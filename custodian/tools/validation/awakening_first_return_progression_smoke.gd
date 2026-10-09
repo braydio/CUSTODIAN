@@ -173,20 +173,41 @@ func _check_locker(awakening: Node) -> void:
 	if locker.position != Vector2(832, -1952):
 		_fail("SidearmLocker drifted from (832, -1952): %s" % str(locker.position))
 	var operator := awakening.get_node("World/Operator") as Node2D
+	var registered_parent := awakening.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"
+	) as CanvasItem
+	var registered_locker := awakening.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"
+	) as CanvasItem
 	operator.global_position = locker.position + Vector2(-64, 0)
+	awakening.call("_update_zone_art_visibility")
+	_check_registered_locker_presentation(registered_parent, registered_locker, "closed")
 	await physics_frame
 	# The locker opens on the first interaction and only yields the P-9 once its
 	# opening animation has finished.
 	locker.interact(operator)
 	for i in 300:
 		await process_frame
+		_check_registered_locker_presentation(registered_parent, registered_locker, "authorize_open")
 		if int(locker.get("_state")) == 1: break
+	_check_registered_locker_presentation(registered_parent, registered_locker, "open_loaded")
 	locker.interact(operator)
+	_check_registered_locker_presentation(registered_parent, registered_locker, "empty")
 	for i in 60:
 		await process_frame
 		if bool(awakening.get("p9_recovered")): break
 	if not bool(awakening.get("p9_recovered")):
 		_fail("recovering the sidearm did not advance progression")
+
+
+func _check_registered_locker_presentation(parent: CanvasItem, locker: CanvasItem, state: String) -> void:
+	if parent == null or locker == null:
+		_fail("registered Locker Reliquary art is missing during %s" % state)
+		return
+	if not parent.visible or not is_equal_approx(parent.modulate.a, 1.0):
+		_fail("registered composition parent changed during locker %s" % state)
+	if not locker.visible or not is_equal_approx(locker.modulate.a, 1.0):
+		_fail("registered Locker Reliquary art was not stable during locker %s (visible=%s alpha=%0.3f)" % [state, locker.visible, locker.modulate.a])
 
 
 # --- Dust Lung lift ----------------------------------------------------------

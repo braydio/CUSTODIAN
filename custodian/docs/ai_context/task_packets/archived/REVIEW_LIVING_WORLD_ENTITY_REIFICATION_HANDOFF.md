@@ -75,7 +75,7 @@ The implementation/review pair remains `draft/manual` until the official targete
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: The first direct smoke could not resolve global classes in the fresh worktree; editor import generated nine unrelated reference-art import sidecars.
+- What went wrong: The first direct smoke could not resolve global classes in the fresh worktree; editor import generated nine unrelated reference-art import sidecars. Finish met one managed README index conflict after concurrent Awakening landing; regenerating the index resolved it while preserving incoming source and packet archives.
 - Root cause / contributing factors: The new worktree had no Godot class/import cache; LFS preflight checks pointers rather than initializing that cache.
 - Prevention / pipeline improvement: Initialize the Godot editor cache once before direct scripts in a fresh worktree; remove only the exact disposable generated sidecars after validation.
 - Tooling / docs drift discovered: The authored physical hold missed an eligible macro interval, so its passing suspension assertion was not the claimed ownership falsification.
