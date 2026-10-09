@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-abstract-activity-foundation-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-living-world-abstract-activity-foundation`
@@ -47,14 +47,14 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: pending
-- Friction severity: none
-- What went wrong: pending
-- Root cause / contributing factors: pending
-- Prevention / pipeline improvement: pending
+- Outcome: success
+- Friction severity: low
+- What went wrong: Fresh Godot project initialization reimported 9,662 assets and generated nine unrelated reference-art `.import` sidecars; those exact sidecars were removed after validation. An exploratory Python bytecode command was also mistakenly applied to a GDScript file and rejected as invalid syntax; Godot parser validation remained the source of truth.
+- Root cause / contributing factors: The ephemeral worktree had no Godot import cache, and the `.gd` file was mistakenly passed to a Python-only syntax tool.
+- Prevention / pipeline improvement: Initialize Godot project metadata before focused GDScript validation; use Godot validation for `.gd` files.
 - Tooling / docs drift discovered: none
-- Follow-up: pending
-- What worked: pending
+- Follow-up: `review-living-world-abstract-activity-foundation-review-corrections-1`
+- What worked: The focused smoke directly covered two formerly colliding legal identities, snapshot restore/fingerprint continuity, and compatibility with existing schema-v5 event IDs.
 
 ## Refresh Planning Authority
 
@@ -65,5 +65,14 @@
 
 ## Handoff
 
-- Next action: Implement and land this bounded correction, then start a fresh paired review.
-- Blockers or open questions: none.
+- Next action: Start a fresh reviewer context and claim the paired correction review after this correction lands and archives complete.
+- Blockers or open questions: none; paired review requires a fresh reviewer context.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Focused abstract-activity smoke (including collision, snapshot fingerprint, and legacy schema-v5 ID restore); kernel, macro-state, and snapshot-roundtrip smokes; changed-file validation (2 selected, 2 passed); `git diff --check`; packet-pair authoring preflight and managed index check.

@@ -112,7 +112,7 @@ func advance_to_fixed_tick(fixed_tick: int, world_tick: int) -> bool:
 		var domain_id := String(group.domain_id)
 		var group_id := String(group.group_id)
 		causal_events.append({
-			"event_id": "%s.%s.%d" % [domain_id, group_id, fixed_tick],
+			"event_id": _event_id(domain_id, group_id, fixed_tick),
 			"kind": "patrol_route_advanced",
 			"cause": "bounded_offscreen_patrol_progression",
 			"domain_id": domain_id,
@@ -226,7 +226,8 @@ static func from_dict(data: Dictionary) -> AbstractActivitySimulationState:
 			or String(event.get("cause", "")) != "bounded_offscreen_patrol_progression" \
 			or String(event.get("objective_id", "")) != String(group.objective_id):
 			return null
-		if event_id != "%s.%s.%d" % [domain_id, group_id, int(fixed_tick)]:
+		if event_id != _event_id(domain_id, group_id, int(fixed_tick)) \
+			and event_id != _legacy_event_id(domain_id, group_id, int(fixed_tick)):
 			return null
 		if int(fixed_tick) > int(group.last_advanced_fixed_tick):
 			return null
@@ -292,6 +293,16 @@ func _reject(message: String) -> bool:
 
 static func _group_key(domain_id: String, group_id: String) -> String:
 	return "%s::%s" % [domain_id, group_id]
+
+
+static func _event_id(domain_id: String, group_id: String, fixed_tick: int) -> String:
+	# Length prefixes make the pair unambiguous while preserving the accepted ID grammar.
+	return "%d:%s:%d:%s:%d" % [domain_id.length(), domain_id, group_id.length(), group_id, fixed_tick]
+
+
+static func _legacy_event_id(domain_id: String, group_id: String, fixed_tick: int) -> String:
+	# Continue reading schema-v5 snapshots written before event IDs were length-prefixed.
+	return "%s.%s.%d" % [domain_id, group_id, fixed_tick]
 
 
 static func _valid_id(value: String) -> bool:

@@ -13,6 +13,7 @@ func _init() -> void:
 func _run() -> void:
 	_check_uninstantiated_group_progress()
 	_check_deterministic_registration_order()
+	_check_collision_free_event_ids_and_legacy_restore()
 	_check_pause_and_invalid_operations()
 	_check_snapshot_continuation_and_legacy_v4()
 	finish()
@@ -79,6 +80,40 @@ func _check_pause_and_invalid_operations() -> void:
 	before = state.canonical_fingerprint()
 	_check(not state.abstract_activity.advance_to_fixed_tick(59, 1), "backwards fixed tick was accepted")
 	_check(state.canonical_fingerprint() == before, "backwards tick partially mutated abstract state")
+
+
+func _check_collision_free_event_ids_and_legacy_restore() -> void:
+	var state := WorldSimulationState.new(720)
+	for domain_id in ["a.b", "a"]:
+		_check(state.abstract_activity.register_location(domain_id, "X"), "collision fixture X location registration failed")
+		_check(state.abstract_activity.register_location(domain_id, "Y"), "collision fixture Y location registration failed")
+	_check(state.abstract_activity.register_group("a.b", "c", "X", "PATROL_ROUTE", ["X", "Y"]), "first colliding identity fixture failed to register")
+	_check(state.abstract_activity.register_group("a", "b.c", "X", "PATROL_ROUTE", ["X", "Y"]), "second colliding identity fixture failed to register")
+	var kernel := SimulationKernel.new(state)
+	for index in 60: kernel.step_once()
+	var events := state.abstract_activity.causal_events
+	_check(events.size() == 2, "collision fixture did not produce both causal events")
+	if events.size() == 2:
+		_check(events[0].event_id != events[1].event_id, "distinct legal identity pairs produced colliding event IDs")
+		var snapshot := SimulationSnapshot.capture(state).to_dict()
+		var restored := SimulationSnapshot.restore(JSON.parse_string(JSON.stringify(snapshot)))
+		_check(restored != null, "snapshot with distinct dotted identity pairs failed to restore")
+		if restored != null:
+			_check(restored.canonical_fingerprint() == state.canonical_fingerprint(), "collision-free event snapshot changed its canonical fingerprint")
+			_check(SimulationCanonicalJson.encode(restored.abstract_activity.causal_events) == SimulationCanonicalJson.encode(events), "collision-free event snapshot changed its causal event sequence")
+	var legacy_snapshot := SimulationSnapshot.capture(_new_single_group_state()).to_dict()
+	var legacy_kernel := SimulationKernel.new(SimulationSnapshot.restore(legacy_snapshot))
+	for index in 60: legacy_kernel.step_once()
+	legacy_snapshot = SimulationSnapshot.capture(legacy_kernel.state).to_dict()
+	var legacy_activity: Dictionary = legacy_snapshot.state.abstract_activity
+	var legacy_events: Array = legacy_activity.causal_events
+	legacy_events[0].event_id = "%s.%s.60" % [DOMAIN, GROUP]
+	legacy_activity.causal_events = legacy_events
+	legacy_snapshot.fingerprint = SimulationCanonicalJson.sha256(legacy_snapshot.state)
+	var legacy_restored := SimulationSnapshot.restore(legacy_snapshot)
+	_check(legacy_restored != null, "pre-correction schema-v5 event ID snapshot failed to restore")
+	if legacy_restored != null:
+		_check(legacy_restored.abstract_activity.causal_events[0].event_id == "%s.%s.60" % [DOMAIN, GROUP], "legacy causal event ID changed during restore")
 
 
 func _check_snapshot_continuation_and_legacy_v4() -> void:
