@@ -76,3 +76,29 @@
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
 - Evidence: Focused abstract-activity smoke (including collision, snapshot fingerprint, and legacy schema-v5 ID restore); kernel, macro-state, and snapshot-roundtrip smokes; changed-file validation (2 selected, 2 passed); `git diff --check`; packet-pair authoring preflight and managed index check.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-living-world-abstract-activity-foundation-review-corrections-1`
+- Reviewed on main: `a012988f373a61bf076d71bf2113842851dde66e`
+- Review modes: `code, runtime`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Retained finding dispositions: `R0-01 fixed`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31`
+
+### Review Notes
+
+- `R0-01` is fixed: new causal IDs length-prefix domain and group identities, eliminating the demonstrated collision without narrowing accepted dotted IDs.
+- The focused collision fixture and abstract-activity, kernel, macro-state, and snapshot-roundtrip smokes passed. Legacy schema-v5 dotted event restore also passed.
+- No new finding was identified; F14-C handoff/reification and F15 production geography remain outside this correction scope.
