@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-entity-reification-handoff`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-living-world-abstract-activity-foundation-review-corrections-1`
 - Locks: `world-simulation-runtime, living-world-abstract-activity, world-actor-lifecycle`
