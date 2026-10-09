@@ -26,6 +26,9 @@ class DummyTarget:
 	func apply_enemy_falcon_punch_impact(_direction: Vector2, _knockback_px: float, _victim_hitstop_sec: float) -> void:
 		falcon_impacts += 1
 
+	func take_damage(_amount: float) -> void:
+		pass
+
 
 class RejectingEngagementCoordinator:
 	extends Node
@@ -356,11 +359,12 @@ func _run() -> void:
 	ability.normal_attacks_since_special = 0
 	ability.cadence_credit = 0.0
 	_assert_true(not bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "falcon punch should require normal melee pressure first")
-	grunt.call("_start_attack_windup", 13.0, false)
+	var standard_melee := grunt.get_standard_enemy_melee_ability() as StandardEnemyMelee
+	_assert_true(standard_melee.try_start(), "ordinary melee should start through its owned API")
 	_assert_true(bool(grunt.call("_should_start_grunt_falcon_punch_now", target)), "normal melee pressure should advance deterministic Falcon eligibility")
 
 	# A terminal leap without a hit goes directly to recovery and records why.
-	grunt.call("_clear_pending_attack_context")
+	standard_melee.cancel(&"interrupted", &"test_cleanup")
 	ability.recent_parry_timer = 0.0
 	grunt.call("_start_grunt_falcon_punch_windup", Vector2.RIGHT)
 	grunt.call("_start_grunt_falcon_punch_leap")
@@ -406,8 +410,7 @@ func _run() -> void:
 	_assert_true(grunt.get_enemy_presentation_action() == &"posture.draw", "relaxed grunt should draw on first notice")
 	grunt.on_behavior_presentation_state_changed(&"search", &"notice")
 	_assert_true(grunt.get_enemy_presentation_action() == &"posture.alert", "ready grunt should alert on later notice")
-	grunt._pending_attack_id = ""
-	grunt._attack_windup_timer = 0.0
+	standard_melee.cancel(&"interrupted", &"test_reset")
 	grunt._grunt_expression_action = &""
 	grunt._grunt_expression_timer = 0.0
 	grunt._grunt_flavor_cooldown = 0.0

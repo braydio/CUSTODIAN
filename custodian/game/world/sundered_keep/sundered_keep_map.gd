@@ -3178,7 +3178,7 @@ func _build_great_hall_marine_ambush() -> void:
 	marine.set("melee_impact_audio_profile", &"hallway_reverb")
 	marine.set("damage", 18.0)
 	marine.set("damage_interval", 1.4)
-	marine.set("attack_windup_duration", 0.30)
+	marine.standard_enemy_melee_config.windup_duration = 0.30
 	marine.set("behavior_state_machine_enabled", false)
 	marine.set("custom_enemy_fx_scale", Vector2.ONE)
 	add_child(marine)

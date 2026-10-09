@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -9,12 +9,15 @@
 [ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/savage_pounce_default.tres" id="7_pounce_config"]
 [ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/savage_chain_default.tres" id="8_chain_config"]
 
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_savage.tres" id="9_melee_config"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_savage"]
 size = Vector2(34, 38)
 
 [node name="EnemySavage" type="CharacterBody2D"]
 z_index = 2
 script = ExtResource("1_enemy")
+standard_enemy_melee_config = ExtResource("9_melee_config")
 enemy_name = "SAVAGE"
 speed = 104.0
 health = 64.0
@@ -22,8 +25,6 @@ max_health = 64.0
 damage = 10.0
 base_tint = Color(0.48, 0.22, 0.16, 1)
 melee_impact_audio_profile = &"scorched"
-attack_windup_duration = 0.26
-melee_hit_arc_degrees = 115.0
 stagger_duration = 0.45
 stagger_damage_threshold = 16.0
 material_drop_min = 0

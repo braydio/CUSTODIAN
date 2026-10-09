@@ -1358,7 +1358,12 @@ Documentation updates this session:
   abilities remain separate. Live remeasurement shows `damage_timer` /
   `damage_interval` are no longer baseline BSM melee cadence, so NPA-4
   deliberately leaves that special/compatibility state outside ordinary melee.
-  Pounce-first attack selection and fixed-step priority remain preserved.
+  `StandardEnemyMelee` + typed `StandardEnemyMeleeConfig` now own the ordinary
+  transaction, commitment/context, and recovery/redecision; Grunt/Marine/Savage/
+  Pursuit scene overrides remain explicit. The focused smoke verifies target-at-
+  resolution, strong whiff consumption, contact provenance, tracking lock, and
+  the variant cooldown negative control. The implementation is landed pending
+  its fresh paired review. Pounce-first selection and fixed-step priority remain preserved.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

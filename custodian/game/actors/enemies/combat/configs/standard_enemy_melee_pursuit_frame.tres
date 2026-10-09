@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="StandardEnemyMeleeConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/combat/standard_enemy_melee_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+strong_opening_multiplier = 3.0
+player_contact_range_px = 40.0
+windup_duration = 0.46
+recovery_duration = 0.48
+tracking_lock_sec = 0.12
+range_grace_multiplier = 1.15
+range_grace_px = 10.0
+contact_arc_degrees = 95.0
+redecision_delay_sec = 0.28

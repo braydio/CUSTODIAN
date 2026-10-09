@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-4-standard-enemy-melee-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-enemy-savage-chain-ability-extraction`
@@ -47,13 +47,33 @@
 - Task overrides: `none`
 - Deferred: NPA-5 reaction/posture/parry-critical authority; NPA-6 death/corpse/loot; explicit procgen variant attack-cooldown design/correction; later shared-family convergence.
 
-## Handoff
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `/tmp/npa4-changed-validation-final.json` records 31/31 selected checks passed, complete changed-file ownership, zero failures and zero timeouts; focused standard melee and the named packet regressions also passed; `git diff --check` passed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Initial focused validation caught a missing host release method, a malformed conditional, and an attempted call to a nonexistent facing API; these were corrected. The commitment regression fixture initially used a plain Node2D without a physics RID; it now uses CharacterBody2D. The first changed sweep exposed two changed callers without manifest ownership, which were registered. A procgen spawn integration check timed out at its 180-second cap when assigned the ambient scene; that scene is now loaded directly by the focused smoke, and the final changed sweep passes.
+- Root cause / contributing factors: Extraction removed a shared token helper together with the ordinary transaction; the new fixture did not initially satisfy the perception component's physics-query contract; ownership metadata for newly changed caller paths was incomplete.
+- Prevention / pipeline improvement: Keep shared engagement token release at the Enemy host boundary, use physics-body fixtures wherever perception queries can run, and register each changed scene/source against the narrowest relevant validation owner before the changed-file sweep. Fixed in scope.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Public semantic APIs kept reaction/commitment regressions independent of private transaction fields.
+
+## Next Handoff
 - Next workstream: `review-npa-4-standard-enemy-melee-extraction`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh reason: `none`
-- Next action: After NPA-4 lands, launch its paired review in a fresh Codex context through the autonomous paired-review runner if that tooling is landed and reviewed; otherwise use the existing fresh-context review path.
-- Blockers or open questions: `none`
+- Refresh reason: none
+- Next action: Start the paired post-land review in a fresh reviewer context after this implementation lands; do not continue this implementation context as reviewer.
+- Blockers or open questions: none

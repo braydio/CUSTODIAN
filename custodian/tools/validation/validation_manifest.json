@@ -2666,6 +2666,36 @@
       "needs_import": false
     },
     {
+      "id": "standard_enemy_melee",
+      "type": "godot_script",
+      "script": "res://tools/validation/standard_enemy_melee_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "melee",
+        "npa"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/ambient_shrumb.tscn",
+        "custodian/game/actors/enemies/combat/standard_enemy_melee.gd",
+        "custodian/game/actors/enemies/combat/standard_enemy_melee_config.gd",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_default.tres",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_grunt.tres",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_marine.tres",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_savage.tres",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_pursuit_frame.tres",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/game/actors/enemies/pursuit_frame.tscn",
+        "custodian/tools/validation/standard_enemy_melee_smoke.gd"
+      ],
+      "timeout_sec": 40,
+      "needs_import": false
+    },
+    {
       "id": "enemy_grunt_notice_and_attack_cadence",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_grunt_notice_and_attack_cadence_smoke.gd",
@@ -5392,6 +5422,7 @@
         "ambush"
       ],
       "owners": [
+        "custodian/game/world/sundered_keep/sundered_keep_map.gd",
         "custodian/game/world/sundered_keep/sundered_keep_marine_ambush.gd",
         "custodian/tools/validation/sundered_keep_marine_ambush_smoke.gd"
       ],
