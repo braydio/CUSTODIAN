@@ -261,7 +261,18 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         elif packet.status != "ready":
             groups["INVALID/RECOVERY"].append(f"{name} — status: {packet.status or 'missing'} [{packet.path}]")
         elif packet.dispatch == "manual":
-            groups["MANUAL READY"].append(f"{name} [{packet.path}]")
+            ok, reason = _decision(
+                packet, packets, archived, claimed, auto_only=False,
+                pairing_errors=pairing_errors, validation_errors=validation_errors,
+                queue_errors=queue_errors,
+            )
+            if ok:
+                groups["MANUAL READY"].append(f"{name} [{packet.path}]")
+            else:
+                label = "DEPENDENCY/LOCK BLOCKED" if reason and (
+                    reason.startswith("dependency:") or reason.startswith("lock:")
+                ) else "INVALID/RECOVERY"
+                groups[label].append(f"{name} — {reason} [{packet.path}]")
         else:
             ok, reason = _decision(
                 packet, packets, archived, claimed, auto_only=True,

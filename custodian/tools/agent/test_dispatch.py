@@ -208,6 +208,38 @@ class DispatchTests(unittest.TestCase):
             dispatch.claim(self.repo, "manual-ready", "codex", False)
         self.assertEqual(fake.start.call_args.args[0], "manual-ready")
 
+    def test_manual_ready_status_matches_pairing_and_validation_claim_gates(self):
+        self.add_packet(
+            "manual-bad-pair", dispatch_value="manual", review="auto",
+            paired_review_workstream="review-manual-bad-pair",
+        )
+        self.add_packet(
+            "review-manual-bad-pair", dispatch_value="auto", kind="review", review="none",
+            depends="other-task", review_target_workstream="other-task",
+            review_target_packet=archived_target("other-task"),
+        )
+        self.add_packet("manual-bad-validation", dispatch_value="manual", text=(
+            packet("manual-bad-validation", dispatch_value="manual")
+            + "\n## Validation\n\nRun `python3 custodian/tools/agent/not_here.py`.\n"
+        ))
+        self.add_packet("manual-good", dispatch_value="manual")
+
+        rendered = dispatch.status(self.repo, output=False)
+        invalid = rendered.split("INVALID/RECOVERY (", 1)[1].split("PARKED DRAFT (", 1)[0]
+        manual = rendered.split("MANUAL READY (", 1)[1].split("PARKED DRAFT (", 1)[0]
+        self.assertIn("manual-bad-pair", invalid)
+        self.assertIn("invalid review pairing", invalid)
+        self.assertIn("manual-bad-validation", invalid)
+        self.assertIn("invalid validation references", invalid)
+        self.assertIn("manual-good", manual)
+        self.assertNotIn("manual-bad-pair", manual)
+        self.assertNotIn("manual-bad-validation", manual)
+
+        with self.assertRaisesRegex(dispatch.DispatchError, "invalid review pairing"):
+            dispatch.claim(self.repo, "manual-bad-pair", "codex", False)
+        with self.assertRaisesRegex(dispatch.DispatchError, "invalid validation references"):
+            dispatch.claim(self.repo, "manual-bad-validation", "codex", False)
+
     def test_priority_and_path_tiebreak_order(self):
         self.add_packet("late", dispatch_value="auto", priority="P2", filename="z-late.md")
         self.add_packet("first", dispatch_value="auto", priority="P1", filename="z-first.md")

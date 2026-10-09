@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `task-packet-queue-stranding-hardening-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-task-packet-queue-stranding-hardening`
@@ -32,6 +32,27 @@
 - Validation: `python3 custodian/tools/agent/test_dispatch.py`; `python3 custodian/tools/agent/test_task_packet_contract.py`; `python3 custodian/tools/agent/test_task_packet_index.py`; focused `dispatch.py status` fixture/live check; `git diff --check`.
 - Task overrides: `none`
 - Deferred: none
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: dispatcher status routes ready/manual packets through the shared explicit-claim eligibility gate; focused regression covers valid manual, invalid review pairing, and invalid validation references. Dispatcher suite 76 passed, packet contract suite 26 passed, packet index suite 12 passed, and `git diff --check` passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `none`
+- Root cause / contributing factors: manual-ready status classification bypassed the shared explicit-claim eligibility decision.
+- Prevention / pipeline improvement: use `_decision()` as the shared eligibility gate for ready/manual status classification.
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope`
+- What worked: focused temporary-repository regressions proved both status and explicit-claim behavior.
 
 ## Next Handoff
 
