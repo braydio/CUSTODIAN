@@ -67,7 +67,7 @@ func _run() -> void:
 	_assert_approx(float(savage.get("health")), 64.0, "health")
 	_assert_approx(float(savage.get("max_health")), 64.0, "max_health")
 	_assert_approx(float(savage.get("damage")), 10.0, "damage")
-	_assert_approx(float(savage.get("attack_windup_duration")), 0.26, "attack windup")
+	_assert_approx(float(savage.get_standard_enemy_melee_windup_duration()), 0.26, "attack windup")
 	_assert_approx(float(savage.get("stagger_damage_threshold")), 16.0, "stagger threshold")
 	_assert_true(savage.get("behavior_profile_id") == &"raider_savage", "scene should use raider_savage")
 	_assert_true(savage.get("custom_enemy_animation_set") == "enemy_savage", "scene should use enemy_savage animation set")

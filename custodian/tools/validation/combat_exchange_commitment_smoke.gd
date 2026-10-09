@@ -4,6 +4,14 @@ const ENEMY_SCENE := preload("res://game/actors/enemies/enemy_grunt.tscn")
 const CombatConstants := preload("res://game/systems/combat/combat_constants.gd")
 
 var _enemy: CharacterBody2D
+var _target: Node2D
+
+
+class DummyTarget:
+	extends CharacterBody2D
+
+	func take_damage(_amount: float) -> void:
+		pass
 
 
 func _init() -> void:
@@ -16,8 +24,13 @@ func _run() -> void:
 	current_scene = fixture
 	_enemy = ENEMY_SCENE.instantiate() as CharacterBody2D
 	fixture.add_child(_enemy)
+	_target = DummyTarget.new()
+	_target.add_to_group("player")
+	fixture.add_child(_target)
 	await process_frame
 	_enemy.set_physics_process(false)
+	_target.global_position = _enemy.global_position + Vector2.RIGHT * 20.0
+	_enemy.set("target", _target)
 	_enemy.set_process(false)
 
 	_validate_committed_light_survives()
@@ -44,18 +57,27 @@ func _reset_enemy() -> void:
 	_enemy.set("_light_flinch_cooldown_timer", 0.0)
 	_enemy.set("_recoil_timer", 0.0)
 	_enemy.set("_stagger_timer", 0.0)
-	_enemy.set("_pending_attack_id", "")
+	(_enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee).cancel(&"interrupted", &"test_reset")
+	_enemy.set("target", _target)
+
+
+func _start_melee_commitment() -> void:
+	_target.global_position = _enemy.global_position + Vector2.RIGHT * 20.0
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
+	assert(melee.try_start(), "test must create commitment through the public melee start API")
 
 
 func _validate_committed_light_survives() -> void:
 	_reset_enemy()
-	_enemy.set("_pending_attack_id", "committed-fast-01")
-	_enemy.set("_attack_windup_timer", 0.25)
+	_start_melee_commitment()
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
+	var attack_id := String(melee.get_debug_state().get("attack_id", ""))
+	var windup := float(melee.get_debug_state().get("windup_remaining", 0.0))
 	var hp_before := float(_enemy.get("health"))
 	_enemy.call("take_damage", 11.0, CombatConstants.HitStrength.LIGHT, 14.0)
 	assert(float(_enemy.get("health")) == hp_before - 11.0)
-	assert(String(_enemy.get("_pending_attack_id")) == "committed-fast-01")
-	assert(is_equal_approx(float(_enemy.get("_attack_windup_timer")), 0.25))
+	assert(melee.is_committed() and String(melee.get_debug_state().get("attack_id", "")) == attack_id)
+	assert(is_equal_approx(float(melee.get_debug_state().get("windup_remaining", 0.0)), windup))
 	assert(is_zero_approx(float(_enemy.get("_recoil_timer"))))
 	assert(is_zero_approx(float(_enemy.get("_stagger_timer"))))
 	# Gameplay recoil stays suppressed, but the cosmetic presentation-only
@@ -80,11 +102,12 @@ func _validate_light_flinch_gate() -> void:
 
 func _validate_posture_break() -> void:
 	_reset_enemy()
-	_enemy.set("_pending_attack_id", "committed-posture")
+	_start_melee_commitment()
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
 	_enemy.call("take_damage", 1.0, CombatConstants.HitStrength.LIGHT, 60.0)
-	assert(String(_enemy.get("_pending_attack_id")) == "committed-posture")
+	assert(melee.is_committed())
 	_enemy.call("take_damage", 1.0, CombatConstants.HitStrength.LIGHT, 40.0)
-	assert(String(_enemy.get("_pending_attack_id")).is_empty())
+	assert(not melee.is_committed())
 	assert(float(_enemy.get("_stagger_timer")) > 0.0)
 	assert(is_zero_approx(float(_enemy.get("posture_current"))))
 
@@ -102,16 +125,18 @@ func _validate_posture_recovery() -> void:
 
 func _validate_heavy_authority() -> void:
 	_reset_enemy()
-	_enemy.set("_pending_attack_id", "committed-heavy")
+	_start_melee_commitment()
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
 	_enemy.call("take_damage", 2.0, CombatConstants.HitStrength.HEAVY, 45.0)
-	assert(String(_enemy.get("_pending_attack_id")).is_empty())
+	assert(not melee.is_committed())
 	assert(float(_enemy.get("_stagger_timer")) > 0.0)
 	assert(is_equal_approx(float(_enemy.get("posture_current")), 45.0))
 
 
 func _validate_displacement_does_not_cancel() -> void:
 	_reset_enemy()
-	_enemy.set("_pending_attack_id", "committed-displacement")
+	_start_melee_commitment()
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
 	var before := _enemy.global_position
 	# Knockback is a queued, collision-resolved impulse (resolved across
 	# _physics_process ticks), not an instantaneous position change -- with
@@ -121,16 +146,19 @@ func _validate_displacement_does_not_cancel() -> void:
 	assert(is_zero_approx(_enemy.global_position.distance_to(before)))
 	assert(float(_enemy.get("_knockback_remaining")) > 0.0)
 	assert((_enemy.get("_knockback_velocity") as Vector2).length() > 0.0)
-	assert(String(_enemy.get("_pending_attack_id")) == "committed-displacement")
+	assert(melee.is_committed())
 	_enemy.call("_update_knockback_impulse", 0.5)
 	assert(_enemy.global_position.distance_to(before) > 0.0)
-	assert(String(_enemy.get("_pending_attack_id")) == "committed-displacement")
+	assert(melee.is_committed())
 	assert(is_zero_approx(float(_enemy.get("_knockback_remaining"))))
 
 
 func _validate_knockback_multi_tick_displacement() -> void:
 	_reset_enemy()
 	_enemy.global_position = Vector2(2000.0, 2000.0)
+	_target.global_position = _enemy.global_position + Vector2.RIGHT * 20.0
+	_start_melee_commitment()
+	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
 	var before := _enemy.global_position
 	# Fast 02 target: ~5-7px over ~0.09-0.11s.
 	_enemy.call("apply_melee_impact", "vigil_dagger_fast_02:default", Vector2.RIGHT, 360.0)

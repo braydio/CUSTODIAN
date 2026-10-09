@@ -1,8 +1,6 @@
 extends CharacterBody2D
 class_name Enemy
 
-const EnemyHitSpatialContract = preload("res://game/systems/combat/enemy_hit_spatial_contract.gd")
-
 signal enemy_died(enemy: Enemy)
 
 const CombatConstants = preload("res://game/systems/combat/combat_constants.gd")
@@ -23,6 +21,7 @@ const GRUNT_FALCON_PUNCH_SCRIPT := preload(
 )
 const SAVAGE_POUNCE_SCRIPT := preload("res://game/actors/enemies/abilities/savage_pounce.gd")
 const SAVAGE_CHAIN_SCRIPT := preload("res://game/actors/enemies/abilities/savage_chain.gd")
+const STANDARD_ENEMY_MELEE_SCRIPT := preload("res://game/actors/enemies/combat/standard_enemy_melee.gd")
 const SAVAGE_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/savage_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
@@ -119,19 +118,11 @@ enum GruntWeaponPosture {
 @export var detection_range: float = 420.0
 @export var retarget_interval: float = 0.25
 @export var team: String = "enemy"
-@export var strong_attack_multiplier: float = 3.0
 @export var attack_objective: String = "breach_command"
-@export var attack_windup_duration: float = 0.10
-@export var attack_recovery_duration: float = 0.40
-## Short post-recovery pause before a BSM-controlled baseline grunt may
-## begin its next windup. Replaces the old generic 1.0s damage_interval gate
-## for that path; savage/falcon-punch/dash abilities are unaffected.
-@export var attack_redecision_delay_sec: float = 0.28
-@export var attack_tracking_lock_sec: float = 0.12
 @export var hit_recoil_duration: float = 0.12
-@export var melee_hit_range_grace_multiplier: float = 1.15
-@export var melee_hit_range_grace_px: float = 10.0
-@export var melee_hit_arc_degrees: float = 95.0
+@export var standard_enemy_melee_config: StandardEnemyMeleeConfig = preload(
+	"res://game/actors/enemies/combat/configs/standard_enemy_melee_default.tres"
+)
 @export var stagger_duration: float = 0.35
 ## Fallback HEAVY/LIGHT classifier for melee hits that arrive without an
 ## explicit hit_kind (see _resolve_hit_strength_for_attack). Reaction
@@ -248,9 +239,6 @@ var _corpse_cleanup_timer_sec := 0.0
 var damage_timer := 0.0
 var damage_interval := 1.0  # Damage every 1 second
 var target_refresh_timer := 0.0
-var used_strong_attack := false
-var _attack_windup_timer: float = 0.0
-var _pending_attack_damage: float = 0.0
 var _stagger_timer: float = 0.0
 var _recoil_timer: float = 0.0
 var posture_current: float = 0.0
@@ -261,8 +249,6 @@ var _light_contact_visual_origin: Vector2 = Vector2.ZERO
 var _light_contact_visual_active: bool = false
 var _knockback_velocity := Vector2.ZERO
 var _knockback_remaining := 0.0
-var _attack_recovery_timer: float = 0.0
-var _attack_redecision_timer: float = 0.0
 var _crit_timer: float = 0.0
 var _crit_recovery_timer: float = 0.0
 var _parry_critical_window_timer: float = 0.0
@@ -280,13 +266,7 @@ var _parry_critical_execution_body_original_position: Vector2 = Vector2.ZERO
 var _parry_critical_execution_body_position_captured: bool = false
 var _critical_breach_marker_vfx: Node2D = null
 var _critical_window_ring_vfx: Node2D = null
-var _windup_attack_is_strong: bool = false
-var _pending_attack_forward: Vector2 = Vector2.DOWN
-var _pending_attack_range_px: float = 0.0
-var _pending_attack_range_source: StringName = &"unknown"
-var _pending_attack_arc_degrees: float = 95.0
 var _attack_sequence: int = 0
-var _pending_attack_id: String = ""
 var _threat_highlight_enabled: bool = false
 var _threat_highlight_time: float = 0.0
 var _base_sprite_scale: Vector2 = Vector2.ONE
@@ -311,6 +291,7 @@ var _last_movement_probe_position: Vector2 = Vector2.ZERO
 var _stuck_reroute_timer: float = 0.0
 var _stuck_repath_cooldown_timer: float = 0.0
 var _marine_dash_ability := MarineDash.new()
+var _standard_enemy_melee: StandardEnemyMelee = STANDARD_ENEMY_MELEE_SCRIPT.new()
 var _savage_chain_ability: SavageChain = SAVAGE_CHAIN_SCRIPT.new()
 var _savage_pounce_ability: SavagePounce = SAVAGE_POUNCE_SCRIPT.new()
 
@@ -466,6 +447,8 @@ func _ready():
 	_savage_pounce_ability.setup(self, savage_pounce_config)
 	savage_chain_config = savage_chain_config.duplicate(true)
 	_savage_chain_ability.setup(self, savage_chain_config)
+	standard_enemy_melee_config = standard_enemy_melee_config.duplicate(true)
+	_standard_enemy_melee.setup(self, standard_enemy_melee_config)
 	_refresh_target()
 	_initialize_navigation()
 	var stable_spawn_ordinal := int(get_meta("stable_spawn_ordinal", 0))
@@ -554,7 +537,7 @@ func _physics_process(delta):
 		delta = _simulation_tier_accum
 		_simulation_tier_accum = 0.0
 	_update_knockback_impulse(delta)
-	_update_attack_recovery_and_redecision(delta)
+	_standard_enemy_melee.update_recovery(delta)
 	var presentation_started: int = obs.perf_span_begin() if obs != null else 0
 	_update_threat_highlight_visual(delta)
 	_update_grunt_expression(delta)
@@ -597,7 +580,7 @@ func _physics_process(delta):
 	if obs != null:
 		obs.perf_span_end(&"enemy_combat", combat_started)
 	combat_started = obs.perf_span_begin() if obs != null else 0
-	if _update_attack_windup(delta):
+	if _standard_enemy_melee.tick(delta):
 		if obs != null:
 			obs.perf_span_end(&"enemy_combat", combat_started)
 			obs.perf_span_end(tier_span_name, total_started)
@@ -711,20 +694,13 @@ func _attack_target(delta: float):
 	if _should_use_marine_dash_attack():
 		_marine_dash_ability.try_start(delta)
 		return
-	if _attack_windup_timer > 0.0:
+	if _standard_enemy_melee.is_active():
 		return
 	if _stagger_timer > 0.0 or _recoil_timer > 0.0:
 		return
-	if not _is_baseline_melee_attack_eligible():
+	if not _standard_enemy_melee.is_eligible():
 		return
-	if target and target.has_method("take_damage"):
-		var dealt_damage := damage
-		var is_strong := false
-		if not used_strong_attack:
-			used_strong_attack = true
-			dealt_damage = damage * strong_attack_multiplier
-			is_strong = true
-		_start_attack_windup(dealt_damage, is_strong)
+	_standard_enemy_melee.try_start()
 
 
 func _should_use_marine_dash_attack() -> bool:
@@ -835,7 +811,9 @@ func try_claim_ability_engagement_token(target_node: Node2D, hold_sec: float) ->
 
 
 func release_ability_engagement_token() -> void:
-	_release_engagement_token()
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator != null:
+		coordinator.call("release_committed_attack", self)
 
 
 func resolve_ability_hit(
@@ -852,23 +830,86 @@ func resolve_ability_hit(
 
 
 func get_ability_melee_spatial_context(target_node: Node2D, direction: Vector2) -> Dictionary:
+	return _standard_enemy_melee.get_contact_context(target_node, direction)
+
+
+func get_standard_enemy_melee_ability() -> StandardEnemyMelee:
+	return _standard_enemy_melee
+
+
+func get_standard_enemy_melee_debug_state() -> Dictionary:
+	return _standard_enemy_melee.get_debug_state()
+
+
+func is_standard_enemy_melee_committed() -> bool:
+	return _standard_enemy_melee.is_committed()
+
+
+func get_standard_enemy_melee_windup_duration() -> float:
+	return _standard_enemy_melee.get_windup_duration()
+
+
+func resolve_standard_melee_contact_range(target_node: Node2D, player_range_px: float) -> Dictionary:
+	if _variant_profile != null:
+		return {"range_px": float(_variant_profile.get("attack_range")), "source": &"variant_profile"}
+	if target_node != null and target_node.is_in_group("player"):
+		return {"range_px": player_range_px, "source": &"standard_melee"}
+	return {"range_px": structure_attack_range, "source": &"structure_melee"}
+
+
+func get_standard_melee_facing() -> Vector2:
+	return _last_move_direction
+
+
+func next_standard_melee_attack_id() -> String:
+	_attack_sequence += 1
+	return "%s:%s" % [get_instance_id(), _attack_sequence]
+
+
+func request_standard_melee_engagement(target_node: Node2D, hold_duration_sec: float) -> bool:
 	if target_node == null or not is_instance_valid(target_node):
-		return {}
-	var contact_range := _get_standard_melee_contact_range(target_node)
-	var spatial := EnemyHitSpatialContract.radial_arc(
-		global_position,
-		target_node.global_position,
-		direction,
-		contact_range,
-		melee_hit_range_grace_multiplier,
-		melee_hit_range_grace_px,
-		melee_hit_arc_degrees
-	)
-	spatial["base_contact_range_px"] = contact_range
-	spatial["melee_range_grace_multiplier"] = melee_hit_range_grace_multiplier
-	spatial["melee_range_grace_px"] = melee_hit_range_grace_px
-	spatial["contact_range_source"] = String(_get_standard_melee_contact_range_source(target_node))
-	return spatial
+		return false
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator == null:
+		return true
+	return bool(coordinator.call("request_committed_attack", self, target_node, hold_duration_sec))
+
+
+func release_standard_melee_engagement() -> void:
+	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
+	if coordinator != null:
+		coordinator.call("release_committed_attack", self)
+
+
+func resolve_standard_melee_hit(target_node: Node2D, amount: float, attack_id: String, spatial: Dictionary) -> Dictionary:
+	return _apply_enemy_hit_to_target(target_node, amount, &"melee", -1.0, attack_id, spatial)
+
+
+func record_standard_melee_event(event_name: StringName, data: Dictionary) -> void:
+	_obs_log(event_name, data)
+
+
+func count_standard_melee_metric(counter_name: StringName, amount: int = 1) -> void:
+	_obs_increment(counter_name, amount)
+
+
+func on_standard_melee_started(is_strong: bool) -> void:
+	if _should_use_grunt_falcon_punch_attack() and target is Node2D and target.is_in_group("player"):
+		_grunt_falcon_punch_ability.on_normal_attack_started()
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_ensure_enemy_presentation_controller()
+		if _enemy_presentation != null:
+			_grunt_attack_presentation_action = _enemy_presentation.select_normal_attack()
+	velocity = Vector2.ZERO
+	if _uses_humanoid_cutout_backend():
+		humanoid_cutout_rig.set_facing_vector(_last_move_direction)
+		_play_cutout_presentation_state(&"attack_light", true)
+	elif _uses_custom_enemy_animation_set():
+		_update_custom_enemy_animation(_last_move_direction, false, true)
+	elif _uses_procedural_variant_animation_set():
+		_update_procedural_variant_animation(_last_move_direction, false, true)
+	elif _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
 
 
 func separate_ability_from_target(target_node: Node2D, fallback_direction: Vector2) -> void:
@@ -970,8 +1011,7 @@ func _grunt_transition_expression_blocked() -> bool:
 		or _stagger_timer > 0.0 \
 		or _recoil_timer > 0.0 \
 		or _grunt_falcon_punch_ability.is_active() \
-		or _attack_windup_timer > 0.0 \
-		or not _pending_attack_id.is_empty()
+		or _standard_enemy_melee.is_active()
 
 
 func _grunt_is_weapon_ready() -> bool:
@@ -1222,22 +1262,6 @@ func _get_attack_range(node: Node2D) -> float:
 	if node.is_in_group("player"):
 		return 40.0
 	return structure_attack_range
-
-
-func _get_standard_melee_contact_range(node: Node2D) -> float:
-	if _variant_profile != null:
-		return float(_variant_profile.get("attack_range"))
-	if node != null and node.is_in_group("player"):
-		return 40.0
-	return structure_attack_range
-
-
-func _get_standard_melee_contact_range_source(node: Node2D) -> StringName:
-	if _variant_profile != null:
-		return &"variant_profile"
-	if node != null and node.is_in_group("player"):
-		return &"standard_melee"
-	return &"structure_melee"
 
 
 func _limit_pursuit_inward_velocity(target_position: Vector2, stop_distance: float, delta: float) -> void:
@@ -1661,7 +1685,7 @@ func die():
 	velocity = Vector2.ZERO
 	_pending_corpse_payload = _build_corpse_payload_once()
 	_play_enemy_death_sfx()
-	_cancel_pending_attack_with_result(&"cancelled_by_death", &"death")
+	_standard_enemy_melee.cancel(&"cancelled_by_death", &"death")
 	_clear_grunt_critical_open_vfx(false)
 	_release_parry_critical_execution_owner()
 	_parry_critical_phase = ParryCriticalPhase.NONE
@@ -1928,7 +1952,8 @@ func get_behavior_authority_snapshot() -> Dictionary:
 ## Read-only, compact diagnostic surface for validation tooling.
 ## Gameplay must not consume this snapshot as authority.
 func get_debug_snapshot() -> Dictionary:
-	var attack_id := _pending_attack_id
+	var melee_snapshot := _standard_enemy_melee.get_debug_state()
+	var attack_id := String(melee_snapshot.get("attack_id", ""))
 	var attack_type := "melee" if not attack_id.is_empty() else ""
 	var attack_phase := "pending" if not attack_id.is_empty() else "idle"
 	if _marine_dash_ability.is_active():
@@ -2380,271 +2405,6 @@ func _hold_animated_sprite_final_frame(animation_name: StringName) -> void:
 		animated_sprite.frame_progress = 1.0
 
 
-func _start_attack_windup(queued_damage: float, is_strong: bool) -> void:
-	if _should_use_grunt_falcon_punch_attack() and target is Node2D and target.is_in_group("player"):
-		_grunt_falcon_punch_ability.on_normal_attack_started()
-	_pending_attack_damage = queued_damage
-	_attack_sequence += 1
-	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		_ensure_enemy_presentation_controller()
-		if _enemy_presentation != null:
-			_grunt_attack_presentation_action = _enemy_presentation.select_normal_attack()
-	_pending_attack_id = "%s:%s" % [get_instance_id(), _attack_sequence]
-	_attack_windup_timer = max(0.01, attack_windup_duration)
-	_windup_attack_is_strong = is_strong
-	_capture_pending_attack_context()
-	_obs_increment(&"enemy_attack_windups", 1)
-	_obs_log(&"enemy_attack_windup_started", {
-		"enemy_id": get_instance_id(),
-		"attack_id": _pending_attack_id,
-		"windup_duration": _attack_windup_timer,
-	})
-	_obs_log(&"enemy_attack_windup", {
-		"enemy": enemy_name,
-		"position": global_position,
-		"damage": queued_damage,
-		"attack_id": _pending_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
-		"is_strong": is_strong,
-		"attack_objective": attack_objective,
-		"target": target.name if target != null and is_instance_valid(target) else "",
-		"range_px": _pending_attack_range_px,
-		"contact_range_source": String(_pending_attack_range_source),
-		"arc_degrees": _pending_attack_arc_degrees,
-	})
-	velocity = Vector2.ZERO
-	if _uses_humanoid_cutout_backend():
-		humanoid_cutout_rig.set_facing_vector(_last_move_direction)
-		_play_cutout_presentation_state(&"attack_light", true)
-	elif _uses_custom_enemy_animation_set():
-		_update_custom_enemy_animation(_last_move_direction, false, true)
-	elif _uses_procedural_variant_animation_set():
-		_update_procedural_variant_animation(_last_move_direction, false, true)
-	elif _uses_directional_animation_set():
-		_update_directional_animation(_last_move_direction, false)
-
-
-func _capture_pending_attack_context() -> void:
-	_pending_attack_range_px = 40.0
-	_pending_attack_range_source = &"standard_melee"
-	_pending_attack_arc_degrees = melee_hit_arc_degrees
-
-	if target is Node2D:
-		var target_node := target as Node2D
-		_pending_attack_range_px = _get_standard_melee_contact_range(target_node)
-		_pending_attack_range_source = _get_standard_melee_contact_range_source(target_node)
-
-		var to_target := target_node.global_position - global_position
-		if to_target.length_squared() > 0.0001:
-			_pending_attack_forward = to_target.normalized()
-			return
-
-	if _last_move_direction.length_squared() > 0.0001:
-		_pending_attack_forward = _last_move_direction.normalized()
-	else:
-		_pending_attack_forward = Vector2.DOWN
-
-
-func _update_attack_windup(delta: float) -> bool:
-	if _attack_windup_timer <= 0.0:
-		return false
-	_attack_windup_timer = max(0.0, _attack_windup_timer - delta)
-	velocity = Vector2.ZERO
-	if _attack_windup_timer > maxf(0.0, attack_tracking_lock_sec):
-		_capture_pending_attack_context()
-	if _attack_windup_timer > 0.0:
-		return true
-	if not _try_claim_engagement_token(attack_recovery_duration):
-		return true
-	_execute_queued_attack()
-	return true
-
-
-func _try_claim_engagement_token(hold_duration_sec: float) -> bool:
-	if target == null or not is_instance_valid(target) or not (target is Node2D):
-		return false
-	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
-	if coordinator == null:
-		return true
-	return bool(coordinator.call(
-		"request_committed_attack",
-		self,
-		target as Node2D,
-		hold_duration_sec
-	))
-
-
-func _release_engagement_token() -> void:
-	var coordinator := get_node_or_null("/root/EnemyEngagementCoordinator")
-	if coordinator != null:
-		coordinator.call("release_committed_attack", self)
-
-
-func _execute_queued_attack() -> void:
-	if dead:
-		_cancel_pending_attack_with_result(&"cancelled_by_death", &"death")
-		return
-	_obs_log(&"enemy_attack_active", {
-		"attack_id": _pending_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
-		"attack_type": "melee",
-		"phase": "active",
-		"enemy": enemy_name,
-	})
-	if target == null or not is_instance_valid(target) or _is_target_destroyed(target):
-		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
-		_obs_log(&"enemy_attack_cancelled", {
-			"attack_id": _pending_attack_id,
-			"attacker_id": get_instance_id(),
-			"target_id": 0,
-			"attack_type": "melee",
-			"phase": "active",
-			"result": "interrupted",
-			"enemy": enemy_name,
-			"reason": "no_target",
-			"position": global_position,
-		})
-		_clear_pending_attack_context()
-		return
-
-	var target_node := target as Node2D if target is Node2D else null
-	if target_node == null:
-		_obs_increment(&"enemy_attack_cancelled_no_target", 1)
-		_obs_log(&"enemy_attack_cancelled", {
-			"attack_id": _pending_attack_id,
-			"attacker_id": get_instance_id(),
-			"target_id": 0,
-			"attack_type": "melee",
-			"phase": "active",
-			"result": "interrupted",
-			"enemy": enemy_name,
-			"reason": "target_not_node2d",
-			"position": global_position,
-		})
-		_clear_pending_attack_context()
-		return
-
-	var spatial := _get_pending_attack_spatial_context(target_node)
-	var miss_reason := StringName(str(spatial.get("spatial_reason", "")))
-	if not miss_reason.is_empty():
-		_obs_increment(&"enemy_attack_whiffs", 1)
-		_obs_increment(&"enemy_attack_result_whiffed", 1)
-		var whiff_counter_suffix := "out_of_range" if miss_reason == &"target_out_of_range" else "out_of_arc"
-		_obs_increment(StringName("enemy_attack_whiffed_%s" % whiff_counter_suffix), 1)
-		var whiff_data := {
-			"attack_id": _pending_attack_id,
-			"attacker_id": get_instance_id(),
-			"target_id": target_node.get_instance_id(),
-			"enemy": enemy_name,
-			"attack_type": "melee",
-			"phase": "active",
-			"result": "whiffed",
-			"reason": String(miss_reason),
-			"position": global_position,
-			"target": target_node.name,
-			"target_position": target_node.global_position,
-			"queued_damage": _pending_attack_damage,
-			"range_px": _pending_attack_range_px,
-			"arc_degrees": _pending_attack_arc_degrees,
-		}
-		whiff_data.merge(spatial, true)
-		_obs_log(&"enemy_attack_whiff", whiff_data)
-		_begin_attack_recovery_and_redecision()
-		_clear_pending_attack_context()
-		return
-
-	var hit_result := _apply_enemy_hit_to_target(target_node, _pending_attack_damage, &"melee", -1.0, _pending_attack_id, spatial)
-	_obs_increment(&"enemy_attacks_resolved", 1)
-	var resolved_data := {
-		"attack_id": _pending_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target_node.get_instance_id(),
-		"enemy": enemy_name,
-		"attack_type": "melee",
-		"phase": "resolved",
-		"position": global_position,
-		"target": target_node.name,
-		"target_position": target_node.global_position,
-		"result": String(hit_result.get("result", "")),
-		"hit_kind": String(hit_result.get("hit_kind", "")),
-		"applied_damage": float(hit_result.get("applied_damage", 0.0)),
-		"damage_attempted": _pending_attack_damage,
-		"target_health_before": hit_result.get("target_health_before", null),
-		"target_health_after": hit_result.get("target_health_after", null),
-		"dodged": bool(hit_result.get("dodged", false)),
-		"blocked": bool(hit_result.get("blocked", false)),
-		"parried": bool(hit_result.get("parried", false)),
-	}
-	resolved_data.merge(spatial, true)
-	_obs_log(&"enemy_attack_resolved", resolved_data)
-	var result_name := String(hit_result.get("result", "unknown"))
-	_obs_increment(StringName("enemy_attack_result_%s" % result_name), 1)
-	if bool(hit_result.get("dodged", false)) or bool(hit_result.get("parried", false)):
-		pass  # clean whiff
-	elif bool(hit_result.get("blocked", false)):
-		pass  # blocked, handled by receiver
-	elif float(hit_result.get("applied_damage", 0.0)) > 0.0:
-		print("Enemy hit ", target.name, " for ", hit_result.get("applied_damage", 0.0), " damage!")
-	_begin_attack_recovery_and_redecision()
-	_clear_pending_attack_context()
-
-
-func _clear_pending_attack_context() -> void:
-	_pending_attack_damage = 0.0
-	_windup_attack_is_strong = false
-	_pending_attack_forward = Vector2.DOWN
-	_pending_attack_range_px = 0.0
-	_pending_attack_range_source = &"unknown"
-	_pending_attack_arc_degrees = melee_hit_arc_degrees
-	_pending_attack_id = ""
-
-
-func _cancel_pending_attack_with_result(result: StringName, reason: StringName) -> void:
-	if _pending_attack_id.is_empty():
-		_clear_pending_attack_context()
-		return
-	_obs_log(&"enemy_attack_resolved", {
-		"attack_id": _pending_attack_id,
-		"attacker_id": get_instance_id(),
-		"target_id": target.get_instance_id() if target != null and is_instance_valid(target) else 0,
-		"attack_type": "melee",
-		"phase": "cancelled",
-		"result": String(result),
-		"reason": String(reason),
-		"enemy": enemy_name,
-		"position": global_position,
-	})
-	_obs_increment(StringName("enemy_attack_result_%s" % String(result)), 1)
-	if result == &"cancelled_by_death":
-		_obs_increment(&"enemy_attack_interrupted_by_death")
-	elif reason == &"parry":
-		_obs_increment(&"enemy_attack_interrupted_by_parry")
-	_release_engagement_token()
-	_clear_pending_attack_context()
-
-
-func _can_pending_attack_connect(target_node: Node2D) -> bool:
-	return _get_pending_attack_miss_reason(target_node).is_empty()
-
-
-func _get_pending_attack_miss_reason(target_node: Node2D) -> StringName:
-	return StringName(str(_get_pending_attack_spatial_context(target_node).get("spatial_reason", "")))
-
-
-func _get_pending_attack_spatial_context(target_node: Node2D) -> Dictionary:
-	if _pending_attack_range_px <= 0.0:
-		_pending_attack_range_px = _get_standard_melee_contact_range(target_node)
-		_pending_attack_range_source = _get_standard_melee_contact_range_source(target_node)
-	var spatial := EnemyHitSpatialContract.radial_arc(global_position, target_node.global_position, _pending_attack_forward, _pending_attack_range_px, melee_hit_range_grace_multiplier, melee_hit_range_grace_px, _pending_attack_arc_degrees)
-	spatial["base_contact_range_px"] = _pending_attack_range_px
-	spatial["melee_range_grace_multiplier"] = melee_hit_range_grace_multiplier
-	spatial["melee_range_grace_px"] = melee_hit_range_grace_px
-	spatial["contact_range_source"] = String(_pending_attack_range_source)
-	return spatial
-
-
 func _apply_enemy_hit_to_target(
 	hit_node: Node,
 	amount: float,
@@ -2668,7 +2428,7 @@ func _apply_enemy_hit_to_target(
 		hit_direction = global_position.direction_to((hit_node as Node2D).global_position)
 
 	var attack_context := {
-		"attack_id": attack_id_override if not attack_id_override.is_empty() else _pending_attack_id,
+		"attack_id": attack_id_override if not attack_id_override.is_empty() else String(_standard_enemy_melee.get_debug_state().get("attack_id", "")),
 		"attacker_id": get_instance_id(),
 		"target_id": hit_node.get_instance_id(),
 		"damage_attempted": amount,
@@ -2802,7 +2562,7 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 		# Armor-deflect presentation: visual cue but no movement interruption
 		_play_armor_deflect_fx()
 		_obs_increment(&"enemy_reactions_armor_deflect", 1)
-	elif not _pending_attack_id.is_empty():
+	elif _standard_enemy_melee.is_committed():
 		_play_light_contact_visual_reaction(amount)
 		_obs_increment(&"enemy_light_flinch_suppressed_commit")
 		_obs_increment(&"enemy_attack_survived_light_contact")
@@ -2819,7 +2579,7 @@ func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStren
 ## Presentation-only cosmetic reaction for a LIGHT hit that gameplay
 ## suppressed (attack-commit survival or flinch-cooldown throttling). This
 ## must never touch gameplay state -- velocity, _recoil_timer, _stagger_timer,
-## _attack_windup_timer, _pending_attack_id, _pending_attack_forward, and BSM
+## standard melee commitment, and BSM
 ## state are all left completely untouched by this function. Real flinch/
 ## stagger presentation (_start_hit_recoil_reaction/_start_stagger_reaction)
 ## remains a strictly stronger, separate reaction than this cosmetic kick.
@@ -2908,29 +2668,6 @@ func _update_knockback_impulse(delta: float) -> void:
 		_obs_log(&"enemy_knockback_impulse_completed", {"enemy_id": get_instance_id()})
 
 
-## Starts the post-attack recovery + redecision gate for a BSM-controlled
-## baseline grunt melee attack that just naturally concluded (hit or whiff --
-## not an interruption, which is already gated by stagger/recoil instead).
-func _begin_attack_recovery_and_redecision() -> void:
-	_attack_recovery_timer = maxf(0.0, attack_recovery_duration)
-	_attack_redecision_timer = 0.0
-
-
-func _update_attack_recovery_and_redecision(delta: float) -> void:
-	if _attack_recovery_timer > 0.0:
-		_attack_recovery_timer = maxf(0.0, _attack_recovery_timer - delta)
-		if _attack_recovery_timer <= 0.0:
-			_attack_redecision_timer = maxf(0.0, attack_redecision_delay_sec)
-			_obs_log(&"enemy_attack_recovery_completed", {"enemy_id": get_instance_id()})
-		return
-	if _attack_redecision_timer > 0.0:
-		_attack_redecision_timer = maxf(0.0, _attack_redecision_timer - delta)
-
-
-func _is_baseline_melee_attack_eligible() -> bool:
-	return _attack_recovery_timer <= 0.0 and _attack_redecision_timer <= 0.0
-
-
 func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knockback_force: float) -> void:
 	if dead or _parry_critical_phase != ParryCriticalPhase.NONE:
 		return
@@ -2942,10 +2679,10 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	var is_dagger_finisher_catch := is_dagger_finisher and contact_id == "cut_01"
 	# A committed attack that survives contact keeps its authored facing —
 	# the knockback push moves the body without turning it away from its
-	# own swing (see _pending_attack_forward).
+	# own swing (see StandardEnemyMelee.get_committed_forward()).
 	var preserve_attack_facing := is_dagger_finisher_catch \
 		and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) \
-		and not _pending_attack_id.is_empty()
+		and _standard_enemy_melee.is_committed()
 	if not preserve_attack_facing:
 		_last_move_direction = knockback_direction if knockback_direction.length_squared() > 0.0001 else _last_move_direction
 	if is_dagger_finisher_catch \
@@ -2955,14 +2692,14 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
 		_stagger_timer = maxf(_stagger_timer, 0.33)
 		_recoil_timer = 0.0
-		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+		_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
 		_recoil_timer = maxf(_recoil_timer, 0.22)
-		_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+		_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
 		if not _savage_chain_ability.is_active() and not _savage_pounce_ability.is_active():
 			_recoil_timer = maxf(_recoil_timer, 0.20)
-			_cancel_pending_attack_with_result(&"interrupted", &"dagger_finisher")
+			_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif attack_kind == "heavy":
 		# Heavy gameplay interruption was already resolved at take_damage().
 		pass
@@ -2973,7 +2710,7 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		_resolve_melee_impact_knockback_duration(base_attack_kind)
 	)
 	if _uses_directional_animation_set():
-		var facing := _pending_attack_forward if preserve_attack_facing else _last_move_direction
+		var facing := _standard_enemy_melee.get_committed_forward() if preserve_attack_facing else _last_move_direction
 		_update_directional_animation(facing, false)
 
 
@@ -2981,7 +2718,7 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	if dead:
 		return
 	var interrupted_falcon_punch := _grunt_falcon_punch_ability.is_active()
-	_cancel_pending_attack_with_result(&"interrupted", &"parry")
+	_standard_enemy_melee.cancel(&"interrupted", &"parry")
 	posture_current = 0.0
 	_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
 	_cancel_savage_attack()
@@ -3436,10 +3173,8 @@ func _start_hit_recoil_reaction(applied_damage := 0.0) -> void:
 func _start_stagger_reaction() -> void:
 	_stagger_timer = max(_stagger_timer, stagger_duration)
 	_recoil_timer = 0.0
-	_attack_windup_timer = 0.0
-	_cancel_pending_attack_with_result(&"interrupted", &"stagger")
+	_standard_enemy_melee.cancel(&"interrupted", &"stagger")
 	_cancel_savage_attack()
-	_release_engagement_token()
 	_finish_grunt_falcon_punch_attack()
 	_marine_dash_ability.finish()
 	velocity = Vector2.ZERO
@@ -3456,8 +3191,7 @@ func _start_crit_reaction() -> void:
 	_clear_grunt_critical_open_vfx(false)
 	_recoil_timer = 0.0
 	_stagger_timer = 0.0
-	_attack_windup_timer = 0.0
-	_cancel_pending_attack_with_result(&"interrupted", &"critical_hit")
+	_standard_enemy_melee.cancel(&"interrupted", &"critical_hit")
 	_cancel_savage_attack()
 	_finish_grunt_falcon_punch_attack()
 	_marine_dash_ability.finish()
@@ -3550,7 +3284,7 @@ func get_posture_status() -> Dictionary:
 		"recovery_delay_remaining": _posture_recovery_delay_timer,
 		"recovery_rate": posture_recovery_rate,
 		"light_flinch_cooldown_remaining": _light_flinch_cooldown_timer,
-		"attack_committed": not _pending_attack_id.is_empty(),
+		"attack_committed": _standard_enemy_melee.is_committed(),
 	}
 
 
