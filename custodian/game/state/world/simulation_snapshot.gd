@@ -1,7 +1,7 @@
 class_name SimulationSnapshot
 extends RefCounted
 const SCHEMA := "custodian.world_simulation_snapshot"
-const VERSION := 4
+const VERSION := 5
 var fixed_tick: int = 0
 var world_tick: int = 0
 var fingerprint: String = ""
@@ -13,6 +13,7 @@ static func restore(snapshot_data: Dictionary) -> WorldSimulationState:
 	var migrated := SimulationSnapshotMigration.migrate(snapshot_data)
 	if migrated.is_empty(): return null
 	var state := WorldSimulationState.from_dict(migrated.get("state", {}))
+	if not state.snapshot_state_valid: return null
 	if String(migrated.get("fingerprint", "")) != SimulationCanonicalJson.sha256(state.to_dict()): return null
 	return state
 func to_dict() -> Dictionary: return {"schema": SCHEMA, "schema_version": VERSION, "fixed_tick": fixed_tick, "world_tick": world_tick, "fingerprint": fingerprint, "state": payload.duplicate(true)}

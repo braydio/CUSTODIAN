@@ -38,7 +38,7 @@ func _check_macro_order() -> void:
 	var kernel := SimulationKernel.new(WorldSimulationState.new(11)); var order: Array[String] = []
 	kernel.macro_stage_completed.connect(func(stage: StringName) -> void: order.append(String(stage)))
 	for index in 60: kernel.step_once()
-	_check(order == ["power", "logistics", "repairs", "fabrication", "relay", "systemic_events", "strategic_assault", "wear", "fidelity"], "macro order must remain explicit and stable")
+	_check(order == ["power", "logistics", "repairs", "fabrication", "relay", "systemic_events", "strategic_assault", "wear", "fidelity", "abstract_activity"], "macro order must remain explicit and stable")
 
 func _check_relay_determinism() -> void:
 	var first := SimulationKernel.new(WorldSimulationState.new(7101)); var second := SimulationKernel.new(WorldSimulationState.new(7101))
@@ -88,12 +88,12 @@ func _check_legacy_snapshot_migration() -> void:
 	var state := WorldSimulationState.new(404); var current := SimulationSnapshot.capture(state).to_dict()
 	var version_three := current.duplicate(true); version_three.schema_version = 3; version_three.state.schema_version = 3; version_three.state.erase("macro_fidelity"); version_three.state.erase("ambient_fab_progress"); version_three.state.erase("signal_interference_ticks")
 	var migrated_three := SimulationSnapshot.restore(version_three)
-	_check(migrated_three != null and migrated_three.macro_fidelity == "FULL" and SimulationSnapshot.capture(migrated_three).to_dict().schema_version == 4, "version 3 snapshot did not migrate REMAP-2 defaults to schema 4")
+	_check(migrated_three != null and migrated_three.macro_fidelity == "FULL" and SimulationSnapshot.capture(migrated_three).to_dict().schema_version == 5, "version 3 snapshot did not migrate through schema v5 defaults")
 	current.schema_version = 2; current.state.schema_version = 2; current.state.erase("rng_state"); current.state.erase("systemic_event_state"); current.state.erase("relay_knowledge_level"); current.state.erase("relay_dormancy_pressure"); current.state.erase("assaults_enabled"); current.state.relays = {}
 	var migrated := SimulationSnapshot.restore(current)
 	_check(migrated != null and migrated.relays.has("R_NORTH"), "version 2 snapshot did not migrate with relay defaults")
 	_check(migrated != null and not migrated.assaults_enabled, "legacy snapshot migration enabled strategic assaults without saved configuration")
-	_check(migrated != null and SimulationSnapshot.capture(migrated).to_dict().schema_version == 4, "snapshot migration did not advance schema")
+	_check(migrated != null and SimulationSnapshot.capture(migrated).to_dict().schema_version == 5, "snapshot migration did not advance schema")
 
 func _check_physical_authority_boundary() -> void:
 	var assault := AssaultSimulationState.new(); assault.phase = "HANDOFF_READY"; assault.assault_id = "assault_test"; assault.objective = "COMMAND"; assault.spawn_plan = [{"composition": ["grunt"], "lane": "north", "objective": "breach_command", "behavior_profile": ""}]

@@ -212,7 +212,7 @@
 
 **F14: [Living-world simulation, interest management and unloaded-sector continuity](F14_LIVING_WORLD_SIMULATION.md)**
 
-> **Status:** F14 V1 **BOUNDED** behavior/owner choice locked by user (2026-10-09); six baseline tests agent-reported pass; full offscreen reification not proved. CS-F14-A baseline is fulfilled; B approved as the **next bounded implementation workstream**, packet + paired review drafted, awaiting official local authoring preflight before `ready/auto`. C–E remain conceptual and gated. See [F14 V1 lock and local evidence](F14_LIVING_WORLD_SIMULATION.md) and [F15 continuous geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
+> **Status:** F14 V1 **BOUNDED** behavior/owner choice locked by user (2026-10-09); six baseline tests agent-reported pass; F14-B implementation and focused checks complete on its task branch, with independent paired review pending. Full offscreen reification is not proved. CS-F14-A baseline is fulfilled; C–E remain conceptual and gated. See [F14 V1 lock and local evidence](F14_LIVING_WORLD_SIMULATION.md) and [F15 continuous geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
 
 ### CS-F14-A
 - **Intent:** Characterize interest tier, macro clock, actor serialization/identity, streaming, history, and current load/unload parity; profile baseline.
@@ -222,10 +222,10 @@
 - **Acceptance sketch:** exact current ownership map and falsifiable gap list, no new implementation or duplicate system.
 
 ### CS-F14-B
-- **Status:** **DESIGN AUTHORIZED; PAIRED PACKETS DRAFT/MANUAL, NOT YET CLAIMABLE** until local targeted validator passes and pair is promoted. No runtime implementation landed.
+- **Status:** **IMPLEMENTATION COMPLETE; PAIRED INDEPENDENT REVIEW PENDING.** The implementation adds bounded synthetic geographic group activity, snapshot schema v5 with v4 migration, and focused validation. No physical handoff/reification, map binding, combat, or disk persistence is included.
 - **Implementation packet:** [LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md) · [paired review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION.md).
 - **Intent:** Add a small deterministically stepped, serializable offscreen group model using stable synthetic geographic IDs and existing `SimulationKernel` 60-fixed-tick macro cadence; prove one uninstantiated patrol produces a bounded causal state change and snapshot continuation.
-- **Lock:** user approved Bounded offscreen simulation; foundation does **not** include physical→abstract handoff, combat casualties, procgen infinite world or REMAP-3 persistence. The local agent must run `validate_task_packet_authoring.py` against the exact pair **before** switching both to `ready/auto`.
+- **Lock:** user approved Bounded offscreen simulation; foundation does **not** include physical→abstract handoff, combat casualties, procgen infinite world or REMAP-3 persistence. The exact implementation/review pair passed `validate_task_packet_authoring.py` before both packets were promoted to `ready/auto`.
 - **Acceptance sketch:** state-only B evolves while uninstantiated with reproducible event/snapshot, identity conserved, same-seed repeated run and legacy snapshot read green. No independent clock, actor double-spawn or parallel materials authority.
 
 ### CS-F14-C
