@@ -8,7 +8,7 @@ The scene binds the focused config. Presentation, interruption, behavior range, 
 
 - `enemy_savage_pounce`: passed; covers config defaults, launch band, ordering, timing, contact window, damage/impact, directional miss, travel, cooldown, parry/block, interruption, and chain control.
 - `savage_runtime`: passed; presentation priority reads the ability state.
-- `run_validation.py --changed --json`: 25 selected, 25 passed, 0 failed, 0 timed out, 0 skipped, complete changed-file coverage. The final report covers the implementation/code/test/config/manifest files with complete ownership; repository docs and `.uid` sidecars are explicitly excluded from test selection.
+- `run_validation.py --changed --json`: 25 selected, 25 passed, 0 failed, 0 timed out, 0 skipped, complete changed-file coverage. The final report covers implementation/code/test/config/manifest files with complete ownership; repository docs and `.uid` sidecars are explicitly excluded from test selection. `workstream.py finish` first rejected a noncanonical Completion Truth receipt; the packet now uses the enforced `custodian.task_completion.v1` fields.
 - `git diff --check`: passed.
 
 ## Friction / Deferrals
