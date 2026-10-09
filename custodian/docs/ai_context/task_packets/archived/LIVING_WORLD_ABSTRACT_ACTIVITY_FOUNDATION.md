@@ -79,7 +79,7 @@ The user approved the bounded offscreen activity decision on October 9, 2026. Th
 - Correction finding IDs: `R0-01`
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
-- Detailed review summary: `LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CLAUDE_SUMMARY.md`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `living-world-abstract-activity-foundation-review-corrections-1`
 
 ### Findings
