@@ -31,6 +31,11 @@
 
 ## Agent Handoff / Planning Decisions
 
+- **Single-connector authority lock (2026-10-09):** the live 04→05 connector art is one registered 1502×2048 plate at `RegisteredComposition04_05/Connector`, sourced from `awakening_reliquary_dust_lung_connector_full_plate_underlay_1502x2048.png`. Do not interpret `04_05_A`, `04_05_B`, or `04_05_C` as art pieces. They are only `AwakeningLayout.CONNECTORS` Rect2 traversal/visibility checkpoints describing the dogleg.
+- The retired three-piece connector interpretation is explicitly non-authoritative. Do not recreate, split, crop, or re-register the current single connector plate.
+- **Recorded human visual decision:** the user states that the currently live single connector “looks incredible.” Treat the accepted connector layout/order/art direction as approved. The remaining review duty is objective: confirm the repair preserved that exact single-plate presentation and that room-floor visibility remains stable at the two interiors and the A/B/C **route checkpoints** in both directions.
+- Reuse the existing human approval unless implementation changed the connector bytes/registration/order after the 2026-10-09 review handoff. Any such art/registration change invalidates the approval and requires a new visual gate.
+
 - The user has already accepted layout and draw order. That decision is not pending and must not be re-requested. A reviewer finding that merely prefers a different position/composition is invalid unless the implementation actually changed the locked transform/pixels/order.
 - The defect under review is presentation-alpha ownership, including the stale/vacuous lower→upper hidden-underlay test.
 - The user playtest report is guardrail evidence only because it came from `game.tscn`, not the Awakening scene. Do not claim it reproduces the connector fade.
