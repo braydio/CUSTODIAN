@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-abstract-activity-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -20,7 +20,7 @@
 - Visual review: `none`
 - Goal: Establish deterministic bounded offscreen group activity in one Campaign World using existing simulation time, so a named group in a genuinely uninstantiated geographic location changes objective/route progress and produces inspectable causal evidence without a second scene or clock.
 - Completion boundary: One serializable abstract-activity state owner, deterministic fixed-tick invocation and a focused two-synthetic-location proof. A group exists in abstract state without a physical actor, advances via an approved nonlethal state change and survives macro snapshot/restore and replay. Does **not** instantiate/reify/teardown physical actors; F14-C owns that.
-- Current measured state: Local read-only F14 agent audit reported six focused Godot runs passing on matching runtime. `WorldSimulationRuntime` has a single fixed-step `SimulationClock`; `SimulationKernel.step_once()` runs macro systems every 60 fixed ticks; `WorldSimulationState` serializes current macro state at schema v4. `SimulationInterestManager` changes live enemy workload, while dormant root physics stops; no existing focused smoke proves unloaded group causal evolution or actor reification. F15 geographic generation is not implemented.
+- Current measured state: The baseline audit reported six focused Godot runs passing. This slice adds deterministic state-only synthetic location activity every 60 fixed ticks and upgrades macro snapshots to schema v5 with v4 migration. The focused smoke proves causal route progress without a physical B actor, deterministic map-order behavior, pause, snapshot continuation, invalid-input rejection and legacy v4 restore. No actual geographic map binding, actor handoff/reification, or disk persistence is implemented; F15 geography and REMAP-3 remain deferred.
 - Evidence: `design/04_architecture/codebase_systems_audit/F14_LIVING_WORLD_SIMULATION.md` local audit receipt; `design/04_architecture/codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md` continuous-world user lock; `custodian/game/systems/simulation/simulation_kernel.gd`; `custodian/game/state/world/world_simulation_state.gd`; `custodian/game/systems/simulation/world_simulation_runtime.gd`; `design/04_architecture/PYTHON_SIM_REMAP_TRACKER.md`.
 - Task-specific authority: F14 V1 bounded-world simulation decision lock and F15 stable-geographic-identity seam; `design/04_architecture/PYTHON_SIM_TO_GODOT_MIGRATION.md`; `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`. Preserve `WorldSimulationState` schema migration and `SimulationSnapshot` canonical fingerprint semantics.
 - Work surface: Primary owner `custodian/game/systems/simulation/` as a focused abstract-activity domain model/coordinator; small `SimulationKernel` stage integration and `WorldSimulationState` snapshot serialization/migration only where necessary. Target focused new Godot validation under `custodian/tools/validation/` and update `custodian/tools/validation/validation_manifest.json` only for changed owner selection. Do not embed stateful offscreen behavior in `enemy.gd`, `ProcGenTilemap`, HUD or the interest-manager autoload.
@@ -32,9 +32,30 @@
 - Task overrides: `none`
 - Deferred: F14-C owns actual physical↔abstract handoff and exactly-once reification; F14-D integrates durable Domain activity through REMAP-3; F14-E integrates the two-location playable proof and perf/soak. F15 owns world-scale topology, pedestrian/vehicle continuous streaming, passes and Archive Resolve presentation integration. Revisit 1Hz and activity budgets after a representative performance benchmark.
 
-## Authoring / promotion gate
+## Authoring / promotion receipt
 
-**Planning decision approved** by the user (Bounded offscreen activity, October 9, 2026), but this packet is deliberately **draft/manual** because the official repository-local authoring preflight has not run in this GitHub-only documentation session. No further gameplay choice is required for this narrow slice. A local agent should run the targeted authoring preflight on this pair, repair any findings and then promote implementation to `ready/auto` and its paired review to `ready/auto` together before dispatch. Do not claim a draft packet.
+The user approved the bounded offscreen activity decision on October 9, 2026. The targeted repository authoring preflight passed for this packet and its paired review before both were promoted to `ready/auto` and dispatched.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: n/a
+- Evidence: Focused abstract activity smoke; kernel, macro-state, snapshot-roundtrip, telemetry and live-scene smokes; changed-file validation (17 selected, 17 passed); authoring preflight passed. Independent post-land review remains the required next workstream.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Godot first-import generated nine unrelated reference-art `.import` sidecars; removed these exact generated files after validation.
+- Root cause / contributing factors: Fresh worktree required Godot editor import before headless validation.
+- Prevention / pipeline improvement: none
+- Tooling / docs drift discovered: F14 architecture and roadmap still described B as draft/unimplemented; updated to distinguish implementation from pending independent review.
+- Follow-up: none
+- What worked: Focused smoke and changed-file owner coverage exercised schema migration and deterministic continuation.
 
 ## Refresh Planning Authority
 

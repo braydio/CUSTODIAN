@@ -22,6 +22,29 @@
   ],
   "tests": [
     {
+      "id": "world_simulation_abstract_activity",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_simulation_abstract_activity_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "simulation",
+        "abstract_activity",
+        "determinism",
+        "snapshot"
+      ],
+      "owners": [
+        "custodian/game/state/world/abstract_activity_simulation_state.gd",
+        "custodian/game/state/world/world_simulation_state.gd",
+        "custodian/game/state/world/simulation_snapshot.gd",
+        "custodian/game/state/world/simulation_snapshot_migration.gd",
+        "custodian/game/systems/simulation/abstract_activity_simulation_system.gd",
+        "custodian/game/systems/simulation/simulation_kernel.gd",
+        "custodian/tools/validation/world_simulation_abstract_activity_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "awakening_connector_asset_contract",
       "type": "python",
       "script": "custodian/tools/validation/awakening_connector_asset_contract_smoke.py",

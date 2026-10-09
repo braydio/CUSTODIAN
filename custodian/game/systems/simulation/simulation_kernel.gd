@@ -18,6 +18,7 @@ var _systemic_events := SystemicEventSimulationSystem.new()
 var _strategic_assault := StrategicAssaultSimulationSystem.new()
 var _wear := WearSimulationSystem.new()
 var _fidelity := FidelitySimulationSystem.new()
+var _abstract_activity := AbstractActivitySimulationSystem.new()
 var _invariants := SimulationInvariants.new()
 
 func _init(initial_state: WorldSimulationState = null) -> void: state = initial_state if initial_state != null else WorldSimulationState.new()
@@ -37,7 +38,9 @@ func step_once() -> SimulationSnapshot:
 		_strategic_assault.step_macro(state); macro_stage_completed.emit(&"strategic_assault")
 		_wear.step_macro(state); macro_stage_completed.emit(&"wear")
 		_fidelity.step_macro(state); macro_stage_completed.emit(&"fidelity")
-		state.world_tick += 1; _validate(); _evaluate_failure()
+		state.world_tick += 1
+		_abstract_activity.step_macro(state); macro_stage_completed.emit(&"abstract_activity")
+		_validate(); _evaluate_failure()
 		if state.assault.phase == "HANDOFF_READY" and not state.assault.handoff_consumed: assault_handoff_ready.emit(state.assault.to_spawn_plan())
 	var snapshot := SimulationSnapshot.capture(state); snapshot_emitted.emit(snapshot); return snapshot
 func _drain_commands() -> void:
