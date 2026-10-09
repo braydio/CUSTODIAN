@@ -2,12 +2,12 @@
 
 [← Systems audit overview](../CODEBASE_SYSTEMS_AUDIT.md) · [Conceptual packet roadmap](PACKET_ROADMAP.md#cs-f14-a)
 
-> **Status:** source-level initial audit recorded; local Godot baseline/actor reification proof pending  
+> **Status:** local Godot **baseline characterization received**; unloaded-area actor-continuity proof pending  
 > **Priority:** P0 audit focus, NOT an automatic implementation/dispatch priority  
 > **Decision:** **NOT LOCKED**. No new executable packets authorized or authored.  
 > **Workstream:** `living-world-simulation-audit`; repository branch `agent/living-world-simulation-audit` for this documentation slice.  
 > **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
-> **Evidence method:** current GitHub source + design + validation recipe inspection, October 8, 2026. No local Godot execution or interactive playtesting in this audit.
+> **Evidence method:** initial live GitHub source/design inspection plus **user-supplied read-only local agent audit** of runtime source matching fetched `origin/main@1d19ec8fae15c6eb23604457e3da2adef596c19d`, October 8, 2026. Six reported headless runs passed; those commands were executed by the local agent, **not by this documentation editor**. Findings rechecked against current `main` where indicated. No physical→abstract→physical gameplay proof yet.
 
 ## Why this focus exists
 
@@ -39,11 +39,46 @@ The target player promise is that areas the player leaves continue to evolve wit
 
 **F14-03 · CONFIRMED LIMITATION:** `WorldHistory` is an in-memory journal using monotonic process milliseconds, and macro campaign disk persistence remains incomplete per REMAP-3. It cannot by itself satisfy deterministic persistent histories across process restarts.
 
-**F14-04 · DOC DRIFT:** The interest design says background enemies continue ordinary physics until an abstract 1–2Hz update is implemented. Live `Enemy._simulation_tier_interval()` already throttles normal enemy physics/behavior to 0.50s in background, and 0.10s nearby. Clarify intended behavior and update the active design only after characterization tests; **no fabricated evidence of correctness or error**.
+**F14-04 · CONFIRMED DOC DRIFT; DESCRIPTION CORRECTED:** The earlier interest spec described nearby/background as full ordinary processing. Source and local benchmark characterize `Enemy._simulation_tier_interval()` as 0.10s nearby / 0.50s background, within root `_physics_process` rather than an abstract actor model. The source-grounded behavior is now documented in [`INTEREST_MANAGEMENT_SYSTEM.md`](../../01_systems/INTEREST_MANAGEMENT_SYSTEM.md). This descriptive correction does **not** approve further throttling or change the intended gameplay contract; gameplay/feel parity of tier transitions is not yet proved.
 
-**F14-05 · UNVERIFIED DESIGN GAP:** Entity identity, aggregate population accounting, sector ownership and reification are not expressed by the investigated strategic macro state; do not infer duplicates or missing actors at runtime without tracing spawn/despawn/streaming/Director integration and constructing a live test.
+**F14-05 · CONFIRMED EVIDENCE GAP (NOT PROVEN GLOBAL ABSENCE):** The agent traced `ambient_enemy_spawner.gd:44–95`: ambient enemy `stable_spawn_ordinal` is assigned at spawn, not shown to be a durable identity. `proc_gen_tilemap.gd:10673–10705` unloads **visual chunk presentation** while preserving canonical semantics; it does not itself serialize, migrate or reify enemy actors. `level_loader.gd:296–305` may disable route-cached scenes or free them under destroy policy. No inspected live test demonstrates stable identity/objective/health across unload→offscreen activity→reconstruction. Other level-specific teardown/persistence integration paths remain to be audited; do not claim every system lacks them.
 
-**F14-06 · UNVERIFIED RISK:** Dormant enemy physics suspension may not suspend all child nodes/timers/perception/independent components. Verify with instrumented lifecycle tests rather than treating `set_physics_process(false)` as global suspension.
+**F14-06 · VERIFIED SUSPENSION SCOPE; SUBTREE RISK OPEN:** `enemy.gd:1980–1988` zeros velocity and disables **root** physics for dormant actors; this does not itself suspend all descendants, timers, signals or presentation. The local agent reported eight dormant actors producing zero enemy physics-body spans while all eight remained presentation-enabled. `get_runtime_cost_state()` supplies tier-derived flags, **not proof of actual descendant processing**. Source inspection of `enemy_perception_component.gd:22–25,99–125` found a connected noise-bus handler that may mutate the cached blackboard after dormancy, subject to its eligibility/cache state. **Not reproduced at runtime**: a targeted descendant/noise lifecycle test remains required.
+
+## Local read-only runtime audit and validation receipt (2026-10-08)
+
+**Provenance:** The user supplied an agent report stating its fetched baseline was `origin/main@1d19ec8fae15c6eb23604457e3da2adef596c19d` with a clean working tree and matching local runtime sources; local `main` was three documentation-only commits behind. The results below are **reported local runs**, not commands re-executed by this documentation pass. Current `main` was fetched again for the simulation clock/runtime and current design artifacts; no new behavior is inferred from commit ancestry alone.
+
+| Local validation (all reported exit 0) | Outcome and boundary |
+| --- | --- |
+| `world_simulation_kernel_smoke.gd` | **PASS:** macro command/clock and kernel contracts; no physical offscreen continuation |
+| `world_simulation_macro_state_smoke.gd` | **PASS:** strategic ordering and deterministic macro continuation; no offscreen groups |
+| `world_telemetry_foundation_smoke.gd` | **PASS:** dummy interest-managed node telemetry; does not prove enemy descendant lifecycle |
+| `world_simulation_live_scene_smoke.gd` | **PASS:** scene/runtime creation, pause/fixed ticks, snapshot and binding; no unloaded actor reification |
+| `world_simulation_snapshot_roundtrip_smoke.gd` | **PASS:** valid snapshot restore with an expected invalid-schema negative-control error |
+| `enemy_runtime_attribution_perf_bench.gd` | **PASS:** eight actors per uniform tier, instrumentation only; not a production-hardware capacity or game-feel threshold |
+
+**Reported benchmark:** ~6.89 ms average frame wall time across four uniform-tier cases, `enemy_total` ~0.481 ms for eight active vs. 0 ms for eight dormant. The report path on the agent's local machine was `/home/braydenchaffee/.local/share/godot/app_userdata/CUSTODIAN/performance/enemy_runtime_attribution_perf_bench.json`. This absolute path is an **agent-local artifact**, not a portable checked-in report or evidence of full-subtree suspension. Collect machine-controlled comparisons before setting performance targets.
+
+**Explicit limits:** No smoke above validates an unloaded geographic area's changed state, a stable actor/group reconstruction, exact population counts after repeated crossings, or the end-to-end disk-restart world lifecycle. The first proof must be added separately.
+
+### Additional findings from the local characterization
+
+**F14-07 · CONFIRMED SNAPSHOT CONTRACT LIMIT:** `WorldSimulationState` snapshots include macro sector/structure state, queues for repairs/fabrication, bounded macro events and serialized RNG. However `WorldSimulationRuntime.save_snapshot()` returns a dictionary, not a disk save; `restore_snapshot()` restores world state and `clock.fixed_tick`, not `SimulationClock` accumulator/pause/drop counters or `SimulationKernel` pending command queue and next sequence. Which of those must survive a **save/restart** boundary, versus being intentionally normalized to a safe fixed-step boundary, is a REMAP-3 design/validation choice. No save correctness claim until that contract is explicit.
+
+**F14-08 · CONFIRMED DUAL CLOCK USE, NO DEFECT PROVED:** Campaign kernel advances fixed steps at 60Hz and steps macro systems every 60 fixed ticks; interest classification runs at 0.20s in presentation `_process`, and enemy behavior throttling accumulates physics `delta`. They are separate scheduling surfaces. This does not prove that tier transitions break determinism, but it prohibits treating elapsed wall time or interest-classification frames as authoritative abstract-world time without a bridge.
+
+**F14-09 · F15 GEOGRAPHY DEPENDENCY:** A conceptual `sector_activity` subsystem cannot use facility macro-sector names (POWER/COMMS/etc.), scene `Sector` rectangles or presentation chunk IDs as its only geographic identity. [F15 campaign-world geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md) owns stable geographic topology and location vocabulary across one large traversable campaign. **The first F14 proof may use two deterministic synthetic geographic location IDs** so it is not blocked on the final physical world size or art; production ownership/schema integration must wait for an agreed F15 geographic identity contract. This does not block F14 lifecycle/clock test characterization.
+
+### Audit milestone and residual tests
+
+**Baseline local read-only audit: satisfied.** Re-running the above six green smokes as a standalone conceptual `CS-F14-A` packet has low return. Remaining useful evidence is **new** lifecycle falsification, not re-auditing the same runtime:
+
+1. Dormant enemy with actual perception component and noise-bus signals: prove which descendant callbacks/state mutations remain possible and which behavior must be disabled or redirected.
+2. Demonstrate physical actor identity and health/intent/state across a real level cache/destroy and re-entry, with a negative case for duplicate spawns.
+3. Seeded abstract two-geographic-location proof using canonical fixed ticks with B uninstantiated: causal offscreen event → deterministic snapshot/replay → reification exactly once → repeated leave/return.
+4. Process-restart persistence, exact-once event reconciliation and pending-command/clock-boundary semantics coordinated with REMAP-3.
+5. Only after geographic scale/interest policies are locked: representative population/performance budget and visibility-independent processing measurements.
 
 ## Desired authority model to consider (not locked)
 
@@ -70,7 +105,7 @@ Never resolve offscreen attacks with the same physical combat mechanics or claim
 
 ## Desired first playable proof before committing to a broad program
 
-1. Seed a small two-sector scenario with one named patrol/group, a resource/repair consequence and a stable entity identity.
+1. Seed two **synthetic geographic location IDs** (A/B) in one campaign with one named patrol/group, a resource/repair consequence, and stable actor/group and location identity. Do **not** use a POWER/COMMS facility macro sector or painted presentation chunk as the geographic key.
 2. Start in A while B is absent from loaded physical gameplay. Advance **authoritative simulation time**, not wall-clock sleep.
 3. Observe B change in a reproducible, inspectable way, including a causal reason; persist or snapshot the state and verify deterministic continuation.
 4. Enter B: reconstruct **one** correct patrol/group state, with adjusted location/goal, no duplicate spawn, no reset to default health/resources and no immediate contradiction to loaded-world physics.
@@ -78,22 +113,9 @@ Never resolve offscreen attacks with the same physical combat mechanics or claim
 
 This is a proposed **acceptance narrative**. Precise schema, update cadence and ownership must be locked after local proof and performance measurements.
 
-## Runtime audit agent: recommended READ-ONLY first pass
+## Local audit status
 
-No all-repo refactor required. Agent should:
-
-- Start from latest `origin/main` with repository AGENTS and current docs; make no source edits.
-- Trace exact scene tree, autoloads, interest classification, enemy throttling, node/component processing, procgen distant unloading, EnemyDirector spawn/identity and `WorldSimulationRuntime` bindings.
-- Run the repository-prescribed focused tests:
-  ```bash
-  cd custodian
-  godot --headless --path . --script res://tools/validation/world_simulation_kernel_smoke.gd
-  godot --headless --path . --script res://tools/validation/world_simulation_macro_state_smoke.gd
-  godot --headless --path . --script res://tools/validation/world_telemetry_foundation_smoke.gd
-  godot --headless --path . --script res://tools/validation/world_simulation_live_scene_smoke.gd
-  ```
-- Characterize, **do not silently repair**, dormant/nearby/background processing, simulation-tick ownership, seeded snapshot/restore, and missing actor reification tests. Use narrower profiling only if source evidence needs it.
-- Return findings IDs, touched/read paths, test pass/fail and reproducibility, gaps in existing smokes, design drift, a candidate architecture boundary, and recommended decision-lock changes. Do **not** create runnable implementation packets.
+The requested **read-only local source/test audit has been returned** and is recorded above. It does not need to be repeated as a second implementation task. The next checks should be newly scoped, falsifiable **dormant-subtree / actor-handoff lifecycle tests** and the F15 geographic identity decision, rather than an unfocused Godot sweep. Consult the six reproduced command names above and `VALIDATION_RECIPES.md` for regression reuse.
 
 ## Cross-workstream ownership guard
 
@@ -104,6 +126,7 @@ No all-repo refactor required. Agent should:
 - **F10 Streaming/presentation:** whether content is rendered/instanced; visibility is never the source of truth for physical action.
 - **F12/F13 Feel/feature ROI:** player-visible patrol movement/recovery and environmental responsiveness are value measures, not implementation owners.
 - **F03 HUD:** observatory/terminal view only; must never become the engine of offscreen simulation.
+- **F15 Geographic topology:** stable location/territory and campaign-world topology identity; F14 consumes it for offscreen simulation but should not create a competing geographic generator. Synthetic geographic IDs are acceptable for F14's initial behavioral test.
 
 ## Conceptual task-packet roadmap
 
@@ -115,13 +138,13 @@ All slots remain blocked pending this item's audit and lock, and existing REMAP,
 - [CS-F14-D: persistent history, save/restore and world consequence reconciliation](PACKET_ROADMAP.md#cs-f14-d) (proposed)
 - [CS-F14-E: two-sector playable proof, instrumentation, soak and integration closeout](PACKET_ROADMAP.md#cs-f14-e) (proposed)
 
-A may be audit-only; B and C may change sequence after authority decisions; D must consume REMAP-3 rather than duplicate persistence. This is **not an executable packet sequence**.
+**A's read-only diagnostic purpose is now satisfied by the supplied local agent audit**; do not author a duplicate audit-only implementation packet. A may be re-scoped to newly required lifecycle tests **only after decision lock**. B and C may change sequence after F15 stable-location semantics are agreed; D must consume REMAP-3 rather than duplicate persistence. This is **not an executable packet sequence**.
 
 ## Decision lock record
 
-- **Audit result:** source inventory complete for the named runtime modules; all-group/streaming/cross-scene runtime trace and focused tests **not yet complete**.
+- **Audit result:** read-only baseline runtime/source characterization and six focused local checks **reported complete/passing**. Full actor handoff/reification, descendant lifecycle and unloaded-area causal simulation tests **not yet proven**.
 - **Selected owner/seam:** proposed above, **undecided**.
-- **Design approval:** still needed to choose strategic tick frequency, granularity of stable individual/group identity, reification rules, unloaded hazard/combat limitations and player-facing reporting.
+- **Design approval:** still needed for strategic update cadence (all time sourced from existing authoritative fixed clock), group-versus-individual stable identity, geographic ID contract with F15, actor reification/handback rules, unloaded hazard/combat limits, persistence/command-boundary behavior and player-facing reporting.
 - **Preserved contracts:** 60Hz fixed step, kernel macro ordering, loaded physical gameplay, one runtime authority, canonical procgen and campaign identity.
-- **Document drift:** interest background throttle mismatch recorded; do not rewrite historical design speculation as implemented truth.
-- **Implementation decision:** **UNLOCKED**; **0 new packets authored or activated**. Next: local read-only characterization + desired two-sector proof scope and then explicit lock.
+- **Document drift:** interest tier behavior mismatch recorded and descriptive implementation notes reconciled in `design/01_systems/INTEREST_MANAGEMENT_SYSTEM.md`; further gameplay policy changes remain unapproved.
+- **Implementation decision:** **UNLOCKED**; **0 new packets authored or activated**. Next: lock F15-compatible stable geographic identity and F14 abstract/handoff behavior, then authorize narrowly scoped new tests and implementation slices. Baseline audit does not need repeating.
