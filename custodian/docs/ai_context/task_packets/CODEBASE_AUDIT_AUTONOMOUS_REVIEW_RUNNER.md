@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `new process-spawning control-plane seam; independent review must falsify duplicate claims, non-fresh contexts, unsafe recovery, and accidental queue/finish coupling`
 - Reviewed main: `7eddb322aca7871a9146fe4e6952fe265039f8cd`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Visual review: `none`
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Make paired CUSTODIAN reviews actually launch in a mechanically fresh Codex context without user message relay, while preserving the existing dispatcher, workstream, review-lineage and human-gate authorities.
@@ -49,7 +49,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d`
 - Refresh reason: `none`
 - Next action: After implementation lands, the normal successor logic should use the newly landed runner itself to launch this packet's fresh-context paired review if bootstrap mechanics safely permit; otherwise perform this one bootstrap review through the existing fresh-context method, then require the runner for subsequent paired reviews.
 - Blockers or open questions: `bootstrap self-review must not fake independence by reviewing the runner implementation in the same implementation context`

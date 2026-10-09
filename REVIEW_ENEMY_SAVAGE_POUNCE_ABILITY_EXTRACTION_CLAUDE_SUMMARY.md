@@ -42,7 +42,7 @@ The first validation attempt used repeated `--test` flags (the runner selected o
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: NPA-3 planning requires the landed and reviewed pounce ability/config API and current chain ownership before promotion.
 - Next action: Return the landed pounce API, passed review receipt, current chain ownership, and this summary to the Authoring chat to refresh NPA-3.
 - Blockers or open questions: none

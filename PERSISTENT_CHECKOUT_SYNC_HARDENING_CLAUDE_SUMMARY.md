@@ -1,6 +1,6 @@
 # Persistent Checkout Sync Hardening
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 Implemented one shared persistent-checkout sync authority for coordination `main` and the Operator art worktree. The CLI provides read-only status and guarded apply operations, reports structured checkout state and exact blockers, serializes mutations with an advisory lock, revalidates immediately before fast-forward, and only uses `merge --ff-only`. Git hooks are disabled during the mutation and LFS smudging is skipped. Dirty, ahead, diverged, detached, wrong-branch, pending-publication, recovery, and Aseprite-open states are preserved.
 
@@ -34,7 +34,7 @@ No pixel/art outputs were changed. No ignored state or user checkout data was ch
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Run the paired fresh-context review of the landed implementation.
 - Blockers or open questions: none

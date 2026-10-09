@@ -1,6 +1,6 @@
 # Review: Operator Workbench Animation Creation
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 
 ## Findings
 
@@ -64,7 +64,7 @@ Moment Forge: not run — review concerns authoring/publisher tooling and has no
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac8f303-1b34-83ea-a74b-3e3973c9667d
 - Refresh reason: none
 - Next action: Claim the bounded R0-01 correction, then its paired cycle-1 re-review. Resume downstream cockpit/UX planning only after correction review passes.
 - Blockers or open questions: New-animation UI/CLI publication is blocked by R0-01; optional interactive Textual pilot remains unrun.
