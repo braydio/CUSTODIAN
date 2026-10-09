@@ -72,3 +72,59 @@
 - Refresh reason: `none`
 - Next action: Implement the queue invariant and classification hardening, land, then allow the paired fresh-context review to claim.
 - Blockers or open questions: None.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-task-packet-queue-stranding-hardening`
+- Reviewed on main: `ac87c8ade9cc010c819c2fa5113dde905df17cb9`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_TASK_PACKET_QUEUE_STRANDING_HARDENING_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `task-packet-queue-stranding-hardening-review-corrections-1`
+
+### R0-01
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: Status must distinguish actual claim eligibility; explicit ready/manual claims must continue to enforce pairing and validation gates.
+- Evidence: In `custodian/tools/agent/dispatch.py:263-264`, the `ready/manual` path appends directly to `MANUAL READY` without consulting `pairing_errors` or `validation_errors`; `_decision()` applies both gates to explicit claims. A focused temporary-repository fixture with a ready/manual implementation declaring `Review: auto` and missing paired review renders `MANUAL READY (1)` / `manual-invalid-pair`; `dispatch.claim(..., auto_only=False)` rejects the same packet with `invalid review pairing: paired review workstream 'review-missing' has no matching active packet`.
+- Disposition: `correction`
+- Rationale: The queue display claims the packet is explicitly claimable while its supported explicit claim is rejected by a required gate. This is the exact status/eligibility divergence named in the review focus and can mislead operators deciding whether the queue is actionable.
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Focused contract, dispatcher, and index suites passed (26, 75, and 12 tests). Live `dispatch.py status` showed the expected six canonical categories. A targeted fixture confirmed R0-01 while preserving explicit-claim rejection.
+
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Code graph unavailable; graph build did not complete in the available review window.
+- Root cause / contributing factors: No graph database was present in the assigned reviewer checkout; direct focused source inspection and test evidence were used after the graph build stalled.
+- Prevention / pipeline improvement: none
+- Tooling / docs drift discovered: none
+- Follow-up: `task-packet-queue-stranding-hardening-review-corrections-1`
+- What worked: Focused tests and an isolated temporary-repository mutation exposed the queue-display/claim mismatch without changing production code.
+
+- Next workstream: `task-packet-queue-stranding-hardening-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c
+- Refresh reason: `none`
+- Next action: Claim the bounded correction after this review packet is archived complete; then run its paired re-review from a fresh context.
+- Blockers or open questions: none.
