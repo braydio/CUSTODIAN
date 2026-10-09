@@ -161,8 +161,8 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 | Slice | Workstream | Scope | Status |
 | --- | --- | --- | --- |
 | NPA-1 | `enemy-marine-dash-ability-extraction-recovery-1` | Extract complete Marine Dash authority + typed tuning from `enemy.gd` | **complete / paired review passed** |
-| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the reviewed ability seam | **implementation complete; paired review pending** |
-| NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **blocked/manual / ChatGPT refresh after passed NPA-2 review** |
+| NPA-2 | `enemy-savage-pounce-ability-extraction` | Extract Savage pounce authority using the reviewed ability seam | **implementation complete; paired review passed on review branch, landing pending unrelated pairing-contract repair** |
+| NPA-3 | `enemy-savage-chain-ability-extraction` | Extract Savage two-hit chain authority | **planning refreshed / ready-auto but dependency-gated until NPA-2 review lands** |
 | NPA-4 | TBD after NPA-3 | Extract ordinary standard-enemy melee execution/cadence authority | planned |
 | NPA-5 | TBD | Extract shared enemy reaction/posture/parry-critical authority where a coherent boundary exists | planned |
 | NPA-6 | TBD | Extract enemy death/corpse/loot lifecycle from combat coordinator | planned |
@@ -174,7 +174,7 @@ Expected program size: **11 implementation packets**. The exact later packet bou
 
 Only NPA-1 through NPA-3 are authored now because their current authority and behavior are already concrete.
 
-NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 extracts pounce to `SavagePounce` + typed `SavagePounceConfig`, preserving its 13 defaults and the pounce-before-chain ordering. Focused pounce and Savage runtime smokes pass; paired review is pending. The two-hit chain remains actor-owned for NPA-3.
+NPA-1 implementation + paired-review evidence: `MarineDash` + typed `MarineDashConfig` are the sole Marine lifecycle/tuning authority; `request_marine_dash` is the public request seam; all 26 defaults and 26 Marine scene values match; current-main Marine, spatial telemetry, Sundered Keep ambush, and Falcon reversal gates pass; the implementation recorded a 23/23 changed-file closeout; and `enemy.gd` remains 343 lines below the 4,958-line recorded baseline. The paired review passed with 0 blockers and 0 material gaps. NPA-2 extracts pounce to `SavagePounce` + typed `SavagePounceConfig`, preserving its 13 defaults and the pounce-before-chain ordering. Its fresh paired review passed with 0 blockers / 0 material gaps / 0 findings on review branch `eec8419f6`; landing is pending only because the repository-wide pairing validator currently fails on unrelated `living-world-abstract-activity-foundation`. NPA-3 planning is now remeasured from that reviewed pounce seam: only the six chain-specific tuning values and three mutable chain fields move; generic Enemy cadence, first-hit damage/windup and shared melee contact geometry remain host/shared authority for NPA-4 comparison.
 
 Cross-program dependency note: the stealth-perception foundation is not an NPA slice. It is a cross-cutting sensory substrate. The approved pre-NPA-8 Vaultwing chain is `stealth-perception-foundation` -> its paired review -> `vaultwing-runtime-hardening` -> its paired review. That chain establishes shared acoustic observations first, then fixes Vaultwing-local fixed-step/bond/relationship residue. It deliberately stops before NPA-8. NPA-8 must then be authored against both those reviewed seams **and** the landed/reviewed earlier NPA program state rather than inventing Vaultwing-only hearing, importing Enemy behavior policy, or freezing a speculative universal actor API.
 
@@ -182,7 +182,7 @@ Author NPA-4+ against landed live main so the program learns from the actual ext
 
 **Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
 
-NPA-3 remains refresh-gated. Bring the passed NPA-2 implementation/review evidence back to the planning chat before promoting the chain packet; do not let an execution agent silently freeze provisional private APIs.
+NPA-3 planning refresh is complete. The packet/review pair are `ready/auto` but remain mechanically dependency-gated until `review-enemy-savage-pounce-ability-extraction` actually lands/archives. Do not bypass that dependency because the review branch passed; once it lands, the dispatcher may claim NPA-3 without another planning visit.
 
 ## Program-Start Measured Baseline
 
