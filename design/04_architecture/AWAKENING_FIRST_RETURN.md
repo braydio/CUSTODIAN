@@ -139,11 +139,20 @@ Locker visible-bounds centers to the existing room-art centers; opposite
 residuals are 33×10 world units. The previously reviewed connector transform
 (scale `0.715951`, rotation `-11.391598°`, center `(351.821,-2392.391)`) is
 historical evidence only. Layout's gameplay dogleg/collision remain separate
-authority and are unchanged; the shared composition stays opaque through the
-connector visibility envelope. The Locker foreground remains deferred unless
-parity is proven, and the specialized Designation Locker remains the interactive
-P-9 prop. Paired review for
-`awakening-04-05-registered-composition-correction-v1` is pending.
+authority and are unchanged. The shared registration, placement and
+Dust→connector→Locker draw order are accepted visual authority. A 2026-10-09
+playtest exposed a separate runtime fade defect: the controller currently applies
+the narrow connector-envelope alpha to the shared composition parent while the
+original Zone04/Zone05 underlay sprites are hidden. This can fade valid room floor
+pixels outside the dogleg and also leaves the 05→06 smoke checking hidden legacy
+Zone05 art instead of the live shared Dust layer. The active
+`awakening-04-05-registered-composition-fade-repair-v1` workstream must keep the
+shared root at `(349,-2585)`, native 1:1, zero rotation and exact layer order,
+while moving fade ownership to the live Dust/Connector/Locker children and
+repairing the vacuous coverage checks. The Locker foreground remains deferred
+unless parity is proven, and the specialized Designation Locker remains the
+interactive P-9 prop. The registered-composition correction itself passed paired
+review; only the fade ownership is pending repair.
 
 For 05→06, `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` is the single
 passage authority: `Rect2(-64,-3840,128,96)`. It replaces the former
