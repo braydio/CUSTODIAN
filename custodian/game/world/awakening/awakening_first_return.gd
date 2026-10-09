@@ -144,15 +144,39 @@ func _cache_zone_art_visibility_targets() -> void:
 	_connector_fade_entries.clear()
 	if zones_root == null:
 		return
+	var registered_locker := zones_root.get_node_or_null(
+		"Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"
+	) as CanvasItem
+	var registered_dust := zones_root.get_node_or_null(
+		"Traversal/ProductionArt/RegisteredComposition04_05/DustLung"
+	) as CanvasItem
+	var registered_connector := zones_root.get_node_or_null(
+		"Traversal/ProductionArt/RegisteredComposition04_05/Connector"
+	) as CanvasItem
 	for zone in Layout.ZONES:
 		var zone_node := zones_root.get_node_or_null(NodePath(String(zone["node"])))
 		if zone_node == null:
 			continue
 		var targets: Array[CanvasItem] = []
-		for child_name in ["ArtUnderlay", "Occlusion", "SetPieces", "RoadOfWitnessesPrototype", "SidearmLocker"]:
+		var registered_underlay: CanvasItem = null
+		var uses_registered_underlay := false
+		match String(zone["node"]):
+			"Zone04_LockerReliquary":
+				uses_registered_underlay = true
+				registered_underlay = registered_locker
+			"Zone05_DustLung":
+				uses_registered_underlay = true
+				registered_underlay = registered_dust
+		if registered_underlay != null:
+			targets.append(registered_underlay)
+		for child_name in ["Occlusion", "SetPieces", "RoadOfWitnessesPrototype", "SidearmLocker"]:
 			var item := zone_node.get_node_or_null(child_name) as CanvasItem
 			if item != null:
 				targets.append(item)
+		if not uses_registered_underlay:
+			var art_underlay := zone_node.get_node_or_null("ArtUnderlay") as CanvasItem
+			if art_underlay != null:
+				targets.append(art_underlay)
 		var entry := {
 			"rect": zone["envelope"],
 			"targets": targets,
@@ -170,12 +194,11 @@ func _cache_zone_art_visibility_targets() -> void:
 		Layout.CONNECTORS["04_05_B"]
 	).merge(Layout.CONNECTORS["04_05_C"])
 	_lower_upper_passage = Layout.PASSAGES[LOWER_UPPER_PASSAGE_ID]
-	for visual_path in [
-		"Traversal/ProductionArt/RegisteredComposition04_05",
-	]:
-		var visual := zones_root.get_node_or_null(visual_path) as CanvasItem
-		if visual != null:
-			_connector_fade_entries.append(visual)
+	# The parent is only a shared registration container. Each accepted plate
+	# follows its room's fade authority; only the connector follows the merged
+	# A/B/C connector envelope.
+	if registered_connector != null:
+		_connector_fade_entries.append(registered_connector)
 
 
 func _update_zone_art_visibility() -> void:

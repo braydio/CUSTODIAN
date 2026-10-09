@@ -2188,6 +2188,14 @@ floor pixels beneath the Operator. The shared composition stays opaque through
 the connector fade envelope. The old Locker foreground remains preserved but
 unbound; Layout traversal/collision and the four-state interactive Designation
 Locker remain unchanged. Implementation is complete pending its paired review.
+The follow-up fade-ownership repair now keeps this shared parent fixed at full
+opacity and applies room/connector distance to the registered Locker, Dust, and
+Connector children independently. The live Dust child is also held opaque across
+the lower→upper passage; the hidden legacy underlay is no longer used as its
+coverage oracle. The P-9 state progression, 1,025-sample bidirectional traversal,
+and deterministic late-seam checkpoints all pass. The compact visual evidence
+is published for the fresh paired review; the accepted layout, pixels, root,
+order, and gameplay geometry remain unchanged.
 Separately, the lower and later halves connect through the single
 `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` authority at
 `Rect2(-64,-3840,128,96)`. It preserves the former connector/door union and the

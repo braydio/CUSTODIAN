@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-registered-composition-fade-repair-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-04-05-registered-composition-correction-v1`
@@ -44,6 +44,27 @@
 - Task overrides: `none`
 - Deferred: The same user playtest report also exposed unrelated production issues: a wrapped Observatory event ring, a degraded procgen performance incident/rebuild storm, two “Operator modular ranged presentation unavailable” warnings, and ranged overheat dominating fire failures. They are recorded here so they are not lost, but this fade repair only consumes the first two as guardrails: acceptance must not depend on retained event-tail history, and the fade path must remain cache-only/lightweight. Combat/procgen fixes belong to their existing authorities/workstreams.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `AWAKENING_04_05_REGISTERED_COMPOSITION_FADE_REPAIR_V1_CLAUDE_SUMMARY.md`; focused Awakening smoke, P-9 progression, 1,025-sample traversal, connector asset contract, renderer smoke, 68 Moment Forge assertions, ROI metrics, and compact evidence pass; final changed-file validation selected 14 checks, passed 14 with complete coverage; git diff --check passes. The evidence handoff is `/CUSTODIAN/visual_review/awakening-04-05-registered-composition-fade-repair-v1/20261009T135021Z/REVIEW_MANIFEST.json`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first Moment Forge attempts exposed an unregistered `show_checkpoint` fixture command, the runner's required sixth contact-sheet tick, and stale checkpoint comparisons. They were corrected before the final 68-assertion run. One initial validation-manifest edit became redundant after syncing current main, which already contained the ownership edge; it was removed before commit.
+- Root cause / contributing factors: The late-seam fixture's command allow-list and contact-sheet contract were not checked together with the first scenario draft, and the original worktree predated the packet/manifest updates later landed on main.
+- Prevention / pipeline improvement: Keep scenario timeline, fixture command allow-list, evidence adapter ticks, and cross-check snapshots aligned; refresh the claimed branch to current main before final lifecycle validation.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: The existing Moment Forge scenario and live child alpha probes provided deterministic state checks and a compact visual handoff without changing the accepted art composition.
+
 ## Agent Handoff / Planning Decisions
 
 - **Human visual lock:** the current 1502×2048 layout, placement and Dust→Connector→Locker order are good. Do not reauthor/reposition them. This prior user decision satisfies the implementation-stage human art-direction gate; do not ask the user to approve the same lock again before commit/landing.
@@ -79,5 +100,5 @@ Use the persistent-root CRG only for baseline orientation; the claimed worktree 
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
-- Next action: Claim and implement this fade-only repair, then dispatch the paired fresh-context review.
-- Blockers or open questions: none. The human-owned visual decision is already locked: preserve layout/order; repair fade only. Objective checks + the compact capture are sufficient to land the implementation and start paired review. Only the paired reviewer may escalate a new human question if its fresh evidence is materially ambiguous or contradicts the locked composition.
+- Next action: Claim and complete the paired fresh-context review; inspect the supplied compact evidence and escalate only if it is materially ambiguous or contradicts the locked composition.
+- Blockers or open questions: none. The human-owned visual decision is already locked: preserve layout/order; repair fade only. Objective checks and the compact capture are sufficient to land the implementation. Only the paired reviewer may escalate a new human question if its fresh evidence is materially ambiguous or contradicts the locked composition.

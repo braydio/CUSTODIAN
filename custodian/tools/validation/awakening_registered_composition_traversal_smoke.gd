@@ -15,6 +15,7 @@ const ROOT_CENTER := Vector2(349, -2585)
 
 var _failures: Array[String] = []
 var _layer_images: Array[Image] = []
+var _layer_sprites: Array[Sprite2D] = []
 var _operator: CharacterBody2D
 var _composition: CanvasItem
 var _samples := 0
@@ -32,6 +33,7 @@ func _run() -> void:
 	_composition = scene.get_node("World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05") as CanvasItem
 	for node_name in ["DustLung", "Connector", "LockerReliquary"]:
 		var sprite := _composition.get_node(node_name) as Sprite2D
+		_layer_sprites.append(sprite)
 		_layer_images.append(sprite.texture.get_image())
 	_operator.global_position = Vector2(704, -2208)
 	scene.call("_update_zone_art_visibility")
@@ -80,14 +82,30 @@ func _check_floor(label: String) -> void:
 		_failures.append("Operator left Layout walkable floor during %s at %s" % [label, str(point)])
 		return
 	if not _composition.visible or _composition.modulate.a < 0.99:
-		_failures.append("registered composition lost visibility during %s at %s" % [label, str(point)])
+		_failures.append("registered composition parent changed during %s at %s" % [label, str(point)])
+		return
+	var connector_envelope: Rect2 = Layout.CONNECTORS["04_05_A"].merge(
+		Layout.CONNECTORS["04_05_B"]
+	).merge(Layout.CONNECTORS["04_05_C"])
+	if connector_envelope.has_point(point):
+		for sprite in _layer_sprites:
+			if not sprite.visible or sprite.modulate.a < 0.99:
+				_failures.append("registered layer %s faded inside the 04→05 dogleg during %s at %s" % [sprite.name, label, str(point)])
+				return
+	if Layout.ZONES[3]["envelope"].has_point(point) and _layer_sprites[2].modulate.a < 0.99:
+		_failures.append("Locker layer faded in its owner room during %s at %s" % [label, str(point)])
+		return
+	if Layout.ZONES[4]["envelope"].has_point(point) and _layer_sprites[0].modulate.a < 0.99:
+		_failures.append("Dust layer faded in its owner room during %s at %s" % [label, str(point)])
 		return
 	var composition_point := point - ROOT_CENTER + Vector2(751, 1024)
 	var px := roundi(composition_point.x)
 	var py := roundi(composition_point.y)
 	var covered := false
-	for image in _layer_images:
+	for i in _layer_images.size():
+		var image := _layer_images[i]
 		if px >= 0 and py >= 0 and px < image.get_width() and py < image.get_height() and image.get_pixel(px, py).a > 0.05:
-			covered = true
+			if _layer_sprites[i].visible and _layer_sprites[i].modulate.a > 0.05:
+				covered = true
 	if not covered:
 		_failures.append("Operator had no registered floor pixels underfoot during %s at %s" % [label, str(point)])

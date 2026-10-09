@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Build the compact ROI evidence sheet for the five late Awakening seams.
+"""Build the compact ROI evidence sheet for the 04→05 fade handoff.
 
-Structural registration/alpha/order/order facts for all five late seams
-(05-06, 06-07, 07-08, 08-10, 08-09) already run for free via the generic
-Moment Forge probes/assertions in
+Structural registration/alpha/order facts for the 04→05 composition and later
+Awakening seams run via the generic Moment Forge probes/assertions in
 `custodian/tools/iteration/scenarios/traversal/awakening_late_seams_v1.json`
 under `--capture-mode none`. This script is the optional, explicitly-invoked
 escalation: it turns that scenario's one `--capture-mode evidence` run into a
@@ -32,13 +31,13 @@ sys.path.insert(0, str(ITERATION_DIR))
 from build_moment_report import build_roi_contact_sheet  # noqa: E402
 from presentation_image_metrics import analyze  # noqa: E402
 
-# (seam id, contact_sheet tick that frames it) - see the scenario's setup/timeline.
+# (checkpoint, contact_sheet tick that frames it) - see the scenario's timeline.
 SEAMS = [
-    ("05_06", 30),
-    ("06_07", 95),
-    ("07_08", 160),
-    ("08_10", 225),
-    ("08_09", 290),
+    ("locker_interior", 30),
+    ("connector_a", 90),
+    ("connector_b", 150),
+    ("connector_c", 210),
+    ("dust_interior", 270),
 ]
 # Centered band around the framed seam boundary (screen center is 640, 360 at
 # 1280x720); tight enough to be compact, wide enough to show the join.
