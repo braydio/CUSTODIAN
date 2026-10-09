@@ -139,6 +139,18 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("auto-task", dispatch_value="auto")
         self.assertIn("auto-task", dispatch.status(self.repo, output=False).split("READY", 1)[1])
 
+    def test_local_only_packet_claim_reports_exact_promotion_sequence(self):
+        self.add_packet("local-authoring-only", dispatch_value="auto", push=False)
+        with self.assertRaises(dispatch.DispatchError) as caught:
+            dispatch.claim(self.repo, "local-authoring-only", "codex", False)
+        message = str(caught.exception)
+        self.assertIn("does not exist on origin/main", message)
+        self.assertIn("validate_task_packet_authoring.py", message)
+        self.assertIn("task_packet_index.py --write", message)
+        self.assertIn("land the scoped queue changes on origin/main", message)
+        self.assertIn("never claim a draft/unpublished packet", message)
+
+
     def test_claim_receipt_surfaces_authoring_chat_and_visual_review_root(self):
         self.add_packet(
             "visual-task",
