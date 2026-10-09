@@ -2512,3 +2512,7 @@ Per-direction publish state, sibling and generation isolation, stale-reference
 precedence, and no-write behavior are covered by focused regression fixtures.
 The correction's paired cycle-1 review is the immediate successor; later WB25
 work remains gated on that review and its recorded refresh.
+
+## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
+
+The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
