@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `enemy-savage-chain-ability-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-savage-pounce-ability-extraction, review-enemy-savage-pounce-ability-extraction`
@@ -21,7 +21,7 @@
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Move the Savage two-hit chain lifecycle out of `enemy.gd` into one actor-local `SavageChain` authority while preserving the current rushdown cadence, pounce-first priority, two-hit damage and guard-pressure semantics, and the generic ordinary-melee surface NPA-4 still needs to inspect.
 - Completion boundary: This slice owns only Savage chain-specific state, chain-only tuning, chain execution, focused diagnostics/tests, and the narrow public host services required to resolve the existing contact contract. It does not extract ordinary Enemy melee cadence/damage/windup/contact tuning, does not modify Savage pounce behavior, and does not introduce a generic ability hierarchy.
-- Current measured state: NPA-2 implementation is landed and its fresh paired review passed with 0 defects / 0 material gaps on review branch `eec8419f6`; review landing remains blocked only by the unrelated `living-world-abstract-activity-foundation` review-pairing defect. The reviewed pounce seam is stable: `SavagePounce` owns pounce phase/timer/cooldown/direction/start/hit-target state plus the 13-value typed config; `enemy.gd` keeps only the pounce feature/config binding, fixed-step priority and narrow host services. The two-hit chain remains entirely actor-owned in `enemy.gd`: six chain-only tuning exports (`gap=0.10`, `second_windup=0.16`, `second_damage=12`, `recovery=0.55`, guard pressure `10 -> 22`) plus three mutable runtime fields (phase, timer, committed direction), and methods `_start_savage_chain`, `_update_savage_chain`, `_resolve_savage_chain_hit`, `_finish_savage_chain`. The first hit still uses generic Savage `damage=10` and generic `attack_windup_duration=0.26`; the host's generic `damage_timer/damage_interval` still schedules when a chain may start. Current contact uses the standard radial-arc contract at 40 px plus generic grace/arc tuning. Pounce is attempted first in `_attack_target()`; only when pounce declines and no chain is active does generic cadence advance toward chain start.
+- Current measured state: NPA-2 implementation is landed and its fresh paired review passed with 0 defects / 0 material gaps on review branch `eec8419f6`; review landing remains blocked only by the unrelated `living-world-abstract-activity-foundation` review-pairing defect. The reviewed pounce seam is stable: `SavagePounce` owns pounce phase/timer/cooldown/direction/start/hit-target state plus the 13-value typed config; `enemy.gd` keeps only the pounce feature/config binding, fixed-step priority and narrow host services. The two-hit chain is now owned by `SavageChain` + typed `SavageChainConfig`: six chain-only values (`gap=0.10`, `second_windup=0.16`, `second_damage=12`, `recovery=0.55`, guard pressure `10 -> 22`) and phase/timer/committed direction live in the ability. `Enemy` retains generic cadence, first-hit damage/windup, shared melee contact geometry, the feature toggle and narrow ability host services. The first hit still uses generic Savage `damage=10` and generic `attack_windup_duration=0.26`; the host's generic `damage_timer/damage_interval` still schedules when a chain may start. Current contact uses the standard radial-arc contract at 40 px plus generic grace/arc tuning. Pounce is attempted first in `_attack_target()`; only when pounce declines and no chain is active does generic cadence advance toward chain start.
 - Evidence: Passed NPA-2 review summary `REVIEW_ENEMY_SAVAGE_POUNCE_ABILITY_EXTRACTION_CLAUDE_SUMMARY.md` from review branch `eec8419f6`; archived NPA-2 implementation packet/summary; `custodian/game/actors/enemies/abilities/savage_pounce.gd`; `savage_pounce_config.gd`; `enemy.gd`; `enemy_savage.tscn`; `custodian/tools/validation/{enemy_savage_smoke,savage_runtime_smoke}.gd`; `custodian/game/actors/enemies/abilities/README.md`; `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Task-specific authority: `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`; reviewed NPA-2 pounce seam; current Savage runtime scene/tuning; live shared hit/guard/contact and fixed-step contracts.
 - Work surface: New focused `custodian/game/actors/enemies/abilities/savage_chain.gd`, `savage_chain_config.gd`, and `configs/savage_chain_default.tres` (exact private filenames may vary only to match established ability conventions); `enemy.gd` setup/delegation/public host-service seam; `enemy_savage.tscn`; `enemy_savage_smoke.gd`; `savage_runtime_smoke.gd`; validation-manifest ownership; consequence-driven architecture/context/abilities docs.
@@ -43,13 +43,33 @@
 - Task overrides: `none`
 - Deferred: NPA-4 ordinary standard-enemy melee cadence/execution/contact authority; NPA-5 reaction/posture/parry-critical; NPA-6 death/corpse/loot; later cross-family convergence.
 
-## Handoff
+## Completion Truth
 
-- Next workstream: `review-enemy-savage-chain-ability-extraction`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes; the Savage two-hit lifecycle and six chain-only tuning values have one actor-local `SavageChain` / `SavageChainConfig` authority.
+- Completion boundary satisfied: yes; generic cadence, first-hit damage/windup and shared melee contact remain host/shared authority, and Savage pounce behavior was preserved.
+- Acceptance satisfied: yes; phase state was removed from `Enemy`, timing/hit/guard-pressure behavior and pounce ordering passed focused regression coverage, and validation ownership includes the new modules.
+- Superseded/legacy production path disposition: n/a; the former actor-owned chain implementation was removed.
+- Evidence: `enemy_savage_pounce`, `savage_runtime`, `combat_exchange_commitment`, `enemy_hit_spatial_telemetry`, and `operator_guard_flow` focused validations passed; required changed-file sweep recorded at closeout; `git diff --check` passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial focused validation ran before the fresh worktree's Godot import/class cache existed and failed during project loading; after one editor import pass, all focused checks passed. The prior review workstream's unrelated `review_pairing_contract` failure remained outside this implementation scope.
+- Root cause / contributing factors: A fresh LFS worktree had no generated Godot import/class cache.
+- Prevention / pipeline improvement: Warm the isolated worktree's Godot editor cache once before gameplay validation on fresh checkouts.
+- Tooling / docs drift discovered: none in this workstream.
+- Follow-up: none
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
-- Refresh reason: `none; NPA-3 has been remeasured against the passed NPA-2 review and current chain ownership`
-- Next action: Once the NPA-2 review workstream actually lands/archives, let the dispatcher make NPA-3 eligible; after NPA-3 lands, launch its paired review through the fresh paired-review runner if that tooling has landed, otherwise use the existing fresh-context review method.
-- Blockers or open questions: `mechanical dependency only: review-enemy-savage-pounce-ability-extraction must land/complete; no remaining NPA-3 planning question`
+
+## Next Handoff
+- Next workstream: `review-enemy-savage-chain-ability-extraction`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Refresh reason: none
+- Next action: Land/archive this implementation; then claim its paired fresh-context review when the dispatcher reports eligible.
+- Blockers or open questions: paired review must use fresh reviewer context; no implementation blocker.

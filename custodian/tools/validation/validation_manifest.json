@@ -5589,11 +5589,14 @@
       "type": "godot_script",
       "script": "res://tools/validation/enemy_savage_smoke.gd",
       "tier": "actor",
-      "tags": ["combat", "enemy", "savage", "pounce"],
+      "tags": ["combat", "enemy", "savage", "pounce", "chain"],
       "owners": [
         "custodian/game/actors/enemies/abilities/savage_pounce.gd",
         "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
         "custodian/game/actors/enemies/abilities/configs/savage_pounce_default.tres",
+        "custodian/game/actors/enemies/abilities/savage_chain.gd",
+        "custodian/game/actors/enemies/abilities/savage_chain_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/savage_chain_default.tres",
         "custodian/game/actors/enemies/enemy.gd",
         "custodian/game/actors/enemies/enemy_savage.tscn",
         "custodian/tools/validation/enemy_savage_smoke.gd"
@@ -5611,6 +5614,9 @@
         "custodian/game/actors/enemies/abilities/savage_pounce.gd",
         "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
         "custodian/game/actors/enemies/abilities/configs/savage_pounce_default.tres",
+        "custodian/game/actors/enemies/abilities/savage_chain.gd",
+        "custodian/game/actors/enemies/abilities/savage_chain_config.gd",
+        "custodian/game/actors/enemies/abilities/configs/savage_chain_default.tres",
         "custodian/game/actors/enemies/enemy.gd",
         "custodian/game/actors/enemies/enemy_savage.tscn",
         "custodian/tools/validation/savage_runtime_smoke.gd"

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SavageChainConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/abilities/savage_chain_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+gap_time = 0.10
+second_windup_time = 0.16
+second_damage = 12.0
+recovery_time = 0.55
+first_guard_stamina_damage = 10.0
+second_guard_stamina_damage = 22.0
