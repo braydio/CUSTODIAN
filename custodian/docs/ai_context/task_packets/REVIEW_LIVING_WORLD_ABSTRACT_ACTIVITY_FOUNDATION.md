@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-living-world-abstract-activity-foundation`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `living-world-abstract-activity-foundation`
 - Locks: `world-simulation-runtime, living-world-abstract-activity`
