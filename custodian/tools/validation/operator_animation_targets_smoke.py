@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import shutil
 import sys
@@ -84,7 +85,71 @@ def main() -> None:
         stale_accepted = next(item for item in stale if item.selection.action == "idle_relaxed_01")
         assert stale_accepted.stale_reference and stale_accepted.workflow_status == "STALE_REFERENCE"
 
-    print("operator_animation_targets_smoke ok")
+        workspace_root = repo / ".ai/workbench"
+        generation_root = workspace_root / "operator_2_5d_128"
+        passed = generation_root / "melee_1h/attack/fast_01/n"
+        passed.mkdir(parents=True)
+        passed_manifest = passed / "workbench.json"
+        passed_manifest.write_text(json.dumps({
+            "layers": [], "aseprite": {"last_synced_sha256": "fixture"},
+            "last_publish": {"state": "PUBLISHED", "validation_status": "passed"},
+        }))
+        sibling = generation_root / "melee_1h/attack/fast_01/e"
+        sibling.mkdir(parents=True)
+        sibling_manifest = sibling / "workbench.json"
+        sibling_manifest.write_text(json.dumps({
+            "creation": {"state": "NEW / UNSAVED"}, "layers": [],
+            "aseprite": {"last_synced_sha256": hashlib.sha256(b"blank").hexdigest()},
+        }))
+        legacy_sibling = workspace_root / "legacy_96/melee_1h/attack/fast_01/n"
+        legacy_sibling.mkdir(parents=True)
+        (legacy_sibling / "workbench.json").write_text(passed_manifest.read_text())
+        workflow_rows = targets.project_targets(plan, repo_root=repo, workspace_root=workspace_root)
+        workflow = {record.selection.authoring_identity: record.workflow_status for record in workflow_rows}
+        assert workflow["operator_2_5d_128:melee_1h/attack/fast_01/n"] == "RUNTIME_VERIFIED"
+        assert workflow["operator_2_5d_128:melee_1h/attack/fast_01/e"] == "EDITING"
+        assert workflow["operator_2_5d_128:melee_1h/attack/fast_01/ne"] == "NONE"
+        passed_snapshot = passed_manifest.read_bytes()
+
+        creation = generation_root / "melee_1h/attack/fast_02/n"
+        creation.mkdir(parents=True)
+        creation_manifest = creation / "workbench.json"
+        baseline = b"blank baseline document"
+        creation_manifest.write_text(json.dumps({
+            "creation": {"state": "NEW / UNSAVED"}, "layers": [],
+            "aseprite": {"last_synced_sha256": hashlib.sha256(baseline).hexdigest()},
+        }))
+        document = creation / "workbench.aseprite"
+        document.write_bytes(b"saved document differs from blank baseline")
+        manifest_snapshot = creation_manifest.read_bytes()
+        document_snapshot = document.read_bytes()
+        creation_rows = targets.project_targets(plan, repo_root=repo, workspace_root=workspace_root)
+        creation_state = next(record.workflow_status for record in creation_rows
+            if record.selection.authoring_identity == "operator_2_5d_128:melee_1h/attack/fast_02/n")
+        assert creation_state == "READY_TO_PUBLISH"
+        assert creation_manifest.read_bytes() == manifest_snapshot
+        assert document.read_bytes() == document_snapshot
+
+        unchanged = b"blank baseline document"
+        document.write_bytes(unchanged)
+        unsaved_rows = targets.project_targets(plan, repo_root=repo, workspace_root=workspace_root)
+        unsaved_state = next(record.workflow_status for record in unsaved_rows
+            if record.selection.authoring_identity == "operator_2_5d_128:melee_1h/attack/fast_02/n")
+        assert unsaved_state == "EDITING"
+        assert creation_manifest.read_bytes() == manifest_snapshot
+        assert passed_manifest.read_bytes() == passed_snapshot
+
+        stale_workflow_plan = copy.deepcopy(plan)
+        fast02 = next(item for item in stale_workflow_plan["items"] if item["action"] == "fast_02")
+        fast02["canonical_profile_sha256"] = "0" * 64
+        stale_workflow_rows = targets.project_targets(
+            stale_workflow_plan, repo_root=repo, workspace_root=workspace_root,
+        )
+        stale_creation = next(record for record in stale_workflow_rows
+            if record.selection.authoring_identity == "operator_2_5d_128:melee_1h/attack/fast_02/n")
+        assert stale_creation.stale_reference and stale_creation.workflow_status == "STALE_REFERENCE"
+
+    print("operator_animation_targets_smoke ok (workflow direction/readiness/read-only)")
 
 
 if __name__ == "__main__":

@@ -2479,3 +2479,10 @@ remain distinct. Runtime selectors/resources and New Animation behavior are
 unchanged. Focused checks and the changed-files validation gate passed (19/19
 selected, complete coverage). The paired fresh-context review is the immediate
 successor; WB25-2 remains gated on its findings and planning refresh.
+
+WB25-1's R0-01 review correction now reads each direction's own workspace and
+uses the existing read-only Workbench classifier for saved creation readiness.
+Per-direction publish state, sibling and generation isolation, stale-reference
+precedence, and no-write behavior are covered by focused regression fixtures.
+The correction's paired cycle-1 review is the immediate successor; later WB25
+work remains gated on that review and its recorded refresh.
