@@ -54,6 +54,7 @@ normal closeout.
 - `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` — Extract melee timeline/drive/target/contact state into one focused authority and cash in the existing modular art where it genuinely improves moving combat p...
 - `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — Make the unarmed guard lifecycle visibly movement-permissive wherever gameplay already allows movement, so strafing is expressed as movement-owned lower-body...
 - `OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Finish the one genuinely missing gameplay tail from the legacy Hit Taxonomy/Riposte effort: a dedicated semantic riposte after a successful parry when no val...
+- `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Turn the useful one-off Aseprite cleanup/registration tricks proven while authoring idle_relaxed_01 into safe Workbench/Art-Agent operations so a 2.5D strip...
 - `OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — Extract primary-ranged/sidearm combat state into one ranged authority and make all movement-permissive ranged presentation use the same lower-locomotion + up...
 - `OPERATOR_RANGED_STATIC_WEAPON_SOCKET_CLOSEOUT.md` — Finish the already-live Carbine hybrid socket architecture by making the static directional `WeaponSprite` the sole primary-ranged weapon renderer for author...
 - `OPERATOR_RECOVERY_DOMAIN_EXTRACTION.md` — Extract Operator damage/recovery/Field Patch survivability behavior into explicit authorities and make the movement-permissive Field Patch animation reflect...
@@ -197,7 +198,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
 - `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified.
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
-- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved the original Source Session, direction progress, collision, legacy-96, and publication boundaries. WB25-3 remains draft/refresh-required until the recorded authoring chat refreshes the accepted Source Session/Workbench handoff and Art Agent seams.
+- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved Source Session target binding, direction progress, collision, legacy-96, valid artist edits, and the no-publication boundary. WB25-3 has consumed that landed handoff and is now `ready/auto`; it owns exact existing-Workbench Art Agent attachment, generation-derived 128 profile selection, objective polish diagnostics, and scoped/undoable polish mutations.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -208,7 +209,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction passed its fresh paired review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-3 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction passed its fresh paired review. WB25-3 is `ready/auto`, with its paired review `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-4 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
