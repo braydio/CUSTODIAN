@@ -85,7 +85,6 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_LIVING_WORLD_ABSTRACT_ACTIVITY_FOUNDATION_REVIEW_CORRECTIONS_1.md` — Independently verify correction `R0-01` fixes causal event-ID collisions for valid abstract group identities without regressing snapshot restore or determini...
 - `REVIEW_NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` — Independently prove ordinary standard-enemy melee now has one focused lifecycle authority without changing combat feel, special-ability ordering, reaction ow...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
