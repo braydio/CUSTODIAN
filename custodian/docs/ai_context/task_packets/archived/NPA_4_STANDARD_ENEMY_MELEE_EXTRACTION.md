@@ -77,3 +77,16 @@
 - Refresh reason: none
 - Next action: Start the paired post-land review in a fresh reviewer context after this implementation lands; do not continue this implementation context as reviewer.
 - Blockers or open questions: none
+
+## Independent Review
+
+- Status: `passed`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed main: `810fb93aa20209096e88a6422c832885f220b22c`
+- Reviewed implementation commit: `453bb87dc`
+- Review modes: `code, architecture, runtime`
+- Findings: `none`
+- Evidence: `standard_enemy_melee`, `enemy_grunt_notice_and_attack_cadence`, `enemy_hit_spatial_telemetry`, `combat_exchange_commitment`, `operator_guard_flow`, `grunt_falcon_punch`, `sundered_keep_marine_ambush`, `enemy_savage_pounce`, and `savage_runtime` passed independently; the reviewed implementation diff passed `git diff --check`; migrated ordinary-melee mutable field names are absent from `enemy.gd`; variant attack_cooldown remains outside the melee module.
+- Conclusion: `StandardEnemyMelee is the sole ordinary-melee lifecycle and mutable transaction authority. Typed tuning, authored scene overrides, host hit/target/engagement services, special-first ordering, semantic interruption, and variant cooldown non-change satisfy the review contract. No blocking defect or material evidence gap remains.`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
