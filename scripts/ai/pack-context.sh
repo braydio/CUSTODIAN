@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /home/braydenchaffee/Projects/CUSTODIAN
-mkdir -p .ai
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+  echo "pack-context: run inside a CUSTODIAN Git checkout" >&2
+  exit 2
+}
+cd "$REPO_ROOT"
+mkdir -p .ai .ai/task-context
 
 case "${1:-all}" in
   all|arch|architecture)
@@ -52,8 +56,25 @@ case "${1:-all}" in
       -o .ai/custodian-current-diff.xml
     ;;
 
+  task)
+    INCLUDE="${2:-}"
+    NAME="${3:-task-context}"
+    if [ -z "$INCLUDE" ]; then
+      echo "Usage: $0 task \"<comma-separated repo-relative include globs>\" [name]" >&2
+      exit 2
+    fi
+    SAFE_NAME="$(printf '%s' "$NAME" | tr -cs 'A-Za-z0-9._-' '-')"
+    OUTPUT=".ai/task-context/${SAFE_NAME}.xml"
+    npx repomix@latest \
+      --include "AGENTS.md,custodian/AGENTS.md,$INCLUDE" \
+      --compress \
+      --style xml \
+      -o "$OUTPUT"
+    echo "$OUTPUT"
+    ;;
+
   *)
-    echo "Usage: $0 {all|procgen|combat|ui|diff}" >&2
+    echo "Usage: $0 {all|procgen|combat|ui|diff|task <include-globs> [name]}" >&2
     exit 1
     ;;
 esac
