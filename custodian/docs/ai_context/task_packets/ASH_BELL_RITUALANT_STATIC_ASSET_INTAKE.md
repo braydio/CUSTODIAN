@@ -21,6 +21,17 @@
 - Goal: Publish and wire the 12 already-reviewed Ritualant ritual-prop/chamber-dressing states through Asset Pipeline V2 without reopening encounter behavior or making the execution agent rediscover art/source decisions.
 - Completion boundary: Fetch the exact two approved Dropbox source packages, verify their SHA-256 values, preserve their selected source masters under the declared source-work paths, register/merge exactly two Asset V2 families, ingest all 12 accepted static states, bind them into the authored Ritualant scene as presentation only, update the two requirement rows to Asset V2-derived truth, and prove native-scale scene readability. Do not generate new art in this packet.
 
+- Current measured state: Two approved SHA-256-identified Dropbox archives supply six ritual-prop and six chamber-dressing static states; verify live Asset V2 ingestion and scene-binding state at claim time.
+- Evidence: Exact package names, hashes, dimensions and intake paths below; `custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn`; current Asset V2 catalog/requirements registry and authored encounter spec.
+- Task-specific authority: Current Asset Pipeline V2 schema and `custodian/tools/assets/asset.py` govern ingestion; authored Ritualant encounter spec/mapper govern placement; scene owns visual consumers; required-assets registry owns requirements.
+- Work surface: `custodian/asset_drop/source_work/ash_bell/`, both `custodian/asset_drop/inbox/ash_bell_*` families, corresponding Asset V2 family contracts, Ritualant scene, and `custodian/content/metadata/assets/required_assets.registry.json`.
+- Change: Verify both archive hashes; preserve exact source masters; register/merge two Asset V2 families; ingest 12 accepted static states; bind presentation-only scene sprites; migrate two requirement rows to derived Asset V2 status.
+- Preserve: Broken chapel bell, Stilling Pin gating, White Thread gameplay hazard, authored room collision/navigation, Lower Quarter Seal, encounter combat/dialogue/timing, and existing attack/death animation families.
+- Non-goals: No generated art, rise/reaction animation, apparition/procession/Fountain art, audio, route changes, encounter mechanics or alpha-driven collision/navigation.
+- Acceptance: Both hashes pass; 12/12 exact RGBA states have healthy canonical Asset V2 status and scene consumers; both requirement rows derive from Asset V2; gameplay is unchanged; native-scale visual review is approved.
+- Validation: Run SHA-256 checks, Asset V2 plan/status/doctor and needs check, existing asset-pipeline/requirements smokes, three existing Ritualant Godot smokes, `custodian/tools/validation/run_validation.py --changed --json`, and `git diff --check`.
+- Deferred: Ritualant animations, apparition/procession, Dry Fountain, audio, and the broad production-art closeout refresh after the reviewed static intake.
+
 ## Approved durable source batch
 
 Dropbox batch root:
