@@ -170,11 +170,11 @@ This slice is pipeline/presentation infrastructure, not art creation.
 
 ### Current drive-source availability
 
-Approved E / NE / SE 12-frame `drive_01` source masters plus normalized candidates are preserved in Dropbox:
+Approved N / NE / E / SE / S 12-frame `drive_01` source masters plus 156px cadence/orientation references are present at:
 
-`/CUSTODIAN/implementation_inputs/custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip`
+`/home/braydenchaffee/CUSTODIAN-DROPBOX-UPLOADS/Custodian-Buggy`
 
-This is **source availability only**. Asset V2 ingest/binding is still pending, and authored N / S remain missing.
+The older three-direction Dropbox ZIP remains historical partial evidence only. This complete five-direction set is **source availability only** until Asset V2 ingest/binding is green; all authored drive directions are now supplied, but none is yet runtime-complete.
 
 It registers `custodian_field_scout_buggy_mk1`, removes hover-specific importer assumptions, and allows canonical Scout body states to replace compatibility art without changing gameplay.
 
