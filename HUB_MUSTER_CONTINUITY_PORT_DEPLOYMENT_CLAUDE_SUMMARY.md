@@ -2,59 +2,51 @@
 
 ## Recovery and current state
 
-Resumed the existing `hub-muster-continuity-port-deployment` branch from checkpoint `7f5cdfcce` and synchronized it with current `origin/main` at `03a584ee4`; the lifecycle produced merge commit `f07c67743`. Vaultwing import repair `ed433103` is an ancestor of current main. The original implementation at `c040ee120` remains intact. The root checkout is clean, and no H5 runtime code or assets were changed during this recovery.
+Resumed the existing `hub-muster-continuity-port-deployment` workstream in its preserved worktree. `workstream.py resume` synchronized it with current `origin/main@b0cbd649c36e86c9002d6d0951a3c26bb61c872c` via merge `de1e7d40a`. Original H5 implementation commit `c040ee120` remains in the branch. Upstream Vaultwing import repair `ed433103` is included; it was not repeated. The user project-root checkout and Awakening sprite were left untouched.
 
-The earlier 42-test JSON report was not retained under the worktree or found in the searched temporary report locations. Its two historical failing test IDs therefore cannot be verified. Fresh focused and full-suite reports are retained under `/tmp` below.
+The original 42-test JSON report remains unavailable, so its historical failing test IDs cannot be established. This recovery saved fresh reports under `/tmp` and updated the active H5 packet with current evidence. No runtime code or assets were edited during this recovery.
 
-## Fresh validation evidence
+## Fresh validation
 
-- `git lfs fsck --pointers`: passed. `godot_import_preflight.py --project-dir custodian`: passed with no checked-out LFS pointers. `godot --headless --path custodian --import --quit`: passed, including the repaired Vaultwing bonding textures.
-- `task_packet_index.py`: passed; `validate_review_pairing.py`: passed, 61 auto pairs; `check_ai_context.py --json`: passed with zero findings.
-- Focused checks all passed: `hub_continuity_port`, `world_transition_handoff`, `world_contract_prewarm`, `hub_forum_adjudication`, `startup_world_entry`, `contract_world_archive_resolve_ingress`, and `contract_world_operator_spawn_residency`. Reports: `/tmp/h5-current-<test-id>.json`.
-- `game_scene_operator_startup_integrity`: passed in 162876 ms; report `/tmp/h5-game_scene_operator_startup_integrity.json`. Real production startup reached READY for run seed `1773840677`, map seed `3207643685`; the test measured 151630 ms prewarm and 33617 ms final generation. Its placement/install evidence passed. Peak RSS was about 1.02 GB, available system memory about 11 GB. Godot emitted known exit warnings for 170 ObjectDB instances and 4 resources still in use. The 360-second timeout did not reproduce and was not changed.
-- Full `run_validation.py --changed --base origin/main --json`: report `/tmp/h5-current-changed-validation.json`; 43 tests selected, coverage complete, 40 passed, 1 failed, 1 timed out, 1 skipped.
+- `git lfs fsck --pointers` and `godot_import_preflight.py --project-dir custodian`: passed; no checked-out LFS pointers.
+- `validate_review_pairing.py`: passed, 62 auto pairs. `check_ai_context.py --json`: passed with zero findings. `task_packet_index.py`: passed after refreshing its generated README block. `git diff --check origin/main...HEAD`: passed.
+- Focused H5 tests passed: `hub_continuity_port`, `world_contract_prewarm`, `hub_forum_adjudication`, `startup_world_entry`, `contract_world_archive_resolve_ingress`, and `contract_world_operator_spawn_residency`. `world_transition_handoff` failed once (“Qualified Awakening completion did not enter Hub”) and passed on immediate rerun. Treat this as intermittent evidence, not a stable pass without review.
+- Standalone `game_scene_operator_startup_integrity`: passed in 161178 ms; run seed `1773840677`, map seed `3207643685`, prewarm 150766 ms, final generation 33359 ms. It passed again in the complete changed suite at 159440 ms. The configured 360-second limit was not changed. Known exit warnings reported 170 ObjectDB instances and 4 resources still in use.
+- Complete `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`: `/tmp/h5-20261010-changed-validation.json`; complete coverage of 25 changed files, 44 tests selected, 41 passed, 1 failed, 1 timed out, 1 skipped.
 
-### Current full-suite blockers
+## Remaining validation blockers
 
-`vaultwing_world_spawn` failed in 4256 ms. Assertions reported:
+`vaultwing_world_spawn` failed in 3997 ms. It reported five assertions: `game.tscn lacks production VaultwingSpawner`; marker spawning did not produce exactly one Vaultwing; duplicate marker handling produced another; the Vaultwing was not under `World/Ambient`; and reset did not permit a clean replacement population. The smoke reported missing `/root/GameRoot/World/ContractMap` and repeated `vaultwing_spawner.gd:119` errors: the `filter` lambda could not convert `Object`, and its generic `Array` result could not be assigned to `Array[Node]`. Focused report: `/tmp/h5-20261010-vaultwing-world-spawn.json`. This remains an owning-lane runtime issue; the already-landed `.png.import` metadata repair does not resolve it.
 
-- `game.tscn lacks production VaultwingSpawner`
-- `marker spawn did not create exactly one Vaultwing`
-- `duplicate marker processing created another Vaultwing`
-- `Vaultwing was not placed under World/Ambient`
-- `world reset did not permit a clean replacement population count=0 active=0`
+`procgen_ambient_enemy_real_world_spawn` timed out at 180068 ms, unchanged manifest limit 180 seconds. Seed `3348744079` completed candidate generation in 16756 ms, followed by no more output before timeout; stderr was empty. Focused report: `/tmp/h5-20261010-ambient-spawn.json`. H5 adds loader activation-result signaling, wait, and rollback APIs but does not change ambient candidate selection. Attribution to the mainline loader/spawn path is still an inference, not a confirmed cause.
 
-The smoke warned that `ContractMap` was missing at `/root/GameRoot/World/ContractMap`. It also emitted repeated fatal errors from `vaultwing_spawner.gd:119`: a `filter` lambda could not convert `Object` arguments, and a generic `Array` could not be assigned to `Array[Node]`. This is distinct from the now-repaired `.png.import` metadata.
+`awakening_late_seams_v1` was skipped because its required integration tier failed. No timeout was adjusted and no unrelated runtime/assets were changed.
 
-`procgen_ambient_enemy_real_world_spawn` timed out at 180000 ms; report `/tmp/h5-procgen_ambient_enemy_real_world_spawn.json`. Generation of seed `3348744079` completed in 18064 ms (`EVAL_CANDIDATE`), after which no further stdout or stderr appeared before timeout. The process used about 99% of one CPU core, peaked near 747 MB RSS, and system memory availability was about 9.6–11 GB. The test calls the loader's real `_on_contract_generated` path after generation. H5's loader diff adds activation signaling/result, wait, and rollback APIs, but does not change the ambient candidate-selection algorithm; assigning the hang to the pre-existing mainline loader path is an inference, not a confirmed root cause. Its current-owner test ID is exact even though the earlier 42-test report was lost.
+## Closeout state
 
-`awakening_late_seams_v1` was skipped because the integration tier failed. No timeout was increased and no unrelated Vaultwing/ambient-spawn code was edited.
+H5 remains active, unarchived, and unlanded. Its paired review is still dependency-gated. Completion Truth now records that the implementation goal is satisfied but the boundary and acceptance closeout are not. `workstream.py finish` was not run because current changed-file validation is red. Do not start H6 before H5 is landed and its independent review is accepted.
 
-## Closeout and preservation
-
-H5 remains unlanded. Its active packet remains unarchived; completion truth has not been converted to literal `yes`; the paired review remains dependency-gated. `workstream.py finish` was not run because current changed-file validation is red. Do not start H6 before accepted H5 review.
-
-The project-root checkout remains clean on `main`; the Awakening sprite and other worktrees were preserved. Previous `ProcGenStuckPocket` and Vaultwing import observations from the separate real-generation probe remain distinct evidence. This rerun confirms import repair but does not establish a green ambient-spawn production test.
+The fresh complete report does not prove clean production ambient generation. Earlier `ProcGenStuckPocket` and Vaultwing import observations from the separate real-generation probe remain separate evidence; the import repair is present on current main, while the ambient-spawn timeout remains reproducible.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: medium
-- What went wrong: the prior aggregate report was not saved, preventing exact recovery of its historical failure IDs. Current main still has a Vaultwing runtime-smoke failure and a real-world ambient-spawn timeout.
-- Root cause / contributing factors: the Vaultwing asset import defect is fixed, but current `game.tscn`/spawner assertions and typed-array errors remain. Ambient generation finishes in 18 seconds, while its subsequent loader/spawn processing runs until the 180-second limit. H5 attribution is not established.
-- Prevention / pipeline improvement: save future changed-file JSON reports under `/tmp` before examining them; keep unrelated runtime gates intact and route their failures to owning lanes.
-- Tooling / docs drift discovered: none in the current workflow; LFS/import, pairing, AI-context, and packet-index checks passed after synchronization.
+- Friction severity: high
+- What went wrong: the historical 42-test JSON report was not retained. The fresh complete report confirms the known Vaultwing failure and ambient timeout; one transition run also failed before an immediate passing rerun.
+- Root cause / contributing factors: current runtime assertions and a typed-array pruning error keep Vaultwing spawning red. Ambient processing hangs after successful candidate generation. The transition failure did not reproduce, so its cause remains unknown.
+- Prevention / pipeline improvement: retain full changed-validation JSON before inspecting results; rerun intermittent failures once without masking the first result; leave manifest timeouts and unrelated owning-lane code unchanged.
+- Tooling / docs drift discovered: the managed packet index needed regeneration after synchronization. The generated view now passes validation.
 - Follow-up: manual-follow-up
-- What worked: fresh main proved all H5-focused tests and production startup integrity pass; the startup timeout did not reproduce.
+- What worked: the H5 focused deployment checks and real startup-integrity scenario passed; the configured startup timeout was sufficient.
 
 ## Next Handoff
 
-- Next workstream: review-hub-muster-continuity-port-deployment
+- Next workstream: `review-hub-muster-continuity-port-deployment`
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: route `vaultwing_world_spawn` and `procgen_ambient_enemy_real_world_spawn` findings to their owning lanes, then rerun current-main changed validation. After a green report, close and land H5, then launch the paired review in fresh context.
-- Blockers or open questions: one changed-file test fails, one times out, and one higher-tier test is skipped. Keep H5 active and do not begin H6.
+- Next action: resolve `vaultwing_world_spawn` and `procgen_ambient_enemy_real_world_spawn` in their owning lanes; then rerun complete changed-file validation for H5. Only after a green report should H5 be archived and finished, followed by the paired review through a fresh reviewer context.
+- Blockers or open questions: current report is red (1 failed, 1 timed out, 1 skipped); H5 remains unlanded and HR5 ineligible. Do not weaken validation or edit unrelated lanes inside H5.
