@@ -72,9 +72,9 @@ When the blocked implementation packet is refreshed after predecessors land, ref
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: `The paired runner sandbox could not write shared Git metadata needed by changed-file enumeration, pairing validation, and workstream finish; those gates were rerun successfully from the coordination context.`
+- What went wrong: `The paired runner sandbox could not write shared Git metadata needed by changed-file enumeration, pairing validation, and workstream finish. After recovery, newer main introduced ten unrelated NPA pairing-state validation failures.`
 - Root cause / contributing factors: `The claimed worktree shares Git metadata outside the runner sandbox writable roots.`
 - Prevention / pipeline improvement: `Provide a writable common Git metadata path or no-fetch/read-only validator modes for fresh reviewer sandboxes.`
-- Tooling / docs drift discovered: `The paired-review runner environment cannot currently write shared metadata required by the standard changed-file and pairing validators.`
+- Tooling / docs drift discovered: `The paired-review runner environment cannot currently write shared metadata required by the standard changed-file and pairing validators; current main has ten unrelated NPA paired-review metadata mismatches.`
 - Follow-up: `manual-follow-up` (support writable shared metadata or read-only validator modes in paired reviewer sandboxes)
 - What worked: `Focused runtime smokes covered acceptance, idempotence, generation failure visibility, Hub retention, and authored traversal rollback.`
