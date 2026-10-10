@@ -48,6 +48,10 @@ must not consume or modify Dust Lung V2 art/geometry. A later dedicated DL0
 implementation packet will own the actual Zone 05 spatial cutover after the V2
 source set is generated and human-approved.
 
+## Adjacent Crèche console VFX defect (separate owner)
+
+A first-interaction FX has been reported rendering on the floor beneath the computer, and the live Awakening controller anchors `CrecheConsoleActivation` at the `(112,144)` logical interaction marker while the registered idle console prop is not visibly instanced. This is owned by `AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1` and its paired review. The perimeter AP1 implementation **must not silently fix, replace, duplicate or move that console/FX**, and should include it only as an unchanged adjacent-presentation regression. The dedicated fix must inspect the baked console versus 128×128 Asset V2 prop and bind the existing 8-frame activation to the actual screen-local point, not the floor.
+
 ## Promotion / asset gates
 
 - AP0 may be claimed when its named predecessor review archives complete, locks clear and the dispatcher reports eligibility. It does **not** require images or user aesthetic judgment.

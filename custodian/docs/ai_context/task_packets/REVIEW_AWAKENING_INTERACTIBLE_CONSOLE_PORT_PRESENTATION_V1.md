@@ -35,6 +35,7 @@
   1. Both actual interactibles have recognizable silhouettes before prompt range.
   2. Crèche acknowledgement/repeat readout and Port damaged status semantics remain unchanged.
   3. No duplicate hero art/extra interaction; scene alpha, anchors and geometry verified; human visual approval recorded.
+  3a. First Crèche activation is visibly contained on the registered/baked console screen, with zero floor-beneath-computer presentation; screen-local coordinates are measured, published existing console art is reused or intentionally omitted if baked art is already correct, and acknowledgement remains once-only. Independently compare pre-fix/current renderer ROI and actual FPS/8-frame state after triggering, replay attempt and debug reset.
   4. No blocking defect/material evidence gap; external human disposition recorded if required.
 - Validation: awakening_first_return_progression; awakening_undergate_lighting; awakening_art_registration; interaction_feedback console activation; focus/layout smoke; Asset V2 doctor; real renderer; --changed; git diff --check
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
