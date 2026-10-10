@@ -318,10 +318,35 @@ path. Space, arrows, Home/End, brackets, `Z`, and `L` control playback, frame
 review, REVIEW FPS, zoom, and looping. REVIEW FPS is disposable presentation
 state and never writes gameplay timing or transition authority.
 
-Timeline clips contain only semantic identity, direction, REVIEW FPS, loop
-count, and optional inclusive frame trims. Duplicates are legal. Saved sequences
-live under `.ai/operator_animation_workbench/sequences/`; clip boundaries are
-exact, and sequence JSON is never published to canonical source or runtime.
+Timeline clips contain semantic identity, direction, REVIEW FPS, loop count,
+optional inclusive frame trims, and an appended `art_generation` defaulting to
+`legacy_96`. Existing v1 sequence files load as legacy clips and remain
+compatible with positional callers. Generation-aware clips write sequence v2;
+2.5D clips resolve exact saved Workbench renders rather than legacy runtime
+pixels. Their optional per-frame durations come from the saved physical
+Aseprite document. Presets are unavailable when any exact component identity or
+required timing is missing. Duplicates are legal. Saved sequences live under
+`.ai/operator_animation_workbench/sequences/`; sequence JSON is never published
+to canonical source or runtime.
+
+### 2.5D review receipts and runtime sandbox
+
+2.5D review receipts are derived from `project_targets()` leaves plus current
+Workbench/Art Agent QA evidence. The receipt binds the manifest and saved
+document, rendered frame bytes, accepted profile/reference hashes, physical
+canvas/frame/duration contract, QA findings, human disposition when required,
+and the sandbox request/result. A stale or unverifiable receipt contributes no
+effective verification. Advisory-only YELLOW QA remains non-blocking; RED
+blocks and NEEDS_HUMAN_REVIEW requires an explicit disposition.
+
+Family state is recomputed from the required projected directions and current
+receipts on read. Missing, projected, legacy-fallback, partial, and stale cells
+remain incomplete. The isolated debug sandbox displays exact hash-bound 128px
+Workbench frames on the real Operator body renderer and camera/shadow context
+through `OperatorBodyPresenter`. It records production runtime resource hashes
+before and after; the sandbox has no source publication, selector, catalog, or
+runtime-build authority. `RUNTIME_VERIFIED` is review evidence only; canonical
+2.5D publication remains a later migration authority.
 Enter jumps to the selected clip; I / Shift+I and O / Shift+O edit inclusive
 trim edges; brackets edit selected-clip REVIEW FPS; Shift+L cycles clip repeat
 count while L loops the whole sequence; arrows navigate flattened source frames;

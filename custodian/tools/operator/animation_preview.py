@@ -17,12 +17,23 @@ def consume_frame_time(elapsed_sec: float, fps: float) -> tuple[bool, float]:
         return False, max(0.0, elapsed_sec)
     return True, max(0.0, elapsed_sec - frame_duration)
 
+
+def consume_duration(elapsed_sec: float, duration: float) -> tuple[bool, float]:
+    """Consume one authored physical frame duration."""
+    interval = float(duration)
+    if interval <= 0:
+        raise ValueError("frame duration must be positive")
+    if elapsed_sec + 1e-12 < interval:
+        return False, max(0.0, elapsed_sec)
+    return True, max(0.0, elapsed_sec - interval)
+
 PreviewSource = Literal["live", "workbench", "canonical", "runtime"]
 ZoomMode = Literal["auto", "1x", "2x", "3x", "fit"]
 CompositionMode = Literal["body", "fx", "body_fx"]
 PLAN_SCHEMA = "custodian.operator_animation_implementation_plan.v2"
 PLAN_SCHEMAS = {"custodian.operator_animation_implementation_plan.v1", PLAN_SCHEMA}
-SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v1"
+SEQUENCE_SCHEMA_V1 = "custodian.operator_animation_review_sequence.v1"
+SEQUENCE_SCHEMA = "custodian.operator_animation_review_sequence.v2"
 
 
 @dataclass(frozen=True)
@@ -119,6 +130,9 @@ class TimelineClip:
     loops: int = 1
     start_frame: int | None = None
     end_frame: int | None = None
+    # Appended for compatibility with positional v1 callers.
+    art_generation: str = "legacy_96"
+    frame_durations: list[float] = field(default_factory=list)
 
     @property
     def identity(self) -> SemanticIdentity:
@@ -129,16 +143,30 @@ class TimelineClip:
 class ReviewSequence:
     name: str
     clips: list[TimelineClip] = field(default_factory=list)
-    schema: str = SEQUENCE_SCHEMA
+    schema: str = SEQUENCE_SCHEMA_V1
 
     def to_json(self) -> dict:
-        return {"schema": self.schema, "name": self.name, "clips": [asdict(clip) for clip in self.clips]}
+        generation_aware = any(clip.art_generation != "legacy_96" for clip in self.clips)
+        schema = SEQUENCE_SCHEMA if generation_aware or self.schema == SEQUENCE_SCHEMA else SEQUENCE_SCHEMA_V1
+        clips = [asdict(clip) for clip in self.clips]
+        if schema == SEQUENCE_SCHEMA_V1:
+            for clip in clips:
+                clip.pop("art_generation", None)
+                clip.pop("frame_durations", None)
+        return {"schema": schema, "name": self.name, "clips": clips}
 
     @classmethod
     def from_json(cls, value: dict) -> "ReviewSequence":
-        if value.get("schema") != SEQUENCE_SCHEMA:
+        schema = value.get("schema")
+        if schema not in {SEQUENCE_SCHEMA, SEQUENCE_SCHEMA_V1}:
             raise ValueError(f"unsupported review sequence schema: {value.get('schema')}")
-        return cls(str(value["name"]), [TimelineClip(**item) for item in value.get("clips", ())])
+        clips = []
+        for item in value.get("clips", ()):
+            row = dict(item)
+            if schema == SEQUENCE_SCHEMA_V1:
+                row["art_generation"] = "legacy_96"
+            clips.append(TimelineClip(**row))
+        return cls(str(value["name"]), clips, str(schema))
 
 
 def clip_frame_bounds(clip: TimelineClip, frame_count: int) -> tuple[int, int]:

@@ -1,11 +1,11 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-3 reviewed complete / WB25-4 ready-auto  
+**Status:** active implementation / WB25-3 reviewed complete / WB25-4 implementation complete, paired review pending
 **Priority:** P1  
 **Reviewed main:** `119fa1a19427dce838977422d5186e3624e3457e`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
-**Last updated:** 2026-10-09
+**Last updated:** 2026-10-10
 
 ## Goal
 
@@ -222,7 +222,7 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-2R | review-operator-2-5d-workbench-ingress | **complete / final correction re-review passed** | provenance/rollback/import review |
 | WB25-3 | operator-2-5d-workbench-polish-automation | **complete / reviewed after R0-01 correction** | profile-guided Aseprite polish + temporal diagnostics |
 | WB25-3R | review-operator-2-5d-workbench-polish-automation | **complete / correction re-review passed** | mutation/QA boundary review |
-| WB25-4 | operator-2-5d-workbench-review-automation | **ready / auto** | canonical QA, family/sequence review, sandbox runtime proof |
+| WB25-4 | operator-2-5d-workbench-review-automation | **implementation complete / paired review pending** | canonical QA, family/sequence review, sandbox runtime proof |
 | WB25-4R | review-operator-2-5d-workbench-review-automation | **ready / auto behind WB25-4** | anti-drift/sequence/sandbox review |
 | WB25-5 | operator-2-5d-workbench-production-queue | draft / refresh-required | queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | dependency-gated | queue math/brief review |
@@ -256,7 +256,7 @@ Current live-main refresh (2026-10-09):
 - `operator_asset_schema.py` now owns additive generation-aware canonical source paths while preserving legacy behavior.
 - WB25-2 and its two bounded correction cycles are complete/reviewed. The final cycle-2 review passed with zero blocking defects/evidence gaps on exact saved-document proof, preserving target binding, independent direction progress, collision semantics, legacy-96 behavior and unconditional 2.5D publication refusal.
 - WB25-3 and its bounded R0-01 correction are complete/reviewed. The accepted apply boundary re-inspects the physical Workbench, re-renders current frames, reloads masks/landmarks and re-derives erase/registration proposals before mutation; forged/stale proposal data cannot reach Art Agent operations. QA remains `custodian.operator_art_qa.v2` and publication/runtime bytes remain untouched.
-- WB25-4 is ready/auto. Live refresh found three required adaptations: review receipts must bind exact current Workbench/render/profile/reference/timing evidence rather than cached proposal authority; `ReviewSequence` v1 is generation-blind and needs an additive v2 art-generation field/source resolver; and the existing Motion Godot harness resolves production runtime art, so the 2.5D sandbox must instead consume a hash-bound local Workbench-frame bundle while preserving `OperatorBodyPresenter` visibility authority. WB25-4 may set current review `runtime_verified` truth but does not own `PUBLISHED`.
+- WB25-4 implementation now binds each leaf receipt to exact Workbench/render/profile/reference/physical-timing and QA evidence. Family state derives from `project_targets()` plus current receipts; sequence v1 remains legacy-readable while v2 carries art generation and exact Workbench frames; the real-Operator sandbox refuses tampered request/frame bytes and checks production runtime resources remain unchanged. `RUNTIME_VERIFIED` is review evidence only; WB25-4 does not own `PUBLISHED`. Its fresh-context paired review is pending.
 - Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.
 ## Exit condition
 

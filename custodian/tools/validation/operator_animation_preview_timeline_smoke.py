@@ -51,6 +51,19 @@ with tempfile.TemporaryDirectory(prefix="operator_preview_") as raw:
     else: raise AssertionError("invalid timeline clip accepted")
     path=save_sequence(sequence,root/"sequences"); loaded=load_sequence(path)
     assert len(loaded.clips)==3 and len(flatten_sequence(loaded,provider))==5
+    legacy_written=json.loads(path.read_text())
+    assert legacy_written["schema"] == "custodian.operator_animation_review_sequence.v1"
+    assert "art_generation" not in legacy_written["clips"][0] and "frame_durations" not in legacy_written["clips"][0]
+    generation_aware=ReviewSequence("wb25", [TimelineClip("u", "posture", "idle_relaxed_01", "ne", 8.0,
+        art_generation="operator_2_5d_128")])
+    generated_path=save_sequence(generation_aware, root/"sequences")
+    generated_json=json.loads(generated_path.read_text())
+    assert generated_json["schema"] == "custodian.operator_animation_review_sequence.v2"
+    assert load_sequence(generated_path).clips[0].art_generation == "operator_2_5d_128"
+    legacy_v1=root/"sequences"/"legacy_v1.json"
+    legacy_v1.write_text(json.dumps({"schema":"custodian.operator_animation_review_sequence.v1","name":"legacy_v1",
+        "clips":[{"profile":"u","group":"locomotion","action":"run","direction":"e","review_fps":8.0,"loops":1,"start_frame":None,"end_frame":None}]}))
+    assert load_sequence(legacy_v1).clips[0].art_generation == "legacy_96"
     loaded.clips[0],loaded.clips[1]=loaded.clips[1],loaded.clips[0]; loaded.clips.pop(); assert len(loaded.clips)==2
     assert before==(sha(runtime),sha(source),sha(catalog))
 

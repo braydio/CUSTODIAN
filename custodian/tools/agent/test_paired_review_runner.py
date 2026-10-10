@@ -15,6 +15,8 @@ from unittest.mock import patch
 
 import paired_review_runner as runner
 
+ROOT = Path(__file__).resolve().parents[3]
+
 
 def review_packet(*, visual="none", refresh="no"):
     return f"""# Review packet
@@ -103,6 +105,40 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         packet = runner.parse_packet("review.md", gated)
         with patch.object(runner, "packet_at_main", return_value=("review.md", gated, packet)):
             with self.assertRaisesRegex(runner.RunnerError, "human planning"):
+                runner.validate_eligible_review(Path("."), "review-sample")
+
+    def test_successor_handoff_refresh_does_not_gate_current_review(self):
+        content = review_packet() + """
+## Handoff
+- Next workstream: `next-slice`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+"""
+        packet = runner.parse_packet("review.md", content)
+        target = target_packet()
+        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
+             patch.object(runner, "git", return_value=target):
+            runner.validate_eligible_review(Path("."), "review-sample")
+
+    def test_actual_wb25_review_packet_is_eligible_despite_successor_refresh(self):
+        review_path = "custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md"
+        review_content = (ROOT / review_path).read_text(encoding="utf-8")
+        review_packet_data = runner.parse_packet(review_path, review_content)
+        target_content = (ROOT / review_packet_data.review_target_packet).read_text(encoding="utf-8")
+        with patch.object(runner, "packet_at_main", return_value=(review_path, review_content, review_packet_data)), \
+             patch.object(runner, "git", return_value=target_content):
+            runner.validate_eligible_review(ROOT, "review-operator-2-5d-workbench-review-automation")
+
+    def test_human_owner_in_current_review_authority_is_refused(self):
+        content = review_packet() + """
+## Current Review Authority
+- Refresh owner: `chatgpt-user`
+## Handoff
+- Refresh owner: `none`
+"""
+        packet = runner.parse_packet("review.md", content)
+        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)):
+            with self.assertRaisesRegex(runner.RunnerError, "human-owned refresh"):
                 runner.validate_eligible_review(Path("."), "review-sample")
 
     def test_review_target_must_be_complete_and_present(self):

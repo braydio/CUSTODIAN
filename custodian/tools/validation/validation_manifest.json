@@ -5898,6 +5898,27 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_review",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_review_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "2_5d", "review", "sandbox"],
+      "owners": [
+        "custodian/tools/operator/operator_2_5d_review.py",
+        "custodian/tools/operator/animation_preview.py",
+        "custodian/tools/operator/ui/service.py",
+        "custodian/tools/operator/ui/app.py",
+        "custodian/tools/operator/ui/screens/main.py",
+        "custodian/tools/operator/ui/widgets/polish_panel.py",
+        "custodian/tools/operator/ui/widgets/review_family_table.py",
+        "custodian/scenes/debug/operator_2_5d_review_sandbox.tscn",
+        "custodian/tools/debug/operator_2_5d_review_sandbox.gd",
+        "custodian/tools/validation/operator_2_5d_review_smoke.py"
+      ],
+      "timeout_sec": 180,
+      "needs_import": true
+    },
+    {
       "id": "enemy_savage_pounce",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_savage_smoke.gd",

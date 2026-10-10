@@ -2577,6 +2577,25 @@ precedence, and no-write behavior are covered by focused regression fixtures.
 The correction's paired cycle-1 review is the immediate successor; later WB25
 work remains gated on that review and its recorded refresh.
 
+## Operator 2.5D Workbench Review Automation (WB25-4 implementation)
+
+The Workbench now has a hash-bound per-direction 2.5D review receipt and a
+target-derived family evidence matrix. Current QA comes from the WB25-3 Art
+Agent owner; advisory YELLOW findings stay non-blocking, RED blocks, and major
+findings require explicit human disposition. Receipts revalidate exact saved
+Workbench/render/profile/reference/timing and QA inputs before contributing
+verification. The debug Godot sandbox displays exact 128px Workbench frames on
+the real Operator body renderer under `OperatorBodyPresenter`, with production
+runtime hashes fenced before and after. It never writes canonical source or
+runtime publication state.
+
+Review sequences remain v1-readable as legacy clips; v2 adds `art_generation`
+and exact 2.5D Workbench frame resolution. Physical saved-document durations
+drive 2.5D sequence clips and presets; a missing component or timing contract
+keeps a preset unavailable. WB25-4 implementation is complete and awaits its
+fresh-context paired review. WB25-5 remains planning-refresh gated after that
+review; WB25-6 remains the separate publication/runtime-promotion authority.
+
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
 The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
