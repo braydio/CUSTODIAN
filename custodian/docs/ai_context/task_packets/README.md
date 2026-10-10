@@ -81,7 +81,6 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` — Independently verify that NPA-6 moved Enemy health and death/corpse lifecycle state behind one focused owner while preserving public combat, loot, reificatio...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 against the landed implementation and adversarial live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
