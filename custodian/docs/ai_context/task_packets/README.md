@@ -76,7 +76,6 @@ normal closeout.
 - `REVIEW_CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Independently verify that R2 removes the R1 Game Over fallback only for a genuinely accepted death return, layers recovery on the reviewed H6 authority witho...
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Independently verify that NPA-7 integrates commanded drones/droids with the existing relationship/targetability resolver, preserves autonomous-vs-explicit ta...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
