@@ -1,6 +1,6 @@
 # Campaign-World Geography and Topology · Design Discussion Draft
 
-**Status:** **continuous campaign geography PLAYER-EXPERIENCE LOCKED** (2026-10-09); exact topology/generation/scale, route seams, vehicle feel and implementation architecture remain **PROPOSAL**, not runtime authority or an executable task packet  
+**Status:** **continuous campaign geography player experience and F15 D1–D7 boundaries approved** (2026-10-10); numeric scale, final visuals, exact streaming mechanics, route seams and vehicle feel remain open. This design record is not itself runtime authority.
 **Date:** 2026-10-08  
 **Workstream:** `campaign-world-geography-design-audit`  
 **Audit focus:** [F15 Geographic Scale and Traversable Campaign-World Topology](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md)  
@@ -170,4 +170,4 @@ No hard map dimensions, travel-minutes budget, number of towns, art products or 
 - Keep CampaignRegion = transient portion-of-Domain runtime and Domain = enduring place per [Lattice Doctrine](../03_world/LATTICE_DOCTRINE.md). A campaign resolving must never magically delete its represented world.
 - Existing code with `Sector` should not be renamed or assigned world-geography authority just to match new design vocabulary.
 
-**Governance:** This draft records the user's design intent and source-backed candidate architecture only. It does not override existing locked spec, queue or asset requirements. Promotion requires F15 evidence, user design lock, exact owner/API boundaries, and existing packet-queue reconciliation.
+**Governance:** This design record preserves the user's approved D1–D7 boundaries and source-backed candidate architecture. It does not override existing runtime owners, packet queue, or asset requirements. B1 packet authoring is authorized; execution promotion requires separate authorization and normal packet-queue validation.
