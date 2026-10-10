@@ -170,16 +170,16 @@ This slice is pipeline/presentation infrastructure, not art creation.
 
 ### Current drive-source availability
 
-Approved N / NE / E / SE / S 12-frame `drive_01` source masters plus 156px cadence/orientation references are present at:
+Approved N / NE / E / SE / S 12-frame high-resolution source masters plus canonical 156×156 pixel-art normalizer outputs are present at:
 
 `/home/braydenchaffee/CUSTODIAN-DROPBOX-UPLOADS/Custodian-Buggy`
 
-The older three-direction Dropbox ZIP remains historical partial evidence only. This complete five-direction set is **source availability only** until Asset V2 ingest/binding is green; all authored drive directions are now supplied, but none is yet runtime-complete.
+The older three-direction Dropbox ZIP remains historical partial evidence only. The 156px outputs are the approved runtime-scale art and should be ingested byte-for-byte; do not re-normalize them to the earlier 256px planning canvas. This complete five-direction set is **source availability only** until Asset V2 ingest/binding is green; all authored drive directions are now supplied, but none is yet runtime-complete.
 
 It registers `custodian_field_scout_buggy_mk1`, removes hover-specific importer assumptions, and allows canonical Scout body states to replace compatibility art without changing gameplay.
 
 Body family:
-- 256×256 cells;
+- 156×156 cells;
 - 8dir with authored n/ne/e/se/s and mirrored nw/w/sw;
 - stable bottom-center registration;
 - true alpha.
