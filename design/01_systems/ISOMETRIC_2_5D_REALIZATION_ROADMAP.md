@@ -2,10 +2,10 @@
 # CUSTODIAN ISOMETRIC 2.5D REALIZATION ROADMAP
 
 **Program ID:** `isometric-2-5d-realization`
-**Status:** active / foundation implemented / Operator authority accepted / WB25-4 ready before Forum
+**Status:** active / foundation implemented / Operator authority accepted / WB25-4 R0-01 correction ready
 **Priority:** P2
-**Reviewed main:** `119fa1a19427dce838977422d5186e3624e3457e`
-**Last Updated:** 2026-10-09
+**Reviewed main:** `5f4762ab06a4b3d45608ef9d43b5e8bce92d1e44`
+**Last Updated:** 2026-10-10
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
 
@@ -127,6 +127,6 @@ If yes, the next work is production rollout and asset standards, not a return to
 
 ## Current position
 
-K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator viability audit is complete: 69 live semantic families are legacy fallback, one authored relaxed-idle family is canonical, and 68 baseline canonical families remain (544 baseline direction-animation strips before extra modular/weapon/FX layers). The canonical visual contract and its paired review are complete/passed with accepted profile SHA `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761` and normalized-reference SHA `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`. WB25-1 is complete/reviewed; WB25-2 guided ingress is complete/reviewed through its cycle-2 saved-document correction; WB25-3 polish automation is complete/reviewed after its proposal-integrity R0-01 correction; WB25-4 review automation has consumed those landed authorities and is now `ready/auto` with its paired review armed behind it. After foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice still waits for its remaining declared dependencies/refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
+K3D-1P is complete and landed as the final Kenney walkaround precursor. The 2.5D-1 presentation foundation is implemented and awaits its fresh-context review. The Operator viability audit is complete: 69 live semantic families are legacy fallback, one authored relaxed-idle family is canonical, and 68 baseline canonical families remain (544 baseline direction-animation strips before extra modular/weapon/FX layers). The canonical visual contract and its paired review are complete/passed with accepted profile SHA `05e92192af68b2f4e7516f59a0938e536926f3525a31b42dd7695f61d77ca761` and normalized-reference SHA `e529df0e0ceaeb941f67ed18ce93799755053b7c516a9f02a5b6929248e25fb9`. WB25-1 is complete/reviewed; WB25-2 guided ingress is complete/reviewed through its cycle-2 saved-document correction; WB25-3 polish automation is complete/reviewed after its proposal-integrity R0-01 correction; WB25-4 implementation landed, but its paired review found blocking R0-01 in the required-human gate. The bounded cycle-1 correction and fresh re-review are now `ready/auto`; WB25-5 remains blocked until that lineage passes. After foundation review passes, the Sundered Keep overlook may proceed independently; the Forum vertical slice still waits for its remaining declared dependencies/refresh. Retain the user's A/B walkaround notes as tuning input for the Forum slice and use the Sundered-specific authoring chat/roadmap for the overlook program.
 
 H1 remains separate. At 2.5D-2 claim time, use landed H1 layout constants if available; otherwise use locked Forum coordinates read-only.
