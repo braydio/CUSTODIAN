@@ -37,26 +37,25 @@ Normalized example: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1/
 
 ## Current authored-source availability
 
-The Field Scout drive cycle has approved authored source for three of the five authored directions. These assets are **preserved externally in Dropbox but are not yet counted as ingested, bound, or runtime-complete**.
+The Field Scout drive cycle now has approved authored source for **all five authored directions** on the user's workstation at `/home/braydenchaffee/CUSTODIAN-DROPBOX-UPLOADS/Custodian-Buggy`. These assets are not yet counted as ingested, bound, or runtime-complete until `vehicle-field-scout-buggy-asset-v2` stages and ingests them through Asset Pipeline V2.
 
-Dropbox handoff:
+Earlier partial Dropbox handoff (E / NE / SE only, retained as historical evidence):
 `/CUSTODIAN/implementation_inputs/custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip`
 
-Handoff contents include:
-- untouched high-detail source masters for `drive_01__e_source.png`, `drive_01__ne_source.png`, and `drive_01__se_source.png`;
-- clean 12-frame 156×156-per-frame reference strips;
-- already-normalized 3072×256, 12×256×256 inbox candidates for E / NE / SE;
-- `MANIFEST.json`, `README.md`, and `CODEX_IMPLEMENTATION.md`.
+Current complete five-direction handoff directory:
+`/home/braydenchaffee/CUSTODIAN-DROPBOX-UPLOADS/Custodian-Buggy`
+
+The complete directory contains high-resolution 12-frame source masters and 1872×156 reference strips for N / NE / E / SE / S. High-resolution masters are the normalization authority; 156px strips are cadence/orientation references.
 
 Directional source status:
 
 | Direction | Authored source | Normalized candidate | Runtime / Asset V2 status |
 |---|---|---|---|
-| `e` | available in Dropbox handoff | available | not yet ingested |
-| `ne` | available in Dropbox handoff | available | not yet ingested |
-| `se` | available in Dropbox handoff | available | not yet ingested |
-| `n` | missing | missing | missing |
-| `s` | missing | missing | missing |
+| `e` | available in complete local handoff | derivable from high-res master | not yet ingested |
+| `ne` | available in complete local handoff | derivable from high-res master | not yet ingested |
+| `se` | available in complete local handoff | derivable from high-res master | not yet ingested |
+| `n` | available in complete local handoff | derivable from high-res master | not yet ingested |
+| `s` | available in complete local handoff | derivable from high-res master | not yet ingested |
 | `nw` | mirrored from NE after canonical ingest | n/a | pending |
 | `w` | mirrored from E after canonical ingest | n/a | pending |
 | `sw` | mirrored from SE after canonical ingest | n/a | pending |
