@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-npa-6-enemy-death-corpse-loot-extraction`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `npa-6-enemy-death-corpse-loot-extraction`
@@ -28,6 +28,28 @@
 - Acceptance: Findings-first fresh-context review with zero blocking defects/material evidence gaps for pass. Record stable cycle-scoped finding IDs and evidence. Correction-worthy findings use normal bounded correction/re-review lineage. Do not patch reviewed implementation.
 - Non-goals: No loot economy or balance changes; no corpse art/VFX/audio redesign; no general actor health abstraction; no persistence schema, spawn/wave, Operator death/campaign, or cross-family changes.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Independent Review
+
+- Review schema: `custodian.independent_review.v1`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed implementation SHA: `4fda2ffa1`
+- Verdict: `pass`
+- Findings: `none`
+- Evidence: Fresh focused checks passed for lifecycle/corpse behavior, authored vault/loot behavior, lifecycle config parity, world-simulation reification, NPA-5 reaction posture, parry-critical, and standard Enemy melee after initializing the fresh Godot import cache. The blocked review's changed-file and whitespace checks were infrastructure failures caused by writes to shared `.git` LFS/FETCH_HEAD storage. The recovery artifact `VALIDATION_EVIDENCE.md` identifies the implementation workstream's post-sync changed-file report at target main `c5d4c19fe99be2a2164a878609413391f250d213`: 42/42 selected passed, no failures/timeouts/skips/infrastructure errors, complete coverage, and `review_pairing_contract` passed; it was supplied to that target's finish. `FILTER_SAFE_DIFF_CHECK.txt` records successful `git -c filter.lfs.process= -c filter.lfs.clean=cat diff --check 4fda2ffa1^ 4fda2ffa1` with no whitespace errors. These match the reviewed implementation commit `4fda2ffa1` and close the material evidence gap without repeating prohibited shared-metadata commands. Source review found one `EnemyLifecycle` mutable owner for health/death/payload/corpse clocks; Enemy preserves the damage/death/reification façade and effectful host callback ordering; `EnemyCorpseLoot` and `EnemyLootCarrier` retain their reward and captured-resource boundaries; typed scene configs and architecture ownership match the packet. No blocking or material non-blocking defect remains. `RV0-01` is resolved.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: `The initial review's changed-file and diff commands attempted writes under shared .git LFS/FETCH_HEAD paths; these checks were initially treated as an unresolved evidence gap.`
+- Root cause / contributing factors: `The review worktree shares Git metadata outside the writable roots; the target implementation finish retained equivalent post-sync validation and LFS-safe diff evidence in its recovery artifact.`
+- Prevention / pipeline improvement: `Accept matching implementation-finish validation evidence for the exact landed target when review-worktree Git metadata is read-only; do not retry changed-file discovery in that environment.`
+- Tooling / docs drift discovered: `Review validation instructions do not identify the shared-Git-metadata write constraint in restricted review worktrees.`
+- Follow-up: fixed-in-scope
+- What worked: `Focused checks plus durable implementation-finish evidence satisfied the review contract without retrying a known read-only shared-metadata operation.`
 
 ## Handoff
 
