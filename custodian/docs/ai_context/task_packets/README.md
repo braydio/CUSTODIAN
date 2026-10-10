@@ -42,6 +42,7 @@ normal closeout.
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION_REVIEW_CORRECTIONS_1.md` — Close WB25-4 R0-01 by making required-human review fail closed unless an explicit Workbench approval is backend-authored and evidence-bound.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -79,6 +80,7 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
+- `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION_REVIEW_CORRECTIONS_1.md` — Independently prove WB25-4 R0-01 is fixed at both human-disposition production and current-receipt verification boundaries.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
 - `REVIEW_OPERATOR_WORKBENCH_FX_LAYER_ADOPTION_REVIEW_CORRECTIONS_1.md` — Independently verify that correction `R0-01` closes the REPLACE source-conflict window without weakening successful publication, CREATE collision refusal, or...
@@ -195,7 +197,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
 - WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved Source Session target binding, direction progress, collision, legacy-96, valid artist edits, and the no-publication boundary.
 - WB25-3 polish automation is complete/reviewed after R0-01 correction. Exact current pixels/masks/landmarks are re-derived before erase/registration mutation, so forged or stale proposal geometry cannot bypass Art Agent scope/journal/undo.
-- WB25-4 review automation has consumed that corrected boundary and is now `ready/auto`; it owns hash-bound review receipts, target-derived family review, generation-aware sequence review and a publication-free real-Operator sandbox.
+- WB25-4 review automation is implemented, but its fresh paired review found blocking R0-01: free-form human disposition can waive a `NEEDS_HUMAN_REVIEW` gate. Cycle-1 correction is now `ready/auto`; it makes human state QA-derived and accepts only backend-authored, evidence-bound explicit Workbench approval for human-required review.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -206,7 +208,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 is `ready/auto`, with its paired review `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 implementation is complete, but its paired review recorded blocking R0-01; `operator-2-5d-workbench-review-automation-review-corrections-1` and its fresh re-review are now `ready/auto`. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 and later remain refresh-gated until this correction lineage closes cleanly.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 

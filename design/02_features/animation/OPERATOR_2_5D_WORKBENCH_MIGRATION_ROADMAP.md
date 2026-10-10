@@ -1,9 +1,9 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-3 reviewed complete / WB25-4 implementation complete, paired review pending
+**Status:** active implementation / WB25-4 review found R0-01 / correction cycle 1 ready-auto
 **Priority:** P1  
-**Reviewed main:** `119fa1a19427dce838977422d5186e3624e3457e`  
+**Reviewed main:** `bede798e744b40f334424998148baac87052b362`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-10
 
@@ -222,8 +222,8 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-2R | review-operator-2-5d-workbench-ingress | **complete / final correction re-review passed** | provenance/rollback/import review |
 | WB25-3 | operator-2-5d-workbench-polish-automation | **complete / reviewed after R0-01 correction** | profile-guided Aseprite polish + temporal diagnostics |
 | WB25-3R | review-operator-2-5d-workbench-polish-automation | **complete / correction re-review passed** | mutation/QA boundary review |
-| WB25-4 | operator-2-5d-workbench-review-automation | **implementation complete / paired review pending** | canonical QA, family/sequence review, sandbox runtime proof |
-| WB25-4R | review-operator-2-5d-workbench-review-automation | **ready / auto behind WB25-4** | anti-drift/sequence/sandbox review |
+| WB25-4 | operator-2-5d-workbench-review-automation | **implementation complete / review finding R0-01** | canonical QA, family/sequence review, sandbox runtime proof |
+| WB25-4R | review-operator-2-5d-workbench-review-automation | **complete / blocking R0-01** | anti-drift/sequence/sandbox review |
 | WB25-5 | operator-2-5d-workbench-production-queue | draft / refresh-required | queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | dependency-gated | queue math/brief review |
 | WB25-6 | operator-2-5d-runtime-promotion | draft / refresh-required | cohort-based 2.5D production cutover + rollback |
@@ -238,8 +238,8 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 - WB25-1: complete and independently reviewed after bounded correction R0-01. Direction workflow now reads the exact direction workspace and saved creation readiness uses the backend classifier. Final planning truth remains 69 live legacy semantic families, 1 authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips.
 - WB25-2: complete and independently reviewed through cycle-2 correction. The final accepted ingress validates exact target-bound Source Sessions, generation-scoped handoff/workspaces, independent direction progress, legacy compatibility, no-runtime-promotion, and the physical saved Aseprite frame/canvas/timing contract before recovery/completion while preserving legitimate artist edits.
 - WB25-3: complete and independently reviewed after bounded correction R0-01. Exact detached-island and registration proposals are re-derived from the current physical Workbench, render, masks and landmarks before mutation; forged/stale coordinates or deltas fail before Art Agent apply, while valid scoped apply/undo remains intact.
-- WB25-4: **final pre-claim refresh complete / ready-auto**. It consumes the corrected WB25-3 QA/apply boundary, adds hash-bound per-leaf review receipts, target-derived 8-direction family review, backward-compatible generation-aware Sequence v2, and an isolated real-Operator Godot sandbox. It may establish truthful `RUNTIME_VERIFIED` review evidence but remains publication-free.
-- WB25-5: refresh after WB25-4 + review.
+- WB25-4: implementation landed, but its fresh paired review found blocking R0-01: a caller-supplied `NOT_REQUIRED` human disposition can waive `NEEDS_HUMAN_REVIEW` and still reach effective `runtime_verified=true`. Planning now authorizes cycle-1 correction `operator-2-5d-workbench-review-automation-review-corrections-1`: derive human state from live QA, accept only backend-authored explicit Workbench approval for human-required evidence, bind approval to the exact current evidence hash, and revalidate that contract at `current_receipt()`. The correction and its paired re-review are `ready/auto`; no new Dropbox decision subsystem is introduced.
+- WB25-5: refresh only after the WB25-4 correction + fresh re-review pass.
 - WB25-6: refresh after WB25-5 + review and real queue/verification counts exist.
 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
