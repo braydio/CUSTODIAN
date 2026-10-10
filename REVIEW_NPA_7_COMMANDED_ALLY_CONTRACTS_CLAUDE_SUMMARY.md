@@ -38,7 +38,7 @@ The first focused attempt preceded import and could not load generated classes/r
 
 ## Lifecycle
 
-The review packet is marked complete and archived, and the packet index check passed. `workstream.py status` could not fetch because shared `FETCH_HEAD` is read-only. The required finish attempt then stopped even earlier while trying to create its run trace at `/home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-workflow/traces/review-npa-7-commanded-ally-contracts/20261010T200921Z-399a1aa70bd9.jsonl`, which is outside the writable review-run root. No lifecycle trace was created and no teardown occurred. Preserve this claimed worktree at `/home/braydenchaffee/Projects/.custodian-worktrees/review-npa-7-commanded-ally-contracts-20261010T200921Z-399a1aa70bd9`; do not reclaim it. Finish remains pending a writable shared Git workflow-trace/FETCH_HEAD path.
+The review packet is complete and archived. The initial isolated Codex process could not write lifecycle traces or `FETCH_HEAD` in shared Git metadata, so its worktree was preserved. Recovery from the coordination context recorded the required Independent Review receipt on the archived implementation packet, reran the focused projectile check after synchronization (1/1 passed), and completed `workstream.py finish`. Review landing commit: `f7c1ea6b3b18ecce2754ef2cb9fa17985708dd7c`. The project-root checkout is synchronized and clean.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
@@ -51,4 +51,4 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: NPA-8 requires reviewed NPA-7 command boundaries and the current stealth-perception and bonded Vaultwing runtime contracts, rather than assuming a generic NPC system.
 - Next action: Return to the authoring chat for NPA-8 planning; do not auto-author or claim NPA-8.
-- Blockers or open questions: NPA-8 intentionally remains unauthored. Review workstream finish remains pending writable shared Git metadata.
+- Blockers or open questions: NPA-8 intentionally remains unauthored and requires the planning refresh.

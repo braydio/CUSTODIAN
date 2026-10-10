@@ -1423,8 +1423,8 @@ Documentation updates this session:
   target-order changes cancel queued burst shots. Explicit passive Shrumb orders
   remain supported; autonomous targeting excludes passive actors. The focused
   actor-to-projectile contract smoke is registered. NPA-7 implementation and
-  validation are complete; its fresh-context paired review is next, and NPA-8
-  remains gated on that review.
+  validation are complete; its fresh-context paired review passed with no
+  findings. NPA-8 remains gated on the required planning refresh.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
