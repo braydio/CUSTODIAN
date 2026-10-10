@@ -4,6 +4,8 @@
 
 Resumed the existing `hub-muster-continuity-port-deployment` workstream in its preserved worktree. `workstream.py resume` synchronized it with current `origin/main@b0cbd649c36e86c9002d6d0951a3c26bb61c872c` via merge `de1e7d40a`. Original H5 implementation commit `c040ee120` remains in the branch. Upstream Vaultwing import repair `ed433103` is included; it was not repeated. The user project-root checkout and Awakening sprite were left untouched.
 
+After the full validation below, `origin/main` advanced three commits. A second `workstream.py resume` merged through `origin/main@d4efc02345efc360210e456458f8534d64faced2` at `1aa81d4f0`. LFS pointer/import preflight, pairing (61 pairs), AI-context, packet-index, and whitespace checks pass on this latest tree. The recorded full runtime report predates that second sync; rerun it on the latest tree after the two owning-lane runtime blockers are resolved and before any landing attempt.
+
 The original 42-test JSON report remains unavailable, so its historical failing test IDs cannot be established. This recovery saved fresh reports under `/tmp` and updated the active H5 packet with current evidence. No runtime code or assets were edited during this recovery.
 
 ## Fresh validation
