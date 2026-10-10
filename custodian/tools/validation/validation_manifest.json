@@ -32,7 +32,8 @@
     "custodian/addons/indie_game_components/**",
     "custodian/addons/limboai/**",
     "custodian/addons/sprite_pipeline/**",
-    "custodian/addons/__MACOSX/**"
+    "custodian/addons/__MACOSX/**",
+    "custodian/addons/dev-console/**"
   ],
   "tests": [
     {
@@ -6056,6 +6057,50 @@
         "custodian/tools/validation/savage_runtime_smoke.gd"
       ],
       "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
+      "id": "dev_console_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/dev_console_contract_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "dev_console",
+        "debug_ui",
+        "command_registry",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/ui/debug/dev_console_service.gd",
+        "custodian/game/actors/operator/input/operator_input_router.gd",
+        "custodian/game/systems/debug/dev_mode.gd",
+        "custodian/tools/validation/dev_console_contract_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "dev_console_ui",
+      "type": "godot_script",
+      "script": "res://tools/validation/dev_console_ui_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "dev_console",
+        "debug_ui",
+        "layout",
+        "focus",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/ui/debug/dev_console_service.gd",
+        "custodian/game/ui/debug/dev_console_panel.gd",
+        "custodian/game/ui/debug/dev_console_panel.tscn",
+        "custodian/game/ui/debug/dev_console_style.gd",
+        "custodian/tools/validation/dev_console_ui_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     }
   ]

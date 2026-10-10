@@ -46,6 +46,7 @@ normal closeout.
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
 - `NPA_SHOWCASE_ARENA_FOUNDATION.md` — Deliver an actual registered five-zone authored development level and standalone playtest with real Operator and safe world ingress/return.
 - `NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Prove and improve the existing standard-combat-agent stack as production-grade, deterministic arena fixtures before creating a derivative hostile actor.
+- `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -206,7 +207,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - WB25-3 polish automation is complete/reviewed after R0-01 correction. Exact current pixels/masks/landmarks are re-derived before erase/registration mutation, so forged or stale proposal geometry cannot bypass Art Agent scope/journal/undo.
 - WB25-4 review automation is complete and accepted after cycle-1 correction. R0-01 is fixed: human-review state is QA-derived, explicit Workbench approval is backend-authored and evidence-bound, and the fresh correction re-review passed with no new findings.
 
-Operator Workbench implementation series, all pre-authored with refresh gates:
+Operator Workbench implementation series (WB25-1 through WB25-4 accepted; WB25-5 ready/auto; WB25-6 refresh-gated):
 
 1. OPERATOR_2_5D_WORKBENCH_COCKPIT_FOUNDATION.md + paired review — generation namespace, plan v2, target-first tree/matrix.
 2. OPERATOR_2_5D_WORKBENCH_INGRESS.md + paired review — guided NEW/IMPORT and resumable direction packages.
@@ -215,7 +216,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 is complete/accepted after its cycle-1 human-approval correction and clean fresh re-review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 is now the next planning-refresh gate.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 is complete/accepted after its cycle-1 human-approval correction and clean fresh re-review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 planning refresh has completed and its implementation + paired review packets are published ready/auto on `main@5e7c8e58` with the current WB25-5 authoring chat recorded in both packet headers. WB25-5 implementation is not yet landed; WB25-6 remains a separate planning-refresh gate.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 

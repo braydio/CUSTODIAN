@@ -22,6 +22,7 @@ var input_prompt_service: Node
 var world_history: Node
 var dev_mode: Node
 var game_state: Node
+var dev_console: Node
 
 
 func validate_required() -> PackedStringArray:

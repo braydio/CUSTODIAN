@@ -39,10 +39,13 @@
   2. Verify there is still exactly one Archive Resolve presentation state/timing owner. If multiple render primitives exist, prove they consume one shared slot/state/timing authority and cannot diverge.
   3. Verify unresolved concealment uses explicit effective z/coverage rather than fragile sibling ordering. Representative terrain, wall/front presentation, cliff/fascia, props/items and enemies must be covered where unresolved; Operator/HUD readability must remain intact through the safety pocket rather than a broad actor-layer exemption.
   4. Inspect cliff integration carefully. Archive Resolve may consume only the existing cliff owner's read-only painted-cell/frontier mapping. Any duplicate cliff classification, semantic mutation, or image-alpha inference is a finding.
-  5. Verify timing/defaults match the implementation packet or the bounded human-approved tuning recorded during implementation. Ordinary first-resolve must remain slower than reacquisition and AR4's radius/fringe must remain unchanged unless the human decision explicitly approved otherwise.
-  6. Verify the shader still uses pause-safe `presentation_time`, one shared material path, bounded batched instances, no per-cell node/tween/material growth, and reduced-effects/disabled parity.
+  5. Verify the approved 2026-10-10 distance/cascade refinement, not the superseded AR4 11-tile numeric baseline: target radius 18 (bounded 16–20 after visual review), fringe 2, canonical wall LOS, camera relevance, safe mask rebuild profiling, time-based starts and reacquisition shorter than first resolve. Distinguish visual distance cap from LOS; any through-wall start is a finding.
+  6. Verify the shader still uses pause-safe `presentation_time`, one shared material path, bounded batched instances, no per-cell node/tween/material growth, and reduced-effects/disabled parity. Confirm revised per-instance/wave parameter encoding retains cell hash, reacquisition identity and semantic echo, and that intermediate progress frames show coherent boundaries without 32 px tile seams or repeated sketched lattices.
   7. Re-run/falsify the updated layering regression. A mutation that restores the old actor-above-veil invariant or disables cliff companion coverage must make the relevant focused test fail.
-  8. Verify the required external visual handoff used the exact Authoring chat URL and that the human explicitly answered the five packet questions. The reviewer may verify that decision exists; it may not replace or reinterpret the human aesthetic judgment.
+  8. Verify the required external visual handoff used the exact Authoring chat URL and the human explicitly answered the six revised packet questions with a minimal motion clip (distance, cascades, unresolved field, VFX, complete world masking, clean settlement). The reviewer may verify that decision exists; it may not replace or reinterpret the human aesthetic judgment.
+  9. Independently trace a deterministic LOS-seeded wave through live `ProcGenRevealPresentation` code: 1–3 bounded origins, connected READY/committed local traversal, nearest-wave late neighbor participation, deterministic 30–90 ms near-neighbor staggering, safe isolated fallback, shared token budget, and no new lifecycle/spawn/collision authority. A fixture must fail under a mutation restoring the old rotating independent READY-queue scan.
+  10. Verify that the unresolved NOT REQUESTED state has restrained continuous world-space abstract motion without inventing terrain/landmarks; REQUESTED but uncommitted tiles remain opaque, and committed/settled states are not misrepresented. Inspect camera edges, map bounds, pause, reduced/disabled paths and content leaks.
+  11. Re-run visible-corner, occluded corridor, disconnected pocket, turn, late commit, unload/reacquire, high-speed motion and safety-halo tests. Ensure the enlarged 18-tile cached LOS window does not introduce a main-thread hotspot.
 - Preserve:
   - AR1-AR4 lifecycle/frontier contracts;
   - procgen streaming/collision/navigation/topology;
@@ -51,25 +54,25 @@
   - S1 determinism fingerprint authority.
 - Non-goals: No new tuning based on reviewer taste; no AP2/AP3 implementation; no performance rewrite; no actor AI changes; no screen-texture architecture proposal unless the landed implementation already crossed that boundary and requires a finding.
 - Acceptance:
-  - fresh-context code inspection finds one Archive Resolve owner/state machine;
+  - fresh-context code inspection finds one Archive Resolve owner/state machine and one shared cascade scheduler that only emits presentation starts;
   - effective-z/coverage evidence proves no representative unresolved-world presentation leak for cliffs, props/items or enemies;
   - Operator safety/readability and HUD isolation remain correct;
   - cliff coverage is read-only/adapted from the existing cliff owner;
-  - focused AR1-AR4, cliff, streaming/runtime-health and S1 validations pass;
-  - mutation proof catches a reintroduced world-layering or cliff-coverage leak;
-  - human visual disposition exists and explicitly passes the required questions or documents a bounded correction need;
+  - focused AR1-AR4, cliff, cascade wavefront, enlarged LOS mask, streaming/runtime-health and S1 validations pass;
+  - mutation proofs catch reintroduced world-layering/cliff-coverage leaks and reintroduction of isolated READY-queue starts;
+  - human visual disposition exists and explicitly passes the revised six questions (including perceived front distance, connected currents, abstract distant field) or documents a bounded correction need;
   - no material evidence gap remains.
 - Validation:
   - `procgen_archive_resolve_shader`
-  - `procgen_archive_resolve_frontier_restraint`
-  - `procgen_reveal_presentation`
+  - `procgen_archive_resolve_frontier_restraint` (18-tile radius, occlusion, camera bounds, bounded mask rebuild)
+  - `procgen_reveal_presentation` (connected cascade, late neighbor, true singleton, pause, deterministic token budget)
   - `procgen_archive_resolve_semantic_echo`
   - `contract_world_archive_resolve_ingress`
   - `procgen_void_cliff_face`
   - `procgen_void_cliff_wall_integration`
   - affected streaming/lifecycle/cache/unload/runtime-health owners
   - S1 quick
-  - implementation mutation proof
+  - cascade/isolated-queue mutation proof, plus implementation composition mutation proof
   - `python3 custodian/tools/validation/run_validation.py --changed --json`
   - `git diff --check`
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
