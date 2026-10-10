@@ -30,7 +30,10 @@ const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/e
 const ENEMY_PERCEPTION_SCRIPT := preload("res://game/actors/enemies/components/enemy_perception_component.gd")
 const ENEMY_OBJECTIVE_SENSOR_SCRIPT := preload("res://game/actors/enemies/components/enemy_objective_sensor.gd")
 const ENEMY_LOOT_CARRIER_SCRIPT := preload("res://game/actors/enemies/components/enemy_loot_carrier.gd")
-const ENEMY_CORPSE_LOOT_SCRIPT := preload("res://game/actors/enemies/components/enemy_corpse_loot.gd")
+const ENEMY_LIFECYCLE_SCRIPT := preload("res://game/actors/enemies/components/enemy_lifecycle.gd")
+const ENEMY_LIFECYCLE_DEFAULT: EnemyLifecycleConfig = preload(
+	"res://game/actors/enemies/components/configs/enemy_lifecycle_default.tres"
+)
 const ENEMY_DEATH_SOUND: AudioStream = preload("res://content/audio/sfx/combat/enemy_death_01.wav")
 const ENEMY_BEHAVIOR_STATE_MACHINE_SCRIPT := preload("res://game/actors/enemies/enemy_behavior_state_machine.gd")
 const CRITICAL_BREACH_MARKER_VFX_SCENE := preload("res://game/vfx/combat/critical_breach_marker_vfx.tscn")
@@ -112,8 +115,20 @@ enum GruntWeaponPosture {
 
 @export var enemy_name: String = "SCOUT"
 @export var speed: float = 80.0
-@export var health: float = 50.0
-@export var max_health: float = 50.0
+@export var lifecycle_config: EnemyLifecycleConfig = ENEMY_LIFECYCLE_DEFAULT
+var _lifecycle: EnemyLifecycle = ENEMY_LIFECYCLE_SCRIPT.new()
+var health: float:
+	get: return _lifecycle.health
+	set(value): _lifecycle.set_health(value)
+var max_health: float:
+	get: return _lifecycle.max_health
+	set(value): _lifecycle.set_max_health(value)
+var dead: bool:
+	get: return _lifecycle.dead
+	set(value): _lifecycle.dead = value
+var life_state: int:
+	get: return _lifecycle.life_state
+	set(value): _lifecycle.set_life_state(int(value))
 @export var damage: float = 10.0
 @export var base_tint: Color = Color(0.8, 0.2, 0.2, 1.0)
 @export var structure_attack_range: float = 58.0
@@ -147,16 +162,6 @@ var melee_impact_audio_profile: String = "body"
 @export var assault_commit_detection_multiplier: float = 0.72
 @export var passive: bool = false
 @export var counts_as_wave_enemy: bool = true
-@export var material_drop_min: int = 0
-@export var material_drop_max: int = 0
-@export var material_drop_fallback_enabled: bool = true
-@export var loot_table_id: String = ""
-@export var loot_table: Array[Dictionary] = []
-@export var empty_corpse_min_lifetime_sec: float = 8.0
-@export var corpse_offscreen_margin_px: float = 96.0
-@export var empty_corpse_hard_lifetime_sec: float = 45.0
-@export var corpse_loot_pickup_radius_px: float = 22.0
-@export var corpse_loot_marker_offset := Vector2(0.0, -8.0)
 @export var passive_wander_radius: float = 72.0
 @export var passive_wander_interval_min: float = 0.8
 @export var passive_wander_interval_max: float = 2.6
@@ -225,12 +230,6 @@ var _simulation_tier_accum := 0.0
 @export var behavior_profile_id: StringName = &"raider_grunt"
 
 var target: Node2D = null
-var dead := false
-var life_state: LifeState = LifeState.ALIVE
-var _pending_corpse_payload: Dictionary = {}
-var _corpse_loot: EnemyCorpseLoot = null
-var _empty_corpse_age_sec := 0.0
-var _corpse_cleanup_timer_sec := 0.0
 var damage_timer := 0.0
 var damage_interval := 1.0  # Damage every 1 second
 var target_refresh_timer := 0.0
@@ -375,6 +374,8 @@ func _set(property: StringName, value: Variant) -> bool:
 	return true
 
 func _ready():
+	lifecycle_config = lifecycle_config.duplicate(true) as EnemyLifecycleConfig
+	_lifecycle.setup(self, lifecycle_config)
 	var obs := get_node_or_null("/root/DevObservatory")
 	if obs != null and obs.has_method("adjust_gauge"):
 		obs.adjust_gauge(&"living_enemies", 1)
@@ -501,7 +502,8 @@ func _physics_process(delta):
 	var tier_span_name := StringName("enemy_%s_total" % simulation_tier)
 	if dead:
 		var corpse_started: int = obs.perf_span_begin() if obs != null else 0
-		_update_empty_corpse_cleanup(delta)
+		if advance_corpse_lifecycle(delta):
+			queue_free()
 		if obs != null:
 			obs.perf_span_end(&"enemy_corpse", corpse_started)
 			obs.perf_span_end(tier_span_name, total_started)
@@ -1561,14 +1563,12 @@ func take_damage(
 	hit_strength: int = CombatConstants.HitStrength.LIGHT,
 	reaction_damage: float = -1.0
 ) -> Dictionary:
-	var health_before := maxf(0.0, health)
-	if dead or health_before <= 0.0:
+	var damage_state := _lifecycle.apply_damage(amount)
+	var applied_damage := float(damage_state.get("applied_damage", 0.0))
+	if not bool(damage_state.get("accepted", false)):
 		return _damage_result(0.0, false)
-
-	var applied_damage := minf(maxf(0.0, amount), health_before)
 	if applied_damage <= 0.0:
 		return _damage_result(0.0, true)
-	health = maxf(0.0, health_before - applied_damage)
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call(
 			"on_damaged",
@@ -1604,25 +1604,7 @@ func _damage_result(
 	applied_damage: float,
 	target_was_alive: bool
 ) -> Dictionary:
-	var safe_applied := maxf(0.0, applied_damage)
-	var health_after := maxf(0.0, health)
-	return {
-		"applied_damage": safe_applied,
-		"damage_applied": safe_applied,
-		"target_was_alive": target_was_alive,
-		"target_health_before": health_after + safe_applied,
-		"target_health_after": health_after,
-		"lethal": dead or health <= 0.0,
-		"blocked": false,
-		"eligible_hostile": (
-			team == "enemy"
-			and not passive
-		),
-		"passive": passive,
-		"structure": false,
-		"deflected": false,
-		"invulnerable": false,
-	}
+	return _lifecycle.build_damage_result(applied_damage, target_was_alive, team, passive)
 
 func update_visuals():
 	var obs := get_node_or_null("/root/DevObservatory")
@@ -1654,17 +1636,15 @@ func update_visuals():
 		obs.perf_span_end(&"enemy_presentation", presentation_started)
 
 func die():
-	if life_state != LifeState.ALIVE:
+	if not _lifecycle.begin_death():
 		return
-	life_state = LifeState.DYING
-	dead = true
 	var obs := get_node_or_null("/root/DevObservatory")
 	if obs != null and obs.has_method("adjust_gauge") and _observatory_population_registered and not _observatory_corpse_registered:
 		obs.adjust_gauge(&"living_enemies", -1)
 		obs.adjust_gauge(&"corpse_enemies", 1)
 		_observatory_corpse_registered = true
 	velocity = Vector2.ZERO
-	_pending_corpse_payload = _build_corpse_payload_once()
+	_lifecycle.build_pending_payload_once()
 	_play_enemy_death_sfx()
 	_standard_enemy_melee.cancel(&"cancelled_by_death", &"death")
 	_clear_grunt_critical_open_vfx(false)
@@ -1714,17 +1694,17 @@ func die():
 	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT) and _has_animation(String(GRUNT_DEATH_ANIMATION)):
 		call_deferred("_play_grunt_death")
 		return
-	call_deferred("_finalize_corpse_state")
+	call_deferred("complete_death_presentation")
 
 
 func _play_humanoid_cutout_death() -> void:
 	if humanoid_cutout_rig == null or not humanoid_cutout_rig.has_state(&"death"):
-		_finalize_corpse_state()
+		complete_death_presentation()
 		return
 	humanoid_cutout_rig.play_state(&"death", true)
 	await humanoid_cutout_rig.state_finished
 	if is_instance_valid(self):
-		_finalize_corpse_state()
+		complete_death_presentation()
 
 
 func is_passive_enemy() -> bool:
@@ -2221,60 +2201,6 @@ func _is_passive_destination_valid(destination: Vector2) -> bool:
 	return true
 
 
-func _roll_legacy_material_payload() -> int:
-	var drop_min: int = max(0, material_drop_min)
-	var drop_max: int = max(drop_min, material_drop_max)
-	if drop_max <= 0:
-		return 0
-	return randi_range(drop_min, drop_max)
-
-
-func _roll_loot_table_payload() -> Dictionary:
-	var rolled := {}
-	if loot_table.is_empty():
-		return rolled
-	for entry in loot_table:
-		if not (entry is Dictionary):
-			continue
-		var resource_id := str(entry.get("resource_id", entry.get("id", ""))).strip_edges()
-		if resource_id.is_empty():
-			continue
-		var chance := clampf(float(entry.get("chance", 1.0)), 0.0, 1.0)
-		if chance < 1.0 and randf() > chance:
-			continue
-		var min_amount: int = max(0, int(entry.get("min", entry.get("amount", 0))))
-		var max_amount: int = max(min_amount, int(entry.get("max", min_amount)))
-		if max_amount <= 0:
-			continue
-		var amount := randi_range(min_amount, max_amount)
-		if amount <= 0:
-			continue
-		var key := StringName(resource_id)
-		rolled[key] = int(rolled.get(key, 0)) + amount
-	if not rolled.is_empty():
-		print("ENEMY LOOT ROLLED: ", enemy_name, " table=", loot_table_id, " drops=", rolled)
-	return rolled
-
-
-func _build_corpse_payload_once() -> Dictionary:
-	var resource_payload := _roll_loot_table_payload()
-	var vault_payload := {}
-	var carrier := get_node_or_null("EnemyLootCarrier")
-	if carrier != null and carrier.has_method("take_payload"):
-		vault_payload = carrier.call("take_payload") as Dictionary
-	var legacy_materials := 0
-	# Preserve the previous fallback rule: a configured typed table suppresses
-	# generic PARTS even when this particular roll produces no entries.
-	if loot_table.is_empty() and material_drop_fallback_enabled:
-		legacy_materials = _roll_legacy_material_payload()
-	return {
-		"resource_ledger": resource_payload,
-		"vault_recovery": vault_payload,
-		"legacy_materials": legacy_materials,
-		"items": [],
-	}
-
-
 func _disable_live_enemy_runtime() -> void:
 	target = null
 	clear_path()
@@ -2303,68 +2229,28 @@ func _disable_live_enemy_runtime() -> void:
 			component.set_physics_process(false)
 
 
-func _finalize_corpse_state() -> void:
-	if life_state != LifeState.DYING:
-		return
-	if _structured_payload_has_loot(_pending_corpse_payload):
-		life_state = LifeState.LOOTABLE_CORPSE
-		_corpse_loot = ENEMY_CORPSE_LOOT_SCRIPT.new() as EnemyCorpseLoot
-		_corpse_loot.name = "CorpseLoot"
-		_corpse_loot.pickup_radius_px = corpse_loot_pickup_radius_px
-		_corpse_loot.marker_offset = corpse_loot_marker_offset
-		add_child(_corpse_loot)
-		_corpse_loot.loot_collected.connect(_on_corpse_loot_collected)
-		_corpse_loot.activate(_pending_corpse_payload, _get_corpse_visual_owner())
-	else:
-		_enter_empty_corpse_state()
-	_pending_corpse_payload.clear()
+func complete_death_presentation() -> void:
+	_lifecycle.complete_death_presentation()
 
 
-func _on_corpse_loot_collected(_payload: Dictionary) -> void:
-	_enter_empty_corpse_state()
+func get_lifecycle_debug_state() -> Dictionary:
+	return _lifecycle.get_debug_state()
 
 
-func _enter_empty_corpse_state() -> void:
-	life_state = LifeState.EMPTY_CORPSE
-	_empty_corpse_age_sec = 0.0
-	_corpse_cleanup_timer_sec = 0.0
+func restore_lifecycle_state(
+	current_health: float,
+	maximum_health_value: float,
+	is_dead: bool,
+	state: LifeState
+) -> void:
+	_lifecycle.restore_state(current_health, maximum_health_value, is_dead, int(state))
 
 
-func _update_empty_corpse_cleanup(delta: float) -> void:
-	if life_state != LifeState.EMPTY_CORPSE:
-		return
-	_empty_corpse_age_sec += delta
-	_corpse_cleanup_timer_sec -= delta
-	if _empty_corpse_age_sec >= empty_corpse_hard_lifetime_sec:
-		queue_free()
-		return
-	if _empty_corpse_age_sec < empty_corpse_min_lifetime_sec or _corpse_cleanup_timer_sec > 0.0:
-		return
-	_corpse_cleanup_timer_sec = 0.5
-	if _is_outside_active_camera(corpse_offscreen_margin_px):
-		queue_free()
+func advance_corpse_lifecycle(delta: float) -> bool:
+	return _lifecycle.advance_dead(delta)
 
 
-func _is_outside_active_camera(margin: float) -> bool:
-	var viewport := get_viewport()
-	if viewport == null:
-		return false
-	var camera := viewport.get_camera_2d()
-	if camera == null:
-		return false
-	var half_size := viewport.get_visible_rect().size * 0.5 / camera.zoom
-	var camera_rect := Rect2(camera.get_screen_center_position() - half_size, half_size * 2.0)
-	return not camera_rect.grow(maxf(0.0, margin)).has_point(global_position)
-
-
-func _structured_payload_has_loot(payload: Dictionary) -> bool:
-	return not (payload.get("resource_ledger", {}) as Dictionary).is_empty() \
-		or not (payload.get("vault_recovery", {}) as Dictionary).is_empty() \
-		or int(payload.get("legacy_materials", 0)) > 0 \
-		or not (payload.get("items", []) as Array).is_empty()
-
-
-func _get_corpse_visual_owner() -> CanvasItem:
+func get_corpse_visual_owner() -> CanvasItem:
 	if _uses_humanoid_cutout_backend() and humanoid_cutout_rig != null:
 		return humanoid_cutout_rig
 	if animated_sprite != null and animated_sprite.visible:
@@ -2812,9 +2698,9 @@ func apply_parry_critical_execution_damage(attacker: Node2D, damage_amount: floa
 
 
 func apply_paired_execution_damage(damage_amount: float, _hit_data: Dictionary = {}) -> Dictionary:
-	var health_before := maxf(0.0, health)
-	var applied_damage := minf(maxf(0.0, damage_amount), health_before)
-	health = maxf(0.0, health_before - applied_damage)
+	var damage_state := _lifecycle.apply_damage(damage_amount, false)
+	var health_before := float(damage_state.get("health_before", 0.0))
+	var applied_damage := float(damage_state.get("applied_damage", 0.0))
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, applied_damage)
 	_on_assault_damage_taken(applied_damage)
@@ -3864,24 +3750,24 @@ func _get_procedural_variant_direction_suffix(direction: Vector2) -> String:
 
 func _play_procedural_variant_death() -> void:
 	if animated_sprite == null or not _has_animation(String(WOLF_DEATH_ANIMATION)):
-		_finalize_corpse_state()
+		complete_death_presentation()
 		return
 	animated_sprite.play(String(WOLF_DEATH_ANIMATION))
 	await animated_sprite.animation_finished
 	_hold_animated_sprite_final_frame(StringName(WOLF_DEATH_ANIMATION))
-	_finalize_corpse_state()
+	complete_death_presentation()
 
 
 func _play_grunt_death() -> void:
 	if animated_sprite == null or not _has_animation(String(GRUNT_DEATH_ANIMATION)):
-		_finalize_corpse_state()
+		complete_death_presentation()
 		return
 	animated_sprite.stop()
 	animated_sprite.flip_h = _last_move_direction.x < -0.05
 	animated_sprite.play(String(GRUNT_DEATH_ANIMATION))
 	await animated_sprite.animation_finished
 	_hold_animated_sprite_final_frame(GRUNT_DEATH_ANIMATION)
-	_finalize_corpse_state()
+	complete_death_presentation()
 
 
 func _play_enemy_death_sfx() -> void:
@@ -3911,7 +3797,7 @@ func _get_custom_ambient_scale_for_animation(animation_name: StringName) -> Vect
 
 func _play_custom_ambient_knockout() -> void:
 	if animated_sprite == null or not _has_animation(String(CUSTOM_AMBIENT_KO_ANIMATION)):
-		_finalize_corpse_state()
+		complete_death_presentation()
 		return
 	animated_sprite.flip_h = _custom_ambient_knockout_flip_h
 	animated_sprite.scale = _get_custom_ambient_scale_for_animation(CUSTOM_AMBIENT_KO_ANIMATION)
@@ -3919,7 +3805,7 @@ func _play_custom_ambient_knockout() -> void:
 	animated_sprite.play(String(CUSTOM_AMBIENT_KO_ANIMATION))
 	await animated_sprite.animation_finished
 	_hold_animated_sprite_final_frame(CUSTOM_AMBIENT_KO_ANIMATION)
-	_finalize_corpse_state()
+	complete_death_presentation()
 
 
 func set_threat_highlight(enabled: bool) -> void:

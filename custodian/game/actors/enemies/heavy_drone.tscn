@@ -1,16 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://heavy_drone_001"]
+[gd_scene load_steps=3 format=3 uid="uid://heavy_drone_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Resource" path="res://game/actors/enemies/components/configs/enemy_lifecycle_heavy_drone.tres" id="2_lifecycle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_heavy"]
 size = Vector2(34, 34)
 
 [node name="HeavyDrone" type="CharacterBody2D"]
 script = ExtResource("1_enemy")
+lifecycle_config = ExtResource("2_lifecycle")
 enemy_name = "BRUTE"
 speed = 60.0
-health = 145.0
-max_health = 145.0
 damage = 22.0
 base_tint = Color(0.28, 0.42, 0.95, 1)
 melee_impact_audio_profile = &"robot_metal"

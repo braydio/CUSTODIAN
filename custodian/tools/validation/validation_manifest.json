@@ -3593,10 +3593,48 @@
         "ui"
       ],
       "owners": [
+		"custodian/game/actors/enemies/components/enemy_lifecycle.gd",
+		"custodian/game/actors/enemies/components/enemy_lifecycle_config.gd",
+		"custodian/game/actors/enemies/components/configs/enemy_lifecycle_grunt.tres",
+		"custodian/game/actors/enemies/enemy.gd",
+		"custodian/game/actors/enemies/enemy_grunt.tscn",
         "custodian/game/actors/enemies/components/enemy_corpse_loot.gd",
         "custodian/tools/validation/lootable_corpse_beacon_smoke.gd"
       ],
       "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
+      "id": "enemy_lifecycle_config",
+      "type": "godot_script",
+      "script": "res://tools/validation/enemy_lifecycle_config_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "enemy",
+        "lifecycle",
+        "configuration"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_default.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_dev_cutout.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_enemy.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_fast_drone.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_grunt.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_heavy_drone.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_marine.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_pursuit_frame.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_savage.tres",
+        "custodian/game/actors/enemies/dev/enemy_humanoid_cutout_test.tscn",
+        "custodian/game/actors/enemies/enemy.tscn",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/game/actors/enemies/fast_drone.tscn",
+        "custodian/game/actors/enemies/heavy_drone.tscn",
+        "custodian/game/actors/enemies/pursuit_frame.tscn",
+        "custodian/tools/validation/enemy_lifecycle_config_smoke.gd"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {

@@ -23,11 +23,16 @@ func _run() -> void:
 	var root := Node2D.new()
 	root.name = "LootableCorpseBeaconSmokeRoot"
 	get_root().add_child(root)
+	current_scene = root
 	root.add_child(LOOT_TOAST_QUEUE_SCENE.instantiate())
+	var navigation_stub := Node.new()
+	navigation_stub.add_to_group("navigation")
+	root.add_child(navigation_stub)
 	await process_frame
 
 	_validate_marker_contract(root)
 	await _validate_corpse_delivery(root)
+	await _validate_lifecycle_contract(root)
 
 	if _failed:
 		push_error("lootable_corpse_beacon_smoke failed")
@@ -125,25 +130,21 @@ func _validate_corpse_delivery(root: Node) -> void:
 
 	var grunt := GRUNT_SCENE.instantiate()
 	root.add_child(grunt)
-	grunt.set("material_drop_fallback_enabled", false)
 	var carrier := grunt.get_node("EnemyLootCarrier")
 	carrier.call("set_payload", {&"power_components": 1})
-	var payload := grunt.call("_build_corpse_payload_once") as Dictionary
+	grunt.die()
+	var payload := (grunt.get_lifecycle_debug_state().get("pending_payload", {}) as Dictionary)
 	var rolled_ruin_scrap := int((payload["resource_ledger"] as Dictionary).get(&"ruin_scrap", 0))
 	_assert_true(rolled_ruin_scrap >= 1, "death roll must determine guaranteed typed loot once")
 	_assert_true(int((payload["vault_recovery"] as Dictionary).get(&"power_components", 0)) == 1, "carried loot must transfer into vault channel")
 	_assert_true(not bool(carrier.call("is_carrying_loot")), "take_payload must clear the carrier")
 	_assert_true(int(ledger.call("get_amount", "ruin_scrap")) == 0, "death determination must not award typed loot")
 
-	grunt.set("life_state", 1)
-	grunt.set("dead", true)
-	grunt.set("_pending_corpse_payload", payload)
-	grunt.call("_disable_live_enemy_runtime")
-	grunt.call("_finalize_corpse_state")
+	grunt.complete_death_presentation()
 	var corpse_loot := grunt.get_node_or_null("CorpseLoot")
 	_assert_true(corpse_loot != null and bool(corpse_loot.call("has_loot")), "lootable corpse must survive finalization")
 	_assert_true(int(grunt.get("life_state")) == 2, "corpse must enter LOOTABLE_CORPSE")
-	grunt.call("_update_empty_corpse_cleanup", 120.0)
+	_assert_true(not grunt.advance_corpse_lifecycle(120.0), "lootable corpse must ignore empty cleanup")
 	_assert_true(not grunt.is_queued_for_deletion(), "lootable corpse must ignore empty cleanup")
 
 	await create_timer(0.65).timeout
@@ -182,12 +183,16 @@ func _validate_corpse_delivery(root: Node) -> void:
 	_assert_true(toast_queue != null, "loot toast queue must be available")
 	if toast_queue != null:
 		var toast_entries := toast_queue.get("_entries") as Array
-		_assert_true(toast_entries.size() == 2, "enemy corpse collection must show typed and recovered-resource toasts")
+		_assert_true(toast_entries.size() >= 2, "enemy corpse collection must show typed and recovered-resource toasts")
 		var has_loot_table_toast := false
+		var has_vault_recovery_toast := false
 		for entry in toast_entries:
 			if entry.get("item_id") == &"ruin_scrap":
 				has_loot_table_toast = true
+			if entry.get("item_id") == &"vault_resources":
+				has_vault_recovery_toast = true
 		_assert_true(has_loot_table_toast, "enemy loot table resource must produce a pickup toast")
+		_assert_true(has_vault_recovery_toast, "carried loot must produce a recovery toast")
 	_assert_true(int(game_state.get("materials")) == materials_before, "zero legacy materials must not change GameState")
 	_assert_true(int(grunt.get("life_state")) == 3, "collected corpse must enter EMPTY_CORPSE")
 	_assert_true(not bool(corpse_loot.call("has_loot")), "collected corpse payload must be empty")
@@ -197,6 +202,90 @@ func _validate_corpse_delivery(root: Node) -> void:
 		_assert_true(not is_instance_valid(marker), "marker must free after collection collapse")
 	collector.queue_free()
 	grunt.queue_free()
+
+
+func _validate_lifecycle_contract(root: Node) -> void:
+	var enemy := GRUNT_SCENE.instantiate()
+	enemy.set("health", 3.0)
+	enemy.set("max_health", 10.0)
+	root.add_child(enemy)
+	var zero_result: Dictionary = enemy.take_damage(0.0)
+	_assert_true(bool(zero_result.get("target_was_alive")), "zero damage must be accepted for a living enemy")
+	_assert_true(float(zero_result.get("applied_damage", -1.0)) == 0.0, "zero damage must not change health")
+	_assert_true(float(enemy.get("health")) == 3.0, "pre-ready health overrides must survive lifecycle setup")
+	var hit_result: Dictionary = enemy.take_damage(2.0)
+	_assert_true(float(hit_result.get("target_health_before", -1.0)) == 3.0, "damage result must report the pre-hit health")
+	_assert_true(float(hit_result.get("target_health_after", -1.0)) == 1.0, "damage result must report the post-hit health")
+	_assert_true(float(enemy.get("health")) == 1.0, "lifecycle must own health arithmetic")
+	var lethal_result: Dictionary = enemy.take_damage(10.0)
+	_assert_true(bool(lethal_result.get("lethal")), "lethal damage must report a lethal result")
+	_assert_true(bool(enemy.get("dead")), "lethal damage must enter dead state")
+	var death_state: Dictionary = enemy.get_lifecycle_debug_state()
+	_assert_true(int(death_state.get("life_state", -1)) == 1, "lethal damage must enter DYING exactly once")
+	var pending_payload: Dictionary = death_state.get("pending_payload", {})
+	enemy.die()
+	_assert_true(
+		enemy.get_lifecycle_debug_state().get("pending_payload", {}) == pending_payload,
+		"repeated death must not reroll or replace the pending payload"
+	)
+	enemy.complete_death_presentation()
+	_assert_true(int(enemy.get("life_state")) == 2, "configured loot must transition to LOOTABLE_CORPSE")
+	var corpse := enemy.get_node_or_null("CorpseLoot")
+	var invalid_collector := CharacterBody2D.new()
+	root.add_child(invalid_collector)
+	_assert_true(not bool(corpse.call("collect", invalid_collector)), "non-player collectors must be rejected")
+	_assert_true(not enemy.advance_corpse_lifecycle(120.0), "lootable corpse must not use empty-corpse cleanup")
+	invalid_collector.queue_free()
+	enemy.queue_free()
+
+	var no_amount_enemy := GRUNT_SCENE.instantiate()
+	var no_amount_config := no_amount_enemy.lifecycle_config.duplicate(true) as EnemyLifecycleConfig
+	no_amount_config.loot_table = [{"resource_id": "ruin_scrap", "min": 0, "max": 0}]
+	no_amount_config.material_drop_min = 3
+	no_amount_config.material_drop_max = 3
+	no_amount_enemy.set("lifecycle_config", no_amount_config)
+	root.add_child(no_amount_enemy)
+	no_amount_enemy.die()
+	var no_amount_payload: Dictionary = no_amount_enemy.get_lifecycle_debug_state().get("pending_payload", {})
+	_assert_true((no_amount_payload.get("resource_ledger", {}) as Dictionary).is_empty(), "zero-amount table entry must produce no typed loot")
+	_assert_true(int(no_amount_payload.get("legacy_materials", -1)) == 0, "configured table must suppress legacy fallback even when it yields no loot")
+	no_amount_enemy.queue_free()
+
+	var empty_enemy := GRUNT_SCENE.instantiate()
+	var empty_config := empty_enemy.lifecycle_config.duplicate(true) as EnemyLifecycleConfig
+	empty_config.loot_table.clear()
+	empty_config.material_drop_fallback_enabled = false
+	empty_enemy.set("lifecycle_config", empty_config)
+	empty_enemy.set("health", 1.0)
+	empty_enemy.set("max_health", 1.0)
+	root.add_child(empty_enemy)
+	var camera := Camera2D.new()
+	root.add_child(camera)
+	camera.make_current()
+	await process_frame
+	empty_enemy.die()
+	empty_enemy.complete_death_presentation()
+	_assert_true(int(empty_enemy.get("life_state")) == 3, "empty payload must enter EMPTY_CORPSE")
+	_assert_true(not empty_enemy.advance_corpse_lifecycle(7.99), "empty corpse must survive its minimum lifetime")
+	_assert_true(not empty_enemy.advance_corpse_lifecycle(0.02), "on-screen empty corpse must survive the offscreen check")
+	_assert_true(empty_enemy.advance_corpse_lifecycle(37.02), "empty corpse must obey its hard lifetime")
+	empty_enemy.queue_free()
+
+	var offscreen_enemy := GRUNT_SCENE.instantiate()
+	var offscreen_config := offscreen_enemy.lifecycle_config.duplicate(true) as EnemyLifecycleConfig
+	offscreen_config.loot_table.clear()
+	offscreen_config.material_drop_fallback_enabled = false
+	offscreen_enemy.set("lifecycle_config", offscreen_config)
+	offscreen_enemy.global_position = Vector2(100000.0, 100000.0)
+	offscreen_enemy.set("health", 1.0)
+	offscreen_enemy.set("max_health", 1.0)
+	root.add_child(offscreen_enemy)
+	offscreen_enemy.die()
+	offscreen_enemy.complete_death_presentation()
+	_assert_true(not offscreen_enemy.advance_corpse_lifecycle(7.99), "offscreen cleanup must still wait for the minimum lifetime")
+	_assert_true(offscreen_enemy.advance_corpse_lifecycle(0.02), "offscreen empty corpse must clean up after its minimum lifetime")
+	offscreen_enemy.queue_free()
+	camera.queue_free()
 
 
 func _on_vault_recovered(resources: Dictionary) -> void:

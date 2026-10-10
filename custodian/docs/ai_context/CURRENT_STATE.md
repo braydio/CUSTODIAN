@@ -1400,8 +1400,12 @@ Documentation updates this session:
   assigns health/death/corpse transitions and one-time loot payload lifecycle
   to a focused `EnemyLifecycle` owner, while `EnemyCorpseLoot` remains the
   reward-collection boundary and `EnemyLootCarrier` remains the stolen-resource
-  carrier. Its implementation and paired-review packets are ready/auto and
-  dependency-gated in the dispatcher until NPA-6 implementation completes.
+  carrier. NPA-6 now implements health/death/damage-result authority,
+  one-time payload assembly, corpse transitions and empty-corpse cleanup in
+  `EnemyLifecycle` + typed `EnemyLifecycleConfig`; Enemy keeps orchestration and
+  compatibility façades. Scene tuning moved to typed configs, and the corpse
+  collector/carrier boundaries remain unchanged. Focused lifecycle and combat
+  validation plus changed-file closeout precede its fresh paired review.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
