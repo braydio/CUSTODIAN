@@ -1,6 +1,6 @@
 # F15-B / F14-C2 · Post-F15-A Geographic Design Decision Record
 
-**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10); F15-B1 data-only identity foundation **implemented and fresh-context review PASSED** on main@03a584ee (2026-10-10), 0 blocking / 0 material gaps.** The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.
+**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10)**; **F15-B1 implemented and independently reviewed PASS** on main@03a584ee, zero blocking/material gaps. The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.
 **Planning workstream:** `f14-c2-f15-production-residency-planning`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 **Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).
@@ -59,7 +59,7 @@ LocalityResidency {
 
 ## C. Atomic packet-refresh plan under approved design lock
 
-**Do not turn one wide F15-B packet into an unreviewable game-world rewrite.** User approval selects B1 as the immediate implementation slice; claim only after its promotion PR merges and remote verification passes. All later rows remain conceptual/dependency-gated. Distinguish conceptual series from dispatchable packets:
+**Do not turn one wide F15-B packet into an unreviewable game-world rewrite.** User approval selected B1 as the immediately authorized slice; B1 subsequently landed and passed fresh independent review. All later rows remain conceptual/dependency-gated. Distinguish conceptual series from dispatchable packets:
 
 | Order | Packet refresh / workstream | One primary owner and first proof | Gate |
 | --- | --- | --- | --- |
@@ -72,7 +72,7 @@ LocalityResidency {
 
 If B1 needs minimal typed fields or a small separate registry file, prefer focused module(s) under `custodian/game/world/` after exact code-owner inspection. Avoid prescriptive private class names and significant edits to `operator.gd`, `enemy.gd`, `route_traversal_manager.gd` or `proc_gen_tilemap.gd` until an existing integration seam is proven. F14-C2a can proceed after B1 if its identity/queue gates hold; it need not wait for landmark polish.
 
-**B1 falsifiable acceptance:** (1) two fixed-seed Domain fixtures, including dotted-but-valid IDs, yield repeatable addresses and reciprocal physical edge semantics; (2) a second CampaignVisit to the same Domain resolves identical sites; (3) collision, duplicate edge, changed generation version, absent neighbor and invalid ingress provenance fail closed; (4) a fixture distinguishing route node identity from `LocationId`; (5) no gameplay nodes / added disk persistence / changed procgen outputs; (6) targeted validator + packet index/paired review proof on current main.
+**B1 falsifiable acceptance:** (1) two fixed-seed Domain fixtures, including dotted-but-valid IDs, yield repeatable addresses and reciprocal **logical topology edge** semantics; (2) a second CampaignVisit to the same Domain resolves identical sites; (3) collision, duplicate edge, changed generation version, absent neighbor and invalid ingress provenance fail closed; (4) a fixture distinguishing route node identity from `LocationId`; (5) no gameplay nodes / added disk persistence / changed procgen outputs; (6) targeted validator + packet index/paired review proof on current main.
 
 ## D. Hall of Great Ideas: mechanism decisions now vs implementation later
 
@@ -96,12 +96,12 @@ The [dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_R
 
 The data-only `CampaignGeographyRegistry` now owns finite Domain, Location and Edge identity. It accepts only schema 1 and the explicitly supported `geo-v1` generation provenance, validates bounded IDs/seeds and known endpoints before registration, and returns deep-copy descriptors. Undirected connections require exactly one reciprocal mapping with the same stable edge ID; directed transit is explicit. Domain/location address keys use UTF-8 byte-length-prefixed components, and locality seeds derive deterministically from Domain seed, canonical IDs and generation version.
 
-`CampaignVisitReference` represents a distinct visit ID referencing the same Domain and explicit entry/active locations plus known accessible edges. It does not modify `CampaignSession`, create persistence, or derive geography from route/level IDs. The focused fixture and manifest entry live at `custodian/tools/validation/campaign_geography_identity_smoke.gd` and `custodian/tools/validation/validation_manifest.json`. No physical scene, actor, save, procgen adapter, route integration, or streaming behavior is implemented. Independent review remains the next required gate.
+`CampaignVisitReference` represents a distinct visit ID referencing the same Domain and explicit entry/active locations plus known accessible edges. It does not modify `CampaignSession`, create persistence, or derive geography from route/level IDs. The focused fixture and manifest entry live at `custodian/tools/validation/campaign_geography_identity_smoke.gd` and `custodian/tools/validation/validation_manifest.json`. No physical scene, actor, save, procgen adapter, route integration, or streaming behavior is implemented. Independent review **PASSED**; the next required gate is the separately proposed [B2/C2 design refresh](F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md).
 
 ## E. Verification, provenance and doc drift
 
 - This decision record itself adds **no game runtime, scenes, sprite sheets, props, assets, Asset V2 manifests or executable code**. The B1 packet pair is tracked separately. New art is unnecessary for B1; initial B2/F15-C use existing terrain or debug overlays. Any future asset request must specify `asset_drop/inbox/<family>/<named_source>`, repository destination, pixel dimensions, frame count, real alpha where needed, source attribution and Asset Pipeline V2 family schema **when the visual grammar is actually approved**.
-- Recheck `origin/main`, current workstream index, root/local AGENTS, active F02 route/level and F14/C1 F04 implementations **before claiming** B1. The above names are possible module surfaces, not nonexistent classes claimed as present.
+- Recheck `origin/main`, dispatcher queue/claim state, root/local AGENTS, active F02 route/level and F14/C1/F04 implementations **before authoring or claiming** any *new* B2/C2 work; B1 is complete. The above names are possible module surfaces, not nonexistent classes claimed as present.
 - Outstanding **owner-specific blocker:** required Ritualant underground ingress can block the ambient real-world spawn fixture. It belongs to its **existing procgen/level** owner and must be repaired or supplied with a valid canonical ingress fixture before claiming live managed-spawn coverage; neither the successful F15-A audit nor this design makes it pass.
 - **Doc drift corrected by accompanying links:** earlier F15-A planning pages still refer to `ready/auto` F15-A or preflight; the authoritative latest event is **F15-A accepted and review archived on `main@83e0008e`**. No older audit evidence should be rewritten retroactively; update their forward-looking status/next-step lines only.
 - **Next human planning step:** consider the [post-B1 B2/C2 design refresh](F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md) and approve or revise its B2 semantics-sidecar, C2a managed-spawn reservation, and C2b physical-handoff prerequisite boundaries. Neither B2 nor C2 is claimable from the completion of B1.
