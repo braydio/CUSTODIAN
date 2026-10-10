@@ -81,7 +81,6 @@ normal closeout.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Independently verify that NPA-7 integrates commanded drones/droids with the existing relationship/targetability resolver, preserves autonomous-vs-explicit ta...
 - `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -316,7 +315,7 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
   - `archived/NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` / archived paired review — NPA-5 complete; the fresh-context review passed at `f5dc6da50` with zero findings.
   - `archived/NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` and archived paired review — NPA-6 implementation and independent review complete; review passed with zero findings and the post-sync changed-file sweep passed 42/42 with complete coverage. Enemy lifecycle ownership is extracted while the corpse collector and loot carrier boundaries remain intact.
-  - `NPA_7_COMMANDED_ALLY_CONTRACTS.md` / `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — published ready/auto implementation/review pair for commanded drone/droid relationship, targetability, shot-time validation and squad-local identity contracts. Implementation is claimable; review remains dependency-gated until implementation lands. Bonded Vaultwing commands remain outside NPA-7.
+  - `archived/NPA_7_COMMANDED_ALLY_CONTRACTS.md` / `archived/REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — NPA-7 implementation and fresh-context paired review complete. Review passed with no findings; focused command, relationship, navigation, droid and projectile checks passed. Bonded Vaultwing command convergence remains gated for NPA-8 planning.
 
 ### Ash-Bell / Ritualant Scene Closeout
 
