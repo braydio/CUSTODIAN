@@ -91,24 +91,22 @@ Each row below requests one independent static image, 1 frame, omni, 0 FPS, no a
 - Source: `custodian/asset_drop/source_work/awakening/awakening_locker_reliquary_perimeter_support/edge_transition_source.png`
 - Inbox: `custodian/asset_drop/inbox/awakening_locker_reliquary_perimeter_support/edge_transition.png`
 
-## 05 — Dust Lung Cistern: Subterranean Rupture
+## 05 — Dust Lung Cistern: SUPERSEDED BY V2
 
-**Family:** `awakening_dust_lung_perimeter_support` · **Kind:** `backdrop` · **Area:** `levels/awakening/05_dust_lung` (Road module ownership separately verified for 10).
+**Do not use the old generic perimeter-support prompts for Zone 05.**
 
-### `structural_support` — 512×512, 1f
-**Prompt:** "Produce one 512×512 pixel **seamless-tileable top-down foundation/rim texture** for Subterranean Rupture in CUSTODIAN's Awakening. Compose seamless rim-side cistern rockwork and reservoir foundation slabs with dry mineral crust; NO new walkable bridges. Materials: cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Every boundary repeats pixel-consistently; no standalone room center, no framing borders, no lighting vignette, no scenery implying a playable doorway. This is just the off-route lower architectural field beneath the existing Dust Lung Cistern production underlay. 1 static frame, native scale, overhead orthographic."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/structural_support_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/structural_support.png`
+Dust Lung is no longer an additive off-route support treatment around the
+existing small room. It has a dedicated full modular spatial/presentation
+reauthor:
 
-### `distant_structures` — 1024×512, 1f
-**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Subterranean Rupture. Depict plunging layered walls of a colossal dry cistern with suspended inaccessible bridge wreckage and distant pipe banks. Architecture: vast ruptured reservoir, deep maintenance shafts, hanging pipe galleries, broken bridges, enormous dry void. Materials: cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest first shocking reveal of institutional scale and collapse, and sit fully behind established gameplay art. No new entrances. One static isolated silhouette plate."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/distant_structures_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/distant_structures.png`
+- [AWAKENING_DUST_LUNG_V2.md](AWAKENING_DUST_LUNG_V2.md)
+- [AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md](AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md)
 
-### `edge_transition` — 256×256, 1f
-**Prompt:** "Produce a single 256×256 **transparent RGBA overhead edge-transition decal** for the off-route margin of Dust Lung Cistern. Include fractured lip masonry, torn pipe flange, falling rubble and haze-dissolved edges around an inaccessible chasm. Follow the same existing top-down CUSTODIAN palette of cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Irregular organically damaged silhouette and clean partially transparent erosion; subtle dark-to-haze visual falloff must not be baked as a solid square. It is a noninteractive support seam, not a corridor, gate or piece of playable ground. One static frame."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/edge_transition_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/edge_transition.png`
+The dedicated manifest owns the new P0 underlays, western lift spine,
+critical-route connector overlays, source-work/inbox naming, dimensions and
+image-generation prompts. The former family
+`awakening_dust_lung_perimeter_support` and its three generic states must not
+be generated.
 
 ## 06 — Undergate Mechanism Hall: Buried Routeworks
 
