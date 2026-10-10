@@ -5,6 +5,9 @@ const LAYOUT := preload("res://game/world/hub/first_set/hub_first_set_layout.gd"
 const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
 	"res://game/world/hub/hub_crown_transfer_ingress.gd"
 )
+const ADJUDICATION_DAIS_SCRIPT := preload(
+	"res://game/world/hub/hub_adjudication_dais.gd"
+)
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
 
@@ -26,6 +29,7 @@ func _ready() -> void:
 	super._ready()
 	add_to_group("world_origin_branch")
 	_build_crown_transfer_ingress()
+	_build_adjudication_dais()
 
 
 func get_authoring_markers() -> Dictionary:
@@ -156,3 +160,24 @@ func _attach_crown_transfer_ingress(
 		return
 	world.add_child(ingress)
 	ingress.global_position = world_position
+
+
+func _build_adjudication_dais() -> void:
+	var marker := get_named_marker(&"AdjudicationDais")
+	var host := get_node_or_null("/root/GameRoot")
+	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
+	if marker == null or authority == null \
+			or get_parent() != get_node_or_null("/root/GameRoot/World"):
+		return
+	var dais := Node2D.new()
+	dais.name = "AdjudicationDaisInteraction"
+	dais.set_script(ADJUDICATION_DAIS_SCRIPT)
+	dais.call("configure", authority, self)
+	call_deferred("_attach_adjudication_dais", dais, marker.global_position)
+
+
+func _attach_adjudication_dais(dais: Node2D, world_position: Vector2) -> void:
+	if not is_instance_valid(dais):
+		return
+	add_child(dais)
+	dais.global_position = world_position

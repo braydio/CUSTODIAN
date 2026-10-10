@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://game/world/hub/hub_runtime_host.gd" id="1_host"]
 [ext_resource type="PackedScene" path="res://game/world/hub/first_set/hub_first_set_map.tscn" id="2_map"]
 [ext_resource type="Script" path="res://game/systems/core/systems/navigation_system.gd" id="3_navigation"]
 [ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="4_level_loader"]
 [ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="5_route_manager"]
+[ext_resource type="Script" path="res://game/world/hub/hub_campaign_selection_authority.gd" id="6_campaign_authority"]
 
 [node name="HubRuntimeStage" type="Node2D"]
 script = ExtResource("1_host")
@@ -21,3 +22,6 @@ script = ExtResource("5_route_manager")
 
 [node name="NavigationSystem" type="Node" parent="."]
 script = ExtResource("3_navigation")
+
+[node name="HubCampaignAuthority" type="Node" parent="."]
+script = ExtResource("6_campaign_authority")

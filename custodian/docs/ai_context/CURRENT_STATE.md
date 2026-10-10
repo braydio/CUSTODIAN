@@ -540,10 +540,12 @@ Awakening→Hub runtime handoff with one context authority, exact `Spawn_SouthRe
 camera/navigation binding before input unlock, and source rollback with the
 South Reach barrier intact; its independent paired review passed. H4 connects the
 H1 Crown Transfer to the registered Twin Solaria route and restores the same Hub
-host at `Spawn_TwinReturn`. Its focused route smoke covers repeat cycles, exact
-spawns, camera/navigation ownership, and staging/activation rollback. H4's paired
-review remains pending. Contract prewarm, Port deployment, and campaign return
-remain deferred to H3, H5, and H6.
+host at `Spawn_TwinReturn`; its paired review passed with no findings. H3 now adds
+the production Adjudication Dais selection owner, stores one typed accepted
+scenario in `HubState`, and starts the existing Contract bootstrap exactly once
+while the Hub remains active. Twin traversal retains that state. H3 implementation
+is complete and awaits its fresh-context paired review. Port deployment and
+campaign return remain deferred to H5 and H6.
 
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 

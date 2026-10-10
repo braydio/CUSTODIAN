@@ -84,7 +84,16 @@ func _run() -> void:
 		_fail("Rollback did not restore exactly one authoritative world")
 		return
 
+	var collision_layer := operator.collision_layer
+	var collision_mask := operator.collision_mask
+	operator.collision_layer = 0
+	operator.collision_mask = 0
+	operator.global_position = completion_volume.global_position + Vector2(0.0, 300.0)
+	await physics_frame
+	await physics_frame
 	manager.set("hub_host_scene_path", "res://scenes/hub_runtime_host.tscn")
+	operator.collision_layer = collision_layer
+	operator.collision_mask = collision_mask
 	operator.global_position = completion_volume.global_position + Vector2(0.0, 100.0)
 	await physics_frame
 	await physics_frame

@@ -4,6 +4,12 @@
 
 > Runtime update (2026-08-08): `HubState.history: CampaignHistory` is the single mutable history owner. Persistent `applied_outcome_ids` rejects duplicate outcomes atomically, and transient world objects never enter Hub state.
 
+> Runtime update (2026-10-10): H3 stores the first accepted `CampaignScenario`
+> as data in `HubState` and starts the existing `WorldContractBootstrap` once
+> from the production Adjudication Dais. The default offer is intentionally one
+> provisional scenario; full offer generation, deployment, Campaign execution,
+> and outcome mutation remain later slices.
+
 **Project:** CUSTODIAN
 **Status:** Required Early
 **Priority:** Critical, but after runtime world/camera stabilization
