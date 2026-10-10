@@ -506,6 +506,164 @@ class WorkbenchService:
         return Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root).family(
             self.browser_records(show_superseded=True), profile=profile, group=group, action=action)
 
+    def animation_queue(self, filter_name: str = "ALL") -> dict[str, Any]:
+        """Return a live queue projection; plan rank and priority remain read-only."""
+        from operator_2_5d_review import Operator2DReview
+
+        filters = {"NEXT", "MISSING", "INTAKE", "EDITING", "REVIEW", "STALE",
+                   "FALLBACK/PROJECTED", "VERIFIED", "PUBLISHED", "ALL"}
+        filter_name = str(filter_name).upper()
+        if filter_name not in filters:
+            raise ValueError(f"unsupported queue filter: {filter_name}")
+        payload = operator_animation_targets.load_plan(self.plan_path)
+        families = operator_animation_targets.target_families(payload)
+        projection_status = {"status": "AVAILABLE", "reason": ""}
+        try:
+            legacy_records = tuple(record for record in self.discover_browser_records()
+                                   if record.selection.art_generation == "legacy_96")
+        except (OSError, ValueError, RuntimeError) as error:
+            legacy_records = ()
+            projection_status = {"status": "UNAVAILABLE", "reason": str(error)}
+        records = operator_animation_targets.project_targets(
+            payload, repo_root=self.repo_root, workspace_root=self.workspace_root,
+            legacy_records=legacy_records,
+        )
+        by_family: dict[tuple[str, str, str], list[AnimationRecord]] = {}
+        for record in records:
+            selection = record.selection
+            by_family.setdefault((selection.profile, selection.group, selection.action), []).append(record)
+        review = Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root)
+        rows = []
+        for family in families:
+            family_records = by_family.get((family.profile, family.group, family.action), [])
+            state = review.family(family_records, profile=family.profile, group=family.group, action=family.action)
+            cells = {cell["direction"]: cell for cell in state["cells"]}
+            ordered_records = {record.selection.direction: record for record in family_records}
+            primary_counts = {key: 0 for key in ("VERIFIED", "CANONICAL SOURCE", "LOCAL CANONICAL", "PARTIAL", "FALLBACK", "PROJECTED", "MISSING")}
+            for direction in family.directions:
+                record = ordered_records.get(direction)
+                cell = cells[direction]
+                if cell["runtime_verified"]:
+                    bucket = "VERIFIED"
+                elif record and record.coverage_status == "CANONICAL_2_5D" and record.workflow_status == "INTAKE":
+                    bucket = "CANONICAL SOURCE"
+                elif record and record.coverage_status == "CANONICAL_2_5D":
+                    bucket = "LOCAL CANONICAL"
+                elif record and record.coverage_status == "PARTIAL":
+                    bucket = "PARTIAL"
+                elif record and record.coverage_status == "LEGACY_FALLBACK":
+                    bucket = "FALLBACK"
+                elif record and record.coverage_status == "PROJECTED":
+                    bucket = "PROJECTED"
+                else:
+                    bucket = "MISSING"
+                primary_counts[bucket] += 1
+            blocked = []
+            choices = []
+            for direction in family.directions:
+                record = ordered_records.get(direction)
+                cell = cells[direction]
+                if cell["runtime_verified"]:
+                    blocked.append({"direction": direction, "reason": "already runtime-verified"})
+                    continue
+                reason = None
+                if cell["stale"]:
+                    reason = "profile/reference authority is stale"
+                elif record is None:
+                    reason = "target projection leaf is unavailable"
+                elif record.workflow_status == "BLOCKED":
+                    reason = "Workbench reports a blocked workspace"
+                if reason:
+                    blocked.append({"direction": direction, "reason": reason})
+                else:
+                    choices.append(direction)
+                    break
+            next_direction = choices[0] if choices else None
+            accepted_source = bool(family.source_sha256 and family.migration_verdict == "canonical_2_5d")
+            workflow_counts: dict[str, int] = {}
+            for record in family_records:
+                workflow_counts[record.workflow_status] = workflow_counts.get(record.workflow_status, 0) + 1
+            qa_counts: dict[str, int] = {}
+            for cell in state["cells"]:
+                qa_counts[cell["qa"]] = qa_counts.get(cell["qa"], 0) + 1
+            row = {
+                "id": f"{family.generation}:{family.profile}/{family.group}/{family.action}",
+                "art_generation": family.generation, "profile": family.profile,
+                "group": family.group, "action": family.action,
+                "rank": family.rank, "priority": family.priority, "state": family.state,
+                "directions": list(family.directions), "required_layers": list(family.required_layers),
+                "target_total": len(family.directions), "coverage": primary_counts["LOCAL CANONICAL"] + primary_counts["CANONICAL SOURCE"] + primary_counts["VERIFIED"],
+                "verified": sum(bool(cell["runtime_verified"]) for cell in state["cells"]),
+                "complete": bool(state["complete"]), "accepted_source": accepted_source,
+                "source_directions": len(family.directions) if accepted_source else 0,
+                "workspace_directions": sum(1 for record in family_records if record.workflow_status != "NONE"),
+                "workflow_counts": workflow_counts, "qa_counts": qa_counts,
+                "stale_directions": sum(bool(cell["stale"]) for cell in state["cells"]),
+                "primary_counts": primary_counts, "next_direction": next_direction,
+                "next_selection": AnimationSelection(family.profile, family.group, family.action, next_direction,
+                    art_generation=family.generation) if next_direction else None,
+                "skipped": blocked, "skipped_before_next": list(blocked), "frame_contract": dict(family.frame_contract),
+                "publication": "NOT_SUPPORTED_BY_WB25_5",
+                "needs_review": any(cell["qa"] in {"GREEN", "YELLOW", "NEEDS_HUMAN_REVIEW", "RED"}
+                                     and not cell["runtime_verified"] for cell in state["cells"]),
+            }
+            rows.append(row)
+        priority = {"P0": 0, "P1": 1}
+        rows.sort(key=lambda row: (priority.get(row["priority"], 99), row["rank"], row["profile"], row["group"], row["action"]))
+        next_target = None
+        skipped = []
+        for row in rows:
+            if row["complete"]:
+                skipped.append({"target": row["id"], "reason": "all required directions are already runtime-verified"})
+                continue
+            if row["next_direction"] is None:
+                skipped.append({"target": row["id"], "reason": "; ".join(f'{item["direction"]}: {item["reason"]}' for item in row["skipped"]) or "no actionable direction"})
+                continue
+            next_target = {"id": row["id"], "rank": row["rank"], "priority": row["priority"],
+                           "direction": row["next_direction"], "selection": row["next_selection"]}
+            if row["skipped_before_next"]:
+                skipped.append({"target": row["id"], "reason": "; ".join(
+                    f"{item['direction']}: {item['reason']}" for item in row["skipped_before_next"])})
+            break
+        if filter_name == "NEXT":
+            visible = [row for row in rows if next_target and row["id"] == next_target["id"]]
+        elif filter_name == "MISSING":
+            visible = [row for row in rows if row["primary_counts"]["MISSING"]]
+        elif filter_name == "INTAKE":
+            visible = [row for row in rows if row["accepted_source"] and not row["complete"]]
+        elif filter_name == "EDITING":
+            visible = [
+                row for row in rows
+                if any(
+                    record.workflow_status == "EDITING"
+                    for record in by_family.get((row["profile"], row["group"], row["action"]), [])
+                )
+            ]
+        elif filter_name == "REVIEW":
+            visible = [row for row in rows if row["needs_review"]]
+        elif filter_name == "STALE":
+            visible = [row for row in rows if row["stale_directions"]]
+        elif filter_name == "FALLBACK/PROJECTED":
+            visible = [row for row in rows if row["primary_counts"]["FALLBACK"] or row["primary_counts"]["PROJECTED"]]
+        elif filter_name == "VERIFIED":
+            visible = [row for row in rows if row["complete"]]
+        elif filter_name == "PUBLISHED":
+            visible = []
+        else:
+            visible = rows
+        totals = {key: sum(row["primary_counts"][key] for row in rows)
+                  for key in next(iter(rows))["primary_counts"]} if rows else {}
+        return {"filter": filter_name, "families": len(families), "direction_slots": sum(len(f.directions) for f in families),
+                "priority_counts": {key: sum(row["priority"] == key for row in rows) for key in ("P0", "P1")},
+                "primary_counts": totals, "rows": visible, "all_rows": rows,
+                "next": next_target, "skipped_before_next": skipped,
+                "legacy_projection": projection_status,
+                "published_supported": False}
+
+    def export_generation_brief(self, selection: AnimationSelection) -> dict[str, Any]:
+        from operator_generation_brief import export_generation_brief
+        return export_generation_brief(self.repo_root, self.workspace_root, selection)
+
     @staticmethod
     def classify_layers(layers: tuple[str, ...] | list[str]) -> tuple[str, str]:
         names = set(layers)

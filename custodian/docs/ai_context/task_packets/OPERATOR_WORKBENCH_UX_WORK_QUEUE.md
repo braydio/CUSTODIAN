@@ -7,7 +7,7 @@
 > review after UX3 has landed. Remove this banner only after the packet is
 > reconciled against current main and explicitly signed off for execution.
 >
-> **SUPERSEDED SCOPE NOTE:** The 2.5D migration queue/coverage authority is now owned by `operator-2-5d-workbench-cockpit-foundation` + `operator-2-5d-workbench-production-queue`. Refresh must retire or substantially retarget this packet; do not implement a competing queue.
+> **SUPERSEDED SCOPE NOTE:** The 2.5D migration queue, target coverage, current verification, and NEXT authority are implemented by `operator-2-5d-workbench-production-queue`. This packet remains historical UX guidance only; it must be refreshed to a non-competing artist-facing scope before any future implementation. Do not create another progress or coverage authority.
 
 - Packet schema: `custodian.task_packet.v2`
 - Series: `operator-workbench-ux-hierarchy-v1`
