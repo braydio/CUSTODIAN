@@ -20,7 +20,6 @@
 - Visual review: none
 - Goal: Allow an eligible paired review to launch when human-refresh fields describe only its future successor, while continuing to block genuine current-review human gates.
 - Completion boundary: Correct current-review gate detection in `paired_review_runner.py` and add focused regression tests. Preserve dispatcher eligibility, target validation, visual gates, and no-claim-before-preflight behavior.
-- Reviewed main: `73eaf5fcf61c962497da02b2f383fadd2865af7f`
 - Current measured state: Runner scans the full review packet for refresh fields, so the archived WB25-4 review is falsely blocked by its successor WB25-5 refresh under `## Handoff`.
 - Evidence: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md`; reproduced preclaim false-gate output.
 - Task-specific authority: Current review eligibility is defined by its own authority; future successor handoff fields apply only after review completion. Dispatcher remains the sole claim authority.
