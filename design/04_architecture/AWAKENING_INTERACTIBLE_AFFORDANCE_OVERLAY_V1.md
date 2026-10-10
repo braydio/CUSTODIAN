@@ -46,9 +46,9 @@ AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_V2_CONTRACTS_V1  ready/auto (independent
      + genuine normalized Asset V2 VERIFIED states
      + two predecessor reviews
              │
-             ├─ CONSOLE_PORT_PRESENTATION_V1       draft/manual -> art-verified promotion
-             ├─ LOCKER_LIFT_PRESENTATION_V1        draft/manual -> art-verified promotion
-             └─ MARKER_WAYFINDING_V1               draft/manual -> selected optional-art promotion
+             ├─ CONSOLE_PORT_PRESENTATION_V1       blocked/manual -> art-verified promotion
+             ├─ LOCKER_LIFT_PRESENTATION_V1        blocked/manual -> art-verified promotion
+             └─ MARKER_WAYFINDING_V1               blocked/manual -> selected optional-art promotion
                  (each has independent paired review and human visual check)
 
 AWAKENING_INTERACTIBLE_DEFERRED_FAMILY_HANDOFF_V1 ready/auto (docs-only future owner crosswalk)
