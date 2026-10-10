@@ -1,11 +1,11 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-2 reviewed complete / WB25-3 ready-auto  
+**Status:** active implementation / WB25-3 reviewed complete / WB25-4 ready-auto  
 **Priority:** P1  
-**Reviewed main:** `c447db62d5c6f434394d6c634e1e191952658cc5`  
+**Reviewed main:** `119fa1a19427dce838977422d5186e3624e3457e`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
-**Last updated:** 2026-10-08
+**Last updated:** 2026-10-09
 
 ## Goal
 
@@ -134,14 +134,13 @@ The standalone Lua helpers created during the first idle family are prototypes, 
 
 ## Objective review taxonomy
 
-All automated findings use the canonical visual-contract categories:
-
-~~~text
-HARD_FAIL
-STRUCTURAL_WARN
-ART_DIRECTION_WARN
-INFO
-~~~
+The live objective QA authority is `custodian.operator_art_qa.v2` from
+`custodian/tools/operator/art_agent/qa.py`. Findings carry severity
+`critical`, `major`, or `advisory` plus their existing finding class.
+The aggregate QA status is `RED`, `NEEDS_HUMAN_REVIEW`, `YELLOW`, or
+`GREEN`. WB25 review/queue surfaces consume that schema directly and must not
+reintroduce historical planning labels such as `HARD_FAIL` or
+`STRUCTURAL_WARN` as a parallel taxonomy.
 
 Minimum family QA:
 - exact frame dimensions/count;
@@ -221,10 +220,10 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-1R | review-operator-2-5d-workbench-cockpit-foundation | **complete / correction re-review passed** | independent target/namespace truth review |
 | WB25-2 | operator-2-5d-workbench-ingress | **complete / reviewed through cycle-2 correction** | guided New/Import + directional package intake |
 | WB25-2R | review-operator-2-5d-workbench-ingress | **complete / final correction re-review passed** | provenance/rollback/import review |
-| WB25-3 | operator-2-5d-workbench-polish-automation | **ready / auto** | profile-guided Aseprite polish + temporal diagnostics |
-| WB25-3R | review-operator-2-5d-workbench-polish-automation | **ready / auto behind WB25-3** | mutation/QA boundary review |
-| WB25-4 | operator-2-5d-workbench-review-automation | draft / refresh-required | canonical QA, family/sequence review, sandbox runtime proof |
-| WB25-4R | review-operator-2-5d-workbench-review-automation | dependency-gated | anti-drift/sequence/sandbox review |
+| WB25-3 | operator-2-5d-workbench-polish-automation | **complete / reviewed after R0-01 correction** | profile-guided Aseprite polish + temporal diagnostics |
+| WB25-3R | review-operator-2-5d-workbench-polish-automation | **complete / correction re-review passed** | mutation/QA boundary review |
+| WB25-4 | operator-2-5d-workbench-review-automation | **ready / auto** | canonical QA, family/sequence review, sandbox runtime proof |
+| WB25-4R | review-operator-2-5d-workbench-review-automation | **ready / auto behind WB25-4** | anti-drift/sequence/sandbox review |
 | WB25-5 | operator-2-5d-workbench-production-queue | draft / refresh-required | queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | dependency-gated | queue math/brief review |
 | WB25-6 | operator-2-5d-runtime-promotion | draft / refresh-required | cohort-based 2.5D production cutover + rollback |
@@ -238,8 +237,8 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 
 - WB25-1: complete and independently reviewed after bounded correction R0-01. Direction workflow now reads the exact direction workspace and saved creation readiness uses the backend classifier. Final planning truth remains 69 live legacy semantic families, 1 authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips.
 - WB25-2: complete and independently reviewed through cycle-2 correction. The final accepted ingress validates exact target-bound Source Sessions, generation-scoped handoff/workspaces, independent direction progress, legacy compatibility, no-runtime-promotion, and the physical saved Aseprite frame/canvas/timing contract before recovery/completion while preserving legitimate artist edits.
-- WB25-3: **final pre-claim refresh complete / ready-auto**. It attaches Art Agent to the existing exact 2.5D Workbench, derives the accepted registration profile from bound generation, adds connected-component/temporal diagnostics and explicit-opt-in planted registration through existing scoped mutation/undo authority. It remains publication-free.
-- WB25-4: refresh after WB25-3 + review.
+- WB25-3: complete and independently reviewed after bounded correction R0-01. Exact detached-island and registration proposals are re-derived from the current physical Workbench, render, masks and landmarks before mutation; forged/stale coordinates or deltas fail before Art Agent apply, while valid scoped apply/undo remains intact.
+- WB25-4: **final pre-claim refresh complete / ready-auto**. It consumes the corrected WB25-3 QA/apply boundary, adds hash-bound per-leaf review receipts, target-derived 8-direction family review, backward-compatible generation-aware Sequence v2, and an isolated real-Operator Godot sandbox. It may establish truthful `RUNTIME_VERIFIED` review evidence but remains publication-free.
 - WB25-5: refresh after WB25-4 + review.
 - WB25-6: refresh after WB25-5 + review and real queue/verification counts exist.
 
@@ -247,7 +246,7 @@ Each refresh re-derives current public APIs, exact files, locks, profile/referen
 
 ## Current repository drift / prerequisites
 
-Current live-main refresh (2026-10-08):
+Current live-main refresh (2026-10-09):
 - New Animation backend is reviewed complete (`a26982b8d` correction; `0ebea7b6` cycle-1 re-review).
 - Human art-direction ambiguity is resolved: the design lock and first authored relaxed-idle family are the exact Dropbox inputs/hashes above. Do not reopen whether legacy live art is the migration target.
 - `operator-2-5d-animation-viability-audit` completed its current-main read-only closeout: 69 production-reachable families are legacy fallback, one supplied relaxed-idle source is canonical but not runtime-published, and 68 semantic families remain in the baseline atlas estimate. No new subjective visual decision was needed.
@@ -256,7 +255,8 @@ Current live-main refresh (2026-10-08):
 - `OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json` is now backward-readable v2 and generation-aware through the WB25-1 target projection.
 - `operator_asset_schema.py` now owns additive generation-aware canonical source paths while preserving legacy behavior.
 - WB25-2 and its two bounded correction cycles are complete/reviewed. The final cycle-2 review passed with zero blocking defects/evidence gaps on exact saved-document proof, preserving target binding, independent direction progress, collision semantics, legacy-96 behavior and unconditional 2.5D publication refusal.
-- WB25-3 is ready/auto. Live refresh found that Art Agent `start_session()` still resolves through the legacy generic Workbench path and default registration/QA profile selection remains legacy-shaped. WB25-3 owns the narrow existing-Workbench attach + generation-derived profile adaptation before adding objective polish metrics and bounded mutations.
+- WB25-3 and its bounded R0-01 correction are complete/reviewed. The accepted apply boundary re-inspects the physical Workbench, re-renders current frames, reloads masks/landmarks and re-derives erase/registration proposals before mutation; forged/stale proposal data cannot reach Art Agent operations. QA remains `custodian.operator_art_qa.v2` and publication/runtime bytes remain untouched.
+- WB25-4 is ready/auto. Live refresh found three required adaptations: review receipts must bind exact current Workbench/render/profile/reference/timing evidence rather than cached proposal authority; `ReviewSequence` v1 is generation-blind and needs an additive v2 art-generation field/source resolver; and the existing Motion Godot harness resolves production runtime art, so the 2.5D sandbox must instead consume a hash-bound local Workbench-frame bundle while preserving `OperatorBodyPresenter` visibility authority. WB25-4 may set current review `runtime_verified` truth but does not own `PUBLISHED`.
 - Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.
 ## Exit condition
 

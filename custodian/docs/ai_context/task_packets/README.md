@@ -43,6 +43,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Make exact-current QA, 8-direction family review, generation-aware sequence review, structured review receipts, and a bounded real-Godot sandbox one guided a...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -196,7 +197,9 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - `operator-2-5d-animation-viability-audit` is complete as a read-only current-main closeout: 69 live action families remain `legacy_96`, one exact-hash relaxed-idle source is the first canonical `operator_2_5d_128` family, and 68 semantic families remain in the baseline production backlog. No second subjective review was requested.
 - `operator-2-5d-canonical-visual-contract` and its paired review are complete/passed. The exact source masters, accepted canonical profile/reference, fixed root semantics, legacy-96 compatibility, guide exclusion, and absence of runtime cutover were independently verified.
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
-- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved Source Session target binding, direction progress, collision, legacy-96, valid artist edits, and the no-publication boundary. WB25-3 has consumed that landed handoff and is now `ready/auto`; it owns exact existing-Workbench Art Agent attachment, generation-derived 128 profile selection, objective polish diagnostics, and scoped/undoable polish mutations.
+- WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved Source Session target binding, direction progress, collision, legacy-96, valid artist edits, and the no-publication boundary.
+- WB25-3 polish automation is complete/reviewed after R0-01 correction. Exact current pixels/masks/landmarks are re-derived before erase/registration mutation, so forged or stale proposal geometry cannot bypass Art Agent scope/journal/undo.
+- WB25-4 review automation has consumed that corrected boundary and is now `ready/auto`; it owns hash-bound review receipts, target-derived family review, generation-aware sequence review and a publication-free real-Operator sandbox.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -207,7 +210,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction passed its fresh paired review. WB25-3 is `ready/auto`, with its paired review `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-4 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 is `ready/auto`, with its paired review `ready/auto` behind it. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 and later remain refresh-gated until their immediate predecessor + paired review return to the authoring chat.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
