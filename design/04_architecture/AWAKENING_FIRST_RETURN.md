@@ -149,6 +149,19 @@ Dust/Connector/Locker children. The smoke checks the live Dust child rather than
 hidden legacy Zone05 art. The Locker foreground remains deferred unless parity is
 proven, and the specialized Designation Locker remains the interactive P-9 prop.
 
+**Dust Lung V2 target (2026-10-10).** The current 04→05 registered composition
+remains live production fallback, but it is no longer the final Zone 05 spatial
+or presentation target. `AWAKENING_DUST_LUNG_V2.md` now locks a region-scale
+ruptured cistern complex using modular underlays, a westbound lower service
+route, a **western/central service lift** for the ASCENT beat, an upper route back
+toward Undergate, and large scenic void/inaccessible infrastructure outside the
+canonical traversal. The former idea of placing the lift in a new east-side hall
+is superseded by the accepted red/green planning route in the authoring chat.
+`AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md` owns source-generation sizes,
+Asset V2 naming, and exact image prompts. No runtime geometry, lift station,
+05→06 passage, or current 04→05 cutover changes until that V2 source set is
+reviewed and a bounded spatial-authority implementation packet lands.
+
 For 05→06, `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` is the single
 passage authority: `Rect2(-64,-3840,128,96)`. It replaces the former
 `CONNECTORS["05_06"]` plus `THRESHOLDS["z06_south_door"]` split while preserving
