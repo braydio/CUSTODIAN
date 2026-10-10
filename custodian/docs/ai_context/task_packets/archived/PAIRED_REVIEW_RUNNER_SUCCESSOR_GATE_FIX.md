@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `paired-review-runner-successor-gate-fix`
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: `operator-2-5d-workbench-review-automation`
@@ -20,7 +20,6 @@
 - Visual review: none
 - Goal: Allow an eligible paired review to launch when human-refresh fields describe only its future successor, while continuing to block genuine current-review human gates.
 - Completion boundary: Correct current-review gate detection in `paired_review_runner.py` and add focused regression tests. Preserve dispatcher eligibility, target validation, visual gates, and no-claim-before-preflight behavior.
-- Reviewed main: `73eaf5fcf61c962497da02b2f383fadd2865af7f`
 - Current measured state: Runner scans the full review packet for refresh fields, so the archived WB25-4 review is falsely blocked by its successor WB25-5 refresh under `## Handoff`.
 - Evidence: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md`; reproduced preclaim false-gate output.
 - Task-specific authority: Current review eligibility is defined by its own authority; future successor handoff fields apply only after review completion. Dispatcher remains the sole claim authority.
@@ -113,13 +112,33 @@ The runner in `custodian/tools/agent/paired_review_runner.py` applies regex chec
 - Refresh status: `consumed; the WB25-4 handoff directly authorized this bounded correction`
 - Refresh instruction: `Do not change product design or human approval policy; scope only current-review gate detection.`
 
-## Handoff
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `test_paired_review_runner.py` passed 14 tests; changed-file validation passed 3 selected checks with complete coverage; py_compile and diff check passed. The corrected runner validated and claimed `review-operator-2-5d-workbench-review-automation`, then launched its fresh Codex review context. Receipt run ID: `20261010T040821Z-c03afcd6fc13`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The first packet-authoring pass omitted required top-level V2 fields; the authoring preflight caught this before publication. The exact WB25-4 review then exposed the runner bug before a review claim existed.`
+- Root cause / contributing factors: `Current-review gate checks scanned the complete packet, including the future successor Handoff section.`
+- Prevention / pipeline improvement: `Gate detection now stops at the top-level successor Handoff; regression fixtures cover successor-only refresh and a genuine current human owner.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `review-paired-review-runner-successor-gate-fix`
+- What worked: `A regression test against the actual archived WB25-4 packet reproduced the false gate and now verifies eligibility; the corrected runner claim receipt confirms end-to-end launch.`
+
+## Next Handoff
 - Next workstream: `review-paired-review-runner-successor-gate-fix`
-- Next packet state: `ready/auto behind implementation`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `none`
-- Next action: `After this implementation lands and archives complete, start its paired fresh-context review.`
+- Next action: `Claim and complete the fresh paired review of the runner correction. The WB25-4 paired review is already running in its separate fresh reviewer worktree.`
 - Blockers or open questions: `none`

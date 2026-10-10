@@ -49,6 +49,17 @@ def packet_at_main(repo: Path, workstream: str):
     return matches[0]
 
 
+def current_review_authority(content: str) -> str:
+    """Return current-packet authority without its future successor handoff.
+
+    Paired review packets commonly put the *next* workstream's refresh gate
+    under a top-level ``## Handoff``. That gate is evaluated only after this
+    review completes, so it must not make the current review ineligible.
+    """
+    successor = re.search(r"(?im)^##[ \t]+(?:handoff|next handoff)[ \t]*$", content)
+    return content[:successor.start()] if successor else content
+
+
 def validate_eligible_review(repo: Path, workstream: str):
     path, content, packet = packet_at_main(repo, workstream)
     if packet.error:
@@ -63,9 +74,10 @@ def validate_eligible_review(repo: Path, workstream: str):
         raise RunnerError("review target must be an explicit dependency")
     if packet.visual_review == "required":
         raise RunnerError("review packet requires a human visual review")
-    if re.search(r"(?im)^\s*-\s*(?:ChatGPT/user planning refresh required|Human decision required):\s*`?yes\b", content):
+    authority = current_review_authority(content)
+    if re.search(r"(?im)^\s*-\s*(?:ChatGPT/user planning refresh required|Human decision required):\s*`?yes\b", authority):
         raise RunnerError("review packet requires a human planning/decision gate")
-    if re.search(r"(?im)^\s*-\s*Refresh owner:\s*`?(?:chatgpt-user|human)", content):
+    if re.search(r"(?im)^\s*-\s*Refresh owner:\s*`?(?:chatgpt-user|human)", authority):
         raise RunnerError("review packet has a human-owned refresh gate")
 
     target_path = packet.review_target_packet
