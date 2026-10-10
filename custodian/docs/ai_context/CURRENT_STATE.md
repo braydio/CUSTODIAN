@@ -2607,7 +2607,8 @@ and exact 2.5D Workbench frame resolution. Physical saved-document durations
 drive 2.5D sequence clips and presets; a missing component or timing contract
 keeps a preset unavailable. WB25-4 is complete and independently accepted after
 the cycle-1 R0-01 human-approval provenance correction and fresh clean re-review.
-WB25-5 remains a separate planning-refresh/publication gate; the tracked plan
+WB25-5 planning refresh is complete and its implementation + paired review are
+published ready/auto (2026-10-10, main@5e7c8e58); the tracked plan
 holds 69 target families and 552 required direction leaves (one accepted
 8-direction source family, 544 baseline strips yet to author), not 552 reviewed
 or published runtime directions. Locally generated current receipts determine
