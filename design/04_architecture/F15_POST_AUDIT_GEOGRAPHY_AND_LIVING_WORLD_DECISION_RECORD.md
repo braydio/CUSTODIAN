@@ -1,6 +1,6 @@
 # F15-B / F14-C2 · Post-F15-A Geographic Design Decision Record
 
-**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10)**. The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. F15-B1 implementation is authorized after its promotion PR merges and current-main packet/index verification passes. B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.
+**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10); F15-B1 data-only identity foundation implemented (2026-10-10), independent review pending.** The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.
 **Planning workstream:** `f14-c2-f15-production-residency-planning`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 **Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).
@@ -89,6 +89,12 @@ The [dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_R
 | **Line-of-Communication / Faction Knowledge** | F15 owns physical geographic edges; later systems may attach typed power/signal/logistics status and source-tagged faction reports. Dying scout or broken relay may prevent propagation **only through a later separately-authorized mechanism**. | C2 interface reservation; distinct implementation after actual population/connectivity |
 
 **Live-foundation hardening watchlist:** WorldStateGraph keyed dependency truth; WorldHistory sector-local, uptime-stamped bounded memory; Material Intelligence observational classifications; Interest Management tiers ≠ actor eviction; Observatory capture/perf; Heatmaps telemetry-only; Moment Forge deterministic short capture. **Extend these owners when a verified gap exists**, never reopen them as clean-sheet systems. World Event Timeline, Resource Economy, Sector Activity Simulator, Ambient Scheduler, AI Morale, Director Memory, Replay and Performance Budget retain later gate/decision records in the register.
+
+## F15-B1 implementation snapshot (2026-10-10)
+
+The data-only `CampaignGeographyRegistry` now owns finite Domain, Location and Edge identity. It accepts only schema 1 and the explicitly supported `geo-v1` generation provenance, validates bounded IDs/seeds and known endpoints before registration, and returns deep-copy descriptors. Undirected connections require exactly one reciprocal mapping with the same stable edge ID; directed transit is explicit. Domain/location address keys use UTF-8 byte-length-prefixed components, and locality seeds derive deterministically from Domain seed, canonical IDs and generation version.
+
+`CampaignVisitReference` represents a distinct visit ID referencing the same Domain and explicit entry/active locations plus known accessible edges. It does not modify `CampaignSession`, create persistence, or derive geography from route/level IDs. The focused fixture and manifest entry live at `custodian/tools/validation/campaign_geography_identity_smoke.gd` and `custodian/tools/validation/validation_manifest.json`. No physical scene, actor, save, procgen adapter, route integration, or streaming behavior is implemented. Independent review remains the next required gate.
 
 ## E. Verification, provenance and doc drift
 

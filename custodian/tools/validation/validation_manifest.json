@@ -36,6 +36,24 @@
   ],
   "tests": [
     {
+      "id": "campaign_geography_identity",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_geography_identity_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "geography",
+        "identity",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/geography/campaign_geography_registry.gd",
+        "custodian/game/world/geography/campaign_visit_reference.gd",
+        "custodian/tools/validation/campaign_geography_identity_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "world_simulation_abstract_activity",
       "type": "godot_script",
       "script": "res://tools/validation/world_simulation_abstract_activity_smoke.gd",
@@ -3607,11 +3625,11 @@
         "ui"
       ],
       "owners": [
-		"custodian/game/actors/enemies/components/enemy_lifecycle.gd",
-		"custodian/game/actors/enemies/components/enemy_lifecycle_config.gd",
-		"custodian/game/actors/enemies/components/configs/enemy_lifecycle_grunt.tres",
-		"custodian/game/actors/enemies/enemy.gd",
-		"custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/components/enemy_lifecycle.gd",
+        "custodian/game/actors/enemies/components/enemy_lifecycle_config.gd",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_grunt.tres",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
         "custodian/game/actors/enemies/components/enemy_corpse_loot.gd",
         "custodian/tools/validation/lootable_corpse_beacon_smoke.gd"
       ],
@@ -5945,7 +5963,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_polish_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "2_5d", "art_agent"],
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "art_agent"
+      ],
       "owners": [
         "custodian/tools/operator/operator_2_5d_polish.py",
         "custodian/tools/operator/art_agent/metrics.py",
@@ -5962,7 +5985,13 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_review_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "2_5d", "review", "sandbox"],
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "review",
+        "sandbox"
+      ],
       "owners": [
         "custodian/tools/operator/operator_2_5d_review.py",
         "custodian/tools/operator/animation_preview.py",
