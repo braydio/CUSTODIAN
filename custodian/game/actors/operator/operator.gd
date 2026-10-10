@@ -13011,14 +13011,14 @@ func _emit_weapon_noise(position: Vector2) -> void:
 	var weapon_definition := _get_active_ranged_weapon_definition()
 	if weapon_definition == null:
 		return
-	var bus := _runtime_dependencies.noise_event_bus
-	if bus == null or not bus.has_method("emit_at"):
+	var bus := _runtime_dependencies.noise_event_bus as NoiseEventBusSystem
+	if bus == null:
 		return
 	var suppressed := weapon_definition.get_noise_bool("suppressed", weapon_definition.suppressed)
 	var radius := weapon_definition.get_noise_float("shot_radius_px", weapon_definition.shot_noise_radius_px)
 	if suppressed:
 		radius *= weapon_definition.get_noise_float("suppressed_radius_mult", weapon_definition.suppressed_radius_mult)
-	bus.call("emit_at", self, position, radius, &"gunshot", weapon_definition.get_noise_float("alert_threat_value", weapon_definition.alert_threat_value), weapon_definition.get_noise_float("shot_loudness", weapon_definition.shot_loudness), suppressed, &"player")
+	bus.emit_at(self, position, radius, &"gunshot", weapon_definition.get_noise_float("alert_threat_value", weapon_definition.alert_threat_value), weapon_definition.get_noise_float("shot_loudness", weapon_definition.shot_loudness), suppressed, &"player")
 
 
 func get_ranged_posture() -> StringName:

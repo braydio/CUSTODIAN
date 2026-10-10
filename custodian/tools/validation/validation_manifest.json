@@ -5298,6 +5298,33 @@
       "needs_import": false
     },
     {
+      "id": "perception_acoustic_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/perception_acoustic_contract_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "stealth",
+        "perception",
+        "noise",
+        "enemy",
+        "vaultwing"
+      ],
+      "owners": [
+        "custodian/game/systems/stealth/noise_event.gd",
+        "custodian/game/systems/stealth/noise_event_bus.gd",
+        "custodian/game/systems/stealth/perception_observation.gd",
+        "custodian/game/systems/stealth/acoustic_perception_sensor.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/enemies/components/enemy_perception_component.gd",
+        "custodian/game/actors/ambient/vaultwing/vaultwing_behavior_controller.gd",
+        "custodian/tools/validation/perception_acoustic_contract_smoke.gd",
+        "custodian/tools/validation/ranged_combat_balance_smoke.gd",
+        "custodian/tools/validation/combat_resource_feedback_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "actor_relationship_contract",
       "type": "godot_script",
       "script": "res://tools/validation/actor_relationship_contract_smoke.gd",

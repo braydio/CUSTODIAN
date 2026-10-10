@@ -33,6 +33,17 @@
 - Task overrides: `none`
 - Deferred: S2 expanded emitters/material response; S3 alarms; S4 awareness UI/readability; S5 occlusion/environment masking; S6 wider cross-family adoption; Vaultwing fixed-step/bond/compatibility hardening belongs to the next packet; NPA-8 remains separately refresh-gated.
 
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `blocked`
+- Friction severity: `medium`
+- What went wrong: The required changed-file sweep selected three unrelated Operator actor regressions because `operator.gd` is an acoustic event producer. All three also failed on a clean, imported `origin/main@5e7c8e58a4b67dc8c29e85d4ab952e5f3fc07178` checkout with the same assertions.
+- Root cause / contributing factors: Existing broad validation ownership for `operator.gd` pulls unrelated ranged-ready, unarmed-chain, and Vigil Dagger suites into the changed-file sweep; their baseline failures predate this branch.
+- Prevention / pipeline improvement: Keep the new acoustic contract test owned by the narrow stealth/perception files and retain the directly affected ranged/noise checks. The baseline Operator regressions require their owning workstream before this packet can finish.
+- Tooling / docs drift discovered: The paired review packet omitted required fresh reviewer context/provenance fields; these were added and the targeted authoring validator passed. The NPA architecture tracker also still said NPA-7 review was pending; its status is now corrected.
+- Follow-up: `manual-follow-up`
+- What worked: The typed acoustic event and shared receiver observation passed their focused contract checks across Enemy, wild Vaultwing, and bonded Vaultwing.
+
 ## Handoff
 
 - Next workstream: `review-stealth-perception-foundation`
