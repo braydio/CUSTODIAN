@@ -92,6 +92,14 @@ bash tools/install_git_hooks.sh
 
 The pre-commit hook validates codex structure when `design/90_codex/` files are staged.
 
+## Dependency-triggered packet refresh tracking (2026-10-09)
+
+The [Hall dependency refresh register](../04_architecture/codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md) is the **revisit schedule** for candidate, later-dependent and already-graduated ideas. It is crosslinked from the [Hall](01_hall_of_great_ideas.md) and the live [F14/F15 packet roadmap](../04_architecture/codebase_systems_audit/PACKET_ROADMAP.md).
+
+For a matching packet refresh: recheck latest reviewed source/queue; classify `incorporate-now`, `extend-live-owner`, `separate-next-slice`, `defer-with-trigger` or `superseded`; **decide** the mechanic, authoritative data/provenance owner, procedural determinism, API/fields, smallest gameplay proof and negative tests, performance/Asset V2 cost. Then update active design and packet boundaries **only after their separate dependency/user gates**. Record a disposition even when nothing is implemented.
+
+Do not alter the published ready/auto F15-A read-only audit to sneak features into its scope. The next F15-B refresh is the first destination for Encounter Language, Landmark Hierarchy, Spatial Compression and Mystery Budget mechanical decisions. Other ideas are preserved by individual triggers in the register, not premature task packets.
+
 ## Agent Rule
 
 Agents may use codex cards for ideation, prioritization, and design continuity.
