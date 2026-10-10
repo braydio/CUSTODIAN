@@ -75,5 +75,10 @@ The previously recorded five M6 inferred-type parse errors are not independently
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh reason: none
-- Next action: Resume the existing claimed review after safely checkpointing its blocked receipt and resolving temporary-storage capacity; complete reviewer-snapshot M6 and metadata checks without creating another claim.
-- Blockers or open questions: Existing review checkout is dirty; workstream resume requires a clean checkout. Temporary storage quota prevented completion of the review-snapshot M6 and metadata checks.
+- Next action: Continue the resumed existing review by running the focused M6 and route smokes on current main after the active shared Godot validation sweep finishes; keep the result findings-first and do not create another claim.
+- Blockers or open questions: The recovery probe could not complete the reviewer-snapshot M6 or metadata checks because `/tmp` storage quota was exhausted. Current-main task index, pairing (62 packets), and AI-context checks now pass. The resumed checkout is clean.
+
+
+## Resume and latest-main checks
+
+`python3 custodian/tools/agent/workstream.py resume review-campaign-geography-residency-authority-audit` succeeded on 2026-10-10 and merged current `origin/main` into the preserved branch. The exact claimed review worktree remains attached and clean. On that current-main checkout, `task_packet_index.py`, `validate_review_pairing.py` (62 auto review pairs), and `check_ai_context.py` all pass. A separate shared `run_validation.py --changed` sweep is currently executing Godot smokes, so no additional engine process has been started. The current-main focused M6 and route smokes remain outstanding.
