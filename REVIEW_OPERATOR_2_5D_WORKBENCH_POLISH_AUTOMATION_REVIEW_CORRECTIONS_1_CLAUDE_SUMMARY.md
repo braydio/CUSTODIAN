@@ -31,7 +31,7 @@ None. R0-01 is fixed. No R1 findings were confirmed.
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Review conclusion: `R0-01 is fixed. Exact current erase geometry and current registration derivations are revalidated before scoped mutation. Adversarial forged coordinates, bounds, deltas, stale evidence, and protected masks fail closed; valid exact apply/undo remains available.`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 
 ## Process Feedback
 
@@ -55,7 +55,7 @@ None. R0-01 is fixed. No R1 findings were confirmed.
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: `WB25-4 must consume the corrected apply boundary and fresh independent review evidence.`
 - Next action: `Refresh WB25-4 in the authoring chat after this correction review closes.`
 - Blockers or open questions: `none`
