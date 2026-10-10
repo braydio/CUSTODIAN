@@ -23,7 +23,7 @@ from .security import require_under
 from . import drafts as draft_store
 from . import landmarks as landmark_store
 from . import masks as mask_store
-from .metrics import animation_metrics
+from .metrics import animation_metrics, temporal_metrics
 from .planner import build as build_animation_plan
 from .qa import run_qa as evaluate_qa
 from .references import assemble as assemble_references
@@ -123,15 +123,18 @@ class ArtAgentService:
             self.aseprite,
         )
         self._assert_workbench_usable(manifest, workbench_root / "workbench.aseprite")
+        return self._create_session(manifest, workbench_root)
+
+    def _create_session(self, manifest: dict[str, Any], workbench_root: Path) -> Path:
         identity_data = manifest["identity"]
         identity = ArtIdentity(
             profile=identity_data["profile"],
             group=identity_data["group"],
             action=identity_data["action"],
             direction=identity_data["direction"],
-            weapon=str(manifest.get("context", {}).get("weapon_id", weapon)),
+            weapon=str(manifest.get("context", {}).get("weapon_id", "")),
             linked_profile=str(
-                manifest.get("context", {}).get("linked_profile", linked_profile)
+                manifest.get("context", {}).get("linked_profile", "")
             ),
         )
         session_id = uuid.uuid4().hex[:12]
@@ -157,6 +160,7 @@ class ArtAgentService:
             context_fingerprint=manifest.get("context", {}).get("fingerprint", ""),
             workbench_sha256=sha,
             capability_path=str((root / "capability.json").resolve()),
+            art_generation=str(manifest.get("creation", {}).get("art_generation", "legacy_96")),
         )
         session_path = root / "session.json"
         write_json(session_path, session.to_json())
@@ -175,6 +179,79 @@ class ArtAgentService:
         )
         shutil.copy2(workbench_path, root / "backups/000000_baseline.aseprite")
         return session_path
+
+    def attach_existing_workbench(self, manifest_path: Path, selection: Any) -> Path:
+        """Create an Art Agent capability around one validated, existing 2.5D Workbench."""
+        manifest_path = require_under(self.workspace_root, Path(manifest_path), label="Workbench manifest")
+        if manifest_path.name != "workbench.json":
+            raise model.WorkbenchError("existing Workbench attach requires workbench.json")
+        document_path = manifest_path.parent / "workbench.aseprite"
+        if not manifest_path.is_file() or not document_path.is_file():
+            raise model.WorkbenchError("existing Workbench manifest and saved document are required")
+        from operator_2_5d_ingress import IngressError, Operator2DIngress
+        try:
+            ingress = Operator2DIngress(model.REPO_ROOT, workspace_root=self.workspace_root)
+            binding = ingress.target_binding(selection)
+            candidate_value = json.loads(manifest_path.read_text(encoding="utf-8")).get(
+                "creation", {}).get("import_sources", {}).get(binding["layer"], "")
+            if not candidate_value:
+                raise model.WorkbenchError("existing Workbench has no exact imported Source Session candidate")
+            candidate = Path(candidate_value)
+            ingress._validate_workbench(binding, candidate, str(manifest_path.parent))
+        except (IngressError, OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+            raise model.WorkbenchError(f"existing 2.5D Workbench refused without changes: {error}") from error
+        manifest = workbench.load(manifest_path)
+        if str(manifest.get("creation", {}).get("art_generation", "")) != "operator_2_5d_128":
+            raise model.WorkbenchError("existing Workbench is not bound to operator_2_5d_128")
+        return self._create_session(manifest, manifest_path.parent)
+
+    def inspect_polish_contract(self, session_path: Path) -> dict[str, Any]:
+        """Recheck target identity and the physical saved document without repairing it."""
+        session, manifest, _root = self._checked_session(session_path)
+        if session.art_generation == "operator_2_5d_128":
+            from operator_2_5d_ingress import IngressError, Operator2DIngress
+            from types import SimpleNamespace
+            selection = SimpleNamespace(
+                art_generation=session.art_generation,
+                profile=session.identity.profile,
+                group=session.identity.group,
+                action=session.identity.action,
+                direction=session.identity.direction,
+                authoring_identity=f"{session.art_generation}:{session.identity.profile}/{session.identity.group}/{session.identity.action}/{session.identity.direction}",
+            )
+            ingress = Operator2DIngress(model.REPO_ROOT, workspace_root=self.workspace_root)
+            binding = ingress.target_binding(selection)
+            candidate_value = manifest.get("creation", {}).get("import_sources", {}).get(binding["layer"], "")
+            if not candidate_value:
+                raise model.WorkbenchError("2.5D Workbench has no exact imported Source Session candidate")
+            candidate = Path(candidate_value)
+            try:
+                ingress._validate_workbench(binding, candidate, str(Path(session.workbench_manifest).parent))
+            except (IngressError, OSError, ValueError, KeyError, TypeError) as error:
+                raise model.WorkbenchError(f"2.5D Workbench contract refused without repair: {error}") from error
+        else:
+            report = workbench.inspect_saved_document_contract(Path(session.workbench_manifest), self.aseprite)
+            timeline, canvas = manifest["timeline"], manifest["canvas"]
+            expected_frames = int(timeline["document_frames"])
+            expected_canvas = [int(canvas["width"]), int(canvas["height"])]
+            expected_duration = 1.0 / float(timeline.get("preview_fps", timeline.get("fps", 0)) or 1)
+            durations = [float(value) for value in report["durations"]]
+            if (int(report["frames"]) != expected_frames
+                    or [int(report["width"]), int(report["height"])] != expected_canvas
+                    or len(durations) != expected_frames
+                    or any(abs(value - expected_duration) > 0.001 for value in durations)):
+                raise model.WorkbenchError("saved Workbench physical frame/canvas/timing contract changed")
+        return {"valid": True, "art_generation": session.art_generation,
+                "manifest": session.workbench_manifest, "document": session.workbench_path,
+                "workbench_sha256": session.expected_workbench_sha256}
+
+    @staticmethod
+    def _session_profile_id(session: ArtSession | None, explicit: str | None = None) -> str | None:
+        if explicit:
+            return explicit
+        if session is None:
+            return None
+        return session.art_generation if session.art_generation == "operator_2_5d_128" else None
 
     def load_session(self, session_path: Path) -> ArtSession:
         path = self._authorized_session_path(session_path)
@@ -586,10 +663,14 @@ class ArtAgentService:
         return record.to_json()
 
     def get_metrics(self, session_path: Path) -> dict[str, Any]:
-        _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); values=animation_metrics([Path(x) for x in artifacts["frames"]],self.get_landmarks(session_path),masks=self.get_masks(session_path)); write_json(root/"metrics.json",values); return values
+        _session,_manifest,root=self._checked_session(session_path); artifacts=self.render(session_path); masks=self.get_masks(session_path); frames=[Path(x) for x in artifacts["frames"]]; values=animation_metrics(frames,self.get_landmarks(session_path),masks=masks); values["temporal_metrics"]=temporal_metrics(frames,masks=masks); write_json(root/"metrics.json",values); return values
 
     def registration_profile(self, session_path: Path | None = None, *, profile_id: str | None = None) -> dict[str, Any]:
-        value = load_profile(profile_id=profile_id)
+        if session_path is None:
+            value = load_profile(profile_id=profile_id)
+        else:
+            session, _manifest, _root = self._checked_session(session_path)
+            value = load_profile(profile_id=self._session_profile_id(session, profile_id))
         if session_path is not None:
             _session, manifest, _root = self._checked_session(session_path)
             canvas = manifest["canvas"]
@@ -598,19 +679,19 @@ class ArtAgentService:
         return value
 
     def registration_report(self, session_path: Path, *, profile_id: str | None = None) -> dict[str, Any]:
-        _session, manifest, root = self._checked_session(session_path)
+        session, manifest, root = self._checked_session(session_path)
         metrics = self.get_metrics(session_path)
         canvas = manifest["canvas"]
         frame_size = [int(canvas["width"]), int(canvas["height"])]
         report = profile_report(landmarks=self.get_landmarks(session_path), frames=metrics.get("frames", []),
-                                profile=load_profile(profile_id=profile_id), registered_canvas=True, frame_size=frame_size)
+                                profile=load_profile(profile_id=self._session_profile_id(session, profile_id)), registered_canvas=True, frame_size=frame_size)
         output = root / "previews/registration_report.json"
         write_json(output, report)
         report["report"] = str(output.resolve())
         return report
 
     def registration_overlay(self, session_path: Path, *, profile_id: str | None = None) -> dict[str, Any]:
-        _session, manifest, root = self._checked_session(session_path)
+        session, manifest, root = self._checked_session(session_path)
         canvas = manifest["canvas"]
         artifacts = self.render(session_path)
         landmarks = self.get_landmarks(session_path)
@@ -619,8 +700,8 @@ class ArtAgentService:
             frame_landmarks = [item for item in landmarks if item["frame"] == index + 1]
             output = root / f"previews/registration_overlay_{index + 1:02d}.png"
             paths.append(render_overlay(output=output, frame_size=(int(canvas["width"]), int(canvas["height"])),
-                                        profile=load_profile(profile_id=profile_id), landmarks=frame_landmarks))
-        loaded = load_profile(profile_id=profile_id)
+                                        profile=load_profile(profile_id=self._session_profile_id(session, profile_id)), landmarks=frame_landmarks))
+        loaded = load_profile(profile_id=self._session_profile_id(session, profile_id))
         return {"overlays": paths, "profile_sha256": loaded["sha256"], "read_only": True}
 
     def plan(self, session_path: Path, recipe: str) -> dict[str, Any]:
@@ -632,8 +713,8 @@ class ArtAgentService:
         session,manifest,root=self._checked_session(session_path)
         metrics=self.get_metrics(session_path)
         profile_path=model.CUSTODIAN_ROOT/"content/data/operator/authoring/operator_art_profile.json"
-        profile=json.loads(profile_path.read_text()) if profile_path.exists() else None
-        profile_state = load_profile(profile_path) if profile_path.exists() else None
+        profile_state = load_profile(profile_path, self._session_profile_id(session)) if profile_path.exists() else None
+        profile=profile_state or None
         palette_findings=[]
         for plan_path in sorted((root/"recolor_plans").glob("*.json")) if (root/"recolor_plans").exists() else []:
             plan=recolor_store.load(plan_path)
@@ -1071,6 +1152,9 @@ class ArtAgentService:
             raise model.WorkbenchError("Art Agent session is not active")
         manifest_path, workbench_path = self._authorized_workbench_paths(session)
         manifest = workbench.load(manifest_path)
+        manifest_generation = str(manifest.get("creation", {}).get("art_generation", "legacy_96"))
+        if manifest_generation != session.art_generation:
+            raise model.WorkbenchError("WORKBENCH ART GENERATION MISMATCH")
         if manifest.get("context", {}).get("fingerprint", "") != session.context_fingerprint:
             raise model.WorkbenchError("WORKBENCH CONTEXT MISMATCH")
         self._assert_workbench_usable(manifest, workbench_path)

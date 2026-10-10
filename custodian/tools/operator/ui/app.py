@@ -11,7 +11,7 @@ from pathlib import Path
 from textual.app import App
 from textual.binding import Binding
 from textual.widget import Widget
-from textual.widgets import DataTable, Input, Static, TextArea
+from textual.widgets import Button, Checkbox, DataTable, Input, Static, TextArea
 
 from .dialogs import (
     AnimationCreationDialog, AnimationCreationPlanDialog, CanvasMigrationDialog, CanvasResizeDialog, ContextMismatchDialog, ErrorDialog, FrameAddDialog, FrameRemoveDialog, DirectionSetImportDialog, ImportSourceDialog,
@@ -26,7 +26,7 @@ from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
-                      PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
+                      PolishPanel, PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 import animation_preview
 import animation_motion_preview
 import animation_transition
@@ -68,6 +68,11 @@ class OperatorWorkbenchApp(App):
     #motion-controls { height: 7; padding: 0 1; }
     #motion-metrics { height: 1fr; padding: 0 1; }
     #motion-preview-controls { height: 3; content-align: center middle; background: #202734; }
+    #polish-panel { height: 1fr; padding: 1; }
+    .polish-actions { height: 3; align-horizontal: left; }
+    .polish-actions Button { margin-right: 1; }
+    #polish-proposals { height: 1fr; min-height: 8; }
+    #polish-status { height: 5; padding: 1; background: #181e28; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
     .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
     .publish-dialog { width: 78; max-height: 100%; margin: 0 1; padding: 0 1; }
@@ -104,6 +109,7 @@ class OperatorWorkbenchApp(App):
         Binding("1", "mode_plan", "Plan", priority=True, show=False), Binding("2", "mode_workbench", "Workbench", priority=True, show=False),
         Binding("3", "mode_preview", "Preview", priority=True, show=False), Binding("4", "mode_timeline", "Timeline", priority=True, show=False),
         Binding("5", "mode_motion", "Motion", priority=True, show=False),
+        Binding("6", "mode_polish", "Polish", priority=True, show=False),
         Binding("space", "preview_toggle", "Play/Pause", show=False), Binding("left", "preview_previous", "Previous frame", show=False),
         Binding("right", "preview_next", "Next frame", show=False), Binding("home", "preview_first", "First frame", show=False),
         Binding("end", "preview_last", "Last frame", show=False), Binding("left_square_bracket", "preview_slower", "Slower review", show=False),
@@ -166,6 +172,10 @@ class OperatorWorkbenchApp(App):
         self._pending_preview_play_intent = False
         self._browser_preview_play_intent = False
         self._sleep = asyncio.sleep
+        self.polish_session_path: Path | None = None
+        self.polish_selection_identity = ""
+        self.polish_proposals: list[dict] = []
+        self._polish_columns_ready = False
 
     def _next_preview_generation(self) -> int:
         self.state.preview_generation += 1
@@ -952,7 +962,7 @@ class OperatorWorkbenchApp(App):
             self._preview_replacing = mode == "preview"
         self.state.mode = mode
         self._reset_preview_clock()
-        ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode"}
+        ids = {"plan": "#plan-mode", "workbench": "#workspace-row", "preview": "#preview-mode", "timeline": "#timeline-mode", "motion": "#motion-mode", "polish": "#polish-mode"}
         for name, selector in ids.items(): self._main_widget(selector, Widget).set_class(name != mode, "hidden")
         self._main_widget("#context-key-bar", ContextKeyBar).set_mode(mode, self.state.copy_mode, self.state.show_superseded)
         if mode == "preview": self.run_worker(self._load_preview(generation=preview_generation), group="preview-image", exclusive=True)
@@ -968,6 +978,108 @@ class OperatorWorkbenchApp(App):
     def action_mode_preview(self): self._set_mode("preview")
     def action_mode_timeline(self): self._set_mode("timeline")
     def action_mode_motion(self): self._set_mode("motion")
+    def action_mode_polish(self): self._set_mode("polish")
+
+    async def on_button_pressed(self, event: Button.Pressed) -> None:
+        if not event.button.id or not event.button.id.startswith("polish-"):
+            return
+        action = event.button.id.removeprefix("polish-")
+        self.run_worker(self._run_polish_action(action), group="polish", exclusive=True, exit_on_error=False)
+
+    async def _ensure_polish_session(self) -> Path:
+        selection = self._require_selection()
+        if selection is None:
+            raise RuntimeError("Select a 2.5D animation target first")
+        if selection.art_generation != "operator_2_5d_128":
+            raise RuntimeError("POLISH is available only for operator_2_5d_128 targets")
+        if (self.polish_session_path is not None
+                and self.polish_selection_identity == selection.authoring_identity
+                and self.polish_session_path.is_file()):
+            return self.polish_session_path
+        path = await self._thread(self.service.polish_attach, selection)
+        self.polish_session_path = Path(path)
+        self.polish_selection_identity = selection.authoring_identity
+        return self.polish_session_path
+
+    def _show_polish_result(self, payload: dict, *, append: bool = False) -> None:
+        table = self._main_widget("#polish-proposals", DataTable)
+        if not self._polish_columns_ready:
+            table.add_columns("PROPOSAL", "FRAME", "DETAIL")
+            self._polish_columns_ready = True
+        if not append:
+            table.clear()
+            self.polish_proposals.clear()
+        rows = []
+        for item in payload.get("proposals", {}).get("detached_components", []):
+            rows.append(item)
+        for kind in ("planted_registration", "center_x"):
+            proposal = payload.get("proposals", {}).get(kind)
+            if proposal and proposal.get("status") == "PROPOSAL":
+                rows.extend({**proposal, "frame": offset["frame"]} for offset in proposal.get("offsets", []))
+        self._append_polish_proposals(rows)
+        status = (f"Analysis complete · {payload.get('qa', {}).get('status', 'unknown')} QA · "
+                  f"{len(self.polish_proposals)} non-mutating proposal(s). No publication path is available here.")
+        self._main_widget("#polish-status", Static).update(status)
+
+    def _append_polish_proposals(self, proposals: list[dict]) -> None:
+        table = self._main_widget("#polish-proposals", DataTable)
+        if not self._polish_columns_ready:
+            table.add_columns("PROPOSAL", "FRAME", "DETAIL")
+            self._polish_columns_ready = True
+        for proposal in proposals:
+            self.polish_proposals.append(proposal)
+            frame = str(proposal.get("frame", "all"))
+            if proposal.get("kind") == "erase_detached_component":
+                detail = f"{proposal.get('area')} pixels · bounds {proposal.get('bounds')}"
+            else:
+                offset = next((item for item in proposal.get("offsets", []) if str(item.get("frame")) == frame), {})
+                detail = f"dx={offset.get('dx', 0)} dy={offset.get('dy', 0)} · {proposal.get('warning', proposal.get('evidence', 'preview only'))}"
+            table.add_row(str(proposal.get("kind", "proposal")), frame, detail, key=f"polish-{len(self.polish_proposals)-1}")
+
+    async def _run_polish_action(self, action: str) -> None:
+        try:
+            if action == "open":
+                selection = self._require_selection()
+                if selection is None: return
+                process = await self._thread(self.service.open_existing_workbench, selection)
+                self.state.aseprite_process = process
+                self._main_widget("#polish-status", Static).update("Opened the exact saved Workbench document in Aseprite.")
+                return
+            session_path = await self._ensure_polish_session()
+            if action in {"attach", "refresh"}:
+                result = await self._thread(self.service.polish_analyze, session_path)
+                self._show_polish_result(result)
+            elif action == "center":
+                result = await self._thread(self.service.polish_propose_center_x, session_path)
+                self._append_polish_proposals([{**result, "frame": item["frame"]} for item in result.get("offsets", [])])
+                self._main_widget("#polish-status", Static).update(result.get("warning", result.get("reason", "Manual Center X proposal ready.")))
+            elif action == "planted":
+                choice = self._main_widget("#polish-planted-opt-in", Checkbox).value
+                result = await self._thread(partial(self.service.polish_propose_planted, session_path, enabled=choice))
+                self._main_widget("#polish-planted-opt-in", Checkbox).value = False
+                if result.get("status") == "PROPOSAL":
+                    self._append_polish_proposals([{**result, "frame": item["frame"]} for item in result.get("offsets", [])])
+                self._main_widget("#polish-status", Static).update(result.get("reason", "Explicit planted registration proposal ready."))
+            elif action == "apply":
+                table = self._main_widget("#polish-proposals", DataTable)
+                row = table.cursor_row
+                if row < 0 or row >= len(self.polish_proposals):
+                    raise RuntimeError("Select a proposal row before applying")
+                result = await self._thread(self.service.polish_apply, session_path, self.polish_proposals[row])
+                self._main_widget("#polish-status", Static).update(f"Applied one scoped Art Agent operation · {result.get('status')} · undo is available.")
+                refreshed = await self._thread(self.service.polish_analyze, session_path)
+                self._show_polish_result(refreshed)
+            elif action == "guide":
+                result = await self._thread(self.service.polish_registration_guide, session_path)
+                self._main_widget("#polish-status", Static).update(f"Canonical 2.5D registration guide overlays (read-only): {', '.join(result['overlays'])}")
+            elif action == "undo":
+                result = await self._thread(self.service.polish_undo, session_path)
+                self._main_widget("#polish-status", Static).update(f"Undid Art Agent operation {result.get('undone_operation')}; workbench restored through its journal backup.")
+                refreshed = await self._thread(self.service.polish_analyze, session_path)
+                self._show_polish_result(refreshed)
+        except Exception as error:
+            self._main_widget("#polish-status", Static).update(f"POLISH refused: {error}")
+            self._error(error)
 
     async def _load_preview(self, *, generation: int | None = None) -> None:
         selection = self.state.selection

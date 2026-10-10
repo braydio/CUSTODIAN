@@ -2687,6 +2687,55 @@
       "needs_import": false
     },
     {
+      "id": "codex_task_fixes",
+      "type": "godot_script",
+      "script": "res://tools/validation/codex_task_fixes_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "regression"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/tools/validation/codex_task_fixes_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "enemy_reaction_posture",
+      "type": "godot_script",
+      "script": "res://tools/validation/enemy_reaction_posture_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "reaction",
+        "posture",
+        "npa"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/grunt_falcon_punch.gd",
+        "custodian/game/actors/enemies/combat/enemy_reaction_config.gd",
+        "custodian/game/actors/enemies/combat/enemy_reaction_controller.gd",
+        "custodian/game/actors/enemies/combat/configs/enemy_reaction_default.tres",
+        "custodian/game/actors/enemies/combat/configs/enemy_reaction_marine.tres",
+        "custodian/game/actors/enemies/combat/configs/enemy_reaction_savage.tres",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical_config.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical.gd",
+        "custodian/game/actors/enemies/combat/configs/enemy_parry_critical_default.tres",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/game/actors/enemies/presentation/enemy_presentation_controller.gd",
+        "custodian/tools/validation/enemy_reaction_posture_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "standard_enemy_melee",
       "type": "godot_script",
       "script": "res://tools/validation/standard_enemy_melee_smoke.gd",
@@ -3168,6 +3217,30 @@
         "custodian/tools/analysis/analyze_dev_observatory_session.py"
       ],
       "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
+      "id": "grunt_parry_critical",
+      "type": "godot_script",
+      "script": "res://tools/validation/grunt_parry_crit_reaction_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "combat",
+        "enemy",
+        "operator",
+        "critical",
+        "parry"
+      ],
+      "owners": [
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical_config.gd",
+        "custodian/game/actors/enemies/combat/configs/enemy_parry_critical_default.tres",
+        "custodian/game/actors/enemies/presentation/enemy_presentation_controller.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/tools/validation/grunt_parry_crit_reaction_smoke.gd"
+      ],
+      "timeout_sec": 60,
       "needs_import": false
     },
     {
@@ -5742,6 +5815,23 @@
         "custodian/tools/operator/operator_2_5d_ingress.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
         "custodian/tools/validation/operator_2_5d_ingress_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_2_5d_polish",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_polish_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "2_5d", "art_agent"],
+      "owners": [
+        "custodian/tools/operator/operator_2_5d_polish.py",
+        "custodian/tools/operator/art_agent/metrics.py",
+        "custodian/tools/operator/art_agent/models.py",
+        "custodian/tools/operator/art_agent/qa.py",
+        "custodian/tools/operator/art_agent/service.py",
+        "custodian/tools/validation/operator_2_5d_polish_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false

@@ -337,7 +337,7 @@ func try_apply_hit(force_contact_check := false) -> void:
 			return
 		host.separate_ability_from_target(target, direction)
 		if recent_parry_timer <= 0.0:
-			host.apply_parry_stagger(-direction, host.stagger_duration, 70.0)
+			host.apply_parry_stagger(-direction, host.reaction_config.stagger_duration, 70.0)
 		return
 	if not bool(hit_result.get("dodged", false)) \
 			and not bool(hit_result.get("blocked", false)) \

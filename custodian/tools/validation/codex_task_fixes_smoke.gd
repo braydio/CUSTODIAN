@@ -48,12 +48,13 @@ func _run() -> void:
 		1.0,
 		COMBAT_CONSTANTS.HitStrength.HEAVY
 	)
+	var reaction_state: Dictionary = grunt.call("get_reaction_debug_state")
 	_assert(
-		float(grunt.get("_stagger_timer")) > 0.0,
+		float(reaction_state.get("stagger_remaining", 0.0)) > 0.0,
 		"a low-damage heavy hit did not guarantee enemy stagger"
 	)
 	_assert(
-		is_zero_approx(float(grunt.get("_recoil_timer"))),
+		is_zero_approx(float(reaction_state.get("recoil_remaining", -1.0))),
 		"a guaranteed heavy stagger incorrectly fell back to light recoil"
 	)
 

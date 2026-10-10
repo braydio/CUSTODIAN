@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://enemy_marine_001"]
+[gd_scene load_steps=10 format=3 uid="uid://enemy_marine_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -10,6 +10,7 @@
 [ext_resource type="Resource" path="res://game/actors/enemies/abilities/configs/marine_dash_default.tres" id="7_dash"]
 
 [ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_marine.tres" id="8_melee_config"]
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/enemy_reaction_marine.tres" id="9_reaction_config"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_marine"]
 size = Vector2(28, 28)
@@ -18,6 +19,7 @@ size = Vector2(28, 28)
 z_index = 2
 script = ExtResource("1_enemy")
 standard_enemy_melee_config = ExtResource("8_melee_config")
+reaction_config = ExtResource("9_reaction_config")
 enemy_name = "MARINE"
 speed = 76.0
 health = 96.0
@@ -34,7 +36,6 @@ marine_dash_enabled = true
 marine_dash_config = ExtResource("7_dash")
 behavior_state_machine_enabled = true
 behavior_profile_id = &"raider_marine"
-resists_light_flinch = true
 
 [node name="Visual" type="ColorRect" parent="."]
 offset_left = -14.0

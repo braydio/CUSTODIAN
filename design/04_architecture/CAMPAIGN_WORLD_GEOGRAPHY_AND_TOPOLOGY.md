@@ -6,6 +6,10 @@
 **Audit focus:** [F15 Geographic Scale and Traversable Campaign-World Topology](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md)  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 
+## Planning continuation: accepted F14-C1 and production residency (2026-10-09)
+
+[**F14-C2/F15 Geographic Identity and Physical Residency Refresh**](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) reconciles the independently accepted synthetic real-Grunt physical/abstract handoff with current route scenes, generated locality staging, M6 visual-only chunk eviction, and ambient spawning. It proposes a **read-only F15-A geographic authority and travel-scale evidence pass first**, then a decision on stable Domain/Location and real locality residency, before any automatic F14-C2 implementation. The proposed finite graph-backed materialization strategy is *not yet a design lock*. The locked player target remains continuous geography within one Campaign World.
+
 ## 0. User-described target (design input, not yet a locked change)
 
 The intended player experience is:

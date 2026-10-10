@@ -16,6 +16,10 @@ func _init() -> void:
 	_run.call_deferred()
 
 
+func _phase_name(enemy: Node) -> String:
+	return String((enemy.call("get_parry_critical_debug_state") as Dictionary).get("phase", ""))
+
+
 func _run() -> void:
 	var hud_source := FileAccess.get_file_as_string("res://game/ui/hud/ui.gd")
 	_assert_true(hud_source.contains("spawn_pursuit_frame"), "DevConsole should register spawn_pursuit_frame")
@@ -65,7 +69,7 @@ func _run() -> void:
 	var lethal_grunt: Node2D = await _spawn_mode(wave_manager, enemies, operator, &"execution_lethal")
 	_assert_true(lethal_grunt != null, "execution_lethal should be accepted")
 	if lethal_grunt != null:
-		_assert_true(int(lethal_grunt.get("_parry_critical_phase")) == PHASE_HOLD, "execution_lethal should enter hold")
+		_assert_true(_phase_name(lethal_grunt) == "hold", "execution_lethal should enter hold")
 		_assert_true(is_equal_approx(float(lethal_grunt.get("health")), 1.0), "execution_lethal should prepare one-health victim")
 		_assert_true(bool(lethal_grunt.call("can_receive_parry_critical_from", operator)), "execution_lethal should remain reservable")
 
@@ -97,7 +101,8 @@ func _assert_mode(
 	if grunt == null:
 		return
 	var body := grunt.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
-	_assert_true(int(grunt.get("_parry_critical_phase")) == expected_phase, "%s phase mismatch" % String(mode))
+	var expected_phase_name := ["none", "enter", "hold", "recover"][expected_phase]
+	_assert_true(_phase_name(grunt) == expected_phase_name, "%s phase mismatch" % String(mode))
 	_assert_true(body != null and body.animation == expected_animation, "%s animation mismatch" % String(mode))
 	var should_show_opportunity := expected_phase in [PHASE_ENTER, PHASE_HOLD]
 	_assert_true(bool(grunt.call("has_active_critical_target_reticle")) == should_show_opportunity, "%s reticle contract mismatch" % String(mode))

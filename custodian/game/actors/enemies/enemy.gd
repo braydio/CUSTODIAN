@@ -22,6 +22,8 @@ const GRUNT_FALCON_PUNCH_SCRIPT := preload(
 const SAVAGE_POUNCE_SCRIPT := preload("res://game/actors/enemies/abilities/savage_pounce.gd")
 const SAVAGE_CHAIN_SCRIPT := preload("res://game/actors/enemies/abilities/savage_chain.gd")
 const STANDARD_ENEMY_MELEE_SCRIPT := preload("res://game/actors/enemies/combat/standard_enemy_melee.gd")
+const ENEMY_REACTION_CONTROLLER_SCRIPT := preload("res://game/actors/enemies/combat/enemy_reaction_controller.gd")
+const ENEMY_PARRY_CRITICAL_SCRIPT := preload("res://game/actors/enemies/combat/enemy_parry_critical.gd")
 const SAVAGE_ANIMATION_LIBRARY := preload("res://game/enemies/procgen/savage_animation_library.gd")
 const ENEMY_PALETTE_SHADER := preload("res://game/enemies/procgen/enemy_palette_tint.gdshader")
 const ENEMY_BLACKBOARD_SCRIPT := preload("res://game/actors/enemies/components/enemy_blackboard.gd")
@@ -119,25 +121,21 @@ enum GruntWeaponPosture {
 @export var retarget_interval: float = 0.25
 @export var team: String = "enemy"
 @export var attack_objective: String = "breach_command"
-@export var hit_recoil_duration: float = 0.12
+@export var reaction_config: EnemyReactionConfig = preload(
+	"res://game/actors/enemies/combat/configs/enemy_reaction_default.tres"
+)
+@export var parry_critical_config: EnemyParryCriticalConfig = preload(
+	"res://game/actors/enemies/combat/configs/enemy_parry_critical_default.tres"
+)
 @export var standard_enemy_melee_config: StandardEnemyMeleeConfig = preload(
 	"res://game/actors/enemies/combat/configs/standard_enemy_melee_default.tres"
 )
-@export var stagger_duration: float = 0.35
 ## Fallback HEAVY/LIGHT classifier for melee hits that arrive without an
 ## explicit hit_kind (see _resolve_hit_strength_for_attack). Reaction
 ## dispatch itself is posture- and hit_strength-driven, not threshold-driven.
 @export var stagger_damage_threshold: float = 24.0
-@export var resists_light_flinch: bool = false
-@export_category("Poise and Posture")
-@export var posture_max: float = 100.0
-@export var posture_recovery_delay: float = 1.25
-@export var posture_recovery_rate: float = 26.0
-@export var light_flinch_cooldown: float = 0.70
 @export_enum("body", "robot_metal", "scorched", "shrumb", "hallway_reverb")
 var melee_impact_audio_profile: String = "body"
-@export var crit_hit_duration: float = 0.8
-@export var crit_recovery_duration: float = 0.625
 @export var assault_staging_duration_min: float = 1.25
 @export var assault_staging_duration_max: float = 2.75
 @export var assault_probe_duration_min: float = 2.5
@@ -183,9 +181,6 @@ var melee_impact_audio_profile: String = "body"
 @export var custom_enemy_fx_scale: Vector2 = Vector2.ONE
 @export var visual_backend: VisualBackend = VisualBackend.AUTHORED_FRAMES
 @export var health_bar_vertical_offset: float = -28.0
-@export var grunt_parry_critical_window_min_sec: float = 0.8
-@export var grunt_parry_critical_capture_range_px: float = 72.0
-@export var grunt_parry_critical_operator_offset: Vector2 = Vector2.ZERO
 @export var grunt_critical_breach_marker_offset: Vector2 = Vector2(0.0, -62.0)
 @export var grunt_critical_window_ring_offset: Vector2 = Vector2.ZERO
 @export var grunt_optional_critical_vfx_enabled: bool = true
@@ -239,31 +234,11 @@ var _corpse_cleanup_timer_sec := 0.0
 var damage_timer := 0.0
 var damage_interval := 1.0  # Damage every 1 second
 var target_refresh_timer := 0.0
-var _stagger_timer: float = 0.0
-var _recoil_timer: float = 0.0
-var posture_current: float = 0.0
-var _posture_recovery_delay_timer: float = 0.0
-var _light_flinch_cooldown_timer: float = 0.0
 var _light_contact_visual_tween: Tween = null
 var _light_contact_visual_origin: Vector2 = Vector2.ZERO
 var _light_contact_visual_active: bool = false
 var _knockback_velocity := Vector2.ZERO
 var _knockback_remaining := 0.0
-var _crit_timer: float = 0.0
-var _crit_recovery_timer: float = 0.0
-var _parry_critical_window_timer: float = 0.0
-var _parry_critical_phase: int = ParryCriticalPhase.NONE
-var _parry_critical_target: Node2D = null
-var _parry_critical_phase_timer: float = 0.0
-var _parry_critical_execution_token: int = 0
-var _parry_critical_execution_damage_applied: bool = false
-var _parry_critical_execution_root: Vector2 = Vector2.ZERO
-var _parry_critical_execution_direction: StringName = &"s"
-var _parry_critical_execution_kind: StringName = &"ordinary_critical"
-var _parry_critical_standalone_root: Vector2 = Vector2.ZERO
-var _parry_critical_standalone_root_valid: bool = false
-var _parry_critical_execution_body_original_position: Vector2 = Vector2.ZERO
-var _parry_critical_execution_body_position_captured: bool = false
 var _critical_breach_marker_vfx: Node2D = null
 var _critical_window_ring_vfx: Node2D = null
 var _attack_sequence: int = 0
@@ -292,6 +267,8 @@ var _stuck_reroute_timer: float = 0.0
 var _stuck_repath_cooldown_timer: float = 0.0
 var _marine_dash_ability := MarineDash.new()
 var _standard_enemy_melee: StandardEnemyMelee = STANDARD_ENEMY_MELEE_SCRIPT.new()
+var _reaction_controller: EnemyReactionController = ENEMY_REACTION_CONTROLLER_SCRIPT.new()
+var _parry_critical: EnemyParryCritical = ENEMY_PARRY_CRITICAL_SCRIPT.new()
 var _savage_chain_ability: SavageChain = SAVAGE_CHAIN_SCRIPT.new()
 var _savage_pounce_ability: SavagePounce = SAVAGE_POUNCE_SCRIPT.new()
 
@@ -447,6 +424,10 @@ func _ready():
 	_savage_pounce_ability.setup(self, savage_pounce_config)
 	savage_chain_config = savage_chain_config.duplicate(true)
 	_savage_chain_ability.setup(self, savage_chain_config)
+	reaction_config = reaction_config.duplicate(true)
+	_reaction_controller.setup(self, reaction_config)
+	parry_critical_config = parry_critical_config.duplicate(true)
+	_parry_critical.setup(self, parry_critical_config)
 	standard_enemy_melee_config = standard_enemy_melee_config.duplicate(true)
 	_standard_enemy_melee.setup(self, standard_enemy_melee_config)
 	_refresh_target()
@@ -696,7 +677,7 @@ func _attack_target(delta: float):
 		return
 	if _standard_enemy_melee.is_active():
 		return
-	if _stagger_timer > 0.0 or _recoil_timer > 0.0:
+	if _reaction_controller.is_staggered() or _reaction_controller.is_recoiling():
 		return
 	if not _standard_enemy_melee.is_eligible():
 		return
@@ -1005,11 +986,11 @@ func _update_grunt_expression(delta: float) -> void:
 
 func _grunt_transition_expression_blocked() -> bool:
 	return dead \
-		or _parry_critical_phase != ParryCriticalPhase.NONE \
-		or _crit_timer > 0.0 \
-		or _crit_recovery_timer > 0.0 \
-		or _stagger_timer > 0.0 \
-		or _recoil_timer > 0.0 \
+		or _parry_critical.blocks_normal_behavior() \
+		or _reaction_controller.is_crit_reacting() \
+		or _reaction_controller.is_crit_recovering() \
+		or _reaction_controller.is_staggered() \
+		or _reaction_controller.is_recoiling() \
 		or _grunt_falcon_punch_ability.is_active() \
 		or _standard_enemy_melee.is_active()
 
@@ -1172,7 +1153,7 @@ func play_ability_movement(direction: Vector2) -> void:
 
 
 func is_ability_reset_interrupted() -> bool:
-	return _stagger_timer > 0.0 or _recoil_timer > 0.0
+	return _reaction_controller.is_staggered() or _reaction_controller.is_recoiling()
 
 
 func next_ability_attack_id(kind: StringName) -> String:
@@ -1687,9 +1668,7 @@ func die():
 	_play_enemy_death_sfx()
 	_standard_enemy_melee.cancel(&"cancelled_by_death", &"death")
 	_clear_grunt_critical_open_vfx(false)
-	_release_parry_critical_execution_owner()
-	_parry_critical_phase = ParryCriticalPhase.NONE
-	_parry_critical_standalone_root_valid = false
+	_parry_critical.reset_for_death()
 	if _grunt_falcon_punch_ability.is_active():
 		_obs_increment(&"enemy_attack_interrupted_by_death")
 		_obs_increment(&"falcon_punch_cancelled")
@@ -2527,60 +2506,69 @@ func _resolve_hit_strength_for_attack(hit_kind: StringName, amount: float) -> in
 
 
 func _apply_reaction(amount: float, hit_strength: int = CombatConstants.HitStrength.LIGHT) -> void:
-	if _parry_critical_phase != ParryCriticalPhase.NONE:
-		return
+	_reaction_controller.apply_reaction(amount, hit_strength)
 
-	var posture_damage := maxf(0.0, amount)
-	if posture_damage > 0.0:
-		posture_current = minf(maxf(1.0, posture_max), posture_current + posture_damage)
-		_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
-		_obs_accumulate(&"enemy_posture_damage_received", posture_damage)
-	if posture_current + 0.0001 >= maxf(1.0, posture_max):
-		posture_current = 0.0
-		_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
-		_start_stagger_reaction()
-		_obs_increment(&"enemy_posture_break")
-		_obs_increment(&"enemy_reactions_stagger", 1)
-		_obs_log(&"enemy_posture_break", {
-			"enemy_id": get_instance_id(),
-			"posture_max": posture_max,
-		})
-		return
 
-	# Explicit interrupt-class hits override ordinary poise.
-	if hit_strength == CombatConstants.HitStrength.INTERRUPT:
-		_start_stagger_reaction()
-		_obs_increment(&"enemy_reactions_interrupt", 1)
-		return
+func is_parry_critical_active() -> bool:
+	return _parry_critical.is_active()
 
-	# Explicit hit classes retain poise authority independently of HP damage.
-	if hit_strength == CombatConstants.HitStrength.HEAVY:
-		# Attack commitment, not raw damage, guarantees the heavy stagger.
-		_start_stagger_reaction()
-		_obs_increment(&"enemy_reactions_stagger", 1)
-	elif resists_light_flinch:
-		# Armor-deflect presentation: visual cue but no movement interruption
-		_play_armor_deflect_fx()
-		_obs_increment(&"enemy_reactions_armor_deflect", 1)
-	elif _standard_enemy_melee.is_committed():
-		_play_light_contact_visual_reaction(amount)
-		_obs_increment(&"enemy_light_flinch_suppressed_commit")
-		_obs_increment(&"enemy_attack_survived_light_contact")
-	elif _light_flinch_cooldown_timer > 0.0:
-		_play_light_contact_visual_reaction(amount)
-		_obs_increment(&"enemy_light_flinch_suppressed_cooldown")
-	else:
-		_start_hit_recoil_reaction(amount)
-		_light_flinch_cooldown_timer = maxf(0.0, light_flinch_cooldown)
-		_obs_increment(&"enemy_light_flinch_applied")
-		_obs_increment(&"enemy_reactions_flinch", 1)
+
+func observatory_accumulate(key: StringName, amount: float) -> void:
+	_obs_accumulate(key, amount)
+
+
+func play_armor_deflect_reaction() -> void:
+	_play_armor_deflect_fx()
+
+
+func play_light_contact_visual_reaction(amount: float) -> void:
+	_play_light_contact_visual_reaction(amount)
+
+
+func on_reaction_recoil_requested(applied_damage: float) -> void:
+	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
+		_ensure_enemy_presentation_controller()
+		if _enemy_presentation != null:
+			var severity_ratio := applied_damage / maxf(1.0, max_health)
+			_grunt_flinch_presentation_action = _enemy_presentation.select_flinch_for_severity(severity_ratio)
+	refresh_reaction_presentation()
+
+
+func on_reaction_stagger_requested() -> void:
+	_standard_enemy_melee.cancel(&"interrupted", &"stagger")
+	_cancel_savage_attack()
+	_finish_grunt_falcon_punch_attack()
+	_marine_dash_ability.finish()
+	halt_reaction_movement()
+	refresh_reaction_presentation()
+
+
+func on_reaction_critical_hit_requested() -> void:
+	_parry_critical.cancel_opportunity()
+	_clear_grunt_critical_open_vfx(false)
+	_standard_enemy_melee.cancel(&"interrupted", &"critical_hit")
+	_cancel_savage_attack()
+	_finish_grunt_falcon_punch_attack()
+	_marine_dash_ability.finish()
+	halt_reaction_movement()
+	refresh_reaction_presentation()
+	_play_custom_enemy_crit_fx()
+
+
+func halt_reaction_movement() -> void:
+	velocity = Vector2.ZERO
+
+
+func refresh_reaction_presentation() -> void:
+	if _uses_directional_animation_set():
+		_update_directional_animation(_last_move_direction, false)
 
 
 ## Presentation-only cosmetic reaction for a LIGHT hit that gameplay
 ## suppressed (attack-commit survival or flinch-cooldown throttling). This
-## must never touch gameplay state -- velocity, _recoil_timer, _stagger_timer,
-## standard melee commitment, and BSM
-## state are all left completely untouched by this function. Real flinch/
+## must never touch gameplay state -- velocity, reaction-controller timers,
+## standard melee commitment, and BSM state are all left completely untouched
+## by this function. Real flinch/
 ## stagger presentation (_start_hit_recoil_reaction/_start_stagger_reaction)
 ## remains a strictly stronger, separate reaction than this cosmetic kick.
 func _play_light_contact_visual_reaction(amount: float) -> void:
@@ -2669,7 +2657,7 @@ func _update_knockback_impulse(delta: float) -> void:
 
 
 func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knockback_force: float) -> void:
-	if dead or _parry_critical_phase != ParryCriticalPhase.NONE:
+	if dead or _parry_critical.is_active():
 		return
 	_custom_ambient_knockout_flip_h = knockback_direction.x > 0.0
 	var attack_parts := attack_kind.split(":", false, 1)
@@ -2690,15 +2678,14 @@ func apply_melee_impact(attack_kind: String, knockback_direction: Vector2, knock
 		# First contact creates space but does not steal the enemy's turn.
 		pass
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		_stagger_timer = maxf(_stagger_timer, 0.33)
-		_recoil_timer = 0.0
+		_reaction_controller.request_stagger(0.33, false)
 		_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_MARINE):
-		_recoil_timer = maxf(_recoil_timer, 0.22)
+		_reaction_controller.request_recoil(0.22)
 		_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif is_dagger_finisher and custom_enemy_animation_set == String(CUSTOM_ENEMY_SAVAGE):
 		if not _savage_chain_ability.is_active() and not _savage_pounce_ability.is_active():
-			_recoil_timer = maxf(_recoil_timer, 0.20)
+			_reaction_controller.request_recoil(0.20)
 			_standard_enemy_melee.cancel(&"interrupted", &"dagger_finisher")
 	elif attack_kind == "heavy":
 		# Heavy gameplay interruption was already resolved at take_damage().
@@ -2719,22 +2706,16 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 		return
 	var interrupted_falcon_punch := _grunt_falcon_punch_ability.is_active()
 	_standard_enemy_melee.cancel(&"interrupted", &"parry")
-	posture_current = 0.0
-	_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
+	_reaction_controller.clear_for_parry()
 	_cancel_savage_attack()
 	if interrupted_falcon_punch:
 		_grunt_falcon_punch_ability.on_parried()
 	_marine_dash_ability.finish()
-	_stagger_timer = 0.0
-	_recoil_timer = 0.0
-	_crit_timer = 0.0
-	_crit_recovery_timer = 0.0
+	_reaction_controller.clear_for_parry()
 	if _uses_grunt_critical_window():
-		var critical_window_duration := _get_grunt_parry_critical_window_duration(duration)
-		_parry_critical_window_timer = critical_window_duration
+		var critical_window_duration := _parry_critical.open_window(duration)
 		_clear_grunt_standard_hit_fx()
-		_spawn_grunt_critical_open_vfx(_parry_critical_window_timer)
-		_enter_parry_critical_phase(ParryCriticalPhase.ENTER)
+		_spawn_grunt_critical_open_vfx(critical_window_duration)
 		_obs_increment(&"enemy_parry_vulnerable_opened")
 		_obs_log(&"enemy_parry_vulnerable_opened", {
 			"enemy_id": get_instance_id(),
@@ -2747,11 +2728,10 @@ func apply_parry_stagger(knockback_direction: Vector2, duration: float, knockbac
 	_last_move_direction = resolved_direction
 	velocity = resolved_direction * knockback_force
 	move_and_slide()
-	if _parry_critical_phase == ParryCriticalPhase.ENTER:
+	if _parry_critical.get_phase() == ParryCriticalPhase.ENTER:
 		# The requested parry impulse is the only root displacement allowed before
 		# reservation. Standalone open/recover clips keep this independent root.
-		_parry_critical_standalone_root = global_position
-		_parry_critical_standalone_root_valid = true
+		_parry_critical.set_standalone_root(global_position)
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, 0.0)
 	if _uses_directional_animation_set():
@@ -2766,175 +2746,74 @@ func _uses_grunt_critical_window() -> bool:
 		and _has_directional_grunt_execution_animations()
 
 
-func _is_grunt_parry_critical_window_active() -> bool:
-	return _uses_grunt_critical_window() \
-		and _parry_critical_window_timer > 0.0 \
-		and _parry_critical_phase in [ParryCriticalPhase.ENTER, ParryCriticalPhase.HOLD]
+func uses_grunt_critical_window() -> bool:
+	return _uses_grunt_critical_window()
+
+
+func is_grunt() -> bool:
+	return custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT)
+
+
+func falcon_can_receive_reversal(attacker: Node2D) -> bool:
+	return _grunt_falcon_punch_ability.can_receive_reversal_from(attacker)
 
 
 func can_receive_parry_critical_from(attacker: Node2D) -> bool:
-	if dead or attacker == null or not is_instance_valid(attacker):
-		return false
-	if not _is_grunt_parry_critical_window_active() or _parry_critical_target != null:
-		return false
-	return global_position.distance_to(attacker.global_position) <= grunt_parry_critical_capture_range_px
+	return _parry_critical.can_receive_from(attacker)
 
 
-func get_parry_critical_rejection_reason(
-	attacker: Node2D
-) -> StringName:
-	if _parry_critical_phase not in [
-		ParryCriticalPhase.ENTER,
-		ParryCriticalPhase.HOLD,
-	]:
-		return &""
-	if dead:
-		return &"target_dead"
-	if _parry_critical_target != null:
-		return &"already_reserved"
-	if _parry_critical_window_timer <= 0.0:
-		return &"window_expired"
-	if attacker == null or not is_instance_valid(attacker):
-		return &"invalid_attacker"
-	if (
-		global_position.distance_to(attacker.global_position)
-		> grunt_parry_critical_capture_range_px
-	):
-		return &"out_of_capture_range"
-	return &""
+func get_parry_critical_rejection_reason(attacker: Node2D) -> StringName:
+	return _parry_critical.get_rejection_reason(attacker)
 
 
 func reserve_parry_critical(attacker: Node2D) -> Dictionary:
-	if not can_receive_parry_critical_from(attacker):
-		return {}
-	return _reserve_paired_execution(
-		attacker,
-		&"ordinary_critical",
-		_resolve_parry_critical_execution_direction(attacker)
-	)
+	return _parry_critical.reserve(attacker, &"ordinary_critical", _parry_critical.resolve_direction(attacker)) \
+		if _parry_critical.can_receive_from(attacker) else {}
 
 
-func can_receive_falcon_reversal_from(
-	attacker: Node2D,
-	incoming_direction: Vector2 = Vector2.ZERO
-) -> bool:
-	if dead or custom_enemy_animation_set != String(CUSTOM_ENEMY_GRUNT):
-		return false
-	if not _grunt_falcon_punch_ability.can_receive_reversal_from(attacker):
-		return false
-	if _parry_critical_target != null \
-			or _parry_critical_phase == ParryCriticalPhase.EXECUTING:
-		return false
-	var direction := _resolve_falcon_reversal_direction(incoming_direction)
-	if direction.is_empty():
-		return false
-	var animation_name: StringName = GRUNT_FALCON_REVERSAL_VICTIM_ANIMATIONS.get(
-		direction,
-		&""
-	)
-	return not animation_name.is_empty() and _has_animation(String(animation_name))
+func can_receive_falcon_reversal_from(attacker: Node2D, incoming_direction: Vector2 = Vector2.ZERO) -> bool:
+	return _parry_critical.can_use_falcon_reversal(attacker, incoming_direction)
 
 
-func reserve_falcon_reversal(
-	attacker: Node2D,
-	incoming_direction: Vector2
-) -> Dictionary:
+func reserve_falcon_reversal(attacker: Node2D, incoming_direction: Vector2) -> Dictionary:
 	if not can_receive_falcon_reversal_from(attacker, incoming_direction):
 		return {}
-	var direction := _resolve_falcon_reversal_direction(incoming_direction)
+	var direction := _parry_critical.resolve_falcon_direction(incoming_direction)
 	_grunt_falcon_punch_ability.finish_for_reversal()
-	return _reserve_paired_execution(attacker, &"falcon_reversal", direction)
+	return _parry_critical.reserve(attacker, &"falcon_reversal", direction)
 
 
-func _reserve_paired_execution(
-	attacker: Node2D,
-	execution_kind: StringName,
-	direction: StringName
-) -> Dictionary:
-	_parry_critical_execution_token += 1
-	_parry_critical_target = attacker
-	_parry_critical_execution_damage_applied = false
-	_parry_critical_window_timer = 0.0
-	_parry_critical_phase = ParryCriticalPhase.EXECUTING
-	_parry_critical_phase_timer = 0.0
-	_parry_critical_standalone_root_valid = false
-	_parry_critical_execution_direction = direction
-	_parry_critical_execution_kind = execution_kind
-	_parry_critical_execution_root = get_parry_critical_execution_anchor()
-	global_position = _parry_critical_execution_root
-	_clear_grunt_critical_open_vfx(false)
-	velocity = Vector2.ZERO
-	_obs_increment(&"enemy_parry_vulnerable_consumed")
-	_obs_log(&"enemy_parry_vulnerable_consumed", {
-		"enemy_id": get_instance_id(),
-		"attacker_id": attacker.get_instance_id(),
-		"execution_token": _parry_critical_execution_token,
-		"execution_kind": String(execution_kind),
-	})
-	return {
-		"token": _parry_critical_execution_token,
-		"anchor": get_parry_critical_execution_anchor(),
-		"operator_offset": get_parry_critical_operator_offset(),
-		"facing": get_parry_critical_facing(),
-		"direction": _parry_critical_execution_direction,
-		"execution_kind": execution_kind,
-	}
+func get_parry_critical_execution_anchor() -> Vector2:
+	var anchor := get_node_or_null("CriticalExecutionAnchor") as Marker2D
+	return anchor.global_position if anchor != null else global_position
 
 
-func _resolve_falcon_reversal_direction(
-	incoming_direction: Vector2
-) -> StringName:
-	if incoming_direction.x > 0.0001:
-		return &"w"
-	if incoming_direction.x < -0.0001:
-		return &"e"
-	return &""
+func get_parry_critical_operator_offset() -> Vector2:
+	return parry_critical_config.operator_offset
+
+
+func get_parry_critical_facing() -> Vector2:
+	return _parry_critical.get_facing()
 
 
 func begin_parry_critical_execution(attacker: Node2D, execution_data: Dictionary) -> bool:
-	if not _is_valid_parry_critical_execution_owner(attacker, int(execution_data.get("token", -1))):
-		return false
-	velocity = Vector2.ZERO
-	global_position = _parry_critical_execution_root
-	var victim_animation := _get_parry_critical_execution_animation()
-	_play_animation(String(victim_animation), false)
-	if animated_sprite != null:
-		_parry_critical_execution_body_original_position = animated_sprite.position
-		_parry_critical_execution_body_position_captured = true
-		animated_sprite.position = Vector2.ZERO
-		animated_sprite.stop()
-		animated_sprite.set_frame_and_progress(0, 0.0)
-	return true
+	return _parry_critical.begin_execution(attacker, int(execution_data.get("token", -1)))
 
 
 func set_parry_critical_execution_frame(attacker: Node2D, token: int, frame_index: int) -> bool:
-	if not _is_valid_parry_critical_execution_owner(attacker, token):
-		return false
-	global_position = _parry_critical_execution_root
-	velocity = Vector2.ZERO
-	if animated_sprite == null or animated_sprite.animation != String(_get_parry_critical_execution_animation()):
-		return false
-	animated_sprite.stop()
-	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(
-		animated_sprite.animation
-	)
-	animated_sprite.set_frame_and_progress(
-		clampi(frame_index, 0, maxi(frame_count - 1, 0)),
-		0.0
-	)
-	return true
+	return _parry_critical.set_execution_frame(attacker, token, frame_index)
 
 
 func apply_parry_critical_execution_damage(attacker: Node2D, damage_amount: float, hit_data: Dictionary = {}) -> Dictionary:
-	var token := int(hit_data.get("execution_token", _parry_critical_execution_token))
-	if not _is_valid_parry_critical_execution_owner(attacker, token) or _parry_critical_execution_damage_applied:
+	var token := int(hit_data.get("execution_token", _parry_critical.get_execution_token()))
+	if not _parry_critical.try_consume_damage(attacker, token):
 		return {"critical": false, "consumed": false, "damage_applied": 0.0, "lethal": dead}
-	_parry_critical_execution_damage_applied = true
+	return apply_paired_execution_damage(damage_amount, hit_data)
+
+
+func apply_paired_execution_damage(damage_amount: float, _hit_data: Dictionary = {}) -> Dictionary:
 	var health_before := maxf(0.0, health)
-	var applied_damage := minf(
-		maxf(0.0, damage_amount),
-		health_before
-	)
+	var applied_damage := minf(maxf(0.0, damage_amount), health_before)
 	health = maxf(0.0, health_before - applied_damage)
 	if behavior_state_machine != null and behavior_state_machine.has_method("on_damaged"):
 		behavior_state_machine.call("on_damaged", self, applied_damage)
@@ -2945,106 +2824,82 @@ func apply_parry_critical_execution_damage(attacker: Node2D, damage_amount: floa
 	if lethal:
 		die()
 	var result := _damage_result(applied_damage, health_before > 0.0)
-	result.merge({
-		"critical": true,
-		"consumed": true,
-		"damage_applied": applied_damage,
-		"lethal": lethal,
-	}, true)
+	result.merge({"critical": true, "consumed": true, "damage_applied": applied_damage, "lethal": lethal}, true)
 	return result
 
 
 func finish_parry_critical_execution(attacker: Node2D, result: Dictionary = {}) -> void:
-	var token := int(result.get("execution_token", _parry_critical_execution_token))
-	if not _is_valid_parry_critical_execution_owner(attacker, token):
-		return
-	_release_parry_critical_execution_owner()
-	if dead:
-		return
-	_parry_critical_phase = ParryCriticalPhase.NONE
-	_crit_recovery_timer = maxf(_crit_recovery_timer, crit_recovery_duration)
-	_update_custom_enemy_animation(_last_move_direction, false)
+	_parry_critical.finish_execution(attacker, int(result.get("execution_token", _parry_critical.get_execution_token())))
 
 
 func cancel_parry_critical_execution(attacker: Node2D, reason: StringName) -> void:
-	if _parry_critical_phase != ParryCriticalPhase.EXECUTING:
-		return
-	if attacker != null and is_instance_valid(attacker) and attacker != _parry_critical_target:
-		return
-	_release_parry_critical_execution_owner()
-	if dead:
-		return
-	_parry_critical_phase = ParryCriticalPhase.NONE
-	_crit_recovery_timer = maxf(_crit_recovery_timer, crit_recovery_duration)
+	_parry_critical.cancel_execution(attacker, reason)
+
+
+func on_parry_critical_reserved(execution_kind: StringName, token: int) -> void:
+	_clear_grunt_critical_open_vfx(false)
+	velocity = Vector2.ZERO
+	_obs_increment(&"enemy_parry_vulnerable_consumed")
+	_obs_log(&"enemy_parry_vulnerable_consumed", {
+		"enemy_id": get_instance_id(),
+		"attacker_id": _parry_critical.get_reserved_attacker().get_instance_id(),
+		"execution_token": token,
+		"execution_kind": String(execution_kind),
+	})
+
+
+func on_parry_critical_window_expired() -> void:
+	_obs_increment(&"enemy_parry_vulnerable_expired")
+	_obs_log(&"enemy_parry_vulnerable_expired", {"enemy_id": get_instance_id(), "position": global_position})
+	_clear_grunt_critical_open_vfx(true)
+
+
+func refresh_parry_critical_presentation() -> void:
 	_update_custom_enemy_animation(_last_move_direction, false)
 
 
-func _release_parry_critical_execution_owner() -> void:
-	if animated_sprite != null and _parry_critical_execution_body_position_captured:
-		animated_sprite.position = _parry_critical_execution_body_original_position
-	_parry_critical_execution_body_position_captured = false
-	_parry_critical_target = null
-	_parry_critical_phase_timer = 0.0
-	_parry_critical_window_timer = 0.0
-	_parry_critical_execution_damage_applied = false
-	_parry_critical_execution_direction = &"s"
-	_parry_critical_execution_kind = &"ordinary_critical"
+func begin_parry_execution_presentation(animation_name: StringName) -> bool:
+	if not _has_animation(String(animation_name)):
+		return false
+	_ensure_enemy_presentation_controller()
+	_play_animation(String(animation_name), false)
+	if _enemy_presentation != null:
+		_enemy_presentation.capture_execution_body_position()
+	return true
+
+
+func set_parry_execution_presentation_frame(animation_name: StringName, frame_index: int) -> bool:
+	if animated_sprite == null or animated_sprite.sprite_frames == null or animated_sprite.animation != String(animation_name):
+		return false
+	animated_sprite.stop()
+	var frame_count: int = animated_sprite.sprite_frames.get_frame_count(animated_sprite.animation)
+	animated_sprite.set_frame_and_progress(clampi(frame_index, 0, maxi(frame_count - 1, 0)), 0.0)
+	return true
+
+
+func restore_parry_execution_presentation() -> void:
+	if _enemy_presentation != null:
+		_enemy_presentation.restore_execution_body_position()
+
+
+func on_parry_critical_released() -> void:
 	_clear_grunt_critical_open_vfx(false)
 
 
-func _is_valid_parry_critical_execution_owner(attacker: Node2D, token: int) -> bool:
-	return _parry_critical_phase == ParryCriticalPhase.EXECUTING \
-		and not dead \
-		and attacker != null \
-		and is_instance_valid(attacker) \
-		and attacker == _parry_critical_target \
-		and token == _parry_critical_execution_token
+func start_parry_critical_recovery() -> void:
+	_reaction_controller.start_critical_recovery()
 
 
-func get_parry_critical_execution_anchor() -> Vector2:
-	var anchor := get_node_or_null("CriticalExecutionAnchor") as Marker2D
-	return anchor.global_position if anchor != null else global_position
-
-
-func get_parry_critical_operator_offset() -> Vector2:
-	return grunt_parry_critical_operator_offset
-
-
-func get_parry_critical_facing() -> Vector2:
-	match _parry_critical_execution_direction:
-		&"e":
-			return Vector2.RIGHT
-		&"w":
-			return Vector2.LEFT
-		_:
-			return Vector2.DOWN
-
-
-func _resolve_parry_critical_execution_direction(attacker: Node2D) -> StringName:
-	if attacker == null or not is_instance_valid(attacker):
-		return &"s"
-	var approach := attacker.global_position.direction_to(global_position)
-	if absf(approach.x) > absf(approach.y):
-		return &"e" if approach.x > 0.0 else &"w"
-	# The authored set intentionally has no north strip. Vertical approaches use
-	# the south composition rather than mirroring or inventing layer offsets.
-	return &"s"
-
-
-func _get_parry_critical_execution_animation() -> StringName:
-	if _parry_critical_execution_kind == &"falcon_reversal":
-		return GRUNT_FALCON_REVERSAL_VICTIM_ANIMATIONS.get(
-			_parry_critical_execution_direction,
-			&""
-		) as StringName
-	return GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS.get(
-		_parry_critical_execution_direction,
-		GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS[&"s"]
-	) as StringName
+func has_parry_execution_animation(animation_name: StringName) -> bool:
+	return _has_animation(String(animation_name))
 
 
 func _has_directional_grunt_execution_animations() -> bool:
-	for animation_name: StringName in GRUNT_CRITICAL_EXECUTION_VICTIM_ANIMATIONS.values():
+	for animation_name: StringName in [
+		&"critical_execution_victim_s",
+		&"critical_execution_victim_e",
+		&"critical_execution_victim_w",
+	]:
 		if not _has_animation(String(animation_name)):
 			return false
 	return true
@@ -3063,13 +2918,8 @@ func debug_apply_spawn_mode(mode: StringName, attacker: Node2D = null) -> bool:
 		if attacker == null or not is_instance_valid(attacker):
 			return false
 		target = attacker
-		var direction := global_position.direction_to(attacker.global_position)
-		_start_grunt_falcon_punch_windup(direction)
-		_obs_log(&"debug_enemy_spawn_mode_applied", {
-			"enemy": enemy_name,
-			"mode": String(normalized_mode),
-			"position": global_position,
-		})
+		_start_grunt_falcon_punch_windup(global_position.direction_to(attacker.global_position))
+		_obs_log(&"debug_enemy_spawn_mode_applied", {"enemy": enemy_name, "mode": String(normalized_mode), "position": global_position})
 		return true
 	if normalized_mode not in [&"critical_enter", &"critical_hold", &"critical_recover", &"execution_ready", &"execution_lethal"]:
 		return false
@@ -3078,24 +2928,19 @@ func debug_apply_spawn_mode(mode: StringName, attacker: Node2D = null) -> bool:
 		knockback_direction = attacker.global_position.direction_to(global_position)
 		if knockback_direction.length_squared() <= 0.0001:
 			knockback_direction = Vector2.RIGHT
-	apply_parry_stagger(knockback_direction, grunt_parry_critical_window_min_sec, 0.0)
-	if _parry_critical_phase != ParryCriticalPhase.ENTER:
+	apply_parry_stagger(knockback_direction, parry_critical_config.minimum_window_sec, 0.0)
+	if _parry_critical.get_phase() != ParryCriticalPhase.ENTER:
 		return false
 	match normalized_mode:
 		&"critical_hold", &"execution_ready", &"execution_lethal":
-			_enter_parry_critical_phase(ParryCriticalPhase.HOLD)
+			_parry_critical.force_phase(EnemyParryCritical.Phase.HOLD)
 		&"critical_recover":
-			_parry_critical_window_timer = 0.0
+			_parry_critical.force_phase(EnemyParryCritical.Phase.RECOVER)
 			_clear_grunt_critical_open_vfx(false)
-			_enter_parry_critical_phase(ParryCriticalPhase.RECOVER)
 	if normalized_mode == &"execution_lethal":
 		health = minf(health, 1.0)
 		update_visuals()
-	_obs_log(&"debug_enemy_spawn_mode_applied", {
-		"enemy": enemy_name,
-		"mode": String(normalized_mode),
-		"position": global_position,
-	})
+	_obs_log(&"debug_enemy_spawn_mode_applied", {"enemy": enemy_name, "mode": String(normalized_mode), "position": global_position})
 	return true
 
 
@@ -3110,95 +2955,44 @@ func receive_parry_critical(attacker: Node2D, damage_amount: float, hit_data: Di
 
 
 func has_active_critical_target_reticle() -> bool:
-	return _is_grunt_parry_critical_window_active() \
-		and _critical_window_ring_vfx != null \
-		and is_instance_valid(_critical_window_ring_vfx)
+	return _parry_critical.is_open() and _critical_window_ring_vfx != null and is_instance_valid(_critical_window_ring_vfx)
 
 
 func suppresses_normal_targeting_presentation() -> bool:
-	return _parry_critical_phase in [
-		ParryCriticalPhase.ENTER,
-		ParryCriticalPhase.HOLD,
-		ParryCriticalPhase.RECOVER,
-		ParryCriticalPhase.EXECUTING,
-	]
+	return _parry_critical.suppresses_normal_targeting()
 
 
-func _preserve_parry_critical_standalone_root() -> void:
-	if not _parry_critical_standalone_root_valid:
-		_parry_critical_standalone_root = global_position
-		_parry_critical_standalone_root_valid = true
-	if OS.is_debug_build():
-		assert(
-			global_position.is_equal_approx(_parry_critical_standalone_root),
-			"Critical-open standalone state changed the enemy world root."
-		)
-	global_position = _parry_critical_standalone_root
-	velocity = Vector2.ZERO
+func get_enemy_animation_duration(animation_name: StringName) -> float:
+	return _get_animation_duration(String(animation_name))
+
+
+func get_parry_enter_animation_duration() -> float:
+	return _get_animation_duration(String(GRUNT_CRITICAL_OPEN_ENTER_ANIMATION))
+
+
+func play_enemy_animation(animation_name: StringName) -> void:
+	if not animation_name.is_empty():
+		_play_animation(String(animation_name), false)
 
 
 func _get_grunt_parry_critical_window_duration(duration: float) -> float:
-	return maxf(maxf(duration, grunt_parry_critical_window_min_sec), _get_animation_duration(String(GRUNT_CRITICAL_OPEN_ENTER_ANIMATION)))
+	return maxf(maxf(duration, parry_critical_config.minimum_window_sec), _get_animation_duration(String(GRUNT_CRITICAL_OPEN_ENTER_ANIMATION)))
 
 
-func _enter_parry_critical_phase(phase: int) -> void:
-	_parry_critical_phase = phase
-	velocity = Vector2.ZERO
-	var animation_name := &""
-	match phase:
-		ParryCriticalPhase.ENTER:
-			animation_name = GRUNT_CRITICAL_OPEN_ENTER_ANIMATION
-		ParryCriticalPhase.HOLD:
-			animation_name = GRUNT_CRITICAL_OPEN_HOLD_ANIMATION
-		ParryCriticalPhase.RECOVER:
-			animation_name = GRUNT_CRITICAL_OPEN_RECOVER_ANIMATION
-		_:
-			_parry_critical_phase_timer = 0.0
-			return
-	_parry_critical_phase_timer = _get_animation_duration(String(animation_name))
-	_play_animation(String(animation_name), false)
+func _get_parry_critical_execution_animation() -> StringName:
+	return _parry_critical.get_execution_animation()
 
 
 func _start_hit_recoil_reaction(applied_damage := 0.0) -> void:
-	_recoil_timer = max(_recoil_timer, hit_recoil_duration)
-	if custom_enemy_animation_set == String(CUSTOM_ENEMY_GRUNT):
-		_ensure_enemy_presentation_controller()
-		if _enemy_presentation != null:
-			var severity_ratio := applied_damage / maxf(1.0, max_health)
-			_grunt_flinch_presentation_action = _enemy_presentation.select_flinch_for_severity(severity_ratio)
-	if _uses_directional_animation_set():
-		_update_directional_animation(_last_move_direction, false)
+	_reaction_controller.request_recoil(reaction_config.hit_recoil_duration, applied_damage)
 
 
 func _start_stagger_reaction() -> void:
-	_stagger_timer = max(_stagger_timer, stagger_duration)
-	_recoil_timer = 0.0
-	_standard_enemy_melee.cancel(&"interrupted", &"stagger")
-	_cancel_savage_attack()
-	_finish_grunt_falcon_punch_attack()
-	_marine_dash_ability.finish()
-	velocity = Vector2.ZERO
-	if _uses_directional_animation_set():
-		_update_directional_animation(_last_move_direction, false)
+	_reaction_controller.request_stagger(reaction_config.stagger_duration)
 
 
 func _start_crit_reaction() -> void:
-	posture_current = 0.0
-	_posture_recovery_delay_timer = maxf(0.0, posture_recovery_delay)
-	_crit_timer = max(_crit_timer, crit_hit_duration)
-	_crit_recovery_timer = 0.0
-	_parry_critical_window_timer = 0.0
-	_clear_grunt_critical_open_vfx(false)
-	_recoil_timer = 0.0
-	_stagger_timer = 0.0
-	_standard_enemy_melee.cancel(&"interrupted", &"critical_hit")
-	_cancel_savage_attack()
-	_finish_grunt_falcon_punch_attack()
-	_marine_dash_ability.finish()
-	velocity = Vector2.ZERO
-	if _uses_directional_animation_set():
-		_update_directional_animation(_last_move_direction, false)
-	_play_custom_enemy_crit_fx()
+	_reaction_controller.request_critical_hit()
 
 
 func _spawn_damage_popup(amount: float) -> void:
@@ -3209,83 +3003,34 @@ func _spawn_damage_popup(amount: float) -> void:
 
 
 func _update_reaction_timers(delta: float) -> bool:
-	_light_flinch_cooldown_timer = maxf(0.0, _light_flinch_cooldown_timer - delta)
-	if _posture_recovery_delay_timer > 0.0:
-		_posture_recovery_delay_timer = maxf(0.0, _posture_recovery_delay_timer - delta)
-	elif posture_current > 0.0:
-		posture_current = maxf(0.0, posture_current - maxf(0.0, posture_recovery_rate) * delta)
-	if _parry_critical_phase == ParryCriticalPhase.EXECUTING:
-		velocity = Vector2.ZERO
-		global_position = _parry_critical_execution_root
-		if _parry_critical_target == null or not is_instance_valid(_parry_critical_target):
-			cancel_parry_critical_execution(null, &"owner_invalid")
+	_reaction_controller.advance_timers(delta)
+	if _parry_critical.tick(delta):
 		return true
-	if _parry_critical_phase in [ParryCriticalPhase.ENTER, ParryCriticalPhase.HOLD]:
-		_preserve_parry_critical_standalone_root()
-		_parry_critical_window_timer = maxf(0.0, _parry_critical_window_timer - delta)
-		_parry_critical_phase_timer = maxf(0.0, _parry_critical_phase_timer - delta)
-		velocity = Vector2.ZERO
-		if _parry_critical_window_timer <= 0.0:
-			_obs_increment(&"enemy_parry_vulnerable_expired")
-			_obs_log(&"enemy_parry_vulnerable_expired", {
-				"enemy_id": get_instance_id(),
-				"position": global_position,
-			})
-			_clear_grunt_critical_open_vfx(true)
-			_enter_parry_critical_phase(ParryCriticalPhase.RECOVER)
-		elif _parry_critical_phase == ParryCriticalPhase.ENTER and _parry_critical_phase_timer <= 0.0:
-			_enter_parry_critical_phase(ParryCriticalPhase.HOLD)
-		_update_custom_enemy_animation(_last_move_direction, false)
-		return true
-	if _parry_critical_phase == ParryCriticalPhase.RECOVER:
-		_preserve_parry_critical_standalone_root()
-		_parry_critical_phase_timer = maxf(0.0, _parry_critical_phase_timer - delta)
-		velocity = Vector2.ZERO
-		if _parry_critical_phase_timer <= 0.0:
-			_parry_critical_phase = ParryCriticalPhase.NONE
-			_parry_critical_standalone_root_valid = false
-			_update_custom_enemy_animation(_last_move_direction, false)
-		else:
-			_update_custom_enemy_animation(_last_move_direction, false)
-		return true
-	if _crit_timer > 0.0:
-		_crit_timer = max(0.0, _crit_timer - delta)
-		velocity = Vector2.ZERO
-		if _crit_timer <= 0.0:
-			_crit_recovery_timer = max(_crit_recovery_timer, crit_recovery_duration)
-		if _uses_directional_animation_set():
-			_update_directional_animation(_last_move_direction, false)
-		return true
-	if _crit_recovery_timer > 0.0:
-		_crit_recovery_timer = max(0.0, _crit_recovery_timer - delta)
-		velocity = Vector2.ZERO
-		if _uses_directional_animation_set():
-			_update_directional_animation(_last_move_direction, false)
-		return true
-	if _stagger_timer > 0.0:
-		_stagger_timer = max(0.0, _stagger_timer - delta)
-		velocity = Vector2.ZERO
-		if _uses_directional_animation_set():
-			_update_directional_animation(_last_move_direction, false)
-		return true
-	if _recoil_timer > 0.0:
-		_recoil_timer = max(0.0, _recoil_timer - delta)
-		velocity = Vector2.ZERO
-		if _uses_directional_animation_set():
-			_update_directional_animation(_last_move_direction, false)
-		return true
-	return false
+	return _reaction_controller.tick_active_reaction(delta)
 
 
 func get_posture_status() -> Dictionary:
-	return {
-		"current": posture_current,
-		"maximum": posture_max,
-		"recovery_delay_remaining": _posture_recovery_delay_timer,
-		"recovery_rate": posture_recovery_rate,
-		"light_flinch_cooldown_remaining": _light_flinch_cooldown_timer,
-		"attack_committed": _standard_enemy_melee.is_committed(),
-	}
+	return _reaction_controller.get_posture_status(_standard_enemy_melee.is_committed())
+
+
+func get_reaction_debug_state() -> Dictionary:
+	return _reaction_controller.get_debug_state()
+
+
+func reset_reaction_state() -> void:
+	_reaction_controller.reset_state()
+
+
+func request_recoil_reaction(duration: float, applied_damage: float = 0.0) -> void:
+	_reaction_controller.request_recoil(duration, applied_damage)
+
+
+func request_stagger_reaction(duration: float) -> void:
+	_reaction_controller.request_stagger(duration)
+
+
+func get_parry_critical_debug_state() -> Dictionary:
+	return _parry_critical.get_debug_state()
 
 
 # ============================================================
@@ -3596,7 +3341,7 @@ func _build_directional_atlas(texture: Texture2D, dir_index: int, row_index: int
 func _update_directional_animation(direction: Vector2, is_moving: bool) -> void:
 	if _uses_humanoid_cutout_backend():
 		humanoid_cutout_rig.set_facing_vector(direction)
-		if _recoil_timer > 0.0 or _stagger_timer > 0.0 or _crit_timer > 0.0:
+		if _reaction_controller.is_recoiling() or _reaction_controller.is_staggered() or _reaction_controller.is_crit_reacting():
 			_play_cutout_presentation_state(&"hit_react", false)
 		else:
 			_play_cutout_presentation_state(&"run" if is_moving else &"idle", false)
@@ -3825,9 +3570,9 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 	if _grunt_falcon_punch_ability.is_active():
 		_grunt_falcon_punch_ability.play_current_presentation()
 		return
-	if _parry_critical_phase != ParryCriticalPhase.NONE:
+	if _parry_critical.blocks_normal_behavior():
 		var critical_phase_name := &""
-		match _parry_critical_phase:
+		match _parry_critical.get_phase():
 			ParryCriticalPhase.ENTER:
 				critical_phase_name = GRUNT_CRITICAL_OPEN_ENTER_ANIMATION
 			ParryCriticalPhase.HOLD:
@@ -3840,20 +3585,20 @@ func _update_custom_enemy_animation(direction: Vector2, is_moving: bool, force_a
 			animated_sprite.flip_h = false
 			_play_animation(String(critical_phase_name), false)
 		return
-	if _crit_timer > 0.0:
+	if _reaction_controller.is_crit_reacting():
 		if _has_animation(String(GRUNT_CRIT_ANIMATION)):
 			animated_sprite.flip_h = false
 			_play_animation(String(GRUNT_CRIT_ANIMATION), false)
 		return
-	if _crit_recovery_timer > 0.0:
+	if _reaction_controller.is_crit_recovering():
 		if _has_animation(String(GRUNT_CRIT_RECOVERY_ANIMATION)):
 			animated_sprite.flip_h = false
 			_play_animation(String(GRUNT_CRIT_RECOVERY_ANIMATION), false)
 			return
-	if _recoil_timer > 0.0:
+	if _reaction_controller.is_recoiling():
 		if _play_grunt_semantic(_grunt_flinch_presentation_action, facing):
 			return
-	if _stagger_timer > 0.0:
+	if _reaction_controller.is_staggered():
 		var stagger_animation := _get_grunt_stagger_animation()
 		if _has_animation(String(stagger_animation)):
 			animated_sprite.flip_h = false
@@ -3930,11 +3675,11 @@ func _update_savage_enemy_animation(direction: Vector2, is_moving: bool) -> void
 	# locomotion. Until those authored clips are present, preserve the current
 	# presentation rather than allowing movement/idle selection to overwrite it.
 	if dead \
-	or _parry_critical_phase != ParryCriticalPhase.NONE \
-	or _crit_timer > 0.0 \
-	or _crit_recovery_timer > 0.0 \
-	or _stagger_timer > 0.0 \
-	or _recoil_timer > 0.0 \
+	or _parry_critical.blocks_normal_behavior() \
+	or _reaction_controller.is_crit_reacting() \
+	or _reaction_controller.is_crit_recovering() \
+	or _reaction_controller.is_staggered() \
+	or _reaction_controller.is_recoiling() \
 		or _savage_pounce_ability.is_active() \
 		or _savage_chain_ability.is_active():
 		return

@@ -214,7 +214,7 @@
 
 **F14: [Living-world simulation, interest management and unloaded-sector continuity](F14_LIVING_WORLD_SIMULATION.md)**
 
-> **Status:** F14 V1 **BOUNDED** behavior locked; baseline evidence fulfilled. **F14-B plus R0-01 correction and a distinct fresh correction re-review all archived/accepted** (`main@7d9fe1872361`, zero findings). Narrow **F14-C1 one-real-Enemy synthetic A/B ownership handoff** is design-authorized and has implementation/review packet drafts pending local authoring preflight and queue promotion; production F14-C2 geographic residency and D/E remain unapproved. See [F14 acceptance/C1 lock](F14_LIVING_WORLD_SIMULATION.md) and [F15 geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
+> **Status:** F14 V1 **BOUNDED** behavior locked; baseline evidence fulfilled. **F14-B plus R0-01 correction and a distinct fresh correction re-review all archived/accepted** (`main@7d9fe1872361`, zero findings). **F14-C1 one-real-Enemy synthetic A/B ownership handoff** is implemented, corrected and independently re-reviewed PASS (R0-01/02/03 fixed; no new findings). Production F14-C2 geographic residency and D/E remain unapproved. See [F14 acceptance/C1 lock](F14_LIVING_WORLD_SIMULATION.md) and [F15 geography](F15_CAMPAIGN_WORLD_GEOGRAPHY.md).
 
 ### CS-F14-A
 - **Intent:** Characterize interest tier, macro clock, actor serialization/identity, streaming, history, and current load/unload parity; profile baseline.
@@ -232,11 +232,11 @@
 
 ### CS-F14-C
 
-- **C1 status:** **Design-authorized, implementation/review packet pair DRAFT/MANUAL pending targeted local authoring preflight**, index and origin/main publication. [Implementation packet](../../../custodian/docs/ai_context/task_packets/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md) · [fresh-context review](../../../custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md). Workstream **`living-world-entity-reification-handoff`** reuses the exact F14-B next-handoff identity.
-- **C1 intent:** One actual Grunt Enemy, distinct durable ActorId and GroupId, deterministic physical→abstract→physical ownership switch using synthetic Domain locations A/B and explicit caller-driven residency. Preserve non-default health/intent, allow bounded offscreen route change only when abstract, validate no duplicate actor on repeated leave/reentry or snapshot continuation; unsupported mid-combat/corpse/queued spawn fails closed. No second clock, scene copy or graphics creation.
-- **C1 dependency and authorization:** B's R0-01 independent re-review passed. Synthetic locations are explicitly allowed for the *narrow* proof. The authoring agent must run targeted pair preflight, promote both to `ready/auto`, regenerate/check index and **land all three queue-authority files on `origin/main`** before dispatcher claim. Do not treat draft/manual as claimable.
-- **C2 production integration:** **NOT AUTHORIZED**. Real geographic Domain/Region/Site identity and residency API, F02 actual scene lifecycle, F04 ambient camp/spawner reconciliation, and transition/campaign authority must first be locked from live evidence. M6 presentation/cache chunk eviction is NOT real actor unload and does not automatically invoke F14 transfer. No speculative C2 packet should be created before reviewing C1.
-- **Next review gate:** independently falsify C1 exclusive representation, real Enemy/descendant teardown, snapshots/ID collisions, repeated reentry and compatibility. On pass return to this authoring chat to decide C2/F15 physical world integration.
+- **C1: IMPLEMENTED / CORRECTED / INDEPENDENTLY RE-REVIEWED PASS.** [Archived implementation](../../../custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md), [initial review](../../../custodian/docs/ai_context/task_packets/archived/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md), [correction](../../../custodian/docs/ai_context/task_packets/archived/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_REVIEW_CORRECTIONS_1.md), [fresh re-review PASS](../../../custodian/docs/ai_context/task_packets/archived/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_REVIEW_CORRECTIONS_1.md); R0-01/02/03 fixed, zero new findings. Real Grunt synthetic A/B handoff, stable ActorId+GroupId, health/intent, repeated crossings, fixed-boundary authority and old schema-v5 restore are proved. **Not a production geographic or ambient-spawner integration.**
+- **C2: NOT AUTHORIZED, design slots only.** [F14-C2/F15 production planning refresh](../F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) separates C2a actor/camp-spawner logical slot reservation from C2b production locality scene-residency → C1 coordinator transaction.
+- **C2a proposed** `living-world-population-slot-reservations`: durable ActorId + GroupId reservation, reconcile queued pending ambient spawns/camp reactivation, no duplicate restored Grunt, unmanaged ambient unaffected; requires accepted C1 and approved F15 location address mapping.
+- **C2b proposed** `living-world-locality-residency-binding`: real local scene unload/reenter and domain-location keyed safe anchors request physical↔abstract handoff at a canonical fixed boundary; failures rollback/pin resident; requires F15-B, C2a, active F02 scene/route APIs.
+- **Next:** F15-A read-only geography, route and physical scene-residency evidence; lock real Domain/Location owner **before** making either C2 packet executable. Archive Resolve/M6 visual chunks do not unload actors.
 
 ### CS-F14-D
 - **Intent:** Durable, causally interpretable world history and save/restart reconciliation only where not already covered by REMAP-3.
@@ -255,18 +255,18 @@
 
 **F15: [Campaign-World Geographic Scale, Topology and Traversable Domain](F15_CAMPAIGN_WORLD_GEOGRAPHY.md)**
 
-> User **locked Continuous geography as the player-facing campaign traversal target**, and **Ports/vehicles as major travel infrastructure** (2026-10-09). Mountain passes are ordinary traversable geography, not cutscenes by default; Archive Resolve is visual presentation only and does not supply new world-scale generation. [Decision and draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) do **not** yet lock macro topology, numeric sizes, infinite extent or F15 implementation. F15-A/B/C remain conceptual and not claimable; keep existing F09 vehicle-series ownership.
+> User **locked Continuous geography as the player-facing campaign traversal target**, and **Ports/vehicles as major travel infrastructure** (2026-10-09). Mountain passes are ordinary traversable geography, not cutscenes by default; Archive Resolve is visual presentation only and does not supply new world-scale generation. [Decision and draft](../CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md) do **not** yet lock macro topology, numeric sizes, infinite extent or F15 implementation. F15-A/B/C remain conceptual and not claimable; [production residency design refresh](../F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) records alternatives and the gated execution order. Keep existing F09 vehicle-series ownership.
 
 ### CS-F15-A
 - **Intent:** Current finite-world scale and wayfinding benchmark, canonical Hub/Port/Domain terms, local procgen vs global geography owner map and three architectural alternatives evaluated.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_SCALE_AND_TOPOLOGY_EVIDENCE.md` (**not created**).
-- **Authorization:** BLOCKED pending F15 item-level evidence/decision lock and current F02 procgen authority check.
-- **Acceptance sketch:** fixed seeds, live traversal/time/density/biome measures, region/route API trace, clear old-doc drift disposition; no geometry rewrite.
+- **Authorization:** Proposed **read-only next audit slice**, not yet claimable. Confirm no duplicate active F02/F15 audit; local fixed-seed measurements and actual region/scene lifecycle mapping still required.
+- **Acceptance sketch:** fixed-seed current Operator travel/camera/landmark/biome and existing Scout route measurements, actual route stage/rollback and camp spawn queue inspection, verified Domain/Location/Route/Scene/Chunk identity map, comparison of finite graph-backed versus enlarged one-map versus expandable alternatives, and concrete doc drift disposition. No geometry rewrite.
 
 ### CS-F15-B
 - **Intent:** Deterministic macro geographic backbone / stable location IDs and coherent route, water, biome-edge, settlement and domain-boundary metadata; preserve current procgen runtime ownership.
 - **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_GEOGRAPHIC_BACKBONE.md` (**not created**).
-- **Authorization:** BLOCKED pending A, explicit player-scale/extent/scene-seam choice, active GenerationGrid/procgen stage and one geographic data owner. May instead integrate with an existing procgen program packet.
+- **Authorization:** BLOCKED pending F15-A evidence, explicit player-scale/extent/scene-seam decision, current procgen/generation authority and single durable `(domain_id, location_id)` owner. Reuse existing F02 work if it covers the same seam.
 - **Acceptance sketch:** stable topology and boundary test without creating a huge TileMap, renderer authority or new persistence silo.
 
 ### CS-F15-C

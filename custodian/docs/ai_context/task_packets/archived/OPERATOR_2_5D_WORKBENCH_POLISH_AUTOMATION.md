@@ -1,11 +1,11 @@
 # OPERATOR 2.5D WORKBENCH POLISH AUTOMATION
 
-> REFRESHED / READY FOR IMPLEMENTATION  
+> COMPLETE / IMPLEMENTATION LANDED
 > WB25-2 and its final cycle-2 correction/re-review are complete. Consume the accepted Source Session→Workbench handoff, physical saved-document checks, and exact Art Agent seams below; do not recreate a second workspace, registration authority, or mutation path.
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-polish-automation
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-ingress-review-corrections-2
@@ -158,14 +158,60 @@ Art Agent operations and rechecks the physical Workbench contract afterward.
 - Refresh status: **consumed / final pre-claim refresh complete**
 - Refresh instruction: WB25-2 correction 2 + final re-review and the live Source Session→Workbench/Art Agent seams have been consumed. WB25-3 is now `ready/auto`. Re-open planning only for a real contradiction in the accepted target/workbench/profile/mutation authorities or a new human-owned art-direction choice.
 
-## Handoff
+## Completion Truth
+
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: WB25-3 implementation, focused smoke, 29/29 pre-sync and 30/30 post-sync changed validations, compiled Python modules, and clean diff checks are recorded in `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The initial integration exposed a legacy test fixture with no session projection and a mode-contract checker that required POLISH to be named in the active-mode map and cheatsheet. A few UI service imports also had a misspelled module path; focused validation caught and corrected it before landing.
+- Root cause / contributing factors: New mode wiring and generation-derived defaults crossed existing UI and legacy compatibility contracts that were not visible from the new panel alone.
+- Prevention / pipeline improvement: Keep the active mode contract and operator cheatsheet in scope when adding a numbered UI mode; retain the legacy-profile regression fixture and import path in the focused polish smoke.
+- Tooling / docs drift discovered: Optional Textual UI interaction pilot is skipped when Textual is not installed; service/UI smoke remains runnable. The paired review runner was previously observed to mishandle an `origin/main:<path>` post-review source path; unrelated to WB25-3 and deferred.
+- Follow-up: review-operator-2-5d-workbench-polish-automation
+- What worked: Changed-file coverage selected the new focused smoke and all affected unit/integration/moment owners.
+
+## Next Handoff
 
 - Next workstream: review-operator-2-5d-workbench-polish-automation
-- Next packet state: ready/auto behind WB25-3
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: WB25-3 is fully refreshed; paired review should claim automatically after implementation lands.
-- Next action: claim and implement `operator-2-5d-workbench-polish-automation`; then dispatch its paired fresh-context review.
+- Next action: Claim `review-operator-2-5d-workbench-polish-automation` in a fresh reviewer context and verify the durable metrics, target-bound attach, proposal gates, scoped mutations/undo, and publication boundary.
 - Blockers or open questions: none at planning level. Subjective art-direction questions, if any survive objective metrics, use the packet's conditional visual-review handoff rather than autonomous aesthetic approval.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-workbench-polish-automation`
+- Reviewed main: `c447db62d5c6f434394d6c634e1e191952658cc5`
+- Reviewed implementation commit: `c928fddb7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow, visual`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `no; R0-01 requires correction`
+- Evidence: `All seven named focused validations passed. A fresh forged-proposal probe demonstrated that apply accepts a one-pixel claimed detached-component proposal containing two arbitrary coordinates and forwards both to erase_pixels. git diff --check passed. No implementation/runtime code was changed by review.`
+- Review conclusion: `R0-01 is a blocking mutation-authority defect: apply does not verify that proposal pixels/bounds/offsets match a freshly generated, current proposal. The Art Agent frame/layer scope confines location but does not enforce the tiny-island, exact-pixel, protected-landmark or computed-translation rules. A bounded correction and fresh paired re-review are required.`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`

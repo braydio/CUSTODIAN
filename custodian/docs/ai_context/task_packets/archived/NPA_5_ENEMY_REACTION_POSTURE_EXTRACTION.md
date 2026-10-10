@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-5-enemy-reaction-posture-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-4-standard-enemy-melee-extraction`
@@ -21,7 +21,7 @@
 - Summary backlink: Include the exact Authoring chat URL above in every durable implementation/review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Goal: Remove enemy reaction/posture and Grunt parry-critical victim state from `enemy.gd` without creating another god-object: one focused `EnemyReactionController` owns ordinary incoming reaction/posture state and one focused `EnemyParryCritical` owns the critical-open opportunity / paired-execution victim state, while `Enemy` remains the façade/physical host and current Operator-facing APIs stay stable.
 - Completion boundary: Extract two actor-local authorities plus typed tuning. `EnemyReactionController` owns posture accumulation/recovery, light-flinch cooldown/suppression decisions, recoil, stagger, ordinary critical-hit reaction/recovery, and semantic interruption state. `EnemyParryCritical` owns ENTER/HOLD/RECOVER/EXECUTING opportunity state, capture eligibility, reservation token/owner, execution direction/kind/root, one-damage-consumption state, and standalone-root preservation. Keep HP/damage/death/corpse/loot, shared hit-strength classification, special abilities, StandardEnemyMelee, physical movement primitives, semantic presentation/VFX rendering, BSM behavior, and Operator paired-execution choreography in their existing owners.
-- Current measured state: NPA-4 implementation and fresh paired review are complete on `main@8817908b1f32a26893785536a9d81ba053ea12c5`; the review found 0 defects, 0 material gaps and 0 other findings, with nine focused runtime checks green. `enemy.gd` is ~4,202 lines. Standard ordinary melee is now owned by `StandardEnemyMelee`, so reaction code no longer needs to mutate melee-private fields and already cancels through `standard_melee.cancel(...)`. Reaction/posture mutable state still in `enemy.gd`: `_stagger_timer`, `_recoil_timer`, `posture_current`, `_posture_recovery_delay_timer`, `_light_flinch_cooldown_timer`, `_crit_timer`, `_crit_recovery_timer`. Reaction tuning still exported on Enemy: hit recoil 0.12, stagger 0.35, `resists_light_flinch=false`, posture max 100, recovery delay 1.25, recovery rate 26, light-flinch cooldown 0.70, crit hit 0.8, crit recovery 0.625; Marine alone overrides light-flinch resistance, Savage overrides stagger duration to 0.45. `stagger_damage_threshold=24` (Savage 16) is not reaction tuning: it remains the fallback LIGHT/HEAVY classifier in shared hit resolution and must stay outside this extraction. Parry-critical mutable state still in `enemy.gd`: opportunity/window timer, phase, reserved attacker, phase timer, execution token, once-only damage flag, execution root/direction/kind, standalone root + validity, plus execution-body presentation capture fields. Grunt parry-critical tuning is window min 0.8s, capture range 72px and operator offset Vector2.ZERO. Existing public APIs on Enemy are consumed by Operator/Falcon flows and must remain stable.
+- Current measured state: At authoring after NPA-4, `enemy.gd` was ~4,202 lines and held the reaction/posture plus parry-critical mutable state described below. Standard ordinary melee is owned by `StandardEnemyMelee`, and reaction code cancels through `standard_melee.cancel(...)`. `stagger_damage_threshold=24` (Savage 16) remains shared hit-classification authority. Grunt parry-critical tuning is window min 0.8s, capture range 72px and operator offset Vector2.ZERO. Existing public APIs on Enemy are consumed by Operator/Falcon flows and remain stable. Completed implementation now has `EnemyReactionController` and `EnemyParryCritical` as separate focused authorities with typed config. Focused combat/runtime validation passed 15/15; the changed-file sweep passed 31/31 with complete ownership and no timeouts. The original `wave_manager_debug_grunt_spawn_gate` failure was reproduced on clean `origin/main@2dffdffbd026b0788702eaa5f0aae4edfe4d5355`; only its serialized-text assertion was corrected to inspect the effective property on the instantiated production scene. No production scene or spawn behavior changed.
 - Evidence: `REVIEW_NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION_CLAUDE_SUMMARY.md`; archived NPA-4 packet/review receipt; current `custodian/game/actors/enemies/enemy.gd`; `standard_enemy_melee.gd`; `design/02_features/combat_feel/{HIT_TAXONOMY_AND_RIPOSTE,PARRY_CRITICAL_BRANCHING_AND_VFX,COMBAT_FEEL_SYSTEM}.md`; `combat_exchange_commitment_smoke.gd`; `grunt_parry_crit_reaction_smoke.gd`; `grunt_falcon_reversal_smoke.gd`; `enemy_grunt_behavior_presentation_smoke.gd`; `savage_runtime_smoke.gd`; `debug_grunt_spawn_modes_smoke.gd`; `operator_guard_flow_smoke.gd`; `codex_task_fixes_smoke.gd`; `design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md`.
 - Task-specific authority: `NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md` owns decomposition boundaries; `HIT_TAXONOMY_AND_RIPOSTE.md` owns hit-strength/posture semantics; `PARRY_CRITICAL_BRANCHING_AND_VFX.md` owns critical-open reservation/execution semantics; reviewed NPA-4 owns the ordinary-melee cancellation/commitment seam; NPA-6 remains future health/death/corpse/loot owner.
 - Work surface: New focused files under `custodian/game/actors/enemies/combat/`: `enemy_reaction_controller.gd`, `enemy_reaction_config.gd`, `enemy_parry_critical.gd`, `enemy_parry_critical_config.gd`, and focused config resources (exact private filenames may vary only to match live conventions); `enemy.gd` setup/delegation/public façade; Marine/Savage scene bindings for reaction overrides; `EnemyPresentationController` only for the narrow presentation-state hook required to stop the actor façade from owning execution-sprite restoration; focused validation and manifest ownership; consequence-driven architecture/current-state/docs.
@@ -46,13 +46,49 @@
 - Task overrides: `none`
 - Deferred: NPA-6 enemy health/death/corpse/loot lifecycle; broader knockback authority; Operator riposte completion; later family convergence.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: Focused combat/runtime validation passed 15/15, including `enemy_reaction_posture`, paired-execution/lethal controls, StandardEnemyMelee, Marine ambush/Dash, Falcon, Savage, posture/guard, and spatial/commitment regressions. The source-change `run_validation.py --changed --json` sweep passed 31/31 with complete ownership and zero timeouts before packet lifecycle closeout. The final changed sweep selected the unrelated `review_pairing_contract` unit and failed on the known F14-C1 `living-world-entity-reification-handoff` pair mismatch, skipping later tiers; F14 was kept out of scope. `git diff --check` passed. Baseline reproduction on clean `origin/main@2dffdffbd026b0788702eaa5f0aae4edfe4d5355` confirmed the startup debug-grunt gate failed at its source-text assertion while runtime checks before it passed; the smoke now verifies the instantiated production `WaveManager` property.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The initial source sweep stopped on a reproduced pre-existing `wave_manager_debug_grunt_spawn_gate` failure. The test required a literal serialized false value even though the production node correctly inherits the false script default. The replacement expression needed an explicit `bool` type for GDScript inference. One smoke run also intermittently exceeded the existing 4px debug-spawn position tolerance; it passed on rerun and in the 31-test source-change sweep. The post-closeout changed sweep additionally selected the global packet-pairing contract and failed on the unrelated F14-C1 pair mismatch.
+- Root cause / contributing factors: The scene contract checked serialization rather than effective runtime configuration; the unrelated debug-spawn fixture also has small physics-frame position variance.
+- Prevention / pipeline improvement: Validate safety gates against instantiated effective properties. Confirm an isolated baseline before classifying a shared-test failure as a regression; leave the F14 pair correction with its owner.
+- Tooling / docs drift discovered: The debug-spawn smoke encoded a serialization implementation detail as its production safety proof. Corrected in-scope; no production scene edit was needed. The final closeout sweep also surfaced the already-known F14-C1 queue-contract defect.
+- Follow-up: manual-follow-up
+- What worked: A clean-main reproduction separated the validation defect from NPA-5 behavior; focused coverage and the changed-file sweep then passed.
+
 ## Handoff
 
 - Next workstream: `review-npa-5-enemy-reaction-posture-extraction`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
 - Refresh reason: `none`
-- Next action: After NPA-5 lands, run its fresh-context paired review automatically; use the Codex paired-review runner if that implementation has landed/reviewed, otherwise use the existing fresh-context review path.
+- Next action: After this implementation lands and archives, claim `review-npa-5-enemy-reaction-posture-extraction` through `paired_review_runner.py` in a fresh reviewer context. After review passes, stop at the required NPA-6 planning refresh.
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `passed`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed main: `76bd0946bfee6d703e5c56950e6664afb8b572b0`
+- Reviewed implementation commit: `475de3b6eab6e46a9ef95d55bd17520a64cec7cc`
+- Implementation baseline: `6775cc84424371ef9bf8cba64a7ad00088901a8a`
+- Review modes: `code, architecture, runtime`
+- Findings: `none`
+- Evidence: `enemy_reaction_posture, standard_enemy_melee, combat_exchange_commitment, operator_guard_flow, grunt_parry_critical, grunt_falcon_reversal, debug_grunt_spawn_modes, savage_runtime, enemy_savage_pounce, authored_vault_grunt_loot_marine, grunt_falcon_punch, wave_manager_debug_grunt_spawn_gate all passed. Changed-file validation passed twice: once with the pre-commit docs diff (review_pairing_contract and visual_review_handoff, 2/2), and once against the clean post-commit worktree (zero selected tests, complete ownership). LFS-filter-safe git diff --check passed.`
+- Review conclusion: `The implementation satisfies the archived NPA-5 acceptance contract. Ordinary reaction/posture and parry-critical execution state have separate focused owners; classifier threshold, health/death/damage result, special abilities, BSM, and presentation playback remain at their prior ownership seams. Enemy façade compatibility, tuning, interruption, token/owner checks, once-only damage consumption, paired root/frame behavior and Falcon Reversal are preserved. No blocking defect or material proof gap was found.`
+- Durable review receipt: `custodian/docs/ai_context/task_packets/archived/REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md`
+- Closing summary: `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION_CLAUDE_SUMMARY.md`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`

@@ -1224,7 +1224,7 @@ guards active design, runtime, tooling, content, and current AI-context paths.
 
 ## Simulation integration status
 
-Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Macro order is power, logistics, repairs, explicit and ambient fabrication, relay, systemic events, strategic assault, wear, fidelity, abstract geographic-group activity, then world-tick increment/invariants/failure. F14-B adds bounded, domain/location/group-keyed abstract patrol state stepped every 60 authoritative fixed ticks, with stable ordering and a capped causal event ring; it is snapshot schema v5 and v4 snapshots migrate with an empty activity state. This is a synthetic state-only foundation: no physical actor handoff/reification, map binding, offscreen combat, or durable disk persistence is provided. Python parity remains offline only and does not yet cover abstract activity. Strategic assault handoff is data-only through `WaveManagerSimulationBinding`; physical completion is observed from `WaveManager`, while loaded combat remains actor/systems-owned. ARRN remains the player-facing relay interaction owner. REMAP-1 and REMAP-2 are complete; REMAP-2 adds policy-driven macro wear, derived HP-repair jobs, authoritative fabrication recipes/ambient progress, and macro fidelity consumed by terminal presentation. REMAP-3 disk persistence and REMAP-4 closeout remain deferred.
+Live runtime authority: yes. One `WorldSimulationRuntime` in `game.tscn` owns clock, kernel, session/world, snapshots, command ingress, and resolution. Macro order is power, logistics, repairs, explicit and ambient fabrication, relay, systemic events, strategic assault, wear, fidelity, abstract geographic-group activity, then world-tick increment/invariants/failure. F14-B adds bounded, domain/location/group-keyed abstract patrol state stepped every 60 authoritative fixed ticks, with stable ordering and a capped causal event ring; it is snapshot schema v5 and v4 snapshots migrate with an empty activity state. F14-B alone was the synthetic group-state foundation. **F14-C1 has since landed and passed independent correction re-review:** a real Grunt can explicitly transfer physical→abstract→physical with stable domain-scoped ActorId/GroupId, conserved health and supported intent, fixed-boundary exclusive representation, repeated transitions, deterministic replay and backwards-readable v4/v5 snapshots (abstract activity schema v2). R0-01/02/03 were fixed without new findings; five focused smokes and negative ownership-bypass mutation were independently checked. **Still not implemented:** real production geographic identity/locality residency triggers, ambient camp/spawner slot reconciliation, multi-member groups, world-scale continuous scene streaming, offscreen physical combat or durable REMAP-3 disk persistence. Design/evidence plan: `design/04_architecture/F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md`. Python parity remains offline only and does not yet cover abstract activity. Strategic assault handoff is data-only through `WaveManagerSimulationBinding`; physical completion is observed from `WaveManager`, while loaded combat remains actor/systems-owned. ARRN remains the player-facing relay interaction owner. REMAP-1 and REMAP-2 are complete; REMAP-2 adds policy-driven macro wear, derived HP-repair jobs, authoritative fabrication recipes/ambient progress, and macro fidelity consumed by terminal presentation. REMAP-3 disk persistence and REMAP-4 closeout remain deferred.
 
 ## Reciprocal Continuity Migration (2026-08-18)
 
@@ -1381,12 +1381,29 @@ Documentation updates this session:
   transaction, commitment/context, and recovery/redecision; Grunt/Marine/Savage/
   Pursuit scene overrides remain explicit. NPA-4's fresh paired review landed at
   `8817908b1` with zero defects, evidence gaps or other findings and all nine
-  focused runtime checks passing. NPA-5 is now authored: ordinary incoming
-  reaction/posture moves to `EnemyReactionController`, while Grunt
-  critical-open/reservation/execution-victim state moves separately to
-  `EnemyParryCritical`; hit classification, health/death, presentation and
-  special abilities remain outside those modules. Pounce-first selection and
-  fixed-step priority remain preserved.
+  focused runtime checks passing. NPA-5 now extracts ordinary incoming
+  reaction/posture into `EnemyReactionController` and Grunt
+  critical-open/reservation/execution-victim state into `EnemyParryCritical`,
+  each with typed tuning. Hit-strength classification, health/death, semantic
+  presentation, special abilities and Operator execution choreography remain
+  outside those modules. Scene-specific Marine/Savage values and exact reaction
+  timing are preserved; paired-execution token/owner checks and single-damage
+  consumption remain intact. The focused combat/runtime set passed 15/15 and
+  the source-change sweep passed 31/31 before packet lifecycle closeout. The
+  final changed sweep selected the unrelated global `review_pairing_contract`
+  check and failed on the known F14-C1 `living-world-entity-reification-handoff`
+  pair; higher tiers were skipped. Baseline reproduction on clean
+  `origin/main@2dffdff` confirmed `wave_manager_debug_grunt_spawn_gate` failed
+  only because it searched for a serialized script-default value; the smoke now
+  loads the production scene and checks the effective `WaveManager` property.
+  The fresh paired NPA-5 review passed with zero findings at `f5dc6da50`.
+  NPA-6 was refreshed against the landed `EnemyReactionController` and
+  `EnemyParryCritical` APIs and current runtime ownership: the task packet now
+  assigns health/death/corpse transitions and one-time loot payload lifecycle
+  to a focused `EnemyLifecycle` owner, while `EnemyCorpseLoot` remains the
+  reward-collection boundary and `EnemyLootCarrier` remains the stolen-resource
+  carrier. Its implementation and paired-review packets are ready/auto and
+  dependency-gated in the dispatcher until NPA-6 implementation completes.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

@@ -58,8 +58,21 @@ func _run() -> void:
 		push_error("debug startup grunt should spawn at original spawn-zone offset; got=%s expected=%s" % [str(grunt.global_position if grunt != null else Vector2.INF), str(expected_position)])
 		quit(1)
 		return
-	var game_scene_source := FileAccess.get_file_as_string("res://scenes/game.tscn")
-	if not game_scene_source.contains("debug_spawn_grunt_on_start = false"):
+	var production_scene := load("res://scenes/game.tscn") as PackedScene
+	if production_scene == null:
+		push_error("production game scene could not be loaded")
+		quit(1)
+		return
+
+	var production_root := production_scene.instantiate()
+	var production_wave_manager := production_root.get_node_or_null("WaveManager")
+	var startup_debug_disabled: bool = (
+		production_wave_manager != null
+		and production_wave_manager.get("debug_spawn_grunt_on_start") == false
+	)
+	production_root.free()
+
+	if not startup_debug_disabled:
 		push_error("production game scene must keep startup debug grunt disabled")
 		quit(1)
 		return

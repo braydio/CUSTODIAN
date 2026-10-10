@@ -52,11 +52,7 @@ func _reset_enemy() -> void:
 	_enemy.set("dead", false)
 	_enemy.set("health", 1000.0)
 	_enemy.set("max_health", 1000.0)
-	_enemy.set("posture_current", 0.0)
-	_enemy.set("_posture_recovery_delay_timer", 0.0)
-	_enemy.set("_light_flinch_cooldown_timer", 0.0)
-	_enemy.set("_recoil_timer", 0.0)
-	_enemy.set("_stagger_timer", 0.0)
+	_enemy.call("reset_reaction_state")
 	(_enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee).cancel(&"interrupted", &"test_reset")
 	_enemy.set("target", _target)
 
@@ -78,8 +74,9 @@ func _validate_committed_light_survives() -> void:
 	assert(float(_enemy.get("health")) == hp_before - 11.0)
 	assert(melee.is_committed() and String(melee.get_debug_state().get("attack_id", "")) == attack_id)
 	assert(is_equal_approx(float(melee.get_debug_state().get("windup_remaining", 0.0)), windup))
-	assert(is_zero_approx(float(_enemy.get("_recoil_timer"))))
-	assert(is_zero_approx(float(_enemy.get("_stagger_timer"))))
+	var reaction_state: Dictionary = _enemy.call("get_reaction_debug_state")
+	assert(is_zero_approx(float(reaction_state.get("recoil_remaining", -1.0))))
+	assert(is_zero_approx(float(reaction_state.get("stagger_remaining", -1.0))))
 	# Gameplay recoil stays suppressed, but the cosmetic presentation-only
 	# kick must still fire (Combat tempo + impact feedback pass).
 	assert(_enemy.get("_light_contact_visual_tween") != null)
@@ -88,16 +85,16 @@ func _validate_committed_light_survives() -> void:
 func _validate_light_flinch_gate() -> void:
 	_reset_enemy()
 	_enemy.call("take_damage", 4.0, CombatConstants.HitStrength.LIGHT, 14.0)
-	assert(float(_enemy.get("_recoil_timer")) > 0.0)
-	_enemy.set("_recoil_timer", 0.0)
+	assert(float((_enemy.call("get_reaction_debug_state") as Dictionary).get("recoil_remaining", 0.0)) > 0.0)
+	_enemy.call("_update_reaction_timers", 0.13)
 	_enemy.set("_light_contact_visual_tween", null)
 	_enemy.call("take_damage", 4.0, CombatConstants.HitStrength.LIGHT, 16.0)
-	assert(is_zero_approx(float(_enemy.get("_recoil_timer"))))
+	assert(is_zero_approx(float((_enemy.call("get_reaction_debug_state") as Dictionary).get("recoil_remaining", -1.0))))
 	# Cooldown-suppressed LIGHT hits still get the cosmetic-only kick.
 	assert(_enemy.get("_light_contact_visual_tween") != null)
 	_enemy.call("_update_reaction_timers", 0.71)
 	_enemy.call("take_damage", 4.0, CombatConstants.HitStrength.LIGHT, 1.0)
-	assert(float(_enemy.get("_recoil_timer")) > 0.0)
+	assert(float((_enemy.call("get_reaction_debug_state") as Dictionary).get("recoil_remaining", 0.0)) > 0.0)
 
 
 func _validate_posture_break() -> void:
@@ -108,19 +105,20 @@ func _validate_posture_break() -> void:
 	assert(melee.is_committed())
 	_enemy.call("take_damage", 1.0, CombatConstants.HitStrength.LIGHT, 40.0)
 	assert(not melee.is_committed())
-	assert(float(_enemy.get("_stagger_timer")) > 0.0)
-	assert(is_zero_approx(float(_enemy.get("posture_current"))))
+	var reaction_state: Dictionary = _enemy.call("get_reaction_debug_state")
+	assert(float(reaction_state.get("stagger_remaining", 0.0)) > 0.0)
+	assert(is_zero_approx(float((_enemy.call("get_posture_status") as Dictionary).get("current", -1.0))))
 
 
 func _validate_posture_recovery() -> void:
 	_reset_enemy()
 	_enemy.call("take_damage", 1.0, CombatConstants.HitStrength.LIGHT, 30.0)
-	_enemy.set("_recoil_timer", 0.0)
+	_enemy.call("_update_reaction_timers", 0.13)
 	_enemy.call("_update_reaction_timers", 1.0)
-	assert(is_equal_approx(float(_enemy.get("posture_current")), 30.0))
+	assert(is_equal_approx(float((_enemy.call("get_posture_status") as Dictionary).get("current", -1.0)), 30.0))
 	_enemy.call("_update_reaction_timers", 0.30)
 	_enemy.call("_update_reaction_timers", 0.10)
-	assert(float(_enemy.get("posture_current")) < 30.0)
+	assert(float((_enemy.call("get_posture_status") as Dictionary).get("current", 100.0)) < 30.0)
 
 
 func _validate_heavy_authority() -> void:
@@ -129,8 +127,9 @@ func _validate_heavy_authority() -> void:
 	var melee := _enemy.call("get_standard_enemy_melee_ability") as StandardEnemyMelee
 	_enemy.call("take_damage", 2.0, CombatConstants.HitStrength.HEAVY, 45.0)
 	assert(not melee.is_committed())
-	assert(float(_enemy.get("_stagger_timer")) > 0.0)
-	assert(is_equal_approx(float(_enemy.get("posture_current")), 45.0))
+	var reaction_state: Dictionary = _enemy.call("get_reaction_debug_state")
+	assert(float(reaction_state.get("stagger_remaining", 0.0)) > 0.0)
+	assert(is_equal_approx(float((_enemy.call("get_posture_status") as Dictionary).get("current", -1.0)), 45.0))
 
 
 func _validate_displacement_does_not_cancel() -> void:

@@ -718,6 +718,72 @@ class WorkbenchService:
         binary = self.workbench.resolve_aseprite(self.aseprite, True)
         return self._popen([str(binary), str(ws / "workbench.aseprite")])
 
+    def _polish(self, selection: AnimationSelection):
+        if selection.art_generation != "operator_2_5d_128":
+            raise ValueError("POLISH is available only for exact operator_2_5d_128 selections")
+        from art_agent.service import ArtAgentService
+        from operator_2_5d_polish import Operator2DPolish
+        art = ArtAgentService(
+            art_root=self.repo_root / ".ai/operator_art_agent",
+            workspace_root=self.workspace_root, aseprite=self.aseprite,
+        )
+        return Operator2DPolish(art)
+
+    def polish_attach(self, selection: AnimationSelection) -> Path:
+        manifest = self.workspace(selection) / "workbench.json"
+        if not manifest.is_file():
+            raise ValueError("this exact target has no saved Workbench; complete accepted WB25-2 ingress first")
+        return self._polish(selection).attach(manifest, selection)
+
+    def polish_analyze(self, session_path: Path) -> dict[str, Any]:
+        from operator_2_5d_polish import Operator2DPolish
+        from art_agent.service import ArtAgentService
+        art = ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                              workspace_root=self.workspace_root, aseprite=self.aseprite)
+        return Operator2DPolish(art).analyze(session_path)
+
+    def polish_apply(self, session_path: Path, proposal: dict[str, Any]) -> dict[str, Any]:
+        from operator_2_5d_polish import Operator2DPolish
+        from art_agent.service import ArtAgentService
+        art = ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                              workspace_root=self.workspace_root, aseprite=self.aseprite)
+        return Operator2DPolish(art).apply(session_path, proposal)
+
+    def polish_propose_center_x(self, session_path: Path) -> dict[str, Any]:
+        from operator_2_5d_polish import Operator2DPolish
+        from art_agent.service import ArtAgentService
+        art = ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                              workspace_root=self.workspace_root, aseprite=self.aseprite)
+        return Operator2DPolish(art).propose_center_x(session_path)
+
+    def polish_propose_planted(self, session_path: Path, *, enabled: bool) -> dict[str, Any]:
+        from operator_2_5d_polish import Operator2DPolish
+        from art_agent.service import ArtAgentService
+        art = ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                              workspace_root=self.workspace_root, aseprite=self.aseprite)
+        return Operator2DPolish(art).propose_planted_registration(session_path, enabled=enabled)
+
+    def polish_registration_guide(self, session_path: Path) -> dict[str, Any]:
+        from art_agent.service import ArtAgentService
+        return ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                               workspace_root=self.workspace_root, aseprite=self.aseprite).registration_overlay(session_path)
+
+    def polish_undo(self, session_path: Path) -> dict[str, Any]:
+        from art_agent.service import ArtAgentService
+        return ArtAgentService(art_root=self.repo_root / ".ai/operator_art_agent",
+                               workspace_root=self.workspace_root, aseprite=self.aseprite).undo_last(session_path)
+
+    def open_existing_workbench(self, selection: AnimationSelection):
+        if selection.art_generation != "operator_2_5d_128":
+            raise ValueError("POLISH Open is scoped to 2.5D Workbenches")
+        manifest = self.workspace(selection) / "workbench.json"
+        document = manifest.parent / "workbench.aseprite"
+        if not manifest.is_file() or not document.is_file():
+            raise ValueError("exact saved Workbench manifest/document pair is missing")
+        self.workbench.inspect_saved_document_contract(manifest, self.aseprite)
+        binary = self.workbench.resolve_aseprite(self.aseprite, True)
+        return self._popen([str(binary), str(document)])
+
     def adopt_fx_layer(self, selection: AnimationSelection, layer_name: str, *, live_document_path: str | None = None, live_modified: bool | None = None):
         manifest=self.workspace(selection)/"workbench.json"
         if not manifest.is_file():

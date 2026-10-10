@@ -200,6 +200,45 @@ def _animation_findings(metrics: dict[str, Any]) -> list[dict[str, Any]]:
     return findings
 
 
+def _temporal_pixel_findings(metrics: dict[str, Any]) -> list[dict[str, Any]]:
+    temporal = metrics.get("temporal_metrics") or metrics.get("polish_temporal") or {}
+    findings = []
+    pairs = list(temporal.get("adjacent_frames", []))
+    if temporal.get("loop_seam"):
+        pairs.append({**temporal["loop_seam"], "loop_seam": True})
+    for pair in pairs:
+        boundary = int(pair.get("external_boundary_delta_pixels", 0))
+        silhouette = int(pair.get("silhouette_delta_pixels", 0))
+        if boundary >= 8:
+            findings.append(_finding(
+                ADVISORY, "animation", "external silhouette boundary changes across frames",
+                frame=pair.get("to_frame"), from_frame=pair.get("from_frame"),
+                loop_seam=pair.get("loop_seam", False), changed_pixels=boundary,
+                bounds=pair.get("external_boundary_delta_bounds"),
+                clusters=pair.get("external_boundary_clusters"),
+            ))
+        elif silhouette >= 8:
+            findings.append(_finding(
+                ADVISORY, "animation", "silhouette changes across frames",
+                frame=pair.get("to_frame"), from_frame=pair.get("from_frame"),
+                loop_seam=pair.get("loop_seam", False), changed_pixels=silhouette,
+                bounds=pair.get("silhouette_delta_bounds"),
+            ))
+    for region in temporal.get("regions", []):
+        for sample in region.get("metrics", []):
+            if abs(float(sample.get("mean_luminance_delta", 0))) < 24 or int(sample.get("changed_pixels", 0)) < 4:
+                continue
+            direction = "brightens" if sample["mean_luminance_delta"] > 0 else "darkens"
+            findings.append(_finding(
+                ADVISORY, "pixel_art", f"semantic highlight region {direction} between frames",
+                frame=sample.get("to_frame"), from_frame=sample.get("from_frame"),
+                mask_id=region.get("mask_id"), part=region.get("part"),
+                luminance_delta=sample.get("mean_luminance_delta"),
+                bounds=sample.get("changed_bounds"), clusters=sample.get("changed_clusters"),
+            ))
+    return findings
+
+
 def _weapon_findings(by_frame: dict) -> list[dict[str, Any]]:
     findings = []
     lengths: dict[int, float] = {}
@@ -266,6 +305,7 @@ def run_qa(
     findings += _anatomy_findings(metrics, each_frame, when_visible, by_frame)
     findings += _pixel_art_findings(metrics)
     findings += _animation_findings(metrics)
+    findings += _temporal_pixel_findings(metrics)
     findings += _weapon_findings(by_frame)
     findings += _semantic_findings(landmarks, masks, drafts, critiques)
     findings += [
