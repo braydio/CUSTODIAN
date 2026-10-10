@@ -46,7 +46,7 @@ The independent-workbench attach, profile compatibility, temporal metrics and pr
 - What went wrong: The focused smoke covers valid proposals and some negative eligibility cases but does not attempt a forged apply payload.
 - Root cause / contributing factors: Apply's test fake proves frame/layer scope and undo delegation but not proposal integrity at the mutation boundary.
 - Prevention / pipeline improvement: Add adversarial proposal forgery fixtures to the focused smoke, including arbitrary erase pixels and planted/manual offsets.
-- Tooling / docs drift discovered: Optional Textual UI pilot is skipped when Textual is absent; the service/UI smoke remains runnable.
+- Tooling / docs drift discovered: Optional Textual UI pilot is skipped when Textual is absent; the service/UI smoke remains runnable. The paired-review runner treats a successor refresh handoff as a pre-review human gate; the exact ready/auto review was therefore claimed directly and launched in a fresh Codex context. The later README conflict was limited to the managed packet index and was resolved by regenerating that index from current packet state, preserving both the NPA-6 row and this review correction pair.
 - Follow-up: operator-2-5d-workbench-polish-automation-review-corrections-1
 - What worked: The review's direct service-boundary negative probe exposed a mutation-authority gap not detected by the producer-level smoke.
 
