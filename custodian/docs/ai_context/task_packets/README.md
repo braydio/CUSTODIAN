@@ -74,7 +74,6 @@ normal closeout.
 - `REVIEW_BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Independently verify that Bridged Falls is genuinely seed-generated and structurally valid, not a fixed authored corridor with cosmetic variation.
 - `REVIEW_CUSTODIAN_DEATH_HANDOFF_FOUNDATION_RECOVERY_1.md` — Independently verify that the recovered R1 death handoff lands the intended campaign-level exactly-once death consequence on current main without importing s...
 - `REVIEW_CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Independently verify that R2 removes the R1 Game Over fallback only for a genuinely accepted death return, layers recovery on the reviewed H6 authority witho...
-- `REVIEW_HUB_AWAKENING_CONTEXT_HANDOFF.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
