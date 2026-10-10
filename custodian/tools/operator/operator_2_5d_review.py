@@ -64,6 +64,37 @@ def qa_state(qa: dict[str, Any]) -> str:
     return "GREEN"
 
 
+def human_review_is_valid(qa_status: str, human: dict[str, Any], evidence_sha: str) -> bool:
+    """Validate the backend-derived human gate for the exact current QA state."""
+    if qa_status in {"GREEN", "YELLOW"}:
+        return human == {"status": "NOT_REQUIRED"}
+    if qa_status == "NEEDS_HUMAN_REVIEW":
+        return human in ({"status": "REQUIRED"}, {
+            "status": "APPROVED",
+            "provenance": {
+                "kind": "workbench_explicit_user",
+                "reviewer": "human-user",
+                "control": "polish-human-approved",
+            },
+            "evidence_sha256": evidence_sha,
+        })
+    return qa_status == "RED" and human == {"status": "REQUIRED"}
+
+
+def human_review_passes(qa_status: str, human: dict[str, Any], evidence_sha: str) -> bool:
+    """Return whether human review permits verification for the live QA state."""
+    return ((qa_status in {"GREEN", "YELLOW"} and human == {"status": "NOT_REQUIRED"})
+            or (qa_status == "NEEDS_HUMAN_REVIEW" and human == {
+                "status": "APPROVED",
+                "provenance": {
+                    "kind": "workbench_explicit_user",
+                    "reviewer": "human-user",
+                    "control": "polish-human-approved",
+                },
+                "evidence_sha256": evidence_sha,
+            }))
+
+
 class Operator2DReview:
     """Creates and validates a receipt around one attached exact Workbench leaf."""
 
@@ -92,13 +123,36 @@ class Operator2DReview:
 
     @staticmethod
     def _under(root: Path, value: str | Path) -> Path:
-        path = Path(value).resolve()
+        candidate = Path(value)
+        if not candidate.is_absolute():
+            candidate = root / candidate
+        path = candidate.resolve()
         if not path.is_relative_to(root.resolve()):
             raise ValueError("review evidence path escapes its authorized root")
         return path
 
-    def inspect(self, selection: Any, *, human_disposition: dict[str, Any] | None = None,
-                sandbox_result: dict[str, Any] | None = None) -> dict[str, Any]:
+    @staticmethod
+    def _approval_record(evidence_sha: str) -> dict[str, Any]:
+        return {
+            "status": "APPROVED",
+            "provenance": {
+                "kind": "workbench_explicit_user",
+                "reviewer": "human-user",
+                "control": "polish-human-approved",
+            },
+            "evidence_sha256": evidence_sha,
+        }
+
+    def inspect(self, selection: Any, *, sandbox_result: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Reinspect current QA and derive human state from current evidence."""
+        return self._inspect(selection, sandbox_result=sandbox_result, approve_human=False)
+
+    def _approve_human_review(self, selection: Any) -> dict[str, Any]:
+        """Author approval only after the Workbench service observes explicit UI intent."""
+        return self._inspect(selection, sandbox_result=None, approve_human=True)
+
+    def _inspect(self, selection: Any, *, sandbox_result: dict[str, Any] | None,
+                 approve_human: bool) -> dict[str, Any]:
         """Reinspect current QA and produce an honest, initially unverified receipt."""
         manifest_path, document_path = self._paths(selection)
         session_path = self.service.polish_attach(selection)
@@ -129,7 +183,6 @@ class Operator2DReview:
             raise ValueError("accepted canonical profile/reference evidence is missing or changed")
         frame_paths = [Path(path) for path in rendered["frames"]]
         frame_digests = [sha256_file(path) for path in frame_paths]
-        human = human_disposition or {"status": "NOT_REQUIRED" if qa_state(qa) != "NEEDS_HUMAN_REVIEW" else "REQUIRED"}
         sandbox = sandbox_result or {"status": "NOT_RUN", "request_sha256": "", "result_sha256": ""}
         state = qa_state(qa)
         evidence_sha = human_review_evidence_sha(identity=selection.authoring_identity,
@@ -137,8 +190,35 @@ class Operator2DReview:
             frame_sha256=frame_digests, profile_sha256=profile_sha, reference_sha256=reference_sha,
             frames=int(physical["frames"]), frame_size=[int(physical["width"]), int(physical["height"])],
             durations=[float(value) for value in physical["durations"]], findings_sha256=findings_digest)
-        if human.get("status") == "APPROVED":
-            human = {**human, "evidence_sha256": evidence_sha}
+        if state in {"GREEN", "YELLOW"}:
+            human = {"status": "NOT_REQUIRED"}
+        else:
+            human = {"status": "REQUIRED"}
+            if state == "NEEDS_HUMAN_REVIEW":
+                if approve_human:
+                    human = self._approval_record(evidence_sha)
+                else:
+                    try:
+                        previous = json.loads(self._receipt_path(selection).read_text(encoding="utf-8"))
+                        previous_human = previous.get("human_review", {})
+                        previous_receipt_digest = previous.get("receipt_sha256", "")
+                        previous_receipt_payload = {key: value for key, value in previous.items()
+                                                    if key != "receipt_sha256"}
+                        previous_evidence = sha256_bytes(canonical_json({
+                            "identity": previous.get("authoring_identity"),
+                            "authority": previous.get("authority"),
+                            "qa": previous.get("qa"),
+                            "human_review": previous_human,
+                        }))
+                        if (previous.get("schema") == SCHEMA
+                                and previous.get("authoring_identity") == selection.authoring_identity
+                                and previous_receipt_digest == sha256_bytes(canonical_json(previous_receipt_payload))
+                                and previous.get("evidence_sha256") == previous_evidence
+                                and previous.get("qa", {}).get("status") == "NEEDS_HUMAN_REVIEW"
+                                and previous_human == self._approval_record(evidence_sha)):
+                            human = previous_human
+                    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                        pass
         sandbox_ok = sandbox.get("status") == "PASSED" and bool(sandbox.get("request_sha256")) and bool(sandbox.get("result_sha256"))
         receipt = {
             "schema": SCHEMA,
@@ -198,6 +278,19 @@ class Operator2DReview:
             if authority["normalized_reference_sha256"] != str(profile_payload.get("canonical_visual_reference", {}).get("sha256", "")): return None
             reference_path = self.repo_root / str(profile_payload.get("canonical_visual_reference", {}).get("path", ""))
             if not reference_path.is_file() or sha256_file(reference_path) != authority["normalized_reference_sha256"]: return None
+            session_path = self.service.polish_attach(selection)
+            art = self.service._polish(selection).service
+            contract = art.inspect_polish_contract(session_path)
+            if not contract.get("valid") or contract.get("art_generation") != GENERATION: return None
+            import animation_workbench
+            physical = animation_workbench.inspect_saved_document_contract(manifest, art.aseprite)
+            if ((int(physical["width"]), int(physical["height"])) != (128, 128)
+                    or int(physical["frames"]) < 1
+                    or (int(physical["width"]), int(physical["height"])) != tuple(authority["frame_size"])
+                    or int(physical["frames"]) != int(authority["frames"])
+                    or len(physical["durations"]) != int(physical["frames"])
+                    or [float(value) for value in physical["durations"]] != [float(value) for value in authority["durations"]]):
+                return None
             if (len(authority["durations"]) != authority["frames"]
                     or any(not math.isfinite(float(value)) or float(value) <= 0 for value in authority["durations"])): return None
             frame_paths = authority.get("frame_paths", [])
@@ -208,6 +301,7 @@ class Operator2DReview:
             current_qa = analysis.get("qa", {})
             if qa_state(current_qa) != receipt.get("qa", {}).get("status") or sha256_bytes(canonical_json(current_qa.get("findings", ()))) != receipt.get("qa", {}).get("findings_sha256"):
                 return None
+            if canonical_json(current_qa.get("findings", ())) != canonical_json(receipt.get("qa", {}).get("findings", ())): return None
             if [sha256_file(self._under(art_root, p)) for p in frame_paths] != authority.get("frame_sha256"):
                 return None
             qa_digest = receipt.get("qa", {}).get("findings_sha256", "")
@@ -218,7 +312,16 @@ class Operator2DReview:
                 reference_sha256=authority["normalized_reference_sha256"], frames=authority["frames"],
                 frame_size=authority["frame_size"], durations=authority["durations"], findings_sha256=qa_digest)
             human = receipt.get("human_review", {})
-            if human.get("status") == "APPROVED" and human.get("evidence_sha256") != expected_evidence: return None
+            qa_status = receipt.get("qa", {}).get("status")
+            if not human_review_is_valid(qa_status, human, expected_evidence):
+                return None
+            expected_receipt_evidence = sha256_bytes(canonical_json({
+                "identity": receipt["authoring_identity"],
+                "authority": authority,
+                "qa": receipt["qa"],
+                "human_review": human,
+            }))
+            if receipt.get("evidence_sha256") != expected_receipt_evidence: return None
             sandbox = receipt.get("sandbox", {})
             if sandbox.get("status") == "PASSED":
                 if not sandbox.get("request_sha256") or not sandbox.get("result_sha256"): return None
@@ -251,10 +354,8 @@ class Operator2DReview:
             elif sandbox.get("status") not in {"NOT_RUN", "FAILED"}:
                 return None
             receipt["runtime_verified"] = bool(
-                receipt.get("qa", {}).get("status") in {"GREEN", "YELLOW", "NEEDS_HUMAN_REVIEW"}
-                and receipt.get("human_review", {}).get("status") in {"APPROVED", "NOT_REQUIRED"}
-                and sandbox.get("status") == "PASSED"
-            )
+                human_review_passes(receipt["qa"]["status"], human, expected_evidence)
+                and sandbox.get("status") == "PASSED")
             return receipt
         except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError):
             return None

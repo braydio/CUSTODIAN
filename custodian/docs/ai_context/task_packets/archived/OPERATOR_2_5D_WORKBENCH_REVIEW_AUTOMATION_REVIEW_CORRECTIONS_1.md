@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-review-automation-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-review-automation
@@ -77,14 +77,31 @@ Generate once from the claimed worktree:
 scripts/ai/pack-context.sh task "<Include value above>" "operator-2-5d-workbench-review-automation-review-corrections-1"
 ```
 
-## Handoff
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_2_5d_review`, `operator_workbench_ui`, and `operator_2_5d_polish` passed; Python compile checks and `git diff --check` passed. The full changed-file sweep mapped all changed implementation/test files but its `review_pairing_contract` failed on 10 unrelated NPA Showcase lifecycle mismatches, causing one lower-tier-dependent skip; no changed-file implementation test failed. The approval seam is backend-authored and evidence-bound, with direct negative/positive controls recorded in the closing summary.
 
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: the fresh worktree's first two real-sandbox attempts timed out while Godot populated its cold import/class cache; the new positive current-receipt fixture also found relative sandbox-frame paths were not resolved under the authorized bundle root.
+- Root cause / contributing factors: an ephemeral checkout has no project-local `.godot` cache until its first editor import pass completes, and `_under()` did not join relative evidence paths to the supplied root.
+- Prevention / pipeline improvement: warm a cold worktree once with `godot --headless --editor --path custodian --quit` before the first sandbox smoke, and keep direct current-receipt positive/negative bundle fixtures for authority-root resolution.
+- Tooling / docs drift discovered: the repository-wide review-pairing validator reports 10 unrelated NPA Showcase implementation/review lifecycle mismatches; this task's correction/review wiring validates. The optional Textual pilot was also skipped because its package is absent, while the core UI test passed.
+- Follow-up: none
+- What worked: current evidence hashing and adversarial receipt controls directly proved the human gate.
+
+## Next Handoff
 - Next workstream: review-operator-2-5d-workbench-review-automation-review-corrections-1
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Summary backlink: include exact Authoring chat URL
 - Refresh reason: none
-- Next action: Claim the correction, close R0-01 with focused adversarial proof, then launch the paired fresh-context re-review.
-- Blockers or open questions: none; the approval-provenance contract is fixed above.
+- Next action: launch the paired review from a fresh reviewer context and verify the landed R0-01 correction against the adversarial evidence.
+- Blockers or open questions: none

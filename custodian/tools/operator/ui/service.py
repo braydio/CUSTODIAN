@@ -483,23 +483,23 @@ class WorkbenchService:
             return animation_preview.Preview(identity, "workbench", frames, (128, 128), digest.hexdigest(), tuple(rendered["frames"]))
         return self.preview_provider.load(identity, source)
 
-    def review_leaf(self, selection: AnimationSelection, *, human_disposition=None, sandbox_result=None):
+    def review_leaf(self, selection: AnimationSelection, *, sandbox_result=None):
         from operator_2_5d_review import Operator2DReview
         return Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root).inspect(
-            selection, human_disposition=human_disposition, sandbox_result=sandbox_result)
+            selection, sandbox_result=sandbox_result)
 
     def review_and_sandbox(self, selection: AnimationSelection, *, human_approved: bool = False):
         from operator_2_5d_review import Operator2DReview
         owner = Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root)
-        receipt = owner.inspect(selection, human_disposition={"status": "APPROVED", "provenance": "Workbench explicit human-disposition checkbox"} if human_approved else None)
+        receipt = owner.inspect(selection)
         if receipt["qa"]["status"] == "RED":
             return receipt
-        if receipt["qa"]["status"] == "NEEDS_HUMAN_REVIEW" and receipt["human_review"]["status"] != "APPROVED":
-            return receipt
+        if receipt["qa"]["status"] == "NEEDS_HUMAN_REVIEW":
+            if not human_approved:
+                return receipt
+            receipt = owner._approve_human_review(selection)
         sandbox = owner.run_sandbox(selection, receipt)
-        return owner.inspect(selection,
-            human_disposition={"status": "APPROVED", "provenance": "Workbench explicit human-disposition checkbox"} if human_approved else None,
-            sandbox_result=sandbox)
+        return owner.inspect(selection, sandbox_result=sandbox)
 
     def review_family(self, profile: str, group: str, action: str):
         from operator_2_5d_review import Operator2DReview
