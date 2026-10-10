@@ -65,7 +65,7 @@
 - What went wrong: `none`
 - Root cause / contributing factors: `none`
 - Prevention / pipeline improvement: `none`
-- Tooling / docs drift discovered: `none`
+- Tooling / docs drift discovered: `workstream.py finish` requires the durable Independent Review section on the reviewed packet; added that bounded receipt to the archived implementation packet.
 - Follow-up: `none`
 - What worked: `Landed diff, packet contract, and focused fault tests supplied independent evidence.`
 

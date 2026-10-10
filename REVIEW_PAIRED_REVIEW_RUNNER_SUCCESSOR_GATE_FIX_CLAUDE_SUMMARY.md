@@ -18,7 +18,7 @@ No blocking defects or material proof gaps found. The correction scopes current-
 
 The changed-file validation correctly selected no files against current `origin/main`; the focused unittest suite and direct syntax checks supplied the executable evidence for the landed correction. The paired WB25-4 runner run is recorded as launched, and its run metadata was used as evidence of claim identity and invocation, not as a claim that its separate review has completed.
 
-No reviewed implementation or runtime code was modified. Only this review receipt, this review summary, and the authorized review packet lifecycle metadata/index are included in this review workstream.
+No reviewed implementation or runtime code was modified. Changes are limited to this review receipt, this review summary, the authorized review packet lifecycle metadata/index, and the Independent Review receipt appended to the reviewed packet as required by the paired-review finish gate.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
@@ -27,7 +27,7 @@ No reviewed implementation or runtime code was modified. Only this review receip
 - What went wrong: none
 - Root cause / contributing factors: none
 - Prevention / pipeline improvement: none
-- Tooling / docs drift discovered: none
+- Tooling / docs drift discovered: `workstream.py finish` requires the durable Independent Review section on the reviewed packet; this was added to the archived implementation packet as the bounded review receipt.
 - Follow-up: none
 - What worked: landed diff, packet contract, and isolated runner fault tests gave sufficient independent evidence.
 
