@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-geography-residency-authority-audit`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `campaign-geography-residency-authority-audit`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `campaign-geography-residency-authority-audit`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md`
-- Reviewed main: `c5d4c19fe99be2a2164a878609413391f250d213`
+- Reviewed main: `1da9c970f27ff37298abb190ce8d3075d4837f0b`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -46,27 +46,41 @@ This F15-A paired review is **blocked/manual only until targeted authoring prefl
 
 ## Independent Review
 
-- Status: `blocked`
+- Status: `passed`
 - Review workstream: `review-campaign-geography-residency-authority-audit`
-- Reviewed main ref available: `24dbb0a015c145b54d4db90d7b0af3b40b73382e` (implementation `18e7e88ac91d5c70445121038984a4e15830d820`; report source snapshot `6d66c1696596e2a8646a56e7de986dc70bbac02e`)
+- Reviewed on main: `1da9c970f27ff37298abb190ce8d3075d4837f0b`
+- Implementation commit: `18e7e88ac91d5c70445121038984a4e15830d820`
+- Report source snapshot: `6d66c1696596e2a8646a56e7de986dc70bbac02e`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
-- Blocking defects: `0 confirmed implementation defects`
-- Material evidence gaps: `independent validation incomplete`
-- Non-blocking issues: `none assigned`
-- Optional improvements: `none assigned`
-- Finding IDs: `none assigned; no implementation finding established`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
-- Review notes: Implementation is an ancestor of the available `origin/main` ref, but fetch failed because shared Git metadata rejected `FETCH_HEAD` writes. Initial import preflight passed. Route lifecycle smoke exited 0 and printed PASS alongside unresolved resource errors. The initial M6 run reported five inferred-type parse errors; a later isolated clean-import probe did not reproduce them at the report source snapshot, while the reviewer-snapshot run was truncated by temporary-storage exhaustion before PASS and emitted no parser diagnostic. `check_ai_context.py` passed; source `task_packet_index.py` failed on stale managed output; source pairing validation passed, while reviewer-snapshot metadata checks could not complete. These incomplete and storage-limited reproductions prevent an independent acceptance verdict. No reviewed implementation or report files were edited. Preserve this claimed workstream and resume it in an environment where fetch and focused validation work.
 
-### Recovery probe update (2026-10-10)
+### Review Notes
 
-A clean-import comparison used Godot `4.7.2.stable.arch_linux.ed1daf0bf` at the report source snapshot `6d66c1696596e2a8646a56e7de986dc70bbac02e` and reviewer snapshot `26b6ed9ad8ad164890dab583d268eecc3cfd885d`. The source M6 smoke exited 0 and printed PASS, so the previously recorded inferred-type parser failures were not reproduced at the report source. Both route smokes exited 0 and printed PASS while logging negative-path rollback diagnostics and cliff-catalog missing-resource errors. The reviewer snapshot import logged an unrecognized imported binary resource; its M6 smoke exited 1 before PASS and had no parser diagnostic in the retained partial log. Both imported snapshots consumed roughly 12.6 GB under `/tmp`, exhausting the available quota before reviewer-snapshot index and pairing checks completed. Source index validation failed on stale managed Ready/Auto output; source pairing validation passed for 49 review packets. No queue or implementation files were changed. Probe logs are retained at `/tmp/custodian-f15a-validation.XvBZV0oY`.
+- The report correctly distinguishes persistent identity, route/scene identity, physical sectors, macro sectors, M6 map-local presentation chunks, and F14 actor identity. Its proposed address/residency seam is explicitly provisional and does not choose world extent or authorize implementation.
+- Fixed-seed measurements are labelled as local-map evidence; projected straight-axis travel is not presented as a walked route. Continuous two-site travel and camera landmark coverage remain `NOT PROVED`/unmeasured as stated.
+- The ambient-spawn race is a source-inspected possible interleaving, not a reproduced duplicate. The Ritualant ingress failure is documented as a fixture/content limitation, not general proof of region failure.
+- After full Godot editor import, the current-main M6 distant-chunk smoke exited 0 and printed PASS. The current-main route lifecycle smoke exited 0 and printed PASS. Its expected `MissingSpawn` and invalid `ProcGen owner` negative controls emitted rollback errors before PASS.
+- The initial M6 parse cascade occurred before full import initialization and was not reproduced after initialization. The isolated duplicate-snapshot probe exhausted `/tmp`; its incomplete reviewer-snapshot result is not used as product evidence.
+- Current-main task packet index, review pairing (62 packets), and AI-context checks pass. No implementation/report edit, correction finding, or new runtime defect was established.
 
-Review remains blocked pending focused current-main engine smokes. The existing claimed checkout was checkpointed and `workstream.py resume` succeeded, preserving the same workstream without another claim. Current-main packet-index, review-pairing (62 pairs), and AI-context checks pass. A shared changed-file Godot validation sweep is active, so focused M6/route smokes have not yet been started. The unconfirmed review-snapshot smoke and earlier queue drift are not F15-A implementation findings.
+## Next Handoff
 
-
-### Resume update (2026-10-10)
-
-The existing claimed workstream resumed successfully after the bounded evidence checkpoint was committed and pushed. The checkout is clean and includes current `origin/main`. Current-main `task_packet_index.py`, `validate_review_pairing.py` (62 pairs), and `check_ai_context.py` pass. Focused M6 and route smokes remain outstanding while a shared changed-file Godot validation sweep runs. No new paired claim was created.
+- Next workstream: `none`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Refresh reason: Decide the production geographic address/topology owner, finite or expandable extent, continuous scene seam, minimum locality proof, and actor/spawn residency boundaries before F15-B/C2.
+- Next action: Return the accepted F15-A evidence and unresolved design decisions to the authoring conversation.
+- Blockers or open questions: No review blocker; F15-B/C2 require the recorded human planning refresh.
