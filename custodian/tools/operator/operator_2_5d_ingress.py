@@ -47,7 +47,8 @@ class Operator2DIngress:
             raise IngressError("selection is not a target in the current 2.5D projection")
         return family
 
-    def target_binding(self, selection: AnimationSelection, layer: str = "full_body") -> dict[str, Any]:
+    def target_binding(self, selection: AnimationSelection, layer: str = "full_body", *,
+                       brief_id: str | None = None, brief_sha256: str | None = None) -> dict[str, Any]:
         family = self._family(selection)
         if layer not in family.required_layers:
             raise IngressError(f"layer {layer!r} is not required by this target")
@@ -55,17 +56,30 @@ class Operator2DIngress:
         if profile_sha != family.canonical_profile_sha256 or reference_sha != family.normalized_reference_sha256:
             raise IngressError("2.5D profile or normalized reference changed; refresh target authority")
         contract = family.frame_contract
-        frames = int(contract.get("frames", 0))
+        try:
+            frames = int(contract.get("frames", 0))
+        except (TypeError, ValueError):
+            frames = 0
         size = contract.get("frame_size", [128, 128])
         if frames < 1 or list(size) != [128, 128]:
             raise IngressError("projected target frame contract is unsupported")
-        return {"art_generation": family.generation, "profile": family.profile,
+        binding = {"art_generation": family.generation, "profile": family.profile,
                 "group": family.group, "action": family.action,
                 "direction": selection.direction, "layer": layer,
                 "authoring_identity": selection.authoring_identity,
                 "canonical_profile_sha256": profile_sha,
                 "normalized_reference_sha256": reference_sha,
                 "frames": frames, "frame_size": list(size)}
+        if brief_id is not None or brief_sha256 is not None:
+            if not brief_id or not brief_sha256:
+                raise IngressError("brief correlation requires both brief_id and manifest SHA-256")
+            try:
+                from operator_generation_brief import validate_generation_brief
+                validate_generation_brief(self.repo_root, self.workspace_root, selection, brief_id, brief_sha256)
+            except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+                raise IngressError(f"generation brief correlation failed validation: {error}") from error
+            binding["generation_brief"] = {"brief_id": brief_id, "manifest_sha256": brief_sha256}
+        return binding
 
     @staticmethod
     def _package_id(targets: list[dict[str, Any]], source_hashes: list[str]) -> str:
@@ -73,11 +87,14 @@ class Operator2DIngress:
         return hashlib.sha256(stable.encode()).hexdigest()[:20]
 
     def create_package(self, targets: list[AnimationSelection], *, source_paths: dict[str, Path | str],
-                       direction_map: dict[str, str] | None = None) -> Path:
+                       direction_map: dict[str, str] | None = None,
+                       brief_id: str | None = None, brief_sha256: str | None = None) -> Path:
         """Create one explicit direction package; direction keys are never inferred from pixels."""
         if len(targets) not in {1, 8}:
             raise IngressError("an intake package must contain one direction or all eight directions")
-        bindings = [self.target_binding(selection) for selection in targets]
+        if (brief_id is not None or brief_sha256 is not None) and len(targets) != 1:
+            raise IngressError("one generation brief correlates to exactly one direction target")
+        bindings = [self.target_binding(selection, brief_id=brief_id, brief_sha256=brief_sha256) for selection in targets]
         family_ids = {(item["profile"], item["group"], item["action"]) for item in bindings}
         if len(family_ids) != 1 or len({item["direction"] for item in bindings}) != len(bindings):
             raise IngressError("package targets must be unique directions from one semantic family")
@@ -130,9 +147,11 @@ class Operator2DIngress:
         source = package["sources"][direction]
         if sha256(Path(source["path"])) != source["sha256"]:
             raise IngressError("source PNG changed after package creation")
+        brief = binding.get("generation_brief", {})
         current_binding = self.target_binding(AnimationSelection(
             binding["profile"], binding["group"], binding["action"], direction,
-            art_generation=binding["art_generation"]), binding["layer"])
+            art_generation=binding["art_generation"]), binding["layer"],
+            brief_id=brief.get("brief_id"), brief_sha256=brief.get("manifest_sha256"))
         if current_binding != binding:
             raise IngressError("target authority changed after package creation")
         if cell.get("source_session"):
