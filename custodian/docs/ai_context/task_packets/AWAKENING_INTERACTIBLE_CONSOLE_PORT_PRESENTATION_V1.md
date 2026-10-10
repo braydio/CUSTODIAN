@@ -45,6 +45,19 @@
 - **Not claimable**: ART UNAVAILABLE. Remain draft/manual until approved source PNGs, SHA-256, frame/alpha validation, human style approval, Asset V2 verified status, and predecessor reviews are documented. Promote this packet and its review together after checking current main and regenerating the queue index.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
 
+## Required visual review handoff
+
+- Publication root: `/CUSTODIAN/visual_review/awakening-interactible-console-port-presentation-v1/` via current `publish_review_artifacts.py` protocol after focused objective tests pass.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`.
+- Evidence budget: one before/after contact sheet and at most two representative native-scale stills per setting (more only when temporal animation cannot be judged from stills). Keep review artifacts short-lived/delete-after-review unless explicitly retained.
+- External human/ChatGPT questions (must be answered and recorded, not self-approved by the implementer):
+  1. Without HUD prompt, do Crèche Console and damaged Port Console each read as usable physical interfaces at mid-distance?
+  2. Does the Port Console read as damaged/read-only, not a functioning route gate?
+  3. Do teal/amber status lights remain subtle and legible under Crèche and dim Undergate lighting?
+  4. Do near-focus and post-acknowledgement cues feel tied to real interaction state?
+  5. Are console wall silhouettes, floor pads, grates and foreground/Operator sorting visually seamless?
+- If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
