@@ -12,7 +12,7 @@ No blocking defects or material proof gaps found. The correction scopes current-
 - `python3 -m py_compile custodian/tools/agent/paired_review_runner.py custodian/tools/agent/test_paired_review_runner.py`: PASS.
 - `git diff --check`: PASS for the implementation commit and review changes.
 - The exact WB25-4 launch receipt is at `.git/custodian-review-runs/review-operator-2-5d-workbench-review-automation/20261010T040821Z-c03afcd6fc13/`; it verifies the requested branch, worktree, packet, and fresh ephemeral launch.
-- Findings-first receipt: `PAIRED_REVIEW_RUNNER_SUCCESSOR_GATE_FIX_REVIEW_RECEIPT.md`.
+- Findings-first receipt: the `## Independent Review` section in `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_RUNNER_SUCCESSOR_GATE_FIX.md`.
 
 ## Review Limits
 
