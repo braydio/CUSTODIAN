@@ -68,7 +68,7 @@
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `operator_guard_flow`, `operator_modular_defense_ranged`, `operator_body_pair_canonical`, `operator_visual_ownership`, `operator_fixed_tick_spine`, `operator_input_frame`, and `operator_upper_fx_canonical` passed. Moment Forge `combat/operator_mobile_guard_strafe` passed in evidence mode at `reports/moment_forge/combat/operator_mobile_guard_strafe/20261010T194147-0400`. The full changed-file sweep covered all changed source files and passed 54 checks; three unrelated Operator baseline checks remain failed and are owned by the dependent `operator-baseline-validation-rehabilitation` packet: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger`.
+- Evidence: After synchronizing with current `origin/main`, `operator_guard_flow`, `operator_modular_defense_ranged`, `operator_body_pair_canonical`, `operator_visual_ownership`, `operator_fixed_tick_spine`, `operator_input_frame`, `operator_upper_fx_canonical`, and `operator_mobile_guard_strafe` passed. Moment Forge `combat/operator_mobile_guard_strafe` passed in evidence mode at `reports/moment_forge/combat/operator_mobile_guard_strafe/20261010T195227-0400`. The code closeout sweep had complete owner coverage: 54 passed, 3 failed, and 15 skipped. Its three failures are owned by the dependent `operator-baseline-validation-rehabilitation` packet: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger`. After the main sync, the remaining documentation-only changed-file sweep passed `review_pairing_contract` (1/1).
 
 ## Execution Feedback
 
