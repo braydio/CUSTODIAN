@@ -259,8 +259,8 @@
 
 ### CS-F15-A
 - **Intent:** Current finite-world scale and wayfinding benchmark, canonical Hub/Port/Domain terms, local procgen vs global geography owner map and three architectural alternatives evaluated.
-- **Proposed future location:** `custodian/docs/ai_context/task_packets/CODEBASE_AUDIT_CAMPAIGN_WORLD_SCALE_AND_TOPOLOGY_EVIDENCE.md` (**not created**).
-- **Authorization:** Proposed **read-only next audit slice**, not yet claimable. Confirm no duplicate active F02/F15 audit; local fixed-seed measurements and actual region/scene lifecycle mapping still required.
+- **Authored pair:** [F15-A read-only evidence packet](../../../custodian/docs/ai_context/task_packets/CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md) and [fresh post-land review](../../../custodian/docs/ai_context/task_packets/REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md), both `blocked/manual` **only pending targeted local authoring preflight and remote publication**. Workstream `campaign-geography-residency-authority-audit`.
+- **Authorization:** **READ-ONLY AUDIT AUTHORIZED BY USER, PACKETS NOT YET CLAIMABLE.** No matching active F15-A packet/branch found in live search at authoring baseline; paired metadata awaits local authoring preflight, promotion to `ready/auto`, index regeneration and `origin/main` publication before claim. F15-B/C2 remain separately design-gated.
 - **Acceptance sketch:** fixed-seed current Operator travel/camera/landmark/biome and existing Scout route measurements, actual route stage/rollback and camp spawn queue inspection, verified Domain/Location/Route/Scene/Chunk identity map, comparison of finite graph-backed versus enlarged one-map versus expandable alternatives, and concrete doc drift disposition. No geometry rewrite.
 
 ### CS-F15-B
