@@ -41,17 +41,17 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 - Completion boundary satisfied: implementation and rollback boundary are implemented; landing is pending the changed-validation blocker documented in the closing summary.
 - Acceptance satisfied: focused pending/failed/ready, same-seed retry, same-map activation, exact CampaignSession identity, rollback, and exclusive authority checks pass; changed-file closeout is blocked only by the unrelated global review-pairing contract.
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `hub_continuity_port` pass; `world_transition_handoff` pass with H5 failure/success transaction fixtures; `world_contract_prewarm`, `startup_world_entry`, `hub_forum_adjudication`, `contract_world_archive_resolve_ingress`, and `contract_world_operator_spawn_residency` pass. Full changed run selected 42 tests: 16 passed, 1 failed (`review_pairing_contract`, ten unrelated NPA metadata failures), 25 skipped behind the failed unit tier. `git diff --check` and task-packet index pass.
+- Evidence: After synchronizing with current `origin/main`, task packet index, all 62 review pairings, and AI-context checks pass. Focused `hub_forum_adjudication`, `startup_world_entry`, `contract_world_archive_resolve_ingress`, and `contract_world_operator_spawn_residency` pass. H5 Port, transition, and prewarm smokes emit their expected PASS markers; the first standalone runner attempts were rejected by missing-addon startup diagnostics, while the complete changed suite later reports `world_transition_handoff` and `world_contract_prewarm` passed. Complete `--changed --base origin/main --json` coverage is complete and selects 42 tests: 38 passed, 2 failed, 1 timed out, and 1 skipped. The emitted failure evidence includes Vaultwing spawn/import errors; a separate long-running startup integrity check timed out. `git diff --check origin/main...HEAD` passes.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: partial
-- Friction severity: medium
-- What went wrong: the changed-file suite runs the repository-wide paired-review validator because the H5 packet is in its owners glob; ten existing NPA packet pairing findings prevent a green closeout. A one-off real-generation probe also surfaced existing ProcGenStuckPocket warnings and invalid Vaultwing import metadata; the production transaction reached the loader, while deterministic task smokes use the prescribed fake generator path.
-- Root cause / contributing factors: unrelated NPA review packets on the current base violate the global pair contract; the live procedural probe traverses optional ambient assets whose tracked import sidecars are invalid in this worktree.
-- Prevention / pipeline improvement: isolate task-scoped validation from known unrelated queue state without weakening the global validator; route the ambient asset/import findings to their owning workstream.
-- Tooling / docs drift discovered: H5 paired review packet lacked the required explicit `Visual review: none` metadata; added before handoff. Global pairing/AI-context findings remain unrelated.
+- Friction severity: high
+- What went wrong: resume merged current main and required resolving two documentation conflicts. Fresh repository checks are green, but the complete 42-test changed-file suite is not: two tests failed, one timed out, and one was skipped. Vaultwing spawn/import errors remain visible. The three critical H5/Port runner attempts initially emitted fatal missing-addon diagnostics before the later full sweep passed the transition and prewarm checks.
+- Root cause / contributing factors: unrelated upstream Vaultwing/import behavior and a long-running startup integrity check prevent the required green closeout report; the earlier NPA pairing and Operator AI-context blockers are now resolved.
+- Prevention / pipeline improvement: keep global validation gates intact and route the Vaultwing/import and timeout findings to their owning workstreams before retrying H5 closeout.
+- Tooling / docs drift discovered: resume produced merge conflicts in `CURRENT_STATE.md` and the managed packet index; both were resolved by preserving H5 and upstream entries. The packet-index, pairing, and AI-context checks then passed.
 - Follow-up: manual-follow-up
 
 ## Next Handoff
@@ -61,5 +61,5 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: resolve the existing repository-wide NPA pairing gate, rerun changed validation, finish H5, then launch the paired review in a fresh reviewer context.
-- Blockers or open questions: `review_pairing_contract` reports ten NPA packet-state mismatches; `check_ai_context.py` reports one unrelated Operator 2.5D dependency identity mismatch. Do not weaken either validator or edit those unrelated packets inside H5.
+- Next action: resolve the independent Vaultwing/import failures and startup integrity timeout through their owning lanes, then rerun the complete changed-file validation. Only after it is green, set exact completion truth values, archive the implementation packet, finish H5, and launch the paired review in fresh context.
+- Blockers or open questions: complete changed-file validation remains red (2 failed, 1 timed out, 1 skipped). Keep the implementation packet active and its paired review dependency-gated. Do not weaken validation or edit unrelated lanes inside H5.
