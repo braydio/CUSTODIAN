@@ -3,7 +3,7 @@
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
 **Status:** active implementation / WB25-4 review found R0-01 / correction cycle 1 ready-auto
 **Priority:** P1  
-**Reviewed main:** `bede798e744b40f334424998148baac87052b362`  
+**Reviewed main:** `5f4762ab06a4b3d45608ef9d43b5e8bce92d1e44`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
 **Last updated:** 2026-10-10
 
@@ -246,7 +246,7 @@ Each refresh re-derives current public APIs, exact files, locks, profile/referen
 
 ## Current repository drift / prerequisites
 
-Current live-main refresh (2026-10-09):
+Current live-main refresh (2026-10-10):
 - New Animation backend is reviewed complete (`a26982b8d` correction; `0ebea7b6` cycle-1 re-review).
 - Human art-direction ambiguity is resolved: the design lock and first authored relaxed-idle family are the exact Dropbox inputs/hashes above. Do not reopen whether legacy live art is the migration target.
 - `operator-2-5d-animation-viability-audit` completed its current-main read-only closeout: 69 production-reachable families are legacy fallback, one supplied relaxed-idle source is canonical but not runtime-published, and 68 semantic families remain in the baseline atlas estimate. No new subjective visual decision was needed.
@@ -256,7 +256,7 @@ Current live-main refresh (2026-10-09):
 - `operator_asset_schema.py` now owns additive generation-aware canonical source paths while preserving legacy behavior.
 - WB25-2 and its two bounded correction cycles are complete/reviewed. The final cycle-2 review passed with zero blocking defects/evidence gaps on exact saved-document proof, preserving target binding, independent direction progress, collision semantics, legacy-96 behavior and unconditional 2.5D publication refusal.
 - WB25-3 and its bounded R0-01 correction are complete/reviewed. The accepted apply boundary re-inspects the physical Workbench, re-renders current frames, reloads masks/landmarks and re-derives erase/registration proposals before mutation; forged/stale proposal data cannot reach Art Agent operations. QA remains `custodian.operator_art_qa.v2` and publication/runtime bytes remain untouched.
-- WB25-4 implementation now binds each leaf receipt to exact Workbench/render/profile/reference/physical-timing and QA evidence. Family state derives from `project_targets()` plus current receipts; sequence v1 remains legacy-readable while v2 carries art generation and exact Workbench frames; the real-Operator sandbox refuses tampered request/frame bytes and checks production runtime resources remain unchanged. `RUNTIME_VERIFIED` is review evidence only; WB25-4 does not own `PUBLISHED`. Its fresh-context paired review is pending.
+- WB25-4 implementation binds each leaf receipt to exact Workbench/render/profile/reference/physical-timing and QA evidence; family/sequence/sandbox/runtime no-diff behavior passed focused review. The fresh paired review nevertheless found blocking R0-01 in the required-human gate: caller-supplied `NOT_REQUIRED` can waive `NEEDS_HUMAN_REVIEW`. Cycle-1 correction + re-review are now ready/auto with an explicit backend-authored Workbench approval provenance/evidence contract. `RUNTIME_VERIFIED` remains review evidence only and WB25-4 still does not own `PUBLISHED`.
 - Production runtime remains one generated database + `OperatorAnimationSelector`; WB25-6 changes which authoring generation feeds that identity, not the runtime authority architecture.
 ## Exit condition
 

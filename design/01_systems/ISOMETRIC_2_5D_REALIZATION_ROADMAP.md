@@ -4,8 +4,8 @@
 **Program ID:** `isometric-2-5d-realization`
 **Status:** active / foundation implemented / Operator authority accepted / WB25-4 R0-01 correction ready
 **Priority:** P2
-**Reviewed main:** `bede798e744b40f334424998148baac87052b362`
-**Last Updated:** 2026-10-09
+**Reviewed main:** `5f4762ab06a4b3d45608ef9d43b5e8bce92d1e44`
+**Last Updated:** 2026-10-10
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 **Design authority:** `design/01_systems/ISOMETRIC_2_5D_PRESENTATION_CONTRACT.md`
 
