@@ -45,6 +45,19 @@
 - **Not claimable**: ART UNAVAILABLE. Remain draft/manual until approved source PNGs, SHA-256, frame/alpha validation, human style approval, Asset V2 verified status, and predecessor reviews are documented. Promote this packet and its review together after checking current main and regenerating the queue index.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
 
+## Required visual review handoff
+
+- Publication root: `/CUSTODIAN/visual_review/awakening-interactible-locker-lift-presentation-v1/` via current `publish_review_artifacts.py` protocol after focused objective tests pass.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`.
+- Evidence budget: one before/after contact sheet and at most two representative native-scale stills per setting (more only when temporal animation cannot be judged from stills). Keep review artifacts short-lived/delete-after-review unless explicitly retained.
+- External human/ChatGPT questions (must be answered and recorded, not self-approved by the implementer):
+  1. Does the P-9 Locker remain the same high-quality wall-integrated existing hero, with clearer approach/readability?
+  2. Do both lift call stations look usable and visually connected to one functional lift?
+  3. Do busy/empty states avoid promising an action that cannot currently be taken?
+  4. Are the floor/trim/grate relationships coherent without hiding or changing the registered Locker→Dust connector?
+  5. Are the subtle brass/cyan cues readable but restrained at normal game zoom?
+- If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
