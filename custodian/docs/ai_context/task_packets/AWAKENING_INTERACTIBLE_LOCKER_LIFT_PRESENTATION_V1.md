@@ -79,8 +79,8 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-locker-lift-presentation-v1`
-- Next packet state: `blocked`
-- Refresh owner: `human-art-approval`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`
