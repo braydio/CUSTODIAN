@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-geography-residency-authority-audit`
 - Kind: `review`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `campaign-geography-residency-authority-audit`
 - Locks: `campaign-geography-audit`
