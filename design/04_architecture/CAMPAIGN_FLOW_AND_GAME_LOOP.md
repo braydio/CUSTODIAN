@@ -18,6 +18,12 @@
 > Hub/Forum sections that follow the Awakening, which are not yet implemented;
 > prewarming and the handoff into the procgen sandbox re-attach there.
 
+> Runtime update (2026-10-10): H2 now lands in the persistent production Hub;
+> H3 surfaces one provisional Contract at the Adjudication Dais, stores its typed
+> scenario/seed in `HubState`, and prewarms the Contract while the Hub remains
+> active. H4's optional Twin Solaria roundtrip preserves that Hub state. Port
+> deployment, Campaign execution, and outcome return remain future H5-H7 work.
+
 **Project:** CUSTODIAN
 **Status:** Required After Runtime Stabilization, Hub Foundation, World Transition, Region Generation, and Compound Structural Baseline
 **Priority:** Critical

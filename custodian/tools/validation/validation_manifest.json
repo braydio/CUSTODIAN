@@ -4777,6 +4777,32 @@
       "needs_import": false
     },
     {
+      "id": "hub_forum_adjudication",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_forum_adjudication_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "forum",
+        "adjudication",
+        "campaign",
+        "contract_prewarm"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/state/run/campaign_scenario.gd",
+        "custodian/game/world/hub/hub_campaign_selection_authority.gd",
+        "custodian/game/world/hub/hub_adjudication_dais.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/world/procgen/world_contract_bootstrap.gd",
+        "custodian/tools/validation/hub_forum_adjudication_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "world_contract_prewarm",
       "type": "godot_script",
       "script": "res://tools/validation/world_contract_prewarm_smoke.gd",
