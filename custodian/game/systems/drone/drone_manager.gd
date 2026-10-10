@@ -4,8 +4,8 @@ class_name DroneManager
 const DEFAULT_DRONE_SCENE := preload("res://game/actors/allies/allied_infantry_droid.tscn")
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneSquadStateScript := preload("res://game/systems/drone/drone_squad_state.gd")
+const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")
 const GUARD_ORDER_MARKER_SCENE := preload("res://game/actors/effects/drone_guard_order_marker.tscn")
-const RelationshipResolver := preload("res://game/systems/combat/actor_relationship_resolver.gd")
 
 @export var operator_path: NodePath = NodePath("../Operator")
 @export var spawn_on_ready: bool = true
@@ -26,6 +26,7 @@ var _drones: Array[Node2D] = []
 var _guard_order_marker: Node2D = null
 var _command_hover_target: Node2D = null
 var _command_target: Node2D = null
+var _targeting: RefCounted = DroneTargetingScript.new()
 
 
 func _ready() -> void:
@@ -45,6 +46,8 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _command_target != null and not _is_valid_command_target(_command_target):
+		_propagate_command_target_clear()
 	if is_target_command_active():
 		_command_hover_target = _resolve_hostile_at_position(_get_pointer_world_position())
 	else:
@@ -259,6 +262,8 @@ func _apply_squad_state_to_drone(drone: Node) -> void:
 		drone.call("set_order_anchor", squad_state.order_anchor_position)
 	elif drone.has_method("clear_order_anchor"):
 		drone.call("clear_order_anchor")
+	if _command_target != null and not _is_valid_command_target(_command_target):
+		_propagate_command_target_clear()
 	if _is_valid_command_target(_command_target) and drone.has_method("set_command_target"):
 		drone.call("set_command_target", _command_target)
 
@@ -395,25 +400,7 @@ func _get_command_target_candidates() -> Array[Node]:
 
 
 func _is_valid_command_target(candidate: Variant) -> bool:
-	if candidate == null or not is_instance_valid(candidate) or not (candidate is Node):
-		return false
-	var candidate_node := candidate as Node
-	if candidate_node.has_method("is_dead") and bool(candidate_node.call("is_dead")):
-		return false
-	if candidate_node.is_in_group("drone_command_target"):
-		return true
-	return _is_valid_command_hostile(candidate_node)
-
-
-func _is_valid_command_hostile(candidate: Variant) -> bool:
-	if candidate == null or not is_instance_valid(candidate) or not (candidate is Node):
-		return false
-	var candidate_node := candidate as Node
-	if not RelationshipResolver.can_target(self, candidate_node, &"defense"):
-		return false
-	if candidate_node.has_method("is_passive_enemy") and bool(candidate_node.call("is_passive_enemy")):
-		return false
-	return true
+	return _targeting.is_valid_command_target(candidate, self)
 
 
 func _update_guard_order_marker() -> void:

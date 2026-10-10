@@ -46,7 +46,18 @@
 - Completion boundary satisfied: `no`
 - Acceptance satisfied: `no`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: Planning packet authored externally; not yet implemented or locally validated.
+- Evidence: Implementation changes are present in the claimed worktree. The focused `commanded_ally_targeting_contract` smoke passes with real projectile emission/damage and no-fire transitions; `allied_drone_navigation_walkability` passes. The changed-file sweep has complete coverage but is blocked by pre-existing `actor_relationship_contract` and unrelated `world_transition_handoff` failures; the actor relationship failure was also reproduced on clean `origin/main@1da9c970`.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: The required changed-file sweep is not green because the existing actor relationship contract fails on clean main and the unrelated world transition handoff smoke fails in this worktree.
+- Root cause / contributing factors: Existing actor relationship fixtures include legacy Enemy allegiance assertions and Vaultwing animation resources whose imports are unavailable in the main checkout; the unrelated route handoff scenario also fails in the changed sweep. These failures are outside NPA-7's implementation surface.
+- Prevention / pipeline improvement: Keep baseline reproductions for shared validation failures and resolve them in their owning workstreams before treating downstream changed sweeps as green.
+- Tooling / docs drift discovered: The changed-file sweep selects shared relationship and route tests because `DroneManager` and the validation manifest are registered owners; report their failures separately from NPA-7's focused runtime evidence.
+- Follow-up: `npa-7-commanded-ally-contracts`
+- What worked: A deterministic actor-to-projectile smoke proved the explicit passive-Shrumb exception, neutral explicit targeting, target flips before first fire and mid-burst, direct-setter rejection, real damage, and squad-slot replacement.
 
 ## Refresh Planning Authority
 
@@ -63,5 +74,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
-- Next action: `Validate packet pair against live repo; promote to ready/auto; update docs/index; publish through normal lifecycle; verify dispatcher mechanical claimability. Do not implement within the publication workstream.`
-- Blockers or open questions: `Authoring preflight, publication and dispatch audit not yet executed.`
+- Next action: `Resume this claimed implementation workstream after the repository's baseline actor_relationship_contract and world_transition_handoff validation failures are corrected; rerun required validation, then land and launch review-npa-7-commanded-ally-contracts in a fresh context.`
+- Blockers or open questions: `Changed-file validation is red on existing non-NPA-7 contracts; do not land until the required sweep is green.`

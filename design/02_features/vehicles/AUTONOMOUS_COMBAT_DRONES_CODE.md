@@ -9,6 +9,9 @@ Status: implemented-v3
 - `DroneManager` is scene-mounted under `GameRoot/World`, spawns two drones into `GameRoot/World/Allies`, and owns squad command input.
 - `DroneCommandProfile` centralizes tactical mode constants, follow-distance bands, separation, free-roam patrol timing, and guard engage/return/leash ranges.
 - `DroneTargeting` performs deterministic nearest-target selection against non-passive enemies around either a node anchor or explicit world position.
+- `CombatDrone` composes `ActorAllegianceComponent` as `operator_allied`; `AlliedInfantryDroid` inherits the relationship while retaining the legacy ally/defense/turret projectile groups.
+- `DroneTargeting` owns source-aware qualification: autonomous scans require a live, targetable hostile and exclude passive actors; an explicit `drone_command_target` order may select a passive neutral/hostile actor such as Shrumb, but never an allied, dead, or untargetable actor.
+- `DroneManager`, `CombatDrone` order receipt/retention, target refresh, weapon update, and every projectile commit apply that qualification. A changed allegiance, targetability, death, freed instance, or target order cancels queued burst rounds before another shot.
 - `DroneSquadState` tracks active/destroyed drone IDs, current tactical mode, squad fire discipline, current follow distance, and Operator/order-point anchor state.
 
 ## V2 Runtime Additions
@@ -33,6 +36,7 @@ Status: implemented-v3
 - Operator primary fire is suppressed while the guard-order chord is held so a command click does not consume ammunition.
 - During the guard-order chord, `DroneManager` resolves the nearest valid hostile under the pointer. The HUD reads this presentation state to place the command reticle over that hostile and tint it red. Clicking propagates the hostile as an explicit command target and anchors the squad at its position; an empty-ground click preserves ordinary guard placement.
 - `CombatDrone` prioritizes the explicit command target without bypassing guard engage/return/leash constraints. Ground orders and recall clear it.
+- `drone_id` is a manager-scoped squad slot label, not a save-stable creature identity. Destroyed slots remain in the squad summary and may be reused by a replacement.
 
 ## Integration
 
@@ -47,7 +51,11 @@ cd custodian
 godot --headless --quit
 godot --headless --script res://tools/validation/drone_follower_commands_smoke.gd
 godot --headless --script res://tools/validation/main_scene_allied_droid_smoke.gd
+godot --headless --script res://tools/validation/commanded_ally_targeting_contract_smoke.gd
 rg "KEY_T|toggle_key|_toggle_combat_mode|set_input_as_handled" game/actors/allies game/systems/drone
 ```
+
+The focused commanded-ally contract smoke is also registered as
+`commanded_ally_targeting_contract` in `validation_manifest.json`.
 
 Known deferred work remains in `design/02_features/vehicles/AUTONOMOUS_COMBAT_DRONES.md` and is summarized by `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md`.

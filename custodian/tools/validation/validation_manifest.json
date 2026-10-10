@@ -4223,6 +4223,26 @@
       "needs_import": false
     },
     {
+      "id": "commanded_ally_targeting_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/commanded_ally_targeting_contract_smoke.gd",
+      "tier": "actor",
+      "tags": [
+        "drone",
+        "relationship",
+        "targetability",
+        "projectile"
+      ],
+      "owners": [
+        "custodian/game/actors/allies/combat_drone.gd",
+        "custodian/game/systems/drone/drone_manager.gd",
+        "custodian/game/systems/drone/drone_targeting.gd",
+        "custodian/tools/validation/commanded_ally_targeting_contract_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "allied_drone_navigation_walkability",
       "type": "godot_script",
       "script": "res://tools/validation/allied_drone_navigation_walkability_smoke.gd",

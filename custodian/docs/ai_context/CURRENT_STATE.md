@@ -1416,10 +1416,15 @@ Documentation updates this session:
   boundaries remain unchanged. Focused lifecycle/combat checks passed 10/10;
   post-sync changed-file validation passed 42/42 with complete coverage; the
   independent review passed with zero findings at `a9b4e0b9`.
-  NPA-7's commanded-drone/droid contracts are now authored and published in a
-  ready/auto packet pair. The implementation packet is claimable after queue
-  validation; its paired review waits on implementation landing. NPA-7 has not
-  been implemented. NPA-8 remains a later planning refresh after NPA-7 review.
+  NPA-7 commanded-drone/droid implementation now composes
+  `ActorAllegianceComponent` on `CombatDrone`, keeps `DroneManager` as order
+  authority, and routes autonomous, explicit, and per-projectile eligibility
+  through `DroneTargeting`. Allegiance, targetability, death/freed state, and
+  target-order changes cancel queued burst shots. Explicit passive Shrumb orders
+  remain supported; autonomous targeting excludes passive actors. The focused
+  actor-to-projectile contract smoke is registered. NPA-7 is closing through
+  validation and landing; its fresh-context review is next, and NPA-8 remains
+  gated on that review.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
