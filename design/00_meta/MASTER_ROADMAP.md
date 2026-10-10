@@ -413,7 +413,7 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/l
 
 ---
 
-**F15-A milestone (2026-10-10):** Geography/residency evidence and independent review accepted on `main@83e0008e`. Human design confirmation for finite seeded Domain geography, location/visit IDs and uninterrupted traversal is next. [Post-audit D1–D7 proposal](../04_architecture/F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) separates B1 data identity, later B2 semantic site/procgen contract, F14-C2 actor residency and F15-C playable proof. **No implementation/asset packet becomes claimable from this milestone note.**
+**F15-A milestone (2026-10-10):** Geography/residency evidence and independent review accepted on `main@83e0008e`. Human D1–D7 design confirmation for finite seeded Domain geography, stable location/visit IDs and uninterrupted traversal **landed 2026-10-10**. [Approved D1–D7 decision record](../04_architecture/F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) separates B1 data identity, later B2 semantic site/procgen contract, F14-C2 actor residency and F15-C playable proof. F15-B1 is promoted to `ready/auto` on the publication branch; claim only after its PR merges and the packets/index are verified on current `main`. No B2/C2/art packet is authorized.
 
 ### Cross-cutting F15 Procedural World Semantics and Codex Idea Graduation
 

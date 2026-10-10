@@ -1,18 +1,18 @@
 # Campaign-World Geography and Topology · Design Discussion Draft
 
-**Status:** **continuous campaign geography PLAYER-EXPERIENCE LOCKED** (2026-10-09); exact topology/generation/scale, route seams, vehicle feel and implementation architecture remain **PROPOSAL**, not runtime authority or an executable task packet  
+**Status:** **continuous campaign geography player experience and F15 D1–D7 boundaries approved** (2026-10-10); numeric scale, final visuals, exact streaming mechanics, route seams and vehicle feel remain open. This design record is not itself runtime authority.
 **Date:** 2026-10-08  
 **Workstream:** `campaign-world-geography-design-audit`  
 **Audit focus:** [F15 Geographic Scale and Traversable Campaign-World Topology](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md)  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 
-## Post-F15-A independent review and D1–D7 human design gate (2026-10-10)
+## Post-F15-A independent review and D1–D7 approval (2026-10-10)
 
-F15-A evidence was independently reviewed **PASS** on `origin/main@83e0008e` (zero blocking or material evidence gaps). The new [post-audit geographic decision proposal](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) reconciles the measured local-region facts with the selected player-facing **finite seeded procgen / persistent geography / continuous travel** direction and proposes explicit D1–D7 owner boundaries. It is **not yet a human-approved production topology or packet publication**. Keep the historical alternatives, definitions and caveats in this draft as evidence, but route **new** F15-B B1/B2 and F14-C2 decisions through the post-audit record and Hall refresh register. The required Ritualant ingress defect remains with existing procgen/level owners.
+F15-A evidence was independently reviewed **PASS** on `origin/main@83e0008e` (zero blocking or material evidence gaps). The user approved D1–D7 in the [post-audit geographic decision record](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) on 2026-10-10. F15-B1 is the only authorized implementation slice; claim it after the promotion PR merges and current-main packet/index verification passes. Numeric scale, final visual presentation, exact streaming implementation, B2, C2 and F15-C remain separately gated. Keep the historical alternatives, definitions and caveats in this draft as evidence, but route new decisions through the post-audit record and Hall refresh register. The required Ritualant ingress defect remains with existing procgen/level owners.
 
 ## Planning continuation: accepted F14-C1 and production residency (2026-10-09)
 
-[**F14-C2/F15 Geographic Identity and Physical Residency Refresh**](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) reconciles the independently accepted synthetic real-Grunt physical/abstract handoff with current route scenes, generated locality staging, M6 visual-only chunk eviction, and ambient spawning. It proposes a **read-only F15-A geographic authority and travel-scale evidence pass first**, then a decision on stable Domain/Location and real locality residency, before any automatic F14-C2 implementation. The proposed finite graph-backed materialization strategy is *not yet a design lock*. The locked player target remains continuous geography within one Campaign World.
+[**F14-C2/F15 Geographic Identity and Physical Residency Refresh**](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) reconciles the independently accepted synthetic real-Grunt physical/abstract handoff with current route scenes, generated locality staging, M6 visual-only chunk eviction, and ambient spawning. It records the now-completed F15-A evidence audit and the approved D1–D7 geographic identity/travel boundaries. The finite graph-backed direction is approved; numeric scale and exact streaming implementation remain open. Production F14-C2 implementation remains separately gated. The locked player target remains continuous geography within one Campaign World.
 
 ## 0. User-described target (design input, not yet a locked change)
 
@@ -170,4 +170,4 @@ No hard map dimensions, travel-minutes budget, number of towns, art products or 
 - Keep CampaignRegion = transient portion-of-Domain runtime and Domain = enduring place per [Lattice Doctrine](../03_world/LATTICE_DOCTRINE.md). A campaign resolving must never magically delete its represented world.
 - Existing code with `Sector` should not be renamed or assigned world-geography authority just to match new design vocabulary.
 
-**Governance:** This draft records the user's design intent and source-backed candidate architecture only. It does not override existing locked spec, queue or asset requirements. Promotion requires F15 evidence, user design lock, exact owner/API boundaries, and existing packet-queue reconciliation.
+**Governance:** This design record preserves the user's approved D1–D7 boundaries and source-backed candidate architecture. It does not override existing runtime owners, packet queue, or asset requirements. F15-B1 is separately authorized for execution after its promotion PR merges and current-main queue verification passes; later slices retain their own gates.

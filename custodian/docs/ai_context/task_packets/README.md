@@ -31,6 +31,8 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION.md` — Establish the smallest deterministic, inspectable **data-only** F15 authority for persistent Domain/Location/Edge identity and visit-to-Domain references; no...
+- `REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION.md` — Independently falsify the landed F15-B1 **data-only** persistent geography identity foundation against D1–D7 user-approved boundaries without authorizing or...
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
@@ -43,7 +45,6 @@ normal closeout.
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Integrate commanded drones/droids with already-live shared relationship/targetability contracts while preserving squad command behavior, explicit-target exce...
 - `NPA_SHOWCASE_ARENA_FOUNDATION.md` — Deliver an actual registered five-zone authored development level and standalone playtest with real Operator and safe world ingress/return.
 - `NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Prove and improve the existing standard-combat-agent stack as production-grade, deterministic arena fixtures before creating a derivative hostile actor.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
@@ -82,7 +83,6 @@ normal closeout.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Independently verify that NPA-7 integrates commanded drones/droids with the existing relationship/targetability resolver, preserves autonomous-vs-explicit ta...
 - `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -205,7 +205,7 @@ The project has pivoted away from planned live-3D presentation experiments. The 
 - WB25-1 is complete. Its first review found one blocking workflow-projection defect (R0-01); the bounded correction landed and its fresh re-review passed with no remaining findings. Generation-aware targets, 2.5D source paths, direction workspaces and backend-derived saved creation readiness are now accepted predecessor authority.
 - WB25-2 guided ingress and its cycle-1/cycle-2 corrections are complete and independently reviewed. The final cycle-2 review passed physical saved-document proof and preserved Source Session target binding, direction progress, collision, legacy-96, valid artist edits, and the no-publication boundary.
 - WB25-3 polish automation is complete/reviewed after R0-01 correction. Exact current pixels/masks/landmarks are re-derived before erase/registration mutation, so forged or stale proposal geometry cannot bypass Art Agent scope/journal/undo.
-- WB25-4 review automation is implemented, but its fresh paired review found blocking R0-01: free-form human disposition can waive a `NEEDS_HUMAN_REVIEW` gate. Cycle-1 correction is now `ready/auto`; it makes human state QA-derived and accepts only backend-authored, evidence-bound explicit Workbench approval for human-required review.
+- WB25-4 review automation is complete and accepted after cycle-1 correction. R0-01 is fixed: human-review state is QA-derived, explicit Workbench approval is backend-authored and evidence-bound, and the fresh correction re-review passed with no new findings.
 
 Operator Workbench implementation series, all pre-authored with refresh gates:
 
@@ -216,7 +216,7 @@ Operator Workbench implementation series, all pre-authored with refresh gates:
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 implementation is complete, but its paired review recorded blocking R0-01; `operator-2-5d-workbench-review-automation-review-corrections-1` and its fresh re-review are now `ready/auto`. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 and later remain refresh-gated until this correction lineage closes cleanly.
+WB25-1 is complete/reviewed after correction R0-01. WB25-2 is complete/reviewed after the cycle-2 correction. WB25-3 is complete/reviewed after its proposal-integrity R0-01 correction. WB25-4 is complete/accepted after its cycle-1 human-approval correction and clean fresh re-review. The planning seed remains 69 live legacy semantic families, 1 already-authored canonical family, 68 remaining baseline canonical families, and 544 baseline direction-animation strips before extra modular/weapon/FX layers. WB25-5 is now the next planning-refresh gate.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -317,7 +317,7 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
   - `archived/NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` / archived paired review — NPA-5 complete; the fresh-context review passed at `f5dc6da50` with zero findings.
   - `archived/NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` and archived paired review — NPA-6 implementation and independent review complete; review passed with zero findings and the post-sync changed-file sweep passed 42/42 with complete coverage. Enemy lifecycle ownership is extracted while the corpse collector and loot carrier boundaries remain intact.
-  - `NPA_7_COMMANDED_ALLY_CONTRACTS.md` / `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — published ready/auto implementation/review pair for commanded drone/droid relationship, targetability, shot-time validation and squad-local identity contracts. Implementation is claimable; review remains dependency-gated until implementation lands. Bonded Vaultwing commands remain outside NPA-7.
+  - `archived/NPA_7_COMMANDED_ALLY_CONTRACTS.md` / `archived/REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — NPA-7 implementation and fresh-context paired review complete. Review passed with no findings; focused command, relationship, navigation, droid and projectile checks passed. Bonded Vaultwing command convergence remains gated for NPA-8 planning.
 
 ### Ash-Bell / Ritualant Scene Closeout
 
