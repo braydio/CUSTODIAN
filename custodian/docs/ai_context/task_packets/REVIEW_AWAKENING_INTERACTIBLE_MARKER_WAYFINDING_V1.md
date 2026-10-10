@@ -35,7 +35,7 @@
   3. Approved selected artwork verified, no duplicated overlay pixels and human approval recorded.
   4. No blocking defect/material evidence gap; external human disposition recorded if required.
 - Validation: awakening_first_return_smoke; awakening_first_return_geometry; awakening_first_return_progression; awakening_art_registration; Gate camera review; Asset V2 doctor; screenshots; --changed; git diff --check
-- Task overrides: `TASK OVERRIDE: review only; commits limited to review receipt/summary/lifecycle metadata and bounded correction packets. No reviewed-code edits.`
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
 ## Review Receipt
