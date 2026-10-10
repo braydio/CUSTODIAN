@@ -145,6 +145,43 @@ class QueueContractTests(unittest.TestCase):
 
 
 class ReviewPairingTests(unittest.TestCase):
+    def test_draft_manual_pair_is_parked_but_does_not_break_global_pairing(self):
+        impl_text = (
+            legacy_packet("parked-impl", status="draft", dispatch="manual")
+            + "- Review: `auto`\n"
+            + "- Paired review workstream: `review-parked-impl`\n"
+        )
+        review_text = (
+            "# Review Packet\n\n"
+            "- Workstream: `review-parked-impl`\n"
+            "- Status: `draft`\n"
+            "- Dispatch: `manual`\n"
+            "- Priority: `P2`\n"
+            "- Depends on: `parked-impl`\n"
+            "- Locks: `none`\n"
+            "- Kind: `review`\n"
+            "- Review: `none`\n"
+            "- Review target workstream: `parked-impl`\n"
+            f"- Review target packet: `{tpc.PACKET_ROOT}/archived/PARKED_IMPL.md`\n"
+            f"- Task overrides: `{tpc.BOUNDED_REVIEW_OVERRIDE}`\n"
+        )
+        def parse_impl(txt):
+            return tpc.parse_packet(f"{tpc.PACKET_ROOT}/PARKED_IMPL.md", txt)
+        review = tpc.parse_packet(f"{tpc.PACKET_ROOT}/REVIEW_PARKED_IMPL.md", review_text)
+        parked = parse_impl(impl_text)
+        self.assertEqual(tpc.validate_review_pairing([parked, review]), {})
+        # A ready implementation may never hide behind a parked review.
+        ready = parse_impl(impl_text.replace("- Status: `draft`", "- Status: `ready`")
+                                   .replace("- Dispatch: `manual`", "- Dispatch: `auto`"))
+        errors = tpc.validate_review_pairing([ready, review])
+        self.assertIn("must declare Status: ready", errors["parked-impl"])
+        self.assertIn("must declare Dispatch: auto", errors["parked-impl"])
+        # An explicitly blocked/manual implementation also needs a
+        # ready/auto or blocked/manual paired reviewer, not a draft.
+        blocked = parse_impl(impl_text.replace("- Status: `draft`", "- Status: `blocked`"))
+        errors = tpc.validate_review_pairing([blocked, review])
+        self.assertIn("must be ready/auto or blocked/manual", errors["parked-impl"])
+
     def test_correctly_paired_auto_review_has_no_errors(self):
         impl_text = (
             legacy_packet("impl-work")
