@@ -1,10 +1,12 @@
 # F15-B / F14-C2 · Post-F15-A Geographic Design Decision Record
 
-**Status:** **decision-ready design proposal; human confirmation outstanding.** This is not live implementation authority, a new claimable packet, or approval to dispatch F15-B/C2.  
+**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10)**. The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. **Only F15-B1 packet authoring is authorized now.** B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.  
 **Planning workstream:** `f14-c2-f15-production-residency-planning`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
 **Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).  
 **Authority:** [Accepted F15-A report](codebase_systems_audit/F15_GEOGRAPHY_RESIDENCY_AUTHORITY_EVIDENCE.md), [independent review summary](../../REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md), [prior F14-C2/F15 refresh](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md), [Hall dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md), [Domain/visit doctrine](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md).
+
+**Human decision receipt:** 2026-10-10, exact [authoring chat](https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31): “Approve the recommended F15 post-audit D1–D7 design lock ... keeping numerical world size and exact streaming mechanics gated ... author the minimal F15-B1 implementation and fresh independent review packet pair; do not broaden into F15-B2, F14-C2, or art.” This is explicit human approval, **not** implementation or validator proof.
 
 ## A. What passed; what it does not prove
 
@@ -14,11 +16,11 @@
 - No production mapping from durable `(DomainId, LocationId)` to route/level/scene identities; F14-C1 has **synthetic** locality anchors; M6 evicts **presentation**, never geographic residency. Source-inspected ambient spawn/managed actor race remains unobserved as a duplicate. Required Ritualant underground ingress prevents one real-world spawn fixture from reaching activation; its generator/level owner retains that defect, not F15-A.
 - This review **accepted the audit's truthfulness**, not the following architecture or new F15-B, F14-C2 or F15-C executable work.
 
-## B. One coherent proposed human design lock (D1–D7)
+## B. Approved design lock (D1–D7)
 
-The user's previously expressed experiential direction is **large finite seeded procgen Campaign Worlds; physically coherent, continuous on-foot travel; persistent locations; on-demand materialization; selectively authored lore sites**. Based on accepted evidence, prefer a finite graph-backed Domain/locality footprint over a single giant TileMap or unbounded coordinate generation. **The precise technical design below is recommended, not yet approved.**
+The user's previously expressed experiential direction is **large finite seeded procgen Campaign Worlds; physically coherent, continuous on-foot travel; persistent locations; on-demand materialization; selectively authored lore sites**. Based on accepted evidence, the user **approves a finite graph-backed Domain/locality footprint** over a single giant TileMap or unbounded coordinate generation for the initial implementation path. Numeric extent, exact coordinate systems, staging internals and world-scale performance budgets remain deferred until later evidence.
 
-| Decision | Recommended lock to approve | Owner / boundary | Explicitly NOT assumed |
+| Decision | **Approved design contract** | Owner / boundary | Explicitly NOT assumed |
 | --- | --- | --- | --- |
 | **D1 Domain, Location, Visit** | One persistent Lattice Domain has a seed and durable finite geographic location/adjacency descriptors. Canonical `domain_id` + `location_id` is the location address; `CampaignVisit` is a distinct per-Contract/session reference to *the same Domain*, not a fresh geography. Scene/route/node IDs and generator seeds are provenance, not substitute identity. | **F15** sole geographic address/topology owner; existing F06 campaign/session owns visit lifecycle; F14 receives immutable location addresses. | A new F14 geography store; deriving identity from a route node, visible chunk, or map label. |
 | **D2 Footprint/scale** | **Finite accessible footprint for initial Campaign World**, seeded once per persistent Domain with named boundaries and physically plausible outer limits. **Expandable in future only by a later versioned design** that cannot reroll previously visited locations. Leave numeric cell/kilometer extents and settlement density unset until playable F15-C measurements. | F15 geographic topology data, F02 existing local terrain generator | Infinite geography, automatic dynamic expansion, invented kilometer conversion or simply enlarging a local map. |
@@ -28,7 +30,7 @@ The user's previously expressed experiential direction is **large finite seeded 
 | **D6 Persistence** | Version identity, topology, locale seed/provenance and visit reference for eventual durable snapshots; use collision-safe structured or injectively encoded keys (never naive `domain.location` concatenation). **REMAP-3** owns disk save/restart; F15-B makes deterministic descriptors serializable but creates no competing save pipeline. | F15 descriptor contract; REMAP-3 disk; F14 snapshot state | Claim that process restart already preserves the new domain; an F15 save silo. |
 | **D7 Vehicles** | Ground-vehicle traversal matters to the world design but initial two-site acceptance is **on foot**. An F09-owned Field Scout travel, handling and persistence proof follows real road/scene-seam maturity. | F09 vehicle authority + F15-C later route integration | Vehicle configured max-speed = achieved travel speed; new vehicle controller. |
 
-**User approval needed:** confirm the finite-v1/expandable-later policy, persistent Domain-versus-Visit identity, and **uninterrupted perceived traversal with hidden technical staging** as one package. These do not set numeric world size or technical streaming implementation prematurely. **No production implementation packet changes to ready/auto before this approval.**
+**Approval recorded:** User explicitly approved **D1–D7 together** on 2026-10-10, retaining numerical world scale and exact technical streaming as later evidence gates. Implementation authorization is **limited to authoring the minimal B1 Domain/Location identity and paired fresh review packet**, subject to required authoring preflight and queue publication. This approval does **not** authorize dispatching B2, F14-C2, F15-C or art.
 
 ### Candidate minimum contract, not prescribed internal class names
 
@@ -55,9 +57,9 @@ LocalityResidency {
 - All scene handles are ephemeral; F02 existing level/route APIs remain active scene owners. F15 produces descriptions/approved requests, not `Node2D` creation by a competing generator.
 - Unknown profiles, malformed keys, incompatible edge seams, no safe ingress, duplicate actor slot, incompatible snapshot schema and cancellation races fail closed with a machine-inspectable reason.
 
-## C. Atomic packet-refresh plan after human design lock
+## C. Atomic packet-refresh plan under approved design lock
 
-**Do not turn one wide F15-B packet into an unreviewable game-world rewrite.** Distinguish conceptual series from dispatchable packets:
+**Do not turn one wide F15-B packet into an unreviewable game-world rewrite.** User approval selects B1 as the immediate implementation-authoring slice only; all later rows remain conceptual/dependency-gated. Distinguish conceptual series from dispatchable packets:
 
 | Order | Packet refresh / workstream | One primary owner and first proof | Gate |
 | --- | --- | --- | --- |
@@ -94,4 +96,4 @@ The [dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_R
 - Recheck `origin/main`, current workstream index, root/local AGENTS, active F02 route/level and F14/C1 F04 implementations **before authoring** B1. The above names are possible module surfaces, not nonexistent classes claimed as present.
 - Outstanding **owner-specific blocker:** required Ritualant underground ingress can block the ambient real-world spawn fixture. It belongs to its **existing procgen/level** owner and must be repaired or supplied with a valid canonical ingress fixture before claiming live managed-spawn coverage; neither the successful F15-A audit nor this design makes it pass.
 - **Doc drift corrected by accompanying links:** earlier F15-A planning pages still refer to `ready/auto` F15-A or preflight; the authoritative latest event is **F15-A accepted and review archived on `main@83e0008e`**. No older audit evidence should be rewritten retroactively; update their forward-looking status/next-step lines only.
-- **Next human step:** accept or revise the one-package D1–D3 lock and D4–D7 boundaries, then convert **B1 only** to a V2 implementation + fresh post-land review pair, with targeted authoring preflight and managed-index publication. Deferred Hall items remain tracked without resetting their gates.
+- **Next execution step:** validate the new B1 V2 implementation/review packet pair through the repository's targeted authoring validator, promote to `ready/auto` only on a green preflight, regenerate/check the managed queue index, and land it on main. B2/C2/visual ideas remain separately gated; track their future refresh triggers in the Hall register.
