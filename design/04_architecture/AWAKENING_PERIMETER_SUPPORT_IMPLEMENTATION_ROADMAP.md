@@ -4,6 +4,10 @@
 **Design:** [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md) · **Prompts:** [AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md](AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md)
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 
+## Calibration batch 01 (10 image requests)
+
+[AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) is the first ten-asset source-generation brief: three complete 01/07/10 role sets (9 states), plus Zone 06's distant structures (1 state). Assets 1–3 are an explicit visual calibration stop/go before 4–10. This does not override AP0's camera-footprint proof or automatically promote AP1–AP4.
+
 ## Locked project decisions
 
 Nine independently named **generic** nonplayable perimeter regions (Zones 01–04 and 06–10); three candidate Asset V2 states per generic region (27 new generic support files total); background-only support below canonical gameplay plates; all existing geometry/seams/collisions authoritative and unchanged. **Zone 05 Dust Lung is removed from this DAG** and owned by `AWAKENING_DUST_LUNG_V2.md` / `AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md`, whose later runtime cutover may intentionally reauthor Zone 05 geometry. Camera-footprint extents and exact source normalization must be measured before committing layout/registered dimensions. No generated image exists solely by virtue of this roadmap.
