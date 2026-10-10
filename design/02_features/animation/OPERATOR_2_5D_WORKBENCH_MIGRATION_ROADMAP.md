@@ -1,7 +1,7 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-4 correction re-review passed / WB25-5 refresh-required
+**Status:** active implementation / WB25-4 accepted / WB25-5 planning refreshed and published ready/auto
 **Priority:** P1  
 **Reviewed main:** `81766d1c848ae9c373f2f3b15aff96a610e82d95`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
@@ -224,7 +224,7 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-3R | review-operator-2-5d-workbench-polish-automation | **complete / correction re-review passed** | mutation/QA boundary review |
 | WB25-4 | operator-2-5d-workbench-review-automation | **complete / accepted after cycle-1 correction** | canonical QA, family/sequence review, sandbox runtime proof |
 | WB25-4R | review-operator-2-5d-workbench-review-automation | **complete / R0-01 corrected and re-reviewed clean** | anti-drift/sequence/sandbox review |
-| WB25-5 | operator-2-5d-workbench-production-queue | draft / refresh-required | queue/dashboard + deterministic generation briefs |
+| WB25-5 | operator-2-5d-workbench-production-queue | **ready / auto; design refreshed** | queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | dependency-gated | queue math/brief review |
 | WB25-6 | operator-2-5d-runtime-promotion | draft / refresh-required | cohort-based 2.5D production cutover + rollback |
 | WB25-6R | review-operator-2-5d-runtime-promotion | dependency-gated | no-mix/runtime/rollback review |
@@ -239,7 +239,7 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 - WB25-2: complete and independently reviewed through cycle-2 correction. The final accepted ingress validates exact target-bound Source Sessions, generation-scoped handoff/workspaces, independent direction progress, legacy compatibility, no-runtime-promotion, and the physical saved Aseprite frame/canvas/timing contract before recovery/completion while preserving legitimate artist edits.
 - WB25-3: complete and independently reviewed after bounded correction R0-01. Exact detached-island and registration proposals are re-derived from the current physical Workbench, render, masks and landmarks before mutation; forged/stale coordinates or deltas fail before Art Agent apply, while valid scoped apply/undo remains intact.
 - WB25-4: complete and independently accepted after cycle-1 correction. R0-01 is fixed: caller-supplied human disposition was removed, `NEEDS_HUMAN_REVIEW` remains required until the explicit Workbench approval path authors canonical provenance with the backend-computed exact evidence hash, `current_receipt()` revalidates that evidence, RED remains non-overridable, and GREEN/YELLOW preserve their no-approval path. The fresh correction re-review passed with zero blocking defects/material proof gaps and no new findings.
-- WB25-5: **refresh-required now**. Its dependency is the clean correction re-review; final queue fields/counts and generation-brief inputs must be re-derived from the accepted receipt contract before claim.
+- WB25-5: **planning refresh complete / ready-auto on main** (2026-10-10; commit `5e7c8e58`). The implementation and fresh paired review carry the accepted WB25-4 receipt/provenance gate, 69 family/552 target-direction baseline (8 accepted-source/544 not-yet-authored), dynamic live VERIFIED measures, rank-safe NEXT and deterministic generation-brief contracts. Claim is subject to dispatcher dependencies/locks, not a second human planning gate. No production queue implementation or runtime publication has landed yet.
 - WB25-6: refresh after WB25-5 + review and real queue/verification counts exist.
 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
