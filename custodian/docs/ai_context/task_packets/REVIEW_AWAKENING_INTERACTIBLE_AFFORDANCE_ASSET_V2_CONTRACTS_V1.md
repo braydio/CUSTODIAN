@@ -11,6 +11,8 @@
 - Review stage: `post-land`
 - Review modes: `code, architecture`
 - Paired review workstream: `none`
+- Review target workstream: `awakening-interactible-affordance-asset-v2-contracts-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_V2_CONTRACTS_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `<fill at claim>`
