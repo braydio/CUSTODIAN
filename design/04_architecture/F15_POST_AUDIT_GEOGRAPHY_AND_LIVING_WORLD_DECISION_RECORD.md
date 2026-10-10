@@ -1,12 +1,12 @@
 # F15-B / F14-C2 · Post-F15-A Geographic Design Decision Record
 
-**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10)**. The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. **Only F15-B1 packet authoring is authorized now.** B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.  
-**Planning workstream:** `f14-c2-f15-production-residency-planning`  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
-**Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).  
+**Status:** **D1–D7 USER-APPROVED ARCHITECTURE LOCK (2026-10-10)**. The finite-v1, persistent Domain-versus-Visit identity, perceived continuous traversal, residency/population/persistence/vehicle ownership boundaries below are approved as design authority. **Only F15-B1 packet authoring is authorized now.** B2, F14-C2, F15-C implementation, numeric world dimensions and exact scene-streaming mechanics remain independently dependency-gated.
+**Planning workstream:** `f14-c2-f15-production-residency-planning`
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+**Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).
 **Authority:** [Accepted F15-A report](codebase_systems_audit/F15_GEOGRAPHY_RESIDENCY_AUTHORITY_EVIDENCE.md), [independent review summary](../../REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md), [prior F14-C2/F15 refresh](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md), [Hall dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md), [Domain/visit doctrine](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md).
 
-**Human decision receipt:** 2026-10-10, exact [authoring chat](https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31): “Approve the recommended F15 post-audit D1–D7 design lock ... keeping numerical world size and exact streaming mechanics gated ... author the minimal F15-B1 implementation and fresh independent review packet pair; do not broaden into F15-B2, F14-C2, or art.” This is explicit human approval, **not** implementation or validator proof.
+**Human decision receipt:** 2026-10-10, exact [authoring chat](https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31): the user approved the F15-B design direction and D1–D7, authorizing preparation of the focused B1 implementation/review pair, while leaving numeric scale, final visuals and exact streaming for later gates. This is explicit design and packet-authoring approval, **not** implementation authorization or validator proof.
 
 ## A. What passed; what it does not prove
 

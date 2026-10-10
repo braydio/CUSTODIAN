@@ -43,7 +43,7 @@
 
 ## Packet publication / preclaim gate
 
-**Draft/manual here is an authoring-preflight hold, not an outstanding human architecture decision.** D1–D7 were approved on https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31. Run targeted preflight against this packet **and** `REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION.md`; if green, set **both** to `Status: ready` / `Dispatch: auto`, rerun the targeted validator, regenerate/check the bounded Ready/Auto index, run pairing/AI-context checks, and publish to `origin/main`. **Do not claim before these verifications.** If any validator fails, retain draft/manual with the exact failure until corrected; never hand-edit the managed index.
+**Draft/manual here records the user's authorization boundary:** D1–D7 are approved, and this turn authorizes preparation of the B1 implementation/review pair only. Run targeted preflight against this packet **and** `REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION.md` and publish the validated pair in `draft/manual` state. Do not promote to `ready`, make the packet claimable, or claim it until the user separately authorizes implementation execution. Never hand-edit the managed index.
 
 ## Next Handoff
 
@@ -53,5 +53,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh reason: `none; D1–D7 already approved and B1 is explicitly bounded`
-- Next action: Implement and land only B1 with focused deterministic identity evidence, then launch its fresh post-land independent review.
-- Blockers or open questions: `No human gate; targeted authoring preflight and origin/main queue publication must pass before implementation claim.`
+- Next action: Await separate user authorization to execute B1; after that, promote through the authorized task-packet lifecycle and claim only when the dispatcher permits it.
+- Blockers or open questions: `Implementation execution has not been authorized; this approval covers packet preparation only.`
