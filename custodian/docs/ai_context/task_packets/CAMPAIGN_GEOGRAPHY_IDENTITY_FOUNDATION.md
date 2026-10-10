@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-geography-identity-foundation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-campaign-geography-residency-authority-audit`
 - Locks: `campaign-geography-identity`
@@ -43,7 +43,7 @@
 
 ## Packet publication / preclaim gate
 
-**Draft/manual here records the user's authorization boundary:** D1–D7 are approved, and this turn authorizes preparation of the B1 implementation/review pair only. Run targeted preflight against this packet **and** `REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION.md` and publish the validated pair in `draft/manual` state. Do not promote to `ready`, make the packet claimable, or claim it until the user separately authorizes implementation execution. Never hand-edit the managed index.
+**Promotion receipt:** The user authorized `ready/auto` promotion after validation against the current main snapshot, and authorized the B1 claim only after the publication PR is merged and both packets plus the index are verified on current `main`. This publication branch must not claim or implement B1. Never hand-edit the managed index.
 
 ## Next Handoff
 
@@ -53,5 +53,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh reason: `none; D1–D7 already approved and B1 is explicitly bounded`
-- Next action: Await separate user authorization to execute B1; after that, promote through the authorized task-packet lifecycle and claim only when the dispatcher permits it.
-- Blockers or open questions: `Implementation execution has not been authorized; this approval covers packet preparation only.`
+- Next action: After the publication PR merges, verify both packets and the managed index on current `main`, then claim only `campaign-geography-identity-foundation` through the dispatcher.
+- Blockers or open questions: `Publication PR must merge before verification and B1 claim; no implementation work occurs on this publication branch.`

@@ -8,7 +8,7 @@
 
 ## Post-F15-A independent review and D1–D7 approval (2026-10-10)
 
-F15-A evidence was independently reviewed **PASS** on `origin/main@83e0008e` (zero blocking or material evidence gaps). The user approved D1–D7 in the [post-audit geographic decision record](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) on 2026-10-10. This authorizes preparation/publication of the focused B1 pair only. Numeric scale, final visual presentation, exact streaming implementation, B2, C2 and F15-C remain separately gated. Keep the historical alternatives, definitions and caveats in this draft as evidence, but route new decisions through the post-audit record and Hall refresh register. The required Ritualant ingress defect remains with existing procgen/level owners.
+F15-A evidence was independently reviewed **PASS** on `origin/main@83e0008e` (zero blocking or material evidence gaps). The user approved D1–D7 in the [post-audit geographic decision record](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) on 2026-10-10. F15-B1 is the only authorized implementation slice; claim it after the promotion PR merges and current-main packet/index verification passes. Numeric scale, final visual presentation, exact streaming implementation, B2, C2 and F15-C remain separately gated. Keep the historical alternatives, definitions and caveats in this draft as evidence, but route new decisions through the post-audit record and Hall refresh register. The required Ritualant ingress defect remains with existing procgen/level owners.
 
 ## Planning continuation: accepted F14-C1 and production residency (2026-10-09)
 
@@ -170,4 +170,4 @@ No hard map dimensions, travel-minutes budget, number of towns, art products or 
 - Keep CampaignRegion = transient portion-of-Domain runtime and Domain = enduring place per [Lattice Doctrine](../03_world/LATTICE_DOCTRINE.md). A campaign resolving must never magically delete its represented world.
 - Existing code with `Sector` should not be renamed or assigned world-geography authority just to match new design vocabulary.
 
-**Governance:** This design record preserves the user's approved D1–D7 boundaries and source-backed candidate architecture. It does not override existing runtime owners, packet queue, or asset requirements. B1 packet authoring is authorized; execution promotion requires separate authorization and normal packet-queue validation.
+**Governance:** This design record preserves the user's approved D1–D7 boundaries and source-backed candidate architecture. It does not override existing runtime owners, packet queue, or asset requirements. F15-B1 is separately authorized for execution after its promotion PR merges and current-main queue verification passes; later slices retain their own gates.
