@@ -11,6 +11,8 @@
 - Review stage: `post-land`
 - Review modes: `code, architecture`
 - Paired review workstream: `none`
+- Review target workstream: `awakening-interactible-deferred-family-handoff-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_DEFERRED_FAMILY_HANDOFF_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `<fill at claim>`
