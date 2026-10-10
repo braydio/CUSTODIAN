@@ -30,7 +30,6 @@ SPARSE_PROFILE_PATHS = (
     "custodian/addons/godot_ai/runtime/game_helper.gd",
     "custodian/addons/godot_ai/runtime",
     "custodian/addons/godot_ai/utils",
-    "custodian/addons/debug_console",
     "custodian/addons/dev-console",
     "custodian/tools/operator",
     "custodian/tools/aseprite",
