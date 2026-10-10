@@ -165,7 +165,7 @@ Art Agent operations and rechecks the physical Workbench contract afterward.
 - Completion boundary satisfied: yes
 - Acceptance satisfied: yes
 - Superseded/legacy production path disposition: intentionally-preserved
-- Evidence: WB25-3 implementation, focused smoke, 29/29 changed validations, compiled Python modules, and clean diff checks are recorded in `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`.
+- Evidence: WB25-3 implementation, focused smoke, 29/29 pre-sync and 30/30 post-sync changed validations, compiled Python modules, and clean diff checks are recorded in `OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`.
 
 ## Execution Feedback
 

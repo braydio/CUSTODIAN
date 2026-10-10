@@ -12,6 +12,7 @@ The active authoring-surface contract and sprite pipeline cheatsheet now include
 
 - Focused validation: `operator_2_5d_polish`, `operator_2_5d_ingress`, `operator_art_agent_service`, `operator_art_agent_aseprite`, `operator_art_registration_profile`, `operator_animation_workbench`, and `operator_workbench_ui` passed.
 - `python3 custodian/tools/validation/run_validation.py --changed --json`: 29 selected, 29 passed, 0 failed, 0 skipped. This run included the integration/moment tier and emitted only known expected fixture diagnostics/deprecation warnings. A separate UI smoke reports its optional interactive Textual pilot skipped because Textual is not installed.
+- After `workstream.py finish` merged newer `origin/main`, `run_validation.py --changed --base origin/main --json` passed all 30 selected checks (0 failed, 0 skipped) against the merged implementation tree.
 - Python compile checks passed for the affected operator, Art Agent, UI, and focused validation modules.
 - `git diff --check` passed.
 - The 2.5D ingress smoke covers fail-closed physical frame/canvas/timing refusal and byte preservation; the polish attach/analyze/apply path reuses that exact validator without repair.
