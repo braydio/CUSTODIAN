@@ -15,7 +15,7 @@ class PolishPanel(Vertical):
             yield Button("Review + Runtime Sandbox", id="polish-review")
             yield Button("Open Aseprite", id="polish-open")
             yield Button("Registration Guide", id="polish-guide")
-        yield Checkbox("Explicit human disposition for major findings", id="polish-human-approved", value=False)
+        yield Checkbox("Approve current NEEDS_HUMAN_REVIEW evidence", id="polish-human-approved", value=False)
         with Horizontal(classes="polish-actions"):
             yield Button("Preview Center X", id="polish-center")
             yield Checkbox("Explicit planted/stationary choice for this proposal", id="polish-planted-opt-in", value=False)

@@ -44,8 +44,8 @@ These packets are authored **draft/manual** on main as a planning series because
 ## Handoff
 - Next workstream: `npa-showcase-broken-warrant-actor`
 - Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
 - Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.

@@ -334,10 +334,13 @@ to canonical source or runtime.
 2.5D review receipts are derived from `project_targets()` leaves plus current
 Workbench/Art Agent QA evidence. The receipt binds the manifest and saved
 document, rendered frame bytes, accepted profile/reference hashes, physical
-canvas/frame/duration contract, QA findings, human disposition when required,
-and the sandbox request/result. A stale or unverifiable receipt contributes no
-effective verification. Advisory-only YELLOW QA remains non-blocking; RED
-blocks and NEEDS_HUMAN_REVIEW requires an explicit disposition.
+canvas/frame/duration contract, QA findings, evidence-bound human approval when
+required, and the sandbox request/result. A stale or unverifiable receipt
+contributes no effective verification. Advisory-only YELLOW QA remains
+non-blocking; RED blocks and NEEDS_HUMAN_REVIEW requires an explicit Workbench
+approval whose backend-authored provenance and evidence digest match the exact
+current leaf. Review inspection derives `NOT_REQUIRED`/`REQUIRED` from live QA;
+callers cannot submit a disposition record.
 
 Family state is recomputed from the required projected directions and current
 receipts on read. Missing, projected, legacy-fallback, partial, and stale cells

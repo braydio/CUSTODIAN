@@ -307,9 +307,10 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
     packet: same declared `Paired review workstream` id, `Kind: review`,
     `Review: none`, a dependency back on the implementation workstream, and
     matching target workstream and canonical archived target-packet path. The
-    pair must be ready/auto or blocked/manual. A ready/auto implementation
-    requires a ready/auto review; a blocked/manual implementation may also
-    retain a ready/auto review waiting on its dependency. Historical packets
+    A ready/auto implementation requires a ready/auto review; a gated
+    implementation may pair with ready/auto or blocked/manual. When BOTH
+    implementation and review are draft/manual, the intentionally parked pair
+    is valid but neither side is claimable. Historical packets
     that omit review metadata (`Review: none`, the default) are never required
     to pair.
     Reusable by dispatcher eligibility, check_ai_context.py, and tooling per
@@ -341,6 +342,11 @@ def validate_review_pairing(packets: list[Packet]) -> dict[str, str]:
         paired_state = (paired.status, paired.dispatch)
         implementation_is_ready = (p.status, p.dispatch) == ("ready", "auto")
         valid_pair_states = {("ready", "auto"), ("blocked", "manual")}
+        # Draft/manual is an intentionally parked, non-claimable planning state.
+        # Permit it only when the implementation is also draft/manual, not when
+        # a ready or blocked implementation is relying on its paired reviewer.
+        if (p.status, p.dispatch) == ("draft", "manual"):
+            valid_pair_states.add(("draft", "manual"))
         if implementation_is_ready:
             if paired.status != "ready":
                 add(p.workstream, f"paired review '{paired_id}' must declare Status: ready")
