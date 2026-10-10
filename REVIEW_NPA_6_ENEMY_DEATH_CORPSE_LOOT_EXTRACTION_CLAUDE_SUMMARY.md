@@ -19,6 +19,7 @@ No blocking or material non-blocking findings. Provisional finding `RV0-01` is r
 - Fresh focused checks recorded in the provisional review passed after editor import initialization: `lootable_corpse_beacon`, `authored_vault_grunt_loot_marine`, `enemy_lifecycle_config`, `world_simulation_actor_reification_handoff`, `enemy_reaction_posture`, `grunt_parry_critical`, and `standard_enemy_melee`.
 - Recovery evidence `VALIDATION_EVIDENCE.md` identifies the implementation workstream's post-sync changed-file report at target main `c5d4c19fe99be2a2164a878609413391f250d213`: 42/42 selected passed, zero failures/timeouts/skips/infrastructure errors, complete changed-file coverage, and `review_pairing_contract` passed. The report was supplied to the implementation workstream's finish at the landed target.
 - `FILTER_SAFE_DIFF_CHECK.txt` records a successful LFS-filter-safe `git diff --check 4fda2ffa1^ 4fda2ffa1`, exit status 0 and no whitespace errors.
+- Mirrored the passing `Independent Review` receipt into the archived NPA-6 implementation packet for the repository finish artifact contract; no implementation source was changed.
 - The original review attempts failed because changed-file discovery and the default diff filter attempted writes under the read-only shared Git metadata path. This was an environment limitation, not a source failure; the exact-commit implementation-finish evidence closes the material gap. The overlapping 56-file run from newer main history remains out of scope and was not used as proof.
 
 ## Process Feedback
