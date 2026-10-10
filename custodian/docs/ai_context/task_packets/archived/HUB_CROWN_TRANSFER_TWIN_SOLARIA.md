@@ -81,9 +81,9 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 - Next action: After implementation archives complete, dispatch-claim the paired review in a fresh context and review the landed H4 implementation.
 - Blockers or open questions: implementation landing required.
 
-## Independent Review Receipt
+## Independent Review
 
-- Status: `pass`
+- Status: `passed`
 - Review workstream: `review-hub-crown-transfer-twin-solaria`
 - Reviewed on main: `941fcfccfc66d573c8fbd073f3bed60655151876`
 - Reviewer context: `fresh`
