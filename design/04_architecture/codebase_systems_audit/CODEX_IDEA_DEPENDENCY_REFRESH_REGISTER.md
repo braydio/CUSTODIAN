@@ -15,6 +15,8 @@ The Hall review found complementary ideas worth **weaving into future packet *re
 
 **Do not modify the currently authorized F15-A audit packet.** At this review `CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md` and its fresh review pair have `ready/auto` headers on main (post-promotion). F15-A remains read-only and must complete independently. Its output is an input to the *next* design refresh, not permission to add unreviewed experiments to the claimed audit.
 
+**Refresh checkpoint (2026-10-10):** F15-A independently accepted; decision candidates and B1/B2/C2 scope separation are recorded in [F15 post-audit human design record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md). **Do not mark entries 1–4 implemented:** proposed mechanic/metadata choices await user approval, and physical/rendered behavior remains for later F15-C. Keep all later idea reentry triggers intact.
+
 ## Refresh stages and decision prompts
 
 | Existing gate | What to reconsider at the refresh | Decision that belongs in that future packet | Not authorized yet |
@@ -82,6 +84,6 @@ At each matching gate, **before authoring any implementation packet**:
 
 ## Non-goals and next update
 
-No executable packet, scene, script, asset, art manifest, queue metadata, F15-A measurement, or implementation lock is created by this register. **Next action:** after *independent* F15-A evidence/review, come back to the [F15 design and packet roadmap](F15_CAMPAIGN_WORLD_GEOGRAPHY.md) and incorporate entries 1–4 into the F15-B specification decision; tag entry 5 as a metadata reserve. Subsequent F14-C2 and site-history gates must read the rest of this register.
+No executable packet, scene, script, asset, art manifest, queue metadata, F15-A measurement, or implementation lock is created by this register. **Next action:** F15-A is independently accepted on main@83e0008e. Confirm or revise the [D1–D7 post-audit decision proposal](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) before authoring B1. Encounter Language, Landmark Hierarchy, Spatial Compression and Mystery Budget have concrete proposed data/placement mechanics in that record, while Procedural Ruin Generator has only a metadata reserve and later trigger. Subsequent F14-C2 and site-history gates must read the rest of this register.
 
 No new asset is commissioned. If one is authorized later, use Asset Pipeline V2 and specify source under `asset_drop/inbox/`, in-repository target, dimensions, frame count, alpha, manifest family and validation receipts. No invented placeholder asset files.
