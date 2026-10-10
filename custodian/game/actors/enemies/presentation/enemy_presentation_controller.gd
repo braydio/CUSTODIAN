@@ -9,6 +9,8 @@ var attack_ordinal := 0
 var reaction_ordinal := 0
 var flavor_ordinal := 0
 var stable_spawn_ordinal := 0
+var _execution_body_original_position := Vector2.ZERO
+var _execution_body_position_captured := false
 
 const ATTACK_BAGS: Array[Array] = [
 	[&"combat.fast_01", &"combat.fast_02", &"combat.fast_01", &"combat.fast_03", &"combat.fast_02", &"combat.fast_03", &"combat.fast_01"],
@@ -78,6 +80,22 @@ func stop_on_first_frame() -> void:
 		return
 	body_sprite.stop()
 	body_sprite.set_frame_and_progress(0, 0.0)
+
+
+func capture_execution_body_position() -> void:
+	if body_sprite == null:
+		return
+	_execution_body_original_position = body_sprite.position
+	_execution_body_position_captured = true
+	body_sprite.position = Vector2.ZERO
+	body_sprite.stop()
+	body_sprite.set_frame_and_progress(0, 0.0)
+
+
+func restore_execution_body_position() -> void:
+	if body_sprite != null and _execution_body_position_captured:
+		body_sprite.position = _execution_body_original_position
+	_execution_body_position_captured = false
 
 
 func select_normal_attack() -> StringName:

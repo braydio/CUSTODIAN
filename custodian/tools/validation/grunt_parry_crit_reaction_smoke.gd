@@ -40,6 +40,10 @@ func _init() -> void:
 	_run.call_deferred()
 
 
+func _phase_name(enemy: Node) -> String:
+	return String((enemy.call("get_parry_critical_debug_state") as Dictionary).get("phase", ""))
+
+
 func _run() -> void:
 	var observatory := get_root().get_node_or_null("DevObservatory")
 	if observatory != null and observatory.has_method("clear"):
@@ -91,10 +95,10 @@ func _run() -> void:
 	grunt.call("apply_parry_stagger", Vector2.RIGHT, 0.55, 0.0)
 	var standalone_grunt_root: Vector2 = grunt.global_position
 	var independent_operator_root: Vector2 = operator.global_position
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_ENTER, "parry should enter critical-open enter")
+	_assert_true(_phase_name(grunt) == "enter", "parry should enter critical-open enter")
 	_assert_true(String(body_sprite.animation) == "critical_open_enter_s", "enter should play critical_open_enter_s")
 	_assert_animation(body_sprite.sprite_frames, "critical_open_enter_s", 5, 12.0, false)
-	_assert_true(float(grunt.get("_parry_critical_window_timer")) > 0.0, "parry should open enemy-owned opportunity time")
+	_assert_true(float((grunt.call("get_parry_critical_debug_state") as Dictionary).get("window_remaining", 0.0)) > 0.0, "parry should open enemy-owned opportunity time")
 	_assert_true(not fx_sprite.visible, "opening should clear ordinary flinch FX")
 	var marker := grunt.get("_critical_breach_marker_vfx") as Node2D
 	var ring := grunt.get("_critical_window_ring_vfx") as Node2D
@@ -108,7 +112,7 @@ func _run() -> void:
 	grunt.call("_update_reaction_timers", enter_duration + 0.001)
 	_assert_true(grunt.global_position.is_equal_approx(standalone_grunt_root), "enter-to-hold should preserve the enemy standalone root")
 	_assert_true(operator.global_position.is_equal_approx(independent_operator_root), "critical-open phases must not snap the Operator to the enemy")
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_HOLD, "enter completion should transition to hold")
+	_assert_true(_phase_name(grunt) == "hold", "enter completion should transition to hold")
 	_assert_true(String(body_sprite.animation) == "critical_open_hold_s", "hold should play critical_open_hold_s")
 	_assert_animation(body_sprite.sprite_frames, "critical_open_hold_s", 4, 6.0, true)
 	_assert_true(is_instance_valid(marker) and is_instance_valid(ring), "indicators should persist through hold")
@@ -125,7 +129,7 @@ func _run() -> void:
 	_assert_true(shared_root_offset.is_zero_approx(), "shared-root execution offset should be zero")
 	operator.call("_start_critical_attack", grunt)
 	_assert_true(bool(operator.get("_paired_execution_active")), "valid input should start paired execution")
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_EXECUTING, "reservation should atomically enter executing")
+	_assert_true(_phase_name(grunt) == "executing", "reservation should atomically enter executing")
 	_assert_true(String(operator_body.animation) == "unarmed/cosmetic/critical_execution_01/s/full_body", "Operator should use the canonical execution body")
 	_assert_true(String(operator_fx.animation) == "unarmed/cosmetic/critical_execution_01/s/fx", "Operator should use canonical execution FX")
 	_assert_true(String(body_sprite.animation) == "critical_execution_victim_s", "enemy victim should start on the reservation tick")
@@ -159,8 +163,8 @@ func _run() -> void:
 	_assert_true(operator_body.frame == 7, "final separation frame should hold before control restoration")
 	operator.call("_update_paired_execution", 1.0)
 	_assert_true(not bool(operator.get("_paired_execution_active")), "normal completion should unlock Operator")
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_NONE, "normal completion should release enemy execution ownership")
-	_assert_true(float(grunt.get("_crit_recovery_timer")) > 0.0, "nonlethal completion should enter crit recovery")
+	_assert_true(_phase_name(grunt) == "none", "normal completion should release enemy execution ownership")
+	_assert_true(float((grunt.call("get_reaction_debug_state") as Dictionary).get("crit_recovery_remaining", 0.0)) > 0.0, "nonlethal completion should enter crit recovery")
 	_assert_true(String(body_sprite.animation) == "crit_recovery_s", "nonlethal completion should play crit_recovery_s")
 	_assert_true(not operator_fx.visible, "cleanup should hide execution FX")
 	_assert_true(operator_body.position.is_equal_approx(operator_body_original_position), "cleanup should restore Operator body local position")
@@ -224,11 +228,11 @@ func _run() -> void:
 	var expiry_standalone_root: Vector2 = expiry_grunt.global_position
 	var expiry_marker := expiry_grunt.get("_critical_breach_marker_vfx") as Node2D
 	var expiry_ring := expiry_grunt.get("_critical_window_ring_vfx") as Node2D
-	var expiry_duration := float(expiry_grunt.get("_parry_critical_window_timer"))
+	var expiry_duration := float((expiry_grunt.call("get_parry_critical_debug_state") as Dictionary).get("window_remaining", 0.0))
 	expiry_grunt.call("_update_reaction_timers", expiry_duration + 0.01)
 	await process_frame
 	var expire_effect := expiry_grunt.get_node_or_null("CriticalWindowExpireVfx") as Node2D
-	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_RECOVER, "unused expiry should enter recover")
+	_assert_true(_phase_name(expiry_grunt) == "recover", "unused expiry should enter recover")
 	_assert_true(String(expiry_body.animation) == "critical_open_recover_s", "expiry should play critical_open_recover_s")
 	_assert_animation(expiry_body.sprite_frames, "critical_open_recover_s", 5, 10.0, false)
 	_assert_true(not is_instance_valid(expiry_marker) and not is_instance_valid(expiry_ring), "expiry should free both indicators")
@@ -243,7 +247,7 @@ func _run() -> void:
 	range_rejection_grunt.global_position = Vector2(
 		500.0
 		+ float(
-			range_rejection_grunt.grunt_parry_critical_capture_range_px
+			range_rejection_grunt.parry_critical_config.capture_range_px
 		)
 		+ 8.0,
 		500.0
@@ -274,7 +278,7 @@ func _run() -> void:
 	_assert_true(normal_target_ring == null or not normal_target_ring.visible, "Operator target ring should remain hidden during critical-open recover")
 	var recover_duration := expiry_body.sprite_frames.get_frame_count("critical_open_recover_s") / expiry_body.sprite_frames.get_animation_speed("critical_open_recover_s")
 	expiry_grunt.call("_update_reaction_timers", recover_duration + 0.01)
-	_assert_true(int(expiry_grunt.get("_parry_critical_phase")) == PHASE_NONE, "recover completion should return to normal behavior")
+	_assert_true(_phase_name(expiry_grunt) == "none", "recover completion should return to normal behavior")
 	_assert_true(expiry_grunt.global_position.is_equal_approx(expiry_standalone_root), "recover completion should not introduce a lateral root snap")
 	_assert_true(not bool(expiry_grunt.call("suppresses_normal_targeting_presentation")), "normal targeting should resume after recover completes")
 
@@ -301,7 +305,7 @@ func _run() -> void:
 	cancel_operator.call("_cleanup_paired_execution", false, &"smoke_interrupt")
 	_assert_true(not bool(cancel_operator.get("_paired_execution_active")), "interruption should clear Operator execution state")
 	_assert_true(cancel_operator.collision_layer == original_layer and cancel_operator.collision_mask == original_mask, "cleanup should restore exact collision values")
-	_assert_true(int(cancel_grunt.get("_parry_critical_phase")) == PHASE_NONE and float(cancel_grunt.get("_crit_recovery_timer")) > 0.0, "interruption should release a live enemy into recovery")
+	_assert_true(_phase_name(cancel_grunt) == "none" and float((cancel_grunt.call("get_reaction_debug_state") as Dictionary).get("crit_recovery_remaining", 0.0)) > 0.0, "interruption should release a live enemy into recovery")
 
 	var lethal_operator := OPERATOR_SCENE.instantiate()
 	lethal_operator.global_position = Vector2(340.0, 0.0)

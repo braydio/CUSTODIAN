@@ -1362,12 +1362,22 @@ Documentation updates this session:
   transaction, commitment/context, and recovery/redecision; Grunt/Marine/Savage/
   Pursuit scene overrides remain explicit. NPA-4's fresh paired review landed at
   `8817908b1` with zero defects, evidence gaps or other findings and all nine
-  focused runtime checks passing. NPA-5 is now authored: ordinary incoming
-  reaction/posture moves to `EnemyReactionController`, while Grunt
-  critical-open/reservation/execution-victim state moves separately to
-  `EnemyParryCritical`; hit classification, health/death, presentation and
-  special abilities remain outside those modules. Pounce-first selection and
-  fixed-step priority remain preserved.
+  focused runtime checks passing. NPA-5 now extracts ordinary incoming
+  reaction/posture into `EnemyReactionController` and Grunt
+  critical-open/reservation/execution-victim state into `EnemyParryCritical`,
+  each with typed tuning. Hit-strength classification, health/death, semantic
+  presentation, special abilities and Operator execution choreography remain
+  outside those modules. Scene-specific Marine/Savage values and exact reaction
+  timing are preserved; paired-execution token/owner checks and single-damage
+  consumption remain intact. The focused combat/runtime set passed 15/15 and
+  the source-change sweep passed 31/31 before packet lifecycle closeout. The
+  final changed sweep selected the unrelated global `review_pairing_contract`
+  check and failed on the known F14-C1 `living-world-entity-reification-handoff`
+  pair; higher tiers were skipped. Baseline reproduction on clean
+  `origin/main@2dffdff` confirmed `wave_manager_debug_grunt_spawn_gate` failed
+  only because it searched for a serialized script-default value; the smoke now
+  loads the production scene and checks the effective `WaveManager` property.
+  The fresh paired NPA-5 review remains pending.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring

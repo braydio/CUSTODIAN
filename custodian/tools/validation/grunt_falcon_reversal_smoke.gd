@@ -30,6 +30,10 @@ func _init() -> void:
 	_run.call_deferred()
 
 
+func _phase_name(enemy: Node) -> String:
+	return String((enemy.call("get_parry_critical_debug_state") as Dictionary).get("phase", ""))
+
+
 func _run() -> void:
 	_validate_source_geometry()
 	var root := Node2D.new()
@@ -77,7 +81,7 @@ func _run_reversal_case(
 	_assert_true(bool(operator.get("_paired_execution_active")), "%s Falcon parry should automatically start reversal" % expected_direction)
 	_assert_true(String(operator.get("_paired_execution_kind")) == "falcon_reversal", "paired execution should identify Falcon Reversal")
 	_assert_true(String(operator.get("_paired_execution_direction")) == String(expected_direction), "Falcon travel should select the authored %s triplet" % expected_direction)
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_EXECUTING, "Falcon Reversal should enter EXECUTING directly")
+	_assert_true(_phase_name(grunt) == "executing", "Falcon Reversal should enter EXECUTING directly")
 	_assert_true(not falcon.is_active(), "execution ownership should fully cancel Falcon movement")
 	_assert_true(grunt.get("_critical_breach_marker_vfx") == null and grunt.get("_critical_window_ring_vfx") == null, "automatic reversal should not create BREACH/countdown presentation")
 
@@ -130,7 +134,7 @@ func _run_reversal_case(
 	_assert_true(operator_body.frame == 5 and operator_fx.frame == 5 and victim_body.frame == 5, "all three layers should freeze together on contact")
 	operator.call("_update_paired_execution", 2.0)
 	_assert_true(not bool(operator.get("_paired_execution_active")), "completion should restore Operator ownership")
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_NONE, "completion should release enemy execution ownership")
+	_assert_true(_phase_name(grunt) == "none", "completion should release enemy execution ownership")
 	_assert_true(falcon.recent_parry_timer > 0.0, "Falcon parry lockout should survive reversal")
 
 	operator.queue_free()
@@ -145,7 +149,7 @@ func _validate_ordinary_parry_fallback(root: Node2D) -> void:
 	grunt.set_process(false)
 	grunt.set_physics_process(false)
 	grunt.call("apply_parry_stagger", Vector2.RIGHT, 0.55, 0.0)
-	_assert_true(int(grunt.get("_parry_critical_phase")) == PHASE_ENTER, "ordinary non-Falcon parry should retain critical-open flow")
+	_assert_true(_phase_name(grunt) == "enter", "ordinary non-Falcon parry should retain critical-open flow")
 	grunt.queue_free()
 	await process_frame
 

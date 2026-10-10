@@ -119,10 +119,10 @@ func _test_direct_projectile_hit_memory() -> void:
 	_expect(_blackboard.target_last_seen_position == _shooter.global_position, "direct hit must store shooter position")
 	_expect(_blackboard.pursuit_timer >= _behavior.profile.lost_sight_memory_sec, "direct hit must initialize pursuit memory")
 	var draw_remaining := _grunt._grunt_expression_timer
-	_grunt._recoil_timer = 0.20
+	_grunt.request_recoil_reaction(0.20)
 	_grunt._update_grunt_expression(0.10)
 	_expect_near(_grunt._grunt_expression_timer, draw_remaining, 0.001, "recoil must not consume draw time")
-	_grunt._recoil_timer = 0.0
+	_grunt.reset_reaction_state()
 	_grunt._update_grunt_expression(draw_remaining)
 	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.READY, "full draw must follow recoil")
 	_behavior.state_time = _behavior.notice_duration_sec
@@ -160,10 +160,10 @@ func _test_reaction_pauses_draw() -> void:
 	_reset_relaxed_patrol()
 	_behavior.force_notice(_shooter)
 	var before := _grunt._grunt_expression_timer
-	_grunt._stagger_timer = 0.25
+	_grunt.request_stagger_reaction(0.25)
 	_grunt._update_grunt_expression(0.20)
 	_expect_near(_grunt._grunt_expression_timer, before, 0.001, "stagger must pause a non-flavor transition")
-	_grunt._stagger_timer = 0.0
+	_grunt.reset_reaction_state()
 	_grunt._update_grunt_expression(before)
 	_expect(_grunt._grunt_weapon_posture == Enemy.GruntWeaponPosture.READY, "draw must complete after stagger releases presentation")
 
@@ -189,8 +189,7 @@ func _test_debug_snapshot() -> void:
 
 
 func _reset_relaxed_patrol() -> void:
-	_grunt._recoil_timer = 0.0
-	_grunt._stagger_timer = 0.0
+	_grunt.reset_reaction_state()
 	(_grunt.get_standard_enemy_melee_ability() as StandardEnemyMelee).cancel(&"interrupted", &"test_reset")
 	_grunt._grunt_weapon_posture = Enemy.GruntWeaponPosture.RELAXED
 	_grunt._grunt_expression_action = &""
