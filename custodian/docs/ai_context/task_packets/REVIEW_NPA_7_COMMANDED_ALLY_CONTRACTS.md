@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `npa-7-commanded-ally-contracts`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/NPA_7_COMMANDED_ALLY_CONTRACTS.md`
-- Reviewed main: `122643ec8d6d1373266b856d26ccc7d9ef567b64`
+- Reviewed main: `55905da45588857f4c6847aaba5b506d090a4a3a`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
