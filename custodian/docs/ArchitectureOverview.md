@@ -125,7 +125,7 @@ scenes/game.tscn (Main)
 ```gdscript
 # project.godot [autoload] section
 GameState="*res://game/systems/core/state/game_state.gd"
-DevConsole="*uid://ccoijpiv8l45j"
+DevConsole="*res://game/ui/debug/dev_console_service.gd"
 DebugBus="*res://dev/debug/debug_bus.gd"
 ```
 

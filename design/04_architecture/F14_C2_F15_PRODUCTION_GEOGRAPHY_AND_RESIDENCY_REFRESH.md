@@ -1,8 +1,8 @@
 # F14-C2 / F15 · Production Geographic Identity and Physical Residency Planning Refresh
 
-**Status:** planning/evidence design, **NOT a production architecture lock or claimable implementation packet** · 2026-10-09  
-**Planning workstream:** `f14-c2-f15-production-residency-planning`  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
+**Status:** D1–D7 design approved 2026-10-10; packet preparation authorized, implementation execution pending separate authorization. Numeric scale, final visual presentation, exact streaming and production residency remain open.
+**Planning workstream:** `f14-c2-f15-production-residency-planning`
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 **Evidence:** live `braydio/CUSTODIAN` main at `76bd0946bfee6d703e5c56950e6664afb8b572b0`; [F14-C1 correction re-review](../../REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md) and [corrected implementation summary](../../LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md).
 
 ## Decision boundary: what is already accepted
@@ -28,7 +28,7 @@
 | Campaign | `CampaignSession`, `WorldSimulationRuntime`, Hub/WorldTransition/RouteTraversal systems | One active campaign outcome and existing Operator/vehicle ownership; geographic materialization cannot create independent campaign sessions. |
 | Disk persistence | REMAP-3 existing campaign-persistence program | Reuse its eventual disk save authority; snapshot-memory acceptance ≠ disk restart proof. |
 
-## Proposed contract for F15 and F14-C2 (requires architecture approval)
+## Approved D1–D7 contract and later F14-C2 design gates
 
 ### A. Stable geographic address and separation of concerns
 
@@ -71,7 +71,7 @@ If active attack, pending damage/projectile/nav work, loot-bearing corpse, stole
 | Architecture | Benefit | Main risk | Disposition |
 | --- | --- | --- | --- |
 | One larger full-map TileMap | Minimal new topology owner initially | Still finite one-map architecture, heavy generation, weak distinct settlements/seams | **Do not select** as the primary geographic foundation |
-| **Finite Domain topology graph + deterministically materialized localities** | Stable geographic identity, authored/generated compatibility, tractable persistent roads/sites and residency | Requires topology, seam/coordinate and locality mapping work | **Preferred design hypothesis**, pending measured F15-A evidence and explicit lock |
+| **Finite Domain topology graph + deterministically materialized localities** | Stable geographic identity, authored/generated compatibility, tractable persistent roads/sites and residency | Requires topology, seam/coordinate and locality mapping work | **Approved geographic direction**; numeric extent and exact streaming design remain gated |
 | Unbounded procedural coordinate world | Expandable theoretical extent | Major seam, perf, navigation, persistence, content identity and lore costs | Not justified by the currently locked player experience |
 
 A graph-backed finite accessible footprint can satisfy continuous travel if the route terrain is genuinely traversable and player-facing transitions are seamless. It must not devolve into a menu of disconnected local levels with mandatory cutscenes. Do not prescribe map kilometers or cell counts before travel/camera/vehicle measurements.
@@ -86,12 +86,14 @@ A graph-backed finite accessible footprint can satisfy continuous travel if the 
 6. Camera, collision, navigation, Operator and campaign session remain intact across actual source/target lifecycle. Ultimately demonstrate a meaningful walkable road/wilderness journey between distinct sites; test vehicle travel separately using current F09 owner once dependencies permit.
 7. Validate failure rollback, re-entry from true process restart once REMAP-3 supports it, and benchmark occupied/abstract population and load duration before fixing production density/stream budgets.
 
+**2026-10-10 F15-A acceptance and design approval update:** [Accepted independent review](../../REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md) · [approved D1–D7 decision record](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md). F15-B1 is the only authorized implementation slice; its claim waits for the promotion PR to merge and remote packet/index verification. B2/C2 remain gated; do not rerun F15-A or expand B1 into semantic art/ruins.
+
 ## Recommended packet roadmap (design slots, not yet executable)
 
 | Slot / suggested workstream | Sole primary owner and output | Depends on | Gate |
 | --- | --- | --- | --- |
-| **F15-A** `campaign-geography-residency-authority-audit` | **Read-only** code+runtime evidence: route-generated/local scene lifecycle, existing IDs, two seeded fixture runs, measured or clearly unmeasured timing/camera, camp spawn queues; compare architecture alternatives and propose formal address/residency API; no gameplay rewrite | Accepted C1/F14 and current F02/F15 docs | **Read-only implementation + fresh-review pair published `ready/auto` on origin/main after local authoring preflight and index update. Claim eligibility remains dispatcher-owned; active scope must stay read-only.** |
-| **F15-B** `campaign-geography-identity-foundation` | Deterministic persistent Domain/Location address graph and spatial/route binding, no large generator or actors | Approved F15-A observations and explicit geography/extent/seam decision | **Blocked on design lock** |
+| **F15-A** `campaign-geography-residency-authority-audit` | **Read-only** code+runtime evidence: route-generated/local scene lifecycle, existing IDs, two seeded fixture runs, measured or clearly unmeasured timing/camera, camp spawn queues; compare architecture alternatives and propose formal address/residency API; no gameplay rewrite | Accepted C1/F14 and current F02/F15 docs | **F15-A implemented, archived, independently reviewed PASS (0 blocking / 0 material gaps) on main@83e0008e. Read-only audit completed.** |
+| **F15-B1** `campaign-geography-identity-foundation` | Data-only Domain/Location/Edge identity + seed/version + visit references, no physical scene or actors | Accepted F15-A review + **user-approved D1–D7** | **Promoted on publication branch; claim after PR merge and current-main packet/index verification** |
 | **F14-C2a** `living-world-population-slot-reservations` | Reconcile F14 ActorId/GroupId with camp/spawner queue, idempotent managed slot reservations and pending request cancellation; no geographic auto-handoff yet | Accepted C1 + approved Domain/Location contract | **Blocked on F15 address authority** |
 | **F14-C2b** `living-world-locality-residency-binding` | Bind approved real locality staging/eviction events to C1 transactional handoff; no trigger on visual chunks; safe anchor and failure rollback | F15-B + C2a + real F02 scene/route APIs | **Blocked on F15-B and spawner ownership** |
 | **F15-C** `campaign-continuous-two-site-traversal-proof` | Player-facing continuous foot traversal and repeated physical/abstract return across two distinct recognizable sites, preserving campaign/Operator/navigation | F15-B + C2b + reviewed F02 integration | **Blocked on architecture + preceding reviews** |
@@ -101,7 +103,7 @@ Each executable implementation slice should have an independently authored V2 im
 
 ## Codex Hall dependency hooks for upcoming packet refreshes (2026-10-09)
 
-[Tracked idea inventory and mechanics decision gates](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md) **must** be consulted once F15-A's independently reviewed evidence arrives and **F15-B**, **F14-C2a/b**, **F15-C** or **F14-D** is refreshed for packet authoring. The user's preferred design direction is a **large finite, seeded procedurally generated world with persistent geography and selectively authored lore sites**. World size/coordinate system/staging remain unapproved pending F15-A evidence.
+[Tracked idea inventory and mechanics decision gates](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md) **must** be consulted once F15-A's independently reviewed evidence arrives and **F15-B**, **F14-C2a/b**, **F15-C** or **F14-D** is refreshed for packet authoring. The user's preferred design direction is a **large finite, seeded procedurally generated world with persistent geography and selectively authored lore sites**. F15-A evidence is accepted; world size/coordinate system/staging now require user approval of the [post-audit decision proposal](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md), not another audit.
 
 - **F15-B:** determine Encounter Language, Landmark Hierarchy, Spatial Compression and Mystery Budget's **actual mechanics, semantic generation fields, ownership, placement/seed controls and first negative/visibility tests**. Reserve only a lightweight purpose/failure/clue metadata seam for the later Procedural Ruin Generator. Preserve F02 procgen, live Material Intelligence and existing authored-site exceptions. Do not commission visual assets before art grammar and Asset V2 requirements are locked.
 - **F14-C2a/b:** decide Faction Knowledge report/witness and Line-of-Communication route/signal **interfaces** only once a durable geographic address, ActorId/group and residency owner exist. **Do not implement** a duplicate actor simulator, faction AI or strategic world graph in C2.
@@ -115,4 +117,4 @@ Each executable implementation slice should have an independently authored V2 im
 
 **Still requires an explicit F15 decision after evidence:** large-but-finite vs expandable world footprint; macro region/route coordinate and deterministic seam owner; whether foot travel must be literally continuous or may conceal technically staged transitions while remaining uninterrupted to the player; terrain/road/vehicle scale and target travel times; which particular real sites make the first proof. The player-facing *continuous travel* intent is already locked; do not reinterpret that as permission for abrupt route menus.
 
-**Immediate next action:** F15-A current-runtime evidence pass and formal geography/residency contract recommendation. Do **not** queue production C2a/b or world generator rewrites first. No assets are required for this planning/evidence slice; any subsequent commissioned art must follow Asset Pipeline V2 and receive exact in-repo paths, pixel dimensions and frame counts at its own design gate.
+**Immediate next action:** merge the validated B1 promotion PR, verify both packet headers and the managed index on current `main`, then claim only B1; no B2/C2 claim. Do **not** queue production C2a/b or world generator rewrites first. No assets are required for this planning/evidence slice; any subsequent commissioned art must follow Asset Pipeline V2 and receive exact in-repo paths, pixel dimensions and frame counts at its own design gate.

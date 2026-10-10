@@ -11,6 +11,7 @@ const STEP_SOUNDS: Array[AudioStream] = [
 ]
 const DroneCommandProfileScript := preload("res://game/systems/drone/drone_command_profile.gd")
 const DroneTargetingScript := preload("res://game/systems/drone/drone_targeting.gd")
+const ActorAllegianceScript := preload("res://game/actors/core/actor_allegiance_component.gd")
 
 @export var drone_id: String = "DRONE_01"
 @export var base_tint: Color = Color(0.35, 0.82, 0.95, 1.0)
@@ -44,12 +45,14 @@ var _roam_goal: Vector2 = Vector2.ZERO
 var _roam_repath_timer: float = 0.0
 var _roam_sequence: int = 0
 var _command_target_instance_id: int = 0
+var _burst_target_instance_id: int = 0
 var _target_scan_timer: float = 0.0
 var _footstep_timer: float = 0.0
 var _footstep_interval: float = 0.3
 var _step_index: int = 0
 var _navigation_system: Node = null
 var _walkability_provider: Node = null
+var allegiance_component: ActorAllegianceComponent
 
 @onready var visual: ColorRect = get_node_or_null("Visual")
 @onready var health_bar: ProgressBar = get_node_or_null("HealthBar")
@@ -62,6 +65,10 @@ func _ready() -> void:
 	add_to_group("allied_drone")
 	add_to_group("defense")
 	add_to_group("turret")
+	allegiance_component = ActorAllegianceScript.new()
+	allegiance_component.name = "ActorAllegiance"
+	add_child(allegiance_component)
+	allegiance_component.configure(self, ActorAllegianceComponent.OPERATOR_ALLIED)
 	_hold_position = global_position
 	_resolve_movement_authorities()
 	_apply_profile()
@@ -88,8 +95,7 @@ func set_mode(mode: int) -> void:
 func set_fire_at_will(enabled: bool) -> void:
 	fire_at_will = enabled
 	if not fire_at_will:
-		_burst_remaining = 0
-		_burst_gap_timer = 0.0
+		_cancel_burst()
 
 
 func set_follow_distance_mode(mode: int) -> void:
@@ -100,6 +106,7 @@ func set_follow_distance_mode(mode: int) -> void:
 
 
 func set_order_anchor(position: Vector2) -> void:
+	_cancel_burst()
 	order_anchor_position = position
 	order_anchor_active = true
 	target = null
@@ -109,6 +116,7 @@ func set_order_anchor(position: Vector2) -> void:
 
 
 func clear_order_anchor() -> void:
+	_cancel_burst()
 	order_anchor_active = false
 	target = null
 	_roam_goal = Vector2.ZERO
@@ -117,17 +125,30 @@ func clear_order_anchor() -> void:
 
 
 func set_command_target(hostile: Node2D) -> void:
+	if not _targeting.is_valid_command_target(hostile, self):
+		clear_command_target()
+		return
+	var next_instance_id := hostile.get_instance_id()
+	if next_instance_id != _command_target_instance_id:
+		_cancel_burst()
 	command_target = hostile
 	target = hostile
-	_command_target_instance_id = hostile.get_instance_id() if hostile != null and is_instance_valid(hostile) else 0
+	_command_target_instance_id = next_instance_id
 	_target_scan_timer = target_scan_interval_sec
 
 
 func clear_command_target() -> void:
+	_cancel_burst()
 	command_target = null
 	target = null
 	_command_target_instance_id = 0
 	_target_scan_timer = 0.0
+
+
+func get_allegiance() -> StringName:
+	if allegiance_component != null:
+		return allegiance_component.get_allegiance()
+	return ActorAllegianceComponent.OPERATOR_ALLIED
 
 
 func _get_anchor_position() -> Vector2:
@@ -181,13 +202,18 @@ func _refresh_target() -> void:
 	var engage_range := _get_engage_range()
 	if _targeting.is_valid_command_target(command_target, self):
 		if command_target.global_position.distance_to(anchor_position) <= engage_range:
+			if target != command_target:
+				_cancel_burst()
 			target = command_target
 			return
-	command_target = null
-	_command_target_instance_id = 0
-	if target != null and is_instance_valid(target) and not _targeting.is_invalid_enemy(target, self):
+	if command_target != null or _command_target_instance_id != 0:
+		clear_command_target()
+	if target != null and is_instance_valid(target) and _targeting.is_valid_autonomous_target(target, self):
 		if target.global_position.distance_to(anchor_position) <= engage_range:
 			return
+	if target != null:
+		target = null
+		_cancel_burst()
 	target = _targeting.acquire_target_at_position(self, anchor_position, squad_mode, profile, engage_range)
 
 
@@ -209,6 +235,7 @@ func _prune_freed_target_references() -> void:
 		cleared_slots.append("target")
 	if cleared_slots.is_empty():
 		return
+	_cancel_burst()
 	var observatory := get_node_or_null("/root/DevObservatory")
 	if observatory != null:
 		if observatory.has_method("increment"):
@@ -493,36 +520,71 @@ func _should_retreat() -> bool:
 
 func _update_weapon() -> void:
 	if not fire_at_will:
-		_burst_remaining = 0
+		_cancel_burst()
 		return
-	if target == null or not is_instance_valid(target):
-		_burst_remaining = 0
+	if not _validate_target_before_fire():
 		return
 	if global_position.distance_to(target.global_position) > profile.drone_weapon_range:
 		return
 	if _burst_remaining > 0:
+		if _burst_target_instance_id != target.get_instance_id():
+			_cancel_burst()
+			return
 		if _burst_gap_timer <= 0.0:
-			_fire_once()
-			_burst_remaining -= 1
-			_burst_gap_timer = profile.drone_burst_gap
+			if _fire_once():
+				_burst_remaining -= 1
+				_burst_gap_timer = profile.drone_burst_gap
+			else:
+				_cancel_burst()
 		return
 	if _fire_cooldown_timer <= 0.0:
 		_burst_remaining = max(1, profile.drone_burst_size)
+		_burst_target_instance_id = target.get_instance_id()
 		_fire_cooldown_timer = profile.drone_fire_cooldown
 
 
-func _fire_once() -> void:
+func _validate_target_before_fire() -> bool:
 	if target == null or not is_instance_valid(target):
-		return
+		_cancel_burst()
+		return false
+	var explicit_target := command_target != null and target == command_target
+	var valid: bool = (
+		_targeting.is_valid_command_target(target, self)
+		if explicit_target
+		else _targeting.is_valid_autonomous_target(target, self)
+	)
+	if valid:
+		return true
+	if explicit_target:
+		clear_command_target()
+	else:
+		target = null
+		_cancel_burst()
+	return false
+
+
+func _cancel_burst() -> void:
+	_burst_remaining = 0
+	_burst_gap_timer = 0.0
+	_burst_target_instance_id = 0
+
+
+func _fire_once() -> bool:
+	if not _validate_target_before_fire():
+		return false
+	if _burst_remaining > 0 and _burst_target_instance_id != target.get_instance_id():
+		_cancel_burst()
+		return false
+	var fire_target := target
 	var bullet = BULLET_SCENE.instantiate()
 	if bullet == null:
-		return
+		return false
 	var spawn_position := global_position
 	if muzzle != null:
 		spawn_position = muzzle.global_position
-	var direction := (target.global_position - spawn_position).normalized()
+	var direction := (fire_target.global_position - spawn_position).normalized()
 	if direction.length_squared() <= 0.001:
-		return
+		return false
 	if bullet.has_method("set_direction"):
 		bullet.call("set_direction", direction)
 	bullet.set("damage", profile.drone_damage)
@@ -540,6 +602,7 @@ func _fire_once() -> void:
 		get_tree().current_scene.add_child(bullet)
 	bullet.global_position = spawn_position
 	_play_mech_gunshot(spawn_position)
+	return true
 
 
 func _play_mech_gunshot(pos: Vector2) -> void:

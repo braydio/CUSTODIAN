@@ -384,6 +384,9 @@ const TERMINAL_ACTIVITY_SCROLL_FOLLOW_MARGIN := 24.0
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Lets the developer shell find this HUD's gameplay terminal state without
+	# a hard scene-path dependency; see DevConsoleService._gameplay_terminal_open().
+	add_to_group(&"gameplay_command_terminal_host")
 	_ensure_terminal_modal_input_order()
 	# The tactical map is pause-only; its parent panel owns visibility.
 	_minimap_visible = false
@@ -1820,6 +1823,11 @@ func exit_construction_placement_ui(reopen_fabrication_terminal: bool = false) -
 		Input.mouse_mode = _terminal_previous_mouse_mode
 
 func open_command_terminal(service_url: String = ""):
+	# The developer shell must not sit behind the gameplay terminal holding
+	# keyboard focus; close it before this modal claims input.
+	var dev_console := get_node_or_null("/root/DevConsole")
+	if dev_console != null and dev_console.has_method("close_console"):
+		dev_console.call("close_console")
 	if not _terminal_open:
 		_terminal_previous_mouse_mode = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

@@ -1416,10 +1416,15 @@ Documentation updates this session:
   boundaries remain unchanged. Focused lifecycle/combat checks passed 10/10;
   post-sync changed-file validation passed 42/42 with complete coverage; the
   independent review passed with zero findings at `a9b4e0b9`.
-  NPA-7's commanded-drone/droid contracts are now authored and published in a
-  ready/auto packet pair. The implementation packet is claimable after queue
-  validation; its paired review waits on implementation landing. NPA-7 has not
-  been implemented. NPA-8 remains a later planning refresh after NPA-7 review.
+  NPA-7 commanded-drone/droid implementation now composes
+  `ActorAllegianceComponent` on `CombatDrone`, keeps `DroneManager` as order
+  authority, and routes autonomous, explicit, and per-projectile eligibility
+  through `DroneTargeting`. Allegiance, targetability, death/freed state, and
+  target-order changes cancel queued burst shots. Explicit passive Shrumb orders
+  remain supported; autonomous targeting excludes passive actors. The focused
+  actor-to-projectile contract smoke is registered. NPA-7 implementation and
+  validation are complete; its fresh-context paired review passed with no
+  findings. NPA-8 remains gated on the required planning refresh.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
@@ -1922,7 +1927,7 @@ Documentation updates this session:
 - Inventory item icons now render through dedicated `TextureRect` children so item-specific CanvasItem materials cannot affect button text or panel chrome. Blackwood alone uses the reusable `inventory_ember_spark.gdshader` through `blackwood_ember_spark_material.tres`: its amber pixels and nearby dark cracks pulse subtly, rare procedural sparks remain inside source alpha, and optional emission-mask support is available without requiring a mask. The inventory asset resolver now also finds existing resource icons under `content/ui/inventory/icons/resources/`.
 - Operator visual testing now has a DevConsole-driven Knight skin override: `knight_skin on/off/status` swaps the body `SpriteFrames` to runtime slices built from `res://dev/test_sprites/Knight/*.png`, hides custom operator weapon/FX overlays while active, and leaves movement, collision, health, stamina, loadout, and combat simulation unchanged.
 - `game.tscn` scene hygiene was tightened: `GameRoot` now starts at the world origin, the duplicate defense blaster is no longer stacked at the same local position, the HUD contract path points explicitly at `../World/ContractMap`, interaction prompts no longer overlap the supply-drop debug line, and the terminal scrim remains behind/before the panel so it blocks gameplay clicks without intercepting terminal controls.
-- Debug console access: DevConsole addon (autoloaded at `/root/DevConsole`) toggles with `~` (tilde/backtick); commands include `debug_hud`, `show_cognitive`, `test_spawn`, `spawn_grunt`, `knight_skin`, `ui_status`, `toggle_minimap`, and `minimap_status`. `debug_hud` and F12 open the dedicated tabbed Godot-native debug screen. The former Dear ImGui F3 Director Console is removed; `DebugBus` and `DebugSnapshotCollector` remain read-only infrastructure.
+- Debug console access: the native Developer Shell (`custodian/game/ui/debug/dev_console_service.gd`, autoloaded at `/root/DevConsole`) toggles with `~` (tilde/backtick), gated by `DevMode.allows(&"debug_ui")`. It replaces the third-party `dev-console` Godot addon (which itself had replaced the Dear ImGui F3 Director Console); the addon, its `project.godot` autoload target, `[editor_plugins]` entry, and `[dev_console]` settings section are all removed. It preserves the addon's `add_command`/`add_signal`/variadic-`callv` contract, so `ui.gd`'s HUD command registrations (`debug_hud`, `show_cognitive`, `test_spawn`, `spawn_grunt`, `ui_status`, `toggle_minimap`, `minimap_status`, etc.) keep working unchanged, alongside built-in `help`/`clear`/`cls`/`history` and command-history/autocomplete. Its Godot-native panel (`dev_console_panel.gd`/`.tscn`, `dev_console_style.gd`) follows the Black Reliquary palette; opening it suppresses local Operator gameplay input (see `DEBUG_DEV_UI_SYSTEM.md`'s Developer Shell Gameplay Input Isolation). `debug_hud` and F12 open the separate, independent tabbed Godot-native debug screen. `DebugBus` and `DebugSnapshotCollector` remain read-only infrastructure.
 - Operator action arbitration is now explicit in `OperatorActionController`: attack, guard, equip/sheathe, damage reaction and death transitions run on the fixed tick, death is terminal until respawn, and locomotion remains movement-derived. `OperatorPresentationController` routes semantic requests through selector/presenter/player; legacy animation-state shells and reflection glue are removed.
 - Operator light damage reaction now enters `hit_recoil` for a short `0.22s` stun window; while Fists are active, it resolves through the `unarmed_light_hitreact` profile animation.
 - Operator Field Patch healing/restock V1 is live in `res://game/actors/operator/operator.gd`: `use_field_patch` is bound to keyboard `P`, starts with 1 carried patch out of a baseline max of 2, uses a 1.25s vulnerable commit window, slows movement to 35%, restores 35% max health only at commit, and preserves the patch if interrupted before commit. Damage, attack, dodge, reload, death, terminal/inventory/UI/runtime locks, and field-work input cancel the use before commit. Compact HUD health text reads `PATCH n/max` or `PATCHING x.xs` through `Operator.get_field_patch_status()`. Restock v1 is terminal/fabrication based: recipe `lattice_field_patch` costs `resin_clot` x2, `signal_filament` x1, and `capacitor_dust` x1, completes as an `operator_consumable` output after a short fabrication job, consumes resources only when the Operator is below carry cap, and grants through `add_field_patches(...)`; `res://game/actors/items/consumables/lattice_field_patch_pickup.tscn` provides rare emergency-cache pickup support that grants +1 patch below cap or fallback materials when full. Normal enemy health-potion drops and passive combat refill are not part of the live contract.
@@ -2600,9 +2605,22 @@ runtime publication state.
 Review sequences remain v1-readable as legacy clips; v2 adds `art_generation`
 and exact 2.5D Workbench frame resolution. Physical saved-document durations
 drive 2.5D sequence clips and presets; a missing component or timing contract
-keeps a preset unavailable. WB25-4 implementation is complete and awaits its
-fresh-context paired review. WB25-5 remains planning-refresh gated after that
-review; WB25-6 remains the separate publication/runtime-promotion authority.
+keeps a preset unavailable. WB25-4 is complete and independently accepted after
+the cycle-1 R0-01 human-approval provenance correction and fresh clean re-review.
+WB25-5 planning refresh is complete and its implementation + paired review are
+published ready/auto (2026-10-10, initial main@5e7c8e58). A later read-only
+Operator-art checkout sample found zero currently verified 2.5D leaves/families,
+zero 2.5D manifests/receipts/sandbox passes and only the old legacy 96px
+five-frame east relaxed-idle Workbench document; these figures apply only to
+that sampled workspace, not to all machines. WB25-5 also owns a bounded fix
+for the live `Operator2DReview.family()` to `AnimationRecord` field-name mismatch
+(`coverage`/`stale` vs `coverage_status`/`stale_reference`), plus a real-record
+regression test before integrating the queue. The tracked plan holds 69 target
+families and 552 required direction leaves (one accepted 8-direction source
+family, 544 baseline strips yet to author), not 552 reviewed
+or published runtime directions. Locally generated current receipts determine
+VERIFIED rather than plan/source counts. WB25-6 retains independent runtime
+publication/promotion authority.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
@@ -2616,3 +2634,7 @@ The production Hub offers the first Contract through the Forum Dais and deploys 
 User gameplay review exposed a discoverability gap: an interactible terminal did not read as a physical use object until its prompt. The current authored Awakening scene has four live interaction owners: Crèche readout, P-9 locker, one two-station Dust Lung lift, and damaged Port status readout. Layout also has scenic/encounter/future markers; `lift_mechanism` is marked interactible without being separately built by `AwakeningFirstReturn._build_interactables()` and is queued for evidence-based kind reconciliation.
 
 The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is now specified at `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`, with 77 artwork states in its V2 manifest (27 current-required, 14 recommended, 36 future-deferred). New artwork is **not present**. Two no-art packets (foundation owner parity/presenter and source-pending family registration) are ready/auto with their paired reviews. Crèche/Port, Locker/Lift and scenic wayfinding integrations are blocked/manual and must stay parked until exact reviewed Dropbox state inputs, verified V2 routing and predecessor reviews exist; a separate ready/auto future-owner crosswalk avoids prematurely implementing Hub/Continuity/supply/Sepulcher/gate controls. This overlay does not change existing 04→05 registered composition, 05→06 passage or gameplay route and is independent of the off-route AP0–AP4 perimeter artwork.
+
+## F15-B1 persistent geography identity foundation (2026-10-10)
+
+`CampaignGeographyRegistry` now provides bounded, deterministic, data-only Domain/Location/Edge identity with length-prefixed address keys, explicit reciprocal or directed adjacency, versioned seed provenance and deep-copy resolution. `CampaignVisitReference` records a distinct visit against an existing Domain without changing campaign-session lifecycle or persistence. The focused fixture covers fixed-seed registration order, repeat visits, dotted IDs, malformed topology/provenance, route/level identity separation and the no-scene-node boundary. This is only the F15-B1 identity foundation: no procedural terrain integration, physical residency, actor handoff, disk save, campaign-flow wiring, or continuous travel is implemented; independent paired review remains pending.

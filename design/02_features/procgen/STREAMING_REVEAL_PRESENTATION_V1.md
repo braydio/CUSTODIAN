@@ -1,8 +1,8 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** Design locked; AR1/ARR1 complete; AR2/recovery/review passed; spawn validity reviewed; AR3 complete/reviewed; AR4 frontier restraint implemented (visual verdict pending)  
-**Last updated:** 2026-10-03  
+**Status:** AR1–AR4 technical lineage complete; 2026-10-10 human gameplay refinement approved as target for the active playtest-polish successor; revised visual judgment pending  
+**Last updated:** 2026-10-10  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
 
@@ -20,6 +20,57 @@ The locked presentation name is **Archive Resolve**.
 This document governs the reveal's visual/presentation behavior. It does not
 replace seeded procgen, chunk lifecycle, PREPARE/COMMIT scheduling, collision,
 navigation, residency, or world semantics.
+
+## 2026-10-10 Live Playtest Revision (Target, Not Yet Runtime Truth)
+
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+
+The user likes the current graphite/brass dissolve but says the visual frontier is
+too close to the Operator, individual square cells and a sketched lattice dominate,
+apparently unrequested/unstreamed space looks dead, and neighboring parts of a
+region often resolve as late singletons. The targeted successor is
+`PROCGEN_ARCHIVE_RESOLVE_PLAYTEST_POLISH_V1.md` and its paired review, not an
+AR4 correction. Numeric values below are **design targets** until landed and
+visually approved; AR4's current live production distance cap is still 11.
+
+- Increase normal visual-start radial reach initially to **18 +/-2 tiles**
+  (human-tunable 16–20), while keeping canonical grid wall LOS, camera
+  relevance, operator safety and committed-only starts. This is a distance
+  expansion, **not** disabling occlusion or changing physical simulation.
+- Prefer **1–3 locally separated LOS-derived acquisition origins** inside the
+  camera-visible, committed READY set. Each should propagate a connected
+  wavefront across eligible adjacent cells in small overlapping patches.
+  Nearby cells should begin roughly 30–90 ms apart with a small coherent
+  pressure/spring-shaped variation. Prioritize neighboring cells over
+  arbitrary queue entries; true isolated cells get bounded fallback.
+- “Ray-tracing” is a **presentation metaphor** for reading the existing
+  bounded grid-visibility mask and propagating currents from visible points;
+  it never means GPU ray tracing, new per-cell physics raycasts, revealing
+  uncommitted data, or using visual fog as a gameplay discovery system.
+- The visible dissolve/registration boundary should move **across cell edges
+  continuously**. Avoid the 32 px tile frame and the overly sketched 16 px
+  lattice read. “Elastic” means the small brass/soot front bends and trails
+  slightly, not tile sprites bouncing, scaling or elastic world geometry.
+- Distinguish four states: not-yet-requested in-map space may receive a
+  low-contrast world-space **abstract** graphite underfield; requested
+  uncommitted space remains opaque; committed READY space may echo/join waves;
+  settled space is plain normal world. The underfield cannot invent
+  undiscovered terrain contours, enemy positions or accessible routes.
+- Preserve the existing world/actor/cliff concealment scope from the
+  playtest-polish packet. The player must see the process but never feel that
+  every forward step triggers close-up tiling.
+- Do not blindly scale LOS mask cost with radius. Keep cached bounded
+  revision behavior, measure larger-window rebuild duration, and reduce
+  redundant probes if it would introduce a frame-time regression.
+- Required human review includes a short motion sample plus mid-phase frames
+  that show connected outward currents, a calmer larger lead distance,
+  non-static abstract unresolved space, and no late square afterthoughts.
+
+**Implementation and validation owner:** the active playtest-polish
+implementation/review packet pair. This subsection supersedes the old **11-tile
+numeric target** and any older instructions to preserve the exact AR4 distance
+without human permission; it does not retroactively claim the new behavior is
+already in production.
 
 ## Core Design Lock
 

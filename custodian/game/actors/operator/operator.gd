@@ -1032,6 +1032,7 @@ func _compose_runtime_dependencies() -> OperatorRuntimeDependencies:
 		dependencies.world_history = scene_root.get_node_or_null("WorldHistory")
 		dependencies.dev_mode = scene_root.get_node_or_null("DevMode")
 		dependencies.game_state = scene_root.get_node_or_null("GameState")
+		dependencies.dev_console = scene_root.get_node_or_null("DevConsole")
 	return dependencies
 
 
@@ -13291,11 +13292,26 @@ func _sample_input_frame() -> void:
 		_input_frame = _input_router.adopt(_external_control_frame)
 		_external_control_frame = null
 		return
+	if _is_local_input_suppressed():
+		_input_frame = _input_router.sample_suppressed(_read_mouse_motion_generation())
+		return
 	_input_frame = _input_router.sample(
 		_is_gamepad_input_active(),
 		controller_aim_deadzone,
 		_read_mouse_motion_generation()
 	)
+
+
+## The developer shell owns keyboard focus while open; local gameplay sampling
+## must not also read the keys the player is typing. External control (replay,
+## AI, possession) is unaffected -- it is handled above this check. The
+## reference comes from `_runtime_dependencies`, bound once at the facade seam
+## in `_compose_runtime_dependencies()`, not a fresh `/root/...` lookup here.
+func _is_local_input_suppressed() -> bool:
+	var dev_console := _runtime_dependencies.dev_console
+	return dev_console != null \
+		and dev_console.has_method("is_open") \
+		and bool(dev_console.call("is_open"))
 
 
 func _is_aiming_for_facing() -> bool:

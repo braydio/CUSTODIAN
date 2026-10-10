@@ -67,12 +67,39 @@ python3 custodian/tools/agent/task_packet_index.py
 
 ## Next Handoff
 
-- Next workstream: `review-campaign-geography-residency-authority-audit`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `none`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Summary backlink: include the exact Authoring chat URL in every durable summary and final Next Handoff
-- Refresh reason: none
-- Next action: Land and archive this implementation; then claim the named paired review from a fresh reviewer context.
-- Blockers or open questions: Human/architecture decisions D1–D7 are enumerated in the evidence report and belong after F15-A review; required-ingress generation failure needs follow-up by its owning procgen/level workstream.
+- Refresh reason: Decide the production geographic address/topology owner, finite or expandable extent, continuous scene seam, minimum locality proof, and actor/spawn residency boundaries before F15-B/C2.
+- Next action: Return the accepted F15-A report and unresolved design agenda to the authoring conversation for the F15-B/C2 planning refresh.
+- Blockers or open questions: No F15-A blocker; the Ritualant required-ingress failure remains with its procgen/level owner.
+
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-campaign-geography-residency-authority-audit`
+- Reviewed on main: `1da9c970f27ff37298abb190ce8d3075d4837f0b`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+
+### Review Notes
+
+- The evidence report preserves the distinction between confirmed contracts, measured individual local maps, inferred architecture, and unproved seamless travel. It does not select finite versus expandable world extent or authorize F15-B/C2 implementation.
+- After a full Godot editor import, the focused M6 distant-chunk and generated-region route lifecycle smokes both exited 0 and printed PASS. The route fixture's missing-spawn and invalid-ProcGen errors were deliberate negative controls whose rollback assertions passed.
+- The earlier M6 parser cascade was caused by an uninitialized fresh-worktree import/global-class cache and disappeared after explicit editor import. A duplicate-snapshot probe was storage-limited and is not treated as product evidence.
+- Current-main task packet index, review pairing (62 packets), and AI-context checks passed. No blocking finding or correction is required.

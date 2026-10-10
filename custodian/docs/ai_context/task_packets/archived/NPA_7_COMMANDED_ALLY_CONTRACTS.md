@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-7-commanded-ally-contracts`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-6-enemy-death-corpse-loot-extraction`
@@ -35,18 +35,41 @@
 - Preserve: All existing input modes, squad/formation/guard/recall/navigation/leashes, target hover/reticle, explicit passive Shrumb commands, autonomous enemy-only scan, 0.18s scan cadence, burst timing and damage, health/destroyed rules, droid sprites/status, slot and member replacement, projectile team and compatibility groups; shared resolver behavior for unrelated actors.
 - Non-goals: No Enemy inheritance, generic NPC base/command framework, global hostility rewrite, drone faction flips, durable cross-family IDs, save schema, bonded Vaultwing commands/perception (NPA-8), turret/social/boss convergence, drone fabrication/repair, combat balance, HUD or asset/art/VFX/audio changes.
 - Acceptance: (1) compositionally expressed ally relationship and existing inheritance retained; (2) autonomous targets always require resolver-qualified hostility/non-passive targetability; (3) Operator-explicit opted-in passive Shrumb works, never autonomously acquired; (4) live valid hostile remains attackable; (5) newly allied/dead/freed/untargetable loses eligibility before further shots, including burst; (6) direct drone setter, manager and final weapon gate agree; (7) no duplicated squad command/identity authority; (8) existing controls, formation, navigation, leash, fire discipline, droid presentation, projectile team and status are unchanged; (9) slot replacement/destroyed identities are safe and clearly squad-local; (10) deterministic real actor-to-projectile regression; (11) manifest/changed-file coverage is complete; (12) architecture and current-state docs match landed runtime.
-- Validation: On planning baseline, manifest registered `actor_relationship_contract` and `allied_drone_navigation_walkability`. Run those with the live `run_validation.py` targeted-test syntax after checking `--help`. Existing `drone_follower_commands_smoke.gd`, `main_scene_allied_droid_smoke.gd`, and `debug_collector_combat_drone_smoke.gd` exist but were not registered IDs: execute directly through `godot --headless --path custodian --script res://tools/validation/<name>.gd` as appropriate or add canonical manifest entries. Add one focused transition-and-shot test and prove it is selected for modified drone sources. Then run `python3 custodian/tools/validation/run_validation.py --changed --json`, `python3 custodian/tools/agent/check_ai_context.py --json`, applicable pairing/authoring checks and LFS-filter-safe `git diff --check`. Check current manifest and resource budget before broad sweeps.
+- Validation: On planning baseline, manifest registered `actor_relationship_contract` and `allied_drone_navigation_walkability`. Run those with the live `run_validation.py` targeted-test syntax after checking `--help`. Existing `drone_follower_commands_smoke.gd`, `main_scene_allied_droid_smoke.gd`, and `debug_collector_combat_drone_smoke.gd` exist but were not registered IDs: execute directly through `godot --headless --path custodian --script res://tools/validation/<name>.gd` as appropriate or add canonical manifest entries. Add one focused transition-and-shot test and prove it is selected for modified drone sources. Then run `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` so committed workstream changes are included, `python3 custodian/tools/agent/check_ai_context.py --json`, applicable pairing/authoring checks and LFS-filter-safe `git diff --check`. Check current manifest and resource budget before broad sweeps.
 - Task overrides: `none`
 - Deferred: Bonded Vaultwing commands and identity (NPA-8); any real cross-family command model only after second independent family; turret/social convergence (NPA-9/10); optional unused compatibility removal (NPA-11).
 
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `no`
-- Completion boundary satisfied: `no`
-- Acceptance satisfied: `no`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: Planning packet authored externally; not yet implemented or locally validated.
+- Evidence: The post-sync changed-file sweep passed with complete coverage: 26 selected, 26 passed, 0 failed, 0 skipped. The registered `commanded_ally_targeting_contract`, `actor_relationship_contract`, and `allied_drone_navigation_walkability` checks passed; all three existing direct drone smokes exited 0. AI-context check reported 0 findings, review pairing passed for 63 pairs, targeted packet authoring passed, and `git diff --check` passed. Clean-import preflight passed and Godot import exited 0 after the separate Vaultwing sidecar repair landed. Nine temporary operator `.import` files created by the import were removed before closeout. The first full sweep had one intermittent `world_transition_handoff` failure; the focused test and second complete sweep passed.
+
+## Independent Review
+
+- Review schema: `custodian.independent_review.v1`
+- Status: `passed`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed implementation SHA: `64306601e824012017d8f6a653438951e53a8975`
+- Reviewed main SHA: `4cbc6a67d1156fe7e87262203279835cffe1548f`
+- Findings: `none`
+- Evidence: Fresh-context source and manifest review; `commanded_ally_targeting_contract`, `actor_relationship_contract`, `allied_drone_navigation_walkability`, all three direct legacy drone smokes, and `enemy_direct_hit_awareness` passed. `check_ai_context.py --json` and task packet index verification passed. The review-context changed-file sweep had complete coverage but its `review_pairing_contract` check could not write `FETCH_HEAD` under the read-only shared Git directory; tier gating skipped downstream tests, so the drone checks were run directly. The implementation closeout's based changed-file sweep passed 26/26 with complete coverage. The review recorded no implementation findings.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The initial clean-main blocker came from invalid Vaultwing importer sidecars and was repaired in a separate landed workstream. The first post-sync NPA-7 sweep also had one intermittent `world_transition_handoff` failure; its focused check and a second complete sweep passed.
+- Root cause / contributing factors: The 15 tracked Vaultwing `.png.import` files had invalid remap metadata; the scoped correction landed at `afc4282d4`. The transition failure did not reproduce on the clean current-main baseline or the subsequent focused/full reruns.
+- Prevention / pipeline improvement: Run the LFS import preflight and Godot import before resource-dependent validation. When the implementation is already committed, pass `--base origin/main` to `run_validation.py --changed`; the default only sees uncommitted/staged/untracked paths. This packet now records the based command.
+- Tooling / docs drift discovered: The previous validation command omitted `--base origin/main` and returned an empty changed-file set for the committed workstream branch.
+- Follow-up: none
+- What worked: The real projectile smoke proves explicit passive Shrumb commands and cancellation before subsequent burst shots; the complete based sweep now passes all 26 checks.
 
 ## Refresh Planning Authority
 
@@ -57,11 +80,11 @@
 
 ## Handoff
 
-- Next workstream: `npa-7-commanded-ally-contracts`
-- Next packet state: `ready`
+- Next workstream: `review-npa-7-commanded-ally-contracts`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
-- Next action: `Validate packet pair against live repo; promote to ready/auto; update docs/index; publish through normal lifecycle; verify dispatcher mechanical claimability. Do not implement within the publication workstream.`
-- Blockers or open questions: `Authoring preflight, publication and dispatch audit not yet executed.`
+- Next action: After this implementation lands and archives complete, launch `paired_review_runner.py review-npa-7-commanded-ally-contracts` from the coordination checkout for a fresh reviewer context.
+- Blockers or open questions: `none`
