@@ -43,3 +43,25 @@ This F15-A paired review is **blocked/manual only until targeted authoring prefl
 - Refresh reason: Decide from F15-A measured evidence the production geographic address/topology owner, finite/expandable extent, continuous scene seam, minimum first locality proof and actor/spawn residency boundaries before any implementation packet.
 - Next action: Return exact reviewed F15-A report, factual corrected measurements, findings receipt and unresolved design choice shortlist to authoring chat for F15-B/C2 scope lock.
 - Blockers or open questions: No implementation blocker for independent F15-A audit review after precursor archives; subsequent geography/world-scale decisions remain human-owned.
+
+## Independent Review
+
+- Status: `blocked`
+- Review workstream: `review-campaign-geography-residency-authority-audit`
+- Reviewed main ref available: `24dbb0a015c145b54d4db90d7b0af3b40b73382e` (implementation `18e7e88ac91d5c70445121038984a4e15830d820`; report source snapshot `6d66c1696596e2a8646a56e7de986dc70bbac02e`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `0 confirmed implementation defects`
+- Material evidence gaps: `independent validation incomplete`
+- Non-blocking issues: `none assigned`
+- Optional improvements: `none assigned`
+- Finding IDs: `none assigned; no implementation finding established`
+- Detailed review summary: `REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Review notes: Implementation is an ancestor of the available `origin/main` ref, but fetch failed because shared Git metadata rejected `FETCH_HEAD` writes. Initial import preflight passed. Route lifecycle smoke exited 0 and printed PASS alongside unresolved resource errors. The initial M6 run reported five inferred-type parse errors; a later isolated clean-import probe did not reproduce them at the report source snapshot, while the reviewer-snapshot run was truncated by temporary-storage exhaustion before PASS and emitted no parser diagnostic. `check_ai_context.py` passed; source `task_packet_index.py` failed on stale managed output; source pairing validation passed, while reviewer-snapshot metadata checks could not complete. These incomplete and storage-limited reproductions prevent an independent acceptance verdict. No reviewed implementation or report files were edited. Preserve this claimed workstream and resume it in an environment where fetch and focused validation work.
+
+### Recovery probe update (2026-10-10)
+
+A clean-import comparison used Godot `4.7.2.stable.arch_linux.ed1daf0bf` at the report source snapshot `6d66c1696596e2a8646a56e7de986dc70bbac02e` and reviewer snapshot `26b6ed9ad8ad164890dab583d268eecc3cfd885d`. The source M6 smoke exited 0 and printed PASS, so the previously recorded inferred-type parser failures were not reproduced at the report source. Both route smokes exited 0 and printed PASS while logging negative-path rollback diagnostics and cliff-catalog missing-resource errors. The reviewer snapshot import logged an unrecognized imported binary resource; its M6 smoke exited 1 before PASS and had no parser diagnostic in the retained partial log. Both imported snapshots consumed roughly 12.6 GB under `/tmp`, exhausting the available quota before reviewer-snapshot index and pairing checks completed. Source index validation failed on stale managed Ready/Auto output; source pairing validation passed for 49 review packets. No queue or implementation files were changed. Probe logs are retained at `/tmp/custodian-f15a-validation.XvBZV0oY`.
+
+Review remains blocked: the claimed reviewer checkout is dirty, so `workstream.py resume` correctly refused to proceed. A bounded evidence checkpoint is needed before resuming the same claim; do not launch another paired runner claim. The unconfirmed review-snapshot smoke and global queue drift are not F15-A implementation findings.
