@@ -15,7 +15,7 @@ The Hall review found complementary ideas worth **weaving into future packet *re
 
 **Do not modify the currently authorized F15-A audit packet.** At this review `CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md` and its fresh review pair have `ready/auto` headers on main (post-promotion). F15-A remains read-only and must complete independently. Its output is an input to the *next* design refresh, not permission to add unreviewed experiments to the claimed audit.
 
-**Refresh checkpoint (2026-10-10):** F15-A independently accepted; decision candidates and B1/B2/C2 scope separation are recorded in [F15 post-audit human design record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md). **Do not mark entries 1–4 implemented:** proposed mechanic/metadata choices await user approval, and physical/rendered behavior remains for later F15-C. Keep all later idea reentry triggers intact.
+**Refresh checkpoint (2026-10-10):** F15-A independently accepted; the user approved D1–D7 and authorized preparation/publication of the focused B1 packet pair in [F15 post-audit decision record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md). **Do not mark entries 1–4 implemented:** their mechanisms remain future design/implementation gates; physical/rendered behavior remains for later F15-C. Keep all later idea reentry triggers intact.
 
 ## Refresh stages and decision prompts
 

@@ -1,9 +1,10 @@
 # F15-B / F14-C2 · Post-F15-A Geographic Design Decision Record
 
-**Status:** **decision-ready design proposal; human confirmation outstanding.** This is not live implementation authority, a new claimable packet, or approval to dispatch F15-B/C2.  
-**Planning workstream:** `f14-c2-f15-production-residency-planning`  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
-**Verified main baseline:** `83e0008e317958d767aac321d7127ecd33c768ff` (F15-A independent review landed and archived).  
+**Status:** **D1–D7 approved by the user on 2026-10-10.** Approval authorizes preparation and publication of the focused F15-B1 implementation/review pair only; it does not authorize implementation or dispatch. Numeric scale, final visual presentation, and exact streaming implementation remain gated for later measured design decisions.
+**Planning workstream:** `f14-c2-f15-production-residency-planning`
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+**Approval source:** Authoring chat above; user approved the recorded D1–D7 boundaries and limited authorization to preparing the focused B1 packet pair.
+**Verified main baseline:** `fb2f634b` (post-audit planning refresh; F15-A independently accepted and archived).
 **Authority:** [Accepted F15-A report](codebase_systems_audit/F15_GEOGRAPHY_RESIDENCY_AUTHORITY_EVIDENCE.md), [independent review summary](../../REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md), [prior F14-C2/F15 refresh](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md), [Hall dependency register](codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md), [Domain/visit doctrine](CAMPAIGN_WORLD_GEOGRAPHY_AND_TOPOLOGY.md).
 
 ## A. What passed; what it does not prove
@@ -16,7 +17,7 @@
 
 ## B. One coherent proposed human design lock (D1–D7)
 
-The user's previously expressed experiential direction is **large finite seeded procgen Campaign Worlds; physically coherent, continuous on-foot travel; persistent locations; on-demand materialization; selectively authored lore sites**. Based on accepted evidence, prefer a finite graph-backed Domain/locality footprint over a single giant TileMap or unbounded coordinate generation. **The precise technical design below is recommended, not yet approved.**
+The user's previously expressed experiential direction is **large finite seeded procgen Campaign Worlds; physically coherent, continuous on-foot travel; persistent locations; on-demand materialization; selectively authored lore sites**. Based on accepted evidence, prefer a finite graph-backed Domain/locality footprint over a single giant TileMap or unbounded coordinate generation. **The precise technical design below is approved within the gates stated above.**
 
 | Decision | Recommended lock to approve | Owner / boundary | Explicitly NOT assumed |
 | --- | --- | --- | --- |
@@ -28,7 +29,7 @@ The user's previously expressed experiential direction is **large finite seeded 
 | **D6 Persistence** | Version identity, topology, locale seed/provenance and visit reference for eventual durable snapshots; use collision-safe structured or injectively encoded keys (never naive `domain.location` concatenation). **REMAP-3** owns disk save/restart; F15-B makes deterministic descriptors serializable but creates no competing save pipeline. | F15 descriptor contract; REMAP-3 disk; F14 snapshot state | Claim that process restart already preserves the new domain; an F15 save silo. |
 | **D7 Vehicles** | Ground-vehicle traversal matters to the world design but initial two-site acceptance is **on foot**. An F09-owned Field Scout travel, handling and persistence proof follows real road/scene-seam maturity. | F09 vehicle authority + F15-C later route integration | Vehicle configured max-speed = achieved travel speed; new vehicle controller. |
 
-**User approval needed:** confirm the finite-v1/expandable-later policy, persistent Domain-versus-Visit identity, and **uninterrupted perceived traversal with hidden technical staging** as one package. These do not set numeric world size or technical streaming implementation prematurely. **No production implementation packet changes to ready/auto before this approval.**
+**Approval recorded:** the user approved D1–D7 as recorded on 2026-10-10. This approval does not set numeric world size, final visual presentation, or exact technical streaming implementation. It authorizes only the focused B1 implementation/review packet pair to be authored, validated, promoted and published; implementation remains unapproved until separately authorized.
 
 ### Candidate minimum contract, not prescribed internal class names
 
@@ -61,7 +62,7 @@ LocalityResidency {
 
 | Order | Packet refresh / workstream | One primary owner and first proof | Gate |
 | --- | --- | --- | --- |
-| **B1** `campaign-geography-identity-foundation` (existing F15-B slot) | F15 data-only **Domain/Location/Edge registry**; collision-safe address, stable deterministic seed/version, visit reference and two named neighboring fixture sites with reciprocal edge; return/reinstantiate without ID drift. **No tiles, scenes, actors, saving**. | This human lock + accepted F15-A review; paired V2 packet/independent review needed |
+| **B1** `campaign-geography-identity-foundation` (existing F15-B slot) | F15 data-only **Domain/Location/Edge registry**; collision-safe address, stable deterministic seed/version, visit reference and two named neighboring fixture sites with reciprocal edge; return/reinstantiate without ID drift. **No tiles, scenes, actors, saving**. | Approved D1–D7 + accepted F15-A review; paired V2 packet/independent review to be authored and published; implementation separately gated |
 | **B2** *suggested separately authorable follow-on* `campaign-geography-semantic-site-contract` | F15→F02 **read-only semantic generation/seam descriptor** binding an accepted location to existing local procgen and route metadata; validate crossing correspondence, biome/road/water continuity. Reserve landmark/motif/mystery/ruin fields without building their visual systems. | Accepted/reviewed B1 and F02 actual staging owner; separate design/packet decision |
 | **C2a** `living-world-population-slot-reservations` | F04 camp/spawner keyed **managed reservation, dedupe, queue cancellation and caps** consuming B1 stable addresses; negative race tests, unmanaged ambient unchanged. | Accepted/reviewed B1, stable F14 group mapping, ingress defect disposition by F02 owner when it blocks real smoke |
 | **C2b** `living-world-locality-residency-binding` | F15/F02 scene lifecycle event→F14-C1 fixed-step handoff, transactional rollback/pin, safe anchor reentry and repeated crossing; no M6 actor unload. | B1, physical B2 seam, reviewed C2a, accepted F14-C1 |

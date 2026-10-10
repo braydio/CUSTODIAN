@@ -89,7 +89,7 @@ A later authorized F15 prototype should prove:
 
 **Not yet decided:** large finite versus expandable geographic extent; exact world-cell API; kilometers/minutes of travel; ground vehicle speed and fuel; crossing long-range Ports inside the same Campaign; optional explicit cinematic moments; later scope for airborne/waterborne vehicles. These are **engineering or subsequent content locks**, not reasons to overturn the selected continuous-geography player target.
 
-**2026-10-10 accepted review / next lock:** F15-A completed and independently passed. [D1–D7 geography and living-world decision record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) is the recommended **human-review candidate**. It divides F15-B into a small B1 Domain/Location data authority and a potential separately-gated B2 semantic/scene adapter; the first four Hall ideas are designed at the schema/placement stage, not bundled as all-at-once runtime features.
+**2026-10-10 accepted review / design approval:** F15-A completed and independently passed. The user approved D1–D7 in the [geography and living-world decision record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md), authorizing preparation/publication of the focused B1 pair only. B1 implementation, numeric scale, final visual presentation, exact streaming, B2/C2 and F15-C remain gated. The first four Hall ideas are not bundled as runtime features.
 
 ## Upcoming idea mechanics decisions, post-F15-A only
 
