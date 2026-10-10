@@ -1,10 +1,10 @@
 # AWAKENING INTERACTIBLE CONSOLE PORT PRESENTATION V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-console-port-presentation-v1`
-- Status: `draft`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1;review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -23,7 +23,7 @@
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/game/world/awakening/awakening_plaque_interactable.gd`; `custodian/game/world/interactions/world_readout_interactable.gd`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_{support,terminal,port,shared_fx}.asset.json`; directly affected focused validation.
 - Change:
-  1. ART GATE: Keep draft/manual until exact required support/terminal/port/FX states are approved in the specified Dropbox batch, checksum-validated, normalized, Asset V2 `verified`, and reviewed in context. Promote implementation/review together only after the gate and predecessor reviews pass.
+  1. ART GATE: Keep blocked/manual until exact required support/terminal/port/FX states are approved in the specified Dropbox batch, checksum-validated, normalized, Asset V2 `verified`, and reviewed in context. Promote implementation/review together only after the gate and predecessor reviews pass.
   2. Bind `console_pedestal`, `console_backplate`, `screen_glow`, floor pad, beacon and support dressing to existing `zone01_creche.creche_console` (112,144). Prefer reuse of existing Crèche console body when matching dimensions/role; never stack two body sprites if one already fulfills silhouette.
   3. Bind damaged body, backplate, floor inset, failing Port status beacon and low-key readout flicker at existing `zone06_undergate.port_status_plaque` (128,-4016), keeping `PORT_READOUT` status-only and no opening gate or route grant.
   4. Use foundation's dedicated visual-only host; measure visual offset from actual room plates (including draw order) instead of shifting gameplay nodes. Preserve existing `show_latched_interaction` and target/HUD prompt logic. Recognition at mid-distance must not depend on prompt text.
@@ -66,7 +66,7 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-console-port-presentation-v1`
-- Next packet state: `draft`
+- Next packet state: `blocked`
 - Refresh owner: `human-art-approval`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
