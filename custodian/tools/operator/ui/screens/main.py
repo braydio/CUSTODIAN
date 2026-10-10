@@ -1,7 +1,7 @@
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Input, Label, Static, TabbedContent, TabPane
+from textual.widgets import Button, Input, Label, Static, TabbedContent, TabPane
 
 from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                        MotionCanvas, MotionControls, MotionMetrics, PlanTable,
@@ -37,6 +37,14 @@ class MainScreen(Screen):
             yield PreviewControls("REVIEW FPS", id="preview-controls")
         with Container(id="timeline-mode", classes="mode-pane hidden"):
             yield Label("REVIEW SEQUENCE · disposable .ai artifact", classes="pane-title")
+            with Horizontal(classes="polish-actions"):
+                yield Button("Idle → Walk → Idle", id="timeline-preset-idle_walk_idle")
+                yield Button("Relaxed → Draw → Ready", id="timeline-preset-relaxed_draw_ready")
+                yield Button("Fast Chain → Ready", id="timeline-preset-fast_chain_ready")
+            with Horizontal(classes="polish-actions"):
+                yield Button("Block Enter → Hit → Hold", id="timeline-preset-block_enter_hit_hold")
+                yield Button("Dodge → Recovery", id="timeline-preset-dodge_recovery")
+            yield Static("Presets are added only when exact component identities and physical timing are present.", id="timeline-preset-status")
             yield TimelineTable(id="timeline-table")
             yield PreviewCanvas("Add clips to review the sequence", id="timeline-canvas")
             yield PreviewControls("SEQUENCE REVIEW FPS", id="timeline-controls")

@@ -14,5 +14,6 @@ from .motion_canvas import MotionCanvas
 from .motion_controls import MotionControls
 from .motion_metrics import MotionMetrics
 from .polish_panel import PolishPanel
+from .review_family_table import ReviewFamilyTable
 
-__all__ = ["ActivityLog", "AnimationDetail", "AnimationTree", "AnimationMatrix", "ContextKeyBar", "LayerTable", "WorkbenchStatusBar", "PlanTable", "PreviewCanvas", "PreviewControls", "PreviewFilmstrip", "TimelineTable", "MotionCanvas", "MotionControls", "MotionMetrics", "PolishPanel"]
+__all__ = ["ActivityLog", "AnimationDetail", "AnimationTree", "AnimationMatrix", "ContextKeyBar", "LayerTable", "WorkbenchStatusBar", "PlanTable", "PreviewCanvas", "PreviewControls", "PreviewFilmstrip", "TimelineTable", "MotionCanvas", "MotionControls", "MotionMetrics", "PolishPanel", "ReviewFamilyTable"]

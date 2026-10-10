@@ -26,7 +26,7 @@ from .service import WorkbenchService
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
-                      PolishPanel, PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
+                      PolishPanel, PreviewCanvas, PreviewControls, PreviewFilmstrip, ReviewFamilyTable, TimelineTable, WorkbenchStatusBar)
 import animation_preview
 import animation_motion_preview
 import animation_transition
@@ -72,6 +72,7 @@ class OperatorWorkbenchApp(App):
     .polish-actions { height: 3; align-horizontal: left; }
     .polish-actions Button { margin-right: 1; }
     #polish-proposals { height: 1fr; min-height: 8; }
+    #polish-family-review { height: 9; min-height: 5; }
     #polish-status { height: 5; padding: 1; background: #181e28; }
     .pane-title { height: 1; padding: 0 1; text-style: bold; background: #202734; }
     .dialog { width: 72; max-height: 94%; margin: 1 4; padding: 1 2; border: thick #81a1c1; background: #202734; }
@@ -972,6 +973,8 @@ class OperatorWorkbenchApp(App):
         if mode == "motion":
             self._motion_last_tick = time.monotonic()
             self.run_worker(self._load_motion_preview(), group="motion-image", exclusive=True)
+        if mode == "polish" and self.state.selection is not None:
+            self.run_worker(self._load_review_family(self.state.selection), group="review-family", exclusive=True, exit_on_error=False)
 
     def action_mode_plan(self): self._set_mode("plan")
     def action_mode_workbench(self): self._set_mode("workbench")
@@ -981,6 +984,10 @@ class OperatorWorkbenchApp(App):
     def action_mode_polish(self): self._set_mode("polish")
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id and event.button.id.startswith("timeline-preset-"):
+            preset_id = event.button.id.removeprefix("timeline-preset-")
+            self.run_worker(self._run_timeline_preset(preset_id), group="timeline-preset", exclusive=True, exit_on_error=False)
+            return
         if not event.button.id or not event.button.id.startswith("polish-"):
             return
         action = event.button.id.removeprefix("polish-")
@@ -1000,6 +1007,34 @@ class OperatorWorkbenchApp(App):
         self.polish_session_path = Path(path)
         self.polish_selection_identity = selection.authoring_identity
         return self.polish_session_path
+
+    async def _run_timeline_preset(self, preset_id: str) -> None:
+        selection = self._require_selection()
+        if selection is None:
+            return
+        try:
+            result = await self._thread(partial(self.service.timeline_preset, selection, preset_id,
+                                                review_fps=self.state.review_fps))
+            status = self._main_widget("#timeline-preset-status", Static)
+            if not result.get("available"):
+                status.update(f"Preset unavailable · {result.get('reason', 'required identity or timing missing')}")
+                return
+            self.sequence.clips.extend(result["clips"])
+            table = self._main_widget("#timeline-table", TimelineTable)
+            table.set_sequence(self.sequence)
+            table.select_clip(max(0, len(self.sequence.clips) - len(result["clips"])))
+            await self._load_timeline()
+            status.update(f"Added {len(result['clips'])} exact, physically timed clips · generation {selection.art_generation}")
+        except Exception as error:
+            self._main_widget("#timeline-preset-status", Static).update(f"Preset unavailable · {error}")
+
+    async def _load_review_family(self, selection: AnimationSelection) -> None:
+        try:
+            family = await self._thread(partial(self.service.review_family, selection.profile,
+                                                selection.group, selection.action))
+            self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
+        except Exception as error:
+            self._main_widget("#polish-status", Static).update(f"Family review unavailable · {error}")
 
     def _show_polish_result(self, payload: dict, *, append: bool = False) -> None:
         table = self._main_widget("#polish-proposals", DataTable)
@@ -1046,7 +1081,19 @@ class OperatorWorkbenchApp(App):
                 self._main_widget("#polish-status", Static).update("Opened the exact saved Workbench document in Aseprite.")
                 return
             session_path = await self._ensure_polish_session()
-            if action in {"attach", "refresh"}:
+            if action == "review":
+                selection = self._require_selection()
+                approved = self._main_widget("#polish-human-approved", Checkbox).value
+                result = await self._thread(partial(self.service.review_and_sandbox, selection, human_approved=approved))
+                family = await self._thread(partial(self.service.review_family, selection.profile, selection.group, selection.action))
+                self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
+                self._main_widget("#polish-human-approved", Checkbox).value = False
+                current_count = sum(1 for cell in family["cells"] if cell["runtime_verified"])
+                self._main_widget("#polish-status", Static).update(
+                    f"{result['qa']['status']} · sandbox {result['sandbox']['status']} · "
+                    f"runtime_verified={result['runtime_verified']} · family {current_count}/{len(family['cells'])} verified. "
+                    "PUBLISHED remains owned by WB25-6.")
+            elif action in {"attach", "refresh"}:
                 result = await self._thread(self.service.polish_analyze, session_path)
                 self._show_polish_result(result)
             elif action == "center":
@@ -1824,7 +1871,11 @@ class OperatorWorkbenchApp(App):
         if self._route_text_entry_shortcut("ctrl+a") or self.state.mode != "timeline": return
         selection = self._require_selection()
         if not selection: return
-        self.sequence.clips.append(animation_preview.TimelineClip(selection.profile, selection.group, selection.action, selection.direction, self.state.review_fps))
+        clip = animation_preview.TimelineClip(
+            selection.profile, selection.group, selection.action, selection.direction,
+            self.state.review_fps, art_generation=selection.art_generation)
+        clip.frame_durations = list(self.service.timeline_clip_durations(clip))
+        self.sequence.clips.append(clip)
         index = len(self.sequence.clips) - 1
         self._timeline_pending_focus = (index, 0)
         table = self._main_widget("#timeline-table", TimelineTable); table.set_sequence(self.sequence); table.select_clip(index)
@@ -1962,12 +2013,19 @@ class OperatorWorkbenchApp(App):
         self._preview_elapsed_sec += delta
         while self.state.preview_playing:
             fps = self.state.review_fps
+            frame_duration = None
             if self.state.mode == "timeline" and self.timeline_frames:
-                clip_index = self.timeline_frames[self.state.preview_frame][0]
-                fps = self.sequence.clips[clip_index].review_fps
-            due, self._preview_elapsed_sec = animation_preview.consume_frame_time(
-                self._preview_elapsed_sec, fps,
-            )
+                clip_index, source_frame, _frame = self.timeline_frames[self.state.preview_frame]
+                clip = self.sequence.clips[clip_index]
+                fps = clip.review_fps
+                if clip.frame_durations:
+                    if len(clip.frame_durations) != self.service.timeline_clip_frame_count(clip):
+                        raise ValueError("sequence physical frame-duration contract is stale")
+                    frame_duration = clip.frame_durations[source_frame]
+            if frame_duration is None:
+                due, self._preview_elapsed_sec = animation_preview.consume_frame_time(self._preview_elapsed_sec, fps)
+            else:
+                due, self._preview_elapsed_sec = animation_preview.consume_duration(self._preview_elapsed_sec, frame_duration)
             if not due:
                 break
             frames = len(self.timeline_frames) if self.state.mode == "timeline" else len(self.preview_view.frames) if self.preview_view else 0

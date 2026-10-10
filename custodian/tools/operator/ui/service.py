@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 import io
+import math
 import os
 import shutil
 import subprocess
@@ -322,9 +323,62 @@ class WorkbenchService:
                 and selection.group == clip.group
                 and selection.action == clip.action
                 and selection.direction == clip.direction
+                and selection.art_generation == clip.art_generation
             ):
                 return record.frames
         raise ValueError(f"timeline clip identity is no longer present: {clip.identity.key}")
+
+    def timeline_clip_durations(self, clip: animation_preview.TimelineClip) -> tuple[float, ...]:
+        if clip.art_generation != "operator_2_5d_128":
+            return ()
+        selection = AnimationSelection(clip.profile, clip.group, clip.action, clip.direction,
+                                       art_generation=clip.art_generation)
+        manifest = self.workspace(selection) / "workbench.json"
+        if not manifest.is_file():
+            return ()
+        physical = self.workbench.inspect_saved_document_contract(manifest, self.aseprite)
+        durations = tuple(float(value) for value in physical["durations"])
+        if len(durations) != int(physical["frames"]) or any(not math.isfinite(value) or value <= 0 for value in durations):
+            raise ValueError("saved Workbench physical duration contract is invalid")
+        return durations
+
+    def timeline_preset(self, selection: AnimationSelection, preset_id: str, *, review_fps: float = 8.0):
+        """Resolve a preset only when each exact identity and timing contract exists."""
+        specs = {
+            "idle_walk_idle": [("locomotion", "idle_01"), ("locomotion", "walk_01"), ("locomotion", "idle_01")],
+            "relaxed_draw_ready": [("posture", "idle_relaxed_01"), ("posture", "draw_01"), ("posture", "idle_ready_01")],
+            "fast_chain_ready": [("attack", "fast_01"), ("attack", "fast_02"), ("attack", "fast_03"),
+                                 ("attack", "fast_04"), ("posture", "idle_ready_01")],
+            "block_enter_hit_hold": [("defense", "block_enter_01"), ("defense", "block_hold_01"),
+                                     ("defense", "block_hit_01"), ("defense", "block_hold_01")],
+            "dodge_recovery": [("transition", "dodge_01"), ("attack", "fast_recovery_01")],
+        }
+        if preset_id not in specs:
+            raise ValueError(f"unknown review preset: {preset_id}")
+        candidates = {(row.selection.group, row.selection.action): row for row in self.browser_records(show_superseded=True)
+            if row.selection.profile == selection.profile and row.selection.direction == selection.direction
+            and row.selection.art_generation == selection.art_generation}
+        clips = []
+        for group, action in specs[preset_id]:
+            record = candidates.get((group, action))
+            if record is None:
+                return {"available": False, "reason": f"missing exact component {group}/{action}/{selection.direction}"}
+            if selection.art_generation == "operator_2_5d_128":
+                if record.coverage != "CANONICAL_2_5D" or record.stale:
+                    return {"available": False, "reason": f"component is {record.coverage} or stale: {group}/{action}"}
+            clip = animation_preview.TimelineClip(record.selection.profile, group, action, selection.direction,
+                1.0, art_generation=selection.art_generation)
+            clip.frame_durations = list(self.timeline_clip_durations(clip))
+            if selection.art_generation == "operator_2_5d_128":
+                if len(clip.frame_durations) != record.frames or not clip.frame_durations:
+                    return {"available": False, "reason": f"saved physical timing is unavailable for {group}/{action}"}
+                clip.review_fps = len(clip.frame_durations) / sum(clip.frame_durations)
+            else:
+                if review_fps <= 0:
+                    return {"available": False, "reason": "no authored review timing is selected"}
+                clip.review_fps = float(review_fps)
+            clips.append(clip)
+        return {"available": True, "clips": clips}
 
     def motion_event_markers(self, selection: AnimationSelection) -> tuple[animation_motion_preview.MotionEventMarker, ...]:
         """Read optional structured catalog events without scraping runtime source."""
@@ -402,7 +456,55 @@ class WorkbenchService:
         return animation_preview.load_sequence(self.sequence_root / f"{name}.json")
 
     def flatten_sequence(self, sequence: animation_preview.ReviewSequence, source: str = "runtime"):
-        return animation_preview.flatten_sequence(sequence, self.preview_provider, source)
+        flattened = []
+        for clip_index, clip in enumerate(sequence.clips):
+            preview = self._preview_timeline_clip(clip, source)
+            start, end = animation_preview.clip_frame_bounds(clip, len(preview.frames))
+            if clip.loops < 1 or clip.review_fps <= 0:
+                raise ValueError(f"invalid review timing for clip {clip_index + 1}")
+            if clip.frame_durations and (len(clip.frame_durations) != len(preview.frames)
+                    or any(float(value) <= 0 for value in clip.frame_durations)):
+                raise ValueError(f"physical duration contract is stale for clip {clip_index + 1}")
+            for _ in range(clip.loops):
+                flattened.extend((clip_index, index, preview.frames[index]) for index in range(start, end + 1))
+        return flattened
+
+    def _preview_timeline_clip(self, clip: animation_preview.TimelineClip, source: str):
+        identity = animation_preview.SemanticIdentity(clip.profile, clip.group, clip.action, clip.direction)
+        if clip.art_generation == "operator_2_5d_128":
+            selection = AnimationSelection(clip.profile, clip.group, clip.action, clip.direction,
+                                           art_generation=clip.art_generation)
+            session_path = self.polish_attach(selection)
+            art = self._polish(selection).service
+            rendered = art.render(session_path)
+            frames = tuple(Image.open(path).convert("RGBA") for path in rendered["frames"])
+            digest = __import__("hashlib").sha256()
+            for path in rendered["frames"]: digest.update(Path(path).read_bytes())
+            return animation_preview.Preview(identity, "workbench", frames, (128, 128), digest.hexdigest(), tuple(rendered["frames"]))
+        return self.preview_provider.load(identity, source)
+
+    def review_leaf(self, selection: AnimationSelection, *, human_disposition=None, sandbox_result=None):
+        from operator_2_5d_review import Operator2DReview
+        return Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root).inspect(
+            selection, human_disposition=human_disposition, sandbox_result=sandbox_result)
+
+    def review_and_sandbox(self, selection: AnimationSelection, *, human_approved: bool = False):
+        from operator_2_5d_review import Operator2DReview
+        owner = Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root)
+        receipt = owner.inspect(selection, human_disposition={"status": "APPROVED", "provenance": "Workbench explicit human-disposition checkbox"} if human_approved else None)
+        if receipt["qa"]["status"] == "RED":
+            return receipt
+        if receipt["qa"]["status"] == "NEEDS_HUMAN_REVIEW" and receipt["human_review"]["status"] != "APPROVED":
+            return receipt
+        sandbox = owner.run_sandbox(selection, receipt)
+        return owner.inspect(selection,
+            human_disposition={"status": "APPROVED", "provenance": "Workbench explicit human-disposition checkbox"} if human_approved else None,
+            sandbox_result=sandbox)
+
+    def review_family(self, profile: str, group: str, action: str):
+        from operator_2_5d_review import Operator2DReview
+        return Operator2DReview(service=self, repo_root=self.repo_root, workspace_root=self.workspace_root).family(
+            self.browser_records(show_superseded=True), profile=profile, group=group, action=action)
 
     @staticmethod
     def classify_layers(layers: tuple[str, ...] | list[str]) -> tuple[str, str]:

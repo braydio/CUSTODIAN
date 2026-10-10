@@ -5,7 +5,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-review-automation
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-polish-automation-review-corrections-1
@@ -153,14 +153,33 @@ The sandbox is proof, not publication.
 - Refresh status: **consumed / final pre-claim refresh complete**
 - Refresh instruction: WB25-3 correction R0-01 + fresh re-review and current target/Sequence/Motion/presentation APIs have been consumed. WB25-4 is now `ready/auto`. Re-open planning only for a genuine contradiction in landed authority or a new human-owned art-direction choice.
 
-## Handoff
 
-- Next workstream: review-operator-2-5d-workbench-review-automation
-- Next packet state: ready/auto behind WB25-4
-- Refresh owner: none
-- ChatGPT/user planning refresh required: no
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `operator_2_5d_review_smoke.py` passed the hash-bound receipt/bundle, QA-state, family-incomplete, mixed-generation sequence, real Operator sandbox, request/frame tamper refusal, presentation ownership, and production-runtime fence assertions. Seven predecessor/focused checks passed. Changed-file validation passed 28/28 selected checks with complete changed-file coverage; `py_compile` and `git diff --check` passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The first changed-file sweep included generated Godot .import sidecars and reported the new sandbox scene as uncovered; a concurrent worktree also started another sweep during execution.`
+- Root cause / contributing factors: `Godot import sidecars were created before changed-file selection, and the new .tscn had not yet been listed as an owner of the sandbox smoke. Independent worktrees can start overlapping broad validation despite the repository single-sweep guidance.`
+- Prevention / pipeline improvement: `Register both sandbox script and scene with the focused smoke, remove generated sidecars before changed-file selection, and coordinate broad sweep starts across active worktrees.`
+- Tooling / docs drift discovered: `paired_review_runner.py scans successor Next Handoff planning-refresh fields as if they gate the current review; the supplied WB25-4 review packet explicitly says WB25-5 refresh is not a current-review gate.`
+- Follow-up: `manual-follow-up`
+- What worked: `The focused real-Godot smoke proved the exact-pixel path and fail-closed tamper behavior; the second changed sweep completed with full coverage.`
+
+## Next Handoff
+- Next workstream: `review-operator-2-5d-workbench-review-automation`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Summary backlink: include exact Authoring chat URL
-- Refresh reason: WB25-4 is fully refreshed; paired review should launch after the implementation lands.
-- Next action: claim and implement `operator-2-5d-workbench-review-automation`, then run its paired fresh-context review.
-- Blockers or open questions: none at planning level. Any surviving subjective art-direction question uses the conditional visual handoff; it does not authorize automatic approval.
+- Refresh reason: `none`
+- Next action: `Launch the paired review from a fresh reviewer context. Harden paired_review_runner.py separately so it scopes current-review gate detection to the current packet authority and excludes successor handoff fields.`
+- Blockers or open questions: `none`

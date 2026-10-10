@@ -11,7 +11,7 @@ HINTS = {
         "G Ground   D Distance   L Loop   ⇧L Span   "
         "Ctrl+R Reset   ENTER Runtime   ? Help"
     ),
-    "polish": "Attach + Analyze   Refresh Analysis   Open Aseprite   Registration Guide   Preview Center X   Explicit Planted Choice   Apply Selected   Undo Last   6 POLISH   ? Help",
+    "polish": "Attach + Analyze   Refresh Analysis   Review + Runtime Sandbox + Family   Open Aseprite   Registration Guide   Preview Center X   Explicit Planted Choice   Apply Selected   Undo Last   6 POLISH   ? Help",
 }
 
 
