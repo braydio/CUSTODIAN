@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-polish-automation-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-polish-automation
@@ -39,8 +39,28 @@
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: none
-- Root cause / contributing factors: none
-- Prevention / pipeline improvement: Add adversarial proposal forgery cases alongside successful proposal/apply fixtures.
-- Tooling / docs drift discovered: none
+- What went wrong: The first focused smoke run exposed a missing import in the new adversarial fixture; it was corrected before the full packet checks.
+- Root cause / contributing factors: The correction smoke grew from producer-level checks to exercise the apply boundary and needed one additional proposal helper import.
+- Prevention / pipeline improvement: Keep adversarial validation at the mutation boundary and rerun the focused smoke after fixture edits.
+- Tooling / docs drift discovered: The optional Textual interaction pilot is skipped because Textual is not installed; the service/UI smoke passes.
 - Follow-up: none
+
+## Completion Truth
+
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: The focused smoke rejects forged/stale/protected/oversized/out-of-bounds erase and forged registration proposals before mutation, accepts a fresh exact 3-pixel candidate through scoped apply/undo delegation, and all packet-named checks pass.
+
+## Next Handoff
+
+- Next workstream: review-operator-2-5d-workbench-polish-automation-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh reason: none
+- Next action: Claim the cycle-1 paired review in a fresh reviewer context and independently attack proposal fabrication and stale application.
+- Blockers or open questions: none
