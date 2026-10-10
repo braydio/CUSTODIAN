@@ -6,6 +6,10 @@
 **Audit focus:** [F15 Geographic Scale and Traversable Campaign-World Topology](codebase_systems_audit/F15_CAMPAIGN_WORLD_GEOGRAPHY.md)  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 
+## Post-F15-A independent review and D1–D7 human design gate (2026-10-10)
+
+F15-A evidence was independently reviewed **PASS** on `origin/main@83e0008e` (zero blocking or material evidence gaps). The new [post-audit geographic decision proposal](F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) reconciles the measured local-region facts with the selected player-facing **finite seeded procgen / persistent geography / continuous travel** direction and proposes explicit D1–D7 owner boundaries. It is **not yet a human-approved production topology or packet publication**. Keep the historical alternatives, definitions and caveats in this draft as evidence, but route **new** F15-B B1/B2 and F14-C2 decisions through the post-audit record and Hall refresh register. The required Ritualant ingress defect remains with existing procgen/level owners.
+
 ## Planning continuation: accepted F14-C1 and production residency (2026-10-09)
 
 [**F14-C2/F15 Geographic Identity and Physical Residency Refresh**](F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md) reconciles the independently accepted synthetic real-Grunt physical/abstract handoff with current route scenes, generated locality staging, M6 visual-only chunk eviction, and ambient spawning. It proposes a **read-only F15-A geographic authority and travel-scale evidence pass first**, then a decision on stable Domain/Location and real locality residency, before any automatic F14-C2 implementation. The proposed finite graph-backed materialization strategy is *not yet a design lock*. The locked player target remains continuous geography within one Campaign World.
