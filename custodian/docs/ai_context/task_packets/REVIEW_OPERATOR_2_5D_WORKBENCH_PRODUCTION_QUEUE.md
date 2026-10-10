@@ -11,7 +11,7 @@
 - Review: none
 - Review target workstream: operator-2-5d-workbench-production-queue
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md
-- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
+- Reviewed main: cee646f21e5a6dc6fb4cc487f8ec04043c683259
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Visual review: none
 - Reviewer context: fresh
@@ -24,7 +24,7 @@
 - Review evidence: Reuse implementation receipts/fixtures first; gather fresh evidence only where acceptance is not established.
 - Correction threshold: Correct confirmed correctness/authority defects or material proof gaps through bounded correction + re-review; route polish to the next slice.
 - Focused validation: Rerun the smallest tests named by the archived packet plus git diff --check.
-- Review focus: Queue counts must exactly reconcile to target/review truth; NEXT cannot mutate human rank; fallback never counts complete; generation briefs are deterministic/hash-bound/stale-safe and contain no network generation side effects.
+- Review focus: Independently reconcile 69 baseline families/552 direction leaves (8 accepted-source/544 not-authored baseline) without conflating these with dynamic coverage/VERIFIED; challenge current_receipt-only verification, forged/NOT_REQUIRED human bypass, stale/local-absent receipt, family closure, P0/rank-preserving NEXT and blocked skip explanation. Confirm fallback/projected/partial/accepted-source never count verified or PUBLISHED. Probe deterministic content-addressed briefs, null frame/FPS non-fabrication, exact reference/plan/profile hashes, path traversal, stale/tampered/overwrite rejection, and bounded existing-ingress source re-association with legacy imports preserved. No network generation, production asset mutation or runtime promotion.
 - Acceptance: Findings-first receipt with stable IDs; zero blocking defects/material proof gaps for pass; do not patch reviewed implementation.
 - Non-goals: No redesign, implementation fixes, production art mutation, or successor implementation.
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
