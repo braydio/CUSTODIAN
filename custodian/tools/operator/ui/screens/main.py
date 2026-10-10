@@ -5,7 +5,7 @@ from textual.widgets import Input, Label, Static, TabbedContent, TabPane
 
 from ..widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                        MotionCanvas, MotionControls, MotionMetrics, PlanTable,
-                       PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
+                       PolishPanel, PreviewCanvas, PreviewControls, PreviewFilmstrip, TimelineTable, WorkbenchStatusBar)
 
 
 class MainScreen(Screen):
@@ -48,6 +48,8 @@ class MainScreen(Screen):
                     yield MotionControls(id="motion-controls")
                     yield MotionMetrics(id="motion-metrics")
             yield PreviewControls("MOTION REVIEW", id="motion-preview-controls")
+        with Container(id="polish-mode", classes="mode-pane hidden"):
+            yield PolishPanel(id="polish-panel")
         with Vertical(id="activity-pane"):
             yield Label("ACTIVITY", classes="pane-title")
             yield ActivityLog(id="activity-log", max_lines=200, markup=True)

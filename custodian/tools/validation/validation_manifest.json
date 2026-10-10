@@ -5788,6 +5788,23 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_polish",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_polish_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "2_5d", "art_agent"],
+      "owners": [
+        "custodian/tools/operator/operator_2_5d_polish.py",
+        "custodian/tools/operator/art_agent/metrics.py",
+        "custodian/tools/operator/art_agent/models.py",
+        "custodian/tools/operator/art_agent/qa.py",
+        "custodian/tools/operator/art_agent/service.py",
+        "custodian/tools/validation/operator_2_5d_polish_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "enemy_savage_pounce",
       "type": "godot_script",
       "script": "res://tools/validation/enemy_savage_smoke.gd",
