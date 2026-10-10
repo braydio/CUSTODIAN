@@ -3,12 +3,12 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-workbench-review-automation
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-workbench-review-automation
 - Locks: operator-workbench-ui, operator-art-agent, operator-review-automation, operator-runtime-preview
-- Review: none
+- Review: findings recorded; blocking R0-01
 - Review target workstream: operator-2-5d-workbench-review-automation
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md
 - Reviewed main: 119fa1a19427dce838977422d5186e3624e3457e
@@ -38,12 +38,22 @@
 
 ## Handoff
 
-- Next workstream: operator-2-5d-workbench-production-queue
-- Next packet state: refresh-required
+- Next workstream: none (R0-01 requires planning a bounded correction and re-review)
+- Next packet state: human-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Summary backlink: include exact Authoring chat URL
-- Refresh reason: WB25-5 must consume landed receipt schema, actual family/review counts and any WB25-4 review findings before final queue/NEXT/brief fields are frozen.
-- Next action: After this review closes, return WB25-4 implementation/review evidence to the authoring chat and refresh WB25-5.
-- Blockers or open questions: none for this review; successor refresh occurs only after this review is complete.
+- Refresh reason: Blocking R0-01 prevents a clean WB25-4 review. Plan the bounded correction and fresh re-review before WB25-5 consumes WB25-4 as accepted.
+- Next action: Bring this findings receipt to the exact authoring chat and authorize/define the bounded correction packet. This reviewer does not claim another packet.
+- Blockers or open questions: human planning must decide correction scope and whether the review acceptance gate needs an explicit approval provenance contract.
+
+## Independent Review Receipt
+
+- Outcome: `findings`
+- Reviewed implementation commit: `23e88f377` (`operator 2.5d review, runtime sandbox`), landed in current `origin/main` ancestry.
+- Findings-first result: `R0-01` is blocking. `Operator2DReview.inspect()` accepts caller-provided human disposition values without validating the required status/provenance. For a `NEEDS_HUMAN_REVIEW` QA result, `current_receipt()` computes `runtime_verified=true` when the status is either `APPROVED` or `NOT_REQUIRED`; a caller can therefore label a major finding `NOT_REQUIRED` and satisfy the required-human gate without approval. References: `custodian/tools/operator/operator_2_5d_review.py:132` and `:253-256`.
+- Acceptance consequence: WB25-4 does not pass acceptance item (9) until human-required findings cannot become effectively verified without a valid explicit approval bound to the review evidence.
+- Focused validation: `operator_2_5d_review`, `operator_2_5d_polish`, `operator_2_5d_ingress`, `operator_animation_plan` (target projection), `operator_animation_preview_timeline`, `operator_workbench_ui`, `operator_motion_preview`, direct `operator_runtime_animation_authority_smoke.py`, and `git diff --check` passed. The smoke includes a successful real-Operator sandbox, tampered request/frame refusal, and production-runtime before/after evidence. Runtime-authority smoke reports 188 legacy residue files and one existing migration gate.
+- Packet lifecycle result: review packet is complete as a review activity, with implementation acceptance failed pending bounded correction and fresh re-review. No implementation/runtime edits were made.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
