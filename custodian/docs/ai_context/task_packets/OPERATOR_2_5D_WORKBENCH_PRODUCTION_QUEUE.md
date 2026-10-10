@@ -1,7 +1,8 @@
 # OPERATOR 2.5D WORKBENCH PRODUCTION QUEUE + GENERATION BRIEFS
 
 > PRE-AUTHORED / REFRESH REQUIRED BEFORE IMPLEMENTATION  
-> Refresh after the WB25-4 R0-01 correction + fresh paired re-review land. Consume only the accepted final target/review state; do not invent another progress database.
+> PREDECESSOR COMPLETE / PLANNING REFRESH REQUIRED BEFORE IMPLEMENTATION  
+> WB25-4 R0-01 correction and fresh re-review are complete/passed. Re-derive this packet from the accepted final target/review state before claim; do not invent another progress database.
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-production-queue
@@ -23,7 +24,7 @@
 - Visual review: none
 - Goal: Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author is obvious and returned source-work can re-associate with the exact target.
 - Completion boundary: Add queue/dashboard projections, progress/family closure, NEXT explanation, filters, and local generation-brief bundles. Preserve human plan rank/priority. No network generation and no production runtime cutover.
-- Current measured state: PlanTable exists and OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json owns rank/priority; WB25-4 implementation is landed but its first paired review found blocking R0-01 in required-human approval truth. Cycle-1 correction/re-review now gate the final accepted receipt contract. Workbench still has no generation-aware production queue or source-generation brief bundle; exact final verified counts must be re-measured only after that correction lineage passes.
+- Current measured state: PlanTable exists and OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json owns rank/priority; WB25-4 correction/re-review are complete and R0-01 is fixed under the accepted backend-authored evidence-bound approval contract. Workbench still has no generation-aware production queue or source-generation brief bundle. Exact current target/review/verified counts must be re-measured during this packet's required authoring-chat refresh before it can become ready.
 - Evidence: custodian/tools/operator/ui/widgets/plan_table.py; custodian/tools/operator/ui/service.py; design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json; landed target/review receipts after dependency.
 - Task-specific authority: v2 implementation plan for rank/priority; target projection for coverage/workflow; only current receipts accepted under the clean WB25-4 correction re-review for review/RUNTIME_VERIFIED truth; canonical reference/profile for brief input. `PUBLISHED` remains a separate later authority and must not be inferred from review verification.
 - Work surface: recommended custodian/tools/operator/operator_generation_brief.py; ui/service.py; app.py; plan_table.py or recommended queue_table.py; target/review owner modules from predecessors; roadmap/current-state docs where live behavior changes.
