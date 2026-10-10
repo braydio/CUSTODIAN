@@ -1394,7 +1394,14 @@ Documentation updates this session:
   `origin/main@2dffdff` confirmed `wave_manager_debug_grunt_spawn_gate` failed
   only because it searched for a serialized script-default value; the smoke now
   loads the production scene and checks the effective `WaveManager` property.
-  The fresh paired NPA-5 review remains pending.
+  The fresh paired NPA-5 review passed with zero findings at `f5dc6da50`.
+  NPA-6 was refreshed against the landed `EnemyReactionController` and
+  `EnemyParryCritical` APIs and current runtime ownership: the task packet now
+  assigns health/death/corpse transitions and one-time loot payload lifecycle
+  to a focused `EnemyLifecycle` owner, while `EnemyCorpseLoot` remains the
+  reward-collection boundary and `EnemyLootCarrier` remains the stolen-resource
+  carrier. Its implementation and paired-review packets are ready/auto and
+  dependency-gated in the dispatcher until NPA-6 implementation completes.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
