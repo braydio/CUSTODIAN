@@ -58,19 +58,16 @@ func _run() -> void:
 	_check(not bool(coordinator.take_result(pending_request).get("ok", false)), "pending spawn actor was transferred")
 	_check(actor.is_inside_tree() and String(state.abstract_activity.get_group(DOMAIN, GROUP).representation) == "physical", "pending-spawn rejection changed authority")
 	actor.remove_meta("spawn_pending")
-	actor.dead = true
-	actor.life_state = Enemy.LifeState.DYING
+	actor.restore_lifecycle_state(actor.health, actor.max_health, true, Enemy.LifeState.DYING)
 	var dead_request := coordinator.request_abstract(DOMAIN, GROUP, actor, "A")
 	kernel.step_once()
 	_check(not bool(coordinator.take_result(dead_request).get("ok", false)), "dying actor was transferred")
 	_check(actor.is_inside_tree() and String(state.abstract_activity.get_group(DOMAIN, GROUP).representation) == "physical", "dying-actor rejection changed authority")
-	actor.dead = false
-	actor.life_state = Enemy.LifeState.ALIVE
-	actor.life_state = Enemy.LifeState.LOOTABLE_CORPSE
+	actor.restore_lifecycle_state(actor.health, actor.max_health, false, Enemy.LifeState.LOOTABLE_CORPSE)
 	var corpse_request := coordinator.request_abstract(DOMAIN, GROUP, actor, "A")
 	kernel.step_once()
 	_check(not bool(coordinator.take_result(corpse_request).get("ok", false)), "corpse actor was transferred")
-	actor.life_state = Enemy.LifeState.ALIVE
+	actor.restore_lifecycle_state(actor.health, actor.max_health, false, Enemy.LifeState.ALIVE)
 	var loot_carrier := actor.get_node("EnemyLootCarrier") as EnemyLootCarrier
 	loot_carrier.set_payload({"ruin_scrap": 1})
 	var loot_request := coordinator.request_abstract(DOMAIN, GROUP, actor, "A")

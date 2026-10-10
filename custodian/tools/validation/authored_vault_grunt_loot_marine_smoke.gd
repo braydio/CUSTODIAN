@@ -45,6 +45,7 @@ func _validate_grunt_loot(root: Node) -> void:
 
 	var grunt := GRUNT_SCENE.instantiate()
 	root.add_child(grunt)
+	var lifecycle_config := grunt.lifecycle_config as EnemyLifecycleConfig
 	var expected_ids := [
 		"ruin_scrap",
 		"spent_charge_cell",
@@ -55,13 +56,16 @@ func _validate_grunt_loot(root: Node) -> void:
 		"white_thread_knot",
 	]
 	var table_ids := {}
-	for entry in grunt.get("loot_table"):
+	for entry in lifecycle_config.loot_table:
 		table_ids[str(entry.get("resource_id", ""))] = true
 	var defs: Dictionary = ledger.call("get_resource_defs")
 	for resource_id in expected_ids:
 		_assert_true(table_ids.has(resource_id), "grunt loot table should include %s" % resource_id)
 		_assert_true(defs.has(resource_id), "resource defs should include %s" % resource_id)
-	var rolled := grunt.call("_roll_loot_table_payload") as Dictionary
+	grunt.die()
+	var death_state: Dictionary = grunt.get_lifecycle_debug_state()
+	var payload := death_state.get("pending_payload", {}) as Dictionary
+	var rolled := payload.get("resource_ledger", {}) as Dictionary
 	_assert_true(int(rolled.get(&"ruin_scrap", 0)) >= 1, "grunt loot should always roll at least one ruin_scrap")
 	_assert_true(int(ledger.call("get_amount", "ruin_scrap")) == 0, "grunt loot must remain corpse-bound until collection")
 	if owns_ledger:

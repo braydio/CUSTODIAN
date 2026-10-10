@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://enemy_grunt_001"]
+[gd_scene load_steps=14 format=3 uid="uid://enemy_grunt_001"]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -13,6 +13,7 @@
 [ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_grunt.tres" id="10_melee_config"]
 [ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/enemy_parry_critical_default.tres" id="11_parry_config"]
 [ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/enemy_reaction_default.tres" id="12_reaction_config"]
+[ext_resource type="Resource" path="res://game/actors/enemies/components/configs/enemy_lifecycle_grunt.tres" id="13_lifecycle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_grunt"]
 size = Vector2(26, 26)
@@ -20,19 +21,14 @@ size = Vector2(26, 26)
 [node name="EnemyGrunt" type="CharacterBody2D"]
 z_index = 2
 script = ExtResource("1_enemy")
+lifecycle_config = ExtResource("13_lifecycle")
 standard_enemy_melee_config = ExtResource("10_melee_config")
 reaction_config = ExtResource("12_reaction_config")
 parry_critical_config = ExtResource("11_parry_config")
 enemy_name = "GRUNT"
 speed = 84.0
-health = 78.0
-max_health = 78.0
 damage = 13.0
 base_tint = Color(0.72, 0.28, 0.22, 1)
-material_drop_min = 1
-material_drop_max = 3
-loot_table_id = "practical_salvage_x_grunt"
-loot_table = [{"resource_id": "ruin_scrap", "min": 1, "max": 3, "chance": 1.0, "label": "bent plating and stripped field brackets"}, {"resource_id": "spent_charge_cell", "min": 1, "max": 1, "chance": 0.35, "label": "cheap sidearm or chest-rig cell"}, {"resource_id": "frayed_signal_filament", "min": 1, "max": 1, "chance": 0.2, "label": "helmet comms conductor"}, {"resource_id": "cracked_field_tag", "min": 1, "max": 1, "chance": 0.15, "label": "scraped patrol identity tag"}, {"resource_id": "power_components", "min": 1, "max": 1, "chance": 0.1, "label": "tiny regulator or heat-warped relay"}, {"resource_id": "memory_glass_fragment", "min": 1, "max": 1, "chance": 0.04, "label": "impossible patrol-order sliver"}, {"resource_id": "white_thread_knot", "min": 1, "max": 1, "chance": 0.01, "label": "clean white thread clue"}]
 custom_enemy_animation_set = "enemy_grunt"
 custom_enemy_animation_scale = Vector2(1, 1)
 custom_enemy_fx_scale = Vector2(1, 1)

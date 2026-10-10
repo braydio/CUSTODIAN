@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://game/actors/enemies/enemy.gd" id="1_enemy"]
 [ext_resource type="Script" path="res://game/actors/enemies/components/enemy_blackboard.gd" id="2_blackboard"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://content/sprites/world/shadows/contact_shadow_character_64x32.png" id="8_shadow_texture"]
 
 [ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_pursuit_frame.tres" id="9_melee_config"]
+[ext_resource type="Resource" path="res://game/actors/enemies/components/configs/enemy_lifecycle_pursuit_frame.tres" id="10_lifecycle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pursuit"]
 size = Vector2(28, 28)
@@ -17,15 +18,12 @@ size = Vector2(28, 28)
 [node name="PursuitFrame" type="CharacterBody2D"]
 z_index = 2
 script = ExtResource("1_enemy")
+lifecycle_config = ExtResource("10_lifecycle")
 standard_enemy_melee_config = ExtResource("9_melee_config")
 enemy_name = "PURSUIT FRAME"
 speed = 96.0
-health = 92.0
-max_health = 92.0
 damage = 15.0
 base_tint = Color(0.22, 0.42, 0.48, 1)
-material_drop_min = 1
-material_drop_max = 3
 custom_enemy_animation_set = "pursuit_frame"
 behavior_state_machine_enabled = true
 behavior_profile_id = &"pursuit_frame"

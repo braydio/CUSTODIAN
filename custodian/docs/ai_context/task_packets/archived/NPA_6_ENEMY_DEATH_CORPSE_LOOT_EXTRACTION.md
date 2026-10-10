@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-6-enemy-death-corpse-loot-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-5-enemy-reaction-posture-extraction`
@@ -44,31 +44,31 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `no`
-- Completion boundary satisfied: `no`
-- Acceptance satisfied: `no`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: Not implemented yet; this packet is being published before dispatch.
+- Evidence: `EnemyLifecycle` + `EnemyLifecycleConfig` now own health/death, damage results, payload construction, corpse state and cleanup clocks; Enemy scene tuning moved to typed configs with unchanged values. Focused lifecycle/combat checks passed 10/10; changed-file validation passed 40/40 with complete coverage; `git diff --check` passed; AI-context validation found zero findings. See `NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION_CLAUDE_SUMMARY.md`.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: partial
+- Outcome: success
 - Friction severity: low
-- What went wrong: The NPA-6 refresh handoff named a workstream but no active implementation/review packet existed on origin/main.
-- Root cause / contributing factors: The NPA-5 review correctly stopped at the human planning refresh; refreshed execution authorization was recorded in chat before its executable packet was published.
-- Prevention / pipeline improvement: When a planning refresh completes, publish the bounded implementation/review pair and managed index to origin/main before dispatcher claim.
-- Tooling / docs drift discovered: The architecture roadmap and current-state paragraph still described NPA-5 review as pending and NPA-6 as intentionally un-authored after the review had completed.
+- What went wrong: The first parser pass found that GDScript cannot cast with the nested `LifeState` enum name; the expanded corpse smoke also exposed a brittle assertion that expected exactly two toasts despite random typed drops. The first changed sweep passed all selected tests but exposed missing validation ownership for the newly migrated scene configs.
+- Root cause / contributing factors: The enum is an integer-backed namespace rather than a callable constructor; the old toast assertion counted a random number of successful table rolls; new config resources and scenes needed an explicit owning test.
+- Prevention / pipeline improvement: Keep enum-backed public state as integer values at the façade; assert reward categories rather than random toast counts; add config parity owners whenever scene-authoring values move into typed resources.
+- Tooling / docs drift discovered: None.
 - Follow-up: fixed-in-scope
-- What worked: Live-main source and focused corpse/loot/reification consumers provided a concrete behavior-preservation boundary.
+- What worked: Focused corpse, loot, reification and combat tests gave direct evidence for preserved behavior; the config smoke closed coverage gaps without instantiating unrelated presentation behavior.
 
 ## Handoff
 
-- Next workstream: `npa-6-enemy-death-corpse-loot-extraction`
+- Next workstream: `review-npa-6-enemy-death-corpse-loot-extraction`
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
-- Next action: Claim and implement the published NPA-6 packet, then run its fresh-context paired review after implementation finish.
+- Next action: Run the paired review through `paired_review_runner.py` in its fresh reviewer context after this implementation lands.
 - Blockers or open questions: `none`
