@@ -50,6 +50,21 @@ func play(sprite: AnimatedSprite2D, animation: StringName, restart := false) -> 
 	return true
 
 
+## Play an already-resolved animation from its final frame toward its first.
+## Reverse playback is still mechanical; the semantic caller owns why it is
+## requested (for example, a guard exit reusing the guard-enter pose).
+func play_backwards(sprite: AnimatedSprite2D, animation: StringName, restart := false) -> bool:
+	if not can_play(sprite, animation):
+		return false
+	if not restart and sprite.animation == animation and sprite.is_playing():
+		return true
+	if restart:
+		sprite.stop()
+		sprite.frame = sprite.sprite_frames.get_frame_count(animation) - 1
+	sprite.play_backwards(animation)
+	return true
+
+
 ## Play only when the sprite is not already running that clip.
 ##
 ## The guard callers used to write by hand, in one place: re-issuing `play()` on
