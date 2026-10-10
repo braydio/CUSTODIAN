@@ -17,6 +17,8 @@ The Hall review found complementary ideas worth **weaving into future packet *re
 
 **Refresh checkpoint (2026-10-10):** F15-A independently accepted; decision candidates and B1/B2/C2 scope separation are recorded in [F15 post-audit human design record](../F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md). **Do not mark entries 1–4 implemented:** D1–D7 were user-approved 2026-10-10, but B1 authoring explicitly excludes their semantic gameplay/placement implementation; detailed B2 and rendered F15-C evidence remain separate design/technical gates. Keep all later idea reentry triggers intact.
 
+**Post-B1 idea status (2026-10-10):** B1 reviewed PASS and introduced **no semantic gameplay systems**. The [B2/C2 implementation-narrowing proposal](../F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md) assigns Encounter Language, Landmark Hierarchy, Spatial Compression and Mystery Budget **schema/contract** candidates to B2, not playable placement or art; Procedural Ruin Generator is metadata-only. For F14-C2a/b, reserve only identity-compatible report/signal interfaces and defer Faction Knowledge and Line-of-Communication gameplay until their explicit triggers. Do not classify those cards as implemented.
+
 ## Refresh stages and decision prompts
 
 | Existing gate | What to reconsider at the refresh | Decision that belongs in that future packet | Not authorized yet |

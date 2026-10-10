@@ -413,7 +413,9 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/l
 
 ---
 
-**F15-A milestone (2026-10-10):** Geography/residency evidence and independent review accepted on `main@83e0008e`. Human D1–D7 design confirmation for finite seeded Domain geography, stable location/visit IDs and uninterrupted traversal **landed 2026-10-10**. [Approved D1–D7 decision record](../04_architecture/F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) separates B1 data identity, later B2 semantic site/procgen contract, F14-C2 actor residency and F15-C playable proof. F15-B1 is promoted to `ready/auto` on the publication branch; claim only after its PR merges and the packets/index are verified on current `main`. No B2/C2/art packet is authorized.
+**F15-A milestone (2026-10-10):** Geography/residency evidence and independent review accepted on `main@83e0008e`. Human D1–D7 design confirmation for finite seeded Domain geography, stable location/visit IDs and uninterrupted traversal **landed 2026-10-10**. [Approved D1–D7 decision record](../04_architecture/F15_POST_AUDIT_GEOGRAPHY_AND_LIVING_WORLD_DECISION_RECORD.md) separates B1 data identity, later B2 semantic site/procgen contract, F14-C2 actor residency and F15-C playable proof. F15-B1 implemented, fresh-context review **PASSED** and archived on main@03a584ee. [Post-B1 B2/C2 planning refresh](../04_architecture/F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md) is the next user-owned design gate; no B2/C2/art implementation packet is authorized.
+
+**Post-B1 milestone (2026-10-10):** [Accepted B1 review](../../REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION_CLAUDE_SUMMARY.md) confirms data-only location/edge identity. [Next B2/C2 design refresh](../04_architecture/F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md) proposes semantic site/ingress mapping and F14 managed population reservation independently. No new art or streaming implementation is authorized by this note.
 
 ### Cross-cutting F15 Procedural World Semantics and Codex Idea Graduation
 

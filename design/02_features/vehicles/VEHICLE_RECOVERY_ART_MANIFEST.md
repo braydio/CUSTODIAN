@@ -15,23 +15,23 @@ All vehicle recovery art uses Asset Pipeline V2. New/unprocessed files are saved
 - normalized inbox: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1/`
 - runtime domain: `custodian/content/sprites/vehicles/custodian_field_scout_buggy_mk1/`
 - consumer: `custodian/game/actors/vehicles/field_scout_buggy_mk1.tscn`
-- canvas: 256×256 RGBA per frame
+- canvas: 156×156 RGBA per frame
 - direction policy: 8dir, authored n/ne/e/se/s, mirrored nw/w/sw
 - registration: stable bottom-center; wheel/ground contact may not bob
 - true alpha; no baked floor shadow
 
 | State | Tier | Frames | FPS | Per-direction sheet |
 |---|---|---:|---:|---:|
-| `parked_01` | required | 1 | n/a | 256×256 |
-| `drive_01` | required | 12 | 12 | 3072×256 |
-| `disabled_01` | required | 1 | n/a | 256×256 |
-| `wreck_01` | required | 1 | n/a | 256×256 |
-| `engine_start_01` | recommended | 7 | 8 | 1792×256 |
-| `engine_idle_01` | recommended | 6 | 6 | 1536×256 |
-| `brake_01` | recommended | 4 | 10 | 1024×256 |
-| `impact_01` | recommended | 4 | 12 | 1024×256 |
-| `destroy_01` | recommended | 8 | 10 | 2048×256 |
-| `restore_01` | strongly recommended | 8 | 8 | 2048×256 |
+| `parked_01` | required | 1 | n/a | 156×156 |
+| `drive_01` | required | 12 | 12 | 1872×156 |
+| `disabled_01` | required | 1 | n/a | 156×156 |
+| `wreck_01` | required | 1 | n/a | 156×156 |
+| `engine_start_01` | recommended | 7 | 8 | 1092×156 |
+| `engine_idle_01` | recommended | 6 | 6 | 936×156 |
+| `brake_01` | recommended | 4 | 10 | 624×156 |
+| `impact_01` | recommended | 4 | 12 | 624×156 |
+| `destroy_01` | recommended | 8 | 10 | 1248×156 |
+| `restore_01` | strongly recommended | 8 | 8 | 1248×156 |
 
 Normalized example: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1/wreck_01__e.png`.
 
@@ -45,7 +45,7 @@ Earlier partial Dropbox handoff (E / NE / SE only, retained as historical eviden
 Current complete five-direction handoff directory:
 `/home/braydenchaffee/CUSTODIAN-DROPBOX-UPLOADS/Custodian-Buggy`
 
-The complete directory contains high-resolution 12-frame source masters and 1872×156 reference strips for N / NE / E / SE / S. High-resolution masters are the normalization authority; 156px strips are cadence/orientation references.
+The complete directory contains high-resolution 12-frame source masters and approved 1872×156 pixel-art normalizer outputs for N / NE / E / SE / S. The 156px strips are the canonical runtime-scale body art; high-resolution masters are preserved upstream evidence for future intentional re-authoring.
 
 Directional source status:
 
@@ -60,7 +60,11 @@ Directional source status:
 | `w` | mirrored from E after canonical ingest | n/a | pending |
 | `sw` | mirrored from SE after canonical ingest | n/a | pending |
 
-The approved `drive_01` source contract is now **12 frames at 12 FPS**. Do not regress it to the earlier 6-frame planning assumption when the family contract is registered.
+### Scale rationale
+
+CUSTODIAN world tiles are 32×32. The Operator commonly uses 96×96 frames with an approximately 80px-tall body. The approved Scout 156px normalized frames place the visible buggy at roughly 136–143px wide in the reviewed E/NE/SE samples, or about 4.3–4.5 world tiles across in screen projection. This is intentionally larger than its compact collision/ground footprint because the elevated 40–50° camera exposes roof, wheels, and suspension. A 256px **filled** vehicle would overscale the Scout at 1:1 runtime presentation; transparent padding to 256 would add only dead canvas. Therefore 156×156 is the locked Scout body-family canvas unless a later gameplay-scale review explicitly reopens it.
+
+The approved `drive_01` source contract is now **12 frames at 12 FPS on 156×156 cells (1872×156 per authored direction)**. Do not regress it to the earlier 6-frame planning assumption when the family contract is registered.
 
 
 ## Family B — Shared Vehicle Recovery FX

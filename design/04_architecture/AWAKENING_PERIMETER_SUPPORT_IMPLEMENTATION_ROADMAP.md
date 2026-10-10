@@ -6,7 +6,7 @@
 
 ## Locked project decisions
 
-Ten independently named nonplayable perimeter regions; three candidate Asset V2 states per region (30 new art files total); background-only support below canonical gameplay plates; all existing geometry/seams/collisions authoritative and unchanged. Camera-footprint extents and exact source normalization must be measured before committing layout/registered dimensions. No generated image exists solely by virtue of this roadmap.
+Nine independently named **generic** nonplayable perimeter regions (Zones 01–04 and 06–10); three candidate Asset V2 states per generic region (27 new generic support files total); background-only support below canonical gameplay plates; all existing geometry/seams/collisions authoritative and unchanged. **Zone 05 Dust Lung is removed from this DAG** and owned by `AWAKENING_DUST_LUNG_V2.md` / `AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md`, whose later runtime cutover may intentionally reauthor Zone 05 geometry. Camera-footprint extents and exact source normalization must be measured before committing layout/registered dimensions. No generated image exists solely by virtue of this roadmap.
 
 ## Execution DAG / workstream identity
 
@@ -14,7 +14,7 @@ Ten independently named nonplayable perimeter regions; three candidate Asset V2 
 |---|---|---|---|---|
 | AP0 | `awakening-perimeter-support-foundation-v1` | `review-awakening-perimeter-support-foundation-v1` | ready/auto, **dependency-gated** | Audit camera gaps, source support layer, schema-validated family/requirement plan, safe absent-art fallback, focused tests. |
 | AP1 | `awakening-perimeter-interior-v1` | `review-awakening-perimeter-interior-v1` | draft/manual, art approval gate | Integrate 01–04 Crèche, Ambulatory, Attestation, Reliquary approved plates; validate adjacency and P-9. |
-| AP2 | `awakening-perimeter-depth-v1` | `review-awakening-perimeter-depth-v1` | draft/manual, art approval gate | Integrate 05–06 Dust Lung/Cistern and Undergate depth; validate 04→05/05→06 registration and camera reveal. |
+| AP2 | `awakening-perimeter-depth-v1` | `review-awakening-perimeter-depth-v1` | draft/manual, art approval gate | Integrate **Zone 06 Undergate only**; preserve 05→06 and current Dust Lung fallback while the separate Dust Lung V2 program proceeds. |
 | AP3 | `awakening-perimeter-exterior-v1` | `review-awakening-perimeter-exterior-v1` | draft/manual, art approval gate | Integrate 07–09 Gate, Approach and optional Chapel; preserve Gate route and 08↔09. |
 | AP4 | `awakening-perimeter-south-reach-v1` | `review-awakening-perimeter-south-reach-v1` | draft/manual, art approval gate | Integrate 10 around Road-owned South Reach without replacing its five modular plates or spilling into later Hub; final focused route/performance/coverage review. |
 
@@ -34,11 +34,25 @@ AP4 → AR4
 
 Each review runs fresh-context/different-agent post-land, and only verifies the implementation already archived. Existing implementation/review pair(s) take priority over simultaneous writes in `awakening_first_return.gd`, `awakening_layout.gd` and scene registration. Claims must use current `origin/main` dispatcher.
 
+## Parallel Dust Lung V2 program
+
+Zone 05 no longer belongs to AP0–AP4 art fulfillment. Its replacement target is
+the region-scale modular design in
+[AWAKENING_DUST_LUNG_V2.md](AWAKENING_DUST_LUNG_V2.md), with exact underlay and
+connector generation contracts in
+[AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md](AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md).
+
+AP0 may still **measure** Zone 05 camera gaps as part of the ten-zone coverage
+ledger, but it must not register `awakening_dust_lung_perimeter_support`. AP2
+must not consume or modify Dust Lung V2 art/geometry. A later dedicated DL0
+implementation packet will own the actual Zone 05 spatial cutover after the V2
+source set is generated and human-approved.
+
 ## Promotion / asset gates
 
 - AP0 may be claimed when its named predecessor review archives complete, locks clear and the dispatcher reports eligibility. It does **not** require images or user aesthetic judgment.
 - AP1–AP4 need human approval of all specified constituent images and a source/normalized handoff manifest with checksums and real dimensions, or a documented reduction in scope. Each stage must be refreshed against actual Asset V2 family/catalog status and predecessor reviewed runtime, then its implementation/review metadata promoted together to ready/auto and the README index regenerated. Do not fabricate source, fake ingestion, silently mark artwork complete, or change manual-to-auto while approval is outstanding.
-- Style calibration: generate/review single Dust Lung, Gate and South Reach sample images before producing all 30; this is a visual acceptance workflow, not an automated art-generation side effect of Codex.
+- Style calibration for this generic perimeter DAG: generate/review representative interior, Gate and South Reach samples before producing all 27 generic files. Dust Lung calibration/generation happens only through its dedicated V2 manifest and authoring chat.
 - If a verified asset already exists under another family, prefer a provenance-safe reuse decision; do not duplicate/replace production material without evidence.
 
 ## Required proof after each stage
