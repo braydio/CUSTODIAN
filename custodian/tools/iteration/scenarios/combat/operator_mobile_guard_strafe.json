@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "combat/operator_mobile_guard_strafe",
+  "description": "Runtime-scale westward strafe through the unarmed guard enter, hold, and exit while aiming east.",
+  "scene": "res://scenes/debug/combat_playground.tscn",
+  "seed": 104729,
+  "duration_ticks": 120,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 2, "max_wall_seconds": 30, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": true, "start_tick": 0, "end_tick": 119, "contact_sheet_ticks": [0, 24, 36, 48, 72, 78], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": ["World/Enemies/EnemyGrunt2", "World/Enemies/EnemyGrunt3", "World/DroneManager"],
+    "roles": {
+      "operator": {"node_path": "World/Operator"},
+      "target": {"node_path": "World/Enemies/EnemyGrunt1"},
+      "lower_body": {"node_path": "World/Operator/ModularLowerBodySprite"},
+      "upper_body": {"node_path": "World/Operator/ModularUpperBodySprite"}
+    },
+    "spawns": [],
+    "properties": [
+      {"role": "operator", "property": "global_position", "value": [420, 360]},
+      {"role": "operator", "property": "arrow_aim_enabled", "value": true},
+      {"role": "operator", "property": "combat_loadout_mode", "value": "melee"},
+      {"role": "operator", "property": "primary_weapon_equipped", "value": false},
+      {"role": "operator", "property": "using_unarmed", "value": true},
+      {"role": "target", "property": "global_position", "value": [500, 360]}
+    ],
+    "processing": [{"role": "target", "physics": false, "process": false}],
+    "fixture": {"id": "combat_playground", "config": {"stationary_target": true}}
+  },
+  "timeline": [
+    {"tick": 12, "action": "aim_at_role", "role": "operator", "target_role": "target"},
+    {"tick": 18, "action": "input_press", "name": "attack_secondary"},
+    {"tick": 19, "action": "input_press", "name": "move_left"},
+    {"tick": 66, "action": "input_release", "name": "attack_secondary"},
+    {"tick": 84, "action": "input_release", "name": "move_left"},
+    {"tick": 118, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "operator_state", "role": "operator", "fields": ["global_position", "movement_direction", "aim_direction", "_block_phase", "_enemy_impact_lock_timer"], "ticks": [20, 24, 48, 78], "required": true},
+    {"id": "lower_body_state", "role": "lower_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "ticks": [20, 24, 48, 78], "required": true},
+    {"id": "upper_body_state", "role": "upper_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "ticks": [20, 24, 48, 78], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "target", "severity": "error"},
+    {"type": "probe_compare", "probe": "lower_body_state", "tick": 20, "field": "animation", "op": "eq", "value": "unarmed/locomotion/walk_01/w/lower_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 20, "field": "animation", "op": "eq", "value": "unarmed/defense/block_enter_01/e/upper_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 24, "field": "animation", "op": "eq", "value": "unarmed/defense/block_hold_01/e/upper_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 78, "field": "animation", "op": "eq", "value": "unarmed/defense/block_enter_01/e/upper_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 48, "field": "movement_direction", "op": "eq", "value": [-1.0, 0.0], "severity": "error"},
+    {"type": "probe_compare", "probe": "operator_state", "tick": 48, "field": "aim_direction", "op": "eq", "value": [1.0, 0.0], "severity": "error"},
+    {"type": "probe_compare", "probe": "lower_body_state", "tick": 48, "field": "animation", "op": "eq", "value": "unarmed/locomotion/walk_01/w/lower_body", "severity": "error"},
+    {"type": "probe_sequence_equal", "probe": "lower_body_state", "field": "animation", "points": [{"probe": "lower_body_state", "tick": 20}, {"probe": "lower_body_state", "tick": 24}, {"probe": "lower_body_state", "tick": 48}, {"probe": "lower_body_state", "tick": 78}], "tolerance": 0.0, "severity": "error"},
+    {"type": "probe_compare", "probe": "lower_body_state", "tick": 24, "field": "effective_visible", "op": "eq", "value": true, "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 24, "field": "effective_visible", "op": "eq", "value": true, "severity": "error"},
+    {"type": "no_unreleased_inputs", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["operator_state", "lower_body_state", "upper_body_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["combat", "operator", "guard", "mobile_guard", "presentation", "operator_animation"]
+}

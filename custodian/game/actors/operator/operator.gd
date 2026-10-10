@@ -1728,7 +1728,7 @@ func _update_animation():
 		)
 		if is_attacking and _sync_modular_action_domains():
 			return
-		if is_block_anim and _is_mobile_guard_composition_allowed():
+		if is_block_anim and _is_unarmed_guard_composition_phase():
 			if _sync_modular_guard_movement_presentation():
 				return
 			_play_block_animation(_guard_animation_for_current_phase())
@@ -4178,6 +4178,9 @@ func _register_body_presentation_layers() -> void:
 		[modular_lower_body_sprite, modular_upper_body_sprite]
 	)
 	_body_presenter.register_overlay_layers(
+		OperatorBodyPresenter.Owner.LEGACY_FULL_BODY, [modular_upper_fx_sprite]
+	)
+	_body_presenter.register_overlay_layers(
 		OperatorBodyPresenter.Owner.MODULAR_BODY, [modular_upper_fx_sprite]
 	)
 
@@ -4294,6 +4297,10 @@ func _play_optional_fx(
 	speed_scale := 1.0
 ) -> bool:
 	if modular_upper_fx_sprite == null:
+		return false
+	if _body_presenter.current_owner() == OperatorBodyPresenter.Owner.NONE:
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
 		return false
 	if not _has_fx_animation(profile, group, action, sector):
 		_hide_presentation_layer(modular_upper_fx_sprite, true)
@@ -8021,6 +8028,8 @@ func _play_operator_critical_hitspark(direction: Vector2) -> bool:
 	# Was built into the renderer's SpriteFrames at runtime from a raw PNG sheet.
 	# The renderer now shares the canonical resource, which such a mutation would
 	# leak into, and the same pixels are published as critical_hitspark_01.
+	if _body_presenter.current_owner() == OperatorBodyPresenter.Owner.NONE:
+		return false
 	var sector: StringName = &"w" if _is_facing_left(direction) else &"e"
 	if not _play_optional_fx(&"unarmed", &"cosmetic", &"critical_hitspark_01", sector):
 		_warn_missing_animation_once("critical_hitspark_01", "critical attack visual-only FX")
@@ -8293,9 +8302,12 @@ func _get_modular_fx_sector(direction: Vector2) -> StringName:
 
 
 func _is_mobile_guard_composition_allowed() -> bool:
+	return _is_unarmed_guard_composition_phase() and velocity.length() > 0.01
+
+
+func _is_unarmed_guard_composition_phase() -> bool:
 	return modular_locomotion_layers_enabled \
 		and _is_current_profile_unarmed() \
-		and velocity.length() > 0.01 \
 		and _block_phase in [&"enter", &"hold", &"hitreact", &"exit"] \
 		and not _guard_controller.is_break_locked()
 
@@ -8319,7 +8331,7 @@ func _unarmed_block_base_for_current_phase() -> String:
 
 
 func _sync_modular_guard_movement_presentation() -> bool:
-	if not _is_mobile_guard_composition_allowed():
+	if not _is_unarmed_guard_composition_phase():
 		return false
 	return _present_modular_unarmed_guard_action(
 		_unarmed_block_base_for_current_phase(), false
@@ -8330,8 +8342,6 @@ func _sync_modular_block_hold_movement_presentation() -> bool:
 	if _block_phase != &"hold":
 		return false
 	if not _is_current_profile_unarmed() or not modular_locomotion_layers_enabled:
-		return false
-	if velocity.length() <= 0.01:
 		return false
 	return _present_modular_unarmed_guard_action("unarmed_block_hold", false)
 

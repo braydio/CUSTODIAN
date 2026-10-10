@@ -2622,6 +2622,7 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
         "custodian/game/actors/operator/presentation/operator_animation_player.gd",
         "custodian/tools/validation/operator_modular_layers_smoke.gd"
       ],
@@ -2954,6 +2955,7 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
         "custodian/tools/validation/operator_upper_fx_canonical_smoke.gd"
       ],
       "timeout_sec": 40,
@@ -5108,6 +5110,25 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_mobile_guard_strafe",
+      "type": "moment",
+      "scenario": "combat/operator_mobile_guard_strafe",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "guard",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/scenarios/combat/operator_mobile_guard_strafe.json"
+      ],
+      "timeout_sec": 60,
       "needs_import": false
     },
     {
