@@ -38,7 +38,7 @@
   4. New parity smoke detects a deliberately mismatched/phantom owner and no missing images are misclassified as installed.
   5. No blocking defect or material evidence gap.
 - Validation: new focused affordance marker/owner parity smoke, awakening_first_return_progression, awakening_designation_locker_presentation, lift, geometry, 04→05 composition/05→06 connector; `python3 custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`.
-- Task overrides: `TASK OVERRIDE: review only; commits limited to durable receipt/summary/lifecycle changes and bounded correction packets. Do not modify reviewed implementation code.`
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Art-gated successors remain draft/manual pending exact verified Asset V2 art.
 
 ## Review Receipt
