@@ -2,6 +2,11 @@ class_name HubFirstSetMap
 extends AuthoredLevel2D
 
 const LAYOUT := preload("res://game/world/hub/first_set/hub_first_set_layout.gd")
+const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
+	"res://game/world/hub/hub_crown_transfer_ingress.gd"
+)
+const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
+const CROWN_TRANSFER_PROFILE := &"production"
 
 @onready var blockout_grid: AuthoredBlockoutGrid2D = $BlockoutGrid
 @onready var authored_navigation: AuthoredNavigationProvider2D = $NavigationRoot/AuthoredNavigationProvider
@@ -19,6 +24,8 @@ func _ready() -> void:
 	_build_markers()
 	_build_labels()
 	super._ready()
+	add_to_group("world_origin_branch")
+	_build_crown_transfer_ingress()
 
 
 func get_authoring_markers() -> Dictionary:
@@ -119,3 +126,33 @@ func _build_labels() -> void:
 		label.add_theme_constant_override("shadow_offset_y", 2)
 		label.z_index = 8
 		add_child(label)
+
+
+func _build_crown_transfer_ingress() -> void:
+	var world := get_parent()
+	var marker := get_named_marker(&"CrownTransfer")
+	if world == null or marker == null \
+			or world != get_node_or_null("/root/GameRoot/World") \
+			or world.get_node_or_null("RouteTraversalManager") == null:
+		return
+	var ingress := CROWN_TRANSFER_INGRESS_SCRIPT.new() as Node2D
+	ingress.name = "CrownTransferIngress"
+	ingress.call(
+		"configure_hub_route",
+		CROWN_TRANSFER_ROUTE,
+		CROWN_TRANSFER_PROFILE,
+		self,
+		&"Spawn_TwinReturn"
+	)
+	call_deferred("_attach_crown_transfer_ingress", ingress, world, marker.global_position)
+
+
+func _attach_crown_transfer_ingress(
+	ingress: Node2D,
+	world: Node,
+	world_position: Vector2
+) -> void:
+	if not is_instance_valid(ingress) or not is_instance_valid(world):
+		return
+	world.add_child(ingress)
+	ingress.global_position = world_position

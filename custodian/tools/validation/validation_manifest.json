@@ -5370,6 +5370,29 @@
       "needs_import": true
     },
     {
+      "id": "hub_twin_solaria_route",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_twin_solaria_route_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "twin_solaria",
+        "route_transaction"
+      ],
+      "owners": [
+        "custodian/content/routes/hub/hub_twin_solaria_route.json",
+        "custodian/content/routes/routes.json",
+        "custodian/game/world/hub/hub_crown_transfer_ingress.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/levels/authored/hub/twin_solaria/**",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/tools/validation/hub_twin_solaria_route_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "twin_solaria_runtime",
       "type": "godot_script",
       "script": "res://tools/validation/twin_solaria_runtime_smoke.gd",
