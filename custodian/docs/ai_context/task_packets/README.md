@@ -81,7 +81,6 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — Independently prove NPA-5 removed reaction/posture and critical-opportunity mutable state from `enemy.gd` into two focused authorities without changing hit t...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
@@ -311,7 +310,6 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `archived/REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 fresh-context review passed with zero findings; implementation closeout recorded 31/31 changed-file checks.
   - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
   - `NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — NPA-5 ready/auto; extracts reaction/posture into `EnemyReactionController` and keeps Grunt critical-open / paired-execution victim state in a separate `EnemyParryCritical` authority rather than creating a new reaction god-object.
-  - `REVIEW_NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` — paired NPA-5 review ready/auto and dependency-gated on NPA-5; passed review stops at the NPA-6 planning refresh.
 - Author NPA-6+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
 
 ### Ash-Bell / Ritualant Scene Closeout
