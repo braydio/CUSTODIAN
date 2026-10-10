@@ -1,7 +1,7 @@
 # REVIEW AWAKENING INTERACTIBLE CONSOLE PORT PRESENTATION V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-awakening-interactible-console-port-presentation-v1`
-- Status: `draft`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `awakening-interactible-console-port-presentation-v1`
@@ -11,6 +11,8 @@
 - Review stage: `post-land`
 - Review modes: `code, runtime, visual, asset-pipeline`
 - Paired review workstream: `none`
+- Review target workstream: `awakening-interactible-console-port-presentation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `<fill at claim>`
@@ -18,7 +20,7 @@
 - Visual review: `required`
 - Goal: Independently verify that give crèche console and damaged undergate port console a strong physical/mid-distance read using only their existing interaction/readout owners..
 - Completion boundary: Fresh-context inspection of the real landed production owners, asset gate, focused tests and mutation/evidence as applicable, with independent falsification of claimed acceptance and a user visual verdict when required.
-- Current measured state: This packet depends on the implementation and is draft/manual, with an unverified human art gate.
+- Current measured state: This packet is blocked/manual until the implementation is landed and the exact human-approved Art V2 inputs are verified.
 - Evidence: `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md`; archived `AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1.md`; implementation summary; current main runtime/scene/Asset V2 receipts.
 - Task-specific authority: actual Awakening scene/interaction owners, Layout and Asset V2; review does not create source art or determine human visual acceptance.
 - Work surface: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/game/world/awakening/awakening_plaque_interactable.gd`; `custodian/game/world/interactions/world_readout_interactable.gd`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_{support,terminal,port,shared_fx}.asset.json`; implemented focus tests and evidence.
@@ -35,7 +37,7 @@
   3. No duplicate hero art/extra interaction; scene alpha, anchors and geometry verified; human visual approval recorded.
   4. No blocking defect/material evidence gap; external human disposition recorded if required.
 - Validation: awakening_first_return_progression; awakening_undergate_lighting; awakening_art_registration; interaction_feedback console activation; focus/layout smoke; Asset V2 doctor; real renderer; --changed; git diff --check
-- Task overrides: `TASK OVERRIDE: review only; commits limited to review receipt/summary/lifecycle metadata and bounded correction packets. No reviewed-code edits.`
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
 ## Review Receipt

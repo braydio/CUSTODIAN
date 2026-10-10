@@ -11,6 +11,8 @@
 - Review stage: `post-land`
 - Review modes: `code, architecture`
 - Paired review workstream: `none`
+- Review target workstream: `awakening-interactible-affordance-asset-v2-contracts-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_V2_CONTRACTS_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `<fill at claim>`
@@ -35,7 +37,7 @@
   3. Future Hub/Supply/Sepulcher/Gate concepts are not introduced into the game or active required tracker.
   4. No blocking defect/material evidence gap; external human disposition recorded if required.
 - Validation: Asset V2 plan/status/doctor for seven families; registry generator --check; awakening_art_registration; --changed; git diff --check
-- Task overrides: `TASK OVERRIDE: review only; commits limited to review receipt/summary/lifecycle metadata and bounded correction packets. No reviewed-code edits.`
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
 ## Review Receipt

@@ -13,7 +13,9 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/operator"))
-from operator_2_5d_review import Operator2DReview, human_review_evidence_sha, qa_state, sha256_file
+import operator_2_5d_review as review_module
+from operator_2_5d_review import (Operator2DReview, human_review_evidence_sha, human_review_is_valid,
+                                  human_review_passes, qa_state, sha256_file)
 from animation_preview import Preview, ReviewSequence, SemanticIdentity, TimelineClip
 from ui.service import WorkbenchService
 from ui.state import AnimationSelection
@@ -31,6 +33,141 @@ human_evidence = dict(identity="operator_2_5d_128:u/posture/idle/ne", manifest_s
     frames=1, frame_size=[128, 128], durations=[0.125], findings_sha256="q")
 assert human_review_evidence_sha(**human_evidence) != human_review_evidence_sha(**{**human_evidence, "findings_sha256":"changed"})
 assert human_review_evidence_sha(**human_evidence) != human_review_evidence_sha(**{**human_evidence, "durations":[0.25]})
+approval_sha = human_review_evidence_sha(**human_evidence)
+canonical_approval = {
+    "status": "APPROVED",
+    "provenance": {
+        "kind": "workbench_explicit_user",
+        "reviewer": "human-user",
+        "control": "polish-human-approved",
+    },
+    "evidence_sha256": approval_sha,
+}
+assert human_review_is_valid("NEEDS_HUMAN_REVIEW", {"status": "REQUIRED"}, approval_sha)
+assert not human_review_passes("NEEDS_HUMAN_REVIEW", {"status": "NOT_REQUIRED"}, approval_sha)
+assert not human_review_is_valid("NEEDS_HUMAN_REVIEW", {"status": "APPROVED"}, approval_sha)
+assert not human_review_is_valid("NEEDS_HUMAN_REVIEW", {**canonical_approval, "evidence_sha256": "forged"}, approval_sha)
+assert not human_review_is_valid("NEEDS_HUMAN_REVIEW", {**canonical_approval,
+    "provenance": {**canonical_approval["provenance"], "reviewer": "caller"}}, approval_sha)
+assert human_review_passes("NEEDS_HUMAN_REVIEW", canonical_approval, approval_sha)
+assert not human_review_passes("RED", canonical_approval, approval_sha)
+assert not human_review_is_valid("RED", canonical_approval, approval_sha)
+for status in ("GREEN", "YELLOW"):
+    assert human_review_is_valid(status, {"status": "NOT_REQUIRED"}, approval_sha)
+    assert human_review_passes(status, {"status": "NOT_REQUIRED"}, approval_sha)
+    assert not human_review_is_valid(status, canonical_approval, approval_sha)
+
+with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
+    root = Path(raw)
+    workbench = root / "workbench"
+    workbench.mkdir()
+    manifest = workbench / "workbench.json"
+    document = workbench / "workbench.aseprite"
+    manifest.write_text("fixture manifest")
+    document.write_bytes(b"fixture physical document")
+    reference = root / "reference.png"
+    Image.new("RGBA", (128, 128), (1, 2, 3, 255)).save(reference)
+    reference_sha = sha256_file(reference)
+    profile_path = root / "custodian/content/data/operator/authoring/operator_art_profile.json"
+    profile_path.parent.mkdir(parents=True)
+    profile_path.write_text(json.dumps({
+        "active_authoring_profile": "operator_2_5d_128",
+        "profiles": {"operator_2_5d_128": {"profile_sha256": "profile-sha"}},
+        "canonical_visual_reference": {"sha256": reference_sha, "path": "reference.png"},
+    }))
+    art_root = root / ".ai/operator_art_agent/render"
+    art_root.mkdir(parents=True)
+    frame_path = art_root / "frame.png"
+    Image.new("RGBA", (128, 128), (17, 34, 51, 255)).save(frame_path)
+    selection = SimpleNamespace(profile="operator", group="posture", action="idle", direction="ne",
+        art_generation="operator_2_5d_128", authoring_identity="operator_2_5d_128:operator/posture/idle/ne")
+    qa_findings = [{"severity": "major", "code": "fixture-major"}]
+    qa = {"schema": "custodian.operator_art_qa.v2", "status": "NEEDS_HUMAN_REVIEW", "findings": qa_findings}
+
+    class ReceiptArt:
+        aseprite = "fixture-aseprite"
+        def inspect_polish_contract(self, _session): return {"valid": True, "art_generation": "operator_2_5d_128"}
+
+    class ReceiptService:
+        def workspace(self, _selection): return workbench
+        def polish_attach(self, _selection): return workbench
+        def _polish(self, _selection): return SimpleNamespace(service=ReceiptArt())
+        def polish_analyze(self, _session): return {"qa": qa}
+
+    receipt_owner = Operator2DReview(service=ReceiptService(), repo_root=root, workspace_root=workbench)
+    physical_contract = {"width": 128, "height": 128, "frames": 1, "durations": [0.125]}
+    import animation_workbench
+    saved_contract = animation_workbench.inspect_saved_document_contract
+    animation_workbench.inspect_saved_document_contract = lambda *_args: physical_contract
+
+    last_approval = {}
+    def current_receipt_for(human):
+        authority = {
+            "workbench_manifest_sha256": sha256_file(manifest),
+            "workbench_document_sha256": sha256_file(document),
+            "render_sha256": "render-sha",
+            "frame_sha256": [sha256_file(frame_path)],
+            "frame_paths": [str(frame_path.resolve())],
+            "canonical_profile_sha256": "profile-sha",
+            "normalized_reference_sha256": reference_sha,
+            "frames": 1,
+            "frame_size": [128, 128],
+            "durations": [0.125],
+        }
+        qa_record = {"status": "NEEDS_HUMAN_REVIEW",
+            "findings_sha256": hashlib.sha256(json.dumps(qa_findings, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest(),
+            "findings": qa_findings}
+        human_digest = human_review_evidence_sha(identity=selection.authoring_identity,
+            manifest_sha256=authority["workbench_manifest_sha256"], document_sha256=authority["workbench_document_sha256"],
+            frame_sha256=authority["frame_sha256"], profile_sha256="profile-sha", reference_sha256=reference_sha,
+            frames=1, frame_size=[128, 128], durations=[0.125], findings_sha256=qa_record["findings_sha256"])
+        approval_record = receipt_owner._approval_record(human_digest)
+        last_approval["record"] = approval_record
+        if human == "AUTO_APPROVAL":
+            human = approval_record
+        evidence = hashlib.sha256(json.dumps({"identity": selection.authoring_identity, "authority": authority,
+            "qa": qa_record, "human_review": human}, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+        request_base = {"schema": "custodian.operator_2_5d_sandbox_request.v1", "request_id": "receipt-fixture",
+            "authoring_identity": selection.authoring_identity, "evidence_sha256": evidence,
+            "frame_size": [128, 128], "durations": [0.125],
+            "frames": [{"path": "frame_000.png", "sha256": sha256_file(frame_path),
+                        "pixel_sha256": hashlib.sha256(Image.open(frame_path).convert("RGBA").tobytes()).hexdigest()}]}
+        request_payload = json.dumps(request_base, separators=(",", ":"), ensure_ascii=False)
+        request_sha = hashlib.sha256(request_payload.encode()).hexdigest()
+        bundle = receipt_owner.preview_root / "receipt-fixture"
+        bundle.mkdir(parents=True, exist_ok=True)
+        (bundle / "frame_000.png").write_bytes(frame_path.read_bytes())
+        request = {**request_base, "payload_json": request_payload, "request_sha256": request_sha}
+        request_path = bundle / "request.json"
+        request_path.write_text(json.dumps(request))
+        result_path = bundle / "result.json"
+        result_path.write_text(json.dumps({"request_sha256": request_sha, "presentation": "PASSED"}))
+        sandbox = {"status": "PASSED", "request_sha256": request_sha,
+            "result_sha256": sha256_file(result_path), "result_path": str(result_path.resolve()),
+            "request_path": str(request_path.resolve()), "production_unchanged": True,
+            "production_before": {}, "production_after": {}}
+        receipt = {"schema": "custodian.operator_2_5d_review_receipt.v1",
+            "authoring_identity": selection.authoring_identity, "session_path": str(workbench.resolve()),
+            "authority": authority, "qa": qa_record, "human_review": human, "sandbox": sandbox,
+            "runtime_verified": False, "evidence_sha256": evidence}
+        receipt["receipt_sha256"] = hashlib.sha256(json.dumps(receipt, sort_keys=True,
+            separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+        receipt_path = receipt_owner._receipt_path(selection)
+        receipt_path.parent.mkdir(parents=True, exist_ok=True)
+        receipt_path.write_text(json.dumps(receipt))
+        return receipt_owner.current_receipt(selection)
+
+    try:
+        assert current_receipt_for({"status": "REQUIRED"})["runtime_verified"] is False
+        assert current_receipt_for({"status": "NOT_REQUIRED"}) is None
+        assert current_receipt_for("AUTO_APPROVAL")["runtime_verified"] is True
+        current_approval = last_approval["record"]
+        assert current_receipt_for({**current_approval, "provenance": {"kind": "forged"}}) is None
+        assert current_receipt_for({**current_approval, "evidence_sha256": "stale"}) is None
+        assert current_receipt_for({"status": "APPROVED", "provenance": current_approval["provenance"],
+            "evidence_sha256": approval_sha}) is None
+    finally:
+        animation_workbench.inspect_saved_document_contract = saved_contract
 
 with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     root = Path(raw)
@@ -41,6 +178,43 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     class Service:
         def workspace(self, _selection): return root / "workbench"
     owner = Operator2DReview(service=Service(), repo_root=root, workspace_root=root / "workbench")
+    try:
+        owner.inspect(selection, human_disposition={"status": "NOT_REQUIRED"})
+        raise AssertionError("the removed free-form disposition seam must reject legacy callers")
+    except TypeError:
+        pass
+
+    class ReviewFlow:
+        instances = []
+        def __init__(self, **_kwargs):
+            self.calls = []
+            self.instances.append(self)
+        def inspect(self, _selection, *, sandbox_result=None):
+            self.calls.append(("inspect", sandbox_result))
+            if sandbox_result:
+                return {"qa": {"status": "NEEDS_HUMAN_REVIEW"}, "human_review": {"status": "APPROVED"},
+                        "sandbox": sandbox_result, "runtime_verified": True}
+            return {"qa": {"status": "NEEDS_HUMAN_REVIEW"}, "human_review": {"status": "REQUIRED"},
+                    "sandbox": {"status": "NOT_RUN"}, "runtime_verified": False}
+        def _approve_human_review(self, _selection):
+            self.calls.append(("approve", None))
+            return {"qa": {"status": "NEEDS_HUMAN_REVIEW"}, "human_review": {"status": "APPROVED"},
+                    "sandbox": {"status": "NOT_RUN"}, "runtime_verified": False}
+        def run_sandbox(self, _selection, _receipt):
+            self.calls.append(("sandbox", None))
+            return {"status": "PASSED", "request_sha256": "request", "result_sha256": "result"}
+
+    real_review_owner = review_module.Operator2DReview
+    review_module.Operator2DReview = ReviewFlow
+    flow_service = SimpleNamespace(repo_root=root, workspace_root=root / "workbench")
+    try:
+        waiting = WorkbenchService.review_and_sandbox(flow_service, selection, human_approved=False)
+        assert not waiting["runtime_verified"] and ReviewFlow.instances[-1].calls == [("inspect", None)]
+        verified = WorkbenchService.review_and_sandbox(flow_service, selection, human_approved=True)
+        assert verified["runtime_verified"]
+        assert [name for name, _ in ReviewFlow.instances[-1].calls] == ["inspect", "approve", "sandbox", "inspect"]
+    finally:
+        review_module.Operator2DReview = real_review_owner
     sandbox_owner = Operator2DReview(service=Service(), repo_root=ROOT, workspace_root=root / "workbench")
     sandbox_owner.preview_root = root / "runtime_preview"
     digest = sha256_file(frame)

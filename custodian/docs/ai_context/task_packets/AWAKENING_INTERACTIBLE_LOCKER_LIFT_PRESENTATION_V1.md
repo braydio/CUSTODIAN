@@ -1,10 +1,10 @@
 # AWAKENING INTERACTIBLE LOCKER LIFT PRESENTATION V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-locker-lift-presentation-v1`
-- Status: `draft`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1;review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -23,7 +23,7 @@
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `custodian/game/world/home/sidearm_locker_interactable.gd`; `custodian/game/world/awakening/awakening_transit_lift.gd`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_{locker,lift,support,shared_fx}.asset.json`; directly affected focused validation.
 - Change:
-  1. ART GATE: Keep draft/manual until exact locker/lift/support/FX required states are approved on Dropbox and verified through Asset V2, then promote implementation/review pair after predecessor reviews pass. Existing core art stays canonical.
+  1. ART GATE: Keep blocked/manual until exact locker/lift/support/FX required states are approved on Dropbox and verified through Asset V2, then promote implementation/review pair after predecessor reviews pass. Existing core art stays canonical.
   2. At Layout `p9_locker` marker and actual scene `SidearmLocker`, add shallow relief footing, brass designation seal/inset, warm sconce and correct floor approach cue. Retain original 4-state `closed -> authorize_open -> open_loaded -> empty`, 128×160, one-shot P-9 grant, offset and on-wall relief; DO NOT generate/wire a second full locker body.
   3. Bind individual lower/upper lift call housings, service stop floor plates and cyan ready/busy lamps to the existing two Layout station positions, while retaining one `TransitLift` owner. No duplicate lift buttons, duplicate group registrations or changes to ride duration/current_station logic.
   4. Idle long-read physical presence, mid-read floor/utility mounting, near-read only if actual available state. On emptied locker and during lift busy, lights may show an inert/processing state but never imply an actionable prompt.
@@ -44,6 +44,19 @@
 - Dropbox canonical batch root: `/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/`.
 - **Not claimable**: ART UNAVAILABLE. Remain draft/manual until approved source PNGs, SHA-256, frame/alpha validation, human style approval, Asset V2 verified status, and predecessor reviews are documented. Promote this packet and its review together after checking current main and regenerating the queue index.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
+
+## Required visual review handoff
+
+- Publication root: `/CUSTODIAN/visual_review/awakening-interactible-locker-lift-presentation-v1/` via current `publish_review_artifacts.py` protocol after focused objective tests pass.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`.
+- Evidence budget: one before/after contact sheet and at most two representative native-scale stills per setting (more only when temporal animation cannot be judged from stills). Keep review artifacts short-lived/delete-after-review unless explicitly retained.
+- External human/ChatGPT questions (must be answered and recorded, not self-approved by the implementer):
+  1. Does the P-9 Locker remain the same high-quality wall-integrated existing hero, with clearer approach/readability?
+  2. Do both lift call stations look usable and visually connected to one functional lift?
+  3. Do busy/empty states avoid promising an action that cannot currently be taken?
+  4. Are the floor/trim/grate relationships coherent without hiding or changing the registered Locker→Dust connector?
+  5. Are the subtle brass/cyan cues readable but restrained at normal game zoom?
+- If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
@@ -66,8 +79,8 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-locker-lift-presentation-v1`
-- Next packet state: `draft`
-- Refresh owner: `human-art-approval`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`

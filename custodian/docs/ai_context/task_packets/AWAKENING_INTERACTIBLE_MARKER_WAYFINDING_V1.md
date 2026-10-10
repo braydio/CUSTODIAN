@@ -1,10 +1,10 @@
 # AWAKENING INTERACTIBLE MARKER WAYFINDING V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-marker-wayfinding-v1`
-- Status: `draft`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1;review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
 - Locks: `awakening-interaction-presentation, awakening-wayfinding`
 - Kind: `implementation`
 - Review: `auto`
@@ -23,7 +23,7 @@
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_wayfinding.asset.json`; `custodian/content/metadata/assets/families/gate_of_dust.asset.json`; `design/04_architecture/AWAKENING_FIRST_RETURN.md`; directly affected focused validation.
 - Change:
-  1. ART GATE: This optional visual slice remains draft/manual until a deliberately selected subset of recommended `awakening_interact_wayfinding` states has source/Dropbox/human art approval and verified V2 routing. Do NOT require all recommended or future states for the current story.
+  1. ART GATE: This optional visual slice remains blocked/manual until a deliberately selected subset of recommended `awakening_interact_wayfinding` states has source/Dropbox/human art approval and verified V2 routing. Do NOT require all recommended or future states for the current story.
   2. Use Layout marker IDs and scene SetPieces to add subtle Register of Departures panel, Gate rest/checkpoint approach medallion, Attestation dais authority marker, lore plaque frame and optional Chapel orientation piece, only where approved art physically fits.
   3. Make scenic markers visually important without false activation: long-read silhouette, mid-read floor and directed lamplight, **no** active near-read interaction pulse, no Operator target registration and no HUD 'press' hint.
   4. Keep the Gate of Dust sealed, its five existing hero components intact, approach/Chapel routes and unlocks untouched. The Road south reach and existing Gate camera reveal remain as live. Avoid replacing foreground/underlay or creating false walkable paths.
@@ -44,6 +44,19 @@
 - Dropbox canonical batch root: `/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/`.
 - **Not claimable**: ART UNAVAILABLE. Remain draft/manual until approved source PNGs, SHA-256, frame/alpha validation, human style approval, Asset V2 verified status, and predecessor reviews are documented. Promote this packet and its review together after checking current main and regenerating the queue index.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
+
+## Required visual review handoff
+
+- Publication root: `/CUSTODIAN/visual_review/awakening-interactible-marker-wayfinding-v1/` via current `publish_review_artifacts.py` protocol after focused objective tests pass.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`.
+- Evidence budget: one before/after contact sheet and at most two representative native-scale stills per setting (more only when temporal animation cannot be judged from stills). Keep review artifacts short-lived/delete-after-review unless explicitly retained.
+- External human/ChatGPT questions (must be answered and recorded, not self-approved by the implementer):
+  1. Can you identify the Register, Gate checkpoint, Attestation dais, lore marker and optional Chapel landmarks without HUD captions?
+  2. Is it still clear these are scenic landmarks, not currently usable consoles/buttons?
+  3. Does Gate aperture remain convincingly sealed, with no false invitation to activate?
+  4. Does the added dressing stay coherent with lighting, room art, camera and existing routes?
+  5. Are landmark cue brightness and density restrained enough to preserve the scene hierarchy?
+- If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
@@ -66,8 +79,8 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-marker-wayfinding-v1`
-- Next packet state: `draft`
-- Refresh owner: `human-art-approval`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`

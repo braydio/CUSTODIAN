@@ -11,6 +11,8 @@
 - Review stage: `post-land`
 - Review modes: `code, architecture`
 - Paired review workstream: `none`
+- Review target workstream: `awakening-interactible-deferred-family-handoff-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_DEFERRED_FAMILY_HANDOFF_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Reviewed main: `<fill at claim>`
@@ -35,7 +37,7 @@
   3. Handoff avoids duplicate Hub families and provides a useful future task-packet dependency map.
   4. No blocking defect/material evidence gap; external human disposition recorded if required.
 - Validation: Repo docs/task packet consistency; crosswalk completeness; changed-doc validation; git diff --check
-- Task overrides: `TASK OVERRIDE: review only; commits limited to review receipt/summary/lifecycle metadata and bounded correction packets. No reviewed-code edits.`
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
 ## Review Receipt
