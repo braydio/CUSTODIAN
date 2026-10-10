@@ -21,7 +21,7 @@ The registered `commanded_ally_targeting_contract` smoke exercises actual projec
 - `git diff --check` and validation manifest JSON parse: passed.
 - Final `run_validation.py --changed --json`: coverage complete; 21 passed, 2 failed, 1 skipped. `actor_relationship_contract` failed and blocked `awakening_late_seams_v1`; the changed sweep also failed `world_transition_handoff`.
 
-The `actor_relationship_contract` failure was reproduced from clean project-root `main@1da9c970f27ff37298abb190ce8d3075d4837f0b`. It fails its legacy Enemy allegiance fallback and player-targeting assertions and reports unavailable Vaultwing animation imports. The changed-sweep `world_transition_handoff` failure reports `Qualified Awakening completion did not enter Hub`; the same check is also red on clean main, where the local environment reports missing GDExtension and resource imports. Neither failing check touches NPA-7's source surface.
+The `actor_relationship_contract` failure was reproduced on clean project-root `main@1da9c970f27ff37298abb190ce8d3075d4837f0b` and again on the latest clean `origin/main@83e0008e317958d767aac321d7127ecd33c768ff`. It fails its legacy Enemy allegiance fallback and player-targeting assertions and reports unavailable Vaultwing animation imports. The changed-sweep `world_transition_handoff` failure reports `Qualified Awakening completion did not enter Hub`; the same check is also red on clean `origin/main@83e0008`, where this checkout reports a missing GDExtension, script classes, and scene resources. Neither failing check touches NPA-7's source surface.
 
 ## Process Feedback
 

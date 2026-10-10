@@ -46,7 +46,7 @@
 - Completion boundary satisfied: `no`
 - Acceptance satisfied: `no`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: Implementation changes are present in the claimed worktree. The focused `commanded_ally_targeting_contract` smoke passes with real projectile emission/damage and no-fire transitions; `allied_drone_navigation_walkability` passes. The changed-file sweep has complete coverage but is blocked by pre-existing `actor_relationship_contract` and unrelated `world_transition_handoff` failures; the actor relationship failure was also reproduced on clean `origin/main@1da9c970`.
+- Evidence: Implementation changes are present in the claimed worktree. The focused `commanded_ally_targeting_contract` smoke passes with real projectile emission/damage and no-fire transitions; `allied_drone_navigation_walkability` passes. The changed-file sweep has complete coverage but is blocked by pre-existing `actor_relationship_contract` and unrelated `world_transition_handoff` failures; both checks were also reproduced as red on clean project-root `origin/main@83e0008`.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
