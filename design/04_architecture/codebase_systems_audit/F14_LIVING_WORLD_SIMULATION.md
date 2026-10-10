@@ -119,7 +119,7 @@ The target player promise is that areas the player leaves continue to evolve wit
 
 **New current-main drift discovered:** Production M6 `ProcGenChunkResidencyPolicy` does evict *disposable painted presentation/cache residency* for distant chunks, while canonical semantics, collision/navigation and foliage identity remain authoritative. It **does not evict or reconstitute Enemy actors**. `AmbientEnemySpawner` uses a per-run `stable_spawn_ordinal` for pacing and its scheduled `_spawn_queue`; `AmbientEnemyCamp` can independently reactivate/spawn based on physical proximity. These are **not a durable Domain/Group/Actor identity registry** and cannot silently become F14 handoff authority. `SimulationInterestManager` only throttles existing live actors and is not a population owner. `Enemy` retains gameplay health, death/corpse/loot and behavior state. **Do not connect physical actor destruction to Archive Resolve or visual chunk eviction.**
 
-### F14-C narrowed, design-authorized first proof
+### Historical F14-C1 first-proof design contract (implemented and reviewed)
 
 **Design decision:** Author one narrow implementation workstream, **`living-world-entity-reification-handoff`**, to prove an **actual `Enemy` scene (Grunt fixture)** moving `physical → abstract → physical` under explicit, synthetic **Domain + Location A/B** residency requests. This advances the physical-actor bridge *without* prematurely choosing F15's global topology, world-size or production streaming triggers. The broader multi-actor/multi-location production integration is **not** authorized by this step; it must consume F15's later geography/scene binding.
 
@@ -139,7 +139,7 @@ The target player promise is that areas the player leaves continue to evolve wit
 
 **Boundary following C1:** C2 production registration and automatic unload/reentry must be separately refreshed with F15's **stable real geographic IDs/topology** and F02 procgen/NPA/ambient-spawner lifecycle. Later F14-D owns REMAP-3 save/restart integration; F14-E owns two-site player-facing soak. Continuous geography, Ports and vehicle travel stay F15/F09-owned. No new art assets.
 
-**Packet promotion:** C1 implementation and paired review may be authored **now** with `draft/manual` pending the official repository-local targeted authoring preflight, then promoted together to `ready/auto`, regenerated in the managed queue index and landed on `origin/main` *before dispatcher claim*. Do not mark them claimable merely because the design is locked. Keep the exact recorded Authoring chat URL. The unrelated Awakening validator drift is a separate correction, not license to bypass targeted validation.
+**Historical C1 promotion, now complete:** the implementation and paired review passed targeted authoring preflight, were promoted/published on `origin/main`, implemented, reviewed, corrected and independently re-reviewed PASS. **Do not reauthor or re-claim C1**. For later C2 implementation pairs, the same preflight/index/publication gates still apply *after* F15 geography/residency decisions are locked; this planning refresh does not bypass them.
 
 ## F14-C1 accepted; production F14-C2/F15 boundary refresh (2026-10-09)
 
