@@ -1425,3 +1425,10 @@ Last updated: 2026-10-02
 - `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md` — approved planning authority for ten nonplayable Awakening off-route support regions and their art/runtime/seam invariants; not yet implemented.
 - `design/04_architecture/AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md` — all 30 exact image-generation prompts, per-state sizes, source_work and inbox paths for Asset V2 staging; no images exist yet.
 - `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md` — AP0–AP4 implementation/review dependency chain and human art acceptance gates.
+
+- `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md` — main Awakening interactible discoverability presentation contract and six-slice packet DAG, separate from gameplay interaction owners and off-route perimeter support.
+- `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md` — 77 state-level source art requirements in 12 conceptual Asset V2 families (27 current required, 14 recommended, 36 deferred); source_work/inbox sizes, frames, alpha and Dropbox art gates; no art is claimed available.
+- `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1.md` + paired review — ready/auto no-art visual-host and posted-marker/live-owner reconciliation.
+- `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_V2_CONTRACTS_V1.md` + paired review — ready/auto source-pending V2 family/required-demand registration, no forged art input.
+- `custodian/docs/ai_context/task_packets/{AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1,AWAKENING_INTERACTIBLE_LOCKER_LIFT_PRESENTATION_V1,AWAKENING_INTERACTIBLE_MARKER_WAYFINDING_V1}.md` + paired reviews — art-gated draft/manual integration of current console, locker/lift and scenic-wayfinding layers.
+- `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_DEFERRED_FAMILY_HANDOFF_V1.md` + paired review — ready/auto doc-only crosswalk of future transfer, civic, supply, memorial and gate ideas into actual future owner/Hub packets; no new current Awakening interactions.
