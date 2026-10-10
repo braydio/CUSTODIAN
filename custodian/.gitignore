@@ -9,9 +9,6 @@
 .import/
 .mono/
 
-# Local addon cache
-addons/godot_mcp/.cache/
-
 # Export
 export_presets.cfg
 *.translation
