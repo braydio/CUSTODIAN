@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-09
+Last updated: 2026-10-10
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -43,6 +43,7 @@ normal closeout.
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Make the Adjudication Dais the first embodied Contract decision: surface one provisional first Contract, accept it exactly once, persist that accepted scenar...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Integrate commanded drones/droids with already-live shared relationship/targetability contracts while preserving squad command behavior, explicit-target exce...
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` — Extend the proven movement-permissive guard composition to the remaining defensive presentations that already allow movement, without weakening contact weigh...
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
@@ -78,6 +79,7 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` — Independently verify the landed implementation against its archived packet and live runtime.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — Independently verify that NPA-7 integrates commanded drones/droids with the existing relationship/targetability resolver, preserves autonomous-vs-explicit ta...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
@@ -307,8 +309,8 @@ Non-player actor planning / refresh chat: https://chatgpt.com/g/g-p-6980439e5568
   - `archived/REVIEW_ENEMY_SAVAGE_CHAIN_ABILITY_EXTRACTION.md` — paired NPA-3 fresh-context review passed with zero findings; implementation closeout recorded 31/31 changed-file checks.
   - `archived/NPA_4_STANDARD_ENEMY_MELEE_EXTRACTION.md` / archived paired review — NPA-4 complete; fresh review landed at `8817908b1` with zero defects/gaps/findings and nine focused runtime checks green. `StandardEnemyMelee` is the sole ordinary-melee transaction authority.
   - `archived/NPA_5_ENEMY_REACTION_POSTURE_EXTRACTION.md` / archived paired review — NPA-5 complete; the fresh-context review passed at `f5dc6da50` with zero findings.
-  - `NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` — refresh-complete NPA-6 implementation packet; moves Enemy health/death/corpse transitions and one-time loot payload assembly into one focused lifecycle owner while retaining the existing corpse collector and carrier boundaries. Implementation and paired review are dependency-gated on NPA-5 review and NPA-6 implementation respectively.
-- Author NPA-7+ against reviewed landed predecessor seams rather than freezing speculative shared actor APIs. The target is composition over six actor families, not a universal NPC superclass.
+  - `archived/NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` and archived paired review — NPA-6 implementation and independent review complete; review passed with zero findings and the post-sync changed-file sweep passed 42/42 with complete coverage. Enemy lifecycle ownership is extracted while the corpse collector and loot carrier boundaries remain intact.
+  - `NPA_7_COMMANDED_ALLY_CONTRACTS.md` / `REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` — published ready/auto implementation/review pair for commanded drone/droid relationship, targetability, shot-time validation and squad-local identity contracts. Implementation is claimable; review remains dependency-gated until implementation lands. Bonded Vaultwing commands remain outside NPA-7.
 
 ### Ash-Bell / Ritualant Scene Closeout
 
