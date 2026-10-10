@@ -2,7 +2,7 @@
 
 ## Task-Packet Queue Semantics (2026-10-09)
 
-Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `draft/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
+Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `blocked/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
 
 ## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
 
@@ -2601,3 +2601,9 @@ review; WB25-6 remains the separate publication/runtime-promotion authority.
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
 The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
+
+## Awakening interactible affordance continuation (2026-10-10)
+
+User gameplay review exposed a discoverability gap: an interactible terminal did not read as a physical use object until its prompt. The current authored Awakening scene has four live interaction owners: Crèche readout, P-9 locker, one two-station Dust Lung lift, and damaged Port status readout. Layout also has scenic/encounter/future markers; `lift_mechanism` is marked interactible without being separately built by `AwakeningFirstReturn._build_interactables()` and is queued for evidence-based kind reconciliation.
+
+The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is now specified at `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`, with 77 artwork states in its V2 manifest (27 current-required, 14 recommended, 36 future-deferred). New artwork is **not present**. Two no-art packets (foundation owner parity/presenter and source-pending family registration) are ready/auto with their paired reviews. Crèche/Port, Locker/Lift and scenic wayfinding integrations are blocked/manual and must stay parked until exact reviewed Dropbox state inputs, verified V2 routing and predecessor reviews exist; a separate ready/auto future-owner crosswalk avoids prematurely implementing Hub/Continuity/supply/Sepulcher/gate controls. This overlay does not change existing 04→05 registered composition, 05→06 passage or gameplay route and is independent of the off-route AP0–AP4 perimeter artwork.
