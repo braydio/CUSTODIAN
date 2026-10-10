@@ -1032,6 +1032,7 @@ func _compose_runtime_dependencies() -> OperatorRuntimeDependencies:
 		dependencies.world_history = scene_root.get_node_or_null("WorldHistory")
 		dependencies.dev_mode = scene_root.get_node_or_null("DevMode")
 		dependencies.game_state = scene_root.get_node_or_null("GameState")
+		dependencies.dev_console = scene_root.get_node_or_null("DevConsole")
 	return dependencies
 
 
@@ -13303,9 +13304,11 @@ func _sample_input_frame() -> void:
 
 ## The developer shell owns keyboard focus while open; local gameplay sampling
 ## must not also read the keys the player is typing. External control (replay,
-## AI, possession) is unaffected -- it is handled above this check.
+## AI, possession) is unaffected -- it is handled above this check. The
+## reference comes from `_runtime_dependencies`, bound once at the facade seam
+## in `_compose_runtime_dependencies()`, not a fresh `/root/...` lookup here.
 func _is_local_input_suppressed() -> bool:
-	var dev_console := get_node_or_null("/root/DevConsole")
+	var dev_console := _runtime_dependencies.dev_console
 	return dev_console != null \
 		and dev_console.has_method("is_open") \
 		and bool(dev_console.call("is_open"))

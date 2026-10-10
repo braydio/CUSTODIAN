@@ -32,7 +32,8 @@
     "custodian/addons/indie_game_components/**",
     "custodian/addons/limboai/**",
     "custodian/addons/sprite_pipeline/**",
-    "custodian/addons/__MACOSX/**"
+    "custodian/addons/__MACOSX/**",
+    "custodian/addons/dev-console/**"
   ],
   "tests": [
     {
