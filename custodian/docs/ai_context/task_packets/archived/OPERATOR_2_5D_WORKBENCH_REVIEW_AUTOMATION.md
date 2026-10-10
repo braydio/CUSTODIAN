@@ -183,3 +183,14 @@ The sandbox is proof, not publication.
 - Refresh reason: `none`
 - Next action: `Launch the paired review from a fresh reviewer context. Harden paired_review_runner.py separately so it scopes current-review gate detection to the current packet authority and excludes successor handoff fields.`
 - Blockers or open questions: `none`
+
+## Independent Review
+
+- Status: `findings`
+- Reviewer provenance: `different-agent; fresh reviewer context`
+- Reviewed main: `23e88f377` (`operator 2.5d review, runtime sandbox`)
+- Receipt: `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION_CLAUDE_SUMMARY.md`
+- Findings: `R0-01` blocks acceptance item (9): `Operator2DReview.inspect()` accepts arbitrary human-disposition statuses, and `current_receipt()` treats `NOT_REQUIRED` as passing even when live QA is `NEEDS_HUMAN_REVIEW`. This can make a major finding effectively runtime-verified without approval. See the receipt and summary for exact references and validation evidence.
+- Focused validation: `operator_2_5d_review`, `operator_2_5d_polish`, `operator_2_5d_ingress`, `operator_animation_plan`, `operator_animation_preview_timeline`, `operator_workbench_ui`, `operator_motion_preview`, direct `operator_runtime_animation_authority_smoke.py`, and `git diff --check` passed.
+- Completion: `Review activity complete; WB25-4 acceptance remains failed pending a bounded correction and fresh re-review.`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
