@@ -4439,6 +4439,33 @@
       "needs_import": false
     },
     {
+      "id": "world_transition_handoff",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_transition_handoff_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "hub",
+        "world_transition",
+        "rollback",
+        "authority"
+      ],
+      "owners": [
+        "custodian/project.godot",
+        "custodian/game/app/boot/runtime_entrypoint.gd",
+        "custodian/game/systems/world/world_transition_*.gd",
+        "custodian/game/systems/core/systems/navigation_system.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/camera.gd",
+        "custodian/game/world/hub/hub_runtime_host.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/tools/validation/world_transition_handoff_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
       "id": "hud_interaction_prompt_lease",
       "type": "godot_script",
       "script": "res://tools/validation/hud_interaction_prompt_lease_smoke.gd",
@@ -5705,7 +5732,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_ingress_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "2_5d", "source_intake"],
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "source_intake"
+      ],
       "owners": [
         "custodian/tools/operator/operator_2_5d_ingress.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
@@ -5719,7 +5751,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/enemy_savage_smoke.gd",
       "tier": "actor",
-      "tags": ["combat", "enemy", "savage", "pounce", "chain"],
+      "tags": [
+        "combat",
+        "enemy",
+        "savage",
+        "pounce",
+        "chain"
+      ],
       "owners": [
         "custodian/game/actors/enemies/abilities/savage_pounce.gd",
         "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",
@@ -5739,7 +5777,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/savage_runtime_smoke.gd",
       "tier": "actor",
-      "tags": ["combat", "enemy", "savage", "presentation"],
+      "tags": [
+        "combat",
+        "enemy",
+        "savage",
+        "presentation"
+      ],
       "owners": [
         "custodian/game/actors/enemies/abilities/savage_pounce.gd",
         "custodian/game/actors/enemies/abilities/savage_pounce_config.gd",

@@ -20,10 +20,11 @@
 - `custodian/tools/validation/levels/kenney_isometric_blockout_playtest_smoke.gd` — focused wrapper, spawn, presentation switching, collision-ownership, asset, bounds, and production-main-scene checks.
 - `design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md` — exact 32px-grid spatial authority/spec for the first persistent Hub set north of Awakening: South Reach, Forum, literal two-connector Sepulcher loop, Archive Rise/Crown Transfer, Muster Court, and ordinary Continuity Port.
 - `design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md` — seven-slice H1-H7 tracker for blockout → Awakening handoff → Forum Contract/prewarm → optional Twin → Port deployment → Campaign return → end-to-end closeout, including dependency/refresh gates.
-- `custodian/game/world/hub/first_set/` and `custodian/scenes/hub_first_set_blockout_playtest.tscn` — H1 first-set spatial authority/map and standalone real-Operator/camera playtest; H2-H6 lifecycle handlers remain inert.
+- `custodian/game/world/hub/first_set/` and `custodian/scenes/hub_first_set_blockout_playtest.tscn` — H1 first-set spatial authority/map and standalone playtest; production H2 host is `custodian/scenes/hub_runtime_host.tscn` and the Awakening→Hub transfer is owned by `custodian/game/systems/world/world_transition_manager.gd`.
 - `custodian/tools/validation/hub_first_set_blockout_smoke.gd` and `hub_first_set_overview_capture.gd` — exact geometry, topology, raw/Operator-clearance connectivity, Road collision ownership, inert-lifecycle smoke, and deterministic single human-review overview capture.
-- `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md` and active `REVIEW_HUB_FIRST_SET_BLOCKOUT_V1.md` — completed H1 implementation with approved macro-topology overview and the next paired post-land review.
-- `custodian/docs/ai_context/task_packets/HUB_AWAKENING_CONTEXT_HANDOFF.md` through `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` plus paired `REVIEW_HUB_*.md` packets — pre-authored H2-H7 first-campaign-loop series; downstream packets are dependency-gated and refreshed in place.
+- `custodian/game/systems/world/world_transition_manager.gd`, `custodian/scenes/hub_runtime_host.tscn`, and `custodian/tools/validation/world_transition_handoff_smoke.gd` — production H2 major-context handoff, rollback, Hub bindings, and active-world exclusivity.
+- `custodian/docs/ai_context/task_packets/archived/HUB_FIRST_SET_BLOCKOUT_V1.md` and archived H1 review — completed H1 implementation with approved macro-topology overview and passed fresh-context review.
+- `custodian/docs/ai_context/task_packets/HUB_AWAKENING_CONTEXT_HANDOFF.md` through `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` plus paired `REVIEW_HUB_*.md` packets — H2 handoff implementation is archived with paired review pending; H3-H7 remain pre-authored, dependency-gated packets refreshed in place.
 
 ## Operator Player VFX
 

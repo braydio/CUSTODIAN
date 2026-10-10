@@ -38,6 +38,10 @@ func start(args: PackedStringArray = PackedStringArray()) -> void:
 			bootstrap.call("ensure_started")
 		else:
 			bootstrap.call("ensure_started", int(seed))
+	elif mode == "awakening":
+		var transition_manager := get_node_or_null("/root/WorldTransitionManager")
+		if transition_manager != null:
+			transition_manager.call("arm_for_startup_awakening")
 
 	var error := _change_scene_to_file(target)
 	if error != OK:
