@@ -1,10 +1,10 @@
 # AWAKENING INTERACTIBLE MARKER WAYFINDING V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-marker-wayfinding-v1`
-- Status: `draft`
+- Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P2`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1;review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
 - Locks: `awakening-interaction-presentation, awakening-wayfinding`
 - Kind: `implementation`
 - Review: `auto`
@@ -66,7 +66,7 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-marker-wayfinding-v1`
-- Next packet state: `draft`
+- Next packet state: `blocked`
 - Refresh owner: `human-art-approval`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
