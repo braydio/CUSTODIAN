@@ -222,30 +222,106 @@ class Operator2DPolish:
         result["layer"] = next(row["aseprite_layer_name"] for row in manifest.get("layers", []) if row.get("editable"))
         return result
 
-    def apply(self, session_path: Path, proposal: dict[str, Any]) -> dict[str, Any]:
-        if proposal.get("status") != "PROPOSAL" or proposal.get("mutates") is not False:
-            raise PolishError("only an explicit non-mutating proposal can be applied")
-        session, manifest, _root = self.service._checked_session(session_path)
+    @staticmethod
+    def _integer_list(value: Any, length: int) -> bool:
+        return (isinstance(value, list) and len(value) == length
+                and all(type(item) is int for item in value))
+
+    def _fresh_apply_operation(
+        self, session_path: Path, proposal: dict[str, Any], session: Any,
+        manifest: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Authenticate caller data against a fresh proposal before mutation."""
+        if not isinstance(proposal, dict):
+            raise PolishError("proposal must be an object")
+        if (proposal.get("status") != "PROPOSAL" or proposal.get("mutates") is not False
+                or type(proposal.get("frame")) is not int):
+            raise PolishError("only a well-formed non-mutating proposal can be applied")
+        editable_layers = [row["aseprite_layer_name"] for row in manifest.get("layers", [])
+                           if row.get("editable")]
+        if not editable_layers:
+            raise PolishError("Workbench has no editable polish layer")
+        # WB25-3 proposal generation binds to this exact primary editable body cel.
+        layer = editable_layers[0]
+        if proposal.get("layer") != layer:
+            raise PolishError("proposal target layer does not match the current polish binding")
+
         self.service.inspect_polish_contract(session_path)
-        frame = int(proposal["frame"])
-        layer = str(proposal["layer"])
-        allowed_layers = {row["aseprite_layer_name"] for row in manifest.get("layers", []) if row.get("editable")}
-        if layer not in allowed_layers:
-            raise PolishError("proposal target layer is not an editable Workbench layer")
-        if proposal["kind"] == "erase_detached_component":
-            operation = {"type": "erase_pixels", "layer": layer, "frame": frame,
-                         "pixels": [{"x": int(x), "y": int(y)} for x, y in proposal["pixels"]]}
-        elif proposal["kind"] in {"planted_registration", "manual_center_x"}:
-            offset = next((item for item in proposal["offsets"] if int(item["frame"]) == frame), None)
-            if offset is None:
-                raise PolishError("registration proposal has no offset for requested frame")
-            dx, dy = int(offset["dx"]), int(offset["dy"])
-            if dx == 0 and dy == 0:
-                return {"status": "NOOP", "frame": frame, "workbench_sha256": session.expected_workbench_sha256}
-            operation = {"type": "move_region", "layer": layer, "frame": frame,
-                         "source_rect": offset["bounds"], "dx": dx, "dy": dy}
+        rendered = self.service.render(session_path)
+        frames = [Path(path) for path in rendered["frames"]]
+        frame = proposal["frame"]
+        if not 1 <= frame <= len(frames):
+            raise PolishError("proposal frame is outside the current Workbench")
+        masks = self.service.get_masks(session_path)
+        landmarks = self.service.get_landmarks(session_path)
+        kind = proposal.get("kind")
+
+        if kind == "erase_detached_component":
+            if (type(proposal.get("area")) is not int
+                    or not self._integer_list(proposal.get("bounds"), 4)
+                    or not isinstance(proposal.get("pixels"), list)
+                    or not proposal["pixels"]
+                    or any(not self._integer_list(point, 2) for point in proposal["pixels"])):
+                raise PolishError("detached-component proposal geometry is malformed")
+            fresh = detached_component_proposals(frames, layer=layer, masks=masks, landmarks=landmarks)
+            candidate = next((item for item in fresh if item["frame"] == frame
+                              and proposal["area"] == item["area"]
+                              and proposal["bounds"] == item["bounds"]
+                              and proposal["pixels"] == item["pixels"]), None)
+            if candidate is None:
+                raise PolishError("detached-component proposal is stale, forged, protected, or not an exact current island")
+            return {"type": "erase_pixels", "layer": layer, "frame": frame,
+                    "pixels": [{"x": x, "y": y} for x, y in candidate["pixels"]]}
+
+        if kind not in {"planted_registration", "manual_center_x"}:
+            raise PolishError(f"unsupported polish proposal: {kind}")
+        if not isinstance(proposal.get("offsets"), list):
+            raise PolishError("registration proposal offsets are malformed")
+        if kind == "manual_center_x":
+            fresh_registration = center_x_proposal(
+                frames, group=session.identity.group, action=session.identity.action)
+            if proposal.get("basis") != "current visual bounds":
+                raise PolishError("manual Center X proposal basis is invalid")
         else:
-            raise PolishError(f"unsupported polish proposal: {proposal.get('kind')}")
+            if (proposal.get("motion_policy") != "explicit_planted"
+                    or proposal.get("evidence") != "approved_support_landmark_or_mask"
+                    or type(proposal.get("authority_frame")) is not int
+                    or proposal.get("authority_frame") != 1):
+                raise PolishError("planted registration requires its explicit supported proposal receipt")
+            fresh_registration = planted_registration_proposal(
+                frames, landmarks=landmarks, masks=masks,
+                group=session.identity.group, action=session.identity.action, enabled=True,
+            )
+        if fresh_registration.get("status") != "PROPOSAL":
+            raise PolishError("registration proposal is no longer eligible from current evidence")
+        fresh_offsets = fresh_registration["offsets"]
+        supplied_offsets = proposal["offsets"]
+        if len(supplied_offsets) != len(fresh_offsets):
+            raise PolishError("registration proposal frame set differs from the fresh proposal")
+        for supplied, expected in zip(supplied_offsets, fresh_offsets):
+            if not isinstance(supplied, dict) or any(type(supplied.get(key)) is not int
+                    for key in ("frame", "dx", "dy")) or not self._integer_list(supplied.get("bounds"), 4):
+                raise PolishError("registration proposal contains malformed offset data")
+            if supplied != expected:
+                raise PolishError("registration offsets or bounds differ from the fresh proposal")
+        if kind == "planted_registration":
+            if (not self._integer_list(proposal.get("anchor"), 2)
+                    or proposal["anchor"] != fresh_registration.get("anchor")):
+                raise PolishError("planted registration anchor differs from current support evidence")
+        elif proposal.get("warning") != fresh_registration.get("warning"):
+            raise PolishError("manual Center X warning/basis differs from the fresh proposal")
+        offset = next(item for item in fresh_offsets if item["frame"] == frame)
+        if offset["dx"] == 0 and offset["dy"] == 0:
+            return {"type": "noop", "layer": layer, "frame": frame}
+        return {"type": "move_region", "layer": layer, "frame": frame,
+                "source_rect": list(offset["bounds"]), "dx": offset["dx"], "dy": offset["dy"]}
+
+    def apply(self, session_path: Path, proposal: dict[str, Any]) -> dict[str, Any]:
+        session, manifest, _root = self.service._checked_session(session_path)
+        operation = self._fresh_apply_operation(session_path, proposal, session, manifest)
+        frame, layer = operation.get("frame"), operation.get("layer")
+        if operation["type"] == "noop":
+            return {"status": "NOOP", "frame": frame, "workbench_sha256": session.expected_workbench_sha256}
         self.service.set_edit_scope(session_path, allowed=[{"layer": layer, "frames": [frame]}],
                                     operations=[operation["type"]])
         try:

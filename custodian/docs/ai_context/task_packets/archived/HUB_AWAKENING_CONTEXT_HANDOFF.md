@@ -2,8 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-awakening-context-handoff`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `complete`
 - Priority: `P1`
 - Depends on: `review-hub-first-set-blockout-v1, review-awakening-handoff-readiness-art-convergence-v1`
 - Locks: `hub-runtime, world-lifecycle`
@@ -60,25 +59,32 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Legacy context aliases: `COMPOUND` and `HOME` resolve to canonical runtime context `HUB` in the same manager; no parallel home manager.
+- Evidence: `world_transition_handoff`, `awakening_first_return_progression`, `hub_first_set_blockout`, and `startup_world_entry` focused validations passed; changed-file validation and AI-context/pairing/index closeout recorded in the implementation summary.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first handoff smoke exposed unsafe physics-callback collision updates; rollback initially restored the Operator inside the completion volume and could retrigger a failed handoff. An early fresh-checkout scan also generated unrelated `.import` sidecars.
+- Root cause / contributing factors: Godot rejects immediate collision-object/process-mode changes during physics callbacks, and the trigger-time position is not a safe rollback point. Fresh editor scans generated cache-adjacent sidecar metadata for unrelated reference art.
+- Prevention / pipeline improvement: Defer physics-sensitive source shutdown changes and roll back south of the completion volume. Remove only known validation-generated unrelated sidecars before workstream finish.
+- Tooling / docs drift discovered: `WORLD_TRANSITION_SYSTEM.md` still described the major-context manager as future work and used `COMPOUND` as a separate home context; updated to record the H2 foundation and canonical Hub alias.
+- Follow-up: none
+- What worked: A real Operator volume-entry smoke covers failure rollback and successful transfer without renderer evidence.
 
-## Handoff
+## Next Handoff
 
-- Next action: Auto-claim after both prerequisite reviews archive complete; perform the claim-time dependency refresh before mutation.
-- Best starting files: archived Awakening convergence + H1 packets/reviews; `WORLD_TRANSITION_SYSTEM.md`; live startup/camera/navigation binding code.
-- Blockers or open questions: exact landed completion schema and Hub-host seam are dependency outputs.
+- Next workstream: `review-hub-awakening-context-handoff`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh reason: none
+- Next action: Run the paired review in a fresh independent reviewer context against the archived packet and landed runtime; preserve any findings as authored correction work.
+- Blockers or open questions: none

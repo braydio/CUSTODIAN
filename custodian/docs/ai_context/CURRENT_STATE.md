@@ -535,9 +535,11 @@ walkable cells, 52 merged boundary rails, the north/south 4x8 Sepulcher links,
 the connector-restricted garden loop, and mandatory routes after deriving a
 25px clearance from the live Operator capsule and 10px boundary rail radius.
 The single 2048x2048 macro-topology overview received human approval on
-2026-10-05. This is H1 spatial/runtime only: Contract selection, world
-transitions, Twin transfer, deployment, and campaign return remain inert. The
-paired H1 review is the next lifecycle step.
+2026-10-05. H1 and its paired review are complete. H2 implements the production
+Awakening→Hub runtime handoff with one context authority, exact `Spawn_SouthReach`,
+camera/navigation binding before input unlock, and source rollback with the
+South Reach barrier intact. Its paired review is pending. Contract selection,
+Twin transfer, deployment, and campaign return remain deferred to H3-H7.
 
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 

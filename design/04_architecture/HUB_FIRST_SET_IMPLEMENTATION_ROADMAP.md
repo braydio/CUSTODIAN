@@ -30,7 +30,7 @@ Awakening
 
 ```text
 H1 hub-first-set-blockout-v1-recovery-1
-  └─ HR1 review-hub-first-set-blockout-v1
+  └─ HR1 review-hub-first-set-blockout-v1 (complete)
 
 awakening-handoff-readiness-art-convergence-v1-r1
   └─ review-awakening-handoff-readiness-art-convergence-v1
@@ -58,8 +58,8 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 
 | Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
-| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review ready/auto | none | implementation complete; HR1 verifies the obsolete active H1 branch/worktree/claim is gone and donor archive remains reachable; lifecycle diagnostic refs are preserved evidence |
-| H2 | `hub-awakening-context-handoff` | ready/auto, dependency-gated | HR1 + Awakening handoff review | execution-agent |
+| H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review complete | none | H1 and HR1 archived; donor archive remains reachable |
+| H2 | `hub-awakening-context-handoff` | implementation complete/landed; paired review pending | HR1 + Awakening handoff review (complete) | execution-agent |
 | H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
 | H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
 | H5 | `hub-muster-continuity-port-deployment` | ready/auto, dependency-gated | HR3 | execution-agent |
@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 implementation is complete/landed. The original 04→05 source-set packet and review landed, but later direct user registration evidence proved its `-11.391598°` independently fitted connector transform was the wrong visual solution. The interaction-feedback/Crèche activation pair is complete. The exact axis-aligned 1502×2048 Dust→connector→Locker composition is now implemented through its existing Asset V2 families, with a shared root at `(349,-2585)`, native 1:1 scale, zero rotation, exact alpha bounds/overlaps, and real Operator bidirectional traversal evidence. Its paired review has passed, and the lower→upper passage implementation/review is complete. The full Awakening handoff-readiness slice is now active; H2-H7 remain dependency-gated behind its completion and paired review.
-**Next:** Complete and review `awakening-handoff-readiness-art-convergence-v1-r1`. H2 becomes claimable only after the reviewed Awakening handoff is archived complete.
+**Current:** H1 and HR1 are complete. Awakening handoff-readiness and its review are complete. H2 now lands the transactional Awakening→Hub handoff; its paired review is the immediate next step. H3-H7 remain dependency-gated behind the H2 review and their own predecessor reviews.
+**Next:** Fresh-context review of `hub-awakening-context-handoff`; then H3 and H4 can become claimable in parallel.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

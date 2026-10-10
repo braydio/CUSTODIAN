@@ -99,6 +99,9 @@ func _ready() -> void:
 	_configure_hud()
 	_enter_zone(&"zone01_creche")
 	_update_zone_art_visibility()
+	var transition_manager := get_node_or_null("/root/WorldTransitionManager")
+	if transition_manager != null:
+		transition_manager.call("register_awakening", self)
 
 
 func _process(_delta: float) -> void:
@@ -921,6 +924,13 @@ func _on_south_reach_reached(body: Node) -> void:
 	}
 	awakening_completed.emit(snapshot)
 	blockout_completed.emit()
+
+
+func restore_after_handoff_failure() -> void:
+	completed = false
+	_set_objective(OBJECTIVE_RETURN_TO_POST)
+	if hud != null and hud.has_method("hide_interaction"):
+		hud.call("hide_interaction")
 
 
 # --- Progression -------------------------------------------------------------

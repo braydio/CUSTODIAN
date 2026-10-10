@@ -21,6 +21,7 @@ driver/buffer_size=512
 
 [autoload]
 
+WorldTransitionManager="*res://game/systems/world/world_transition_manager.gd"
 GameState="*res://game/systems/core/state/game_state.gd"
 GameStats="*res://game/systems/core/state/game_stats.gd"
 ARRNManager="*res://game/systems/core/systems/arrn/arrn_manager.gd"

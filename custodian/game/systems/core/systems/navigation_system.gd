@@ -65,6 +65,11 @@ func _initialize_navigation_deferred() -> void:
 
 
 func _initialize_navigation() -> void:
+	if runtime_navigation_provider != null and is_instance_valid(runtime_navigation_provider):
+		_initialized = true
+		navigation_revision += 1
+		navigation_ready.emit()
+		return
 	var world_loader = get_tree().get_first_node_in_group("contract_world_loader")
 	if world_loader != null:
 		if world_loader.has_method("is_contract_activation_aborted") and bool(world_loader.call("is_contract_activation_aborted")):

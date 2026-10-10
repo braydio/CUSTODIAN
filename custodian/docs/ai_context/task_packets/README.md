@@ -38,7 +38,6 @@ normal closeout.
 - `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Publish and wire the 12 already-reviewed Ritualant ritual-prop/chamber-dressing states through Asset Pipeline V2 without reopening encounter behavior or maki...
 - `AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md` — Establish measured off-route camera-footprint coverage, an Asset V2-compatible ten-family pending-art contract, and a collision-free Awakening perimeter supp...
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
-- `HUB_AWAKENING_CONTEXT_HANDOFF.md` — Consume the reviewed one-shot Awakening completion seam and enter the reviewed persistent Hub first-set runtime at `Spawn_SouthReach` through one major-conte...
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
 - `HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` — Make Crown Transfer a real optional Hub branch into the existing registered Twin Solaria authored level and back, without turning Twin into ordinary Contract...
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
@@ -83,7 +82,6 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_6_ENEMY_DEATH_CORPSE_LOOT_EXTRACTION.md` — Independently verify that NPA-6 moved Enemy health and death/corpse lifecycle state behind one focused owner while preserving public combat, loot, reificatio...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
-- `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
@@ -173,10 +171,10 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 Design/spatial authority: `../../../design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md`.
 Program tracker: `../../../design/04_architecture/HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`.
 
-Seven implementation slices are pre-authored with paired reviews. H1 `hub-first-set-blockout-v1-recovery-1` is complete and archived with its human-approved overview; its paired review is the immediate successor. H2-H7 remain `ready/auto`; their incomplete dependencies keep them non-claimable until predecessor reviews archive `complete`. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
+Seven implementation slices are pre-authored with paired reviews. H1 `hub-first-set-blockout-v1-recovery-1` and its paired review are complete and archived with the human-approved overview. H2 `hub-awakening-context-handoff` is implemented and its paired review is the next lifecycle step. H3-H7 remain `ready/auto` and dependency-gated. Each downstream execution agent performs its own claim-time refresh from current main and landed predecessor evidence before mutation.
 
-- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / active review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics and human topology approval. The paired review verifies the obsolete active H1 branch/worktree/claim is gone and donor history remains reachable; `agent-diagnostics/*` traces are preserved lifecycle evidence, not executable work.
-- H2 `HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — reviewed Awakening completion → persistent Hub; also waits on reviewed Awakening handoff-readiness.
+- H1 `archived/HUB_FIRST_SET_BLOCKOUT_V1.md` / archived review — recovery workstream `hub-first-set-blockout-v1-recovery-1`; blockout with true two-connector Sepulcher loop, Operator-clearance path proof, Port return-bay semantics and human topology approval. The paired review passed; donor history remains reachable and `agent-diagnostics/*` traces are preserved lifecycle evidence, not executable work.
+- H2 `archived/HUB_AWAKENING_CONTEXT_HANDOFF.md` / review — production Awakening completion → persistent Hub with transactional rollback; paired review pending.
 - H3 `HUB_FORUM_ADJUDICATION_CONTRACT_PREWARM.md` / review — explicit Dais acceptance + persistent accepted CampaignScenario/seed + one bootstrap generation.
 - H4 `HUB_CROWN_TRANSFER_TWIN_SOLARIA.md` / review — optional same-Hub Crown Transfer route to production Twin and back; may run parallel with H3 after H2.
 - H5 `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` / review — READY/GENERATING/FAILED Port gating and same-prewarmed-map deployment.

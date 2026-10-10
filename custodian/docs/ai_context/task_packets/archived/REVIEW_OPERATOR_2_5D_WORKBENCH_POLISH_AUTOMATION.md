@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-workbench-polish-automation
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-workbench-polish-automation
@@ -58,3 +58,27 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Refresh reason: WB25-4 must consume the landed polish finding/receipt shape and current review/session APIs before implementation.
 - Next action: Return implementation/review evidence to the authoring chat and refresh the successor before claim.
 - Blockers or open questions: successor intentionally draft until refresh
+
+## Independent Review Receipt
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-workbench-polish-automation`
+- Reviewed implementation commit: `c928fddb7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow, visual`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes; findings recorded and bounded correction pair authorized`
+- Evidence: `All seven required focused validation checks passed. Independent forged-payload probe reproduced R0-01. The 2.5D publish guard rejects Publish and Validation for 2.5D selections. git diff --check passed. No reviewed implementation/runtime code changed.`
+- Review conclusion: `R0-01 is a blocking defect in apply proposal trust: the method accepts fabricated detached-component coordinates and forwards them to erase_pixels without verifying exact current proposal geometry or protections. Correction pair cycle 1 is scaffolded and preflighted.`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`

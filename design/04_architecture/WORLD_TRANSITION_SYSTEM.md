@@ -3,23 +3,31 @@
 # World Transition System
 
 **Project:** CUSTODIAN
-**Status:** Required After Runtime Stabilization and Hub Foundation
+**Status:** Active foundation — Awakening → Hub (H2); later campaign transitions remain planned
 **Priority:** High
 **Depends On:** Runtime World & Camera Stabilization, Hub System (Meta Progression)
 **Blocks:** Campaign Flow & Game Loop, Integration Contract, Region Deployment
 **Runtime Target:** Godot 4.x (`custodian/`)
-**Last Updated:** 2026-07-20
+**Last Updated:** 2026-10-10
 
 ## Current Runtime Bridge
 
-The authoritative major-context manager described below remains future architecture. Intra-campaign handoff is now live through:
+The first production major-context transition is live through:
+
+- `custodian/game/systems/world/world_transition_manager.gd`
+- `custodian/scenes/hub_runtime_host.tscn` (production host)
+- `custodian/game/world/awakening/awakening_first_return.gd` (qualified completion signal)
+
+The manager validates the completion snapshot, freezes Awakening, stages the Hub first-set host, transfers the existing Operator/controller/camera/HUD, binds the H1 authored navigation and camera map, commits one authoritative world, then resumes input. A failed stage restores playable Awakening south of the completion trigger with `SouthReachCollapse` intact. This is the H2 Awakening→Hub foundation; deployment, campaign return, and later context flows in this document remain future work.
+
+Intra-campaign handoff remains owned by:
 
 - `custodian/game/world/levels/level_loader.gd`
 - `custodian/game/world/routes/route_traversal_manager.gd`
 - `custodian/game/world/procgen/ingress/world_ingress_site.gd`
 - `custodian/game/systems/core/systems/contract_world_loader.gd`
 
-Registered authored destinations and named-spawn activation are governed by `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`. That bridge must preserve one active gameplay world and the persistent main-world Operator until the full transition manager replaces it.
+Registered authored destinations and named-spawn activation are governed by `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`. RouteTraversalManager and LevelLoader continue owning those sub-level transitions; they do not compete with the major-context manager.
 
 ### Transition layers
 
@@ -195,7 +203,7 @@ Lock the available context types now so naming does not drift later.
 ```gdscript id="egrv43"
 enum WorldContextType {
     NONE,
-    COMPOUND,
+    HUB,
     CAMPAIGN_REGION,
     TRANSIT,
     POST_CAMPAIGN_RESOLUTION
@@ -206,7 +214,7 @@ enum WorldContextType {
 
 Used only during startup or active transition shutdown window. No gameplay world should be simulating here.
 
-### 7.2 `COMPOUND`
+### 7.2 `HUB`
 
 The home-state runtime context that hosts:
 
@@ -215,6 +223,11 @@ The home-state runtime context that hosts:
 * hub access surface
 * local preparation loops
 * local traversal and support systems
+
+`HUB` is the canonical runtime home-context name. `COMPOUND` and `HOME` are
+accepted legacy aliases and resolve to this same context and transition manager;
+they do not identify a second home world or authorize a parallel manager. Older
+tables and examples below may use `COMPOUND` as a historical label.
 
 ### 7.3 `CAMPAIGN_REGION`
 

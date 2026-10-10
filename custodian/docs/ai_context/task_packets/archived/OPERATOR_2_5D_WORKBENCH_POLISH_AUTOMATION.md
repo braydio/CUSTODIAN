@@ -190,3 +190,28 @@ Art Agent operations and rechecks the physical Workbench contract afterward.
 - Refresh reason: WB25-3 is fully refreshed; paired review should claim automatically after implementation lands.
 - Next action: Claim `review-operator-2-5d-workbench-polish-automation` in a fresh reviewer context and verify the durable metrics, target-bound attach, proposal gates, scoped mutations/undo, and publication boundary.
 - Blockers or open questions: none at planning level. Subjective art-direction questions, if any survive objective metrics, use the packet's conditional visual-review handoff rather than autonomous aesthetic approval.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-workbench-polish-automation`
+- Reviewed main: `c447db62d5c6f434394d6c634e1e191952658cc5`
+- Reviewed implementation commit: `c928fddb7`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow, visual`
+- Blocking defects: `1`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_WORKBENCH_POLISH_AUTOMATION_CLAUDE_SUMMARY.md`
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `no; R0-01 requires correction`
+- Evidence: `All seven named focused validations passed. A fresh forged-proposal probe demonstrated that apply accepts a one-pixel claimed detached-component proposal containing two arbitrary coordinates and forwards both to erase_pixels. git diff --check passed. No implementation/runtime code was changed by review.`
+- Review conclusion: `R0-01 is a blocking mutation-authority defect: apply does not verify that proposal pixels/bounds/offsets match a freshly generated, current proposal. The Art Agent frame/layer scope confines location but does not enforce the tiny-island, exact-pixel, protected-landmark or computed-translation rules. A bounded correction and fresh paired re-review are required.`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb`
