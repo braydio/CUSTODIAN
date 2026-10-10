@@ -33,8 +33,8 @@ When the blocked implementation packet is refreshed after predecessors land, ref
 
 ## Handoff
 
-- Next action: Follow the Hub roadmap after a clean/non-blocking review.
-- Blockers or open questions: implementation dependency only.
+- Next action: Continue with `hub-muster-continuity-port-deployment` after HR3 archives complete.
+- Blockers or open questions: none for this review; the global AI-context checker reports one unrelated Operator queue dependency identity.
 
 ## Completion Truth
 
