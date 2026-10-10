@@ -62,7 +62,8 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `COMPOUND` and `HOME` resolve as aliases to canonical runtime context `HUB`; no parallel home manager.
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Legacy context aliases: `COMPOUND` and `HOME` resolve to canonical runtime context `HUB` in the same manager; no parallel home manager.
 - Evidence: `world_transition_handoff`, `awakening_first_return_progression`, `hub_first_set_blockout`, and `startup_world_entry` focused validations passed; changed-file validation and AI-context/pairing/index closeout recorded in the implementation summary.
 
 ## Execution Feedback
