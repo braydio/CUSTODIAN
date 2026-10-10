@@ -19,7 +19,7 @@
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
 - Reviewed main: cee646f21e5a6dc6fb4cc487f8ec04043c683259
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: none
 - Goal: Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author is obvious and returned source-work can re-associate with the exact target.
 - Completion boundary: Add queue/dashboard projections, progress/family closure, NEXT explanation, filters, and local generation-brief bundles. Preserve human plan rank/priority. No network generation and no production runtime cutover.
@@ -106,7 +106,7 @@ Only after the new chat's precise URL is supplied and updated in implementation/
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Refresh instruction: Design/content re-derivation done on 2026-10-10 against main@cee646f2 and accepted WB25-4 correction review. The tracked baseline 69/552/8/544 was measured; ignored local receipts are computed at execution, not guessed. Capture this chat's new authoring URL, update BOTH packet backlinks, run paired authoring preflight, reconcile any concurrent main changes and promote through the repository workflow. Do not use the superseded original WB25-4 findings review.
 
 ## Handoff
@@ -115,7 +115,7 @@ Only after the new chat's precise URL is supplied and updated in implementation/
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review
