@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-geography-residency-authority-audit`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `campaign-geography-residency-authority-audit`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `campaign-geography-residency-authority-audit`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT.md`
-- Reviewed main: `c5d4c19fe99be2a2164a878609413391f250d213`
+- Reviewed main: `1da9c970f27ff37298abb190ce8d3075d4837f0b`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -43,3 +43,44 @@ This F15-A paired review is **blocked/manual only until targeted authoring prefl
 - Refresh reason: Decide from F15-A measured evidence the production geographic address/topology owner, finite/expandable extent, continuous scene seam, minimum first locality proof and actor/spawn residency boundaries before any implementation packet.
 - Next action: Return exact reviewed F15-A report, factual corrected measurements, findings receipt and unresolved design choice shortlist to authoring chat for F15-B/C2 scope lock.
 - Blockers or open questions: No implementation blocker for independent F15-A audit review after precursor archives; subsequent geography/world-scale decisions remain human-owned.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-campaign-geography-residency-authority-audit`
+- Reviewed on main: `1da9c970f27ff37298abb190ce8d3075d4837f0b`
+- Implementation commit: `18e7e88ac91d5c70445121038984a4e15830d820`
+- Report source snapshot: `6d66c1696596e2a8646a56e7de986dc70bbac02e`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_CAMPAIGN_GEOGRAPHY_RESIDENCY_AUTHORITY_AUDIT_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+
+### Review Notes
+
+- The report correctly distinguishes persistent identity, route/scene identity, physical sectors, macro sectors, M6 map-local presentation chunks, and F14 actor identity. Its proposed address/residency seam is explicitly provisional and does not choose world extent or authorize implementation.
+- Fixed-seed measurements are labelled as local-map evidence; projected straight-axis travel is not presented as a walked route. Continuous two-site travel and camera landmark coverage remain `NOT PROVED`/unmeasured as stated.
+- The ambient-spawn race is a source-inspected possible interleaving, not a reproduced duplicate. The Ritualant ingress failure is documented as a fixture/content limitation, not general proof of region failure.
+- After full Godot editor import, the current-main M6 distant-chunk smoke exited 0 and printed PASS. The current-main route lifecycle smoke exited 0 and printed PASS. Its expected `MissingSpawn` and invalid `ProcGen owner` negative controls emitted rollback errors before PASS.
+- The initial M6 parse cascade occurred before full import initialization and was not reproduced after initialization. The isolated duplicate-snapshot probe exhausted `/tmp`; its incomplete reviewer-snapshot result is not used as product evidence.
+- Current-main task packet index, review pairing (62 packets), and AI-context checks pass. No implementation/report edit, correction finding, or new runtime defect was established.
+
+## Next Handoff
+
+- Next workstream: `none`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+- Refresh reason: Decide the production geographic address/topology owner, finite or expandable extent, continuous scene seam, minimum locality proof, and actor/spawn residency boundaries before F15-B/C2.
+- Next action: Return the accepted F15-A evidence and unresolved design decisions to the authoring conversation.
+- Blockers or open questions: No review blocker; F15-B/C2 require the recorded human planning refresh.
