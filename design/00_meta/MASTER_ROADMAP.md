@@ -413,6 +413,23 @@ V1 remains dependency-driven and evidence-gated. RF1/RFR1 and AP1 are complete/l
 
 ---
 
+### Cross-cutting F15 Procedural World Semantics and Codex Idea Graduation
+
+**Status:** design/dependency-gated; **priority:** P1 architectural planning, not an implementation claim.  
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31  
+**Design/tracking:** [F14-C2/F15 production geography refresh](../04_architecture/F14_C2_F15_PRODUCTION_GEOGRAPHY_AND_RESIDENCY_REFRESH.md), [Hall dependency register](../04_architecture/codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md), [Codex Hall](../90_codex/01_hall_of_great_ideas.md).  
+**Depends on:** accepted F14-C1, **F15-A independently reviewed evidence**, F15 design lock and each later runtime owner.
+
+| Idea family | Earliest design gate | State / required action |
+| --- | --- | --- |
+| Encounter Language; Landmark Hierarchy; Spatial Compression; Mystery Budget | **F15-B geography/procgen spec and packet refresh**, after F15-A | **Design candidate:** decide placement semantics, source truth, repeatable camera/travel tests; no immediate new feature packet |
+| Procedural Ruin Generator + World Autopsy | After stable site/room geometry, material metadata and canonical history | **Deferred design:** choose failure cause/physical damage, clue reconstruction and repair mechanics |
+| Line-of-Communication Graph + Faction Knowledge | Geographic network identities + F14-C2 population/residency | **Deferred design:** grounded physical links and sourced reports, no competing F14 clock/graph |
+| World Event Timeline, Resource Economy Graph, Ambient Scheduler, Morale, Director Memory | After specific site/history/resource/biome/faction gates | **Deferred with explicit triggers** in Hall register |
+| WorldHistory, WorldStateGraph, Material Intelligence, Observatory, Heatmaps, Interest; Replay and Performance Budget | **Extend verified live owners**, after F15-A perf and multi-site evidence | **Hardening/extension review**, do not start second systems without verified gap |
+
+**Graduation requirement:** Once the relevant dependency closes, refresh mechanics, ownership, game-feel/lore choices and negative tests with ChatGPT/user; graduate/extend active design authority; only then author paired V2 implementation/review packets. This entry authorizes neither code nor art.
+
 ### Backlog
 
 | Feature | Status | Priority | Notes |

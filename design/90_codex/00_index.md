@@ -10,6 +10,10 @@ This index tracks idea cards, including graduated cards retained as audit record
 - `03_graduated.md` - record of cards moved into active implementation specs
 - `templates/IDEA_CARD.md` - card template
 
+## Dependency and refresh tracking (2026-10-09)
+
+The [Hall idea dependency/packet-refresh register](../04_architecture/codebase_systems_audit/CODEX_IDEA_DEPENDENCY_REFRESH_REGISTER.md) records when indexed cards must resurface in the F15-B, F14-C2, F15-C, post-geography causal-world and live-system hardening reviews, including decisions, ownership and falsifiable acceptance. **It is a planning ledger, not a promotion of all cards or a new queue.**
+
 ## Categories
 
 - `ai/`
