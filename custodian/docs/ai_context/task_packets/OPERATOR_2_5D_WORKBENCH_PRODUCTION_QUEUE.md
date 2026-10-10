@@ -1,14 +1,14 @@
 # OPERATOR 2.5D WORKBENCH PRODUCTION QUEUE + GENERATION BRIEFS
 
 > PRE-AUTHORED / REFRESH REQUIRED BEFORE IMPLEMENTATION  
-> Refresh after WB25-4 + paired review land. Consume the landed target/review state; do not invent another progress database.
+> Refresh after the WB25-4 R0-01 correction + fresh paired re-review land. Consume only the accepted final target/review state; do not invent another progress database.
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-production-queue
 - Status: draft
 - Dispatch: manual
 - Priority: P1
-- Depends on: review-operator-2-5d-workbench-review-automation
+- Depends on: review-operator-2-5d-workbench-review-automation-review-corrections-1
 - Locks: operator-workbench-ui, operator-animation-plan
 - Kind: implementation
 - Review: auto
@@ -23,9 +23,9 @@
 - Visual review: none
 - Goal: Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author is obvious and returned source-work can re-associate with the exact target.
 - Completion boundary: Add queue/dashboard projections, progress/family closure, NEXT explanation, filters, and local generation-brief bundles. Preserve human plan rank/priority. No network generation and no production runtime cutover.
-- Current measured state: PlanTable exists and OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json owns rank/priority; Workbench has browser/session/review state but no generation-aware family queue or source-generation brief bundle; exact final target counts await WB25-1..4.
+- Current measured state: PlanTable exists and OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json owns rank/priority; WB25-4 implementation is landed but its first paired review found blocking R0-01 in required-human approval truth. Cycle-1 correction/re-review now gate the final accepted receipt contract. Workbench still has no generation-aware production queue or source-generation brief bundle; exact final verified counts must be re-measured only after that correction lineage passes.
 - Evidence: custodian/tools/operator/ui/widgets/plan_table.py; custodian/tools/operator/ui/service.py; design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json; landed target/review receipts after dependency.
-- Task-specific authority: v2 implementation plan for rank/priority; target projection for coverage/workflow; review receipts for PUBLISHED/RUNTIME_VERIFIED; canonical reference/profile for brief input.
+- Task-specific authority: v2 implementation plan for rank/priority; target projection for coverage/workflow; only current receipts accepted under the clean WB25-4 correction re-review for review/RUNTIME_VERIFIED truth; canonical reference/profile for brief input. `PUBLISHED` remains a separate later authority and must not be inferred from review verification.
 - Work surface: recommended custodian/tools/operator/operator_generation_brief.py; ui/service.py; app.py; plan_table.py or recommended queue_table.py; target/review owner modules from predecessors; roadmap/current-state docs where live behavior changes.
 - Change:
   1. Filters at least NEXT, MISSING, INTAKE, EDITING, REVIEW, STALE, FALLBACK/PROJECTED, PUBLISHED, VERIFIED, ALL.
@@ -85,7 +85,7 @@
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh instruction: Bring WB25-4 + review receipts and live target/review counts to this chat. Re-derive final queue fields/counts, NEXT tie-break, brief inputs, old UX4 disposition and tests before ready.
+- Refresh instruction: Bring the WB25-4 correction + fresh re-review receipt and live target/review counts to this chat. Re-derive final queue fields/counts, NEXT tie-break, brief inputs, old UX4 disposition and tests before ready. Do not refresh from the original WB25-4 findings review.
 
 ## Handoff
 

@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-09
+Last updated: 2026-10-10
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
