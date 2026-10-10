@@ -2608,9 +2608,16 @@ drive 2.5D sequence clips and presets; a missing component or timing contract
 keeps a preset unavailable. WB25-4 is complete and independently accepted after
 the cycle-1 R0-01 human-approval provenance correction and fresh clean re-review.
 WB25-5 planning refresh is complete and its implementation + paired review are
-published ready/auto (2026-10-10, main@5e7c8e58); the tracked plan
-holds 69 target families and 552 required direction leaves (one accepted
-8-direction source family, 544 baseline strips yet to author), not 552 reviewed
+published ready/auto (2026-10-10, initial main@5e7c8e58). A later read-only
+Operator-art checkout sample found zero currently verified 2.5D leaves/families,
+zero 2.5D manifests/receipts/sandbox passes and only the old legacy 96px
+five-frame east relaxed-idle Workbench document; these figures apply only to
+that sampled workspace, not to all machines. WB25-5 also owns a bounded fix
+for the live `Operator2DReview.family()` to `AnimationRecord` field-name mismatch
+(`coverage`/`stale` vs `coverage_status`/`stale_reference`), plus a real-record
+regression test before integrating the queue. The tracked plan holds 69 target
+families and 552 required direction leaves (one accepted 8-direction source
+family, 544 baseline strips yet to author), not 552 reviewed
 or published runtime directions. Locally generated current receipts determine
 VERIFIED rather than plan/source counts. WB25-6 retains independent runtime
 publication/promotion authority.
