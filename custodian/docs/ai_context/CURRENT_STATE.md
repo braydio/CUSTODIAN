@@ -2605,9 +2605,14 @@ runtime publication state.
 Review sequences remain v1-readable as legacy clips; v2 adds `art_generation`
 and exact 2.5D Workbench frame resolution. Physical saved-document durations
 drive 2.5D sequence clips and presets; a missing component or timing contract
-keeps a preset unavailable. WB25-4 implementation is complete and awaits its
-fresh-context paired review. WB25-5 remains planning-refresh gated after that
-review; WB25-6 remains the separate publication/runtime-promotion authority.
+keeps a preset unavailable. WB25-4 is complete and independently accepted after
+the cycle-1 R0-01 human-approval provenance correction and fresh clean re-review.
+WB25-5 remains a separate planning-refresh/publication gate; the tracked plan
+holds 69 target families and 552 required direction leaves (one accepted
+8-direction source family, 544 baseline strips yet to author), not 552 reviewed
+or published runtime directions. Locally generated current receipts determine
+VERIFIED rather than plan/source counts. WB25-6 retains independent runtime
+publication/promotion authority.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
