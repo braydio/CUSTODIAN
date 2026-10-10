@@ -437,6 +437,9 @@ This pass is complete when:
 
 ## Live production status and supplied detail ingests — 2026-10-03
 
+> Historical snapshot: the audit below records the 2026-10-03 state. The current
+> 2026-10-09 ledger below supersedes its counts and standalone-consumption status.
+
 Baseline inspected before the remaining-detail handoff: live
 `main@cf3ba2eb2`; status below reflects the Asset V2 family contracts, the
 production-demand registry, and the two supplied detail ingests.
@@ -507,15 +510,54 @@ their intended edge contacts. No Awakening Layout, collision, or progression
 authority changed; scene placement for the six topology inlays and the two
 recommended motifs remains deferred.
 
+### Current handoff ledger — 2026-10-09
+
+Asset V2 status now reports seven published Crèche fixture states and six
+published Ambulatory fixture states, including `service_basin_b`. Both sets are
+**BAKED_ONLY** in production room plates; separate fixture sprites would create
+duplicate presentation. Attestation, Reliquary, Dust Lung Structures,
+Undergate Machinery, authority inlays, and ruin decals are published/imported,
+but their current **BAKED_ONLY** / **NOT_READY** consumption classifications
+still prohibit speculative standalone placement.
+
+Specialized runtime consumers are the recovery alcove, four-state P-9
+Designation Locker, Dust Lung lift, five required Gate of Dust components,
+route-circle inlay, and required local ambient effects. Approach fixtures, Late
+Service fixtures, and the Late Service relay lamp remain unpublished. All five
+Road modular environment families are registered, ingested, and consumed by
+`RoadOfWitnessesPrototype`; only the north processional continuation is deferred.
+Field Terminal, Forum/Continuity Port, and first-Contract production assets
+belong to the later Hub rather than Awakening scene debt.
+
 ### Current drift note
 
-`custodian/asset_drop/inbox/awakening_ingest_manifest.json` still records the
-Undergate environment as 896×1216 even though the live family/runtime contract
-is 1536×1216. It is not current authority until regenerated or explicitly
-archived. The older
+The former `custodian/asset_drop/inbox/awakening_ingest_manifest.json` was a
+stale 2026-10-03 snapshot, not a current generated catalog. It is archived at
+`custodian/asset_drop/archive/historical/awakening_ingest_manifest_legacy_snapshot_20261003.json`.
+The staging helper now writes a per-family staging receipt beside that family's
+inbox files and cannot overwrite a global current-status filename. The older
 `custodian/asset_drop/source_work/awakening/next10_20260920/ASSET_BUNDLE_MANIFEST.json`
 is a historical Batch 01 snapshot and likewise must not be used as current
 production status.
+
+### Current live consumption ledger — 2026-10-09
+
+Live Asset V2 catalog and family contracts report all seven Crèche fixture
+states and all six Ambulatory fixture states, including `service_basin_b`, as
+published/imported. Both fixture families are **BAKED_ONLY** in their room
+plates and must not be bound as duplicate sprites. Attestation fixtures,
+Reliquary fixtures, Dust Lung structures, Undergate machinery, authority inlays,
+and ruin decals are published/imported but remain **BAKED_ONLY** or
+**NOT_READY** for standalone scene placement; publication alone does not
+authorize a placement system.
+
+Specialized live consumers remain the recovery alcove, four-state P-9
+Designation Locker, Dust Lung transit lift, five required Gate components,
+route-circle inlay, and the required local ambient effects. Environment sets and
+the 04→05 source-preserving composition are runtime-bound. Approach fixtures,
+Late Service fixtures, and the Late Service relay lamp remain unpublished.
+Field Terminal, Ashen Forum/Continuity Port, and first-Contract presentation
+assets belong to the later Hub and are not Awakening-scene debt.
 
 ## Art generation order
 
@@ -546,3 +588,7 @@ scene bindings, collision, or interaction authority were added by the intake.
 The exact A2 `attestation_dais` alpha cleanup is limited to Dropbox revision
 `65d22e7369f4c915cdd61` and is documented in
 `custodian/docs/ai_context/reports/assets/attestation_dais_a2_correction_receipt.json`.
+
+## Planned, not registered: Awakening perimeter support families
+
+[AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md) specifies ten additional nonplayable support-backdrop families with proposed per-family static `structural_support` (512×512), `distant_structures` (1024×512), and `edge_transition` (256×256) states. Their 30 images are **not yet generated, registered, ingested or bound**; technical canvases may be amended from AP0 measured evidence before family creation. They must not replace the established `underlay`/`foreground` pairs. Exact prompts: [AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md](AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md). Implementation: [AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md](AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md).

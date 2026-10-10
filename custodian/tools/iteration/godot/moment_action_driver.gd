@@ -263,6 +263,7 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 		"vaultwing_forced_landing": ["start_dive", "interrupt_dive"],
 		"vaultwing_first_bond": ["begin_trial", "controlled_approach", "final_feed", "finish"],
 		"awakening_late_seams_v1": [
+			"show_checkpoint",
 			"show_seam_05_06",
 			"show_seam_06_07",
 			"show_seam_07_08",

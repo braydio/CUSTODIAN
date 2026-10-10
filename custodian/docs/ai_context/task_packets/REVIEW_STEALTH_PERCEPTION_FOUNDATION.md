@@ -12,7 +12,7 @@
 - Review target workstream: `stealth-perception-foundation`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/STEALTH_PERCEPTION_FOUNDATION.md`
 - Reviewed main: `0c80f6a5a1c64168a39b841fa5de362d98728664`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, runtime`
@@ -34,7 +34,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `mechanical post-review live-main reconciliation only; Vaultwing hardening scope is already locked`
 - Next action: If this review passes (including any bounded correction cycle), continue autonomously into `vaultwing-runtime-hardening`; refresh only exact file/test references from reviewed main.
 - Blockers or open questions: `none`

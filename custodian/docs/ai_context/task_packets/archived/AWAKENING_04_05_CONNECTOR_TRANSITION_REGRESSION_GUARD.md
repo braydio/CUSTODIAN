@@ -1,7 +1,6 @@
 # AWAKENING 04→05 CONNECTOR TRANSITION REGRESSION GUARD
 
-> **SUPERSEDED/GATED BY THE LIVE FADE DEFECT — DO NOT CLAIM.**
-> User playtest on 2026-10-09 accepts the registered 1502×2048 layout/order and rejects the current fade behavior. `awakening-04-05-registered-composition-fade-repair-v1` now owns the production fix and the missing bidirectional 04→05 evidence. After its paired review passes, archive this packet as superseded unless that review proves one residual regression-only gap.
+> **Archived as superseded.** The final source-preserving 1502×2048 registered composition and its fade ownership are covered by the completed correction/review packets and `awakening_registered_composition_traversal_smoke.gd`. This older packet's 1024×576 identity is retired; do not dispatch it.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-04-05-connector-transition-regression`

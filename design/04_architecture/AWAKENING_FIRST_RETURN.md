@@ -141,18 +141,13 @@ residuals are 33×10 world units. The previously reviewed connector transform
 historical evidence only. Layout's gameplay dogleg/collision remain separate
 authority and are unchanged. The shared registration, placement and
 Dust→connector→Locker draw order are accepted visual authority. A 2026-10-09
-playtest exposed a separate runtime fade defect: the controller currently applies
-the narrow connector-envelope alpha to the shared composition parent while the
-original Zone04/Zone05 underlay sprites are hidden. This can fade valid room floor
-pixels outside the dogleg and also leaves the 05→06 smoke checking hidden legacy
-Zone05 art instead of the live shared Dust layer. The active
-`awakening-04-05-registered-composition-fade-repair-v1` workstream must keep the
-shared root at `(349,-2585)`, native 1:1, zero rotation and exact layer order,
-while moving fade ownership to the live Dust/Connector/Locker children and
-repairing the vacuous coverage checks. The Locker foreground remains deferred
-unless parity is proven, and the specialized Designation Locker remains the
-interactive P-9 prop. The registered-composition correction itself passed paired
-review; only the fade ownership is pending repair.
+playtest exposed a separate runtime fade defect, since repaired by
+`awakening-04-05-registered-composition-fade-repair-v1` and accepted in its
+paired review. The shared root remains at `(349,-2585)`, native 1:1, zero
+rotation, and exact layer order; fade ownership now belongs to the live
+Dust/Connector/Locker children. The smoke checks the live Dust child rather than
+hidden legacy Zone05 art. The Locker foreground remains deferred unless parity is
+proven, and the specialized Designation Locker remains the interactive P-9 prop.
 
 For 05→06, `AwakeningLayout.PASSAGES["lower_upper_spine_05_06"]` is the single
 passage authority: `Rect2(-64,-3840,128,96)`. It replaces the former
@@ -175,8 +170,12 @@ presentation extraction.
 
 South Reach completion is gated by both the Crèche console acknowledgement and
 P-9 recovery. Arriving before either beat leaves the route physically open and
-sets the objective to the missing prerequisite; only after both beats does the
-completion signal fire. The existing RETURN TO POST objective remains in place.
+sets the objective to the missing prerequisite. Once both beats are complete,
+`awakening_completed(snapshot: Dictionary)` emits once with data-only completion,
+prerequisite, final-zone, and Operator-position fields. The deprecated
+`blockout_completed` compatibility signal emits from the same one-shot decision.
+The existing RETURN TO POST objective remains in place; this signal does not
+perform a Hub transition.
 
 ### Reused runtime, not rebuilt
 
@@ -815,3 +814,7 @@ Canonical one-liner for the docs:
 ```text
 The first objective is not “explore.” It is **RETURN TO POST**. The Custodian awakens in a grand institution ruin beneath a repeating command from a terminal carrying imported authority credentials from a physically adjacent continuity. The Custodian answers the command because responding to dead authority is what it was built to do. Authentication establishes the first local anchor of archive, repair, scanning, and future base progression — and confirms that the Custodian is not inheriting power, but refusing to relinquish residual authority.
 ```
+
+## Planned: Off-route perimeter underlay support (not yet implemented)
+
+The approved ten-region off-route scenery language and nonplayable structural/depth/atmospheric rules are owned by [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md); its implementation DAG and per-state art prompts are linked there. This is future visual presentation work only, **not** additional traversable regions or published art. Preserve current Layout/registered room plates, accepted 04→05 source composition and existing camera/visibility authority.

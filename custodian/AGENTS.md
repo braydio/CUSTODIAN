@@ -556,6 +556,15 @@ an internal helper and must not be used as a substitute for finish. Stage only c
 other sessions' work, and never amend or force-push unless explicitly asked.
 Use the repository's short lowercase, comma-joined commit style.
 
+Paired post-land reviews must run in a mechanically fresh context. From the
+coordination checkout, invoke
+`python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+for an exact eligible review successor; do not claim it in the implementation
+context. The runner uses the dispatcher receipt, launches `codex exec
+--ephemeral` in that worktree, stores sanitized evidence under Git-common-dir
+workflow state, and returns the durable `Next Handoff`. If a process fails after
+claim, preserve the claimed branch/worktree and follow its recovery card.
+
 ## Design Codex Governance
 
 `../design/90_codex/` is the project's idea inventory and design memory layer.

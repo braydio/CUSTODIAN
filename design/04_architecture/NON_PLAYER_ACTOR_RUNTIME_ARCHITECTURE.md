@@ -181,7 +181,7 @@ NPA-5 implementation extracts posture accumulation/recovery, flinch policy, reco
 
 Author NPA-4+ against landed live main so the program learns from the actual extracted seams rather than inventing a generic actor framework up front.
 
-**Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+**Planning / refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 NPA-4 is complete and independently reviewed. NPA-5 implementation is validated and awaiting its paired fresh-context review. After the NPA-5 paired review passes, stop at the recorded NPA-6 planning gate and remeasure health/death/corpse/loot ownership rather than freezing today's private life-state fields.
 

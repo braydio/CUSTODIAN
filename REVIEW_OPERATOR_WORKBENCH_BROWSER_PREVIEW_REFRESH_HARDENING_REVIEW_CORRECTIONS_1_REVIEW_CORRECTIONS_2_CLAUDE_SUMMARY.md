@@ -1,6 +1,6 @@
 # Independent review: Operator Workbench browser / PREVIEW correction cycle 2
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Disposition: `human_required` — one confirmed blocking defect at automatic review cycle 2 of maximum 2. Reviewed landed main `032d5f037bc846a0b7d291d27300645fcab2ea34`, including correction commit `b2b5b155b40fb32211da63802a3ef27336e4719e`. Reviewer context: `fresh`; reviewer provenance: `same-agent-fresh-context`. Reconstructed the target from root/local instructions, archived parent/correction/review packets and summaries, active Workbench design/current-state/index/validation authority, exact live diff/source, and fresh probes. No reviewed implementation was edited.
 
@@ -239,7 +239,7 @@ asyncio.run(sync_loader_probe(True))
 - Next packet state: human-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: Final automatic review cycle 2 confirms R2-01; R1-01/R0-04 disconnect acceptance remains unresolved. No automatic cycle 3 is authorized.
 - Next action: Return to the exact authoring conversation with this review summary and decide the bounded disconnect correction/re-review or an explicit acceptance exception before FX adoption may proceed.
 - Blockers or open questions: R2-01 accepts detached live pixels after actual bridge disconnect. FX packet still depends on review-operator-workbench-browser-preview-refresh-hardening; its lane cannot proceed while this final review is human_required. Historic production traceback remains unavailable.

@@ -4,6 +4,7 @@ const MACRO_TICK_INTERVAL := 60
 signal snapshot_emitted(snapshot: SimulationSnapshot)
 signal event_emitted(event: SimulationEvent)
 signal macro_stage_completed(stage: StringName)
+signal fixed_step_boundary(fixed_tick: int)
 signal assault_handoff_ready(plan: AssaultSpawnPlan)
 var state: WorldSimulationState
 var command_queue: Array[SimulationCommand] = []
@@ -27,7 +28,7 @@ func enqueue(command: SimulationCommand) -> int:
 func queue(kind: StringName, payload: Dictionary = {}, at_world_tick: int = -1) -> int: return enqueue(SimulationCommand.new(kind, payload, at_world_tick))
 func apply_commands_at_current_boundary() -> void: _drain_commands()
 func step_once() -> SimulationSnapshot:
-	_drain_commands(); state.fixed_tick += 1
+	_drain_commands(); state.fixed_tick += 1; fixed_step_boundary.emit(state.fixed_tick)
 	if state.fixed_tick % MACRO_TICK_INTERVAL == 0:
 		_power.step_macro(state); macro_stage_completed.emit(&"power")
 		_logistics.step_macro(state); macro_stage_completed.emit(&"logistics")

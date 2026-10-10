@@ -15,6 +15,8 @@ const SCENE := preload("res://scenes/awakening_first_return.tscn")
 
 var _failures: Array[String] = []
 var _camera_calls: Array[Dictionary] = []
+var _awakening_completion_events: Array[Dictionary] = []
+var _legacy_completion_count := 0
 
 
 func _init() -> void:
@@ -173,20 +175,41 @@ func _check_locker(awakening: Node) -> void:
 	if locker.position != Vector2(832, -1952):
 		_fail("SidearmLocker drifted from (832, -1952): %s" % str(locker.position))
 	var operator := awakening.get_node("World/Operator") as Node2D
+	var registered_parent := awakening.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05"
+	) as CanvasItem
+	var registered_locker := awakening.get_node_or_null(
+		"World/AwakeningZones/Traversal/ProductionArt/RegisteredComposition04_05/LockerReliquary"
+	) as CanvasItem
 	operator.global_position = locker.position + Vector2(-64, 0)
+	awakening.call("_update_zone_art_visibility")
+	_check_registered_locker_presentation(registered_parent, registered_locker, "closed")
 	await physics_frame
 	# The locker opens on the first interaction and only yields the P-9 once its
 	# opening animation has finished.
 	locker.interact(operator)
 	for i in 300:
 		await process_frame
+		_check_registered_locker_presentation(registered_parent, registered_locker, "authorize_open")
 		if int(locker.get("_state")) == 1: break
+	_check_registered_locker_presentation(registered_parent, registered_locker, "open_loaded")
 	locker.interact(operator)
+	_check_registered_locker_presentation(registered_parent, registered_locker, "empty")
 	for i in 60:
 		await process_frame
 		if bool(awakening.get("p9_recovered")): break
 	if not bool(awakening.get("p9_recovered")):
 		_fail("recovering the sidearm did not advance progression")
+
+
+func _check_registered_locker_presentation(parent: CanvasItem, locker: CanvasItem, state: String) -> void:
+	if parent == null or locker == null:
+		_fail("registered Locker Reliquary art is missing during %s" % state)
+		return
+	if not parent.visible or not is_equal_approx(parent.modulate.a, 1.0):
+		_fail("registered composition parent changed during locker %s" % state)
+	if not locker.visible or not is_equal_approx(locker.modulate.a, 1.0):
+		_fail("registered Locker Reliquary art was not stable during locker %s (visible=%s alpha=%0.3f)" % [state, locker.visible, locker.modulate.a])
 
 
 # --- Dust Lung lift ----------------------------------------------------------
@@ -331,6 +354,14 @@ func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
 
 func _check_south_reach(awakening: Node) -> void:
 	var operator := awakening.get_node("World/Operator") as Node2D
+	if not awakening.has_signal("awakening_completed"):
+		_fail("production Awakening completion signal is missing")
+	else:
+		awakening.awakening_completed.connect(_on_awakening_completed)
+	if not awakening.has_signal("blockout_completed"):
+		_fail("legacy completion compatibility signal is missing")
+	else:
+		awakening.blockout_completed.connect(_on_legacy_completion)
 	operator.global_position = Layout.SOUTH_REACH_COMPLETION_CENTER
 	var prerequisites := [
 		{"console": false, "p9": false, "expected": false, "objective": "Wake and read the crèche console"},
@@ -349,11 +380,40 @@ func _check_south_reach(awakening: Node) -> void:
 			_fail("missing prerequisite feedback is not useful: %s" % str(awakening.get("current_objective_text")))
 	if not bool(awakening.get("completed")):
 		_fail("both authored prerequisites did not permit South Reach completion")
+	if _awakening_completion_events.size() != 1 or _legacy_completion_count != 1:
+		_fail("completion signals did not emit exactly once: production=%d legacy=%d" % [
+			_awakening_completion_events.size(), _legacy_completion_count,
+		])
+	else:
+		var snapshot: Dictionary = _awakening_completion_events[0]
+		var expected_snapshot := {
+			"completed": true,
+			"opening_console_acknowledged": true,
+			"p9_recovered": true,
+			"final_zone_id": &"zone10_road_south_reach",
+			"operator_global_position": Layout.SOUTH_REACH_COMPLETION_CENTER,
+		}
+		if snapshot != expected_snapshot:
+			_fail("completion snapshot does not match the data-only handoff contract: %s" % str(snapshot))
+		for value in snapshot.values():
+			if value is Object:
+				_fail("completion snapshot contains an Object/Node reference")
+	awakening.call("_on_south_reach_reached", operator)
+	if _awakening_completion_events.size() != 1 or _legacy_completion_count != 1:
+		_fail("repeated South Reach arrival re-emitted completion")
 	var barrier := awakening.get_node_or_null(
 		"World/AwakeningZones/Zone10_RoadSouthReach/SetPieces/SouthReachCollapse"
 	)
 	if barrier == null:
 		_fail("temporary South Reach ruin is not a visible set piece")
+
+
+func _on_awakening_completed(snapshot: Dictionary) -> void:
+	_awakening_completion_events.append(snapshot.duplicate(true))
+
+
+func _on_legacy_completion() -> void:
+	_legacy_completion_count += 1
 
 
 # --- Encounters stay disabled ------------------------------------------------

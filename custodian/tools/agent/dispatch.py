@@ -92,6 +92,7 @@ def _decision(
     *, auto_only: bool, pairing_errors: dict[str, str] | None = None,
     validation_errors: dict[str, str] | None = None,
     queue_errors: dict[str, str] | None = None,
+    interrupted_claims: set[str] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
@@ -101,6 +102,8 @@ def _decision(
         return False, f"invalid validation references: {validation_errors[packet.workstream]}"
     if queue_errors and packet.workstream in queue_errors:
         return False, f"invalid queue contract: {queue_errors[packet.workstream]}"
+    if interrupted_claims and packet.workstream in interrupted_claims:
+        return False, "remote dispatch claim interrupted; recovery required"
     if packet.status != "ready":
         return False, f"status: {packet.status or 'missing'}"
     if auto_only and packet.dispatch != "auto":
@@ -224,6 +227,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         "PARKED DRAFT", "INVALID/RECOVERY",
     )}
     claims, branches = _remote_claim_state(repo)
+    interrupted_claims = claims - branches
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     packet_texts = _packet_texts(repo, packets)
@@ -264,7 +268,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
             ok, reason = _decision(
                 packet, packets, archived, claimed, auto_only=False,
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
-                queue_errors=queue_errors,
+                queue_errors=queue_errors, interrupted_claims=interrupted_claims,
             )
             if ok:
                 groups["MANUAL READY"].append(f"{name} [{packet.path}]")
@@ -277,7 +281,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
             ok, reason = _decision(
                 packet, packets, archived, claimed, auto_only=True,
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
-                queue_errors=queue_errors,
+                queue_errors=queue_errors, interrupted_claims=interrupted_claims,
             )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
@@ -318,6 +322,8 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
     packets = _packets(repo)
     archived = _archived_packets(repo)
     claimed = _claimed(repo)
+    remote_claims, remote_branches = _remote_claim_state(repo)
+    interrupted_claims = remote_claims - remote_branches
     texts = _packet_texts(repo, packets)
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
@@ -333,12 +339,12 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         ok, decision_reason = _decision(
             packet, packets, archived, claimed, auto_only=False,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
-            queue_errors=queue_errors,
+            queue_errors=queue_errors, interrupted_claims=interrupted_claims,
         )
         auto_ok, _ = _decision(
             packet, packets, archived, claimed, auto_only=True,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
-            queue_errors=queue_errors,
+            queue_errors=queue_errors, interrupted_claims=interrupted_claims,
         )
         reasons = []
         for error_map, label in (
@@ -359,6 +365,8 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
                 reasons.append(f"dependency not archived complete: {dependency}")
         if packet.workstream in claimed:
             reasons.append("already claimed by published agent branch")
+        if packet.workstream in interrupted_claims:
+            reasons.append("remote dispatch claim interrupted; recovery required")
         if packet.status != "ready":
             reasons.append(f"status is {packet.status or 'missing'}")
         elif packet.dispatch == "manual":
@@ -368,7 +376,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
 
         if packet.workstream in claimed:
             actual_class = "claimed"
-        elif packet.error or packet.workstream in pairing_errors or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1:
+        elif packet.error or packet.workstream in pairing_errors or packet.workstream in validation_errors or packet.workstream in queue_errors or active_counts.get(packet.workstream, 0) > 1 or packet.workstream in interrupted_claims:
             actual_class = "invalid_recovery"
         elif packet.status == "draft":
             actual_class = "parked_draft" if packet.dispatch == "manual" else "invalid_recovery"
@@ -457,9 +465,8 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "recovery_disposition": "canonical_branch_present_claim_residue" if has_branch else "protected_claim_without_agent_branch",
         })
     published_ids = {item["workstream"] for item in branch_audit if item["remote_branch_exists"]}
-    interrupted_claims = [item for item in remote_claim_audit if not item["agent_branch_exists"]]
-    if interrupted_claims:
-        class_counts["invalid_recovery"] = class_counts.get("invalid_recovery", 0) + len(interrupted_claims)
+    interrupted_claim_rows = [item for item in remote_claim_audit if not item["agent_branch_exists"]]
+    claim_only_orphans = [item for item in interrupted_claim_rows if item["workstream"] not in active_ids]
     return {
         "schema": "custodian.task_packet_queue_audit.v1",
         "raw_active_markdown_count": raw_active,
@@ -468,7 +475,9 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
         "class_counts": dict(sorted(class_counts.items())),
         "remote_agent_branches": branch_audit,
         "remote_dispatch_claims": remote_claim_audit,
-        "interrupted_dispatch_claim_count": len(interrupted_claims),
+        "interrupted_dispatch_claim_count": len(interrupted_claim_rows),
+        "claim_only_orphan_dispatch_claim_count": len(claim_only_orphans),
+        "claim_only_orphan_dispatch_claims": claim_only_orphans,
         "packets": rows,
     }
 
@@ -522,7 +531,7 @@ def claim(
                     ok, reason = _decision(
                         packet, packets, archived, claimed, auto_only=auto_only,
                         pairing_errors=pairing_errors, validation_errors=validation_errors,
-                        queue_errors=queue_errors,
+                        queue_errors=queue_errors, interrupted_claims=remote_claims - remote_branches,
                     )
                     if ok:
                         selected = packet

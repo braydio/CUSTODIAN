@@ -1,6 +1,6 @@
 # Persistent Checkout Sync Hardening Review Corrections 1
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 Closed blocking finding R0-01 from the paired review. Persistent sync no longer enumerates or hashes all ignored files. It now checks only incoming tracked paths and their ancestors, recording path type, tracked status, and `skip-worktree` state for race revalidation. Exact ignored/untracked destinations, directory collisions, sparse skip-worktree overlays, and non-directory ancestors block before fast-forward. Unrelated ignored siblings are outside the incoming path set, so Git's FF-only update leaves them in place without inspecting their contents.
 
@@ -33,7 +33,7 @@ The first fixture expectation assumed read-only status fetched the remote. It co
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: Run the paired fresh-context review of correction cycle 1.
 - Blockers or open questions: none

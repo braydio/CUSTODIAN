@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-handoff-readiness-art-convergence-v1-r1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-awakening-04-05-registered-composition-correction-v1, review-awakening-04-05-registered-composition-fade-repair-v1, review-awakening-interaction-feedback-console-activation, review-awakening-lower-upper-spine-connection`
@@ -18,7 +18,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`
 - Goal: Make the complete Awakening / The First Return scene a trustworthy production handoff source for the later Hub runtime by locking its current art registration and seam behavior to the Layout authority, closing objective overlap/registration defects found by visual evidence, exposing a clean completion/handoff signal without performing the Hub transition, and reconciling stale Awakening documentation with live runtime truth.
 - Completion boundary: Validate and, only where evidence proves a defect, correct presentation registration/seams across Zones 01–10 while preserving authored gameplay geometry; formalize the South Reach completion API that the next world-lifecycle slice can consume; add focused structural/visual validation; reconcile the Awakening asset-consumption ledger and known art gaps; repair current documentation drift. Done means the current scene can be traversed from Crèche wake to South Reach with production art registered to the existing spatial authority, all mandatory joins have explicit evidence, completion requires the opening console plus P-9, and a later Hub transition can subscribe to one production-named completion seam without depending on debug/blockout wording.
-- Current measured state: This packet now follows three explicit P0 corrections. First, `awakening-room-connectors-polish` published the exact source set but its independently anchor-fitted connector transform was later superseded by direct user registration evidence. `awakening-04-05-registered-composition-correction-v1` now owns the final 1502×2048 Dust→connector→Locker shared-layout correction, with zero per-piece rotation and exact measured layer bounds/overlaps. User playtest on 2026-10-09 confirms that layout/order are visually correct but exposes a separate fade-ownership defect: the shared registered parent is being faded from the narrow connector envelope. `awakening-04-05-registered-composition-fade-repair-v1` is now a required predecessor and must preserve the exact registered art while moving fade ownership to the live Dust/Connector/Locker children. Second, `awakening-interaction-feedback-console-activation` makes actionable interaction prompts persist, gives readouts a readable dwell contract, and wires the existing 8-frame Crèche console activation FX that is currently cataloged but not runtime-consumed. Third, `awakening-lower-upper-spine-connection` converts the split Dust Lung→Undergate route into one semantic 128×96 05→06 passage and proves real-Operator continuity into the later half. Claim only after all three paired reviews pass. On claim, reconstruct the exact landed connector canvas/transform and 05→06 passage from archived evidence/current main, then perform the remaining full-scene art/seam/South-Reach convergence. No manual ChatGPT refresh is required unless those reviewed corrections expose a new unresolved art/design choice.
+- Current measured state (refreshed 2026-10-09): The connector correction, fade-ownership repair, console-feedback/activation work, and lower→upper passage work have all passed paired review and archived complete. The registered 04→05 composition is the exact 1502×2048 Dust→connector→Locker stack at shared root `(349,-2585)`, zero rotation, scale 1, with child-owned fades. The 05→06 authority is one `Rect2(-64,-3840,128,96)` passage. All five Road modular environment families are registered, ingested, and used by `RoadOfWitnessesPrototype`; the north processional continuation remains deferred. The current live asset ledger and exact connector transforms are recorded below and in `AWAKENING_ASSET_MANIFEST.md`. This workstream completes remaining full-scene registration/seam/South-Reach convergence. No manual ChatGPT refresh is required unless live evidence exposes a new unresolved art/design choice.
 - Evidence: `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/game/world/awakening/awakening_first_return.gd`; `AWAKENING_04_05_CONNECTOR_VISUAL_CLOSEOUT_CLAUDE_SUMMARY.md`; `custodian/tools/assets/compose_awakening_connector_full_plate.py`; `reports/awakening_gate_collision/QA.md`; `reports/awakening_visual_walkthrough/QA.md`; `custodian/game/world/hub/road_of_witnesses_prototype.gd`; `custodian/tools/validation/road_of_witnesses_production_smoke.gd`; live Asset V2 family contracts/catalog; `custodian/content/metadata/assets/required_assets.registry.json`.
 - Task-specific authority: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; `design/04_architecture/AWAKENING_ASSET_MANIFEST.md`; `custodian/game/world/awakening/awakening_layout.gd`; live Asset Pipeline V2 family contracts; `design/05_levels/TWIN_SOLARIA.md` only for the next-stage boundary that Awakening must not bypass.
 - Work surface: Primary runtime owner is `custodian/game/world/awakening/awakening_first_return.gd` plus its scene and Layout-backed tests. Presentation inputs are the existing Awakening zone plates, 04→05 connector, and Road prototype/module families. Expected docs/tests: Awakening focused smokes, validation manifest/recipes, CURRENT_STATE, FILE_INDEX, and only the minimum design notes needed to record live truth. Do not modify Twin Solaria runtime in this slice.
@@ -150,12 +150,13 @@ Do not change scenes in this slice.
 
 Reconcile against the live generated catalog and family contracts, not old prose.
 
-Known current classes to preserve unless main has advanced when claimed:
+Live Asset V2 status refreshed on 2026-10-09:
 
 - **specialized live:** Crèche recovery alcove; P-9 Designation Locker; Dust Lung lift; required Gate of Dust component composition.
-- **BAKED_ONLY:** all seven published `awakening_creche_fixtures`; five published Ambulatory fixture states. Do not double-render them.
-- **partial:** `awakening_ambulatory_fixtures`, missing required `service_basin_b`.
-- **registered / currently unpublished:** Attestation fixtures, Reliquary fixtures, Dust Lung structures, Undergate machinery, Approach fixtures, Late Service fixtures, Late Service relay lamp, authority inlay, ruin decals, and required ambient FX.
+- **BAKED_ONLY:** all seven `awakening_creche_fixtures` states and all six `awakening_ambulatory_fixtures` states, including `service_basin_b`. Do not double-render them.
+- **published/imported, not standalone-bound:** Attestation fixtures, Reliquary fixtures, Dust Lung structures, Undergate machinery, authority inlays, and ruin decals; preserve their current `BAKED_ONLY` / `NOT_READY` classifications and do not invent placement.
+- **unpublished/not ready:** Approach fixtures, Late Service fixtures, and the Late Service relay lamp.
+- **specialized live:** Crèche recovery alcove, P-9 Designation Locker, Dust Lung lift, Gate components, route-circle inlay, and required Awakening ambient effects.
 - **later Hub, not Awakening-scene debt:** Field Terminal production prop/art, Field Terminal chamber dressing, Continuity Port, and first-Contract presentation.
 
 Do not publish missing generic art as part of this packet.
@@ -317,3 +318,42 @@ The already-queued Twin forensic/route-review/acquisition packets remain separat
 - Next action: after this packet lands and its review passes, implement the actual Awakening→Hub world-context transition and persistent Hub runtime host. That slice should depend on this workstream and on the App/Boot spine where required.
 - Best starting files: Awakening controller/layout/scene and focused smokes; Road prototype; world lifecycle architecture; `hub_twin_solaria` level definition for the later destination contract.
 - Blockers or open questions: Gate central sealed-body route readability remains a human/art composition decision if existing presentation cannot be corrected without changing the intended state. Missing P1 generic fixture/inlay/decal/ambient art is not a blocker for handoff readiness.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Focused Awakening progression, geometry, traversal, production environment, Road South Reach, connector asset contract, renderer, registration, and compact seam evidence checks passed. Final changed-file validation passed 28/28 selected checks with complete coverage and no failures, infra errors, timeouts, or skips. Portable five-seam ROI captures, metrics, and capture manifest are committed with the work. The previously recorded human visual lock satisfied the implementation-stage art-direction decision; the user explicitly directed closeout to proceed without another approval cycle. No agent vision adjudication was used.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: An intermediate changed-file sweep exposed a missing owner test for the staging helper; a focused receipt test and manifest ownership were added before the final passing sweep. Godot also regenerated unrelated `.import` sidecars during validation; these were removed before commit.
+- Root cause / contributing factors: Staging behavior had no test proving inbox-local receipt isolation; imported media sidecars are generated by editor/test initialization.
+- Prevention / pipeline improvement: Keep staging receipt behavior covered by the targeted changed-file suite.
+- Tooling / docs drift discovered: `kitty` is unavailable in this environment; existing human visual lock and explicit user direction authorized proceeding with committed compact evidence. Python `pytest` is not installed; repository-owned unittest files were run directly.
+- Follow-up: `none`
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-awakening-handoff-readiness-art-convergence-v1`
+- Reviewed on main: `3374efec219d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime, visual, asset-pipeline`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_HANDOFF_READINESS_ART_CONVERGENCE_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `awakening-handoff-readiness-art-convergence-v1-r1-review-corrections-1`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a`

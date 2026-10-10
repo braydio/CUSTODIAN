@@ -1498,6 +1498,33 @@ floor outside walls, ocean, and chasm. The save/restore smoke proves the
 versioned `InfrastructureRegistry` boundary. It does not imply project-wide
 save-manager integration.
 
+## Awakening Registration and Handoff
+
+Run after changing Awakening plate registration, seam probes, or South Reach
+completion. The evidence pass emits five authored-region captures in this order:
+05→06, 06→07, 07→08, 08→10, and optional 08↔09. Pixel metrics are technical
+measurements; the task packet owns any required human composition approval.
+
+`awakening_art_registration_smoke.gd` derives the ordinary Zone 01–03 and
+06–09 plate rectangles from `AwakeningLayout.ZONES` and requires each underlay
+and foreground canvas, global bounds, center, scale, and rotation to match its
+Layout envelope grown by 64 pixels. Zones 04/05 are an explicit exception: the
+accepted presentation is the shared 1502×2048 Dust → connector → Locker source
+composition at the measured root transform. The smoke checks its layer order,
+source hashes and alpha silhouette against
+`docs/ai_context/reports/assets/awakening_04_05_registered_composition_v1.json`, plus hidden
+legacy room sprites and the intentionally unbound Locker foreground. Do not
+apply the grow-64 room-plate rule to that approved composition.
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/awakening_art_registration_smoke.gd
+godot --headless --path . --script res://tools/validation/awakening_first_return_progression_smoke.gd
+python3 tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode none
+python3 tools/iteration/run_moment.py traversal/awakening_late_seams_v1 --capture-mode evidence
+python3 tools/validation/awakening_handoff_seam_evidence.py <evidence-run-directory>
+```
+
 ## Custodian Wake Contract Prewarm
 
 Use after changing the Home-to-operational-world handoff, contract bootstrap,

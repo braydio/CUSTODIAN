@@ -1,14 +1,75 @@
 # Task Packet Queue Reconciliation V1 Ledger
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Reconciliation boundary
 
-- Claim checkout base / before inventory: `52135e3401a9efd49b011e676171373c3bef37b2` (2026-10-09; dispatcher-created worktree). The packet's older `d6028a6d` values remain historical only.
-- Latest fetched main inspected and merged before final audit: `b5ce4e52bbd352b4d88fb61a4ac73d57098915ae`. Main advanced several times during this run, including a completed NPA-4 landing; every advancement was fetched and merged before the final inventory.
-- The initial live dispatcher inventory at claim was 23 ready/auto, 6 claimed, 96 dependency/lock blocked, 1 manual ready, 16 parked draft, 94 invalid/recovery (236 raw active Markdown files). This is the before state. The historical packet counts (231 raw, 107 managed, 53 complete-looking) were not used as live eligibility truth.
-- Final live audit on merged `origin/main`: 239 raw active Markdown files, 139 managed packets, 23 claimable ready/auto, 6 claimed, 93 dependency/lock blocked, 0 manual ready, 16 parked draft, 101 invalid/recovery. These classes sum to the raw active count; `dispatch.py audit --json` and `dispatch.py status` agree. Changes versus claim include upstream additions/completions and reclassification, so the increase in raw/invalid totals is not a loss of eligible identities. README index is regenerated and passes its check.
-- No task packet IDs were deleted. The 24 archival moves below preserve file bytes; 22 complete-looking legacy records without affirmative completion evidence remain active and unchanged. The separate NPA-4 packet was completed and archived by its upstream landing, not this repair.
+- Original claim-time live counts were recorded as 236 raw active Markdown files, 23 ready/auto, 6 claimed, 96 dependency/lock blocked, 1 manual ready, 16 parked draft and 94 invalid/recovery. The exact origin SHA and remote-ref snapshot for that dispatcher invocation were not recorded; therefore these are retained as an **unbound historical observation**, not a tree-bound before count. The prior historical `d6028a6d` counts are likewise not current truth.
+- Reproducible tree inventory (run `git ls-tree -r --name-only <tree> custodian/docs/ai_context/task_packets/`, count exact top-level `.md` files excluding `README.md`, then parse active and archived `Workstream:` identities with `task_packet_contract.parse_packet`):
+
+| Exact tree | Raw active files | Active identities | Archived identities | Active ∪ archived identities |
+| --- | ---: | ---: | ---: | ---: |
+| `52135e3401a9efd49b011e676171373c3bef37b2` (claim checkout baseline) | 234 | 146 | 191 | 337 |
+| `b5ce4e52bbd352b4d88fb61a4ac73d57098915ae` (upstream pre-archive snapshot) | 239 | 151 | 192 | 343 |
+| `7f43556150ca170f0d84f29771d5feb34dbabd18` (corrected candidate and landed implementation) | 213 | 149 | 194 | 343 |
+| `105c2541fd1c4dd7bf3dab688b64c3da76a4310b` (reviewed main) | 214 | 150 | 195 | 345 |
+| `37b84831079c2205197e4f86ddf0b71cefd0a6f6` (current correction audit main) | 219 | 156 | 211 | 367 |
+
+The table and baseline-to-landed identity delta can be regenerated with this read-only script from the repository root:
+
+```bash
+python3 - <<'PY'
+import subprocess
+import sys
+sys.path.insert(0, "custodian/tools/agent")
+from task_packet_contract import parse_packet
+
+refs = [
+    "52135e3401a9efd49b011e676171373c3bef37b2",
+    "b5ce4e52bbd352b4d88fb61a4ac73d57098915ae",
+    "7f43556150ca170f0d84f29771d5feb34dbabd18",
+    "105c2541fd1c4dd7bf3dab688b64c3da76a4310b",
+]
+def git(*args):
+    return subprocess.run(["git", *args], text=True, capture_output=True, check=True).stdout.strip()
+def inventory(ref):
+    paths = git("ls-tree", "-r", "--name-only", ref, "--", "custodian/docs/ai_context/task_packets").splitlines()
+    root = "custodian/docs/ai_context/task_packets/"
+    active = [p for p in paths if p.startswith(root) and p.endswith(".md") and "/" not in p[len(root):] and p != root + "README.md"]
+    archived = [p for p in paths if p.startswith(root + "archived/") and p.endswith(".md")]
+    ids = {}
+    for path in active + archived:
+        workstream = parse_packet(path, git("show", f"{ref}:{path}")).workstream
+        if workstream:
+            ids.setdefault(workstream, set()).add("active" if path in active else "archived")
+    active_ids = {identity for identity, locations in ids.items() if "active" in locations}
+    archived_ids = {identity for identity, locations in ids.items() if "archived" in locations}
+    return {"ref": ref, "raw_active": len(active), "active_ids": len(active_ids),
+            "archived_ids": len(archived_ids), "all_ids": set(ids)}
+snapshots = [inventory(ref) for ref in refs]
+for row in snapshots:
+    print(row["ref"], row["raw_active"], row["active_ids"], row["archived_ids"], len(row["all_ids"]))
+baseline, landed = snapshots[0], snapshots[2]
+print("baseline_to_landed_added", *sorted(landed["all_ids"] - baseline["all_ids"]))
+removed = sorted(baseline["all_ids"] - landed["all_ids"])
+print("baseline_to_landed_removed", *(removed or ["none"]))
+PY
+```
+
+- The old “final live audit” counts of 239 raw / 139 managed / 23 claimable were from `b5ce4e52`, before the 24 safe archive moves; they are not the repaired result. The landed result is the exact `7f435561` tree: 213 raw active files and 343 unique active-plus-archived workstream identities. `b5ce4e52` and `7f435561` have the same 343-identity set. Compared with baseline `52135e34`, the landed tree adds exactly `awakening-04-05-registered-composition-fade-repair-v1`, `review-awakening-04-05-registered-composition-fade-repair-v1`, `loot-toast-hud-clearance-v1`, `review-loot-toast-hud-clearance-v1`, `procgen-archive-resolve-playtest-polish-v1`, and `review-procgen-archive-resolve-playtest-polish-v1`; it removes **zero** baseline identities. The 24 archive moves preserve bytes, and the 22 ambiguous legacy records remain active and unchanged.
+- The `105c2541` review tree contains two further upstream identities (`living-world-entity-reification-handoff` and its paired review), with zero identity removals from baseline. These changes are outside the original implementation result and are recorded separately from the `7f435561` acceptance snapshot.
+- Current live dispatcher snapshot was taken from the correction worktree against fetched `origin/main@1aaeba23d3ad1a758d53e1224045951ff543e227`, using the corrected candidate `dispatch.py audit --json`: raw=219, managed=156, claimable-auto=24; classes are claimed=6, dependency/lock-blocked=105, invalid/recovery=64, parked-draft=20, ready-auto=24; interrupted claims=0 and claim-only orphan claims=0. Its exact eligible IDs were:
+
+  `asset-workbench-review-studio-r1`, `baby-opossum-runtime-hardening-r1`, `hub-awakening-context-handoff`, `kenney-pattern-lines-source-library`, `loot-toast-hud-clearance-v1`, `operator-2-5d-workbench-polish-automation`, `operator-unarmed-defense-source-promotion`, `procgen-alpine-cliff-presentation-v1`, `procgen-archive-resolve-playtest-polish-v1`, `procgen-authored-claim-registry-extraction`, `reciprocal-continuity-canon-drift-guard`, `review-bidirectional-dropbox-handoff`, `review-contract-world-placement-foundation-r1`, `review-isometric-2-5d-presentation-foundation`, `review-lords-of-pain-test-gallery`, `review-operator-art-registration-profile-review-corrections-1-r1`, `review-operator-workbench-fx-layer-adoption-review-corrections-1`, `review-startup-world-entry-spine-v1-r1`, `twin-solaria-crown-incident-forensics`, `twin-solaria-development-preview-consistency-r1`, `twin-solaria-route-vista-samples-v1`, `ultra-codex-packet-worker`, `vaultwing-bonding-local-history-recovery`, `visual-review-question-answer-capture-v1`.
+
+- At this same ref snapshot, `remote_dispatch_claims` was empty. The correction's canonical `origin/agent/task-packet-queue-reconciliation-v1-review-corrections-1` branch was `c2dac570fc0d002144b292e199837ad5b8ac6c5d`, six commits behind main with no unique commits, attached to this active dirty worktree; no temporary `dispatch-claims/task-packet-queue-reconciliation-v1-review-corrections-1` ref existed. These are current refs, not reconstructed historical claim counts. Re-run the command pair below to reproduce a later live snapshot:
+
+```bash
+git rev-parse origin/main
+python3 custodian/tools/agent/dispatch.py audit --json
+```
+
+- The managed README index is generated output, not an independent count authority. At each measured tree, raw files, parsed identity sets and any live claim/ref audit are kept distinct so upstream arrivals, packet archival, and current ownership cannot be conflated.
 
 ## Invalid and newly surfaced packet repairs
 
@@ -55,7 +116,7 @@ The following 22 complete-looking legacy records remain in the active directory 
 
 ## Branches, claims, and protected ownership
 
-The final audit inspected every local/remote `agent/*` branch against merged `origin/main`, plus attached worktrees, dirtiness, ancestry, and claim refs. There were zero interrupted remote dispatch claims. No claim, branch, mutex, or worktree was deleted/released by this task.
+The implementation's contemporaneous live branch audit reported zero interrupted remote dispatch claims and released no claim, branch, mutex, or worktree. Its exact Git/ref snapshot was not persisted, so that report is an unbound historical observation. The separately reproducible packet-tree identity evidence above does not depend on that live-ref report.
 
 - `ash-bell-ritualant-runtime-truth-closeout`: `origin/agent/...`, 0 ahead / 304 behind, attached clean worktree; local and published diagnostic traces exist. Protected as attached/live.
 - `awakening-handoff-readiness-art-convergence-v1-r1`: remote branch, 0/92, attached clean; protected as plausible active Awakening owner.
@@ -83,10 +144,17 @@ The protected rows are concrete ownership blockers for claim release only. They 
 
 - Attached agent worktrees listed above remain under their owners' control; release requires affirmative owner/claim resolution through normal branch-hygiene lifecycle.
 - The 22 legacy completion-looking files need source-owner evidence before archive; their identities remain searchable and visible.
-- Existing historical invalid/recovery entries (101 at final audit, including legacy schema residue and upstream-specific defects) remain explicitly classified by dispatcher reasons; this task did not fabricate a complete contract for them. Newest-main invalid references found during review were fixed as itemized above.
+- At the pre-archive `b5ce4e52` live audit, 101 entries were classified invalid/recovery, including legacy schema residue and upstream-specific defects. This count is tied to that exact tree/ref observation, not to the repaired `7f435561` result or current main. The task did not fabricate a complete contract for ambiguous historical entries; newest-main invalid references found during review were repaired as itemized above.
 
 ## Process receipt
 
 - Implementation status: complete, pending safe landing and independent paired review.
 - Reconciliation result: safe repairs applied; ambiguous ownership preserved.
-- Before/after machine reports captured from `dispatch.py audit --json` and status; raw and managed inventory differ because of upstream commits during execution.
+- The implementation summary's before/after machine outputs were not retained with their exact Git and remote-ref snapshots. The original claim-time raw count remains explicitly unbound above; the source-tree counts and identity sets in this correction are reproducible from their full Git SHAs.
+
+
+## Correction 1 reconciliation refresh
+
+- The correction implementation refreshed the live snapshot at `origin/main@1aaeba23d3ad1a758d53e1224045951ff543e227`. Its queue counts and eligible identity set are unchanged from `37b84831`: 219 raw active files, 156 managed packets, 24 claimable auto packets, 0 interrupted claims and 0 claim-only orphan claims. The correction branch was six commits behind main at that exact audit; it remained attached to its dirty worktree and no claim refs were present.
+- The raw/managed/eligible counts above are live dispatcher output from the corrected candidate code, while the exact source-tree inventory remains bound to each source tree listed earlier. Current live branch ownership is volatile and must be refreshed by the paired reviewer at its own captured SHA.
+- R0-01 is corrected in the candidate dispatcher: temporary claims without canonical agent branches suppress named/next eligibility, count an active packet exactly once as invalid/recovery, and expose claim-only orphans in a separate field. The tests assert repeated JSON stability and preserve the recovery ref. R0-02 is corrected by removing concurrent patches to process-global `builtins.print`; the exact committed five-module CI command passes 122 tests. R0-03 is corrected by the exact-tree inventory and identity delta above. These findings remain subject to independent paired re-review.

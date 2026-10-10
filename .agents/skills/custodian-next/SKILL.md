@@ -60,7 +60,16 @@ rather than treating a local PASS as remote queue availability.
    - After that successor finishes, persist its `<TASK>_CLAUDE_SUMMARY.md` and
      repeat this same routing step through the named same-series chain.
    - A paired review is an immediate successor but must run in a fresh reviewer
-     context; that freshness requirement does not turn it into a user relay step.
+     context. Once eligible, invoke
+     `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+     from the coordination checkout. The runner preflights Codex before claim,
+     claims only that exact review via the dispatcher, launches
+     `codex exec --ephemeral` in the returned review worktree, persists sanitized
+     run evidence under `.git/custodian-review-runs/`, and returns the durable
+     summary plus `Next Handoff`. Do not directly claim paired reviews inside the
+     implementation context or ask the user to relay them. If the runner reports
+     a recoverable block, preserve the reported branch/worktree and continue from
+     its durable summary; do not claim a replacement review.
 
 3. **Stop only at a real gate.**
    - Stop before claiming when ChatGPT/user planning refresh is required, a

@@ -2,7 +2,7 @@ class_name AbstractActivitySimulationState
 extends RefCounted
 
 const SCHEMA := "custodian.abstract_activity_state"
-const VERSION := 1
+const VERSION := 2
 const MAX_DOMAINS := 64
 const MAX_LOCATIONS_PER_DOMAIN := 128
 const MAX_GROUPS := 256
@@ -41,11 +41,14 @@ func register_group(
 	route_location_ids: Array,
 	registered_fixed_tick: int = 0,
 	condition: float = 1.0,
-	pressure: float = 0.0
+	pressure: float = 0.0,
+	actor_id: String = ""
 ) -> bool:
 	last_error = ""
 	if not _valid_id(domain_id) or not _valid_id(group_id) or not _valid_id(objective_id):
 		return _reject("invalid domain, group, or objective identity")
+	if not actor_id.is_empty() and not _valid_id(actor_id):
+		return _reject("invalid stable actor identity")
 	if not _has_location(domain_id, location_id):
 		return _reject("group location is not registered in its domain")
 	if registered_fixed_tick < 0:
@@ -67,6 +70,8 @@ func register_group(
 	var key := _group_key(domain_id, group_id)
 	if groups.has(key):
 		return _reject("duplicate group identity %s/%s" % [domain_id, group_id])
+	if not actor_id.is_empty() and _actor_identity_claimed(domain_id, actor_id):
+		return _reject("duplicate actor identity %s/%s" % [domain_id, actor_id])
 	if groups.size() >= MAX_GROUPS:
 		return _reject("abstract group bound exceeded")
 	groups[key] = {
@@ -79,6 +84,9 @@ func register_group(
 		"last_advanced_fixed_tick": registered_fixed_tick,
 		"condition": condition,
 		"pressure": pressure,
+		"actor_id": actor_id,
+		"representation": "abstract",
+		"actor_projection": {},
 	}
 	return true
 
@@ -99,6 +107,9 @@ func advance_to_fixed_tick(fixed_tick: int, world_tick: int) -> bool:
 	for key in keys:
 		var group: Dictionary = groups[key]
 		var elapsed := fixed_tick - int(group.last_advanced_fixed_tick)
+		if String(group.get("representation", "abstract")) == "physical":
+			group.last_advanced_fixed_tick = fixed_tick
+			continue
 		if elapsed < ACTIVITY_INTERVAL_TICKS:
 			continue
 		var route: Array = group.route_location_ids
@@ -109,6 +120,10 @@ func advance_to_fixed_tick(fixed_tick: int, world_tick: int) -> bool:
 		group.location_id = next_location
 		group.route_progress_index = next_index
 		group.last_advanced_fixed_tick = fixed_tick
+		var projection: Dictionary = group.get("actor_projection", {})
+		if not projection.is_empty():
+			projection["location_id"] = next_location
+			group.actor_projection = projection
 		var domain_id := String(group.domain_id)
 		var group_id := String(group.group_id)
 		causal_events.append({
@@ -135,6 +150,31 @@ func get_group(domain_id: String, group_id: String) -> Dictionary:
 	return value.duplicate(true) if value is Dictionary else {}
 
 
+func set_actor_representation(domain_id: String, group_id: String, actor_id: String, representation: String, projection: Dictionary, fixed_tick: int) -> bool:
+	last_error = ""
+	var group: Dictionary = groups.get(_group_key(domain_id, group_id), {})
+	if group.is_empty() or not _valid_id(actor_id) or representation not in ["abstract", "physical"]:
+		return _reject("invalid actor representation transition")
+	if String(group.get("actor_id", "")) not in ["", actor_id]:
+		return _reject("group actor identity is already claimed")
+	if _actor_identity_claimed(domain_id, actor_id, group_id):
+		return _reject("actor identity is already claimed by another group")
+	if fixed_tick < int(group.get("last_advanced_fixed_tick", 0)):
+		return _reject("actor transition tick moved backwards")
+	if representation == "physical" and projection.is_empty():
+		return _reject("physical representation requires an actor projection")
+	if not projection.is_empty() and (String(projection.get("location_id", "")) != String(group.get("location_id", "")) \
+		or not _valid_actor_projection(domain_id, group_id, actor_id, projection)):
+		return _reject("actor projection is invalid or does not match group state")
+	group.actor_id = actor_id
+	group.representation = representation
+	group.actor_projection = projection.duplicate(true)
+	if not projection.is_empty():
+		group.condition = float(projection.condition)
+	group.last_advanced_fixed_tick = fixed_tick
+	return true
+
+
 func to_dict() -> Dictionary:
 	var domains: Dictionary = {}
 	var domain_ids: Array[String] = []
@@ -158,7 +198,8 @@ func to_dict() -> Dictionary:
 
 
 static func from_dict(data: Dictionary) -> AbstractActivitySimulationState:
-	if String(data.get("schema", "")) != SCHEMA or int(data.get("schema_version", 0)) != VERSION:
+	var schema_version := int(data.get("schema_version", 0))
+	if String(data.get("schema", "")) != SCHEMA or schema_version not in [1, VERSION]:
 		return null
 	var restored := AbstractActivitySimulationState.new()
 	var serialized_domains: Variant = data.get("locations_by_domain", {})
@@ -185,9 +226,17 @@ static func from_dict(data: Dictionary) -> AbstractActivitySimulationState:
 		var domain_id := String(group.get("domain_id", ""))
 		var group_id := String(group.get("group_id", ""))
 		var key := _group_key(domain_id, group_id)
-		if restored.groups.has(key) or not restored._valid_group_record(key, group):
+		var normalized_group := group.duplicate(true)
+		if schema_version == 1:
+			normalized_group["actor_id"] = ""
+			normalized_group["representation"] = "abstract"
+			normalized_group["actor_projection"] = {}
+		if restored.groups.has(key) or not restored._valid_group_record(key, normalized_group):
 			return null
-		restored.groups[key] = group.duplicate(true)
+		if not String(normalized_group.get("actor_id", "")).is_empty() \
+			and restored._actor_identity_claimed(domain_id, String(normalized_group.actor_id)):
+			return null
+		restored.groups[key] = normalized_group
 	var serialized_events: Variant = data.get("causal_events", [])
 	if not serialized_events is Array or serialized_events.size() > MAX_CAUSAL_EVENTS:
 		return null
@@ -269,6 +318,16 @@ func _valid_group_record(key: String, group: Dictionary) -> bool:
 	var last_tick := int(last_tick_variant)
 	var condition := float(group.get("condition", -1.0))
 	var pressure := float(group.get("pressure", -1.0))
+	var actor_id := String(group.get("actor_id", ""))
+	var representation := String(group.get("representation", "abstract"))
+	var actor_projection: Variant = group.get("actor_projection", {})
+	if (not actor_id.is_empty() and not _valid_id(actor_id)) or representation not in ["abstract", "physical"]:
+		return false
+	if not actor_projection is Dictionary or (representation == "physical" and (actor_id.is_empty() or actor_projection.is_empty())):
+		return false
+	if not actor_projection.is_empty() and (actor_id.is_empty() or String(actor_projection.get("location_id", "")) != location_id \
+		or not _valid_actor_projection(domain_id, group_id, actor_id, actor_projection)):
+		return false
 	return last_tick >= 0 and is_finite(condition) and condition >= 0.0 and condition <= 1.0 \
 		and is_finite(pressure) and pressure >= 0.0 and pressure <= 100.0
 
@@ -276,6 +335,43 @@ func _valid_group_record(key: String, group: Dictionary) -> bool:
 func _has_location(domain_id: String, location_id: String) -> bool:
 	var locations: Variant = locations_by_domain.get(domain_id, null)
 	return _valid_id(location_id) and locations is Array and locations.has(location_id)
+
+
+func _actor_identity_claimed(domain_id: String, actor_id: String, except_group_id: String = "") -> bool:
+	for group_variant in groups.values():
+		var group: Dictionary = group_variant
+		if String(group.get("domain_id", "")) == domain_id \
+			and String(group.get("group_id", "")) != except_group_id \
+			and String(group.get("actor_id", "")) == actor_id:
+			return true
+	return false
+
+
+func _valid_actor_projection(domain_id: String, group_id: String, actor_id: String, projection: Dictionary) -> bool:
+	if String(projection.get("domain_id", "")) != domain_id \
+		or String(projection.get("group_id", "")) != group_id \
+		or String(projection.get("actor_id", "")) != actor_id \
+		or not _has_location(domain_id, String(projection.get("location_id", ""))):
+		return false
+	var health: Variant = projection.get("health", null)
+	var max_health: Variant = projection.get("max_health", null)
+	var condition: Variant = projection.get("condition", null)
+	if not _is_finite_number(health) or not _is_finite_number(max_health) or not _is_finite_number(condition):
+		return false
+	if float(max_health) <= 0.0 or float(health) <= 0.0 or float(health) > float(max_health):
+		return false
+	if float(condition) < 0.0 or float(condition) > 1.0 or not is_equal_approx(float(condition), float(health) / float(max_health)):
+		return false
+	if not _valid_id(String(projection.get("attack_objective", ""))) \
+		or not _valid_id(String(projection.get("behavior_profile_id", ""))):
+		return false
+	var position: Variant = projection.get("position", null)
+	return position is Array and position.size() == 2 \
+		and _is_finite_number(position[0]) and _is_finite_number(position[1])
+
+
+static func _is_finite_number(value: Variant) -> bool:
+	return (typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT) and is_finite(float(value))
 
 
 func _sorted_group_keys() -> Array[String]:

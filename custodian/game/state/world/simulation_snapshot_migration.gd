@@ -1,7 +1,16 @@
 class_name SimulationSnapshotMigration
 extends RefCounted
 static func migrate(data: Dictionary) -> Dictionary:
-	if String(data.get("schema", "")) == SimulationSnapshot.SCHEMA and int(data.get("schema_version", 0)) == SimulationSnapshot.VERSION: return data.duplicate(true)
+	if String(data.get("schema", "")) == SimulationSnapshot.SCHEMA and int(data.get("schema_version", 0)) == SimulationSnapshot.VERSION:
+		var current := data.duplicate(true)
+		var snapshot_state: Variant = current.get("state", {})
+		var abstract_state: Variant = snapshot_state.get("abstract_activity", {}) if snapshot_state is Dictionary else {}
+		if abstract_state is Dictionary and int(abstract_state.get("schema_version", 0)) == 1:
+			var incoming_fingerprint := String(current.get("fingerprint", ""))
+			if incoming_fingerprint.is_empty() or incoming_fingerprint != SimulationCanonicalJson.sha256(snapshot_state):
+				return {}
+			return _capture_migrated_state(snapshot_state)
+		return current
 	if String(data.get("schema", "")) == SimulationSnapshot.SCHEMA and int(data.get("schema_version", 0)) == 4 and data.get("state", {}) is Dictionary:
 		return _capture_migrated_state(data.state)
 	if String(data.get("schema", "")) == SimulationSnapshot.SCHEMA and int(data.get("schema_version", 0)) == 3 and data.get("state", {}) is Dictionary:

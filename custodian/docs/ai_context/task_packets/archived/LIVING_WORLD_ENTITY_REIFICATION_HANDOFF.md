@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-entity-reification-handoff`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `complete`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-living-world-abstract-activity-foundation-review-corrections-1`
 - Locks: `world-simulation-runtime, living-world-abstract-activity, world-actor-lifecycle`
@@ -28,23 +28,13 @@
 - Preserve: F14-B determinism and corrected R0-01 event IDs; schema-v5 restore compatibility and v4 migration; kernel 60Hz/60-tick macro cadence and world ownership; Enemy death/corpse/loot once-only policy; F02 visual M6/Archive Resolve authority, F04 NPA behavior; native ambient camp spawn rules outside explicitly managed test fixture; F06 CampaignVisit/Hub boundary and REMAP-3 disk persistence. Do not reinterpret visual chunk eviction or interest dormancy as actor unloading.
 - Non-goals: No real F15 geographic topology, production auto location-residency subscription, generation of remote map chunks, automatic ambient-camp population takeover, multi-member combat groups or other NPA families, open-world scene residency policy, unseen physical combat/casualties, vehicles/Ports, full Enemy AI blackboard serialization, arbitrary mid-attack resumption, new HUD, background simulation process, save-to-disk or artwork.
 - Acceptance: (1) Deterministic synthetic Domain A/B fixture instantiates an **actual enemy_grunt.tscn Enemy** with known GroupId+ActorId, a non-default health fraction and non-default goal/behavior. (2) Explicit safe physical→abstract transition fully removes/neutralizes the real actor and descendants before any abstract causal tick; precisely one serializable record continues with original stable IDs and state. (3) Advance 60+ kernel ticks: exactly one bounded route-progress event and changed target location; repeated same-tick requests/events do not double advance. (4) Explicit abstract→physical at the correct deterministic A/B safe anchor creates **one and only one** Grunt, preserving ActorId, GroupId, health/condition and intent; abstract movement remains suspended while physical and no second actor appears on repeated reentry requests. (5) Repeat unload/reenter twice with same IDs, and compare deterministic group/fingerprint/event state against identical seeded replay; restore a snapshot while abstract then reify with no duplicate or identity reset. (6) Negative tests: duplicate actor claim, invalid geographic site/anchor, queued/pending spawn, active attack, dead/corpse/loot, and failed staging/removal reject non-destructively and preserve prior authority; no pending callbacks continue from an abstract actor. (7) Legacy v4/v5 snapshots and pre-correction v5 event IDs still restore; if schema changes, required migration and canonical fingerprint assertions cover it. (8) Previous abstract activity, kernel, macro-state, snapshot and relevant Enemy spawn/lifecycle regression smokes remain green; a focused test genuinely fails when exclusive ownership switching is disabled. (9) No full production/procgen/vehicle world binding claimed.
-- Validation: First `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian`, then `godot --headless --path custodian --script res://tools/validation/world_simulation_actor_reification_handoff_smoke.gd` (or exact authored path) and focused existing `world_simulation_abstract_activity_smoke.gd`, `world_simulation_kernel_smoke.gd`, `world_simulation_macro_state_smoke.gd`, `world_simulation_snapshot_roundtrip_smoke.gd`, plus narrow `procgen_ambient_enemy_real_world_spawn_smoke.gd` if touched/claimed. Run `python3 custodian/tools/validation/run_validation.py --changed --json` once after focused smokes, `git diff --check`; do not overlap broad headless Godot jobs. Authoring/pairing preflight is REQUIRED for both packets before promotion to ready/auto. The existing repo-wide review-pairing failure on an unrelated Awakening validation-script path is a separate scoped maintenance defect; report it rather than corrupting this packet's acceptance or bypassing targeted validators.
+- Validation: First `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian`, then run the focused actor-reification handoff smoke authored and registered for this workstream using its committed manifest entry/path, plus focused existing `world_simulation_abstract_activity_smoke.gd`, `world_simulation_kernel_smoke.gd`, `world_simulation_macro_state_smoke.gd`, `world_simulation_snapshot_roundtrip_smoke.gd`, and narrow `procgen_ambient_enemy_real_world_spawn_smoke.gd` if touched/claimed. Run `python3 custodian/tools/validation/run_validation.py --changed --json` once after focused smokes, `git diff --check`; do not overlap broad headless Godot jobs. Authoring/pairing preflight is REQUIRED for both packets before promotion to ready/auto. The existing repo-wide review-pairing failure on an unrelated Awakening validation-script path is a separate scoped maintenance defect; report it rather than corrupting this packet's acceptance or bypassing targeted validators.
 - Task overrides: `none`
 - Deferred: F14-C2 production physical residency/spawner registration and F15 geographic ID/route binding; F14-D consumes REMAP-3 save/restart; F14-E validates multi-site player-facing leave/reenter and budgets. Post-land fresh-context independent code/architecture/runtime review required before any of these successors.
 
 ## Planning authorization and promotion
 
-This first C1 **synthetic two-location real-Enemy handoff boundary is design-authorized** by the accepted B review and F14 V1 exclusive-ownership player lock. The broader production auto-streaming system is not. This pair is deliberately `draft/manual` only because this GitHub documentation session cannot execute the required local targeted packet-authoring preflight; this is a procedural preflight hold, not an invitation for an autonomous dispatcher to claim a draft. Execute the following first in a real checkout, then set BOTH implementation and paired review `Status: ready`, `Dispatch: auto`, rerun preflight, regenerate/check managed queue index, land exactly those queue-authority files on `origin/main`, fetch/verify, and only then `dispatch.py claim living-world-entity-reification-handoff --agent codex`:
-
-```bash
-python3 custodian/tools/agent/validate_task_packet_authoring.py \
-  custodian/docs/ai_context/task_packets/LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md \
-  custodian/docs/ai_context/task_packets/REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF.md
-python3 custodian/tools/agent/task_packet_index.py --write
-python3 custodian/tools/agent/task_packet_index.py
-```
-
-See root `AGENTS.md` → Task-Packet Promotion Before Dispatch. Do not confuse local PASS with remote queue authority.
+The first C1 synthetic two-location real-Enemy handoff was design-authorized by the accepted F14-B review and F14 V1 exclusive-ownership lock. The paired packets passed targeted authoring preflight, were promoted to `ready/auto`, indexed and landed on `origin/main` before this implementation was claimed. The packet validation reference was repaired and republished before claim so its focused smoke is authored and manifest-registered by this workstream. The broader production auto-streaming system remains outside this authorization.
 
 ## Refresh Planning Authority
 
@@ -52,3 +42,51 @@ See root `AGENTS.md` → Task-Packet Promotion Before Dispatch. Do not confuse l
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh instruction: On claim inspect current `WorldSimulationState`, F14-B corrected event serialization, actual `Enemy` Grunt properties and live F02/F04 owners. Reconcile private adapter names locally without weakening the approved one-actor synthetic proof. If new material ownership conflict arises, return evidence to the Authoring chat rather than inventing production streaming.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Focused Grunt handoff smoke passed with two unload/reentry cycles, snapshot restore, deterministic replay, one abstract route event, physical tick suspension, identity and condition preservation, duplicate/pending/active-attack/dead/corpse/loot/invalid-site rejection, and non-destructive failed transfer/staging paths; F14-B abstract activity, kernel, macro-state and snapshot smokes passed; ambient real-world Enemy spawn smoke exited successfully; changed-file validation passed 15/15; import preflight and `git diff --check` passed.
+- Deferred work: F14-C2 production physical residency/spawner registration and F15 geography remain separate; no production streaming binding is claimed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first direct smoke run exposed an indentation error in the state deserializer edit; it was corrected before the focused validation pass.
+- Root cause / contributing factors: A narrow validation-state edit changed indentation inside the nested event validation loop.
+- Prevention / pipeline improvement: The focused parser/smoke pass ran immediately after the preflight and caught the issue before broader validation.
+- Tooling / docs drift discovered: none
+- Follow-up: `review-living-world-entity-reification-handoff` — required fresh-context independent post-land review.
+- What worked: The focused smoke exercised real Grunt ownership transitions and old v5 event-ID migration without broadening the production integration surface.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-living-world-entity-reification-handoff`
+- Reviewed on main: `0728ec281` (implementation commit `3eeae806f3f897c9b467cd929a324aa13cfb7216`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `2`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02, R0-03`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_LIVING_WORLD_ENTITY_REIFICATION_HANDOFF_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `living-world-entity-reification-handoff-review-corrections-1`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
+
+### Review Notes
+
+- R0-01: A live Node2D anchor at `Vector2(NAN, 0)` is accepted; reentry commits physical ownership and creates a Grunt with nonfinite global position. Validate finite safe placement before staging/commit and preserve abstract authority on failure.
+- R0-02: Schema-v5 snapshots whose abstract state is v1 bypass the incoming fingerprint check because migration captures/signs the migrated state first. A valid legacy snapshot changed only to `fingerprint = "corrupted"` still restores. Validate the original canonical payload fingerprint before upgrading it.
+- R0-03: The authored smoke still passes with physical-group abstract advancement enabled by an independent scratch subclass. The physical 60-tick hold does not cross an eligible activity interval at a macro boundary; a 120-tick hold exposes the mutation. Strengthen the ownership falsification proof.
+- Import preflight and all five required focused smokes passed after fresh-worktree editor import. Independent supported-goal full twice-crossing replay also produced equal fingerprint/events in two separate processes. Passing current tests does not resolve these findings.

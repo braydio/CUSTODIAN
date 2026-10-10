@@ -6,7 +6,7 @@
 - Implementation commit boundary: `f2b896379^` → `f2b896379`; later implementation closeout commits `0f121c638` and `a7e3188c8`.
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Findings
 
@@ -93,7 +93,7 @@ Raw review logs, temporary scripts, previews, and validation JSON remain disposa
 - Next packet state: none
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac36534-b620-83ea-9805-525e2ae891ab
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
 - Next action: North VFX implementation/review series is closed; refresh the stale FILE_INDEX path/state during a later authorized documentation maintenance.
 - Blockers or open questions: none; R0-01 is deferred and nonblocking.
