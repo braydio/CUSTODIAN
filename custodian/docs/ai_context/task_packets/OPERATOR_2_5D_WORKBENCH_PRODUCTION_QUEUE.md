@@ -32,7 +32,7 @@
   2. Preserve authored rank/priority/state. Computed workflow never rewrites plan order.
   3. NEXT may skip a blocked item only with a deterministic visible reason.
   4. Show family completion by required canonical directions/layers. Legacy/fallback/projected never count.
-  5. Equal-priority family-close tie-break may prefer finishing a nearly complete family, but must expose the reason and may not jump a higher authored priority/rank.
+  5. Family-close preference may choose directions within the same equal-priority/equal-rank family; it must not reorder separately ranked families. Expose the reason and any skipped blocked target.
   6. Queue totals reconcile exactly to target projection and review receipts. No independent stored progress counters.
   7. Queue/tree/matrix select the same authoring identity.
   8. Export Generation Brief creates a local immutable bundle under .ai/operator_animation_workbench/generation_briefs/<brief-id>/.
@@ -49,12 +49,12 @@
      - target identity/hash for re-association.
   10. Export is deterministic for identical target authority/hashes and fails stale if profile/reference/plan changes.
   11. No network/image-generation API call. The user/agent may take PROMPT + refs to an external generator manually.
-  12. When returned art is imported, WB25-2 uses brief identity/hash to associate it; filename alone is never authority.
+  12. Add an optional exact brief identity/hash validation adapter to the EXISTING WB25-2 ingress seam for returned art. Filename alone is never authority; existing valid unbriefed import stays supported.
   13. Supersede OPERATOR_WORKBENCH_UX_WORK_QUEUE.md as migration queue authority without deleting unrelated historical UX guidance.
 - Preserve: plan human priority authority; target/review state ownership; legacy browser; Workbench publication; local-only generated briefs.
 - Non-goals: no autonomous generation; no plan mutation; no background workers; no runtime cutover; no legacy deletion; no broad UX restyle.
 - Acceptance: queue totals equal target projection exactly; NEXT is reproducible; fallback remains incomplete; family completion agrees with matrix; a generation brief for a test idle target contains correct reference/profile/frame hashes and is byte-stable on repeated export; stale authority refuses export; imported source can resolve back to the same target using manifest identity.
-- Validation: focused reconciliation/count invariants, blocked NEXT, fallback negative control, family completion, brief idempotency/hash, stale export, target re-association, queue/tree/matrix identity; operator_workbench_ui_smoke.py as needed; changed validation + git diff --check.
+- Validation: focused queue/brief smokes for counts, blocked NEXT, fallback and accepted-source negative controls, receipt/human gate, family completion, idempotency/content hashes, null timing, stale/unsafe export, target re-association, queue/tree/matrix identity; register new validation owners and rerun existing target/ingress/review/Workbench UI smokes where touched; then --changed and git diff --check. See Locked Refresh Decisions below for negative-control details.
 - Task overrides: none
 - Deferred: runtime cohort promotion; actual art-production automation/network generation.
 
