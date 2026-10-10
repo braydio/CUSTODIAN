@@ -1,0 +1,2203 @@
+{
+  "schema": "custodian.asset_source_plan.v1",
+  "status": "source_pending_specification_only",
+  "warning": "Planning-side manifest, NOT a canonical live Asset V2 family contract and NOT evidence of generated, verified or Dropbox-published imagery.",
+  "asset_set": "awakening_interactible_affordance_overlay_v1",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d",
+  "markdown_authority": "design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md",
+  "runtime_scope": "four current owners plus 2 lift mounts; scenic markers only; future state families are deferred and may need reuse mapping to Hub",
+  "current_required": 27,
+  "recommended": 14,
+  "deferred": 36,
+  "approved_source_root": "/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/",
+  "gate": "Exact approved source hashes + human art decision + normalized true alpha + current Asset V2 ingested/bound/verified state; never infer availability from a folder.",
+  "families": [
+    {
+      "family_id": "awakening_interact_support",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_support.asset.json",
+      "states": [
+        {
+          "state_id": "floor_pad_01",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "floor_pad_01",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/floor_pad_01_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/floor_pad_01.png",
+          "description": "neutral access inset"
+        },
+        {
+          "state_id": "floor_pad_02",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "floor_pad_02",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/floor_pad_02_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/floor_pad_02.png",
+          "description": "alternate cracked access inset"
+        },
+        {
+          "state_id": "beacon_cyan",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "beacon_cyan",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/beacon_cyan_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/beacon_cyan.png",
+          "description": "information/control beacon"
+        },
+        {
+          "state_id": "beacon_amber",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "beacon_amber",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/beacon_amber_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/beacon_amber.png",
+          "description": "authorization/storage beacon"
+        },
+        {
+          "state_id": "cable_bundle",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "cable_bundle",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/cable_bundle_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/cable_bundle.png",
+          "description": "gothic-civic cable dressing"
+        },
+        {
+          "state_id": "service_crate",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "service_crate",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/service_crate_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/service_crate.png",
+          "description": "utility dressing, collision-free"
+        },
+        {
+          "state_id": "wall_backplate",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "wall_backplate",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/wall_backplate_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/wall_backplate.png",
+          "description": "shared relief/frame adapter"
+        },
+        {
+          "state_id": "status_pole",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "status_pole",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_support/status_pole_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_support/status_pole.png",
+          "description": "world-space status beacon mounting"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_terminal",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_terminal.asset.json",
+      "states": [
+        {
+          "state_id": "console_pedestal",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "console_pedestal",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_pedestal_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_pedestal.png",
+          "description": "console body with readable reachable face, complement existing crèche art without replacing it"
+        },
+        {
+          "state_id": "console_wall",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "console_wall",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_wall_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_wall.png",
+          "description": "wall console variant for damaged Port status, not a freestanding duplicate"
+        },
+        {
+          "state_id": "console_backplate",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "console_backplate",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_backplate_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_backplate.png",
+          "description": "heavy slab housing, cable service joint"
+        },
+        {
+          "state_id": "screen_glow",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "screen_glow",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/screen_glow_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/screen_glow.png",
+          "description": "quiet teal display authority"
+        },
+        {
+          "state_id": "console_floor_pad",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "console_floor_pad",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_floor_pad_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_floor_pad.png",
+          "description": "floor approach locus"
+        },
+        {
+          "state_id": "console_cables",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "console_cables",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_cables_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_cables.png",
+          "description": "concealed service bundle"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_locker",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_locker.asset.json",
+      "states": [
+        {
+          "state_id": "reliquary_plinth",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "reliquary_plinth",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_locker/reliquary_plinth_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_locker/reliquary_plinth.png",
+          "description": "shallow relief footing to match wall recess"
+        },
+        {
+          "state_id": "reliquary_sconce",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "reliquary_sconce",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_locker/reliquary_sconce_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_locker/reliquary_sconce.png",
+          "description": "warm authority lamp; no false inventory"
+        },
+        {
+          "state_id": "reliquary_insignia",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "reliquary_insignia",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_locker/reliquary_insignia_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_locker/reliquary_insignia.png",
+          "description": "designation marker/brass seal"
+        },
+        {
+          "state_id": "reliquary_floor_inset",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "reliquary_floor_inset",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_locker/reliquary_floor_inset_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_locker/reliquary_floor_inset.png",
+          "description": "accessible pickup approach reading"
+        },
+        {
+          "state_id": "reliquary_latch_detail",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "reliquary_latch_detail",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_locker/reliquary_latch_detail_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_locker/reliquary_latch_detail.png",
+          "description": "wall latch/cable continuation"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_lift",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_lift.asset.json",
+      "states": [
+        {
+          "state_id": "station_call_lower",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "station_call_lower",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_lift/station_call_lower_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_lift/station_call_lower.png",
+          "description": "lower lift call housing, aligned with lower station"
+        },
+        {
+          "state_id": "station_call_upper",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "station_call_upper",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_lift/station_call_upper_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_lift/station_call_upper.png",
+          "description": "upper lift call housing, aligned with upper station"
+        },
+        {
+          "state_id": "station_floor_stop",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "station_floor_stop",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_lift/station_floor_stop_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_lift/station_floor_stop.png",
+          "description": "service lane landing stop"
+        },
+        {
+          "state_id": "station_light",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "station_light",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_lift/station_light_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_lift/station_light.png",
+          "description": "cold functional status lamp"
+        },
+        {
+          "state_id": "station_lever_dressing",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "station_lever_dressing",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_lift/station_lever_dressing_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_lift/station_lever_dressing.png",
+          "description": "reuse/bind existing lift lever art if it genuinely satisfies role"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_port",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_port.asset.json",
+      "states": [
+        {
+          "state_id": "damaged_status_body",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "damaged_status_body",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_port/damaged_status_body_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_port/damaged_status_body.png",
+          "description": "damaged readable port status console, not operational gate"
+        },
+        {
+          "state_id": "route_registry_backplate",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "route_registry_backplate",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_port/route_registry_backplate_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_port/route_registry_backplate.png",
+          "description": "route readout housing"
+        },
+        {
+          "state_id": "damaged_floor_inset",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "damaged_floor_inset",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_port/damaged_floor_inset_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_port/damaged_floor_inset.png",
+          "description": "approach and cable groove"
+        },
+        {
+          "state_id": "port_status_beacon",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "port_status_beacon",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_port/port_status_beacon_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_port/port_status_beacon.png",
+          "description": "weak failing status glow"
+        },
+        {
+          "state_id": "port_conduit",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "port_conduit",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_port/port_conduit_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_port/port_conduit.png",
+          "description": "service route cable trunk"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_wayfinding",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_wayfinding.asset.json",
+      "states": [
+        {
+          "state_id": "register_of_departures_marker",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "register_of_departures_marker",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/register_of_departures_marker_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/register_of_departures_marker.png",
+          "description": "register display, *marker only* until gameplay owner exists"
+        },
+        {
+          "state_id": "gate_rest_marker",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_rest_marker",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/gate_rest_marker_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/gate_rest_marker.png",
+          "description": "Gate checkpoint readable floor orientation, not new checkpoint mechanic"
+        },
+        {
+          "state_id": "gate_aperture_access_face",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_aperture_access_face",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/gate_aperture_access_face_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/gate_aperture_access_face.png",
+          "description": "dormant access face, not open gate control"
+        },
+        {
+          "state_id": "lore_plaque_frame",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "lore_plaque_frame",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/lore_plaque_frame_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/lore_plaque_frame.png",
+          "description": "lore plaque frame, marker only unless a readout is explicitly wired"
+        },
+        {
+          "state_id": "attestation_dais_read",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "attestation_dais_read",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/attestation_dais_read_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/attestation_dais_read.png",
+          "description": "dais/authority role preview, marker only"
+        },
+        {
+          "state_id": "chapel_reliquary_marker",
+          "requirement": "recommended",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "chapel_reliquary_marker",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_wayfinding/chapel_reliquary_marker_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_wayfinding/chapel_reliquary_marker.png",
+          "description": "optional chapel presentation, no implicit interaction"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_shared_fx",
+      "kind": "effect",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_shared_fx.asset.json",
+      "states": [
+        {
+          "state_id": "indicator_blink",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "indicator_blink",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            384,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/indicator_blink_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/indicator_blink.png",
+          "description": "dim indicator 6f loop"
+        },
+        {
+          "state_id": "glow_pulse",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "glow_pulse",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            512,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/glow_pulse_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/glow_pulse.png",
+          "description": "contained emissive 8f loop"
+        },
+        {
+          "state_id": "terminal_scan",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "terminal_scan",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            512,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/terminal_scan_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/terminal_scan.png",
+          "description": "subtle screen activity loop"
+        },
+        {
+          "state_id": "reliquary_breath",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "reliquary_breath",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            512,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/reliquary_breath_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/reliquary_breath.png",
+          "description": "warm brass breathing loop"
+        },
+        {
+          "state_id": "lift_ready",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "lift_ready",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            384,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/lift_ready_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/lift_ready.png",
+          "description": "station status flicker"
+        },
+        {
+          "state_id": "port_failing",
+          "requirement": "required",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "port_failing",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            512,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/port_failing_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/port_failing.png",
+          "description": "failing port flicker, no fake operational state"
+        },
+        {
+          "state_id": "ash_drift",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "ash_drift",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            64
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            512,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/ash_drift_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/ash_drift.png",
+          "description": "memorial ash in optional future space"
+        },
+        {
+          "state_id": "route_trace",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "effect",
+          "variant": "route_trace",
+          "action_group": "effect",
+          "layer": "fx",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 8,
+          "fps": 8,
+          "loop": true,
+          "layout": "horizontal",
+          "normalized_dimensions": [
+            1024,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_shared_fx/route_trace_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_shared_fx/route_trace.png",
+          "description": "future civic transfer registration trace"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_future_transfer",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_future_transfer.asset.json",
+      "states": [
+        {
+          "state_id": "transfer_control_post",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_control_post",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_control_post_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_control_post.png",
+          "description": "crown/transfer control"
+        },
+        {
+          "state_id": "transfer_threshold_medallion",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_threshold_medallion",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_threshold_medallion_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_threshold_medallion.png",
+          "description": "transfer floor medallion"
+        },
+        {
+          "state_id": "transfer_beacon_pair",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_beacon_pair",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_beacon_pair_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_beacon_pair.png",
+          "description": "paired transfer lamps"
+        },
+        {
+          "state_id": "transfer_cable_spine",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_cable_spine",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_cable_spine_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_cable_spine.png",
+          "description": "transfer cable service"
+        },
+        {
+          "state_id": "transfer_registry_panel",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_registry_panel",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_registry_panel_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_registry_panel.png",
+          "description": "authoritative registry panel"
+        },
+        {
+          "state_id": "transfer_seal_frame",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "transfer_seal_frame",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/transfer_seal_frame_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/transfer_seal_frame.png",
+          "description": "seal frame"
+        },
+        {
+          "state_id": "continuity_port_pylon",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_pylon",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_pylon_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_pylon.png",
+          "description": "future continuity port pylon"
+        },
+        {
+          "state_id": "continuity_port_gate_frame",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_gate_frame",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            256,
+            256
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            256,
+            256
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_gate_frame_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_gate_frame.png",
+          "description": "future port gate"
+        },
+        {
+          "state_id": "continuity_port_floor_lane",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_floor_lane",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_floor_lane_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_floor_lane.png",
+          "description": "egress lane"
+        },
+        {
+          "state_id": "continuity_port_control_terminal",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_control_terminal",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_control_terminal_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_control_terminal.png",
+          "description": "future port control"
+        },
+        {
+          "state_id": "continuity_port_beacon",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_beacon",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_beacon_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_beacon.png",
+          "description": "egress beacon"
+        },
+        {
+          "state_id": "continuity_port_signage",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "continuity_port_signage",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_transfer/continuity_port_signage_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_transfer/continuity_port_signage.png",
+          "description": "egress signage"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_future_civic",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_future_civic.asset.json",
+      "states": [
+        {
+          "state_id": "witness_lectern",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "witness_lectern",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/witness_lectern_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/witness_lectern.png",
+          "description": "witness civic lectern"
+        },
+        {
+          "state_id": "witness_seal_floor",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "witness_seal_floor",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/witness_seal_floor_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/witness_seal_floor.png",
+          "description": "authority seal"
+        },
+        {
+          "state_id": "adjudication_plinth",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "adjudication_plinth",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/adjudication_plinth_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/adjudication_plinth.png",
+          "description": "adjudication"
+        },
+        {
+          "state_id": "adjudication_light_pair",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "adjudication_light_pair",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/adjudication_light_pair_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/adjudication_light_pair.png",
+          "description": "ritual lamp pair"
+        },
+        {
+          "state_id": "forum_record_pillar",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "forum_record_pillar",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/forum_record_pillar_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/forum_record_pillar.png",
+          "description": "record pillar"
+        },
+        {
+          "state_id": "registry_brass_plate",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "registry_brass_plate",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_civic/registry_brass_plate_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_civic/registry_brass_plate.png",
+          "description": "inscribed authority plate"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_future_supply",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_future_supply.asset.json",
+      "states": [
+        {
+          "state_id": "supply_station_frame",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_station_frame",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_station_frame_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_station_frame.png",
+          "description": "service frame"
+        },
+        {
+          "state_id": "supply_station_tray",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_station_tray",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_station_tray_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_station_tray.png",
+          "description": "supply tray"
+        },
+        {
+          "state_id": "supply_patch_canister",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_patch_canister",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_patch_canister_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_patch_canister.png",
+          "description": "field patch carrier"
+        },
+        {
+          "state_id": "supply_cabinet",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_cabinet",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_cabinet_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_cabinet.png",
+          "description": "cabinet"
+        },
+        {
+          "state_id": "supply_floor_marking",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_floor_marking",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_floor_marking_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_floor_marking.png",
+          "description": "resource safety inset"
+        },
+        {
+          "state_id": "supply_task_light",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "supply_task_light",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_supply/supply_task_light_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_supply/supply_task_light.png",
+          "description": "status task lamp"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_future_memorial",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_future_memorial.asset.json",
+      "states": [
+        {
+          "state_id": "sepulcher_plinth",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_plinth",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_plinth_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_plinth.png",
+          "description": "memorial plinth"
+        },
+        {
+          "state_id": "sepulcher_marker",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_marker",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            160
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            160
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_marker_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_marker.png",
+          "description": "record marker"
+        },
+        {
+          "state_id": "sepulcher_sconce",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_sconce",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_sconce_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_sconce.png",
+          "description": "low devotional light"
+        },
+        {
+          "state_id": "sepulcher_ash_basin",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_ash_basin",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_ash_basin_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_ash_basin.png",
+          "description": "ash basin"
+        },
+        {
+          "state_id": "sepulcher_floor_ring",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_floor_ring",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_floor_ring_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_floor_ring.png",
+          "description": "memorial floor ring"
+        },
+        {
+          "state_id": "sepulcher_inscription",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "sepulcher_inscription",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_memorial/sepulcher_inscription_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_memorial/sepulcher_inscription.png",
+          "description": "record inscription"
+        }
+      ]
+    },
+    {
+      "family_id": "awakening_interact_future_gate",
+      "kind": "world_prop",
+      "area": "awakening",
+      "action": "extend_or_create_after_live_reuse_audit",
+      "family_contract": "custodian/content/metadata/assets/families/awakening_interact_future_gate.asset.json",
+      "states": [
+        {
+          "state_id": "gate_access_panel",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_access_panel",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            128
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            128
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_gate/gate_access_panel_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_gate/gate_access_panel.png",
+          "description": "access station, only if real gate owner"
+        },
+        {
+          "state_id": "gate_lock_wheel",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_lock_wheel",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            96,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            96,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_gate/gate_lock_wheel_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_gate/gate_lock_wheel.png",
+          "description": "manual emergency lock"
+        },
+        {
+          "state_id": "gate_threshold_strip",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_threshold_strip",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            128,
+            64
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            128,
+            64
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_gate/gate_threshold_strip_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_gate/gate_threshold_strip.png",
+          "description": "crossing strip"
+        },
+        {
+          "state_id": "gate_status_lamp",
+          "requirement": "deferred",
+          "status": "source_pending",
+          "kind": "world_prop",
+          "variant": "gate_status_lamp",
+          "action_group": "affordance",
+          "layer": "body",
+          "direction_policy": "omni",
+          "auto_mirror": false,
+          "frame_dimensions": [
+            64,
+            96
+          ],
+          "frames": 1,
+          "fps": null,
+          "loop": false,
+          "layout": "copy",
+          "normalized_dimensions": [
+            64,
+            96
+          ],
+          "alpha": "RGBA true alpha, isolated exterior",
+          "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_future_gate/gate_status_lamp_source.png",
+          "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_future_gate/gate_status_lamp.png",
+          "description": "gate status beacon"
+        }
+      ]
+    }
+  ]
+}

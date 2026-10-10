@@ -18,7 +18,21 @@
     "custodian/game/actors/base/light_buggy.tscn.txt",
     "custodian/game/actors/base/vehicle_base.gd",
     "custodian/game/actors/base/vehicle_interaction.gd",
-    "scripts/repomix-elevation.sh"
+    "scripts/repomix-elevation.sh",
+    "custodian/.gitignore",
+    "custodian/asset.cfg",
+    "scripts/start-godot-mcp.sh",
+    "custodian/addons/ai_coding_assistant/**",
+    "custodian/addons/anim_sheet/**",
+    "custodian/addons/aseprite_importer/**",
+    "custodian/addons/copy_all_errors/**",
+    "custodian/addons/debug_console/**",
+    "custodian/addons/fightengine/**",
+    "custodian/addons/godot_mcp/**",
+    "custodian/addons/indie_game_components/**",
+    "custodian/addons/limboai/**",
+    "custodian/addons/sprite_pipeline/**",
+    "custodian/addons/__MACOSX/**"
   ],
   "tests": [
     {

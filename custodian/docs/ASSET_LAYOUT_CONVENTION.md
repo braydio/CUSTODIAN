@@ -130,8 +130,8 @@ always findable at `content/_aseprite/<original-relative-path>`.
 
 ### Exceptions
 
-Third-party addon assets (e.g. `addons/fightengine/demo/Assets/Aseprite/*.ase`)
-are not moved — they belong to their respective packages.
+Third-party addon assets (e.g. anything under a vendored `addons/<name>/`
+package) are not moved — they belong to their respective packages.
 
 ## Naming Rules
 

@@ -108,22 +108,36 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                 runner.validate_eligible_review(Path("."), "review-sample")
 
     def test_successor_handoff_refresh_does_not_gate_current_review(self):
-        content = review_packet() + """
-## Handoff
+        # Both section spellings are live: F15-A uses "Next Handoff", WB25 "Handoff".
+        for heading in ("## Handoff", "## Next Handoff"):
+            with self.subTest(heading=heading):
+                content = review_packet() + f"""
+{heading}
 - Next workstream: `next-slice`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 """
-        packet = runner.parse_packet("review.md", content)
-        target = target_packet()
-        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
-             patch.object(runner, "git", return_value=target):
-            runner.validate_eligible_review(Path("."), "review-sample")
+                packet = runner.parse_packet("review.md", content)
+                target = target_packet()
+                with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
+                     patch.object(runner, "git", return_value=target):
+                    runner.validate_eligible_review(Path("."), "review-sample")
 
     def test_actual_wb25_review_packet_is_eligible_despite_successor_refresh(self):
-        review_path = "custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md"
-        review_content = (ROOT / review_path).read_text(encoding="utf-8")
+        # WB25's review correctly left the active queue after closeout. Reuse the
+        # immutable historical packet, restoring only pre-claim lifecycle metadata
+        # in memory so this regression survives normal archive transitions.
+        review_path = "custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION.md"
+        archived_content = (ROOT / review_path).read_text(encoding="utf-8")
+        self.assertIn("- Status: complete", archived_content)
+        self.assertIn("- Review: none", archived_content)
+        archived_packet_data = runner.parse_packet(review_path, archived_content)
+        self.assertIsNone(archived_packet_data.error)
+        self.assertEqual(archived_packet_data.status, "complete")
+        self.assertEqual(archived_packet_data.review, "none")
+        review_content = archived_content.replace("- Status: complete", "- Status: ready", 1)
         review_packet_data = runner.parse_packet(review_path, review_content)
+        self.assertIsNone(review_packet_data.error)
         target_content = (ROOT / review_packet_data.review_target_packet).read_text(encoding="utf-8")
         with patch.object(runner, "packet_at_main", return_value=(review_path, review_content, review_packet_data)), \
              patch.object(runner, "git", return_value=target_content):

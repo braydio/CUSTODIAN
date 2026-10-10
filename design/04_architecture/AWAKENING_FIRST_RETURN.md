@@ -818,3 +818,9 @@ The first objective is not “explore.” It is **RETURN TO POST**. The Custodia
 ## Planned: Off-route perimeter underlay support (not yet implemented)
 
 The approved ten-region off-route scenery language and nonplayable structural/depth/atmospheric rules are owned by [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md); its implementation DAG and per-state art prompts are linked there. This is future visual presentation work only, **not** additional traversable regions or published art. Preserve current Layout/registered room plates, accepted 04→05 source composition and existing camera/visibility authority.
+
+## Interactible discoverability continuation (2026-10-10)
+
+The [interactible affordance overlay](AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md) explicitly distinguishes functional `CrecheConsole`, the scene-bound P-9 `SidearmLocker`, one two-station `TransitLift`, and `PortStatusPlaque` from inactive Layout markers. The overlay adds readable silhouettes, floor/mounting dressing and restrained state-aware status VFX using a separate presentation-only mount, **not** new gameplay interaction authority. The `lift_mechanism` Layout marker is an audited inconsistency unless a separate live use owner can be demonstrated.
+
+Current art generation remains outstanding: the state-level [Asset V2 manifest](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md) defines exact source-work paths, normalized sizes/frames and art-provenance gates. Foundation/contract packets can proceed without art; the three live visual-integration packets remain blocked/manual until exact required source states are approved and verified. No future Field Terminal, Ashen Forum, Continuity Port, supply, gate control, or Sepulcher interaction is made live by the overlay. Existing 04→05 shared registered art, 05→06 passage, P-9 body/lift artwork and Gate sealed visual state remain authoritative.

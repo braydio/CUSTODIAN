@@ -2,7 +2,7 @@
 
 ## Task-Packet Queue Semantics (2026-10-09)
 
-Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `draft/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
+Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `blocked/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
 
 ## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
 
@@ -1408,12 +1408,18 @@ Documentation updates this session:
   assigns health/death/corpse transitions and one-time loot payload lifecycle
   to a focused `EnemyLifecycle` owner, while `EnemyCorpseLoot` remains the
   reward-collection boundary and `EnemyLootCarrier` remains the stolen-resource
-  carrier. NPA-6 now implements health/death/damage-result authority,
-  one-time payload assembly, corpse transitions and empty-corpse cleanup in
-  `EnemyLifecycle` + typed `EnemyLifecycleConfig`; Enemy keeps orchestration and
-  compatibility façades. Scene tuning moved to typed configs, and the corpse
-  collector/carrier boundaries remain unchanged. Focused lifecycle and combat
-  validation plus changed-file closeout precede its fresh paired review.
+  carrier. NPA-6 implementation and its fresh-context paired review are complete.
+  Health/death/damage-result authority, one-time payload assembly, corpse
+  transitions and empty-corpse cleanup live in `EnemyLifecycle` + typed
+  `EnemyLifecycleConfig`; Enemy keeps orchestration and compatibility façades.
+  Scene tuning moved to typed configs, and the corpse collector/carrier
+  boundaries remain unchanged. Focused lifecycle/combat checks passed 10/10;
+  post-sync changed-file validation passed 42/42 with complete coverage; the
+  independent review passed with zero findings at `a9b4e0b9`.
+  NPA-7's commanded-drone/droid contracts are now authored and published in a
+  ready/auto packet pair. The implementation packet is claimable after queue
+  validation; its paired review waits on implementation landing. NPA-7 has not
+  been implemented. NPA-8 remains a later planning refresh after NPA-7 review.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
@@ -2605,3 +2611,8 @@ The ten-region off-route backdrop vision and 30 requested image prompts are pers
 ## Hub Continuity Port Campaign Deployment (H5, 2026-10-10)
 
 The production Hub offers the first Contract through the Forum Dais and deploys it only through the ordinary Continuity Port. Port interaction while prewarm is GENERATING keeps the Hub active; FAILED exposes same-accepted-seed retry; READY starts a transactional Hub→Campaign context handoff. The Campaign session is seeded with the accepted scenario before `game.tscn` enters the tree. `ContractWorldLoader` installs and claims the retained bootstrap map, and the manager releases Hub only after validating the exact map instance, scenario identity, Operator/controller/camera binding, and exclusive world authority. Activation failure returns the map to bootstrap and restores the Hub. H6 owns Campaign return.
+## Awakening interactible affordance continuation (2026-10-10)
+
+User gameplay review exposed a discoverability gap: an interactible terminal did not read as a physical use object until its prompt. The current authored Awakening scene has four live interaction owners: Crèche readout, P-9 locker, one two-station Dust Lung lift, and damaged Port status readout. Layout also has scenic/encounter/future markers; `lift_mechanism` is marked interactible without being separately built by `AwakeningFirstReturn._build_interactables()` and is queued for evidence-based kind reconciliation.
+
+The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is now specified at `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`, with 77 artwork states in its V2 manifest (27 current-required, 14 recommended, 36 future-deferred). New artwork is **not present**. Two no-art packets (foundation owner parity/presenter and source-pending family registration) are ready/auto with their paired reviews. Crèche/Port, Locker/Lift and scenic wayfinding integrations are blocked/manual and must stay parked until exact reviewed Dropbox state inputs, verified V2 routing and predecessor reviews exist; a separate ready/auto future-owner crosswalk avoids prematurely implementing Hub/Continuity/supply/Sepulcher/gate controls. This overlay does not change existing 04→05 registered composition, 05→06 passage or gameplay route and is independent of the off-route AP0–AP4 perimeter artwork.
