@@ -23,7 +23,7 @@
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_wayfinding.asset.json`; `custodian/content/metadata/assets/families/gate_of_dust.asset.json`; `design/04_architecture/AWAKENING_FIRST_RETURN.md`; directly affected focused validation.
 - Change:
-  1. ART GATE: This optional visual slice remains draft/manual until a deliberately selected subset of recommended `awakening_interact_wayfinding` states has source/Dropbox/human art approval and verified V2 routing. Do NOT require all recommended or future states for the current story.
+  1. ART GATE: This optional visual slice remains blocked/manual until a deliberately selected subset of recommended `awakening_interact_wayfinding` states has source/Dropbox/human art approval and verified V2 routing. Do NOT require all recommended or future states for the current story.
   2. Use Layout marker IDs and scene SetPieces to add subtle Register of Departures panel, Gate rest/checkpoint approach medallion, Attestation dais authority marker, lore plaque frame and optional Chapel orientation piece, only where approved art physically fits.
   3. Make scenic markers visually important without false activation: long-read silhouette, mid-read floor and directed lamplight, **no** active near-read interaction pulse, no Operator target registration and no HUD 'press' hint.
   4. Keep the Gate of Dust sealed, its five existing hero components intact, approach/Chapel routes and unlocks untouched. The Road south reach and existing Gate camera reveal remain as live. Avoid replacing foreground/underlay or creating false walkable paths.
@@ -79,8 +79,8 @@
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-marker-wayfinding-v1`
-- Next packet state: `blocked`
-- Refresh owner: `human-art-approval`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`
