@@ -1,50 +1,51 @@
-# NPA-7 Packet Publication
+# NPA-7 Packet Publication — Landing Blocked
 
-Published the bounded NPA-7 commanded-ally implementation and paired-review packet pair. This run authorizes packet publication only: no NPA-7 implementation was claimed or started.
+Prepared the bounded NPA-7 commanded-ally implementation and paired-review packet pair in the designated publication workstream. The packets and documentation are committed on the workstream branch, but the required post-sync changed-file gate failed on unrelated current-main packet pairs, so this publication has not landed on `origin/main` and is not dispatcher-visible. No NPA-7 implementation was claimed or started.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
-## Published Contract
+## Prepared Contract
 
-- Implementation packet: `custodian/docs/ai_context/task_packets/NPA_7_COMMANDED_ALLY_CONTRACTS.md` (`npa-7-commanded-ally-contracts`, `ready/auto`).
-- Paired review packet: `custodian/docs/ai_context/task_packets/REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` (`review-npa-7-commanded-ally-contracts`, `ready/auto`, dependency-gated on implementation completion).
-- The implementation depends on the completed NPA-6 review and owns the `ally-runtime` lock. The pre-publication dispatcher audit found NPA-6 implementation/review archived complete and no active claimed workstream holding `ally-runtime`.
-- The candidate review was corrected to the live exact bounded paired-review override. While its implementation remained gated during the initial preflight, review state was set to `blocked/manual` as required by current pairing schema; both packets were promoted to `ready/auto` only after validation.
-- `Reviewed main` was advanced from the package's baseline `6d66c169` to current fetched `origin/main@6bf4ca99`. The intervening relevant runtime sources were unchanged; the validation manifest changes were unrelated registrations, and the drone smoke scripts named in the contract remain direct-run scripts rather than registered IDs.
+- Implementation packet: `custodian/docs/ai_context/task_packets/NPA_7_COMMANDED_ALLY_CONTRACTS.md` (`npa-7-commanded-ally-contracts`, `ready/auto` on this branch).
+- Paired review packet: `custodian/docs/ai_context/task_packets/REVIEW_NPA_7_COMMANDED_ALLY_CONTRACTS.md` (`review-npa-7-commanded-ally-contracts`, `ready/auto` on this branch; dependency-gated on implementation completion).
+- The implementation depends on the completed NPA-6 review and owns `ally-runtime`. Dispatcher audits found NPA-6 implementation/review archived complete and no claimed workstream holding `ally-runtime`.
+- The `NPA_ACTOR_SHOWCASE_PROGRAM` and `npa-showcase-existing-drone-hardening` packets landed on main during this publication. That packet explicitly says to run after NPA-7 implementation and review and not duplicate NPA-7 engineering; its `drone-runtime` lock has no active claimant. It is a draft/manual planning packet, not a competing ready task.
+- `Reviewed main` in both NPA-7 packets was refreshed to `3137a41f4adefd2ae0c703947d0be032dd89acf3`. Relevant drone/allegiance/relationship runtime files did not change from the package baseline; the scoped validation-manifest diff was unrelated registrations. The two named registered drone IDs remain registered, and the three named direct smoke scripts remain non-ID direct runs.
 
 ## Documentation Reconciliation
 
-Updated the NPA runtime architecture roadmap, `CURRENT_STATE.md`, and the task-packet README to record NPA-6's completed implementation and zero-finding review, and NPA-7's authored/published status. The managed packet index includes both new packets. NPA-7 runtime implementation remains outstanding; bonded Vaultwing commands remain outside its scope.
+Updated the NPA runtime architecture roadmap, `CURRENT_STATE.md`, and task-packet README to record NPA-6's completed implementation and zero-finding review and the authored NPA-7 boundary. The managed index includes both NPA-7 packet entries and the packets added by current main. These changes are present on the publication branch but are not yet on `origin/main`.
 
-## Validation
+## Validation and Blocker
 
 - Package manifest SHA-256 values: matched for the supplied planning report, implementation packet, review packet, and publication handoff.
-- Targeted packet authoring preflight: PASS for both packets before promotion and again after promotion/schema correction.
+- Targeted packet authoring preflight: PASS for both packets before promotion and again after promotion, including against current `origin/main@3137a41f`.
 - `task_packet_index.py --write` and verification: PASS.
-- `run_validation.py --changed --json`: PASS, 9/9 selected; complete changed-file coverage; `review_pairing_contract` passed.
-- `git diff --check`: PASS.
-- `check_ai_context.py --json`: one unrelated existing queue finding remains at `custodian/docs/ai_context/task_packets/OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md`: missing dependency identity `review-operator-2-5d-workbench-review-automation`. That packet is outside NPA-7; this publication did not alter it.
-- Post-landing dispatcher audit remains required to record actual NPA-7 implementation claimability and review dependency state. This workstream must not claim either NPA-7 packet.
+- Pre-sync `run_validation.py --changed --json`: PASS, 9/9, complete coverage; `review_pairing_contract` passed before the concurrent main updates.
+- Post-sync `run_validation.py --changed --json`: BLOCKED, 0/1 selected passed. The single global `review_pairing_contract` test reports ten NPA Showcase pairs added on main with `Review: auto` implementations still `draft/manual` and paired reviews also `draft/manual`; current schema requires each gated paired review to be `ready/auto` or `blocked/manual`. The failures are in `npa-showcase-{actor-art-intake,arena-foundation,artwork-completion-audit,broken-warrant-actor,complete-arena,dev-overlays,escort-frame-m7-actor,existing-drone-hardening,existing-enemy-hardening,existing-vaultwing-proof}`. No NPA-7 packet failed targeted authoring validation. These unrelated packets were not edited or promoted.
+- `check_ai_context.py --json`: one unrelated queue finding remains in `custodian/docs/ai_context/task_packets/OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION_REVIEW_CORRECTIONS_1.md`: missing dependency identity `review-operator-2-5d-workbench-review-automation`.
+- `git diff --check`: PASS on the publication changes.
+- Normal landing is blocked until the current-main paired-review contract failure is repaired and a green after-sync report is available. Dispatcher audit on current main has no NPA-7 implementation or review entries; branch-local `ready/auto` does not establish claimability. The implementation was not claimed.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
-- Friction severity: medium
-- What went wrong: The external review packet's draft/manual state and task-override wording did not match the live paired-packet schema. An initial generic publication workstream was also started before reading the handoff's designated identity; it was removed while still at the main commit and before any packet changes were committed.
-- Root cause / contributing factors: The downloaded package was authored against an earlier queue contract, and the handoff's exact publication workstream ID was not read before the first lifecycle start.
-- Prevention / pipeline improvement: Read the complete publication handoff before workstream creation; copy bounded review overrides verbatim from the live review template; use the targeted preflight before and after promotion.
-- Tooling / docs drift discovered: The repo-wide AI-context check currently reports the unrelated missing Operator 2.5D review dependency listed above.
+- Outcome: blocked
+- Friction severity: high
+- What went wrong: Main advanced during closeout and its new NPA Showcase packet pairs made the global changed-file pairing check fail after synchronization. The initial generated-README merge conflict was resolved by preserving both NPA-7 and current-main entries and regenerating the managed index.
+- Root cause / contributing factors: The newly landed showcase pairs have `Review: auto` implementations and `draft/manual` paired reviews, which violate the live pair-state contract while remaining parked on main.
+- Prevention / pipeline improvement: Run the shared authoring/pairing contract check before publishing any new packet series to main; keep a gated review `blocked/manual` until its implementation is ready.
+- Tooling / docs drift discovered: One unrelated missing Operator 2.5D dependency identity is reported by `check_ai_context.py`; the ten NPA Showcase pair-state mismatches block `review_pairing_contract`.
 - Follow-up: manual-follow-up
-- What worked: The targeted authoring check and dispatcher audit exposed the actual schema and dependency/lock boundaries without touching gameplay or unrelated packets.
+- What worked: The targeted NPA-7 authoring preflight passed; the post-sync suite exposed the unrelated queue gate instead of allowing a false-green landing.
 
 ## Next Handoff
 
 - Next workstream: npa-7-commanded-ally-contracts
-- Next packet state: ready
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
-- Next action: After this publication lands, verify actual dispatcher claimability. The user explicitly requested that implementation not be claimed or started during this run; leave NPA-7 `ready/auto` for a later execution claim.
-- Blockers or open questions: The persistent project-root checkout has an unrelated modified sprite and is behind `origin/main`; preserve that file and report synchronization pending if the safe fast-forward gate remains closed.
+- Next action: After the current-main packet-pair validation blocker is corrected, rerun post-sync validation and publish these ready/auto packets. Then verify actual dispatcher eligibility. Do not claim or implement NPA-7 during this publication task.
+- Blockers or open questions: Ten NPA Showcase paired-review state mismatches fail the required global changed-file check; one separate Operator 2.5D dependency identity fails AI-context validation. The project-root checkout still has a user-modified sprite and is behind current main; preserve it.
