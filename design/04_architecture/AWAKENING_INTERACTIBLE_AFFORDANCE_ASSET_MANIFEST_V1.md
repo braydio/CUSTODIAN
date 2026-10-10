@@ -4,6 +4,7 @@
 **Workstream:** `awakening-interactible-affordance-overlay-v1`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 **Base inspected:** `main@afb1f1c5f145fec42f9a3f5a492ab31d5ffc138d`
+**Machine-readable state ledger:** [AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json) (source plan only, NOT a V2 published-status claim)
 **Status:** artwork manifest locked for source creation; all new files SOURCE_PENDING. No generated art is represented as available.
 
 ## Main overlay, scope, and gameplay truth
