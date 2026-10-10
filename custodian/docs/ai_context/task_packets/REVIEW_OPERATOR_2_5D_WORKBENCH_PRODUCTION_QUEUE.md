@@ -12,7 +12,7 @@
 - Review target workstream: operator-2-5d-workbench-production-queue
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md
 - Reviewed main: cee646f21e5a6dc6fb4cc487f8ec04043c683259
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
@@ -39,7 +39,7 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: WB25-6 requires real VERIFIED coverage/cohort evidence and a fresh human choice of the first promotion cohort.
 - Next action: Return implementation/review evidence to the authoring chat and refresh the successor before claim.
