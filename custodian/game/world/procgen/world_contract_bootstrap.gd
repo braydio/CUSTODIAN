@@ -24,13 +24,13 @@ var failure: Dictionary = {}
 var prewarm_start_ms: int = 0
 var prewarm_ready_ms: int = 0
 var prewarm_duration_ms: int = 0
-var prewarm_ready_before_terminal: bool = false
+var prewarm_ready_before_deployment: bool = false
 var transition_wait_ms: int = 0
 var generation_started_scene: String = ""
 var generation_count: int = 0
 
 var _generator: Node = null
-var _terminal_requested_ms: int = 0
+var _deployment_requested_ms: int = 0
 var _generator_scene: PackedScene = CONTRACT_MAP_SCENE
 
 
@@ -38,7 +38,9 @@ func ensure_started(seed: int = 0) -> void:
 	if state in [State.GENERATING, State.READY, State.CLAIMED]:
 		if state == State.GENERATING or _has_live_contract_map():
 			return
+	var previous_generation_count := generation_count
 	reset()
+	generation_count = previous_generation_count
 	run_seed = seed if seed != 0 else randi()
 	if run_seed == 0:
 		run_seed = 1
@@ -101,20 +103,29 @@ func _has_live_contract_map() -> bool:
 	)
 
 
-func mark_terminal_requested() -> void:
-	_terminal_requested_ms = Time.get_ticks_msec()
-	prewarm_ready_before_terminal = is_ready()
+func mark_deployment_requested() -> void:
+	if _deployment_requested_ms > 0:
+		return
+	_deployment_requested_ms = Time.get_ticks_msec()
+	prewarm_ready_before_deployment = is_ready()
 	transition_wait_ms = 0
 
 
 func mark_claimed() -> void:
 	if state == State.READY:
 		state = State.CLAIMED
-	if _terminal_requested_ms > 0:
+	if _deployment_requested_ms > 0:
 		transition_wait_ms = maxi(
 			0,
-			Time.get_ticks_msec() - _terminal_requested_ms
+			Time.get_ticks_msec() - _deployment_requested_ms
 		)
+
+
+func restore_ready_after_deployment_rollback() -> bool:
+	if state != State.CLAIMED or not _has_live_contract_map():
+		return false
+	state = State.READY
+	return true
 
 
 func get_metrics() -> Dictionary:
@@ -122,7 +133,7 @@ func get_metrics() -> Dictionary:
 		"prewarm_start_ms": prewarm_start_ms,
 		"prewarm_ready_ms": prewarm_ready_ms,
 		"prewarm_duration_ms": prewarm_duration_ms,
-		"prewarm_ready_before_terminal": prewarm_ready_before_terminal,
+		"prewarm_ready_before_deployment": prewarm_ready_before_deployment,
 		"transition_wait_ms": transition_wait_ms,
 		"generation_started_scene": generation_started_scene,
 		"generation_count": generation_count,
@@ -139,11 +150,11 @@ func reset() -> void:
 	prewarm_start_ms = 0
 	prewarm_ready_ms = 0
 	prewarm_duration_ms = 0
-	prewarm_ready_before_terminal = false
+	prewarm_ready_before_deployment = false
 	transition_wait_ms = 0
 	generation_started_scene = ""
 	generation_count = 0
-	_terminal_requested_ms = 0
+	_deployment_requested_ms = 0
 	if _generator != null and is_instance_valid(_generator):
 		var generated_callback := Callable(self, "_on_generated")
 		var failed_callback := Callable(self, "_on_failed")
@@ -179,8 +190,8 @@ func _on_generated(value: Dictionary) -> void:
 	state = State.READY
 	prewarm_ready_ms = Time.get_ticks_msec()
 	prewarm_duration_ms = maxi(0, prewarm_ready_ms - prewarm_start_ms)
-	if _terminal_requested_ms > 0:
-		transition_wait_ms = maxi(0, prewarm_ready_ms - _terminal_requested_ms)
+	if _deployment_requested_ms > 0:
+		transition_wait_ms = maxi(0, prewarm_ready_ms - _deployment_requested_ms)
 	contract_ready.emit(contract)
 
 
@@ -192,6 +203,6 @@ func _on_failed(value: Dictionary) -> void:
 	state = State.FAILED
 	prewarm_ready_ms = Time.get_ticks_msec()
 	prewarm_duration_ms = maxi(0, prewarm_ready_ms - prewarm_start_ms)
-	if _terminal_requested_ms > 0:
-		transition_wait_ms = maxi(0, prewarm_ready_ms - _terminal_requested_ms)
+	if _deployment_requested_ms > 0:
+		transition_wait_ms = maxi(0, prewarm_ready_ms - _deployment_requested_ms)
 	generation_failed.emit(failure)

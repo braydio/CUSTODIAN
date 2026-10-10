@@ -1,6 +1,8 @@
 extends Node
 class_name ContractWorldLoader
 
+signal contract_activation_finished(result: Dictionary)
+
 @export var contract_map_path: NodePath = NodePath("/root/GameRoot/World/ContractMap")
 @export var world_path: NodePath = NodePath("/root/GameRoot/World")
 @export var sectors_container_path: NodePath = NodePath("/root/GameRoot/World/Sectors")
@@ -94,6 +96,7 @@ var _operator_placement_receipt: Dictionary = {}
 var _active_generation_identity: String = ""
 var _install_started_usec: int = 0
 var _last_install_phase_usec: int = 0
+var _contract_activation_result: Dictionary = {}
 
 
 func _ready() -> void:
@@ -171,6 +174,7 @@ func _bind_contract_map() -> void:
 
 
 func _on_contract_generated(contract: Dictionary) -> void:
+	_contract_activation_result.clear()
 	var map_block: Dictionary = contract.get("map", {}) as Dictionary
 	var map_instance_variant: Variant = map_block.get("instance")
 	if (
@@ -638,12 +642,26 @@ func _mark_contract_ready() -> void:
 	if game_state != null and game_state.has_method("mark_contract_ready"):
 		game_state.call("mark_contract_ready")
 	_observe_startup_transition(&"contract_ready", {"placement_receipt": get_operator_placement_receipt()})
+	_contract_activation_result = {
+		"ready": true,
+		"code": "CONTRACT_ACTIVATED",
+		"generation_identity": _active_generation_identity,
+		"map_instance_id": _active_procgen_map.get_instance_id() if is_instance_valid(_active_procgen_map) else -1,
+		"placement_receipt": get_operator_placement_receipt(),
+	}
+	contract_activation_finished.emit(_contract_activation_result.duplicate(true))
 
 
 func _mark_contract_failed(result: Dictionary) -> void:
 	var game_state := get_node_or_null("/root/GameState")
 	if game_state != null and game_state.has_method("mark_contract_failed"):
 		game_state.call("mark_contract_failed", result)
+	_contract_activation_result = {
+		"ready": false,
+		"code": "CONTRACT_ACTIVATION_FAILED",
+		"failure": result.duplicate(true),
+	}
+	contract_activation_finished.emit(_contract_activation_result.duplicate(true))
 
 
 func _stop_combat_activation() -> void:
@@ -1232,6 +1250,29 @@ func _rebuild_navigation(map_instance: Node) -> void:
 
 func get_active_map_instance() -> Node:
 	return _active_procgen_map
+
+
+func return_preloaded_map_to_bootstrap() -> bool:
+	if _active_procgen_map == null or not is_instance_valid(_active_procgen_map):
+		return false
+	var bootstrap := get_node_or_null("/root/WorldContractBootstrap")
+	if bootstrap == null:
+		return false
+	_active_procgen_map.visible = false
+	_active_procgen_map.reparent(bootstrap)
+	_active_procgen_map = null
+	_contract_activation_result.clear()
+	return bool(bootstrap.call("restore_ready_after_deployment_rollback")) if bootstrap.has_method("restore_ready_after_deployment_rollback") else true
+
+
+func wait_for_contract_activation(max_frames: int = 3600) -> Dictionary:
+	for _frame in range(maxi(1, max_frames)):
+		if not _contract_activation_result.is_empty():
+			return _contract_activation_result.duplicate(true)
+		if not is_inside_tree() or get_tree() == null:
+			return {"ready": false, "code": "LOADER_LEFT_TREE"}
+		await get_tree().process_frame
+	return {"ready": false, "code": "ACTIVATION_TIMEOUT"}
 
 
 func _position_command_terminal(level_data: Dictionary, map_instance: Node) -> void:

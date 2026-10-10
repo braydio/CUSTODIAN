@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://game/systems/simulation/world_simulation_runtime.gd" id="1_simulation"]
+[ext_resource type="Script" path="res://tools/validation/fixtures/hub_campaign_test_loader.gd" id="2_loader"]
+
+[node name="GameRoot" type="Node2D"]
+[node name="World" type="Node2D" parent="."]
+[node name="Operator" type="Node2D" parent="World"]
+[node name="PlayerController" type="Node" parent="World"]
+[node name="Camera2D" type="Camera2D" parent="World"]
+[node name="Simulation" type="Node" parent="."]
+script = ExtResource("1_simulation")
+[node name="ContractWorldLoader" type="Node" parent="."]
+script = ExtResource("2_loader")

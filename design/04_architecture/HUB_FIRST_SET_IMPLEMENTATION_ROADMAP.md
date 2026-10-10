@@ -60,9 +60,9 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 |---|---|---|---|---|
 | H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review complete | none | H1 and HR1 archived; donor archive remains reachable |
 | H2 | `hub-awakening-context-handoff` | implementation and paired review complete/landed | HR1 + Awakening handoff review (complete) | execution-agent |
-| H3 | `hub-forum-adjudication-contract-prewarm` | implementation complete/landing; HR3 follows landing | HR2 | execution-agent |
+| H3 | `hub-forum-adjudication-contract-prewarm` | implementation and HR3 complete/landed | HR2 | execution-agent |
 | H4 | `hub-crown-transfer-twin-solaria` | implementation and HR4 complete/landed | HR2 | execution-agent |
-| H5 | `hub-muster-continuity-port-deployment` | ready/auto, dependency-gated | HR3 | execution-agent |
+| H5 | `hub-muster-continuity-port-deployment` | implementation complete/landing; HR5 follows landing | HR3 | execution-agent |
 | H6 | `hub-campaign-return` | ready/auto, dependency-gated | HR5 | execution-agent, including current recovery/death-handoff state |
 | H7 | `hub-first-set-integration-closeout` | ready/auto, dependency-gated | HR4 + HR6 | execution-agent |
 
@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1/HR1, H2/HR2, and H4/HR4 are complete. H3 implementation adds persistent Forum scenario acceptance and one Contract prewarm; its paired fresh-context review is next. H5 waits on HR3; H6 waits on HR5; H7 waits on HR4 and HR6.
-**Next:** Fresh-context review of `hub-forum-adjudication-contract-prewarm`.
+**Current:** H1/HR1 through H4/HR4 are complete. H5 implements the ordinary Port deployment path; HR5 is its paired fresh-context review. H6 waits on HR5; H7 waits on HR4 and HR6.
+**Next:** Fresh-context review of `hub-muster-continuity-port-deployment`.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

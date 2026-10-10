@@ -16,6 +16,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if kernel != null: clock.advance(delta, _authoritative_step)
 func start_campaign(scenario: CampaignScenario) -> void:
+	if scenario == null or session != null:
+		return
 	var world := DefaultCampaignScenarioFactory.create_world(scenario); session = CampaignSession.new(scenario, world); session.start(); kernel = SimulationKernel.new(world); kernel.event_emitted.connect(_on_event); kernel.assault_handoff_ready.connect(_on_assault_handoff_ready); latest_snapshot = SimulationSnapshot.capture(world); campaign_started.emit(session); snapshot_updated.emit(latest_snapshot)
 func queue_command(kind: StringName, payload: Dictionary = {}, at_world_tick: int = -1) -> int: return -1 if kernel == null else kernel.queue(kind, payload, at_world_tick)
 func set_simulation_paused(value: bool) -> void: clock.paused = value

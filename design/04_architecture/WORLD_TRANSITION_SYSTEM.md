@@ -3,7 +3,7 @@
 # World Transition System
 
 **Project:** CUSTODIAN
-**Status:** Active foundation — Awakening → Hub (H2); later campaign transitions remain planned
+**Status:** Active foundation — Awakening → Hub (H2) and Hub → Campaign (H5); return remains planned
 **Priority:** High
 **Depends On:** Runtime World & Camera Stabilization, Hub System (Meta Progression)
 **Blocks:** Campaign Flow & Game Loop, Integration Contract, Region Deployment
@@ -18,7 +18,7 @@ The first production major-context transition is live through:
 - `custodian/scenes/hub_runtime_host.tscn` (production host)
 - `custodian/game/world/awakening/awakening_first_return.gd` (qualified completion signal)
 
-The manager validates the completion snapshot, freezes Awakening, stages the Hub first-set host, transfers the existing Operator/controller/camera/HUD, binds the H1 authored navigation and camera map, commits one authoritative world, then resumes input. A failed stage restores playable Awakening south of the completion trigger with `SouthReachCollapse` intact. This is the H2 Awakening→Hub foundation; deployment, campaign return, and later context flows in this document remain future work.
+The manager validates the completion snapshot, freezes Awakening, stages the Hub first-set host, transfers the existing Operator/controller/camera/HUD, binds the H1 authored navigation and camera map, commits one authoritative world, then resumes input. A failed stage restores playable Awakening south of the completion trigger with `SouthReachCollapse` intact. This is the H2 Awakening→Hub foundation. The ordinary Continuity Port now provides the H5 Hub→Campaign deployment path. The Forum-owned accepted `CampaignScenario` and READY bootstrap map are validated before the source Hub freezes. The manager stages `scenes/game.tscn`, injects the accepted scenario before scene readiness, and transfers the existing Operator/controller/camera/HUD. `ContractWorldLoader` must activate and claim the identical prewarmed map before the manager commits Campaign authority and releases Hub. A failed activation returns the map to the bootstrap and restores the Hub bindings and accepted scenario. Campaign return remains H6 work.
 
 Intra-campaign handoff remains owned by:
 

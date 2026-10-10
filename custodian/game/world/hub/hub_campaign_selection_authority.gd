@@ -73,6 +73,70 @@ func accept_first_contract() -> Dictionary:
 	}
 
 
+func retry_failed_preparation() -> Dictionary:
+	var scenario := get_accepted_scenario()
+	if scenario == null:
+		return {"ok": false, "code": "SCENARIO_NOT_ACCEPTED"}
+	if _bootstrap == null or not _bootstrap.has_method("ensure_started"):
+		return {"ok": false, "code": "CONTRACT_BOOTSTRAP_UNAVAILABLE"}
+	if get_preparation_state() != "FAILED":
+		return {"ok": false, "code": "PREPARATION_NOT_FAILED", "state": get_preparation_state()}
+	var previous_generation_count := int(_bootstrap.get("generation_count"))
+	_bootstrap.call("ensure_started", scenario.seed)
+	if int(_bootstrap.get("run_seed")) != scenario.seed \
+			or int(_bootstrap.get("generation_count")) != previous_generation_count + 1:
+		return {
+			"ok": false,
+			"code": "PREPARATION_RETRY_MISMATCH",
+			"accepted_seed": scenario.seed,
+			"bootstrap_seed": int(_bootstrap.get("run_seed")),
+			"generation_count": int(_bootstrap.get("generation_count")),
+		}
+	return {
+		"ok": true,
+		"code": "PREPARATION_RETRY_STARTED",
+		"seed": scenario.seed,
+		"generation_count": int(_bootstrap.get("generation_count")),
+	}
+
+
+func request_campaign_deployment() -> Dictionary:
+	var scenario := get_accepted_scenario()
+	if scenario == null:
+		return {"ok": false, "code": "SCENARIO_NOT_ACCEPTED"}
+	if _bootstrap == null or not _bootstrap.has_method("is_ready"):
+		return {"ok": false, "code": "CONTRACT_BOOTSTRAP_UNAVAILABLE"}
+	if not bool(_bootstrap.call("is_ready")) \
+			or get_preparation_state() != "READY" \
+			or int(_bootstrap.get("run_seed")) != scenario.seed:
+		return {
+			"ok": false,
+			"code": "PREPARATION_NOT_READY",
+			"state": get_preparation_state(),
+			"accepted_seed": scenario.seed,
+			"bootstrap_seed": int(_bootstrap.get("run_seed")),
+		}
+	var transition_manager := get_node_or_null("/root/WorldTransitionManager")
+	if transition_manager == null or not transition_manager.has_method("request_hub_to_campaign"):
+		return {"ok": false, "code": "CAMPAIGN_TRANSITION_UNAVAILABLE"}
+	if _bootstrap.has_method("mark_deployment_requested"):
+		_bootstrap.call("mark_deployment_requested")
+	var accepted := bool(transition_manager.call("request_hub_to_campaign", scenario))
+	if not accepted:
+		return {
+			"ok": false,
+			"code": "CAMPAIGN_TRANSITION_REJECTED",
+			"reason": str(transition_manager.get("last_rejection_code")),
+		}
+	return {
+		"ok": true,
+		"code": "CAMPAIGN_DEPLOYMENT_REQUESTED",
+		"scenario_id": scenario.scenario_id,
+		"seed": scenario.seed,
+		"request_id": str(transition_manager.call("get_active_request_id")),
+	}
+
+
 func get_accepted_scenario() -> CampaignScenario:
 	return hub_state.get_accepted_scenario() if hub_state != null else null
 

@@ -15,6 +15,7 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Review modes: `code, architecture, runtime`
+- Visual review: `none`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Goal: Independently verify the landed implementation against its archived packet and live runtime behavior.

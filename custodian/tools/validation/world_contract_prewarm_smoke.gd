@@ -94,6 +94,14 @@ func _run() -> void:
 	await process_frame
 	assert(int(bootstrap.call("get_state")) == 3, "forced failure must reach FAILED")
 	assert(not (bootstrap.call("get_latest_generation_failure") as Dictionary).is_empty())
+	var failed_generation_count := int(bootstrap.get("generation_count"))
+	bootstrap.call("ensure_started", 515151)
+	assert(int(bootstrap.call("get_state")) == 1, "explicit retry must start from FAILED")
+	assert(int(bootstrap.get("run_seed")) == 515151, "retry changed accepted seed")
+	assert(int(bootstrap.get("generation_count")) == failed_generation_count + 1, "retry did not count exactly one new generation")
+	await process_frame
+	assert(int(bootstrap.call("get_state")) == 3, "forced retry must return to FAILED")
+	assert(int(bootstrap.get("generation_count")) == failed_generation_count + 1)
 	bootstrap.call("reset")
 	await process_frame
 	bootstrap.call(

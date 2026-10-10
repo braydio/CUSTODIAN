@@ -8,6 +8,9 @@ const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
 const ADJUDICATION_DAIS_SCRIPT := preload(
 	"res://game/world/hub/hub_adjudication_dais.gd"
 )
+const CONTINUITY_PORT_SCRIPT := preload(
+	"res://game/world/hub/hub_continuity_port_interaction.gd"
+)
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
 
@@ -30,6 +33,7 @@ func _ready() -> void:
 	add_to_group("world_origin_branch")
 	_build_crown_transfer_ingress()
 	_build_adjudication_dais()
+	_build_continuity_port()
 
 
 func get_authoring_markers() -> Dictionary:
@@ -181,3 +185,16 @@ func _attach_adjudication_dais(dais: Node2D, world_position: Vector2) -> void:
 		return
 	add_child(dais)
 	dais.global_position = world_position
+
+
+func _build_continuity_port() -> void:
+	var marker := get_named_marker(&"ContinuityPort")
+	var host := get_node_or_null("/root/GameRoot")
+	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
+	if marker == null or authority == null or get_parent() != get_node_or_null("/root/GameRoot/World"):
+		return
+	var port := Node2D.new()
+	port.name = "ContinuityPortInteraction"
+	port.set_script(CONTINUITY_PORT_SCRIPT)
+	port.call("configure", authority, self)
+	call_deferred("_attach_adjudication_dais", port, marker.global_position)

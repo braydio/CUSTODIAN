@@ -2,6 +2,7 @@ extends SceneTree
 
 const AWAKENING_SCENE := preload("res://scenes/awakening_first_return.tscn")
 const HUB_MAP_SCRIPT := preload("res://game/world/hub/first_set/hub_first_set_map.gd")
+const FAKE_CONTRACT_MAP_SCRIPT := preload("res://tools/validation/fixtures/fake_world_contract_map.gd")
 
 var _finished_results: Array[Dictionary] = []
 
@@ -148,8 +149,9 @@ func _run() -> void:
 	if root.get_node_or_null("WorldContractBootstrap") == null or int(root.get_node("WorldContractBootstrap").get("generation_count")) != 0:
 		_fail("Awakening-to-Hub transition unexpectedly generated a Contract")
 		return
+	await _exercise_continuity_port_deployment(manager, hub_root, operator)
 
-	print("PASS: world transition handoff failure rollback, duplicate suppression, reviewed Hub spawn, bindings, authority exclusivity, and no Contract generation")
+	print("PASS: H2 handoff plus H5 Continuity Port pending, rollback, exact scenario/map deployment, and authority exclusivity")
 	quit(0)
 
 
@@ -158,6 +160,86 @@ func _wait_for_result_count(count: int) -> void:
 		if _finished_results.size() >= count:
 			return
 		await process_frame
+
+
+func _exercise_continuity_port_deployment(manager: Node, hub_root: Node, operator: CharacterBody2D) -> void:
+	var authority := hub_root.get_node_or_null("HubCampaignAuthority")
+	var port := hub_root.get_node_or_null("World/Level/ContinuityPortInteraction")
+	var bootstrap := root.get_node_or_null("WorldContractBootstrap")
+	if authority == null or port == null or bootstrap == null:
+		_fail("Production Hub did not expose its scenario authority and Continuity Port")
+		return
+	bootstrap.call("reset")
+	await process_frame
+	bootstrap.call("set_generator_scene_for_testing", _build_fake_generator_scene())
+	var accepted: Dictionary = authority.call("accept_first_contract")
+	if not bool(accepted.get("ok", false)):
+		_fail("Forum did not accept the first scenario")
+		return
+	var scenario: CampaignScenario = accepted.get("scenario")
+	var pending: Dictionary = port.call("interact", operator)
+	if pending.get("code") != "PREPARATION_PENDING" or int(bootstrap.get("generation_count")) != 1:
+		_fail("Port failed to hold Hub while the one accepted Contract generated")
+		return
+	for _frame in range(120):
+		if int(bootstrap.call("get_state")) != 1:
+			break
+		await process_frame
+	if int(bootstrap.call("get_state")) != 2:
+		_fail("Fake accepted Contract did not reach READY")
+		return
+	var map_instance: Node = bootstrap.get_latest_contract().get("map", {}).get("instance")
+	if map_instance == null:
+		_fail("READY bootstrap did not retain its generated map")
+		return
+	var map_id := map_instance.get_instance_id()
+	manager.set("campaign_scene_path", "res://tools/validation/fixtures/hub_campaign_deployment_failure.tscn")
+	var rejected_activation: Dictionary = port.call("interact", operator)
+	if not bool(rejected_activation.get("ok", false)):
+		_fail("READY Port did not begin the first Campaign activation attempt")
+		return
+	await _wait_for_result_count(3)
+	if _finished_results.size() != 3 or bool(_finished_results[2].get("succeeded", true)) \
+			or get_current_scene() != hub_root or int(bootstrap.call("get_state")) != 2 \
+			or bootstrap.get_latest_contract().get("map", {}).get("instance") != map_instance:
+		_fail("Activation failure did not restore Hub and the same READY map")
+		return
+	var still_accepted: CampaignScenario = authority.call("get_accepted_scenario")
+	if still_accepted == null or still_accepted.scenario_id != scenario.scenario_id:
+		_fail("Deployment rollback changed accepted Hub scenario state")
+		return
+	manager.set("campaign_scene_path", "res://tools/validation/fixtures/hub_campaign_deployment_success.tscn")
+	var deploy: Dictionary = port.call("interact", operator)
+	if not bool(deploy.get("ok", false)):
+		_fail("READY Port could not retry activation with the retained map")
+		return
+	await _wait_for_result_count(4)
+	if _finished_results.size() != 4 or not bool(_finished_results[3].get("succeeded", false)):
+		_fail("Same-map Hub→Campaign activation did not commit")
+		return
+	var campaign := get_current_scene()
+	var simulation := campaign.get_node_or_null("Simulation")
+	var loader := campaign.get_node_or_null("ContractWorldLoader")
+	var session: CampaignSession = simulation.get("session") if simulation != null else null
+	var active_map: Node = loader.call("get_active_map_instance") if loader != null else null
+	if session == null or session.scenario.scenario_id != scenario.scenario_id \
+			or session.scenario.seed != scenario.seed or active_map == null \
+			or active_map.get_instance_id() != map_id \
+			or campaign.get_node("World/Operator") != operator \
+			or int(bootstrap.call("get_state")) != 4 \
+			or int(manager.call("count_authoritative_worlds")) != 1:
+		_fail("Campaign lost accepted identity, prewarmed map, Operator, or exclusive authority")
+		return
+	manager.set("campaign_scene_path", "res://scenes/game.tscn")
+
+
+func _build_fake_generator_scene() -> PackedScene:
+	var generator := Node2D.new()
+	generator.set_script(FAKE_CONTRACT_MAP_SCRIPT)
+	var packed := PackedScene.new()
+	assert(packed.pack(generator) == OK)
+	generator.free()
+	return packed
 
 
 func _on_transition_finished(result: Dictionary) -> void:

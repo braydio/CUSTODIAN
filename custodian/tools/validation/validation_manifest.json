@@ -4569,6 +4569,16 @@
         "custodian/game/world/awakening/awakening_first_return.gd",
         "custodian/game/world/camera.gd",
         "custodian/game/world/hub/hub_runtime_host.gd",
+        "custodian/game/world/hub/hub_campaign_selection_authority.gd",
+        "custodian/game/world/hub/hub_continuity_port_interaction.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/procgen/world_contract_bootstrap.gd",
+        "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/systems/simulation/world_simulation_runtime.gd",
+        "custodian/tools/validation/fixtures/hub_campaign_deployment_failure.tscn",
+        "custodian/tools/validation/fixtures/hub_campaign_deployment_success.tscn",
+        "custodian/tools/validation/fixtures/hub_campaign_test_loader.gd",
+        "custodian/tools/validation/fixtures/fake_world_contract_map.gd",
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/tools/validation/world_transition_handoff_smoke.gd",
         "custodian/tools/validation/validation_manifest.json"
@@ -4820,9 +4830,27 @@
         "custodian/game/world/procgen/world_contract_bootstrap.gd",
         "custodian/game/world/procgen/world_contract_proxy.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",
+        "custodian/game/systems/simulation/world_simulation_runtime.gd",
+        "custodian/game/systems/world/world_transition_manager.gd",
         "custodian/tools/validation/world_contract_prewarm_smoke.gd",
+        "custodian/tools/validation/hub_continuity_port_smoke.gd",
+        "custodian/game/world/hub/hub_continuity_port_interaction.gd",
+        "custodian/game/world/hub/hub_campaign_selection_authority.gd",
         "custodian/tools/validation/fixtures/fake_world_contract_map.gd",
         "custodian/tools/validation/fixtures/fake_navigation_system.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "hub_continuity_port",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_continuity_port_smoke.gd",
+      "tier": "integration",
+      "tags": ["hub", "campaign", "continuity_port", "contract"],
+      "owners": [
+        "custodian/game/world/hub/hub_continuity_port_interaction.gd",
+        "custodian/tools/validation/hub_continuity_port_smoke.gd"
       ],
       "timeout_sec": 30,
       "needs_import": false

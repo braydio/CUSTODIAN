@@ -15,11 +15,11 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default`
-- Reviewed main: `348d00eea51e`
+- Reviewed main: `122643ec8d6d`
 
 - Goal: Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation and entering `game.tscn` only when that same Contract is READY.
 - Completion boundary: Add Port deployment state/interaction and Hub→Campaign major-context transition. GENERATING holds in Hub; FAILED remains in Hub with deterministic retry; READY stages `game.tscn`, injects/starts the accepted CampaignScenario once, lets `WorldContractProxy/ContractWorldLoader` claim the already-prewarmed map, validates campaign bindings, then releases Hub control. No Campaign return.
-- Current measured state: `WorldContractBootstrap` owns IDLE/GENERATING/READY/FAILED/CLAIMED and retains generated map instances across scene change. `game.tscn` uses `WorldContractProxy` + `ContractWorldLoader`, while `WorldSimulationRuntime` currently auto-starts `DefaultCampaignScenarioFactory.create_scenario()` when no session is injected. Bootstrap's unused deployment timing seam is still terminal-named (`mark_terminal_requested`, terminal metrics). H3 has not yet created accepted-scenario ownership.
+- Current measured state: H3/HR3 are landed and reviewed. Production `HubRuntimeHost` owns `HubCampaignSelectionAuthority`, which latches a typed accepted `CampaignScenario` in `HubState` and prewarms it through the persistent `WorldContractBootstrap`; READY, GENERATING, FAILED, accepted seed, and generation count are observable. The bootstrap retains its generated map instance across scene changes. `game.tscn` uses `WorldContractProxy` + `ContractWorldLoader`, which claims the bootstrap map only after spawn, camera, and navigation validation. `WorldSimulationRuntime` has a guarded exactly-once `start_campaign` entry point; its default `_ready()` startup remains available when no scenario was injected. `WorldTransitionManager` owns Awakening→Hub and the H5 Continuity Port Hub→Campaign transaction. Deployment timing is named `mark_deployment_requested` / `prewarm_ready_before_deployment`.
 - Evidence: `HUB_FIRST_SET_BLOCKOUT.md`; `WORLD_TRANSITION_SYSTEM.md`; `world_contract_bootstrap.gd`; `world_contract_proxy.gd`; `contract_world_loader.gd`; `scenes/game.tscn`; `world_simulation_runtime.gd`; `world_contract_prewarm_smoke.gd`; startup world entry smoke.
 - Task-specific authority: reviewed H3 accepted scenario/prewarm owner; reviewed H2 major-context lifecycle; existing game/proxy/loader contract.
 - Work surface: Muster/Port interaction/controller under production Hub host; major-context deploy request; accepted CampaignScenario handoff; `game.tscn`/WorldSimulationRuntime startup seam; deployment-neutral bootstrap timing API; focused Port deployment smoke.
@@ -37,25 +37,29 @@ This packet is intentionally `ready/auto` while its declared dependencies may st
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: yes; the Forum accepted-scenario flow now reaches Campaign only through READY-gated Continuity Port deployment.
+- Completion boundary satisfied: implementation and rollback boundary are implemented; landing is pending the changed-validation blocker documented in the closing summary.
+- Acceptance satisfied: focused pending/failed/ready, same-seed retry, same-map activation, exact CampaignSession identity, rollback, and exclusive authority checks pass; changed-file closeout is blocked only by the unrelated global review-pairing contract.
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `<fill at closeout>`
+- Evidence: `hub_continuity_port` pass; `world_transition_handoff` pass with H5 failure/success transaction fixtures; `world_contract_prewarm`, `startup_world_entry`, `hub_forum_adjudication`, `contract_world_archive_resolve_ingress`, and `contract_world_operator_spawn_residency` pass. Full changed run selected 42 tests: 16 passed, 1 failed (`review_pairing_contract`, ten unrelated NPA metadata failures), 25 skipped behind the failed unit tier. `git diff --check` and task-packet index pass.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: the changed-file suite runs the repository-wide paired-review validator because the H5 packet is in its owners glob; ten existing NPA packet pairing findings prevent a green closeout. A one-off real-generation probe also surfaced existing ProcGenStuckPocket warnings and invalid Vaultwing import metadata; the production transaction reached the loader, while deterministic task smokes use the prescribed fake generator path.
+- Root cause / contributing factors: unrelated NPA review packets on the current base violate the global pair contract; the live procedural probe traverses optional ambient assets whose tracked import sidecars are invalid in this worktree.
+- Prevention / pipeline improvement: isolate task-scoped validation from known unrelated queue state without weakening the global validator; route the ambient asset/import findings to their owning workstream.
+- Tooling / docs drift discovered: H5 paired review packet lacked the required explicit `Visual review: none` metadata; added before handoff. Global pairing/AI-context findings remain unrelated.
+- Follow-up: manual-follow-up
 
-## Handoff
-
-- Next action: Auto-claim after HR3 archives complete; self-refresh from the landed accepted-scenario/bootstrap/deployment seams. H4 remains independent.
-- Best starting files: reviewed H3 coordinator; reviewed H2 lifecycle owner; WorldContractBootstrap/Proxy/Loader; game.tscn; WorldSimulationRuntime.
-- Blockers or open questions: accepted-scenario injection and deploy API are predecessor outputs.
+## Next Handoff
+- Next workstream: `review-hub-muster-continuity-port-deployment`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: resolve the existing repository-wide NPA pairing gate, rerun changed validation, finish H5, then launch the paired review in a fresh reviewer context.
+- Blockers or open questions: `review_pairing_contract` reports ten NPA packet-state mismatches; `check_ai_context.py` reports one unrelated Operator 2.5D dependency identity mismatch. Do not weaken either validator or edit those unrelated packets inside H5.
