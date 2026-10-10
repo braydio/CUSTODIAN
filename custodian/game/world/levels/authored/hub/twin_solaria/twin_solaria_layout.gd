@@ -4,6 +4,7 @@ extends AuthoredLevel2D
 const READOUT_SCRIPT := preload("res://game/world/interactions/world_readout_interactable.gd")
 const CANVAS_SIZE := Vector2(2048.0, 1536.0)
 const CANVAS_ORIGIN := -CANVAS_SIZE * 0.5
+const NAVIGATION_REGIONS: Array[Rect2i] = [Rect2i(16, 34, 32, 14)]
 const PLATE_TEXTURES := {
  "solarium_i_acquisition_court": preload("res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_solarium_i_acquisition_court_617x695.png"),
  "upper_crown_court": preload("res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_upper_crown_court_697x520.png"),
@@ -78,11 +79,16 @@ The missing upper-right court remains absent. Its forensic history requires a se
 ]
 
 @onready var background_root: Node2D = $BackgroundRoot
+@onready var blockout_grid: AuthoredBlockoutGrid2D = $BlockoutGrid
+@onready var authored_navigation: AuthoredNavigationProvider2D = $NavigationRoot/AuthoredNavigationProvider
 
 func _ready() -> void:
  camera_bounds = Rect2(CANVAS_ORIGIN, CANVAS_SIZE)
  placeholder_canvas_size = CANVAS_SIZE
  draw_placeholder_grid = false
+ blockout_grid.position = CANVAS_ORIGIN
+ blockout_grid.configure(32.0, Vector2i(64, 48), NAVIGATION_REGIONS)
+ authored_navigation.configure(blockout_grid)
  _build_registered_plates()
  _build_readouts()
  super._ready()

@@ -8,6 +8,9 @@
     {"id": "expected_generated_region_missing_spawn_rollback", "pattern": "ERROR: \\[LevelLoader\\] unable to enter generated_route_procgen_fixture: target spawn could not be resolved: MissingSpawn"},
     {"id": "expected_generated_region_missing_spawn_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] generated_region_lifecycle_smoke/enter_generated failed: target spawn could not be resolved: MissingSpawn"},
     {"id": "expected_generated_region_missing_procgen_rollback", "pattern": "ERROR: \\[LevelLoader\\] unable to enter generated_route_procgen_fixture: generated-region map has no ProcGen owner"},
-    {"id": "expected_generated_region_missing_procgen_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] generated_region_lifecycle_smoke/enter_generated failed: generated-region map has no ProcGen owner"}
+    {"id": "expected_generated_region_missing_procgen_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] generated_region_lifecycle_smoke/enter_generated failed: generated-region map has no ProcGen owner"},
+    {"id": "expected_hub_twin_missing_spawn_rollback", "pattern": "ERROR: \\[LevelLoader\\] unable to enter hub_twin_solaria: target spawn could not be resolved: MissingCrownSpawn"},
+    {"id": "expected_hub_twin_missing_spawn_rollback_manager", "pattern": "ERROR: \\[RouteTraversalManager\\] hub_twin_solaria/crown_transfer_to_twin_solaria failed: target spawn could not be resolved: MissingCrownSpawn"},
+    {"id": "expected_hub_twin_activation_rollback", "pattern": "ERROR: \\[RouteTraversalManager\\] hub_twin_solaria/crown_transfer_to_twin_solaria failed: active instance changed before commit"}
   ]
 }

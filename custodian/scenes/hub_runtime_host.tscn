@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/world/hub/hub_runtime_host.gd" id="1_host"]
 [ext_resource type="PackedScene" path="res://game/world/hub/first_set/hub_first_set_map.tscn" id="2_map"]
 [ext_resource type="Script" path="res://game/systems/core/systems/navigation_system.gd" id="3_navigation"]
+[ext_resource type="Script" path="res://game/world/levels/level_loader.gd" id="4_level_loader"]
+[ext_resource type="Script" path="res://game/world/routes/route_traversal_manager.gd" id="5_route_manager"]
 
 [node name="HubRuntimeStage" type="Node2D"]
 script = ExtResource("1_host")
@@ -10,6 +12,12 @@ script = ExtResource("1_host")
 [node name="World" type="Node2D" parent="."]
 
 [node name="Level" parent="World" instance=ExtResource("2_map")]
+
+[node name="LevelLoader" type="Node" parent="World"]
+script = ExtResource("4_level_loader")
+
+[node name="RouteTraversalManager" type="Node" parent="World"]
+script = ExtResource("5_route_manager")
 
 [node name="NavigationSystem" type="Node" parent="."]
 script = ExtResource("3_navigation")

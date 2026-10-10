@@ -7,18 +7,18 @@
 
 ## Purpose
 
-Provide one directed, transactional traversal authority for authored scenes that remain inside a campaign world. Route traversal preserves the campaign-world context and persistent Operator while moving authority between route nodes.
+Provide one directed, transactional traversal authority for authored scenes that remain inside one major world context. Route traversal preserves that context and the persistent Operator while moving authority between route nodes. Production use covers both CampaignRegion routes and the Hub's optional Crown Transfer into Twin Solaria.
 
 ## Ownership Boundary
 
 ```text
-WorldTransitionManager  Compound ↔ Campaign major-context changes (future)
-RouteTraversalManager   Directed traversal inside one campaign (live V1 target)
+WorldTransitionManager  Awakening ↔ Hub and Hub ↔ Campaign major-context changes
+RouteTraversalManager   Directed traversal inside one major context (CampaignRegion and Hub)
 LevelLoader             Stage, validate, activate, deactivate, cache, release one level
 Level scene             Local content, named spawns, state hooks, generic exit requests
 ```
 
-`LevelLoader` never resolves topology, profiles, branches, or history. Level scenes never instantiate or select their next destination. `RouteTraversalManager` never performs Compound/Campaign context changes.
+`LevelLoader` never resolves topology, profiles, branches, or history. Level scenes never instantiate or select their next destination. `RouteTraversalManager` never performs major-context changes; a route's registered levels must belong to the route's declared context.
 
 ## Data Contracts
 
@@ -51,9 +51,9 @@ A profile names one entry edge and an explicit enabled-edge set. Exactly one ena
 
 ## Reserved World Endpoint
 
-`@world_origin` represents the captured campaign-world location and the ingress that opened the route. It is not a level ID and is never staged by `LevelLoader`.
+`@world_origin` represents the captured location in the route's current major context and the ingress that opened the route. It is not a level ID and is never staged by `LevelLoader`. A Hub route can suspend the current H1 map and restore that same host through its Crown Transfer ingress without creating a Campaign deployment or a second major world.
 
-Production ingress captures and isolates the origin before the entry edge activates. Exfil restores the exact origin branch, actor, camera, and UI snapshot transactionally, resets the ingress, releases all route instances, clears session state, and preserves runtime-persistent state.
+Production ingress captures and isolates the origin before the entry edge activates. Exfil restores the captured origin branch, actor, camera, and UI snapshot transactionally; an ingress may resolve the actor's return position through an authored named marker. It then resets the ingress, releases route instances, clears session state, and preserves runtime-persistent state.
 
 Origin isolation uses the explicit `world_origin_branch` group. `WorldIngressSite`
 collects only grouped direct children of `/root/GameRoot/World`, plus temporary

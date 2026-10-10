@@ -1,7 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/hub/twin_solaria/twin_solaria_layout.gd" id="1_layout"]
 [ext_resource type="Texture2D" path="res://content/levels/hub/twin_solaria/v1/twin_solaria_v1_fidelity_fidelity_underlay_2048x1536.png" id="2_underlay"]
+[ext_resource type="Script" path="res://game/world/levels/authored_blockout_grid_2d.gd" id="3_grid"]
+[ext_resource type="Script" path="res://game/world/levels/authored_navigation_provider_2d.gd" id="4_navigation"]
+[ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="5_return_exit"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_return"]
+size = Vector2(72, 96)
 
 [node name="TwinSolaria" type="Node2D"]
 script = ExtResource("1_layout")
@@ -14,6 +20,9 @@ texture = ExtResource("2_underlay")
 
 [node name="BackgroundRoot" type="Node2D" parent="."]
 [node name="PlayableRoot" type="Node2D" parent="."]
+[node name="BlockoutGrid" type="Node2D" parent="."]
+visible = false
+script = ExtResource("3_grid")
 [node name="PropsRoot" type="Node2D" parent="."]
 [node name="OcclusionRoot" type="Node2D" parent="."]
 [node name="Collision" type="Node2D" parent="."]
@@ -38,3 +47,14 @@ collision_mask = 0
 [node name="EventMarkers" type="Node2D" parent="."]
 [node name="EventRuntime" type="Node2D" parent="."]
 [node name="NavigationRoot" type="Node2D" parent="."]
+[node name="AuthoredNavigationProvider" type="Node" parent="NavigationRoot"]
+script = ExtResource("4_navigation")
+[node name="Exits" type="Node2D" parent="."]
+[node name="Exit_ReturnHub" type="Area2D" parent="Exits"]
+position = Vector2(72, 696)
+script = ExtResource("5_return_exit")
+exit_id = &"return_hub"
+prompt_text = "RETURN TO HUB"
+trigger_on_body_entered = false
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Exits/Exit_ReturnHub"]
+shape = SubResource("RectangleShape2D_return")

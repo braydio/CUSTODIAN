@@ -59,9 +59,9 @@ H3 and H4 intentionally run in parallel after HR2. H5 does not wait for Twin bec
 | Slice | Workstream | Packet state | Depends on | Claim-time refresh |
 |---|---|---|---|---|
 | H1 | `hub-first-set-blockout-v1-recovery-1` | complete/landed; human overview approved; paired review complete | none | H1 and HR1 archived; donor archive remains reachable |
-| H2 | `hub-awakening-context-handoff` | implementation complete/landed; paired review pending | HR1 + Awakening handoff review (complete) | execution-agent |
+| H2 | `hub-awakening-context-handoff` | implementation and paired review complete/landed | HR1 + Awakening handoff review (complete) | execution-agent |
 | H3 | `hub-forum-adjudication-contract-prewarm` | ready/auto, dependency-gated | HR2 | execution-agent |
-| H4 | `hub-crown-transfer-twin-solaria` | ready/auto, dependency-gated | HR2 | execution-agent |
+| H4 | `hub-crown-transfer-twin-solaria` | implementation complete/landed; HR4 pending | HR2 | execution-agent |
 | H5 | `hub-muster-continuity-port-deployment` | ready/auto, dependency-gated | HR3 | execution-agent |
 | H6 | `hub-campaign-return` | ready/auto, dependency-gated | HR5 | execution-agent, including current recovery/death-handoff state |
 | H7 | `hub-first-set-integration-closeout` | ready/auto, dependency-gated | HR4 + HR6 | execution-agent |
@@ -92,6 +92,6 @@ Do not restore Field Terminal as the embodied destination. Preserve Forum adjudi
 
 ## Program Position
 
-**Current:** H1 and HR1 are complete. Awakening handoff-readiness and its review are complete. H2 now lands the transactional Awakening→Hub handoff; its paired review is the immediate next step. H3-H7 remain dependency-gated behind the H2 review and their own predecessor reviews.
-**Next:** Fresh-context review of `hub-awakening-context-handoff`; then H3 and H4 can become claimable in parallel.
+**Current:** H1/HR1 and H2/HR2 are complete. H4 now lands the optional Crown Transfer↔Twin route and awaits HR4. H3 and H4 were parallel successors after HR2; H3 remains dependency/lock-gated by its own live dispatcher state. H5-H7 remain gated behind their predecessor reviews.
+**Next:** Fresh-context review of `hub-crown-transfer-twin-solaria`; continue the H3 chain when its route/contract locks are available.
 **Finish:** HR7 passes the complete first-campaign-loop proof.

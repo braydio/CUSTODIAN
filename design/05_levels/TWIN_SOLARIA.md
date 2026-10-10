@@ -8,7 +8,7 @@
 > **Historical incident authority:** `design/03_world/lore/TWIN_SOLARIA_CROWN_INCIDENT.md`  
 > **Hub architecture:** `design/04_architecture/HUB_DOCTRINE.md`, `design/04_architecture/HUB_SPATIAL_LAYOUT.md`  
 > **Persistent visual reference:** `design/05_levels/reference/twin_solaria/twin_solaria_crown_route_court_reference.png`  
-> **Current runtime status:** development fidelity preview only; internal collision and route gameplay are not authored
+> **Current runtime status:** the production H1 Crown Transfer enters the registered `hub_twin_solaria` authored level at `Spawn_CrownCauseway` and returns to the same Hub host at `Spawn_TwinReturn`. A bounded arrival-apron navigation region supports the route shell; full internal collision, route adjudication, and acquisition gameplay remain unauthored.
 
 ## Canonical visual reference
 
@@ -1858,13 +1858,14 @@ Do not put a large strategic travel system directly into `operator.gd`,
 
 Future implementation should be split.
 
-### Slice A: authored traversal shell
+### Slice A: authored traversal shell — route connection implemented
 
-- decompose the backdrop into usable authored presentation;
-- author internal collision;
-- add camera zones;
-- preserve Solarium I and Second Crown Root landmark positions;
-- no strategic route gameplay.
+- H1 Crown Transfer starts the registered authored route and preserves the existing Hub host as its origin;
+- Twin entry validates `Spawn_CrownCauseway`, binds its camera and bounded navigation provider before input resumes, and exposes an explicit return interaction;
+- return restores the same Hub map and runtime session at `Spawn_TwinReturn`;
+- the route does not activate adjudication, Solarium I acquisition, or Passage behavior.
+
+Full internal collision, camera zones, and detailed traversal topology remain future authored-level work.
 
 ### Slice B: dormant machine interactions
 
