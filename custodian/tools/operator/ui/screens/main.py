@@ -13,7 +13,12 @@ class MainScreen(Screen):
         yield WorkbenchStatusBar(id="workbench-status")
         yield Input(placeholder="Search profile / group / action / direction", id="search", classes="hidden")
         with Container(id="plan-mode", classes="mode-pane hidden"):
-            yield Label("ANIMATION PLAN · authored rank / computed coverage", classes="pane-title")
+            yield Label("2.5D PRODUCTION QUEUE · authored rank / live coverage / current review authority", classes="pane-title")
+            with Horizontal(classes="polish-actions"):
+                yield Button("Filter: ALL", id="queue-filter")
+                yield Button("Export Brief", id="queue-export-brief")
+                yield Button("Open Workbench", id="queue-open-workbench")
+            yield Static("Counts are derived from the live target projection and current review receipts.", id="queue-summary")
             yield PlanTable(id="plan-table")
         with Horizontal(id="workspace-row", classes="mode-pane"):
             with Container(id="navigation-pane"):

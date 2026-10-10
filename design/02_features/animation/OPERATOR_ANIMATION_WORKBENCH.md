@@ -350,6 +350,43 @@ through `OperatorBodyPresenter`. It records production runtime resource hashes
 before and after; the sandbox has no source publication, selector, catalog, or
 runtime-build authority. `RUNTIME_VERIFIED` is review evidence only; canonical
 2.5D publication remains a later migration authority.
+
+### 2.5D production queue and generation briefs
+
+The QUEUE view is a live projection of the implementation plan, generation-aware
+`project_targets()` leaves, and current `Operator2DReview.current_receipt()`
+evidence. It does not persist progress. Plan priority, rank, and state remain
+human-owned. The baseline contains 69 families and 552 required direction
+targets (4 P0 / 65 P1); the accepted relaxed-idle source is eight authored input
+directions, not local canonical intake, review verification, or publication.
+Current verified counts are read from current receipts. If legacy fallback
+discovery cannot parse the selected source tree, that projection is shown as
+unavailable rather than counted as zero.
+
+Queue filters are NEXT, MISSING, INTAKE, EDITING, REVIEW, STALE,
+FALLBACK/PROJECTED, VERIFIED, PUBLISHED, and ALL. NEXT orders P0 before P1,
+then authored rank and stable identity; skips include a visible deterministic
+reason. Missing frame counts, loop values, and timing stay unknown. Accepted
+source, fallback, projected, partial, or stale leaves cannot close a family.
+Family completion requires every plan-required direction and layer to be
+current and runtime-verified by its receipt. PUBLISHED remains empty and
+unsupported until WB25-6 supplies publication authority.
+
+Export Generation Brief writes an immutable, content-addressed local bundle
+under `.ai/operator_animation_workbench/generation_briefs/<brief-id>/`. The
+bundle binds the exact target, plan/profile/reference hashes, direction and
+adjacent references, accepted registration guide plus a deterministic overlay, and authoritative frame
+contract. Unknown contract fields remain explicit, and identical authority
+produces byte-identical output. No network generator is called. Returned art
+can carry the exact brief ID and manifest hash through the existing WB25-2
+ingress package; the bundle is revalidated against current authority and
+selection. Existing unbriefed intake remains supported. Filenames are never
+used as identity.
+
+These 2.5D queue semantics supersede UX4's competing migration-queue scope.
+The UX hierarchy roadmap and its unrelated historical presentation guidance
+remain available for a future refresh; they do not define another progress or
+coverage authority.
 Enter jumps to the selected clip; I / Shift+I and O / Shift+O edit inclusive
 trim edges; brackets edit selected-clip REVIEW FPS; Shift+L cycles clip repeat
 count while L loops the whole sequence; arrows navigate flattened source frames;

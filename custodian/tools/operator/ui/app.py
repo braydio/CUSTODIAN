@@ -33,6 +33,8 @@ import animation_transition
 
 LIVE_PREVIEW_DEBOUNCE_SEC = 0.15
 TIMELINE_LOOP_PRESETS = (1, 2, 3, 4, 6, 8)
+QUEUE_FILTERS = ("ALL", "NEXT", "MISSING", "INTAKE", "EDITING", "REVIEW", "STALE",
+                 "FALLBACK/PROJECTED", "VERIFIED", "PUBLISHED")
 
 
 class OperatorWorkbenchApp(App):
@@ -54,6 +56,7 @@ class OperatorWorkbenchApp(App):
     #context-key-bar { height: 1; padding: 0 1; background: #202734; color: #d8dee9; }
     .mode-pane { height: 1fr; }
     #plan-table { height: 1fr; }
+    #queue-summary { height: 2; padding: 0 1; background: #181e28; }
     #timeline-table { height: 12; }
     #timeline-canvas { height: 1fr; content-align: center middle; }
     #preview-canvas { height: 1fr; content-align: center middle; }
@@ -107,7 +110,7 @@ class OperatorWorkbenchApp(App):
         Binding("v", "validate", "Validate", show=False), Binding("j", "cursor_down", "Down", show=False),
         Binding("f", "adopt_fx_layer", "Adopt as FX", show=False),
         Binding("k", "cursor_up", "Up", show=False),
-        Binding("1", "mode_plan", "Plan", priority=True, show=False), Binding("2", "mode_workbench", "Workbench", priority=True, show=False),
+        Binding("1", "mode_plan", "Queue", priority=True, show=False), Binding("2", "mode_workbench", "Workbench", priority=True, show=False),
         Binding("3", "mode_preview", "Preview", priority=True, show=False), Binding("4", "mode_timeline", "Timeline", priority=True, show=False),
         Binding("5", "mode_motion", "Motion", priority=True, show=False),
         Binding("6", "mode_polish", "Polish", priority=True, show=False),
@@ -177,6 +180,8 @@ class OperatorWorkbenchApp(App):
         self.polish_selection_identity = ""
         self.polish_proposals: list[dict] = []
         self._polish_columns_ready = False
+        self.queue_filter = "ALL"
+        self.queue_selection: AnimationSelection | None = startup
 
     def _next_preview_generation(self) -> int:
         self.state.preview_generation += 1
@@ -599,6 +604,11 @@ class OperatorWorkbenchApp(App):
             self.state.preview_playing = False
             self._reset_preview_clock()
         try:
+            # Keep the plan/receipt queue available even if unrelated legacy
+            # browser source discovery is malformed in an older art checkout.
+            await self._load_queue_table()
+            if not self._browser_generation_current(generation):
+                return
             candidate = tuple(await self._thread(self.features["animations"].refresh))
             if not self._browser_generation_current(generation):
                 return
@@ -697,11 +707,6 @@ class OperatorWorkbenchApp(App):
                 self._status_checkout = "unknown checkout"
             self._status_aseprite = str(self.service.workbench.resolve_aseprite(self.service.aseprite) or "unavailable")
             self._update_status_bar()
-            if hasattr(self.service, "animation_plan"):
-                plan = await self._thread(self.service.animation_plan)
-                if not self._browser_generation_current(generation):
-                    return
-                self._main_widget("#plan-table", PlanTable).set_items(plan)
             action_count = len({(row.selection.profile, row.selection.group, row.selection.action) for row in filtered})
             self._activity(f"browser refreshed: {len(filtered)} directional variants, {action_count} actions", "OK")
         except Exception as error:
@@ -841,15 +846,15 @@ class OperatorWorkbenchApp(App):
             return
         if event.data_table.id != "plan-table": return
         item_id = str(event.row_key.value)
-        item = next((row for row in self.service.animation_plan() if row["id"] == item_id), None)
+        item = self._main_widget("#plan-table", PlanTable).item_for_key(item_id)
         if item:
-            direction = (item.get("covered_directions") or item.get("requested_directions") or item["directions"])[0]
-            self.state.selection = self.state.contextualize(AnimationSelection(
-                item["profile"], item["group"], item["action"], direction,
-                art_generation=item.get("art_generation", "legacy_96"),
-            ))
-            self._set_mode("workbench")
-            self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
+            self.queue_selection = item.get("next_selection") or AnimationSelection(
+                item["profile"], item["group"], item["action"], item["directions"][0],
+                art_generation=item["art_generation"],
+            )
+            self._main_widget("#queue-summary", Static).update(
+                f"Selected {self.queue_selection.authoring_identity}. Click Open Workbench to load, or Export Brief for this exact direction."
+            )
 
     def on_preview_controls_scrubbed(self, event: PreviewControls.Scrubbed) -> None:
         if self.state.mode == "preview" and self.state.preview_examiner_mode == "transition":
@@ -984,6 +989,33 @@ class OperatorWorkbenchApp(App):
     def action_mode_polish(self): self._set_mode("polish")
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "queue-filter":
+            index = QUEUE_FILTERS.index(self.queue_filter)
+            self.queue_filter = QUEUE_FILTERS[(index + 1) % len(QUEUE_FILTERS)]
+            event.button.label = f"Filter: {self.queue_filter}"
+            await self._load_queue_table()
+            return
+        if event.button.id == "queue-export-brief":
+            selection = self.queue_selection or self.state.selection
+            try:
+                if selection is None:
+                    raise ValueError("Select a queue family first")
+                result = await self._thread(self.service.export_generation_brief, selection)
+                self._main_widget("#queue-summary", Static).update(
+                    f"Brief {result['brief_id']} · manifest {result['manifest_sha256']} · {result['path']}"
+                )
+            except Exception as error:
+                self._main_widget("#queue-summary", Static).update(f"Brief export refused · {error}")
+            return
+        if event.button.id == "queue-open-workbench":
+            selection = self.queue_selection or self.state.selection
+            if selection is None:
+                self._main_widget("#queue-summary", Static).update("Select a queue family first")
+                return
+            self.state.selection = self.state.contextualize(selection)
+            self._set_mode("workbench")
+            self.run_worker(self._load_session(self.state.selection), group="session", exclusive=True)
+            return
         if event.button.id and event.button.id.startswith("timeline-preset-"):
             preset_id = event.button.id.removeprefix("timeline-preset-")
             self.run_worker(self._run_timeline_preset(preset_id), group="timeline-preset", exclusive=True, exit_on_error=False)
@@ -992,6 +1024,23 @@ class OperatorWorkbenchApp(App):
             return
         action = event.button.id.removeprefix("polish-")
         self.run_worker(self._run_polish_action(action), group="polish", exclusive=True, exit_on_error=False)
+
+    async def _load_queue_table(self) -> None:
+        snapshot = await self._thread(self.service.animation_queue, self.queue_filter)
+        self._main_widget("#plan-table", PlanTable).set_items(snapshot["rows"])
+        counts = snapshot["primary_counts"]
+        next_target = snapshot["next"]
+        next_text = (f"NEXT {next_target['priority']} rank {next_target['rank']} · {next_target['id']} · {next_target['direction']}"
+                     if next_target else "NEXT unavailable · every remaining target is blocked or verified")
+        skipped = "; ".join(f"{item['target']}: {item['reason']}" for item in snapshot["skipped_before_next"])
+        breakdown = ", ".join(f"{key} {value}" for key, value in counts.items())
+        self._main_widget("#queue-summary", Static).update(
+            f"{snapshot['families']} families / {snapshot['direction_slots']} direction slots · {breakdown} · {next_text}"
+            + (f" · skipped: {skipped}" if skipped else "")
+            + (f" · legacy fallback projection {snapshot['legacy_projection']['status']}: {snapshot['legacy_projection']['reason']}"
+               if snapshot["legacy_projection"]["status"] != "AVAILABLE" else "")
+            + (" · publication authority is WB25-6" if not snapshot["published_supported"] else "")
+        )
 
     async def _ensure_polish_session(self) -> Path:
         selection = self._require_selection()

@@ -2608,24 +2608,36 @@ and exact 2.5D Workbench frame resolution. Physical saved-document durations
 drive 2.5D sequence clips and presets; a missing component or timing contract
 keeps a preset unavailable. WB25-4 is complete and independently accepted after
 the cycle-1 R0-01 human-approval provenance correction and fresh clean re-review.
-WB25-5 planning refresh is complete and its implementation + paired review are
-published ready/auto (2026-10-10, initial main@5e7c8e58). A later read-only
-Operator-art checkout sample found zero currently verified 2.5D leaves/families,
-zero 2.5D manifests/receipts/sandbox passes and only the old legacy 96px
-five-frame east relaxed-idle Workbench document; these figures apply only to
-that sampled workspace, not to all machines. WB25-5 also owns a bounded fix
-for the live `Operator2DReview.family()` to `AnimationRecord` field-name mismatch
-(`coverage`/`stale` vs `coverage_status`/`stale_reference`), plus a real-record
-regression test before integrating the queue. The tracked plan holds 69 target
-families and 552 required direction leaves (one accepted 8-direction source
-family, 544 baseline strips yet to author), not 552 reviewed
-or published runtime directions. Locally generated current receipts determine
-VERIFIED rather than plan/source counts. WB25-6 retains independent runtime
-publication/promotion authority.
+WB25-5 planning refresh is complete and its implementation + paired review were
+published ready/auto (2026-10-10). The implementation adds a live production
+queue over plan families, target leaves, and current review receipts; it keeps
+accepted source, local canonical coverage, effective `RUNTIME_VERIFIED`, and
+later publication distinct. The queue preserves authored P0/P1 and rank,
+supports its required filters, and explains deterministic NEXT skips. Family
+review now reads `AnimationRecord.coverage_status`/`stale_reference` and checks
+every required plan direction/layer, including absent leaves. Its smoke uses
+actual records and `WorkbenchService.review_family()`.
+
+WB25-5 also exports immutable local generation briefs under the ignored
+`.ai/operator_animation_workbench/generation_briefs/` workspace and correlates
+returned source through the existing WB25-2 ingress package using validated
+brief ID + manifest hash. Unknown plan frame/timing values remain unknown;
+unbriefed ingress remains compatible. The Workbench UX4 roadmap's 2.5D queue
+scope is superseded, while unrelated UX guidance remains historical.
+
+At implementation start, the plan projection was 69 families / 552 direction
+slots (4 P0 / 65 P1), with 1 accepted source family, 1 resolved and 68
+unresolved frame contracts. The sampled Operator-art workspace at
+`c463a1cf` had 0 effective current receipt-verified leaves/families, 0 2.5D
+workspace manifests, and 0 current receipts; these counts apply only to that
+workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
+filename in that 745-commit-behind checkout, so fallback discovery reports an
+explicit unavailable diagnostic instead of turning that scan failure into a
+zero. WB25-6 retains independent runtime publication/promotion authority.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
-The ten-region off-route backdrop vision and 30 requested image prompts are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
+The nine-region generic off-route backdrop vision and 27 requested image prompts (with Dust Lung Zone 05 separately superseded by Dust Lung V2) are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
 
 ## Hub Continuity Port Campaign Deployment (H5, 2026-10-10)
 
