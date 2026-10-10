@@ -1,12 +1,12 @@
 # OPERATOR 2.5D WORKBENCH PRODUCTION QUEUE + GENERATION BRIEFS
 
-> PLANNING REFRESH CANDIDATE (2026-10-10; main@cee646f2)  
-> WB25-4 R0-01 correction + fresh re-review complete/passed. Live API and tracked counts were reconciled below. **Keep draft/manual pending updated authoring-chat backlink, paired authoring preflight, queue-index regeneration and main publication.** Never claim the WB25-4 correction again.
+> WB25-5 design refreshed 2026-10-10 against the accepted WB25-4 correction/re-review and live v2 plan.  
+> This packet builds the queue and local generation briefs only; WB25-6 still owns runtime promotion. Never re-claim archived WB25-4 corrections.
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-workbench-production-queue
-- Status: draft
-- Dispatch: manual
+- Status: ready
+- Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-review-automation-review-corrections-1
 - Locks: operator-workbench-ui, operator-animation-plan
@@ -18,7 +18,7 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
-- Reviewed main: cee646f21e5a6dc6fb4cc487f8ec04043c683259
+- Reviewed main: ff7d3aecaa681ff8308cab318f3c60c90bdc11b7
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: none
 - Goal: Turn the landed 2.5D target/workflow/review state into an honest production queue and deterministic generation-brief exporter so the next animation to author is obvious and returned source-work can re-associate with the exact target.
@@ -78,7 +78,7 @@ Test (a) 69 families/552 leaves and 8 accepted-source/544 baseline-un-authored p
 
 ### Promotion gate
 
-Only after the new chat's precise URL is supplied and updated in implementation/review packets: run paired `validate_task_packet_authoring.py`, promote both packets to ready/auto if clean, rerun authoring validation, regenerate and verify task-packet README index, safely land scoped files on origin/main, verify fetched headers/dispatcher eligibility and only then claim WB25-5. Keep WB25-6 draft/refresh-required until WB25-5 + paired review pass and real cohort evidence exists.
+Planning refresh and exact current-chat backlinks were resolved on 2026-10-10. Before any claim, the paired authoring validator, README managed index, and fetched origin/main/dispatcher gates must pass; WB25-6 stays draft/refresh-required until WB25-5 + paired review pass and real cohort evidence exists.
 
 ## Recommended brief manifest
 
@@ -104,10 +104,10 @@ Only after the new chat's precise URL is supplied and updated in implementation/
 
 ## Refresh Planning Authority
 
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
-- Refresh instruction: Design/content re-derivation done on 2026-10-10 against main@cee646f2 and accepted WB25-4 correction review. The tracked baseline 69/552/8/544 was measured; ignored local receipts are computed at execution, not guessed. Capture this chat's new authoring URL, update BOTH packet backlinks, run paired authoring preflight, reconcile any concurrent main changes and promote through the repository workflow. Do not use the superseded original WB25-4 findings review.
+- Refresh instruction: Completed in the exact authoring chat on 2026-10-10 using the accepted WB25-4 correction re-review and latest unchanged Operator target/review owners. Tracked baseline measured 69/552/8/544; executing agent must still measure local current receipt/coverage counts rather than inventing them. No further human planning judgment required for WB25-5.
 
 ## Handoff
 
@@ -119,4 +119,4 @@ Only after the new chat's precise URL is supplied and updated in implementation/
 - Summary backlink: include exact Authoring chat URL
 - Refresh reason: none after refresh/implementation
 - Next action: paired review
-- Blockers or open questions: packet must be refreshed before claim
+- Blockers or open questions: none after publication and dispatcher preflight
