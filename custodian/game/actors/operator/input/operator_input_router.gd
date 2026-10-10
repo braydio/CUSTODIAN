@@ -99,6 +99,24 @@ func sample(
 	)
 
 
+## Sample one fixed tick while local gameplay input is suppressed (the
+## developer shell is open and has keyboard focus).
+##
+## Real hardware state is still folded into `_previous_pressed` so a key held
+## across the suppression window does not manufacture a phantom
+## `just_pressed` edge once `sample()` resumes -- the frame handed back to
+## gameplay this tick is simply neutral. External control (replay, AI,
+## possession) is a separate seam and is not affected by this method; callers
+## check for an external frame first and only fall here for local sampling.
+func sample_suppressed(mouse_motion_generation: int) -> OperatorInputFrame:
+	var pressed: Dictionary = {}
+	for action: StringName in _available:
+		pressed[action] = Input.is_action_pressed(action)
+	_previous_pressed = pressed.duplicate()
+	_last_mouse_motion_generation = mouse_motion_generation
+	return OperatorInputFrame.neutral()
+
+
 ## Adopt an externally supplied frame -- replay, AI, possession, a vehicle.
 ##
 ## The external source states what is *held*; it does not know when it started

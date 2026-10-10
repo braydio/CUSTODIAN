@@ -14,7 +14,7 @@ Replace print/debug spam with a deterministic-safe, opt-in dev layer that keeps 
 - **No print spam** from gameplay systems. Debug data is written to a bus, not to console/render.
 - **No debug draw inside systems.** All overlays rendered by a dedicated dev layer.
 - **Opt-in and toggleable.** Debug UI and overlays can be fully disabled.
-- **Godot-native UI only.** The former Dear ImGui dependency is retired; use the F12 `Control`-based debug screen and Observatory surfaces.
+- **Godot-native UI only.** The former Dear ImGui dependency and the later third-party `dev-console` addon are both retired; use the F12 `Control`-based debug screen, the Observatory surfaces, and the native Developer Shell (`/root/DevConsole`).
 - **Debug mutation is queued.** Debug panels may write to debug overrides or `DebugBus.queue_command(...)`; gameplay systems apply commands only at explicit safe boundaries.
 
 ## Architecture (One-Way Data Flow)
@@ -92,30 +92,48 @@ Rules:
 - Overlays are frame-scoped; cleared once per frame by controller.
 - Debug commands are not applied by UI code. Runtime systems drain and apply them at safe boundaries.
 
-## Retired Dear ImGui Director Console
+## Native Developer Shell
 
-The former Dear ImGui Director Console, plugin, autoload, and focused smoke were removed. F12 `debug_hud` and F9/F10 Developer Observatory surfaces are the supported developer interfaces. `DebugBus` and `DebugSnapshotCollector` remain available as read-only data infrastructure for Godot-native consumers.
+`custodian/game/ui/debug/dev_console_service.gd` is the `/root/DevConsole` autoload and the command-registry/execution authority; `dev_console_panel.gd`/`.tscn` and `dev_console_style.gd` are its Godot-native presentation, built from `BlackReliquaryPalette`/`BlackReliquaryStyles`. It opens and closes with backtick/tilde, bottom-docked, and is gated end-to-end by `DevMode.allows(&"debug_ui")`.
 
-Historical controls were:
+It replaces two retired predecessors in turn: the original Dear ImGui Director Console, and the third-party `dev-console` Godot addon that followed it. Both are fully removed (plugin, autoload target, and config). F12 `debug_hud`, F9/F10 Developer Observatory, and this Developer Shell are the supported developer interfaces. `DebugBus` and `DebugSnapshotCollector` remain available as read-only data infrastructure for Godot-native consumers; the Developer Shell does not read `DebugBus` automatically (it is a command surface, not a log sink).
 
-- F3 toggles `/root/DebugBus.enabled`.
-- Shift+F3 toggles minimal stats mode.
-- World/ProcGen tab shows seed/profile, generation mode, terrain fallback/connectivity, required/missing cell counts, and rescue-carved cells.
-- Sectors tab shows a table of sector intelligence snapshots.
-- Events tab shows bounded debug/observatory timeline events.
-- Combat, Actors, and Animation tabs are scaffolds for read-only tuning visibility and later adapter-specific details.
+Command registration preserves the legacy addon's public contract exactly, since `ui.gd`'s `_register_devconsole_commands()` depends on it unchanged:
 
-Data flow is one-way by default:
+- `add_command(name, callback, metadata = {})` -- two-argument legacy calls remain valid.
+- `add_signal(name, target_signal)`.
+- Dispatch is always `callback.callv(parts)`, so every registered callback -- built-in or HUD-registered -- must be able to accept a variable number of positional arguments (the HUD adapter's `func(...args): return handler.call(args)` shape, or an equivalent variadic lambda).
+
+Historical controls from the retired Director Console were:
+
+- F3 toggled `/root/DebugBus.enabled`.
+- Shift+F3 toggled minimal stats mode.
+- World/ProcGen tab showed seed/profile, generation mode, terrain fallback/connectivity, required/missing cell counts, and rescue-carved cells.
+- Sectors tab showed a table of sector intelligence snapshots.
+- Events tab showed bounded debug/observatory timeline events.
+- Combat, Actors, and Animation tabs were scaffolds for read-only tuning visibility and later adapter-specific details.
+
+Data flow for that read-only data infrastructure remains one-way:
 
 ```
 Gameplay systems
     -> read-only snapshot methods / groups
     -> DebugSnapshotCollector
     -> DebugBus
-    -> retired Director Console
+    -> F12 debug screen / Observatory
 ```
 
-If a panel needs a dev action such as spawning, seed regeneration, or profile swapping, it must queue a command on `DebugBus` instead of directly mutating core systems from UI code.
+If a panel or console command needs a dev action such as spawning, seed regeneration, or profile swapping, it must queue a command on `DebugBus` instead of directly mutating core systems from UI code.
+
+### Developer Shell Gameplay Input Isolation
+
+A focused `LineEdit` alone does not stop `Input.is_action_pressed()` from also reporting movement/attack/etc. to gameplay, since the Operator samples raw input on the fixed simulation tick, not the render/GUI tick. The seam lives in `operator_input_router.gd`'s `sample_suppressed()`, called from `operator.gd::_sample_input_frame()` whenever `DevConsole.is_open()`:
+
+- It returns `OperatorInputFrame.neutral()` -- no movement, no pressed actions -- for that tick.
+- It still folds the real hardware state into the router's own `_previous_pressed` bookkeeping, so a key held across the whole time the shell is open does not manufacture a phantom `just_pressed` edge once the shell closes and ordinary sampling resumes.
+- External control (replay, AI, possession) is a separate seam and is untouched by this check.
+
+The developer shell and the in-world gameplay command terminal (`ui.gd`'s `_terminal_open` state) are independent modals that must not overlap: `DevConsoleService.open_console()` refuses to open while the gameplay terminal is up, and `ui.gd::open_command_terminal()` closes the developer shell before claiming input. F9 Observatory and F12 debug screen remain independent of both.
 
 ## Input Model
 

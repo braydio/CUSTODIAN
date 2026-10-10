@@ -13291,11 +13291,24 @@ func _sample_input_frame() -> void:
 		_input_frame = _input_router.adopt(_external_control_frame)
 		_external_control_frame = null
 		return
+	if _is_local_input_suppressed():
+		_input_frame = _input_router.sample_suppressed(_read_mouse_motion_generation())
+		return
 	_input_frame = _input_router.sample(
 		_is_gamepad_input_active(),
 		controller_aim_deadzone,
 		_read_mouse_motion_generation()
 	)
+
+
+## The developer shell owns keyboard focus while open; local gameplay sampling
+## must not also read the keys the player is typing. External control (replay,
+## AI, possession) is unaffected -- it is handled above this check.
+func _is_local_input_suppressed() -> bool:
+	var dev_console := get_node_or_null("/root/DevConsole")
+	return dev_console != null \
+		and dev_console.has_method("is_open") \
+		and bool(dev_console.call("is_open"))
 
 
 func _is_aiming_for_facing() -> bool:

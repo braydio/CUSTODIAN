@@ -48,9 +48,9 @@ all builds. Infinite health ignores incoming damage; infinite stamina prevents
 spending and clears sprint exhaustion. A small status overlay remains visible
 while any playtest control is active.
 
-`DebugBus`, `DebugSnapshotCollector`, the F12 debug screen, and `DevObservatory` disable their eligible input/process work when the corresponding capability is unavailable. The former Dear ImGui console is retired. Observatory event/counter/gauge accumulation is disabled outside development eligibility. Explicit Observatory export remains callable and forces one current runtime snapshot.
+`DebugBus`, `DebugSnapshotCollector`, the F12 debug screen, `DevObservatory`, and the native Developer Shell (`/root/DevConsole`, see `DEBUG_DEV_UI_SYSTEM.md`) disable their eligible input/process work when the corresponding capability is unavailable. The former Dear ImGui console and the later third-party `dev-console` addon are both retired; the Developer Shell is a first-party Godot-native replacement built from `BlackReliquaryStyles`/`BlackReliquaryPalette`. Observatory event/counter/gauge accumulation is disabled outside development eligibility. Explicit Observatory export remains callable and forces one current runtime snapshot.
 
-The native `ImGui` extension remains an unconditional autoload in V1; its CUSTODIAN console consumer does not connect or draw outside debug-UI eligibility. A future `DevBootstrap` may instantiate/remove the entire debug stack per export.
+A future `DevBootstrap` may instantiate/remove the entire debug stack per export. The Developer Shell autoload stays registered in release builds, but its visual scene is only instantiated on first open, which `DevConsoleService.open_console()` itself refuses when `DevMode.allows(&"debug_ui")` is false.
 
 ## Offline Boundary
 

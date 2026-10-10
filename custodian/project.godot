@@ -26,7 +26,7 @@ GameState="*res://game/systems/core/state/game_state.gd"
 GameStats="*res://game/systems/core/state/game_stats.gd"
 ARRNManager="*res://game/systems/core/systems/arrn/arrn_manager.gd"
 DevMode="*res://game/systems/debug/dev_mode.gd"
-DevConsole="*uid://ccoijpiv8l45j"
+DevConsole="*res://game/ui/debug/dev_console_service.gd"
 DebugBus="*res://debug/debug_bus.gd"
 DebugSnapshotCollector="*res://debug/debug_snapshot_collector.gd"
 InventoryManager="*res://game/systems/core/systems/inventory_manager.gd"
@@ -56,13 +56,6 @@ InputPromptService="*res://game/systems/input/input_prompt_service.gd"
 dev/enabled=false
 dev/heavy_diagnostics=false
 
-[dev_console]
-
-console_title_label="CONSOLE"
-console_use_default_commands=true
-console_use_command_history=true
-console_background_transparency=0.9
-
 [display]
 
 window/size/viewport_width=1280
@@ -71,7 +64,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dev-console/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/shader_library/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg", "res://addons/godotdev_nvim_node_copy/plugin.cfg", "res://addons/shader_library/plugin.cfg")
 
 [input]
 
