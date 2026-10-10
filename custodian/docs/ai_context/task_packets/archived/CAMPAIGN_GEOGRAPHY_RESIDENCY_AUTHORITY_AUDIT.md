@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-geography-residency-authority-audit`
 - Kind: `implementation`
-- Status: `blocked`
-- Dispatch: `manual`
+- Status: `complete`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-living-world-entity-reification-handoff-review-corrections-1`
 - Locks: `campaign-geography-audit`
@@ -44,6 +44,27 @@ python3 custodian/tools/agent/task_packet_index.py --write
 python3 custodian/tools/agent/task_packet_index.py
 ```
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Added `design/04_architecture/codebase_systems_audit/F15_GEOGRAPHY_RESIDENCY_AUTHORITY_EVIDENCE.md` with source SHA/date, identity and lifecycle ownership maps, ambient-spawn race, two fixed-seed generated-region measurements, observed controlled Operator movement, camera configuration, option comparison, candidate boundary contract, named decisions, and ordered handoff. Required route lifecycle, region frame, M6 chunk, F14 handoff, and Scout class smokes passed. The ambient real-world spawn smoke's generated-ingress failure is recorded with exact boundary and does not invalidate this read-only evidence goal. No runtime, scene, or content files changed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Ambient real-world spawn smoke failed after generated-world acceptance because the required Ritualant underground ingress could not resolve within 65 deterministic candidates; initial harness hierarchy also differed from ContractWorldLoader's expected owner. Seed generation and metrics probes required multi-minute runs.
+- Root cause / contributing factors: Existing generated ingress contract rejects the authored pocket; the smoke assumes a specific world hierarchy; production contract generation performs repeated expensive candidate evaluation.
+- Prevention / pipeline improvement: Keep a focused metrics mode ahead of integration activation and record hierarchy assumptions; assign the ingress-generation correction to its existing procgen/level owner before relying on this smoke as a spawn-success proof.
+- Tooling / docs drift discovered: No packet/queue drift. Existing ambient smoke does not emit accepted map metrics and its generated-world activation currently has an unresolved required-ingress failure.
+- Follow-up: `manual-follow-up`
+- What worked: Fixed-seed generated candidate metrics and a controlled Operator physics-frame probe produced reproducible local scale and movement evidence.
+
 ## Next Handoff
 
 - Next workstream: `review-campaign-geography-residency-authority-audit`
@@ -51,5 +72,7 @@ python3 custodian/tools/agent/task_packet_index.py
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
-- Next action: Complete source/run evidence report, land/archive implementation, then claim fresh post-land review.
-- Blockers or open questions: Authoring preflight and remote publication are procedural prerequisites. F15 world-scale/extent and scene-seam choices remain **human/architecture decisions after F15-A**, not reasons to skip the evidence audit.
+- Summary backlink: include the exact Authoring chat URL in every durable summary and final Next Handoff
+- Refresh reason: none
+- Next action: Land and archive this implementation; then claim the named paired review from a fresh reviewer context.
+- Blockers or open questions: Human/architecture decisions D1–D7 are enumerated in the evidence report and belong after F15-A review; required-ingress generation failure needs follow-up by its owning procgen/level workstream.
