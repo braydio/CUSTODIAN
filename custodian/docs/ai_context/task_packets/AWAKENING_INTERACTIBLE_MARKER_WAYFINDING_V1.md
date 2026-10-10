@@ -45,6 +45,19 @@
 - **Not claimable**: ART UNAVAILABLE. Remain draft/manual until approved source PNGs, SHA-256, frame/alpha validation, human style approval, Asset V2 verified status, and predecessor reviews are documented. Promote this packet and its review together after checking current main and regenerating the queue index.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
 
+## Required visual review handoff
+
+- Publication root: `/CUSTODIAN/visual_review/awakening-interactible-marker-wayfinding-v1/` via current `publish_review_artifacts.py` protocol after focused objective tests pass.
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`.
+- Evidence budget: one before/after contact sheet and at most two representative native-scale stills per setting (more only when temporal animation cannot be judged from stills). Keep review artifacts short-lived/delete-after-review unless explicitly retained.
+- External human/ChatGPT questions (must be answered and recorded, not self-approved by the implementer):
+  1. Can you identify the Register, Gate checkpoint, Attestation dais, lore marker and optional Chapel landmarks without HUD captions?
+  2. Is it still clear these are scenic landmarks, not currently usable consoles/buttons?
+  3. Does Gate aperture remain convincingly sealed, with no false invitation to activate?
+  4. Does the added dressing stay coherent with lighting, room art, camera and existing routes?
+  5. Are landmark cue brightness and density restrained enough to preserve the scene hierarchy?
+- If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
