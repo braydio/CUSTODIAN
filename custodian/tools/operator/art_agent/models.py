@@ -54,6 +54,9 @@ class ArtSession:
     state: Literal["ACTIVE", "CLOSED", "ERROR"] = "ACTIVE"
     live_client_session_id: str = ""
     expected_live_revision: int | None = None
+    # A backward-readable projection of the bound Workbench creation contract.
+    # The manifest remains authoritative; missing values in old sessions mean legacy.
+    art_generation: str = "legacy_96"
 
     @classmethod
     def create(
@@ -67,6 +70,7 @@ class ArtSession:
         context_fingerprint: str,
         workbench_sha256: str,
         capability_path: str = "",
+        art_generation: str = "legacy_96",
     ) -> "ArtSession":
         return cls(
             schema=SESSION_SCHEMA,
@@ -79,6 +83,7 @@ class ArtSession:
             initial_workbench_sha256=workbench_sha256,
             expected_workbench_sha256=workbench_sha256,
             capability_path=capability_path,
+            art_generation=art_generation,
         )
 
     @classmethod
@@ -86,6 +91,7 @@ class ArtSession:
         if payload.get("schema") != SESSION_SCHEMA:
             raise ValueError(f"unsupported Art Agent session schema: {payload.get('schema')}")
         data = dict(payload)
+        data.setdefault("art_generation", "legacy_96")
         data["identity"] = ArtIdentity(**data["identity"])
         return cls(**data)
 

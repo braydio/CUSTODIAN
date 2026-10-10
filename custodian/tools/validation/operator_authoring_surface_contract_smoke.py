@@ -29,6 +29,7 @@ MODE_NAME_BY_ACTION = {
     "mode_preview": "PREVIEW",
     "mode_timeline": "TIMELINE",
     "mode_motion": "MOTION",
+    "mode_polish": "POLISH",
 }
 
 
