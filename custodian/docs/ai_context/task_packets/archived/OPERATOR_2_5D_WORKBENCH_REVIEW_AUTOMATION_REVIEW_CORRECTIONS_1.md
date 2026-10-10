@@ -103,5 +103,21 @@ scripts/ai/pack-context.sh task "<Include value above>" "operator-2-5d-workbench
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
 - Refresh reason: none
-- Next action: launch the paired review from a fresh reviewer context and verify the landed R0-01 correction against the adversarial evidence.
-- Blockers or open questions: none
+- Next action: fresh paired review passed and is archived; return its receipt to the authoring chat for the WB25-5 planning refresh.
+- Blockers or open questions: none for WB25-4 correction; WB25-5 refresh is required before execution.
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-operator-2-5d-workbench-review-automation-review-corrections-1`
+- Reviewed main: `c90acdab833cb027e260f8da174090837a0e5253`
+- Reviewer context: fresh
+- Reviewer provenance: different-agent
+- Verdict: passed
+- R0-01 disposition: fixed
+- Blocking defects: 0
+- Material evidence gaps: 0
+- New findings: none
+- Evidence: `operator_2_5d_review`, `operator_workbench_ui`, and `operator_2_5d_polish` passed. Direct regression coverage rejects caller-supplied disposition, missing/forged approval provenance, stale/caller-supplied evidence, `RED + approval`, and invalid `NOT_REQUIRED`; it accepts exact evidence-bound Workbench approval and preserves GREEN/YELLOW no-approval behavior. `run_validation.py --changed --json` exited 0.
+- Pairing check: the repository-wide validator still reports ten unrelated NPA Showcase lifecycle mismatches; this correction/review pair is correctly wired.
+- Durable summary: `REVIEW_OPERATOR_2_5D_WORKBENCH_REVIEW_AUTOMATION_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
