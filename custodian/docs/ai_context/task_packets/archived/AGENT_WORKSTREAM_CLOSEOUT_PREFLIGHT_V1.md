@@ -89,5 +89,5 @@
 - `python3 custodian/tools/agent/task_packet_index.py` — passed.
 - `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` — passed, but the landed tree had no changed files selected (zero tests); the focused unit suite above is the substantive test evidence.
 - `git diff --check` — passed before review receipt changes.
-- `python3 custodian/tools/agent/validate_review_pairing.py` — blocked before validation because its required fetch could not write shared Git metadata (`FETCH_HEAD` is on a read-only filesystem in this worktree environment).
+- `python3 custodian/tools/agent/validate_review_pairing.py` — passed (66 auto packets); the first sandboxed attempt could not write shared Git `FETCH_HEAD`, then the exact check passed when rerun with the repository-authorized Git metadata access.
 - Post-sync/landing behavior — remains finish-owned and is labeled `unknown` by preflight as designed; no sync or landing was attempted during this read-only review.
