@@ -75,8 +75,7 @@ dedicated family folder. Production-ready 1536×1216 copies were normalized thro
 `custodian/asset_drop/inbox/awakening_undergate_environment/` and published on
 2026-09-16; both canonical runtime plates are bound at the shared zone-envelope center.
 
-The underlay contains the floor, background walls, machinery bases, and other
-material behind the Operator. The foreground requires true alpha and contains
+The underlay contains the floor, background walls, fixed *non-interactive* architectural infrastructure and other material behind the Operator. For the Crèche and Undergate reauthoring specifically, the user-approved clean-plate contract **excludes all actual interactible console/Port machinery** from the background image; those machines, their screens and machine-specific effects must be separately rendered and registered as props. See `AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md`. The foreground requires true alpha and contains
 only geometry that legitimately passes over the Operator; it must not duplicate
 the underlay, repaint the floor, add an opaque background, or bake canvas-wide
 darkness. Both plates share a pixel-identical centered registration. Runtime
@@ -120,7 +119,7 @@ Canvas 128×128.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
 
-Published 2026-09-08, but the `AwakeningFirstReturn` controller does **not** instantiate the idle console art yet: `CrecheConsole` is the gameplay owner and the separate `awakening_creche_console_activation_fx` currently sits detached at the interaction marker. A reviewed body+FX binding and art-gated reauthor must correct that pairing before claiming scene-quality completion.
+Published 2026-09-08. The baseline scene/FX binding subsequently landed and passed independent review: `AwakeningFirstReturn` currently attaches the activation FX through a measured `CrecheConsoleBody/ScreenAnchor` representing the **machine baked into the Crèche underlay**, without instantiating the separate idle hero sprite. This is a validated historical integration state, **not the final visual design**. The user has since chosen prop-free reauthored Crèche and Undergate underlays with independently rendered console/Port heroes; see `AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md`. The new Crèche plate (960×704) and the independently published 128×128 console hero must be introduced together in an approved, verified Asset V2 cutover, with the existing 8-frame screen FX re-anchored to the physical sprite.
 The Crèche console is not part of the bidirectional Dust Lung lift authority.
 
 The activation overlay is a separate `effect` family so body and FX lifecycles remain independent.
