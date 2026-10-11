@@ -21,15 +21,23 @@ User reports the two dust-devil animations appearing inside the Undergate Mechan
 
 The current `AwakeningLayout` Zone07 floor is `Rect2(-704,-5504,1408,640)` and Zone07 has no distinct west/east branch connector, markers, or entered destinations. The north Route remains `zone07_gate_of_dust → zone08_custodian_approach`, and Zone09's Chapel of Late Service is a **separate optional west detour farther north**. An apparent staircase in raster art does not establish a working route or justify making an unbounded continuation.
 
-### Proposed branch identities (pending approval)
+### West/east branch direction revised 2026-10-10 (exploration, NOT implementation)
 
-| Exit from Gate plaza | Proposed identity | Play value | Reason not redundant |
-|---|---|---|---|
-| **WEST stair** | **Warden's Vigil** (former Gate-watch platform / duty chambers) | Small optional exploration pocket: silent observation stations, failed watch apparatus, signs of final handover and departure; physical history of the people who staffed a threshold | Not another Register of Departures (already in Undergate), nor the separate devotional Chapel of Late Service |
-| **EAST stair** | **Scourwind Overlook** (ruined exposed terrace) | Small optional vista pocket: weather-worn masonry, shattered observation instruments, first compelling lateral view of ash-scoured landscape; ideal home for stronger **future** dust/wind presentation when actually reached | Exterior/world revelation rather than more bureaucracy or a second road/Hub route |
-| **NORTH** | **Custodian Approach** | Unchanged mandatory progression to South Reach | Avoids bypass of established prologue completion |
+**User rejected both former tentative names**. Never use `Warden's Vigil` or `Scourwind Overlook` as active lore/quest/location IDs. Former small west guard-duty pocket is superseded as a creative direction. These stair destinations are NOT yet ratified runtime traversal.
 
-Both lateral pockets should **rejoin the same Gate plaza** for first implementation. They are short bounded optional destinations, not alternate main-world transitions, Contract activation or active game systems; avoid pre-assigning loot/lore interactions without actual interaction/progression owners. Keep the central route complete without entering either side. Decide naming, exact stair anchor positions, bounds, clearance, content owners, return points and camera behavior by an independent Gate spatial/visual audit against the true plate before changing `awakening_layout.gd`.
+| Gate direction | Revised intended presentation | Decision state |
+|---|---|---|
+| **WEST** | **Unnamed, hard/secret mid-game underground region**, close enough to the opening experience to tease very early, with apparent catacomb-like descent and later much deeper institutional/continuity horror. The Gate stair is a conspicuous sealed return-later invitation, not a mundane watch platform. | Location/presentation direction favored; identity, interior content and gate imagery undecided |
+| **EAST** | **Unnamed simple overlook of the dead historical city**. Cracked elevated terrace, ruined skyline, subtle wind and tremendous negative space; no named destination, special reward or narrative mechanism required. | User directed; preserve scenery without over-design |
+| **NORTH** | Existing mandatory route to Custodian Approach and South Reach. | Locked current runtime authority |
+
+**Literal spawn distinction:** `AwakeningLayout.OPERATOR_WAKE_POSITION` is the Crèche `(0,160)`, whereas the west Gate stair is in Zone07 several zones north. If the requested experience is *literally beside spawn*, a separate **purely visual** inaccessible glimpse of the same forbidden substructure at the Crèche/early Ambulatory (a shaft, grille, hanging iron doors, distant vertical chamber) can establish its presence there, while the actual sealed entrance is later encountered at Gate west. This is a concept, not a second functional portal or a coordinate change. Never pretend the Zone07 staircase itself is at spawn.
+
+**No mechanics in this design iteration:** avoid specifying a key, player ability, boss prerequisite or authored state machine. Present a physical heavy seal that *visually* promises later entry: structural weights, immobile bolt drums, inaccessible descent, and low distant activity. Next review may choose a thematic reason for the seal; coders must not infer a mechanical unlock contract from an art concept.
+
+**Candidate environmental identities:** see [AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md](AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md). The environmental region must not accidentally duplicate the later Hub Sepulcher Gardens, the Undergate Register of Departures, or the optional Chapel. A memory/identity/recovery-oriented catacomb underground is a particularly apt synthesis, because the Crèche canon deliberately distinguishes valid designation from proven continuity of personhood.
+
+Keep the two existing Gate stair mouths legible and preserve main north route. Any future region-scale/branch game area requires its own separately decided design, spatial plan, task packet and paired review; neither AP3 perimeter art nor W0 wind fix can create a secretly claimable side route.
 
 ### Immediate containment / art requirement
 
@@ -52,7 +60,7 @@ The earlier `CUSTODIAN_Awakening_Perimeter_Batch01_10_Assets_CANDIDATES.zip` (us
 ## Next engineering packets (not yet authored)
 
 - **W0** minimal Gate wind placement correction and focused renderer/geometry regression, ideally independent of art intake.
-- **S0** camera/geometry/art inspection and user-ratified Gate lateral side-branch design, followed by a separate bounded Gate side-pockets runtime implementation/review pair only if approved.
+- **S0** user-ratified Gate west forbidden-region presentation concept and unnamed east city-overlook presentation, then evidence-driven independent spatial plan/implementation/review only if approved. For a literal spawn-adjacent tease, audit an early Crèche/nearby view of the *same* deep structure; do not invent a second portal.
 - **A0** revise and regenerate the three first calibration states one-by-one, re-auditing Gate branch mouths before creating any perimeter atlas; retain the AP0/AP3 art gates as manual where appropriate.
 
 The separately tracked Crèche screen-local activation VFX fix remains owned by `awakening-interactible-console-port-presentation-v1`. Dust Lung V2 remains separate. This document does not change either.

@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-canonical-idle-workbench-intake
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-canonical-idle-workbench-intake
@@ -43,3 +43,43 @@ Follow custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md from fresh cont
 - Refresh reason: after intake, exact family reviews/timing and dependency-closed cohort are still needed before runtime promotion
 - Next action: verify idle family with WB25-4 sandbox, then resolve cohort selection
 - Blockers or open questions: WB25-6 remains draft/manual and cannot be claimed merely because intake was reviewed
+
+
+## Review Result
+- Result: `findings`
+- Findings: `R0-01`
+- Reviewed implementation commit: `3dc888c44`
+- Reviewed main snapshot: `26167ea659057192e12b71288e5a2be793454dd7`
+- Evidence: Accepted master SHA and dimensions verified; eight manifest-ordered strips independently compared to source rows and concatenated RGBA pixels exactly; eight Source Session candidates independently compared pixel-for-pixel to strips; eight Aseprite documents have valid headers (15 frames, 128x128, RGBA) and match durable hashes; all eight Workbench identities and JSON hashes verified. Focused ingress, animation target and production queue smokes pass. The landed implementation diff contains no runtime/catalog/selector changes.
+- Findings: `R0-01` is a blocking implementation defect. The archived intake acceptance requires source timing `fps=null` to remain unknown and explicitly says editor default FPS is not authored or human-approved. All eight actual `workbench.json` files have `timeline.fps=8.0` and `timeline.timing_authority=true`, created by the ingress path's unconditional `fps: 8.0`; `timing_payload_from_timeline` treats this flag as authority. This conflicts with the report's `UNKNOWN_NOT_APPROVED` claim even though no publication was observed. Disposition: `correction`; bounded follow-up `operator-2-5d-canonical-idle-workbench-intake-review-corrections-1`.
+- Runtime/promotion boundary: no runtime mutation or effective review/publication was found; all cells remain editable and unreviewed.
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `no`
+- Evidence: Required source, per-direction artifact, target-binding and focused smoke evidence were independently verified. Acceptance fails only on the unapproved timing authority recorded in the eight editable Workbench manifests.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: low
+- What went wrong: shared Git metadata denied fetch writes in this linked worktree; local refs supplied the reviewed current-main evidence.
+- Root cause / contributing factors: Git common directory is outside the writable review worktree.
+- Prevention / pipeline improvement: allow the paired-review runner's normal metadata access for fetch-backed validation.
+- Tooling / docs drift discovered: none
+- Follow-up: operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
+- What worked: physical source and ignored Workbench artifacts were available for direct independent hashing and structural validation.
+
+## Next Handoff
+- Next workstream: operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Refresh reason: none
+- Next action: resolve R0-01 by keeping editor preview defaults non-authoritative until timing is explicitly authored; then re-review the corrected Workbench evidence.
+- Blockers or open questions: correction packets are parked draft/manual pending normal publication/dispatch authority.
