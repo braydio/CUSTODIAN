@@ -32,7 +32,6 @@ normal closeout.
 
 <!-- task_packet_index:managed:start -->
 - `AGENT_NEXT_EXECUTION_BOUNDARY_V1.md` — Make a routine request to implement the next CUSTODIAN packet execute exactly one implementation plus its paired independent review, then stop; expose explic...
-- `AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1_REVIEW_CORRECTIONS_2.md` — Make the canonical receipt-delta flow work against real archived packets while preserving exact target bytes outside the permitted receipt.
 - `LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Guarantee **at most one pending or consumed physical allocation per F14-managed logical actor identity**, including cancel, rollback, stale callback and camp...
 - `REVIEW_AGENT_NEXT_EXECUTION_BOUNDARY_V1.md` — Independently falsify Agent Next Execution Boundary V1 against the landed code and all numbered implementation acceptance items.
 - `REVIEW_AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` — Independently establish R0-01 is fixed through both runner and workstream finish without loosening immutable implementation/reviewer authority.

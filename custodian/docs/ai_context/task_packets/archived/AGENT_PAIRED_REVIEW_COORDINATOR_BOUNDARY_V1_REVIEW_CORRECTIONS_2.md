@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-coordinator-boundary-v1-review-corrections-2`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-coordinator-boundary-v1-review-corrections-1`
@@ -32,6 +32,22 @@
 - Non-goals: No broad text-diff allowlist; no editing unrelated archived packets; no loosening receipt fields or accepting a reviewer-supplied commit without history proof; no general dispatch/landing redesign; no correction beyond R1-01/R1-02.
 - Acceptance: (A) The actual archived cycle-1 target resolves to exactly `16b9dfdd6ce09889b85c61372e02d0eccea5de76` from pinned history despite lacking the header field. (B) Runner, workstream preflight, and landed-state verification preserve and use the exact trailing newline. (C) A canonical receipt-only append to the actual target passes the shared verifier and normal temporary-remote coordinator plus `workstream.py finish` path. (D) No-receipt, ambiguous archive history, malformed/mismatched workstream, mismatched commit, unrelated header/body/Completion Truth/Execution Feedback/Next Handoff edits, duplicate sections/receipts, and prior-receipt tampering all fail closed. (E) Runner rejects invalid deltas before staging. (F) The cycle-1 pair's prior 73-test baseline remains green, with focused regressions covering actual packet bytes and metadata. (G) No duplicate claim, force push, or claim-state loss.
 - Validation: Focused paired-runner/workstream/workstream-artifact unittest suites; actual target history and exact-byte regression; temporary bare-remote end-to-end receipt and `workstream.py finish` fixture with green complete-coverage report; negative delta fixtures; `check_ai_context.py --json`; `validate_review_pairing.py`; `task_packet_index.py`; changed-file validation with complete coverage; `git diff --check`.
+- Completion Truth:
+  - Completion schema: `custodian.task_completion.v1`
+  - Goal satisfied: `yes`
+  - Completion boundary satisfied: `yes`
+  - Acceptance satisfied: `yes`
+  - Evidence: Actual archived correction-1 packet at pinned main `607c76aba831ed5fcc313f00489e10df75a8a375` resolves to `16b9dfdd6ce09889b85c61372e02d0eccea5de76`; exact blob newline preserved; temporary bare-remote receipt append completed through `workstream.py finish`; 77 focused runner/workstream/artifact tests passed; changed-file validation passed 7/7 with complete coverage; AI-context, review-pairing and packet-index checks passed.
+- Execution Feedback:
+  - Feedback schema: `custodian.task_feedback.v1`
+  - Outcome: `success`
+  - Friction severity: `low`
+  - What went wrong: Initial full-suite run exposed regression fixtures that mocked the old text-mode `git show` path and abbreviated SHA responses; they were updated to mock the exact-byte reader and identity resolver explicitly.
+  - Root cause / contributing factors: The tests encoded the previous helper boundary and the new fail-closed resolver requires a full pinned commit.
+  - Prevention / pipeline improvement: Keep unit fixtures explicit about exact blob reads and full-SHA identity resolution; maintain the real archived-target and temporary-remote end-to-end regressions.
+  - Tooling / docs drift discovered: none
+  - Follow-up: none
+  - What worked: The real archived packet probe pinned the regression to the precise newline and archive-history identity assumptions before relying on synthetic coverage.
 - Task overrides: `none`
 - Deferred: Any further receipt protocol changes after review cycle 2 require a new human-planned workstream; the downstream agent-next-execution-boundary remains gated on the cycle-1 review being independently accepted.
 

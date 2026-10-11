@@ -2,11 +2,104 @@
 from __future__ import annotations
 
 import re
+import subprocess
+from pathlib import Path
 
 
 _SECTION_RE = re.compile(r"(?m)^## Independent Review[ \t]*$")
 _NEXT_SECTION_RE = re.compile(r"(?m)^## [^\r]*$")
 _SHA_RE = re.compile(r"^[0-9a-f]{40,64}$")
+
+
+def read_git_text(repo: Path, revision: str, path: str) -> str:
+    """Read exact UTF-8 blob contents without stripping or newline conversion."""
+    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                            capture_output=True, check=False)
+    stdout = result.stdout if isinstance(result.stdout, bytes) else result.stdout.encode("utf-8")
+    stderr = result.stderr if isinstance(result.stderr, bytes) else result.stderr.encode("utf-8")
+    if result.returncode:
+        raise ValueError(stderr.decode("utf-8", errors="replace").strip()
+                         or f"cannot read {path} at {revision}")
+    try:
+        return stdout.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"pinned packet {path} is not UTF-8") from exc
+
+
+def resolve_target_implementation_commit(
+    repo: Path,
+    pinned_main: str,
+    target_packet_path: str,
+    target_workstream: str,
+    baseline: str | None = None,
+) -> tuple[str | None, str | None]:
+    """Resolve identity from explicit metadata or the unique completed archive commit.
+
+    Legacy V2 packets did not record an implementation commit. Their canonical
+    workstream landing commit is the unique commit that introduced the exact
+    archived packet as complete. The commit is derived from pinned history,
+    never from reviewer-supplied receipt text.
+    """
+    if not _SHA_RE.fullmatch(pinned_main):
+        return None, "pinned main is not a full commit SHA"
+    if not target_packet_path.startswith("custodian/docs/ai_context/task_packets/archived/"):
+        return None, "target packet is not at the canonical archive path"
+    try:
+        baseline = baseline if baseline is not None else read_git_text(repo, pinned_main, target_packet_path)
+    except (OSError, ValueError) as exc:
+        return None, f"cannot load pinned target packet: {exc}"
+
+    explicit = re.findall(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", baseline)
+    explicit_lines = re.findall(r"(?im)^- Implementation commit:.*$", baseline)
+    if explicit_lines:
+        if len(explicit) != 1 or len(explicit_lines) != 1:
+            return None, "pinned target has malformed or ambiguous Implementation commit metadata"
+        commit = explicit[0]
+        if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo,
+                          capture_output=True).returncode:
+            return None, "pinned target Implementation commit is unavailable"
+        if subprocess.run(["git", "merge-base", "--is-ancestor", commit, pinned_main], cwd=repo,
+                          capture_output=True).returncode:
+            return None, "pinned target Implementation commit is not an ancestor of pinned main"
+        return commit, None
+
+    workstream_match = re.findall(r"(?im)^- Workstream:\s*`?([^`\r\n]+)`?\s*$", baseline)
+    kind_match = re.findall(r"(?im)^- Kind:\s*`?(implementation|correction)`?\s*$", baseline)
+    status_match = re.findall(r"(?im)^- Status:\s*`?(complete)`?\s*$", baseline)
+    reviewed_main_match = re.findall(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$", baseline)
+    if (workstream_match != [target_workstream] or len(kind_match) != 1 or len(status_match) != 1
+            or len(reviewed_main_match) != 1):
+        return None, "pinned target is not one complete identified implementation packet"
+
+    history = subprocess.run(
+        ["git", "log", "--follow", "--diff-filter=AR", "--format=%H", pinned_main,
+         "--", target_packet_path], cwd=repo, capture_output=True, check=False,
+    )
+    if history.returncode:
+        return None, "cannot inspect pinned target archive history"
+    candidates: list[str] = []
+    for raw_sha in history.stdout.decode("ascii", errors="ignore").splitlines():
+        if not _SHA_RE.fullmatch(raw_sha):
+            continue
+        try:
+            archived = read_git_text(repo, raw_sha, target_packet_path)
+        except ValueError:
+            continue
+        if (re.findall(r"(?im)^- Workstream:\s*`?([^`\r\n]+)`?\s*$", archived) == [target_workstream]
+                and re.findall(r"(?im)^- Kind:\s*`?(implementation|correction)`?\s*$", archived)
+                and re.findall(r"(?im)^- Status:\s*`?complete`?\s*$", archived)):
+            candidates.append(raw_sha)
+    if len(candidates) != 1:
+        return None, "pinned target has no unique complete archive-introduction commit"
+    archive_commit = candidates[0]
+    reviewed_main = reviewed_main_match[0]
+    if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, archive_commit], cwd=repo,
+                      capture_output=True).returncode:
+        return None, "target archive commit does not descend from its recorded Reviewed main"
+    if subprocess.run(["git", "merge-base", "--is-ancestor", archive_commit, pinned_main], cwd=repo,
+                      capture_output=True).returncode:
+        return None, "target archive commit is not an ancestor of pinned main"
+    return archive_commit, None
 
 
 def _section(text: str) -> tuple[int, int, str] | None:
