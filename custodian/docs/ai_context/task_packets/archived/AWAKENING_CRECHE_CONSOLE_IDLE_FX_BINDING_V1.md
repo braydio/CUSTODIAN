@@ -61,3 +61,20 @@
 - Refresh reason: `none`
 - Next action: After implementation lands, start paired fresh-context review.
 - Blockers or open questions: none
+
+## Independent Review
+- Status: `passed`
+- Review workstream: `review-awakening-creche-console-idle-fx-binding-v1`
+- Reviewed main: `c1f63cf42279c0f2f17d32de29ad0c78238c5f7d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Blocking defects: `none`
+- Material evidence gaps: `none`
+- Non-blocking issues: `none`
+- Optional improvements: `none`
+- Findings: `none`
+- Evidence: `e512482eef5df3061498c07a9c991505702d3075` is the landed implementation commit. The native underlay remains the sole visible console body; the existing idle hero is not overlaid. Runtime hierarchy binds the activation effect beneath `CrecheConsoleBody/ScreenAnchor`; the interaction owner and marker remain unchanged. The real underlay is 960x704 with measured 27x18 source ROI (572,493)-(598,510), and the real activation strip is 1024x128 with eight 128x128 frames. Each frame's nontransparent alpha bounds fit within the scaled 16.64x16.64 canvas. The targeted terminal crop confirms the single console is baked into the underlay.
+- Validation: focused screen-anchor smoke passed, including floor-anchor negative control, first interaction, all eight frames, completion, repeat, and reset. Awakening progression passed. Awakening art registration passed. Godot validation runner's import stage was attempted and reported infrastructure failure because sandbox TCP socket binds are denied; direct headless runs of all three required scripts passed after imports were populated.
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_CRECHE_CONSOLE_IDLE_FX_BINDING_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
