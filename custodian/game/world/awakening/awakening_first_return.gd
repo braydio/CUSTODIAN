@@ -74,6 +74,7 @@ var _occupied_zones := {}
 var _transit_lift: Node = null
 var _recovery_alcove: AnimatedSprite2D = null
 var _console_activation_fx: AnimatedSprite2D = null
+var _affordance_presenter: Node = null
 var _console_activation_remaining := 0.0
 var _reveal_release_pending := false
 var _reveal_generation := 0
@@ -93,6 +94,7 @@ func _ready() -> void:
 	_build_hero_presentation()
 	_build_detail_presentation()
 	_build_interactables()
+	_mount_interactible_affordances()
 	_build_triggers()
 	_place_operator()
 	_apply_camera_bounds()
@@ -773,6 +775,14 @@ func _build_interactables() -> void:
 			locker.connect("sidearm_taken", _on_sidearm_taken)
 
 
+func _mount_interactible_affordances() -> void:
+	_affordance_presenter = get_node_or_null("AffordancePresentation")
+	if _affordance_presenter == null:
+		return
+	if not bool(_affordance_presenter.call("bind", self)):
+		push_error("[AwakeningFirstReturn] interactible affordance owner/marker binding failed")
+
+
 func _find_sidearm_locker() -> Node:
 	return zones_root.get_node_or_null("Zone04_LockerReliquary/SidearmLocker")
 
@@ -1134,6 +1144,8 @@ func reset_progression() -> void:
 	var console := interactables.get_node_or_null("CrecheConsole") if interactables != null else null
 	if console != null and "is_acknowledged" in console:
 		console.set("is_acknowledged", false)
+		if _affordance_presenter != null:
+			_affordance_presenter.call("set_owner_status", console, &"available")
 	_reset_console_activation()
 	# Keep the one-time grant state aligned with the persistent locker/inventory.
 	if _recovery_alcove != null:
@@ -1144,6 +1156,11 @@ func reset_progression() -> void:
 
 
 func _update_interaction_prompt() -> void:
+	if _affordance_presenter != null:
+		var focus_target: Node = null
+		if operator_ref != null and is_instance_valid(operator_ref) and "interaction_target" in operator_ref:
+			focus_target = operator_ref.get("interaction_target") as Node
+		_affordance_presenter.call("set_focus_target", focus_target)
 	if hud == null or not is_instance_valid(hud):
 		return
 	if not hud.visible or (hud.has_method("is_context_active") and not bool(hud.call("is_context_active"))):

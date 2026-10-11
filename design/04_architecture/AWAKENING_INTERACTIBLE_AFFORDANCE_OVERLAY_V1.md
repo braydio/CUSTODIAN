@@ -34,6 +34,10 @@ The eight design roles approved in the review are represented:
 
 **Future** (not current Awakening 01–10): Field Terminal, Ashen Forum/Witness/Adjudication, CrownTransfer, ContinuityPort, Sepulcher, supply/Field Patch station, door/gate use. Use existing Hub/Campaign posting owners when available.
 
+## No-art foundation implementation (2026-10-11)
+
+The `awakening-interactible-affordance-foundation-v1` implementation reconciles the live Layout inventory and provides a visual-only presenter with four gameplay owners and five marker mounts: Crèche, P-9 locker, two lift stations sharing one `TransitLift`, and damaged Port status. `lift_mechanism` is `kind=marker` at its unchanged location because there is no separate mechanism interaction owner. Every descriptor currently has empty long/mid/near art parts; absent source art is silently omitted. Mounts live under existing zone `SetPieces`, consume the Operator's selected target for bounded focus updates, and add no interaction owner, collision, target scan, or navigation behavior.
+
 ## Queue insertion / DAG
 
 ```text

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-affordance-foundation-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -19,7 +19,7 @@
 - Visual review: `none`
 - Goal: Establish one narrow visual-affordance mounting/presentation authority for actual Awakening interactibles while auditing every posted marker against live gameplay nodes. Preserve target selection, prompts, progression, collision, lighting, and existing art authorities.
 - Completion boundary: Real live interactibles have unambiguous marker/owner mappings, data-driven long/mid/near presentation descriptors and no art-dependent boot failure. No marker without a live interaction owner produces actionable highlights/prompts.
-- Current measured state: `AwakeningFirstReturn._build_interactables()` instantiates Crèche Console, damaged Port readout and one two-station TransitLift. `Zone04_LockerReliquary/SidearmLocker` is scene-instanced. Layout MARKERS calls `lift_mechanism` an interactable but there is no separate mechanism interactible node. Other marked lore/Attestation/Register/Checkpoint/Gate/Chapel content is principally scenic, not a live interaction.
+- Current measured state: `AwakeningFirstReturn._build_interactables()` instantiates Crèche Console, damaged Port readout and one two-station TransitLift. `Zone04_LockerReliquary/SidearmLocker` is scene-instanced. Layout MARKERS initially called `lift_mechanism` interactable, but no separate owner existed; it is now `kind=marker` at unchanged placement. Other marked lore/Attestation/Register/Checkpoint/Gate/Chapel content is principally scenic, not a live interaction.
 - Evidence: `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md`; the screenshot/user note in Authoring chat; live `awakening_layout.gd`, `awakening_first_return.gd`, `awakening_transit_lift.gd`, `world_readout_interactable.gd`, `sidearm_locker_interactable.gd`.
 - Task-specific authority: Layout owns zone/marker coordinates; each current node owns gameplay interaction state; Operator owns `interaction_target`; HUD owns prompt display; new affordance presenter owns visuals only.
 - Work surface: `custodian/game/world/awakening/awakening_layout.gd`; `custodian/game/world/awakening/awakening_first_return.gd` (wiring only); `custodian/scenes/awakening_first_return.tscn`; new `custodian/game/world/awakening/awakening_interactible_affordance_presenter.gd` or equivalent narrow presenter; focused smoke; `custodian/tools/validation/validation_manifest.json`; `custodian/docs/ai_context/CURRENT_STATE.md`.
@@ -58,22 +58,28 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `No gameplay interaction path replaced; visual overlay is additional and optional.`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Four live owners map to five mounts; every Layout marker is reconciled, art is optional, and no inert marker advertises interaction. Focused smoke and six Awakening regressions passed; final changed-file report `/tmp/awakening-affordance-changed-final.json` (42/42); `git diff --check`.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
+- Outcome: `success`
+- Friction severity: `low`
 - What went wrong: `Prompt-only world discoverability and ambiguous marker kind.`
-- Root cause / contributing factors: `<fill at closeout>`
+- Root cause / contributing factors: `A marker kind had drifted from the live interaction-owner inventory; the worktree also required a fresh Godot import preflight before focused tests.`
 - Prevention / pipeline improvement: `Marker/live-owner parity gate and Asset V2 visual mounting contract.`
-- Tooling / docs drift discovered: `<fill at closeout>`
+- Tooling / docs drift discovered: `CURRENT_STATE and the asset manifest described the lift marker as unresolved after the design refresh had narrowed the live scope; both are now reconciled.`
 - Follow-up: `review-awakening-interactible-affordance-foundation-v1`
 - What worked: `Existing scene node and Operator/HUD target authority.`
+
+## Validation evidence
+- Focused affordance contract smoke: passed.
+- Awakening progression, locker presentation, first-return geometry, lower/upper lift traversal, and registered composition traversal: passed individually.
+- Changed-file sweep: 42/42 passed, 0 failed; report `/tmp/awakening-affordance-changed-final.json`.
+- `git diff --check`: passed.
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-affordance-foundation-v1`

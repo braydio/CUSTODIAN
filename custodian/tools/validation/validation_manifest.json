@@ -4688,6 +4688,28 @@
       "needs_import": true
     },
     {
+      "id": "awakening_interactible_affordance_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_interactible_affordance_contract_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "interaction",
+        "presentation",
+        "marker_owner_parity"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/awakening/awakening_interactible_affordance_presenter.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_interactible_affordance_contract_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "world_transition_handoff",
       "type": "godot_script",
       "script": "res://tools/validation/world_transition_handoff_smoke.gd",
