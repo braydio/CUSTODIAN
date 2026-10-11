@@ -64,7 +64,8 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
     workbench.mkdir()
     manifest = workbench / "workbench.json"
     document = workbench / "workbench.aseprite"
-    manifest.write_text("fixture manifest")
+    manifest.write_text(json.dumps({"timeline": {"fps": 8.0, "preview_fps": 8.0,
+        "workspace_clock_frames": 1, "durations": [1.0], "loop": True, "timing_authority": True}}))
     document.write_bytes(b"fixture physical document")
     reference = root / "reference.png"
     Image.new("RGBA", (128, 128), (1, 2, 3, 255)).save(reference)
@@ -102,7 +103,10 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
     animation_workbench.inspect_saved_document_contract = lambda *_args: physical_contract
 
     last_approval = {}
-    def current_receipt_for(human):
+    def current_receipt_for(human, *, timing_authority=True):
+        manifest.write_text(json.dumps({"timeline": {"fps": 8.0, "preview_fps": 8.0,
+            "workspace_clock_frames": 1, "durations": [1.0], "loop": True,
+            "timing_authority": timing_authority}}))
         authority = {
             "workbench_manifest_sha256": sha256_file(manifest),
             "workbench_document_sha256": sha256_file(document),
@@ -162,6 +166,27 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
         assert current_receipt_for({"status": "REQUIRED"})["runtime_verified"] is False
         assert current_receipt_for({"status": "NOT_REQUIRED"}) is None
         assert current_receipt_for("AUTO_APPROVAL")["runtime_verified"] is True
+        # Passing QA, human approval, and sandbox proof cannot turn the physical
+        # 8 FPS preview default into approved timing authority.
+        assert current_receipt_for("AUTO_APPROVAL", timing_authority=False) is None
+        assert current_receipt_for("AUTO_APPROVAL", timing_authority=True)["runtime_verified"] is True
+        # Family completion consumes the same effective leaf receipt gate. A
+        # fully covered family cannot advance while its current timing proof is
+        # non-authoritative, even with the positive QA/human/sandbox fixture.
+        family_owner = Operator2DReview(service=ReceiptService(), repo_root=ROOT, workspace_root=workbench)
+        family_owner.current_receipt = lambda _selection: current_receipt_for(
+            "AUTO_APPROVAL", timing_authority=False)
+        family_records = [SimpleNamespace(
+            selection=SimpleNamespace(profile="unarmed", group="posture", action="idle_relaxed_01",
+                direction=direction, art_generation="operator_2_5d_128",
+                authoring_identity=f"operator_2_5d_128:unarmed/posture/idle_relaxed_01/{direction}"),
+            coverage_status="CANONICAL_2_5D", workflow_status="EDITABLE_WORKBENCH",
+            stale_reference=False, layers=("full_body",))
+            for direction in ("n", "ne", "e", "se", "s", "sw", "w", "nw")]
+        family = family_owner.family(family_records, profile="unarmed", group="posture",
+                                     action="idle_relaxed_01")
+        assert family["complete"] is False
+        assert all(not cell["runtime_verified"] for cell in family["cells"])
         current_approval = last_approval["record"]
         assert current_receipt_for({**current_approval, "provenance": {"kind": "forged"}}) is None
         assert current_receipt_for({**current_approval, "evidence_sha256": "stale"}) is None
