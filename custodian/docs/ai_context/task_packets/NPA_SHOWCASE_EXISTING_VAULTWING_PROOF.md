@@ -20,8 +20,8 @@
 - Visual review: `none`
 - Goal: Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely.
 - Completion boundary: Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely. Must land scoped real runtime/source changes, focused owned validation and a fresh independent paired review; no diagram-only or proxy closure.
-- Current measured state: Common Vaultwing already implements wild hostile flight bands, same-instance allegiance change, bond state and active Asset V2 art; review-vaultwing-runtime-hardening is an active predecessor.
-- Evidence: custodian/game/actors/ambient/vaultwing/; custodian/tools/validation/{vaultwing_runtime_smoke,vaultwing_bond_smoke,actor_relationship_contract_smoke}.gd; new arena Vaultwing fixture; design/04_architecture/NON_PLAYER_ACTOR_RUNTIME_ARCHITECTURE.md; design/05_levels/LORDS_OF_PAIN_TEST_GALLERY.md; NPA-6 reviewed receipts.
+- Current measured state: Existing wild/bonded and HIGH-flight semantics are live; runtime hardening implementation is archived complete, but its independent review is still a preserved active post-exit claim. The independent real-world-spawn recovery review is also outstanding. Await BOTH complete/passed before claiming the same-instance showcase proof.
+- Evidence: custodian/game/actors/ambient/vaultwing/vaultwing.gd; vaultwing_bond_state.gd; custodian/tools/validation/vaultwing_runtime_smoke.gd; vaultwing_bond_smoke.gd; actor_relationship_contract_smoke.gd; arena root custodian/game/world/levels/authored/dev/npa_showcase_arena/. New arena fixture is proposed output.
 - Task-specific authority: Active actor/level/Asset V2 design and live runtime under Work surface; this program's design/04_architecture/NPA_ACTOR_SHOWCASE_PROGRAM.md.
 - Work surface: custodian/game/actors/ambient/vaultwing/; custodian/tools/validation/{vaultwing_runtime_smoke,vaultwing_bond_smoke,actor_relationship_contract_smoke}.gd; new arena Vaultwing fixture
 - Change: After the Vaultwing hardening review lands, use the real Vaultwing species/actor state and public allegiance/bond seam to stage HIGH hostile-but-untargetable, attack/ground hostile-targetable, then operator-allied target-invalid on the SAME instance. Use only dev-local forced scenario requests and truthful labels; no species logic fork, fake bonding or world-state mutation beyond local fixture. If the reviewed interface differs, refresh this packet mechanically before ready promotion.
@@ -36,7 +36,7 @@
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh instruction: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
+- Refresh instruction: Verify the archived independent runtime-hardening AND world-spawn reviews, then remeasure the public bond/allegiance/targetability facades in the claimed worktree. No NPA-8 species commands.
 
 ## Ready/auto dependency and publication contract (2026-10-11)
 The original speculative-design hold has been reconciled: this is an implementation-ready, dependency-gated pair, **not user-manual dispatch timing**. Before a claim, the execution coordinator MUST run the repository-local targeted `validate_task_packet_authoring.py` on both this implementation and its paired review, then `task_packet_index.py` and `dispatch.py audit --json`; stop and repair if those authoritative checks fail. Current-main GitHub-only metadata checks do NOT prove Godot or full local authoring validation, nor authorize a bypass of existing locks/claims. New source art, final human art approval, NPA-8 and unrelated H5 are out of scope.
