@@ -13,6 +13,17 @@ import run_validation as runner
 
 def main() -> int:
     tests = runner.load_manifest()
+    patterns = runner.load_warning_patterns(test_ids={item["id"] for item in tests})
+    expected_rollback_tests = {item["id"]: item.get("test_id") for item in patterns if item.get("test_id")}
+    assert expected_rollback_tests == {
+        "expected_generated_region_missing_spawn_rollback": "generated_region_route_lifecycle",
+        "expected_generated_region_missing_spawn_rollback_manager": "generated_region_route_lifecycle",
+        "expected_generated_region_missing_procgen_rollback": "generated_region_route_lifecycle",
+        "expected_generated_region_missing_procgen_rollback_manager": "generated_region_route_lifecycle",
+        "expected_hub_twin_missing_spawn_rollback": "hub_twin_solaria_route",
+        "expected_hub_twin_missing_spawn_rollback_manager": "hub_twin_solaria_route",
+        "expected_hub_twin_activation_rollback": "hub_twin_solaria_route",
+    }
     excludes = runner.load_coverage_excludes()
     assert tests and len({item["id"] for item in tests}) == len(tests)
     selected = runner.select_tests(tests, files=["custodian/game/systems/combat/melee_target_resolver.gd"])
@@ -25,6 +36,11 @@ def main() -> int:
     ]
     assert [item["tier"] for item in selected] == ["unit", "unit", "actor", "actor", "moment"]
     assert runner.select_tests(tests, tag="ranged")
+    import_truth = runner.select_tests(tests, tag="import_truth")
+    assert [item["id"] for item in import_truth] == [
+        "actor_relationship_contract", "generated_region_route_lifecycle", "vaultwing_runtime"
+    ]
+    assert all(item["needs_import"] for item in import_truth)
     assert [item["id"] for item in runner.select_tests(tests, test_id="operator_melee_soft_targeting")] == ["operator_melee_soft_targeting"]
     assert all(item["tier"] == "unit" for item in runner.select_tests(tests, tier="unit"))
 
@@ -43,6 +59,48 @@ def main() -> int:
     assert malformed["status"] == "failed" and "malformed" in malformed["failures"][0]["message"]
     fatal = runner.execute_test(fake, [], [sys.executable, "-c", "import sys; print('ERROR: unexpected', file=sys.stderr)"])
     assert fatal["status"] == "failed" and fatal["warnings"][0]["classification"] == "fatal"
+    for diagnostic in (
+        "ERROR: Failed loading resource: res://broken.tscn",
+        "SCRIPT ERROR: Parse Error: Cannot infer type",
+        "Parse Error: invalid scene resource",
+        "ERROR: GDExtension dynamic library not found",
+    ):
+        sentinel_command = (
+            "import sys; print(" + repr(passed_sentinel) + "); print(" + repr(diagnostic) + ", file=sys.stderr)"
+        )
+        false_green = runner.execute_test(fake, [], [sys.executable, "-c", sentinel_command])
+        assert false_green["status"] == "failed", (diagnostic, false_green)
+    expected_line = (
+        "ERROR: [LevelLoader] unable to enter generated_route_procgen_fixture: "
+        "target spawn could not be resolved: MissingSpawn"
+    )
+    scoped_patterns = [item for item in patterns if item.get("test_id") == "generated_region_route_lifecycle"]
+    expected = runner.classify_warnings(expected_line, scoped_patterns, "generated_region_route_lifecycle")
+    assert expected[0]["classification"] == "expected_error"
+    unrelated = runner.classify_warnings(expected_line, scoped_patterns, "another_smoke")
+    assert unrelated[0]["classification"] == "fatal"
+    near_match = runner.classify_warnings(expected_line + "Extra", scoped_patterns, "generated_region_route_lifecycle")
+    assert near_match[0]["classification"] == "fatal"
+    hub_line = (
+        "ERROR: [LevelLoader] unable to enter hub_twin_solaria: "
+        "target spawn could not be resolved: MissingCrownSpawn"
+    )
+    hub_patterns = [item for item in patterns if item.get("test_id") == "hub_twin_solaria_route"]
+    assert runner.classify_warnings(hub_line, hub_patterns, "hub_twin_solaria_route")[0]["classification"] == "expected_error"
+    assert runner.classify_warnings(hub_line, hub_patterns, "generated_region_route_lifecycle")[0]["classification"] == "fatal"
+    known_exit = "ERROR: 2 resources still in use at exit (run with --verbose for details)."
+    known_exit_result = runner.classify_warnings(known_exit, patterns)
+    assert known_exit_result[0]["classification"] == "known_warning"
+    assert runner.classify_warnings(known_exit + " extra", patterns)[0]["classification"] == "fatal"
+    known_objectdb = "ERROR: 56 ObjectDB instances were leaked at exit (run with `--verbose` for details)."
+    assert runner.classify_warnings(known_objectdb, patterns)[0]["classification"] == "known_warning"
+    assert runner.classify_warnings(known_objectdb + " extra", patterns)[0]["classification"] == "fatal"
+    warning_objectdb = known_objectdb.replace("ERROR:", "WARNING:")
+    assert runner.classify_warnings(warning_objectdb, patterns)[0]["classification"] == "known_warning"
+    import_fatal_ok, import_fatal = runner._run_import(
+        2, [sys.executable, "-c", "import sys; print('ERROR: Failed loading resource: res://broken.tscn', file=sys.stderr)"]
+    )
+    assert not import_fatal_ok and import_fatal["status"] == "failed" and import_fatal["warnings"][0]["classification"] == "fatal"
     legacy = runner.execute_test(fake, [], [sys.executable, "-c", "print('legacy')"])
     assert legacy["status"] == "passed" and legacy["stdout_tail"] == ["legacy"]
     timed = dict(fake, timeout_sec=0.01)

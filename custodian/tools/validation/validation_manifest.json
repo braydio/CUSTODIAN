@@ -1822,7 +1822,8 @@
         "custodian/tools/pipelines/runtime_ready_assets.py",
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/run_world_simulation_migration_suite.sh",
-        "custodian/tools/validation/godot_import_preflight_smoke.py"
+        "custodian/tools/validation/godot_import_preflight_smoke.py",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 15,
       "needs_import": false
@@ -5413,7 +5414,8 @@
         "combat",
         "relationship",
         "targetability",
-        "vaultwing"
+        "vaultwing",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/actors/core/actor_allegiance_component.gd",
@@ -5423,10 +5425,15 @@
         "custodian/game/actors/defense/**",
         "custodian/game/systems/drone/**",
         "custodian/game/systems/combat/engagement_tracker.gd",
-        "custodian/tools/validation/actor_relationship_contract_smoke.gd"
+        "custodian/tools/validation/actor_relationship_contract_smoke.gd",
+        "custodian/game/actors/ambient/vaultwing/vaultwing.tscn",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png.import",
+        "custodian/tools/validation/known_headless_warnings.json",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "vaultwing_runtime",
@@ -5439,7 +5446,8 @@
         "determinism",
         "combat",
         "flight",
-        "presentation"
+        "presentation",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/actors/ambient/vaultwing/**",
@@ -5447,10 +5455,15 @@
         "custodian/game/actors/ambient/ambient_creature_presentation_controller.gd",
         "custodian/game/systems/spawning/vaultwing_spawner.gd",
         "custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json",
+        "custodian/game/actors/ambient/vaultwing/vaultwing.tscn",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png.import",
+        "custodian/tools/validation/known_headless_warnings.json",
+        "custodian/tools/validation/validation_manifest.json",
         "custodian/tools/validation/vaultwing_runtime_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "vaultwing_asset_contract",
@@ -5556,6 +5569,7 @@
         "custodian/game/world/levels/authored/hub/twin_solaria/**",
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/tools/validation/hub_twin_solaria_route_smoke.gd",
+        "custodian/tools/validation/known_headless_warnings.json",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
@@ -6037,7 +6051,8 @@
         "routes",
         "generated_region",
         "rollback",
-        "regression"
+        "regression",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/world/levels/generated_region_level.gd",

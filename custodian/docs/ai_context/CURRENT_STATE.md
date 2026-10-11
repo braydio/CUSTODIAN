@@ -1334,7 +1334,12 @@ Documentation updates this session:
   configuration / preflight / failure / coverage-gap exit codes. Non-excluded
   changed files without manifest ownership prevent a false-green result;
   structured `passed:false` and unexpected fatal stderr override exit zero,
-  and a failing tier skips higher-cost tiers. Import and test subprocesses have
+  and a failing tier skips higher-cost tiers. Fatal parse, script, resource-load,
+  and GDExtension diagnostics also override PASS sentinels. Expected rollback
+  errors are exact full-line patterns scoped to their owning validation test.
+  Before imports, the preflight checks checked-out LFS pointers and malformed
+  tracked PNG sidecars referenced by project text; import-dependent manifest
+  tests then load representative runtime scenes/resources. Import and test subprocesses have
   bounded process-group supervision. The shared GDScript harness
   now proves pure-resolver and Observatory-backed actor styles. Moment Forge
   supports six relational event/distance assertions plus shared dotted-path

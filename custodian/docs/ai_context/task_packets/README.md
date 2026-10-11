@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Reject false-green Godot smoke results and invalid imported runtime resource metadata while preserving narrowly authored expected rollback errors.
 - `AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Keep heavy disposable agent scratch on disk and bound concurrent expensive Godot work across worktrees so parallel agent sessions cannot exhaust RAM.
 - `AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Expose an accurate, nonmutating workstream-finish readiness report before expensive synchronization and landing while keeping workstream.py finish authoritat...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...

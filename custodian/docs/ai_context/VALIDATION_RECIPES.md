@@ -239,7 +239,10 @@ an explicit `run_moment.py` decision.
 ## Godot Import Preflight
 
 Before a project-wide import, use the repository preflight so Godot does not
-write invalid import sidecars for checked-out Git LFS pointer files:
+write invalid import sidecars for checked-out Git LFS pointer files. It also
+blocks malformed `.png.import` records (`valid=false`, missing remap `path`, or
+missing `dest_files`) when a tracked project scene/resource/script references
+the corresponding PNG. Unreferenced archived sidecars do not block import:
 
 ```bash
 python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
@@ -280,6 +283,21 @@ tooling should implement the same ordering when it needs local-only
 materialization: shared/local LFS cache first, verified hydrated local checkout
 second, explicit blocker third. Operator ingest, Workbench publication, and the
 shared import adapters run the pointer guard automatically.
+
+`run_validation.py` runs the preflight before any selected `needs_import` test,
+then runs that test against the imported resources. Register at least one such
+test that loads the affected runtime scene/resources; an import process exit code
+alone does not establish loadability. Fatal Godot script, parse, resource-load,
+and GDExtension diagnostics fail even when a smoke prints its PASS sentinel and
+exits zero. Expected rollback errors in `known_headless_warnings.json` are bound
+to their owning manifest test and exact full-line patterns; near matches and
+the same diagnostic from another test remain fatal. The compact post-import
+resource gate runs the actor relationship, Vaultwing runtime, and generated
+region rollback smokes under one import:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --tag import_truth --json
+```
 
 ## Resource Budget Before Broad Sweeps
 
