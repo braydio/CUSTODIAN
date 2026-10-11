@@ -1,10 +1,10 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** active implementation / WB25-4 accepted / WB25-5 planning refreshed and published ready/auto
+**Status:** WB25-1 through WB25-5 implemented/reviewed; WB25-6 architecture refreshed and first live cohort held
 **Priority:** P1  
 **Reviewed main:** `81766d1c848ae9c373f2f3b15aff96a610e82d95`  
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb  
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38  
 **Last updated:** 2026-10-10
 
 ## Goal
@@ -224,9 +224,9 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-3R | review-operator-2-5d-workbench-polish-automation | **complete / correction re-review passed** | mutation/QA boundary review |
 | WB25-4 | operator-2-5d-workbench-review-automation | **complete / accepted after cycle-1 correction** | canonical QA, family/sequence review, sandbox runtime proof |
 | WB25-4R | review-operator-2-5d-workbench-review-automation | **complete / R0-01 corrected and re-reviewed clean** | anti-drift/sequence/sandbox review |
-| WB25-5 | operator-2-5d-workbench-production-queue | **ready / auto; design refreshed** | queue/dashboard + deterministic generation briefs |
-| WB25-5R | review-operator-2-5d-workbench-production-queue | dependency-gated | queue math/brief review |
-| WB25-6 | operator-2-5d-runtime-promotion | draft / refresh-required | cohort-based 2.5D production cutover + rollback |
+| WB25-5 | operator-2-5d-workbench-production-queue | **complete / accepted** | live queue/dashboard + deterministic generation briefs |
+| WB25-5R | review-operator-2-5d-workbench-production-queue | **complete / passed, zero findings** | queue math, real family and brief review |
+| WB25-6 | operator-2-5d-runtime-promotion | **draft / architecture refreshed; real cohort held** | guarded generation switch + rollback |
 | WB25-6R | review-operator-2-5d-runtime-promotion | dependency-gated | no-mix/runtime/rollback review |
 
 Expected implementation packets: **6**.
@@ -239,8 +239,8 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 - WB25-2: complete and independently reviewed through cycle-2 correction. The final accepted ingress validates exact target-bound Source Sessions, generation-scoped handoff/workspaces, independent direction progress, legacy compatibility, no-runtime-promotion, and the physical saved Aseprite frame/canvas/timing contract before recovery/completion while preserving legitimate artist edits.
 - WB25-3: complete and independently reviewed after bounded correction R0-01. Exact detached-island and registration proposals are re-derived from the current physical Workbench, render, masks and landmarks before mutation; forged/stale coordinates or deltas fail before Art Agent apply, while valid scoped apply/undo remains intact.
 - WB25-4: complete and independently accepted after cycle-1 correction. R0-01 is fixed: caller-supplied human disposition was removed, `NEEDS_HUMAN_REVIEW` remains required until the explicit Workbench approval path authors canonical provenance with the backend-computed exact evidence hash, `current_receipt()` revalidates that evidence, RED remains non-overridable, and GREEN/YELLOW preserve their no-approval path. The fresh correction re-review passed with zero blocking defects/material proof gaps and no new findings.
-- WB25-5: **planning refresh complete / ready-auto on main** (2026-10-10; original publication `5e7c8e58`). The implementation and paired review carry the accepted WB25-4 receipt/provenance gate, 69 family/552 direction baseline (8 accepted-source/544 not-yet-authored; 1 resolved frame contract/68 unresolved), live VERIFIED projection, rank-safe NEXT and deterministic generation briefs. An additional read-only sample of the older populated Operator art checkout recorded 0 verified leaves/families, 0 current review receipts/sandbox passes and no 2.5D Workbench manifests. **Known code defect pending WB25-5 implementation:** `Operator2DReview.family()` reads nonexistent `AnimationRecord.coverage/stale` rather than `coverage_status/stale_reference`, and the mock-based review smoke masked it. WB25-5 now explicitly owns this bounded adapter/test fix before queue integration. The sampled workspace zeros are not global runtime constants. Claim remains subject to dispatcher dependencies/locks; no production queue implementation or runtime publication has landed.
-- WB25-6: refresh after WB25-5 + review and real queue/verification counts exist.
+- WB25-5: **implemented and accepted**. Implementation `69cdfdbf1`, landed as `d4efc0234`; independent paired review `cd72b90b1` passed with zero findings; 36/36 changed validation passed. The live 69 family/552 direction queue and local deterministic generation-brief/ingress architecture are implemented, including real-record family verification and rank-safe NEXT. The paired review measured **0 current receipt-verified 2.5D leaves / 0 verified families** in its default workspace. No live runtime promotion was performed.
+- WB25-6: **architecture refreshed 2026-10-10; keep draft/manual.** Live runtime sync scans legacy source by default and WB25-5 does not own PUBLISHED. Release must follow a current verified, human-chosen dependency-closed cohort → staged transactional generation switch → confirmed runtime publication and rollback proof. The one accepted idle source family alone is not a coherent release cohort; 0 verified families means no candidate is eligible. See the active WB25-6 packet for full gates.
 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
 
