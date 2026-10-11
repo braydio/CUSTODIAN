@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-geography-semantic-site-contract`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `campaign-geography-semantic-site-contract`
 - Locks: `campaign-geography-semantic-contract`
