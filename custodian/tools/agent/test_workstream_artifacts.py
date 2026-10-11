@@ -222,6 +222,90 @@ class WorkstreamArtifactTests(unittest.TestCase):
         self.assertEqual(receipt["reviewer_context"], "fresh")
         self.assertEqual(receipt["reviewer_provenance"], "different-agent")
 
+    def test_paired_review_receipt_delta_passes_real_finish_and_missing_receipt_fails(self):
+        workstream_id = "review-fixture-review-corrections-1"
+        target_workstream = "fixture-review-corrections-1"
+        review_path = "custodian/docs/ai_context/task_packets/archived/REVIEW_FIXTURE.md"
+        target_path = "custodian/docs/ai_context/task_packets/archived/FIXTURE.md"
+        chat = "https://chatgpt.com/c/receipt-delta-fixture"
+        remote = Path(self.temp.name) / "origin.git"
+        git(self.repo, "init", "-b", "main")
+        git(self.repo, "branch", "-M", "main")
+        git(self.repo, "init", "--bare", str(remote))
+        git(self.repo, "remote", "add", "origin", str(remote))
+
+        implementation = self.repo / "custodian/game/fixture_impl.py"
+        implementation.parent.mkdir(parents=True, exist_ok=True)
+        implementation.write_text("fixture implementation\n")
+        git(self.repo, "add", "custodian/game/fixture_impl.py")
+        git(self.repo, "commit", "-m", "fixture implementation")
+        implementation_sha = git(self.repo, "rev-parse", "HEAD")
+        target = self.repo / target_path
+        target.write_text(
+            "# Fixture implementation\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{target_workstream}`\n"
+            "- Kind: `correction`\n- Status: `complete`\n"
+            f"- Implementation commit: `{implementation_sha}`\n"
+        )
+        review = self.repo / review_path
+        review.write_text(
+            "# Fixture review\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Kind: `review`\n- Status: `complete`\n"
+            "- Dispatch: `auto`\n- Review cycle: `1`\n- Max automatic review cycles: `1`\n"
+            f"- Review target workstream: `{target_workstream}`\n"
+            f"- Review target packet: `{target_path}`\n- Authoring chat: `{chat}`\n"
+        )
+        git(self.repo, "add", target_path, review_path)
+        git(self.repo, "commit", "-m", "publish fixture packets")
+        reviewed_main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "-u", "origin", "main")
+        git(self.repo, "update-ref", "refs/remotes/origin/main", reviewed_main)
+
+        branch = workstream.branch_for(workstream_id)
+        branch_path = Path(self.temp.name) / "review-branch"
+        git(self.repo, "worktree", "add", "-b", branch, str(branch_path), "HEAD")
+        baseline = (branch_path / target_path).read_text()
+        with self.assertRaisesRegex(workstream.WorkstreamError, "requires a committed change to the reviewed packet receipt"):
+            workstream.artifact_preflight(workstream_id, branch_path)
+
+        candidate = baseline + (
+            "\n## Independent Review\n\n"
+            f"### Review Receipt: {workstream_id}\n"
+            "- Schema: `custodian.paired_review.v1`\n"
+            f"- Review workstream: `{workstream_id}`\n"
+            f"- Review target workstream: `{target_workstream}`\n"
+            "- Status: `passed`\n- Blocking defects: `0`\n- Material gaps: `0`\n"
+            "- Reviewer context: `fresh`\n- Reviewer provenance: `different-agent`\n"
+            f"- Reviewed main: `{reviewed_main}`\n"
+            f"- Reviewed implementation commit: `{implementation_sha}`\n"
+        )
+        (branch_path / target_path).write_text(candidate)
+        pinned_baseline = subprocess.run(["git", "show", f"{reviewed_main}:{target_path}"], cwd=branch_path,
+                                         check=True, text=True, capture_output=True).stdout
+        self.assertEqual(pinned_baseline, baseline)
+        self.assertTrue(baseline.endswith("\n"), repr(baseline))
+        self.assertNotIn("## Independent Review", baseline)
+        self.assertTrue(candidate.startswith(baseline))
+        summary_path = branch_path / workstream._expected_summary_filename(workstream_id)
+        summary_path.write_text(f"Authoring chat: {chat}\n\n## Next Handoff\n- Next workstream: none\n")
+        git(branch_path, "add", target_path, summary_path.name)
+        git(branch_path, "commit", "-m", "append exact paired review receipt")
+        candidate_head = git(branch_path, "rev-parse", "HEAD")
+        self.assertIsNone(workstream._paired_review_artifact_preflight_error(
+            workstream_id, branch_path, branch_path / review_path))
+
+        report = Path(self.temp.name) / "green-validation.json"
+        report.write_text(json.dumps({
+            "schema": "custodian.validation.result.v1", "passed": True,
+            "coverage": {"complete": True}, "tests": [{"id": "fixture", "status": "passed"}],
+        }))
+        workstream.finish(workstream_id, report, repo=self.repo)
+        landed = git(self.repo, "--git-dir", str(remote), "rev-parse", "refs/heads/main")
+        self.assertEqual(git(self.repo, "merge-base", "--is-ancestor", candidate_head, landed), "")
+        self.assertFalse(branch_path.exists())
+        self.assertNotIn(branch, git(self.repo, "branch", "--list", branch))
+
     def test_closeout_preflight_is_ready_only_for_complete_committed_green_state(self):
         workstream_id = "preflight-ready"
         chat = "https://chatgpt.com/c/preflight-ready"
@@ -326,7 +410,7 @@ class WorkstreamArtifactTests(unittest.TestCase):
         review_packet = self.packet_root / "REVIEW_IMPLEMENTATION.md"
         review_packet.write_text(
             "# Review\n\n- Workstream: `review-implementation`\n- Kind: `review`\n"
-            "- Dispatch: `auto`\n- Status: `ready`\n"
+            "- Dispatch: `manual`\n- Status: `ready`\n"
             "- Review target workstream: `implementation`\n"
             "- Review target packet: `custodian/docs/ai_context/task_packets/archived/IMPLEMENTATION.md`\n"
             "- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`\n"

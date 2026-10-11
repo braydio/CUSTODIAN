@@ -24,6 +24,7 @@ from persistent_checkout_sync import ROOT_PROFILE, apply_profiles, format_result
 from task_packet_contract import (
     completion_truth_required, parse_completion_truth, parse_packet,
 )
+from review_receipt_delta import verify_review_receipt_delta
 
 class WorkstreamError(RuntimeError):
     pass
@@ -271,6 +272,45 @@ def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, revi
     receipt_status = re.search(r"(?m)^\s*-\s*Status:\s*`(passed|findings|human_required)`\s*$", receipt.group(1)) if receipt else None
     if not receipt_status:
         return "paired review artifact gate requires a completed Independent Review receipt"
+    receipt_heading = f"### Review Receipt: {workstream_id}"
+    if target_text.count(receipt_heading) != 1:
+        return "paired review artifact gate requires exactly one receipt for this review workstream"
+    receipt_match = re.search(
+        rf"(?ms)^## Independent Review\s*\n.*?^{re.escape(receipt_heading)}\s*\n(.*?)(?=^### |^## |\Z)",
+        target_text,
+    )
+    reviewed_main_match = re.search(r"(?m)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$",
+                                    receipt_match.group(1) if receipt_match else "")
+    if not reviewed_main_match:
+        return "paired review artifact gate requires the receipt's full pinned Reviewed main SHA"
+    reviewed_main = reviewed_main_match.group(1)
+    baseline_result = subprocess.run(
+        ["git", "show", f"{reviewed_main}:{target_packet_path}"], cwd=path,
+        text=True, capture_output=True,
+    )
+    if baseline_result.returncode:
+        return "paired review artifact gate cannot load the receipt's pinned target baseline"
+    baseline_target = baseline_result.stdout
+    baseline_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$",
+                                baseline_target)
+    receipt_data, delta_error = verify_review_receipt_delta(
+        baseline_target, target_text, review_workstream=workstream_id,
+        target_workstream=_packet_header_value(packet_text, "Review target workstream") or "",
+        reviewed_main=reviewed_main,
+        target_implementation_commit=baseline_commit.group(1) if baseline_commit else None,
+    )
+    if delta_error:
+        return f"paired review artifact gate rejects reviewed packet receipt delta: {delta_error}"
+    reviewed_commit = receipt_data["Reviewed implementation commit"]
+    if subprocess.run(["git", "cat-file", "-e", f"{reviewed_commit}^{{commit}}"], cwd=path,
+                      text=True, capture_output=True).returncode:
+        return "paired review artifact gate cannot resolve the reviewed implementation commit"
+    if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, "HEAD"], cwd=path,
+                      text=True, capture_output=True).returncode:
+        return "paired review artifact gate's pinned reviewed main is not an ancestor of the review branch"
+    if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_commit, "HEAD"], cwd=path,
+                      text=True, capture_output=True).returncode:
+        return "paired review artifact gate's reviewed implementation commit is not an ancestor of the review branch"
     artifact_contents = {
         changed: (path / changed).read_text()
         for changed in changed_paths

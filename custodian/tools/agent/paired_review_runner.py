@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
+from review_receipt_delta import verify_review_receipt_delta
 from workflow_control import common_dir, redact
 
 SCHEMA = "custodian.paired_review_run.v1"
@@ -140,7 +141,23 @@ def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: 
 
 Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. {pinned} Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary. {backlink}
 
-This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. Run the required validation and save its green structured JSON result to `{validation_path}` (schema `custodian.validation.result.v1`, with `passed: true`, `coverage.complete: true`, and all test statuses passed). Update/archive only the authorized review packet and managed index. If blocked, write the durable summary explaining the blocker and leave the packet/worktree recoverable. Do not claim another packet or hop to the global queue. Report the exact result and evidence paths."""
+This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. If the target packet needs its receipt, append exactly one `### Review Receipt: {workstream}` block under `## Independent Review` (or append that section at EOF), preserving all existing target bytes. Use this exact field layout, substituting the review packet's exact target identity and the pinned main and implementation SHAs:
+
+```markdown
+### Review Receipt: {workstream}
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{workstream}`
+- Review target workstream: `<exact target workstream>`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent` or `same-agent-fresh-context`
+- Reviewed main: `<full pinned main SHA>`
+- Reviewed implementation commit: `<full implementation SHA>`
+```
+
+Do not edit any other target bytes. Run the required validation and save its green structured JSON result to `{validation_path}` (schema `custodian.validation.result.v1`, with `passed: true`, `coverage.complete: true`, and all test statuses passed). Update/archive only the authorized review packet and managed index. If blocked, write the durable summary explaining the blocker and leave the packet/worktree recoverable. Do not claim another packet or hop to the global queue. Report the exact result and evidence paths."""
 
 
 def validation_report_is_green(path: Path) -> bool:
@@ -172,7 +189,7 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         raise RunnerError(f"reviewer did not provide a green structured validation report: {report}")
     summary_path = expected_summary_path(workstream)
     archive_path = f"{PACKET_ROOT}/archived/{Path(active_packet_path).name}"
-    allowed = {active_packet_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path}
+    allowed = {active_packet_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path, target_packet_path}
     changed = set(_changed_paths(worktree, "diff", "--name-only", "origin/main...HEAD"))
     changed.update(_changed_paths(worktree, "diff", "--name-only", "HEAD"))
     changed.update(_changed_paths(worktree, "diff", "--cached", "--name-only"))
@@ -180,6 +197,17 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
     unexpected = sorted(changed - allowed)
     if unexpected:
         raise RunnerError("reviewer changed files outside its bounded evidence scope: " + ", ".join(unexpected))
+    implementation_commit = re.search(
+        r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", target_content,
+    )
+    _, receipt_error = verify_review_receipt_delta(
+        target_content, (worktree / target_packet_path).read_text(encoding="utf-8"),
+        review_workstream=workstream, target_workstream=target_workstream,
+        reviewed_main=reviewed_main,
+        target_implementation_commit=implementation_commit.group(1) if implementation_commit else None,
+    )
+    if receipt_error:
+        raise RunnerError("reviewed target failed pinned receipt-delta verification: " + receipt_error)
     if not (worktree / archive_path).is_file() or not (worktree / summary_path).is_file():
         raise RunnerError("reviewer did not write the archived packet and exact root summary")
     if _changed_paths(worktree, "diff", "--cached", "--name-only"):
@@ -279,7 +307,11 @@ def expected_summary_path(workstream: str) -> str:
 
 def _show_at(repo: Path, revision: str, path: str) -> str:
     """Read one exact path from one pinned commit (never a grep result)."""
-    return git(repo, "show", f"{revision}:{path}")
+    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise RunnerError(redact(result.stderr or result.stdout))
+    return result.stdout
 
 
 def fetch_and_pin_main(repo: Path) -> str:
@@ -313,35 +345,48 @@ def landed_review_state(repo: Path, revision: str, workstream: str, review_packe
         result["reasons"].append("exact archived review packet is not complete")
     if archived.review_target_workstream != target_workstream or archived.review_target_packet != target_packet_path:
         result["reasons"].append("archived review packet names a different target")
+    archived_receipt = _independent_review_receipt(archived_text)
+    if archived_receipt is None:
+        result["reasons"].append("archived review packet has no unambiguous independent review receipt")
+    else:
+        for key, expected in (("Schema", "custodian.paired_review.v1"),
+                              ("Review target workstream", target_workstream),
+                              ("Status", "passed"), ("Blocking defects", "0"),
+                              ("Material gaps", "0"), ("Reviewer context", "fresh")):
+            if archived_receipt.get(key) != expected:
+                result["reasons"].append(f"archived review receipt has missing or mismatched {key}")
+        if archived_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}:
+            result["reasons"].append("archived review receipt has missing or invalid reviewer provenance")
+        if archived_receipt.get("Review workstream", workstream) != workstream:
+            result["reasons"].append("archived review receipt identifies a different review workstream")
+        if reviewed_main and archived_receipt.get("Reviewed main") != reviewed_main:
+            result["reasons"].append("archived review receipt does not match the pinned reviewed main")
     if target.error or target.kind not in {"implementation", "correction"} or target.workstream != target_workstream or target.status != "complete":
         result["reasons"].append("exact reviewed implementation packet is not complete")
-    if expected_target_content and target_text != expected_target_content:
-        result["reasons"].append("reviewed implementation packet changed during review")
+    implementation_commit = re.search(
+        r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", expected_target_content,
+    )
+    receipt, receipt_error = verify_review_receipt_delta(
+        expected_target_content, target_text, review_workstream=workstream,
+        target_workstream=target_workstream, reviewed_main=reviewed_main or "",
+        target_implementation_commit=implementation_commit.group(1) if implementation_commit else None,
+    )
+    if receipt_error:
+        result["reasons"].append(receipt_error)
     if authoring_chat and archived.authoring_chat != authoring_chat:
         result["reasons"].append("archived review packet changed its authoring-chat identity")
     if reviewed_main and subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, revision],
                                         cwd=repo, text=True, capture_output=True).returncode:
         result["reasons"].append("pinned post-review main is not descended from the reviewed main")
 
-    receipt_match = re.search(r"(?ims)^## Independent Review\s*\n(.*?)(?=^## |\Z)", archived_text)
-    receipt = receipt_match.group(1) if receipt_match else ""
-    reviewed_commit = re.search(r"(?im)^- Reviewed implementation commit:\s*`?([0-9a-f]{7,40})`?\s*$", receipt)
-    receipt_main = re.search(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{7,64})`?\s*$", receipt)
-    if not receipt_match or not re.search(r"(?im)^- Status:\s*`?passed`?\s*$", receipt):
+    reviewed_commit_value = receipt.get("Reviewed implementation commit") if receipt else None
+    if not reviewed_commit_value:
         result["reasons"].append("independent review receipt is absent or not passed")
-    if not re.search(r"(?im)^- Blocking defects:\s*`?0`?\s*$", receipt):
-        result["reasons"].append("review receipt does not record zero blocking defects")
-    if not re.search(r"(?im)^- Material gaps:\s*`?0`?\s*$", receipt):
-        result["reasons"].append("review receipt does not record zero material gaps")
-    if not re.search(r"(?im)^- Reviewer context:\s*`?fresh`?\s*$", receipt):
-        result["reasons"].append("review receipt does not verify fresh reviewer context")
-    if not re.search(r"(?im)^- Reviewer provenance:\s*`?(?:different-agent|same-agent-fresh-context)`?\s*$", receipt):
-        result["reasons"].append("review receipt does not identify independent reviewer provenance")
-    if not reviewed_commit:
-        result["reasons"].append("review receipt omits the reviewed implementation commit")
-    else:
-        commit = reviewed_commit.group(1)
-        target_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{7,40})`?\s*$", target_text)
+    if reviewed_commit_value:
+        commit = reviewed_commit_value
+        if archived_receipt and archived_receipt.get("Reviewed implementation commit") != commit:
+            result["reasons"].append("archived review receipt names a different implementation commit than target receipt")
+        target_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", target_text)
         if target_commit:
             target_full = git(repo, "rev-parse", "--verify", f"{target_commit.group(1)}^{{commit}}", check=False)
             review_full = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}", check=False)
@@ -353,16 +398,31 @@ def landed_review_state(repo: Path, revision: str, workstream: str, review_packe
         elif subprocess.run(["git", "merge-base", "--is-ancestor", commit, revision], cwd=repo,
                             text=True, capture_output=True).returncode:
             result["reasons"].append("reviewed implementation commit is not an ancestor of pinned main")
-    result["reviewed_implementation_commit"] = reviewed_commit.group(1) if reviewed_commit else None
-    if not receipt_main:
-        result["reasons"].append("review receipt omits its immutable reviewed-main SHA")
-    elif reviewed_main and receipt_main.group(1) != reviewed_main:
-        result["reasons"].append("review receipt is bound to a different reviewed-main SHA")
+    result["reviewed_implementation_commit"] = reviewed_commit_value
     if authoring_chat and f"Authoring chat: {authoring_chat}" not in summary_text:
         result["reasons"].append("exact closing summary is missing the packet authoring-chat backlink")
     if not next_handoff(summary_text):
         result["reasons"].append("exact closing summary omits Next Handoff")
     result["complete"] = not result["reasons"]
+    return result
+
+
+def _independent_review_receipt(packet_text: str) -> dict[str, str] | None:
+    """Parse a single flat receipt from the archived reviewer-authored packet."""
+    matches = list(re.finditer(r"(?m)^## Independent Review[ \t]*$", packet_text))
+    if len(matches) != 1:
+        return None
+    section = packet_text[matches[0].end():]
+    next_section = re.search(r"(?m)^## [^\r]*$", section)
+    if next_section:
+        section = section[:next_section.start()]
+    result: dict[str, str] = {}
+    for name in ("Schema", "Review workstream", "Review target workstream", "Status",
+                 "Blocking defects", "Material gaps", "Reviewer context", "Reviewer provenance",
+                 "Reviewed main", "Reviewed implementation commit"):
+        values = re.findall(rf"(?m)^- {re.escape(name)}: `?([^`\r\n]+)`?\s*$", section)
+        if len(values) == 1:
+            result[name] = values[0].strip()
     return result
 
 

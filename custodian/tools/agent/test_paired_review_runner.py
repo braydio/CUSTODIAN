@@ -14,6 +14,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
+from review_receipt_delta import verify_review_receipt_delta
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -38,8 +39,8 @@ Review this task.
 """
 
 
-def target_packet():
-    return """# Implementation
+def target_packet(implementation_commit="a" * 40):
+    return f"""# Implementation
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `sample-impl`
 - Kind: `implementation`
@@ -48,10 +49,100 @@ def target_packet():
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `agent-workflow`
+- Implementation commit: `{implementation_commit}`
+
+## Goal
+Retain the exact implementation goal.
+
+## Acceptance
+Retain the exact acceptance contract.
+
+## Completion Truth
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+
+## Implementation
+```gdscript
+func preserved_code():
+    return true
+```
 """
 
 
+def append_receipt(target, *, review_workstream, target_workstream, reviewed_main, implementation_commit):
+    section = f"""### Review Receipt: {review_workstream}
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{review_workstream}`
+- Review target workstream: `{target_workstream}`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{reviewed_main}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+    if "## Independent Review\n" in target:
+        return target.rstrip("\n") + "\n\n" + section
+    return target + f"""
+## Independent Review
+
+{section}"""
+
+
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_review_receipt_delta_allows_only_one_valid_append(self):
+        main = "b" * 40
+        implementation = "a" * 40
+        baseline = target_packet(implementation)
+        valid = append_receipt(baseline, review_workstream="review-sample", target_workstream="sample-impl",
+                               reviewed_main=main, implementation_commit=implementation)
+        receipt, error = verify_review_receipt_delta(
+            baseline, valid, review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main=main, target_implementation_commit=implementation)
+        self.assertIsNone(error)
+        self.assertEqual(receipt["Reviewed implementation commit"], implementation)
+        for changed in (
+            valid.replace("Status: `passed`", "Status: `findings`"),
+            valid.replace("Reviewer provenance: `different-agent`", "Reviewer provenance: `unspecified`"),
+            valid.replace(main, "c" * 40),
+            valid.replace(implementation, "d" * 40),
+            valid.replace("Review workstream: `review-sample`", "Review workstream: `review-spoof`"),
+            valid.replace("Review target workstream: `sample-impl`", "Review target workstream: `other-impl`"),
+            valid.replace("- Status: `complete`", "- Status: `draft`"),
+            valid.replace("Retain the exact implementation goal", "Rewrite the goal"),
+            valid.replace("Retain the exact acceptance contract", "Rewrite acceptance"),
+            valid.replace("Completion boundary satisfied: `yes`", "Completion boundary satisfied: `no`"),
+            valid.replace("return true", "return false"),
+            valid + "\n## Independent Review\n\n- Status: `passed`\n",
+            valid + "\n### Review Receipt: review-sample\n",
+        ):
+            _, error = verify_review_receipt_delta(
+                baseline, changed, review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main=main, target_implementation_commit=implementation)
+            self.assertIsNotNone(error, changed)
+
+    def test_review_receipt_delta_preserves_prior_receipt_bytes(self):
+        main = "b" * 40
+        implementation = "a" * 40
+        baseline = append_receipt(target_packet(implementation), review_workstream="review-old",
+                                  target_workstream="sample-impl", reviewed_main=main,
+                                  implementation_commit=implementation)
+        candidate = append_receipt(baseline, review_workstream="review-sample",
+                                   target_workstream="sample-impl", reviewed_main=main,
+                                   implementation_commit=implementation)
+        receipt, error = verify_review_receipt_delta(
+            baseline, candidate, review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main=main, target_implementation_commit=implementation)
+        self.assertIsNone(error)
+        self.assertEqual(receipt["Review workstream"], "review-sample")
+        tampered = candidate.replace("Reviewer context: `fresh`", "Reviewer context: `stale`", 1)
+        _, error = verify_review_receipt_delta(
+            baseline, tampered, review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main=main, target_implementation_commit=implementation)
+        self.assertIsNotNone(error)
+
     def test_prior_claimed_run_blocks_reclaim_until_recovered(self):
         with tempfile.TemporaryDirectory() as temp:
             common = Path(temp)
@@ -87,7 +178,14 @@ class PairedReviewRunnerTests(unittest.TestCase):
             (repo / active).parent.mkdir(parents=True)
             (repo / active).write_text("active review packet\n")
             (repo / target_path).parent.mkdir(parents=True)
-            (repo / target_path).write_text(target_packet())
+            implementation_file = repo / "implementation.py"
+            implementation_file.write_text("implementation\n")
+            subprocess.run(["git", "-C", str(repo), "add", "implementation.py"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "implementation"], check=True)
+            implementation_sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                                text=True, capture_output=True).stdout.strip()
+            baseline_target = target_packet(implementation_sha)
+            (repo / target_path).write_text(baseline_target)
             (repo / readme).write_text("active packet index\n")
             subprocess.run(["git", "-C", str(repo), "add", active, readme, target_path], check=True)
             subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
@@ -100,6 +198,9 @@ class PairedReviewRunnerTests(unittest.TestCase):
                             str(worktree)], check=True)
             (worktree / active).unlink()
             (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
+            (worktree / target_path).write_text(append_receipt(
+                baseline_target, review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main=target_sha, implementation_commit=implementation_sha))
             (worktree / archive).write_text(f"""# Review
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-sample`
@@ -115,13 +216,15 @@ class PairedReviewRunnerTests(unittest.TestCase):
 
 ## Independent Review
 - Schema: `custodian.paired_review.v1`
+- Review workstream: `review-sample`
+- Review target workstream: `sample-impl`
 - Status: `passed`
 - Blocking defects: `0`
 - Material gaps: `0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Reviewed main: `{target_sha}`
-- Reviewed implementation commit: `{target_sha}`
+- Reviewed implementation commit: `{implementation_sha}`
 """)
             (worktree / readme).write_text("archived review packet index\n")
             summary = worktree / runner.expected_summary_path("review-sample")
@@ -135,7 +238,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             (worktree / "unauthorized.py").write_text("reviewer must not add this\n")
             with self.assertRaisesRegex(runner.RunnerError, "outside its bounded evidence scope"):
                 runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
-                                                 target_path, runner.git(repo, "show", f"HEAD:{target_path}"),
+                                                 target_path, baseline_target,
                                                  "https://chatgpt.com/c/example", target_sha, run_dir)
             (worktree / "unauthorized.py").unlink()
 
@@ -150,7 +253,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
 
             with patch.object(runner.subprocess, "run", side_effect=intercept_finish):
                 landed_sha = runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
-                                                             target_path, runner.git(repo, "show", f"HEAD:{target_path}"),
+                                                             target_path, baseline_target,
                                                              "https://chatgpt.com/c/example", target_sha, run_dir)
             self.assertEqual(landed_sha, target_sha)
             self.assertEqual(len(finish_calls), 1)
@@ -158,7 +261,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             committed = subprocess.run(["git", "-C", str(worktree), "diff-tree", "--no-commit-id",
                                         "--name-only", "-r", "HEAD"], check=True, text=True,
                                        capture_output=True).stdout.splitlines()
-            self.assertEqual(set(committed), {active, archive, readme, summary.name})
+            self.assertEqual(set(committed), {active, archive, readme, summary.name, target_path})
 
     def test_landed_review_uses_exact_summary_and_pinned_git_paths(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -167,7 +270,13 @@ class PairedReviewRunnerTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(repo), "config", "user.name", "test"], check=True)
             subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
             target_path = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
-            target_text = target_packet()
+            implementation_file = repo / "implementation.py"
+            implementation_file.write_text("implementation\n")
+            subprocess.run(["git", "-C", str(repo), "add", "implementation.py"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "implementation"], check=True)
+            implementation_sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                                text=True, capture_output=True).stdout.strip()
+            target_text = target_packet(implementation_sha)
             target_file = repo / target_path
             target_file.parent.mkdir(parents=True)
             target_file.write_text(target_text)
@@ -175,6 +284,9 @@ class PairedReviewRunnerTests(unittest.TestCase):
             subprocess.run(["git", "-C", str(repo), "commit", "-qm", "target"], check=True)
             target_sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
                                         text=True, capture_output=True).stdout.strip()
+            (repo / target_path).write_text(append_receipt(
+                target_text, review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main=target_sha, implementation_commit=implementation_sha))
             review_path = f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
             review_text = f"""# Review
 - Packet schema: `custodian.task_packet.v2`
@@ -191,17 +303,20 @@ class PairedReviewRunnerTests(unittest.TestCase):
 
 ## Independent Review
 - Schema: `custodian.paired_review.v1`
+- Review workstream: `review-sample`
+- Review target workstream: `sample-impl`
 - Status: `passed`
 - Blocking defects: `0`
 - Material gaps: `0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Reviewed main: `{target_sha}`
-- Reviewed implementation commit: `{target_sha}`
+- Reviewed implementation commit: `{implementation_sha}`
 """
             summary_path = runner.expected_summary_path("review-sample")
             summary = (f"Authoring chat: https://chatgpt.com/c/example\n\n## Next Handoff\n"
                        "- Next workstream: none\n- Next action: done\n")
+            subprocess.run(["git", "-C", str(repo), "add", target_path], check=True)
             for path, content in ((review_path, review_text), (summary_path, summary),
                                    ("UNRELATED_CLAUDE_SUMMARY.md", "review-sample appears here only\n")):
                 file = repo / path
@@ -222,8 +337,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
             self.assertIn(f"{revision}:UNRELATED_CLAUDE_SUMMARY.md", grep)
             state = runner.landed_review_state(repo, revision, "review-sample",
                                                f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md", "sample-impl",
-                                               target_path, target_text.strip(),
-                                               "https://chatgpt.com/c/example")
+                                               target_path, target_text,
+                                               "https://chatgpt.com/c/example", target_sha)
             self.assertTrue(state["complete"], state["reasons"])
             self.assertEqual(state["summary_path"], summary_path)
 
@@ -234,8 +349,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                               text=True, capture_output=True).stdout.strip()
             missing = runner.landed_review_state(repo, missing_revision, "review-sample",
                                                  f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md", "sample-impl",
-                                                 target_path, target_text.strip(),
-                                                 "https://chatgpt.com/c/example")
+                                                 target_path, target_text,
+                                                 "https://chatgpt.com/c/example", target_sha)
             self.assertFalse(missing["complete"])
             self.assertTrue(missing["reasons"])
 
@@ -489,6 +604,12 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                     self.assertEqual(argv[2:5], ["claim", "review-sample", "--agent"])
                     self.assertEqual(argv[5], "codex-reviewer")
                     return completed
+                if argv and argv[:2] == ["git", "show"]:
+                    requested = argv[2]
+                    if requested == f"{'a' * 40}:{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md":
+                        return subprocess.CompletedProcess(argv, 0, target_packet(), "")
+                    if requested == f"{'a' * 40}:{summary_path}":
+                        return subprocess.CompletedProcess(argv, 0, summary if summary_available["value"] else "", "")
                 if argv and argv[:2] == ["git", "cat-file"]:
                     return subprocess.CompletedProcess(argv, 0 if summary_available["value"] else 1, "", "")
                 return original_run(argv, *args, **kwargs)
