@@ -6,6 +6,7 @@ import json
 import fcntl
 import io
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -14,7 +15,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
-from review_receipt_delta import verify_review_receipt_delta
+from review_receipt_delta import (
+    read_git_text,
+    resolve_target_implementation_commit,
+    verify_review_receipt_delta,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -92,6 +97,74 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_real_archived_correction_target_keeps_exact_blob_and_resolves_landing(self):
+        pinned_main = "607c76aba831ed5fcc313f00489e10df75a8a375"
+        target_path = (
+            "custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md"
+        )
+        target_workstream = "agent-paired-review-coordinator-boundary-v1-review-corrections-1"
+        baseline = read_git_text(ROOT, pinned_main, target_path)
+
+        self.assertTrue(baseline.endswith("\n"))
+        self.assertFalse(re.search(r"(?m)^- Implementation commit:", baseline))
+        self.assertNotEqual(runner.git(ROOT, "show", f"{pinned_main}:{target_path}"), baseline)
+        implementation, error = resolve_target_implementation_commit(
+            ROOT, pinned_main, target_path, target_workstream, baseline,
+        )
+        self.assertIsNone(error)
+        self.assertEqual(implementation, "16b9dfdd6ce09889b85c61372e02d0eccea5de76")
+
+        candidate = append_receipt(
+            baseline, review_workstream="review-agent-paired-review-coordinator-boundary-v1-review-corrections-1",
+            target_workstream=target_workstream, reviewed_main=pinned_main,
+            implementation_commit=implementation,
+        )
+        receipt, error = verify_review_receipt_delta(
+            baseline, candidate,
+            review_workstream="review-agent-paired-review-coordinator-boundary-v1-review-corrections-1",
+            target_workstream=target_workstream, reviewed_main=pinned_main,
+            target_implementation_commit=implementation,
+        )
+        self.assertIsNone(error)
+        self.assertEqual(receipt["Reviewed implementation commit"], implementation)
+
+    def test_legacy_archive_identity_rejects_ambiguous_reintroduction_and_wrong_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.test"], cwd=repo, check=True)
+            target_path = "custodian/docs/ai_context/task_packets/archived/TARGET.md"
+            target = repo / target_path
+            target.parent.mkdir(parents=True)
+            target.write_text(
+                "# Target\n- Workstream: `target-impl`\n- Kind: `correction`\n"
+                "- Status: `complete`\n- Reviewed main: `0000000000000000000000000000000000000000`\n"
+            )
+            subprocess.run(["git", "add", target_path], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "archive target"], cwd=repo, check=True)
+            first_archive = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, text=True,
+                                           check=True, capture_output=True).stdout.strip()
+            target.unlink()
+            subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "remove target"], cwd=repo, check=True)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(
+                "# Target\n- Workstream: `target-impl`\n- Kind: `correction`\n"
+                "- Status: `complete`\n- Reviewed main: `0000000000000000000000000000000000000000`\n"
+            )
+            subprocess.run(["git", "add", target_path], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "reintroduce target"], cwd=repo, check=True)
+            pinned_main = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, text=True,
+                                        check=True, capture_output=True).stdout.strip()
+
+            _, error = resolve_target_implementation_commit(repo, pinned_main, target_path, "target-impl")
+            self.assertEqual(error, "pinned target has no unique complete archive-introduction commit")
+            _, error = resolve_target_implementation_commit(repo, pinned_main, target_path, "other-impl")
+            self.assertEqual(error, "pinned target is not one complete identified implementation packet")
+            self.assertNotEqual(first_archive, pinned_main)
+
     def test_review_receipt_delta_allows_only_one_valid_append(self):
         main = "b" * 40
         implementation = "a" * 40
@@ -422,8 +495,56 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                 packet = runner.parse_packet("review.md", content)
                 target = target_packet()
                 with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
-                     patch.object(runner, "git", return_value=target):
+                     patch.object(runner, "read_git_text", return_value=target), \
+                     patch.object(runner, "git", return_value="a" * 40), \
+                     patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)):
                     runner.validate_eligible_review(Path("."), "review-sample")
+
+    def test_successor_scoped_refresh_planning_authority_does_not_gate_review(self):
+        content = review_packet() + """
+## Refresh Planning Authority
+- Refresh applies to: `successor`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh instruction: After this review passes, plan the next slice.
+
+## Handoff
+- Next workstream: `next-slice`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+"""
+        packet = runner.parse_packet("review.md", content)
+        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
+             patch.object(runner, "read_git_text", return_value=target_packet()), \
+             patch.object(runner, "git", return_value="a" * 40), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)):
+            runner.validate_eligible_review(Path("."), "review-sample")
+
+        for gated in (
+            content.replace("- Refresh applies to: `successor`\n", ""),
+            content.replace("- Next workstream: `next-slice`", "- Next workstream: `none`"),
+            content.split("## Handoff", 1)[0],
+            content.replace("- ChatGPT/user planning refresh required: `no`",
+                            "- ChatGPT/user planning refresh required: `yes`", 1),
+        ):
+            with self.subTest(gated=gated[-90:]):
+                parsed = runner.parse_packet("review.md", gated)
+                with patch.object(runner, "packet_at_main", return_value=("review.md", gated, parsed)):
+                    with self.assertRaisesRegex(runner.RunnerError, "human planning|human-owned"):
+                        runner.validate_eligible_review(Path("."), "review-sample")
+
+    def test_actual_vaultwing_review_successor_refresh_is_not_a_current_gate(self):
+        review_path = "custodian/docs/ai_context/task_packets/REVIEW_VAULTWING_RUNTIME_HARDENING.md"
+        content = (ROOT / review_path).read_text(encoding="utf-8")
+        self.assertIn("- Refresh applies to: `successor`", content)
+        parsed = runner.parse_packet(review_path, content)
+        self.assertIsNone(parsed.error)
+        self.assertEqual(parsed.status, "ready")
+        target = (ROOT / parsed.review_target_packet).read_text(encoding="utf-8")
+        with patch.object(runner, "packet_at_main", return_value=(review_path, content, parsed)), \
+             patch.object(runner, "git", return_value=target), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)):
+            runner.validate_eligible_review(ROOT, "review-vaultwing-runtime-hardening")
 
     def test_actual_wb25_review_packet_is_eligible_despite_successor_refresh(self):
         # WB25's review correctly left the active queue after closeout. Reuse the
@@ -442,7 +563,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         self.assertIsNone(review_packet_data.error)
         target_content = (ROOT / review_packet_data.review_target_packet).read_text(encoding="utf-8")
         with patch.object(runner, "packet_at_main", return_value=(review_path, review_content, review_packet_data)), \
-             patch.object(runner, "git", return_value=target_content):
+             patch.object(runner, "git", return_value=target_content), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)):
             runner.validate_eligible_review(ROOT, "review-operator-2-5d-workbench-review-automation")
 
     def test_human_owner_in_current_review_authority_is_refused(self):
@@ -513,6 +635,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
                  patch.object(runner, "common_dir", return_value=common), \
                  patch.object(runner, "parse_claim_receipt", return_value=receipt), \
+                 patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
                  patch.object(runner.subprocess, "run", return_value=completed), \
                  patch.object(runner.subprocess, "Popen", side_effect=OSError("fixture launch failure")):
                 self.assertEqual(runner.run(repo, "review-sample"), 2)
@@ -669,6 +792,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                  patch.object(runner.subprocess, "Popen", side_effect=lambda argv, **kwargs: FakeCodex(argv, **kwargs)), \
                  patch.object(runner, "git", side_effect=git_side_effect), \
                  patch.object(runner, "coordinator_finish_review", return_value="a" * 40), \
+                 patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
                  patch.object(runner, "landed_review_state", side_effect=lambda *args: {
                      "complete": summary_available["value"], "summary_path": summary_path,
                      "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \

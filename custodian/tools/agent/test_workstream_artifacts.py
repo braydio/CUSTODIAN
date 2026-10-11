@@ -239,14 +239,14 @@ class WorkstreamArtifactTests(unittest.TestCase):
         implementation.write_text("fixture implementation\n")
         git(self.repo, "add", "custodian/game/fixture_impl.py")
         git(self.repo, "commit", "-m", "fixture implementation")
-        implementation_sha = git(self.repo, "rev-parse", "HEAD")
+        packet_predecessor = git(self.repo, "rev-parse", "HEAD")
         target = self.repo / target_path
         target.write_text(
             "# Fixture implementation\n"
             "- Packet schema: `custodian.task_packet.v2`\n"
             f"- Workstream: `{target_workstream}`\n"
             "- Kind: `correction`\n- Status: `complete`\n"
-            f"- Implementation commit: `{implementation_sha}`\n"
+            f"- Reviewed main: `{packet_predecessor}`\n"
         )
         review = self.repo / review_path
         review.write_text(
@@ -258,7 +258,8 @@ class WorkstreamArtifactTests(unittest.TestCase):
         )
         git(self.repo, "add", target_path, review_path)
         git(self.repo, "commit", "-m", "publish fixture packets")
-        reviewed_main = git(self.repo, "rev-parse", "HEAD")
+        implementation_sha = git(self.repo, "rev-parse", "HEAD")
+        reviewed_main = implementation_sha
         git(self.repo, "push", "-u", "origin", "main")
         git(self.repo, "update-ref", "refs/remotes/origin/main", reviewed_main)
 
@@ -285,6 +286,7 @@ class WorkstreamArtifactTests(unittest.TestCase):
                                          check=True, text=True, capture_output=True).stdout
         self.assertEqual(pinned_baseline, baseline)
         self.assertTrue(baseline.endswith("\n"), repr(baseline))
+        self.assertNotIn("Implementation commit:", baseline)
         self.assertNotIn("## Independent Review", baseline)
         self.assertTrue(candidate.startswith(baseline))
         summary_path = branch_path / workstream._expected_summary_filename(workstream_id)

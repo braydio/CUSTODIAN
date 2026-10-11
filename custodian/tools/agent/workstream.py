@@ -24,7 +24,7 @@ from persistent_checkout_sync import ROOT_PROFILE, apply_profiles, format_result
 from task_packet_contract import (
     completion_truth_required, parse_completion_truth, parse_packet,
 )
-from review_receipt_delta import verify_review_receipt_delta
+from review_receipt_delta import read_git_text, resolve_target_implementation_commit, verify_review_receipt_delta
 
 class WorkstreamError(RuntimeError):
     pass
@@ -267,7 +267,10 @@ def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, revi
     target_file = (path / target_packet_path).resolve()
     if not target_file.is_relative_to(path.resolve()) or not target_file.is_file():
         return "paired review artifact gate cannot resolve its archived review target packet"
-    target_text = target_file.read_text()
+    try:
+        target_text = target_file.read_bytes().decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return "paired review artifact gate cannot read the reviewed packet as exact UTF-8 bytes"
     receipt = re.search(r"(?ms)^## Independent Review\s*\n(.*?)(?=^## |\Z)", target_text)
     receipt_status = re.search(r"(?m)^\s*-\s*Status:\s*`(passed|findings|human_required)`\s*$", receipt.group(1)) if receipt else None
     if not receipt_status:
@@ -284,20 +287,21 @@ def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, revi
     if not reviewed_main_match:
         return "paired review artifact gate requires the receipt's full pinned Reviewed main SHA"
     reviewed_main = reviewed_main_match.group(1)
-    baseline_result = subprocess.run(
-        ["git", "show", f"{reviewed_main}:{target_packet_path}"], cwd=path,
-        text=True, capture_output=True,
-    )
-    if baseline_result.returncode:
+    try:
+        baseline_target = read_git_text(path, reviewed_main, target_packet_path)
+    except ValueError:
         return "paired review artifact gate cannot load the receipt's pinned target baseline"
-    baseline_target = baseline_result.stdout
-    baseline_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$",
-                                baseline_target)
+    target_commit, identity_error = resolve_target_implementation_commit(
+        path, reviewed_main, target_packet_path,
+        _packet_header_value(packet_text, "Review target workstream") or "", baseline_target,
+    )
+    if identity_error:
+        return f"paired review artifact gate cannot identify the pinned implementation: {identity_error}"
     receipt_data, delta_error = verify_review_receipt_delta(
         baseline_target, target_text, review_workstream=workstream_id,
         target_workstream=_packet_header_value(packet_text, "Review target workstream") or "",
         reviewed_main=reviewed_main,
-        target_implementation_commit=baseline_commit.group(1) if baseline_commit else None,
+        target_implementation_commit=target_commit,
     )
     if delta_error:
         return f"paired review artifact gate rejects reviewed packet receipt delta: {delta_error}"

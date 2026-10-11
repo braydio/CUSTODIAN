@@ -16,7 +16,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
-from review_receipt_delta import verify_review_receipt_delta
+from review_receipt_delta import (
+    read_git_text,
+    resolve_target_implementation_commit,
+    verify_review_receipt_delta,
+)
 from workflow_control import common_dir, redact
 
 SCHEMA = "custodian.paired_review_run.v1"
@@ -41,7 +45,7 @@ def packet_at_main(repo: Path, workstream: str):
     for path in paths:
         if not path.endswith(".md") or "/archived/" in path:
             continue
-        content = git(repo, "show", f"origin/main:{path}")
+        content = read_git_text(repo, "origin/main", path)
         packet = parse_packet(path, content)
         if packet.workstream == workstream:
             matches.append((path, content, packet))
@@ -51,14 +55,35 @@ def packet_at_main(repo: Path, workstream: str):
 
 
 def current_review_authority(content: str) -> str:
-    """Return current-packet authority without its future successor handoff.
+    """Keep current review gates while excluding explicitly scoped successor gates.
 
-    Paired review packets commonly put the *next* workstream's refresh gate
-    under a top-level ``## Handoff``. That gate is evaluated only after this
-    review completes, so it must not make the current review ineligible.
+    A future handoff never gates the current review. A preceding
+    ``## Refresh Planning Authority`` section, however, remains a current
+    human gate unless it explicitly declares ``Refresh applies to: successor``
+    AND the future handoff names a real next workstream. Missing or ambiguous
+    scope fails closed.
     """
-    successor = re.search(r"(?im)^##[ \t]+(?:handoff|next handoff)[ \t]*$", content)
-    return content[:successor.start()] if successor else content
+    handoff = re.search(r"(?im)^##[ \t]+(?:handoff|next handoff)[ \t]*$", content)
+    authority = content[:handoff.start()] if handoff else content
+    if not handoff:
+        return authority
+    next_workstream = re.search(
+        r"(?im)^\s*-\s*Next workstream:\s*`?([a-z0-9-]+)`?\s*$",
+        content[handoff.start():],
+    )
+    if not next_workstream or next_workstream.group(1) == "none":
+        return authority
+
+    sections = list(re.finditer(r"(?m)^##[ \t]+[^\r\n]+$", authority))
+    for index in range(len(sections) - 1, -1, -1):
+        heading = sections[index]
+        if heading.group(0).strip().casefold() != "## refresh planning authority":
+            continue
+        end = sections[index + 1].start() if index + 1 < len(sections) else len(authority)
+        body = authority[heading.end():end]
+        if re.search(r"(?im)^\s*-\s*Refresh applies to:\s*`?successor`?\s*$", body):
+            authority = authority[:heading.start()] + authority[end:]
+    return authority
 
 
 def validate_eligible_review(repo: Path, workstream: str):
@@ -83,14 +108,20 @@ def validate_eligible_review(repo: Path, workstream: str):
 
     target_path = packet.review_target_packet
     try:
-        target_content = git(repo, "show", f"origin/main:{target_path}")
-    except RunnerError as exc:
+        target_content = read_git_text(repo, "origin/main", target_path)
+    except ValueError as exc:
         raise RunnerError("completed review target is absent from origin/main") from exc
     target = parse_packet(target_path, target_content)
     if target.kind not in {"implementation", "correction"} or target.status != "complete":
         raise RunnerError("review target must be an archived, complete implementation/correction")
     if target_path != f"{PACKET_ROOT}/archived/{Path(target_path).name}":
         raise RunnerError("review target must be in the canonical archived packet directory")
+    _, identity_error = resolve_target_implementation_commit(
+        repo, git(repo, "rev-parse", "origin/main^{commit}"), target_path,
+        packet.review_target_workstream, target_content,
+    )
+    if identity_error:
+        raise RunnerError(f"review target implementation identity is invalid: {identity_error}")
     return path, content, packet
 
 
@@ -133,13 +164,16 @@ def parse_claim_receipt(stdout: str, workstream: str, repo: Path) -> dict:
 
 
 def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: Path | None = None,
-               authoring_chat: str | None = None, reviewed_main: str | None = None) -> str:
+               authoring_chat: str | None = None, reviewed_main: str | None = None,
+               implementation_commit: str | None = None) -> str:
     validation_path = str(run_dir / "validation.json") if run_dir else "the run evidence directory's validation.json"
     backlink = f"Use this exact Authoring chat URL in the summary: {authoring_chat}" if authoring_chat else "Preserve the packet's exact Authoring chat URL in the summary."
     pinned = f"Review the immutable baseline `origin/main` at `{reviewed_main}`; report this exact SHA in the review receipt." if reviewed_main else "Record the exact immutable reviewed-main SHA in the review receipt."
+    implementation = (f"The exact reviewed implementation SHA derived from the pinned archived packet history is `{implementation_commit}`; report this exact SHA in the review receipt."
+                      if implementation_commit else "Derive the implementation SHA from the exact archived target history; do not guess or use a reviewer-supplied value without verifying it.")
     return f"""You are the fresh independent paired reviewer for CUSTODIAN workstream `{workstream}`.
 
-Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. {pinned} Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary. {backlink}
+Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. {pinned} {implementation} Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary. {backlink}
 
 This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. If the target packet needs its receipt, append exactly one `### Review Receipt: {workstream}` block under `## Independent Review` (or append that section at EOF), preserving all existing target bytes. Use this exact field layout, substituting the review packet's exact target identity and the pinned main and implementation SHAs:
 
@@ -197,14 +231,16 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
     unexpected = sorted(changed - allowed)
     if unexpected:
         raise RunnerError("reviewer changed files outside its bounded evidence scope: " + ", ".join(unexpected))
-    implementation_commit = re.search(
-        r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", target_content,
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, reviewed_main, target_packet_path, target_workstream, target_content,
     )
+    if identity_error:
+        raise RunnerError("reviewed target implementation identity is invalid: " + identity_error)
     _, receipt_error = verify_review_receipt_delta(
-        target_content, (worktree / target_packet_path).read_text(encoding="utf-8"),
+        target_content, (worktree / target_packet_path).read_bytes().decode("utf-8"),
         review_workstream=workstream, target_workstream=target_workstream,
         reviewed_main=reviewed_main,
-        target_implementation_commit=implementation_commit.group(1) if implementation_commit else None,
+        target_implementation_commit=implementation_commit,
     )
     if receipt_error:
         raise RunnerError("reviewed target failed pinned receipt-delta verification: " + receipt_error)
@@ -307,11 +343,10 @@ def expected_summary_path(workstream: str) -> str:
 
 def _show_at(repo: Path, revision: str, path: str) -> str:
     """Read one exact path from one pinned commit (never a grep result)."""
-    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
-                            text=True, capture_output=True)
-    if result.returncode:
-        raise RunnerError(redact(result.stderr or result.stdout))
-    return result.stdout
+    try:
+        return read_git_text(repo, revision, path)
+    except ValueError as exc:
+        raise RunnerError(redact(str(exc))) from exc
 
 
 def fetch_and_pin_main(repo: Path) -> str:
@@ -363,14 +398,16 @@ def landed_review_state(repo: Path, revision: str, workstream: str, review_packe
             result["reasons"].append("archived review receipt does not match the pinned reviewed main")
     if target.error or target.kind not in {"implementation", "correction"} or target.workstream != target_workstream or target.status != "complete":
         result["reasons"].append("exact reviewed implementation packet is not complete")
-    implementation_commit = re.search(
-        r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", expected_target_content,
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, reviewed_main or "", target_packet_path, target_workstream, expected_target_content,
     )
     receipt, receipt_error = verify_review_receipt_delta(
         expected_target_content, target_text, review_workstream=workstream,
         target_workstream=target_workstream, reviewed_main=reviewed_main or "",
-        target_implementation_commit=implementation_commit.group(1) if implementation_commit else None,
+        target_implementation_commit=implementation_commit,
     )
+    if identity_error:
+        result["reasons"].append(identity_error)
     if receipt_error:
         result["reasons"].append(receipt_error)
     if authoring_chat and archived.authoring_chat != authoring_chat:
@@ -382,16 +419,14 @@ def landed_review_state(repo: Path, revision: str, workstream: str, review_packe
     reviewed_commit_value = receipt.get("Reviewed implementation commit") if receipt else None
     if not reviewed_commit_value:
         result["reasons"].append("independent review receipt is absent or not passed")
-    if reviewed_commit_value:
+    if reviewed_commit_value and implementation_commit:
         commit = reviewed_commit_value
         if archived_receipt and archived_receipt.get("Reviewed implementation commit") != commit:
             result["reasons"].append("archived review receipt names a different implementation commit than target receipt")
-        target_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{40,64})`?\s*$", target_text)
-        if target_commit:
-            target_full = git(repo, "rev-parse", "--verify", f"{target_commit.group(1)}^{{commit}}", check=False)
-            review_full = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}", check=False)
-            if not target_full or target_full != review_full:
-                result["reasons"].append("review receipt names a different implementation commit than the archived target")
+        target_full = git(repo, "rev-parse", "--verify", f"{implementation_commit or ''}^{{commit}}", check=False)
+        review_full = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}", check=False)
+        if not target_full or target_full != review_full:
+            result["reasons"].append("review receipt names a different implementation commit than the archived target")
         if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo,
                           text=True, capture_output=True).returncode:
             result["reasons"].append("reviewed implementation commit is unavailable")
@@ -525,7 +560,16 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         # Pin the baseline from the claimed checkout after dispatch has finished
         # synchronizing it. Keep the SHA and target bytes fixed for the full run.
         reviewed_main = git(worktree, "rev-parse", "--verify", "origin/main^{commit}")
-        target_content = git(worktree, "show", f"{reviewed_main}:{packet.review_target_packet}")
+        try:
+            target_content = read_git_text(worktree, reviewed_main, packet.review_target_packet)
+        except ValueError as exc:
+            raise RunnerError("claimed review target is absent from its pinned main") from exc
+        implementation_commit, identity_error = resolve_target_implementation_commit(
+            worktree, reviewed_main, packet.review_target_packet,
+            packet.review_target_workstream or "", target_content,
+        )
+        if identity_error:
+            raise RunnerError("claimed review target implementation identity is invalid: " + identity_error)
         metadata.update({"phase": "claimed", "branch": receipt["branch"], "worktree": str(worktree),
                          "packet": actual_path, "codex": str(executable), "fresh": True})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
@@ -543,7 +587,8 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             exit_code = launch_codex(argv, worktree, prompt_for(workstream, actual_path,
                                       packet.review_target_packet or "", run_dir=run_dir,
                                       authoring_chat=packet.authoring_chat,
-                                      reviewed_main=reviewed_main), run_dir, timeout)
+                                      reviewed_main=reviewed_main,
+                                      implementation_commit=implementation_commit), run_dir, timeout)
         except subprocess.TimeoutExpired:
             metadata.update({"phase": "codex_timeout_recovery", "elapsed_seconds": round(time.monotonic() - started, 3),
                              "recovery_worktree": str(worktree)})
