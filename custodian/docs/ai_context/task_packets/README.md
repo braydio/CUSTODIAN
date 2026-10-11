@@ -32,6 +32,7 @@ normal closeout.
 
 <!-- task_packet_index:managed:start -->
 - `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Reject false-green Godot smoke results and invalid imported runtime resource metadata while preserving narrowly authored expected rollback errors.
+- `AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Keep heavy disposable agent scratch on disk and bound concurrent expensive Godot work across worktrees so parallel agent sessions cannot exhaust RAM.
 - `AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Expose an accurate, nonmutating workstream-finish readiness report before expensive synchronization and landing while keeping workstream.py finish authoritat...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
@@ -67,6 +68,7 @@ normal closeout.
 - `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
 - `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Independently falsify the new import/truth gate using resource failures masked by PASS markers and expected-rollback near misses.
+- `REVIEW_AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
 - `REVIEW_AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` — Independently prove baseline attribution cannot misrepresent or waive a genuine failure.
 - `REVIEW_AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Independently prove the closeout preflight is nonmutating, truthful and consistent with finish's authoritative final gates.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
@@ -86,7 +88,7 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE.md` — Independently verify the byte-exact eight-direction source-master-to-Workbench intake while preserving the zero-promotion boundary and honest per-direction e...
+- `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1.md` — Independently recheck R0-01 after the bounded timing-authority correction lands.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
@@ -119,7 +121,6 @@ normal closeout.
 - `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — Implement Twin Solaria Slice E so authorized route-review state drives a readable Solarium I observational-acquisition sequence through the Outbound/Reciproc...
 - `ULTRA_CODEX_PACKET_WORKER.md` — Bootstrap and prove a persistent, bandwidth-conservative Codex worker on the user's Ultra.cc "Speedboat Ops" seedbox that can autonomously claim explicitly e...
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — Preserve and audit the clean attached Vaultwing bonding-art worktree without losing its exact HEAD, compare its branch history with current main and the prev...
-- `VAULTWING_RUNTIME_HARDENING.md` — Harden Vaultwing-local runtime ownership after shared hearing/perception lands, without recreating species-local sensing or redesigning wild combat/bond bala...
 - `VAULTWING_WORLD_SPAWN_INTEGRITY_RECOVERY_V1.md` — Make production Vaultwing spawning track active instances and recover cleanly after removals, while accurately validating the existing production spawner node.
 - `VEHICLE_DIAGNOSIS_KNOWLEDGE_V1.md` — Add the vehicle diagnosis/reverse-engineering layer: the Operator can service-scan real vehicles, learn named mechanical domains, collect specific assembly-p...
 - `VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md` — Give the Field Scout Buggy a real Asset Pipeline V2 family and replace hover-buggy-specific vehicle post-processing with an owner/family-driven seam that sup...
@@ -220,7 +221,7 @@ Operator Workbench implementation series (WB25-1 through WB25-5 complete/accepte
 5. OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md + paired review — honest queue/dashboard and deterministic generation briefs.
 6. OPERATOR_2_5D_RUNTIME_PROMOTION.md + paired review — coherent-cohort generation cutover while preserving one runtime selector/database.
 
-WB25-1 through WB25-5 are implemented/reviewed, with WB25-5 implementation `69cdfdbf1` landed via `d4efc0234`, and fresh independent WB25-5 review `cd72b90b1` passed with zero findings (36/36 implementation changed-validation checks). The reviewed default workspace projected 69 families/552 direction slots and zero currently verified leaves/families; the one accepted idle source is not published. WB25-6 has now received its architecture planning refresh and its original implementation packet stays **draft/manual**. The current 0/552 verified remeasurement and real `full_body` 2.5D vs modular `lower_body`+`upper_body` unarmed posture runtime incompatibility bar a cutover. Seven exact unarmed neutral-motion plan families (56 directional targets) are recorded as a candidate, not yet a user-approved or fully presentation-closed production cohort. **New immediate action:** `OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE.md` is **ready/manual** for explicit claim (eight lossless source-master directions into existing Workbench, runtime untouched); its separate `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE.md` paired review is ready/auto behind implementation. This is a predecessor art-intake slice, not WB25-6 runtime promotion. Later real per-direction receipts, timing and presentation closure remain required. WB25-6 authoring/refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38.
+WB25-1 through WB25-5 are implemented/reviewed, with WB25-5 implementation `69cdfdbf1` landed via `d4efc0234`, and fresh independent WB25-5 review `cd72b90b1` passed with zero findings (36/36 implementation changed-validation checks). The reviewed default workspace projected 69 families/552 direction slots and zero currently verified leaves/families; the one accepted idle source is not published. WB25-6 has now received its architecture planning refresh and its original implementation packet stays **draft/manual**. The current 0/552 verified remeasurement and real `full_body` 2.5D vs modular `lower_body`+`upper_body` unarmed posture runtime incompatibility bar a cutover. Seven exact unarmed neutral-motion plan families (56 directional targets) are recorded as a candidate, not yet a user-approved or fully presentation-closed production cohort. **Latest intake:** `OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE.md` is complete and archived: eight lossless source-master directions are editable in Workbench, with 0 currently verified and no runtime publication. Its fresh paired review is **complete with blocking finding R0-01**: all eight exact editable documents and pixels are valid, but unapproved preview 8 FPS is currently marked as authoritative. The bounded implementation packet `OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1.md` has now been planning-refreshed to **ready/manual** for the existing workstream, and its cycle-1 paired review is **ready/auto** behind implementation. Its correction must update both new import timing provenance and actual eight existing manifest authority flags, and prevent positive sandbox/QA from producing an effective verified receipt on provisional timing. The original intake report remains historical and runtime is unchanged. This is a predecessor art-intake correction, not WB25-6 runtime promotion. Later real per-direction receipts, timing and presentation closure remain required. WB25-6 authoring/refresh chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38.
 
 The canceled kenney-orthographic-3d-feasibility and kenney-3d-to-2d-production-feasibility workstreams must not be revived.
 
@@ -345,11 +346,11 @@ Actor/facet authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME
 The architecture boundary is now approved. Hearing is a shared perception facet, not a Vaultwing-owned mechanic. The executable chain is deliberately serial:
 
 1. `archived/STEALTH_PERCEPTION_FOUNDATION.md` — P0 implementation complete and landed; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
-2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — ready/auto fresh-context paired review; no user refresh required when it passes.
-3. `VAULTWING_RUNTIME_HARDENING.md` — P1 ready/auto and dependency-gated on the reviewed stealth foundation; owns fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
-4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review and intentional stop boundary.
+2. `archived/REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review passed with no findings.
+3. `archived/VAULTWING_RUNTIME_HARDENING.md` — P1 implementation complete and landed; fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
+4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — ready/auto fresh-context paired review and intentional stop boundary.
 
-After step 4, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
+After step 4 passes, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
 
 ## Completed Bidirectional Dropbox Handoff
 

@@ -116,12 +116,13 @@ func _active_count() -> int:
 
 
 func _prune_spawned() -> void:
-	_spawned = _spawned.filter(func(creature: Node) -> bool:
+	var active: Array[Node] = []
+	for creature in _spawned:
 		if not is_instance_valid(creature) or creature.is_queued_for_deletion():
 			if is_instance_valid(creature): _log_despawn(creature, "runtime_removal")
-			return false
-		return true
-	)
+			continue
+		active.append(creature)
+	_spawned = active
 	_obs_set_gauge("active_vaultwings", _living_count())
 
 func _living_count() -> int:

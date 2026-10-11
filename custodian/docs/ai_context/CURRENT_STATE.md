@@ -2439,9 +2439,10 @@ relationship resolver separates discovery/indexing, allegiance, and dynamic
 targetability; it preserves legacy Enemy/team behavior, invalidates retained
 turret and drone targets when allegiance or targetability changes, and exposes
 Vaultwing hostile intent without coupling EngagementTracker to controller
-internals. The relationship foundation is complete; current Vaultwing work is
-bonding presentation art recovery, then production SFX and bait/global-save
-integration. Slice C companion progression remains later work.
+internals. The relationship foundation is complete. Vaultwing runtime hardening now owns
+fixed-step bond clocks, silent restored-BONDED reconciliation, semantic damage
+eligibility, and removal of unused group/field residue. Production SFX,
+bait/global-save integration, and Slice C companion progression remain deferred.
 
 Vaultwing Slice B.1 now implements the same-instance behavioral bonding loop:
 safe interruptible bait approach/observation, encounter-separated peaceful-feed
@@ -2484,7 +2485,13 @@ remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
 flight may leave the body above the camera, and body/shadow convergence is part
 of the dive telegraph. Focused validation includes `vaultwing_runtime`,
-`vaultwing_asset_contract`, and `vaultwing_world_spawn`.
+`vaultwing_asset_contract`, and `vaultwing_world_spawn`. The runtime-hardening
+slice moves bond progression clocks to the actor physics step, restores bonded
+records without replaying first-bond signals or presentation, derives damage
+eligibility from the shared relationship resolver, removes the unused
+`hostile_fauna` group and proven-dead combat fields, and hardens typed spawner
+pruning. Its focused bond/runtime/relationship/world-spawn/acoustic checks pass;
+NPA-8 remains behind the fresh-context Vaultwing review and planning refresh.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
@@ -2637,7 +2644,7 @@ workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
 filename in that 745-commit-behind checkout, so fallback discovery reports an
 explicit unavailable diagnostic instead of turning that scan failure into a
 zero. WB25-5 implementation `69cdfdbf1` landed via `d4efc0234` and its fresh paired review `cd72b90b1` passed with zero findings. The independently measured default workspace still had **0 current receipt-verified leaves / 0 verified 2.5D families** (69/552 targets, 8 projected workspace directions). WB25-6 holds independent runtime publication/promotion authority and its **refreshed draft/manual** first-cohort gate: live sync remains legacy-source-based, the Workbench still disables direct 2.5D publication, and `PUBLISHED` can only be observed after a guarded cohort switch, not required before it. No user-approved complete first production cohort or runtime 2.5D cutover is recorded.
-Follow-on current-code remeasurement with populated `CUSTODIAN-operator-art@c463a1cf` (824 commits behind the inspected `f6831452` main, neither checkout mutated) again found 0/552 current review-verified leaves, 0 verified families, no 2.5D Workbench manifests or current 2.5D receipts. Live unarmed posture `_sync_unarmed_posture()` needs `lower_body`+`upper_body` for both sectors; the accepted 128px 2.5D idle sheet/plan provides `full_body`. This is a real runtime-composition release blocker independent of missing receipt counts. A seven-family/56-direction unarmed neutral-motion candidate is recorded for user decision, **not** approved or dependency-closed. The immediate separate ready/manual `operator-2-5d-canonical-idle-workbench-intake` imports the already-accepted 1920×1024 LFS master into 8 editable current Workbench directions using specialized Asset V2 Source Session; no production runtime publication. Its review gates the subsequent WB25-4 physical QA/human timing/sandbox work.
+Follow-on current-code remeasurement with populated `CUSTODIAN-operator-art@c463a1cf` (824 commits behind the inspected `f6831452` main, neither checkout mutated) again found 0/552 current review-verified leaves, 0 verified families, no 2.5D Workbench manifests or current 2.5D receipts. Live unarmed posture `_sync_unarmed_posture()` needs `lower_body`+`upper_body` for both sectors; the accepted 128px 2.5D idle sheet/plan provides `full_body`. This is a real runtime-composition release blocker independent of missing receipt counts. A seven-family/56-direction unarmed neutral-motion candidate is recorded for user decision, **not** approved or dependency-closed. The separate `operator-2-5d-canonical-idle-workbench-intake` **landed at `26167ea6`** and produced eight exact editable 15f/128px Workbench directions (package `6854391909f3dca2ed2b`), with unchanged physical source/runtime and 0 verified/published. Its fresh paired review archived at `6a37beba` with **blocking R0-01**: imported preview `8 FPS` was incorrectly tagged authoritative though source timing is null, while WB25-4 verification currently checks physical duration without independently gating effective receipt authority. The narrowly refreshed `operator-2-5d-canonical-idle-workbench-intake-review-corrections-1` is **ready/manual** to correct future ingress, in-place eight-manifest timing flags, and effective verification; its cycle-1 fresh review is **ready/auto dependency-gated**. No human FPS is selected; WB25-6 remains held.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
@@ -2665,4 +2672,12 @@ Seven current affordance families (`support`, `terminal`, `locker`, `lift`, `por
 
 ## Awakening Gate wind / lateral stairs / generated-art disposition (2026-10-10)
 
-A user runtime observation and direct source inspection confirmed `GateWindDustWest/East` centers at `(±112,-4848)` against Gate Zone07 `Rect2(-704,-5504,1408,640)`: both lie south of the authored exterior boundary, inside the Undergate end. A bounded northward correction candidate is `(±112,-5056)`, not landed. The production Gate 1536×768 underlay visibly invites west and east stair travel, but Layout provides no west/east authored exit, branch bounds or marker; west Warden's Vigil and east Scourwind Overlook are proposed as short optional side pockets, **not approved or implemented**. Mandatory northward route stays unchanged. User rejected all ten atlas-extracted Batch 01 perimeter PNGs for obvious AI artifacting, mirrored fake seamless textures and low-resolution upscaling; no approved Asset V2 state exists as a result. Persistent disposition, owners, and QA: `design/04_architecture/AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md`. Keep artwork gates and side-stair semantics unresolved until reviewed.
+A user runtime observation and direct source inspection confirmed `GateWindDustWest/East` centers at `(±112,-4848)` against Gate Zone07 `Rect2(-704,-5504,1408,640)`: both lie south of the authored exterior boundary, inside the Undergate end. A bounded northward correction candidate is `(±112,-5056)`, not landed. The production Gate 1536×768 underlay visibly invites west and east stair travel, but Layout provides no west/east authored exit, branch bounds or marker; former named/short side pockets were rejected by user. West is now a proposed **large, hard, secret sealed lower region** with several architectural presentation concepts, potentially glimpsed right beside the Crèche spawn before its eventual Gate-west entrance; east is simply an **unnamed overlook** of the dead historical city. No unlock mechanism, branch runtime or name has been approved. Mandatory northward route stays unchanged. User rejected all ten atlas-extracted Batch 01 perimeter PNGs for obvious AI artifacting, mirrored fake seamless textures and low-resolution upscaling; no approved Asset V2 state exists as a result. Persistent disposition, owners, and QA: `design/04_architecture/AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md`. Keep artwork gates and side-stair semantics unresolved until reviewed.
+
+## Awakening west forbidden region / east unnamed overlook (2026-10-10)
+
+Exploratory presentation directions are recorded in `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md`. A sealed, much larger high-difficulty catacomb-like region should be visible surprisingly early and become a return-later destination, but **mechanics are explicitly out of scope**. The west Gate stair is in Zone07, not literally at Zone01 spawn; a separate noninteractive Crèche-side glimpse of the same deep system is an option, not a currently existing route. East stair remains deliberately unnamed, with only a view of the historical city; north prologue route unchanged. Current art/generation packet statuses are unaffected.
+
+## Awakening forbidden lower-region lore exploration: Null Warrant evidence (2026-10-10)
+
+Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 confirms Null Warrant retained records of comparable humanoid manifestations from at least one other continuity where lights/industry continued but coherent human population movements had no identifiable purpose, without an established voluntary/prisoner distinction. The user is exploring an **unconfirmed** presence/return-path arrival that repurposed an old Custodian recovery center beneath the historical city as an eerie organized-human facility. See `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md`. Five earlier west-side presentation concepts stay open; current favored synthesis is ossuary + repurposed recovery infrastructure. No canon claim that Ash-Bell witnesses, Crown, `NON-RECIPIENT` or the Severing share an entity; no new geometry, art, boss or unlock contract authorized. East remains an unnamed city overlook, north main route unchanged.

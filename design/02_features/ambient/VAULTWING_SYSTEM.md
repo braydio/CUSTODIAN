@@ -307,6 +307,10 @@ is a later balance decision. Mounted flight is explicitly deferred pending revie
 of traversal, chasms, connectors, streaming, camera, collision, vehicles, and
 progression.
 
+Bond cooldown, safe-feed dwell, and trial timing advance on the Vaultwing fixed
+simulation tick. Restoring a BONDED record reconciles allegiance and safe runtime
+state without replaying the live first-bond signal or presentation transition.
+
 ## 10. Runtime architecture
 
 Reuse the existing semantic presentation layer:

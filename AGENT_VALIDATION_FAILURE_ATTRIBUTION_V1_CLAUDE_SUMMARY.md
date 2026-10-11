@@ -15,7 +15,7 @@ The first changed-file run exposed `world_transition_handoff` failing and its de
 - `test_validation_failure_triage.py`: 10/10 passed.
 - Canonical `validation_runner` and `validation_failure_triage_unit` manifest tests: passed.
 - `world_transition_handoff`: six consecutive focused runs passed after the fix.
-- Final `run_validation.py --changed --base origin/main --json`: 34 selected, 34 passed, no skips or uncovered files.
+- Final post-sync `run_validation.py --changed --base origin/main --json`: 45 selected, 45 passed, no skips or uncovered files. The pre-sync changed-file sweep also passed 34/34.
 - `check_ai_context.py --json`, packet index, review pairing (68 pairs), Python compilation, manifest JSON parsing, and `git diff --check`: passed.
 - The earlier red report was preserved and triaged as blocking/unknown without an explicit baseline; no failure was waived.
 

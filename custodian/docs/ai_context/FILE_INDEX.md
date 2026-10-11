@@ -1367,9 +1367,10 @@ Last updated: 2026-10-02
 - `design/02_features/ambient/VAULTWING_SYSTEM.md` — locked design authority
   for the Common Vaultwing wild predator, discrete flight bands, bonding,
   companion commands, Asset V2 family, and Slice A acceptance.
-- `custodian/game/actors/ambient/vaultwing/` — Slice A Common Vaultwing actor,
-  deterministic behavior controller, semantic animation set, scene, and Slice B
-  bond-state authority; companion commands remain deferred.
+- `custodian/game/actors/ambient/vaultwing/` — Common Vaultwing actor,
+  deterministic behavior controller, semantic animation set, scene, and bond-state
+  authority; bond clocks advance on the actor fixed tick and bonded restore reconciles
+  safe state without replaying first-bond effects; companion commands remain deferred.
 - `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md`,
   `custodian/tools/validation/vaultwing_bond_smoke.gd`, and
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice
@@ -1441,3 +1442,5 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_DEFERRED_FAMILY_HANDOFF_V1.md` + paired review — ready/auto doc-only crosswalk of future transfer, civic, supply, memorial and gate ideas into actual future owner/Hub packets; no new current Awakening interactions.
 - `design/04_architecture/AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md` — first ten proposed generic perimeter images, with differentiated production prompts, dimensions, exact source/inbox paths and early three-image calibration gate; source requests only.
 - `design/04_architecture/AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md` — Gate dust-devil placement defect, real east/west stairs and optional-destination proposal, rejected 10-asset generated batch QA, and future owner/validation boundaries.
+- `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md` — user-directed west Gate secret hard underground region, five presentation-only options and visual sealing/early spawn tease; east is an unnamed city overlook, no gameplay decisions made.
+- `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md` — exploratory Null Warrant alternate-continuity population evidence and an unconfirmed occupier/repurposed Crèche ossuary concept beneath the Gate; no canonical entity or gameplay decisions.

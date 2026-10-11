@@ -19,7 +19,6 @@ var target_position_valid := false
 var strike_vector := Vector2.RIGHT
 var committed_attack_vector := Vector2.RIGHT
 var strike_hit := false
-var strike_contact_tested := false
 var retreat_vector := Vector2.RIGHT
 var perch_positions: Array[Vector2] = []
 var home_position := Vector2.ZERO
@@ -183,6 +182,38 @@ func clear_operator_hostility(operator: Node) -> void:
 	if state in [State.CIRCLE_INTEREST, State.DIVE_WINDUP, State.DIVE_STRIKE, State.CLIMB_OUT, State.RETREAT, State.PERCH_ALERT, State.GROUND_STALK, State.GROUND_ATTACK, State.BOND_APPROACH]:
 		_enter(State.GROUND_IDLE if band == Band.GROUND else State.PERCH_IDLE if band == Band.PERCHED else State.HIGH_PATROL)
 
+## Reconciles a restored bonded actor without replaying transition logs or cues.
+func reconcile_bonded_restore() -> void:
+	target = null
+	target_position = Vector2.ZERO
+	target_position_valid = false
+	_pending_after_takeoff = &""
+	_perch_approach_active = false
+	_landing_to_perch = false
+	_bond_trial_active = false
+	_bond_feeder = null
+	_bait_approach_active = false
+	_bait_feeder = null
+	_bait_inspection_active = false
+	_interaction_action = &""
+	_interaction_remaining = 0.0
+	_published_action = &""
+	strike_hit = false
+	_interest_elapsed = 0.0
+	_failed_engagement_elapsed = 0.0
+	_engagement_cooldown_remaining = 0.0
+	if actor != null:
+		actor.velocity = Vector2.ZERO
+		match band:
+			Band.GROUND: state = State.GROUND_IDLE
+			Band.PERCHED: state = State.PERCH_IDLE
+			_:
+				band = Band.HIGH
+				state = State.HIGH_PATROL
+		state_elapsed = 0.0
+		if actor.has_method("set_band_interaction"):
+			actor.call("set_band_interaction", band)
+
 func reset_bond_transient_state() -> void:
 	cancel_voluntary_bond_approach()
 	finish_bait_observation()
@@ -251,7 +282,7 @@ func step(delta: float) -> void:
 			_set_band(Band.ATTACK); actor.velocity = strike_vector * profile.dive_speed
 			if not strike_hit and state_elapsed >= 0.08 and state_elapsed <= 0.22:
 				if _hit_target_with_shape(profile.dive_damage, &"dash"):
-					strike_hit = true; strike_contact_tested = true; dive_hit_count += 1; _log_event(&"vaultwing_dive_hit", {"target": target.name if is_instance_valid(target) else ""})
+					strike_hit = true; dive_hit_count += 1; _log_event(&"vaultwing_dive_hit", {"target": target.name if is_instance_valid(target) else ""})
 			if state_elapsed >= profile.dive_strike_seconds:
 				if not strike_hit: dive_miss_count += 1; _log_event(&"vaultwing_dive_missed", {})
 				_enter(State.CLIMB_OUT)
@@ -297,7 +328,7 @@ func step(delta: float) -> void:
 		State.GROUND_ATTACK:
 			_set_band(Band.GROUND)
 			if not strike_hit and state_elapsed >= 0.12 and state_elapsed <= 0.28:
-				if _hit_target_with_shape(profile.bite_damage, &"melee"): strike_hit = true; strike_contact_tested = true
+				if _hit_target_with_shape(profile.bite_damage, &"melee"): strike_hit = true
 			if state_elapsed >= 0.52: _enter(State.GROUND_STALK if _has_valid_target() else State.GROUND_IDLE)
 		State.TAKEOFF:
 			_set_band(Band.GROUND if state_elapsed < profile.takeoff_seconds * 0.35 else Band.HIGH)
@@ -334,7 +365,7 @@ func get_state_name() -> StringName: return StringName(State.keys()[state].to_lo
 func get_band_name() -> StringName: return StringName(Band.keys()[band].to_lower())
 
 func _enter(next_state: State) -> void:
-	state = next_state; state_elapsed = 0.0; strike_hit = false; strike_contact_tested = false
+	state = next_state; state_elapsed = 0.0; strike_hit = false
 	_published_action = &""
 	if next_state not in [State.GROUND_IDLE, State.PERCH_IDLE]:
 		_interaction_action = &""

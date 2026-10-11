@@ -48,7 +48,9 @@ var _last_encounter_position := Vector2.ZERO
 var _trial_initial_distance := INF
 var last_rejection_reason: StringName = &""
 
-func _process(delta: float) -> void:
+func step(delta: float) -> void:
+	if delta <= 0.0:
+		return
 	_encounter_cooldown = maxf(0.0, _encounter_cooldown - delta)
 	if _must_separate and (
 		_last_encounter_feeder == null
@@ -269,8 +271,8 @@ func from_save_dict(data: Dictionary) -> bool:
 		actor.set("health", loaded_health)
 		if actor.has_method("set_allegiance"):
 			actor.call("set_allegiance", ActorAllegianceComponent.OPERATOR_ALLIED if stage == BONDED else ActorAllegianceComponent.HOSTILE)
-		if stage == BONDED and actor.has_method("on_bond_completed"):
-			actor.call("on_bond_completed", get_tree().get_first_node_in_group("player"))
+		if stage == BONDED and actor.has_method("reconcile_restored_bonded_state"):
+			actor.call("reconcile_restored_bonded_state")
 	_set_bonded_gauge()
 	return true
 

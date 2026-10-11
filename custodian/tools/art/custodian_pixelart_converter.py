@@ -167,6 +167,10 @@ class SheetConversionRequest:
     edge_alpha_max: int = 56
     edge_luma_min: float = 190.0
     edge_max_solid_neighbors: int = 2
+    # Crisp output preserves source palette colors unless a caller explicitly
+    # requests a palette cap. The CLI's default is `None`; keeping this separate
+    # from the balanced/clustered `colors` limit lets replay verification match it.
+    crisp_colors: int | None = None
 
 
 # =============================================================================
@@ -822,6 +826,34 @@ def prepare_sheet_frames(
 
     This is the animation-stability core of the tool.
     """
+    if frames and transform.margin == 0 and transform.scale > 0:
+        source_size = frames[0].size
+        width = round(transform.prepared_cell_size[0] / transform.scale)
+        height = round(transform.prepared_cell_size[1] / transform.scale)
+        union = transform.union_bbox
+        expected_scaled = (
+            round((union[2] - union[0]) * transform.scale),
+            round((union[3] - union[1]) * transform.scale),
+        )
+        expected_offset = (
+            round(union[0] * transform.scale),
+            round(union[1] * transform.scale),
+        )
+        if (
+            width > 0 and height > 0
+            and transform.prepared_cell_size == (width * transform.scale, height * transform.scale)
+            and source_size == (width, height)
+            and all(frame.size == source_size for frame in frames)
+            and 0 <= union[0] < union[2] <= width
+            and 0 <= union[1] < union[3] <= height
+            and transform.scaled_union_size == expected_scaled
+            and transform.destination_offset == expected_offset
+        ):
+            # The approved crop/scale/placement is mathematically the identity
+            # in source pixels. Avoid a needless Lanczos upsample/downsample,
+            # which would alter an already canonical 128px source.
+            return [frame.convert("RGBA").copy() for frame in frames]
+
     prepared: list[Image.Image] = []
     resample = choose_resample(prepare_filter)
 
@@ -865,6 +897,8 @@ def translate_frame_integer(frame: Image.Image, *, dx: int, dy: int) -> Image.Im
     if not isinstance(dx, int) or not isinstance(dy, int):
         raise ValueError("frame registration must use integer translations")
     source = frame.convert("RGBA")
+    if dx == 0 and dy == 0:
+        return source.copy()
     result = Image.new("RGBA", source.size, (0, 0, 0, 0))
     source_left, source_top = max(0, -dx), max(0, -dy)
     source_right = min(source.width, source.width - dx)
@@ -1253,7 +1287,7 @@ def convert_sheet_request(request: SheetConversionRequest) -> Image.Image:
         request.target_size,
         request.colors,
         request.alpha_cutoff,
-        crisp_colors=request.colors,
+        crisp_colors=request.crisp_colors,
         edge_cleanup=request.edge_cleanup,
         edge_alpha_max=request.edge_alpha_max,
         edge_luma_min=request.edge_luma_min,
