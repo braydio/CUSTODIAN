@@ -15,6 +15,7 @@
 - Review cycle: `1`
 - Max automatic review cycles: `2`
 - Review rationale: `Close confirmed R0-01 fail-open in the import metadata gate`
+- Findings addressed: `R0-01`
 - Reviewed main: `455392871`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Visual review: `none`
