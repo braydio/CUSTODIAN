@@ -26,7 +26,7 @@
 - Review focus: Confirm no source-master repaint/resize, no invented FPS, no alternate Generic Asset V2 family/identity, no bypass of WB25-2 Source Session/target-binding/inbox and WB25-4 current receipts, no runtime sync/catalog/SpriteFrames mutation. Confirm any blocked cells are truthfully blocked and that the review does not mark verified or PUBLISHED merely for an editable Workbench.
 - Acceptance: Findings-first, stable IDs; passed only when eight independently byte-valid direction-to-Workbench cells and untouched runtime are proven. If input unavailable or missing documents, review cannot pass; leave an explicit evidence gap or block with exact recovery condition.
 - Non-goals: Production runtime generation selection, human artistic judgments, approving unknown timing, art polish, changes to reviewed implementation.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit and push only its review receipt, this review packet's lifecycle/archive metadata, its required closing summary and bounded correction/re-review packets; do not edit the reviewed implementation.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
 ## Procedure
 
