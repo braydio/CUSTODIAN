@@ -48,10 +48,10 @@ reserved for `toggle_unarmed`.
 Run:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/controller_input_contract_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/operator_ranged_ready_input_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/controller_input_contract_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 python3 custodian/tools/validation/run_validation.py --changed --json
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --quit
 ```
 
 Moment Forge is not required for binding/prompt reachability changes that do not alter dodge or combat timing.

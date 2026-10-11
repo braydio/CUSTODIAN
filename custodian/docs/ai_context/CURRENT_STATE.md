@@ -1,5 +1,75 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Presentation Composition Doctrine (2026-10-11)
+
+The user approved **full-body-first with selective modular presentation** for
+the canonical 128px Operator, recorded under `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`.
+Normal neutral idle, ordinary locomotion and committed whole-body actions favor
+independently authored eight-direction `full_body` art. Keep
+`lower_body+upper_body` and owner-scoped weapon/FX modular presentation where
+legal concurrent locomotion and independent upper aim/fire/guard/parry require
+it, with full-body committed contact/dodge/knockdown and no separate
+head/cape revival. The `OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`
+and `custodian/AGENTS.md` inherit this approved choice.
+
+**Scope boundary:** This is an architecture lock, **not** a live generation
+change or approval of additional artwork. The 69/552 planned 2.5D targets
+remain full-body authoring baselines. Existing 96px body composition, canonical
+selector/SpriteFrames and actual runtime behavior stay unchanged. The
+independently reviewed `operator-2-5d-cohort-dependency-closure` correction
+confirms the seven-family/56-direction candidate is NOT_RELEASE_ELIGIBLE and
+all relevant 2.5D transition/preemption edges remain OPEN. New
+`operator-2-5d-composition-mode-guard-v1` with paired review is a
+fixture-only, fail-closed preflight/owner/clock/generation test slice,
+with no active 2.5D switch. WB25-6 stays `draft/manual`, now dependent
+on that guard's reviewed result in addition to timing and cohort evidence.
+
+## Operator 2.5D Cohort Dependency Closure (2026-10-11)
+
+The read-only `operator-2-5d-cohort-dependency-closure` audit is implemented
+against main `7d14aa7d`. Its deterministic report and focused regression live at
+`custodian/docs/reports/operator_presentation/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md`
+and `operator_2_5d_cohort_dependency_closure.json`. The proposed
+`unarmed_neutral_motion_v1` remains **NOT_RELEASE_ELIGIBLE**: 7 families / 56
+direction slots; only relaxed idle has 8 saved editable 2.5D directions; there
+are 0 current effective receipts, 0 verified leaves/families and 0 published
+candidate directions. Idle retains an 8 FPS / 125 ms preview with
+`timing_authority=false`; its 15-frame plan FPS remains null. Frame, loop and FPS
+contracts remain null for the other six families.
+
+The live posture consumer still resolves a modular `lower_body + upper_body`
+pair using east/west projection, while the target plan requires eight-way
+`full_body`. Locomotion normally prefers modular layers, and the runtime selector
+and generated manifest are generation-neutral. The audit traces twelve posture,
+movement, combat, equipment and completion/preemption seams; none is proven
+closed for a full-body generation switch. Keep legacy presentation active and
+WB25-6 held for cohort/timing/verification decisions. The physical artist
+checkout was readable at head `19d466e7`, 67 commits behind main, with preserved
+untracked intake inbox files; the probe did not modify it. Its eight source-strip,
+Source Session, saved-document and corrected-manifest hashes match the landed
+R0-01 evidence. If that workspace is absent on another machine, the report marks
+it `UNAVAILABLE` rather than treating missing evidence as zero.
+
+The `operator-animation-decision-authority-hardening-v1` implementation adds a
+separate explicit Workbench timing-decision record for 2.5D leaves. Generic
+animation creation, imported timing, and a changed `timing_authority` Boolean do
+not authorize a clock; only a current, exact saved-document/profile/reference/
+plan-bound decision can satisfy the timing gate. The Workbench exposes
+`PREVIEW TIMING`, `APPROVED TIMING`, and `TIMING APPROVAL STALE`. This does not
+choose FPS or approve existing idle timing, and does not alter the eight
+preserved unapproved manifests or runtime-generation policy.
+
+## Validation Scratch And Machine-Wide Job Budget (2026-10-11)
+
+Godot validation now keeps its isolated user home under the configurable,
+disk-backed `~/.cache/custodian/` scratch root by default
+(`CUSTODIAN_SCRATCH_DIR` overrides it). Project locks use a user cache namespace
+independent of `TMPDIR`, and validation holds a machine-wide counting slot in
+addition to the per-project writer lock (`CUSTODIAN_GODOT_MAX_JOBS`, default 2).
+`workstream.py status` reports scratch usage and registered RAM-backed
+worktrees, including protected status; it never cleans them. See
+`AGENT_WORKSTREAM_LIFECYCLE.md` and `VALIDATION_RECIPES.md` for details.
+
 ## Task-Packet Queue Semantics (2026-10-09)
 
 Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `blocked/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
@@ -545,7 +615,10 @@ the production Adjudication Dais selection owner, stores one typed accepted
 scenario in `HubState`, and starts the existing Contract bootstrap exactly once
 while the Hub remains active. Twin traversal retains that state. H3 implementation
 is complete and awaits its fresh-context paired review. Port deployment and
-campaign return remain deferred to H5 and H6.
+campaign return remain deferred to H5 and H6. H2 rollback now keeps Awakening
+completion latched until the failed overlap clears and validates the Operator's
+current position against the South Reach trigger, so a deferred stale
+`body_entered` callback cannot submit a second transition after rollback.
 
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 
@@ -1331,7 +1404,12 @@ Documentation updates this session:
   configuration / preflight / failure / coverage-gap exit codes. Non-excluded
   changed files without manifest ownership prevent a false-green result;
   structured `passed:false` and unexpected fatal stderr override exit zero,
-  and a failing tier skips higher-cost tiers. Import and test subprocesses have
+  and a failing tier skips higher-cost tiers. Fatal parse, script, resource-load,
+  and GDExtension diagnostics also override PASS sentinels. Expected rollback
+  errors are exact full-line patterns scoped to their owning validation test.
+  Before imports, the preflight checks checked-out LFS pointers and malformed
+  tracked PNG sidecars referenced by project text; import-dependent manifest
+  tests then load representative runtime scenes/resources. Import and test subprocesses have
   bounded process-group supervision. The shared GDScript harness
   now proves pure-resolver and Observatory-backed actor styles. Moment Forge
   supports six relational event/distance assertions plus shared dotted-path
@@ -1425,6 +1503,13 @@ Documentation updates this session:
   actor-to-projectile contract smoke is registered. NPA-7 implementation and
   validation are complete; its fresh-context paired review passed with no
   findings. NPA-8 remains gated on the required planning refresh.
+  The NPA Showcase Arena foundation adds a registered, bounded five-zone dev
+  level with a full-gameplay standalone wrapper, empty actor sockets and
+  disabled scenario roots. It adds no actor simulation or duplicate Operator,
+  controller, or camera to the production scene. Its focused smoke traverses
+  each doorway, checks perimeter collision, validates registry metadata and
+  exercises ingress/return/re-entry while retaining the same Operator fixture;
+  fresh paired review follows implementation landing.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
@@ -1799,7 +1884,7 @@ Documentation updates this session:
 
 - Combat resource/readability planning is normalized under `design/02_features/combat_feel/COMBAT_RESOURCE_AND_READABILITY_SYSTEM.md`. The in-progress umbrella records verified live state without duplicating completed feature authority: ranged ammo/heat/noise, equipment-gated sidearm behavior, core stamina/parry/guard, Field Patch healing/restock, Integrity Reclaim, vault theft, portable turrets, and allied drone V1 route to their permanent specs and Godot runtime homes. Active follow-up is production combat-pressure feedback, richer Field Patch presentation, hit taxonomy/full riposte, durability, traps, and drone logistics. The former root-level `design/COMBAT_RESOURCE_READABILITY.md` draft and its nonexistent `design/20_features/in_progress/` target are retired.
 
-- Ranged combat balance and stealth V1 is live from `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`. Operator ranged state now uses capped typed reserves and persistent per-weapon magazines, carbine/P-9 data has materially smaller ammunition supply, all ranged weapon JSON supports max range/falloff, handling, heat, and noise, projectiles expire and lose damage over distance, and sustained fire builds per-weapon heat through overheat lockout. `NoiseEventBus` is a generic autoload; gunshots publish positional events consumed by the existing enemy perception component. Behavior-enabled enemies investigate heard positions, pursue only with sight/memory, search deterministic offsets after LOS loss, and return to an authored home/leash. The main scene includes two activation-limited hostile ambient camps outside wave spawning, with a marker-driven spawner bridge available for procgen/authored maps. Canonical weapon status exposes ammo, active ranged context, heat, noise, and range while retaining legacy HUD keys. Normal-play HUDs now show an active weapon icon plus magazine/reserve count under health/stamina, falling back to melee-ready text when no ranged magazine is active. Vehicle weapons, production heat UI/audio, cover/light modifiers, and large procedural bases remain deferred.
+- Ranged combat balance and stealth V1 is live from `design/02_features/combat_feel/RANGED_COMBAT_BALANCE_AND_STEALTH_SYSTEM.md`. Operator ranged state now uses capped typed reserves and persistent per-weapon magazines, carbine/P-9 data has materially smaller ammunition supply, all ranged weapon JSON supports max range/falloff, handling, heat, and noise, projectiles expire and lose damage over distance, and sustained fire builds per-weapon heat through overheat lockout. `NoiseEvent` is typed through its factory, `NoiseEventBus`, the Operator emitter, and both current consumers. Enemy and Vaultwing use the shared `AcousticPerceptionSensor` and typed `PerceptionObservation` for source-envelope and distance evaluation while retaining their own relationship filtering and behavior policy. Behavior-enabled enemies investigate heard positions, pursue only with sight/memory, search deterministic offsets after LOS loss, and return to an authored home/leash. The main scene includes two activation-limited hostile ambient camps outside wave spawning, with a marker-driven spawner bridge available for procgen/authored maps. Canonical weapon status exposes ammo, active ranged context, heat, noise, and range while retaining legacy HUD keys. Normal-play HUDs now show an active weapon icon plus magazine/reserve count under health/stamina, falling back to melee-ready text when no ranged magazine is active. Material footsteps, acoustic occlusion, alarm networks, vehicle weapons, production heat UI/audio, cover/light modifiers, and large procedural bases remain deferred.
 
 - Procgen Intent Graph / Ascent V1 is live as the first route-first worldgen correction layer. `ProcGenTilemap.world_shape_mode` defaults to `ASCENT_FIELD`, which skips the legacy BSP/corridor/cellular cave mask as base substrate and instead builds exterior floor/wall authority from `WorldgenIntentGraph` plus `AscentFieldBuilder`: broad ascent route, switchback terraces, side pockets, sparse cliff/ruin/border blockers, vistas, and story/faction reservations. `LEGACY_CAVE` keeps the old generator path available. `get_level_data()` exports `world_shape_mode`, `worldgen_intent_graph`, `ascent_field_summary`, `main_route_cells`, `vista_cells`, and reserved regions. TerrainBuilder receives intent required cells and reserved regions, applies guarded runtime height/traversal metadata, then preserves connectivity before layering the existing ascent route, mountain, and platform passes. Faction and story reservations now claim actual floor footprints through the shared authored-scene reservation API before their placeholder markers/anchors are used. Elevation traversal query APIs are live on `ProcGenTilemap`; full Operator/enemy/vehicle pathing enforcement remains deferred.
 - CUSTODIAN Lighting System V1 is live in `res://scenes/game.tscn` as a Godot-native presentation layer under `res://game/world/lighting/`, documented in `design/02_features/lighting/CUSTODIAN_LIGHTING_SYSTEM.md` and `design/02_features/visuals/WORLD_ATMOSPHERE_SHADER_SYSTEM.md`. The main scene now owns `CanvasModulate`, `DirectionalLight2D`, `WorldLightingDirector`, the `sundered_keep_exterior` default profile, and a fullscreen world-atmosphere pass below the UI. Contract planet profiles flow through `ContractWorldLoader` into duplicated runtime lighting profiles. Generated foliage shares shrub/tree wind/visibility-bubble materials, derives spatial phase from world position, updates uniforms per shared material, and limits z-order inspection to a tile window around the player; current motion tuning is 0.70 local px for shrubs, 1.35 local px for trees, and 0.42 gust contribution. The atmosphere pass uses three fog FBM octaves, two optional cosmic octaves, and skips cosmic noise entirely at zero strength. `LightRig2D` now supports authored light/glow cookies, shadows, light height, and asymmetric scaling while retaining its generated radial fallback. Six cookies, five painted contact/cast shadows, five additional localized-contrast profiles, and an eight-frame dust shaft are live under `res://content/`; the gatehouse reference scene exercises a cold window slash, two warm braziers, three pillar casters, a gate caster, contact shadows, a darker zone, and a bright objective. Operator and grunt blob-shadow presentation consumes the painted character contact texture. The standalone `lighting_system_smoke.gd` validates both the original playground and gatehouse reference room; `world_atmosphere_smoke.gd` verifies live scene wiring, shader/profile propagation, shared foliage uniforms, UI ordering, and representative light rigs. Production placement of the new profiles/occluders beyond the reference room and manual visual/performance tuning remain deferred.
@@ -2436,9 +2521,10 @@ relationship resolver separates discovery/indexing, allegiance, and dynamic
 targetability; it preserves legacy Enemy/team behavior, invalidates retained
 turret and drone targets when allegiance or targetability changes, and exposes
 Vaultwing hostile intent without coupling EngagementTracker to controller
-internals. The relationship foundation is complete; current Vaultwing work is
-bonding presentation art recovery, then production SFX and bait/global-save
-integration. Slice C companion progression remains later work.
+internals. The relationship foundation is complete. Vaultwing runtime hardening now owns
+fixed-step bond clocks, silent restored-BONDED reconciliation, semantic damage
+eligibility, and removal of unused group/field residue. Production SFX,
+bait/global-save integration, and Slice C companion progression remain deferred.
 
 Vaultwing Slice B.1 now implements the same-instance behavioral bonding loop:
 safe interruptible bait approach/observation, encounter-separated peaceful-feed
@@ -2481,7 +2567,13 @@ remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
 flight may leave the body above the camera, and body/shadow convergence is part
 of the dive telegraph. Focused validation includes `vaultwing_runtime`,
-`vaultwing_asset_contract`, and `vaultwing_world_spawn`.
+`vaultwing_asset_contract`, and `vaultwing_world_spawn`. The runtime-hardening
+slice moves bond progression clocks to the actor physics step, restores bonded
+records without replaying first-bond signals or presentation, derives damage
+eligibility from the shared relationship resolver, removes the unused
+`hostile_fauna` group and proven-dead combat fields, and hardens typed spawner
+pruning. Its focused bond/runtime/relationship/world-spawn/acoustic checks pass;
+NPA-8 remains behind the fresh-context Vaultwing review and planning refresh.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
@@ -2634,6 +2726,7 @@ workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
 filename in that 745-commit-behind checkout, so fallback discovery reports an
 explicit unavailable diagnostic instead of turning that scan failure into a
 zero. WB25-5 implementation `69cdfdbf1` landed via `d4efc0234` and its fresh paired review `cd72b90b1` passed with zero findings. The independently measured default workspace still had **0 current receipt-verified leaves / 0 verified 2.5D families** (69/552 targets, 8 projected workspace directions). WB25-6 holds independent runtime publication/promotion authority and its **refreshed draft/manual** first-cohort gate: live sync remains legacy-source-based, the Workbench still disables direct 2.5D publication, and `PUBLISHED` can only be observed after a guarded cohort switch, not required before it. No user-approved complete first production cohort or runtime 2.5D cutover is recorded.
+Current post-R0-01 WB25-6 truth (2026-10-11): 2.5D canonical relaxed idle intake landed at `26167ea6`, producing **8 byte-exact, physical editable 15-frame/128px full_body direction Workbenches** on the dedicated `CUSTODIAN-operator-art` checkout. Original review found R0-01 (preview 8 FPS incorrectly authoritative); correction implementation `fa955e5e7` and independent cycle-1 review passed, with **only `timing_authority` set false** on all eight ignored manifests, stable Aseprite/source strip/Source Session/protected runtime hashes and **0 effective 2.5D review receipts, 0 verified families, 0 published directions**. The old intake report's accepted-master absolute path points to a removed disposable worktree; all per-direction saved/source evidence remained available and matched the independent review, which should be preferred to the stale path. `Operator2DReview.current_receipt()` now rejects unknown-timing 2.5D reviews. The seven-family / 56-direction `unarmed_neutral_motion_v1` scope is still only a proposed candidate: only its eight idle directions are editable and six other families have unknown frame/loop/FPS contracts. Live `operator.gd::_sync_unarmed_posture` and modular locomotion require or prefer legacy paired lower/upper presentation versus canonical 2.5D full_body, so runtime cutover is not established. WB25-6 remains `draft/manual`; a separate `ready/auto` read-only `operator-2-5d-cohort-dependency-closure` plus fresh review must establish the exact consumer/preemption/composition boundary before any selection of a real cohort. A human-authored FPS and current per-direction QA/sandbox proofs remain required. No code-only fixture proof authorizes a production generation switch.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
@@ -2641,14 +2734,36 @@ The nine-region generic off-route backdrop vision and 27 requested image prompts
 
 ## Awakening perimeter Batch 01 / Crèche screen-FX finding (2026-10-10)
 
-The dedicated [ten-state generic perimeter calibration batch](../../../design/04_architecture/AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) covers three 01/07/10 three-role families plus Zone 06 distant architecture; 27 planned generic states remain unfulfilled overall. The previously generated Gate/South Reach panoramic images are donor/reference art, not runtime-ingested. User review also identified Crèche activation FX apparently rendering **on the floor underneath the first computer**, not at its screen. The actual code mounts an `AnimatedSprite2D` on the logical marker `(112,144)` and does not visibly instantiate the existing published `awakening_creche_console` 128×128 idle asset, so a screen-local registered anchor and sole visible console body require production visual proof. The fix is now explicit acceptance in blocked/manual `AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1` and independent review; do not transfer responsibility to perimeter AP1, invent a second body, move gameplay markers or reauthor the 8×128 one-shot 8 FPS activation state. No live runtime fix is claimed by this note.
+The dedicated [ten-state generic perimeter calibration batch](../../../design/04_architecture/AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) covers three 01/07/10 three-role families plus Zone 06 distant architecture; 27 planned generic states remain unfulfilled overall. The previously generated Gate/South Reach panoramic images are donor/reference art, not runtime-ingested. User review identified Crèche activation FX rendering **on the floor underneath the first computer**, not at its screen. The original runtime attached the effect to the logical marker `(112,144)`. The native underlay already contains the sole visible console; its inspected screen ROI is `(572,493,27,18)` in the 960×704 source, mapping to world center `(105,118)`. The `awakening_creche_console` 128×128 idle hero remains a canonical V2 asset but is not overlaid because that would duplicate the baked console. The implementation now provides `CrecheConsoleBody/ScreenAnchor` as a named transform over that baked body and parents the unchanged 8×128, 8 FPS one-shot effect there at screen-fit scale. The Layout marker and interaction remain unchanged. Focused screen-anchor and progression smokes, Awakening art-registration smoke, pixel ROI assertion, and the changed-file sweep are the completion checks; independent paired review follows landing. Do not transfer responsibility to perimeter AP1, invent a second body, move gameplay markers or reauthor the activation state.
 
 ## Awakening interactible affordance continuation (2026-10-10)
 
-User gameplay review exposed a discoverability gap: an interactible terminal did not read as a physical use object until its prompt. The current authored Awakening scene has four live interaction owners: Crèche readout, P-9 locker, one two-station Dust Lung lift, and damaged Port status readout. Layout also has scenic/encounter/future markers; `lift_mechanism` is marked interactible without being separately built by `AwakeningFirstReturn._build_interactables()` and is queued for evidence-based kind reconciliation.
+User gameplay review exposed a discoverability gap: an interactible terminal did not read as a physical use object until its prompt. The current authored Awakening scene has four live interaction owners: Crèche readout, P-9 locker, one two-station Dust Lung lift, and damaged Port status readout. Layout also has scenic/encounter/future markers; `lift_mechanism` has been reclassified to `kind=marker` at its unchanged position because it has no separate gameplay owner.
 
-The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is now specified at `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`, with 77 artwork states in its V2 manifest (27 current-required, 14 recommended, 36 future-deferred). New artwork is **not present**. Two no-art packets (foundation owner parity/presenter and source-pending family registration) are ready/auto with their paired reviews. Crèche/Port, Locker/Lift and scenic wayfinding integrations are blocked/manual and must stay parked until exact reviewed Dropbox state inputs, verified V2 routing and predecessor reviews exist; a separate ready/auto future-owner crosswalk avoids prematurely implementing Hub/Continuity/supply/Sepulcher/gate controls. This overlay does not change existing 04→05 registered composition, 05→06 passage or gameplay route and is independent of the off-route AP0–AP4 perimeter artwork.
+The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is specified at `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`, with 77 artwork states in its V2 manifest (27 current-required, 14 recommended, 36 future-deferred). New artwork is **not present**. The no-art foundation now maps four live gameplay owners to five empty optional visual mounts. `lift_mechanism` is reconciled to `kind=marker` at its existing `(448,-2944)` placement; only `lift_lower`/`lift_upper` mount to the real lift owner. Crèche/Port, Locker/Lift and scenic wayfinding integrations remain parked until exact reviewed Dropbox state inputs, verified V2 routing and predecessor reviews exist; a separate ready/auto future-owner crosswalk avoids prematurely implementing Hub/Continuity/supply/Sepulcher/gate controls. This overlay does not change existing 04→05 registered composition, 05→06 passage or gameplay route and is independent of the off-route AP0–AP4 perimeter artwork.
 
 ## F15-B1 persistent geography identity foundation (2026-10-10)
 
-`CampaignGeographyRegistry` now provides bounded, deterministic, data-only Domain/Location/Edge identity with length-prefixed address keys, explicit reciprocal or directed adjacency, versioned seed provenance and deep-copy resolution. `CampaignVisitReference` records a distinct visit against an existing Domain without changing campaign-session lifecycle or persistence. The focused fixture covers fixed-seed registration order, repeat visits, dotted IDs, malformed topology/provenance, route/level identity separation and the no-scene-node boundary. This is only the F15-B1 identity foundation: no procedural terrain integration, physical residency, actor handoff, disk save, campaign-flow wiring, or continuous travel is implemented; independent paired review remains pending.
+`CampaignGeographyRegistry` provides bounded deterministic Domain/Location/Edge identity with length-prefixed address keys, reciprocal or directed adjacency, versioned seed provenance and defensive resolution. `CampaignVisitReference` records distinct visits without changing campaign-session lifecycle or persistence. F15-B1's fresh paired review is accepted.
+
+F15-B2 adds `CampaignGeographySemanticRegistry`, a bounded deterministic read-only sidecar keyed by the accepted B1 address. It resolves site sources through the existing F02 `LevelRegistry`, binds only declared logical B1 edges, normalizes optional Hall metadata as references, and leaves ingress `planned` until F02 supplies a real proof. Its focused smoke passes determinism, two-site mapping, domain/address separation, directed transit, atomic rejection, reference-only optional slots, and the data-only boundary. No scene staging, terrain generation, physical edge proof, residency, actor handoff, persistence, numeric world scale or continuous travel is implemented. F02 ingress/seam proof, F14-C2b locality residency and F15-C traversal remain outstanding; independent F15-B2 review is the next step.
+
+## Awakening interactible affordance Asset V2 contracts (2026-10-10)
+
+Seven current affordance families (`support`, `terminal`, `locker`, `lift`, `port`, `wayfinding`, `shared_fx`) are registered from the locked state manifest. The required-assets registry contains 27 exact open Asset V2 state targets; all remain source-pending. Fourteen recommended states remain optional and 36 future states remain outside current required demand. The machine-readable source ledger tracks batch/checksum, alpha/dimensions, pipeline, and human-approval gates; null or pending evidence does not satisfy a gate. Existing hero families remain preserved and no new image availability or gameplay owner is claimed. The Asset V2 doctor reports four designation-locker catalog hash mismatches that were present before this work; those existing catalog entries and art files were not changed.
+
+## Awakening Gate wind / lateral stairs / generated-art disposition (2026-10-10)
+
+A user runtime observation and direct source inspection confirmed `GateWindDustWest/East` centers at `(±112,-4848)` against Gate Zone07 `Rect2(-704,-5504,1408,640)`: both lie south of the authored exterior boundary, inside the Undergate end. A bounded northward correction candidate is `(±112,-5056)`, not landed. The production Gate 1536×768 underlay visibly invites west and east stair travel, but Layout provides no west/east authored exit, branch bounds or marker; former named/short side pockets were rejected by user. West is now a proposed **large, hard, secret sealed lower region** with several architectural presentation concepts, potentially glimpsed right beside the Crèche spawn before its eventual Gate-west entrance; east is simply an **unnamed overlook** of the dead historical city. No unlock mechanism, branch runtime or name has been approved. Mandatory northward route stays unchanged. User rejected all ten atlas-extracted Batch 01 perimeter PNGs for obvious AI artifacting, mirrored fake seamless textures and low-resolution upscaling; no approved Asset V2 state exists as a result. Persistent disposition, owners, and QA: `design/04_architecture/AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md`. Keep artwork gates and side-stair semantics unresolved until reviewed.
+
+## Awakening west forbidden region / east unnamed overlook (2026-10-10)
+
+Exploratory presentation directions are recorded in `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md`. A sealed, much larger high-difficulty catacomb-like region should be visible surprisingly early and become a return-later destination, but **mechanics are explicitly out of scope**. The west Gate stair is in Zone07, not literally at Zone01 spawn; a separate noninteractive Crèche-side glimpse of the same deep system is an option, not a currently existing route. East stair remains deliberately unnamed, with only a view of the historical city; north prologue route unchanged. Current art/generation packet statuses are unaffected.
+
+## Awakening forbidden lower-region lore exploration: Null Warrant evidence (2026-10-10)
+
+Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 confirms Null Warrant retained records of comparable humanoid manifestations from at least one other continuity where lights/industry continued but coherent human population movements had no identifiable purpose, without an established voluntary/prisoner distinction. The user is exploring an **unconfirmed** presence/return-path arrival that repurposed an old Custodian recovery center beneath the historical city as an eerie organized-human facility. See `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md`. Five earlier west-side presentation concepts stay open; current favored synthesis is ossuary + repurposed recovery infrastructure. No canon claim that Ash-Bell witnesses, Crown, `NON-RECIPIENT` or the Severing share an entity; no new geometry, art, boss or unlock contract authorized. East remains an unnamed city overlook, north main route unchanged.
+
+## Awakening Gate western precinct spatial proposal (2026-10-11)
+
+A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.

@@ -13,6 +13,7 @@ OPERATOR_ROOT = Path(__file__).resolve().parents[1] / "operator"
 sys.path.insert(0, str(OPERATOR_ROOT))
 
 from ui.service import WorkbenchService
+import operator_2_5d_timing_authority as timing_authority
 from ui.features.animations import AnimationFeature
 from ui.state import AnimationRecord, AnimationSelection, CanvasMigrationView, ExistingContextView, LayerView, MigrationView, PublishRow, PublishView, SessionView
 import animation_motion_preview
@@ -264,6 +265,8 @@ class PilotService:
         self.runtime_selection = None
         self.copy_calls = []
         self.migration = MigrationView("add", 3, "duplicate-prev", 6, 7, ("lower_body", "upper_body"), (("fx", "independent clock"),), "GREEN")
+        self._pending_timing_decisions = {}
+        self.timing_fixture = None
     def browser_records(self):
         self.browser_calls += 1
         if self.browser_provider is not None:
@@ -274,6 +277,28 @@ class PilotService:
             AnimationRecord(AnimationSelection("unarmed", "locomotion", "walk_01", "e"), 5, ("full_body",)),
             AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
         ]
+    def animation_queue(self, _filter="ALL"):
+        return {"rows": [], "primary_counts": {}, "next": None, "skipped_before_next": [],
+                "families": 0, "direction_slots": 0,
+                "legacy_projection": {"status": "AVAILABLE", "reason": ""},
+                "published_supported": False}
+    def timeline_clip_durations(self, _clip): return ()
+    def polish_attach(self, _selection): return self.repo_root / "timing-ui-session.json"
+    def _preview_timing_decision_from_ui(self, _selection, *, fps_text, loop_text, durations_text):
+        return WorkbenchService._preview_timing_decision_from_ui(
+            self, _selection, fps_text=fps_text, loop_text=loop_text, durations_text=durations_text)
+    def _consume_timing_decision_preview(self, selection, *, preview_token):
+        return WorkbenchService._consume_timing_decision_preview(self, selection, preview_token=preview_token)
+    @staticmethod
+    def _timing_input_hashes(inputs):
+        return WorkbenchService._timing_input_hashes(inputs)
+    def _timing_inputs(self, _selection):
+        if self.timing_fixture is None:
+            raise AssertionError("timing UI smoke lacks its isolated saved-input fixture")
+        inputs = dict(self.timing_fixture)
+        inputs["manifest"] = json.loads(inputs["manifest_path"].read_text())
+        return inputs
+    def review_family(self, *_args): return {"cells": []}
     def filter_records(self, records, query, *, show_superseded=False):
         return WorkbenchService.filter_records(records, query, show_superseded=show_superseded)
     def available_directions(self, selection): return WorkbenchService.available_directions(self, selection)
@@ -435,6 +460,26 @@ async def textual_smoke() -> None:
         assert square_input.mode == "RGBA" and square_input.tobytes() == square.tobytes()
 
     service = PilotService()
+    timing_temporary = tempfile.TemporaryDirectory(prefix="operator_timing_ui_pilot_")
+    timing_root = Path(timing_temporary.name)
+    timing_workspace = timing_root / "workbench"
+    timing_workspace.mkdir(parents=True)
+    timing_manifest = timing_workspace / "workbench.json"
+    timing_document = timing_workspace / "workbench.aseprite"
+    timing_document.write_bytes(b"isolated saved physical document")
+    timing_reference = timing_root / "reference.png"
+    Image.new("RGBA", (128, 128), (17, 34, 51, 255)).save(timing_reference)
+    timing_plan = timing_root / "plan.json"
+    timing_plan.write_text('{"fixture":"target-plan"}')
+    timing_physical = {"frames": 2, "width": 128, "height": 128, "durations": [0.125, 0.25]}
+    timing_manifest.write_text(json.dumps({"identity": {"profile": "unarmed", "group": "posture",
+        "action": "idle_relaxed_01", "direction": "n"}, "canvas": {"width": 128, "height": 128},
+        "timeline": {"preview_fps": 8, "workspace_clock_frames": 2, "document_frames": 2,
+                     "clock_owner": "full_body", "timing_authority": False}}))
+    service.timing_fixture = {"workspace": timing_workspace, "manifest_path": timing_manifest,
+        "document_path": timing_document, "physical": timing_physical, "plan_path": timing_plan,
+        "profile_sha256": "fixture-profile-sha256", "reference_sha256": timing_authority.sha256_file(timing_reference)}
+    service._timing_decision_root = timing_root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128"
     app = OperatorWorkbenchApp(
         service=service, startup=service.selection,
         live_bridge=LiveBridgeController(service.repo_root, port=0),
@@ -463,6 +508,40 @@ async def textual_smoke() -> None:
         assert service.last_selection.identity == target.identity
         print("PASS 2.5D MATRIX: matrix and tree resolve the same generation-aware selection")
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
+        app.action_mode_polish(); await pilot.pause(0.2)
+        assert app.query_one("#polish-timing-fps", Input).value == ""
+        assert app.query_one("#polish-timing-loop", Input).value == ""
+        assert app.query_one("#polish-timing-durations", Input).value == ""
+        assert app.query_one("#polish-timing-confirm", Button).disabled
+        assert "PREVIEW TIMING" in str(app.query_one("#polish-timing-status", Static).render())
+        print("PASS TIMING CONTROLS: no implied clock; confirmation begins disabled")
+        app.query_one("#polish-timing-fps", Input).value = "8"
+        app.query_one("#polish-timing-loop", Input).value = "loop"
+        app.query_one("#polish-timing-durations", Input).value = "1, 2"
+        assert not hasattr(service, "_confirm_timing_decision_from_ui")
+        preview = service._preview_timing_decision_from_ui(
+            target, fps_text="8", loop_text="loop", durations_text="1, 2")
+        service._consume_timing_decision_preview(target, preview_token=preview["token"])
+        decision_path = timing_authority.decision_path(
+            timing_root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", target)
+        assert not decision_path.exists(), "direct service preview/consume calls must be read-only"
+        assert json.loads(timing_manifest.read_text())["timeline"]["timing_authority"] is False
+        await pilot.click("#polish-timing-preview")
+        await pilot.pause(0.2)
+        assert app.query_one("#polish-timing-confirm", Button).disabled is False
+        assert "250ms" in str(app.query_one("#polish-timing-status", Static).render())
+        await pilot.click("#polish-timing-confirm")
+        await pilot.pause(0.3)
+        assert app.pending_timing_ui is None and app.query_one("#polish-timing-confirm", Button).disabled
+        assert "APPROVED TIMING" in str(app.query_one("#polish-timing-status", Static).render())
+        saved_decision = json.loads(decision_path.read_text())
+        assert saved_decision["authoring_identity"] == target.authoring_identity
+        assert saved_decision["parameters"] == {"fps": 8.0, "loop": True, "durations": [1.0, 2.0]}
+        assert timing_authority.current_decision(path=decision_path, selection=target,
+            manifest_path=timing_manifest, document_path=timing_document, physical=timing_physical,
+            plan_path=timing_plan, profile_sha256="fixture-profile-sha256",
+            reference_sha256=service.timing_fixture["reference_sha256"]) is not None
+        print("PASS TIMING UI FLOW: previewed values require a separate confirmation action")
         status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
         assert "LIVE ○ WAITING" in str(status_bar.render())
         status_bar.set_status("workbench/operator-art", False, "/bin/true", checkout="DEDICATED ART · origin/main current")

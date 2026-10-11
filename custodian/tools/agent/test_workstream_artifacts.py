@@ -1,6 +1,8 @@
 """Focused run-artifact finalization coverage for workstream lifecycle."""
 
 import importlib.util
+import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -138,6 +140,180 @@ class WorkstreamArtifactTests(unittest.TestCase):
         (asset / "candidate.png").write_bytes(b"not-a-real-png")
         with self.assertRaisesRegex(workstream.WorkstreamError, "asset-v2-source"):
             workstream.artifact_preflight("artifact-gate", self.repo)
+
+    def test_closeout_preflight_reports_incomplete_truth_index_backlink_debris_and_bad_validation(self):
+        workstream_id = "preflight-incomplete"
+        active = self.packet_root / "ACTIVE_PREFLIGHT.md"
+        active.write_text(
+            "# Active\n\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Kind: `implementation`\n"
+            "- Status: `complete`\n"
+            "- Authoring chat: `https://chatgpt.com/c/preflight`\n"
+        )
+        archived = self.archive_root / "ARCHIVED_PREFLIGHT.md"
+        archived.write_text(
+            "# Archived\n\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Kind: `implementation`\n"
+            "- Status: `complete`\n"
+            "- Authoring chat: `https://chatgpt.com/c/preflight`\n"
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `no`\n"
+            "- Acceptance satisfied: `yes`\n"
+        )
+        (self.packet_root / "README.md").write_text(
+            "# Agent Task Packets\n\n## Active Packets\n\n"
+            "### In Progress\n- `ARCHIVED_PREFLIGHT.md` - stale\n"
+            "### Recently Complete (awaiting archive)\n"
+        )
+        self.commit_all("incomplete closeout state")
+        debris = self.repo / "reports/leftover.json"
+        debris.parent.mkdir()
+        debris.write_text("{}\n")
+        invalid_report = Path(self.temp.name) / "invalid-validation.json"
+        invalid_report.write_text('{"schema":"wrong"}\n')
+
+        before_head = git(self.repo, "rev-parse", "HEAD")
+        before_refs = git(self.repo, "for-each-ref", "--format=%(refname) %(objectname)")
+        before_worktrees = git(self.repo, "worktree", "list", "--porcelain")
+        before_files = {path.relative_to(self.repo).as_posix(): path.read_bytes()
+                        for path in self.repo.rglob("*") if path.is_file() and ".git" not in path.parts}
+        report = workstream.closeout_preflight(workstream_id, self.repo, invalid_report)
+
+        self.assertFalse(report["ready_before_sync"])
+        self.assertEqual(len(report["packet_blockers"]), 1)
+        self.assertEqual(len(report["completion_truth_blockers"]), 2)
+        self.assertEqual(report["managed_index"]["stale_archived_entries"], [archived.relative_to(self.repo).as_posix()])
+        self.assertEqual(report["untracked_artifacts"], [{"path": "reports/leftover.json", "classification": "review-evidence"}])
+        self.assertEqual(report["summary"]["missing_authoring_chat_backlinks"], ["https://chatgpt.com/c/preflight"])
+        self.assertEqual(report["validation"]["integrity"], "invalid")
+        self.assertEqual(report["post_sync"]["status"], "unknown")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), before_head)
+        self.assertEqual(git(self.repo, "for-each-ref", "--format=%(refname) %(objectname)"), before_refs)
+        self.assertEqual(git(self.repo, "worktree", "list", "--porcelain"), before_worktrees)
+        after_files = {path.relative_to(self.repo).as_posix(): path.read_bytes()
+                       for path in self.repo.rglob("*") if path.is_file() and ".git" not in path.parts}
+        self.assertEqual(after_files, before_files)
+
+    def test_closeout_preflight_reports_missing_paired_review_receipt_and_provenance(self):
+        workstream_id = "review-preflight"
+        target = self.archive_root / "TARGET.md"
+        target.write_text("# Target\n\n- Workstream: `target`\n- Status: `complete`\n")
+        packet = self.archive_root / "REVIEW_PREFLIGHT.md"
+        packet.write_text(
+            "# Review\n\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Kind: `review`\n"
+            "- Status: `complete`\n"
+            "- Review target packet: `custodian/docs/ai_context/task_packets/archived/TARGET.md`\n"
+            "- Reviewer context: `fresh`\n"
+            "- Reviewer provenance: `different-agent`\n"
+        )
+        self.commit_all("review packet without receipt")
+        report = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(report["review_receipt_blockers"], [packet.relative_to(self.repo).as_posix()])
+        receipt = report["packets"][0]["review_receipt"]
+        self.assertFalse(receipt["receipt_present"])
+        self.assertEqual(receipt["reviewer_context"], "fresh")
+        self.assertEqual(receipt["reviewer_provenance"], "different-agent")
+
+    def test_closeout_preflight_is_ready_only_for_complete_committed_green_state(self):
+        workstream_id = "preflight-ready"
+        chat = "https://chatgpt.com/c/preflight-ready"
+        packet = self.archive_root / "READY_PREFLIGHT.md"
+        packet.write_text(
+            "# Ready\n\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Kind: `implementation`\n"
+            "- Status: `complete`\n"
+            f"- Authoring chat: `{chat}`\n"
+            "\n## Completion Truth\n\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Evidence: focused checks passed\n"
+        )
+        summary_name = workstream._expected_summary_filename(workstream_id)
+        (self.repo / summary_name).write_text(f"Authoring chat: {chat}\nCloseout evidence.\n")
+        self.commit_all("complete preflight state")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        git(self.repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+        git(self.repo, "update-ref", f"refs/remotes/origin/{branch}", "HEAD")
+        validation = Path(self.temp.name) / "green-validation.json"
+        validation.write_text(json.dumps({
+            "schema": "custodian.validation.result.v1",
+            "passed": True,
+            "coverage": {"complete": True},
+            "tests": [{"id": "sample", "status": "passed"}],
+        }))
+
+        report = workstream.closeout_preflight(workstream_id, self.repo, validation)
+        self.assertTrue(report["ready_before_sync"], report["blockers"])
+        self.assertEqual(report["blockers"], [])
+        self.assertTrue(report["summary"]["committed_at_head"])
+        self.assertTrue(report["validation"]["green"])
+        self.assertEqual(report["post_sync"]["status"], "unknown")
+        validation.write_text(json.dumps({
+            "schema": "custodian.validation.result.v1",
+            "passed": False,
+            "coverage": {"complete": True},
+            "tests": [{"id": "sample", "status": "failed"}],
+        }))
+        report = workstream.closeout_preflight(workstream_id, self.repo, validation)
+        self.assertFalse(report["ready_before_sync"])
+        self.assertIn("validation", [item["gate"] for item in report["blockers"]])
+
+        incomplete_reports = [
+            {"coverage": {"complete": False}},
+            {},
+            {"coverage": []},
+        ]
+        for index, coverage_fields in enumerate(incomplete_reports):
+            incomplete = {
+                "schema": "custodian.validation.result.v1",
+                "passed": True,
+                "tests": [{"id": "sample", "status": "passed"}],
+                **coverage_fields,
+            }
+            validation.write_text(json.dumps(incomplete))
+            report = workstream.closeout_preflight(workstream_id, self.repo, validation)
+            self.assertFalse(report["validation"]["green"], index)
+            self.assertFalse(report["ready_before_sync"], index)
+            self.assertIn("validation", [item["gate"] for item in report["blockers"]], index)
+
+    def test_preflight_cli_is_json_and_does_not_create_a_run_trace(self):
+        import contextlib
+        import io
+        import json
+        import sys
+        from unittest import mock
+
+        branch_path = Path(self.temp.name) / "cli-preflight-worktree"
+        git(self.repo, "worktree", "add", "-b", "agent/cli-preflight", str(branch_path), "HEAD")
+        original_cwd = Path.cwd()
+        before_worktrees = git(self.repo, "worktree", "list", "--porcelain")
+        output = io.StringIO()
+        try:
+            os.chdir(self.repo)
+            with mock.patch.object(sys, "argv", ["workstream.py", "preflight", "cli-preflight", "--json"]), \
+                 mock.patch.object(workstream.RunTrace, "start", side_effect=AssertionError("trace created")), \
+                 contextlib.redirect_stdout(output):
+                result = workstream.main()
+        finally:
+            os.chdir(original_cwd)
+        self.assertEqual(result, 0)
+        data = json.loads(output.getvalue())
+        self.assertEqual(data["schema"], "custodian.workstream.closeout_preflight.v1")
+        self.assertFalse(data["ready_before_sync"])
+        self.assertEqual(git(self.repo, "worktree", "list", "--porcelain"), before_worktrees)
 
     def test_paired_review_commits_only_authorized_artifacts_and_preserves_root_work(self):
         impl_path = self.repo / "custodian/game/reviewed_impl.py"

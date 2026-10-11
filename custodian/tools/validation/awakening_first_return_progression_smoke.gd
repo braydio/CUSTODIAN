@@ -89,15 +89,17 @@ func _check_console(awakening: Node) -> void:
 	if bool(awakening.get("opening_console_acknowledged")):
 		_fail("console reads as acknowledged before any interaction")
 	var activation := awakening.get_node_or_null(
-		"World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleActivation"
+		"World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleBody/ScreenAnchor/CrecheConsoleActivation"
 	) as AnimatedSprite2D
 	if activation == null:
 		_fail("Crèche console activation effect is missing")
 	else:
 		if activation.visible or activation.is_playing():
 			_fail("console activation effect is visible or playing before acknowledgement")
-		if activation.position != Vector2(112, 144) or activation.z_index != Layout.Z_WORLD_PROPS:
-			_fail("console activation effect drifted from the marker or world-prop layer")
+		if activation.position != Vector2.ZERO or activation.scale != Vector2.ONE * 0.13:
+			_fail("console activation effect drifted from the measured screen anchor")
+		if activation.global_position.distance_to(Vector2(112, 144)) < 16.0:
+			_fail("console activation effect remains floor-anchored at the interaction marker")
 		if activation.sprite_frames == null or activation.sprite_frames.get_frame_count(&"activate") != 8:
 			_fail("console activation effect does not have exactly eight frames")
 		elif activation.sprite_frames.get_animation_speed(&"activate") != 8.0 or activation.sprite_frames.get_animation_loop(&"activate"):
@@ -332,7 +334,7 @@ func _check_reveal_lifecycle_and_reset(awakening: Node) -> void:
 	if not bool(awakening.get("p9_recovered")):
 		_fail("debug reset falsely rewound the persistent P-9 grant")
 	var console := awakening.get_node("World/AwakeningZones/Zone01_Creche/Interactables/CrecheConsole")
-	var activation := awakening.get_node("World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleActivation") as AnimatedSprite2D
+	var activation := awakening.get_node("World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleBody/ScreenAnchor/CrecheConsoleActivation") as AnimatedSprite2D
 	if bool(console.get("is_acknowledged")) or bool(awakening.get("opening_console_acknowledged")):
 		_fail("debug reset did not rearm the Crèche console acknowledgement")
 	if activation != null and (activation.visible or activation.is_playing() or activation.frame != 0):

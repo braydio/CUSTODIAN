@@ -29,7 +29,7 @@ func _init() -> void:
 
 	var noise_bus := root.get_node_or_null("NoiseEventBus")
 	if noise_bus != null and noise_bus.has_signal("noise_emitted"):
-		noise_bus.noise_emitted.connect(func(_event: Variant) -> void: _noise_event_count += 1)
+		noise_bus.noise_emitted.connect(func(_event: NoiseEvent) -> void: _noise_event_count += 1)
 
 	var primary = operator.get("primary_weapon_definition")
 	var sidearm = operator.get("sidearm_weapon_definition")

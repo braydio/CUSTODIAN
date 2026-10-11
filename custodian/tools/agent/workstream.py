@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -68,6 +69,113 @@ def worktree_records(repo: Path) -> list[dict[str, str]]:
         key, _, value = line.partition(" ")
         current[key] = value
     return records
+
+
+def _mount_table(path: Path = Path("/proc/self/mountinfo")) -> list[dict[str, str]]:
+    """Read Linux mountinfo without shelling out or changing host state."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return []
+    mounts = []
+    for line in lines:
+        before, separator, after = line.partition(" - ")
+        fields, filesystem = before.split(), after.split()
+        if not separator or len(fields) < 5 or not filesystem:
+            continue
+        mountpoint = re.sub(r"\\([0-7]{3})", lambda match: chr(int(match.group(1), 8)), fields[4])
+        mounts.append({"mount": mountpoint, "fstype": filesystem[0]})
+    return mounts
+
+
+def _filesystem_for(path: Path, mounts: list[dict[str, str]]) -> dict[str, str] | None:
+    resolved = path.resolve()
+    matches = []
+    for mount in mounts:
+        mountpoint = Path(mount["mount"]).resolve()
+        try:
+            resolved.relative_to(mountpoint)
+        except ValueError:
+            continue
+        matches.append((len(mountpoint.parts), mount))
+    return max(matches, default=(0, None), key=lambda item: item[0])[1]
+
+
+def storage_report(
+    repo: Path,
+    *,
+    records: list[dict[str, str]] | None = None,
+    mounts: list[dict[str, str]] | None = None,
+) -> dict[str, object]:
+    """Describe RAM-backed scratch/worktrees and protected worktree state; never delete."""
+    tools_dir = Path(__file__).resolve().parents[1]
+    if str(tools_dir) not in sys.path and (tools_dir / "godot_project_lock.py").is_file():
+        sys.path.insert(0, str(tools_dir))
+    from godot_project_lock import scratch_root
+
+    mount_entries = _mount_table() if mounts is None else mounts
+    scratch = scratch_root(create=False)
+    scratch_mount = _filesystem_for(scratch, mount_entries)
+    usage_path = scratch
+    while not usage_path.exists() and usage_path != usage_path.parent:
+        usage_path = usage_path.parent
+    scratch_stats = shutil.disk_usage(usage_path)
+    scratch_record = {
+        "path": str(scratch),
+        "fstype": scratch_mount["fstype"] if scratch_mount else "unknown",
+        "mount": scratch_mount["mount"] if scratch_mount else "unknown",
+        "total_bytes": scratch_stats.total,
+        "used_bytes": scratch_stats.used,
+        "free_bytes": scratch_stats.free,
+        "ram_backed": bool(scratch_mount and scratch_mount["fstype"] in {"tmpfs", "ramfs"}),
+    }
+    protected = []
+    for record in records if records is not None else worktree_records(repo):
+        path = Path(record.get("worktree", ""))
+        mount = _filesystem_for(path, mount_entries)
+        if not mount or mount["fstype"] not in {"tmpfs", "ramfs"}:
+            continue
+        branch = record.get("branch", "detached")
+        dirty = path.exists() and not status_clean(path)
+        upstream = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+            cwd=path if path.exists() else repo, capture_output=True, text=True, check=False,
+        )
+        ahead = None
+        unpushed = upstream.returncode != 0
+        if upstream.returncode == 0:
+            counts = subprocess.run(
+                ["git", "rev-list", "--left-right", "--count", f"{upstream.stdout.strip()}...HEAD"],
+                cwd=path if path.exists() else repo, capture_output=True, text=True, check=False,
+            )
+            if counts.returncode == 0:
+                parts = counts.stdout.split()
+                ahead = int(parts[1]) if len(parts) == 2 else None
+                unpushed = ahead is None or ahead > 0
+        reasons = ["registered worktree"]
+        if branch.startswith("refs/heads/agent/"):
+            reasons.append("claimed workstream")
+            workstream_id = branch.removeprefix("refs/heads/agent/")
+            if any(
+                _packet_status(packet.read_text()) == "blocked"
+                for packet in _associated_task_packets(repo, workstream_id)
+                if packet.parent == repo / TASK_PACKET_ROOT
+            ):
+                reasons.append("blocked packet")
+        if dirty:
+            reasons.append("dirty")
+        if unpushed:
+            reasons.append("unpushed or no upstream")
+        protected.append({
+            "path": str(path), "branch": branch, "mount": mount["mount"],
+            "fstype": mount["fstype"], "dirty": dirty, "ahead": ahead,
+            "unpushed": unpushed, "protected": True, "protected_reasons": reasons,
+        })
+    return {
+        "scratch": scratch_record,
+        "ram_backed_worktrees": protected,
+        "deletions_performed": 0,
+    }
 
 
 def status_clean(path: Path) -> bool:
@@ -139,6 +247,41 @@ def _untracked_run_artifacts(path: Path) -> list[str]:
     return [entry[3:] for entry in raw.split("\0") if entry.startswith("?? ")]
 
 
+def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, review_packet: Path) -> str | None:
+    packet_text = review_packet.read_text()
+    if _packet_header_value(packet_text, "Kind") != "review" or _packet_header_value(packet_text, "Dispatch") != "auto":
+        return None
+    has_main = subprocess.run(
+        ["git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/main"], cwd=path,
+    ).returncode == 0
+    if not has_main:
+        return "paired review artifact gate cannot inspect changed paths because cached origin/main is missing"
+    try:
+        changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
+    except WorkstreamError as exc:
+        return f"paired review artifact gate cannot inspect changed paths: {exc}"
+    target_packet_path = _packet_header_value(packet_text, "Review target packet")
+    if not target_packet_path or target_packet_path not in changed_paths:
+        return "paired review artifact gate requires a committed change to the reviewed packet receipt"
+    target_file = (path / target_packet_path).resolve()
+    if not target_file.is_relative_to(path.resolve()) or not target_file.is_file():
+        return "paired review artifact gate cannot resolve its archived review target packet"
+    target_text = target_file.read_text()
+    receipt = re.search(r"(?ms)^## Independent Review\s*\n(.*?)(?=^## |\Z)", target_text)
+    receipt_status = re.search(r"(?m)^\s*-\s*Status:\s*`(passed|findings|human_required)`\s*$", receipt.group(1)) if receipt else None
+    if not receipt_status:
+        return "paired review artifact gate requires a completed Independent Review receipt"
+    artifact_contents = {
+        changed: (path / changed).read_text()
+        for changed in changed_paths
+        if changed.startswith("custodian/docs/ai_context/task_packets/") and (path / changed).is_file()
+    }
+    return paired_review_artifact_scope_error(
+        workstream_id, review_packet, packet_text, changed_paths,
+        artifact_contents=artifact_contents,
+    )
+
+
 def _artifact_class(path: str) -> str:
     normalized = path.replace("\\", "/")
     name = Path(normalized).name
@@ -175,28 +318,8 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
 
     packets = _associated_task_packets(repo, workstream_id)
     review_packet = next((packet for packet in packets if _packet_header_value(packet.read_text(), "Kind") == "review"), None)
-    if review_packet and _packet_header_value(review_packet.read_text(), "Dispatch") == "auto":
-        changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
-        target_packet_path = _packet_header_value(review_packet.read_text(), "Review target packet")
-        if not target_packet_path or target_packet_path not in changed_paths:
-            raise WorkstreamError("paired review artifact gate requires a committed change to the reviewed packet receipt")
-        target_file = (path / target_packet_path).resolve()
-        if not target_file.is_relative_to(path.resolve()) or not target_file.is_file():
-            raise WorkstreamError("paired review artifact gate cannot resolve its archived review target packet")
-        target_text = target_file.read_text()
-        receipt = re.search(r"(?ms)^## Independent Review\s*\n(.*?)(?=^## |\Z)", target_text)
-        receipt_status = re.search(r"(?m)^\s*-\s*Status:\s*`(passed|findings|human_required)`\s*$", receipt.group(1)) if receipt else None
-        if not receipt_status:
-            raise WorkstreamError("paired review artifact gate requires a completed Independent Review receipt")
-        artifact_contents = {
-            changed: (path / changed).read_text()
-            for changed in changed_paths
-            if changed.startswith("custodian/docs/ai_context/task_packets/") and (path / changed).is_file()
-        }
-        scope_error = paired_review_artifact_scope_error(
-            workstream_id, review_packet, review_packet.read_text(), changed_paths,
-            artifact_contents=artifact_contents,
-        )
+    if review_packet:
+        scope_error = _paired_review_artifact_preflight_error(workstream_id, path, review_packet)
         if scope_error:
             raise WorkstreamError(scope_error)
     active_root = (repo / TASK_PACKET_ROOT).resolve()
@@ -300,6 +423,277 @@ def _completion_truth_preflight(packets: list[Path]) -> None:
                 "finish completion-truth gate requires Goal satisfied, Completion boundary satisfied, "
                 f"and Acceptance satisfied to all be yes in {packet.name}"
             )
+
+
+def _completion_truth_report(packet: Path, text: str) -> dict[str, object]:
+    header = parse_packet(str(packet), text)
+    required = completion_truth_required(header)
+    truth = parse_completion_truth(text) if required else None
+    return {
+        "required": required,
+        "present": truth is not None,
+        "valid": (truth is not None and truth.error is None) if required else True,
+        "all_yes": truth.all_yes if truth is not None else (not required),
+        "error": truth.error if truth is not None else None,
+    }
+
+
+def _review_receipt_report(repo: Path, packet: Path, text: str) -> dict[str, object] | None:
+    if _packet_header_value(text, "Kind") != "review":
+        return None
+    target_rel = _packet_header_value(text, "Review target packet")
+    result: dict[str, object] = {
+        "target_packet": target_rel,
+        "target_exists": False,
+        "receipt_present": False,
+        "receipt_status": None,
+        "reviewer_context": _packet_header_value(text, "Reviewer context"),
+        "reviewer_provenance": _packet_header_value(text, "Reviewer provenance"),
+        "receipt_reviewer_context": None,
+        "receipt_reviewer_provenance": None,
+        "provenance_complete": False,
+        "provenance_matches_packet": False,
+    }
+    if not target_rel:
+        return result
+    target = (repo / target_rel).resolve()
+    if not target.is_relative_to(repo.resolve()) or not target.is_file():
+        return result
+    result["target_exists"] = True
+    target_text = target.read_text()
+    receipt = re.search(r"(?ms)^## Independent Review\s*\n(.*?)(?=^## |\Z)", target_text)
+    if not receipt:
+        return result
+    receipt_text = receipt.group(1)
+    status = re.search(r"(?m)^\s*-\s*Status:\s*`?(passed|findings|human_required)`?\s*$", receipt_text)
+    context = re.search(r"(?m)^\s*-\s*Reviewer context:\s*`?([^`\n]+?)`?\s*$", receipt_text)
+    provenance = re.search(r"(?m)^\s*-\s*Reviewer provenance:\s*`?([^`\n]+?)`?\s*$", receipt_text)
+    result.update({
+        "receipt_present": status is not None,
+        "receipt_status": status.group(1) if status else None,
+        "receipt_reviewer_context": context.group(1).strip() if context else None,
+        "receipt_reviewer_provenance": provenance.group(1).strip() if provenance else None,
+        "provenance_complete": bool(context and provenance),
+        "provenance_matches_packet": bool(
+            context and provenance
+            and context.group(1).strip() == _packet_header_value(text, "Reviewer context")
+            and provenance.group(1).strip() == _packet_header_value(text, "Reviewer provenance")
+        ),
+    })
+    return result
+
+
+def _validation_report_status(report: Path | None) -> dict[str, object]:
+    result: dict[str, object] = {
+        "provided": report is not None,
+        "path": str(report) if report is not None else None,
+        "exists": False,
+        "integrity": "not-provided",
+        "green": False,
+        "test_count": 0,
+        "failed_tests": [],
+    }
+    if report is None:
+        return result
+    result["exists"] = report.is_file()
+    try:
+        data = json.loads(report.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        result.update({"integrity": "invalid", "error": str(exc)})
+        return result
+    result["exists"] = True
+    if not isinstance(data, dict) or data.get("schema") != "custodian.validation.result.v1":
+        result.update({"integrity": "invalid", "error": "unexpected validation schema"})
+        return result
+    tests = data.get("tests")
+    if not isinstance(tests, list):
+        result.update({"integrity": "invalid", "error": "tests must be a list"})
+        return result
+    malformed = [item for item in tests if not isinstance(item, dict) or not isinstance(item.get("status"), str)]
+    if malformed:
+        result.update({"integrity": "invalid", "error": "each test needs a status"})
+        return result
+    failed = [item.get("id", "<unknown>") for item in tests if item.get("status") != "passed"]
+    green = _validation_data_green(data)
+    result.update({
+        "integrity": "valid",
+        "green": green,
+        "test_count": len(tests),
+        "failed_tests": failed,
+        "coverage_complete": data.get("coverage", {}).get("complete") if isinstance(data.get("coverage"), dict) else None,
+    })
+    return result
+
+
+def closeout_preflight(
+    workstream_id: str, path: Path, validation_report: Path | None = None,
+) -> dict[str, object]:
+    """Inspect finish readiness without fetching, locking, tracing, or changing Git state."""
+    validate_id(workstream_id)
+    path = path.resolve()
+    repo = root_repo(path)
+    expected_branch = branch_for(workstream_id)
+    actual_branch = git("branch", "--show-current", cwd=path)
+    clean = status_clean(path)
+    head = git("rev-parse", "HEAD", cwd=path)
+
+    packets = _associated_task_packets(repo, workstream_id)
+    packet_reports: list[dict[str, object]] = []
+    for packet in packets:
+        text = packet.read_text()
+        status = _packet_status(text)
+        archived = packet.parent.resolve() == (repo / TASK_PACKET_ARCHIVE).resolve()
+        truth = _completion_truth_report(packet, text)
+        packet_reports.append({
+            "path": packet.relative_to(repo).as_posix(),
+            "location": "archived" if archived else "active",
+            "status": status,
+            "complete": bool(status and status.startswith("complete")),
+            "completion_truth": truth,
+            "review_receipt": _review_receipt_report(repo, packet, text),
+        })
+    packet_blockers = [
+        item["path"] for item in packet_reports
+        if item["location"] == "active" or not item["complete"]
+    ]
+    truth_blockers = [
+        item["path"] for item in packet_reports
+        if item["completion_truth"]["required"] and not item["completion_truth"]["all_yes"]
+    ]
+    stale_index = [
+        item["path"] for item in packet_reports
+        if item["location"] == "archived" and _active_packet_index_mentions(repo, Path(item["path"]).name)
+    ]
+
+    summary_name = _expected_summary_filename(workstream_id)
+    summary_path = path / summary_name
+    summary_exists = summary_path.is_file()
+    summary_committed = subprocess.run(
+        ["git", "cat-file", "-e", f"HEAD:{summary_name}"], cwd=path,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    expected_urls: list[str] = []
+    for packet in packets:
+        header = parse_packet(str(packet), packet.read_text())
+        url = header.authoring_chat or header.refresh_planning_chat
+        if url and url not in {"not-recorded", "n/a"} and url not in expected_urls:
+            expected_urls.append(url)
+    summary_text = summary_path.read_text() if summary_exists else ""
+    missing_backlinks = [url for url in expected_urls if f"Authoring chat: {url}" not in summary_text]
+    summary_ok = summary_committed and (not expected_urls or (summary_exists and not missing_backlinks))
+
+    untracked = _untracked_run_artifacts(path)
+    artifact_report = [{"path": item, "classification": _artifact_class(item)} for item in untracked]
+
+    branch_remote = f"refs/remotes/origin/{expected_branch}"
+    remote_exists = subprocess.run(
+        ["git", "show-ref", "--verify", "--quiet", branch_remote], cwd=path,
+    ).returncode == 0
+    remote_head = git("rev-parse", branch_remote, cwd=path, check=False) if remote_exists else None
+    ahead = behind = None
+    if remote_exists:
+        counts = git("rev-list", "--left-right", "--count", f"HEAD...{branch_remote}", cwd=path).split()
+        ahead, behind = (int(counts[0]), int(counts[1])) if len(counts) == 2 else (None, None)
+    main_exists = subprocess.run(
+        ["git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/main"], cwd=path,
+    ).returncode == 0
+    main_head = git("rev-parse", "origin/main", cwd=path, check=False) if main_exists else None
+    main_is_ancestor = bool(main_exists) and subprocess.run(
+        ["git", "merge-base", "--is-ancestor", "origin/main", "HEAD"], cwd=path,
+    ).returncode == 0
+
+    validation = _validation_report_status(validation_report)
+    review_blockers = [
+        item["path"] for item in packet_reports
+        if item["review_receipt"] is not None and not item["review_receipt"]["receipt_present"]
+    ]
+    review_artifact_reports = []
+    for packet in packets:
+        if _packet_header_value(packet.read_text(), "Kind") != "review":
+            continue
+        error = _paired_review_artifact_preflight_error(workstream_id, path, packet)
+        review_artifact_reports.append({
+            "path": packet.relative_to(repo).as_posix(),
+            "status": "pass" if error is None else "blocked",
+            "error": error,
+        })
+    review_artifact_blockers = [item["path"] for item in review_artifact_reports if item["error"]]
+    # Local commits ahead of the published branch are expected before finish
+    # pushes them. A remote-only advance is drift because finish must reconcile it.
+    branch_ready = actual_branch == expected_branch and clean and remote_exists and behind == 0
+    blockers: list[dict[str, str]] = []
+    if actual_branch != expected_branch:
+        blockers.append({"gate": "branch", "detail": f"expected {expected_branch}, found {actual_branch or 'detached'}"})
+    if not clean:
+        blockers.append({"gate": "clean_worktree", "detail": "worktree has tracked changes"})
+    if not remote_exists:
+        blockers.append({"gate": "remote_branch", "detail": f"origin/{expected_branch} is not present in cached refs"})
+    if behind:
+        blockers.append({"gate": "branch_drift", "detail": f"local branch is {behind} commit(s) behind its published branch"})
+    blockers.extend({"gate": "task_packet", "detail": str(item)} for item in packet_blockers)
+    blockers.extend({"gate": "completion_truth", "detail": str(item)} for item in truth_blockers)
+    blockers.extend({"gate": "managed_index", "detail": str(item)} for item in stale_index)
+    blockers.extend({"gate": "untracked_artifact", "detail": str(item["path"])} for item in artifact_report)
+    if not summary_committed:
+        blockers.append({"gate": "summary", "detail": f"{summary_name} is not committed at HEAD"})
+    blockers.extend({"gate": "summary_backlink", "detail": url} for url in missing_backlinks)
+    blockers.extend({"gate": "review_receipt", "detail": str(item)} for item in review_blockers)
+    blockers.extend({"gate": "review_artifact_scope", "detail": str(item["error"])}
+                    for item in review_artifact_reports if item["error"])
+    if not validation["green"]:
+        blockers.append({"gate": "validation", "detail": "report missing, invalid, or non-green"})
+    ready = (
+        branch_ready and not packet_blockers and not truth_blockers and not stale_index
+        and not artifact_report and summary_ok and not review_blockers and not review_artifact_blockers
+        and bool(validation["green"])
+    )
+    return {
+        "schema": "custodian.workstream.closeout_preflight.v1",
+        "workstream_id": workstream_id,
+        "ready_before_sync": ready,
+        "blockers": blockers,
+        "branch": {
+            "expected": expected_branch,
+            "actual": actual_branch,
+            "head": head,
+            "clean": clean,
+            "remote_branch_exists": remote_exists,
+            "remote_head": remote_head,
+            "ahead_of_remote": ahead,
+            "behind_remote": behind,
+            "origin_main_head_cached": main_head,
+            "origin_main_is_ancestor_of_head": main_is_ancestor,
+            "drift": (actual_branch != expected_branch or not clean or not remote_exists or behind != 0),
+            "unpublished_commits": ahead,
+            "sync_required_against_cached_main": not main_is_ancestor,
+        },
+        "packets": packet_reports,
+        "packet_blockers": packet_blockers,
+        "completion_truth_blockers": truth_blockers,
+        "managed_index": {"path": (TASK_PACKET_ROOT / "README.md").as_posix(), "stale_archived_entries": stale_index},
+        "untracked_artifacts": artifact_report,
+        "summary": {
+            "path": summary_name,
+            "exists": summary_exists,
+            "committed_at_head": summary_committed,
+            "expected_authoring_chat_urls": expected_urls,
+            "missing_authoring_chat_backlinks": missing_backlinks,
+            "ready": summary_ok,
+        },
+        "review_receipt_blockers": review_blockers,
+        "review_artifact_checks": review_artifact_reports,
+        "review_provenance_warnings": [
+            item["path"] for item in packet_reports
+            if item["review_receipt"] is not None and item["review_receipt"]["receipt_present"]
+            and (not item["review_receipt"]["provenance_complete"]
+                 or not item["review_receipt"]["provenance_matches_packet"])
+        ],
+        "validation": validation,
+        "post_sync": {
+            "status": "unknown",
+            "reason": "This read-only preflight does not fetch or synchronize; latest-main merge, after-sync validation, and race-safe landing are only knowable during finish.",
+        },
+    }
 
 
 def _packet_header_value(text: str, field: str) -> str | None:
@@ -548,7 +942,14 @@ def validation_green(report: Path) -> bool:
         data = json.loads(report.read_text())
     except (OSError, json.JSONDecodeError) as exc:
         raise WorkstreamError(f"cannot read validation report {report}: {exc}") from exc
-    if data.get("schema") != "custodian.validation.result.v1" or not data.get("passed", False):
+    return _validation_data_green(data)
+
+
+def _validation_data_green(data: object) -> bool:
+    if not isinstance(data, dict) or data.get("schema") != "custodian.validation.result.v1" or not data.get("passed", False):
+        return False
+    coverage = data.get("coverage")
+    if not isinstance(coverage, dict) or coverage.get("complete") is not True:
         return False
     tests = data.get("tests", [])
     return bool(tests) and all(isinstance(test, dict) and test.get("status") == "passed" for test in tests)
@@ -819,15 +1220,48 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
+def preflight(workstream_id: str, validation_report: Path | None = None, repo: Path | None = None) -> dict[str, object]:
+    """Resolve an already-attached workstream and print a read-only readiness report."""
+    repo = (repo or root_repo()).resolve()
+    branch = branch_for(workstream_id)
+    candidates = [Path(item["worktree"]).resolve() for item in worktree_records(repo)
+                  if item.get("branch") == f"refs/heads/{branch}"]
+    path = repo if git("branch", "--show-current", cwd=repo) == branch else (candidates[0] if candidates else None)
+    if path is None:
+        raise WorkstreamError(f"preflight found no attached worktree for {branch}; no state was changed")
+    report = closeout_preflight(workstream_id, path, validation_report)
+    return report
+
+
 def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
     repo = (repo or root_repo()).resolve()
     fetch(repo)
-    for item in worktree_records(repo):
+    records = worktree_records(repo)
+    for item in records:
         branch = item.get("branch", "detached")
         if workstream_id and branch != f"refs/heads/{branch_for(workstream_id)}":
             continue
         path = Path(item["worktree"])
         print(f"{branch}\t{'clean' if status_clean(path) else 'dirty'}\t{path}")
+    report = storage_report(repo, records=records)
+    scratch = report["scratch"]
+    used = scratch["used_bytes"] / (1024 ** 3)
+    total = scratch["total_bytes"] / (1024 ** 3)
+    free = scratch["free_bytes"] / (1024 ** 3)
+    print(
+        "scratch\t%s\t%s (%s, %.2f/%.2f GiB used, %.2f GiB free)" % (
+            scratch["fstype"], scratch["path"], scratch["mount"], used, total, free,
+        )
+    )
+    for item in report["ram_backed_worktrees"]:
+        print(
+            "PROTECTED ram-backed worktree\t%s\t%s\t%s (%s)" % (
+                item["branch"], item["path"], item["fstype"], ", ".join(item["protected_reasons"]),
+            )
+        )
+    if not report["ram_backed_worktrees"]:
+        print("RAM-backed worktrees\tnone")
+    print("storage report is read-only; deletions performed: 0")
     if workstream_id:
         branch = branch_for(workstream_id)
         print(f"remote {branch}: {'present' if subprocess.run(['git','show-ref','--verify','--quiet',f'refs/remotes/origin/{branch}'],cwd=repo).returncode == 0 else 'absent'}")
@@ -848,6 +1282,7 @@ def main() -> int:
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
+    p = subs.add_parser("preflight"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--json", action="store_true")
     subs.add_parser("gc")
     args = parser.parse_args()
     try:
@@ -856,6 +1291,13 @@ def main() -> int:
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)
         elif args.command == "finish": finish(args.workstream_id, args.validation_report, args.validation_report_after_sync)
+        elif args.command == "preflight":
+            result = preflight(args.workstream_id, args.validation_report)
+            if args.json:
+                print(json.dumps(result, sort_keys=True, indent=2))
+            else:
+                print(f"closeout preflight: {'READY' if result['ready_before_sync'] else 'BLOCKED'} (before final sync)")
+                print(json.dumps(result, sort_keys=True, indent=2))
         else: gc()
         return 0
     except WorkstreamError as error:

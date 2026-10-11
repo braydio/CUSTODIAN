@@ -28,6 +28,34 @@ func _run() -> void:
 	await physics_frame
 	vaultwing.global_position = Vector2.ZERO
 	player.global_position = Vector2(120.0, 0.0)
+	if vaultwing.is_in_group("hostile_fauna"):
+		_fail("Vaultwing retained the unused hostile_fauna compatibility group")
+	if not Relationship.are_hostile(player, vaultwing):
+		_fail("wild hostility depended on hostile_fauna membership")
+	var wild_damage_result: Dictionary = vaultwing.take_damage_from(0.0)
+	if not bool(wild_damage_result.get("eligible_hostile", false)):
+		_fail("wild hostile damage result was not reclaim-eligible")
+
+	# Bond clocks advance only from explicit simulation steps.
+	var clock_probe = BondState.new()
+	root.add_child(clock_probe)
+	clock_probe.configure(vaultwing)
+	clock_probe._encounter_cooldown = 1.0
+	await process_frame
+	await process_frame
+	if not is_equal_approx(clock_probe._encounter_cooldown, 1.0):
+		_fail("bond clock advanced from idle process frames")
+	clock_probe.step(0.25)
+	if not is_equal_approx(clock_probe._encounter_cooldown, 0.75):
+		_fail("explicit bond simulation step did not advance cooldown")
+	clock_probe.queue_free()
+	vaultwing.get_bond_state()._encounter_cooldown = 0.5
+	await physics_frame
+	await physics_frame
+	if vaultwing.get_bond_state()._encounter_cooldown >= 0.5:
+		_fail("Vaultwing physics spine did not advance bond clocks")
+	vaultwing.get_bond_state()._encounter_cooldown = 0.0
+
 	vaultwing.behavior.force_state(VaultwingBehaviorController.State.GROUND_IDLE)
 	vaultwing.request_interaction_presentation(&"bond_greet", 0.8)
 	vaultwing.behavior.step(0.01)
@@ -144,10 +172,18 @@ func _run() -> void:
 	player.global_position = vaultwing.global_position + Vector2(54.0, 0.0)
 	var before_bond_health: float = vaultwing.health
 	var seed_state_before_bond: int = vaultwing.behavior._rng.state
+	var live_bond_signals := {"completed": 0, "stage_changed": 0}
+	bond_state.bond_completed.connect(func() -> void: live_bond_signals["completed"] += 1)
+	bond_state.stage_changed.connect(func(_previous: StringName, _current: StringName) -> void: live_bond_signals["stage_changed"] += 1)
 	if not vaultwing.complete_bond_trial(&"vaultwing_bait", player): _fail("valid final direct feed did not complete trial")
 	if vaultwing.behavior._interaction_action != &"bond_greet": _fail("bond completion did not request bond_greet")
 	if vaultwing.get_bond_stage() != BondState.BONDED: _fail("valid trial did not reach BONDED")
+	if live_bond_signals["completed"] != 1 or live_bond_signals["stage_changed"] != 1:
+		_fail("live first bond did not emit its transition signals exactly once")
 	if vaultwing.get_allegiance() != ActorAllegianceComponent.OPERATOR_ALLIED: _fail("bonded Vaultwing did not become Operator-allied")
+	var bonded_damage_result: Dictionary = vaultwing.take_damage_from(0.0)
+	if bool(bonded_damage_result.get("eligible_hostile", true)):
+		_fail("bonded allied damage result remained reclaim-eligible")
 	if vaultwing.get_instance_id() != actor_id or vaultwing.behavior.get_instance_id() != behavior_id: _fail("bonding replaced the actor or behavior controller")
 	if vaultwing.health != before_bond_health or vaultwing.health > health_before: _fail("bonding unexpectedly reset or changed health")
 	if vaultwing.behavior.target == player: _fail("bond completion retained Operator as hostile target")
@@ -183,8 +219,19 @@ func _run() -> void:
 	player.global_position = restored.global_position + Vector2(120.0, 0.0)
 	if not restored.offer_bait(&"vaultwing_bait", player): _fail("restore fixture could not start transient feed attempt")
 	restored.behavior._remember_target(player.global_position, player)
+	restored.behavior.force_state(VaultwingBehaviorController.State.GROUND_ATTACK)
+	restored.request_interaction_presentation(&"bond_greet", 0.8)
+	var restore_signals := {"completed": 0, "stage_changed": 0}
+	restored.get_bond_state().bond_completed.connect(func() -> void: restore_signals["completed"] += 1)
+	restored.get_bond_state().stage_changed.connect(func(_previous: StringName, _current: StringName) -> void: restore_signals["stage_changed"] += 1)
 	if not restored.from_save_dict(saved): _fail("valid bond save did not restore")
 	if restored.get_bond_stage() != BondState.BONDED or restored.get_allegiance() != ActorAllegianceComponent.OPERATOR_ALLIED: _fail("restored save lost stage/allegiance")
+	if restored.get_bond_state().bond_value != bond_state.bond_value or restored.get_bond_state().peaceful_feed_count != bond_state.peaceful_feed_count: _fail("restore did not preserve durable bond values")
+	if restore_signals["completed"] != 0 or restore_signals["stage_changed"] != 0: _fail("restore replayed first-bond transition signals")
+	if restored.behavior._interaction_action != &"" or restored.get_state() != VaultwingBehaviorController.State.GROUND_IDLE: _fail("restore replayed bond presentation or retained unsafe behavior state")
+	if restored.is_in_group("hostile_fauna"): _fail("restored Vaultwing relied on hostile_fauna membership")
+	var restored_damage_result: Dictionary = restored.take_damage_from(0.0)
+	if bool(restored_damage_result.get("eligible_hostile", true)): _fail("restored bonded damage result remained reclaim-eligible")
 	if restored.health != vaultwing.health or restored.max_health != vaultwing.max_health: _fail("save restore did not preserve health values")
 	if restored.get_bond_state().is_feed_attempt_active() or restored.get_bond_state().is_bond_trial_active(): _fail("restore retained transient feed/trial state")
 	if restored.behavior.target == player or restored.behavior.target_position_valid: _fail("bonded restore retained Operator hostility")

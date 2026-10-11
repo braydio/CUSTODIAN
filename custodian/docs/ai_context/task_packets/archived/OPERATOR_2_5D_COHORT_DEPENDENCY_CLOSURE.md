@@ -1,0 +1,102 @@
+# OPERATOR 2.5D RELEASE COHORT DEPENDENCY CLOSURE AUDIT
+
+- Packet schema: custodian.task_packet.v2
+- Workstream: operator-2-5d-cohort-dependency-closure
+- Status: complete
+- Dispatch: auto
+- Priority: P1
+- Depends on: review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
+- Locks: operator-runtime-animation, operator-art-generation-schema
+- Kind: implementation
+- Review: auto
+- Review stage: post-land
+- Review modes: code, architecture, runtime, workflow
+- Paired review workstream: review-operator-2-5d-cohort-dependency-closure
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Review rationale: multi-owner runtime reachability/closure and evidence trust
+- Reviewed main: eff74f4164e46fac2abb5dc91fdbfee6b601d429
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Visual review: none
+- Goal: Produce a reproducible, current-main, **read-only** dependency/consumer closure report for the first possible Operator 2.5D runtime release, separating existing editable art and unknown timing from actually eligible runtime families, without approving or publishing a cohort.
+- Completion boundary: Add one bounded deterministic probe plus durable JSON/Markdown decision evidence that derive the unarmed neutral-motion target set and its actual composition/transition edges from current target/reachability and live presenter/selector code. Identify the smallest **candidate** dependency-closed switch scope, all blockers, required follow-on art/clock/behavior seams, and objective tests. Return the evidence to WB25-6 planning; do not change policy, production presentation or art.
+- Current measured state: The v2 plan projects 69 families/552 directions; proposed `unarmed_neutral_motion_v1` has 7 exact plan families × 8 directions = 56 leaves (idle relaxed/ready, two posture transitions, locomotion idle/walk/run). Only `unarmed/posture/idle_relaxed_01/full_body` has a resolved 15×128×128 frame contract and eight exact editable direction documents. The other six families have `frames=null`, `loop=null`, `fps=null` in plan. Corrected original idle Workbenches have 8 FPS preview, `timing_authority=false`, no current effective review receipts, 0/8 verified directions and 0 runtime publication. Correction commit `fa955e5e7` passed independent cycle-1 review, with protected runtime unchanged. The 8-direction source master SHA is `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`; historical report's absolute master path refers to a retired disposable checkout, so use current actual direction-strip/Source Session/Workbench proof, report master as unavailable if still absent.
+- Evidence: `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`, `custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_correction_1.json`, `design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json`, `custodian/content/data/operator/operator_animation_reachability.json`; live `operator.gd::_sync_unarmed_posture` requires the lower_body/upper_body pair and caller-owned east/west projection; `_sync_modular_locomotion_layers` also normally favors modular rendering. New 2.5D idle provides one `full_body` layer in eight directions. Runtime sync `tools/pipelines/sync_operator_runtime_assets.py::scan_sources` still scans legacy Operator and weapon sources, and `Operator2DReview.current_receipt()` now refuses preview-only timing authority.
+- Task-specific authority: `OPERATOR_2_5D_RUNTIME_PROMOTION.md` is release policy; v2 target plan for exact canonical identities/layers; live `OperatorAnimationSelector`, `operator.gd`, `UnarmedPosturePresentation`, `OperatorBodyPresenter`, `OperatorPresentationController`, generated catalog/manifest, `Operator2DReview.current_receipt()` and queue projections for evidence; Asset Pipeline V2 for any *future* art. No report may become an alternative runtime or timing authority.
+- Work surface: a small read-only probe under `custodian/tools/validation/` or `custodian/tools/operator/` plus focused smoke/manifest ownership, `reports/operator_presentation/operator_2_5d_cohort_dependency_closure.json`, `reports/operator_presentation/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md`; bounded roadmap/current-state notes. **No edits** to `operator.gd`, presenter, selector, animation plan, policy, source/runtime PNG, Aseprite document, Workbench manifest, receipt, catalog, SpriteFrames, or timings.
+- Change:
+  1. Inspect live caller→selector→presenter identities for the seven exact unarmed neutral-motion families. Derive each plan target's eight directions, required layers, known frame/loop/FPS contracts, current authoring/source/effective review state and actual gameplay consumers; do not treat generic plan targets as proven runtime availability. Include manifest/catalog presence separately.
+  2. Trace both ways across idle relaxed↔ready, both transitions, locomotion idle↔walk↔run, and **incoming/outgoing preemption** from guard/parry/dodge, melee, ranged, equip/sheathe and action completion. Record consumer names, actual sector resolution, any missing/ambiguous edges, body composition owner, weapon/socket/FX concerns and where an unconverted legacy layer would reappear.
+  3. Distinguish requested 8-direction art authority from legacy e/w posture projection, and `full_body` canonical 2.5D from `lower_body+upper_body` runtime requirements. Do not assume a hypothetical full-body mode has landed. Explicitly classify family/edge as `CLOSED`, `OPEN`, or `UNKNOWN` with machine-checkable reason and source path or test. The seven-family proposal is a starting candidate, **not** presumed closed; document needed additions or why no finite small release exists without a new presentation-composition seam.
+  4. Create deterministic JSON with schema `custodian.operator_2_5d_cohort_dependency_closure.v1`: investigated main SHA, observed checkout/workspace availability and evidence SHA/status; candidate ID and exact plan set; per family direction/layer/clock/receipt/manifest coverage; keyed transition/preemption edges and classification/evidence; external consumer boundaries; blocking vs advisory gaps; recommended **next bounded implementation/art/QA steps** and status `NOT_RELEASE_ELIGIBLE` until actual human decision and effective receipts exist. Markdown summarises the same JSON. Optional unreadable ignored art workspace becomes `UNAVAILABLE` with reason, never fake 0 or synthesize records.
+  5. Include objective negative controls: canonical idle with 8 saved strips but `timing_authority=false` cannot become `runtime_verified`, seven planned families alone cannot prove a closed gameplay graph, and legacy lower/upper rendering does not count as the 2.5D full-body presentation. A source/plan manifest change or stale report must invalidate or visibly qualify results. Use already existing reachability graph and runtime smokes, not an independent runtime selector.
+- Preserve: All user artist edits, original source and correction receipts, intended 8-direction visual contract and null timing, 96px runtime behavior, source/manifest/catalog/SpriteFrames hashes and locks, worktree isolation, existing gameplay consumers and state transitions.
+- Non-goals: No art generation/import/edit, frame or FPS approval, `timing_authority` mutation, human release choice, direct WB25-4 QA/sandbox review closure, runtime policy, new SpriteFrames, alternate runtime code, WB25-6 implementation or promotion, visual judgment.
+- Acceptance: (A) Report regenerates deterministically from current evidence and explicitly marks checkout limits; (B) all seven named plan families / 56 directions appear with correct layers and unknown timing, all missing effective receipts stay unverified; (C) each idle/motion/transition/preemption consumer seam has a grounded closed/open/unknown classification and cites actual implementation/test authority; (D) full-body vs modular pair and e/w vs eight-direction mismatch cannot be declared closed without a proven composition path; (E) no real generation flip is recommended as eligible before human chosen cohort + authoritative timing + complete current receipts; (F) no source/runtime/artwork/manifests/policy/selector or ignored workspace bytes change; (G) independent fresh review can reproduce enough of the consumer graph and invalidation gates to falsify a false positive.
+- Validation: focused new pure analysis/regression smoke first; `python3 custodian/tools/validation/operator_animation_targets_smoke.py`, `operator_workbench_production_queue_smoke.py`, `operator_2_5d_review_smoke.py`, `operator_runtime_animation_authority_smoke.py`; targeted Godot `operator_unarmed_posture_smoke.gd` and `operator_modular_layers_smoke.gd` only where required for concrete runtime edge evidence, with import cache preflight and serialized Godot lock. Validate generated JSON consistency and protected paths; register test owners in `validation_manifest.json`, run `run_validation.py --changed --json`, AI-context/packet index checks, `git diff --check`. Avoid a full Godot sweep for a read-only report.
+- Task overrides: none
+- Deferred: Human choice of actual release cohort, explicit timing approval for idle, current physical QA and runtime sandbox receipts, production-generation switching and rollback: all remain gated in WB25-6.
+
+## Handoff
+
+- Next workstream: operator-2-5d-runtime-promotion
+- Next packet state: draft/manual; refresh-required before any production activation
+- Refresh owner: chatgpt-user
+- ChatGPT/user planning refresh required: yes
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Summary backlink: include exact Authoring chat URL
+- Refresh reason: closure evidence must identify actual required cohort/consumer boundaries; artist timing, release scope and verification still need human decisions.
+- Next action: Return regenerated closure report and explicit missing-source/QA/timing/transition list to the recorded authoring chat for a bounded decision. Do not claim WB25-6 merely because the report lands.
+- Blockers or open questions: No selected production FPS or approved cohort, and no current effective verified idle leaves.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: Deterministic probe and smoke produce `custodian.operator_2_5d_cohort_dependency_closure.v1` for main `7d14aa7d697ad39696d873c1547092e6f2acb3f4`. The report derives seven exact plan families / 56 directions, all eight physical idle direction manifests/documents/source strips/Source Sessions, current `Operator2DReview.current_receipt()` results for all 56 leaves, generation-neutral runtime manifest/catalog coverage, and twelve open transition/preemption seams. It records 8 editable idle directions, 0 effective receipts/verified leaves/families and 0 candidate publications; idle preview timing remains 8 FPS with `timing_authority=false`; six families retain null frame/loop/FPS. Posture's live lower/upper modular pair plus east/west projection is explicitly incompatible with the candidate's eight-way full-body requirement. Runtime/art/policy/source/manifest/receipt/SpriteFrames/presentation owners were not modified.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: First direct review-sandbox smoke timed out after 90 seconds on the cold worktree import cache; the report's initial file audit also found the physical authoring checkout dirty with preserved untracked source inbox files and 67 commits behind origin/main.
+- Root cause / contributing factors: Fresh Godot worktrees require editor import/class initialization before the sandbox smoke. The populated art checkout deliberately carries untracked source intake and Workbench evidence and had not been synchronized to current main.
+- Prevention / pipeline improvement: Run serialized `run_validation.py` import preflight before direct sandbox execution. Treat external source/workspace checkout state as observed evidence and do not sync, stage, or rewrite its artist-owned/untracked files.
+- Tooling / docs drift discovered: none
+- Follow-up: review-operator-2-5d-cohort-dependency-closure
+- What worked: The report uses the live review receipt authority instead of plan/source completion, records hashes for the complete source evidence set, and keeps candidate closure fail-closed.
+
+## Next Handoff
+- Next workstream: review-operator-2-5d-cohort-dependency-closure
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Refresh reason: none
+- Next action: Run the fresh-context paired review; after it passes, return the evidence to the authoring chat before refreshing or claiming WB25-6.
+- Blockers or open questions: WB25-6 remains draft/manual pending human cohort/timing decisions and complete current verified evidence.
+
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-cohort-dependency-closure`
+- Reviewed on main: `2ffbbec13d55a939096750d059602ea56047cae3`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: 0
+- Material evidence gaps: 1
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Focused validation: `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json` — PASS; smoke exit 0, 12.3s.
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-2-5d-cohort-dependency-closure-review-corrections-1`

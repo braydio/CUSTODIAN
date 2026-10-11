@@ -1,6 +1,6 @@
 # OPERATOR 2.5D RUNTIME PROMOTION — COHORT-SAFE GENERATION SWITCH
 
-> **PLANNING REFRESH / HOLD (2026-10-10; main@84c7eb1f).** WB25-5 implementation and fresh independent review are complete/passed. WB25-6 is deliberately `draft/manual`: the review checkout measured **0 effectively verified 2.5D leaves and 0 verified families**, so there is **no release-eligible production cohort** and no human-approved first production cutover. This refresh specifies the runtime architecture and falsification gates; it does not authorize an empty or partial 2.5D promotion.
+> **POST-COHORT-AUDIT COMPOSITION DECISION / HOLD (2026-10-11):** The reviewed source-grounded cohort-closure audit and correction confirm the proposed seven-family/56-direction candidate is **NOT_RELEASE_ELIGIBLE**. The user has **approved the full-body-first, selectively modular composition doctrine** as an architectural design policy, not approved an actual runtime cohort, asset timing, or generation switch. A separate fixture-only composition guard/review is now the dependency for this release. WB25-6 stays `draft/manual` and legacy remains live.
 >
 > Distinguish **capability implementation with synthetic fixtures** from a **real runtime-generation policy change**. Do not claim this original WB25-6 promotion packet or set it ready merely because its fixture-only technology can be implemented. An independently approved preparatory slice, if later chosen, must keep all live policy entries on `legacy_96`.
 
@@ -9,7 +9,7 @@
 - Status: draft
 - Dispatch: manual
 - Priority: P1
-- Depends on: review-operator-2-5d-workbench-production-queue
+- Depends on: review-operator-2-5d-workbench-production-queue, review-operator-2-5d-cohort-dependency-closure, review-operator-animation-decision-authority-hardening-v1, review-operator-2-5d-composition-mode-guard-v1
 - Locks: operator-runtime-animation, operator-art-generation-schema, operator-workbench-publish
 - Kind: implementation
 - Review: auto
@@ -19,13 +19,13 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
-- Reviewed main: 84c7eb1f8a2ee8c2e4936b9df9afa8ea7e1672d1
+- Reviewed main: eff74f4164e46fac2abb5dc91fdbfee6b601d429
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: conditional
 - Goal: Safely select one coherent, fully reviewed Operator 2.5D authoring generation for a genuinely complete gameplay presentation cohort, keeping all existing semantic runtime identities and one runtime database, with exact preview, publication and rollback evidence.
 - Completion boundary: Add a fail-closed runtime generation-policy/preflight and a transactionally staged, reversible source-to-runtime promotion through existing sync, runtime-manifest, catalog and SpriteFrames owners; implement live publication-state reporting. **Actual promotion is permitted only for an explicitly chosen, currently verified, complete release cohort.** Fixture-only proof cannot satisfy a real art release. Preserve the existing selector and runtime layout.
-- Current measured state: WB25-5 implementation `69cdfdbf1` landed via `d4efc0234`; independent paired review `cd72b90b1` passed with zero findings and its complete packet/summary are archived on main. Review checkout's `WorkbenchService.animation_queue("ALL")` returned **69 families / 552 directions, 4 P0 / 65 P1, 0 effectively receipt-verified leaves / 0 verified families, 8 workspace directions** and NEXT `unarmed/posture/idle_relaxed_01/n`. These are workspace-scoped; ignored source documents/receipts elsewhere must be remeasured on execution, not assumed absent or zero. Only one plan family has resolved frame count (15 frames, 128×128 body, loop true, FPS unknown); 68 remain frame-count unresolved. The accepted `unarmed/posture/idle_relaxed_01` 8-direction source is not 2.5D intake, verified runtime art, or a promoted cohort. `WorkbenchService.publish_preview()` explicitly disables direct 2.5D runtime publication and the WB25-5 queue sets `publication="NOT_SUPPORTED_BY_WB25_5"`, `published_supported=False`. Live runtime sync still reads legacy `source/animations` and weapon-owned sources; the builder emits one manifest and one SpriteFrames; the selector does exact then scoped temporary SOUTH fallback. No generation policy or real 2.5D runtime cutover exists.
-- Evidence: `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` and `custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` (passed receipt); `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` (36/36 changed checks); `ui/service.py::animation_queue`, `publish_preview`; `operator_2_5d_review.py::current_receipt/family`; `operator_animation_targets.py::project_targets`; `tools/pipelines/operator_asset_schema.py::canonical_source_path/canonical_runtime_path`; `tools/pipelines/sync_operator_runtime_assets.py::scan_sources/validate_sources/synchronize_runtime/remove_superseded_runtime/build_runtime_manifest/build_animation_catalog/sync`; `build_operator_runtime_frames.gd`; `operator_animation_selector.gd`; `OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`.
+- Current measured state: Live v2 target plan remains **69 families / 552 directions**, **4 P0 / 65 P1**. Recommended but unapproved `unarmed_neutral_motion_v1` contains 7 families × 8 directions = **56 slots**; only relaxed idle has a resolved 15f/128px/full_body contract, and the other six families have unknown frame count/loop/FPS. Original idle intake `26167ea6` and correction `fa955e5e7` both landed and passed fresh review. The independently checked artist workspace has **8 exact saved editable idle directions** at preview 8 FPS / 125 ms with `timing_authority=false`, **0 effective review receipts, 0 verified families, 0 published directions**. The historical intake report's absolute master path is stale (removed disposable worktree); direction strips, Source Sessions and Workbenches match their recorded SHA. Protected runtime hashes are unchanged. `Operator2DReview.current_receipt()` rejects non-authoritative timing. `WorkbenchService.publish_preview()` still blocks direct 2.5D publication; `sync_operator_runtime_assets.py::scan_sources()` still scans legacy Operator and weapon-owned source trees. Live `operator.gd::_sync_unarmed_posture()` requires modular `lower_body+upper_body` with e/w sector projection and locomotion normally favors modular layers, while canonical 2.5D idle is 8-way `full_body`. No runtime generation policy, 2.5D cutover, approved FPS or dependency-closed human release cohort is recorded.
+- Evidence: `OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`, `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`, `custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_correction_1.json`, `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` and `custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` (passed receipt); `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` (36/36 changed checks); `ui/service.py::animation_queue`, `publish_preview`; `operator_2_5d_review.py::current_receipt/family`; `operator_animation_targets.py::project_targets`; `tools/pipelines/operator_asset_schema.py::canonical_source_path/canonical_runtime_path`; `tools/pipelines/sync_operator_runtime_assets.py::scan_sources/validate_sources/synchronize_runtime/remove_superseded_runtime/build_runtime_manifest/build_animation_catalog/sync`; `build_operator_runtime_frames.gd`; `operator_animation_selector.gd`; `OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`.
 - Task-specific authority: the v2 69-family plan for directions, layers and resolved contracts; exact `Operator2DReview.current_receipt()` and `family()` for effective current verification, including Workbench-bound human/QA/sandbox proof; existing Source Session and Asset Pipeline V2 for untrusted art intake; `operator_asset_schema.py` for generation-aware authoring paths but generation-neutral runtime semantic identity; existing runtime sync/manifest/catalog/SpriteFrames and `OperatorAnimationSelector` as one execution authority. Runtime policy MUST NOT become a second review/progress store.
 - Work surface: `custodian/content/data/operator/authoring/operator_art_generation_policy.json` only after verified first-cohort selection, with conservative absent/default legacy behavior; focused policy/orchestration helper under `custodian/tools/pipelines/` if warranted; `sync_operator_runtime_assets.py`, `operator_asset_schema.py` only for bounded policy-derived source selection; unchanged `build_operator_runtime_frames.gd` if possible; `custodian/tools/operator/ui/service.py` for read-only active-generation/publication truth; focused runtime policy/sync/rollback/selector smokes and authoritative runtime docs. Scope weapon-owned paths only if a chosen cohort actually includes them; never silently reroute them to Operator body generation.
 - Change:
@@ -52,9 +52,59 @@ WB25-2 Source Session ends at an **editable saved Workbench**, not production; W
 
 ## Cohort decision record and earliest feasible route
 
-**Actual chosen first production cohort: NOT YET CHOSEN.** The prior example `unarmed_core` (relaxed/ready idle, walk/run and their transitions) was illustrative, not an accepted dependency-closed release scope. Do not author its policy as `operator_2_5d_128` until a fresh state-machine/selector consumer graph proves the required transition closure and the user approves its precise members. The single authored `unarmed/posture/idle_relaxed_01` family is a useful **test fixture/intake starting point only**, not a coherent independently releasable live gameplay cohort. Other P0 targets include `melee_1h/locomotion/run_01`, `melee_1h/locomotion/walk_01`, and `melee_1h/posture/idle_ready_01`; the three latter frame contracts remain unresolved in the plan.
+**Actual chosen first production cohort: NOT YET CHOSEN.** **Recommended candidate for user approval: `unarmed_neutral_motion_v1`**, the exact seven v2 target families `unarmed/posture/idle_relaxed_01`, `unarmed/posture/idle_ready_01`, `unarmed/transition/relaxed_to_ready_01`, `unarmed/transition/ready_to_relaxed_01`, `unarmed/locomotion/idle_01`, `unarmed/locomotion/walk_01`, and `unarmed/locomotion/run_01`. Each family has N/NE/E/SE/S/SW/W/NW full-body targets, **56 direction targets total**. Only relaxed idle is accepted and **8/56 candidate directions are now editable in the artist Workbench**; the other **48 directions lack accepted canonical authoring art**, and the post-correction art evidence records **0 effective review receipts and 0 published directions**. Idle timing is intentionally unapproved. The other six proposed families have unresolved frame/loop/FPS contracts. This is a **planning production candidate, not a closed runtime dependency graph**; the release remains held until exact reachable seam/transition/weapon-owner evidence and human approval. The prior example `unarmed_core` (relaxed/ready idle, walk/run and their transitions) was illustrative, not an accepted dependency-closed release scope. Do not author its policy as `operator_2_5d_128` until a fresh state-machine/selector consumer graph proves the required transition closure and the user approves its precise members. The single authored `unarmed/posture/idle_relaxed_01` family is a useful **test fixture/intake starting point only**, not a coherent independently releasable live gameplay cohort. Other P0 targets include `melee_1h/locomotion/run_01`, `melee_1h/locomotion/walk_01`, and `melee_1h/posture/idle_ready_01`; the three latter frame contracts remain unresolved in the plan.
+
+### Approved Operator body-composition direction
+
+The user explicitly chose **selective modularity (2026-10-11)**. Follow
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`:
+canonical 2.5D relaxed/ready idle, ordinary no-upper-action motion and
+committed full-body actions remain author-authored `full_body` by
+default; use separate lower locomotion + upper aim/fire/guard/parry only
+where legal concurrent movements need independent facing or progress;
+weapons/FX remain separate owner-scoped overlays. The 69/552
+`full_body` baseline plan **does not** certify that all future 2.5D
+runtime presentations can be full-body-only. Additional split-layer
+128px authoring targets require gameplay need and explicit reviewed
+source/timing/art acceptance; no machine-created half-bodies or global
+catalog conversion. A full-body idle alone cannot satisfy a legacy
+`lower_body+upper_body` consumer.
+
+WB25-6 **must consume the independent**
+`operator-2-5d-composition-mode-guard-v1` and its fresh review;
+this proves fail-closed plan/clock/owner behavior using isolated
+fixtures, **not** a production switch. On a future proposed
+128px cohort, the generation-coherent actor handoff must prevent any
+mixed 96px/128px body layers, incompatible root/sector/clock or
+unpaired upper/lower/weapon/FX, with complete preflight before retiring
+an existing body. The existing `OperatorBodyPresenter`,
+`OperatorPresentationController`, `OperatorAnimationSelector`
+and one SpriteFrames authority remain sole owners. The reviewed cohort
+report still has OPEN transitions and external preemption edges;
+neither a selected design doctrine nor an empty set of physically
+approved animation leaves closes them. Existing legacy 96px
+moving guard/ranged split and committed authored animations must not
+regress.
+
+### Live body-layer incompatibility discovered at the planning refresh
+
+The approved 2.5D plan and source master represent `unarmed/posture/idle_relaxed_01` as **full_body**. But current `operator.gd::_sync_unarmed_posture` insists on **both `lower_body` and `upper_body`** through `OperatorAnimationSelector`, using `UnarmedPosturePresentation` east/west projection, not the 8-direction canonical full-body clip. `operator.gd::_sync_modular_locomotion_layers` likewise normally prefers layered movement before falling back to full-body animation. Therefore merely copying the accepted full-body 128px idle into the existing runtime path would **not necessarily change the live visible posture** and could create 96px/128px visual alternation. WB25-6 must resolve **one** generation-consistent presentation composition path within `OperatorPresentationController` / `OperatorBodyPresenter`, retaining the existing selector and one SpriteFrames DB. It must explicitly prove ordinary stationary↔moving and relaxed↔ready handoff, ranged/melee/guard/action preemption, layer ownership and weapon socket continuity. A proposed full-body rendering mode is not automatically approved; do not silently manufacture lower/upper layers from the body PNG.
+
+### Completed predecessor art intake and correction
+
+`operator-2-5d-canonical-idle-workbench-intake` landed at `26167ea6`. Its fresh review found R0-01, fixed by correction implementation `fa955e5e7` and independently reviewed clean. Eight 1920×128 source strips and eight saved 15f/128px Aseprite direction workspaces are independently pixel-exact; the only existing manifest field corrected was `timing_authority`. Preserve original/correction evidence and artist workspaces; do not repeat intake, overwrite ignored documents, or treat their 8 FPS physical preview as production timing. The original intake report's source-master absolute path is stale because that disposable checkout was removed; current per-direction evidence is valid. The next independent `operator-2-5d-cohort-dependency-closure` audit reconstructs actual consumer/transition/composition boundaries without art or runtime writes. Separately, the user must choose authoritative idle timing using a supported authoring workflow, then obtain real per-direction WB25-4 QA/sandbox receipts. Nothing from this predecessor alone makes WB25-6 ready.
 
 Prior to a claim on this original promotion packet, bring an objective evidence record: (i) `animation_queue("ALL")` all-rows count, real verified family IDs and per-direction current effective receipts on the intended execution checkout, (ii) exact existing live source-art files, Workbench manifests, editable documents and physical frame/timing proofs, (iii) candidate reachability/dependency closure and all layers per action, (iv) human-selected precise cohort, and (v) a negative-control dry run demonstrating no runtime mutation when a leaf is unavailable. A missing/empty proof cannot be converted into a default choice. A fixture-only infrastructure precursor, if deliberately split into a separate reviewed packet later, must leave the production policy entirely legacy.
+
+## Independent decision-authority prerequisite
+
+`operator-animation-decision-authority-hardening-v1` and its fresh paired review now explicitly guard the trust distinction between 2.5D preview values, human-authorized timing parameters, current physical Workbench evidence and effective verification. That packet adds explicit timing-decision provenance and regression tests while preserving the eight original unapproved idle records and all protected runtime outputs. It is a **prerequisite to WB25-6 implementation eligibility**, not an automatic timing choice or an independent release authorization. The separate read-only cohort closure audit remains independently executable.
+
+## Completed read-only cohort dependency closure (not promotion)
+
+`operator-2-5d-cohort-dependency-closure` and its paired review/correction have landed. The corrected independently reviewed report at `custodian/docs/reports/operator_presentation/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md` finds the seven-family candidate NOT_RELEASE_ELIGIBLE. It reconstructs available owner evidence for posture/locomotion and explicitly marks guard/parry/dodge/melee/ranged/equip/action-return paths OPEN where consumer closure is not proven. It did not modify art or runtime; the legacy production generation remains active.
+
+In parallel, an explicit human-authored timing decision is needed for the 15-frame idle. **No numeric FPS is approved:** the 8 FPS preview is neither a timing proposal nor authorization. An approved saved physical document and provenance-safe timing owner must be established before any leaf can pass `current_receipt()` and WB25-4 sandbox verification. Never flip `timing_authority` manually to manufacture approval.
 
 ## Proposed policy contract (schema sketch, not a production activation)
 
@@ -78,7 +128,7 @@ Objective pixel/grid and manifest/selector checks precede visual review. Only if
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
-- Refresh instruction: Architecture and WB25-5 review refreshed on 2026-10-10; real 2.5D verification is still 0/0 in the independently reviewed workspace and there is no coherent user-selected production cohort. Re-enter this chat with **new live effective family receipts**, chosen release-scope closure and exact source/clock evidence. Decide whether the WB25-6 packet may then promote to ready/auto; only after targeted paired authoring preflight, managed-index regeneration, safe main landing and dispatcher checks. Do not claim draft/manual or invent a cohort.
+- Refresh instruction: Updated on 2026-10-11 after the completed, reviewed cohort-dependency-closure report and explicit user-approved full-body-first selective-modularity doctrine. Before any ready/promotion decision consume the completed independent `review-operator-2-5d-composition-mode-guard-v1` and real generation-coherent consumer closure; bring exact unresolved family/guard/parry/dodge/melee/ranged/equipment edges to the recorded authoring chat. Re-measure `animation_queue("ALL")` and `current_receipt()` in the populated persistent art checkout; bring user-approved authoritative idle timing/physical authoring proof, complete per-direction QA/sandbox verification, resolved additional action frame/clock contracts and an explicit user-approved actual production cohort. Only then consider promoting WB25-6 from draft/manual via targeted authoring preflight. No fixture-only evidence or 8 FPS default may authorize production.
 
 ## Handoff
 

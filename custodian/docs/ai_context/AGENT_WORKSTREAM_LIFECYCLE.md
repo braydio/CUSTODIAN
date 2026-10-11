@@ -36,6 +36,23 @@ Existing task state requires the explicit recovery command after inspection:
 python3 custodian/tools/agent/workstream.py resume <workstream-id>
 ```
 
+Before closeout, an attached workstream can preview the locally knowable finish
+gates without changing Git or lifecycle state:
+
+```bash
+python3 custodian/tools/agent/workstream.py preflight <workstream-id> \
+  --validation-report <green-validation.json> --json
+```
+
+The report checks packet/archive state, literal Completion Truth, authoring-chat
+backlinks, managed-index residue, untracked artifacts, review receipts and
+provenance, branch drift, and the supplied validation report. It uses cached
+refs only: it does not fetch, create a trace, take the workflow lock, synchronize,
+or alter files/refs/worktrees. `post_sync.status` is always `unknown`; latest-main
+synchronization, any required after-sync validation, and landing are still
+proved only by `workstream.py finish`. A ready preview is guidance to attempt
+finish, never evidence that the task landed.
+
 `resume` preserves dirty checkouts and only proceeds with a clean attached
 checkout or an explicitly selected published `origin/agent/<id>` branch. A
 remote claim without that branch is interrupted recovery state; ordinary
@@ -219,7 +236,14 @@ The default continuation rule is:
    `--sandbox` flag. Write access is added only for its
    `.git/custodian-review-runs/...` evidence directory. Do not directly claim
    the review in the implementation context or ask the user to relay the packet.
-   The runner returns the durable review summary
+   The fresh reviewer writes bounded evidence and a green validation report but
+   does not fetch, stage, commit, push, checkpoint, or finish. The coordinator
+   pins `origin/main`, checks exact archived packet/receipt/summary identity,
+   stages only authorized review artifacts, and completes the existing
+   `workstream.py finish` lifecycle outside the restricted reviewer process.
+   A failed fetch or incomplete receipt remains recoverable and never counts as
+   completion. A later invocation refuses to make another dispatcher claim while
+   prior post-claim run evidence remains unresolved. The runner returns the durable review summary
    and its `Next Handoff`; continue from that exact handoff. A crash after claim
    preserves the branch/worktree and run evidence for recovery.
 6. Repeat this loop through ready implementation, review, correction, and
@@ -442,6 +466,13 @@ archive-tags unique history before deleting the branch. Protected refs cannot
 be deleted. Archive tags use
 `archive/<sanitized-branch>-<YYYYMMDD>` and are recorded in
 `BRANCH_ARCHIVE.md`.
+
+`workstream.py status` also prints a read-only storage report. Validation scratch
+defaults to `~/.cache/custodian/` (override with `CUSTODIAN_SCRATCH_DIR`), and
+the isolated Godot home is stored under that root. The report identifies
+registered worktrees whose mount is `tmpfs` or `ramfs` and lists protected
+reasons such as claimed workstream, dirty state, and unpushed commits. It reports
+scratch filesystem usage and never removes worktrees, scratch, or evidence.
 
 For an explicitly operator-approved stale `agent/*` ref, use the repeatable
 `--retire-approved BRANCH=SHA` option with the exact reviewed remote head. This

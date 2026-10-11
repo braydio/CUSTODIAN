@@ -55,6 +55,28 @@
       "needs_import": true
     },
     {
+      "id": "campaign_geography_semantic_site",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_geography_semantic_site_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "geography",
+        "semantic_site",
+        "determinism",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/geography/campaign_geography_registry.gd",
+        "custodian/game/world/geography/campaign_geography_semantic_registry.gd",
+        "custodian/game/world/geography/campaign_visit_reference.gd",
+        "custodian/game/world/levels/level_definition.gd",
+        "custodian/game/world/levels/level_registry.gd",
+        "custodian/tools/validation/campaign_geography_semantic_site_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "world_simulation_abstract_activity",
       "type": "godot_script",
       "script": "res://tools/validation/world_simulation_abstract_activity_smoke.gd",
@@ -1615,9 +1637,27 @@
         "custodian/tools/godot_project_lock.py",
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/pipelines/sync_operator_runtime_assets.py",
-        "custodian/tools/validation/godot_project_lock_smoke.py"
+        "custodian/tools/validation/godot_project_lock_smoke.py",
+        "custodian/tools/agent/workstream.py"
       ],
       "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "scratch_storage_report",
+      "type": "python",
+      "script": "custodian/tools/validation/scratch_storage_report_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "tooling",
+        "agent_workflow",
+        "concurrency"
+      ],
+      "owners": [
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/validation/scratch_storage_report_smoke.py"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {
@@ -1800,7 +1840,8 @@
         "custodian/tools/pipelines/runtime_ready_assets.py",
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/validation/run_world_simulation_migration_suite.sh",
-        "custodian/tools/validation/godot_import_preflight_smoke.py"
+        "custodian/tools/validation/godot_import_preflight_smoke.py",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 15,
       "needs_import": false
@@ -1847,7 +1888,8 @@
         "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/content/data/operator/generated/operator_animation_catalog.generated.json",
-        "custodian/tools/validation/operator_animation_timing_smoke.py"
+        "custodian/tools/validation/operator_animation_timing_smoke.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -1980,6 +2022,25 @@
         "custodian/tools/validation/field_patch_smoke.gd"
       ],
       "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "validation_failure_triage_unit",
+      "type": "python",
+      "script": "custodian/tools/validation/test_validation_failure_triage.py",
+      "tier": "unit",
+      "tags": [
+        "validation",
+        "failure_attribution",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/validation/validation_failure_triage.py",
+        "custodian/tools/validation/test_validation_failure_triage.py",
+        "custodian/tools/validation/run_validation.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 20,
       "needs_import": false
     },
     {
@@ -3896,6 +3957,70 @@
       "needs_import": false
     },
     {
+      "id": "authored_level_ingress_return",
+      "type": "godot_script",
+      "script": "res://tools/validation/authored_level_ingress_return_smoke.gd",
+      "tier": "integration",
+      "tags": ["authored_level", "ingress", "return", "operator_identity"],
+      "owners": [
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored_level_2d.gd",
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/world/routes/route_traversal_manager.gd",
+        "custodian/game/world/procgen/ingress/world_ingress_site.gd",
+        "custodian/tools/validation/authored_level_ingress_return_smoke.gd",
+        "custodian/tools/validation/helpers/authored_level_lifecycle_fixture.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "level_registry_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/level_registry_contract_smoke.gd",
+      "tier": "unit",
+      "tags": ["authored_level", "registry", "scene_contract"],
+      "owners": [
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/level_definition.gd",
+        "custodian/game/world/levels/level_registry.gd",
+        "custodian/tools/validation/level_registry_contract_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "npa_showcase_arena_foundation",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
+      "tier": "integration",
+      "tags": ["npa", "authored_level", "walkability", "ingress", "return"],
+      "owners": [
+        "custodian/content/levels/dev/npa_showcase_arena/**",
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/**",
+        "custodian/tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
+        "design/05_levels/NPA_SHOWCASE_ARENA.md"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "world_ingress_physics_reentry",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_ingress_physics_reentry_smoke.gd",
+      "tier": "integration",
+      "tags": ["world_ingress", "physics", "reentry", "return_guard"],
+      "owners": [
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/world/procgen/ingress/world_ingress_site.gd",
+        "custodian/tools/validation/world_ingress_physics_reentry_smoke.gd",
+        "custodian/tools/validation/helpers/authored_level_lifecycle_fixture.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "world_ingress_spawner",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_spawner_smoke.gd",
@@ -4596,13 +4721,58 @@
       "owners": [
         "custodian/game/world/awakening/**",
         "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_first_return_progression_smoke.gd",
         "custodian/game/world/interactions/world_readout_interactable.gd",
         "custodian/game/world/home/sidearm_locker_interactable.gd",
         "custodian/game/actors/props/sidearm_locker.tscn",
         "custodian/game/world/camera.gd"
       ],
       "timeout_sec": 120,
-      "needs_import": false
+      "needs_import": true
+    },
+    {
+      "id": "awakening_creche_console_screen_anchor",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_creche_console_screen_anchor_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "interaction",
+        "presentation",
+        "screen_anchor"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_creche_console_screen_anchor_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
+      "id": "awakening_interactible_affordance_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_interactible_affordance_contract_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "interaction",
+        "presentation",
+        "marker_owner_parity"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/awakening/awakening_interactible_affordance_presenter.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_interactible_affordance_contract_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
     },
     {
       "id": "world_transition_handoff",
@@ -5337,6 +5507,33 @@
       "needs_import": false
     },
     {
+      "id": "perception_acoustic_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/perception_acoustic_contract_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "stealth",
+        "perception",
+        "noise",
+        "enemy",
+        "vaultwing"
+      ],
+      "owners": [
+        "custodian/game/systems/stealth/noise_event.gd",
+        "custodian/game/systems/stealth/noise_event_bus.gd",
+        "custodian/game/systems/stealth/perception_observation.gd",
+        "custodian/game/systems/stealth/acoustic_perception_sensor.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/enemies/components/enemy_perception_component.gd",
+        "custodian/game/actors/ambient/vaultwing/vaultwing_behavior_controller.gd",
+        "custodian/tools/validation/perception_acoustic_contract_smoke.gd",
+        "custodian/tools/validation/ranged_combat_balance_smoke.gd",
+        "custodian/tools/validation/combat_resource_feedback_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "actor_relationship_contract",
       "type": "godot_script",
       "script": "res://tools/validation/actor_relationship_contract_smoke.gd",
@@ -5345,7 +5542,8 @@
         "combat",
         "relationship",
         "targetability",
-        "vaultwing"
+        "vaultwing",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/actors/core/actor_allegiance_component.gd",
@@ -5355,10 +5553,15 @@
         "custodian/game/actors/defense/**",
         "custodian/game/systems/drone/**",
         "custodian/game/systems/combat/engagement_tracker.gd",
-        "custodian/tools/validation/actor_relationship_contract_smoke.gd"
+        "custodian/tools/validation/actor_relationship_contract_smoke.gd",
+        "custodian/game/actors/ambient/vaultwing/vaultwing.tscn",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png.import",
+        "custodian/tools/validation/known_headless_warnings.json",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "vaultwing_runtime",
@@ -5371,7 +5574,8 @@
         "determinism",
         "combat",
         "flight",
-        "presentation"
+        "presentation",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/actors/ambient/vaultwing/**",
@@ -5379,10 +5583,15 @@
         "custodian/game/actors/ambient/ambient_creature_presentation_controller.gd",
         "custodian/game/systems/spawning/vaultwing_spawner.gd",
         "custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json",
+        "custodian/game/actors/ambient/vaultwing/vaultwing.tscn",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png",
+        "custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/*.png.import",
+        "custodian/tools/validation/known_headless_warnings.json",
+        "custodian/tools/validation/validation_manifest.json",
         "custodian/tools/validation/vaultwing_runtime_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "vaultwing_asset_contract",
@@ -5415,6 +5624,7 @@
         "procgen"
       ],
       "owners": [
+        "custodian/game/actors/ambient/vaultwing/**",
         "custodian/scenes/game.tscn",
         "custodian/game/systems/spawning/vaultwing_spawner.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",
@@ -5487,6 +5697,7 @@
         "custodian/game/world/levels/authored/hub/twin_solaria/**",
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/tools/validation/hub_twin_solaria_route_smoke.gd",
+        "custodian/tools/validation/known_headless_warnings.json",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
@@ -5845,6 +6056,26 @@
       "needs_import": true
     },
     {
+      "id": "process_feedback_ledger_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_process_feedback.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "feedback",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/process_feedback.py",
+        "custodian/tools/agent/test_process_feedback.py",
+        "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "task_packet_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_task_packet_contract.py",
@@ -5948,7 +6179,8 @@
         "routes",
         "generated_region",
         "rollback",
-        "regression"
+        "regression",
+        "import_truth"
       ],
       "owners": [
         "custodian/game/world/levels/generated_region_level.gd",
@@ -5975,7 +6207,9 @@
       "owners": [
         "custodian/tools/operator/operator_2_5d_ingress.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
-        "custodian/tools/validation/operator_2_5d_ingress_smoke.py"
+        "custodian/tools/validation/operator_2_5d_ingress_smoke.py",
+        "custodian/tools/operator/animation_workbench.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -6003,6 +6237,34 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_cohort_dependency_closure",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "dependency_closure",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py",
+        "custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd",
+        "custodian/tools/operator/operator_2_5d_review.py",
+        "custodian/tools/operator/operator_animation_targets.py",
+        "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+        "custodian/content/data/operator/operator_animation_reachability.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "operator_2_5d_review",
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_review_smoke.py",
@@ -6018,13 +6280,15 @@
         "custodian/tools/operator/operator_2_5d_review.py",
         "custodian/tools/operator/animation_preview.py",
         "custodian/tools/operator/ui/service.py",
+        "custodian/tools/operator/ui/timing_decision_writer.py",
         "custodian/tools/operator/ui/app.py",
         "custodian/tools/operator/ui/screens/main.py",
         "custodian/tools/operator/ui/widgets/polish_panel.py",
         "custodian/tools/operator/ui/widgets/review_family_table.py",
         "custodian/scenes/debug/operator_2_5d_review_sandbox.tscn",
         "custodian/tools/debug/operator_2_5d_review_sandbox.gd",
-        "custodian/tools/validation/operator_2_5d_review_smoke.py"
+        "custodian/tools/validation/operator_2_5d_review_smoke.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 180,
       "needs_import": true
@@ -6078,6 +6342,32 @@
         "custodian/game/actors/enemies/enemy.gd",
         "custodian/game/actors/enemies/enemy_savage.tscn",
         "custodian/tools/validation/enemy_savage_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
+      "id": "npa_showcase_existing_enemy",
+      "type": "godot_script",
+      "script": "res://tools/validation/npa_showcase_existing_enemy_smoke.gd",
+      "tier": "actor",
+      "tags": ["combat", "enemy", "npa", "showcase", "regression"],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/marine_dash.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce.gd",
+        "custodian/game/actors/enemies/combat/standard_enemy_melee.gd",
+        "custodian/game/actors/enemies/combat/enemy_reaction_controller.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical.gd",
+        "custodian/game/actors/enemies/components/enemy_lifecycle.gd",
+        "custodian/game/actors/enemies/components/enemy_corpse_loot.gd",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/systems/combat/enemy_hit_spatial_contract.gd",
+        "custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 45,
       "needs_import": false

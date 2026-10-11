@@ -2,6 +2,32 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Validation Failure Attribution
+
+When a canonical runner report is red, keep that report unchanged and inspect every failure, timeout, infrastructure error and tier skip with the read-only triage tool. A baseline is used only when explicitly supplied; its exact file SHA-256 is emitted, and only a unique same-test-ID/same-tier result is comparable. Missing or mismatched evidence remains `unknown`. Baseline-red and candidate-only-red classifications are evidence labels; the candidate failure remains blocking.
+
+```bash
+python3 custodian/tools/validation/validation_failure_triage.py changed-report.json --json
+python3 custodian/tools/validation/validation_failure_triage.py changed-report.json --baseline immutable-baseline.json --json
+python3 custodian/tools/validation/test_validation_failure_triage.py
+```
+
+The triage tool never reruns checks, edits reports, waives a failure, or changes `workstream.py finish` validation status.
+
+## Process Feedback Ledger
+
+The read-only process-feedback inventory scans root closing summaries and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
+
+```bash
+python3 custodian/tools/agent/test_process_feedback.py
+python3 custodian/tools/agent/process_feedback.py scan --json > /tmp/process-feedback-a.json
+python3 custodian/tools/agent/process_feedback.py scan --json > /tmp/process-feedback-b.json
+cmp /tmp/process-feedback-a.json /tmp/process-feedback-b.json
+python3 custodian/tools/agent/process_feedback.py report --markdown
+```
+
+A unique explicit workstream identity is required to pair packet and summary mirrors. Ambiguous identities stay separate; author-reported `fixed-in-scope` is not treated as independently verified closure.
+
 ## Agent Workstream Lifecycle
 
 Every packeted implementation run claims through `dispatch.py claim-next` or
@@ -52,11 +78,9 @@ already tolerates them), and never re-litigates already-archived historical
 packets against today's V2/Completion Truth contract. `task_packet_index.py`
 owns only the bounded `<!-- task_packet_index:managed:start/end -->` block
 inside `task_packets/README.md`'s `### Ready / Auto Dispatch` section; run
-with `--write` to repair drift. The live README does not yet have that block
-initialized — initializing it would replace the section's current hand-curated
-entries with deterministic filename+Goal renderings, which is a deliberate,
-separately reviewable migration, not an automatic side effect of routine
-validation.
+with `--write` to repair drift. The live README has this block initialized. The
+bounded writer owns only the marked Ready/Auto section; other README content
+remains manually maintained.
 
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,
 queue ordering, dependency and lock blocking, stale-main discovery, branch
@@ -117,9 +141,9 @@ developer's dirty art worktree.
 ## Persistent Compound Layout
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
 ```
 
 These cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
@@ -127,11 +151,11 @@ These cover seeded topology, live floor/wall/door integration, semantic Sector l
 ## Terminal Sensors Intelligence
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/intel_projector_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/terminal_sensors_intelligence_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/terminal_sensors_layout_smoke.gd
 ```
 
@@ -148,7 +172,7 @@ Use this focused smoke after changing replay sampling, proxy rendering, pause
 ownership, camera restoration, or replay controls:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/instant_replay_smoke.gd
 ```
 
@@ -215,7 +239,10 @@ an explicit `run_moment.py` decision.
 ## Godot Import Preflight
 
 Before a project-wide import, use the repository preflight so Godot does not
-write invalid import sidecars for checked-out Git LFS pointer files:
+write invalid import sidecars for checked-out Git LFS pointer files. It also
+blocks malformed `.png.import` records (`valid=false`, missing remap `path`, or
+missing `dest_files`) when a tracked project scene/resource/script references
+the corresponding PNG. Unreferenced archived sidecars do not block import:
 
 ```bash
 python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian
@@ -257,6 +284,21 @@ materialization: shared/local LFS cache first, verified hydrated local checkout
 second, explicit blocker third. Operator ingest, Workbench publication, and the
 shared import adapters run the pointer guard automatically.
 
+`run_validation.py` runs the preflight before any selected `needs_import` test,
+then runs that test against the imported resources. Register at least one such
+test that loads the affected runtime scene/resources; an import process exit code
+alone does not establish loadability. Fatal Godot script, parse, resource-load,
+and GDExtension diagnostics fail even when a smoke prints its PASS sentinel and
+exits zero. Expected rollback errors in `known_headless_warnings.json` are bound
+to their owning manifest test and exact full-line patterns; near matches and
+the same diagnostic from another test remain fatal. The compact post-import
+resource gate runs the actor relationship, Vaultwing runtime, and generated
+region rollback smokes under one import:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --tag import_truth --json
+```
+
 ## Resource Budget Before Broad Sweeps
 
 Every `godot_script` entry in the manifest launches its own headless Godot
@@ -271,6 +313,26 @@ does not land on a machine that is already loaded:
 ```bash
 free -h | head -2
 ```
+
+Validation uses a disk-backed scratch root at `~/.cache/custodian/` by default.
+Set `CUSTODIAN_SCRATCH_DIR` to choose another location. The isolated Godot user
+home is `<scratch>/godot-home`; runner temp helpers continue to use the system
+temp directory. Project lock files live under the user cache lock namespace,
+independent of `TMPDIR`; `CUSTODIAN_GODOT_LOCK_PATH` remains an explicit
+single-project override. `CUSTODIAN_GODOT_MAX_JOBS` sets the machine-wide limit
+for concurrent validation/import jobs (default `2`). Each run holds both its
+per-project writer lock and one counting-budget slot; nested runs reuse the
+held slot. Dead holders release their `flock` slot automatically.
+
+Before cleanup or another broad run, inspect storage without deleting anything:
+
+```bash
+python3 custodian/tools/agent/workstream.py status
+```
+
+The status report includes scratch mount/usage and flags registered worktrees on
+`tmpfs`/`ramfs`, including dirty, unpushed, and claimed entries as protected.
+The report itself is read-only; choose any cleanup action separately.
 
 Run the sweep when the `available` column has comfortable headroom. If it does
 not, find out what is holding memory before starting another Godot fleet:
@@ -440,7 +502,7 @@ validation process, and keep the two tasks' validation loops separate.
 From `custodian/`, run the complete directed-route suite:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
 bash tools/validation/run_route_pipeline_suite.sh
 ```
 
@@ -686,8 +748,8 @@ python3 custodian/tools/validation/meridian_civic_props_semantic_manifest_smoke.
 python3 custodian/tools/validation/meridian_civic_wall_semantic_manifest_smoke.py \
   custodian/content/metadata/assets/meridian_civic_wall.semantic.json
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/meridian_civic_native_prop_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/meridian_civic_native_prop_smoke.gd
 cd ..
 python3 custodian/tools/iteration/run_moment.py traversal/meridian_civic_native_scale --capture-mode full
 ```
@@ -696,25 +758,25 @@ For Operator combat-resource feedback, compact HUD pressure state, and weapon-lo
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_combat_balance_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_resource_feedback_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/combat_impact_audio_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_melee_locomotion_socket_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ballistic_aim_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/ranged_ballistic_reticle_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/ranged_combat_balance_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/combat_resource_feedback_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/combat_impact_audio_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_primary_ranged_modular_fire_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_weapon_socket_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_melee_locomotion_socket_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_ranged_ballistic_aim_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/ranged_ballistic_reticle_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_ranged_ready_input_smoke.gd
 # Optional socket/art calibration review: python3 tools/iteration/run_moment.py combat/ranged_ballistic_octants --capture-mode full
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_charged_long_roll_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_controller_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_charge_feedback_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_flow_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_modular_fast_attack_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/operator_visual_anchor_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/codex_task_fixes_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_charged_long_roll_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_dodge_controller_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_dodge_charge_feedback_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_dodge_flow_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_dodge_overlap_telemetry_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_modular_fast_attack_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/operator_visual_anchor_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/codex_task_fixes_smoke.gd
 ```
 
 For universal initiative, Vanguard Seal, relic equipment, and equipment-save
@@ -722,10 +784,10 @@ persistence:
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/initiative_vanguard_seal_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/inventory_ui_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/sundered_keep_vanguard_seal_acquisition_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/initiative_vanguard_seal_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/inventory_ui_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/sundered_keep_vanguard_seal_acquisition_smoke.gd
 ```
 
 The Sundered Keep acquisition smoke validates the authored East Command Cache
@@ -1099,11 +1161,11 @@ For the native Godot lighting layer:
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" \
   godot --headless --path . \
   --script res://tools/validation/lighting_system_smoke.gd
 
-env HOME=/tmp/custodian-godot-home \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" \
   godot --headless --path . \
   --script res://tools/validation/world_atmosphere_smoke.gd
 ```
@@ -1690,9 +1752,9 @@ If a feasible validation step cannot run, record it in the task packet completio
 ## Command Pressure Scenario V1
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/command_pressure_scenario_setup_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/command_pressure_physical_loop_smoke.gd
 ```
 
@@ -1711,9 +1773,17 @@ python3 custodian/tools/validation/operator_art_agent_smoke.py
 python3 custodian/tools/validation/operator_animation_workbench_smoke.py
 python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py
 python3 custodian/tools/validation/operator_workbench_ui_smoke.py
+python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json
 python3 custodian/tools/validation/operator_art_worktree_smoke.py
 python3 custodian/tools/validation/run_validation.py --changed --json
 ```
+
+The registered `operator_2_5d_review` test has `needs_import: true` because its
+real Godot sandbox scene requires project import data. In a fresh worktree, use
+the validation runner above (which performs the import preflight) or explicitly
+run `godot --headless --path custodian --import --quit` once before invoking the
+smoke script directly. The sandbox itself remains a separate required real
+Godot pass with a finite timeout; a fixture status cannot stand in for it.
 
 The Workbench publisher smoke also checks saved-document contract inspection,
 byte-preserving obsolete frame-migration reconciliation, tracked import metadata

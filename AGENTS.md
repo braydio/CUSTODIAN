@@ -166,6 +166,37 @@ The user's explicit current-turn instructions may narrow, pause, or override exe
 
 If a recognizable name is ambiguous, prefer the packet/workstream whose durable metadata and current DAG position match the conversation. Do not invent a new packet merely because the user used a nickname or shorthand. Close out through the packet and ordinary workstream lifecycle.
 
+## Codex Activity Attribution (low overhead)
+
+Keep Codex usage attribution aligned with the existing canonical CUSTODIAN
+workstream lifecycle. Once a dispatcher claim/resume or the active worktree has
+**verified** the assignment, begin the first substantive user-visible progress
+or completion reply **in each Codex turn** with this plain-text line:
+
+```text
+Workstream: <canonical-workstream-id>
+```
+
+Use the exact `Workstream:` value in the task packet or verified claim receipt,
+including the `review-...` prefix for independent reviews and the full
+`...-review-corrections-N` name for corrections. Do not substitute a feature
+nickname, packet filename, agent name, or previously completed workstream.
+When autonomous continuation claims a successor, announce the new exact ID in
+the first reply for that successor. If no assignment is verified, omit the line
+rather than guessing. Where possible, keep one workstream per Codex turn; a
+turn spanning multiple assignments must not be reported as single-workstream
+usage.
+
+This line is a lightweight attribution hint, **not** a dispatch claim, an
+approval, or a required extra status message. Do not create extra Codex calls,
+commit telemetry files, or extend task summaries solely for usage tracking.
+Model, reasoning effort, wall time, input/cached/output/reasoning tokens, and
+quota snapshots must be measured by the local Codex session-log tracker, not
+estimated by the agent or inferred from this label. Existing packet metadata,
+branches, independent reviews, validation requirements, and durable handoffs
+remain authoritative. Prefer compact tool output and non-duplicative context,
+without skipping required checks to optimize tokens.
+
 ## Summary Backlink
 
 When a CUSTODIAN task packet or review packet contains an `Authoring chat:` or `Refresh planning chat:` URL, every durable implementation summary, review summary, correction summary, recovery summary, and closeout handoff authored for that packet must include that exact URL as an explicit `Authoring chat` line. Do not omit, shorten, redirect, or replace it with a generic project link.

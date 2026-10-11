@@ -48,7 +48,7 @@ recording, or continue-from-the-past mechanic.
 ## Validation
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/instant_replay_smoke.gd
 ```
 

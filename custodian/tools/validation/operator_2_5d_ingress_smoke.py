@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 import shutil
 import subprocess
 import sys
@@ -120,9 +121,26 @@ def main() -> None:
                 frame_size=(128, 128), fps=8.0, loop=True, template="full_body",
                 root=root / "workbench", repo_root=root, source_root=source_root,
                 weapon_root=weapon_root, art_generation="operator_2_5d_128",
+                timing_authority=False,
             )
             assert created_workspace == root / "workbench/operator_2_5d_128/unarmed/locomotion/new_ingress_01/ne"
             assert created["creation"]["authoring_identity"] == "operator_2_5d_128:unarmed/locomotion/new_ingress_01/ne"
+            assert created["timeline"]["preview_fps"] == 8.0
+            assert created["timeline"]["timing_authority"] is False
+            assert workbench_model.timing_payload_from_timeline(created["timeline"]) is None
+            physical = animation_workbench.inspect_saved_document_contract(
+                created_workspace / "workbench.json")
+            assert physical["durations"] == [0.125] * 15
+            explicit, _explicit_workspace = animation_workbench.create_animation(
+                "unarmed", "new_ingress_explicit_timing", "ne", group="locomotion", frames=15,
+                frame_size=(128, 128), fps=8.0, loop=True, template="full_body",
+                root=root / "workbench", repo_root=root, source_root=source_root,
+                weapon_root=weapon_root, art_generation="operator_2_5d_128",
+                timing_authority=True,
+            )
+            payload = workbench_model.timing_payload_from_timeline(explicit["timeline"])
+            assert explicit["timeline"]["timing_authority"] is False
+            assert payload is None, "generic create_animation caller values cannot authorize 2.5D timing"
         else:
             print("SKIP 2.5D NEW WORKBENCH integration: aseprite executable unavailable")
         target_key = schema.OperatorAssetKey("operator", "full_body", "unarmed", "locomotion",
@@ -159,7 +177,11 @@ def main() -> None:
         ImageDraw.Draw(bad_image).rectangle((4, 2, 11, 13), fill=(80, 100, 120, 255))
         bad_image.save(bad_source)
         proof_image = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
-        ImageDraw.Draw(proof_image).rectangle((48, 24, 79, 101), fill=(80, 100, 120, 255))
+        proof_pixels = proof_image.load()
+        for y in range(24, 102):
+            for x in range(48, 80):
+                proof_pixels[x, y] = ((x * 7 + y * 3) % 256, (x * 5 + y * 11) % 256,
+                                      (x * 13 + y * 2) % 256, 255)
         proof_image.save(proof_source)
         proof_session = source_service.start(source_path=proof_source, frames=1, target_size=128)
         profile_hash, reference_hash = operator_animation_targets._profile_hashes(REPO)
@@ -192,13 +214,25 @@ def main() -> None:
         source_service.plan_normalization(proof_session, mode="operator_profile")
         command = source_service.production_command(proof_session)["command"]
         assert command[command.index("--size") + 1] == "128"
-        source_service.convert(proof_session)
+        command = source_service.production_command(proof_session)["command"]
+        shell = (
+            "source tools/custodian_aliases.sh && export CUSTODIAN_REPO="
+            + shlex.quote(str(REPO))
+            + " CUSTODIAN_GODOT=" + shlex.quote(str(REPO / "custodian"))
+            + " && pixelart " + shlex.join(command[1:])
+        )
+        subprocess.run(["bash", "-lc", shell], cwd=REPO, check=True, capture_output=True, text=True)
         proof_root = Path(source_service.status(proof_session)["root"])
-        (proof_root / "production").mkdir(parents=True, exist_ok=True)
-        (proof_root / "candidates/crisp.png").replace(proof_root / "production/crisp.png")
         assert source_service.verify_production(proof_session)["verified"] is True
         with Image.open(proof_root / "production/crisp.png") as normalized:
             assert normalized.size == (128, 128)
+            with Image.open(proof_source) as original:
+                assert normalized.convert("RGBA").tobytes() == original.convert("RGBA").tobytes(), (
+                    "an identity profile transform must preserve canonical source pixels"
+                )
+            assert len(normalized.getcolors(maxcolors=1_000_000) or []) > 24, (
+                "default crisp conversion must preserve source colors"
+            )
         stale_custodian = root / "stale-authority/custodian"
         authority_path = stale_custodian / "content/data/operator/authoring/operator_art_profile.json"
         authority_path.parent.mkdir(parents=True)
@@ -267,6 +301,12 @@ def main() -> None:
             assert imported_manifest["creation"]["authoring_identity"] == \
                 f"operator_2_5d_128:unarmed/{family.group}/idle_relaxed_01/ne", imported_manifest["creation"]
             assert imported_manifest["creation"]["import_sources"]["full_body"]
+            assert imported_manifest["timeline"]["preview_fps"] == 8.0
+            assert imported_manifest["timeline"]["timing_authority"] is False
+            assert workbench_model.timing_payload_from_timeline(imported_manifest["timeline"]) is None
+            imported_physical = animation_workbench.inspect_saved_document_contract(
+                Path(imported["workbench"]) / "workbench.json")
+            assert imported_physical["durations"] == [0.125] * 15
             resumed_handoff = source_service.handoff(
                 imported["source_session"], destination_name=Path(imported["handoff"]).name,
                 art_generation="operator_2_5d_128",
@@ -413,7 +453,7 @@ def main() -> None:
             try:
                 ingress.validate_package(single_package_path)
             except IngressError as error:
-                assert "identity or frame contract" in str(error)
+                assert "contract does not match the package" in str(error)
             else:
                 raise AssertionError("package closure trusted a mismatched Workbench frame contract")
             imported_manifest_path.write_bytes(valid_manifest_bytes)
@@ -453,7 +493,7 @@ def main() -> None:
             try:
                 ingress.process_cell(package_path, "ne")
             except IngressError as error:
-                assert "identity or frame contract" in str(error)
+                assert "contract does not match the package" in str(error)
             else:
                 raise AssertionError("completed package trusted a wrong Workbench identity")
             manifest_path.write_bytes(manifest_bytes)

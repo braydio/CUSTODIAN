@@ -12,8 +12,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 REPO_ROOT = PROJECT_ROOT.parent
 PIPELINES = PROJECT_ROOT / "tools/pipelines"
 sys.path.insert(0, str(PIPELINES))
+sys.path.insert(0, str(PROJECT_ROOT / "tools/operator"))
 
 import sync_operator_runtime_assets as syncer  # noqa: E402
+import operator_2_5d_timing_authority as timing_authority  # noqa: E402
 
 
 EXPECTED = [0.6, 0.7, 1.0] * 4
@@ -67,6 +69,25 @@ def main() -> int:
         assert timeline["fps"] == 10.0 and timeline["loop"] is True
         assert timeline["durations"] == EXPECTED
         assert [round(value, 6) for value in timeline["frame_durations_ms"]] == EXPECTED_MS
+
+    # Explicit 2.5D timing must match the physical saved document. This never
+    # changes the legacy builder/sidecar authority above.
+    physical = {"frames": 3, "durations": [0.125, 0.25, 0.125]}
+    approved = timing_authority.validate_parameters(
+        fps=8, loop=True, durations=[1, 2, 1], physical=physical)
+    assert approved["frame_durations_ms"] == [125.0, 250.0, 125.0]
+    for invalid in (
+        {"fps": 8, "loop": True, "durations": [1, 1, 1]},
+        {"fps": 0, "loop": True, "durations": [1, 2, 1]},
+        {"fps": 8, "loop": "yes", "durations": [1, 2, 1]},
+        {"fps": 8, "loop": True, "durations": [1, 2]},
+    ):
+        try:
+            timing_authority.validate_parameters(**invalid, physical=physical)
+        except (ValueError, TypeError):
+            pass
+        else:
+            raise AssertionError(f"invalid 2.5D timing decision accepted: {invalid}")
 
     print("operator_animation_timing_smoke: PASS source/runtime timing metadata, 60/70/100ms cadence, 920ms loops")
     return 0

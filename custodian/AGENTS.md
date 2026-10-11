@@ -547,6 +547,48 @@ must be wired to semantic animation authority rather than directly to its PNG.
 Direct PNG access is allowed only in explicit migration, validation, inspection,
 or asset-authoring tooling outside active gameplay runtime.
 
+### Operator 2.5D Workbench decision guard
+
+For `operator_2_5d_128`, use the accepted profile/visual contract at
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md` and
+`OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`. These decisions are already
+human-locked: eight independently authored directions, 128px full-body
+registration/root/scale, source-work versus Workbench versus runtime separation,
+and the explicit QA, human review, sandbox and coherent-cohort release gates.
+An agent must not silently retune their values or derive missing directions from
+mirroring, a legacy proxy, or an image-generation default.
+
+**A saved Aseprite document or Workbench manifest is descriptive evidence, not
+automatic permission.** A default preview FPS (currently 8 for the imported
+canonical relaxed idle) does not approve animation timing. The manifest Boolean
+`timing_authority` alone is insufficient to establish an explicit human timing
+decision; effective 2.5D verification must use independently validated,
+current-input-bound intent provenance once the dedicated timing decision workflow
+is implemented. Do not fake approval by toggling a flag, inventing FPS, reusing
+stale review receipts or copying them between directions. Until proper provenance
+exists, fail closed and leave the idle Workbenches editable and unverified.
+WB25-6 generation switching remains a separate human/cohort-gated operation.
+Keep legacy 96px timing/publication behavior intact.
+
+**Presentation composition policy (approved 2026-10-11):** Follow the
+single owning doctrine in
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`,
+"Operator presentation composition doctrine." Canonical 128px 2.5D neutral
+idle, ordinary movement and committed whole-body actions use independently
+authored `full_body` by default. Retain selectively modular
+`lower_body+upper_body` whenever legal locomotion and aiming, weapon-ready,
+firing, guard or parry phases **actually** need independent upper/lower
+motion. Weapons/FX remain owner-scoped overlays. A full-body source must
+never be auto-sliced into half-bodies. Never mix 96px and 128px *body*
+layers in one active presentation; preflight a complete compatible body,
+visible clock, facing, registration and weapon/socket before atomic handoff.
+The current 69 canonical 2.5D families are **full-body authoring
+baselines**, not already-authorized modular alternatives. Do not add or
+publish split targets without demonstrated gameplay need and explicit
+Asset Pipeline V2/human design approval. Preserve legacy 96px behavior
+and all existing one-body presenter/selector ownership; WB25-6 is still
+held.
+
 ## Commit Policy
 
 The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit

@@ -4,7 +4,7 @@
 **Workstream:** `awakening-interactible-affordance-overlay-v1`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 **Base inspected:** `main@afb1f1c5f145fec42f9a3f5a492ab31d5ffc138d`
-**Machine-readable state ledger:** [AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json) (source plan only, NOT a V2 published-status claim)
+**Machine-readable state ledger:** [AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json) (source/gate plan, NOT a V2 published-status claim)
 **Status:** artwork manifest locked for source creation; all new files SOURCE_PENDING. No generated art is represented as available.
 
 ## Main overlay, scope, and gameplay truth
@@ -12,7 +12,7 @@
 **Main overlay:** a per-zone **Interactible Affordance Presentation** child/binding under existing Awakening zone `Interactables`/`SetPieces` nodes, keyed to existing `AwakeningLayout.MARKERS` identity and bound to the canonical interaction node. It supplies three presentation layers: (1) legible distance silhouette, (2) local floor/backplate/dressing footprint, and (3) near-range subtle active indicator/FX. No new interaction owner, collider, route, objective, or transfer is created by painting a prop.
 
 **Current actual interaction owners:** Crèche Console (`zone01_creche.creche_console`, `CrecheConsole`), P-9 Designation Locker (`zone04_locker_reliquary.p9_locker`, scene `SidearmLocker`), Dust Lung Lift (two stations `lift_lower`/`lift_upper`, one `TransitLift` runtime owner), and damaged Port Console (`zone06_undergate.port_status_plaque`, `PortStatusPlaque`).
-**Important drift:** `lift_mechanism` marker is `kind=interactable` in Layout but `_build_interactables()` does **not** create a distinct mechanism interaction owner. Audit/reclassify only on semantic evidence; never advertise a live control that is inert. `lore_plaque`, `attestation_dais`, `register_of_departures`, `rest_checkpoint`, `gate_aperture`, `reward_cache` and other markers are not currently equivalent to live interactibles. Future transfer/Continuity Port, Witness/Forum/Adjudication, Sepulcher, supply and gate-control art is **deferred** rather than falsely described as present in Awakening 01–10.
+**Resolved drift (2026-10-11):** `lift_mechanism` is now `kind=marker`, retaining `(448,-2944)`. It has no distinct gameplay owner and no affordance mount; the two actual lift mounts (`lift_lower`, `lift_upper`) share the single `TransitLift` owner. `lore_plaque`, `attestation_dais`, `register_of_departures`, `rest_checkpoint`, `gate_aperture`, `reward_cache` and other markers are not currently equivalent to live interactibles. Future transfer/Continuity Port, Witness/Forum/Adjudication, Sepulcher, supply and gate-control art is **deferred** rather than falsely described as present in Awakening 01–10.
 
 **Existing visual sources to preserve**: `awakening_creche_console`, `awakening_designation_locker` (4-state), `awakening_dust_lung_lift` (1 state), `gate_of_dust` (sealed components), existing room underlays/foregrounds/registered 04→05 composite and `awakening_creche_console_activation_fx`. New families complement them and must not overpaint or replace them without evidence that the existing role cannot be retained.
 
@@ -112,6 +112,21 @@
 - **Markers and waypoint dressing**: `awakening_interact_wayfinding` states are recommended, never falsely mark `kind=interactable` or show an interaction cue without a real owner. Their integration is optional and art-gated, but actual interactible correctness is not gated by optional dressing.
 - **Future-only**: `awakening_interact_future_transfer`, `awakening_interact_future_civic`, `awakening_interact_future_supply`, `awakening_interact_future_memorial`, `awakening_interact_future_gate`, and deferred FX are **not** claimable implementation demand for Awakening 01–10. Preserve design lock and require separate posting/ownership decisions later. Hub assets belong to Hub implementation paths when their existing assets/contracts are known; names here are provisional family IDs, not authorization to duplicate an existing Hub family.
 
+## Registered contract state (2026-10-10)
+
+The seven current families are registered under
+`custodian/content/metadata/assets/families/awakening_interact_*.asset.json`
+with the state dimensions, layers, variants, layouts, and requirement tiers from
+this manifest. The required-assets registry contains 27 exact required state
+targets; no exact zero-new-art substitution was proven by the existing Crèche,
+Locker, Lift, or Gate hero-family audit. Recommended states stay optional, and
+the 36 future-deferred states are not current demand. The JSON ledger has one
+row per state in these seven families, including explicit Dropbox batch/checksum,
+alpha/dimension, Asset V2, and human-approval evidence fields. Every required
+state is currently `source_pending`; null or pending fields fail the art gate.
+Family registration does not authorize a visual consumer or claim source
+availability.
+
 ## Source package and Dropbox proof
 Durable approved batch should be published to `/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/` with `MANIFEST.json`, `CODEX_IMPLEMENTATION.md`, `README.md`, `CHECKSUMS.sha256`, source-work PNGs, exact state sizes/frames/alpha, and a Dropbox `_registry` receipt. Human design and gameplay-scale placement approval required before art-gated packet promotion. Availability means **exact verified state and file**; a Dropbox folder alone does not prove a state is ready. Where existing published art already fulfills the role, allow a documented zero-new-art substitution and update the manifest/tracker accordingly.
 
@@ -125,3 +140,9 @@ Durable approved batch should be published to `/CUSTODIAN/asset_batches/awakenin
 Single fixed-camera playback set at Crèche, Locker, lower/upper lift, Undergate port; normal and dim lighting, unprompted mid distance and actionable near distance. Reviewer should identify each functional object without HUD labels. Distinguish visual-only markers from real interactibles. Return visual decision to the authoring chat and record it with the relevant implementation packet. Family doctor/status + checksum/provenance + geometry/reachability/occlusion validations must pass. 
 
 **Inventory:** 77 planned state images in 12 families: 27 currently-required live, 14 recommended marker/dressing, 36 deferred future. This count is *planning demand*, not evidence that art exists.
+
+## Existing Crèche body/FX replacement contract (2026-10-10)
+
+Do **not** create a new terminal hero family to replace the existing `awakening_creche_console`. Retain `kind=world_prop`, `direction_policy=omni`, state `idle`, `canvas=128×128`, static 1f. Human-authored source path: `custodian/asset_drop/source_work/awakening/awakening_creche_console/idle_source.png`; normalized inbox: `custodian/asset_drop/inbox/awakening_creche_console/idle.png` (128×128 RGBA true-alpha). Existing `awakening_creche_console_activation_fx/activate` is 8 frames ×128×128 at 8 FPS, 1024×128 sheet, unchanged unless the user separately approves an FX source amendment. Inspect screen-window ROI and placement of all 8 frames before changing its anchor. Replacement requires validated source SHA/Asset V2 plan + `--replace` transaction/receipt, actual runtime import and human-reviewed gameplay screenshot; neither `.png.import` existence nor generated family schema proves aesthetic suitability.
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166.

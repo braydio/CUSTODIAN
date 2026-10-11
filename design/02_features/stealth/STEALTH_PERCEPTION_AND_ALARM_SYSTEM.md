@@ -1,9 +1,9 @@
 # CUSTODIAN - STEALTH PERCEPTION, AWARENESS, AND ALARM SYSTEM
 
-**Status:** design draft; live primitives exist, shared architecture not yet implemented  
+**Status:** acoustic S0 and the first shared S1 receiver seam are implemented; broader perception and alarm stages remain design direction
 **Owner:** gameplay/stealth + actor perception + world alert systems  
 **Runtime target:** Godot 4.x (`custodian/`)  
-**Reviewed baseline:** `main@ba04d9e8ee` (2026-10-01)
+**Reviewed baseline:** `main@ff7d3aec` (2026-10-10)
 
 ## Purpose
 
@@ -34,15 +34,16 @@ on the map.
 
 ## Live Foundation
 
-At the reviewed baseline:
+At the pre-foundation baseline:
 
 - `NoiseEventBus` is a generic autoload under
   `game/systems/stealth/`. Operator gunshots publish positional
   `NoiseEvent` objects with source, team, position, radius, kind, threat,
   loudness, suppression state, and a diagnostic timestamp.
 - `EnemyPerceptionComponent` owns enemy visual LOS/cone checks, a detection
-  accumulator, suspicion/alert thresholds, event hearing, investigation
-  position, and last-known target memory.
+  accumulator, suspicion/alert thresholds, investigation position, and
+  last-known target memory. It consumes shared typed acoustic observations for
+  discrete events.
 - `EnemyBehaviorProfile` already exposes `vision_range_px`,
   `vision_cone_degrees`, `peripheral_vision_mult`, `hearing_range_px`,
   detection gain/decay, thresholds, and investigation memory. Different enemy
@@ -50,9 +51,9 @@ At the reviewed baseline:
 - Operator movement exposes a read-only stealth snapshot containing position,
   visibility, movement noise, and locomotion state. Discrete gunshots use
   `NoiseEventBus` instead of that continuous snapshot.
-- Vaultwing has become a second real acoustic consumer, exposing the need for a
-  cross-family sensing contract. Its current direct handler also exposed that
-  the live `NoiseEvent` type is weakened to `Variant` at the bus boundary.
+- Vaultwing is the second real acoustic consumer. Before the foundation it
+  evaluated raw event distance independently and its direct handler passed an
+  unsupported default argument to `Object.get()`.
 - `MaterialProfile` already carries `footstep_noise_mult`,
   `stealth_visibility_mult`, impact presentation identity, and a footstep
   sound family. V1 does not yet apply those material values to gameplay.
@@ -62,6 +63,13 @@ At the reviewed baseline:
   reinforcement escalation system, or normal-play awareness HUD.
 - Carrow Yard already has an authored **Alarm Gantry** identity, but it is not
   yet a gameplay alarm device.
+
+The `stealth-perception-foundation` slice now types `NoiseEvent` through its
+factory, bus, Operator emitter, and consumers. Enemy and Vaultwing both use
+`AcousticPerceptionSensor` to produce a typed `PerceptionObservation` from the
+same source envelope and distance falloff. Their relationship filtering and
+response policies remain local. Material footsteps, vision extraction,
+occlusion, alarms, and normal-play awareness UI remain deferred.
 
 ## Architectural Lock
 
@@ -396,6 +404,15 @@ A typed observation should carry receiver-derived information such as:
 - source relationship snapshot when applicable;
 - sequence/tick identity for deterministic diagnostics.
 
+The first live `PerceptionObservation` carries acoustic channel, semantic kind,
+observed position, source identity, emitted source-team, salience, certainty,
+source radius, loudness, threat, suppression, and the diagnostic event
+timestamp. `AcousticPerceptionSensor.evaluate_noise()` applies the event's
+source-authored radius and shared distance falloff, and suppresses self-source
+observations. The timestamp is diagnostic only. Current allegiance is resolved
+after sensing by the receiving actor's existing relationship policy; hearing
+does not convert source facts into hostility.
+
 Behavior consumers should depend on this observation seam rather than the raw
 event implementation.
 
@@ -427,6 +444,8 @@ presentation.
 
 ### S0 - Contract repair and live bug closure
 
+**Status: complete in `stealth-perception-foundation`.**
+
 - Type `NoiseEvent` end-to-end through its factory, bus signal, emitter, and
   current consumers.
 - Reproduce and close the live Vaultwing gunshot-handler error.
@@ -434,6 +453,10 @@ presentation.
 - Add focused real-event regressions for Enemy and Vaultwing.
 
 ### S1 - Shared perception foundation
+
+The first acoustic receiver seam is implemented. Vision/proximity extraction
+and shared receiver tuning remain deferred until another consumer proves those
+contracts.
 
 - Introduce a typed receiver-side observation contract.
 - Extract shared acoustic detection math after comparing the live Enemy and
@@ -538,10 +561,12 @@ The first implementation slice should prove:
 Later alarm slices should prove network locality, explicit propagation, bounded
 consequences, restore/reset behavior, and absence of map-wide psychic aggro.
 
-## Next Agent Slice
+## Implemented Foundation Slice
 
-**Goal:** implement S0 plus the narrowest S1 seam needed to make Enemy and
-Vaultwing consume the same typed acoustic observation contract.
+**Completed:** S0 plus the narrowest S1 seam needed to make Enemy and Vaultwing
+consume the same typed acoustic observation contract. The separate
+`vaultwing-runtime-hardening` workstream owns remaining fixed-step/bond behavior
+cleanup before NPA-8.
 
 **Files:** `game/systems/stealth/{noise_event,noise_event_bus}.gd`,
 `game/actors/enemies/components/enemy_perception_component.gd`,

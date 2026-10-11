@@ -1,6 +1,8 @@
 extends Node
 class_name EnemyPerceptionComponent
 
+const AcousticSensor := preload("res://game/systems/stealth/acoustic_perception_sensor.gd")
+
 signal became_suspicious(target_position: Vector2)
 signal noticed_operator(operator: Node)
 signal lost_operator(last_known_position: Vector2)
@@ -96,33 +98,28 @@ func update_perception(enemy: Node2D, profile: Resource, blackboard: Node, delta
 		lost_operator.emit(last_known_position)
 
 
-func _on_noise_emitted(event: Variant) -> void:
+func _on_noise_emitted(event: NoiseEvent) -> void:
 	if _current_enemy == null or _current_profile == null or _current_blackboard == null or event == null:
 		return
-	if not is_instance_valid(_current_enemy) or event.get("source") == _current_enemy:
+	if not is_instance_valid(_current_enemy):
 		return
-	if event.get("source_team") != &"player" and event.get("source_team") != &"neutral":
+	var observation: PerceptionObservation = AcousticSensor.evaluate_noise(event, _current_enemy.global_position, _current_enemy)
+	if observation == null:
 		return
-	if event.get("source_team") == &"player":
-		var source_variant: Variant = event.get("source")
-		if source_variant is Node and (source_variant as Node).is_in_group("player"):
-			_current_blackboard.operator_ref = source_variant
+	if observation.source_team != &"player" and observation.source_team != &"neutral":
+		return
+	if observation.source_team == &"player":
+		if observation.source != null and observation.source.is_in_group("player"):
+			_current_blackboard.operator_ref = observation.source
 		elif get_tree() != null:
 			_current_blackboard.operator_ref = get_tree().get_first_node_in_group("player")
-	var event_position: Vector2 = event.get("position")
-	var distance: float = _current_enemy.global_position.distance_to(event_position)
-	var effective_radius: float = float(event.get("radius_px"))
-	if distance > effective_radius or effective_radius <= 0.0:
-		return
-	var distance_strength: float = 1.0 - distance / effective_radius
-	var strength: float = maxf(0.05, float(event.get("threat_value")) * distance_strength)
-	_current_blackboard.target_last_heard_position = event_position
-	_current_blackboard.investigation_position = event_position
+	_current_blackboard.target_last_heard_position = observation.observed_position
+	_current_blackboard.investigation_position = observation.observed_position
 	var memory_mult := 1.2 if _recollection_range_multiplier(_current_blackboard) > 1.0 else 1.0
 	_current_blackboard.investigation_timer = maxf(_current_blackboard.investigation_timer, float(_current_profile.get("investigation_memory_sec")) * memory_mult)
 	_current_blackboard.is_suspicious = true
-	detection_meter = clampf(detection_meter + strength * (0.45 if bool(event.get("suppressed")) else 0.7), 0.0, 1.0)
-	force_noise(event_position, float(_current_profile.get("investigation_memory_sec")) * memory_mult, _current_blackboard)
+	detection_meter = clampf(detection_meter + observation.salience * (0.45 if observation.suppressed else 0.7), 0.0, 1.0)
+	force_noise(observation.observed_position, float(_current_profile.get("investigation_memory_sec")) * memory_mult, _current_blackboard)
 
 
 func _recollection_range_multiplier(blackboard: Node) -> float:

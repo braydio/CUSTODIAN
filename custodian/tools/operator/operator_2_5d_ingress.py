@@ -236,8 +236,9 @@ class Operator2DIngress:
                 or int(timeline.get("workspace_clock_frames", 0)) != int(binding["frames"])
                 or int(timeline.get("document_frames", 0)) != int(binding["frames"])
                 or [int(canvas.get("width", 0)), int(canvas.get("height", 0))] != size
+                or timeline.get("timing_authority") is not False
                 or Path(manifest.get("aseprite", {}).get("path", "")).resolve() != document_path.resolve()):
-            raise IngressError("target Workbench identity or frame contract does not match the package")
+            raise IngressError("target Workbench identity, frame, or timing-authority contract does not match the package")
         try:
             physical = animation_workbench.inspect_saved_document_contract(manifest_path)
             physical_frames = int(physical["frames"])
@@ -381,6 +382,7 @@ class Operator2DIngress:
                 source_root=self.repo_root / "custodian/content/sprites/operator/source",
                 weapon_root=self.repo_root / "custodian/content/sprites/weapons",
                 art_generation=target.art_generation, initial_sources=options["initial_sources"],
+                timing_authority=False,
             )
             self._validate_workbench(binding, candidate, str(workbench_root))
         key = schema.OperatorAssetKey("operator", binding["layer"], binding["profile"], binding["group"],

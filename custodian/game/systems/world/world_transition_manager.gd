@@ -380,14 +380,16 @@ func _rollback(code: StringName, reason: String, target_root: Node = null) -> vo
 		source_world.name = str(_source_state.get("world_name", "World"))
 		source_world.process_mode = int(_source_state.get("world_process_mode", Node.PROCESS_MODE_INHERIT))
 	if is_instance_valid(operator):
-		# The source snapshot is captured from the completion trigger. Return south
-		# of that trigger on rollback so the still-qualified Operator cannot
-		# immediately re-enter the completion volume and spin another failed handoff.
-		operator.global_position = AwakeningLayoutScript.SOUTH_REACH_COMPLETION_CENTER + Vector2(0.0, 128.0)
+		# The source snapshot is captured from the completion trigger. Return well
+		# south of its overlap bounds so rollback cannot immediately retrigger it.
+		operator.global_position = AwakeningLayoutScript.SOUTH_REACH_COMPLETION_CENTER + Vector2(0.0, 512.0)
 		operator.velocity = Vector2.ZERO
 		operator.collision_layer = int(_source_state.get("collision_layer", 1))
 		operator.collision_mask = int(_source_state.get("collision_mask", 1))
 		_set_processing(operator, _source_state.get("operator_processing", {}))
+		# Resume after a physics update so Area2D overlap tracking observes the
+		# rollback destination before the source scene re-arms its completion trigger.
+		await get_tree().process_frame
 	if is_instance_valid(controller):
 		_set_processing(controller, _source_state.get("controller_processing", {}))
 	if is_instance_valid(camera):

@@ -21,7 +21,10 @@ CUSTODIAN_DIR = VALIDATION_DIR.parents[1]
 REPO_ROOT = CUSTODIAN_DIR.parent
 
 sys.path.insert(0, str(CUSTODIAN_DIR / "tools"))
-from godot_project_lock import GodotProjectBusy, GodotProjectLock  # noqa: E402
+from godot_project_lock import (  # noqa: E402
+    GodotJobBudget, GodotProjectBusy, GodotProjectLock, godot_home,
+    inherited_godot_lock_fds,
+)
 sys.path.insert(0, str(CUSTODIAN_DIR / "tools" / "pipelines"))
 from godot_import_preflight import preflight_detail  # noqa: E402
 ITERATION_DIR = CUSTODIAN_DIR / "tools" / "iteration"
@@ -37,6 +40,14 @@ EXIT_CONFIG, EXIT_PREFLIGHT, EXIT_FAILED, EXIT_TIMEOUT, EXIT_COVERAGE = 2, 3, 4,
 EXIT_LOCK = 7
 TAIL_LINES = 40
 IMPORT_TIMEOUT_SEC = 120
+FATAL_DIAGNOSTICS = (
+    re.compile(r"\bERROR:"),
+    re.compile(r"\bSCRIPT ERROR:"),
+    re.compile(r"\bParse Error:"),
+    re.compile(r"Failed (?:to load|loading) resource", re.IGNORECASE),
+    re.compile(r"GDExtension.*(?:not found|failed|could not be loaded)", re.IGNORECASE),
+)
+HARD_FATAL_DIAGNOSTICS = FATAL_DIAGNOSTICS[1:]
 
 
 class ManifestError(ValueError):
@@ -150,22 +161,54 @@ def _tail(text: str) -> list[str]:
     return text.splitlines()[-TAIL_LINES:]
 
 
-def load_warning_patterns(path: Path = WARNINGS_PATH) -> list[dict[str, str]]:
+def load_warning_patterns(path: Path = WARNINGS_PATH, test_ids: set[str] | None = None) -> list[dict[str, str]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schema_version") != 1:
         raise ManifestError("unsupported headless warning registry")
-    return [dict(item) for item in payload.get("patterns", [])]
+    raw_patterns = payload.get("patterns", [])
+    if not isinstance(raw_patterns, list):
+        raise ManifestError("headless warning patterns must be an array")
+    patterns: list[dict[str, str]] = []
+    ids: set[str] = set()
+    for raw in raw_patterns:
+        if not isinstance(raw, dict):
+            raise ManifestError("headless warning pattern must be an object")
+        item = dict(raw)
+        pattern_id = item.get("id")
+        expression = item.get("pattern")
+        owner = item.get("test_id")
+        if not isinstance(pattern_id, str) or not pattern_id or pattern_id in ids:
+            raise ManifestError("headless warning pattern ids must be unique non-empty strings")
+        if not isinstance(expression, str) or not expression:
+            raise ManifestError(f"{pattern_id}: warning pattern must be a non-empty regex")
+        try:
+            re.compile(expression)
+        except re.error as error:
+            raise ManifestError(f"{pattern_id}: invalid warning regex: {error}") from error
+        if owner is not None and (not isinstance(owner, str) or not owner):
+            raise ManifestError(f"{pattern_id}: test_id must be a non-empty string")
+        if owner is not None and test_ids is not None and owner not in test_ids:
+            raise ManifestError(f"{pattern_id}: expected error references unknown test {owner}")
+        ids.add(pattern_id)
+        patterns.append(item)
+    return patterns
 
 
-def classify_warnings(stderr: str, patterns: list[dict[str, str]]) -> list[dict[str, str]]:
+def classify_warnings(stderr: str, patterns: list[dict[str, str]], test_id: str | None = None) -> list[dict[str, str]]:
     output = []
     for line in stderr.splitlines():
-        if "WARNING:" not in line and "ERROR:" not in line:
+        fatal = any(marker.search(line) for marker in FATAL_DIAGNOSTICS)
+        hard_fatal = any(marker.search(line) for marker in HARD_FATAL_DIAGNOSTICS)
+        if not fatal and "WARNING:" not in line:
             continue
-        known = next((item for item in patterns if re.search(item["pattern"], line)), None)
+        matching = [item for item in patterns if re.search(item["pattern"], line)]
+        expected = next((item for item in matching if item.get("test_id") == test_id and test_id is not None), None)
+        known = next((item for item in matching if not item.get("test_id")), None)
         output.append({
-            "classification": "known_warning" if known else ("fatal" if "ERROR:" in line else "new_warning"),
-            "pattern_id": known["id"] if known else "",
+            "classification": "expected_error" if expected else (
+                "fatal" if hard_fatal or (fatal and not known) else ("known_warning" if known else "new_warning")
+            ),
+            "pattern_id": expected["id"] if expected else (known["id"] if known else ""),
             "line": line,
         })
     return output
@@ -184,12 +227,13 @@ def command_for(test: dict[str, Any]) -> tuple[list[str], Path]:
 def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: list[str] | None = None) -> dict[str, Any]:
     resolved_command, cwd = command_for(test) if command is None else (command, REPO_ROOT)
     env = os.environ.copy()
-    env["HOME"] = "/tmp/custodian-godot-home"
+    env["HOME"] = str(godot_home())
     started = time.monotonic()
     timed_out = False
     try:
         process = subprocess.Popen(resolved_command, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, start_new_session=True)
+                                   text=True, start_new_session=True,
+                                   pass_fds=inherited_godot_lock_fds())
     except OSError as error:
         return {
             "id": test["id"], "tier": test["tier"], "status": "infrastructure_error", "exit_code": None,
@@ -210,7 +254,7 @@ def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: 
     harness = parse_harness_result(stdout)
     sentinel_seen = any(line.startswith(RESULT_PREFIX) for line in stdout.splitlines())
     malformed_sentinel = sentinel_seen and harness is None
-    warnings = classify_warnings(stderr, patterns)
+    warnings = classify_warnings(stderr, patterns, str(test.get("id", "")))
     structured_failed = harness is not None and not bool(harness.get("passed", False))
     fatal_stderr = any(item["classification"] == "fatal" for item in warnings)
     status = "timeout" if timed_out else (
@@ -232,12 +276,14 @@ def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: 
     }
 
 
-def _run_import(timeout_sec: float = IMPORT_TIMEOUT_SEC, command: list[str] | None = None) -> tuple[bool, dict[str, Any]]:
-    env = os.environ.copy(); env["HOME"] = "/tmp/custodian-godot-home"
+def _run_import(timeout_sec: float = IMPORT_TIMEOUT_SEC, command: list[str] | None = None,
+                patterns: list[dict[str, str]] | None = None) -> tuple[bool, dict[str, Any]]:
+    env = os.environ.copy(); env["HOME"] = str(godot_home())
     resolved = command or ["godot", "--headless", "--path", str(CUSTODIAN_DIR), "--import", "--quit"]
     try:
         process = subprocess.Popen(resolved, cwd=REPO_ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, start_new_session=True)
+                                   text=True, start_new_session=True,
+                                   pass_fds=inherited_godot_lock_fds())
         try:
             stdout, stderr = process.communicate(timeout=timeout_sec)
         except subprocess.TimeoutExpired:
@@ -248,8 +294,11 @@ def _run_import(timeout_sec: float = IMPORT_TIMEOUT_SEC, command: list[str] | No
     except OSError as error:
         return False, {"status": "launch_error", "exit_code": None, "error": str(error),
                        "stdout_tail": [], "stderr_tail": []}
-    return process.returncode == 0, {"status": "passed" if process.returncode == 0 else "failed",
-                                     "exit_code": process.returncode, "stdout_tail": _tail(stdout), "stderr_tail": _tail(stderr)}
+    warnings = classify_warnings(stderr, patterns if patterns is not None else load_warning_patterns())
+    fatal_diagnostics = any(item["classification"] == "fatal" for item in warnings)
+    ok = process.returncode == 0 and not fatal_diagnostics
+    return ok, {"status": "passed" if ok else "failed", "exit_code": process.returncode,
+                "warnings": warnings, "stdout_tail": _tail(stdout), "stderr_tail": _tail(stderr)}
 
 
 def execute_tiered(selected: list[dict[str, Any]], patterns: list[dict[str, str]],
@@ -293,7 +342,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        tests = load_manifest(); patterns = load_warning_patterns(); coverage_excludes = load_coverage_excludes()
+        tests = load_manifest(); patterns = load_warning_patterns(test_ids={test["id"] for test in tests}); coverage_excludes = load_coverage_excludes()
     except (OSError, json.JSONDecodeError, ManifestError) as error:
         print(json.dumps({"schema": "custodian.validation.result.v1", "passed": False, "configuration_error": str(error)}))
         return EXIT_CONFIG
@@ -319,7 +368,7 @@ def main(argv: list[str] | None = None) -> int:
         CUSTODIAN_DIR, "run_validation (%d checks)" % len(selected)
     )
     try:
-        with lock:
+        with lock, GodotJobBudget("run_validation (%d checks)" % len(selected)):
             if any(bool(test.get("needs_import")) for test in selected):
                 preflight_failure = preflight_detail(CUSTODIAN_DIR)
                 if preflight_failure:
@@ -331,12 +380,12 @@ def main(argv: list[str] | None = None) -> int:
                     }
                     print(json.dumps(result) if args.json else preflight_failure)
                     return EXIT_PREFLIGHT
-                ok, import_result = _run_import()
+                ok, import_result = _run_import(patterns=patterns)
                 if not ok:
                     print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))
                     return EXIT_PREFLIGHT
             results = execute_tiered(selected, patterns)
-    except GodotProjectBusy as error:
+    except (GodotProjectBusy, ValueError, RuntimeError) as error:
         print(json.dumps({
             "schema": "custodian.validation.result.v1", "passed": False,
             "infrastructure_failure": "godot_project_busy", "error": str(error),

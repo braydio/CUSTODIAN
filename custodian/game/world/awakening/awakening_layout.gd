@@ -320,7 +320,7 @@ const MARKERS := {
 	&"zone05_dust_lung": [
 		{"id": "lift_lower", "label": "TRANSIT LIFT / LOWER", "kind": "lift", "position": Vector2(384, -3008)},
 		{"id": "lift_upper", "label": "TRANSIT LIFT / UPPER", "kind": "lift", "position": Vector2(384, -3424)},
-		{"id": "lift_mechanism", "label": "LIFT MECHANISM", "kind": "interactable", "position": Vector2(448, -2944)},
+		{"id": "lift_mechanism", "label": "LIFT MECHANISM", "kind": "marker", "position": Vector2(448, -2944)},
 		{"id": "scavenger_nest", "label": "SCAVENGER NEST", "kind": "encounter", "position": Vector2(-384, -3504)},
 		{"id": "central_shaft", "label": "CENTRAL SHAFT", "kind": "marker", "position": Vector2(0, -3200)},
 	],

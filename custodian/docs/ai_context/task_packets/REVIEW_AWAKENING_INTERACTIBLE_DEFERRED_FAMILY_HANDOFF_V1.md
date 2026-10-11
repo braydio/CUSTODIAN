@@ -40,6 +40,12 @@
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
+## Deferred-family review guard (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Verify no future Hub/Continuity Port interaction is mislabeled as active Awakening 01–10 gameplay; each proposed future art role has explicit owner or `not-posted` and actual family-reuse check. Docs-only review, no new scene or V2 runtime assets.
+
 ## Review Receipt
 - Status: `pending`
 - Review target workstream: `awakening-interactible-deferred-family-handoff-v1`

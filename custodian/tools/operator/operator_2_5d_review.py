@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+import operator_2_5d_timing_authority as timing_authority
 
 SCHEMA = "custodian.operator_2_5d_review_receipt.v1"
 GENERATION = "operator_2_5d_128"
@@ -181,6 +182,13 @@ class Operator2DReview:
         reference_path = self.repo_root / str(profile_payload.get("canonical_visual_reference", {}).get("path", ""))
         if not profile_sha or not reference_sha or not reference_path.is_file() or sha256_file(reference_path) != reference_sha:
             raise ValueError("accepted canonical profile/reference evidence is missing or changed")
+        timing_decision = None
+        if selection.art_generation == GENERATION:
+            timing_decision = timing_authority.current_decision(
+                path=timing_authority.decision_path(self.receipt_root, selection), selection=selection,
+                manifest_path=manifest_path, document_path=document_path, physical=physical,
+                plan_path=self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+                profile_sha256=profile_sha, reference_sha256=reference_sha)
         frame_paths = [Path(path) for path in rendered["frames"]]
         frame_digests = [sha256_file(path) for path in frame_paths]
         sandbox = sandbox_result or {"status": "NOT_RUN", "request_sha256": "", "result_sha256": ""}
@@ -235,6 +243,7 @@ class Operator2DReview:
                 "frames": int(physical["frames"]),
                 "frame_size": [int(physical["width"]), int(physical["height"])],
                 "durations": [float(value) for value in physical["durations"]],
+                "timing_decision_sha256": timing_decision.get("record_sha256", "") if timing_decision else "",
             },
             "qa": {"status": state, "findings_sha256": findings_digest, "findings": qa.get("findings", [])},
             "human_review": human,
@@ -268,6 +277,33 @@ class Operator2DReview:
             authority = receipt["authority"]
             if receipt.get("schema") != SCHEMA or receipt.get("authoring_identity") != selection.authoring_identity:
                 return None
+            if selection.art_generation == GENERATION:
+                workbench = json.loads(manifest.read_text(encoding="utf-8"))
+                timeline = workbench.get("timeline", {})
+                if timeline.get("timing_authority") is not True:
+                    return None
+                import animation_workbench_model
+                if animation_workbench_model.timing_payload_from_timeline(timeline) is None:
+                    return None
+                import animation_workbench
+                profile_path = self.repo_root / "custodian/content/data/operator/authoring/operator_art_profile.json"
+                profile_payload = json.loads(profile_path.read_text(encoding="utf-8"))
+                profile_id = profile_payload.get("active_authoring_profile", GENERATION)
+                profile_sha = str(profile_payload.get("profiles", {}).get(profile_id, {}).get("profile_sha256", ""))
+                reference_sha = str(profile_payload.get("canonical_visual_reference", {}).get("sha256", ""))
+                reference_path = self.repo_root / str(profile_payload.get("canonical_visual_reference", {}).get("path", ""))
+                if not reference_path.is_file() or sha256_file(reference_path) != reference_sha:
+                    return None
+                timing_decision = timing_authority.current_decision(
+                    path=timing_authority.decision_path(self.receipt_root, selection), selection=selection,
+                    manifest_path=manifest, document_path=document,
+                    physical=animation_workbench.inspect_saved_document_contract(manifest, self.service.aseprite),
+                    plan_path=self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+                    profile_sha256=profile_sha, reference_sha256=reference_sha)
+                if timing_decision is None:
+                    return None
+                if authority.get("timing_decision_sha256") != timing_decision.get("record_sha256"):
+                    return None
             if authority["workbench_manifest_sha256"] != sha256_file(manifest): return None
             if authority["workbench_document_sha256"] != sha256_file(document): return None
             profile_path = self.repo_root / "custodian/content/data/operator/authoring/operator_art_profile.json"
@@ -454,7 +490,8 @@ class Operator2DReview:
             request_path.write_text(json.dumps(request, indent=2) + "\n", encoding="utf-8")
         return request
 
-    def run_sandbox(self, selection: Any, receipt: dict[str, Any], *, godot: str = "godot") -> dict[str, Any]:
+    def run_sandbox(self, selection: Any, receipt: dict[str, Any], *, godot: str = "godot",
+                    timeout_sec: float = 90.0) -> dict[str, Any]:
         frame_paths = [Path(path) for path in receipt["authority"]["frame_paths"]]
         request = self.make_sandbox_request(selection, receipt, frame_paths)
         request_path = self.preview_root / request["request_id"] / "request.json"
@@ -480,9 +517,27 @@ class Operator2DReview:
         before = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         command = [godot, "--headless", "--path", str(self.repo_root / "custodian"),
                    "--scene", "res://scenes/debug/operator_2_5d_review_sandbox.tscn", "--", "--request", str(request_path)]
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=90, check=False)
-        after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         result_path = request_path.parent / "result.json"
+        result_path.unlink(missing_ok=True)
+        try:
+            completed = subprocess.run(command, capture_output=True, text=True,
+                                       timeout=timeout_sec, check=False)
+        except subprocess.TimeoutExpired as error:
+            after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
+            stdout = error.stdout.decode(errors="replace") if isinstance(error.stdout, bytes) else (error.stdout or "")
+            stderr = error.stderr.decode(errors="replace") if isinstance(error.stderr, bytes) else (error.stderr or "")
+            result = {"error": f"Godot sandbox timed out after {timeout_sec:g}s",
+                      "stdout": stdout[-4000:], "stderr": stderr[-4000:]}
+            timing_authority.atomic_json(result_path, result)
+            return {"status": "FAILED", "request_sha256": request["request_sha256"],
+                    "result_sha256": sha256_file(result_path),
+                    "result_path": str(result_path.resolve()),
+                    "request_path": str(request_path.resolve()),
+                    "production_before": before, "production_after": after,
+                    "production_unchanged": before == after, "godot_exit_code": None,
+                    "timed_out": True, "timeout_sec": timeout_sec,
+                    "result": result, "stdout": stdout[-3000:], "stderr": stderr[-3000:]}
+        after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         try:
             result = json.loads(result_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):

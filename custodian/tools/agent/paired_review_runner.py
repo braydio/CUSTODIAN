@@ -131,15 +131,118 @@ def parse_claim_receipt(stdout: str, workstream: str, repo: Path) -> dict:
     return receipt
 
 
-def prompt_for(workstream: str, packet_path: str, target_path: str) -> str:
+def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: Path | None = None,
+               authoring_chat: str | None = None, reviewed_main: str | None = None) -> str:
+    validation_path = str(run_dir / "validation.json") if run_dir else "the run evidence directory's validation.json"
+    backlink = f"Use this exact Authoring chat URL in the summary: {authoring_chat}" if authoring_chat else "Preserve the packet's exact Authoring chat URL in the summary."
+    pinned = f"Review the immutable baseline `origin/main` at `{reviewed_main}`; report this exact SHA in the review receipt." if reviewed_main else "Record the exact immutable reviewed-main SHA in the review receipt."
     return f"""You are the fresh independent paired reviewer for CUSTODIAN workstream `{workstream}`.
 
-Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary with the exact Authoring chat URL, update/archive only the authorized review packet, and complete the normal `workstream.py finish` lifecycle when validation permits. If blocked, preserve the claimed workstream and write a durable summary explaining the blocker; never delete or reclaim it. Do not claim another packet or hop to the global queue. Report the exact result and landed SHA or recovery worktree/log path."""
+Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. {pinned} Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary. {backlink}
+
+This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. Run the required validation and save its green structured JSON result to `{validation_path}` (schema `custodian.validation.result.v1`, with `passed: true`, `coverage.complete: true`, and all test statuses passed). Update/archive only the authorized review packet and managed index. If blocked, write the durable summary explaining the blocker and leave the packet/worktree recoverable. Do not claim another packet or hop to the global queue. Report the exact result and evidence paths."""
+
+
+def validation_report_is_green(path: Path) -> bool:
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    tests = report.get("tests") if isinstance(report, dict) else None
+    coverage = report.get("coverage") if isinstance(report, dict) else None
+    return (report.get("schema") == "custodian.validation.result.v1" and report.get("passed") is True
+            and isinstance(coverage, dict) and coverage.get("complete") is True
+            and isinstance(tests, list) and bool(tests)
+            and all(isinstance(test, dict) and test.get("status") == "passed" for test in tests))
+
+
+def _changed_paths(repo: Path, *args: str) -> list[str]:
+    result = subprocess.run(["git", *args], cwd=repo, text=True, capture_output=True)
+    if result.returncode:
+        raise RunnerError(redact(result.stderr or result.stdout))
+    return [line for line in result.stdout.splitlines() if line]
+
+
+def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, active_packet_path: str,
+                              target_workstream: str, target_packet_path: str, target_content: str,
+                              authoring_chat: str | None, reviewed_main: str, run_dir: Path) -> str:
+    """Commit only bounded reviewer evidence and delegate landing to workstream.py."""
+    report = run_dir / "validation.json"
+    if not validation_report_is_green(report):
+        raise RunnerError(f"reviewer did not provide a green structured validation report: {report}")
+    summary_path = expected_summary_path(workstream)
+    archive_path = f"{PACKET_ROOT}/archived/{Path(active_packet_path).name}"
+    allowed = {active_packet_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path}
+    changed = set(_changed_paths(worktree, "diff", "--name-only", "origin/main...HEAD"))
+    changed.update(_changed_paths(worktree, "diff", "--name-only", "HEAD"))
+    changed.update(_changed_paths(worktree, "diff", "--cached", "--name-only"))
+    changed.update(_changed_paths(worktree, "ls-files", "--others", "--exclude-standard"))
+    unexpected = sorted(changed - allowed)
+    if unexpected:
+        raise RunnerError("reviewer changed files outside its bounded evidence scope: " + ", ".join(unexpected))
+    if not (worktree / archive_path).is_file() or not (worktree / summary_path).is_file():
+        raise RunnerError("reviewer did not write the archived packet and exact root summary")
+    if _changed_paths(worktree, "diff", "--cached", "--name-only"):
+        raise RunnerError("reviewer staged evidence before coordinator authorization")
+    staged = subprocess.run(["git", "add", "-A", "--", *sorted(allowed)], cwd=worktree, text=True, capture_output=True)
+    if staged.returncode:
+        raise RunnerError(redact(staged.stderr or staged.stdout))
+    staged_paths = set(_changed_paths(worktree, "diff", "--cached", "--name-only"))
+    if not staged_paths or staged_paths - allowed:
+        raise RunnerError("coordinator staged no review evidence or staged an unauthorized path")
+    committed = subprocess.run(["git", "commit", "-m", "paired review receipt, closeout"], cwd=worktree,
+                               text=True, capture_output=True)
+    if committed.returncode:
+        raise RunnerError(redact(committed.stderr or committed.stdout))
+    branch_head = git(worktree, "rev-parse", "--verify", "HEAD^{commit}")
+    branch_state = landed_review_state(repo, branch_head, workstream, active_packet_path,
+                                       target_workstream, target_packet_path, target_content,
+                                       authoring_chat, reviewed_main)
+    if not branch_state["complete"]:
+        raise RunnerError("review evidence failed exact pre-land verification: " + "; ".join(branch_state["reasons"]))
+    finish_cmd = [sys.executable, str(repo / "custodian/tools/agent/workstream.py"), "finish", workstream,
+                  "--validation-report", str(report)]
+    finished = subprocess.run(finish_cmd, cwd=repo, text=True, capture_output=True)
+    finish_output = finished.stderr + finished.stdout
+    if finished.returncode and "provide a green --validation-report-after-sync" in finish_output:
+        after_sync_report = run_dir / "validation-after-sync.json"
+        validation = subprocess.run([sys.executable, str(repo / "custodian/tools/validation/run_validation.py"),
+                                     "--changed", "--json"], cwd=worktree, text=True, capture_output=True)
+        if validation.returncode:
+            raise RunnerError("post-sync changed-file validation failed; recovery retained: "
+                              + redact(validation.stderr or validation.stdout))
+        _write(after_sync_report, validation.stdout)
+        if not validation_report_is_green(after_sync_report):
+            raise RunnerError("post-sync changed-file validation report is not green; recovery retained")
+        retry = finish_cmd + ["--validation-report-after-sync", str(after_sync_report)]
+        finished = subprocess.run(retry, cwd=repo, text=True, capture_output=True)
+    if finished.returncode:
+        raise RunnerError("coordinator workstream finish failed; branch and evidence preserved: "
+                          + redact(finished.stderr or finished.stdout))
+    landed = re.search(r"verified ([0-9a-f]{40,64}) reachable from origin/main", finished.stdout + finished.stderr)
+    if not landed:
+        raise RunnerError("workstream finish did not return its verified landed commit; inspect preserved run evidence")
+    return landed.group(1)
 
 
 def _write(path: Path, value: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(value, encoding="utf-8")
+
+
+def unresolved_prior_run(common: Path, workstream: str, current_run_id: str) -> Path | None:
+    """Find a prior post-claim run that must be recovered before any new claim."""
+    safe_phases = {"preflight_complete", "claim_failed", "complete"}
+    for metadata_path in sorted((common / "custodian-review-runs" / workstream).glob("*/metadata.json")):
+        if metadata_path.parent.name == current_run_id:
+            continue
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return metadata_path.parent
+        if metadata.get("workstream") == workstream and metadata.get("phase") not in safe_phases:
+            return metadata_path.parent
+    return None
 
 
 def safe_output(value: str) -> str:
@@ -167,6 +270,100 @@ def safe_output(value: str) -> str:
 def next_handoff(summary: str) -> str:
     match = re.search(r"(?ms)^## Next Handoff\s*\n(.*?)(?=^## |\Z)", summary)
     return match.group(1).strip() if match else ""
+
+
+def expected_summary_path(workstream: str) -> str:
+    """Return the one canonical root summary path used by workstream.py."""
+    return f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+
+
+def _show_at(repo: Path, revision: str, path: str) -> str:
+    """Read one exact path from one pinned commit (never a grep result)."""
+    return git(repo, "show", f"{revision}:{path}")
+
+
+def fetch_and_pin_main(repo: Path) -> str:
+    """Fetch successfully, then return the immutable commit used for verification."""
+    git(repo, "fetch", "origin", "main")
+    revision = git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+    if not re.fullmatch(r"[0-9a-f]{40,64}", revision):
+        raise RunnerError("origin/main did not resolve to a full commit ID")
+    return revision
+
+
+def landed_review_state(repo: Path, revision: str, workstream: str, review_packet_path: str,
+                        target_workstream: str, target_packet_path: str,
+                        expected_target_content: str, authoring_chat: str | None,
+                        reviewed_main: str | None = None) -> dict:
+    """Verify completion from exact archived packet, summary and receipt paths."""
+    archive_path = f"{PACKET_ROOT}/archived/{Path(review_packet_path).name}"
+    result = {"complete": False, "revision": revision, "summary_path": expected_summary_path(workstream),
+              "reasons": []}
+    try:
+        archived_text = _show_at(repo, revision, archive_path)
+        summary_text = _show_at(repo, revision, result["summary_path"])
+        target_text = _show_at(repo, revision, target_packet_path)
+    except RunnerError as exc:
+        result["reasons"].append(str(exc))
+        return result
+
+    archived = parse_packet(archive_path, archived_text)
+    target = parse_packet(target_packet_path, target_text)
+    if archived.error or archived.kind != "review" or archived.status != "complete" or archived.workstream != workstream:
+        result["reasons"].append("exact archived review packet is not complete")
+    if archived.review_target_workstream != target_workstream or archived.review_target_packet != target_packet_path:
+        result["reasons"].append("archived review packet names a different target")
+    if target.error or target.kind not in {"implementation", "correction"} or target.workstream != target_workstream or target.status != "complete":
+        result["reasons"].append("exact reviewed implementation packet is not complete")
+    if expected_target_content and target_text != expected_target_content:
+        result["reasons"].append("reviewed implementation packet changed during review")
+    if authoring_chat and archived.authoring_chat != authoring_chat:
+        result["reasons"].append("archived review packet changed its authoring-chat identity")
+    if reviewed_main and subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, revision],
+                                        cwd=repo, text=True, capture_output=True).returncode:
+        result["reasons"].append("pinned post-review main is not descended from the reviewed main")
+
+    receipt_match = re.search(r"(?ims)^## Independent Review\s*\n(.*?)(?=^## |\Z)", archived_text)
+    receipt = receipt_match.group(1) if receipt_match else ""
+    reviewed_commit = re.search(r"(?im)^- Reviewed implementation commit:\s*`?([0-9a-f]{7,40})`?\s*$", receipt)
+    receipt_main = re.search(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{7,64})`?\s*$", receipt)
+    if not receipt_match or not re.search(r"(?im)^- Status:\s*`?passed`?\s*$", receipt):
+        result["reasons"].append("independent review receipt is absent or not passed")
+    if not re.search(r"(?im)^- Blocking defects:\s*`?0`?\s*$", receipt):
+        result["reasons"].append("review receipt does not record zero blocking defects")
+    if not re.search(r"(?im)^- Material gaps:\s*`?0`?\s*$", receipt):
+        result["reasons"].append("review receipt does not record zero material gaps")
+    if not re.search(r"(?im)^- Reviewer context:\s*`?fresh`?\s*$", receipt):
+        result["reasons"].append("review receipt does not verify fresh reviewer context")
+    if not re.search(r"(?im)^- Reviewer provenance:\s*`?(?:different-agent|same-agent-fresh-context)`?\s*$", receipt):
+        result["reasons"].append("review receipt does not identify independent reviewer provenance")
+    if not reviewed_commit:
+        result["reasons"].append("review receipt omits the reviewed implementation commit")
+    else:
+        commit = reviewed_commit.group(1)
+        target_commit = re.search(r"(?im)^- Implementation commit:\s*`?([0-9a-f]{7,40})`?\s*$", target_text)
+        if target_commit:
+            target_full = git(repo, "rev-parse", "--verify", f"{target_commit.group(1)}^{{commit}}", check=False)
+            review_full = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}", check=False)
+            if not target_full or target_full != review_full:
+                result["reasons"].append("review receipt names a different implementation commit than the archived target")
+        if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo,
+                          text=True, capture_output=True).returncode:
+            result["reasons"].append("reviewed implementation commit is unavailable")
+        elif subprocess.run(["git", "merge-base", "--is-ancestor", commit, revision], cwd=repo,
+                            text=True, capture_output=True).returncode:
+            result["reasons"].append("reviewed implementation commit is not an ancestor of pinned main")
+    result["reviewed_implementation_commit"] = reviewed_commit.group(1) if reviewed_commit else None
+    if not receipt_main:
+        result["reasons"].append("review receipt omits its immutable reviewed-main SHA")
+    elif reviewed_main and receipt_main.group(1) != reviewed_main:
+        result["reasons"].append("review receipt is bound to a different reviewed-main SHA")
+    if authoring_chat and f"Authoring chat: {authoring_chat}" not in summary_text:
+        result["reasons"].append("exact closing summary is missing the packet authoring-chat backlink")
+    if not next_handoff(summary_text):
+        result["reasons"].append("exact closing summary omits Next Handoff")
+    result["complete"] = not result["reasons"]
+    return result
 
 
 def launch_codex(argv: list[str], worktree: Path, prompt: str, run_dir: Path, timeout: float | None) -> int:
@@ -233,6 +430,12 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
                     "phase": "preflight_complete", "created_utc": datetime.now(timezone.utc).isoformat(),
                     "run_dir": str(run_dir)}
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+        prior_run = unresolved_prior_run(common, workstream, run_id)
+        if prior_run:
+            metadata.update({"phase": "blocked_prior_recovery", "prior_run_dir": str(prior_run)})
+            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+            _write(run_dir / "RECOVERY.md", f"A prior run for `{workstream}` passed claim and has unresolved state. Recover it before another review claim. Prior evidence: `{prior_run}`. No new dispatcher claim was attempted.\n")
+            raise RunnerError(f"prior claimed review needs recovery before retry; inspect {prior_run}; no new claim attempted")
         claim_cmd = [sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "claim", workstream,
                      "--agent", "codex-reviewer"]
         claimed = subprocess.run(claim_cmd, cwd=repo, text=True, capture_output=True)
@@ -259,6 +462,10 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         if not (worktree / actual_path).is_file():
             _write(run_dir / "RECOVERY.md", f"Claimed packet missing from verified worktree. Preserve branch `{receipt['branch']}` and worktree `{worktree}`. Run evidence: `{run_dir}`.\n")
             raise RunnerError(f"claimed packet missing from verified worktree; recover at {worktree}")
+        # Pin the baseline from the claimed checkout after dispatch has finished
+        # synchronizing it. Keep the SHA and target bytes fixed for the full run.
+        reviewed_main = git(worktree, "rev-parse", "--verify", "origin/main^{commit}")
+        target_content = git(worktree, "show", f"{reviewed_main}:{packet.review_target_packet}")
         metadata.update({"phase": "claimed", "branch": receipt["branch"], "worktree": str(worktree),
                          "packet": actual_path, "codex": str(executable), "fresh": True})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
@@ -274,7 +481,9 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         started = time.monotonic()
         try:
             exit_code = launch_codex(argv, worktree, prompt_for(workstream, actual_path,
-                                      packet.review_target_packet or ""), run_dir, timeout)
+                                      packet.review_target_packet or "", run_dir=run_dir,
+                                      authoring_chat=packet.authoring_chat,
+                                      reviewed_main=reviewed_main), run_dir, timeout)
         except subprocess.TimeoutExpired:
             metadata.update({"phase": "codex_timeout_recovery", "elapsed_seconds": round(time.monotonic() - started, 3),
                              "recovery_worktree": str(worktree)})
@@ -298,31 +507,35 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
                          "elapsed_seconds": round(time.monotonic() - started, 3)})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
 
-        git(repo, "fetch", "origin", "main", check=False)
-        summary_matches = git(repo, "grep", "-l", "--fixed-strings", workstream, "origin/main", "--", "*_CLAUDE_SUMMARY.md", check=False).splitlines()
-        active_packet = (worktree / actual_path).is_file()
-        active_summary = [p for p in worktree.glob("*_CLAUDE_SUMMARY.md") if workstream in p.read_text(encoding="utf-8", errors="replace")]
-        durable_summary = bool(summary_matches) or (active_packet and bool(active_summary))
-        archived_packet_path = f"{PACKET_ROOT}/archived/{Path(actual_path).name}"
-        archive_probe = subprocess.run(["git", "cat-file", "-e", f"origin/main:{archived_packet_path}"], cwd=repo,
-                                       text=True, capture_output=True)
-        archived = False
-        if archive_probe.returncode == 0:
-            archived_packet = parse_packet(archived_packet_path, git(repo, "show", f"origin/main:{archived_packet_path}"))
-            archived = archived_packet.kind == "review" and archived_packet.status == "complete" and archived_packet.workstream == workstream
-        complete = archived and bool(summary_matches)
+        try:
+            # A failed fetch cannot be replaced with stale refs or reviewer-local files.
+            pinned_main = fetch_and_pin_main(repo)
+            if exit_code == 0:
+                pinned_main = coordinator_finish_review(repo, workstream, worktree, actual_path,
+                                                       packet.review_target_workstream or "",
+                                                       packet.review_target_packet or "", target_content,
+                                                       packet.authoring_chat, reviewed_main, run_dir)
+            state = landed_review_state(repo, pinned_main, workstream, actual_path,
+                                        packet.review_target_workstream or "",
+                                        packet.review_target_packet or "", target_content,
+                                        packet.authoring_chat, reviewed_main)
+        except RunnerError as exc:
+            metadata.update({"phase": "post_exit_recovery", "reviewed_main": reviewed_main,
+                             "post_exit_error": redact(str(exc)), "recovery_worktree": str(worktree)})
+            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+            _write(run_dir / "RECOVERY.md", f"Coordinator could not verify/land review evidence: {redact(str(exc))}. Preserve `{receipt['branch']}` and `{worktree}`. Run evidence: `{run_dir}`. Do not reclaim the review.\n")
+            raise RunnerError(f"post-exit coordinator recovery required; preserve claim at {worktree}; evidence: {run_dir}") from exc
+        complete = state["complete"]
         if exit_code == 0 and not complete:
-            metadata["phase"] = "failed_missing_durable_review_state"
+            metadata.update({"phase": "failed_missing_durable_review_state", "post_exit_state": state})
             _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
-            _write(run_dir / "RECOVERY.md", f"Codex exited 0 without a durable landed review receipt/summary. Preserve `{receipt['branch']}` and `{worktree}`. Run evidence: `{run_dir}`.\n")
+            _write(run_dir / "RECOVERY.md", f"Codex exited 0 but exact landed review evidence is incomplete: {state['reasons']}. Preserve `{receipt['branch']}` and `{worktree}`. Run evidence: `{run_dir}`.\n")
             raise RunnerError(f"Codex exited 0 without durable review state; recovery at {run_dir}")
-        if not durable_summary:
-            metadata["phase"] = "failed_missing_summary"
-            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
-            _write(run_dir / "RECOVERY.md", f"Review process did not leave a durable summary. Preserve `{receipt['branch']}` and `{worktree}`. Run evidence: `{run_dir}`.\n")
-            raise RunnerError(f"review state is not durable; recovery at {run_dir}")
-        summary_path = summary_matches[0] if summary_matches else str(active_summary[0])
-        summary_text = git(repo, "show", f"origin/main:{summary_path}") if summary_matches else active_summary[0].read_text(encoding="utf-8", errors="replace")
+        summary_path = state["summary_path"]
+        try:
+            summary_text = _show_at(repo, pinned_main, summary_path)
+        except RunnerError:
+            summary_text = ""
         if not complete and not re.search(r"(?i)\b(blocked|blocker|partial|failed|incomplete|unable)\b", summary_text):
             metadata["phase"] = "failed_unexplained_active_review"
             _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
@@ -330,7 +543,9 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             raise RunnerError(f"active review lacks an explicit blocker explanation; recovery at {run_dir}")
         handoff = next_handoff(summary_text)
         metadata.update({"phase": "complete" if complete else "blocked_recoverable",
-                         "durable_summary": summary_path, "archived_on_origin_main": archived,
+                         "reviewed_main": reviewed_main, "post_exit_main": pinned_main,
+                         "durable_summary": summary_path, "archived_on_origin_main": complete,
+                         "post_exit_state": state,
                          "next_handoff": handoff})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         print(f"paired_review_runner: {'COMPLETE' if complete else 'BLOCKED_RECOVERABLE'} {workstream}")

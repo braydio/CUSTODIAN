@@ -21,8 +21,8 @@ static func create(
 	noise_loudness: float = 1.0,
 	is_suppressed: bool = false,
 	team: StringName = &"neutral"
-) -> RefCounted:
-	var event: RefCounted = load("res://game/systems/stealth/noise_event.gd").new()
+) -> NoiseEvent:
+	var event := NoiseEvent.new()
 	event.source = noise_source
 	event.position = noise_position
 	event.radius_px = maxf(0.0, noise_radius_px)

@@ -6,6 +6,8 @@
 
 ## Calibration batch 01 (10 image requests)
 
+**User disposition 2026-10-10:** All ten originally generated atlas-cropped assets were rejected for visible AI architecture artifacts and mirrored false seamless detail. No state is artistically approved or suitable for Asset V2 ingest; counts and human gates remain unfulfilled. See [Gate Side-Stair / Wind-Dust / Asset QA Ledger](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md). Zone 07 production underlay visibly exposes east/west stairs and northward approach; AP3 must preserve these entrances for a separate, explicitly approved spatial-branch decision and must not treat speculative rubble sealing as part of a generic backdrop pass.
+
 [AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) is the first ten-asset source-generation brief: three complete 01/07/10 role sets (9 states), plus Zone 06's distant structures (1 state). Assets 1–3 are an explicit visual calibration stop/go before 4–10. This does not override AP0's camera-footprint proof or automatically promote AP1–AP4.
 
 ## Locked project decisions
@@ -72,3 +74,7 @@ Recompute world/camera/zone art bounds; verify all support has no collision and 
 1. The 2026-09-20 `reports/awakening_visual_walkthrough/QA.md` still describes 04→05 rectangular uncovered connector gaps and claims five Road plates `REGEN_REQUIRED`. Subsequent direct registered composition and Road modular Asset V2 publication supersede both; treat that report as dated evidence, not current authority. AP0 should tag/cross-reference it rather than rewriting historical test results.
 2. `AWAKENING_ASSET_MANIFEST.md` contains a dated 2026-10-03 claim about nine environment pairs, while the active 04→05 correction explicitly defers incompatible Locker foreground. Do not infer live foreground completeness from the older blanket statement; AP0 reconciles the current catalog ledger.
 3. The 04→05 shared-parent fade defect is corrected and passed paired review; fade ownership remains on the registered Dust/Connector/Locker children. The sealed Gate body's visual-route question remains authored composition work. Perimeter art neither changes the accepted connector registration nor resolves/bypasses the Gate decision.
+
+## Gate lateral-stair creative decision (2026-10-10)
+
+The user rejected earlier proposed west/east names and small-pocket scope. West is now an unnamed forbidden high-difficulty lower region visible early and intended to matter again mid-game, potentially also teased as a visual-only view near the literal Zone01 Crèche spawn. East is simply an unnamed overlook of the dead historical city. See [AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md](AWAKENING_FORBIDDEN_LOWER_REGION_CONCEPTS_V1.md) for five nonbinding visual candidates. AP3 protects both stair mouths and cannot imply active branches, loot, mechanics, authoring of a real dungeon or later access requirements.

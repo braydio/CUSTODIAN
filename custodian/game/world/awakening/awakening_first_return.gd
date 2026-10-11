@@ -74,9 +74,11 @@ var _occupied_zones := {}
 var _transit_lift: Node = null
 var _recovery_alcove: AnimatedSprite2D = null
 var _console_activation_fx: AnimatedSprite2D = null
+var _affordance_presenter: Node = null
 var _console_activation_remaining := 0.0
 var _reveal_release_pending := false
 var _reveal_generation := 0
+var _completion_rearm_pending := false
 var current_objective_text := ""
 var _zone_fade_entries: Array[Dictionary] = []
 var _connector_fade_entries: Array[CanvasItem] = []
@@ -92,6 +94,7 @@ func _ready() -> void:
 	_build_hero_presentation()
 	_build_detail_presentation()
 	_build_interactables()
+	_mount_interactible_affordances()
 	_build_triggers()
 	_place_operator()
 	_apply_camera_bounds()
@@ -586,16 +589,36 @@ func _build_recovery_alcove_presentation() -> void:
 
 func _build_console_activation_presentation() -> void:
 	var set_pieces := _zone_child(&"zone01_creche", "SetPieces")
-	if set_pieces == null or set_pieces.get_node_or_null("CrecheConsoleActivation") != null:
+	if set_pieces == null:
+		return
+	# The native room underlay already contains the sole visible console body.
+	# This named transform represents that baked body without layering a second
+	# sprite over it. The screen center was measured in underlay/world space.
+	var body := set_pieces.get_node_or_null("CrecheConsoleBody") as Node2D
+	if body == null:
+		body = Node2D.new()
+		body.name = "CrecheConsoleBody"
+		body.position = Vector2(105, 118)
+		body.z_index = Layout.Z_WORLD_PROPS
+		body.set_meta("visible_body_source", "awakening_creche_underlay_960x704.png")
+		set_pieces.add_child(body)
+	var screen_anchor := body.get_node_or_null("ScreenAnchor") as Node2D
+	if screen_anchor == null:
+		screen_anchor = Node2D.new()
+		screen_anchor.name = "ScreenAnchor"
+		body.add_child(screen_anchor)
+	if screen_anchor.get_node_or_null("CrecheConsoleActivation") != null:
 		return
 	_console_activation_fx = AnimatedSprite2D.new()
 	_console_activation_fx.name = "CrecheConsoleActivation"
-	_console_activation_fx.position = _marker_position(&"zone01_creche", "creche_console")
-	_console_activation_fx.z_index = Layout.Z_WORLD_PROPS
+	# A full frame is 128px; 0.13 keeps the complete canvas within the measured
+	# 27x18 source-screen window while preserving the existing frame artwork.
+	_console_activation_fx.scale = Vector2.ONE * 0.13
+	_console_activation_fx.z_index = 1
 	_console_activation_fx.sprite_frames = _build_console_activation_frames()
 	_console_activation_fx.visible = false
 	_console_activation_fx.animation_finished.connect(_on_console_activation_finished)
-	set_pieces.add_child(_console_activation_fx)
+	screen_anchor.add_child(_console_activation_fx)
 
 
 func _build_console_activation_frames() -> SpriteFrames:
@@ -752,6 +775,14 @@ func _build_interactables() -> void:
 			locker.connect("sidearm_taken", _on_sidearm_taken)
 
 
+func _mount_interactible_affordances() -> void:
+	_affordance_presenter = get_node_or_null("AffordancePresentation")
+	if _affordance_presenter == null:
+		return
+	if not bool(_affordance_presenter.call("bind", self)):
+		push_error("[AwakeningFirstReturn] interactible affordance owner/marker binding failed")
+
+
 func _find_sidearm_locker() -> Node:
 	return zones_root.get_node_or_null("Zone04_LockerReliquary/SidearmLocker")
 
@@ -783,6 +814,9 @@ func _build_triggers() -> void:
 	_add_trigger_area(&"zone10_road_south_reach", "SouthReachCompletion",
 		Layout.SOUTH_REACH_COMPLETION_CENTER, Layout.SOUTH_REACH_COMPLETION_SIZE,
 		_on_south_reach_reached)
+	var completion_area := _zone_child_node(&"zone10_road_south_reach", "Triggers/SouthReachCompletion") as Area2D
+	if completion_area != null and not completion_area.body_exited.is_connected(_on_south_reach_exited):
+		completion_area.body_exited.connect(_on_south_reach_exited)
 
 
 func _add_trigger_area(zone_id: StringName, node_name: String, centre: Vector2, size: Vector2, callback: Callable) -> void:
@@ -905,6 +939,9 @@ func _release_reveal_after(seconds: float) -> void:
 
 func _on_south_reach_reached(body: Node) -> void:
 	if completed or not _is_operator(body): return
+	var completion_area := _zone_child_node(&"zone10_road_south_reach", "Triggers/SouthReachCompletion") as Area2D
+	if not _is_inside_completion_volume(body, completion_area):
+		return
 	if not opening_console_acknowledged:
 		_set_objective(OBJECTIVE_RECOVERY)
 		return
@@ -926,11 +963,44 @@ func _on_south_reach_reached(body: Node) -> void:
 	blockout_completed.emit()
 
 
-func restore_after_handoff_failure() -> void:
+func _is_inside_completion_volume(body: Node, completion_area: Area2D) -> bool:
+	if not body is Node2D or completion_area == null:
+		return false
+	for child in completion_area.get_children():
+		var shape_node := child as CollisionShape2D
+		if shape_node == null or shape_node.disabled:
+			continue
+		var rectangle := shape_node.shape as RectangleShape2D
+		if rectangle == null:
+			continue
+		var body_position := shape_node.to_local((body as Node2D).global_position)
+		return Rect2(-rectangle.size * 0.5, rectangle.size).grow(24.0).has_point(body_position)
+	return false
+
+
+func _on_south_reach_exited(body: Node) -> void:
+	if not _completion_rearm_pending or body != operator_ref:
+		return
+	_completion_rearm_pending = false
 	completed = false
+
+
+func restore_after_handoff_failure() -> void:
+	# Keep completion latched while the failed overlap is still being retired by
+	# physics. A stale Area2D overlap can otherwise immediately submit the same
+	# failed transition again before the Operator has genuinely left the trigger.
+	_completion_rearm_pending = true
+	completed = true
 	_set_objective(OBJECTIVE_RETURN_TO_POST)
 	if hud != null and hud.has_method("hide_interaction"):
 		hud.call("hide_interaction")
+	# Defer the overlap query until the next process boundary so any body-entered
+	# event queued by the rollback physics step sees completion still latched.
+	await get_tree().process_frame
+	var completion_area := _zone_child_node(&"zone10_road_south_reach", "Triggers/SouthReachCompletion") as Area2D
+	if completion_area == null or operator_ref == null or not completion_area.overlaps_body(operator_ref):
+		_completion_rearm_pending = false
+		completed = false
 
 
 # --- Progression -------------------------------------------------------------
@@ -1074,6 +1144,8 @@ func reset_progression() -> void:
 	var console := interactables.get_node_or_null("CrecheConsole") if interactables != null else null
 	if console != null and "is_acknowledged" in console:
 		console.set("is_acknowledged", false)
+		if _affordance_presenter != null:
+			_affordance_presenter.call("set_owner_status", console, &"available")
 	_reset_console_activation()
 	# Keep the one-time grant state aligned with the persistent locker/inventory.
 	if _recovery_alcove != null:
@@ -1084,6 +1156,11 @@ func reset_progression() -> void:
 
 
 func _update_interaction_prompt() -> void:
+	if _affordance_presenter != null:
+		var focus_target: Node = null
+		if operator_ref != null and is_instance_valid(operator_ref) and "interaction_target" in operator_ref:
+			focus_target = operator_ref.get("interaction_target") as Node
+		_affordance_presenter.call("set_focus_target", focus_target)
 	if hud == null or not is_instance_valid(hud):
 		return
 	if not hud.visible or (hud.has_method("is_context_active") and not bool(hud.call("is_context_active"))):

@@ -52,6 +52,193 @@ def target_packet():
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_prior_claimed_run_blocks_reclaim_until_recovered(self):
+        with tempfile.TemporaryDirectory() as temp:
+            common = Path(temp)
+            old_run = common / "custodian-review-runs/review-sample/old-run"
+            old_run.mkdir(parents=True)
+            (old_run / "metadata.json").write_text(json.dumps({"workstream": "review-sample",
+                                                               "phase": "post_exit_recovery"}))
+            self.assertEqual(runner.unresolved_prior_run(common, "review-sample", "new-run"), old_run)
+            metadata = json.loads((old_run / "metadata.json").read_text())
+            metadata["phase"] = "complete"
+            (old_run / "metadata.json").write_text(json.dumps(metadata))
+            self.assertIsNone(runner.unresolved_prior_run(common, "review-sample", "new-run"))
+
+    def test_fetch_failure_is_not_ignored_or_replaced_by_stale_main(self):
+        with patch.object(runner, "git", side_effect=runner.RunnerError("FETCH_HEAD is read-only")) as git:
+            with self.assertRaisesRegex(runner.RunnerError, "FETCH_HEAD is read-only"):
+                runner.fetch_and_pin_main(Path("."))
+        self.assertEqual(git.call_count, 1)
+
+    def test_coordinator_commits_only_bounded_review_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            remote = base / "origin.git"
+            repo = base / "repo"
+            subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+            subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            active = f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md"
+            archive = f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
+            target_path = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
+            readme = f"{runner.PACKET_ROOT}/README.md"
+            (repo / active).parent.mkdir(parents=True)
+            (repo / active).write_text("active review packet\n")
+            (repo / target_path).parent.mkdir(parents=True)
+            (repo / target_path).write_text(target_packet())
+            (repo / readme).write_text("active packet index\n")
+            subprocess.run(["git", "-C", str(repo), "add", active, readme, target_path], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
+            target_sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                        text=True, capture_output=True).stdout.strip()
+            subprocess.run(["git", "-C", str(repo), "remote", "add", "origin", str(remote)], check=True)
+            subprocess.run(["git", "-C", str(repo), "push", "-qu", "origin", "main"], check=True)
+            worktree = base / "review-worktree"
+            subprocess.run(["git", "-C", str(repo), "worktree", "add", "-qb", "agent/review-sample",
+                            str(worktree)], check=True)
+            (worktree / active).unlink()
+            (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
+            (worktree / archive).write_text(f"""# Review
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-sample`
+- Kind: `review`
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `sample-impl`
+- Locks: `agent-workflow`
+- Review target workstream: `sample-impl`
+- Review target packet: `{target_path}`
+- Authoring chat: `https://chatgpt.com/c/example`
+
+## Independent Review
+- Schema: `custodian.paired_review.v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{target_sha}`
+- Reviewed implementation commit: `{target_sha}`
+""")
+            (worktree / readme).write_text("archived review packet index\n")
+            summary = worktree / runner.expected_summary_path("review-sample")
+            summary.write_text("Authoring chat: https://chatgpt.com/c/example\n\n## Next Handoff\n- Next workstream: none\n")
+            run_dir = base / "run"
+            run_dir.mkdir()
+            (run_dir / "validation.json").write_text(json.dumps({
+                "schema": "custodian.validation.result.v1", "passed": True,
+                "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
+
+            (worktree / "unauthorized.py").write_text("reviewer must not add this\n")
+            with self.assertRaisesRegex(runner.RunnerError, "outside its bounded evidence scope"):
+                runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
+                                                 target_path, runner.git(repo, "show", f"HEAD:{target_path}"),
+                                                 "https://chatgpt.com/c/example", target_sha, run_dir)
+            (worktree / "unauthorized.py").unlink()
+
+            original_run = subprocess.run
+            finish_calls = []
+            def intercept_finish(argv, *args, **kwargs):
+                if any(str(part).endswith("workstream.py") for part in argv):
+                    finish_calls.append((argv, kwargs.get("cwd")))
+                    return subprocess.CompletedProcess(argv, 0,
+                                                        f"finished agent/review-sample; verified {target_sha} reachable from origin/main", "")
+                return original_run(argv, *args, **kwargs)
+
+            with patch.object(runner.subprocess, "run", side_effect=intercept_finish):
+                landed_sha = runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
+                                                             target_path, runner.git(repo, "show", f"HEAD:{target_path}"),
+                                                             "https://chatgpt.com/c/example", target_sha, run_dir)
+            self.assertEqual(landed_sha, target_sha)
+            self.assertEqual(len(finish_calls), 1)
+            self.assertEqual(Path(finish_calls[0][1]), repo)
+            committed = subprocess.run(["git", "-C", str(worktree), "diff-tree", "--no-commit-id",
+                                        "--name-only", "-r", "HEAD"], check=True, text=True,
+                                       capture_output=True).stdout.splitlines()
+            self.assertEqual(set(committed), {active, archive, readme, summary.name})
+
+    def test_landed_review_uses_exact_summary_and_pinned_git_paths(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            target_path = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
+            target_text = target_packet()
+            target_file = repo / target_path
+            target_file.parent.mkdir(parents=True)
+            target_file.write_text(target_text)
+            subprocess.run(["git", "-C", str(repo), "add", target_path], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "target"], check=True)
+            target_sha = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                        text=True, capture_output=True).stdout.strip()
+            review_path = f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
+            review_text = f"""# Review
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-sample`
+- Kind: `review`
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `sample-impl`
+- Locks: `agent-workflow`
+- Review target workstream: `sample-impl`
+- Review target packet: `{target_path}`
+- Authoring chat: `https://chatgpt.com/c/example`
+
+## Independent Review
+- Schema: `custodian.paired_review.v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{target_sha}`
+- Reviewed implementation commit: `{target_sha}`
+"""
+            summary_path = runner.expected_summary_path("review-sample")
+            summary = (f"Authoring chat: https://chatgpt.com/c/example\n\n## Next Handoff\n"
+                       "- Next workstream: none\n- Next action: done\n")
+            for path, content in ((review_path, review_text), (summary_path, summary),
+                                   ("UNRELATED_CLAUDE_SUMMARY.md", "review-sample appears here only\n")):
+                file = repo / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text(content)
+            subprocess.run(["git", "-C", str(repo), "add", review_path, summary_path,
+                            "UNRELATED_CLAUDE_SUMMARY.md"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "review"], check=True)
+            revision = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                      text=True, capture_output=True).stdout.strip()
+            reviewer_checkout = repo.parent / "reviewer-checkout"
+            subprocess.run(["git", "-C", str(repo), "worktree", "add", "--detach",
+                            str(reviewer_checkout), revision], check=True, text=True, capture_output=True)
+            subprocess.run(["git", "-C", str(repo), "worktree", "remove", str(reviewer_checkout)],
+                           check=True, text=True, capture_output=True)
+            grep = subprocess.run(["git", "-C", str(repo), "grep", "-l", "review-sample", revision,
+                                   "--", "*_CLAUDE_SUMMARY.md"], check=True, text=True, capture_output=True).stdout
+            self.assertIn(f"{revision}:UNRELATED_CLAUDE_SUMMARY.md", grep)
+            state = runner.landed_review_state(repo, revision, "review-sample",
+                                               f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md", "sample-impl",
+                                               target_path, target_text.strip(),
+                                               "https://chatgpt.com/c/example")
+            self.assertTrue(state["complete"], state["reasons"])
+            self.assertEqual(state["summary_path"], summary_path)
+
+            subprocess.run(["git", "-C", str(repo), "rm", summary_path], check=True,
+                           text=True, capture_output=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "remove exact summary"], check=True)
+            missing_revision = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                              text=True, capture_output=True).stdout.strip()
+            missing = runner.landed_review_state(repo, missing_revision, "review-sample",
+                                                 f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md", "sample-impl",
+                                                 target_path, target_text.strip(),
+                                                 "https://chatgpt.com/c/example")
+            self.assertFalse(missing["complete"])
+            self.assertTrue(missing["reasons"])
+
     def test_fake_codex_fixture_advertises_required_ephemeral_interface(self):
         with tempfile.TemporaryDirectory() as temp:
             fixture = Path(temp) / "codex"
@@ -239,6 +426,9 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
     def test_prompt_is_durable_evidence_only_and_safe_logs_redact_secrets(self):
         prompt = runner.prompt_for("review-sample", "review.md", "archived/impl.md")
         self.assertIn("Do not use, request, or infer the implementation-session transcript", prompt)
+        self.assertIn("Do not run `git fetch`, `git push`, `git add`, `git commit`", prompt)
+        self.assertIn("workstream.py finish", prompt)
+        self.assertIn("validation.json", prompt)
         self.assertNotIn("transcript contents", prompt)
         line = json.dumps({"type": "event", "api_key": "private-value", "message": "Bearer abcdefghijklmnop"})
         safe = runner.safe_output(line)
@@ -309,18 +499,16 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             def git_side_effect(_repo, *args, check=True):
                 if args == ("rev-parse", "--show-toplevel"):
                     return str(repo)
+                if args == ("show", f"{'a' * 40}:{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"):
+                    return target_packet()
+                if args == ("show", f"{'a' * 40}:{summary_path}"):
+                    return summary if summary_available["value"] else ""
+                if args == ("rev-parse", "--verify", "origin/main^{commit}"):
+                    return "a" * 40
                 if args == ("branch", "--show-current"):
                     return "agent/review-sample"
-                if args[:2] == ("fetch", "origin"):
+                if args[:3] == ("fetch", "origin", "main"):
                     return ""
-                if args[:2] == ("grep", "-l"):
-                    return summary_path if summary_available["value"] else ""
-                if args[:2] == ("cat-file", "-e"):
-                    return ""
-                if args[:1] == ("show",) and args[1] == f"origin/main:{summary_path}":
-                    return summary
-                if args[:1] == ("show",) and args[1] == f"origin/main:{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md":
-                    return review_packet().replace("Status: `ready`", "Status: `complete`")
                 raise AssertionError(f"unexpected git call: {args}")
 
             class CaptureInput(io.StringIO):
@@ -347,6 +535,9 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                     self_test.assertIn("--approve-for-me", self.argv)
                     self_test.assertNotIn("--sandbox", self.argv)
                     self_test.assertIn("Do not use, request, or infer the implementation-session transcript", self.prompt)
+                    report_path = Path(self.argv[self.argv.index("--add-dir") + 1]) / "validation.json"
+                    report_path.write_text(json.dumps({"schema": "custodian.validation.result.v1", "passed": True,
+                                                       "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
                     output_path = Path(self.argv[self.argv.index("--output-last-message") + 1])
                     output_path.write_text("review complete\n")
                     return self.returncode
@@ -356,6 +547,10 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                  patch.object(runner.subprocess, "run", side_effect=run_side_effect), \
                  patch.object(runner.subprocess, "Popen", side_effect=lambda argv, **kwargs: FakeCodex(argv, **kwargs)), \
                  patch.object(runner, "git", side_effect=git_side_effect), \
+                 patch.object(runner, "coordinator_finish_review", return_value="a" * 40), \
+                 patch.object(runner, "landed_review_state", side_effect=lambda *args: {
+                     "complete": summary_available["value"], "summary_path": summary_path,
+                     "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \
                  patch.object(runner, "common_dir", return_value=repo / ".git"):
                 self.assertEqual(runner.run(repo, "review-sample"), 0)
                 summary_available["value"] = False

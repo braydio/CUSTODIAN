@@ -58,6 +58,12 @@
   5. Are landmark cue brightness and density restrained enough to preserve the scene hierarchy?
 - If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
 
+## Marker implementation restriction (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Only visual-only dressing at `awakening_layout.gd::MARKERS` entries `register_of_departures`, `gate_aperture`, `rest_checkpoint`, `attestation_dais`, `lore_plaque`, optional Chapel. Each must remain `kind=marker`; no `interactable` group, input, `Area2D`, prompt, or active near-read signal. Gate of Dust existing five-component sealed art is unchanged.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`

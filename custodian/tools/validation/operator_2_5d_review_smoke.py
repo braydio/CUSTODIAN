@@ -15,6 +15,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/operator"))
 import operator_2_5d_review as review_module
+import operator_2_5d_timing_authority as timing_contract
 from operator_2_5d_review import (Operator2DReview, human_review_evidence_sha, human_review_is_valid,
                                   human_review_passes, qa_state, sha256_file)
 from animation_preview import Preview, ReviewSequence, SemanticIdentity, TimelineClip
@@ -64,7 +65,8 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
     workbench.mkdir()
     manifest = workbench / "workbench.json"
     document = workbench / "workbench.aseprite"
-    manifest.write_text("fixture manifest")
+    manifest.write_text(json.dumps({"timeline": {"fps": 8.0, "preview_fps": 8.0,
+        "workspace_clock_frames": 1, "durations": [1.0], "loop": True, "timing_authority": True}}))
     document.write_bytes(b"fixture physical document")
     reference = root / "reference.png"
     Image.new("RGBA", (128, 128), (1, 2, 3, 255)).save(reference)
@@ -76,12 +78,21 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
         "profiles": {"operator_2_5d_128": {"profile_sha256": "profile-sha"}},
         "canonical_visual_reference": {"sha256": reference_sha, "path": "reference.png"},
     }))
+    plan_path = root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+    plan_path.parent.mkdir(parents=True)
+    plan_path.write_text(json.dumps({"schema": "custodian.operator_animation_implementation_plan.v2",
+        "items": [{"id": "fixture", "rank": 1, "priority": "P0", "state": "complete",
+            "art_generation": "operator_2_5d_128", "canonical_profile_id": "operator_2_5d_128",
+            "profile": "unarmed", "group": "posture", "action": "idle_relaxed_01",
+            "directions": ["n", "ne", "e", "se", "s", "sw", "w", "nw"],
+            "requested_directions": ["n", "ne", "e", "se", "s", "sw", "w", "nw"],
+            "required_layers": ["full_body"]}]}))
     art_root = root / ".ai/operator_art_agent/render"
     art_root.mkdir(parents=True)
     frame_path = art_root / "frame.png"
     Image.new("RGBA", (128, 128), (17, 34, 51, 255)).save(frame_path)
-    selection = SimpleNamespace(profile="operator", group="posture", action="idle", direction="ne",
-        art_generation="operator_2_5d_128", authoring_identity="operator_2_5d_128:operator/posture/idle/ne")
+    selection = SimpleNamespace(profile="unarmed", group="posture", action="idle_relaxed_01", direction="ne",
+        art_generation="operator_2_5d_128", authoring_identity="operator_2_5d_128:unarmed/posture/idle_relaxed_01/ne")
     qa_findings = [{"severity": "major", "code": "fixture-major"}]
     qa = {"schema": "custodian.operator_art_qa.v2", "status": "NEEDS_HUMAN_REVIEW", "findings": qa_findings}
 
@@ -90,6 +101,7 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
         def inspect_polish_contract(self, _session): return {"valid": True, "art_generation": "operator_2_5d_128"}
 
     class ReceiptService:
+        aseprite = "fixture-aseprite"
         def workspace(self, _selection): return workbench
         def polish_attach(self, _selection): return workbench
         def _polish(self, _selection): return SimpleNamespace(service=ReceiptArt())
@@ -102,7 +114,12 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
     animation_workbench.inspect_saved_document_contract = lambda *_args: physical_contract
 
     last_approval = {}
-    def current_receipt_for(human):
+    def current_receipt_for(human, *, timing_authority=True, decision=True):
+        manifest.write_text(json.dumps({"timeline": {"fps": 8.0, "preview_fps": 8.0,
+            "workspace_clock_frames": 1, "document_frames": 1, "clock_owner": "full_body",
+            "durations": [1.0], "loop": True,
+            "frame_durations_ms": [125.0], "timing_authority": timing_authority},
+            "identity": {"profile": "unarmed", "group": "posture", "action": "idle_relaxed_01", "direction": "ne"}}))
         authority = {
             "workbench_manifest_sha256": sha256_file(manifest),
             "workbench_document_sha256": sha256_file(document),
@@ -115,6 +132,28 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
             "frame_size": [128, 128],
             "durations": [0.125],
         }
+        decision_path = timing_contract.decision_path(
+            receipt_owner.receipt_root, selection)
+        decision_path.parent.mkdir(parents=True, exist_ok=True)
+        if decision and timing_authority:
+            params = {"fps": 8.0, "loop": True, "durations": [1.0]}
+            decision_record = {"schema": timing_contract.SCHEMA,
+                "authoring_identity": selection.authoring_identity,
+                "action": "workbench_explicit_timing_confirmation", "parameters": params,
+                "provenance": {"kind": "workbench_explicit_user", "control": "timing-preview-confirm",
+                    "confirmed_utc": "2026-10-11T00:00:00+00:00"},
+                "parameter_sha256": timing_contract.parameter_digest(**params),
+                "bindings": {"manifest_sha256": sha256_file(manifest),
+                    "document_sha256": sha256_file(document), "plan_sha256": sha256_file(plan_path),
+                    "profile_sha256": "profile-sha", "reference_sha256": reference_sha,
+                    "physical": {"frames": 1, "width": 128, "height": 128, "durations": [0.125]}}}
+            decision_record["record_sha256"] = timing_contract.sha256_bytes(timing_contract.canonical_json(decision_record))
+            decision_path.write_text(json.dumps(decision_record))
+        else:
+            decision_path.unlink(missing_ok=True)
+        authority["timing_decision_sha256"] = ""
+        if decision and timing_authority:
+            authority["timing_decision_sha256"] = decision_record["record_sha256"]
         qa_record = {"status": "NEEDS_HUMAN_REVIEW",
             "findings_sha256": hashlib.sha256(json.dumps(qa_findings, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest(),
             "findings": qa_findings}
@@ -158,10 +197,46 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
         receipt_path.write_text(json.dumps(receipt))
         return receipt_owner.current_receipt(selection)
 
+    # Run the required real renderer pass before receipt/family controls. The
+    # receipt controls below use isolated persisted fixtures to test review
+    # derivation; these fixtures cannot replace this actual Godot result.
+    sandbox_owner = Operator2DReview(service=ReceiptService(), repo_root=ROOT, workspace_root=workbench)
+    sandbox_owner.preview_root = root / "renderer_preflight"
+    renderer_receipt = {"receipt_sha256": "renderer-prerequisite",
+        "authoring_identity": selection.authoring_identity,
+        "authority": {"frame_sha256": [sha256_file(frame_path)],
+            "frame_paths": [str(frame_path)], "durations": [0.125]}}
+    godot = shutil.which("godot")
+    assert godot, "R0-02 requires the real Godot sandbox executable"
+    renderer_result = sandbox_owner.run_sandbox(selection, renderer_receipt, godot=godot)
+    assert renderer_result["status"] == "PASSED" and renderer_result["production_unchanged"]
+
     try:
         assert current_receipt_for({"status": "REQUIRED"})["runtime_verified"] is False
         assert current_receipt_for({"status": "NOT_REQUIRED"}) is None
         assert current_receipt_for("AUTO_APPROVAL")["runtime_verified"] is True
+        # Passing QA, human approval, and sandbox proof cannot turn the physical
+        # 8 FPS preview default into approved timing authority.
+        assert current_receipt_for("AUTO_APPROVAL", timing_authority=False) is None
+        assert current_receipt_for("AUTO_APPROVAL", timing_authority=True)["runtime_verified"] is True
+        assert current_receipt_for("AUTO_APPROVAL", timing_authority=True, decision=False) is None
+        # Family completion consumes the same effective leaf receipt gate. A
+        # fully covered family cannot advance while its current timing proof is
+        # non-authoritative, even with the positive QA/human/sandbox fixture.
+        family_owner = Operator2DReview(service=ReceiptService(), repo_root=ROOT, workspace_root=workbench)
+        family_owner.current_receipt = lambda _selection: current_receipt_for(
+            "AUTO_APPROVAL", timing_authority=False)
+        family_records = [SimpleNamespace(
+            selection=SimpleNamespace(profile="unarmed", group="posture", action="idle_relaxed_01",
+                direction=direction, art_generation="operator_2_5d_128",
+                authoring_identity=f"operator_2_5d_128:unarmed/posture/idle_relaxed_01/{direction}"),
+            coverage_status="CANONICAL_2_5D", workflow_status="EDITABLE_WORKBENCH",
+            stale_reference=False, layers=("full_body",))
+            for direction in ("n", "ne", "e", "se", "s", "sw", "w", "nw")]
+        family = family_owner.family(family_records, profile="unarmed", group="posture",
+                                     action="idle_relaxed_01")
+        assert family["complete"] is False
+        assert all(not cell["runtime_verified"] for cell in family["cells"])
         current_approval = last_approval["record"]
         assert current_receipt_for({**current_approval, "provenance": {"kind": "forged"}}) is None
         assert current_receipt_for({**current_approval, "evidence_sha256": "stale"}) is None
@@ -169,6 +244,76 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
             "evidence_sha256": approval_sha}) is None
     finally:
         animation_workbench.inspect_saved_document_contract = saved_contract
+
+with tempfile.TemporaryDirectory(prefix="operator_2d_timing_decision_") as raw:
+    root = Path(raw)
+    ref = root / "reference.png"
+    Image.new("RGBA", (128, 128), (1, 2, 3, 255)).save(ref)
+    ref_sha = sha256_file(ref)
+    profile_path = root / "custodian/content/data/operator/authoring/operator_art_profile.json"
+    profile_path.parent.mkdir(parents=True)
+    profile_path.write_text(json.dumps({"active_authoring_profile": "operator_2_5d_128",
+        "profiles": {"operator_2_5d_128": {"profile_sha256": "profile-sha"}},
+        "canonical_visual_reference": {"sha256": ref_sha, "path": "reference.png"}}))
+    plan_path = root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+    plan_path.parent.mkdir(parents=True)
+    plan_path.write_text(json.dumps({"schema": "custodian.operator_animation_implementation_plan.v2",
+        "items": [{"id": "fixture", "rank": 1, "priority": "P0", "state": "complete",
+            "art_generation": "operator_2_5d_128", "canonical_profile_id": "operator_2_5d_128",
+            "profile": "unarmed", "group": "posture", "action": "idle_relaxed_01",
+            "directions": ["n", "ne", "e", "se", "s", "sw", "w", "nw"],
+            "requested_directions": ["n", "ne", "e", "se", "s", "sw", "w", "nw"],
+            "required_layers": ["full_body"]}]}))
+    selection = AnimationSelection("unarmed", "posture", "idle_relaxed_01", "ne", art_generation="operator_2_5d_128")
+    workspace = root / ".ai/operator_animation_workbench/operator_2_5d_128/unarmed/posture/idle_relaxed_01/ne"
+    workspace.mkdir(parents=True)
+    manifest_path, document_path = workspace / "workbench.json", workspace / "workbench.aseprite"
+    manifest_path.write_text(json.dumps({"identity": {"profile": "unarmed", "group": "posture",
+        "action": "idle_relaxed_01", "direction": "ne"}, "canvas": {"width": 128, "height": 128},
+        "timeline": {"preview_fps": 8, "workspace_clock_frames": 3, "document_frames": 3,
+                     "clock_owner": "full_body", "timing_authority": False}}))
+    document_path.write_bytes(b"saved physical fixture")
+
+    class TimingBackend:
+        durations = [0.125, 0.25, 0.125]
+        def inspect_saved_document_contract(self, *_args):
+            return {"frames": 3, "width": 128, "height": 128, "durations": list(self.durations)}
+
+    timing_backend = TimingBackend()
+    timing_service = WorkbenchService(repo_root=root, workspace_root=root / ".ai/operator_animation_workbench",
+                                      workbench_api=timing_backend)
+    # A manifest Boolean alone cannot create an effective decision.
+    manifest = json.loads(manifest_path.read_text())
+    manifest["timeline"]["timing_authority"] = True
+    manifest_path.write_text(json.dumps(manifest))
+    assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
+    assert not hasattr(timing_service, "_confirm_timing_decision_from_ui")
+    preview = timing_service._preview_timing_decision_from_ui(selection, fps_text="8", loop_text="loop",
+        durations_text="1, 2, 1")
+    assert preview["status"] == "PREVIEW TIMING" and preview["frame_durations_ms"] == [125.0, 250.0, 125.0]
+    prepared = timing_service._consume_timing_decision_preview(selection, preview_token=preview["token"])
+    assert prepared["params"]["frame_durations_ms"] == [125.0, 250.0, 125.0]
+    assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
+    decision_path = timing_contract.decision_path(
+        root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", selection)
+    assert not decision_path.exists(), "generic service preview/consume calls must not persist approval"
+    try:
+        timing_service._consume_timing_decision_preview(selection, preview_token=preview["token"])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("one-use Workbench timing preview was reusable")
+    # A saved-input change also expires a preview before any UI writer can run.
+    stale_preview = timing_service._preview_timing_decision_from_ui(selection, fps_text="8", loop_text="loop",
+        durations_text="1, 2, 1")
+    document_path.write_bytes(b"mutated saved physical fixture")
+    assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
+    try:
+        timing_service._consume_timing_decision_preview(selection, preview_token=stale_preview["token"])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("changed Workbench bytes retained a consumable timing preview")
 
 with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     root = Path(raw)
@@ -227,7 +372,6 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     assert saved_request["request_sha256"] == request["request_sha256"]
     assert sha256_file(bundle / saved_request["frames"][0]["path"]) == digest
     assert request["durations"] == [0.125] and request["frame_size"] == [128, 128]
-    godot = shutil.which("godot")
     if godot:
         sandbox = sandbox_owner.run_sandbox(selection, receipt)
         assert sandbox["status"] == "PASSED" and sandbox["production_unchanged"]
@@ -261,6 +405,16 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
         refused = subprocess.run(command, capture_output=True, text=True, timeout=90, check=False)
         result = json.loads((sandbox_bundle / "result.json").read_text())
         assert refused.returncode != 0 and "frame hash mismatch" in result.get("error", "")
+
+    stalled_godot = root / "stalled-godot"
+    stalled_godot.write_text(f"#!{sys.executable}\nimport time\ntime.sleep(5)\n")
+    stalled_godot.chmod(0o755)
+    timeout_receipt = {**receipt, "receipt_sha256": "bounded-timeout-control"}
+    timed_out = sandbox_owner.run_sandbox(selection, timeout_receipt,
+        godot=str(stalled_godot), timeout_sec=0.05)
+    assert timed_out["status"] == "FAILED" and timed_out["timed_out"] is True
+    assert timed_out["timeout_sec"] == 0.05
+    assert "timed out after 0.05s" in timed_out["result"]["error"]
 
     import operator_animation_targets
     plan = operator_animation_targets.load_plan(ROOT / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json")
