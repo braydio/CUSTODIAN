@@ -64,3 +64,54 @@
 - Refresh reason: `none`
 - Next action: Land and archive this implementation, then run its fresh-context paired review.
 - Blockers or open questions: none
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-agent-godot-validation-truth-gate-v1`
+- Reviewed on main: `455392871`
+- Reviewed implementation commit: `0adbe6265`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `agent-godot-validation-truth-gate-v1-review-corrections-1` (not claimed)
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1
+
+### Findings
+
+#### R0-01 — Referenced malformed sidecar can evade preflight when source_file is missing
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: Referenced tracked `.png.import` sidecars with invalid or missing remap metadata must fail before import.
+- Evidence: `invalid_referenced_png_sidecars()` builds reference needles only from the sidecar's parsed `source_file` and `uid`. A tracked `assets/bad.png.import` containing `valid=false`, an empty `dest_files`, a remap path, and no `source_file` was referenced by a tracked scene using `res://assets/bad.png`; `preflight_detail()` returned `None` in a fresh Git fixture. Missing `source_file` is itself not currently an issue, and the sidecar cannot enter the reference set when both source and UID are absent.
+- Disposition: `correction`
+- Rationale: A referenced malformed sidecar can bypass the gate and proceed to import, directly violating fail-closed resource metadata validation.
+
+### Review Evidence
+
+- `godot_import_preflight_smoke.py`: PASS when run with its temporary directory rooted inside the claimed worktree; the sandbox's `/tmp/.git` marker otherwise made standalone temp projects appear to be in a non-repository.
+- `validation_runner_smoke.py`: PASS, including PASS-plus-fatal, missing GDExtension, exact rollback ownership, wrong-owner, near-match, and exit-leak checks.
+- `run_validation.py --tag import_truth --json`: PASS, 3/3; actor relationship and Vaultwing resources loaded, generated-region rollback lines were accepted exactly, and shutdown leak lines matched the narrow known patterns.
+- `run_validation.py --changed --base 0adbe6265^ --json`: BLOCKED during Godot import. Godot emitted fatal socket bind diagnostics (`_sock == -1`, `ERR_CANT_CREATE`); the inherited config path also failed a save on the first attempt. XDG config/data/cache redirection removed the settings-save error but socket bind diagnostics remained. No changed-file tests ran in this attempt.
+- The R0-01 false-negative was independently reproduced in an isolated tracked Git fixture; no reviewed implementation files were changed.
+
+## Review Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: The required target-parent changed-file sweep could not pass its import infrastructure gate in the sandbox, and an uncovered missing-source sidecar case falsified the preflight contract.
+- Root cause / contributing factors: Godot editor startup attempts socket binds unavailable in this environment; reference association depends on optional metadata fields inside the very sidecar being validated.
+- Prevention / pipeline improvement: Add a fixture for referenced malformed sidecars with absent source and UID fields, and use the sidecar's tracked PNG path as a reference candidate; rerun the changed sweep in an environment that permits Godot's editor socket.
+- Tooling / docs drift discovered: The preflight smoke's default `/tmp` fixture location conflicts with an environment-provided `/tmp/.git` marker; the test passes when temporary fixtures are rooted inside the claimed worktree.
+- Follow-up: `agent-godot-validation-truth-gate-v1-review-corrections-1`
+- What worked: The focused import-gated resource trio passed with real Godot loads, and the runner's scoped rollback/fatal fixture matrix passed.

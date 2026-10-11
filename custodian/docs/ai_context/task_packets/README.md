@@ -65,7 +65,6 @@ normal closeout.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — Convert the completed V1 whole-series review and final soak evidence into the next evidence-backed procgen optimization/correction DAG, preserving stable wor...
 - `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
-- `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Independently falsify the new import/truth gate using resource failures masked by PASS markers and expected-rollback near misses.
 - `REVIEW_AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
