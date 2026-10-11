@@ -1,0 +1,36 @@
+# CORRECTION: OPERATOR 2.5D COHORT DEPENDENCY CLOSURE REVIEW
+
+- Packet schema: custodian.task_packet.v2
+- Workstream: operator-2-5d-cohort-dependency-closure-review-corrections-1
+- Status: ready
+- Dispatch: auto
+- Priority: P1
+- Depends on: review-operator-2-5d-cohort-dependency-closure
+- Locks: operator-runtime-animation, operator-art-generation-schema
+- Kind: correction
+- Review: auto
+- Review stage: post-land
+- Review modes: code, architecture, runtime, workflow
+- Paired review workstream: review-operator-2-5d-cohort-dependency-closure-review-corrections-1
+- Review cycle: 1
+- Max automatic review cycles: 2
+- Reviewed main: 2ffbbec13d55a939096750d059602ea56047cae3
+- Parent implementation: operator-2-5d-cohort-dependency-closure; custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md
+- Parent review: review-operator-2-5d-cohort-dependency-closure; custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md
+- Findings addressed: R0-01
+- Affected acceptance: Original acceptance C and G: consumer seam classifications must be grounded in live implementation/test authority and independently falsifiable.
+- Current defect/evidence: Report edges 03–06 cite operator._sync_animation_from_state, which does not exist in custodian/game/actors/operator/operator.gd or the actor source tree. All edge evidence currently points to that same file/symbol field; the reported consumer is therefore not grounded.
+- Goal: Make every edge consumer/evidence reference resolve to real current-main symbols, tests, or explicit UNKNOWN evidence; include regression coverage that rejects missing consumer symbols and keeps closure OPEN where evidence is insufficient.
+- Completion boundary: Correct report producer and focused smoke only. No runtime or art changes.
+- Current measured state: Twelve edges are OPEN; six locomotion edges use a nonexistent symbol.
+- Evidence: Review receipt R0-01 in the archived parent implementation packet; direct source search found no _sync_animation_from_state symbol.
+- Task-specific authority: Archived parent implementation packet and review packet; live operator presentation code and focused Operator validation.
+- Work surface: custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py, its smoke, regenerated JSON/Markdown report.
+- Required correction: Use correct live motion synchronization owners and edge-specific evidence references, or explicitly classify the owner as UNKNOWN. Add a smoke proving all referenced symbols/evidence targets resolve and forged/missing references fail closed.
+- Preserve: Read-only scope, all current OPEN classifications, NOT_RELEASE_ELIGIBLE, source/runtime/art/policy data, human timing and cohort gates.
+- Non-goals: No runtime, gameplay, art, timing, policy, or release changes.
+- Acceptance: R0-01 references resolve against current source; transition/motion edges remain OPEN absent proven generation-aware composition; probe smoke passes and report regenerates deterministically.
+- Validation: Focused probe smoke; operator animation targets and production queue smokes; relevant posture/modular runtime smokes only if needed; git diff --check.
+- Task overrides: none
+- Deferred: Human cohort/timing decision and production promotion remain with WB25-6 planning.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
