@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-cohort-dependency-closure-review-corrections-1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-cohort-dependency-closure
@@ -34,3 +34,35 @@
 - Task overrides: none
 - Deferred: Human cohort/timing decision and production promotion remain with WB25-6 planning.
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: The producer now grounds posture/motion edge references in current function definitions and represents unresolved preemption edges as explicit `UNKNOWN` evidence with reasons. Unresolved evidence forces the edge classification to `UNKNOWN`; all transition edges remain non-closed and overall release status remains `NOT_RELEASE_ELIGIBLE`. JSON and Markdown regenerate together, with per-edge evidence shown in both.
+- Protected surfaces: Runtime, artwork, animation plans, timing authority, policy, source intake and release status were not changed.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: none
+- Root cause / contributing factors: none
+- Prevention / pipeline improvement: The report smoke now validates evidence targets and rejects unresolved symbols or empty UNKNOWN reasons.
+- Tooling / docs drift discovered: R0-01 established that a report could echo its own consumer label as evidence without confirming a live symbol; corrected by current-source resolution.
+- Follow-up: review-operator-2-5d-cohort-dependency-closure-review-corrections-1
+- What worked: deterministic report generation and a focused fail-closed evidence smoke.
+
+## Next Handoff
+
+- Next workstream: review-operator-2-5d-cohort-dependency-closure-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Refresh reason: none
+- Next action: Complete the fresh paired review, then return the corrected closure evidence to the recorded authoring chat; WB25-6 remains planning-gated.
+- Blockers or open questions: The corrected report remains NOT_RELEASE_ELIGIBLE pending unresolved presentation edges, human cohort/timing decisions, and effective current receipts.
