@@ -41,12 +41,12 @@
 ## Publication / Claim Gate
 This pair was refreshed against actual NPA-7 and existing-enemy review archives. Dispatcher eligibility is authoritative only after both ready/auto files and the managed index are published on origin/main; the claiming agent must run targeted authoring, pairing and index checks. Reviewer claims remain dependency-gated until this implementation is complete and archived.
 
-## Handoff
-- Next workstream: `npa-showcase-existing-vaultwing-proof`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+## Next Handoff
+- Next workstream: `review-npa-showcase-existing-drone-hardening`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: Separate Vaultwing proof remains a genuinely independent live-runtime and reviewed-dependency refresh gate; NPA-7's completion does not release it.
-- Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.
-- Blockers or open questions: None for this drone donor slice. Vaultwing and M-7 successors retain their own planning gates.
+- Refresh reason: `none`
+- Next action: Implement this bounded drone/droid hardening slice, archive it complete, then run the paired review through `paired_review_runner.py` in a fresh reviewer context.
+- Blockers or open questions: `none`
