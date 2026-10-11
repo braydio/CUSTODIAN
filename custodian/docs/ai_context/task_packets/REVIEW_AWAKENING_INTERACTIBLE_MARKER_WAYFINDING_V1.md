@@ -40,6 +40,12 @@
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
+## Negative proof (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Mutation-check that incorrectly promoting `lore_plaque`, `gate_aperture` or `register_of_departures` to actionable fails host parity; no mounted scenic art collides with existing routes or advertises G/interact. Verify Gate sealed visuals and 04→05/05→06 geometry.
+
 ## Review Receipt
 - Status: `pending`
 - Review target workstream: `awakening-interactible-marker-wayfinding-v1`

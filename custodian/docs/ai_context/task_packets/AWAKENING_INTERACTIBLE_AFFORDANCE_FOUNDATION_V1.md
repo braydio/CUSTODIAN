@@ -45,6 +45,17 @@
 ## Context Pack
 - Repomix: `none`
 
+## Implementation recipe (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+1. `res://game/world/awakening/awakening_first_return.gd::_build_interactables()` constructs `CrecheConsole`, `PortStatusPlaque` and the single `TransitLift`; `res://scenes/awakening_first_return.tscn` instantiates `Zone04_LockerReliquary/SidearmLocker`. There are **four interaction owners and five physical affordance anchors**, because the lift has two stations `(384,-3008)` and `(384,-3424)`.
+2. Add `res://game/world/awakening/awakening_interactible_affordance_presenter.gd` as a visual-only `Node2D` host with descriptors keyed by `(zone_id, marker_id)`. Suggested fields: `owner: Node`, `mount: Node2D`, `family_id: StringName`, `visual_offset: Vector2`, `status: StringName`. No second registry for interactibility, collider, proximity radius or prompt.
+3. `_ready()` calls `_mount_interactible_affordances()` immediately after `_build_interactables()`. Anchor idempotent mounts under zone `SetPieces` using Layout; two lift mounts share the one lift owner. No per-frame marker scan.
+4. Reclassify only `awakening_layout.gd::MARKERS.zone05_dust_lung.lift_mechanism.kind` to `marker`, retaining `Vector2(448,-2944)` and existing authored `SET_PIECES` geometry. No phantom interaction.
+5. Observe `WorldReadoutInteractable.is_acknowledged`, `SidearmLockerInteractable` prompt/group lifecycle, and `AwakeningTransitLift.is_busy(), transit_started, transit_finished`. Do not reach into private locker state except if a narrow read-only accessor is justified. Render near-focus light only when existing owner reports available action; scenic markers never get press-key cues.
+6. Add `custodian/tools/validation/awakening_interactible_affordance_contract_smoke.gd`: test four real owners/five mounts, no additional `interactable` group entry or new `CollisionObject2D`, optional missing art stays absent, scene reload/idempotence, negative phantom-owner/duplicate lift station controls. Register focused validation ownership in `validation_manifest.json`. Run focused progression, locker, lift and geometry checks before one changed-file closeout.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
