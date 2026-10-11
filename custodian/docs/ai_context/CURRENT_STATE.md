@@ -2633,11 +2633,15 @@ workspace manifests, and 0 current receipts; these counts apply only to that
 workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
 filename in that 745-commit-behind checkout, so fallback discovery reports an
 explicit unavailable diagnostic instead of turning that scan failure into a
-zero. WB25-6 retains independent runtime publication/promotion authority.
+zero. WB25-5 implementation `69cdfdbf1` landed via `d4efc0234` and its fresh paired review `cd72b90b1` passed with zero findings. The independently measured default workspace still had **0 current receipt-verified leaves / 0 verified 2.5D families** (69/552 targets, 8 projected workspace directions). WB25-6 holds independent runtime publication/promotion authority and its **refreshed draft/manual** first-cohort gate: live sync remains legacy-source-based, the Workbench still disables direct 2.5D publication, and `PUBLISHED` can only be observed after a guarded cohort switch, not required before it. No user-approved complete first production cohort or runtime 2.5D cutover is recorded.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
 The nine-region generic off-route backdrop vision and 27 requested image prompts (with Dust Lung Zone 05 separately superseded by Dust Lung V2) are persisted at `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`, `AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md`, and `AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md`. No perimeter support family is claimed published or scene-bound here. The actual runtime still owns `AwakeningVoidBackdrop`, existing production plates, registered 04→05 composition and 05→06 passage. AP0 can only run after reviewed Awakening convergence; art-dependent AP1–AP4 remain human-gated until assets are generated and approved. Dated walkthrough notes claiming uncovered 04→05 gaps or unproduced Road modular plates are superseded by later registered composition/Road art, not current truth.
+
+## Awakening perimeter Batch 01 / Crèche screen-FX finding (2026-10-10)
+
+The dedicated [ten-state generic perimeter calibration batch](../../../design/04_architecture/AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) covers three 01/07/10 three-role families plus Zone 06 distant architecture; 27 planned generic states remain unfulfilled overall. The previously generated Gate/South Reach panoramic images are donor/reference art, not runtime-ingested. User review also identified Crèche activation FX apparently rendering **on the floor underneath the first computer**, not at its screen. The actual code mounts an `AnimatedSprite2D` on the logical marker `(112,144)` and does not visibly instantiate the existing published `awakening_creche_console` 128×128 idle asset, so a screen-local registered anchor and sole visible console body require production visual proof. The fix is now explicit acceptance in blocked/manual `AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1` and independent review; do not transfer responsibility to perimeter AP1, invent a second body, move gameplay markers or reauthor the 8×128 one-shot 8 FPS activation state. No live runtime fix is claimed by this note.
 
 ## Awakening interactible affordance continuation (2026-10-10)
 

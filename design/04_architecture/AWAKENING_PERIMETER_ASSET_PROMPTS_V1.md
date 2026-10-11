@@ -5,6 +5,8 @@
 **Intake:** [ASSET_PIPELINE_V2.md](ASSET_PIPELINE_V2.md).
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 
+**First batch (10 selected assets):** [AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md), including full prompts and source/inbox paths for Zones 01, 06, 07, 10. It is a source-generation queue, not evidence of ten approved files.
+
 ## Universal style and negative lock
 
 Top-down 2D CUSTODIAN environment art in the live First Return's dark gothic-industrial / ruined civic language. Render a **flat overhead orthographic environment production asset** at native readable game scale, world north at image top, aligned to a 32-pixel architectural grid, with consistent overhead light response and no camera perspective/photography. Restrained near-black graphite, charcoal, aged masonry, oxidized bronze, pale ash and dim cold institutional accent light; meaningful scale cues but no miniature diorama boundary. Text-free except abstract illegible environmental markings. Refer visually to the *existing live zone plate* at review time; never redraw its floor or assume inaccessible geometry is a new gameplay path.
