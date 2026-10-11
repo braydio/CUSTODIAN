@@ -1,5 +1,29 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator Presentation Composition Doctrine (2026-10-11)
+
+The user approved **full-body-first with selective modular presentation** for
+the canonical 128px Operator, recorded under `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`.
+Normal neutral idle, ordinary locomotion and committed whole-body actions favor
+independently authored eight-direction `full_body` art. Keep
+`lower_body+upper_body` and owner-scoped weapon/FX modular presentation where
+legal concurrent locomotion and independent upper aim/fire/guard/parry require
+it, with full-body committed contact/dodge/knockdown and no separate
+head/cape revival. The `OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`
+and `custodian/AGENTS.md` inherit this approved choice.
+
+**Scope boundary:** This is an architecture lock, **not** a live generation
+change or approval of additional artwork. The 69/552 planned 2.5D targets
+remain full-body authoring baselines. Existing 96px body composition, canonical
+selector/SpriteFrames and actual runtime behavior stay unchanged. The
+independently reviewed `operator-2-5d-cohort-dependency-closure` correction
+confirms the seven-family/56-direction candidate is NOT_RELEASE_ELIGIBLE and
+all relevant 2.5D transition/preemption edges remain OPEN. New
+`operator-2-5d-composition-mode-guard-v1` with paired review is a
+fixture-only, fail-closed preflight/owner/clock/generation test slice,
+with no active 2.5D switch. WB25-6 stays `draft/manual`, now dependent
+on that guard's reviewed result in addition to timing and cohort evidence.
+
 ## Operator 2.5D Cohort Dependency Closure (2026-10-11)
 
 The read-only `operator-2-5d-cohort-dependency-closure` audit is implemented
