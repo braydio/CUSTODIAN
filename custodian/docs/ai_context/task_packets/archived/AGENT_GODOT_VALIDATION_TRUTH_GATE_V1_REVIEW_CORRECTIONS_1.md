@@ -37,16 +37,19 @@
 - Task overrides: `none`
 
 ## Completion Truth
-- The malformed tracked sidecar with no source_file or UID is now associated with the PNG implied by its .png.import path, and missing source metadata is reported as malformed.
-- The direct scene-path regression fixture fails preflight as required. Existing valid, invalid, unreferenced, untracked, direct-path, and UID controls pass.
-- Focused smokes passed; import_truth passed 3/3 on retry; changed-file sweep passed 1/1 with complete coverage.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The malformed tracked sidecar with no source_file or UID is associated with the PNG implied by its .png.import path and missing source metadata is reported. The direct scene-path regression fixture blocks preflight; valid, invalid, unreferenced, untracked, direct-path, and UID controls pass. Focused smokes pass; import_truth passes 3/3 on retry; changed-file sweep passes with complete coverage.
 
 ## Execution Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: First import_truth run emitted a TLS handshake error and two WAV size warnings; retry passed the import and all three tests.
-- Root cause / contributing factors: Transient Godot TLS/import infrastructure failure; retry did not reproduce it.
+- What went wrong: First import_truth run emitted a TLS handshake error and two WAV size warnings; retry passed. The first finish attempt also caught a missing machine-readable Completion Truth schema.
+- Root cause / contributing factors: Transient Godot TLS/import infrastructure failure; the completion receipt was initially written as prose rather than the required schema fields.
 - Prevention / pipeline improvement: none
 - Tooling / docs drift discovered: none
 - Follow-up: none

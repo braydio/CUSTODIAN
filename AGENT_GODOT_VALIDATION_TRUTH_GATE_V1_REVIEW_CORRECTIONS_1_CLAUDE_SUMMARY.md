@@ -22,8 +22,8 @@ No Godot runtime behavior or assets changed. The initial TLS error was retained 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
 - Friction severity: low
-- What went wrong: Initial import_truth run reported a TLS handshake error and WAV size warnings; retry passed.
-- Root cause / contributing factors: Transient Godot TLS/import infrastructure failure.
+- What went wrong: Initial import_truth run reported a TLS handshake error and WAV size warnings; retry passed. The first finish attempt caught a missing machine-readable Completion Truth schema, which was corrected before landing.
+- Root cause / contributing factors: Transient Godot TLS/import infrastructure failure; the completion receipt was initially written as prose instead of the required schema fields.
 - Prevention / pipeline improvement: none
 - Tooling / docs drift discovered: none
 - Follow-up: none
