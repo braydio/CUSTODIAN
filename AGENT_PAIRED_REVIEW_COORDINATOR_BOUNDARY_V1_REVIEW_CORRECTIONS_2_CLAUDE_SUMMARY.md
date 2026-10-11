@@ -19,7 +19,7 @@ Implemented the bounded R1-01/R1-02 correction for `agent-paired-review-coordina
 - `validate_review_pairing.py`: PASS, 64 automatic review pairings.
 - `task_packet_index.py`: PASS after archiving this completed packet.
 - `git diff --check`: PASS.
-- One initial focused-suite run found stale test mocks for the former text-mode Git reader and new full-SHA boundary; fixtures were updated to mock the actual seams, then the full focused suites passed.
+- Initial focused-suite run found stale test mocks for the former text-mode Git reader and new full-SHA boundary; fixtures were updated to mock the actual seams, then the full focused suites passed. The first lifecycle finish attempt also caught a malformed completion receipt heading; the archived packet now uses the required top-level section and passes the read-only preflight.
 
 The actual archived-target receipt was checked by the shared verifier, and the no-header fixture passed the normal temporary-remote coordinator and `workstream.py finish` path. The actual historical packet itself was not rewritten or landed with a fabricated receipt.
 
@@ -28,9 +28,9 @@ The actual archived-target receipt was checked by the shared verifier, and the n
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
 - Friction severity: low
-- What went wrong: Initial full-suite run exposed stale helper-boundary mocks.
-- Root cause / contributing factors: Legacy tests mocked `git show` through the text-returning runner helper and did not model a full pinned SHA.
-- Prevention / pipeline improvement: Keep tests aligned with the byte-preserving reader and full-SHA identity resolver; retain both the actual archived-target probe and end-to-end temporary-remote fixture.
+- What went wrong: Initial full-suite run exposed stale helper-boundary mocks; the first finish attempt caught a malformed completion receipt heading.
+- Root cause / contributing factors: Legacy tests mocked `git show` through the text-returning runner helper and did not model a full pinned SHA; the completion receipt heading did not match the lifecycle parser's required top-level section.
+- Prevention / pipeline improvement: Keep tests aligned with the byte-preserving reader and full-SHA identity resolver; retain both the actual archived-target probe and end-to-end temporary-remote fixture; run `workstream.py preflight` before finish.
 - Tooling / docs drift discovered: none
 - Follow-up: none
 - What worked: Comparing the real archived Git blob against the old stripped reader isolated the newline regression directly.
