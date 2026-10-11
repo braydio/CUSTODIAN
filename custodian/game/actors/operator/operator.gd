@@ -11593,6 +11593,12 @@ func guard_parry_animation_remaining() -> float:
 
 func guard_enter_post_parry_neutral() -> void:
 	if not _buffered_attack_kind.is_empty() and _guard_controller.counter_window_timer > 0.0:
+		# The guard controller has completed its success phase and is neutral now.
+		# Release the action-arbiter's completed block before requesting the
+		# buffered counter; block actions intentionally reject interruption.
+		if _action_controller != null \
+		and _action_controller.is_active(OperatorActionControllerScript.BLOCK):
+			_action_controller.complete(OperatorActionControllerScript.BLOCK)
 		_request_attack_state(_consume_buffered_attack())
 		return
 	_guard_controller.guard_requested = false

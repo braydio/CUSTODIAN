@@ -46,6 +46,7 @@ const FX_ANIMATIONS := [
 
 var _errors: Array[String] = []
 var _fixture_root: Node2D
+var _camera_probe: ImpactProbe
 
 
 ## Records what a confirmed contact actually asks the camera for.
@@ -92,6 +93,12 @@ func _run() -> void:
 	_fixture_root.name = "OperatorVigilDaggerSmokeRoot"
 	root.add_child(_fixture_root)
 	current_scene = _fixture_root
+	# Operator binds Camera2D from its World parent during _ready(). Install the
+	# probe before instantiation so the fixture follows the production contract.
+	_fixture_root.name = "World"
+	_camera_probe = ImpactProbe.new()
+	_camera_probe.name = "Camera2D"
+	_fixture_root.add_child(_camera_probe)
 
 	_validate_definition()
 	var operator := await _create_operator()
@@ -782,18 +789,8 @@ func _assert_close(
 ## knockback while borrowing `cut_02`'s hitstop and heavy camera.
 func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
 	operator.call("_interrupt_active_combat_for_damage_reaction")
-	var probe := ImpactProbe.new()
-	var game_root := Node.new()
-	game_root.name = "GameRoot"
-	var world := Node.new()
-	world.name = "World"
-	probe.name = "Camera2D"
-	world.add_child(probe)
-	game_root.add_child(world)
-	get_root().add_child(game_root)
-	await process_frame
 	_assert(
-		operator.call("_get_world_camera") == probe,
+		operator.call("_get_world_camera") == _camera_probe,
 		"the impact probe must be the camera the actor resolves"
 	)
 
@@ -830,9 +827,9 @@ func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
 	await physics_frame
 
 	# Drain exactly as `_update_melee_attack()` does.
-	probe.clear()
+	_camera_probe.clear()
 	operator.call("_apply_melee_hitbox_tick", 4)
-	var after_cut_01 := probe.powers.size()
+	var after_cut_01 := _camera_probe.powers.size()
 	operator.call("_apply_melee_hitbox_tick", 8)
 
 	_assert(
@@ -857,18 +854,18 @@ func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
 
 	# The part the old test could not see: feedback per contact, in order.
 	_assert(
-		after_cut_01 == 1 and probe.powers.size() == 2,
+		after_cut_01 == 1 and _camera_probe.powers.size() == 2,
 		"each contact should ask the camera exactly once, saw %d then %d"
-			% [after_cut_01, probe.powers.size()]
+			% [after_cut_01, _camera_probe.powers.size()]
 	)
-	if probe.powers.size() == 2:
-		_assert_close(probe.powers[0], 1.8, "cut_01 did not carry its own camera power")
-		_assert_close(probe.powers[1], 3.2, "cut_02 did not carry its own camera power")
+	if _camera_probe.powers.size() == 2:
+		_assert_close(_camera_probe.powers[0], 1.8, "cut_01 did not carry its own camera power")
+		_assert_close(_camera_probe.powers[1], 3.2, "cut_02 did not carry its own camera power")
 		_assert(
-			not probe.heavies[0],
+			not _camera_probe.heavies[0],
 			"cut_01 requested the heavy camera push, which belongs to cut_02"
 		)
-		_assert(probe.heavies[1], "cut_02 lost its heavy camera push")
+		_assert(_camera_probe.heavies[1], "cut_02 lost its heavy camera push")
 
 	# Hitstop is resolved through the same function the live path calls, with the
 	# same argument. It cannot be observed twice through `Engine.time_scale`,
@@ -888,7 +885,6 @@ func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
 	)
 
 	target.queue_free()
-	game_root.queue_free()
 	operator.call("_interrupt_active_combat_for_damage_reaction")
 	await process_frame
 
@@ -903,16 +899,6 @@ func _validate_skipped_frame_contact_ownership(operator: Node) -> void:
 ## "always fire feedback".
 func _validate_multi_target_and_miss(operator: Node) -> void:
 	operator.call("_interrupt_active_combat_for_damage_reaction")
-	var probe := ImpactProbe.new()
-	var game_root := Node.new()
-	game_root.name = "GameRoot"
-	var world := Node.new()
-	world.name = "World"
-	probe.name = "Camera2D"
-	world.add_child(probe)
-	game_root.add_child(world)
-	get_root().add_child(game_root)
-	await process_frame
 
 	var targets: Array[DaggerTarget] = []
 	for offset in [Vector2(45.0, -9.0), Vector2(45.0, 9.0)]:
@@ -940,7 +926,7 @@ func _validate_multi_target_and_miss(operator: Node) -> void:
 	await physics_frame
 	await physics_frame
 
-	probe.clear()
+	_camera_probe.clear()
 	operator.set("_hit_stop_active", false)
 	Engine.time_scale = 1.0
 	operator.call("_apply_melee_hitbox_tick", 4)
@@ -965,12 +951,12 @@ func _validate_multi_target_and_miss(operator: Node) -> void:
 				% [index + 1, str(targets[index].impact_kinds)]
 		)
 	_assert(
-		probe.powers.size() == 1,
+		_camera_probe.powers.size() == 1,
 		"two overlapping targets must not double the camera impact, saw %d requests"
-			% probe.powers.size()
+			% _camera_probe.powers.size()
 	)
-	if probe.powers.size() == 1:
-		_assert_close(probe.powers[0], 1.8, "the multi-target contact lost cut_01's camera power")
+	if _camera_probe.powers.size() == 1:
+		_assert_close(_camera_probe.powers[0], 1.8, "the multi-target contact lost cut_01's camera power")
 	_assert(
 		bool(operator.get("_hit_stop_active")),
 		"a confirmed contact should have stopped time once"
@@ -986,14 +972,14 @@ func _validate_multi_target_and_miss(operator: Node) -> void:
 		target.global_position = Vector2(4000.0, 0.0)
 	await physics_frame
 	await physics_frame
-	probe.clear()
+	_camera_probe.clear()
 	operator.set("_hit_stop_active", false)
 	Engine.time_scale = 1.0
 	operator.call("_apply_melee_hitbox_tick", 8)
 	_assert(
-		probe.powers.is_empty(),
+		_camera_probe.powers.is_empty(),
 		"a whiff must not ask the camera for a confirmed-contact impact, asked %s"
-			% str(probe.powers)
+			% str(_camera_probe.powers)
 	)
 	_assert(
 		not bool(operator.get("_hit_stop_active")),
@@ -1011,7 +997,6 @@ func _validate_multi_target_and_miss(operator: Node) -> void:
 
 	for target in targets:
 		target.queue_free()
-	game_root.queue_free()
 	operator.call("_interrupt_active_combat_for_damage_reaction")
 	await process_frame
 

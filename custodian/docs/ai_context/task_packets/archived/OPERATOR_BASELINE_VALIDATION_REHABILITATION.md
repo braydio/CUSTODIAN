@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-baseline-validation-rehabilitation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-mobile-guard-composition`
@@ -20,7 +20,7 @@
 - Visual review: `none`
 - Goal: Restore trustworthy validation for the ranged parry-counter, unarmed-chain carry, and Vigil Dagger camera-contact contracts without weakening combat behavior or its regression assertions.
 - Completion boundary: Complete when the three named Operator validation checks pass on current imported `origin/main`, each test establishes valid runtime/fixture preconditions and fails when its protected contract is broken, and the full changed-file sweep is green. Fix fixture setup where the test is stale; change production behavior only if a traced runtime defect is proven against current design authority. Do not modify the stealth-perception implementation.
-- Current measured state: The three checks failed on a clean imported `origin/main@5e7c8e58a4b67dc8c29e85d4ab952e5f3fc07178` with these assertions: `operator_ranged_ready_input` expected a buffered counter strike after parry-success release; `operator_unarmed_fast_chain` found no live carry before interruption/collision; `operator_vigil_dagger` did not resolve its impact probe through the Operator camera dependency. Current `origin/main` is `03a584ee436cba35cc5f350bfc2e6e557a289fab`; its LFS preflight currently reports 15 unrelated Awakening image pointers, so import and current-main reproduction must first hydrate those files in the claimed worktree and rerun the preflight. `operator-runtime` is held by the active `operator-mobile-guard-composition` workstream; this packet depends on it and will remain auto-gated until that workstream archives complete.
+- Current measured state: Reproduced all three assertions on imported current main in the claimed isolated worktree. `godot_import_preflight.py` passed with no checked-out LFS pointers, and `godot --headless --path custodian --import --quit` completed. The parry trace proved that guard success reached neutral and consumed the buffer while the action arbiter still held a non-interruptible BLOCK action; the production neutral transition now completes that finished block action before requesting the counter. The chain fixture retained internal dodge recovery across its cases; it now resets controller/action state and proves the successor carry's direction, speed, distance, and delay. The Vigil fixture now installs its Camera2D probe under the World parent before Operator `_ready()` binds dependencies. No stealth-perception files changed.
 - Evidence: `custodian/tools/validation/operator_ranged_ready_input_smoke.gd` (`_validate_offhand_parry_guard`); `custodian/game/actors/operator/combat/operator_guard_controller.gd` (`tick`, parry phase transitions); `custodian/game/actors/operator/operator.gd` (`_try_queue_parry_counter_from_block`, `guard_enter_post_parry_neutral`, `_request_attack_state`); `custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd` (`_install_live_carry`, interruption and wall-truncation cases); attack-drive handoff state in `operator.gd`; `custodian/tools/validation/operator_vigil_dagger_smoke.gd` (`_create_operator`, `_validate_multi_target_and_miss`); `custodian/game/actors/operator/operator_runtime_dependencies.gd`; `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`; `design/02_features/combat_feel/OPERATOR_MELEE_ATTACK_DRIVE.md`; `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md`.
 - Task-specific authority: `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md` owns the typed runtime dependency boundary; `design/02_features/combat_feel/COMBAT_FEEL_SYSTEM.md` owns guard/parry input and counter timing semantics; `design/02_features/combat_feel/OPERATOR_MELEE_ATTACK_DRIVE.md` owns chain carry behavior and collision truncation.
 - Work surface: The three named Operator smoke fixtures, only the directly implicated Operator runtime methods/controllers if state tracing proves a production defect, the narrowest validation manifest ownership needed for those tests, and consequence-driven test documentation. Leave the stealth branch and its files untouched.
@@ -44,6 +44,27 @@
 - Validation: First inspect `free -h` and existing Godot processes; run `python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir custodian` in the claimed worktree. If it reports LFS pointers, hydrate LFS files in that worktree, rerun preflight, and import only after it passes. Reproduce the three focused failures on clean current main before editing. Trace the three fixture/runtime states, apply the narrow repair, then run each focused test serially. Finish with one `--changed --base origin/main --json` sweep, `git diff --check`, `python3 custodian/tools/agent/check_ai_context.py --json`, and `python3 custodian/tools/agent/validate_review_pairing.py`. Do not overlap Godot sweeps with other Godot runs.
 - Task overrides: `none`
 - Deferred: Any separate Operator gameplay redesign proven necessary by the investigation; stealth-perception finish/review remains its own preserved branch and must be resumed only after this repair lands.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger` each pass; `run_validation.py --changed --base origin/main --json` selected 49, passed 49, failed 0, skipped 0, and reported complete coverage; `check_ai_context.py --json`, `validate_review_pairing.py`, packet-index check, LFS preflight, and `git diff --check` pass.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The carry fixture inherited the dodge controller's recovery state after its earlier interruption case, preventing movement advancement; AI-context validation also exposed a stale active README entry for the completed mobile-guard packet.
+- Root cause / contributing factors: The fixture reset actor fields but not controller-owned Dodge lifecycle state; a manual architecture-migration README section was not updated when its packet archived.
+- Prevention / pipeline improvement: Reset controller-owned lifecycle through its public cancellation API in shared fixtures, and check active packet references when completing dependent workstreams.
+- Tooling / docs drift discovered: The first required `check_ai_context.py --json` found the stale mobile-guard README entry; removed that line and reran the check successfully.
+- Follow-up: fixed-in-scope
+- What worked: Clean imported-main reproduction isolated one real action-arbitration defect and two stale fixture preconditions; all three fixes preserve the protected combat assertions.
 
 ## Context Pack
 
