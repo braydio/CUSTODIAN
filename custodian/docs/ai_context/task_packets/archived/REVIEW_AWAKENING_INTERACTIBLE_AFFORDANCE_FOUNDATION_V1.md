@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-awakening-interactible-affordance-foundation-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `awakening-interactible-affordance-foundation-v1`
@@ -16,7 +16,7 @@
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `<fill at claim>`
+- Reviewed main: `62f1d051ffa03abc72e8bf9a5a40f9367ce9b288`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `none`
 - Goal: Independently verify that a single presenter can mount affordance parts on the four real Awakening interaction owners while preserving Operator/HUD targeting and distinguishing every genuine interactible from inert Layout markers.
@@ -50,21 +50,21 @@
 Require real scene/marker-to-owner parity, absent-owner negative control, optional-art-absent no-warning startup, two physical lift mounts but one `AwakeningTransitLift`, zero extra collision/navigation/input authority, and mutation-check `lift_mechanism` reclassification. The review must fail if a scenic marker looks ready-to-press or a visual mount creates an additional interaction target. Preserve current 04→05 geometry and HUD prompts.
 
 ## Review Receipt
-- Status: `pending`
+- Status: `pass`
 - Review target workstream: `awakening-interactible-affordance-foundation-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1.md`
-- Reviewed main: `<fill>`
+- Reviewed main: `62f1d051ffa03abc72e8bf9a5a40f9367ce9b288`
 - Reviewer context: `fresh`
-- Reviewer provenance: `<fill>`
-- Blocking defects: `<fill>`
-- Material evidence gaps: `<fill>`
-- Non-blocking issues: `<fill>`
-- Optional improvements: `<fill>`
-- Correction finding IDs: `<fill>`
-- Next-slice finding IDs: `<fill>`
+- Reviewer provenance: `codex-fresh-context`
+- Blocking defects: `none`
+- Material evidence gaps: `none`
+- Non-blocking issues: `none`
+- Optional improvements: `none`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
 - Detailed review summary: `REVIEW_AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `<fill>`
+- Follow-up workstream: `none`
 
 ## Next Handoff
 - Next workstream: `none`
@@ -74,4 +74,4 @@ Require real scene/marker-to-owner parity, absent-owner negative control, option
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
 - Next action: `If passed, art-independent host is available; art-gated visual consumers still require state-by-state source proof and approval.`
-- Blockers or open questions: `Implementation dependency only.`
+- Blockers or open questions: `none; the recovered changed-file sweep passed 2/2 checks (/tmp/review-awakening-affordance-recovery.json).`
