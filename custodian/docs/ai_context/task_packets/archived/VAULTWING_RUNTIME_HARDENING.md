@@ -39,14 +39,14 @@
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: fixed-step bond advancement and live/restore negative controls passed; `vaultwing_runtime`, `actor_relationship_contract`, `vaultwing_world_spawn`, and `perception_acoustic_contract` passed; the final synchronized branch-relative changed-file report `/tmp/vaultwing-hardening-changed-final-c763.json` selected 31 checks, passed 31, failed 0, timed out 0, skipped 0, and reported complete coverage across 14 changed files with no uncovered files. The five focused checks listed in the validation plan passed 5/5.
+- Evidence: fixed-step bond advancement and live/restore negative controls passed; `vaultwing_runtime`, `actor_relationship_contract`, `vaultwing_world_spawn`, and `perception_acoustic_contract` passed; the final synchronized branch-relative changed-file report `/tmp/vaultwing-hardening-changed-final-6a7e-retry.json` selected 31 checks, passed 31, failed 0, timed out 0, skipped 0, and reported complete coverage across 14 changed files with no uncovered files after synchronization with `origin/main@6a7eab57`. An earlier attempt failed the unrelated `world_transition_handoff` assertion; an instrumented probe reached Hub successfully and the final full sweep passed. The five focused checks listed in the validation plan passed 5/5.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: The first focused run used a fresh worktree before Godot completed its global script-class/import cache. The world-spawn validation also exposed a brittle serialized-node assertion, a Godot 4.7 typed-array `filter()` assignment failure in the spawner, and a missing ContractMap signal fixture.
-- Root cause / contributing factors: The dispatch-created worktree required a full import; the spawn smoke was not shaped with the production loader's required ContractMap binding; typed `Array.filter()` returned an untyped array that could not be assigned to `Array[Node]`.
+- What went wrong: The first focused run used a fresh worktree before Godot completed its global script-class/import cache. The world-spawn validation also exposed a brittle serialized-node assertion, a Godot 4.7 typed-array `filter()` assignment failure in the spawner, and a missing ContractMap signal fixture. The final full sweep twice surfaced an intermittent unrelated `world_transition_handoff` assertion; a diagnostic run showed successful Hub entry, and the final sweep passed.
+- Root cause / contributing factors: The dispatch-created worktree required a full import; the spawn smoke was not shaped with the production loader's required ContractMap binding; typed `Array.filter()` returned an untyped array that could not be assigned to `Array[Node]`. The cause of the world-transition test flake was not established.
 - Prevention / pipeline improvement: Complete first import before attributing global-class parse errors; validate scene node properties without requiring exact serialization text; avoid assigning untyped `filter()` results to typed GDScript arrays.
 - Tooling / docs drift discovered: The world-spawn smoke's production fixture and node serialization assertion had drifted from the live scene/loader contract. The manifest did not select that smoke for Vaultwing actor changes; ownership was registered.
 - Follow-up: `none`
