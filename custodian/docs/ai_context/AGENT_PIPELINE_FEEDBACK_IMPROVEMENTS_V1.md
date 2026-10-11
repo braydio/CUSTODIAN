@@ -36,11 +36,11 @@ Each implementation has a corresponding fresh-context paired review, normal `wor
 | PF2: Failure Attribution | `agent-validation-failure-attribution-v1` | `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` | `ready/auto`, P1 |
 | PF3: Godot Truth Gate | `agent-godot-validation-truth-gate-v1` | `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` | `ready/auto`, P1 |
 | PF4: Closeout Preflight | `agent-workstream-closeout-preflight-v1` | `AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` | `ready/auto`, P1 |
-| PF5: Review Coordinator Boundary | `agent-paired-review-coordinator-boundary-v1` | `AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1.md` | `draft/manual`, P2 conditional |
+| PF5: Review Coordinator Boundary | `agent-paired-review-coordinator-boundary-v1` | `AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1.md` | `ready/auto`, P0 (2026-10-11 execution-hardening refresh) |
 
-All implementation packets live at `custodian/docs/ai_context/task_packets/`. Each paired reviewer has the same basename with `REVIEW_` prefixed and the exact `review-<workstream-id>` identity. All ten packet headers include the exact authoring chat above. The managed ready/auto index includes PF1–PF4 pairs but deliberately **not** the parked PF5 pair.
+All implementation packets live at `custodian/docs/ai_context/task_packets/`. Each paired reviewer has the same basename with `REVIEW_` prefixed and the exact `review-<workstream-id>` identity. All ten packet headers include the exact authoring chat above. The managed Ready/Auto index originally included PF1–PF4; after the 2026-10-11 execution-hardening refresh it also includes the promoted PF5 pair.
 
-The four ready implementation slices are independent, with narrow ownership locks. PF1 is the recommended first claim because its source-linked census establishes a rational baseline; PF2–PF4 should be reprioritized only from real findings. PF5 may be promoted only after current-runner evidence demonstrates the original shared-Git sandbox failure is still present and a coordinator boundary is required.
+PF1–PF4 have since been implemented and archived with their independent review/correction lifecycles. The 2026-10-11 audit established the current runner's deterministic double-prefixed Git summary lookup defect. User authorization released PF5 for targeted implementation; the shared-Git-denial fixture remains a fail-closed acceptance requirement, not a permission to widen reviewer access.
 
 ### PF1: Feedback ledger
 
@@ -58,9 +58,9 @@ Extend `godot_import_preflight.py`, `run_validation.py` and narrowly scoped warn
 
 Extend `custodian/tools/agent/workstream.py` with a read-only `preflight` that shares existing final gates for archived status, literal Completion Truth, summary backlinks, managed index, untracked files, review receipt and validation reports. Report SHA/branch drift and unknown post-sync predicates, but never mutate files, refs, traces or worktree identity. The preview does not replace or weaken `workstream.py finish`.
 
-### PF5: Conditional reviewer/coordinator seam
+### PF5: Reviewer/coordinator completion truth (refreshed 2026-10-11)
 
-PF5 remains `draft/manual` and its paired review is parked alongside it. First reproduce the read-only shared-Git `FETCH_HEAD`/trace defect on current main. If still real, have the write-authorized coordinator prepare immutable target refs, authorize only narrowly allowed reviewer evidence and perform the validated receipt/finish action. Never grant the reviewer writable implementation access, silently reclaim failed reviews, introduce a second landing authority or accept its own context as independent. If fixed upstream, recommend superseding this packet instead.
+PF5 is promoted to `ready/auto` in the execution-hardening addendum. First reproduce and repair the verified `origin/main:origin/main:<summary>` double-prefix bug and the broad-summary false-completion risk. Also reproduce shared-Git `FETCH_HEAD`/trace denial on the latest runner before any sandbox/authorization mutation; coordinator alone performs verified writes. Reviewer remains fresh and restricted. See `AGENT_CODEX_EXECUTION_PIPELINE_HARDENING_V1.md` and the refreshed PF5 packet for current scope.
 
 ## 4. Quantitative outcomes and validation economy
 
