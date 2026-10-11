@@ -268,6 +268,14 @@ class Operator2DReview:
             authority = receipt["authority"]
             if receipt.get("schema") != SCHEMA or receipt.get("authoring_identity") != selection.authoring_identity:
                 return None
+            if selection.art_generation == GENERATION:
+                workbench = json.loads(manifest.read_text(encoding="utf-8"))
+                timeline = workbench.get("timeline", {})
+                if timeline.get("timing_authority") is not True:
+                    return None
+                import animation_workbench_model
+                if animation_workbench_model.timing_payload_from_timeline(timeline) is None:
+                    return None
             if authority["workbench_manifest_sha256"] != sha256_file(manifest): return None
             if authority["workbench_document_sha256"] != sha256_file(document): return None
             profile_path = self.repo_root / "custodian/content/data/operator/authoring/operator_art_profile.json"

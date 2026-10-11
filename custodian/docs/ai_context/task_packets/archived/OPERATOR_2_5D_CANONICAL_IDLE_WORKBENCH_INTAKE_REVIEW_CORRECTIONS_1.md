@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
-- Status: ready
-- Dispatch: manual
+- Status: complete
+- Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-canonical-idle-workbench-intake
 - Locks: operator-art-agent, operator-source-normalization, operator-workbench-ui, operator-art-generation-schema
@@ -23,7 +23,7 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Goal: Keep imported idle Workbench preview timing editable while ensuring the 8 FPS UI default is explicitly non-authoritative until an approved timing value exists.
 - Completion boundary: Correct the timing-authority contract for specialized 2.5D import and prove no source pixels, target bindings, legacy/runtime outputs or publication status changed.
-- Current measured state: Accepted immutable master source and all eight 15f/128x128 editable Workbench documents are physically verified (intake package `6854391909f3dca2ed2b`, per-direction evidence `custodian/docs/reports/operator_2_5d/idle_relaxed_01_intake.json`). The source report records plan_fps=null / UNKNOWN_NOT_APPROVED; actual Workbench JSONs contain `timeline.fps=8.0`, `preview_fps=8.0`, `timing_authority=true`. Parent review R0-01 is blocking; review is complete/archived at `6a37beba`, while implementation landed `26167ea6`. No directions are current review-verified or runtime published.
+- Current measured state: The immutable intake report and live authoring checkout matched all eight original Workbench/Aseprite/session/candidate/source-strip hashes and package bindings. All eight ignored manifests now have `timing_authority=false`; preview remains 8 FPS / 125 ms, documents remain 15×128×128. The correction evidence report records exact original/corrected/backup hashes and unchanged source/runtime hashes. Live receipt directory has 0 receipts; 0/8 directions or families verified and 0 published. The old master path recorded in the original intake report points to a removed ephemeral worktree, but the eight strips, sessions and candidates still match their recorded hashes.
 - Evidence: Archived review R0-01 and its closing summary; archived intake packet; the eight physically reviewed manifests and reports; `operator_2_5d_ingress.py::_process_cell/_validate_workbench`; `animation_workbench.py::create_animation`; `animation_workbench_model.py::timing_payload_from_timeline`; `operator_2_5d_review.py::_inspect/current_receipt/make_sandbox_request`; `ui/service.py::review_and_sandbox`; focused ingress, timing, QA and family queue tests.
 - Task-specific authority: Archived parent implementation packet acceptance and design/02_features/animation/OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md; retain WB25-2 editable-workbench behavior and fail-closed publication rules.
 - Work surface: specialized importer `custodian/tools/operator/operator_2_5d_ingress.py`; additive explicit authority option at `custodian/tools/operator/animation_workbench.py::create_animation` (only if necessary); `custodian/tools/operator/operator_2_5d_review.py` for effective verification gating; `animation_workbench_model.py` only if its existing read contract truly needs hardening; focused `operator_2_5d_ingress`, `operator_2_5d_review`, `operator_animation_timing`, production-queue tests and their validation manifest owner; **eight exact ignored workspace `workbench.json` only**, plus a new non-destructive correction evidence report. Do not write arbitrary other Workbench documents or recreate Source Sessions.
@@ -41,15 +41,25 @@
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Refresh instruction: Completed 2026-10-10 in the recorded authoring chat. **Decision:** 8 FPS is provisional preview-only and MUST NOT confer timing authority, while explicit approved timing retains existing behavior. This is a bounded correctness repair, not human FPS selection or WB25-6 promotion. `ready/manual` permits an explicitly authorized claim of the existing correction workstream; no local dispatcher lock bypass, project-root checkout reset or independent re-claim of WB25-6.
 
+## Completion Truth
+
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: `custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_correction_1.json` records 8/8 manifest-only corrections, exact original backups and fresh hashes, preserved Aseprite/source-strip/Source Session/candidate hashes, unchanged protected runtime hashes, 0 effective receipts, and no publication. Focused ingress, review, timing, target, production-queue, and Workbench UI smokes passed. Changed-file validation passed all 26 selected tests with complete coverage; AI-context check and `git diff --check` passed.
+
 ## Execution Feedback
+
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: planning-refreshed; not implemented
-- Friction severity: none
-- What went wrong: parent review R0-01 identified two coupled authority leaks: default creation `timing_authority=true` and review classification based on physical duration alone.
-- Root cause / contributing factors: provisional editor clocks and authoritative authored clocks share a timeline shape without an intake provenance distinction.
-- Prevention / pipeline improvement: explicit creation-time authority and effective current-receipt negative controls; physical eight-manifest correction with backups and hash receipts.
-- Tooling / docs drift discovered: README/roadmap/current-state describe intake review as pending or source intake as upcoming despite landed artifacts and archived blocking review.
-- Follow-up: bounded implementation and fresh cycle-1 paired review; WB25-6 remains draft/manual
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first review smoke hit its 90-second Godot timeout because the ephemeral project had no import cache. The source master path in the original intake report points to a deleted worktree, although all per-direction strips, sessions, candidates and Workbench documents remain available and match the baseline hashes.
+- Root cause / contributing factors: Fresh worktrees require an initial Godot import before sandbox execution; the intake evidence stored an absolute source-master path inside a disposable worktree.
+- Prevention / pipeline improvement: Initialize Godot imports before sandbox smoke in a fresh worktree; prefer durable or checkout-relative source evidence paths in future intake reports.
+- Tooling / docs drift discovered: The historical intake report's accepted master path is stale. The correction verified unchanged direction strips and source session/candidate hashes instead and recorded the stale path in the new evidence report.
+- Follow-up: review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
+- What worked: Strict all-eight preflight and byte-level comparison made the workspace repair auditable and limited each manifest edit to one boolean token.
 
 ## Existing artist workspace and recovery boundary
 
@@ -58,12 +68,12 @@
 - If the current physical workspace cannot be accessed safely, fix and test the code path but report workspace reconciliation as **blocked**, preserve the workstream, and do not land a false eight-manifest completion. Do not reconstruct ignored Aseprite docs from synthetic fixtures or move the artist workspace into a disposable worktree merely to pass review.
 - Run under the existing dispatcher claim/lock and ordinary isolated worktree workflow. Do not take locks held by other agents or alter the persistent project-root checkout (which has unrelated changes).
 
-## Implementation handoff
-
+## Next Handoff
 - Next workstream: review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
-- Next packet state: dependency-gated
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
-- Next action: Claim the existing correction explicitly after dispatcher lock clears; reconcile the eight physical manifests and harden effective review eligibility. On green closeout, run the fresh paired review.
-- Blockers or open questions: None for planning; physical ignored workspace availability and active local dispatcher lock must be checked at claim time. WB25-6 remains separately blocked.
+- Refresh reason: none
+- Next action: Run the fresh-context paired review against the landed correction and physical workspace evidence.
+- Blockers or open questions: none; WB25-6 remains draft/manual and unchanged.

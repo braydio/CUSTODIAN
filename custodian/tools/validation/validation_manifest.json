@@ -6079,7 +6079,8 @@
       "owners": [
         "custodian/tools/operator/operator_2_5d_ingress.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
-        "custodian/tools/validation/operator_2_5d_ingress_smoke.py"
+        "custodian/tools/validation/operator_2_5d_ingress_smoke.py",
+        "custodian/tools/operator/animation_workbench.py"
       ],
       "timeout_sec": 30,
       "needs_import": false

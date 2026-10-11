@@ -121,9 +121,26 @@ def main() -> None:
                 frame_size=(128, 128), fps=8.0, loop=True, template="full_body",
                 root=root / "workbench", repo_root=root, source_root=source_root,
                 weapon_root=weapon_root, art_generation="operator_2_5d_128",
+                timing_authority=False,
             )
             assert created_workspace == root / "workbench/operator_2_5d_128/unarmed/locomotion/new_ingress_01/ne"
             assert created["creation"]["authoring_identity"] == "operator_2_5d_128:unarmed/locomotion/new_ingress_01/ne"
+            assert created["timeline"]["preview_fps"] == 8.0
+            assert created["timeline"]["timing_authority"] is False
+            assert workbench_model.timing_payload_from_timeline(created["timeline"]) is None
+            physical = animation_workbench.inspect_saved_document_contract(
+                created_workspace / "workbench.json")
+            assert physical["durations"] == [0.125] * 15
+            explicit, _explicit_workspace = animation_workbench.create_animation(
+                "unarmed", "new_ingress_explicit_timing", "ne", group="locomotion", frames=15,
+                frame_size=(128, 128), fps=8.0, loop=True, template="full_body",
+                root=root / "workbench", repo_root=root, source_root=source_root,
+                weapon_root=weapon_root, art_generation="operator_2_5d_128",
+                timing_authority=True,
+            )
+            payload = workbench_model.timing_payload_from_timeline(explicit["timeline"])
+            assert payload == {"schema": "custodian.operator_animation_timing.v1", "frames": 15,
+                              "fps": 8.0, "loop": True, "durations": [1.0] * 15}
         else:
             print("SKIP 2.5D NEW WORKBENCH integration: aseprite executable unavailable")
         target_key = schema.OperatorAssetKey("operator", "full_body", "unarmed", "locomotion",
@@ -284,6 +301,12 @@ def main() -> None:
             assert imported_manifest["creation"]["authoring_identity"] == \
                 f"operator_2_5d_128:unarmed/{family.group}/idle_relaxed_01/ne", imported_manifest["creation"]
             assert imported_manifest["creation"]["import_sources"]["full_body"]
+            assert imported_manifest["timeline"]["preview_fps"] == 8.0
+            assert imported_manifest["timeline"]["timing_authority"] is False
+            assert workbench_model.timing_payload_from_timeline(imported_manifest["timeline"]) is None
+            imported_physical = animation_workbench.inspect_saved_document_contract(
+                Path(imported["workbench"]) / "workbench.json")
+            assert imported_physical["durations"] == [0.125] * 15
             resumed_handoff = source_service.handoff(
                 imported["source_session"], destination_name=Path(imported["handoff"]).name,
                 art_generation="operator_2_5d_128",
@@ -430,7 +453,7 @@ def main() -> None:
             try:
                 ingress.validate_package(single_package_path)
             except IngressError as error:
-                assert "identity or frame contract" in str(error)
+                assert "contract does not match the package" in str(error)
             else:
                 raise AssertionError("package closure trusted a mismatched Workbench frame contract")
             imported_manifest_path.write_bytes(valid_manifest_bytes)
@@ -470,7 +493,7 @@ def main() -> None:
             try:
                 ingress.process_cell(package_path, "ne")
             except IngressError as error:
-                assert "identity or frame contract" in str(error)
+                assert "contract does not match the package" in str(error)
             else:
                 raise AssertionError("completed package trusted a wrong Workbench identity")
             manifest_path.write_bytes(manifest_bytes)
