@@ -87,7 +87,6 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE.md` — Independently verify the byte-exact eight-direction source-master-to-Workbench intake while preserving the zero-promotion boundary and honest per-direction e...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...
@@ -120,7 +119,6 @@ normal closeout.
 - `TWIN_SOLARIA_SOLARIUM_I_ACQUISITION_PRESENTATION.md` — Implement Twin Solaria Slice E so authorized route-review state drives a readable Solarium I observational-acquisition sequence through the Outbound/Reciproc...
 - `ULTRA_CODEX_PACKET_WORKER.md` — Bootstrap and prove a persistent, bandwidth-conservative Codex worker on the user's Ultra.cc "Speedboat Ops" seedbox that can autonomously claim explicitly e...
 - `VAULTWING_BONDING_LOCAL_HISTORY_RECOVERY.md` — Preserve and audit the clean attached Vaultwing bonding-art worktree without losing its exact HEAD, compare its branch history with current main and the prev...
-- `VAULTWING_RUNTIME_HARDENING.md` — Harden Vaultwing-local runtime ownership after shared hearing/perception lands, without recreating species-local sensing or redesigning wild combat/bond bala...
 - `VAULTWING_WORLD_SPAWN_INTEGRITY_RECOVERY_V1.md` — Make production Vaultwing spawning track active instances and recover cleanly after removals, while accurately validating the existing production spawner node.
 - `VEHICLE_DIAGNOSIS_KNOWLEDGE_V1.md` — Add the vehicle diagnosis/reverse-engineering layer: the Operator can service-scan real vehicles, learn named mechanical domains, collect specific assembly-p...
 - `VEHICLE_FIELD_SCOUT_BUGGY_ASSET_V2.md` — Give the Field Scout Buggy a real Asset Pipeline V2 family and replace hover-buggy-specific vehicle post-processing with an owner/family-driven seam that sup...
@@ -346,11 +344,11 @@ Actor/facet authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME
 The architecture boundary is now approved. Hearing is a shared perception facet, not a Vaultwing-owned mechanic. The executable chain is deliberately serial:
 
 1. `archived/STEALTH_PERCEPTION_FOUNDATION.md` — P0 implementation complete and landed; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
-2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — ready/auto fresh-context paired review; no user refresh required when it passes.
-3. `VAULTWING_RUNTIME_HARDENING.md` — P1 ready/auto and dependency-gated on the reviewed stealth foundation; owns fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
-4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review and intentional stop boundary.
+2. `archived/REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review passed with no findings.
+3. `archived/VAULTWING_RUNTIME_HARDENING.md` — P1 implementation complete and landed; fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
+4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — ready/auto fresh-context paired review and intentional stop boundary.
 
-After step 4, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
+After step 4 passes, autonomous execution stops at the recorded `non-player-fauna-bonded-command-convergence` planning gate. NPA-8 is intentionally **not authored yet**; it must be re-derived from reviewed stealth + Vaultwing seams and the then-current earlier NPA program so no speculative universal actor API is frozen early.
 
 ## Completed Bidirectional Dropbox Handoff
 

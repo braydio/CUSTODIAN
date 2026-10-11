@@ -1366,9 +1366,10 @@ Last updated: 2026-10-02
 - `design/02_features/ambient/VAULTWING_SYSTEM.md` — locked design authority
   for the Common Vaultwing wild predator, discrete flight bands, bonding,
   companion commands, Asset V2 family, and Slice A acceptance.
-- `custodian/game/actors/ambient/vaultwing/` — Slice A Common Vaultwing actor,
-  deterministic behavior controller, semantic animation set, scene, and Slice B
-  bond-state authority; companion commands remain deferred.
+- `custodian/game/actors/ambient/vaultwing/` — Common Vaultwing actor,
+  deterministic behavior controller, semantic animation set, scene, and bond-state
+  authority; bond clocks advance on the actor fixed tick and bonded restore reconciles
+  safe state without replaying first-bond effects; companion commands remain deferred.
 - `design/02_features/ambient/VAULTWING_SLICE_B_BONDING.md`,
   `custodian/tools/validation/vaultwing_bond_smoke.gd`, and
   `custodian/tools/iteration/scenarios/combat/vaultwing_first_bond.json` — Slice

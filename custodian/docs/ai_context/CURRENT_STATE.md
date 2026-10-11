@@ -2436,9 +2436,10 @@ relationship resolver separates discovery/indexing, allegiance, and dynamic
 targetability; it preserves legacy Enemy/team behavior, invalidates retained
 turret and drone targets when allegiance or targetability changes, and exposes
 Vaultwing hostile intent without coupling EngagementTracker to controller
-internals. The relationship foundation is complete; current Vaultwing work is
-bonding presentation art recovery, then production SFX and bait/global-save
-integration. Slice C companion progression remains later work.
+internals. The relationship foundation is complete. Vaultwing runtime hardening now owns
+fixed-step bond clocks, silent restored-BONDED reconciliation, semantic damage
+eligibility, and removal of unused group/field residue. Production SFX,
+bait/global-save integration, and Slice C companion progression remain deferred.
 
 Vaultwing Slice B.1 now implements the same-instance behavioral bonding loop:
 safe interruptible bait approach/observation, encounter-separated peaceful-feed
@@ -2481,7 +2482,13 @@ remains presentation-only: the body
 lifts above a persistent ground-projection shadow, scale changes modestly, HIGH
 flight may leave the body above the camera, and body/shadow convergence is part
 of the dive telegraph. Focused validation includes `vaultwing_runtime`,
-`vaultwing_asset_contract`, and `vaultwing_world_spawn`.
+`vaultwing_asset_contract`, and `vaultwing_world_spawn`. The runtime-hardening
+slice moves bond progression clocks to the actor physics step, restores bonded
+records without replaying first-bond signals or presentation, derives damage
+eligibility from the shared relationship resolver, removes the unused
+`hostile_fauna` group and proven-dead combat fields, and hardens typed spawner
+pruning. Its focused bond/runtime/relationship/world-spawn/acoustic checks pass;
+NPA-8 remains behind the fresh-context Vaultwing review and planning refresh.
 ## World Environment V1 (2026-09-03)
 
 Accepted procgen maps now own deterministic scrubland, woodland, wetland, and rocky-upland fields that constrain foliage density, composition, and tint beneath route policy. One world-local `WorldEnvironmentDirector` owns a 24-minute fixed-physics day, contract-seeded weather, and indoor exposure; existing lighting, atmosphere, and shared foliage materials remain presentation authorities.
