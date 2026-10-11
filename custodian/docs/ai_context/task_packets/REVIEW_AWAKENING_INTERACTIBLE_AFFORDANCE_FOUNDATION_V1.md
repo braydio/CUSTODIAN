@@ -43,6 +43,12 @@
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Art-gated successors remain draft/manual pending exact verified Asset V2 art.
 
+## Independent proof additions (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Require real scene/marker-to-owner parity, absent-owner negative control, optional-art-absent no-warning startup, two physical lift mounts but one `AwakeningTransitLift`, zero extra collision/navigation/input authority, and mutation-check `lift_mechanism` reclassification. The review must fail if a scenic marker looks ready-to-press or a visual mount creates an additional interaction target. Preserve current 04→05 geometry and HUD prompts.
+
 ## Review Receipt
 - Status: `pending`
 - Review target workstream: `awakening-interactible-affordance-foundation-v1`

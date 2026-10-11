@@ -140,3 +140,9 @@ Durable approved batch should be published to `/CUSTODIAN/asset_batches/awakenin
 Single fixed-camera playback set at Crèche, Locker, lower/upper lift, Undergate port; normal and dim lighting, unprompted mid distance and actionable near distance. Reviewer should identify each functional object without HUD labels. Distinguish visual-only markers from real interactibles. Return visual decision to the authoring chat and record it with the relevant implementation packet. Family doctor/status + checksum/provenance + geometry/reachability/occlusion validations must pass. 
 
 **Inventory:** 77 planned state images in 12 families: 27 currently-required live, 14 recommended marker/dressing, 36 deferred future. This count is *planning demand*, not evidence that art exists.
+
+## Existing Crèche body/FX replacement contract (2026-10-10)
+
+Do **not** create a new terminal hero family to replace the existing `awakening_creche_console`. Retain `kind=world_prop`, `direction_policy=omni`, state `idle`, `canvas=128×128`, static 1f. Human-authored source path: `custodian/asset_drop/source_work/awakening/awakening_creche_console/idle_source.png`; normalized inbox: `custodian/asset_drop/inbox/awakening_creche_console/idle.png` (128×128 RGBA true-alpha). Existing `awakening_creche_console_activation_fx/activate` is 8 frames ×128×128 at 8 FPS, 1024×128 sheet, unchanged unless the user separately approves an FX source amendment. Inspect screen-window ROI and placement of all 8 frames before changing its anchor. Replacement requires validated source SHA/Asset V2 plan + `--replace` transaction/receipt, actual runtime import and human-reviewed gameplay screenshot; neither `.png.import` existence nor generated family schema proves aesthetic suitability.
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166.

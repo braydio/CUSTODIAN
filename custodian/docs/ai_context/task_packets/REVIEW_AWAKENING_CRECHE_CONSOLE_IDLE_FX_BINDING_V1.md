@@ -1,0 +1,64 @@
+# REVIEW AWAKENING CRÈCHE CONSOLE IDLE/FX BINDING V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-awakening-creche-console-idle-fx-binding-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `awakening-creche-console-idle-fx-binding-v1`
+- Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
+- Kind: `review`
+- Review: `none`
+- Reviewed main: `956cf2114458`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
+- Visual review: `conditional`
+- Goal: Independently falsify the corrected idle+FX scene binding without accepting low-quality art as final.
+- Completion boundary: Fresh-context review of real full-scene owner, pixel alignment, first acknowledgement/repeat/reset, one unique visible machine.
+- Current measured state: `AwakeningFirstReturn._build_console_activation_presentation()` adds FX at `_marker_position(&"zone01_creche","creche_console")` without instantiating the existing 128×128 idle hero; FX is 8×128×128 at 8 FPS.
+- Evidence: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/content/metadata/assets/families/awakening_creche_console.asset.json`; `custodian/content/metadata/assets/families/awakening_creche_console_activation_fx.asset.json`; `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md`.
+- Task-specific authority: `AwakeningFirstReturn` visual presentation, original `CrecheConsole` interaction owner, existing canonical V2 families, Layout marker, current root and custodian AGENTS art/review rules.
+- Work surface: Scene, controller, new focused smoke, archived implementation receipt.
+- Change: Verify real source paths, actual body/ScreenAnchor/FX hierarchy and measured screen ROI. Mutate back to floor marker and prove focused smoke fails; ensure no duplicate body and no second gameplay owner. Independent reviewer must not patch implementation.
+- Preserve: Existing `CrecheConsole` gameplay, first-use acknowledgement and repeat readout, HUD prompt, exact Layout marker (112,144), no duplicated body, original FX frames/fps.
+- Non-goals: No new interaction owner, no second asset family for the hero, no general editor, no speculative room/route changes, no direct runtime PNG modification.
+- Acceptance: No blocking findings or material evidence gaps; floor-anchor negative test fails and all 8 FX frames are correctly constrained.
+- Validation: new focused anchor smoke; awakening progression; actual LFS PNG alpha ROI, targeted screenshot.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit and push only durable review receipt, its lifecycle/closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation.
+- Deferred: Authored replacement hero remains future separate human-gated packet.
+
+## Review Receipt
+- Status: `pending`
+- Review target workstream: `awakening-creche-console-idle-fx-binding-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_CRECHE_CONSOLE_IDLE_FX_BINDING_V1.md`
+- Reviewed main: `<fill at claim>`
+- Reviewer context: `fresh`
+- Reviewer provenance: `<fill>`
+- Blocking defects: `<fill>`
+- Material evidence gaps: `<fill>`
+- Non-blocking issues: `<fill>`
+- Optional improvements: `<fill>`
+- Correction finding IDs: `<fill>`
+- Next-slice finding IDs: `<fill>`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_CRÈCHE_CONSOLE_IDLE/FX_BINDING_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `<fill>`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success | partial | blocked`
+- Friction severity: `none | low | medium | high`
+- What went wrong: `<fill at closeout>`
+- Root cause / contributing factors: `<fill at closeout>`
+- Prevention / pipeline improvement: `<fill at closeout>`
+- Tooling / docs drift discovered: `<fill at closeout>`
+- Follow-up: `none`
+- What worked: `<fill at closeout>`
+
+## Next Handoff
+- Next workstream: `none`
+- Next packet state: `none`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
+- Refresh reason: `none`
+- Next action: If passed, permit the dependent successor; otherwise create a bounded correction/re-review.
+- Blockers or open questions: Only declared predecessor/review dependencies.

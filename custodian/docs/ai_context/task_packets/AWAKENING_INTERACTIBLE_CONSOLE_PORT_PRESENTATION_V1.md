@@ -4,7 +4,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1, review-awakening-creche-console-sprite-reauthor-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -23,7 +23,7 @@
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `custodian/game/world/awakening/awakening_first_return.gd`; `custodian/game/world/awakening/awakening_plaque_interactable.gd`; `custodian/game/world/interactions/world_readout_interactable.gd`; `custodian/game/world/awakening/awakening_layout.gd`; `custodian/scenes/awakening_first_return.tscn`; `custodian/content/metadata/assets/families/awakening_interact_{support,terminal,port,shared_fx}.asset.json`; directly affected focused validation.
 - Change:
-  0. **User-observed CRÈCHE SCREEN FX DEFECT (fix with this slice, not perimeter work):** First Crèche computer interaction shows activation FX on the floor beneath the apparent console, rather than on the console screen. Inspect `AwakeningFirstReturn._build_console_activation_presentation()` / the Layout `creche_console` marker `(112,144)` and the actual baked room art on a real runtime frame. Current code puts `CrecheConsoleActivation.position` at the interaction marker and does not visibly instantiate the already-published `awakening_creche_console` 128×128 idle hero body despite its V2 family existing. First determine whether the baked plate already has the exact computer silhouette: if so, use it as the visible body and attach a child screen-local activation FX with a measured offset; otherwise re-use the registered idle prop as **one** physical body and attach FX to its actual screen. Do not blindly layer a second computer, move the gameplay interaction marker, or shift the 8-frame strip without measuring its opaque region. Activation must remain a single 8×128×128 horizontal strip at 8 FPS, trigger on first acknowledgement only, hide when complete, and never paint onto the floor.
+  0. **Reviewed predecessor instead of duplicate correction:** The idle Crèche sprite/8-frame activation FX scene binding is owned by `awakening-creche-console-idle-fx-binding-v1`; custom hero reauthoring and final fit belong to `awakening-creche-console-sprite-reauthor-v1`. This packet consumes the independently reviewed result; do not produce a second console, reattach another FX, or move the gameplay marker.
   1. ART GATE: Keep blocked/manual until exact required support/terminal/port/FX states are approved in the specified Dropbox batch, checksum-validated, normalized, Asset V2 `verified`, and reviewed in context. Promote implementation/review together only after the gate and predecessor reviews pass.
   2. Bind `console_pedestal`, `console_backplate`, `screen_glow`, floor pad, beacon and support dressing to existing `zone01_creche.creche_console` (112,144). Prefer reuse of existing Crèche console body when matching dimensions/role; never stack two body sprites if one already fulfills silhouette.
   3. Bind damaged body, backplate, floor inset, failing Port status beacon and low-key readout flicker at existing `zone06_undergate.port_status_plaque` (128,-4016), keeping `PORT_READOUT` status-only and no opening gate or route grant.
@@ -59,6 +59,14 @@
   4. Do near-focus and post-acknowledgement cues feel tied to real interaction state?
   5. Are console wall silhouettes, floor pads, grates and foreground/Operator sorting visually seamless?
 - If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
+
+## Exact successor seam (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+- `AwakeningFirstReturn` retains gameplay `CrecheConsole` at `Vector2(112,144)`; consumed predecessor binds canonical `awakening_creche_console/idle` and an activation child to a measured screen-local anchor. No duplicate visible body on the baked Crèche underlay, no floor flash.
+- Port remains a damaged, read-only `PortStatusPlaque` at `Vector2(128,-4016)`, with `PORT_READOUT` containing `PORT AUTHORITY: SUSPENDED`; do not imply Continuity Port transit.
+- Use foundation's `AffordancePresentation` and only VERIFIED V2 dressing states. Review objective alpha/ROI/geometry first and produce the smallest gameplay-scale human visual evidence needed.
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`

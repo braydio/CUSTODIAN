@@ -41,6 +41,12 @@
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Future art states remain deferred until separate real gameplay posting.
 
+## Review bridge (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Read the archived Crèche binding+reauthor review receipts. Verify exactly one machine, authored screen retains the correct FX overlay for all 8 frames without floor bloom, Port remains damaged/read-only, and no new interaction owner or duplicate asset family was introduced. Reuse predecessor measured pixel evidence instead of recapturing redundant footage.
+
 ## Review Receipt
 - Status: `pending`
 - Review target workstream: `awakening-interactible-console-port-presentation-v1`
