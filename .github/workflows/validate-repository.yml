@@ -66,13 +66,6 @@ jobs:
             custodian.tools.agent.test_task_packet_repair \
             custodian.tools.agent.test_run_trace
 
-      - name: Hydrate accepted Operator 2.5D contract inputs (bounded LFS)
-        run: |
-          set -euo pipefail
-          # Only the three accepted LFS inputs used by operator_2_5d_canonical_visual_contract_smoke.
-          # Do not hydrate broad asset directories or replace source bytes with fixtures.
-          git lfs pull --include="custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png,custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png,custodian/content/sprites/operator/reference/operator_2_5d/operator_2_5d_rotation_lock_128.png" --exclude=""
-
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
         with:
