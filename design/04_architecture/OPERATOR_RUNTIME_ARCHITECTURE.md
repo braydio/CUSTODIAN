@@ -322,6 +322,110 @@ lower-body cadence
 with authored full-body actions available where appropriate — not a stack of
 every layer that could technically be separated.
 
+### Operator presentation composition doctrine: full-body first, selectively modular (approved 2026-10-11)
+
+**Design decision:** The canonical `operator_2_5d_128` character should read as one
+coherent, independently authored **full-body** figure in ordinary neutral motion
+and in committed whole-body actions. **Modular lower/upper presentation remains
+a first-class gameplay capability**, not a deprecated compatibility hack. Use
+it whenever the Operator must legitimately perform *two independently
+controlled actions at the same time*, most importantly movement while
+aiming, firing, guarding, parrying, or holding weapon-ready posture. Do not
+make every body part independently animated merely because the renderer can.
+
+This decision affects future 2.5D authoring/presentation only until a
+generation-coherent release is explicitly approved. It **does not** retire
+existing `legacy_96` split clips, reset authored asset targets, or authorize
+WB25-6. It is the canonical rationale for **when** future 2.5D split-layer
+variants should be requested. The currently tracked 69 × 8 2.5D target
+families specify `full_body` as their baseline; the new decision does not
+pretend they already have approved split variants or timing. Any genuine new
+128px split-layer requirement must be recorded as a separate, reviewed
+target/Asset V2 authoring decision rather than modifying these baseline
+identities opportunistically.
+
+| Presentation case | 2.5D preferred composition | Reason and boundary |
+| --- | --- | --- |
+| Relaxed/ready stationary idle and quiet posture transitions | **Authored full-body** | Keep silhouette, foot contact, armor and cloak continuous. |
+| Normal idle/walk/run/sprint without competing upper action | **Authored full-body** | Avoid unnecessary upper/lower seam alignment and duplicated art. |
+| Committed attack, knockdown, dodge, guard break, death, execution, planted parry contact | **Authored full-body** or explicitly authored exclusive rig | Whole-body anticipation, contact weight and committed recovery stay intact; never manufacture movement permission. |
+| Movement + independent aim/fire/weapon-ready upper action | **Split lower locomotion + upper action** plus separate weapon/FX | Lower cadence/facing follows legal locomotion while upper aim and weapon follow independent intent. |
+| Movement + held/enter/exit guard or movement-permissive parry phase | **Split when gameplay actually allows concurrent movement** | Preserve lower cadence through upper state changes; committed hit/break/contact beats remain complete-body or explicitly planted. |
+| Weapon, muzzle flash, impact VFX, owner-scoped cosmetic overlays | **Independently owned overlays** | They are not a second body and must preempt/retire with their actual owner. |
+| Head or cape as free-floating modular renderers | **Not active by default** | Existing C2a head/cape retirement stands; add only after reviewed demonstrated need. |
+
+**Mechanical invariants:**
+
+1. **One body:** `OperatorBodyPresenter` remains sole body visibility/owner
+   authority. All presentation choices resolve to a validated full-body,
+   split-body, or exclusive-authored-rig plan; transfer is atomic. No frame
+   may display two body owners or a stray upper/lower/weapon from an old owner.
+2. **One semantic selector and runtime database:** Resolve exact semantic
+   identity through `OperatorAnimationSelector`, and play through the
+   existing controller/player and generated manifest/catalog/SpriteFrames.
+   A full-body asset is not a substitute for missing split layers; split
+   layers are not synthesized by cropping a complete 128px body.
+3. **No mixed body generation:** Every visible *body* layer in an active
+   composition must use one approved art generation/registration frame:
+   `legacy_96` or `operator_2_5d_128`. Do not combine 128px upper or
+   full-body with 96px lower. Standalone weapons/FX can have different
+   presentation envelopes only with explicit validated registration, socket,
+   ownership and scaling. An unavailable matching full composition must
+   **refuse 2.5D activation** rather than silently substitute a legacy piece.
+   Existing live legacy-only presentation and its explicitly authored
+   fallbacks remain undisturbed before promotion.
+4. **Independent facing only when meaningful:** 2.5D full-body art requires
+   authored N, NE, E, SE, S, SW, W, NW identity; do not mirror or project
+   those views from `legacy_96` E/W. A split-mode lower may face travel and
+   upper may face aim, but only when each part has an authored, accepted
+   compatible source, anchor, movement/body alignment, and an intentional
+   sector policy. Sparse legacy projections remain scoped to legacy.
+5. **Timing separation:** Simulation/action controllers own legal movement,
+   attack/contact windows and preemption. Visible `AnimatedSprite2D`
+   drives presentation progress/completion only through the existing
+   chosen visible clock. Never let a hidden legacy sprite, upper animation
+   or default Workbench preview timing silently become a gameplay clock.
+   Respect independently validated timing-decision provenance for 2.5D.
+6. **Whole-composition preflight:** Before changing body owner, prove all
+   required body identities, visible clock and attached weapon/FX registration
+   are available; avoid a body with only one required half. On preemption,
+   the caller invalidates the outgoing lifecycle and the presenter retires
+   its body and owner-scoped overlays. Preserve frame/progress when switching
+   upper phase over an unchanged lower action, where semantics permit it.
+7. **Coherent cohort, not convenient clips:** New 2.5D full-body and modular
+   variants must work across actual posture ↔ locomotion ↔ combat/action ↔
+   return edges. A single validated direction, a full eight-direction
+   family, or a fixture test does not authorize a 96px/128px runtime switch.
+   Explicit human cohort selection, current receipts, source/clock approval
+   and reversible WB25-6 publication remain separate gates.
+
+**Escalation test for new modular art:** identify a demonstrated simultaneous
+legal gameplay requirement, prove a full-body animation would either
+incorrectly freeze/couple independent motion or force an unmanageable
+cross-product of authoring variants, and show the lower+upper+weapon
+composition can preserve registration, view, cadence, contact/readability
+and a bounded source/QA burden. If those proofs are absent, prefer full-body.
+If full-body is demonstrably insufficient, author *only* the required
+modular variants under the existing canonical target and Asset Pipeline V2
+review process. Body layer size remains **128×128 per authored frame**
+with shared root [64,106], shadow [64,107], and eight independently authored
+directions unless a separate approved action-specific envelope requires more
+space; frame counts and FPS are **unknown until explicitly approved**. Future
+source-work enters `custodian/asset_drop/inbox/operator_2_5d/` with the
+canonical `operator_2_5d_128__<profile>__<group>__<action>__<direction>__<layer>__<N>f.png`
+family naming convention and a v2 source manifest; no art is required by
+this decision documentation itself.
+
+**Implementation and proof:** The existing reviewed
+`operator-2-5d-cohort-dependency-closure` report lists all ordinary and
+preemption edges as open, not proven compatible. A bounded
+`operator-2-5d-composition-mode-guard-v1` implementation + fresh review
+should enforce the fail-closed plan/preflight and its negative cases using
+fixtures without any real 2.5D runtime activation. Later WB25-6 may
+implement exact generation-coherent composition after art/timing/QA/human
+release gates; it must not introduce a duplicate presenter/selector or
+rewrite the gameplay simulation to fit pixels.
+
 **Retired from active composition (C2a authoring decision, 2026-09-12):** the
 modular head and the modular cape. `Operator.ACTIVE_MODULAR_HEAD` and
 `ACTIVE_MODULAR_CAPE` are `false`, and the composition paths that used to draw
