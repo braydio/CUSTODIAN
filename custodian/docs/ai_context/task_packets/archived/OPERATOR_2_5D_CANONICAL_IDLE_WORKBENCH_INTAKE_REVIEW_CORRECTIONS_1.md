@@ -81,7 +81,7 @@
 
 ## Independent Review
 
-- Status: passed
+- Status: `passed`
 - Review workstream: `review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1`
 - Reviewed on main: `455392871fd95d831feed14d55bd29ee913680bf`
 - Reviewed implementation commit: `fa955e5e7`
