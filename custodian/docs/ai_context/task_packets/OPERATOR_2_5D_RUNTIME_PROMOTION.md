@@ -1,7 +1,8 @@
-# OPERATOR 2.5D RUNTIME PROMOTION
+# OPERATOR 2.5D RUNTIME PROMOTION — COHORT-SAFE GENERATION SWITCH
 
-> PRE-AUTHORED / REFRESH REQUIRED BEFORE IMPLEMENTATION  
-> Refresh only after WB25-5 + paired review land and real verified-family counts exist.
+> **PLANNING REFRESH / HOLD (2026-10-10; main@84c7eb1f).** WB25-5 implementation and fresh independent review are complete/passed. WB25-6 is deliberately `draft/manual`: the review checkout measured **0 effectively verified 2.5D leaves and 0 verified families**, so there is **no release-eligible production cohort** and no human-approved first production cutover. This refresh specifies the runtime architecture and falsification gates; it does not authorize an empty or partial 2.5D promotion.
+>
+> Distinguish **capability implementation with synthetic fixtures** from a **real runtime-generation policy change**. Do not claim this original WB25-6 promotion packet or set it ready merely because its fixture-only technology can be implemented. An independently approved preparatory slice, if later chosen, must keep all live policy entries on `legacy_96`.
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-runtime-promotion
@@ -18,70 +19,62 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: substantial engineering default
-- Reviewed main: e56a75cfb76cdb5a3a430b21be267b1b4e20ed6e
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Reviewed main: 84c7eb1f8a2ee8c2e4936b9df9afa8ea7e1672d1
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Visual review: conditional
-- Goal: Add one fail-closed, rollbackable runtime generation policy so a fully verified 2.5D cohort can atomically replace the same legacy semantic runtime identities without mixing character generations or creating a second runtime animation database.
-- Completion boundary: Introduce cohort generation policy, make the existing source→runtime sync choose one authoring generation per promoted cohort, prove complete-family gating/rollback, and update runtime authority/docs. Keep OperatorAnimationSelector and the one generated operator_runtime_frames.tres as execution authority.
-- Current measured state: runtime identity is profile/group/action/direction/layer; sync_operator_runtime_assets.py + build_operator_runtime_frames.gd build one runtime manifest/SpriteFrames; OperatorAnimationSelector owns selection and still permits temporary SOUTH fallback. No art-generation policy exists and current canonical source paths are legacy-oriented.
-- Evidence: design/02_features/animation/OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md; design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md; custodian/tools/pipelines/sync_operator_runtime_assets.py; custodian/tools/pipelines/build_operator_runtime_frames.gd; custodian/game/actors/operator/animations/operator_animation_selector.gd; generated runtime manifest/frames.
-- Task-specific authority: reviewed WB25 queue/review receipts for verified canonical 2.5D families; operator_asset_schema.py generation-aware source paths; existing runtime sync/build/selector authority.
-- Work surface: new custodian/content/data/operator/authoring/operator_art_generation_policy.json; sync_operator_runtime_assets.py; only the smallest runtime builder/selector changes proven necessary; runtime authority docs; focused runtime/path/spriteframes tests.
+- Goal: Safely select one coherent, fully reviewed Operator 2.5D authoring generation for a genuinely complete gameplay presentation cohort, keeping all existing semantic runtime identities and one runtime database, with exact preview, publication and rollback evidence.
+- Completion boundary: Add a fail-closed runtime generation-policy/preflight and a transactionally staged, reversible source-to-runtime promotion through existing sync, runtime-manifest, catalog and SpriteFrames owners; implement live publication-state reporting. **Actual promotion is permitted only for an explicitly chosen, currently verified, complete release cohort.** Fixture-only proof cannot satisfy a real art release. Preserve the existing selector and runtime layout.
+- Current measured state: WB25-5 implementation `69cdfdbf1` landed via `d4efc0234`; independent paired review `cd72b90b1` passed with zero findings and its complete packet/summary are archived on main. Review checkout's `WorkbenchService.animation_queue("ALL")` returned **69 families / 552 directions, 4 P0 / 65 P1, 0 effectively receipt-verified leaves / 0 verified families, 8 workspace directions** and NEXT `unarmed/posture/idle_relaxed_01/n`. These are workspace-scoped; ignored source documents/receipts elsewhere must be remeasured on execution, not assumed absent or zero. Only one plan family has resolved frame count (15 frames, 128×128 body, loop true, FPS unknown); 68 remain frame-count unresolved. The accepted `unarmed/posture/idle_relaxed_01` 8-direction source is not 2.5D intake, verified runtime art, or a promoted cohort. `WorkbenchService.publish_preview()` explicitly disables direct 2.5D runtime publication and the WB25-5 queue sets `publication="NOT_SUPPORTED_BY_WB25_5"`, `published_supported=False`. Live runtime sync still reads legacy `source/animations` and weapon-owned sources; the builder emits one manifest and one SpriteFrames; the selector does exact then scoped temporary SOUTH fallback. No generation policy or real 2.5D runtime cutover exists.
+- Evidence: `REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` and `custodian/docs/ai_context/task_packets/archived/REVIEW_OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE.md` (passed receipt); `OPERATOR_2_5D_WORKBENCH_PRODUCTION_QUEUE_CLAUDE_SUMMARY.md` (36/36 changed checks); `ui/service.py::animation_queue`, `publish_preview`; `operator_2_5d_review.py::current_receipt/family`; `operator_animation_targets.py::project_targets`; `tools/pipelines/operator_asset_schema.py::canonical_source_path/canonical_runtime_path`; `tools/pipelines/sync_operator_runtime_assets.py::scan_sources/validate_sources/synchronize_runtime/remove_superseded_runtime/build_runtime_manifest/build_animation_catalog/sync`; `build_operator_runtime_frames.gd`; `operator_animation_selector.gd`; `OPERATOR_RUNTIME_ANIMATION_AUTHORITY.md`.
+- Task-specific authority: the v2 69-family plan for directions, layers and resolved contracts; exact `Operator2DReview.current_receipt()` and `family()` for effective current verification, including Workbench-bound human/QA/sandbox proof; existing Source Session and Asset Pipeline V2 for untrusted art intake; `operator_asset_schema.py` for generation-aware authoring paths but generation-neutral runtime semantic identity; existing runtime sync/manifest/catalog/SpriteFrames and `OperatorAnimationSelector` as one execution authority. Runtime policy MUST NOT become a second review/progress store.
+- Work surface: `custodian/content/data/operator/authoring/operator_art_generation_policy.json` only after verified first-cohort selection, with conservative absent/default legacy behavior; focused policy/orchestration helper under `custodian/tools/pipelines/` if warranted; `sync_operator_runtime_assets.py`, `operator_asset_schema.py` only for bounded policy-derived source selection; unchanged `build_operator_runtime_frames.gd` if possible; `custodian/tools/operator/ui/service.py` for read-only active-generation/publication truth; focused runtime policy/sync/rollback/selector smokes and authoritative runtime docs. Scope weapon-owned paths only if a chosen cohort actually includes them; never silently reroute them to Operator body generation.
 - Change:
-  1. Add one machine-readable generation policy. It owns which authoring generation feeds runtime per named coherent cohort. Default remains legacy_96.
-  2. Policy must never select generation independently per direction/frame. Cohort/family requirements are explicit.
-  3. A cohort may promote to operator_2_5d_128 only when every required target family/direction/layer is canonical, current-profile/reference, human-reviewed where required, PUBLISHED and RUNTIME_VERIFIED.
-  4. sync_operator_runtime_assets.py reads policy and scans the selected authoring generation for promoted identities, then writes the same existing canonical runtime paths/semantic identities.
-  5. Runtime semantic identity remains profile/group/action/direction/layer. Do not add art_generation to gameplay request identity.
-  6. Generated operator_runtime_manifest.generated.json and operator_runtime_frames.tres remain the sole runtime database.
-  7. OperatorAnimationSelector remains the sole semantic selector. Do not add generation branching inside operator.gd or state controllers.
-  8. Promotion is transactional/rollbackable. Before mutation, capture policy + affected generated/runtime hashes. Failure restores prior policy/runtime/generated artifacts exactly.
-  9. Refuse partial cohort, stale review receipt, missing exact direction/layer, source collision, profile/reference mismatch, or dirty/pending publication state.
-  10. Remove temporary SOUTH fallback only for a scope where the active runtime contract has complete exact directions and the existing authority permits scoped removal; do not globally delete fallback while other legacy cohorts still require it.
-  11. Provide dry-run report listing every semantic runtime identity whose source generation would change and every required proof receipt.
-  12. Update Workbench queue so promoted families show active runtime generation, without making runtime policy a second workflow database.
-- Preserve: gameplay timing/hit windows; OperatorAnimationSelector ownership; one generated runtime SpriteFrames; legacy authoring source; rollback; weapon owner semantics; no runtime direct source PNG loading.
-- Non-goals: no deletion of legacy source; no automatic whole-project 2.5D cutover; no gameplay-state redesign; no new animation resolver; no image generation; no silent mixed-generation fallback.
-- Acceptance: with a disposable fully verified cohort fixture, dry-run lists exact affected identities; promotion rewrites only generated/runtime outputs to 2.5D source pixels while gameplay identity/API remains unchanged; an incomplete direction blocks before mutation; injected failure restores exact prior hashes; unrelated legacy cohort stays legacy; no second SpriteFrames/runtime DB appears; selector/runtime smokes remain green.
-- Validation: focused generation-policy parser, complete/incomplete cohort gates, dry-run identity diff, successful promotion, injected rollback, unrelated-cohort preservation, runtime manifest and SpriteFrames rebuild, operator_runtime_animation_authority_smoke.py, operator_runtime_path_audit.py, operator_runtime_spriteframes_import_smoke.py, body-pair canonical smoke where selected, changed validation + git diff --check.
+  1. Define a strict machine-readable **explicit cohort generation policy**. An absent policy or absent cohort maps to `legacy_96`. Refuse unknown generation, duplicate/overlapping semantic identities, mixed layer ownership, duplicate source siblings, unlisted family/direction, mismatched plan/profile/reference, missing contract or unknown promotion proof. No opportunistic source discovery may silently activate 2.5D.
+  2. Select a **presentation-coherent cohort** by the live runtime dependency/transition/consumer inventory, not merely a single plan row or all directions of one idle. Enumerate reachable actions, entry/exit transitions, required direction/layer clocks, posture/locomotion interactions and weapon-owner boundaries. A coherent cohort must not visibly alternate 128px and 96px character generations when ordinary gameplay moves across it. Record exact identity closure and accepted human cohort decision.
+  3. Promotion **preflight** must re-project the current target plan and `current_receipt()` on the actual authoring checkout; require every explicitly needed leaf, layer and direction to be nonstale, exact 2.5D, current-profile/reference, saved/document-validated, objectively reviewed, human-approved where QA requires, and sandbox-verified. Validate current source PNG bytes and complete frame/sidecar timing, and exact current Workbench/Source Session/Asset V2 provenance. Unknown frame counts and unknown publication timing are BLOCKED unless an authoritative completed physical contract resolves them; do not substitute the legacy 8/12 FPS defaults.
+  4. **Correct phase ordering**: `PUBLISHED` is the observed result of a successful guarded commit, not an input to it. WB25-5 deliberately supports no `PUBLISHED` truth. The gates before promotion are current verified authoring evidence + authorized source state + cohort choice. Never satisfy the gate from cached receipt JSON, accepted source alone, copied asset names, a synthetic fixture, or the new policy itself. Capture immutable pre-mutation receipt/evidence digests: `current_receipt()` may become stale **after** changing production hashes, so do not re-use post-mutation cache flags to falsify or silently withdraw a valid published generation.
+  5. Build a **read-only dry run** that lists every semantic runtime identity/direction/layer, old and prospective source path/byte hash, old and prospective frame count/canvas/timing, selection basis, required effective receipt hashes, source/provenance dependencies, authoritative plan/profile/reference hashes, exact files to create/replace/remove and every consumer/fallback effect. Reject collisions, missing layers, any runtime ambiguity, and changes to unrelated cohorts before touching runtime.
+  6. Teach the existing `sync_operator_runtime_assets.py` to select either legacy `content/sprites/operator/source/animations/<profile>/<group>/<action>/...` or `source/generations/operator_2_5d_128/animations/<profile>/<group>/<action>/...` **by policy for entire approved cohort**. `operator_asset_schema.canonical_source_path(..., art_generation=...)` already supplies generation-aware source paths; `canonical_runtime_path` stays generation-neutral. The current `scan_sources()` only scans legacy/operator and weapon-owned paths; expand deliberately without a second sync tool. Reject simultaneous 96×96 and 128×128 semantic siblings rather than nondeterministic overwrite. Preserve weapon-owned source/runtime roots and all unrelated legacy profiles.
+  7. **Transactional publication**: preflight and stage all affected runtime PNGs, timing sidecars, generated manifest, catalog and single `operator_runtime_frames.tres` in a disposable isolated worktree/staging project, using existing import/validation/build owners and a durable before/after journal. Validate first, then atomically switch the complete cohort/policy state; any injected copy/import/build/validation/git failure must restore original policy and every affected generated/runtime content hash exactly. Retain recovery evidence for interrupted sessions; never strand partially updated runtime outputs, leave an unexpected stale sidecar, or mutate the coordination checkout. Serialize with the existing Godot project lock and respect active editor warnings.
+  8. Keep runtime IDs `profile/group/action/direction/layer` (plus `weapon/<id>/` where applicable) and `OperatorAnimationSelector` authoritative. No `art_generation` argument in gameplay requests, alternative SpriteFrames DB, direct source PNG load, selector branch by generation, or actor/state rewrite. Scoped SOUTH-fallback retirement requires an independent complete exact-direction consumer proof; leave the existing fallback untouched if other cohorts still need it.
+  9. After a verified successful commit, update the Workbench queue's previously `NOT_SUPPORTED_BY_WB25_5` publication view to derive the **actual effective runtime generation** from policy + materialized runtime manifest/frames and committed provenance. Keep verification, source intake, published generation and runtime activity distinct. Stale/unavailable provenance is `UNAVAILABLE`, not `PUBLISHED` or verified zero.
+  10. No automated real 2.5D release while the live checkout still measures zero fully verified families. A disposable **fully verified fixture** may prove the entire policy/dry-run/stage/rollback/build path, but release scope is still held until the human-selected real cohort and fresh materialized 2.5D evidence exist. Do not ingest the accepted idle master, fabricate frames, or create an art manifest just to pass tests.
+- Preserve: exact semantics/pixel-clock/loop/FPS/hit windows of unchanged identities; all legacy source; one runtime-generated manifest, generated catalog and SpriteFrames resource; source-to-runtime/asset publication authority; weapon-owner separation; existing GDScript selector; active gameplay compatibility until a scoped independently proven retirement; no production-only test artefacts.
+- Non-goals: automatic whole-character/whole-project 2.5D cutover, automatic source generation, new human review policy, a second runtime resolver/database, hidden legacy fallback masking, change to gameplay behavior or combat windows, global SOUTH fallback removal, legacy deletion, bulk frame contracts, rebuilding unrelated runtime assets for visual taste.
+- Acceptance: (A) empty/default policy reproduces old byte hashes and runtime identities; (B) fixture cohort with all required 128px directions/layers, current bounded approval evidence and valid timing generates a deterministic complete dry-run and promotion, retaining one manifest/SpriteFrames; (C) missing/sparse/caller-forged or obsolete receipt, unknown frame/clock, wrong source or missing layer blocks **before mutation**; (D) a disjoint legacy cohort remains byte-identical and present; (E) fault injection after each stage restores prior policy, PNGs/sidecars/manifest/catalog/SpriteFrames bit-for-bit, with a recoverable journal; (F) exact vs scoped SOUTH resolver retains requested semantics; (G) publication truth derives from fully landed effective runtime state, not a plan/source/cache flag; (H) before any real 2.5D switch, a human-confirmed exact coherent cohort with complete live receipts and direct end-to-end runtime acceptance is recorded; (I) no synthetic fixture is committed as production art.
+- Validation: write focused fixture-first policy parser, semantic collision/path, source/direction/layer, 0-verified negative, stale/human provenance, missing timing, complete incomplete-cohort, full dry-run identity/hash diff, source-selection, generated catalog vs manifest vs SpriteFrames parity, fault-injected transaction rollback and handoff recovery tests. Rerun `custodian/tools/validation/operator_workbench_production_queue_smoke.py`, `operator_generation_brief_smoke.py`, `operator_2_5d_review_smoke.py`, `operator_2_5d_ingress_smoke.py`, existing `operator_runtime_animation_authority_smoke.py`, `operator_runtime_path_audit.py`, `operator_runtime_spriteframes_import_smoke.py`, applicable body-pair/canonical timing tests and Godot import/selector smoke, then `run_validation.py --changed --json`, `task_packet_index.py` and `git diff --check`. Name and register the new focused test owners before implementation closeout.
 - Task overrides: none
-- Deferred: bulk legacy deletion; global SOUTH-fallback retirement until all required production cohorts satisfy exact-direction authority; later asset cleanup.
+- Deferred: selecting and actually flipping the **first production cohort** (explicit human choice + all live evidence pending), mass 2.5D art authoring/intake, deleting 96px source, global SOUTH-fallback retirement, any public release before independent fresh review.
 
-## Recommended policy shape
+## Cohort decision record and earliest feasible route
+
+**Actual chosen first production cohort: NOT YET CHOSEN.** The prior example `unarmed_core` (relaxed/ready idle, walk/run and their transitions) was illustrative, not an accepted dependency-closed release scope. Do not author its policy as `operator_2_5d_128` until a fresh state-machine/selector consumer graph proves the required transition closure and the user approves its precise members. The single authored `unarmed/posture/idle_relaxed_01` family is a useful **test fixture/intake starting point only**, not a coherent independently releasable live gameplay cohort. Other P0 targets include `melee_1h/locomotion/run_01`, `melee_1h/locomotion/walk_01`, and `melee_1h/posture/idle_ready_01`; the three latter frame contracts remain unresolved in the plan.
+
+Prior to a claim on this original promotion packet, bring an objective evidence record: (i) `animation_queue("ALL")` all-rows count, real verified family IDs and per-direction current effective receipts on the intended execution checkout, (ii) exact existing live source-art files, Workbench manifests, editable documents and physical frame/timing proofs, (iii) candidate reachability/dependency closure and all layers per action, (iv) human-selected precise cohort, and (v) a negative-control dry run demonstrating no runtime mutation when a leaf is unavailable. A missing/empty proof cannot be converted into a default choice. A fixture-only infrastructure precursor, if deliberately split into a separate reviewed packet later, must leave the production policy entirely legacy.
+
+## Proposed policy contract (schema sketch, not a production activation)
 
 ~~~json
 {
   "schema": "custodian.operator_art_generation_policy.v1",
   "default_generation": "legacy_96",
-  "cohorts": {
-    "unarmed_core": {
-      "generation": "operator_2_5d_128",
-      "required_families": [
-        "unarmed/posture/idle_relaxed_01",
-        "unarmed/posture/idle_ready_01",
-        "unarmed/locomotion/walk_01",
-        "unarmed/locomotion/run_01"
-      ],
-      "review_receipt_set_sha256": "..."
-    }
-  }
+  "cohorts": {},
+  "generation_switch_requires": "verified_current_human_approved_closed_cohort"
 }
 ~~~
 
-Builder selection should remain outside gameplay:
+The actual canonical machine contract should include cohort identity, versioned exact source/plan/profile/reference fingerprints, required semantic family/direction/layer closure and explicit user-approved cohort-selection provenance. A content-addressed review receipt set alone is insufficient: it must refer to exact **current** receipts and physical artifacts, not string hashes supplied by callers. `cohorts: {}` is the only permissible initial production state when 0 verified families are observed.
 
-~~~python
-generation = policy.generation_for(profile, group, action)
-source_root = schema.authoring_source_root(generation)
-# existing scan/sync then writes unchanged runtime identity/path
-~~~
+## Subjective visual gate
+
+Objective pixel/grid and manifest/selector checks precede visual review. Only if a verified candidate exists and objective checks pass, publish **one** compact visual handoff through `custodian/tools/iteration/publish_review_artifacts.py --important --reason "WB25-6 cohort generation continuity"`, with 3–5 scoped keyframes or one very short transition capture per essential cross-family seam plus legacy comparison, rather than a long raw recording. Reviewer questions: (1) are body scale/root/foot support continuous across idle, movement and ready transitions? (2) do equipment/cape/FX layers remain attached and legible? (3) is any 96px/128px alternation visible during ordinary movement or combat? Record the emitted manifest root `/CUSTODIAN/visual_review/operator-2-5d-runtime-promotion/` and default delete-after-review cleanup. Subjective approval is human-owned; no autonomous art correction or release on ambiguous feedback.
 
 ## Refresh Planning Authority
 
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
-- Refresh instruction: Bring WB25-5 review + live VERIFIED family/cohort counts to this chat. Decide the first actual promotion cohort, re-check current runtime sync/selector/fallback debt and authoring source layout, then refresh exact policy fields and tests before ready.
+- Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Refresh instruction: Architecture and WB25-5 review refreshed on 2026-10-10; real 2.5D verification is still 0/0 in the independently reviewed workspace and there is no coherent user-selected production cohort. Re-enter this chat with **new live effective family receipts**, chosen release-scope closure and exact source/clock evidence. Decide whether the WB25-6 packet may then promote to ready/auto; only after targeted paired authoring preflight, managed-index regeneration, safe main landing and dispatcher checks. Do not claim draft/manual or invent a cohort.
 
 ## Handoff
 
@@ -89,8 +82,8 @@ source_root = schema.authoring_source_root(generation)
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac698a4-ca68-83ea-bc0e-3b8a52e4e0fb
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Summary backlink: include exact Authoring chat URL
-- Refresh reason: none after refresh/implementation
-- Next action: paired review
-- Blockers or open questions: first production cohort is intentionally not chosen until real WB25-5 verified coverage exists
+- Refresh reason: none after a user-approved real cohort is eligible and implementation lands
+- Next action: independent paired promotion review
+- Blockers or open questions: first production cohort not approved and 0 currently verified families; retain draft/manual until evidence and human decision
