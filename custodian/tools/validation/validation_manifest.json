@@ -6315,6 +6315,32 @@
       "needs_import": false
     },
     {
+      "id": "npa_showcase_existing_enemy",
+      "type": "godot_script",
+      "script": "res://tools/validation/npa_showcase_existing_enemy_smoke.gd",
+      "tier": "actor",
+      "tags": ["combat", "enemy", "npa", "showcase", "regression"],
+      "owners": [
+        "custodian/game/actors/enemies/abilities/marine_dash.gd",
+        "custodian/game/actors/enemies/abilities/savage_pounce.gd",
+        "custodian/game/actors/enemies/combat/standard_enemy_melee.gd",
+        "custodian/game/actors/enemies/combat/enemy_reaction_controller.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical.gd",
+        "custodian/game/actors/enemies/components/enemy_lifecycle.gd",
+        "custodian/game/actors/enemies/components/enemy_corpse_loot.gd",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/actors/enemies/enemy_grunt.tscn",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/actors/enemies/enemy_savage.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/game/systems/combat/enemy_hit_spatial_contract.gd",
+        "custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "savage_runtime",
       "type": "godot_script",
       "script": "res://tools/validation/savage_runtime_smoke.gd",

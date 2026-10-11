@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-existing-enemy-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -38,15 +38,36 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh instruction: Verify latest main, actual changed file and test identities; run targeted authoring preflight on this implementation and review before promotion.
 
-## Program Publication Gate
-These packets are authored **draft/manual** on main as a planning series because there is no local Godot checkout/authoring validator in this session. They are not dispatcher-claimable. Execution/promoting agent: inspect main + AGENTS + dispatch audit; run `python3 custodian/tools/agent/validate_task_packet_authoring.py` on each implementation and review pair; reconcile dependency and exact test references; promote mechanically unlocked pairs to ready/auto; rerun validator; regenerate/verify `task_packet_index.py`; land the promotion safely; confirm dispatcher audit/eligibility. A declared implementation dependency also requires its paired review archived complete before consumer claim. Keep external refresh-gated pairs draft until their real evidence is available.
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `npa_showcase_existing_enemy` exercises real Grunt, Marine, Savage and Operator scenes; focused enemy behavior checks; final changed-file validation report `/tmp/npa-existing-enemy-changed-final.json` (33/33 passed, complete coverage).
 
-## Handoff
-- Next workstream: `npa-showcase-existing-drone-hardening`
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Marine Dash and Savage Pounce could begin valid authored attacks but miss the live Operator because body collision stopped their centers farther apart than the configured directional hit reach.`
+- Root cause / contributing factors: `Directional hit validation used center-to-center distance while the physics bodies physically stopped at their collision boundaries.`
+- Prevention / pipeline improvement: `The actor-aware directional lane now adds projected collision support only when both actors have enabled root CollisionShape2D bodies; the fixture retains real-scene contact regression coverage.`
+- Tooling / docs drift discovered: `The existing smoke manifest formatting included unrelated formatter churn; it was removed so the final diff contains only this packet's new test entry.`
+- Follow-up: `review-npa-showcase-existing-enemy-hardening`
+- What worked: `A deterministic real-actor fixture exposed and then verified both contact corrections.`
+
+## Validation Evidence
+- Focused checks passed: `enemy_reaction_posture`, `standard_enemy_melee`, `grunt_parry_critical`, `lootable_corpse_beacon`, `enemy_lifecycle_config`, `enemy_savage_pounce`, `savage_runtime`, `authored_vault_grunt_loot_marine`, `enemy_hit_spatial_telemetry`, and `npa_showcase_existing_enemy`.
+- Final changed-file sweep: `/tmp/npa-existing-enemy-changed-final.json`; 33 selected, 33 passed, 0 failed, 0 timed out, and complete changed-file coverage.
+- Packet authoring preflight and `git diff --check`: passed.
+
+## Next Handoff
+- Next workstream: `review-npa-showcase-existing-enemy-hardening`
 - Next packet state: `dependency-gated`
-- Refresh owner: `execution-agent`
+- Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: normal dependency and latest-main reconciliation
-- Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.
-- Blockers or open questions: none beyond repo-local authoring validation/promotion.
+- Refresh reason: `none`
+- Next action: `After implementation lands and the packet archives complete, invoke the paired fresh-context review runner for the named review workstream.`
+- Blockers or open questions: `none`
