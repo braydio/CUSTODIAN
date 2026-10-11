@@ -425,6 +425,49 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                      patch.object(runner, "git", return_value=target):
                     runner.validate_eligible_review(Path("."), "review-sample")
 
+    def test_successor_scoped_refresh_planning_authority_does_not_gate_review(self):
+        content = review_packet() + """
+## Refresh Planning Authority
+- Refresh applies to: `successor`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Refresh instruction: After this review passes, plan the next slice.
+
+## Handoff
+- Next workstream: `next-slice`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+"""
+        packet = runner.parse_packet("review.md", content)
+        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \\
+             patch.object(runner, "git", return_value=target_packet()):
+            runner.validate_eligible_review(Path("."), "review-sample")
+
+        for gated in (
+            content.replace("- Refresh applies to: `successor`\\n", ""),
+            content.replace("- Next workstream: `next-slice`", "- Next workstream: `none`"),
+            content.split("## Handoff", 1)[0],
+            content.replace("- ChatGPT/user planning refresh required: `no`",
+                            "- ChatGPT/user planning refresh required: `yes`", 1),
+        ):
+            with self.subTest(gated=gated[-90:]):
+                parsed = runner.parse_packet("review.md", gated)
+                with patch.object(runner, "packet_at_main", return_value=("review.md", gated, parsed)):
+                    with self.assertRaisesRegex(runner.RunnerError, "human planning|human-owned"):
+                        runner.validate_eligible_review(Path("."), "review-sample")
+
+    def test_actual_vaultwing_review_successor_refresh_is_not_a_current_gate(self):
+        review_path = "custodian/docs/ai_context/task_packets/REVIEW_VAULTWING_RUNTIME_HARDENING.md"
+        content = (ROOT / review_path).read_text(encoding="utf-8")
+        self.assertIn("- Refresh applies to: `successor`", content)
+        parsed = runner.parse_packet(review_path, content)
+        self.assertIsNone(parsed.error)
+        self.assertEqual(parsed.status, "ready")
+        target = (ROOT / parsed.review_target_packet).read_text(encoding="utf-8")
+        with patch.object(runner, "packet_at_main", return_value=(review_path, content, parsed)), \\
+             patch.object(runner, "git", return_value=target):
+            runner.validate_eligible_review(ROOT, "review-vaultwing-runtime-hardening")
+
     def test_actual_wb25_review_packet_is_eligible_despite_successor_refresh(self):
         # WB25's review correctly left the active queue after closeout. Reuse the
         # immutable historical packet, restoring only pre-claim lifecycle metadata

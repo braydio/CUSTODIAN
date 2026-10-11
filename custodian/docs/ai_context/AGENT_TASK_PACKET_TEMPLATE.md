@@ -87,6 +87,16 @@ snapshot; exact live files and the current worktree diff remain authority.
 Include this block when a packet is dependency/refresh-gated or when landed
 evidence may require architecture/scope re-derivation before execution:
 
+For a paired **review** packet, the fields in this section block review claim
+unless the section is explicitly about its **future successor** and the
+`## Handoff` / `## Next Handoff` names that non-`none` successor.
+Mark only such future-scoped sections with:
+`- Refresh applies to: \`successor\``.
+Without this explicit marker, a human-owned refresh here remains a current
+pre-claim gate. This marker never bypasses current-review header gates or
+`Visual review: required`; do not use it for a current design decision.
+
+
 - Refresh owner: `none | chatgpt-user | execution-agent`
 - ChatGPT/user planning refresh required: `yes | no`
 - Refresh planning chat: `<Authoring chat URL | not-recorded | n/a>`

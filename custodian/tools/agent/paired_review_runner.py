@@ -51,14 +51,35 @@ def packet_at_main(repo: Path, workstream: str):
 
 
 def current_review_authority(content: str) -> str:
-    """Return current-packet authority without its future successor handoff.
+    """Keep current review gates while excluding explicitly scoped successor gates.
 
-    Paired review packets commonly put the *next* workstream's refresh gate
-    under a top-level ``## Handoff``. That gate is evaluated only after this
-    review completes, so it must not make the current review ineligible.
+    A future handoff never gates the current review. A preceding
+    ``## Refresh Planning Authority`` section, however, remains a current
+    human gate unless it explicitly declares ``Refresh applies to: successor``
+    AND the future handoff names a real next workstream. Missing or ambiguous
+    scope fails closed.
     """
-    successor = re.search(r"(?im)^##[ \t]+(?:handoff|next handoff)[ \t]*$", content)
-    return content[:successor.start()] if successor else content
+    handoff = re.search(r"(?im)^##[ \\t]+(?:handoff|next handoff)[ \\t]*$", content)
+    authority = content[:handoff.start()] if handoff else content
+    if not handoff:
+        return authority
+    next_workstream = re.search(
+        r"(?im)^\\s*-\\s*Next workstream:\\s*`?([a-z0-9-]+)`?\\s*$",
+        content[handoff.start():],
+    )
+    if not next_workstream or next_workstream.group(1) == "none":
+        return authority
+
+    sections = list(re.finditer(r"(?m)^##[ \\t]+[^\\r\\n]+$", authority))
+    for index in range(len(sections) - 1, -1, -1):
+        heading = sections[index]
+        if heading.group(0).strip().casefold() != "## refresh planning authority":
+            continue
+        end = sections[index + 1].start() if index + 1 < len(sections) else len(authority)
+        body = authority[heading.end():end]
+        if re.search(r"(?im)^\\s*-\\s*Refresh applies to:\\s*`?successor`?\\s*$", body):
+            authority = authority[:heading.start()] + authority[end:]
+    return authority
 
 
 def validate_eligible_review(repo: Path, workstream: str):
