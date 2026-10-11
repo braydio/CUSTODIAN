@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-geography-semantic-site-contract`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-campaign-geography-identity-foundation`
@@ -45,13 +45,41 @@
 
 This pair is **draft/manual solely pending actual repository-native targeted authoring validation**, NOT an unresolved human architecture decision. User approved this slice separately on 2026-10-10. Run `validate_task_packet_authoring.py` against B2 and its exact REVIEW peer, then move both to `ready/auto` only after PASS; repeat validation, generate/check the managed index, run repo pairing/AI-context/changed-file checks and publish on current main. Do **not** claim while parked and do **not** execute B2 during authoring.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `custodian/game/world/geography/campaign_geography_semantic_registry.gd` and `custodian/tools/validation/campaign_geography_semantic_site_smoke.gd` implement and falsify the bounded data-only sidecar; the new smoke and negative control, existing B1 identity smoke, focused 1/1 changed-file validation with complete coverage, AI-context check, review-pairing check, task-packet index check, and `git diff --check` all pass. The documented boundary explicitly excludes physical proof, staging, terrain, actors, persistence and traversal.
+
+- B2-01 through B2-08: **PASS** for the bounded semantic sidecar contract. The new deterministic smoke covers reordered plans, repeat visits and reconstructed B1 state, canonical directed/undirected edge intent, source resolution, optional typed references, atomic rejection/retry, and absence of Nodes or physical materialization.
+- New smoke `custodian/tools/validation/campaign_geography_semantic_site_smoke.gd`: imported through Godot editor first; positive run exited 0 with `CAMPAIGN_GEOGRAPHY_SEMANTIC_SITE_SMOKE: PASS`; `--negative-control` exited nonzero with `CAMPAIGN_GEOGRAPHY_SEMANTIC_SITE_SMOKE: NEGATIVE CONTROL`.
+- Existing `campaign_geography_identity_smoke.gd`: exited 0 with `CAMPAIGN_GEOGRAPHY_IDENTITY_SMOKE: PASS`.
+- Focused changed-file validation: `campaign_geography_semantic_site` passed 1/1, zero failures, complete coverage, no infrastructure errors.
+- Repository checks: `check_ai_context.py` PASS; review pairing PASS (63 auto packets); `git diff --check` PASS.
+- No F02 physical ingress proof exists in the inspected runtime contract; the implementation rejects `verified` claims and leaves ingress planned. No scene staging, terrain generation, actor/residency, persistence, scale or traversal was added.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial focused smoke iterations exposed fixture typing and invalid test-fixture assumptions; corrected before final validation.
+- Root cause / contributing factors: Godot's typed-array boundaries and directed-edge fixture required matching existing B1 topology exactly.
+- Prevention / pipeline improvement: Keep the semantic fixture typed to the live B1 API and preserve explicit positive, negative-control, and regression runs.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Focused validation manifest selection provided complete coverage and the intended single-test run.
+
 ## Next Handoff
 
 - Next workstream: `review-campaign-geography-semantic-site-contract`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
-- Refresh reason: `none; B2 design explicitly approved, reviewer runs after implementation is archived`
-- Next action: Implement B2 after validated promotion and claim; archive with focus-smoke evidence, then start a **fresh independent** post-land review.
-- Blockers or open questions: `Before claim: official authoring preflight and current-main publication; physical ingress, streaming, scale and art are not B2 implementation prerequisites.`
+- Refresh reason: none; implementation is complete and the paired review is the immediate successor.
+- Next action: Archive and land this implementation, then launch its independent review from a fresh reviewer context with `paired_review_runner.py`.
+- Blockers or open questions: none for B2 implementation; physical F02 ingress proof, C2b residency, numerical scale and F15-C traversal remain separately gated.
