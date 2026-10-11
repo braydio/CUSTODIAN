@@ -69,3 +69,7 @@
 - Refresh reason: `Explicit human art-source and visual approval required`
 - Next action: If passed, permit the dependent successor; otherwise create a bounded correction/re-review.
 - Blockers or open questions: No newly approved source/visual verdict yet; do not claim.
+
+## Revised clean-plate review criterion (2026-10-11)
+
+The Crèche source-only clean-room plate review must pass first. Independently verify live `awakening_creche_environment/underlay` is the accepted 960×704 prop-free replacement, and `awakening_creche_console/idle` is separately rendered exactly once with screen-local 8-frame FX. A baked console silhouette in the live plate is now a **blocking duplicate-authority defect**; the prior baked-body fallback is intentionally retired. Require visual proof without prop enabled (no machine) and with prop enabled (one machine), plus exact V2 receipts, scene geometry/occlusion, and user approval.

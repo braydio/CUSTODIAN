@@ -73,3 +73,7 @@ Read the archived Crèche binding+reauthor review receipts. Verify exactly one m
 - Refresh reason: `none`
 - Next action: `If reviewed and passed, advance to the next eligible Awakening workstream; if missing art, remain parked.`
 - Blockers or open questions: `Implementation dependency and human art disposition where required.`
+
+## Revised independent underlay/prop proof (2026-10-11)
+
+Reject any live Undergate presentation that leaves Port machine pixels baked in `awakening_undergate_environment/underlay`. Verify reviewed clean 1536×1216 source, exact V2 underlay+damaged-body receipts, and one dynamic damage/readout visual attached to the existing status owner. A no-prop screenshot must contain environmental architecture but no Port terminal; a with-prop screenshot contains exactly one machine, correctly shadowed/occluded and with unchanged lighting/collision/route semantics. Earlier baked-art acceptance exceptions are superseded.

@@ -4,7 +4,7 @@
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-creche-console-idle-fx-binding-v1`
+- Depends on: `review-awakening-creche-console-idle-fx-binding-v1, review-awakening-interactible-clean-room-plates-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -67,3 +67,7 @@ This packet stays draft/manual until a human-approved authored image, exact chec
 - Refresh reason: `Explicit human art-source and visual approval required`
 - Next action: After implementation lands, start paired fresh-context review.
 - Blockers or open questions: No newly approved source/visual verdict yet; do not claim.
+
+## Clean room-plate cutover authority (2026-10-11)
+
+**User design decision:** all live interactible machine bodies must be independently rendered, not baked in the new room plates. Consume reviewed source state `awakening_creche_environment/underlay` (960×704) from `awakening-interactible-clean-room-plates-v1` and human-approved new `awakening_creche_console/idle` (128×128); their **runtime cutover is atomic in this Crèche implementation**, with Asset V2 replacement receipts for both. The old `CrecheConsoleBody` Node2D-with-baked-source metadata must become a true `Sprite2D` or own a child Sprite2D; measure physical pivot at existing scene (105,118) and screen anchor/FX offset at 8 FPS. Do not change `CrecheConsole` gameplay interaction (112,144) or `awakening_creche_foreground`. Do not remove baked body before approved hero is shown in same scene transaction. Source-work inbox per `design/04_architecture/AWAKENING_INTERACTIBLE_CLEAN_ROOM_PLATES_V1.md`; use `asset.py plan`, guarded `--replace`, status/doctor, and a normal-gameframe composited screenshot. The old permissive rule to keep a baked visible console is **superseded** by this explicitly approved architecture; prior baseline review is historical only. Preserve exact size/origin and route surfaces.

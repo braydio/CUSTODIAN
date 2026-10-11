@@ -4,7 +4,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1, review-awakening-creche-console-sprite-reauthor-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1, review-awakening-creche-console-sprite-reauthor-v1, review-awakening-interactible-clean-room-plates-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -96,3 +96,7 @@
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`
 - Next action: `After implementation lands, claim fresh-context paired review.`
 - Blockers or open questions: `Required art and predecessor reviews are not yet verified; do not claim.`
+
+## Clean Undergate plate + prop cutover (2026-10-11)
+
+**User design decision:** Undergate machinery representing the actual Port Status Console must not be baked into `awakening_undergate_environment/underlay`. Consume reviewed clean 1536×1216 background from `awakening-interactible-clean-room-plates-v1` and separately published `awakening_interact_port/damaged_status_body` with accessories (actual verified states only). Replace the underlay+Port body **atomically**, never an empty status terminal. Mount at existing `zone06_undergate.port_status_plaque` gameplay marker (128,-4016), with presentation-only measured offsets. Preserve one `PortStatusPlaque` readout, existing `awakening_undergate_foreground` occlusion, lighting, ingress, status-only behavior, scene Sprite2D position (0,-4320) and all unrelated area imagery. Prove no machine remains in the background when dynamic Port props are disabled, and exactly one when enabled. This user-approved clean-plate rule **supersedes** former suggestions to rely on baked machinery, while remaining source/art-approval blocked until truly reviewed and ingested.
