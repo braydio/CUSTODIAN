@@ -66,6 +66,24 @@
 - Follow-up: fixed-in-scope
 - What worked: Clean imported-main reproduction isolated one real action-arbitration defect and two stale fixture preconditions; all three fixes preserve the protected combat assertions.
 
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-baseline-validation-rehabilitation`
+- Reviewed on main: `e03a82582204269c12e998e986a33e269f661429`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `OPERATOR_BASELINE_VALIDATION_REHABILITATION_REVIEW_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-baseline-validation-rehabilitation-review-corrections-1`
+
 ## Context Pack
 
 - Repomix: `recommended`
