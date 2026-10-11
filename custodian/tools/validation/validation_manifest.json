@@ -4656,13 +4656,36 @@
       "owners": [
         "custodian/game/world/awakening/**",
         "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_first_return_progression_smoke.gd",
         "custodian/game/world/interactions/world_readout_interactable.gd",
         "custodian/game/world/home/sidearm_locker_interactable.gd",
         "custodian/game/actors/props/sidearm_locker.tscn",
         "custodian/game/world/camera.gd"
       ],
       "timeout_sec": 120,
-      "needs_import": false
+      "needs_import": true
+    },
+    {
+      "id": "awakening_creche_console_screen_anchor",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_creche_console_screen_anchor_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "interaction",
+        "presentation",
+        "screen_anchor"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/tools/validation/awakening_creche_console_screen_anchor_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/content/levels/awakening/01_creche/awakening_creche_underlay_960x704.png",
+        "custodian/content/sprites/effects/awakening/runtime/awakening_creche_console_activation_fx/awakening_creche_console_activation_fx__fx__effect__activate__omni__8f__128.png"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
     },
     {
       "id": "world_transition_handoff",

@@ -64,6 +64,15 @@ z_index = 10
 position = Vector2(0, -32)
 texture = ExtResource("22_creche_foreground")
 
+[node name="SetPieces" type="Node2D" parent="World/AwakeningZones/Zone01_Creche"]
+
+[node name="CrecheConsoleBody" type="Node2D" parent="World/AwakeningZones/Zone01_Creche/SetPieces"]
+position = Vector2(105, 118)
+z_index = 5
+metadata/visible_body_source = "awakening_creche_underlay_960x704.png"
+
+[node name="ScreenAnchor" type="Node2D" parent="World/AwakeningZones/Zone01_Creche/SetPieces/CrecheConsoleBody"]
+
 [node name="Zone02_Ambulatory" type="Node2D" parent="World/AwakeningZones" unique_id=552911546]
 
 [node name="ArtUnderlay" type="Node2D" parent="World/AwakeningZones/Zone02_Ambulatory" unique_id=653701212]

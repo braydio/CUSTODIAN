@@ -587,16 +587,36 @@ func _build_recovery_alcove_presentation() -> void:
 
 func _build_console_activation_presentation() -> void:
 	var set_pieces := _zone_child(&"zone01_creche", "SetPieces")
-	if set_pieces == null or set_pieces.get_node_or_null("CrecheConsoleActivation") != null:
+	if set_pieces == null:
+		return
+	# The native room underlay already contains the sole visible console body.
+	# This named transform represents that baked body without layering a second
+	# sprite over it. The screen center was measured in underlay/world space.
+	var body := set_pieces.get_node_or_null("CrecheConsoleBody") as Node2D
+	if body == null:
+		body = Node2D.new()
+		body.name = "CrecheConsoleBody"
+		body.position = Vector2(105, 118)
+		body.z_index = Layout.Z_WORLD_PROPS
+		body.set_meta("visible_body_source", "awakening_creche_underlay_960x704.png")
+		set_pieces.add_child(body)
+	var screen_anchor := body.get_node_or_null("ScreenAnchor") as Node2D
+	if screen_anchor == null:
+		screen_anchor = Node2D.new()
+		screen_anchor.name = "ScreenAnchor"
+		body.add_child(screen_anchor)
+	if screen_anchor.get_node_or_null("CrecheConsoleActivation") != null:
 		return
 	_console_activation_fx = AnimatedSprite2D.new()
 	_console_activation_fx.name = "CrecheConsoleActivation"
-	_console_activation_fx.position = _marker_position(&"zone01_creche", "creche_console")
-	_console_activation_fx.z_index = Layout.Z_WORLD_PROPS
+	# A full frame is 128px; 0.13 keeps the complete canvas within the measured
+	# 27x18 source-screen window while preserving the existing frame artwork.
+	_console_activation_fx.scale = Vector2.ONE * 0.13
+	_console_activation_fx.z_index = 1
 	_console_activation_fx.sprite_frames = _build_console_activation_frames()
 	_console_activation_fx.visible = false
 	_console_activation_fx.animation_finished.connect(_on_console_activation_finished)
-	set_pieces.add_child(_console_activation_fx)
+	screen_anchor.add_child(_console_activation_fx)
 
 
 func _build_console_activation_frames() -> SpriteFrames:
