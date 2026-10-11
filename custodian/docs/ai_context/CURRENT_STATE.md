@@ -1334,7 +1334,12 @@ Documentation updates this session:
   configuration / preflight / failure / coverage-gap exit codes. Non-excluded
   changed files without manifest ownership prevent a false-green result;
   structured `passed:false` and unexpected fatal stderr override exit zero,
-  and a failing tier skips higher-cost tiers. Import and test subprocesses have
+  and a failing tier skips higher-cost tiers. Fatal parse, script, resource-load,
+  and GDExtension diagnostics also override PASS sentinels. Expected rollback
+  errors are exact full-line patterns scoped to their owning validation test.
+  Before imports, the preflight checks checked-out LFS pointers and malformed
+  tracked PNG sidecars referenced by project text; import-dependent manifest
+  tests then load representative runtime scenes/resources. Import and test subprocesses have
   bounded process-group supervision. The shared GDScript harness
   now proves pure-resolver and Observatory-backed actor styles. Moment Forge
   supports six relational event/distance assertions plus shared dotted-path
@@ -2681,3 +2686,7 @@ Exploratory presentation directions are recorded in `design/04_architecture/AWAK
 ## Awakening forbidden lower-region lore exploration: Null Warrant evidence (2026-10-10)
 
 Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 confirms Null Warrant retained records of comparable humanoid manifestations from at least one other continuity where lights/industry continued but coherent human population movements had no identifiable purpose, without an established voluntary/prisoner distinction. The user is exploring an **unconfirmed** presence/return-path arrival that repurposed an old Custodian recovery center beneath the historical city as an eerie organized-human facility. See `design/04_architecture/AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md`. Five earlier west-side presentation concepts stay open; current favored synthesis is ossuary + repurposed recovery infrastructure. No canon claim that Ash-Bell witnesses, Crown, `NON-RECIPIENT` or the Severing share an entity; no new geometry, art, boss or unlock contract authorized. East remains an unnamed city overlook, north main route unchanged.
+
+## Awakening Gate western precinct spatial proposal (2026-10-11)
+
+A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.

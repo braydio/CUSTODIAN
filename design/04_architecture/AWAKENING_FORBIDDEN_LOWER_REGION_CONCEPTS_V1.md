@@ -50,3 +50,7 @@ Conceptual pre-access screenshot: west Gate staircase ends at an intact monument
 ## Related exploratory concept: occupied/repurposed recovery installation (2026-10-10)
 
 The old Null Warrant *alternate-continuity population ordering* evidence has been rediscovered in `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6, and a lore-compatible **unconfirmed crossing/occupation** hypothesis is documented in [AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md](AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md). A vast ossuary may prove to be a repurposed Crèche whose recovery apparatus is organizing people for purposes nobody understands. This is not confirmation of `NON-RECIPIENT`, Ash-Bell figure identity, Severing cause or an authorized area/map/quest. Preserve the unnamed east overlook and existing Gate stair apertures.
+
+## Western exterior precinct geography proposal (2026-10-11)
+
+The proposed **exterior, elevated retaining terrace / walled western approach** outside Gate Zone07, rock-cut recovery seal, shaft-overlook, and early Crèche matching view are mapped conceptually at [AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md](AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md). The area is NOT yet spatially locked or playable; the actual Gate west margin has only 384 world units to current western world boundary, so the later vast underground region cannot be silently shoehorned into current Awakening bounds. Five paired user-generated concept images are reviewed there as RGB art references only.
