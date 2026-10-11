@@ -2,9 +2,9 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-coordinator-boundary-v1`
-- Status: `draft`
-- Dispatch: `manual`
-- Priority: `P2`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
 - Depends on: `none`
 - Locks: `agent-workflow`
 - Kind: `implementation`
@@ -15,39 +15,39 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `Security-sensitive reviewer/coordinator privilege separation warrants independent review`
-- Reviewed main: `4b5ba4c4f88f25cbde281ca6f148da58cd5648b2`
+- Reviewed main: `2ffbbec13d55a939096750d059602ea56047cae3`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Visual review: `none`
 - Summary backlink: Repeat exact Authoring chat URL in durable summaries and Next Handoff.
-- Goal: Safely recover independent reviews when their sandbox cannot write common Git metadata, with coordinator-only lifecycle mutations and strict review scope.
-- Completion boundary: Only after current-main repro validates the need, isolate immutable reviewed refs and authorized Git writes in paired_review_runner.py coordinator while the reviewer remains read-only to implementation; prove recoverable failure handling.
-- Current measured state: NPA-7 review closeout recorded permission-denied shared .git/FETCH_HEAD and trace state; prior H4 review recorded LFS-temp restrictions. Current paired_review_runner.py already streams durable evidence and preserves blocked claims, but the exact residual failure has not been reproduced after recent runner changes.
-- Evidence: custodian/tools/agent/paired_review_runner.py; workstream.py; NPA_7_REVIEW_CLOSEOUT_CORRECTION_CLAUDE_SUMMARY.md; REVIEW_HUB_CROWN_TRANSFER_TWIN_SOLARIA_CLAUDE_SUMMARY.md.
-- Task-specific authority: paired_review_runner.py for reviewer isolation; workstream.py and land_main.py for Git lifecycle; canonical review bounded TASK OVERRIDE and fresh provenance.
-- Work surface: Conditional change to paired_review_runner.py coordinator boundary and narrow temporary-Git/sandbox fixtures. No new scheduler or game code.
-- Change: First reproduce read-only shared-Git write restriction against the current runner and determine whether its write-authorized coordinator already handles it. If still present, prefetch immutable target refs and LFS state in coordinator, permit reviewer evidence only in authorized review area, and have coordinator verify reviewed SHA, provenance, allowlisted artifact paths and receipts before committing/finishing. Preserve exact original branch, worktree, logs and claim if blocked. If already solved, report evidence and request packet supersession instead of duplicate orchestration.
-- Preserve: Same-agent fresh-context or different-agent reviewer independence, no implementation edits, bounded review override, no force push, no duplicate claim or root changes.
-- Non-goals: No broad Git permissions granted to reviewer, no replacement land_main, auth-token leakage or automatic review acceptance.
-- Acceptance: 1) Live repro justifies boundary; 2) read-only FETCH_HEAD case fails before and succeeds after; 3) reviewer cannot mutate implementation; 4) coordinator enforces exact target SHA/allowlist/provenance; 5) failures preserve logs and claim without duplicate replay.
-- Validation: Focused read-only common-Git integration fixtures and existing paired_review_runner, dispatch and workstream contract tests; check_ai_context.py --json, validate_review_pairing.py, task_packet_index.py, changed-file runner and git diff --check.
-- Deferred: Distributed reviewer leases and new external review service.
+- Goal: Repair the existing paired-review runner's deterministic post-exit completion truth and coordinator/reviewer Git-metadata ownership, eliminating false-blocked landed reviews without accepting incomplete or unauthorized ones.
+- Completion boundary: One correction to paired_review_runner.py and its focused tests: exact summary lookup, authoritative post-land result, restricted Git sandbox completion path, idempotent recovery, and immutable reviewed target check.
+- Current measured state: Full 2026-10-11 Codex audit log repeatedly records `fatal: path 'origin/main:<summary>.md' does not exist`, `Codex exited 0 without durable review state`, and linked-worktree FETCH_HEAD permission errors. On current main, `git grep -l ... origin/main` yields revision-qualified names, while runner passes them into `git show origin/main:<name>`; broad text grep also does not verify a specific review's closing summary. `git fetch ... check=False` ignores fetch failure. Existing workstream.py finish and PF4 read-only preflight remain authoritative.
+- Evidence: Uploaded 2026-10-11 Codex conversation audit (review PF1, PF2, PF3 and NPA Showcase incidents); custodian/tools/agent/paired_review_runner.py `run`, `packet_at_main`, `parse_claim_receipt`, and `launch_codex`; workstream.py `closing_summary_committed_for_workstream`, `preflight`, `finish`; tests for paired_review_runner and finish; archived prior NPA-7 and operator-baseline correction receipt.
+- Task-specific authority: Reuse paired_review_runner.py, dispatch.py exact claim receipt, task_packet_contract.py, workstream.py finish, paired review packet bounded override and same fresh-context gate. Coordinator owns Git metadata/fetch/landing; reviewer authors bounded review evidence.
+- Work surface: Edit custodian/tools/agent/paired_review_runner.py and focused tests; use existing workstream/dispatch helpers for exact-path review state and controlled coordinator post-review Git operations; adjust only directly affected workflow docs.
+- Change: (A) Normalize Git grep matches to repository paths or, preferably, derive the expected exact closing-summary identity from the review workstream and inspect `origin/main:<path>` directly; never double-prefix a revision or select the first unrelated summary mentioning the slug. (B) After reviewer exits, fetch with explicit failure semantics and pin a single remote-main SHA; inspect exact archived review packet (workstream/status), exact root summary, required authoring-chat and review receipt plus reviewed implementation SHA, and permitted diff. (C) On successful landed result mark complete even if ephemeral reviewer workspace/branch has been torn down; on nonzero/absent/ambiguous receipt never label success. (D) Reproduce sandbox denied FETCH_HEAD and avoid asking restricted reviewer to fetch or finish shared .git when unauthorized: coordinator fetches/prepares reviewed refs; reviewer can emit only bounded evidence, coordinator verifies and performs allowed stage/commit/finish using existing lifecycle. No new finisher and no blanket Git write grant. (E) Persist run state plus recoverable branch/worktree/metadata idempotently and never double-claim after one valid claim. First add failing fixture reproductions. If the sandbox failure is no longer reproducible, do not expand privileges or introduce unnecessary handoff code.
+- Preserve: Independent fresh reviewer context; no implementation edits from review, exact target SHA, no widened Git write permissions, no waived red validations, clean receipt provenance, original claim/trace/run directory after failure, no force/reclaim/reset.
+- Non-goals: No dispatcher or land_main replacement, general global-next chaining change (separate packet), reusable validation cache (separate packet), credential plumbing or new review platform.
+- Acceptance: 1) Negative fixture reproduces `origin/main:origin/main:<summary>` failure before and successful exact summary after; 2) multiple unrelated summaries mentioning the slug do not satisfy closeout; 3) genuinely complete archived review + matching exact summary + receipt returns COMPLETE on remote SHA even when worktree removed and Codex exit 0; 4) absent/mismatched/failed receipt or stale-fetch remote SHA remains BLOCKED; 5) read-only FETCH_HEAD fixture is recovered only with coordinator-owned authorized Git operations and reviewer path restrictions; 6) rerun after block never claims duplicate/reviews wrong SHA; 7) focused existing review/dispatch/workstream tests and repo authoring/paired index checks pass.
+- Validation: Focused paired_review_runner test suite with isolated Git repos and injected fake codex processes, exact grep path/summary identity/archival/exit code/fetch failure/removal races/permissions/unauthorized diff cases; workstream finish and dispatch claim checks; python3 custodian/tools/agent/check_ai_context.py --json, validate_review_pairing.py, task_packet_index.py, run_validation.py --changed --base origin/main --json, git diff --check.
+- Deferred: Distributed review runner, alternative reviewer auth, broad coordinator redesign and general next-task orchestration.
 
 - Task overrides: `none`
 
-## Refresh Planning Authority
+## Audit-Resolved Promotion And Execution Gate
 
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
-- Refresh instruction: `Re-audit paired_review_runner.py against newest main and a real read-only common-Git fixture; promote pair together to ready/auto only if the defect is reproducible and the coordinator correction is still needed.`
+- Human authorization: User approved these pipeline fixes in the current CUSTODIAN authoring chat.
+- Static cause confirmed: `git grep -l ... origin/main` output is a revision-prefixed path but the runner double-adds `origin/main:` before `git show`.
+- Execution gate: Reproduce both exact-summary and restricted-Git failures in focused tests before modifying the runner; if the latter has already been fixed upstream, only repair observed residual causes.
+- No user planning refresh is required to start this already scoped correction; incomplete runtime evidence is a fail-closed validation requirement, not a reason to silently widen review permissions.
 
 ## Handoff
 
 - Next workstream: `review-agent-paired-review-coordinator-boundary-v1`
 - Next packet state: `dependency-gated`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
-- Refresh reason: `The original shared-Git failure may already be addressed by newer runner fixes.`
-- Next action: `Present current-main sandbox reproduction in the authoring chat before promotion and claiming; review remains gated by implementation.`
-- Blockers or open questions: `conditional live-runner audit not yet established`
+- Refresh reason: `none`
+- Next action: `After validated PF5 lands, run the existing fresh-context paired review. Continue to agent-next-execution-boundary-v1 only when review is accepted.`
+- Blockers or open questions: `none; focused denial-path reproduction remains an implementation acceptance gate`
