@@ -31,6 +31,7 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1_REVIEW_CORRECTIONS_1.md` — Close R0-01 so a malformed tracked PNG import sidecar cannot evade preflight when its source metadata is missing.
 - `AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Keep heavy disposable agent scratch on disk and bound concurrent expensive Godot work across worktrees so parallel agent sessions cannot exhaust RAM.
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
@@ -65,6 +66,7 @@ normal closeout.
 - `PROCGEN_RUNTIME_OPTIMIZATION_V2_SERIES_AUTHORING.md` — Convert the completed V1 whole-series review and final soak evidence into the next evidence-backed procgen optimization/correction DAG, preserving stable wor...
 - `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
+- `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 closes the missing-source/UID sidecar bypass without weakening existing preflight behavior.
 - `REVIEW_AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.

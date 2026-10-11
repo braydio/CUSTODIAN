@@ -75,7 +75,7 @@
 - Reviewer provenance: `same-agent-fresh-context`
 - Review modes: `code, architecture, workflow`
 - Blocking defects: `1`
-- Material evidence gaps: `1`
+- Material evidence gaps: `0`
 - Non-blocking issues: `0`
 - Optional improvements: `0`
 - Correction finding IDs: `R0-01`
