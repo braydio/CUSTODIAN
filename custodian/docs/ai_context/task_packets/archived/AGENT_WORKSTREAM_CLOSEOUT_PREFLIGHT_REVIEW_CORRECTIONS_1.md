@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-workstream-closeout-preflight-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -35,10 +35,31 @@
 - Task overrides: `none`
 - Deferred: Broader validation report schema/version changes.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `_validation_data_green()` now requires explicit `coverage.complete: true`. The exact false-green report is rejected by both `finish` and preflight; missing and malformed coverage are non-green; complete coverage remains green. Focused workstream suites passed 52 tests, and `agent_workflow_contract` passed 1/1 with complete coverage.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `none`
+- What went wrong: `none`
+- Root cause / contributing factors: `none`
+- Prevention / pipeline improvement: `none`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `The same shared predicate gates preflight and finish; focused temporary-repository tests cover incomplete, absent, malformed, and complete coverage.`
+
 ## Handoff
 
 - Next workstream: `review-agent-workstream-closeout-preflight-review-corrections-1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
