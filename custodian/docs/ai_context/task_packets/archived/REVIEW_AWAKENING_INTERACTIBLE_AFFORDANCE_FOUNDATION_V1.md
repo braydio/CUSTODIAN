@@ -18,6 +18,8 @@
 - Max automatic review cycles: `2`
 - Reviewed main: `62f1d051ffa03abc72e8bf9a5a40f9367ce9b288`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `codex-fresh-context`
 - Visual review: `none`
 - Goal: Independently verify that a single presenter can mount affordance parts on the four real Awakening interaction owners while preserving Operator/HUD targeting and distinguishing every genuine interactible from inert Layout markers.
 - Completion boundary: The reviewer must inspect actual production scene/marker/runtime mapping, prove absent-art no-op and no separate gameplay authority, reproduce the parity smoke and current progression checks, and find no material evidence gap.

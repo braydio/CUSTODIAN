@@ -90,3 +90,23 @@
 - Refresh reason: `none`
 - Next action: `Fresh-context review, then art-consuming successor once approved assets arrive.`
 - Blockers or open questions: `None to claim.`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-awakening-interactible-affordance-foundation-v1`
+- Reviewed on main: `62f1d051ffa03abc72e8bf9a5a40f9367ce9b288`
+- Reviewer context: `fresh`
+- Reviewer provenance: `codex-fresh-context`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `none`
+- Material evidence gaps: `none`
+- Non-blocking issues: `none`
+- Optional improvements: `none`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Recovered changed-file sweep: `passed 2/2; /tmp/review-awakening-affordance-recovery.json`
