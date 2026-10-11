@@ -101,8 +101,9 @@ Canvas 128×128.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
 
-Published and bound 2026-09-08. The sprite follows the existing bidirectional
-lift runtime authority between its locked stations.
+Published and bound 2026-09-08. `CrecheConsole` owns the interaction presentation;
+the separate `awakening_creche_console_activation_fx` family supplies activation FX.
+The Crèche console is not part of the bidirectional Dust Lung lift authority.
 
 The activation overlay is a separate `effect` family so body and FX lifecycles remain independent.
 

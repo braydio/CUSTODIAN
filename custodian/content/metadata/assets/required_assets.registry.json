@@ -7,7 +7,7 @@
       "title": "Sundered Keep reveal fog veil sheet",
       "target": "`custodian/content/sprites/vista/sundered_keep/reveal/sundered_keep_reveal_fog_veil_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_reveal_fog_veil_01.aseprite`",
       "purpose": "Replace the runtime near-fog peel scaffold with a center-opening authored veil.",
-      "notes": "512×256 frames, 8 frames, 4096×256 transparent sheet.",
+      "notes": "512\u00d7256 frames, 8 frames, 4096\u00d7256 transparent sheet.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -19,7 +19,7 @@
       "title": "Sundered Keep reveal fog ribbons sheet",
       "target": "`custodian/content/sprites/vista/sundered_keep/reveal/sundered_keep_reveal_fog_ribbons_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_reveal_fog_ribbons_01.aseprite`",
       "purpose": "Add soft trailing breakup behind the fast near-fog peel.",
-      "notes": "384×192 frames, 6 frames, 2304×192 transparent sheet.",
+      "notes": "384\u00d7192 frames, 6 frames, 2304\u00d7192 transparent sheet.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -31,7 +31,7 @@
       "title": "Sundered Keep far silhouette plate",
       "target": "`custodian/content/sprites/vista/sundered_keep/background/sundered_keep_far_silhouette_01.png` and `custodian/content/sprites/vista/sundered_keep/source/sundered_keep_far_silhouette_01.aseprite`",
       "purpose": "Replace reused horizon-matte distance scaffolds with a dedicated large keep mass.",
-      "notes": "Single 2048×1024 transparent/background plate.",
+      "notes": "Single 2048\u00d71024 transparent/background plate.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -186,7 +186,7 @@
       "section": "Ash-Bell / Forlorn-Ritualant Encounter",
       "title": "Forlorn-Ritualant NPC runtime sprites",
       "target": "`custodian/content/sprites/enemies/forlorn_ritualant/runtime/body/`",
-      "purpose": "Complete readable locomotion and reaction animation on the live 128×128 contract.",
+      "purpose": "Complete readable locomotion and reaction animation on the live 128\u00d7128 contract.",
       "notes": "Idle, hostile-idle, four-frame rise, Pin Strike, Thread Pull, eight-frame Ninth Answer, and eight-frame Orra Comes Late are live. Still needed: directional walk/drag, turning, reactions, and the eight-frame rise.",
       "fulfillment": {
         "type": "manual",
@@ -532,10 +532,10 @@
     {
       "id": "reliquary-dust-lung-architectural-connector-underlay",
       "section": "Awakening / The First Return (sections 01-10)",
-      "title": "Reliquary → Dust Lung architectural connector underlay",
+      "title": "Reliquary \u2192 Dust Lung architectural connector underlay",
       "target": "`custodian/content/levels/awakening/04_05_connector/awakening_reliquary_dust_lung_connector_full_plate_underlay_1374x1076.png`",
-      "purpose": "Present the locked 04→05 dogleg with surrounding corridor architecture.",
-      "notes": "Asset V2 family `awakening_reliquary_dust_lung_connector`; publishes the exact 1374×1076 Dropbox source with the complete alpha silhouette. Uniform scene scale/rotation/translation are derived from the source's Dust Lung and Locker contact centers against the unchanged Layout anchors and A/B/C traversal rectangles. The historical crop/strip compositor is retired.",
+      "purpose": "Present the locked 04\u219205 dogleg with surrounding corridor architecture.",
+      "notes": "Asset V2 family `awakening_reliquary_dust_lung_connector`; publishes the exact 1374\u00d71076 Dropbox source with the complete alpha silhouette. Uniform scene scale/rotation/translation are derived from the source's Dust Lung and Locker contact centers against the unchanged Layout anchors and A/B/C traversal rectangles. The historical crop/strip compositor is retired.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -549,10 +549,10 @@
     {
       "id": "p0-p1-zone-plates-nine-awakening-environment-families",
       "section": "Awakening / The First Return (sections 01-10)",
-      "title": "P0/P1 zone plates — nine `awakening_*_environment` families",
+      "title": "P0/P1 zone plates \u2014 nine `awakening_*_environment` families",
       "target": "`custodian/content/levels/awakening/<zone>/<owner>_{underlay,foreground}_<WxH>.png`",
       "purpose": "Replace each section's blockout presentation without changing spatial authority.",
-      "notes": "Zones 01–09 have ingested and bound production underlays. Compatible foregrounds are bound except the Locker Reliquary foreground, which is deliberately unbound because the new underlay has transparent support gaps beneath 8.35% of its opaque footprint; see deferred requirement `p1-awakening-locker-foreground-parity`.",
+      "notes": "Zones 01\u201309 have ingested and bound production underlays. Compatible foregrounds are bound except the Locker Reliquary foreground, which is deliberately unbound because the new underlay has transparent support gaps beneath 8.35% of its opaque footprint; see deferred requirement `p1-awakening-locker-foreground-parity`.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -601,7 +601,7 @@
       "title": "Locker Reliquary foreground parity with production underlay",
       "target": "`custodian/content/levels/awakening/04_locker_reliquary/awakening_locker_reliquary_foreground_704x704.png`",
       "purpose": "Restore a foreground occlusion layer only after its registration and opaque backing are compatible with the Dropbox Locker underlay.",
-      "notes": "Deferred. Existing foreground is preserved but unbound: only 91.6% of its alpha≥128 pixels have opaque underlay support after the new crop-free normalization. Do not overlay it or fabricate replacement pixels in the connector polish packet.",
+      "notes": "Deferred. Existing foreground is preserved but unbound: only 91.6% of its alpha\u2265128 pixels have opaque underlay support after the new crop-free normalization. Do not overlay it or fabricate replacement pixels in the connector polish packet.",
       "fulfillment": {
         "type": "manual",
         "status": "deferred"
@@ -734,7 +734,7 @@
       "title": "Vaultwing bonding animation suite",
       "target": "`custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/body/bonding/vaultwing_common__body__bonding__<action>__{n,s,e,w}__<frames>f__256.png`",
       "purpose": "Give bait recognition, cautious approach, inspection, feeding, trial observation, and earned bond recognition distinct authored motion.",
-      "notes": "FULFILLED: Asset V2 reports all six bonding states present across 24/24 runtime directions; `bond_greet` is authored E/N/S/W and the other five states publish W by mirroring E. All four named 8×1 source sheets are preserved as semantic source masters; the four explicit greeting directions were ingested through the existing family contract. The full Vaultwing family reports 80/80 runtime strips. `command_ack` remains deferred to Slice C.",
+      "notes": "FULFILLED: Asset V2 reports all six bonding states present across 24/24 runtime directions; `bond_greet` is authored E/N/S/W and the other five states publish W by mirroring E. All four named 8\u00d71 source sheets are preserved as semantic source masters; the four explicit greeting directions were ingested through the existing family contract. The full Vaultwing family reports 80/80 runtime strips. `command_ack` remains deferred to Slice C.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -917,7 +917,7 @@
       "title": "Baby Opossum `barrel_prop` hide layer, consistent framing",
       "target": "staged as `custodian/asset_drop/inbox/ambient_baby_opossum/hide_{enter,hold,peek,exit}__barrel_prop__s.png`",
       "purpose": "The barrel the opossum hides in. The `HideProp` layer exists and stays hidden without it, so hide states currently show no barrel.",
-      "notes": "The four source canvases are 880x136, 768x162, and 2172x724, which renders the barrel at 74x61, 90x34, and 88x66 — it would visibly resize between hide states. Re-export all four hide actions from one camera/canvas, body and barrel registered to each other.",
+      "notes": "The four source canvases are 880x136, 768x162, and 2172x724, which renders the barrel at 74x61, 90x34, and 88x66 \u2014 it would visibly resize between hide states. Re-export all four hide actions from one camera/canvas, body and barrel registered to each other.",
       "fulfillment": {
         "type": "asset_v2",
         "targets": [
@@ -1066,7 +1066,7 @@
       "title": "Light-body authored impact variants 02 and 03",
       "target": "`custodian/content/audio/sfx/combat/hit_light_body_{02,03}.wav`",
       "purpose": "Complete the requested balanced/sharp/dull three-take light-hit family before enabling bounded runtime pitch variation.",
-      "notes": "`hit_light_body_01.wav` is supplied and live. Export 02/03 as 48 kHz, 24-bit, mono PCM WAV with normalize/dither/reverb off; keep perceived loudness within ±1 dB. Runtime pitch randomization remains disabled until both land.",
+      "notes": "`hit_light_body_01.wav` is supplied and live. Export 02/03 as 48 kHz, 24-bit, mono PCM WAV with normalize/dither/reverb off; keep perceived loudness within \u00b11 dB. Runtime pitch randomization remains disabled until both land.",
       "fulfillment": {
         "type": "audio",
         "status": "needed"
@@ -1318,7 +1318,7 @@
       "title": "Overheat vent FX strip",
       "target": "`custodian/content/sprites/effects/runtime/weapon_pressure/weapon_pressure__fx__ranged__overheat_vent_01__omni__6f__32.png`",
       "purpose": "Compact white-grey pressure discharge with faint amber first frame, spawned at weapon barrel during overheat.",
-      "notes": "32×32 per frame, 6 frames, 12 fps, non-looping. Optional for V1 — a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in.",
+      "notes": "32\u00d732 per frame, 6 frames, 12 fps, non-looping. Optional for V1 \u2014 a procedural particle scene (`weapon_overheat_vent_vfx.tscn`) can stand in.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1342,7 +1342,7 @@
       "title": "HUD icon: heat hot",
       "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_hot.png`",
       "purpose": "Optional state icon for the pressure row when heat is above warning threshold.",
-      "notes": "16×16, transparent background. Optional — initial implementation uses the text label and Black Reliquary palette.",
+      "notes": "16\u00d716, transparent background. Optional \u2014 initial implementation uses the text label and Black Reliquary palette.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1353,8 +1353,8 @@
       "section": "Combat Resource Feedback (Milestone A)",
       "title": "HUD icon: heat critical",
       "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/heat_critical.png`",
-      "purpose": "Optional state icon for the pressure row when 1–2 shots remain before overheat.",
-      "notes": "16×16, transparent background. Optional.",
+      "purpose": "Optional state icon for the pressure row when 1\u20132 shots remain before overheat.",
+      "notes": "16\u00d716, transparent background. Optional.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1366,7 +1366,7 @@
       "title": "HUD icon: overheated",
       "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/overheated.png`",
       "purpose": "Optional state icon for the pressure row during overheat lockout.",
-      "notes": "16×16, transparent background. Optional.",
+      "notes": "16\u00d716, transparent background. Optional.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1378,7 +1378,7 @@
       "title": "HUD icon: reloading",
       "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/reloading.png`",
       "purpose": "Optional state icon for the pressure row during magazine reload.",
-      "notes": "16×16, transparent background. Optional.",
+      "notes": "16\u00d716, transparent background. Optional.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1390,7 +1390,7 @@
       "title": "HUD icon: dry",
       "target": "`custodian/content/ui/black_reliquary/icons/weapon_pressure/dry.png`",
       "purpose": "Optional state icon for the pressure row when magazine and reserve are empty.",
-      "notes": "16×16, transparent background. Optional.",
+      "notes": "16\u00d716, transparent background. Optional.",
       "fulfillment": {
         "type": "manual",
         "status": "needed"
@@ -1462,7 +1462,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/command_post.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/command_post.tmj`",
       "purpose": "",
-      "notes": "16×12 tiles / 512×384px",
+      "notes": "16\u00d712 tiles / 512\u00d7384px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1474,7 +1474,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/power_core_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/power_core_a.tmj`",
       "purpose": "",
-      "notes": "14×10 / 448×320px",
+      "notes": "14\u00d710 / 448\u00d7320px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1486,7 +1486,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/archive_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/archive_a.tmj`",
       "purpose": "",
-      "notes": "13×10 / 416×320px",
+      "notes": "13\u00d710 / 416\u00d7320px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1498,7 +1498,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/defense_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/defense_a.tmj`",
       "purpose": "",
-      "notes": "16×11 / 512×352px",
+      "notes": "16\u00d711 / 512\u00d7352px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1510,7 +1510,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/storage_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/storage_a.tmj`",
       "purpose": "",
-      "notes": "12×9 / 384×288px",
+      "notes": "12\u00d79 / 384\u00d7288px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1522,7 +1522,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/{north_transit_a,south_transit_a}.tmj`",
       "purpose": "",
-      "notes": "12×8 / 384×256px",
+      "notes": "12\u00d78 / 384\u00d7256px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1534,7 +1534,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/maintenance_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/maintenance_a.tmj`",
       "purpose": "",
-      "notes": "10×8 / 320×256px",
+      "notes": "10\u00d78 / 320\u00d7256px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1546,7 +1546,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/fabrication_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/fabrication_a.tmj`",
       "purpose": "",
-      "notes": "14×10 / 448×320px",
+      "notes": "14\u00d710 / 448\u00d7320px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1558,7 +1558,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/comms_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/comms_a.tmj`",
       "purpose": "",
-      "notes": "10×8 / 320×256px",
+      "notes": "10\u00d78 / 320\u00d7256px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1570,7 +1570,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/barracks_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/barracks_a.tmj`",
       "purpose": "",
-      "notes": "12×9 / 384×288px",
+      "notes": "12\u00d79 / 384\u00d7288px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1582,7 +1582,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/hangar_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/hangar_a.tmj`",
       "purpose": "",
-      "notes": "18×14 / 576×448px",
+      "notes": "18\u00d714 / 576\u00d7448px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1594,7 +1594,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/vault_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/vault_a.tmj`",
       "purpose": "",
-      "notes": "10×7 / 320×224px",
+      "notes": "10\u00d77 / 320\u00d7224px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1606,7 +1606,7 @@
       "title": "`custodian/game/world/compound/rooms/templates/service_annex_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/service_annex_a.tmj`",
       "purpose": "",
-      "notes": "10×8 / 320×256px",
+      "notes": "10\u00d78 / 320\u00d7256px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
@@ -1618,18 +1618,139 @@
       "title": "`custodian/game/world/compound/rooms/templates/observation_a.tmj`",
       "target": "`custodian/game/world/compound/rooms/templates/observation_a.tmj`",
       "purpose": "",
-      "notes": "8×7 / 256×224px",
+      "notes": "8\u00d77 / 256\u00d7224px",
       "fulfillment": {
         "type": "tiled",
         "status": "needed"
       }
+    },
+    {
+      "id": "p1-awakening-interactible-affordance-v1",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "P1 Awakening live-interactible affordance overlay art (27 states)",
+      "target": "Asset V2 states in seven `awakening_interact_*` families; see the exact state gate ledger in `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json`.",
+      "purpose": "Supply open, state-specific production art demand for the four current interaction owners and shared affordance presentation.",
+      "notes": "All 27 required states remain source-pending. No Dropbox presence is accepted without exact batch/checksum, true-alpha and dimensions evidence, verified Asset V2 state, and human art approval. Existing Cr\u00e8che, Locker, Lift and Gate hero art is preserved; it does not duplicate or replace those owners. Recommended marker/dressing states and all 36 future-deferred states are excluded.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_interact_support",
+            "state": "floor_pad_01"
+          },
+          {
+            "family": "awakening_interact_support",
+            "state": "beacon_cyan"
+          },
+          {
+            "family": "awakening_interact_support",
+            "state": "beacon_amber"
+          },
+          {
+            "family": "awakening_interact_support",
+            "state": "wall_backplate"
+          },
+          {
+            "family": "awakening_interact_terminal",
+            "state": "console_pedestal"
+          },
+          {
+            "family": "awakening_interact_terminal",
+            "state": "console_wall"
+          },
+          {
+            "family": "awakening_interact_terminal",
+            "state": "console_backplate"
+          },
+          {
+            "family": "awakening_interact_terminal",
+            "state": "screen_glow"
+          },
+          {
+            "family": "awakening_interact_terminal",
+            "state": "console_floor_pad"
+          },
+          {
+            "family": "awakening_interact_locker",
+            "state": "reliquary_plinth"
+          },
+          {
+            "family": "awakening_interact_locker",
+            "state": "reliquary_sconce"
+          },
+          {
+            "family": "awakening_interact_locker",
+            "state": "reliquary_insignia"
+          },
+          {
+            "family": "awakening_interact_locker",
+            "state": "reliquary_floor_inset"
+          },
+          {
+            "family": "awakening_interact_lift",
+            "state": "station_call_lower"
+          },
+          {
+            "family": "awakening_interact_lift",
+            "state": "station_call_upper"
+          },
+          {
+            "family": "awakening_interact_lift",
+            "state": "station_floor_stop"
+          },
+          {
+            "family": "awakening_interact_lift",
+            "state": "station_light"
+          },
+          {
+            "family": "awakening_interact_port",
+            "state": "damaged_status_body"
+          },
+          {
+            "family": "awakening_interact_port",
+            "state": "route_registry_backplate"
+          },
+          {
+            "family": "awakening_interact_port",
+            "state": "damaged_floor_inset"
+          },
+          {
+            "family": "awakening_interact_port",
+            "state": "port_status_beacon"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "indicator_blink"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "glow_pulse"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "terminal_scan"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "reliquary_breath"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "lift_ready"
+          },
+          {
+            "family": "awakening_interact_shared_fx",
+            "state": "port_failing"
+          }
+        ]
+      }
     }
   ],
   "section_notes": {
-    "Awakening / The First Return (sections 01-10)": "The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. The 04→05 connector correction binds the exact source set without crop/strip reconstruction; see `asset_drop/source_work/awakening/DROPBOX_SOURCE_RECEIPT.md`. The Locker foreground remains unbound/deferred until it is compatible with the replacement underlay.",
+    "Awakening / The First Return (sections 01-10)": "The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. The 04\u219205 connector correction binds the exact source set without crop/strip reconstruction; see `asset_drop/source_work/awakening/DROPBOX_SOURCE_RECEIPT.md`. The Locker foreground remains unbound/deferred until it is compatible with the replacement underlay.",
     "Common Vaultwing Bonding Presentation": "Family contract: `custodian/content/metadata/assets/families/ambient_vaultwing_common.asset.json`. Author source masters under `custodian/asset_drop/source_work/fauna/ambient_vaultwing_common/`; Asset V2 publishes to `custodian/content/sprites/ambient_creatures/vaultwing_common/runtime/`.",
     "Baby Opossum Ambient Creature": "Runtime body strips are published; the entries below are approved source renders whose poses sit on a non-uniform grid (or, for the barrel, disagree on canvas framing between hide states), so they cannot be sliced onto 96x96 cells without cutting poses in half. The failed staging is preserved in `custodian/asset_drop/unresolved/ambient_baby_opossum/` and raw renders in `custodian/asset_drop/source_work/baby_opossum/`. Each needs an artist re-export onto a uniform pose grid, not a pipeline change. Family contract: `custodian/content/metadata/assets/families/ambient_baby_opossum.asset.json`. Publish with `python tools/assets/asset.py ingest ambient_baby_opossum`; verify with `python tools/validation/baby_opossum_asset_contract_smoke.py`.",
     "Combat Resource Feedback (Milestone A)": "The V1 common dry-fire and carbine reload/heat/vent WAVs are supplied, format-verified, and wired. The P-9 reuses those cues until bespoke replacements arrive.",
-    "Persistent Compound Authored Rooms": "Persistent Compound V1 is live with procedural semantic shells; these 32×32px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable."
+    "Persistent Compound Authored Rooms": "Persistent Compound V1 is live with procedural semantic shells; these 32\u00d732px Tiled `.tmj` maps are the deferred curated-interior layer, not a runtime blocker. Frame count is not applicable."
   }
 }

@@ -10,7 +10,7 @@
   "recommended": 14,
   "deferred": 36,
   "approved_source_root": "/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/",
-  "gate": "Exact approved source hashes + human art decision + normalized true alpha + current Asset V2 ingested/bound/verified state; never infer availability from a folder.",
+  "gate": "Exact approved source hashes + human art decision + normalized true alpha + current Asset V2 ingested/bound/verified state; never infer availability from a folder. State gate rows are authoritative only when the exact batch, checksums, measured alpha/dimensions, Asset V2 status and human approval are populated from evidence; null/pending means unsatisfied.",
   "families": [
     {
       "family_id": "awakening_interact_support",
@@ -269,7 +269,7 @@
           "alpha": "RGBA true alpha, isolated exterior",
           "source_work_path": "custodian/asset_drop/source_work/awakening/awakening_interact_terminal/console_pedestal_source.png",
           "normalized_inbox_path": "custodian/asset_drop/inbox/awakening_interact_terminal/console_pedestal.png",
-          "description": "console body with readable reachable face, complement existing crèche art without replacing it"
+          "description": "console body with readable reachable face, complement existing cr\u00e8che art without replacing it"
         },
         {
           "state_id": "console_wall",
@@ -2198,6 +2198,911 @@
           "description": "gate status beacon"
         }
       ]
+    }
+  ],
+  "state_gate_ledger": [
+    {
+      "family": "awakening_interact_support",
+      "state": "floor_pad_01",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "floor_pad_02",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "beacon_cyan",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "beacon_amber",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "cable_bundle",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "service_crate",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "wall_backplate",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_support",
+      "state": "status_pole",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "console_pedestal",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "console_wall",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "console_backplate",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "screen_glow",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "console_floor_pad",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_terminal",
+      "state": "console_cables",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_locker",
+      "state": "reliquary_plinth",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_locker",
+      "state": "reliquary_sconce",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_locker",
+      "state": "reliquary_insignia",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_locker",
+      "state": "reliquary_floor_inset",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_locker",
+      "state": "reliquary_latch_detail",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_lift",
+      "state": "station_call_lower",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_lift",
+      "state": "station_call_upper",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_lift",
+      "state": "station_floor_stop",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_lift",
+      "state": "station_light",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_lift",
+      "state": "station_lever_dressing",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_port",
+      "state": "damaged_status_body",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        160
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        160
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_port",
+      "state": "route_registry_backplate",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_port",
+      "state": "damaged_floor_inset",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        128,
+        64
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_port",
+      "state": "port_status_beacon",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        96
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        64,
+        96
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_port",
+      "state": "port_conduit",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "register_of_departures_marker",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        96,
+        160
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        160
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "gate_rest_marker",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "gate_aperture_access_face",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "lore_plaque_frame",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        96,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        96,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "attestation_dais_read",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_wayfinding",
+      "state": "chapel_reliquary_marker",
+      "requirement": "recommended",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 1,
+      "expected_total_dimensions": [
+        128,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "indicator_blink",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 6,
+      "expected_total_dimensions": [
+        384,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "glow_pulse",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        512,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "terminal_scan",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        512,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "reliquary_breath",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        512,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "lift_ready",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 6,
+      "expected_total_dimensions": [
+        384,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "port_failing",
+      "requirement": "required",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        512,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "ash_drift",
+      "requirement": "deferred",
+      "expected_frame_dimensions": [
+        64,
+        64
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        512,
+        64
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
+    },
+    {
+      "family": "awakening_interact_shared_fx",
+      "state": "route_trace",
+      "requirement": "deferred",
+      "expected_frame_dimensions": [
+        128,
+        128
+      ],
+      "expected_frames": 8,
+      "expected_total_dimensions": [
+        1024,
+        128
+      ],
+      "dropbox_batch_id": null,
+      "source_png_sha256": null,
+      "normalized_png_sha256": null,
+      "alpha_validation": "pending_source",
+      "pipeline_status": "source_pending",
+      "asset_v2_status": "not_ingested",
+      "human_art_approval": "pending"
     }
   ]
 }

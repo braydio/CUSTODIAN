@@ -1,7 +1,7 @@
 # AWAKENING INTERACTIBLE AFFORDANCE ASSET V2 CONTRACTS V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-affordance-asset-v2-contracts-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -46,22 +46,22 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `No interaction gameplay authority replaced.`
-- Evidence: `<fill at closeout>`
+- Evidence: `Seven family contracts parse with 27 required and 14 recommended current states; the state ledger has explicit pending evidence fields; the registry targets exactly the 27 required states; generated REQUIRED_ASSETS.md is current. Existing hero families/files are unchanged. No future states entered current required demand.`
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `Existing visible-world affordances were weak or future markers lacked explicit status.`
-- Root cause / contributing factors: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The first Awakening smoke ran before the fresh worktree import completed and failed on missing imported textures; rerunning after the full import passed.`
+- Root cause / contributing factors: `A new worktree starts without current Godot import artifacts. The global Asset V2 catalog also contains four pre-existing designation-locker hash mismatches.`
 - Prevention / pipeline improvement: `Art-state provenance and marker/owner parity with gameplay-scale human review.`
-- Tooling / docs drift discovered: `<fill at closeout>`
+- Tooling / docs drift discovered: `Asset V2 doctor reports four designation-locker catalog hash mismatches, confirmed before scoped edits. No locker catalog or artwork was changed.`
 - Follow-up: `review-awakening-interactible-affordance-asset-v2-contracts-v1`
-- What worked: `Reuse of Layout, established interactions and existing V2 schema.`
+- What worked: `Generating contracts from the locked state ledger kept dimensions, requirement tiers, and source-pending gates aligned.`
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-affordance-asset-v2-contracts-v1`
@@ -70,5 +70,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
-- Next action: `After implementation lands, claim fresh-context paired review.`
+- Next action: `After implementation lands, run the paired fresh-context review.`
 - Blockers or open questions: `None to claim.`

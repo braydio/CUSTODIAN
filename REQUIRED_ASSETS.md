@@ -219,3 +219,11 @@ Persistent Compound V1 is live with procedural semantic shells; these 32×32px T
 | needed | `custodian/game/world/compound/rooms/templates/vault_a.tmj` | `custodian/game/world/compound/rooms/templates/vault_a.tmj` |  | 10×7 / 320×224px |
 | needed | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` | `custodian/game/world/compound/rooms/templates/service_annex_a.tmj` |  | 10×8 / 320×256px |
 | needed | `custodian/game/world/compound/rooms/templates/observation_a.tmj` | `custodian/game/world/compound/rooms/templates/observation_a.tmj` |  | 8×7 / 256×224px |
+
+## Awakening / The First Return (sections 01-10)
+
+The opening dungeon ships as a greybox blockout and is fully playable without any of these. Production art is registered by the Asset V2 families below; drop human-named state files into `custodian/asset_drop/inbox/<family>/`. Envelopes remain authoritative in `custodian/game/world/awakening/awakening_layout.gd`. The 04→05 connector correction binds the exact source set without crop/strip reconstruction; see `asset_drop/source_work/awakening/DROPBOX_SOURCE_RECEIPT.md`. The Locker foreground remains unbound/deferred until it is compatible with the replacement underlay.
+
+| Status | Asset | Target Path | Purpose | Notes |
+|---|---|---|---|---|
+| needed | P1 Awakening live-interactible affordance overlay art (27 states) | Asset V2 states in seven `awakening_interact_*` families; see the exact state gate ledger in `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json`. | Supply open, state-specific production art demand for the four current interaction owners and shared affordance presentation. | All 27 required states remain source-pending. No Dropbox presence is accepted without exact batch/checksum, true-alpha and dimensions evidence, verified Asset V2 state, and human art approval. Existing Crèche, Locker, Lift and Gate hero art is preserved; it does not duplicate or replace those owners. Recommended marker/dressing states and all 36 future-deferred states are excluded. |
