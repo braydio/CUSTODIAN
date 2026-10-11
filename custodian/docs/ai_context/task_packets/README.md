@@ -76,7 +76,6 @@ normal closeout.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md` — Independently establish that the proposed 2.5D release-cohort dependency report reflects live runtime/selector/plan truth rather than its own assumptions.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
