@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-paired-review-coordinator-boundary-v1`
+- Depends on: `review-agent-paired-review-coordinator-boundary-v1-review-corrections-1`
 - Locks: `agent-workflow`
 - Kind: `implementation`
 - Review: `auto`
@@ -15,11 +15,12 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `Independent fresh-context review required for high-impact pipeline safety and resource-use changes`
-- Reviewed main: `2ffbbec13d55a939096750d059602ea56047cae3`
+- Reviewed main: `07b78f98270897211e581128559f9bc2f44a1666`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Visual review: `none`
 - Goal: Make a routine request to implement the next CUSTODIAN packet execute exactly one implementation plus its paired independent review, then stop; expose explicit bounded continuous-chain mode for users who actually request it.
 - Completion boundary: Change CUSTODIAN Next skill and the narrow existing orchestration/receipt seams to provide deterministic, testable invocation-scoped execution limits and compact milestones without changing dispatcher claim or successor authority.
+- R0-01 dispatch hold: PF5 implementation originally landed at `bf9ebf2be`, and review at `fdc4c22` reported PASS; that PASS was invalidated by a post-closeout runner-versus-finish receipt conflict. Do not claim this EH2 packet until `review-agent-paired-review-coordinator-boundary-v1-review-corrections-1` archives complete with an accepted fixed verdict. This is an execution dependency, not an optional documentation note.
 - Current measured state: Current `.agents/skills/custodian-next/SKILL.md` instructs repeated same-series successor execution and suppresses routine user-facing handoffs. The 2026-10-11 Codex export starts with 'Please claim and implement the next custodian task packet' and chains many independent implementation/review pairs until interrupted. `dispatch.py claim-next` owns only one atomic claim, not user intent or execution budget. Normal named dependency chains and review gates already exist.
 - Evidence: 2026-10-11 complete Codex chat log, `.agents/skills/custodian-next/SKILL.md`, root AGENTS.md CUSTODIAN Next Shortcut, `custodian/tools/agent/dispatch.py` and its claim/last-claim receipt, `paired_review_runner.py`, `workstream.py`, existing ULTRA_CODEX_PACKET_WORKER packet (separate host policy).
 - Task-specific authority: Existing dispatcher for claim selection, original packet/Next Handoff for named successors, paired_review_runner for fresh review. The Codex Next skill owns user-facing routing; a small pure execution-boundary helper may enforce an invocation limit but must not implement a second dispatcher.

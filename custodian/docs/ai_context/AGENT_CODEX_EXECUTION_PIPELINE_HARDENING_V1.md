@@ -48,3 +48,13 @@ No changes to Godot game balance, runtime gameplay, visual art, Asset Pipeline V
 The earlier `AGENT_PIPELINE_FEEDBACK_IMPROVEMENTS_V1.md` still presents PF5 as conditional draft/manual. This addendum **supersedes only PF5 scheduling state and its sharpened scope**, not the PF1-PF4 historical outcomes or their completed packet records. EH1's source-level double-prefix failure and user approval satisfy the planning gate; the read-only Git denial fixture remains a mandatory *implementation* reproduction before any privilege-boundary mutation. Update the earlier program document's PF5 status reference only if explicitly authorized by the same scoped publication; do not rewrite history or mutate previously archived packets. The Ready/Auto block in `task_packets/README.md` is generated, not claim authority. Dispatch status/index correctness is to be verified after landing.
 
 **Next exact claim:** `agent-paired-review-coordinator-boundary-v1` through the normal dispatcher after publication, assuming no newer conflicting claim/ref.
+
+## 2026-10-11 PF5 post-closeout correction and successor hold
+
+The original PF5 independent review archived a `passed` receipt on `origin/main@fdc4c22`, but a subsequent confirmed R0-01 reproduction found the reviewer cannot both preserve the exact original target bytes (`paired_review_runner.py`) and append the target's mandatory `## Independent Review` receipt (`workstream.py`). The original review PASS is **historical, not currently accepted**. The original report and local coordinator run evidence (`.git/custodian-review-runs/review-agent-paired-review-coordinator-boundary-v1/20261011T090553Z-d41e261b7386`) must be preserved.
+
+The bounded cycle-1 correction is `custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` (paired re-review `REVIEW_AGENT_PAIRED_REVIEW_COORDINATOR_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md`). Only a verified append/fill of that target's review-receipt section may change the archived implementation packet; all other original implementation bytes, provenance and required finish gates stay immutable. The downstream `agent-next-execution-boundary-v1` implementation now depends on acceptance of the **cycle-1 re-review**, not the disputed original PASS. This is not a reimplementation of PF5's other accepted work.
+
+Related PF4 `R0-01` on incomplete validation coverage is **already fixed and independently reviewed**, with correction `agent-workstream-closeout-preflight-review-corrections-1`, implementation commit `71cc480ad` and completed re-review. Do not issue a duplicate PF4 correction.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1
