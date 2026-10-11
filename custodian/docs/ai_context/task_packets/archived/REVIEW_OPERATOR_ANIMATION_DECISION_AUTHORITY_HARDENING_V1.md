@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-animation-decision-authority-hardening-v1
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-animation-decision-authority-hardening-v1
@@ -11,8 +11,11 @@
 - Review: none
 - Review target workstream: operator-animation-decision-authority-hardening-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1.md
-- Reviewed main: 2a82a470e1af5b16e95497810e4c7f9b7d2edd8f
+- Reviewed main: 0e3cfa940
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Review summary: `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1_CLAUDE_SUMMARY.md`
+- Review result: `findings`
+- Follow-up workstream: `operator-animation-decision-authority-hardening-v1-review-corrections-1`
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
@@ -35,11 +38,32 @@ Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` from fresh co
 
 ## Handoff
 
-- Next workstream: operator-2-5d-runtime-promotion
-- Next packet state: draft/manual, human-and-dependency-gated
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Next workstream: operator-animation-decision-authority-hardening-v1-review-corrections-1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
-- Refresh reason: User-selected authoritative idle timing, real QA/sandbox receipts, dependency-closed cohort and WB25-6 release approval remain outstanding even if this guard review passes.
-- Next action: Return verified timing-provenance controls to WB25-6 planning with the reviewed read-only cohort closure; do not auto-activate 2.5D.
-- Blockers or open questions: No authoring FPS or real complete 2.5D release cohort has been approved.
+- Refresh reason: none; correction cycle 1 addresses findings R0-01 and R0-02.
+- Next action: Implement the bounded correction, then run its fresh paired review.
+- Blockers or open questions: The approval caller boundary and real sandbox/current-receipt evidence must be re-reviewed before returning to WB25-6 planning.
+
+## Completion Truth
+
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: no
+- Review verdict: findings; correction cycle required before approval.
+- Evidence: `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1_CLAUDE_SUMMARY.md`; findings R0-01 and R0-02.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: the required Godot sandbox smoke timed out at 90 seconds; paired validation could not fetch from the isolated Codex process. The review recorded two bounded findings.
+- Root cause / contributing factors: the sandbox did not exit in the reviewer worktree, and that Codex invocation could not write shared Git metadata; the recovery worktree and findings remained intact.
+- Prevention / pipeline improvement: correction cycle 1 will make the sandbox run bounded and reproducible, execute receipt controls after a real pass, and remove service-level timing-write authority.
+- Tooling / docs drift discovered: none confirmed
+- Follow-up: operator-animation-decision-authority-hardening-v1-review-corrections-1
+- What worked: independent direct service calls exposed an approval-authority crossing.

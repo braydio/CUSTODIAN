@@ -77,3 +77,21 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
 - Next action: Fresh independent review after implementation lands, then continue cohort analysis and WB25-6 human gating.
 - Blockers or open questions: None for implementation planning; no FPS or production cohort is yet user-approved.
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-animation-decision-authority-hardening-v1`
+- Reviewed on main: `0e3cfa940` (target implementation commit `0a0238920`)
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, asset-pipeline, workflow`
+- Blocking defects: `1`
+- Material evidence gaps: `1`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `R0-01, R0-02`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-animation-decision-authority-hardening-v1-review-corrections-1`
