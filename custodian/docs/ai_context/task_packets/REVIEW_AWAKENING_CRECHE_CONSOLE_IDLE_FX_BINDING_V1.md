@@ -8,6 +8,13 @@
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `review`
 - Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, runtime, visual, asset-pipeline`
+- Paired review workstream: `none`
+- Review target workstream: `awakening-creche-console-idle-fx-binding-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_CRECHE_CONSOLE_IDLE_FX_BINDING_V1.md`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Reviewed main: `956cf2114458`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `conditional`
@@ -22,7 +29,7 @@
 - Non-goals: No new interaction owner, no second asset family for the hero, no general editor, no speculative room/route changes, no direct runtime PNG modification.
 - Acceptance: No blocking findings or material evidence gaps; floor-anchor negative test fails and all 8 FX frames are correctly constrained.
 - Validation: new focused anchor smoke; awakening progression; actual LFS PNG alpha ROI, targeted screenshot.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit and push only durable review receipt, its lifecycle/closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 - Deferred: Authored replacement hero remains future separate human-gated packet.
 
 ## Review Receipt
