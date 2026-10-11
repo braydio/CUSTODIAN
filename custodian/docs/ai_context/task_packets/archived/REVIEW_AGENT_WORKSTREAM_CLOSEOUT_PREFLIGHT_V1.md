@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-workstream-closeout-preflight-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-workstream-closeout-preflight-v1`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `agent-workstream-closeout-preflight-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md`
-- Reviewed main: `4b5ba4c4f88f25cbde281ca6f148da58cd5648b2`
+- Reviewed main: `f742c79a53244f62ae1720bddac921413ff46fa4`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -32,11 +32,11 @@
 
 ## Handoff
 
-- Next workstream: `agent-paired-review-coordinator-boundary-v1`
+- Next workstream: `agent-workstream-closeout-preflight-review-corrections-1`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
-- Refresh reason: `PF5 remains draft/manual until current runner read-only shared-Git failure is reproduced.`
-- Next action: `Return current paired-review runner sandbox evidence to this authoring chat to decide whether to promote PF5.`
-- Blockers or open questions: `none for PF4; PF5 has an explicit design gate`
+- Refresh reason: `R0-01 demonstrates that incomplete validation coverage can be reported ready; the implementation packet excludes finish-policy changes, so the correction contract must define a safe shared-gate fix.`
+- Next action: `Return R0-01 and the isolated reproduction to this authoring chat; publish a bounded correction and paired review before dispatch.`
+- Blockers or open questions: `R0-01 requires correction; pairing validation and finish fetch are blocked by read-only shared Git metadata in this worktree.`
