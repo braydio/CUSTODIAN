@@ -68,7 +68,6 @@ normal closeout.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
 - `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Independently falsify the new import/truth gate using resource failures masked by PASS markers and expected-rollback near misses.
 - `REVIEW_AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
-- `REVIEW_AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Independently prove the closeout preflight is nonmutating, truthful and consistent with finish's authoritative final gates.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
 - `REVIEW_ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Independently verify the landed Ritualant runtime-truth repair against its packet and current authored-encounter authority.
 - `REVIEW_ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Independently prove the 12 approved static Ritualant assets were fetched from the exact reviewed source packages, published through Asset Pipeline V2, bound...
