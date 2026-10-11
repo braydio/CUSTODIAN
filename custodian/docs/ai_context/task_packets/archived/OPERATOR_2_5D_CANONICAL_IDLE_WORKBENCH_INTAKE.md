@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-canonical-idle-workbench-intake
-- Status: ready
+- Status: complete
 - Dispatch: manual
 - Priority: P1
 - Depends on: review-operator-2-5d-workbench-production-queue
@@ -38,6 +38,34 @@
 - Validation: focused lossless split/reassembly and SHA integrity; `custodian/tools/validation/operator_2_5d_ingress_smoke.py`; `operator_animation_targets_smoke.py`; `operator_workbench_production_queue_smoke.py`; `operator_2_5d_review_smoke.py` if available; compare runtime hashes; run `python3 custodian/tools/validation/run_validation.py --changed --json` only after focused success; `git diff --check`. If code or smoke changes, register focused manifest ownership.
 - Task overrides: none
 - Deferred: final physical timing approval, per-direction QA/human review/sandbox verification; unarmed cohort dependency closure; WB25-6 production promotion.
+
+## Completion Truth
+
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: the exact accepted master hash and dimensions, explicit eight-row split/reassembly equality, eight saved Workbench document/manifest pairs, individual source/candidate and Workbench hashes, live queue counts, timing caveat, and unchanged production/source hashes are recorded in `custodian/docs/reports/operator_2_5d/idle_relaxed_01_intake.json`. All eight targets are `EDITABLE_WORKBENCH`; no review verification or publication was claimed. Focused validation and changed-file validation passed.
+
+## Intake Result
+
+8/8 directions reached `EDITABLE_WORKBENCH`; 0 blocked; 0 pending.
+- Each direction has a saved 15-frame 128×128 Workbench document and exact source/candidate pixel proof. Durable evidence: `custodian/docs/reports/operator_2_5d/idle_relaxed_01_intake.json`.
+- The live queue reports 8 local canonical directions, 0 verified directions, 0 verified families, and 0 published directions. Physical Workbench defaults show 8 FPS / 125 ms, but accepted plan timing remains unknown and unapproved.
+- Runtime manifest, catalog, SpriteFrames, legacy source, generation source, and preexisting pipeline inbox hashes are unchanged. No runtime promotion or publication occurred.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: the documented `pixelart` alias resolved the project-root checkout while the verifier ran from the claimed worktree; replay also reinterpreted crisp colors and a mathematically identity profile transform altered canonical pixels through needless resampling. A fresh worktree had no Godot import cache, so its first review smoke timed out before passing after import initialization.
+- Root cause / contributing factors: converter replay did not preserve the CLI default for crisp palette limits; normalization always resampled even when crop/scale/placement were pixel identity; isolated worktrees require an initial Godot project import before review sandbox tests.
+- Prevention / pipeline improvement: export `CUSTODIAN_REPO` and `CUSTODIAN_GODOT` when exercising the required alias from another checkout; preserve source colors by default and skip identity resampling; initialize Godot import cache before sandbox smoke in a new worktree.
+- Tooling / docs drift discovered: intake's CLI verifier and production command differed in their crisp defaults; the asset-checkout alias is rooted to the persistent project checkout. The converter and focused regression now account for this.
+- Follow-up: fixed-in-scope
+- What worked: package replay, byte-exact source extraction, current queue projection, and pre/post runtime hash snapshots gave a complete nonvisual proof without touching runtime publication.
 
 ## Lifecycle and follow-up
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 import shutil
 import subprocess
 import sys
@@ -159,7 +160,11 @@ def main() -> None:
         ImageDraw.Draw(bad_image).rectangle((4, 2, 11, 13), fill=(80, 100, 120, 255))
         bad_image.save(bad_source)
         proof_image = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
-        ImageDraw.Draw(proof_image).rectangle((48, 24, 79, 101), fill=(80, 100, 120, 255))
+        proof_pixels = proof_image.load()
+        for y in range(24, 102):
+            for x in range(48, 80):
+                proof_pixels[x, y] = ((x * 7 + y * 3) % 256, (x * 5 + y * 11) % 256,
+                                      (x * 13 + y * 2) % 256, 255)
         proof_image.save(proof_source)
         proof_session = source_service.start(source_path=proof_source, frames=1, target_size=128)
         profile_hash, reference_hash = operator_animation_targets._profile_hashes(REPO)
@@ -192,13 +197,25 @@ def main() -> None:
         source_service.plan_normalization(proof_session, mode="operator_profile")
         command = source_service.production_command(proof_session)["command"]
         assert command[command.index("--size") + 1] == "128"
-        source_service.convert(proof_session)
+        command = source_service.production_command(proof_session)["command"]
+        shell = (
+            "source tools/custodian_aliases.sh && export CUSTODIAN_REPO="
+            + shlex.quote(str(REPO))
+            + " CUSTODIAN_GODOT=" + shlex.quote(str(REPO / "custodian"))
+            + " && pixelart " + shlex.join(command[1:])
+        )
+        subprocess.run(["bash", "-lc", shell], cwd=REPO, check=True, capture_output=True, text=True)
         proof_root = Path(source_service.status(proof_session)["root"])
-        (proof_root / "production").mkdir(parents=True, exist_ok=True)
-        (proof_root / "candidates/crisp.png").replace(proof_root / "production/crisp.png")
         assert source_service.verify_production(proof_session)["verified"] is True
         with Image.open(proof_root / "production/crisp.png") as normalized:
             assert normalized.size == (128, 128)
+            with Image.open(proof_source) as original:
+                assert normalized.convert("RGBA").tobytes() == original.convert("RGBA").tobytes(), (
+                    "an identity profile transform must preserve canonical source pixels"
+                )
+            assert len(normalized.getcolors(maxcolors=1_000_000) or []) > 24, (
+                "default crisp conversion must preserve source colors"
+            )
         stale_custodian = root / "stale-authority/custodian"
         authority_path = stale_custodian / "content/data/operator/authoring/operator_art_profile.json"
         authority_path.parent.mkdir(parents=True)
