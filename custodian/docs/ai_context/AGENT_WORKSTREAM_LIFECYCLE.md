@@ -36,6 +36,23 @@ Existing task state requires the explicit recovery command after inspection:
 python3 custodian/tools/agent/workstream.py resume <workstream-id>
 ```
 
+Before closeout, an attached workstream can preview the locally knowable finish
+gates without changing Git or lifecycle state:
+
+```bash
+python3 custodian/tools/agent/workstream.py preflight <workstream-id> \
+  --validation-report <green-validation.json> --json
+```
+
+The report checks packet/archive state, literal Completion Truth, authoring-chat
+backlinks, managed-index residue, untracked artifacts, review receipts and
+provenance, branch drift, and the supplied validation report. It uses cached
+refs only: it does not fetch, create a trace, take the workflow lock, synchronize,
+or alter files/refs/worktrees. `post_sync.status` is always `unknown`; latest-main
+synchronization, any required after-sync validation, and landing are still
+proved only by `workstream.py finish`. A ready preview is guidance to attempt
+finish, never evidence that the task landed.
+
 `resume` preserves dirty checkouts and only proceeds with a clean attached
 checkout or an explicitly selected published `origin/agent/<id>` branch. A
 remote claim without that branch is interrupted recovery state; ordinary
