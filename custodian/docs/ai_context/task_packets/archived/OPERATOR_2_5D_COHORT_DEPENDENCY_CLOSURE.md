@@ -85,19 +85,18 @@
 ## Independent Review
 
 - Status: `findings`
-- Review workstream: `review-operator-2-5d-cohort-dependency-closure-review-corrections-1`
-- Reviewed on main: `d16a49523`
+- Review workstream: `review-operator-2-5d-cohort-dependency-closure`
+- Reviewed on main: `2ffbbec13d55a939096750d059602ea56047cae3`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Review modes: `code, architecture, runtime, workflow`
 - Blocking defects: 0
-- Material evidence gaps: 0
+- Material evidence gaps: 1
 - Non-blocking issues: 0
-- Optional improvements: 1
-- Correction finding IDs: `none`
-- Next-slice finding IDs: `R1-01`
+- Optional improvements: 0
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
-- Focused validation: closure probe smoke, animation-target smoke, production-queue smoke, runtime-authority smoke, and `git diff --check` PASS. Required `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json` BLOCKED in Godot import preflight after 120 seconds at 72%; no smoke result emitted.
-- Finding `R1-01`: optional_improvement / implementation; no acceptance affected. `_edge_evidence_resolves` recognizes source definitions using a line regex that may match commented-out declarations; no current false-positive evidence was found. Disposition: next_slice; rationale: current references all resolve to live definitions and the check fails closed on missing symbols, while parsing comments would only harden a future mutation control.
-- Detailed review summary: `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `none`
+- Focused validation: `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json` — PASS; smoke exit 0, 12.3s.
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-2-5d-cohort-dependency-closure-review-corrections-1`
