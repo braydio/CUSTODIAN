@@ -6,6 +6,8 @@
 
 ## Calibration batch 01 (10 image requests)
 
+**User disposition 2026-10-10:** All ten originally generated atlas-cropped assets were rejected for visible AI architecture artifacts and mirrored false seamless detail. No state is artistically approved or suitable for Asset V2 ingest; counts and human gates remain unfulfilled. See [Gate Side-Stair / Wind-Dust / Asset QA Ledger](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md). Zone 07 production underlay visibly exposes east/west stairs and northward approach; AP3 must preserve these entrances for a separate, explicitly approved spatial-branch decision and must not treat speculative rubble sealing as part of a generic backdrop pass.
+
 [AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md) is the first ten-asset source-generation brief: three complete 01/07/10 role sets (9 states), plus Zone 06's distant structures (1 state). Assets 1–3 are an explicit visual calibration stop/go before 4–10. This does not override AP0's camera-footprint proof or automatically promote AP1–AP4.
 
 ## Locked project decisions

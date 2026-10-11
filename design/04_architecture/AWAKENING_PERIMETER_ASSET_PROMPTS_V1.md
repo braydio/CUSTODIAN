@@ -5,6 +5,8 @@
 **Intake:** [ASSET_PIPELINE_V2.md](ASSET_PIPELINE_V2.md).
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 
+**Prior first-generation attempt rejected (2026-10-10):** All ten atlas-derived PNG candidates are `REJECT_REGENERATE`; technical normalization did not fix AI structural artifacting. Generate future replacements independently at full native source quality, not as cropped labeled contact-sheet pieces. The Gate has actual east/west stairs whose exits must remain physically legible pending branch decisions. See [AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md).
+
 **First batch (10 selected assets):** [AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md), including full prompts and source/inbox paths for Zones 01, 06, 07, 10. It is a source-generation queue, not evidence of ten approved files.
 
 ## Universal style and negative lock

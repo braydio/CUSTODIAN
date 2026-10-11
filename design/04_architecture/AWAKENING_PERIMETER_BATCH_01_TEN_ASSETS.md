@@ -1,9 +1,13 @@
 # Awakening Perimeter Batch 01: Ten Calibration Assets + Generation Prompts
 
-**Status:** Production-generation brief; sources not approved, ingested or bound by this file. **Date:** 2026-10-10.
+**Status:** **Batch 01 GENERATION REJECTED by user 2026-10-10** (all 10 atlas-cropped outputs, not ingestible). This document remains the ten-state design/prompt contract for *future* independently generated replacements; sources are not approved, ingested, scene-bound, or complete. Full defect ledger: [AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md). **Date:** 2026-10-10.
 **Parent:** [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md) · [ASSET PROMPTS V1](AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md) · [IMPLEMENTATION ROADMAP](AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md).
 **Scope:** Zones 01, 06, 07, 10 only; **excludes** separately reauthored Dust Lung Zone 05.
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+
+## Mandatory regeneration / Gate branch preservation
+
+**Stop:** Reject the prior 10-state ZIP as `REJECT_REGENERATE`. It consists of atlas crops, mirrored pseudo-tiles, and visibly incoherent structures; it is not evidence of native production assets or a satisfied art gate. Future generation must issue **one independent output per state**, evaluate structural consistency and real gameplay-scale presentation before resize, and may not fabricate exact-size/source-quality by mirror replication. The real Gate plaza underlay exposes west and east stairways: keep their apparent entrances intact pending explicit side-branch decisions. Do not paste blocked-side-route architecture on either stair mouth. See [Gate Stair + Wind + Art QA ledger](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md).
 
 ## Why exactly these ten
 
