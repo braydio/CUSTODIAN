@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-2-5d-cohort-dependency-closure
 - Kind: review
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: operator-2-5d-cohort-dependency-closure
@@ -43,3 +43,11 @@ Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` from a fresh 
 - Refresh reason: first production cohort still requires a human decision and verified complete timing/art/consumer closure before any cutover.
 - Next action: Bring reviewed cohort-closure report to the authoring chat and agree the smallest real 2.5D rollout slice, then decide whether any preparatory implementation packet is appropriate.
 - Blockers or open questions: No authoritative idle FPS, full 56-leaf verified set, dependency-closed cohort or selected first production release.
+
+
+## Review Result
+
+- Status: `findings`
+- Finding: `R0-01` — locomotion edge evidence cites nonexistent `operator._sync_animation_from_state` for six edges; replace it with verified live consumer symbols and edge-specific source/test evidence.
+- Correction workstream: `operator-2-5d-cohort-dependency-closure-review-corrections-1`
+- Validation: probe smoke, animation-target smoke, production-queue smoke, and runtime-authority smoke passed. The required serialized `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json` passed; `operator_2_5d_review_smoke: PASS` (exit 0, 12.3s). A separate attempt to recapture the JSON under this restricted environment failed during import because Godot could not bind editor sockets; the captured green result is preserved for finish.

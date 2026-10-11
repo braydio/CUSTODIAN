@@ -80,3 +80,23 @@
 - Refresh reason: none
 - Next action: Run the fresh-context paired review; after it passes, return the evidence to the authoring chat before refreshing or claiming WB25-6.
 - Blockers or open questions: WB25-6 remains draft/manual pending human cohort/timing decisions and complete current verified evidence.
+
+
+## Independent Review
+
+- Status: `findings`
+- Review workstream: `review-operator-2-5d-cohort-dependency-closure`
+- Reviewed on main: `2ffbbec13d55a939096750d059602ea56047cae3`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime, workflow`
+- Blocking defects: 0
+- Material evidence gaps: 1
+- Non-blocking issues: 0
+- Optional improvements: 0
+- Correction finding IDs: `R0-01`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Focused validation: `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json` — PASS; smoke exit 0, 12.3s.
+- Detailed review summary: `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `operator-2-5d-cohort-dependency-closure-review-corrections-1`
