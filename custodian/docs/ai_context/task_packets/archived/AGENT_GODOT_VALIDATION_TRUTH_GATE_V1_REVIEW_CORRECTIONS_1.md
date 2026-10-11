@@ -66,7 +66,7 @@
 - Blockers or open questions: none
 
 ## Independent Review
-- Status: passed
+- Status: `passed`
 - Review workstream: review-agent-godot-validation-truth-gate-v1-review-corrections-1
 - Reviewed on main: 6b5f3a83
 - Review modes: code, architecture, workflow
