@@ -15,7 +15,7 @@
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_CRECHE_CONSOLE_SPRITE_REAUTHOR_V1.md`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Reviewed main: `956cf2114458`
+- Reviewed main: `<fill at claim>`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `required`
 - Goal: Review the newly authored Crèche terminal source, real V2 replacement provenance and FX screen fit independently.
@@ -38,7 +38,7 @@
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_CRECHE_CONSOLE_SPRITE_REAUTHOR_V1.md`
 - Reviewed main: `<fill at claim>`
 - Reviewer context: `fresh`
-- Reviewer provenance: `<fill>`
+- Reviewer provenance: `different-agent`
 - Blocking defects: `<fill>`
 - Material evidence gaps: `<fill>`
 - Non-blocking issues: `<fill>`
