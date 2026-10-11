@@ -81,7 +81,7 @@
 - Correction finding IDs: `R0-01`
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
-- Detailed review summary: `OPERATOR_BASELINE_VALIDATION_REHABILITATION_REVIEW_CLAUDE_SUMMARY.md`
+- Detailed review summary: `REVIEW_OPERATOR_BASELINE_VALIDATION_REHABILITATION_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `operator-baseline-validation-rehabilitation-review-corrections-1`
 
 ## Context Pack
