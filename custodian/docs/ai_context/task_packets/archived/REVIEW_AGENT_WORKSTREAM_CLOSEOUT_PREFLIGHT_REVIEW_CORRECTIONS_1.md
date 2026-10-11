@@ -40,7 +40,7 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Refresh reason: `none`
-- Next action: `Record verdict and complete the correction review chain.`
+- Next action: `None; the correction and independent review chain is complete.`
 - Blockers or open questions: `none`
 
 ## Independent Review
