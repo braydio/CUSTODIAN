@@ -84,7 +84,6 @@ normal closeout.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
-- `REVIEW_OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 against current live source and report output.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1.md` — Independently prove immutable Operator art/harness decisions and explicit 2.5D timing intent cannot be silently promoted by editable manifest state or synthe...
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
