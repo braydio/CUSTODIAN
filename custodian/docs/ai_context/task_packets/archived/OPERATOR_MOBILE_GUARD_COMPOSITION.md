@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-mobile-guard-composition`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-action-arbitration`
@@ -57,6 +57,36 @@
 
 ## Handoff
 
-- Next action: Execute now. `operator-action-arbitration` is archived complete; begin by re-reading the landed `OperatorPresentationController` and re-running the focused guard characterization before moving the current helper policy into the bounded semantic composition seam.
+- Next action: Implementation complete. Recheck dispatcher eligibility and continue into `operator-baseline-validation-rehabilitation`, the ready/auto successor that owns the three unrelated Operator baseline failures found by the changed-file sweep.
 - Best starting files: post-Slice-E semantic presentation controller; `custodian/game/actors/operator/combat/operator_guard_controller.gd`; the guard presentation facade in `operator.gd`; `custodian/tools/validation/operator_modular_defense_ranged_smoke.gd`; canonical runtime manifest defense/locomotion entries.
-- Blockers or open questions: None. The declared dependency is already satisfied on main; it remains in metadata as durable execution-order evidence.
+- Blockers or open questions: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger` remain assigned to `operator-baseline-validation-rehabilitation`.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: After synchronizing with current `origin/main`, `operator_guard_flow`, `operator_modular_defense_ranged`, `operator_body_pair_canonical`, `operator_visual_ownership`, `operator_fixed_tick_spine`, `operator_input_frame`, `operator_upper_fx_canonical`, and `operator_mobile_guard_strafe` passed. Moment Forge `combat/operator_mobile_guard_strafe` passed in evidence mode at `reports/moment_forge/combat/operator_mobile_guard_strafe/20261010T195227-0400`. The code closeout sweep had complete owner coverage: 54 passed, 3 failed, and 15 skipped. Its three failures are owned by the dependent `operator-baseline-validation-rehabilitation` packet: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger`. After the main sync, the remaining documentation-only changed-file sweep passed `review_pairing_contract` (1/1).
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: the expanded guard smoke initially asserted `_is_movement_locked()` for guard break, but guard-break movement suppression uses `_enemy_impact_lock_timer`; owner-scoped modular FX also exposed an ownerless test fixture, which needed to establish its ordinary body owner.
+- Root cause / contributing factors: the smoke conflated movement-action locks with impact-recovery locks, and the canonical FX fixture called owner-scoped playback before selecting a body owner.
+- Prevention / pipeline improvement: assert guard-break's real impact-lock state; keep shared upper FX registered to both ordinary body owners; skip ownerless optional FX and initialize the fixture through the canonical presentation-owner API.
+- Tooling / docs drift discovered: the repository changed-file sweep currently includes three previously diagnosed Operator baseline failures, now owned by the explicit dependent rehabilitation packet.
+- Follow-up: `operator-baseline-validation-rehabilitation`
+
+## Next Handoff
+- Next workstream: operator-baseline-validation-rehabilitation
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: after this packet archives complete, recheck dispatcher eligibility and claim `operator-baseline-validation-rehabilitation` if it is ready/auto.
+- Blockers or open questions: the three Operator baseline checks listed in Completion Truth remain assigned to that successor.

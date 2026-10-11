@@ -7,6 +7,7 @@ extends SceneTree
 ## must render nothing and let gameplay continue, never raise a selector error.
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+const BODY_PRESENTER := preload("res://game/actors/operator/presentation/operator_body_presenter.gd")
 const CANONICAL_FRAMES_PATH := "res://content/sprites/operator/runtime/operator_runtime_frames.tres"
 
 const SECTOR_VECTORS := {
@@ -52,6 +53,9 @@ func _run() -> void:
 	_operator = OPERATOR_SCENE.instantiate()
 	root.add_child(_operator)
 	await process_frame
+	# FX overlays are scoped to the body owner; establish the ordinary body
+	# presentation the runtime would own before exercising its shared FX layer.
+	_operator.call("_set_body_presentation_owner", BODY_PRESENTER.Owner.LEGACY_FULL_BODY)
 
 	_check_renderer_is_canonical()
 	_check_parry_family()

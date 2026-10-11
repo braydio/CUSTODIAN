@@ -248,7 +248,7 @@ UX5  custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_UX_CONSISTENCY_CL
 | UX1 | `operator-workbench-ux-state-hierarchy` | blocked / refresh required | Artist-facing workflow state, global shell, debug disclosure, compact activity |
 | UX2 | `operator-workbench-ux-workbench-home` | blocked / refresh required | Page 2 preview-first workspace, compact inspector/layers, browser workflow badges |
 | UX3 | `operator-workbench-ux-publish-decision` | blocked / refresh required | Changes-first Publish modal, no-op clarity, mirror consequence, readiness presentation |
-| UX4 | `operator-workbench-ux-work-queue` | blocked / refresh required | Replace weak PLAN table with actionable authored-rank work queue and direction coverage |
+| UX4 | `operator-workbench-ux-work-queue` | superseded for 2.5D migration queue | WB25-5 owns 2.5D queue, coverage, verification, and NEXT; retain this packet only as historical artist-UX guidance until a future refresh defines non-competing scope |
 | UX5 | `operator-workbench-ux-consistency-closeout` | blocked / refresh required | Cross-mode consistency, responsive/focus/help/accessibility pass, final UX regression closure |
 
 ## UX1 - State Hierarchy + Shell

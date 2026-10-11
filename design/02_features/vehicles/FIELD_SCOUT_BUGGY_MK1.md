@@ -142,7 +142,7 @@ family id:        custodian_field_scout_buggy_mk1
 kind:             vehicle
 runtime domain:   sprites/vehicles
 runtime owner:    custodian_field_scout_buggy_mk1
-canvas:           256x256 per frame
+canvas:           156x156 per frame
 direction policy: 8dir
 auto mirror:      true
 authored dirs:    n, ne, e, se, s
@@ -156,19 +156,19 @@ Asset Pipeline V2 generates W/NW/SW from E/NE/SE. Do not hand-author mirrored du
 
 | State | Tier | Frames | Sheet per authored direction | FPS | Loop | Group |
 | --- | --- | ---: | --- | ---: | --- | --- |
-| `parked_01` | required | 1 | 256x256 | n/a | no | posture |
-| `engine_start_01` | recommended | 7 | 1792x256 | 8 | no | transition |
-| `engine_idle_01` | recommended | 6 | 1536x256 | 6 | yes | posture |
-| `drive_01` | required | 6 | 1536x256 | 8 | yes | locomotion |
-| `brake_01` | recommended | 4 | 1024x256 | 10 | no | locomotion |
-| `impact_01` | recommended | 4 | 1024x256 | 12 | no | reaction |
-| `disabled_01` | required | 1 | 256x256 | n/a | no | reaction |
-| `destroy_01` | recommended | 8 | 2048x256 | 10 | no | death |
-| `wreck_01` | required | 1 | 256x256 | n/a | no | death |
-| `restore_01` | recommended | 8 | 2048x256 | 8 | no | transition |
-| `restore_fx_01` | recommended | 8 | 2048x256 | 8 | no | fx |
+| `parked_01` | required | 1 | 156x156 | n/a | no | posture |
+| `engine_start_01` | recommended | 7 | 1092x156 | 8 | no | transition |
+| `engine_idle_01` | recommended | 6 | 936x156 | 6 | yes | posture |
+| `drive_01` | required | 12 | 1872x156 | 12 | yes | locomotion |
+| `brake_01` | recommended | 4 | 624x156 | 10 | no | locomotion |
+| `impact_01` | recommended | 4 | 624x156 | 12 | no | reaction |
+| `disabled_01` | required | 1 | 156x156 | n/a | no | reaction |
+| `destroy_01` | recommended | 8 | 1248x156 | 10 | no | death |
+| `wreck_01` | required | 1 | 156x156 | n/a | no | death |
+| `restore_01` | recommended | 8 | 1248x156 | 8 | no | transition |
+| `restore_fx_01` | recommended | 8 | 1248x156 | 8 | no | fx |
 
-All animations use `layout: horizontal_strip`, `layer: body`, 256x256 cells, true alpha, stable bottom-center registration, consistent wheel-ground contact, and no painted floor shadow.
+All Scout body animations use `layout: horizontal_strip`, `layer: body`, 156x156 cells, true alpha, stable bottom-center registration, consistent wheel-ground contact, and no painted floor shadow. The current 156px `drive_01` strips are approved Pixel Art Normalizer outputs and must not be padded or re-pixelized to 256 merely to satisfy older planning text.
 
 Suggested aliases:
 

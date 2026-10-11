@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -18,7 +19,7 @@ from operator_2_5d_review import (Operator2DReview, human_review_evidence_sha, h
                                   human_review_passes, qa_state, sha256_file)
 from animation_preview import Preview, ReviewSequence, SemanticIdentity, TimelineClip
 from ui.service import WorkbenchService
-from ui.state import AnimationSelection
+from ui.state import AnimationRecord, AnimationSelection
 
 
 assert qa_state({"status": "RED", "findings": []}) == "RED"
@@ -261,14 +262,32 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
         result = json.loads((sandbox_bundle / "result.json").read_text())
         assert refused.returncode != 0 and "frame hash mismatch" in result.get("error", "")
 
-    good = SimpleNamespace(selection=selection, coverage="CANONICAL_2_5D", workflow_status="LIVE", stale=False)
-    missing_selection = SimpleNamespace(**{**selection.__dict__, "direction": "e",
-        "authoring_identity": "operator_2_5d_128:operator/posture/idle/e"})
-    missing = SimpleNamespace(selection=missing_selection, coverage="MISSING", workflow_status="DORMANT", stale=False)
-    owner.current_receipt = lambda current: {"runtime_verified": current.direction == "ne", "receipt_sha256": "r"} if current.direction == "ne" else None
-    family = owner.family((good, missing), profile="operator", group="posture", action="idle")
-    assert len(family["cells"]) == 2 and not family["complete"]
-    assert family["cells"][0]["runtime_verified"] is False or family["cells"][1]["runtime_verified"] is False
+    import operator_animation_targets
+    plan = operator_animation_targets.load_plan(ROOT / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json")
+    projected = operator_animation_targets.project_targets(plan, repo_root=ROOT, workspace_root=root / "live-workspace")
+    family_records = tuple(record for record in projected if (
+        record.selection.profile, record.selection.group, record.selection.action
+    ) == ("unarmed", "posture", "idle_relaxed_01"))
+    assert len(family_records) == 8 and all(isinstance(record, AnimationRecord) for record in family_records)
+    integrated = WorkbenchService(repo_root=ROOT, workspace_root=root / "live-workspace")
+    integrated.browser_records = lambda **_kwargs: family_records
+    live_family = integrated.review_family("unarmed", "posture", "idle_relaxed_01")
+    assert len(live_family["cells"]) == 8 and not live_family["complete"]
+    assert live_family["required_directions"] == ["n", "ne", "e", "se", "s", "sw", "w", "nw"]
+    assert all(cell["missing_layers"] == [] for cell in live_family["cells"])
+
+    live_owner = Operator2DReview(service=integrated, repo_root=ROOT, workspace_root=root / "live-workspace")
+    live_owner.current_receipt = lambda current: {"runtime_verified": True, "receipt_sha256": "r"}
+    assert live_owner.family(family_records, profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
+    assert not live_owner.family(family_records[:-1], profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
+    missing_layer = (*family_records[:-1], replace(family_records[-1], layers=()))
+    assert not live_owner.family(missing_layer, profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
+    missing_layer = (*family_records[:-1], replace(family_records[-1], layers=()))
+    assert not live_owner.family(missing_layer, profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
+    stale_records = (*family_records[:-1], replace(family_records[-1], stale_reference=True))
+    assert not live_owner.family(stale_records, profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
+    live_owner.current_receipt = lambda _current: {"runtime_verified": False, "receipt_sha256": "forged"}
+    assert not live_owner.family(family_records, profile="unarmed", group="posture", action="idle_relaxed_01")["complete"]
 
     # Mixed v1/v2 sequences must choose legacy runtime and exact 2.5D Workbench
     # frames by generation, even when the caller's default source is runtime.

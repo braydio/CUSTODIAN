@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `campaign-geography-identity-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-campaign-geography-residency-authority-audit`
@@ -41,9 +41,40 @@
 4. **Integration restraint:** add only the smallest evidence-backed read-only conversion seam, if any; do **not** wire actual routes/scenes/actors or modify `campaign_session.gd` merely to demonstrate an interface.
 5. **Documentation:** update the accepted design record and `CURRENT_STATE.md` only with the actual newly implemented scope, marking all physical residency and traversal behavior **not yet implemented**.
 
-## Packet publication / preclaim gate
+## Promotion and claim receipt
 
-**Promotion receipt:** The user authorized `ready/auto` promotion after validation against the current main snapshot, and authorized the B1 claim only after the publication PR is merged and both packets plus the index are verified on current `main`. This publication branch must not claim or implement B1. Never hand-edit the managed index.
+**Completed:** The user authorized `ready/auto` promotion after validation against current main and claim after publication. PR #54 merged at `dcdefc11`; both packet headers and the generated index were verified on `origin/main`, then the implementation was claimed through the dispatcher. This implementation runs only in the claimed worktree.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `campaign_geography_identity_smoke.gd` PASS and negative control exit 1; focused changed validation passed 1/1 with complete coverage; implementation and boundary recorded in the F15 post-audit decision record and CURRENT_STATE.md.
+
+- **A1:** Two fixed-seed Domain fixtures normalize to identical sorted descriptors across fresh registries and reversed registration/location/edge input order; each has two locations, reciprocal adjacency, generation version, and deterministic locality seeds.
+- **A2:** Two distinct visit references retain different visit IDs while resolving the same Domain, locality seed, generation version, adjacency, and edge identity. Rejected visit configuration leaves its previous descriptor intact.
+- **A3:** UTF-8 byte-length-prefixed address keys distinguish `a.b` + `c` from `a` + `b.c`; empty, illegal, and overlength components reject. Duplicate Domain/location/edge identities reject.
+- **A4:** Unknown edge targets, missing reciprocal mappings, conflicting duplicate edge IDs, unsupported schema/generation versions, and invalid seed provenance reject before registration mutation and expose `last_error` reasons.
+- **A5:** Geographic lookup always requires explicit Domain and Location IDs; a matching route/level string alone does not resolve under another Domain.
+- **A6:** Both owners extend `RefCounted`; registry and visit operations instantiate no gameplay scene nodes and do not write disk, change CampaignSession, create an autoload, or alter routes/terrain.
+- **A7:** `campaign_geography_identity_smoke.gd` prints `CAMPAIGN_GEOGRAPHY_IDENTITY_SMOKE: PASS`; its `--negative-control` mode exits 1. The validation manifest maps both new runtime owners to this smoke. Editor import completed before direct smoke execution.
+- **A8:** Only the approved design decision record and `CURRENT_STATE.md` record this data-only foundation. F02 terrain, F06 visit lifecycle, F14 actor state, REMAP-3 persistence, physical residency and travel remain unchanged and unimplemented here.
+- **Validation evidence:** Direct headless smoke passed with exit 0 and PASS marker; negative control exited 1 as expected; changed validation with `--test campaign_geography_identity` passed 1/1 with complete manifest coverage; `git diff --check` and manifest JSON parse passed. F14/route fixtures were not run because their interfaces were not modified.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: `The worktree initially had origin/main behind live main, so unfiltered --changed selected unrelated validations. A fresh editor import also generated unrelated excluded PNG .import sidecars and broadened changed-file selection.`
+- Root cause / contributing factors: `The dispatcher checkout was created at the claim-time main SHA; main advanced afterward. Godot import generated sidecars in this fresh checkout, and run_validation selection includes test owners even when a file is excluded from coverage accounting.`
+- Prevention / pipeline improvement: `Compare changed validations against the claimed baseline and restrict selection to the focused test when shared documentation/manifest ownership fans out; classify and remove only exact generated sidecars from the fresh import.`
+- Tooling / docs drift discovered: `run_validation.py --changed includes broad tests for shared CURRENT_STATE.md and validation_manifest.json owners; --base HEAD plus --test <focused-id> preserves changed-file coverage while executing only the relevant smoke.`
+- Follow-up: `none`
+- What worked: `Length-prefixed identity, defensive descriptor copies, atomic registration, and a narrow deterministic smoke made the boundary easy to inspect.`
 
 ## Next Handoff
 
@@ -53,5 +84,23 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh reason: `none; D1–D7 already approved and B1 is explicitly bounded`
-- Next action: After the publication PR merges, verify both packets and the managed index on current `main`, then claim only `campaign-geography-identity-foundation` through the dispatcher.
-- Blockers or open questions: `Publication PR must merge before verification and B1 claim; no implementation work occurs on this publication branch.`
+- Next action: Land this implementation, then run the paired fresh-context review `review-campaign-geography-identity-foundation` through `paired_review_runner.py`.
+- Blockers or open questions: `Independent post-land review remains pending; B2, F14-C2, and F15-C remain outside this implementation.`
+
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-campaign-geography-identity-foundation`
+- Reviewed on main: `e4cf3b99d41583ce7985310b870cd414f88e04a1`
+- Implementation commit: `f6c86020af0af7abaf65bbe45774a6ac23d7878f`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Detailed review summary: `REVIEW_CAMPAIGN_GEOGRAPHY_IDENTITY_FOUNDATION_CLAUDE_SUMMARY.md`
+- Evidence: Reconstructed the exact implementation commit and current-main ancestry. The B1 smoke passed with `CAMPAIGN_GEOGRAPHY_IDENTITY_SMOKE: PASS`; negative control exited 1 as required; explicit manifest selection passed 1/1; changed-file validation against the implementation parent passed 1/1 with complete coverage. A separate probe confirmed dotted address pairs do not alias, a rejected missing-reciprocal edge leaves no registered Domain, and distinct visits across recreated registries preserve identical locality seed identity. Source review confirmed sorted canonical descriptors, defensive copies, bounded validation, and no CampaignSession/scene/save/autoload takeover. `git diff --check` passed.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31

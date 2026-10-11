@@ -18,6 +18,7 @@ class ParryProbeAttacker:
 
 
 var _failed := false
+var _fast_attack_start_count := 0
 
 
 func _init() -> void:
@@ -122,6 +123,7 @@ func _validate_operator_ranged_ready(root: Node) -> void:
 	var operator := OPERATOR_SCENE.instantiate()
 	root.add_child(operator)
 	await process_frame
+	operator.get("_action_controller").action_entered.connect(_record_action_entry)
 
 	operator.set("combat_loadout_mode", "melee")
 	operator.set("primary_weapon_equipped", false)
@@ -413,6 +415,7 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 		_assert_true(int(observatory.get("counters").get("player_parry_success_sfx_played", 0)) == 1, "successful parry sound telemetry should count once")
 	_assert_true(float(operator.get("_counter_window_timer")) > 0.0, "successful parry should open a counter window")
 	_assert_true(float(operator.get("parry_success_recovery_sec")) <= 0.035, "successful parry should put guard down quickly enough to counter during enemy stagger")
+	var attack_starts_before_buffered_counter := _fast_attack_start_count
 	Input.action_press("fire_primary")
 	operator.call("_sample_input_frame")
 	operator.call("_handle_attack_input")
@@ -423,6 +426,10 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	_assert_true(operator.get("_parry_phase") == &"", "queued parry counter should force success state to release on the next frame")
 	_assert_true(operator.get("_block_phase") == &"", "queued parry counter should put down guard before the strike starts")
 	_assert_true(bool(operator.get("_melee_active")) or bool(operator.get("_melee_fast_windup")), "queued parry counter should start the strike after guard release")
+	_assert_true(
+		_fast_attack_start_count - attack_starts_before_buffered_counter == 1,
+		"queued parry counter should enter the fast-attack action exactly once"
+	)
 	attacker.queue_free()
 
 	operator.set("_melee_active", false)
@@ -441,8 +448,13 @@ func _validate_offhand_parry_guard(operator: Node, root: Node) -> void:
 	held_block_attacker.global_position = operator.global_position + Vector2.RIGHT * 32.0
 	var held_block_parried: bool = bool(operator.call("try_parry_incoming_attack", held_block_attacker, Vector2.LEFT, {"damage": 12.0}))
 	_assert_true(held_block_parried, "second parry should catch incoming melee while block is still held")
+	var attack_starts_before_unbuffered_success_release := _fast_attack_start_count
 	operator.call("_handle_offhand_secondary_input", 0.04)
 	_assert_true(operator.get("_parry_phase") == &"", "successful parry should finish its success state")
+	_assert_true(
+		_fast_attack_start_count == attack_starts_before_unbuffered_success_release,
+		"successful parry without buffered primary must not start an attack"
+	)
 	_assert_true(operator.get("_block_phase") == &"", "held block after successful parry should exit to neutral")
 	_assert_true(not bool(operator.get("_block_active")), "held block after successful parry should not remain active")
 	operator.call("_handle_offhand_secondary_input", 0.02)
@@ -582,3 +594,8 @@ func _assert_true(value: bool, message: String) -> void:
 		return
 	_failed = true
 	push_error(message)
+
+
+func _record_action_entry(action: StringName, _sequence: int, _reentry: bool) -> void:
+	if action == &"attack_fast":
+		_fast_attack_start_count += 1

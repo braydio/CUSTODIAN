@@ -361,23 +361,56 @@ class Operator2DReview:
             return None
 
     def family(self, records: list[Any] | tuple[Any, ...], *, profile: str, group: str, action: str) -> dict[str, Any]:
-        """Derive all family cells from project_targets records plus current receipts."""
-        cells = []
+        """Project every required plan leaf against real browser records and receipts.
+
+        The plan owns the denominator. A sparse or filtered browser list must not
+        make a family look complete merely because its visible rows passed.
+        """
+        import operator_animation_targets
+
+        plan_path = self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json"
+        plan = operator_animation_targets.load_plan(plan_path)
+        target = next((family for family in operator_animation_targets.target_families(plan)
+                       if (family.profile, family.group, family.action) == (profile, group, action)), None)
+        if target is None:
+            raise ValueError(f"family is not present in the current 2.5D target plan: {profile}/{group}/{action}")
+
+        by_direction = {}
         for record in records:
             selection = record.selection
-            if (selection.art_generation, selection.profile, selection.group, selection.action) != (GENERATION, profile, group, action):
-                continue
-            receipt = self.current_receipt(selection) if record.coverage == "CANONICAL_2_5D" and not record.stale else None
-            cells.append({"direction": selection.direction, "coverage": record.coverage,
-                          "workflow": record.workflow_status, "stale": bool(record.stale),
-                          "runtime_verified": bool(receipt and receipt.get("runtime_verified")),
+            if (selection.art_generation, selection.profile, selection.group, selection.action) == (GENERATION, profile, group, action):
+                by_direction[selection.direction] = record
+
+        cells = []
+        required_layers = tuple(target.required_layers)
+        supported_receipt_layers = required_layers == ("full_body",)
+        for direction in target.directions:
+            record = by_direction.get(direction)
+            selection = record.selection if record is not None else None
+            coverage = getattr(record, "coverage_status", "MISSING") if record is not None else "MISSING"
+            workflow = getattr(record, "workflow_status", "NONE") if record is not None else "NONE"
+            stale = bool(getattr(record, "stale_reference", False)) if record is not None else False
+            present_layers = set(getattr(record, "layers", ())) if record is not None else set()
+            missing_layers = [layer for layer in required_layers if layer not in present_layers]
+            receipt = None
+            if (selection is not None and supported_receipt_layers and coverage == "CANONICAL_2_5D"
+                    and not stale and not missing_layers):
+                receipt = self.current_receipt(selection)
+            verified = bool(receipt and receipt.get("runtime_verified"))
+            cells.append({"direction": direction, "coverage": coverage,
+                          "workflow": workflow, "stale": stale,
+                          "required_layers": list(required_layers), "missing_layers": missing_layers,
+                          "runtime_verified": verified,
                           "qa": receipt.get("qa", {}).get("status", "UNREVIEWED") if receipt else "UNREVIEWED",
                           "human_review": receipt.get("human_review", {}).get("status", "NONE") if receipt else "NONE",
                           "sandbox": receipt.get("sandbox", {}).get("status", "NONE") if receipt else "NONE",
                           "receipt_sha256": receipt.get("receipt_sha256", "") if receipt else ""})
-        cells.sort(key=lambda row: row["direction"])
-        return {"profile": profile, "group": group, "action": action, "cells": cells,
-                "complete": bool(cells) and all(cell["coverage"] == "CANONICAL_2_5D" and not cell["stale"] and cell["runtime_verified"] for cell in cells)}
+        complete = bool(cells) and supported_receipt_layers and all(
+            cell["coverage"] == "CANONICAL_2_5D" and not cell["stale"]
+            and not cell["missing_layers"] and cell["runtime_verified"] for cell in cells)
+        return {"profile": profile, "group": group, "action": action,
+                "required_directions": list(target.directions), "required_layers": list(required_layers),
+                "cells": cells, "complete": complete}
 
     def make_sandbox_request(self, selection: Any, receipt: dict[str, Any], frame_paths: list[Path]) -> dict[str, Any]:
         """Copy exact frames to an immutable request bundle; no production assets are read."""

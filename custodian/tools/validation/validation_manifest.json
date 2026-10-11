@@ -37,6 +37,24 @@
   ],
   "tests": [
     {
+      "id": "campaign_geography_identity",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_geography_identity_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "geography",
+        "identity",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/geography/campaign_geography_registry.gd",
+        "custodian/game/world/geography/campaign_visit_reference.gd",
+        "custodian/tools/validation/campaign_geography_identity_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "world_simulation_abstract_activity",
       "type": "godot_script",
       "script": "res://tools/validation/world_simulation_abstract_activity_smoke.gd",
@@ -2604,6 +2622,7 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
         "custodian/game/actors/operator/presentation/operator_animation_player.gd",
         "custodian/tools/validation/operator_modular_layers_smoke.gd"
       ],
@@ -2936,6 +2955,7 @@
         "custodian/game/actors/operator/operator.gd",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
         "custodian/tools/validation/operator_upper_fx_canonical_smoke.gd"
       ],
       "timeout_sec": 40,
@@ -5093,6 +5113,25 @@
       "needs_import": false
     },
     {
+      "id": "operator_mobile_guard_strafe",
+      "type": "moment",
+      "scenario": "combat/operator_mobile_guard_strafe",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "guard",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/scenarios/combat/operator_mobile_guard_strafe.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "melee_soft_target_spacing",
       "type": "moment",
       "scenario": "combat/melee_soft_target_spacing",
@@ -6016,6 +6055,33 @@
       ],
       "timeout_sec": 180,
       "needs_import": true
+    },
+    {
+      "id": "operator_workbench_production_queue",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_workbench_production_queue_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "queue",
+        "generation_brief"
+      ],
+      "owners": [
+        "custodian/tools/operator/operator_2_5d_review.py",
+        "custodian/tools/operator/operator_2_5d_ingress.py",
+        "custodian/tools/operator/operator_generation_brief.py",
+        "custodian/tools/operator/ui/service.py",
+        "custodian/tools/operator/ui/app.py",
+        "custodian/tools/operator/ui/screens/main.py",
+        "custodian/tools/operator/ui/widgets/plan_table.py",
+        "custodian/tools/validation/operator_2_5d_review_smoke.py",
+        "custodian/tools/validation/operator_generation_brief_smoke.py",
+        "custodian/tools/validation/operator_workbench_production_queue_smoke.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
     },
     {
       "id": "enemy_savage_pounce",

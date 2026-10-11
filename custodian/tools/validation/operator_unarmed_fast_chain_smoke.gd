@@ -751,6 +751,20 @@ func _run_handoff_against_wall(
 
 ## Put the actor mid-handoff, with carry installed and still unspent.
 func _install_live_carry(operator: Node) -> void:
+	# Earlier cases deliberately exercise loadout changes. Re-establish the
+	# authored unarmed profile so this interruption fixture does not depend on
+	# whichever case ran immediately before it.
+	operator.call("_apply_unarmed_selection")
+	operator.set("using_unarmed", true)
+	operator.set("combat_loadout_mode", "melee")
+	operator.set("primary_weapon_equipped", false)
+	operator.set("_active_attack_profile", UNARMED)
+	operator.set("_active_melee_attack_profile", UNARMED.fast_chain_attack_profiles[0])
+	operator.set("_enemy_impact_lock_timer", 0.0)
+	operator.get("_action_controller").call("force_neutralize")
+	operator.call("_ensure_dodge_controller").call(
+		"cancel", &"fixture_reset", false, operator.call("_dodge_tuning")
+	)
 	operator.global_position = Vector2.ZERO
 	operator.set("velocity", Vector2.ZERO)
 	operator.set("_melee_attack_kind", "fast")
@@ -764,6 +778,15 @@ func _install_live_carry(operator: Node) -> void:
 	operator.set("_melee_fast_combo_step", 1)
 	operator.call(
 		"_begin_attack_drive", UNARMED.fast_chain_attack_profiles[1], Vector2.RIGHT
+	)
+	_assert_true(
+		bool(operator.call("_has_attack_drive_carry"))
+		and (operator.get("_attack_drive_carry_direction") as Vector2).dot(Vector2.RIGHT) > 0.99
+		and float(operator.get("_attack_drive_carry_speed")) > 0.0
+		and float(operator.get("_attack_drive_carry_distance_remaining")) > 0.0
+		and float(operator.get("_attack_drive_carry_time_remaining")) > 0.0
+		and float(operator.get("_attack_drive_delay_remaining")) > 0.0,
+		"successor handoff must install directional, unspent carry under incoming delay"
 	)
 
 

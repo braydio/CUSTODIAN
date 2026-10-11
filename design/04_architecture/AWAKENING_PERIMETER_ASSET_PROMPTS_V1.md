@@ -1,9 +1,11 @@
 # Awakening Perimeter Support: Image Generation Prompts V1
 
-**Status:** Production prompt contract only; 30 new images requested, **0 created or approved by this document**.
+**Status:** Production prompt contract for **27 planned generic perimeter images across nine non-Dust zones**; none is currently published or approved by this document. Zone 05 is superseded by the separate Dust Lung V2 manifest. Generated Gate/South Reach panoramas from the authoring conversation are **source-style candidates only**, not approved or registered production states.
 **Design authority:** [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md).
 **Intake:** [ASSET_PIPELINE_V2.md](ASSET_PIPELINE_V2.md).
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+
+**First batch (10 selected assets):** [AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md](AWAKENING_PERIMETER_BATCH_01_TEN_ASSETS.md), including full prompts and source/inbox paths for Zones 01, 06, 07, 10. It is a source-generation queue, not evidence of ten approved files.
 
 ## Universal style and negative lock
 
@@ -91,24 +93,22 @@ Each row below requests one independent static image, 1 frame, omni, 0 FPS, no a
 - Source: `custodian/asset_drop/source_work/awakening/awakening_locker_reliquary_perimeter_support/edge_transition_source.png`
 - Inbox: `custodian/asset_drop/inbox/awakening_locker_reliquary_perimeter_support/edge_transition.png`
 
-## 05 — Dust Lung Cistern: Subterranean Rupture
+## 05 — Dust Lung Cistern: SUPERSEDED BY V2
 
-**Family:** `awakening_dust_lung_perimeter_support` · **Kind:** `backdrop` · **Area:** `levels/awakening/05_dust_lung` (Road module ownership separately verified for 10).
+**Do not use the old generic perimeter-support prompts for Zone 05.**
 
-### `structural_support` — 512×512, 1f
-**Prompt:** "Produce one 512×512 pixel **seamless-tileable top-down foundation/rim texture** for Subterranean Rupture in CUSTODIAN's Awakening. Compose seamless rim-side cistern rockwork and reservoir foundation slabs with dry mineral crust; NO new walkable bridges. Materials: cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Every boundary repeats pixel-consistently; no standalone room center, no framing borders, no lighting vignette, no scenery implying a playable doorway. This is just the off-route lower architectural field beneath the existing Dust Lung Cistern production underlay. 1 static frame, native scale, overhead orthographic."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/structural_support_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/structural_support.png`
+Dust Lung is no longer an additive off-route support treatment around the
+existing small room. It has a dedicated full modular spatial/presentation
+reauthor:
 
-### `distant_structures` — 1024×512, 1f
-**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Subterranean Rupture. Depict plunging layered walls of a colossal dry cistern with suspended inaccessible bridge wreckage and distant pipe banks. Architecture: vast ruptured reservoir, deep maintenance shafts, hanging pipe galleries, broken bridges, enormous dry void. Materials: cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest first shocking reveal of institutional scale and collapse, and sit fully behind established gameplay art. No new entrances. One static isolated silhouette plate."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/distant_structures_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/distant_structures.png`
+- [AWAKENING_DUST_LUNG_V2.md](AWAKENING_DUST_LUNG_V2.md)
+- [AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md](AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md)
 
-### `edge_transition` — 256×256, 1f
-**Prompt:** "Produce a single 256×256 **transparent RGBA overhead edge-transition decal** for the off-route margin of Dust Lung Cistern. Include fractured lip masonry, torn pipe flange, falling rubble and haze-dissolved edges around an inaccessible chasm. Follow the same existing top-down CUSTODIAN palette of cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Irregular organically damaged silhouette and clean partially transparent erosion; subtle dark-to-haze visual falloff must not be baked as a solid square. It is a noninteractive support seam, not a corridor, gate or piece of playable ground. One static frame."
-- Source: `custodian/asset_drop/source_work/awakening/awakening_dust_lung_perimeter_support/edge_transition_source.png`
-- Inbox: `custodian/asset_drop/inbox/awakening_dust_lung_perimeter_support/edge_transition.png`
+The dedicated manifest owns the new P0 underlays, western lift spine,
+critical-route connector overlays, source-work/inbox naming, dimensions and
+image-generation prompts. The former family
+`awakening_dust_lung_perimeter_support` and its three generic states must not
+be generated.
 
 ## 06 — Undergate Mechanism Hall: Buried Routeworks
 
@@ -139,7 +139,7 @@ Each row below requests one independent static image, 1 frame, omni, 0 FPS, no a
 - Inbox: `custodian/asset_drop/inbox/awakening_gate_of_dust_perimeter_support/structural_support.png`
 
 ### `distant_structures` — 1024×512, 1f
-**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Ruined Threshold District. Depict fallen checkpoint terraces, collapsed buttress bridges, dislocated colossal statues and faint city silhouette through dust. Architecture: fortified threshold terraces, cracked defensive walls, collapsed causeway approaches and first hints of historical city. Materials: smoke-stained monumental limestone, dark civic basalt, tarnished bronze, ashen sand, rust-red dust. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest passage between institutional machinery and the scale of the old city, and sit fully behind established gameplay art. No new entrances. One static isolated silhouette plate."
+**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Ruined Threshold District. Depict fallen checkpoint terraces, collapsed buttress bridges, dislocated colossal statues and faint city silhouette through dust. Architecture: fortified threshold terraces, cracked defensive walls, collapsed causeway approaches and first hints of historical city. Materials: smoke-stained monumental limestone, dark civic basalt, tarnished bronze, ashen sand, rust-red dust. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest passage between institutional machinery and the scale of the old city, and sit fully behind established gameplay art. No new entrances. Place architectural density in peripheral terraces and lateral distant city fragments, with deliberate transparent negative space around the existing centerline and canonical Gate hero. Never depict a second monumental central Gate, an opened Gate state, or a new traversable causeway. Reconcile depth, charcoal/brass palette, and tonal brightness against the real scene-bound 1536×768 Gate plaza underlay. One static isolated silhouette plate."
 - Source: `custodian/asset_drop/source_work/awakening/awakening_gate_of_dust_perimeter_support/distant_structures_source.png`
 - Inbox: `custodian/asset_drop/inbox/awakening_gate_of_dust_perimeter_support/distant_structures.png`
 
@@ -196,7 +196,7 @@ Each row below requests one independent static image, 1 frame, omni, 0 FPS, no a
 - Inbox: `custodian/asset_drop/inbox/awakening_road_south_reach_perimeter_support/structural_support.png`
 
 ### `distant_structures` — 1024×512, 1f
-**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Fallen Civic Expanse. Depict distant ruined administrative arcades, plazas, colonnades, toppled civic arches and blocked branching streets. Architecture: collapsed colonnades, broken civic plazas, inaccessible avenues, distant administrative towers and city foundations. Materials: worn dark civic basalt, sun-bleached limestone, dulled brass wayfinding, low dusty rust and grey haze. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest the Road belongs to a much larger dead city; north barricade still closes the prologue, and sit fully behind established gameplay art. No new entrances. One static isolated silhouette plate."
+**Prompt:** "Produce one 1024×512 pixel **top-down overhead ruined-architecture silhouette** for Fallen Civic Expanse. Depict distant ruined administrative arcades, plazas, colonnades, toppled civic arches and blocked branching streets. Architecture: collapsed colonnades, broken civic plazas, inaccessible avenues, distant administrative towers and city foundations. Materials: worn dark civic basalt, sun-bleached limestone, dulled brass wayfinding, low dusty rust and grey haze. Make each ruined structure visibly inaccessible by collapse, masonry or void; arrange high-level masses with believable foundations and subdued distant values. Transparent RGBA outside irregular nonplayable structures, never an opaque rectangular full-canvas matte. This should suggest the Road belongs to a much larger dead city; north barricade still closes the prologue, and sit fully behind established gameplay art. No new entrances. Concentrate architecture in lateral ruined arcades and distant civic edges; keep the center open/transparent so no second road, central boulevard, plaza axis, northern opening, or route indication competes with the existing Road. Verify composition against all five registered Road modules and the South Reach 768×896 vertical civic-axis plate, using no replacement paving and no new northward passage. One static isolated silhouette plate."
 - Source: `custodian/asset_drop/source_work/awakening/awakening_road_south_reach_perimeter_support/distant_structures_source.png`
 - Inbox: `custodian/asset_drop/inbox/awakening_road_south_reach_perimeter_support/distant_structures.png`
 
@@ -209,4 +209,4 @@ Each row below requests one independent static image, 1 frame, omni, 0 FPS, no a
 
 For every asset: record family, state, actual generated resolution, expected inbox resolution, exact source and inbox path, 1f, image SHA-256, genuine alpha decision, seamless edge metric for `structural_support`, allowed aspect-preserving normalization, review status (SOURCE_READY_NEEDS_TUNE / RUNTIME_READY / REJECT_REGENERATE), and a 1:1 gameplay-scale crop against the existing live room. Packaging may use a `custodian.asset_handoff.v1` ZIP with checked manifest and source files; the handoff installer may only stage reviewed source/inbox assets, and it **does not ingest or bind** them.
 
-**Generation order:** 05 Dust Lung → 07 Gate of Dust → 10 South Reach for style/scale calibration; next 01/02/03/04 interiors; next 06 Undergate; finish 08 Approach and 09 optional Chapel. Human review of style family precedes batch production. Do not mark a downstream implementation packet ready/auto merely because prompts were written.
+**Generation order:** Calibrate generic off-route style with 07 Gate of Dust, 10 South Reach, and 01 Crèche, explicitly **not** 05 Dust Lung; next 02/03/04 interiors, 06 Undergate, then 08 Approach and 09 optional Chapel. Use a tight gameplay-scale composite against the exact live plates before approving each sample. The previously generated 07 and 10 panoramic images may be reused as reference/source donors, but their elevated perspective, central-route duplication and partial structural opacity do not qualify as runtime-ready art. Human review precedes batch production. Do not mark downstream implementation packets ready/auto merely because prompts were written.

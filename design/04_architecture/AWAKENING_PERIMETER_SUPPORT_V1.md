@@ -28,7 +28,7 @@ These are visual roles, not three extra playable regions. No physics, triggers, 
 | 02 | Recovery Ambulatory | **Abandoned Processing Wards** | awakening_ambulatory_perimeter_support | the Crèche was a processing facility, not a lone awakening chamber |
 | 03 | Attestation Gallery | **Silent Registry** | awakening_attestation_perimeter_support | identity verification once demanded a sprawling bureaucracy |
 | 04 | Locker Reliquary | **Sealed Armament Annex** | awakening_locker_reliquary_perimeter_support | P-9 issuance is a narrow surviving right, not general arsenal access |
-| 05 | Dust Lung Cistern | **Subterranean Rupture** | awakening_dust_lung_perimeter_support | first shocking reveal of institutional scale and collapse |
+| 05 | Dust Lung Cistern | **SUPERSEDED by Dust Lung V2** | `awakening_dust_lung_environment_v2` | full modular spatial/presentation reauthor; see `AWAKENING_DUST_LUNG_V2.md` |
 | 06 | Undergate Mechanism Hall | **Buried Routeworks** | awakening_undergate_perimeter_support | the player's mechanisms are exposed fragments of a city-scale transport system |
 | 07 | Gate of Dust | **Ruined Threshold District** | awakening_gate_of_dust_perimeter_support | passage between institutional machinery and the scale of the old city |
 | 08 | Custodian Approach | **Dead Processional Quarter** | awakening_approach_perimeter_support | history, burial and civic memory gradually replace sterile machinery |
@@ -45,7 +45,7 @@ These are visual roles, not three extra playable regions. No physics, triggers, 
 
 **04 Sealed Armament Annex.** Frame the Locker Reliquary with inaccessible designation-keyed vault banks, reinforced armament racks, sealed security compartments. Material language: smoked gunmetal, dark basalt flooring, brushed brass designation rails, faded amber lock indicators. Its storytelling purpose is P-9 issuance is a narrow surviving right, not general arsenal access. Do not depict accessible new exits.
 
-**05 Subterranean Rupture.** Frame the Dust Lung Cistern with vast ruptured reservoir, deep maintenance shafts, hanging pipe galleries, broken bridges, enormous dry void. Material language: cold charcoal stone, rusted pipe iron, chalky deposits, ashen sediment, diluted pale-blue daylight. Its storytelling purpose is first shocking reveal of institutional scale and collapse. Do not depict accessible new exits.
+**05 Dust Lung V2 supersession.** The former generic perimeter-support plan for Zone 05 is retired. Do not generate `awakening_dust_lung_perimeter_support` or its former `structural_support` / `distant_structures` / `edge_transition` states. Dust Lung now receives a full modular spatial and presentation reauthor under [AWAKENING_DUST_LUNG_V2.md](AWAKENING_DUST_LUNG_V2.md) with source-generation contracts in [AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md](AWAKENING_DUST_LUNG_V2_ASSET_MANIFEST.md). The old material/story thesis remains valid: colossal dry reservoir, deep shafts, broken bridges, pipe galleries, charcoal stone, rusted iron, mineral residue, ash and pale-blue depth. What is superseded is the assumption that these are merely off-route support around the existing small room.
 
 **06 Buried Routeworks.** Frame the Undergate Mechanism Hall with immense blind pressure and route-indexing mechanisms, gear housings, cable galleries and west-side departure records. Material language: oil-dark iron, lead-grey masonry, dull brass coils, worn calibration enamel, tiny dim indicator cyan. Its storytelling purpose is the player's mechanisms are exposed fragments of a city-scale transport system. Do not depict accessible new exits.
 
@@ -70,7 +70,7 @@ These are visual roles, not three extra playable regions. No physics, triggers, 
 
 ## Proposed Asset V2 source specification (planning sizes, not yet registered)
 
-Each named zone family is a **`backdrop` family** with three static, omni, no-mirror, one-frame states; native mapping = one source pixel per world unit where feasible. Same semantic states are independent images rather than baked expansions of existing production plates.
+Each remaining generic perimeter-support zone family is a **`backdrop` family** with three static, omni, no-mirror, one-frame states; native mapping = one source pixel per world unit where feasible. **Zone 05 is excluded** and follows its dedicated Dust Lung V2 manifest. Same semantic states are independent images rather than baked expansions of existing production plates.
 
 | State | Proposal | Alpha | Placement role |
 |---|---:|---|---|
@@ -100,6 +100,6 @@ custodian/content/metadata/assets/families/<family>.asset.json
 ## Status / dependencies
 
 - **Planning decision locked:** region identities and atmospheric progression.
-- **Technical/image production unfulfilled:** none of the 30 proposed perimeter images are claimed to exist or be ingested.
+- **Technical/image production unfulfilled:** the nine remaining generic perimeter zones still have 27 proposed images; Zone 05’s former three generic support images are superseded by the dedicated Dust Lung V2 family and must not be generated.
 - **Active prerequisite:** the 04→05 fade-ownership repair is complete and passed paired review. Complete the Awakening handoff/art-convergence workstream before touching shared registration/fade.
 - **Human gates:** actual generated art and aesthetic acceptance for each group; preserve draft/manual downstream packet states until reviewed source and manifest exist.
