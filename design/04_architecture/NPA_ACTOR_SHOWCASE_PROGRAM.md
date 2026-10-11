@@ -23,7 +23,7 @@ Produce a complete, playable NPA proving ground modeled after the existing Lords
 | --- | --- | --- | --- |
 | 1 | `npa-showcase-arena-foundation` + `review-npa-showcase-arena-foundation` | `none` | repo-local authoring validation |
 | 2 | `npa-showcase-existing-enemy-hardening` + `review-npa-showcase-existing-enemy-hardening` | `none` | repo-local authoring validation |
-| 3 | `npa-showcase-existing-drone-hardening` + `review-npa-showcase-existing-drone-hardening` | `none` | NPA-7 implementation and independent review are landed. Refresh this packet against the actual current APIs and verify the exact pair on main; do not recreate or reimplement NPA-7. |
+| 3 | `npa-showcase-existing-drone-hardening` + `review-npa-showcase-existing-drone-hardening` | `review-npa-7-commanded-ally-contracts, review-npa-showcase-existing-enemy-hardening` | Refreshed against landed NPA-7 and existing-enemy reviews; ready/auto. Preserve NPA-7 relationship, targeting, identity, manager and squad-state ownership; do not recreate or reimplement NPA-7. |
 | 4 | `npa-showcase-existing-vaultwing-proof` + `review-npa-showcase-existing-vaultwing-proof` | `review-vaultwing-runtime-hardening` | Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor. |
 | 5 | `npa-showcase-broken-warrant-actor` + `review-npa-showcase-broken-warrant-actor` | `npa-showcase-existing-enemy-hardening` | repo-local authoring validation |
 | 6 | `npa-showcase-escort-frame-m7-actor` + `review-npa-showcase-escort-frame-m7-actor` | `npa-showcase-existing-drone-hardening` | Refresh this packet against landed NPA-7 runtime and reviewed existing-drone hardening; preserve DroneManager and DroneTargeting ownership. |
