@@ -217,7 +217,9 @@ func try_apply_hit() -> void:
 	var charge_multiplier := 1.0 + 0.22 * charge_ratio
 	var allowed_forward := config.hit_forward_reach_px * charge_multiplier
 	var allowed_lateral := config.hit_lateral_reach_px * (1.0 + 0.15 * charge_ratio)
-	var spatial := EnemyHitSpatialContract.directional_lane(host.global_position, target_node.global_position, direction, 4.0, allowed_forward, allowed_lateral)
+	var spatial := EnemyHitSpatialContract.directional_actor_lane(
+		host, target_node, direction, 4.0, allowed_forward, allowed_lateral
+	)
 	closest_approach = minf(closest_approach, float(spatial.separation_px))
 	last_spatial_context = spatial.duplicate(true)
 	if not bool(spatial.spatial_valid):

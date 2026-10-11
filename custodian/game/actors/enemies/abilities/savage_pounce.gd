@@ -136,9 +136,9 @@ func _try_apply_hit() -> void:
 	var target_id := int(target_node.get_instance_id())
 	if hit_targets.has(target_id):
 		return
-	var spatial := EnemyHitSpatialContract.directional_lane(
-		host.global_position,
-		target_node.global_position,
+	var spatial := EnemyHitSpatialContract.directional_actor_lane(
+		host,
+		target_node,
 		direction,
 		5.0,
 		config.hit_forward_reach_px,
