@@ -54,6 +54,26 @@
 - Follow-up: `fixed-in-scope`
 - What worked: The real Textual Preview→Confirm pilot and 40-test changed-file validation both passed; the renderer smoke also verified real sandbox output and a bounded stalled-child failure.
 
+## Independent Review
+
+- Status: `passed`
+- Review workstream: `review-operator-animation-decision-authority-hardening-v1-review-corrections-1`
+- Reviewed on main: `8c0bd9e2d26e14f83954640d3fb41c2d4b4f76ae`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, workflow`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Non-blocking issues: `0`
+- Optional improvements: `0`
+- Correction finding IDs: `none`
+- Next-slice finding IDs: `none`
+- Human-decision finding IDs: `none`
+- Detailed review summary: `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+- Evidence: R0-01 and R0-02 are fixed. The review initially identified R1-01 because the isolated reviewer environment lacked Textual. During recovery, the existing UI pilot was replayed from this claimed review worktree using the already available Textual-enabled test environment; `PASS TIMING UI FLOW` and the smoke's final PASS confirm the actual Preview→Confirm controls wrote a current hash-bound decision. The subsequent review-runner import retry passed `operator_2_5d_review` (1/1, 13.8 seconds), including real sandbox and current-receipt checks. No blocking defects or material evidence gaps remain.
+- Review conclusion: Service preview/consume calls cannot write approval; only the active confirmation-button path reaches the writer, and it rechecks identity and current saved-input hashes. The real renderer and timeout controls pass. The initially unrepeatable positive UI evidence was reproduced in the claimed review worktree, resolving R1-01 without an implementation change.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`

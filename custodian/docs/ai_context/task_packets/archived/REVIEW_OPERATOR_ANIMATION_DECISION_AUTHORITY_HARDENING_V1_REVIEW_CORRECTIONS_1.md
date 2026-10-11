@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-animation-decision-authority-hardening-v1-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-animation-decision-authority-hardening-v1-review-corrections-1`
@@ -34,13 +34,46 @@
 
 Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` from a fresh context. Reconstruct the correction against the original stable finding IDs; do not rely on the correction author's transient rationale.
 
+## Review Result
+
+- Outcome: `passed`
+- Reviewed main: `8c0bd9e2d26e14f83954640d3fb41c2d4b4f76ae`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Findings: `R0-01 fixed; R0-02 fixed; R1-01 evidence gap resolved during recovery; no new findings`
+- Blocking defects: `0`
+- Material evidence gaps: `0`
+- Focused evidence: `operator_2_5d_review` passed (one selected, one passed; real Godot sandbox/current-receipt controls and bounded timeout negative control). The Textual-enabled `operator_workbench_ui_smoke.py` was replayed from this claimed review worktree and passed the actual Preview→Confirm pilot, including exact current decision/hash checks. `check_ai_context.py`, `validate_review_pairing.py`, `task_packet_index.py`, and `git diff --check` passed.
+- Detailed review summary: `REVIEW_OPERATOR_ANIMATION_DECISION_AUTHORITY_HARDENING_V1_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `none`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The independent review verified service-only preview/consume remains read-only, the active UI event path is the sole approval writer, exact current input hashes are rechecked, and real sandbox/receipt/timeout controls pass. The one environment-related positive UI evidence gap was resolved by replaying the actual Textual pilot from the claimed review worktree. No art or timing decision was made, and no reviewed implementation file was modified.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The paired runner initially could not find durable review state because the summary was not in the exact claimed worktree. The reviewer Python environment lacked Textual and PyPI DNS was unavailable; its first local pairing validator also could not write shared FETCH_HEAD inside the sandbox.
+- Root cause / contributing factors: A non-canonical summary destination, missing optional UI packages, restricted package-index network, and sandbox read-only shared Git metadata.
+- Prevention / pipeline improvement: Place the summary at the exact claimed worktree root; reuse the available local Textual environment; run shared-ref validation from the coordination-capable shell.
+- Tooling / docs drift discovered: No product or validation contract drift. The paired runner correctly failed closed without a summary discoverable at the exact worktree.
+- Follow-up: `fixed-in-scope`
+- What worked: The preserved claimed worktree allowed recovery, actual UI pilot replay, and normal durable review closeout.
+
 ## Handoff
 
-- Next workstream: `operator-animation-decision-authority-hardening-v1-review-corrections-1`
-- Next packet state: `ready`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `operator-2-5d-runtime-promotion`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38`
-- Refresh reason: `none`
-- Next action: `Implement the bounded correction for R0-01 and R0-02, then run its fresh paired review.`
-- Blockers or open questions: `The fresh correction review must pass before returning to WB25-6 planning.`
+- Refresh reason: `Fresh correction review passed. Reconcile the final timing-authority correction evidence with WB25-6's existing hold: no timing is approved, no idle leaves are verified, and runtime promotion remains draft/manual pending its declared cohort review and human decisions.`
+- Next action: `Bring the landed correction and paired-review receipt to the recorded authoring chat; keep WB25-6 held until the cohort dependency review and explicit timing/cohort decisions are resolved.`
+- Blockers or open questions: `WB25-6 remains draft/manual; no authoritative idle FPS or release cohort has been approved.`
