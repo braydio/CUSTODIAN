@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-scratch-ram-budget-hardening-v1`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-scratch-ram-budget-hardening-v1`
 - Locks: `validation-infrastructure, agent-workflow`

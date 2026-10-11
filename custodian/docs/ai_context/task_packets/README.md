@@ -32,6 +32,7 @@ normal closeout.
 
 <!-- task_packet_index:managed:start -->
 - `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Reject false-green Godot smoke results and invalid imported runtime resource metadata while preserving narrowly authored expected rollback errors.
+- `AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Keep heavy disposable agent scratch on disk and bound concurrent expensive Godot work across worktrees so parallel agent sessions cannot exhaust RAM.
 - `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` — Make changed-file failure reports attributable to exact tests, selection owners, skip reasons and explicit immutable baseline evidence without weakening gree...
 - `AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Expose an accurate, nonmutating workstream-finish readiness report before expensive synchronization and landing while keeping workstream.py finish authoritat...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
@@ -68,6 +69,7 @@ normal closeout.
 - `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
 - `RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — Turn the already-landed Reciprocal Continuity / Ash-Bell canon correction into a fail-closed, focused regression contract so active docs/runtime cannot silen...
 - `REVIEW_AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Independently falsify the new import/truth gate using resource failures masked by PASS markers and expected-rollback near misses.
+- `REVIEW_AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md` — Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
 - `REVIEW_AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` — Independently prove baseline attribution cannot misrepresent or waive a genuine failure.
 - `REVIEW_AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Independently prove the closeout preflight is nonmutating, truthful and consistent with finish's authoritative final gates.
 - `REVIEW_ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Independently verify the registered Highlands generated destination against its archived contract.
