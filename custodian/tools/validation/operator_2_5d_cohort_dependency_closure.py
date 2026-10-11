@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -170,24 +171,61 @@ def _runtime_inventory(root: Path, manifest: dict[str, Any], catalog: dict[str, 
 def _edges() -> list[dict[str, Any]]:
     # Classifications concern whether the proposed full-body cohort has a proven
     # end-to-end presentation edge, not whether a legacy transition currently works.
+    operator_path = "custodian/game/actors/operator/operator.gd"
+    posture_path = "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd"
     rows = [
-        ("relaxed_idle", "ready_idle", "engagement becomes active", "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance", ["idle_relaxed_01", "idle_ready_01", "relaxed_to_ready_01"], "OPEN", "existing path chooses a modular pair with east/west projection; no 2.5D full-body owner path exists"),
-        ("ready_idle", "relaxed_idle", "engagement quiets", "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance", ["idle_ready_01", "idle_relaxed_01", "ready_to_relaxed_01"], "OPEN", "same composition mismatch; completion is tied to the legacy transition clip"),
-        ("relaxed_idle", "locomotion_idle", "movement begins below walk threshold", "operator._sync_animation_from_state", ["idle_relaxed_01", "idle_01"], "OPEN", "posture is skipped during movement; current locomotion prefers modular body layers"),
-        ("locomotion_idle", "walk", "movement crosses walk threshold", "operator._sync_animation_from_state -> _sync_modular_locomotion_layers", ["idle_01", "walk_01"], "OPEN", "selector has legacy identities but no generation-selected full-body composition seam"),
-        ("walk", "run", "sprint input / run threshold", "operator._sync_animation_from_state -> _sync_modular_locomotion_layers", ["walk_01", "run_01"], "OPEN", "run and walk remain on modular layer owner before full-body fallback"),
-        ("run", "walk", "sprint ends", "operator._sync_animation_from_state -> _sync_modular_locomotion_layers", ["run_01", "walk_01"], "OPEN", "reverse movement transition has the same owner/generation gap"),
-        ("posture_or_locomotion", "guard_or_parry", "guard/parry action acquires body", "OperatorBodyPresenter + operator guard/parry presentation", ["guard", "parry"], "OPEN", "exclusive legacy body ownership and FX/socket lifetime must be reconciled with full-body cohort"),
-        ("posture_or_locomotion", "dodge", "dodge charge/flow preempts body", "operator dodge presentation / OperatorBodyPresenter", ["dodge_charge", "dodge_flow"], "OPEN", "dodge identities are outside candidate; exact outgoing and settle seams remain 96px"),
-        ("posture_or_locomotion", "melee_action", "melee attack preempts body", "operator melee presentation / OperatorBodyPresenter", ["melee_attack", "parry_recovery"], "OPEN", "profile-specific melee full-body/body-slaved layers, weapon socket and FX ownership are outside cohort"),
-        ("posture_or_locomotion", "ranged_action", "ranged aim/fire preempts body", "operator ranged presentation / OperatorBodyPresenter", ["ranged_ready", "fire"], "OPEN", "ranged upper-body, weapon and muzzle/socket layers are outside unarmed cohort"),
-        ("unarmed", "equipped_or_sheathed", "equip/sheathe changes profile and body owner", "operator.start_equip_weapon_presentation / melee and ranged posture sync", ["draw_01", "sheath_01", "idle_ready_01"], "OPEN", "equipment transition and following profile posture have separate identity/layer requirements"),
-        ("action_owner", "neutral_settle", "action completion returns neutral body", "OperatorPresentationController completion clock + operator posture settle", ["action_recovery", "idle_relaxed_01", "idle_ready_01"], "OPEN", "completion callbacks/anchors must settle into the same selected generation without stale modular renderers"),
+        ("relaxed_idle", "ready_idle", "engagement becomes active", "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance", ["idle_relaxed_01", "idle_ready_01", "relaxed_to_ready_01"], "OPEN", "existing path chooses a modular pair with east/west projection; no 2.5D full-body owner path exists", [{"path": operator_path, "symbol": "operator._update_unarmed_presentation_posture"}, {"path": posture_path, "symbol": "UnarmedPosturePresentation.advance"}]),
+        ("ready_idle", "relaxed_idle", "engagement quiets", "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance", ["idle_ready_01", "idle_relaxed_01", "ready_to_relaxed_01"], "OPEN", "same composition mismatch; completion is tied to the legacy transition clip", [{"path": operator_path, "symbol": "operator._update_unarmed_presentation_posture"}, {"path": posture_path, "symbol": "UnarmedPosturePresentation.advance"}]),
+        ("relaxed_idle", "locomotion_idle", "movement begins below walk threshold", "operator._update_animation", ["idle_relaxed_01", "idle_01"], "OPEN", "posture is skipped during movement; current locomotion prefers modular body layers", [{"path": operator_path, "symbol": "operator._update_animation"}]),
+        ("locomotion_idle", "walk", "movement crosses walk threshold", "operator._update_animation -> operator._sync_modular_locomotion_layers", ["idle_01", "walk_01"], "OPEN", "selector has legacy identities but no generation-selected full-body composition seam", [{"path": operator_path, "symbol": "operator._update_animation"}, {"path": operator_path, "symbol": "operator._sync_modular_locomotion_layers"}]),
+        ("walk", "run", "sprint input / run threshold", "operator._update_animation -> operator._sync_modular_locomotion_layers", ["walk_01", "run_01"], "OPEN", "run and walk remain on modular layer owner before full-body fallback", [{"path": operator_path, "symbol": "operator._update_animation"}, {"path": operator_path, "symbol": "operator._sync_modular_locomotion_layers"}]),
+        ("run", "walk", "sprint ends", "operator._update_animation -> operator._sync_modular_locomotion_layers", ["run_01", "walk_01"], "OPEN", "reverse movement transition has the same owner/generation gap", [{"path": operator_path, "symbol": "operator._update_animation"}, {"path": operator_path, "symbol": "operator._sync_modular_locomotion_layers"}]),
+        ("posture_or_locomotion", "guard_or_parry", "guard/parry action acquires body", "OperatorBodyPresenter + operator guard/parry presentation", ["guard", "parry"], "OPEN", "exclusive legacy body ownership and FX/socket lifetime must be reconciled with full-body cohort", {"status": "UNKNOWN", "reason": "guard/parry acquisition and return owners are not resolved to edge-specific source evidence in this audit"}),
+        ("posture_or_locomotion", "dodge", "dodge charge/flow preempts body", "operator dodge presentation / OperatorBodyPresenter", ["dodge_charge", "dodge_flow"], "OPEN", "dodge identities are outside candidate; exact outgoing and settle seams remain 96px", {"status": "UNKNOWN", "reason": "dodge acquisition and return owners are not resolved to edge-specific source evidence in this audit"}),
+        ("posture_or_locomotion", "melee_action", "melee attack preempts body", "operator melee presentation / OperatorBodyPresenter", ["melee_attack", "parry_recovery"], "OPEN", "profile-specific melee full-body/body-slaved layers, weapon socket and FX ownership are outside cohort", {"status": "UNKNOWN", "reason": "melee acquisition and return owners are not resolved to edge-specific source evidence in this audit"}),
+        ("posture_or_locomotion", "ranged_action", "ranged aim/fire preempts body", "operator ranged presentation / OperatorBodyPresenter", ["ranged_ready", "fire"], "OPEN", "ranged upper-body, weapon and muzzle/socket layers are outside unarmed cohort", {"status": "UNKNOWN", "reason": "ranged acquisition and return owners are not resolved to edge-specific source evidence in this audit"}),
+        ("unarmed", "equipped_or_sheathed", "equip/sheathe changes profile and body owner", "operator.start_equip_weapon_presentation / melee and ranged posture sync", ["draw_01", "sheath_01", "idle_ready_01"], "OPEN", "equipment transition and following profile posture have separate identity/layer requirements", {"status": "UNKNOWN", "reason": "equip/sheathe edge ownership is not resolved to edge-specific source evidence in this audit"}),
+        ("action_owner", "neutral_settle", "action completion returns neutral body", "OperatorPresentationController completion clock + operator posture settle", ["action_recovery", "idle_relaxed_01", "idle_ready_01"], "OPEN", "completion callbacks/anchors must settle into the same selected generation without stale modular renderers", {"status": "UNKNOWN", "reason": "action completion's complete presentation edge is not resolved to edge-specific source evidence in this audit"}),
     ]
-    return [{"id": f"edge-{i+1:02d}", "from": a, "to": b, "trigger": trigger,
-             "consumer": consumer, "identities_or_seams": ids, "classification": status,
-             "evidence": {"path": "custodian/game/actors/operator/operator.gd", "symbol": consumer},
-             "reason": reason} for i, (a,b,trigger,consumer,ids,status,reason) in enumerate(rows)]
+    result = []
+    for i, (a, b, trigger, consumer, ids, status, reason, evidence) in enumerate(rows):
+        result.append({"id": f"edge-{i+1:02d}", "from": a, "to": b, "trigger": trigger,
+                       "consumer": consumer, "identities_or_seams": ids, "classification": status,
+                       "evidence": evidence, "reason": reason})
+    return result
+
+
+def _edge_evidence_resolves(root: Path, evidence: Any) -> bool:
+    """Check source references structurally; UNKNOWN must explain its boundary."""
+    if isinstance(evidence, dict) and evidence.get("status") == "UNKNOWN":
+        return bool(str(evidence.get("reason", "")).strip())
+    if not isinstance(evidence, list) or not evidence:
+        return False
+    for reference in evidence:
+        if not isinstance(reference, dict):
+            return False
+        path = root / str(reference.get("path", ""))
+        symbol = str(reference.get("symbol", ""))
+        if not path.is_file() or not symbol:
+            return False
+        method = symbol.rsplit(".", 1)[-1]
+        source = path.read_text(encoding="utf-8")
+        if re.search(rf"^\s*func\s+{re.escape(method)}\s*\(", source, re.MULTILINE) is None:
+            return False
+    return True
+
+
+def _ground_edges(root: Path) -> list[dict[str, Any]]:
+    edges = _edges()
+    for edge in edges:
+        if not _edge_evidence_resolves(root, edge["evidence"]):
+            edge["evidence"] = {
+                "status": "UNKNOWN",
+                "reason": "one or more source references did not resolve in this checkout",
+            }
+            edge["classification"] = "UNKNOWN"
+            edge["reason"] += "; source evidence failed current-checkout resolution"
+    return edges
 
 
 def build_report(root: Path = ROOT, workspace_root: Path | None = None) -> dict[str, Any]:
@@ -255,7 +293,7 @@ def build_report(root: Path = ROOT, workspace_root: Path | None = None) -> dict[
     authority_paths = [PLAN, REACHABILITY, OPERATOR, SELECTOR, PRESENTER, CONTROLLER, POSTURE, MANIFEST, CATALOG, FRAMES,
                        REVIEW, Path("custodian/tools/operator/operator_animation_targets.py"), CORRECTION]
     input_hashes = {p.as_posix(): sha(root / p) for p in authority_paths}
-    edges = _edges()
+    edges = _ground_edges(root)
     return {
         "schema": "custodian.operator_2_5d_cohort_dependency_closure.v1",
         "investigation": {"main_sha": git_value(root, "rev-parse", "HEAD"),
@@ -337,9 +375,12 @@ def markdown(report: dict[str, Any]) -> str:
               "The eight relaxed-idle Aseprite documents, source strips, and Source Sessions match the correction receipt hashes. Their manifests retain a physical 15 × 125 ms document clock and 8 FPS preview, with `timing_authority=false`; none has a current effective receipt or publication. The other six families have null frame, loop, and FPS contracts.", "",
               "## Runtime Composition and Edges", "",
               "The proposed art is eight-direction `full_body`. Current unarmed posture instead requires `lower_body + upper_body` and projects requested headings to east/west. Locomotion normally prefers modular layers. The selector and runtime manifest are generation-neutral, so current semantic rows prove legacy availability only.", "",
-              "| Edge | Trigger | Consumer | State |", "|---|---|---|---|"]
+              "| Edge | Trigger | Consumer | State | Evidence |", "|---|---|---|---|---|"]
     for edge in report["edges"]:
-        lines.append(f"| `{edge['from']} → {edge['to']}` | {edge['trigger']} | `{edge['consumer']}` | **{edge['classification']}** |")
+        evidence = edge["evidence"]
+        evidence_text = ("; ".join(f"`{item['path']}::{item['symbol']}`" for item in evidence)
+                         if isinstance(evidence, list) else f"UNKNOWN: {evidence['reason']}")
+        lines.append(f"| `{edge['from']} → {edge['to']}` | {edge['trigger']} | `{edge['consumer']}` | **{edge['classification']}** | {evidence_text} |")
     lines += ["", "## Blocking Gaps", ""] + [f"- {gap}" for gap in report["blocking_gaps"]]
     lines += ["", "## Recommended Next Steps", ""] + [f"{i}. {step}" for i, step in enumerate(report["recommended_next_steps"], 1)]
     lines += ["", "## Invalidation", "", "Regenerate this report after any source SHA changes in the JSON `investigation.source_evidence_sha256` map, any plan/reachability/presenter/selector/runtime-manifest/catalog/SpriteFrames change, or any Workbench/receipt change. A missing external workspace is `UNAVAILABLE`; it is never interpreted as zero authored directions or proof of absence.", ""]

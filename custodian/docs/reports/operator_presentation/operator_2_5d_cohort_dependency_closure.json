@@ -1306,10 +1306,16 @@
     {
       "classification": "OPEN",
       "consumer": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance"
-      },
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_unarmed_presentation_posture"
+        },
+        {
+          "path": "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd",
+          "symbol": "UnarmedPosturePresentation.advance"
+        }
+      ],
       "from": "relaxed_idle",
       "id": "edge-01",
       "identities_or_seams": [
@@ -1324,10 +1330,16 @@
     {
       "classification": "OPEN",
       "consumer": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance"
-      },
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_unarmed_presentation_posture"
+        },
+        {
+          "path": "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd",
+          "symbol": "UnarmedPosturePresentation.advance"
+        }
+      ],
       "from": "ready_idle",
       "id": "edge-02",
       "identities_or_seams": [
@@ -1341,11 +1353,13 @@
     },
     {
       "classification": "OPEN",
-      "consumer": "operator._sync_animation_from_state",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._sync_animation_from_state"
-      },
+      "consumer": "operator._update_animation",
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_animation"
+        }
+      ],
       "from": "relaxed_idle",
       "id": "edge-03",
       "identities_or_seams": [
@@ -1358,11 +1372,17 @@
     },
     {
       "classification": "OPEN",
-      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
-      },
+      "consumer": "operator._update_animation -> operator._sync_modular_locomotion_layers",
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_animation"
+        },
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._sync_modular_locomotion_layers"
+        }
+      ],
       "from": "locomotion_idle",
       "id": "edge-04",
       "identities_or_seams": [
@@ -1375,11 +1395,17 @@
     },
     {
       "classification": "OPEN",
-      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
-      },
+      "consumer": "operator._update_animation -> operator._sync_modular_locomotion_layers",
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_animation"
+        },
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._sync_modular_locomotion_layers"
+        }
+      ],
       "from": "walk",
       "id": "edge-05",
       "identities_or_seams": [
@@ -1392,11 +1418,17 @@
     },
     {
       "classification": "OPEN",
-      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
-      "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
-      },
+      "consumer": "operator._update_animation -> operator._sync_modular_locomotion_layers",
+      "evidence": [
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._update_animation"
+        },
+        {
+          "path": "custodian/game/actors/operator/operator.gd",
+          "symbol": "operator._sync_modular_locomotion_layers"
+        }
+      ],
       "from": "run",
       "id": "edge-06",
       "identities_or_seams": [
@@ -1411,8 +1443,8 @@
       "classification": "OPEN",
       "consumer": "OperatorBodyPresenter + operator guard/parry presentation",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "OperatorBodyPresenter + operator guard/parry presentation"
+        "reason": "guard/parry acquisition and return owners are not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "posture_or_locomotion",
       "id": "edge-07",
@@ -1428,8 +1460,8 @@
       "classification": "OPEN",
       "consumer": "operator dodge presentation / OperatorBodyPresenter",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator dodge presentation / OperatorBodyPresenter"
+        "reason": "dodge acquisition and return owners are not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "posture_or_locomotion",
       "id": "edge-08",
@@ -1445,8 +1477,8 @@
       "classification": "OPEN",
       "consumer": "operator melee presentation / OperatorBodyPresenter",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator melee presentation / OperatorBodyPresenter"
+        "reason": "melee acquisition and return owners are not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "posture_or_locomotion",
       "id": "edge-09",
@@ -1462,8 +1494,8 @@
       "classification": "OPEN",
       "consumer": "operator ranged presentation / OperatorBodyPresenter",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator ranged presentation / OperatorBodyPresenter"
+        "reason": "ranged acquisition and return owners are not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "posture_or_locomotion",
       "id": "edge-10",
@@ -1479,8 +1511,8 @@
       "classification": "OPEN",
       "consumer": "operator.start_equip_weapon_presentation / melee and ranged posture sync",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "operator.start_equip_weapon_presentation / melee and ranged posture sync"
+        "reason": "equip/sheathe edge ownership is not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "unarmed",
       "id": "edge-11",
@@ -1497,8 +1529,8 @@
       "classification": "OPEN",
       "consumer": "OperatorPresentationController completion clock + operator posture settle",
       "evidence": {
-        "path": "custodian/game/actors/operator/operator.gd",
-        "symbol": "OperatorPresentationController completion clock + operator posture settle"
+        "reason": "action completion's complete presentation edge is not resolved to edge-specific source evidence in this audit",
+        "status": "UNKNOWN"
       },
       "from": "action_owner",
       "id": "edge-12",
@@ -1801,7 +1833,7 @@
       "other_candidate_workspace_manifests": 0,
       "receipt_inventory_status": "EMPTY",
       "status": "AVAILABLE",
-      "workspace_checkout_behind_main": "67",
+      "workspace_checkout_behind_main": "76",
       "workspace_checkout_head": "19d466e7817cc15c5a07ffef67054e5c45215b02",
       "workspace_checkout_porcelain": "?? custodian/asset_drop/inbox/operator_2_5d/\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__e__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__n__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__ne__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__nw__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__s__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__se__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__sw__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__w__15f__128.png",
       "workspace_checkout_status": "DIRTY",
@@ -1862,8 +1894,8 @@
     }
   ],
   "investigation": {
-    "main_sha": "7d14aa7d697ad39696d873c1547092e6f2acb3f4",
-    "origin_main_sha": "7d14aa7d697ad39696d873c1547092e6f2acb3f4",
+    "main_sha": "7e8049e96baa70630f9d66ed5520fbed83f998a3",
+    "origin_main_sha": "0d7b4d8867cb07fc358505f1f414837a5d065266",
     "read_only": true,
     "source_evidence_sha256": {
       "custodian/content/data/operator/generated/operator_animation_catalog.generated.json": "faa200866f16738ab72fd3b912d33418f726c33b4b977423de7ba590ee7e74fb",
@@ -1880,7 +1912,7 @@
       "custodian/tools/operator/operator_animation_targets.py": "879ed88e816d96ae8b617c3998900c1343b64c4180ff870c23cfc48f89312ba2",
       "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json": "93b2c79146d3974f0c085f9e149c0ce1abc21cf09a21ad7ea928ac636ee6e753"
     },
-    "worktree_branch": "agent/operator-2-5d-cohort-dependency-closure"
+    "worktree_branch": "agent/operator-2-5d-cohort-dependency-closure-review-corrections-1"
   },
   "negative_controls": {
     "legacy_modular_layers_are_not_full_body": {
