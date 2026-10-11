@@ -439,12 +439,12 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
 - ChatGPT/user planning refresh required: `yes`
 """
         packet = runner.parse_packet("review.md", content)
-        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \\
+        with patch.object(runner, "packet_at_main", return_value=("review.md", content, packet)), \
              patch.object(runner, "git", return_value=target_packet()):
             runner.validate_eligible_review(Path("."), "review-sample")
 
         for gated in (
-            content.replace("- Refresh applies to: `successor`\\n", ""),
+            content.replace("- Refresh applies to: `successor`\n", ""),
             content.replace("- Next workstream: `next-slice`", "- Next workstream: `none`"),
             content.split("## Handoff", 1)[0],
             content.replace("- ChatGPT/user planning refresh required: `no`",
@@ -464,7 +464,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         self.assertIsNone(parsed.error)
         self.assertEqual(parsed.status, "ready")
         target = (ROOT / parsed.review_target_packet).read_text(encoding="utf-8")
-        with patch.object(runner, "packet_at_main", return_value=(review_path, content, parsed)), \\
+        with patch.object(runner, "packet_at_main", return_value=(review_path, content, parsed)), \
              patch.object(runner, "git", return_value=target):
             runner.validate_eligible_review(ROOT, "review-vaultwing-runtime-hardening")
 
