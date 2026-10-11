@@ -27,7 +27,7 @@
 - Review focus: Source-of-truth ownership, authentic actor/scene integration, independent evidence, behavior equivalence, and no test fake.
 - Acceptance: Findings-first independent receipt with zero blocking findings and zero material evidence gaps for pass. Use stable cycle R<cycle>-NN IDs and bounded correction/re-review where needed; do not patch the reviewed implementation.
 - Review result: pass (zero blocking findings; zero material evidence gaps; see durable receipt).
-- Review receipt: `custodian/docs/ai_context/review_receipts/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING_R0.md`
+- Review receipt: `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md#independent-review`
 - Non-goals: No opportunistic adjacent fixes, additional actors, global NPC base or reviewer self-approval of subjective art.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 

@@ -10,7 +10,7 @@ The initial runtime blocker was a missing generated Godot import/class cache. Ru
 
 Source review confirmed that Marine Dash and Savage Pounce alone use the actor-aware directional lane, which extends forward reach by projected collision support only when both root collision shapes are enabled. Existing directional-lane users remain unchanged. The real-scene fixture covers public ability requests, expected semantic lifecycle states and once-only corpse loot. `git diff --check` passed for the implementation commit and against stored main.
 
-Evidence and report hashes are recorded in `custodian/docs/ai_context/review_receipts/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING_R0.md`.
+The durable review receipt and report hashes are recorded in the `Independent Review` section of `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md`.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
