@@ -1,0 +1,31 @@
+# REVIEW: AGENT SCRATCH RAM BUDGET HARDENING V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-scratch-ram-budget-hardening-v1`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `agent-scratch-ram-budget-hardening-v1`
+- Locks: `validation-infrastructure, agent-workflow`
+- Review: `none`
+- Review target workstream: `agent-scratch-ram-budget-hardening-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_SCRATCH_RAM_BUDGET_HARDENING_V1.md`
+- Reviewed main: `19d466e7817cc15c5a07ffef67054e5c45215b02`
+- Authoring chat: `none`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Summary backlink: State `Authoring chat: none` in every review/correction/recovery/closeout summary and Next Handoff.
+- Goal: Independently prove scratch relocation and the Godot job budget reduce RAM exposure without weakening the project lock or deleting protected state.
+- Reviewed implementation acceptance: Test every acceptance item in the implementation packet, especially lock-namespace stability under differing TMPDIR, budget plus project-lock layering, stale-holder takeover and zero-deletion reporting.
+- Review evidence: Landed diff, implementation packet and summary, before/after measurements, concurrent-process fixtures run independently.
+- Correction threshold: Split lock namespace, deadlock on re-entrancy, budget that bypasses the project lock, any deletion of a worktree or evidence, or a surviving `/tmp` Godot home require corrections; cosmetic items are next-slice.
+- Focused validation: Rerun lock smoke extensions with two differing TMPDIR values and concurrent launches; run the reporter on a fixture with a claimed, a dirty and a tmpfs worktree; run AI context, pairing and index checks.
+- Review focus: Lock identity, fail-closed behavior, protection of claimed/dirty worktrees, no duplicate scheduler.
+- Acceptance: Findings-first fresh-context review with R0-NN evidence-backed findings or a passed receipt; no implementation edits.
+- Non-goals: No change to runtime, unrelated workstreams, or host-level system configuration.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
