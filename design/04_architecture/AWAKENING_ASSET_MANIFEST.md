@@ -120,8 +120,7 @@ Canvas 128×128.
 
 Consumer: `res://scenes/awakening_first_return.tscn`.
 
-Published and bound 2026-09-08. `CrecheConsole` owns the interaction presentation;
-the separate `awakening_creche_console_activation_fx` family supplies activation FX.
+Published 2026-09-08, but the `AwakeningFirstReturn` controller does **not** instantiate the idle console art yet: `CrecheConsole` is the gameplay owner and the separate `awakening_creche_console_activation_fx` currently sits detached at the interaction marker. A reviewed body+FX binding and art-gated reauthor must correct that pairing before claiming scene-quality completion.
 The Crèche console is not part of the bidirectional Dust Lung lift authority.
 
 The activation overlay is a separate `effect` family so body and FX lifecycles remain independent.

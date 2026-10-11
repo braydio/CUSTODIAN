@@ -828,6 +828,10 @@ Canonical one-liner for the docs:
 The first objective is not “explore.” It is **RETURN TO POST**. The Custodian awakens in a grand institution ruin beneath a repeating command from a terminal carrying imported authority credentials from a physically adjacent continuity. The Custodian answers the command because responding to dead authority is what it was built to do. Authentication establishes the first local anchor of archive, repair, scanning, and future base progression — and confirms that the Custodian is not inheriting power, but refusing to relinquish residual authority.
 ```
 
+## Gate of Dust lateral stairs, misplaced wind dust, and asset QA (2026-10-10)
+
+The actual Zone07 Gate of Dust underlay includes visible west and east stairs beyond the north critical route, while current `awakening_layout.gd` has no named lateral branch connectors/destinations. Proposed future west **Warden's Vigil** (gate personnel legacy) and east **Scourwind Overlook** (weather/ruined city reveal) are **pending user approval** and must not bypass the north mandatory route. Existing `GateWindDustWest/East` FX are centered at `y=-4848`, south of Zone07's `y=-4864` boundary: real visual defect; a bounded move to `y=-5056`, confirmed by renderer, is proposed. All ten atlas-derived Batch 01 perimeter source candidates were rejected, not registered. Authority/acceptance/implementation boundary: [AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md).
+
 ## Planned: Off-route perimeter underlay support (not yet implemented)
 
 The approved ten-region off-route scenery language and nonplayable structural/depth/atmospheric rules are owned by [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md); its implementation DAG and per-state art prompts are linked there. This is future visual presentation work only, **not** additional traversable regions or published art. Preserve current Layout/registered room plates, accepted 04→05 source composition and existing camera/visibility authority.

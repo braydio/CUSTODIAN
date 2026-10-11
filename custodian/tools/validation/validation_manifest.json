@@ -5894,6 +5894,26 @@
       "needs_import": true
     },
     {
+      "id": "process_feedback_ledger_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_process_feedback.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "feedback",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/process_feedback.py",
+        "custodian/tools/agent/test_process_feedback.py",
+        "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/docs/ai_context/VALIDATION_RECIPES.md"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "task_packet_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_task_packet_contract.py",

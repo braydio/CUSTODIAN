@@ -58,6 +58,14 @@
   5. Are the subtle brass/cyan cues readable but restrained at normal game zoom?
 - If no explicit decision is available, implementation stays in its human visual gate. Corrections must be tightly scoped to the answers; no aesthetic acceptance inferred from passing tests.
 
+## Specific runtime binding (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+- Preserve `res://game/world/home/sidearm_locker_interactable.gd` canonical V2 four-state art, calibrated `SPRITE_VISUAL_OFFSET = Vector2(88,-24)`, `authorize_open` eight 128×160 frames at 10 FPS, and one-time P-9 grant. Observe the existing prompt/group behavior; do not draw a second locker hero or create a state owner in the presenter.
+- `res://game/world/awakening/awakening_transit_lift.gd` owns one lift and both stations `(384,-3008)`/`(384,-3424)`; use `is_busy()`, `current_station`, `transit_started`, `transit_finished` to display ready/busy indicators. Never create another lift/mechanism prompt.
+- Preserve registered 04→05 composite at `(349,-2585)` and the 05→06 passage. Prove before/after P-9 grant and both lift stations at native camera zoom.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
