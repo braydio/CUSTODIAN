@@ -1,9 +1,13 @@
 # Awakening Perimeter Batch 01: Ten Calibration Assets + Generation Prompts
 
-**Status:** Production-generation brief; sources not approved, ingested or bound by this file. **Date:** 2026-10-10.
+**Status:** **Batch 01 GENERATION REJECTED by user 2026-10-10** (all 10 atlas-cropped outputs, not ingestible). This document remains the ten-state design/prompt contract for *future* independently generated replacements; sources are not approved, ingested, scene-bound, or complete. Full defect ledger: [AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md). **Date:** 2026-10-10.
 **Parent:** [AWAKENING_PERIMETER_SUPPORT_V1.md](AWAKENING_PERIMETER_SUPPORT_V1.md) · [ASSET PROMPTS V1](AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md) · [IMPLEMENTATION ROADMAP](AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md).
 **Scope:** Zones 01, 06, 07, 10 only; **excludes** separately reauthored Dust Lung Zone 05.
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+
+## Mandatory regeneration / Gate branch preservation
+
+**Stop:** Reject the prior 10-state ZIP as `REJECT_REGENERATE`. It consists of atlas crops, mirrored pseudo-tiles, and visibly incoherent structures; it is not evidence of native production assets or a satisfied art gate. Future generation must issue **one independent output per state**, evaluate structural consistency and real gameplay-scale presentation before resize, and may not fabricate exact-size/source-quality by mirror replication. The real Gate plaza underlay exposes west and east stairways: keep their apparent entrances intact pending explicit side-branch decisions. Do not paste blocked-side-route architecture on either stair mouth. See [Gate Stair + Wind + Art QA ledger](AWAKENING_GATE_STAIRS_WIND_AND_ART_REVIEW_V1.md).
 
 ## Why exactly these ten
 
@@ -34,7 +38,7 @@ Match actual Godot production underlays / overhead-to-gently-oblique gameplay ca
 
 **Full image-generation prompt**
 
-> Create a SINGLE static top-down / gently angled aerial-oblique (match existing production Gate plaza, NOT a diorama), 1024×512 RGBA environmental SUPPORT silhouette for CUSTODIAN Zone 07. These are the RUINED THRESHOLD DISTRICT outside the existing playable 1536×768 Gate plaza: dark collapsed retaining terraces on both lateral margins, fractured checkpoint wall fragments, inaccessible snapped bridge ends, weathered civic buttresses, sparse fallen statuary and dust-muted city fragments in the far wings. Deliberately leave the midframe/central route visually empty or transparent for the already-existing Gate body, west/east pylons and sealed aperture; DO NOT paint a second complete central Gate, causeway, arch or broad road. Pale ash and subdued rust-red sediment over smoke-dark limestone and basalt, oxidized dull-brass detail. Forms must read at actual game zoom and be visibly blocked/inaccessible. Authentic transparency OUTSIDE irregular architecture; no floor-shaped full opaque rectangle; no characters, text, UI or new portals. Light/dark values must be lower priority than the playable floor.
+> Create a SINGLE static top-down / gently angled aerial-oblique (match existing production Gate plaza, NOT a diorama), 1024×512 RGBA environmental SUPPORT silhouette for CUSTODIAN Zone 07. These are the RUINED THRESHOLD DISTRICT outside the existing playable 1536×768 Gate plaza: dark collapsed retaining terraces on both lateral margins, fractured checkpoint wall fragments, inaccessible snapped bridge ends, weathered civic buttresses, sparse fallen statuary and dust-muted city fragments in the far wings. Leave protected transparent clearance for both existing lateral stair apertures in the real production Gate art as well as the midframe/central route and existing Gate body, west/east pylons and sealed aperture; do not paste rubble over the stair mouths, and DO NOT paint a second complete central Gate, causeway, arch or broad road. Pale ash and subdued rust-red sediment over smoke-dark limestone and basalt, oxidized dull-brass detail. Forms must read at actual game zoom and be visibly blocked/inaccessible. Authentic transparency OUTSIDE irregular architecture; no floor-shaped full opaque rectangle; no characters, text, UI or new portals. Light/dark values must be lower priority than the playable floor.
 
 - **Asset family:** `awakening_gate_of_dust_perimeter_support`
 - **Source master:** `custodian/asset_drop/source_work/awakening/awakening_gate_of_dust_perimeter_support/distant_structures_source.png`

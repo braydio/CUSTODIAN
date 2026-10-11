@@ -43,6 +43,12 @@
 - Claimable without new images. Do not assert that missing states are available.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
 
+## Future-role crosswalk scope (refresh 2026-10-10)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+
+Inspect current Hub Muster (H5), Forum/Adjudication, CrownTransfer, ContinuityPort, Sepulcher, Field Patch and gate-owner truth before claiming future art ownership. Map only true scene owner vs `planned` vs `not-posted`, reuse verified hero V2 families where available, and never register deferred states as current required art. No runtime edit to Awakening for future-only roles.
+
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `<fill at closeout>`
