@@ -198,71 +198,47 @@ disposable candidate, or unclassified. The agent must explicitly commit durable
 material or remove disposable material; ambiguous files are never silently
 removed.
 
-## Autonomous Successor Continuation
+## Bounded Successor Continuation
 
-A successful packet finish is **not** a routine handback boundary. After landing
-and the safe persistent-root sync attempt, the execution automation must read the
-durable `## Next Handoff` from the completed packet/closing summary and continue
-the same program/DAG without waiting for the user when the successor is executable.
+A successful packet finish is a pair boundary, not an unlimited continuation
+signal. The default CUSTODIAN Next invocation completes at most one
+implementation plus its required fresh-context paired review (including bounded
+corrections/re-reviews), then stops. An explicitly requested `continuous-chain`
+may continue only with a positive finite pair budget and any user-designated
+scope. The pure policy helper is
+`custodian/tools/agent/next_execution_boundary.py`; it consumes caller-supplied
+facts but does not select packets or claim work. `dispatch.py` remains the claim
+authority. Record structured per-workstream receipts in the existing RunTrace.
 
-The default continuation rule is:
+For each pair:
 
-1. The completed workstream writes and commits its root
-   `<TASK>_CLAUDE_SUMMARY.md` before finish. That file is the persistent handoff
-   record and must contain the same substantive completion/handoff information
-   that would otherwise be pasted into chat.
-2. Resolve the **exact named immediate successor** from `Next workstream`. Do not
-   substitute a globally convenient packet.
-3. When all of the following are true, the agent/worker claims the successor
-   itself and continues autonomously:
-   - `ChatGPT/user planning refresh required: no`;
-   - there is no unresolved human visual/design/canon decision;
-   - the successor is not explicitly user-held via `Dispatch: manual`;
-   - the dispatcher reports the named successor eligible after fresh
-     `origin/main` evaluation.
-4. `Refresh owner: execution-agent` is also autonomous. Perform the bounded
-   live-main reconciliation described by the packet, update the packet if
-   authorized, then claim/continue without involving the user unless the evidence
-   exposes a genuinely new human-owned decision.
-5. A paired post-land review remains a **fresh-context** workstream. Once the
-   implementation/correction is landed and its exact review successor is
-   eligible, invoke
+1. Commit the root `<TASK>_CLAUDE_SUMMARY.md` with the packet's substantive
+   completion and `Next Handoff` before finish.
+2. Resolve only the exact immediate successor named in `Next Handoff`. For a
+   named dependency chain, claim only dispatcher-confirmed eligible predecessors.
+   Do not substitute a globally convenient packet.
+3. Continue only when the invocation's remaining budget permits and there is no
+   planning refresh, human visual/design/canon decision, manual-dispatch hold,
+   failed validation, or unresolved safety/ownership blocker. `Refresh owner:
+   execution-agent` is autonomous only while it exposes no new human decision.
+4. A paired review is part of its implementation pair and always uses a fresh
+   context. Once eligible, invoke
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
-   from the coordination checkout. The runner preflights
-   Codex before claim, claims only that named review through `dispatch.py`, and
-   starts `codex exec --ephemeral` in the receipt's exact worktree. Its default
-   local permission profile uses `--approve-for-me` (which selects Codex's
-   workspace-write approval policy) without also passing the mutually exclusive
-   `--sandbox` flag. Write access is added only for its
-   `.git/custodian-review-runs/...` evidence directory. Do not directly claim
-   the review in the implementation context or ask the user to relay the packet.
-   The fresh reviewer writes bounded evidence and a green validation report but
-   does not fetch, stage, commit, push, checkpoint, or finish. The coordinator
-   pins `origin/main`, checks exact archived packet/receipt/summary identity,
-   stages only authorized review artifacts, and completes the existing
-   `workstream.py finish` lifecycle outside the restricted reviewer process.
-   A failed fetch or incomplete receipt remains recoverable and never counts as
-   completion. A later invocation refuses to make another dispatcher claim while
-   prior post-claim run evidence remains unresolved. The runner returns the durable review summary
-   and its `Next Handoff`; continue from that exact handoff. A crash after claim
-   preserves the branch/worktree and run evidence for recovery.
-6. Repeat this loop through ready implementation, review, correction, and
-   re-review successors until a real stop condition is reached.
+   from the coordination checkout. The runner preflights Codex, claims the exact
+   review through dispatch, and launches `codex exec --ephemeral` in the receipt's
+   worktree. A failed fetch or incomplete receipt is recoverable and does not
+   count as completion. Preserve claimed branches, worktrees, and evidence after
+   runner failure.
+5. At the accepted review boundary, record the landing SHA, review status,
+   elapsed time, validation summary, pair count, and next eligibility. The
+   default one-pair mode stops here even if a successor is ready. Explicit
+   continuous mode follows only an eligible named successor within scope and
+   budget. An explicitly general-next invocation may use one global eligible
+   implementation at a boundary; it must not bypass an unresolved review or gate.
 
-Stop autonomous continuation only for a real boundary:
-
-- `ChatGPT/user planning refresh required: yes`;
-- a required human visual/art-direction/design/canon decision;
-- an explicit user-held manual-dispatch gate;
-- failed required validation, safety ambiguity, or another unresolved blocker;
-- the named same-series successor is not eligible and no authorized mechanical
-  refresh can make it eligible;
-- `Next workstream: none` / the current program chain is complete.
-
-Do **not** automatically jump to an unrelated global queue item merely because a
-same-series chain ends. Global `claim-next` remains appropriate only when the
-user/worker explicitly asked for general next-task execution rather than
-continuation of a named program.
+Do not jump to an unrelated global queue item just because a named chain ends.
+Stop and report the exact planning/human gate or technical blocker. Use the
+compact human unblock card below for planning refreshes.
 
 ### Human unblock card
 

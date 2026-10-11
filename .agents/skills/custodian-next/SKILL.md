@@ -1,6 +1,6 @@
 ---
 name: custodian-next
-description: Continue the current CUSTODIAN workstream or claim the next eligible CUSTODIAN task packet using the repository dispatcher and durable Next Handoff metadata.
+description: Continue the active CUSTODIAN workstream or execute a bounded packet request through its paired review.
 ---
 
 # CUSTODIAN Next
@@ -9,112 +9,85 @@ Use this skill when the user says "next CUSTODIAN task", "claim the next packet"
 "continue the workstream", explicitly invokes `$custodian-next`, or selects
 **CUSTODIAN Next** from `/skills` / the slash picker.
 
-## Newly Authorized Packet Pair (publication before claim)
+## Execution boundary
 
-When the user/authoring handoff specifically says an **approved** packet/review
-pair is still `draft/manual` or exists only in a local authoring branch,
-**do not call the dispatcher yet** and do not ask the user to provide the
-validator command. The normal dispatcher only reads `origin/main`.
+An unqualified invocation is `single-pair`: complete or resume at most one
+implementation packet and its required independent paired review, including
+bounded correction/re-review cycles. Then stop with a compact result. An active
+claimed workstream is resumed and counts as this pair; never claim another packet
+while its implementation or required review is unresolved.
 
-As the authorized authoring/promotion workstream (not ordinary `claim-next`):
-validate the *implementation + review pair*, promote both to `ready/auto`
-only if all human/design gates are resolved, validate again, run
-`python3 custodian/tools/agent/task_packet_index.py --write`, verify with
-the indexer in check mode, commit only the scoped pair + managed
-`task_packets/README.md`, and **land on `origin/main`** through safe
-repository procedure. Fetch and verify the remote packet identities before
-claiming the **exact** implementation workstream. Do not claim the paired
-review early. See root `AGENTS.md` → **Task-Packet Promotion Before
-Dispatch** and `AGENT_TASK_PACKET_TEMPLATE.md` for the copyable commands.
+Only use `continuous-chain` when the user explicitly requests continuing across
+multiple packets. Require an explicit positive `max_pairs`; honor any explicit
+workstream scope. Each pair is one implementation/correction plus its paired
+review cycle. Never turn an open-ended request into an unlimited run.
 
-This special case does not authorize promoting arbitrary parked drafts during
-general next-task routing; the human/ChatGPT decision and existing claims
-remain authoritative. If an exact named claim reports that the packet is not
-on `origin/main`, inspect whether an approved authored pair needs publication
-rather than treating a local PASS as remote queue availability.
+The pure routing/budget policy lives in
+`custodian/tools/agent/next_execution_boundary.py`. At invocation start, recover
+progress for the invocation ID with its `progress` command. At each claim or pair
+boundary, pass the dispatcher eligibility, active-claim reconciliation, packet
+handoff, and review facts to `evaluate`; follow its action. The helper does not
+select packets or claim work: `dispatch.py` remains the assignment authority.
+Record implementation and completed-pair milestones with `record-receipt`,
+including landed SHA, review status, elapsed time, validation summary, and next
+eligibility. Print a short stage update at boundaries; do not dump the queue.
 
 ## Routing
 
-1. **Do not create a second claim while already inside active work.**
-   - Run `git branch --show-current`.
-   - If the branch is `agent/<workstream-id>`, continue that workstream from its
-     packet and current state. Do not claim another packet merely because one is
-     available.
-   - If that active workstream is waiting on required/conditional Dropbox visual
-     review, return `HUMAN REVIEW REQUIRED <workstream>` with the exact recorded
-     Authoring chat URL and `REVIEW_MANIFEST.json` path. Do not fall through to
-     another claim. After the ChatGPT/user decision returns, continue the same
-     workstream, run the manifest cleanup command unless retention was explicit,
-     then close it normally.
-   - If ownership is unclear, use
-     `python3 custodian/tools/agent/dispatch.py last-claim --json` as read-only
-     recovery evidence. The dispatch receipt, not terminal history, is claim authority.
+1. Inspect the current branch and workstream lifecycle. If already in an
+   `agent/<workstream>` checkout, verify its packet, dispatch receipt, branch,
+   worktree, and remote state, then resume that workstream. Do not infer ownership
+   from `last-claim` alone. A stale or ambiguous receipt requires reconciliation
+   or an explicit stop; never create a duplicate claim.
+2. If no workstream is active, use the exact immediate successor from the most
+   recent durable `Next Handoff`. For a named dependency chain, claim only the
+   dispatcher-confirmed eligible predecessor needed to reach that successor.
+   Do not jump to unrelated lanes or edit packet metadata to manufacture
+   eligibility. `Refresh owner: execution-agent` permits a bounded live-main
+   refresh unless it exposes a new human decision.
+3. Respect planning refresh, human visual/design/canon decision, manual-dispatch,
+   failed-validation, and safety gates. Stop at the gate and provide the exact
+   recorded Authoring/Refresh chat URL where present.
+4. A paired post-land review is part of the same pair and must run in a fresh
+   reviewer context. Once eligible, invoke
+   `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+   from the coordination checkout. Do not directly claim the review from the
+   implementation context. Preserve its recovery worktree and run evidence if
+   execution fails after claim.
+5. Follow the packet and normal `workstream.py` lifecycle through validation,
+   summary, commit, landing, and safe root synchronization. Complete and archive
+   the associated packet and write its required root closing summary before
+   finish. Record the exact landing SHA and accepted review in the boundary
+   receipt.
+6. After the pair is accepted, inspect its durable `Next Handoff`. In
+   `single-pair`, stop even when that successor is ready. In explicit
+   `continuous-chain`, continue only to an eligible named successor within the
+   requested scope and remaining budget. A paired review or correction cycle
+   never consumes an additional pair.
+7. Use global `dispatch.py claim-next --agent codex` only when the user
+   explicitly requested general-next execution and the current pair is complete
+   or blocked. It may select exactly one eligible implementation for the next
+   available pair. Never use global fallback to bypass an unresolved review,
+   human gate, stale ownership, or validation blocker.
 
-2. **Prefer the immediate continuation of the work the conversation just finished.**
-   - Fetch current packet truth through the dispatcher/repository workflow.
-   - For a full queue discrepancy, use `python3 custodian/tools/agent/dispatch.py audit --json` to inspect identities and actual eligibility; the README projection is not claim authority.
-   - Resolve the most recently completed/reviewed workstream from durable repo evidence.
-   - Read its archived packet/closing summary `## Next Handoff`.
-   - If an exact successor is eligible and `ChatGPT/user planning refresh required: no`,
-     claim it and continue without handing routine control back to the user.
-   - After that successor finishes, persist its `<TASK>_CLAUDE_SUMMARY.md` and
-     repeat this same routing step through the named same-series chain.
-   - A paired review is an immediate successor but must run in a fresh reviewer
-     context. Once eligible, invoke
-     `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
-     from the coordination checkout. The runner preflights Codex before claim,
-     claims only that exact review via the dispatcher, launches
-     `codex exec --ephemeral` in the returned review worktree, persists sanitized
-     run evidence under `.git/custodian-review-runs/`, and returns the durable
-     summary plus `Next Handoff`. Do not directly claim paired reviews inside the
-     implementation context or ask the user to relay them. If the runner reports
-     a recoverable block, preserve the reported branch/worktree and continue from
-     its durable summary; do not claim a replacement review.
+## Newly authorized packet pair (publication before claim)
 
-3. **Stop only at a real gate.**
-   - Stop before claiming when ChatGPT/user planning refresh is required, a
-     subjective human decision is pending, dispatch is explicitly user-held, or a
-     technical/safety blocker makes the named successor ineligible.
-   - For a planning refresh, return the exact Authoring Chat URL, copyable
-     Workstream ID, and persistent summary path.
-   - `Refresh owner: execution-agent` is an autonomous bounded refresh unless it
-     exposes a genuinely new human-owned decision.
-   - Do not edit packet status, silently reinterpret scope, or skip to unrelated
-     work just to keep the command moving.
-
-4. **Use the global queue only for an explicitly general-next request.**
-   - If the durable handoff says `Next workstream: none`, treat the named
-     same-series chain as complete.
-   - Do not silently continue into unrelated work merely to stay busy.
-   - Only when the user/worker invocation explicitly asks for general next-task
-     execution, run:
-     ```bash
-     python3 custodian/tools/agent/dispatch.py claim-next --agent codex
-     ```
-
-5. **After a successful claim, trust the structured receipt.**
-   - Read `authoring_chat`, `visual_review`, `visual_review_root`, and
-     `visual_review_retention` from the receipt. These are the autonomous route to
-     the authoring conversation and Dropbox review lane when presentation review
-     is required.
-   - Enter the returned worktree.
-   - Read root `AGENTS.md`, `custodian/AGENTS.md`, and the returned task packet.
-   - Treat the task packet as the complete brief. Do not ask the user to restate it.
-   - Execute and finish through the normal workstream lifecycle, then return to
-     step 2 and continue the same-series chain until a real stop boundary.
+When an authoring handoff specifically says an approved packet/review pair is
+still `draft/manual` or exists only in a local authoring branch, do not call the
+dispatcher yet and do not ask the user for the validator command. Validate the
+implementation and review pair, promote both to `ready/auto` only if human and
+design gates are resolved, validate again, regenerate and verify the managed
+index, then land the scoped publication through the safe repository procedure.
+Fetch and verify the remote packet identity before claiming the exact
+implementation. Never claim the paired review early. This does not authorize
+promoting arbitrary parked drafts during general-next routing.
 
 ## Result
 
-Do not emit a routine user-facing handoff between successfully chained packets.
-Persist the completed packet's `<TASK>_CLAUDE_SUMMARY.md` and keep going.
-
-When the automation actually stops, return one compact status:
-- `CHAIN COMPLETE <workstream>` when the named same-series chain has no successor;
-- `REFRESH REQUIRED` with exact `Authoring Chat`, copyable `Workstream`, and
-  persistent summary path when ChatGPT/user planning is the gate;
-- `HUMAN REVIEW REQUIRED <workstream>` with exact Authoring chat and Dropbox
-  manifest when subjective review is the gate;
-- `BLOCKED <reason>` with the persistent summary path when a technical/safety
-  condition prevents continuation;
-- `NO ELIGIBLE AUTO TASK` only for a general-next invocation whose global queue
-  has no eligible work.
+Persist the full completion, process feedback, and `Next Handoff` in the required
+root summary. At a stop, return a concise status with the workstream, pair budget
+progress, landing/review state, blocker or next eligibility, and summary path.
+For a planning refresh, use the exact recorded URL and workstream ID. For a
+subjective visual gate, include the exact Dropbox review manifest path and the
+review question. Do not emit routine handoffs between pairs during an explicitly
+bounded continuous-chain invocation.

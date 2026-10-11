@@ -235,7 +235,8 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
-        ".claude/settings.json"
+        ".claude/settings.json",
+        ".agents/skills/custodian-next/agents/openai.yaml"
       ],
       "timeout_sec": 30,
       "needs_import": false

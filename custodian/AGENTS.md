@@ -373,11 +373,12 @@ Normal implementation work is autonomous through the lifecycle documented in
 there, push a recovery branch, and land through the normal finish/landing path.
 Completed remote task branches are deleted only after reachability from
 `origin/main` is verified. No PR or routine human approval is required.
-After a successful finish, an eligible named same-series successor with
-`ChatGPT/user planning refresh required: no` is claimed and executed by the
-agent/worker automatically; the user is not a relay between ordinary packets.
-Stop and emit the lifecycle's compact Authoring Chat + Workstream handoff only
-when a genuine human/ChatGPT refresh or decision is required.
+CUSTODIAN Next defaults to one implementation and its required paired review,
+then stops. Continuing across packets requires an explicit finite pair budget
+and follows only eligible named same-series handoffs. Stop at a genuine
+human/ChatGPT refresh or decision, manual-dispatch hold, validation failure, or
+unresolved safety/ownership gate. See the lifecycle guide and repository-root
+`AGENTS.md` for invocation-boundary receipts and review routing.
 After landing, agents must also keep the persistent project-root `CUSTODIAN/`
 checkout synchronized with `origin/main` without requiring user approval for
 this routine step. Fast-forward only when the root is on `main`, clean, and

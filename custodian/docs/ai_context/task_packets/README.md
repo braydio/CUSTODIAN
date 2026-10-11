@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `AGENT_NEXT_EXECUTION_BOUNDARY_V1.md` — Make a routine request to implement the next CUSTODIAN packet execute exactly one implementation plus its paired independent review, then stop; expose explic...
 - `LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Guarantee **at most one pending or consumed physical allocation per F14-managed logical actor identity**, including cancel, rollback, stale callback and camp...
 - `REVIEW_AGENT_NEXT_EXECUTION_BOUNDARY_V1.md` — Independently falsify Agent Next Execution Boundary V1 against the landed code and all numbered implementation acceptance items.
 - `REVIEW_LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Independently verify managed spawn **at-most-once** reservation, cancellation/replay safety and camp/global quota convergence at the real F04 scheduler queue...
@@ -551,10 +550,13 @@ publication failure does not change the canonical claim or last-claim receipt.
 
 For interactive Codex, the repository provides the repo-local
 `$custodian-next` skill. It is also selectable from `/skills` and may appear
-directly in the slash picker. It does not change dispatcher eligibility: it
-continues an already-active workstream, otherwise prefers the durable immediate
-`Next Handoff` in the same series, respects refresh/manual/dependency gates,
-and uses global `claim-next` only when no same-series successor exists.
+directly in the slash picker. It does not change dispatcher eligibility. An
+unqualified invocation completes at most one implementation plus its required
+paired review, then stops. Explicit
+continuous-chain requests require a finite pair budget and follow only eligible
+named handoffs. It resumes a verified active workstream and respects
+refresh/manual/dependency gates; global `claim-next` is used only for an explicit
+general-next request. See `custodian/tools/agent/next_execution_boundary.py`.
 
 ## Packet Handoff And Authoring-Chat Provenance
 
@@ -570,11 +572,11 @@ authoring-chat URL, refresh reason, next action, and blockers. The durable
 `<TASK>_CLAUDE_SUMMARY.md` is the persistent copy of that handoff.
 
 A ready/eligible named successor with
-`ChatGPT/user planning refresh required: no` is an **autonomous continuation**,
-not a user relay point. The agent/worker claims that successor itself and
-continues through the same-series implementation/review/correction chain.
-Paired reviews still require a fresh reviewer context, but that context switch
-does not require the user to carry the prior summary.
+`ChatGPT/user planning refresh required: no` may be followed autonomously only
+when the invocation explicitly requested a bounded continuous chain and has
+remaining pair budget. An unqualified invocation stops after one implementation
+and its required review. Paired reviews still require a fresh reviewer context,
+but that context switch does not require the user to carry the prior summary.
 
 Dependency-driven refreshes default to `Refresh owner: execution-agent` and happen
 at claim time from current main plus landed predecessor evidence. Use

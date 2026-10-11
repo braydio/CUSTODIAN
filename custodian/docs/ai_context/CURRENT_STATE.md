@@ -482,12 +482,13 @@ that is accepted only on `workbench/operator-art` targeting `origin/main`; it
 still passes through the same serialized, race-safe `land_main.py` algorithm.
 The lander accepts the branch's own upstream while still rejecting publication
 on unrelated remote refs. Successful finish verifies ancestry from
-`origin/main` before removing completed branch/worktree state. A successful
-finish is no longer a routine human handback boundary: when the durable
-`Next Handoff` names an eligible same-series successor and
-`ChatGPT/user planning refresh required: no`, the agent/worker persists the
-completed `<TASK>_CLAUDE_SUMMARY.md`, claims the successor itself, and continues
-autonomously. Human/ChatGPT refresh gates stop with a compact Authoring Chat +
+`origin/main` before removing completed branch/worktree state. CUSTODIAN Next now
+defaults to one implementation plus its required paired review, then stops.
+Multi-packet continuation requires an explicit finite `continuous-chain` budget
+and follows only eligible named handoffs. The pure boundary policy is
+`custodian/tools/agent/next_execution_boundary.py`; `dispatch.py` remains claim
+authority.
+Human/ChatGPT refresh gates stop with a compact Authoring Chat +
 Workstream + persistent-summary card so the user only has to open the recorded
 conversation and paste the workstream ID. Branch archive hygiene is
 ancestry-based and report-only by default. Paired post-land reviews now use

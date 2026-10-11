@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-next-execution-boundary-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-coordinator-boundary-v1-review-corrections-1`
@@ -32,6 +32,25 @@
 - Validation: Implement rule table and fixtures for 1/2/3-pair scenarios, active-workstream resume and stale last-claim; test changed `.agents/skills/custodian-next` routing against the pure boundary helper, plus existing dispatch/paired-review/workstream tests; check_ai_context.py --json, validate_review_pairing.py, task_packet_index.py, run_validation.py --changed --base origin/main --json; git diff --check.
 - Task overrides: `none`
 - Deferred: Automated policy-based job scheduler, global prioritization, fee/token budgets and webhook progress notifications.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `next_execution_boundary.py` enforces default single-pair and explicit finite continuous-chain budgets from supplied facts; 19 focused tests cover routing, budget, review cycles, resume/recovery, receipts, and skill contract. Changed-file validation passed 35/35 with complete coverage; AI-context, paired-review, packet-index, and diff checks passed. Dispatcher implementation was not changed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The initial changed-file sweep found the skill metadata YAML had no validation owner; adding it to the existing agent workflow contract caused the sweep to select and cover the file.`
+- Root cause / contributing factors: `The prior manifest tracked the skill body but omitted its companion OpenAI metadata.`
+- Prevention / pipeline improvement: `The agent workflow validation entry now owns both skill files, and a focused test checks the user-facing routing contract against the pure policy helper.`
+- Tooling / docs drift discovered: `Lifecycle guidance in root and CUSTODIAN documentation still described unlimited same-series continuation; those instructions and the task-packet routing reference were aligned to the bounded default.`
+- Follow-up: `none`
+- What worked: `The pure policy helper keeps claim selection with dispatch.py and gives pause/resume a durable RunTrace receipt.`
 
 ## Handoff
 

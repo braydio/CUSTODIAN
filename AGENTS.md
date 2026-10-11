@@ -288,40 +288,38 @@ Codex custom prompts are deprecated in favor of skills.
 
 Semantics:
 
-1. If the current session is already in an active `agent/<workstream>`
-   checkout, continue that workstream rather than claiming another packet.
-2. Otherwise prefer the exact immediate successor recorded by the most recently
-   completed packet/review's durable `Next Handoff`, including its paired review.
-3. If the requested successor is dependency-blocked, automatically work the
-   same dependency chain toward that requested packet: dispatch-claim and
-   complete each immediate predecessor that is `ready`/`auto`, including its
-   required paired review, then re-check the dispatcher and continue until the
-   requested packet is claimable or a real blocker is reached. Do not jump to
-   unrelated lanes or edit packet metadata to manufacture eligibility. A
-   blocked packet's `ready` status alone does not override its dependency gate.
-4. When the successor requires **no ChatGPT/user planning refresh or human
-   decision** and the dispatcher says it is eligible, claim it and continue
-   autonomously. `Refresh owner: execution-agent` is likewise an autonomous
-   bounded refresh unless live evidence exposes a new human-owned choice.
-5. Paired review still requires a fresh reviewer context. Once the exact paired
-   review is eligible, invoke
-   `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
-   from the coordination checkout. The runner preflights Codex before claim,
-   claims only that review through the dispatcher, launches
-   `codex exec --ephemeral` in the receipt's exact worktree, and returns its
-   durable summary and `Next Handoff`. Do not directly claim the review in the
-   implementation context or ask the user to relay it. If execution fails after
-   claim, preserve the branch/worktree and use the emitted run-log recovery card.
-6. Stop only on a real human/ChatGPT refresh gate, human visual/design gate,
-   explicit manual-dispatch hold, unresolved safety/validation blocker, failed
-   prerequisite, or successor that remains ineligible after its eligible
-   dependency chain completes. Surface the exact recorded Authoring/Refresh chat
-   URL when the stop is human-owned. Do not silently jump lanes.
-7. Only when there is no same-series successor and the invocation was for general
-   next-task execution, fall back to `dispatch.py claim-next --agent codex`.
+1. An unqualified invocation is `single-pair`: complete or resume at most one
+   implementation packet and its required fresh-context paired review, including
+   bounded correction/re-review cycles, then stop. An active claimed workstream
+   counts as that pair; do not claim another while it is unresolved.
+2. Use `continuous-chain` only when the user explicitly requests multiple
+   packets. Require a positive finite `max_pairs` and honor any explicit scope.
+   Continue only through the durable `Next Handoff` DAG and dispatcher-confirmed
+   eligible predecessors; a pair is one implementation plus its paired review.
+3. Reconcile active branch, worktree, dispatch receipt, and remote state. A stale
+   `last-claim` is not ownership proof. Ambiguous/stale claims require audit and
+   must never cause a duplicate claim.
+4. The pure invocation policy is
+   `custodian/tools/agent/next_execution_boundary.py`. Use its `evaluate`,
+   `progress`, and `record-receipt` commands at invocation/pair boundaries. It
+   does not select or claim packets. `dispatch.py` remains the assignment
+   authority. Record compact receipts with pair progress, landed SHA, review,
+   validation, elapsed time, and next eligibility.
+5. Paired post-land review remains a fresh-context operation. Once eligible,
+   invoke `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
+   from the coordination checkout. Corrections and
+   re-reviews remain inside the same pair.
+6. Stop at planning refresh, human visual/design/canon decision,
+   manual-dispatch, failed validation, or unresolved safety/ownership gates.
+   `Refresh owner: execution-agent` allows a bounded refresh unless it exposes a
+   new human-owned decision. Never edit packet status to manufacture eligibility.
+7. After one pair, default mode stops even if the handoff names another ready
+   packet. Global `dispatch.py claim-next --agent codex` is allowed only when the
+   user explicitly requested general-next execution and no current pair remains
+   unresolved; it selects one eligible implementation within the stated budget.
 
 The dispatcher receipt remains assignment authority; the shortcut never edits
-packet status to manufacture eligibility.
+packet status to manufacture a claim.
 
 ### Naming Work: The Task Packet Is the Brief
 

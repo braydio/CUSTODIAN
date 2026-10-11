@@ -35,6 +35,7 @@ def main() -> int:
         [sys.executable, "custodian/tools/agent/validate_prompt_contract.py", "--templates-only", "--strict", "--self-test"],
         [sys.executable, "custodian/tools/agent/test_land_main.py"],
         [sys.executable, "custodian/tools/agent/test_dispatch.py"],
+        [sys.executable, "custodian/tools/agent/test_next_execution_boundary.py"],
         [sys.executable, "custodian/tools/agent/test_review_contract.py"],
         [sys.executable, "custodian/tools/agent/test_validate_task_packet_authoring.py"],
     ]
