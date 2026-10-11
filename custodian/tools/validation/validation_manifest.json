@@ -3956,6 +3956,70 @@
       "needs_import": false
     },
     {
+      "id": "authored_level_ingress_return",
+      "type": "godot_script",
+      "script": "res://tools/validation/authored_level_ingress_return_smoke.gd",
+      "tier": "integration",
+      "tags": ["authored_level", "ingress", "return", "operator_identity"],
+      "owners": [
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored_level_2d.gd",
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/world/routes/route_traversal_manager.gd",
+        "custodian/game/world/procgen/ingress/world_ingress_site.gd",
+        "custodian/tools/validation/authored_level_ingress_return_smoke.gd",
+        "custodian/tools/validation/helpers/authored_level_lifecycle_fixture.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "level_registry_contract",
+      "type": "godot_script",
+      "script": "res://tools/validation/level_registry_contract_smoke.gd",
+      "tier": "unit",
+      "tags": ["authored_level", "registry", "scene_contract"],
+      "owners": [
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/level_definition.gd",
+        "custodian/game/world/levels/level_registry.gd",
+        "custodian/tools/validation/level_registry_contract_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "npa_showcase_arena_foundation",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
+      "tier": "integration",
+      "tags": ["npa", "authored_level", "walkability", "ingress", "return"],
+      "owners": [
+        "custodian/content/levels/dev/npa_showcase_arena/**",
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/**",
+        "custodian/tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
+        "design/05_levels/NPA_SHOWCASE_ARENA.md"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "world_ingress_physics_reentry",
+      "type": "godot_script",
+      "script": "res://tools/validation/world_ingress_physics_reentry_smoke.gd",
+      "tier": "integration",
+      "tags": ["world_ingress", "physics", "reentry", "return_guard"],
+      "owners": [
+        "custodian/game/world/levels/level_loader.gd",
+        "custodian/game/world/procgen/ingress/world_ingress_site.gd",
+        "custodian/tools/validation/world_ingress_physics_reentry_smoke.gd",
+        "custodian/tools/validation/helpers/authored_level_lifecycle_fixture.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "world_ingress_spawner",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_spawner_smoke.gd",

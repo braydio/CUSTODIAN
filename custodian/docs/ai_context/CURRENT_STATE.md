@@ -1444,6 +1444,13 @@ Documentation updates this session:
   actor-to-projectile contract smoke is registered. NPA-7 implementation and
   validation are complete; its fresh-context paired review passed with no
   findings. NPA-8 remains gated on the required planning refresh.
+  The NPA Showcase Arena foundation adds a registered, bounded five-zone dev
+  level with a full-gameplay standalone wrapper, empty actor sockets and
+  disabled scenario roots. It adds no actor simulation or duplicate Operator,
+  controller, or camera to the production scene. Its focused smoke traverses
+  each doorway, checks perimeter collision, validates registry metadata and
+  exercises ingress/return/re-entry while retaining the same Operator fixture;
+  fresh paired review follows implementation landing.
 - Melee mode now uses deterministic aim-relative soft targeting rather than
   nearest-enemy selection. A weapon-aware reach model, 42/58-degree
   acquire/retain cones, score hysteresis, and a progressive procedural ring
