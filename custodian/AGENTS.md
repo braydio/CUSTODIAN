@@ -547,6 +547,29 @@ must be wired to semantic animation authority rather than directly to its PNG.
 Direct PNG access is allowed only in explicit migration, validation, inspection,
 or asset-authoring tooling outside active gameplay runtime.
 
+### Operator 2.5D Workbench decision guard
+
+For `operator_2_5d_128`, use the accepted profile/visual contract at
+`design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md` and
+`OPERATOR_2_5D_WORKBENCH_MIGRATION_ROADMAP.md`. These decisions are already
+human-locked: eight independently authored directions, 128px full-body
+registration/root/scale, source-work versus Workbench versus runtime separation,
+and the explicit QA, human review, sandbox and coherent-cohort release gates.
+An agent must not silently retune their values or derive missing directions from
+mirroring, a legacy proxy, or an image-generation default.
+
+**A saved Aseprite document or Workbench manifest is descriptive evidence, not
+automatic permission.** A default preview FPS (currently 8 for the imported
+canonical relaxed idle) does not approve animation timing. The manifest Boolean
+`timing_authority` alone is insufficient to establish an explicit human timing
+decision; effective 2.5D verification must use independently validated,
+current-input-bound intent provenance once the dedicated timing decision workflow
+is implemented. Do not fake approval by toggling a flag, inventing FPS, reusing
+stale review receipts or copying them between directions. Until proper provenance
+exists, fail closed and leave the idle Workbenches editable and unverified.
+WB25-6 generation switching remains a separate human/cohort-gated operation.
+Keep legacy 96px timing/publication behavior intact.
+
 ## Commit Policy
 
 The root `AGENTS.md` owns commit and closing-summary policy. Follow it: commit

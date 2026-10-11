@@ -9,7 +9,7 @@
 - Status: draft
 - Dispatch: manual
 - Priority: P1
-- Depends on: review-operator-2-5d-workbench-production-queue, review-operator-2-5d-cohort-dependency-closure
+- Depends on: review-operator-2-5d-workbench-production-queue, review-operator-2-5d-cohort-dependency-closure, review-operator-animation-decision-authority-hardening-v1
 - Locks: operator-runtime-animation, operator-art-generation-schema, operator-workbench-publish
 - Kind: implementation
 - Review: auto
@@ -63,6 +63,10 @@ The approved 2.5D plan and source master represent `unarmed/posture/idle_relaxed
 `operator-2-5d-canonical-idle-workbench-intake` landed at `26167ea6`. Its fresh review found R0-01, fixed by correction implementation `fa955e5e7` and independently reviewed clean. Eight 1920×128 source strips and eight saved 15f/128px Aseprite direction workspaces are independently pixel-exact; the only existing manifest field corrected was `timing_authority`. Preserve original/correction evidence and artist workspaces; do not repeat intake, overwrite ignored documents, or treat their 8 FPS physical preview as production timing. The original intake report's source-master absolute path is stale because that disposable checkout was removed; current per-direction evidence is valid. The next independent `operator-2-5d-cohort-dependency-closure` audit reconstructs actual consumer/transition/composition boundaries without art or runtime writes. Separately, the user must choose authoritative idle timing using a supported authoring workflow, then obtain real per-direction WB25-4 QA/sandbox receipts. Nothing from this predecessor alone makes WB25-6 ready.
 
 Prior to a claim on this original promotion packet, bring an objective evidence record: (i) `animation_queue("ALL")` all-rows count, real verified family IDs and per-direction current effective receipts on the intended execution checkout, (ii) exact existing live source-art files, Workbench manifests, editable documents and physical frame/timing proofs, (iii) candidate reachability/dependency closure and all layers per action, (iv) human-selected precise cohort, and (v) a negative-control dry run demonstrating no runtime mutation when a leaf is unavailable. A missing/empty proof cannot be converted into a default choice. A fixture-only infrastructure precursor, if deliberately split into a separate reviewed packet later, must leave the production policy entirely legacy.
+
+## Independent decision-authority prerequisite
+
+`operator-animation-decision-authority-hardening-v1` and its fresh paired review now explicitly guard the trust distinction between 2.5D preview values, human-authorized timing parameters, current physical Workbench evidence and effective verification. That packet adds explicit timing-decision provenance and regression tests while preserving the eight original unapproved idle records and all protected runtime outputs. It is a **prerequisite to WB25-6 implementation eligibility**, not an automatic timing choice or an independent release authorization. The separate read-only cohort closure audit remains independently executable.
 
 ## Next safe slice: read-only cohort dependency closure
 
