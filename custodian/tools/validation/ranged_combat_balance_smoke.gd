@@ -58,8 +58,8 @@ func _validate_bullet_falloff() -> void:
 
 func _validate_noise_bus() -> void:
 	var bus := NoiseBusScript.new()
-	bus.noise_emitted.connect(func(_event: Variant) -> void: _heard_event = true)
-	var event: RefCounted = NoiseEventScript.create(null, Vector2(10, 20), 420.0, &"gunshot", 1.0, 1.0, false, &"player")
+	bus.noise_emitted.connect(func(_event: NoiseEvent) -> void: _heard_event = true)
+	var event: NoiseEvent = NoiseEventScript.create(null, Vector2(10, 20), 420.0, &"gunshot", 1.0, 1.0, false, &"player")
 	bus.emit_noise(event)
 	_expect(_heard_event, "Noise bus did not emit")
 	_expect(int(event.get("timestamp_msec")) > 0, "Noise event timestamp not assigned")

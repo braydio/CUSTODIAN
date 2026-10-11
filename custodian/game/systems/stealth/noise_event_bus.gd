@@ -3,17 +3,17 @@ class_name NoiseEventBusSystem
 
 const NoiseEventData = preload("res://game/systems/stealth/noise_event.gd")
 
-signal noise_emitted(event: Variant)
+signal noise_emitted(event: NoiseEvent)
 
 @export var debug_noise_events: bool = false
 
 
-func emit_noise(event: Variant) -> void:
-	if event == null or float(event.get("radius_px")) <= 0.0:
+func emit_noise(event: NoiseEvent) -> void:
+	if event == null or event.radius_px <= 0.0:
 		return
-	event.set("timestamp_msec", Time.get_ticks_msec())
+	event.timestamp_msec = Time.get_ticks_msec()
 	if debug_noise_events:
-		print("[NoiseEvent] %s radius=%.1f threat=%.2f at=%s" % [String(event.get("kind")), float(event.get("radius_px")), float(event.get("threat_value")), event.get("position")])
+		print("[NoiseEvent] %s radius=%.1f threat=%.2f at=%s" % [String(event.kind), event.radius_px, event.threat_value, event.position])
 	noise_emitted.emit(event)
 
 
@@ -26,7 +26,7 @@ func emit_at(
 	loudness: float = 1.0,
 	suppressed: bool = false,
 	team: StringName = &"neutral"
-) -> Variant:
-	var event: Variant = NoiseEventData.create(source, position, radius_px, kind, threat_value, loudness, suppressed, team)
+) -> NoiseEvent:
+	var event: NoiseEvent = NoiseEventData.create(source, position, radius_px, kind, threat_value, loudness, suppressed, team)
 	emit_noise(event)
 	return event

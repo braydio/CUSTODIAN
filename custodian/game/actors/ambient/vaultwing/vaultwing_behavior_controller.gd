@@ -5,6 +5,7 @@ enum Band { HIGH, ATTACK, GROUND, PERCHED }
 enum State { HIGH_PATROL, CIRCLE_INTEREST, DIVE_WINDUP, DIVE_STRIKE, CLIMB_OUT, PERCH_IDLE, PERCH_ALERT, LAND, GROUND_IDLE, GROUND_STALK, GROUND_ATTACK, TAKEOFF, AIR_STAGGER, GROUND_STAGGER, RETREAT, BOND_APPROACH, DEAD }
 
 const PROFILE := preload("res://game/actors/ambient/vaultwing/vaultwing_behavior_profile.tres")
+const AcousticSensor := preload("res://game/systems/stealth/acoustic_perception_sensor.gd")
 
 var actor: CharacterBody2D
 var profile: Resource = PROFILE
@@ -417,11 +418,11 @@ func _update_player_interest(delta: float) -> void:
 		if _interest_elapsed >= 0.75 + stage_delay: request_interest(player.global_position, player)
 	else: _interest_elapsed = 0.0
 
-func _on_noise_emitted(event: Variant) -> void:
+func _on_noise_emitted(event: NoiseEvent) -> void:
 	if state != State.HIGH_PATROL or actor == null or event == null: return
-	var position: Vector2 = event.get("position", Vector2.INF); var radius := float(event.get("radius_px", 0.0))
-	if position == Vector2.INF or radius <= 0.0 or actor.global_position.distance_to(position) > radius: return
-	request_interest(position, event.get("source") as Node2D)
+	var observation: PerceptionObservation = AcousticSensor.evaluate_noise(event, actor.global_position, actor)
+	if observation == null: return
+	request_interest(observation.observed_position, observation.source)
 
 func _has_valid_target() -> bool: return is_instance_valid(target) and target is Node2D
 func _target_in_range(distance: float) -> bool: return _has_valid_target() and actor.global_position.distance_to(target.global_position) <= distance
