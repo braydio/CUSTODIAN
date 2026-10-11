@@ -17,7 +17,7 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Review modes: `code, runtime, workflow`
-- Review cycle: `0`
+- Review cycle: `1`
 - Max automatic review cycles: `2`
 - Goal: Independently verify the R0-01 correction adds exactly-once and no-buffer proof without changing Operator gameplay behavior.
 - Reviewed implementation acceptance: The correction packet Acceptance section, mapped to parent finding `R0-01`.
