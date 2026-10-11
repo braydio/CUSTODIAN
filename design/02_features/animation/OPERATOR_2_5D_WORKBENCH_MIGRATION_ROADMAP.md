@@ -84,6 +84,46 @@ The human decision from this authoring chat is:
 
 The canonical visual-contract workstream incorporated these human decisions; WB25-1 preserved them in the live target/profile authority.
 
+## Composition policy (human-approved, 2026-10-11)
+
+**Full-body-first, selectively modular** is now the production *design
+choice*, not a runtime-generation switch. The owning contract is
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md` under
+"Operator presentation composition doctrine". This clarifies that the
+existing **69 families / 552 directional slots** are baseline
+`full_body` *art-authoring targets*: their proposed 128px generations
+should retain cohesive full-body neutral idle, ordinary locomotion and
+committed whole-body actions. No already-accepted idle pixel or source
+target is modified by this decision.
+
+Where the gameplay *legally* permits locomotion simultaneously with an
+independently facing upper-body aim/fire/guard/parry or weapon-ready phase,
+preserve and **purposefully extend** the existing split-body presentation
+capability. Such 2.5D split art requires separately approved canonical
+128px lower+upper directional/source contracts with exact shared root,
+cadence, weapon/socket and state ownership. **Do not** auto-split the 15f
+accepted 2.5D idle, mirror missing views, duplicate generic ready-walk
+variants, or demand 552× multiple layers merely for completeness.
+
+The source-grounded and independently reviewed
+`custodian/docs/reports/operator_presentation/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md`
+reports all relevant state edges OPEN for 2.5D live migration; no
+`operator_2_5d_128` split runtime contract has been approved. The new
+`operator-2-5d-composition-mode-guard-v1` fixture-only packet plus fresh
+review covers full-body/split/exclusive plan preflight, body-owner/clock,
+same-generation registration, independent aiming vs travel, and fail-closed
+partial/mixed parts. It leaves the active 96px presentation unchanged.
+Existing `operator-guard-parry-composition-polish` still owns actual
+moving guard/parry gameplay composition, and the existing 96px modular
+directional coverage closeout remains a later visual-gap assessment.
+No workstream may independently create a second presentation owner or
+new source-to-runtime database.
+
+WB25-6 must consume this design lock and its reviewed guard. It remains
+`draft/manual`, requiring an explicit human-chosen dependency-closed
+cohort, exact 2.5D art and timing approvals, physical QA/sandbox receipts,
+and safe rollback before any 128px runtime activation.
+
 ## Family is the production unit
 
 A target family owns required directions/layers and completion.
@@ -246,6 +286,7 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-5R | review-operator-2-5d-workbench-production-queue | **complete / passed, zero findings** | queue math, real family and brief review |
 | WB25-6 preparation | operator-2-5d-cohort-dependency-closure + paired review | **ready / auto, read-only** | current consumer/transition/body-composition dependency closure with no policy/art/runtime writes |
 | WB25-6 decision guard | operator-animation-decision-authority-hardening-v1 + paired review | **ready / auto, no art authorization** | explicit human timing intent, current physical proof and executable invariants for accepted 2.5D locks |
+| WB25-6 composition guard | operator-2-5d-composition-mode-guard-v1 + paired review | **ready / auto, fixture-only** | prove full-body/default, intentionally split concurrent actions, generation/clock/owner preflight without activating new art |
 | WB25-6 | operator-2-5d-runtime-promotion | **draft / refreshed after idle R0-01; real cohort held** | guarded generation switch + rollback |
 | WB25-6R | review-operator-2-5d-runtime-promotion | dependency-gated | no-mix/runtime/rollback review |
 
@@ -266,6 +307,9 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
 
 ## Current repository drift / prerequisites
+
+- Presentation composition decision (2026-10-11): **full-body-first, selective modular upper/lower only for simultaneous legal movement+upper action**, with independent weapon/FX overlays. This is now approved in the runtime architecture and AGENTS. The 69 full-body target rows remain baseline art authority; do not infer 69 unconditionally full-body runtime behaviors or fabricate split outputs. The reviewed dependency audit remains NOT_RELEASE_ELIGIBLE with open preemption and legacy-vs-2.5D body seams. A separate fixture-only guard and paired review precede WB25-6. Both older roadmap entries saying cohort audit/decision hardening are still `ready` describe historical scheduling, not current queue states; use archived receipts and the actual active packet queue.
+
 
 - Authoring decision trust audit (2026-10-11): `timing_authority=false` from R0-01 intake correction correctly blocks default 8 FPS, but an editable manifest may still assert `timing_authority=true` and supply a well-formed timeline without independent **user timing decision** provenance. The prepared `operator-animation-decision-authority-hardening-v1` pairs explicit-timing authoring intent with exact physical/workspace/plan/reference evidence, adds negative tests for forged/stale approvals, and records existing visual/runtime lock decisions in the canonical visual contract and agent rules. This is NOT human FPS approval or WB25-6 cutover.
 
