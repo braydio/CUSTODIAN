@@ -948,6 +948,9 @@ def validation_green(report: Path) -> bool:
 def _validation_data_green(data: object) -> bool:
     if not isinstance(data, dict) or data.get("schema") != "custodian.validation.result.v1" or not data.get("passed", False):
         return False
+    coverage = data.get("coverage")
+    if not isinstance(coverage, dict) or coverage.get("complete") is not True:
+        return False
     tests = data.get("tests", [])
     return bool(tests) and all(isinstance(test, dict) and test.get("status") == "passed" for test in tests)
 

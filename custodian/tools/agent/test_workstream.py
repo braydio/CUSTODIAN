@@ -238,7 +238,7 @@ class WorkstreamTests(unittest.TestCase):
         git(path, "commit", "-m", "finish sample")
         landed_head = git(path, "rev-parse", "HEAD")
         report = self.base / "validation.json"
-        report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"tests":[{"status":"passed"}]}')
+        report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"coverage":{"complete":true},"tests":[{"status":"passed"}]}')
         # Invoke from the task worktree itself, as the normal CLI does. Teardown
         # must continue through a surviving coordination worktree.
         with mock.patch.object(workstream, "apply_profiles", wraps=workstream.apply_profiles) as sync_apply:
@@ -256,7 +256,7 @@ class WorkstreamTests(unittest.TestCase):
 
     def _green_report(self, name: str = "validation.json") -> Path:
         report = self.base / name
-        report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"tests":[{"status":"passed"}]}')
+        report.write_text('{"schema":"custodian.validation.result.v1","passed":true,"coverage":{"complete":true},"tests":[{"status":"passed"}]}')
         return report
 
     def _red_report(self, name: str = "red.json") -> Path:
@@ -320,6 +320,19 @@ class WorkstreamTests(unittest.TestCase):
         self._simulate_already_landed(path)
         with self.assertRaisesRegex(workstream.WorkstreamError, "not green"):
             workstream.finish("needs-green", self._red_report(), repo=path)
+        self.assertTrue(path.exists())
+
+    def test_finish_rejects_passed_report_with_incomplete_coverage(self):
+        path = workstream.start("incomplete-coverage", self.repo)
+        self._commit_task_work(path, "incomplete-coverage")
+        self._simulate_already_landed(path)
+        report = self.base / "incomplete-coverage.json"
+        report.write_text(
+            '{"schema":"custodian.validation.result.v1","passed":true,'
+            '"coverage":{"complete":false},"tests":[{"status":"passed"}]}'
+        )
+        with self.assertRaisesRegex(workstream.WorkstreamError, "not green"):
+            workstream.finish("incomplete-coverage", report, repo=path)
         self.assertTrue(path.exists())
 
     def test_finish_with_extra_unlanded_commit_uses_normal_landing_path(self):

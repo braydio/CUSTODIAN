@@ -271,6 +271,24 @@ class WorkstreamArtifactTests(unittest.TestCase):
         self.assertFalse(report["ready_before_sync"])
         self.assertIn("validation", [item["gate"] for item in report["blockers"]])
 
+        incomplete_reports = [
+            {"coverage": {"complete": False}},
+            {},
+            {"coverage": []},
+        ]
+        for index, coverage_fields in enumerate(incomplete_reports):
+            incomplete = {
+                "schema": "custodian.validation.result.v1",
+                "passed": True,
+                "tests": [{"id": "sample", "status": "passed"}],
+                **coverage_fields,
+            }
+            validation.write_text(json.dumps(incomplete))
+            report = workstream.closeout_preflight(workstream_id, self.repo, validation)
+            self.assertFalse(report["validation"]["green"], index)
+            self.assertFalse(report["ready_before_sync"], index)
+            self.assertIn("validation", [item["gate"] for item in report["blockers"]], index)
+
     def test_preflight_cli_is_json_and_does_not_create_a_run_trace(self):
         import contextlib
         import io
