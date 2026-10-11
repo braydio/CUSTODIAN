@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-cohort-dependency-closure
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
@@ -48,3 +48,35 @@
 - Refresh reason: closure evidence must identify actual required cohort/consumer boundaries; artist timing, release scope and verification still need human decisions.
 - Next action: Return regenerated closure report and explicit missing-source/QA/timing/transition list to the recorded authoring chat for a bounded decision. Do not claim WB25-6 merely because the report lands.
 - Blockers or open questions: No selected production FPS or approved cohort, and no current effective verified idle leaves.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: Deterministic probe and smoke produce `custodian.operator_2_5d_cohort_dependency_closure.v1` for main `7d14aa7d697ad39696d873c1547092e6f2acb3f4`. The report derives seven exact plan families / 56 directions, all eight physical idle direction manifests/documents/source strips/Source Sessions, current `Operator2DReview.current_receipt()` results for all 56 leaves, generation-neutral runtime manifest/catalog coverage, and twelve open transition/preemption seams. It records 8 editable idle directions, 0 effective receipts/verified leaves/families and 0 candidate publications; idle preview timing remains 8 FPS with `timing_authority=false`; six families retain null frame/loop/FPS. Posture's live lower/upper modular pair plus east/west projection is explicitly incompatible with the candidate's eight-way full-body requirement. Runtime/art/policy/source/manifest/receipt/SpriteFrames/presentation owners were not modified.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: First direct review-sandbox smoke timed out after 90 seconds on the cold worktree import cache; the report's initial file audit also found the physical authoring checkout dirty with preserved untracked source inbox files and 67 commits behind origin/main.
+- Root cause / contributing factors: Fresh Godot worktrees require editor import/class initialization before the sandbox smoke. The populated art checkout deliberately carries untracked source intake and Workbench evidence and had not been synchronized to current main.
+- Prevention / pipeline improvement: Run serialized `run_validation.py` import preflight before direct sandbox execution. Treat external source/workspace checkout state as observed evidence and do not sync, stage, or rewrite its artist-owned/untracked files.
+- Tooling / docs drift discovered: none
+- Follow-up: review-operator-2-5d-cohort-dependency-closure
+- What worked: The report uses the live review receipt authority instead of plan/source completion, records hashes for the complete source evidence set, and keeps candidate closure fail-closed.
+
+## Next Handoff
+- Next workstream: review-operator-2-5d-cohort-dependency-closure
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38
+- Refresh reason: none
+- Next action: Run the fresh-context paired review; after it passes, return the evidence to the authoring chat before refreshing or claiming WB25-6.
+- Blockers or open questions: WB25-6 remains draft/manual pending human cohort/timing decisions and complete current verified evidence.

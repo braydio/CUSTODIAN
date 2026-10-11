@@ -6235,6 +6235,34 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_cohort_dependency_closure",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "animation",
+        "2_5d",
+        "dependency_closure",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py",
+        "custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "custodian/game/actors/operator/presentation/operator_body_presenter.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd",
+        "custodian/tools/operator/operator_2_5d_review.py",
+        "custodian/tools/operator/operator_animation_targets.py",
+        "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+        "custodian/content/data/operator/operator_animation_reachability.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "operator_2_5d_review",
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_review_smoke.py",
