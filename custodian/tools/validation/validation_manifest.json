@@ -1637,9 +1637,27 @@
         "custodian/tools/godot_project_lock.py",
         "custodian/tools/validation/run_validation.py",
         "custodian/tools/pipelines/sync_operator_runtime_assets.py",
-        "custodian/tools/validation/godot_project_lock_smoke.py"
+        "custodian/tools/validation/godot_project_lock_smoke.py",
+        "custodian/tools/agent/workstream.py"
       ],
       "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "scratch_storage_report",
+      "type": "python",
+      "script": "custodian/tools/validation/scratch_storage_report_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "tooling",
+        "agent_workflow",
+        "concurrency"
+      ],
+      "owners": [
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/validation/scratch_storage_report_smoke.py"
+      ],
+      "timeout_sec": 30,
       "needs_import": false
     },
     {

@@ -133,12 +133,12 @@ activation burst and break-on-hit rule are insufficient.
 Run from `custodian/`:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . \
   --script res://tools/validation/initiative_vanguard_seal_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . \
   --script res://tools/validation/inventory_ui_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . \
   --script res://tools/validation/sundered_keep_vanguard_seal_acquisition_smoke.gd
 ```
 

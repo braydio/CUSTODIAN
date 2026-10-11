@@ -1,5 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
+## Validation Scratch And Machine-Wide Job Budget (2026-10-11)
+
+Godot validation now keeps its isolated user home under the configurable,
+disk-backed `~/.cache/custodian/` scratch root by default
+(`CUSTODIAN_SCRATCH_DIR` overrides it). Project locks use a user cache namespace
+independent of `TMPDIR`, and validation holds a machine-wide counting slot in
+addition to the per-project writer lock (`CUSTODIAN_GODOT_MAX_JOBS`, default 2).
+`workstream.py status` reports scratch usage and registered RAM-backed
+worktrees, including protected status; it never cleans them. See
+`AGENT_WORKSTREAM_LIFECYCLE.md` and `VALIDATION_RECIPES.md` for details.
+
 ## Task-Packet Queue Semantics (2026-10-09)
 
 Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `blocked/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.

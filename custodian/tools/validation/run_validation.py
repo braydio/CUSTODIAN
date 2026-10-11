@@ -21,7 +21,10 @@ CUSTODIAN_DIR = VALIDATION_DIR.parents[1]
 REPO_ROOT = CUSTODIAN_DIR.parent
 
 sys.path.insert(0, str(CUSTODIAN_DIR / "tools"))
-from godot_project_lock import GodotProjectBusy, GodotProjectLock  # noqa: E402
+from godot_project_lock import (  # noqa: E402
+    GodotJobBudget, GodotProjectBusy, GodotProjectLock, godot_home,
+    inherited_godot_lock_fds,
+)
 sys.path.insert(0, str(CUSTODIAN_DIR / "tools" / "pipelines"))
 from godot_import_preflight import preflight_detail  # noqa: E402
 ITERATION_DIR = CUSTODIAN_DIR / "tools" / "iteration"
@@ -224,12 +227,13 @@ def command_for(test: dict[str, Any]) -> tuple[list[str], Path]:
 def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: list[str] | None = None) -> dict[str, Any]:
     resolved_command, cwd = command_for(test) if command is None else (command, REPO_ROOT)
     env = os.environ.copy()
-    env["HOME"] = "/tmp/custodian-godot-home"
+    env["HOME"] = str(godot_home())
     started = time.monotonic()
     timed_out = False
     try:
         process = subprocess.Popen(resolved_command, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, start_new_session=True)
+                                   text=True, start_new_session=True,
+                                   pass_fds=inherited_godot_lock_fds())
     except OSError as error:
         return {
             "id": test["id"], "tier": test["tier"], "status": "infrastructure_error", "exit_code": None,
@@ -274,11 +278,12 @@ def execute_test(test: dict[str, Any], patterns: list[dict[str, str]], command: 
 
 def _run_import(timeout_sec: float = IMPORT_TIMEOUT_SEC, command: list[str] | None = None,
                 patterns: list[dict[str, str]] | None = None) -> tuple[bool, dict[str, Any]]:
-    env = os.environ.copy(); env["HOME"] = "/tmp/custodian-godot-home"
+    env = os.environ.copy(); env["HOME"] = str(godot_home())
     resolved = command or ["godot", "--headless", "--path", str(CUSTODIAN_DIR), "--import", "--quit"]
     try:
         process = subprocess.Popen(resolved, cwd=REPO_ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, start_new_session=True)
+                                   text=True, start_new_session=True,
+                                   pass_fds=inherited_godot_lock_fds())
         try:
             stdout, stderr = process.communicate(timeout=timeout_sec)
         except subprocess.TimeoutExpired:
@@ -363,7 +368,7 @@ def main(argv: list[str] | None = None) -> int:
         CUSTODIAN_DIR, "run_validation (%d checks)" % len(selected)
     )
     try:
-        with lock:
+        with lock, GodotJobBudget("run_validation (%d checks)" % len(selected)):
             if any(bool(test.get("needs_import")) for test in selected):
                 preflight_failure = preflight_detail(CUSTODIAN_DIR)
                 if preflight_failure:
@@ -380,7 +385,7 @@ def main(argv: list[str] | None = None) -> int:
                     print(json.dumps({"schema":"custodian.validation.result.v1","passed":False,"infrastructure_failure":"import","import":import_result}))
                     return EXIT_PREFLIGHT
             results = execute_tiered(selected, patterns)
-    except GodotProjectBusy as error:
+    except (GodotProjectBusy, ValueError, RuntimeError) as error:
         print(json.dumps({
             "schema": "custodian.validation.result.v1", "passed": False,
             "infrastructure_failure": "godot_project_busy", "error": str(error),

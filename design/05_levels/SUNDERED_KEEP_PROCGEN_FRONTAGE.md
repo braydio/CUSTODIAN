@@ -192,22 +192,22 @@ camera follow, and presentation bounds on return or entry failure.
 Run from the repository root:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_procgen_vista_layering_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/camera_presentation_subject_constraint_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_shoreline_compositor_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/procgen_walkable_boundary_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/procgen_nonwalkable_surface_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/procgen_ocean_tileset_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_frontage_bypass_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path custodian \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian \
   --script res://tools/validation/sundered_keep_ingress_smoke.gd
 ```
 

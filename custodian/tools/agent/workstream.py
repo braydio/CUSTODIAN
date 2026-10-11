@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -68,6 +69,113 @@ def worktree_records(repo: Path) -> list[dict[str, str]]:
         key, _, value = line.partition(" ")
         current[key] = value
     return records
+
+
+def _mount_table(path: Path = Path("/proc/self/mountinfo")) -> list[dict[str, str]]:
+    """Read Linux mountinfo without shelling out or changing host state."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return []
+    mounts = []
+    for line in lines:
+        before, separator, after = line.partition(" - ")
+        fields, filesystem = before.split(), after.split()
+        if not separator or len(fields) < 5 or not filesystem:
+            continue
+        mountpoint = re.sub(r"\\([0-7]{3})", lambda match: chr(int(match.group(1), 8)), fields[4])
+        mounts.append({"mount": mountpoint, "fstype": filesystem[0]})
+    return mounts
+
+
+def _filesystem_for(path: Path, mounts: list[dict[str, str]]) -> dict[str, str] | None:
+    resolved = path.resolve()
+    matches = []
+    for mount in mounts:
+        mountpoint = Path(mount["mount"]).resolve()
+        try:
+            resolved.relative_to(mountpoint)
+        except ValueError:
+            continue
+        matches.append((len(mountpoint.parts), mount))
+    return max(matches, default=(0, None), key=lambda item: item[0])[1]
+
+
+def storage_report(
+    repo: Path,
+    *,
+    records: list[dict[str, str]] | None = None,
+    mounts: list[dict[str, str]] | None = None,
+) -> dict[str, object]:
+    """Describe RAM-backed scratch/worktrees and protected worktree state; never delete."""
+    tools_dir = Path(__file__).resolve().parents[1]
+    if str(tools_dir) not in sys.path and (tools_dir / "godot_project_lock.py").is_file():
+        sys.path.insert(0, str(tools_dir))
+    from godot_project_lock import scratch_root
+
+    mount_entries = _mount_table() if mounts is None else mounts
+    scratch = scratch_root(create=False)
+    scratch_mount = _filesystem_for(scratch, mount_entries)
+    usage_path = scratch
+    while not usage_path.exists() and usage_path != usage_path.parent:
+        usage_path = usage_path.parent
+    scratch_stats = shutil.disk_usage(usage_path)
+    scratch_record = {
+        "path": str(scratch),
+        "fstype": scratch_mount["fstype"] if scratch_mount else "unknown",
+        "mount": scratch_mount["mount"] if scratch_mount else "unknown",
+        "total_bytes": scratch_stats.total,
+        "used_bytes": scratch_stats.used,
+        "free_bytes": scratch_stats.free,
+        "ram_backed": bool(scratch_mount and scratch_mount["fstype"] in {"tmpfs", "ramfs"}),
+    }
+    protected = []
+    for record in records if records is not None else worktree_records(repo):
+        path = Path(record.get("worktree", ""))
+        mount = _filesystem_for(path, mount_entries)
+        if not mount or mount["fstype"] not in {"tmpfs", "ramfs"}:
+            continue
+        branch = record.get("branch", "detached")
+        dirty = path.exists() and not status_clean(path)
+        upstream = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+            cwd=path if path.exists() else repo, capture_output=True, text=True, check=False,
+        )
+        ahead = None
+        unpushed = upstream.returncode != 0
+        if upstream.returncode == 0:
+            counts = subprocess.run(
+                ["git", "rev-list", "--left-right", "--count", f"{upstream.stdout.strip()}...HEAD"],
+                cwd=path if path.exists() else repo, capture_output=True, text=True, check=False,
+            )
+            if counts.returncode == 0:
+                parts = counts.stdout.split()
+                ahead = int(parts[1]) if len(parts) == 2 else None
+                unpushed = ahead is None or ahead > 0
+        reasons = ["registered worktree"]
+        if branch.startswith("refs/heads/agent/"):
+            reasons.append("claimed workstream")
+            workstream_id = branch.removeprefix("refs/heads/agent/")
+            if any(
+                _packet_status(packet.read_text()) == "blocked"
+                for packet in _associated_task_packets(repo, workstream_id)
+                if packet.parent == repo / TASK_PACKET_ROOT
+            ):
+                reasons.append("blocked packet")
+        if dirty:
+            reasons.append("dirty")
+        if unpushed:
+            reasons.append("unpushed or no upstream")
+        protected.append({
+            "path": str(path), "branch": branch, "mount": mount["mount"],
+            "fstype": mount["fstype"], "dirty": dirty, "ahead": ahead,
+            "unpushed": unpushed, "protected": True, "protected_reasons": reasons,
+        })
+    return {
+        "scratch": scratch_record,
+        "ram_backed_worktrees": protected,
+        "deletions_performed": 0,
+    }
 
 
 def status_clean(path: Path) -> bool:
@@ -1125,12 +1233,32 @@ def preflight(workstream_id: str, validation_report: Path | None = None, repo: P
 def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
     repo = (repo or root_repo()).resolve()
     fetch(repo)
-    for item in worktree_records(repo):
+    records = worktree_records(repo)
+    for item in records:
         branch = item.get("branch", "detached")
         if workstream_id and branch != f"refs/heads/{branch_for(workstream_id)}":
             continue
         path = Path(item["worktree"])
         print(f"{branch}\t{'clean' if status_clean(path) else 'dirty'}\t{path}")
+    report = storage_report(repo, records=records)
+    scratch = report["scratch"]
+    used = scratch["used_bytes"] / (1024 ** 3)
+    total = scratch["total_bytes"] / (1024 ** 3)
+    free = scratch["free_bytes"] / (1024 ** 3)
+    print(
+        "scratch\t%s\t%s (%s, %.2f/%.2f GiB used, %.2f GiB free)" % (
+            scratch["fstype"], scratch["path"], scratch["mount"], used, total, free,
+        )
+    )
+    for item in report["ram_backed_worktrees"]:
+        print(
+            "PROTECTED ram-backed worktree\t%s\t%s\t%s (%s)" % (
+                item["branch"], item["path"], item["fstype"], ", ".join(item["protected_reasons"]),
+            )
+        )
+    if not report["ram_backed_worktrees"]:
+        print("RAM-backed worktrees\tnone")
+    print("storage report is read-only; deletions performed: 0")
     if workstream_id:
         branch = branch_for(workstream_id)
         print(f"remote {branch}: {'present' if subprocess.run(['git','show-ref','--verify','--quiet',f'refs/remotes/origin/{branch}'],cwd=repo).returncode == 0 else 'absent'}")

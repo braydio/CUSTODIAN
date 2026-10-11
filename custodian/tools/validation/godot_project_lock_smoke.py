@@ -20,8 +20,9 @@ from pathlib import Path
 CUSTODIAN_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CUSTODIAN_ROOT))
 from godot_project_lock import (  # noqa: E402
-    DISABLE_ENV, PATH_ENV, REENTRANCY_ENV, GodotProjectBusy, GodotProjectLock,
-    lock_path_for,
+    BUDGET_REENTRANCY_ENV, DEFAULT_MAX_JOBS, DISABLE_ENV, MAX_JOBS_ENV, PATH_ENV, REENTRANCY_ENV,
+    SCRATCH_ENV, GodotJobBudget, GodotProjectBusy, GodotProjectLock,
+    godot_home, inherited_job_budget_fds, lock_path_for, scratch_root,
 )
 
 HOLDER = """
@@ -33,6 +34,33 @@ with GodotProjectLock(%r, "smoke-holder", timeout_sec=30):
     time.sleep(float(sys.argv[1]))
 """
 
+BUDGET_HOLDER = """
+import sys, time
+sys.path.insert(0, %r)
+from godot_project_lock import GodotJobBudget
+with GodotJobBudget("smoke-holder", timeout_sec=10):
+    print("HELD", flush=True)
+    time.sleep(float(sys.argv[1]))
+"""
+
+BUDGET_ORPHAN = """
+import os, subprocess, sys
+sys.path.insert(0, %r)
+from godot_project_lock import GodotJobBudget, inherited_job_budget_fds
+with GodotJobBudget("smoke-orphan-parent", timeout_sec=10):
+    subprocess.Popen([sys.executable, "-c", "import time; time.sleep(2)"],
+                     env=os.environ.copy(), pass_fds=inherited_job_budget_fds(),
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("SPAWNED", flush=True)
+"""
+
+LOCK_PATH_PROBE = """
+import sys
+sys.path.insert(0, %r)
+from godot_project_lock import lock_path_for
+print(lock_path_for(__import__('pathlib').Path(sys.argv[1])))
+"""
+
 
 def main() -> int:
     failures: list[str] = []
@@ -40,6 +68,126 @@ def main() -> int:
     def check(condition: bool, message: str) -> None:
         if not condition:
             failures.append(message)
+
+    with tempfile.TemporaryDirectory(prefix="godot-lock-cache-") as cache, \
+            tempfile.TemporaryDirectory(prefix="godot-lock-tmp-a-") as tmp_a, \
+            tempfile.TemporaryDirectory(prefix="godot-lock-tmp-b-") as tmp_b:
+        old_cache = os.environ.get("XDG_CACHE_HOME")
+        old_tmp = os.environ.get("TMPDIR")
+        old_temp = tempfile.tempdir
+        project = str(Path(cache) / "project")
+        env_a = os.environ.copy()
+        env_a["XDG_CACHE_HOME"] = cache
+        env_a["TMPDIR"] = tmp_a
+        env_a.pop(PATH_ENV, None)
+        env_b = dict(env_a, TMPDIR=tmp_b)
+        lock_a = subprocess.run(
+            [sys.executable, "-c", LOCK_PATH_PROBE % str(CUSTODIAN_ROOT), project],
+            capture_output=True, text=True, check=True, env=env_a,
+        ).stdout.strip()
+        lock_b = subprocess.run(
+            [sys.executable, "-c", LOCK_PATH_PROBE % str(CUSTODIAN_ROOT), project],
+            capture_output=True, text=True, check=True, env=env_b,
+        ).stdout.strip()
+        check(lock_a == lock_b, "project lock path must not split when TMPDIR changes")
+        tempfile.tempdir = old_temp
+        if old_cache is None:
+            os.environ.pop("XDG_CACHE_HOME", None)
+        else:
+            os.environ["XDG_CACHE_HOME"] = old_cache
+        if old_tmp is None:
+            os.environ.pop("TMPDIR", None)
+        else:
+            os.environ["TMPDIR"] = old_tmp
+
+    with tempfile.TemporaryDirectory(prefix="godot-scratch-smoke-") as temp:
+        root = Path(temp) / "scratch"
+        os.environ[SCRATCH_ENV] = str(root)
+        resolved = scratch_root()
+        home = godot_home()
+        check(resolved == root and home == root / "godot-home", "Godot home must resolve under configured scratch")
+        check(root.stat().st_mode & 0o777 == 0o700, "scratch root must be mode 0700")
+        check(home.stat().st_mode & 0o777 == 0o700, "Godot home must be mode 0700")
+        os.environ.pop(SCRATCH_ENV, None)
+
+    with tempfile.TemporaryDirectory(prefix="godot-budget-smoke-") as cache:
+        old_cache = os.environ.get("XDG_CACHE_HOME")
+        old_limit = os.environ.get(MAX_JOBS_ENV)
+        os.environ["XDG_CACHE_HOME"] = cache
+        os.environ.pop(MAX_JOBS_ENV, None)
+        check(GodotJobBudget("smoke-default").limit == DEFAULT_MAX_JOBS == 2,
+              "default machine-wide budget must be two jobs")
+        os.environ[MAX_JOBS_ENV] = "2"
+        os.environ.pop(BUDGET_REENTRANCY_ENV, None)
+        os.environ.pop(REENTRANCY_ENV, None)
+        holders = [subprocess.Popen(
+            [sys.executable, "-c", BUDGET_HOLDER % str(CUSTODIAN_ROOT), "2"],
+            stdout=subprocess.PIPE, text=True, env=os.environ.copy(),
+        ) for _ in range(2)]
+        try:
+            for holder in holders:
+                assert holder.stdout is not None
+                check(holder.stdout.readline().strip() == "HELD", "budget holder failed to acquire a slot")
+            waiter = subprocess.run(
+                [sys.executable, "-c", BUDGET_HOLDER % str(CUSTODIAN_ROOT), "0"],
+                capture_output=True, text=True, env=os.environ.copy(), timeout=10,
+            )
+            check(waiter.returncode == 0, "N+1 job must acquire a released slot")
+            check("waiting for a machine-wide Godot slot" in waiter.stderr,
+                  "N+1 job must print a clear slot wait message")
+            outer = GodotJobBudget("smoke-reentrant", timeout_sec=2)
+            with outer:
+                check(outer.acquired, "budget must acquire a free slot")
+                inner = GodotJobBudget("smoke-nested", timeout_sec=1)
+                with inner:
+                    check(not inner.acquired, "nested run must reuse the held budget slot")
+        finally:
+            for holder in holders:
+                holder.wait(timeout=10)
+
+        stranded = subprocess.Popen(
+            [sys.executable, "-c", BUDGET_HOLDER % str(CUSTODIAN_ROOT), "60"],
+            stdout=subprocess.PIPE, text=True, env=os.environ.copy(),
+        )
+        assert stranded.stdout is not None
+        check(stranded.stdout.readline().strip() == "HELD", "stale-holder fixture failed to acquire a slot")
+        stranded.kill()
+        stranded.wait(timeout=10)
+        recovered = GodotJobBudget("smoke-stale-recovery", timeout_sec=2)
+        with recovered:
+            check(recovered.acquired, "a dead holder must release its budget slot")
+
+        os.environ[MAX_JOBS_ENV] = "1"
+        orphan = subprocess.run(
+            [sys.executable, "-c", BUDGET_ORPHAN % str(CUSTODIAN_ROOT)],
+            capture_output=True, text=True, env=os.environ.copy(), timeout=10,
+        )
+        check(orphan.returncode == 0 and "SPAWNED" in orphan.stdout,
+              "budget holder fixture must spawn an inherited child")
+        try:
+            with GodotJobBudget("smoke-child-retention", timeout_sec=0.5):
+                failures.append("a child outlived its parent but did not retain the budget slot")
+        except GodotProjectBusy:
+            pass
+        time.sleep(2.0)
+        with GodotJobBudget("smoke-child-released", timeout_sec=2) as after_child:
+            check(after_child.acquired, "child exit must release the inherited budget slot")
+        os.environ[MAX_JOBS_ENV] = "2"
+
+        project = Path(cache) / "project"
+        project.mkdir()
+        with GodotProjectLock(project, "project-lock-with-budget", timeout_sec=2) as project_lock:
+            with GodotJobBudget("budget-with-project-lock", timeout_sec=2) as budget:
+                check(project_lock.acquired and budget.acquired,
+                      "job budget must layer on top of the per-project lock")
+        if old_cache is None:
+            os.environ.pop("XDG_CACHE_HOME", None)
+        else:
+            os.environ["XDG_CACHE_HOME"] = old_cache
+        if old_limit is None:
+            os.environ.pop(MAX_JOBS_ENV, None)
+        else:
+            os.environ[MAX_JOBS_ENV] = old_limit
 
     with tempfile.TemporaryDirectory(prefix="godot-lock-smoke-") as temp:
         project = Path(temp) / "project"

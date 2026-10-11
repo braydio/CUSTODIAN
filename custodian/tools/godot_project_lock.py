@@ -17,10 +17,10 @@ Design notes:
 * `fcntl.flock` is used deliberately. The kernel releases it when the holding
   process dies, which matters because agent sessions get killed mid-run and a
   PID-file lock would strand the project behind a lock nobody holds.
-* The lock file lives in the system temp directory, keyed by the resolved
-  project path — never inside the repository (it would show up in `git status`)
-  and never inside `.godot/` (a full reimport deletes that directory, which would
-  silently unlink the inode every waiter is queued on).
+* Lock files live in the user cache namespace, keyed by the resolved project
+  path — independent of TMPDIR, never inside the repository (it would show up
+  in `git status`) and never inside `.godot/` (a full reimport deletes that
+  directory, which would silently unlink the inode every waiter is queued on).
 * Acquisition is reentrant across process boundaries via an environment variable,
   so a locked run can shell out to another locked tool without deadlocking.
 """
@@ -31,7 +31,6 @@ import hashlib
 import json
 import os
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -42,13 +41,59 @@ except ImportError:  # pragma: no cover - POSIX only; see acquire() degradation
 
 #: Set to the lock file path while held, so nested tools skip re-acquiring.
 REENTRANCY_ENV = "CUSTODIAN_GODOT_PROJECT_LOCK"
+PROJECT_FD_ENV = "CUSTODIAN_GODOT_PROJECT_LOCK_FD"
 #: Set to "1" to bypass locking entirely. For debugging a hung lock only.
 DISABLE_ENV = "CUSTODIAN_GODOT_LOCK_DISABLE"
 #: Overrides the derived lock path, so cooperating processes can be pinned.
 PATH_ENV = "CUSTODIAN_GODOT_LOCK_PATH"
+SCRATCH_ENV = "CUSTODIAN_SCRATCH_DIR"
+MAX_JOBS_ENV = "CUSTODIAN_GODOT_MAX_JOBS"
+BUDGET_REENTRANCY_ENV = "CUSTODIAN_GODOT_JOB_BUDGET"
+BUDGET_FD_ENV = "CUSTODIAN_GODOT_JOB_BUDGET_FD"
 
 DEFAULT_TIMEOUT_SEC = 900.0
 POLL_INTERVAL_SEC = 0.5
+DEFAULT_MAX_JOBS = 2
+
+
+def scratch_root(*, create: bool = True) -> Path:
+    """Resolve the configurable, disk-backed home for large disposable state."""
+    configured = os.environ.get(SCRATCH_ENV)
+    path = Path(configured).expanduser() if configured else Path.home() / ".cache" / "custodian"
+    path = path.resolve()
+    if create:
+        path.mkdir(mode=0o700, parents=True, exist_ok=True)
+        try:
+            path.chmod(0o700)
+        except OSError:
+            pass
+    return path
+
+
+def godot_home(*, create: bool = True) -> Path:
+    path = scratch_root(create=create) / "godot-home"
+    if create:
+        path.mkdir(mode=0o700, parents=True, exist_ok=True)
+        try:
+            path.chmod(0o700)
+        except OSError:
+            pass
+    return path
+
+
+def _lock_root() -> Path:
+    cache_home = Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache"))).expanduser()
+    return cache_home / "custodian" / "locks"
+
+
+def _ensure_lock_root() -> Path:
+    root = _lock_root()
+    root.mkdir(mode=0o700, parents=True, exist_ok=True)
+    try:
+        root.chmod(0o700)
+    except OSError:
+        pass
+    return root
 
 
 class GodotProjectBusy(RuntimeError):
@@ -60,7 +105,7 @@ def lock_path_for(project_dir: Path) -> Path:
     if override:
         return Path(override)
     digest = hashlib.sha256(str(Path(project_dir).resolve()).encode()).hexdigest()[:12]
-    return Path(tempfile.gettempdir()) / f"custodian-godot-project-{digest}.lock"
+    return _lock_root() / f"custodian-godot-project-{digest}.lock"
 
 
 def _describe_self(purpose: str) -> str:
@@ -70,6 +115,18 @@ def _describe_self(purpose: str) -> str:
         "argv": sys.argv[:6],
         "acquired_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     })
+
+
+def inherited_job_budget_fds() -> tuple[int, ...]:
+    """Keep the counting slot held if a validation parent exits before its child."""
+    raw = os.environ.get(BUDGET_FD_ENV, "")
+    return (int(raw),) if raw.isdigit() else ()
+
+
+def inherited_godot_lock_fds() -> tuple[int, ...]:
+    """Return held project and job-budget descriptors for launched children."""
+    values = (os.environ.get(PROJECT_FD_ENV, ""), os.environ.get(BUDGET_FD_ENV, ""))
+    return tuple(int(value) for value in values if value.isdigit())
 
 
 def _read_holder(path: Path) -> str:
@@ -128,7 +185,7 @@ class GodotProjectLock:
                 file=sys.stderr,
             )
             return self
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         self._handle = open(self.path, "a+", encoding="utf-8")
         deadline = time.monotonic() + self.timeout_sec
         announced = False
@@ -161,6 +218,7 @@ class GodotProjectLock:
         self._handle.write(_describe_self(self.purpose))
         self._handle.flush()
         os.environ[REENTRANCY_ENV] = str(self.path)
+        os.environ[PROJECT_FD_ENV] = str(self._handle.fileno())
         self._owns_env = True
         self.acquired = True
         return self
@@ -168,19 +226,96 @@ class GodotProjectLock:
     def __exit__(self, *_exc) -> None:
         if self._owns_env:
             os.environ.pop(REENTRANCY_ENV, None)
+            os.environ.pop(PROJECT_FD_ENV, None)
             self._owns_env = False
         if self._handle is None:
             return
+        # A child launched by the locked runner may still be using the project.
+        # Closing preserves the lock until inherited descriptors close; an
+        # explicit LOCK_UN would release it too early.
+        self._handle.close()
+        self._handle = None
+        self.acquired = False
+
+
+class GodotJobBudget:
+    """Machine-wide counting semaphore implemented with crash-safe flock slots."""
+
+    def __init__(self, purpose: str, timeout_sec: float = DEFAULT_TIMEOUT_SEC, on_wait=None) -> None:
+        raw_limit = os.environ.get(MAX_JOBS_ENV, str(DEFAULT_MAX_JOBS))
         try:
-            self._handle.seek(0)
-            self._handle.truncate()
-            self._handle.flush()
-            fcntl.flock(self._handle, fcntl.LOCK_UN)
-        except OSError:
-            pass
-        finally:
-            self._handle.close()
-            self._handle = None
+            self.limit = int(raw_limit)
+        except ValueError as error:
+            raise ValueError(f"{MAX_JOBS_ENV} must be a positive integer") from error
+        if self.limit < 1:
+            raise ValueError(f"{MAX_JOBS_ENV} must be a positive integer")
+        self.purpose = purpose
+        self.timeout_sec = timeout_sec
+        self._on_wait = on_wait
+        self._handle = None
+        self.path: Path | None = None
+        self._owns_env = False
+        self.acquired = False
+
+    def __enter__(self) -> "GodotJobBudget":
+        if os.environ.get(BUDGET_REENTRANCY_ENV):
+            return self
+        if fcntl is None:
+            raise RuntimeError("fcntl unavailable; machine-wide Godot job budget cannot be enforced")
+        root = _ensure_lock_root()
+        deadline = time.monotonic() + self.timeout_sec
+        announced = False
+        while True:
+            for slot in range(self.limit):
+                path = root / f"custodian-godot-job-{slot:02d}.lock"
+                handle = open(path, "a+", encoding="utf-8")
+                try:
+                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    handle.close()
+                    continue
+                handle.seek(0)
+                handle.truncate()
+                handle.write(_describe_self(self.purpose))
+                handle.flush()
+                self.path = path
+                self._handle = handle
+                os.environ[BUDGET_REENTRANCY_ENV] = str(path)
+                os.environ[BUDGET_FD_ENV] = str(handle.fileno())
+                self._owns_env = True
+                self.acquired = True
+                return self
+            if not announced:
+                occupied = [
+                    f"slot {slot}: {_read_holder(root / f'custodian-godot-job-{slot:02d}.lock')}"
+                    for slot in range(self.limit)
+                ]
+                message = (
+                    f"[godot-budget] waiting for a machine-wide Godot slot (limit {self.limit}; "
+                    + "; ".join(occupied) + ")"
+                )
+                if self._on_wait is not None:
+                    self._on_wait(message)
+                else:
+                    print(message, file=sys.stderr)
+                announced = True
+            if time.monotonic() >= deadline:
+                raise GodotProjectBusy(f"all {self.limit} machine-wide Godot job slots are occupied")
+            time.sleep(POLL_INTERVAL_SEC)
+
+    def __exit__(self, *_exc) -> None:
+        if self._owns_env:
+            os.environ.pop(BUDGET_REENTRANCY_ENV, None)
+            os.environ.pop(BUDGET_FD_ENV, None)
+            self._owns_env = False
+        if self._handle is None:
+            return
+        # Do not truncate or explicitly unlock: a launched child may inherit
+        # this open file description and must keep the slot and holder details
+        # until it exits. Close releases the slot when the final child exits.
+        self._handle.close()
+        self._handle = None
+        self.path = None
         self.acquired = False
 
 

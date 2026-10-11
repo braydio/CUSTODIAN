@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -51,6 +52,23 @@ def main() -> int:
 
     fake = {"id": "fake", "type": "python", "script": __file__, "tier": "unit", "timeout_sec": 2,
             "selection_reasons": ["smoke"]}
+    old_scratch = os.environ.get("CUSTODIAN_SCRATCH_DIR")
+    with tempfile.TemporaryDirectory(prefix="validation-runner-scratch-") as scratch:
+        os.environ["CUSTODIAN_SCRATCH_DIR"] = scratch
+        expected_home = str(Path(scratch) / "godot-home")
+        home_probe = runner.execute_test(
+            fake, [], [sys.executable, "-c", "import os; print(os.environ['HOME'])"]
+        )
+        assert home_probe["status"] == "passed" and home_probe["stdout_tail"] == [expected_home]
+        import_home_ok, import_home = runner._run_import(
+            2, [sys.executable, "-c", "import os; print(os.environ['HOME'])"]
+        )
+        assert import_home_ok and import_home["stdout_tail"] == [expected_home]
+        assert Path(expected_home).is_dir()
+    if old_scratch is None:
+        os.environ.pop("CUSTODIAN_SCRATCH_DIR", None)
+    else:
+        os.environ["CUSTODIAN_SCRATCH_DIR"] = old_scratch
     passed = runner.execute_test(fake, [], [sys.executable, "-c", f"print({passed_sentinel!r})"])
     assert passed["status"] == "passed" and passed["structured_result"] is not None
     structured_failure = runner.execute_test(fake, [], [sys.executable, "-c", f"print({failed_sentinel!r})"])

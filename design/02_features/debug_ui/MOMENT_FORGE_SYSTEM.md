@@ -3073,7 +3073,7 @@ Use generated synthetic 1280×720 PNGs and a short WAV. Validate:
 From `custodian/`:
 
 ```bash
-env HOME=/tmp/custodian-godot-home \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" \
 godot --headless --path . \
   --script res://tools/validation/moment_forge_runtime_smoke.gd
 ```
@@ -3106,7 +3106,7 @@ Linux renderer-backed command:
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home \
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" \
 godot \
   --display-driver x11 \
   --rendering-driver opengl3 \
@@ -3131,18 +3131,18 @@ Run:
 
 ```bash
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/dev_observatory_audit_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/field_patch_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/dev_observatory_audit_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/field_patch_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/grunt_parry_crit_reaction_smoke.gd
 ```
 
 For Vista work:
 
 ```bash
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/sundered_keep_world_vista_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/sundered_keep_ingress_smoke.gd
 ```
 
 ### 29.9 Suite
@@ -3452,10 +3452,10 @@ python3 -m py_compile custodian/tools/iteration/run_moment.py
 python3 custodian/tools/validation/moment_forge_schema_smoke.py
 
 cd custodian
-env HOME=/tmp/custodian-godot-home godot --headless --path . --import --quit
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/moment_forge_runtime_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/field_patch_smoke.gd
-env HOME=/tmp/custodian-godot-home godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --import --quit
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/moment_forge_runtime_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/field_patch_smoke.gd
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path . --script res://tools/validation/dev_observatory_smoke.gd
 
 cd ..
 python3 custodian/tools/iteration/run_moment.py \

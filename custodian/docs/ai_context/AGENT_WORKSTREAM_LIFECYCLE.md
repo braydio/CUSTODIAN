@@ -460,6 +460,13 @@ be deleted. Archive tags use
 `archive/<sanitized-branch>-<YYYYMMDD>` and are recorded in
 `BRANCH_ARCHIVE.md`.
 
+`workstream.py status` also prints a read-only storage report. Validation scratch
+defaults to `~/.cache/custodian/` (override with `CUSTODIAN_SCRATCH_DIR`), and
+the isolated Godot home is stored under that root. The report identifies
+registered worktrees whose mount is `tmpfs` or `ramfs` and lists protected
+reasons such as claimed workstream, dirty state, and unpushed commits. It reports
+scratch filesystem usage and never removes worktrees, scratch, or evidence.
+
 For an explicitly operator-approved stale `agent/*` ref, use the repeatable
 `--retire-approved BRANCH=SHA` option with the exact reviewed remote head. This
 path fetches before acting, rejects a changed head, protected/diagnostic refs,
