@@ -1,11 +1,11 @@
 # Operator 2.5D Cohort Dependency Closure
 
 - Report schema: `custodian.operator_2_5d_cohort_dependency_closure.v1`
-- Investigated main: `7d14aa7d697ad39696d873c1547092e6f2acb3f4`
+- Investigated main: `7e8049e96baa70630f9d66ed5520fbed83f998a3`
 - Source evidence digest set: `6861558dcaaedf44458a75e0c4df205244e7c1eeb49b92d2ca71e0cf4ae469b0`
 - Candidate: `unarmed_neutral_motion_v1` — 7 families / 56 direction slots
 - Authoring workspace: `AVAILABLE`; editable idle directions: `8`; effective receipts: `0`
-- Authoring checkout: `DIRTY`; behind origin/main: `67`; working tree evidence is preserved and read-only
+- Authoring checkout: `DIRTY`; behind origin/main: `76`; working tree evidence is preserved and read-only
 - Release: **NOT_RELEASE_ELIGIBLE**
 
 ## Candidate Families
@@ -28,20 +28,20 @@ The eight relaxed-idle Aseprite documents, source strips, and Source Sessions ma
 
 The proposed art is eight-direction `full_body`. Current unarmed posture instead requires `lower_body + upper_body` and projects requested headings to east/west. Locomotion normally prefers modular layers. The selector and runtime manifest are generation-neutral, so current semantic rows prove legacy availability only.
 
-| Edge | Trigger | Consumer | State |
-|---|---|---|---|
-| `relaxed_idle → ready_idle` | engagement becomes active | `operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance` | **OPEN** |
-| `ready_idle → relaxed_idle` | engagement quiets | `operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance` | **OPEN** |
-| `relaxed_idle → locomotion_idle` | movement begins below walk threshold | `operator._sync_animation_from_state` | **OPEN** |
-| `locomotion_idle → walk` | movement crosses walk threshold | `operator._sync_animation_from_state -> _sync_modular_locomotion_layers` | **OPEN** |
-| `walk → run` | sprint input / run threshold | `operator._sync_animation_from_state -> _sync_modular_locomotion_layers` | **OPEN** |
-| `run → walk` | sprint ends | `operator._sync_animation_from_state -> _sync_modular_locomotion_layers` | **OPEN** |
-| `posture_or_locomotion → guard_or_parry` | guard/parry action acquires body | `OperatorBodyPresenter + operator guard/parry presentation` | **OPEN** |
-| `posture_or_locomotion → dodge` | dodge charge/flow preempts body | `operator dodge presentation / OperatorBodyPresenter` | **OPEN** |
-| `posture_or_locomotion → melee_action` | melee attack preempts body | `operator melee presentation / OperatorBodyPresenter` | **OPEN** |
-| `posture_or_locomotion → ranged_action` | ranged aim/fire preempts body | `operator ranged presentation / OperatorBodyPresenter` | **OPEN** |
-| `unarmed → equipped_or_sheathed` | equip/sheathe changes profile and body owner | `operator.start_equip_weapon_presentation / melee and ranged posture sync` | **OPEN** |
-| `action_owner → neutral_settle` | action completion returns neutral body | `OperatorPresentationController completion clock + operator posture settle` | **OPEN** |
+| Edge | Trigger | Consumer | State | Evidence |
+|---|---|---|---|---|
+| `relaxed_idle → ready_idle` | engagement becomes active | `operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_unarmed_presentation_posture`; `custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd::UnarmedPosturePresentation.advance` |
+| `ready_idle → relaxed_idle` | engagement quiets | `operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_unarmed_presentation_posture`; `custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd::UnarmedPosturePresentation.advance` |
+| `relaxed_idle → locomotion_idle` | movement begins below walk threshold | `operator._update_animation` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_animation` |
+| `locomotion_idle → walk` | movement crosses walk threshold | `operator._update_animation -> operator._sync_modular_locomotion_layers` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_animation`; `custodian/game/actors/operator/operator.gd::operator._sync_modular_locomotion_layers` |
+| `walk → run` | sprint input / run threshold | `operator._update_animation -> operator._sync_modular_locomotion_layers` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_animation`; `custodian/game/actors/operator/operator.gd::operator._sync_modular_locomotion_layers` |
+| `run → walk` | sprint ends | `operator._update_animation -> operator._sync_modular_locomotion_layers` | **OPEN** | `custodian/game/actors/operator/operator.gd::operator._update_animation`; `custodian/game/actors/operator/operator.gd::operator._sync_modular_locomotion_layers` |
+| `posture_or_locomotion → guard_or_parry` | guard/parry action acquires body | `OperatorBodyPresenter + operator guard/parry presentation` | **OPEN** | UNKNOWN: guard/parry acquisition and return owners are not resolved to edge-specific source evidence in this audit |
+| `posture_or_locomotion → dodge` | dodge charge/flow preempts body | `operator dodge presentation / OperatorBodyPresenter` | **OPEN** | UNKNOWN: dodge acquisition and return owners are not resolved to edge-specific source evidence in this audit |
+| `posture_or_locomotion → melee_action` | melee attack preempts body | `operator melee presentation / OperatorBodyPresenter` | **OPEN** | UNKNOWN: melee acquisition and return owners are not resolved to edge-specific source evidence in this audit |
+| `posture_or_locomotion → ranged_action` | ranged aim/fire preempts body | `operator ranged presentation / OperatorBodyPresenter` | **OPEN** | UNKNOWN: ranged acquisition and return owners are not resolved to edge-specific source evidence in this audit |
+| `unarmed → equipped_or_sheathed` | equip/sheathe changes profile and body owner | `operator.start_equip_weapon_presentation / melee and ranged posture sync` | **OPEN** | UNKNOWN: equip/sheathe edge ownership is not resolved to edge-specific source evidence in this audit |
+| `action_owner → neutral_settle` | action completion returns neutral body | `OperatorPresentationController completion clock + operator posture settle` | **OPEN** | UNKNOWN: action completion's complete presentation edge is not resolved to edge-specific source evidence in this audit |
 
 ## Blocking Gaps
 

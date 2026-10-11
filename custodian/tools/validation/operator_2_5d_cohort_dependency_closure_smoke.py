@@ -49,6 +49,16 @@ def main() -> None:
     assert all(control["pass"] for control in controls.values())
     assert first["release_status"] == "NOT_RELEASE_ELIGIBLE"
     assert all(edge["classification"] in {"OPEN", "UNKNOWN"} for edge in first["edges"])
+    assert all(closure._edge_evidence_resolves(ROOT, edge["evidence"]) for edge in first["edges"])
+    locomotion = first["edges"][2:6]
+    assert all(isinstance(edge["evidence"], list) for edge in locomotion)
+    assert all(any(ref["symbol"].endswith("_update_animation") for ref in edge["evidence"])
+               for edge in locomotion)
+    assert not closure._edge_evidence_resolves(ROOT, [{
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._sync_animation_from_state",
+    }])
+    assert not closure._edge_evidence_resolves(ROOT, {"status": "UNKNOWN", "reason": ""})
     assert first["presentation_owners"]["posture"]["required_layers"] == ["lower_body", "upper_body"]
     assert first["presentation_owners"]["posture"]["candidate_layers"] == ["full_body"]
     assert first["presentation_owners"]["selector"]["generation_neutral"] is True
