@@ -139,8 +139,8 @@ def main() -> None:
                 timing_authority=True,
             )
             payload = workbench_model.timing_payload_from_timeline(explicit["timeline"])
-            assert payload == {"schema": "custodian.operator_animation_timing.v1", "frames": 15,
-                              "fps": 8.0, "loop": True, "durations": [1.0] * 15}
+            assert explicit["timeline"]["timing_authority"] is False
+            assert payload is None, "generic create_animation caller values cannot authorize 2.5D timing"
         else:
             print("SKIP 2.5D NEW WORKBENCH integration: aseprite executable unavailable")
         target_key = schema.OperatorAssetKey("operator", "full_body", "unarmed", "locomotion",

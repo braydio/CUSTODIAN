@@ -26,6 +26,15 @@ Source Session, saved-document and corrected-manifest hashes match the landed
 R0-01 evidence. If that workspace is absent on another machine, the report marks
 it `UNAVAILABLE` rather than treating missing evidence as zero.
 
+The `operator-animation-decision-authority-hardening-v1` implementation adds a
+separate explicit Workbench timing-decision record for 2.5D leaves. Generic
+animation creation, imported timing, and a changed `timing_authority` Boolean do
+not authorize a clock; only a current, exact saved-document/profile/reference/
+plan-bound decision can satisfy the timing gate. The Workbench exposes
+`PREVIEW TIMING`, `APPROVED TIMING`, and `TIMING APPROVAL STALE`. This does not
+choose FPS or approve existing idle timing, and does not alter the eight
+preserved unapproved manifests or runtime-generation policy.
+
 ## Validation Scratch And Machine-Wide Job Budget (2026-10-11)
 
 Godot validation now keeps its isolated user home under the configurable,

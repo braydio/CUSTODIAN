@@ -181,7 +181,11 @@ def create_animation(profile, action, direction, *, group, frames, frame_size=m.
             "workspace_clock_frames": int(frames), "document_frames": int(frames),
             "preview_fps": float(fps), "fps": float(fps), "loop": bool(loop),
             "durations": timing["durations"], "frame_durations_ms": [1000.0 / float(fps)] * int(frames),
-            "timing_authority": bool(timing_authority), "clock_owner": layer_rows[0]["layer"]},
+            # Generic creation (including imported/caller-provided FPS) cannot
+            # authorize a 2.5D clock. Only the explicit Workbench decision UI
+            # may promote that generation after inspecting its saved document.
+            "timing_authority": bool(timing_authority) if art_generation == "legacy_96" else False,
+            "clock_owner": layer_rows[0]["layer"]},
         "canvas": {"width": width, "height": height},
         "aseprite": {"path": str(document.resolve()), "last_synced_sha256": None},
         "layers": layer_rows, "references": reference_rows, "pending_migration": None,

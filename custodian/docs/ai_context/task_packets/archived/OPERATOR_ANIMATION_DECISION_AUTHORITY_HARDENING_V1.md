@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-animation-decision-authority-hardening-v1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1
@@ -46,6 +46,27 @@
 - The source of truth for a new approved clock must be an **observed explicit user action** inside a trusted authoring workflow, not an editable artifact or arbitrary package flag. Persist a verifiable audit record, but do not claim to solve malicious local-user forgery cryptographically; the goal is strict provenance and accidental/agent-supplied promotion prevention.
 - Do not mutate the ignored persistent art Workbench merely to test a positive control. Fixture tests should use isolated roots. The original eight idle records remain unapproved.
 - Keep this task independent from the **read-only** `operator-2-5d-cohort-dependency-closure` audit. If the two touch shared docs, reconcile on main without discarding either's evidence; WB25-6 should consume both reviews before any release eligibility claim.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `operator_2_5d_timing_authority.py` stores an atomic, backed-up, hash-bound decision only after the Workbench preview/confirm sequence; `current_receipt()` requires that record and binds it into the receipt. Generic 2.5D creation always writes `timing_authority=false`, while legacy creation and sidecar behavior remain intact. Focused review, timing, ingress, target, queue, UI, and visual-contract smokes pass; source/runtime protected files are unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: the first Textual pilot run exposed a missing `Input` widget import, then the UI smoke fixture stalled because `PilotService` lacked the live queue and timeline-duration methods.
+- Root cause / contributing factors: the UI panel and app had advanced beyond the fake service contract, and the new panel import was not exercised while Textual was absent.
+- Prevention / pipeline improvement: restored fixture parity and added an end-to-end preview/confirm UI-flow assertion; optional Textual coverage was run in an isolated verification environment.
+- Tooling / docs drift discovered: stale `PilotService` methods in `operator_workbench_ui_smoke.py`; fixed in-scope.
+- Follow-up: fixed-in-scope
+- What worked: the fixture decision matrix rejects copied and stale approvals without touching the artist workspace.
 
 ## Handoff
 

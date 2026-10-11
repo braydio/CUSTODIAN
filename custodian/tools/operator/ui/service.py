@@ -8,6 +8,8 @@ import math
 import os
 import shutil
 import subprocess
+import secrets
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 from PIL import Image
@@ -19,6 +21,7 @@ import animation_preview
 import animation_motion_preview
 import operator_art_worktree
 import operator_animation_targets
+import operator_2_5d_timing_authority as timing_authority
 from operator_2_5d_ingress import Operator2DIngress
 
 from .state import (
@@ -56,6 +59,7 @@ class WorkbenchService:
         self.sequence_root = self.workspace_root / "sequences"
         self.motion_request_path = self.repo_root / ".ai/operator_animation_workbench/motion_lab_request.json"
         self.clipboard_root = self.repo_root / ".ai/operator_animation_workbench/clipboard"
+        self._pending_timing_decisions: dict[str, dict[str, Any]] = {}
     def _reachability_statuses(self) -> dict[tuple[str, str, str], str]:
         path = self.repo_root / "custodian/content/data/operator/operator_animation_reachability.json"
         try:
@@ -717,6 +721,159 @@ class WorkbenchService:
             "profile": selection.profile, "group": selection.group,
             "action": selection.action, "direction": selection.direction,
         })
+
+    def _timing_inputs(self, selection: AnimationSelection) -> dict[str, Any]:
+        if selection.art_generation != timing_authority.GENERATION:
+            raise ValueError("explicit timing approval is limited to operator_2_5d_128")
+        workspace = self.workspace(selection)
+        manifest_path, document_path = workspace / "workbench.json", workspace / "workbench.aseprite"
+        if not manifest_path.is_file() or not document_path.is_file():
+            raise ValueError("exact saved 2.5D Workbench manifest and document are required")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        identity = manifest.get("identity", {})
+        if identity != {"profile": selection.profile, "group": selection.group,
+                        "action": selection.action, "direction": selection.direction}:
+            raise ValueError("Workbench manifest identity does not match the selected target")
+        plan = operator_animation_targets.load_plan(self.plan_path)
+        target = next((item for item in operator_animation_targets.target_families(plan)
+                       if (item.generation, item.profile, item.group, item.action) ==
+                       (selection.art_generation, selection.profile, selection.group, selection.action)), None)
+        if (target is None or selection.direction not in target.directions
+                or tuple(target.required_layers) != ("full_body",)):
+            raise ValueError("timing approval requires an exact full_body leaf in the current target plan")
+        physical = self.workbench.inspect_saved_document_contract(manifest_path, self.aseprite)
+        canvas = manifest.get("canvas", {})
+        timeline = manifest.get("timeline", {})
+        if (int(physical["width"]) != int(canvas.get("width", -1))
+                or int(physical["height"]) != int(canvas.get("height", -1))
+                or int(physical["width"]) != 128 or int(physical["height"]) != 128
+                or int(physical["frames"]) < 1
+                or len(physical["durations"]) != int(physical["frames"])
+                or int(timeline.get("workspace_clock_frames", -1)) != int(physical["frames"])
+                or int(timeline.get("document_frames", -1)) != int(physical["frames"])
+                or timeline.get("clock_owner") != "full_body"):
+            raise ValueError("saved physical document is outside the 128px timing contract")
+        profile_path = self.repo_root / "custodian/content/data/operator/authoring/operator_art_profile.json"
+        profile = json.loads(profile_path.read_text(encoding="utf-8"))
+        profile_id = profile.get("active_authoring_profile", timing_authority.GENERATION)
+        profile_sha = str(profile.get("profiles", {}).get(profile_id, {}).get("profile_sha256", ""))
+        reference = profile.get("canonical_visual_reference", {})
+        reference_sha = str(reference.get("sha256", ""))
+        reference_path = self.repo_root / str(reference.get("path", ""))
+        if (not profile_sha or not reference_sha or not reference_path.is_file()
+                or timing_authority.sha256_file(reference_path) != reference_sha):
+            raise ValueError("accepted profile/reference evidence is missing or changed")
+        return {"workspace": workspace, "manifest_path": manifest_path, "document_path": document_path,
+                "manifest": manifest, "physical": physical, "plan_path": self.plan_path,
+                "profile_sha256": profile_sha, "reference_sha256": reference_sha}
+
+    def timing_approval_status(self, selection: AnimationSelection) -> dict[str, Any]:
+        if selection.art_generation != timing_authority.GENERATION:
+            return {"status": "PREVIEW TIMING", "reason": "2.5D timing authority does not apply to legacy"}
+        try:
+            inputs = self._timing_inputs(selection)
+            path = timing_authority.decision_path(
+                self.repo_root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", selection)
+            current = timing_authority.current_decision(path=path, selection=selection,
+                manifest_path=inputs["manifest_path"], document_path=inputs["document_path"],
+                physical=inputs["physical"], plan_path=inputs["plan_path"],
+                profile_sha256=inputs["profile_sha256"], reference_sha256=inputs["reference_sha256"])
+            if current:
+                return {"status": "APPROVED TIMING", "fps": current["parameters"]["fps"],
+                        "loop": current["parameters"]["loop"], "durations": current["parameters"]["durations"]}
+            if path.exists():
+                return {"status": "TIMING APPROVAL STALE", "reason": "saved decision no longer matches current inputs"}
+            return {"status": "PREVIEW TIMING", "reason": "no explicit timing decision is recorded"}
+        except Exception as error:
+            return {"status": "TIMING APPROVAL STALE", "reason": str(error)}
+
+    def _preview_timing_decision_from_ui(self, selection: AnimationSelection, *, fps_text: str,
+                                loop_text: str, durations_text: str) -> dict[str, Any]:
+        inputs = self._timing_inputs(selection)
+        try:
+            fps = float(fps_text.strip())
+            multipliers = [float(value.strip()) for value in durations_text.split(",") if value.strip()]
+        except ValueError as error:
+            raise ValueError("enter an FPS and comma-separated numeric frame-duration multipliers") from error
+        loop_value = loop_text.strip().casefold()
+        if loop_value not in {"loop", "once"}:
+            raise ValueError("enter loop or once explicitly")
+        params = timing_authority.validate_parameters(fps=fps, loop=loop_value == "loop",
+            durations=multipliers, physical=inputs["physical"])
+        token = secrets.token_urlsafe(24)
+        self._pending_timing_decisions.clear()
+        self._pending_timing_decisions[token] = {"identity": selection.authoring_identity,
+            "params": params, "input_hashes": self._timing_input_hashes(inputs)}
+        return {"token": token, "status": "PREVIEW TIMING", **params,
+                "frame_count": int(inputs["physical"]["frames"]),
+                "total_ms": round(sum(params["frame_durations_ms"]), 3)}
+
+    @staticmethod
+    def _timing_input_hashes(inputs: dict[str, Any]) -> dict[str, str]:
+        return {"manifest": timing_authority.sha256_file(inputs["manifest_path"]),
+                "document": timing_authority.sha256_file(inputs["document_path"]),
+                "plan": timing_authority.sha256_file(inputs["plan_path"]),
+                "profile": inputs["profile_sha256"], "reference": inputs["reference_sha256"]}
+
+    def _confirm_timing_decision_from_ui(self, selection: AnimationSelection, *, preview_token: str) -> dict[str, Any]:
+        pending = self._pending_timing_decisions.pop(preview_token, None)
+        if not pending or pending["identity"] != selection.authoring_identity:
+            raise ValueError("timing preview expired; review the exact timing again")
+        inputs = self._timing_inputs(selection)
+        if self._timing_input_hashes(inputs) != pending["input_hashes"]:
+            raise ValueError("saved timing inputs changed after preview; preview them again")
+        validated = timing_authority.validate_parameters(fps=pending["params"]["fps"],
+            loop=pending["params"]["loop"], durations=pending["params"]["durations"], physical=inputs["physical"])
+        manifest = inputs["manifest"]
+        timeline = manifest.setdefault("timeline", {})
+        timeline.update({"fps": validated["fps"], "loop": validated["loop"],
+                         "durations": validated["durations"],
+                         "frame_durations_ms": validated["frame_durations_ms"], "timing_authority": True})
+        bindings = {"manifest_sha256": "", "document_sha256": timing_authority.sha256_file(inputs["document_path"]),
+            "plan_sha256": timing_authority.sha256_file(inputs["plan_path"]),
+            "profile_sha256": inputs["profile_sha256"], "reference_sha256": inputs["reference_sha256"],
+            "physical": {"frames": int(inputs["physical"]["frames"]), "width": int(inputs["physical"]["width"]),
+                         "height": int(inputs["physical"]["height"]),
+                         "durations": [float(value) for value in inputs["physical"]["durations"]]}}
+        manifest_path = inputs["manifest_path"]
+        decision = timing_authority.decision_path(
+            self.repo_root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", selection)
+        stamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
+        backup = inputs["workspace"] / "backups" / f"timing_decision_{stamp}"
+        backup.mkdir(parents=True, exist_ok=False)
+        shutil.copy2(manifest_path, backup / "workbench.json")
+        old_decision = None
+        if decision.exists():
+            old_decision = json.loads(decision.read_text(encoding="utf-8"))
+            shutil.copy2(decision, backup / decision.name)
+        try:
+            timing_authority.atomic_json(manifest_path, manifest)
+            bindings["manifest_sha256"] = timing_authority.sha256_file(manifest_path)
+            record = {"schema": timing_authority.SCHEMA, "authoring_identity": selection.authoring_identity,
+                "action": "workbench_explicit_timing_confirmation", "parameters": {
+                    "fps": validated["fps"], "loop": validated["loop"], "durations": validated["durations"]},
+                "provenance": {"kind": "workbench_explicit_user", "control": "timing-preview-confirm",
+                    "confirmed_utc": datetime.now(timezone.utc).isoformat()},
+                "parameter_sha256": timing_authority.parameter_digest(fps=validated["fps"],
+                    loop=validated["loop"], durations=validated["durations"]), "bindings": bindings}
+            record["record_sha256"] = timing_authority.sha256_bytes(timing_authority.canonical_json(record))
+            timing_authority.atomic_json(decision, record)
+            current = timing_authority.current_decision(path=decision, selection=selection,
+                manifest_path=manifest_path, document_path=inputs["document_path"], physical=inputs["physical"],
+                plan_path=inputs["plan_path"], profile_sha256=inputs["profile_sha256"],
+                reference_sha256=inputs["reference_sha256"])
+            if current is None:
+                raise ValueError("timing decision failed immediate revalidation")
+        except Exception:
+            shutil.copy2(backup / "workbench.json", manifest_path)
+            if old_decision is None:
+                decision.unlink(missing_ok=True)
+            else:
+                timing_authority.atomic_json(decision, old_decision)
+            raise
+        return {"status": "APPROVED TIMING", "record_sha256": current["record_sha256"],
+                "fps": validated["fps"], "loop": validated["loop"],
+                "durations": validated["durations"], "backup": str(backup)}
 
     def create_animation(self, *, profile: str, group: str, action: str, direction: str,
                          frames: int, frame_size: tuple[int, int], fps: float,

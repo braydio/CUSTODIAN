@@ -1888,7 +1888,8 @@
         "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json",
         "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres",
         "custodian/content/data/operator/generated/operator_animation_catalog.generated.json",
-        "custodian/tools/validation/operator_animation_timing_smoke.py"
+        "custodian/tools/validation/operator_animation_timing_smoke.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -6207,7 +6208,8 @@
         "custodian/tools/operator/operator_2_5d_ingress.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
         "custodian/tools/validation/operator_2_5d_ingress_smoke.py",
-        "custodian/tools/operator/animation_workbench.py"
+        "custodian/tools/operator/animation_workbench.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
@@ -6284,7 +6286,8 @@
         "custodian/tools/operator/ui/widgets/review_family_table.py",
         "custodian/scenes/debug/operator_2_5d_review_sandbox.tscn",
         "custodian/tools/debug/operator_2_5d_review_sandbox.gd",
-        "custodian/tools/validation/operator_2_5d_review_smoke.py"
+        "custodian/tools/validation/operator_2_5d_review_smoke.py",
+        "custodian/tools/operator/operator_2_5d_timing_authority.py"
       ],
       "timeout_sec": 180,
       "needs_import": true

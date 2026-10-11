@@ -274,6 +274,26 @@ class PilotService:
             AnimationRecord(AnimationSelection("unarmed", "locomotion", "walk_01", "e"), 5, ("full_body",)),
             AnimationRecord(AnimationSelection("unarmed", "defense", "guard_01", "e"), 4, ("full_body",)),
         ]
+    def animation_queue(self, _filter="ALL"):
+        return {"rows": [], "primary_counts": {}, "next": None, "skipped_before_next": [],
+                "families": 0, "direction_slots": 0,
+                "legacy_projection": {"status": "AVAILABLE", "reason": ""},
+                "published_supported": False}
+    def timeline_clip_durations(self, _clip): return ()
+    def polish_attach(self, _selection): return self.repo_root / "timing-ui-session.json"
+    def _preview_timing_decision_from_ui(self, _selection, *, fps_text, loop_text, durations_text):
+        multipliers = [float(value.strip()) for value in durations_text.split(",")]
+        fps = float(fps_text)
+        self.timing_preview = {"fps": fps, "loop": loop_text == "loop", "durations": multipliers}
+        return {"token": "one-use-preview", "status": "PREVIEW TIMING", "fps": fps,
+                "loop": loop_text == "loop", "frame_durations_ms": [value / fps * 1000 for value in multipliers],
+                "frame_count": len(multipliers), "total_ms": sum(value / fps * 1000 for value in multipliers)}
+    def _confirm_timing_decision_from_ui(self, _selection, *, preview_token):
+        assert preview_token == "one-use-preview"
+        return {"status": "APPROVED TIMING", "fps": self.timing_preview["fps"],
+                "loop": self.timing_preview["loop"], "record_sha256": "timing-record-sha",
+                "backup": "/tmp/timing-backup"}
+    def review_family(self, *_args): return {"cells": []}
     def filter_records(self, records, query, *, show_superseded=False):
         return WorkbenchService.filter_records(records, query, show_superseded=show_superseded)
     def available_directions(self, selection): return WorkbenchService.available_directions(self, selection)
@@ -463,6 +483,23 @@ async def textual_smoke() -> None:
         assert service.last_selection.identity == target.identity
         print("PASS 2.5D MATRIX: matrix and tree resolve the same generation-aware selection")
         assert app.live_bridge.snapshot().status is LiveBridgeUIStatus.WAITING
+        app.action_mode_polish(); await pilot.pause(0.2)
+        assert app.query_one("#polish-timing-fps", Input).value == ""
+        assert app.query_one("#polish-timing-loop", Input).value == ""
+        assert app.query_one("#polish-timing-durations", Input).value == ""
+        assert app.query_one("#polish-timing-confirm", Button).disabled
+        assert "PREVIEW TIMING" in str(app.query_one("#polish-timing-status", Static).render())
+        print("PASS TIMING CONTROLS: no implied clock; confirmation begins disabled")
+        app.query_one("#polish-timing-fps", Input).value = "8"
+        app.query_one("#polish-timing-loop", Input).value = "loop"
+        app.query_one("#polish-timing-durations", Input).value = "1, 2"
+        await app._run_polish_action("timing-preview")
+        assert app.query_one("#polish-timing-confirm", Button).disabled is False
+        assert "250ms" in str(app.query_one("#polish-timing-status", Static).render())
+        await app._run_polish_action("timing-confirm")
+        assert app.pending_timing_ui is None and app.query_one("#polish-timing-confirm", Button).disabled
+        assert "APPROVED TIMING" in str(app.query_one("#polish-timing-status", Static).render())
+        print("PASS TIMING UI FLOW: previewed values require a separate confirmation action")
         status_bar = app.main_screen.query_one("#workbench-status", WorkbenchStatusBar)
         assert "LIVE ○ WAITING" in str(status_bar.render())
         status_bar.set_status("workbench/operator-art", False, "/bin/true", checkout="DEDICATED ART · origin/main current")

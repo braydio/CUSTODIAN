@@ -342,6 +342,18 @@ approval whose backend-authored provenance and evidence digest match the exact
 current leaf. Review inspection derives `NOT_REQUIRED`/`REQUIRED` from live QA;
 callers cannot submit a disposition record.
 
+For `operator_2_5d_128`, timeline FPS and saved Aseprite durations are preview
+data until the user completes **Preview Timing** and **Confirm Timing Approval**
+in the Workbench POLISH view. FPS, loop/once, and one duration multiplier per
+saved frame must be entered explicitly; the preview must match the physical
+document exactly. No FPS is prefilled. The decision record binds the selected
+generation/target, manifest, saved document and physical timing, animation plan,
+profile, and canonical reference. A changed bound input marks the decision
+`TIMING APPROVAL STALE`; directly setting `timeline.timing_authority=true`,
+importing art, or running QA/sandbox cannot replace that record. The decision
+is distinct from human art-review approval and does not publish art. Legacy
+96px timing and its runtime-sidecar path retain their existing authority.
+
 Family state is recomputed from the required projected directions and current
 receipts on read. Missing, projected, legacy-fallback, partial, and stale cells
 remain incomplete. The isolated debug sandbox displays exact hash-bound 128px

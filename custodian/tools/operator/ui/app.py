@@ -74,6 +74,9 @@ class OperatorWorkbenchApp(App):
     #polish-panel { height: 1fr; padding: 1; }
     .polish-actions { height: 3; align-horizontal: left; }
     .polish-actions Button { margin-right: 1; }
+    #polish-timing-fps { width: 14; }
+    #polish-timing-loop { width: 14; }
+    #polish-timing-durations { width: 1fr; }
     #polish-proposals { height: 1fr; min-height: 8; }
     #polish-family-review { height: 9; min-height: 5; }
     #polish-status { height: 5; padding: 1; background: #181e28; }
@@ -178,6 +181,7 @@ class OperatorWorkbenchApp(App):
         self._sleep = asyncio.sleep
         self.polish_session_path: Path | None = None
         self.polish_selection_identity = ""
+        self.pending_timing_ui: dict | None = None
         self.polish_proposals: list[dict] = []
         self._polish_columns_ready = False
         self.queue_filter = "ALL"
@@ -895,9 +899,15 @@ class OperatorWorkbenchApp(App):
             self._activity(f"selected {selection.authoring_identity}")
 
     async def on_input_changed(self, event: Input.Changed) -> None:
-        if event.input.id != "search": return
-        self.state.search_filter = event.value
-        self._render_browser_snapshot()
+        if event.input.id == "search":
+            self.state.search_filter = event.value
+            self._render_browser_snapshot()
+        elif event.input.id in {"polish-timing-fps", "polish-timing-loop", "polish-timing-durations"}:
+            if self.pending_timing_ui is not None:
+                self.pending_timing_ui = None
+                self._main_widget("#polish-timing-confirm", Button).disabled = True
+                self._main_widget("#polish-timing-status", Static).update(
+                    "PREVIEW TIMING · inputs changed; preview again before confirmation")
 
     def action_search(self) -> None:
         search = self._main_widget("#search", Input); search.remove_class("hidden"); search.focus()
@@ -1079,6 +1089,13 @@ class OperatorWorkbenchApp(App):
 
     async def _load_review_family(self, selection: AnimationSelection) -> None:
         try:
+            timing = await self._thread(self.service.timing_approval_status, selection)
+            timing_text = timing["status"]
+            if timing.get("fps") is not None:
+                timing_text += f" · {timing['fps']:g} FPS · {'loop' if timing['loop'] else 'once'}"
+            elif timing.get("reason"):
+                timing_text += f" · {timing['reason']}"
+            self._main_widget("#polish-timing-status", Static).update(timing_text)
             family = await self._thread(partial(self.service.review_family, selection.profile,
                                                 selection.group, selection.action))
             self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
@@ -1130,7 +1147,43 @@ class OperatorWorkbenchApp(App):
                 self._main_widget("#polish-status", Static).update("Opened the exact saved Workbench document in Aseprite.")
                 return
             session_path = await self._ensure_polish_session()
-            if action == "review":
+            if action == "timing-preview":
+                selection = self._require_selection()
+                if selection is None: return
+                fps_text = self._main_widget("#polish-timing-fps", Input).value
+                loop_text = self._main_widget("#polish-timing-loop", Input).value
+                durations_text = self._main_widget("#polish-timing-durations", Input).value
+                result = await self._thread(partial(self.service._preview_timing_decision_from_ui, selection,
+                    fps_text=fps_text, loop_text=loop_text, durations_text=durations_text))
+                self.pending_timing_ui = {"token": result["token"], "identity": selection.authoring_identity,
+                    "values": (fps_text, loop_text, durations_text)}
+                self._main_widget("#polish-timing-confirm", Button).disabled = False
+                durations = ", ".join(f"{value:g}ms" for value in result["frame_durations_ms"])
+                self._main_widget("#polish-timing-status", Static).update(
+                    f"PREVIEW TIMING · {result['fps']:g} FPS · {'loop' if result['loop'] else 'once'} · "
+                    f"{result['frame_count']} saved frames · {result['total_ms']:g}ms total · [{durations}] · "
+                    "confirm only if this is the intended clock")
+            elif action == "timing-confirm":
+                selection = self._require_selection()
+                pending = self.pending_timing_ui
+                if selection is None or pending is None or pending["identity"] != selection.authoring_identity:
+                    raise RuntimeError("Preview the exact timing for this selected Workbench before confirming")
+                values = (self._main_widget("#polish-timing-fps", Input).value,
+                          self._main_widget("#polish-timing-loop", Input).value,
+                          self._main_widget("#polish-timing-durations", Input).value)
+                if values != pending["values"]:
+                    raise RuntimeError("Timing fields changed after preview; preview them again")
+                result = await self._thread(partial(self.service._confirm_timing_decision_from_ui, selection,
+                    preview_token=pending["token"]))
+                self.pending_timing_ui = None
+                self._main_widget("#polish-timing-confirm", Button).disabled = True
+                self._main_widget("#polish-timing-status", Static).update(
+                    f"APPROVED TIMING · {result['fps']:g} FPS · {'loop' if result['loop'] else 'once'} · "
+                    f"decision {result['record_sha256'][:12]} · backup {result['backup']}")
+                family = await self._thread(partial(self.service.review_family, selection.profile,
+                    selection.group, selection.action))
+                self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
+            elif action == "review":
                 selection = self._require_selection()
                 approved = self._main_widget("#polish-human-approved", Checkbox).value
                 result = await self._thread(partial(self.service.review_and_sandbox, selection, human_approved=approved))

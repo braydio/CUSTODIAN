@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
+import operator_2_5d_timing_authority as timing_authority
 
 SCHEMA = "custodian.operator_2_5d_review_receipt.v1"
 GENERATION = "operator_2_5d_128"
@@ -181,6 +182,13 @@ class Operator2DReview:
         reference_path = self.repo_root / str(profile_payload.get("canonical_visual_reference", {}).get("path", ""))
         if not profile_sha or not reference_sha or not reference_path.is_file() or sha256_file(reference_path) != reference_sha:
             raise ValueError("accepted canonical profile/reference evidence is missing or changed")
+        timing_decision = None
+        if selection.art_generation == GENERATION:
+            timing_decision = timing_authority.current_decision(
+                path=timing_authority.decision_path(self.receipt_root, selection), selection=selection,
+                manifest_path=manifest_path, document_path=document_path, physical=physical,
+                plan_path=self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+                profile_sha256=profile_sha, reference_sha256=reference_sha)
         frame_paths = [Path(path) for path in rendered["frames"]]
         frame_digests = [sha256_file(path) for path in frame_paths]
         sandbox = sandbox_result or {"status": "NOT_RUN", "request_sha256": "", "result_sha256": ""}
@@ -235,6 +243,7 @@ class Operator2DReview:
                 "frames": int(physical["frames"]),
                 "frame_size": [int(physical["width"]), int(physical["height"])],
                 "durations": [float(value) for value in physical["durations"]],
+                "timing_decision_sha256": timing_decision.get("record_sha256", "") if timing_decision else "",
             },
             "qa": {"status": state, "findings_sha256": findings_digest, "findings": qa.get("findings", [])},
             "human_review": human,
@@ -275,6 +284,25 @@ class Operator2DReview:
                     return None
                 import animation_workbench_model
                 if animation_workbench_model.timing_payload_from_timeline(timeline) is None:
+                    return None
+                import animation_workbench
+                profile_path = self.repo_root / "custodian/content/data/operator/authoring/operator_art_profile.json"
+                profile_payload = json.loads(profile_path.read_text(encoding="utf-8"))
+                profile_id = profile_payload.get("active_authoring_profile", GENERATION)
+                profile_sha = str(profile_payload.get("profiles", {}).get(profile_id, {}).get("profile_sha256", ""))
+                reference_sha = str(profile_payload.get("canonical_visual_reference", {}).get("sha256", ""))
+                reference_path = self.repo_root / str(profile_payload.get("canonical_visual_reference", {}).get("path", ""))
+                if not reference_path.is_file() or sha256_file(reference_path) != reference_sha:
+                    return None
+                timing_decision = timing_authority.current_decision(
+                    path=timing_authority.decision_path(self.receipt_root, selection), selection=selection,
+                    manifest_path=manifest, document_path=document,
+                    physical=animation_workbench.inspect_saved_document_contract(manifest, self.service.aseprite),
+                    plan_path=self.repo_root / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json",
+                    profile_sha256=profile_sha, reference_sha256=reference_sha)
+                if timing_decision is None:
+                    return None
+                if authority.get("timing_decision_sha256") != timing_decision.get("record_sha256"):
                     return None
             if authority["workbench_manifest_sha256"] != sha256_file(manifest): return None
             if authority["workbench_document_sha256"] != sha256_file(document): return None
