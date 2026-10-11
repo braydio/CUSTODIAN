@@ -255,7 +255,7 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 
 - `archived/OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Slice F0 complete: zero absolute scene-tree lookups remain in `operator.gd`; the three mutable weapon-definition findings remain for F1.
 - `archived/OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Slice F4 complete: charge, profile selection, iframe/recovery clocks, Flow/chain, exit carry, and cancellation live in `OperatorDodgeController`; full-body dodge presentation and chassis movement ownership remain intact.
-- `OPERATOR_MOBILE_GUARD_COMPOSITION.md` — P1 ready/auto next implementation slice for movement-owned lower-body locomotion plus action-owned upper-body guard presentation.
+- `archived/OPERATOR_MOBILE_GUARD_COMPOSITION.md` — complete: movement-owned lower-body locomotion and upper-body unarmed guard presentation were implemented; the active follow-up queue is not this archived slice.
 - `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 ready/auto, dependency-gated on F0 and mobile guard composition; it owns the three remaining weapon-definition runtime-state findings.
 
 ### Active Archive Resolve Presentation Series
