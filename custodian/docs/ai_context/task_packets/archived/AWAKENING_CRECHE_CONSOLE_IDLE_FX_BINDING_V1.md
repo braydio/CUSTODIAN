@@ -38,7 +38,7 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `intentionally-preserved — the original CrecheConsole gameplay owner and underlay-baked console body remain authoritative; this slice only reparents the activation presentation.`
+- Superseded/legacy production path disposition: `intentionally-preserved`
 - Evidence: `The 960x704 native underlay is the sole visible console body. Its screen ROI is source pixels (572,493,27,18), mapped to world center (105,118); the existing 128x128 idle hero is intentionally not overlaid. Scene hierarchy now names CrecheConsoleBody/ScreenAnchor, and the unchanged eight-frame, 8 FPS activation is parented there at 0.13 scale so its full canvas fits that measured ROI. The focused smoke rejects a deliberate floor-marker mutation and checks first interaction, playback, repeat, and reset. awakening_first_return_progression, awakening_art_registration, and changed-file validation all pass.`
 
 ## Execution Feedback
