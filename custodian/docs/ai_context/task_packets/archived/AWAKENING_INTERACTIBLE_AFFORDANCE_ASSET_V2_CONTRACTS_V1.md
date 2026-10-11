@@ -49,7 +49,7 @@
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `No interaction gameplay authority replaced.`
+- Superseded/legacy production path disposition: `intentionally-preserved`
 - Evidence: `Seven family contracts parse with 27 required and 14 recommended current states; the state ledger has explicit pending evidence fields; the registry targets exactly the 27 required states; generated REQUIRED_ASSETS.md is current. Existing hero families/files are unchanged. No future states entered current required demand.`
 
 ## Execution Feedback
