@@ -2634,6 +2634,7 @@ workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
 filename in that 745-commit-behind checkout, so fallback discovery reports an
 explicit unavailable diagnostic instead of turning that scan failure into a
 zero. WB25-5 implementation `69cdfdbf1` landed via `d4efc0234` and its fresh paired review `cd72b90b1` passed with zero findings. The independently measured default workspace still had **0 current receipt-verified leaves / 0 verified 2.5D families** (69/552 targets, 8 projected workspace directions). WB25-6 holds independent runtime publication/promotion authority and its **refreshed draft/manual** first-cohort gate: live sync remains legacy-source-based, the Workbench still disables direct 2.5D publication, and `PUBLISHED` can only be observed after a guarded cohort switch, not required before it. No user-approved complete first production cohort or runtime 2.5D cutover is recorded.
+Follow-on current-code remeasurement with populated `CUSTODIAN-operator-art@c463a1cf` (824 commits behind the inspected `f6831452` main, neither checkout mutated) again found 0/552 current review-verified leaves, 0 verified families, no 2.5D Workbench manifests or current 2.5D receipts. Live unarmed posture `_sync_unarmed_posture()` needs `lower_body`+`upper_body` for both sectors; the accepted 128px 2.5D idle sheet/plan provides `full_body`. This is a real runtime-composition release blocker independent of missing receipt counts. A seven-family/56-direction unarmed neutral-motion candidate is recorded for user decision, **not** approved or dependency-closed. The immediate separate ready/manual `operator-2-5d-canonical-idle-workbench-intake` imports the already-accepted 1920×1024 LFS master into 8 editable current Workbench directions using specialized Asset V2 Source Session; no production runtime publication. Its review gates the subsequent WB25-4 physical QA/human timing/sandbox work.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
@@ -2652,3 +2653,16 @@ The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is 
 ## F15-B1 persistent geography identity foundation (2026-10-10)
 
 `CampaignGeographyRegistry` now provides bounded, deterministic, data-only Domain/Location/Edge identity with length-prefixed address keys, explicit reciprocal or directed adjacency, versioned seed provenance and deep-copy resolution. `CampaignVisitReference` records a distinct visit against an existing Domain without changing campaign-session lifecycle or persistence. The focused fixture covers fixed-seed registration order, repeat visits, dotted IDs, malformed topology/provenance, route/level identity separation and the no-scene-node boundary. This is only the F15-B1 identity foundation: no procedural terrain integration, physical residency, actor handoff, disk save, campaign-flow wiring, or continuous travel is implemented; independent paired review remains pending.
+
+## Awakening interactible affordance Asset V2 contracts (2026-10-10)
+
+Seven current affordance families (`support`, `terminal`, `locker`, `lift`, `port`,
+`wayfinding`, `shared_fx`) are registered from the locked state manifest. The
+required-assets registry contains 27 exact open Asset V2 state targets; all remain
+source-pending. Fourteen recommended states remain optional and 36 future states
+remain outside current required demand. The machine-readable source ledger tracks
+batch/checksum, alpha/dimensions, pipeline, and human-approval gates; null or
+pending evidence does not satisfy a gate. Existing hero families remain preserved
+and no new image availability or gameplay owner is claimed. The Asset V2 doctor
+reports four designation-locker catalog hash mismatches that were present before
+this work; those existing catalog entries and art files were not changed.

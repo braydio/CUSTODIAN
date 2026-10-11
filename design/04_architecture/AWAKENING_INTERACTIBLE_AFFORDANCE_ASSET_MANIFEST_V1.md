@@ -4,7 +4,7 @@
 **Workstream:** `awakening-interactible-affordance-overlay-v1`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 **Base inspected:** `main@afb1f1c5f145fec42f9a3f5a492ab31d5ffc138d`
-**Machine-readable state ledger:** [AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json) (source plan only, NOT a V2 published-status claim)
+**Machine-readable state ledger:** [AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.json) (source/gate plan, NOT a V2 published-status claim)
 **Status:** artwork manifest locked for source creation; all new files SOURCE_PENDING. No generated art is represented as available.
 
 ## Main overlay, scope, and gameplay truth
@@ -111,6 +111,21 @@
 - **Locker + Lift**: `awakening_interact_locker`, `awakening_interact_lift`, and shared live FX. Gate only those visual consumers. Preserve existing interactive four-state locker and traveling lift.
 - **Markers and waypoint dressing**: `awakening_interact_wayfinding` states are recommended, never falsely mark `kind=interactable` or show an interaction cue without a real owner. Their integration is optional and art-gated, but actual interactible correctness is not gated by optional dressing.
 - **Future-only**: `awakening_interact_future_transfer`, `awakening_interact_future_civic`, `awakening_interact_future_supply`, `awakening_interact_future_memorial`, `awakening_interact_future_gate`, and deferred FX are **not** claimable implementation demand for Awakening 01–10. Preserve design lock and require separate posting/ownership decisions later. Hub assets belong to Hub implementation paths when their existing assets/contracts are known; names here are provisional family IDs, not authorization to duplicate an existing Hub family.
+
+## Registered contract state (2026-10-10)
+
+The seven current families are registered under
+`custodian/content/metadata/assets/families/awakening_interact_*.asset.json`
+with the state dimensions, layers, variants, layouts, and requirement tiers from
+this manifest. The required-assets registry contains 27 exact required state
+targets; no exact zero-new-art substitution was proven by the existing Crèche,
+Locker, Lift, or Gate hero-family audit. Recommended states stay optional, and
+the 36 future-deferred states are not current demand. The JSON ledger has one
+row per state in these seven families, including explicit Dropbox batch/checksum,
+alpha/dimension, Asset V2, and human-approval evidence fields. Every required
+state is currently `source_pending`; null or pending fields fail the art gate.
+Family registration does not authorize a visual consumer or claim source
+availability.
 
 ## Source package and Dropbox proof
 Durable approved batch should be published to `/CUSTODIAN/asset_batches/awakening-interactible-affordances/<batch_id>/` with `MANIFEST.json`, `CODEX_IMPLEMENTATION.md`, `README.md`, `CHECKSUMS.sha256`, source-work PNGs, exact state sizes/frames/alpha, and a Dropbox `_registry` receipt. Human design and gameplay-scale placement approval required before art-gated packet promotion. Availability means **exact verified state and file**; a Dropbox folder alone does not prove a state is ready. Where existing published art already fulfills the role, allow a documented zero-new-art substitution and update the manifest/tracker accordingly.
