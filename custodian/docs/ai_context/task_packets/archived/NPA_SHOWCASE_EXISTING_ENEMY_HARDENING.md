@@ -71,3 +71,21 @@
 - Refresh reason: `none`
 - Next action: `After implementation lands and the packet archives complete, invoke the paired fresh-context review runner for the named review workstream.`
 - Blockers or open questions: `none`
+
+## Independent Review
+- Schema: `custodian.paired_review.v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Nonblocking findings: `0`
+- Optional findings: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed main: `4380293e6de9e7ed297144103f6e6975c29c9abc`
+- Findings: `none`
+- Focused validation: `npa_showcase_existing_enemy` and unchanged `enemy_reaction_posture` control passed 1/1 after warming the Godot import/class cache. The implementation's after-latest-main changed-file report passed 35/35 with complete coverage and no failures, timeouts, skips, or infrastructure errors.
+- Fault checks: `The reviewer verified the initial cache-state failure also affected the unchanged control, then confirmed both the showcase behavior and control pass after project import. Source review found no test fake, shadow authority, or unrelated directional-lane changes.`
+- Review conclusion: `The implementation meets the archived acceptance. Marine Dash and Savage Pounce account for projected body collision support in the directional contact lane, and the real-scene fixture proves their live contact and lifecycle paths alongside Grunt behavior and once-only loot. No blocking defect or material evidence gap remains.`
+- Visual disposition: `No visual gate applies; the packet validates runtime combat semantics and presentation ownership, with no art-direction acceptance.`
+- Reviewed implementation commit: `9dda45b0f41881bcdb117c7fed4aec9308b75fd1`
+- Follow-up workstream: `none`

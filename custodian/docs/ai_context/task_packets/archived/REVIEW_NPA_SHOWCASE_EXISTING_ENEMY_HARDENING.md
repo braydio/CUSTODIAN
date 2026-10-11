@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-npa-showcase-existing-enemy-hardening`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `npa-showcase-existing-enemy-hardening`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `npa-showcase-existing-enemy-hardening`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md`
-- Reviewed main: `6a5a60ddbf`
+- Reviewed main: `4380293e6d`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -26,6 +26,8 @@
 - Focused validation: enemy_reaction_posture, grunt_parry_critical, standard_enemy_melee, lootable_corpse_beacon, enemy_lifecycle_config, Marine/Savage focused checks, new fixture and changed/manifest/diff.
 - Review focus: Source-of-truth ownership, authentic actor/scene integration, independent evidence, behavior equivalence, and no test fake.
 - Acceptance: Findings-first independent receipt with zero blocking findings and zero material evidence gaps for pass. Use stable cycle R<cycle>-NN IDs and bounded correction/re-review where needed; do not patch the reviewed implementation.
+- Review result: pass (zero blocking findings; zero material evidence gaps; see durable receipt).
+- Review receipt: `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md#independent-review`
 - Non-goals: No opportunistic adjacent fixes, additional actors, global NPC base or reviewer self-approval of subjective art.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
@@ -36,5 +38,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: normal live-main API remeasurement
-- Next action: Check actual archived review proof before promoting any successor; retain human gates explicitly.
+- Next action: Review complete. Do not claim or continue the successor in this workstream.
 - Blockers or open questions: none
