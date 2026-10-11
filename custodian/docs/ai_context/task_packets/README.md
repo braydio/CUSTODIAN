@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `REVIEW_AGENT_PROCESS_FEEDBACK_LEDGER_V1.md` — Independently prove the published feedback ledger is source-verifiable, read-only, deterministic and honest about ambiguity.
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Reject false-green Godot smoke results and invalid imported runtime resource metadata while preserving narrowly authored expected rollback errors.
 - `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` — Make changed-file failure reports attributable to exact tests, selection owners, skip reasons and explicit immutable baseline evidence without weakening gree...
