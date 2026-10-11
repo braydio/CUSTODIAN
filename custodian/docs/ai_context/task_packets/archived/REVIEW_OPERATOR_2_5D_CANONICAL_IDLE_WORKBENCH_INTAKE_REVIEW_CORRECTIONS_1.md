@@ -65,6 +65,5 @@
 - Reviewed main: `455392871fd95d831feed14d55bd29ee913680bf`
 - Reviewed implementation commit: `fa955e5e7`
 - Findings: prior R0-01 fixed; zero new findings and zero material evidence gaps.
-- Durable receipt: `custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_review_1.json`
 - Closing summary: `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1_CLAUDE_SUMMARY.md`
 - Verification: four required focused smokes passed; physical workspace and protected-runtime hashes independently verified. The review smoke passed after warming the fresh Godot import cache.

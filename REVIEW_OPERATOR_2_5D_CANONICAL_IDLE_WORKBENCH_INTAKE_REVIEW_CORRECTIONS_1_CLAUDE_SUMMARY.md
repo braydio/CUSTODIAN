@@ -23,7 +23,7 @@ Protected runtime manifest, animation catalog, and SpriteFrames hashes independe
 - Independent live checks: all eight manifest/backup/document/source-strip/Source-Session hashes and physical timing contracts PASS; protected runtime hashes PASS.
 - `git diff --check` — rerun after review artifact authoring before closeout.
 
-Detailed receipt: `custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_review_1.json`.
+The durable review receipt is recorded in the archived implementation packet’s `Independent Review` section; the complete review run trace remains under `.git/custodian-review-runs/`.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
