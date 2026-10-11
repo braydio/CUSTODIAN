@@ -13,6 +13,24 @@ Make Operator 2.5D animation production a target-driven, family-oriented pipelin
 
 The Workbench is the conductor. Aseprite is the pixel editor. Image generation and external art produce source-work only. Workbench/Source Session owns deterministic normalization and publication. The generated Operator runtime database remains the only production animation database.
 
+## Locked animation-harness decisions and change authority
+
+These are **existing approved choices**, not new values or a parallel configuration. Each remains owned by its cited source. Automation, import packages, pixel measurements, QA results, generation briefs and saved Aseprite documents may **observe** these choices but may not silently amend them. Proposed revisions require a separate recorded human decision, the owning spec/profile update, regenerated source/hash evidence, and relevant focused regression tests.
+
+| Locked decision | Existing owning authority | Non-negotiable guard |
+| --- | --- | --- |
+| Operator 2.5D visual identity, material/projection and N/NE/E/SE/S/SW/W/NW order | Canonical visual contract, accepted design-reference PNG SHA `41782240...`, target plan | Wrong source/reference/hash, swapped directions or invented mirrored directions are not accepted canonical art. |
+| Body canvas/registration | Active `operator_2_5d_128` profile SHA `05e92192...`, canonical visual contract; 128×128 cells, center x=64, projected root [64,106], shadow [64,107], shared visual scale 0.225 | Reject unapproved per-direction re-scaling, alpha-bbox recentering or changes to accepted coordinates. Exceptional action envelopes are separately reviewed. |
+| First accepted canonical source | 8×15 ×128px `idle_relaxed_01/full_body` source SHA `d4a6a5f5...`, v2 plan | Eight physical editable directions are not eight review-verified directions. Pixels and target/source-binding hashes require live evidence. |
+| Animation clock | v2 plan `fps=null` until explicit approved authoring, physical Workbench timeline for edit/preview, source `.animation.json` only after guarded publication | The editor 8 FPS/125 ms fallback is **not** an authored clock; `timing_authority=true` alone is not proof of the human timing decision. Require exact current approval provenance before effective 2.5D review eligibility. |
+| Art authority states | Asset Pipeline V2, Source Sessions, Workbench and guarded publication, WB25-6 policy | Source-work, editable Workbench, QA-verified art and materialized runtime are distinct; neither a saved document nor a generated brief is publication. |
+| Review ownership | Art Agent `operator_art_qa.v2`, Workbench `Operator2DReview.current_receipt`, human explicit QA approval, separate Godot sandbox | Do not collapse objective QA, subjective human disposition, approved timing and real sandbox presentation into one Boolean or cached success. |
+| Cohort/runtime authority | 2.5D Workbench migration roadmap, WB25-6 packet, one `OperatorAnimationSelector`, one generated manifest/catalog/SpriteFrames database | A target family closes only with required directions/layers and current effective receipts; a complete family is not automatically a gameplay-coherent cutover. Legacy remains selected until a dependency-closed, explicitly human-chosen cohort passes a reversible release transaction. |
+
+**Implementation-facing rule:** Where code accepts editable Workbench JSON, separate *descriptive state* from *permission*. Missing, inconsistent, copied or stale decision evidence must fail closed. Revalidate against the saved physical document and the current profile/target/reference, not merely self-asserted manifest fields. This is an operator-art workflow integrity guard, **not a claim that local files are cryptographically tamperproof**.
+
+Executable decision regression ownership is the existing `custodian/tools/validation/operator_animation_timing_smoke.py`, `operator_2_5d_review_smoke.py`, `operator_2_5d_ingress_smoke.py`, `operator_animation_targets_smoke.py`, and production queue/runtime authority smokes. New timing-intent provenance tests are authored by `operator-animation-decision-authority-hardening-v1`; they do not authorize an actual FPS choice or WB25-6 activation.
+
 ## Locked production doctrine
 
 Three pixel states are intentionally distinct:
@@ -227,6 +245,7 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-5 | operator-2-5d-workbench-production-queue | **complete / accepted** | live queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | **complete / passed, zero findings** | queue math, real family and brief review |
 | WB25-6 preparation | operator-2-5d-cohort-dependency-closure + paired review | **ready / auto, read-only** | current consumer/transition/body-composition dependency closure with no policy/art/runtime writes |
+| WB25-6 decision guard | operator-animation-decision-authority-hardening-v1 + paired review | **ready / auto, no art authorization** | explicit human timing intent, current physical proof and executable invariants for accepted 2.5D locks |
 | WB25-6 | operator-2-5d-runtime-promotion | **draft / refreshed after idle R0-01; real cohort held** | guarded generation switch + rollback |
 | WB25-6R | review-operator-2-5d-runtime-promotion | dependency-gated | no-mix/runtime/rollback review |
 
@@ -247,6 +266,9 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
 
 ## Current repository drift / prerequisites
+
+- Authoring decision trust audit (2026-10-11): `timing_authority=false` from R0-01 intake correction correctly blocks default 8 FPS, but an editable manifest may still assert `timing_authority=true` and supply a well-formed timeline without independent **user timing decision** provenance. The prepared `operator-animation-decision-authority-hardening-v1` pairs explicit-timing authoring intent with exact physical/workspace/plan/reference evidence, adds negative tests for forged/stale approvals, and records existing visual/runtime lock decisions in the canonical visual contract and agent rules. This is NOT human FPS approval or WB25-6 cutover.
+
 - Current R0-01 closeout: `Operator2DReview.current_receipt()` rejects preview-only timing, but no user-facing authoritative idle timing selection has been made. Do not treat the physical 8 FPS value as approved or flip the boolean by hand.
 - Latest independent review corrected only ignored art manifests and preserved protected runtime hashes; the old roadmap statements below are historical baseline evidence and must not be used to infer current 2.5D workspace emptiness.
 
