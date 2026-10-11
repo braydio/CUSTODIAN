@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `living-world-population-slot-reservations`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-campaign-geography-identity-foundation, review-living-world-entity-reification-handoff`
 - Locks: `ambient-enemy-spawn-queue, managed-population-reservations`

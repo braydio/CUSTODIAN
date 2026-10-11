@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-living-world-population-slot-reservations`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `living-world-population-slot-reservations`
 - Locks: `ambient-enemy-spawn-queue, managed-population-reservations`
