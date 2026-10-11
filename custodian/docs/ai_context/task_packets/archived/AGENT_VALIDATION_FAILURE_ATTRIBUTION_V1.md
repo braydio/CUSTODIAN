@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-validation-failure-attribution-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -34,6 +34,15 @@
 
 - Task overrides: `none`
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: Added read-only `validation_failure_triage.py` and 10 focused tests. H5/Stealth/NPA-7 fixture shapes preserve all red and skipped IDs; baseline-red remains blocking, candidate-only-red is distinguished, and absent/mismatched evidence remains unknown. The CLI retained exact report SHA provenance, manifest owner/rule, diagnostics, duration/timeout, selection reason and skip blocker. Six consecutive `world_transition_handoff` focused runs passed after fixing rollback/retrigger handling. The canonical `validation_runner` smoke and triage manifest test passed. Final changed-file sweep: 34 selected, 34 passed, zero failures/timeouts/skips, complete coverage. `check_ai_context.py --json`, review pairing, packet index, Python compilation, manifest JSON parse, focused triage suite (10/10), and `git diff --check` passed.
+- Remaining work: Land the implementation and run the required fresh-context paired review.
+
 ## Handoff
 
 - Next workstream: `review-agent-validation-failure-attribution-v1`
@@ -44,3 +53,15 @@
 - Refresh reason: `none`
 - Next action: `After complete validation, landing and archive, initiate its fresh-context paired review.`
 - Blockers or open questions: `none`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `high`
+- What went wrong: The first changed-file sweeps found `world_transition_handoff` red and skipped its dependent moment check. Repeated focused diagnostics showed a second transition request could be submitted after rollback when a deferred `body_entered` callback arrived with the Operator already teleported outside the completion trigger. The failure initially surfaced as `TARGET_SCENE_UNAVAILABLE`, which obscured the stale trigger event. A competing Godot validation sequence also held the shared project lock during closeout.
+- Root cause / contributing factors: Rollback re-armed Awakening completion before stale Area2D overlap callbacks were drained, and the completion callback trusted `body_entered` without verifying the Operator’s current position against the trigger geometry. That allowed a stale callback to start a second transition using the deliberately missing test scene.
+- Prevention / pipeline improvement: Under the user-directed validation remediation, rollback now keeps completion latched until the overlap clears, returns the Operator farther beyond the completion area, and rejects callbacks whose current body position is outside the trigger geometry. The smoke keeps collision tracking active, checks no rollback retrigger occurred, then exercises a real second entry. Six repeated smoke runs and the final full changed-file sweep passed.
+- Tooling / docs drift discovered: None.
+- Follow-up: fixed-in-scope
+- What worked: The triage output kept the original red report blocking and exposed the exact failing test while the rollback defect was isolated.

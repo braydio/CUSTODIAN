@@ -545,7 +545,10 @@ the production Adjudication Dais selection owner, stores one typed accepted
 scenario in `HubState`, and starts the existing Contract bootstrap exactly once
 while the Hub remains active. Twin traversal retains that state. H3 implementation
 is complete and awaits its fresh-context paired review. Port deployment and
-campaign return remain deferred to H5 and H6.
+campaign return remain deferred to H5 and H6. H2 rollback now keeps Awakening
+completion latched until the failed overlap clears and validates the Operator's
+current position against the South Reach trigger, so a deferred stale
+`body_entered` callback cannot submit a second transition after rollback.
 
 ## Operator Animation Workbench Live Bridge + Review Cockpit Packet 8 (2026-09-20)
 

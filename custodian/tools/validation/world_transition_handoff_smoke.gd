@@ -68,10 +68,10 @@ func _run() -> void:
 	if bool(failure.get("succeeded", true)) or StringName(failure.get("failure_code", &"")) != &"TARGET_SCENE_UNAVAILABLE":
 		_fail("Missing Hub scene did not report TARGET_SCENE_UNAVAILABLE")
 		return
-	if operator.global_position != Vector2(0.0, -6336.0):
+	if operator.global_position != completion_volume.global_position + Vector2(0.0, 512.0):
 		_fail("Rollback did not return the Operator south of the completion volume")
 		return
-	if current_scene != awakening or bool(awakening.get("completed")):
+	if current_scene != awakening:
 		_fail("Rollback did not restore Awakening as the playable current scene")
 		return
 	if operator.get_parent() != awakening.get_node("World") or operator.collision_layer == 0 or operator.collision_mask == 0:
@@ -84,16 +84,19 @@ func _run() -> void:
 		_fail("Rollback did not restore exactly one authoritative world")
 		return
 
-	var collision_layer := operator.collision_layer
-	var collision_mask := operator.collision_mask
-	operator.collision_layer = 0
-	operator.collision_mask = 0
+	# Leave the body discoverable to the completion Area2D while moving it fully
+	# outside. Disabling its collision layer here can preserve stale overlap state
+	# across rollback and let a duplicate request consume the next result slot.
 	operator.global_position = completion_volume.global_position + Vector2(0.0, 300.0)
 	await physics_frame
 	await physics_frame
+	if bool(manager.call("is_transitioning")) or _finished_results.size() != 1:
+		_fail("Rollback position retriggered completion before the successful-entry case (count=%d phase=%s last_result=%s)" % [_finished_results.size(), manager.call("get_phase_name"), manager.get("last_result")])
+		return
+	if bool(awakening.get("completed")):
+		_fail("Completion remained latched after the Operator exited the trigger")
+		return
 	manager.set("hub_host_scene_path", "res://scenes/hub_runtime_host.tscn")
-	operator.collision_layer = collision_layer
-	operator.collision_mask = collision_mask
 	operator.global_position = completion_volume.global_position + Vector2(0.0, 100.0)
 	await physics_frame
 	await physics_frame
@@ -107,11 +110,11 @@ func _run() -> void:
 		return
 	await _wait_for_result_count(2)
 	if _finished_results.size() != 2:
-		_fail("Successful Hub transition did not produce exactly one result")
+		_fail("Successful Hub transition did not produce exactly one result (count=%d phase=%s context=%s last_result=%s)" % [_finished_results.size(), manager.call("get_phase_name"), manager.get("current_context"), manager.get("last_result")])
 		return
 	var success := _finished_results[1]
 	if not bool(success.get("succeeded", false)) or StringName(success.get("final_context", &"")) != &"hub":
-		_fail("Qualified Awakening completion did not enter Hub")
+		_fail("Qualified Awakening completion did not enter Hub (result=%s)" % [success])
 		return
 	var hub_root := current_scene
 	var hub_world := hub_root.get_node_or_null("World")
@@ -154,9 +157,8 @@ func _run() -> void:
 
 
 func _wait_for_result_count(count: int) -> void:
-	for _frame in range(240):
-		if _finished_results.size() >= count:
-			return
+	var deadline_msec := Time.get_ticks_msec() + 30000
+	while _finished_results.size() < count and Time.get_ticks_msec() < deadline_msec:
 		await process_frame
 
 

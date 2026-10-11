@@ -2005,6 +2005,25 @@
       "needs_import": false
     },
     {
+      "id": "validation_failure_triage_unit",
+      "type": "python",
+      "script": "custodian/tools/validation/test_validation_failure_triage.py",
+      "tier": "unit",
+      "tags": [
+        "validation",
+        "failure_attribution",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/validation/validation_failure_triage.py",
+        "custodian/tools/validation/test_validation_failure_triage.py",
+        "custodian/tools/validation/run_validation.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "validation_runner",
       "type": "python",
       "script": "custodian/tools/validation/validation_runner_smoke.py",

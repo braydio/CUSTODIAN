@@ -140,6 +140,10 @@ Purpose:
 
 The scope is deliberately smaller than full README generation. Automatic lifecycle-state derivation and historical residue cleanup remain separate concerns.
 
+## Validation Failure Attribution — Implemented
+
+`custodian/tools/validation/validation_failure_triage.py` consumes canonical runner JSON and the manifest to report exact failed/timeout/skipped/infrastructure IDs, diagnostic tails, source owners, timeout budgets, skip blockers and explicit baseline provenance. It does not change the runner result or waive candidate-red statuses. A supplied baseline is identifiable by SHA-256; absent, malformed, duplicate or mismatched per-test evidence stays `unknown`. Focused fixtures are in `test_validation_failure_triage.py` and the test is registered in `validation_manifest.json`.
+
 ## Process Feedback Ledger — Implemented
 
 `custodian/tools/agent/process_feedback.py` provides a read-only, deterministic inventory of root closing summaries and active/archived packet feedback. `scan --json` emits source-linked observations and logical receipts; `report --markdown` renders the same corpus. It deduplicates only a unique explicit workstream packet/summary pair, preserves source provenance, and leaves ambiguous identities and unknown follow-up owners unclassified. `fixed-in-scope` remains author-reported; `manual-follow-up` remains unowned. Focused anti-vacuity tests are in `test_process_feedback.py` and the suite is registered in `validation_manifest.json`.

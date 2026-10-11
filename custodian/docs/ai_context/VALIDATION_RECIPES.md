@@ -2,6 +2,18 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Validation Failure Attribution
+
+When a canonical runner report is red, keep that report unchanged and inspect every failure, timeout, infrastructure error and tier skip with the read-only triage tool. A baseline is used only when explicitly supplied; its exact file SHA-256 is emitted, and only a unique same-test-ID/same-tier result is comparable. Missing or mismatched evidence remains `unknown`. Baseline-red and candidate-only-red classifications are evidence labels; the candidate failure remains blocking.
+
+```bash
+python3 custodian/tools/validation/validation_failure_triage.py changed-report.json --json
+python3 custodian/tools/validation/validation_failure_triage.py changed-report.json --baseline immutable-baseline.json --json
+python3 custodian/tools/validation/test_validation_failure_triage.py
+```
+
+The triage tool never reruns checks, edits reports, waives a failure, or changes `workstream.py finish` validation status.
+
 ## Process Feedback Ledger
 
 The read-only process-feedback inventory scans root closing summaries and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
