@@ -1,9 +1,9 @@
 # OPERATOR 2.5D WORKBENCH MIGRATION + PRODUCTION PIPELINE
 
 **Program ID:** operator-2-5d-workbench-migration-cockpit  
-**Status:** WB25-1 through WB25-5 implemented/reviewed; WB25-6 architecture refreshed and first live cohort held
+**Status:** WB25-1 through WB25-5 complete/reviewed; idle source intake and R0-01 timing correction complete/reviewed; WB25-6 real release held, closure audit ready
 **Priority:** P1  
-**Reviewed main:** `81766d1c848ae9c373f2f3b15aff96a610e82d95`  
+**Reviewed main:** `eff74f4164e46fac2abb5dc91fdbfee6b601d429`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38  
 **Last updated:** 2026-10-10
 
@@ -226,10 +226,11 @@ These are immutable handoff inputs, not runtime paths. The canonical-contract pa
 | WB25-4R | review-operator-2-5d-workbench-review-automation | **complete / R0-01 corrected and re-reviewed clean** | anti-drift/sequence/sandbox review |
 | WB25-5 | operator-2-5d-workbench-production-queue | **complete / accepted** | live queue/dashboard + deterministic generation briefs |
 | WB25-5R | review-operator-2-5d-workbench-production-queue | **complete / passed, zero findings** | queue math, real family and brief review |
-| WB25-6 | operator-2-5d-runtime-promotion | **draft / architecture refreshed; real cohort held** | guarded generation switch + rollback |
+| WB25-6 preparation | operator-2-5d-cohort-dependency-closure + paired review | **ready / auto, read-only** | current consumer/transition/body-composition dependency closure with no policy/art/runtime writes |
+| WB25-6 | operator-2-5d-runtime-promotion | **draft / refreshed after idle R0-01; real cohort held** | guarded generation switch + rollback |
 | WB25-6R | review-operator-2-5d-runtime-promotion | dependency-gated | no-mix/runtime/rollback review |
 
-Expected implementation packets: **6**.
+Core WB25 implementation packets: **6**. An independent **read-only dependency-closure audit** and its paired review precede WB25-6; they are preparatory work, not a seventh release/promotion implementation.
 
 ## Mandatory refresh cadence
 
@@ -240,12 +241,15 @@ Every substantial dependent is intentionally pre-authored but cannot be claimed 
 - WB25-3: complete and independently reviewed after bounded correction R0-01. Exact detached-island and registration proposals are re-derived from the current physical Workbench, render, masks and landmarks before mutation; forged/stale coordinates or deltas fail before Art Agent apply, while valid scoped apply/undo remains intact.
 - WB25-4: complete and independently accepted after cycle-1 correction. R0-01 is fixed: caller-supplied human disposition was removed, `NEEDS_HUMAN_REVIEW` remains required until the explicit Workbench approval path authors canonical provenance with the backend-computed exact evidence hash, `current_receipt()` revalidates that evidence, RED remains non-overridable, and GREEN/YELLOW preserve their no-approval path. The fresh correction re-review passed with zero blocking defects/material proof gaps and no new findings.
 - WB25-5: **implemented and accepted**. Implementation `69cdfdbf1`, landed as `d4efc0234`; independent paired review `cd72b90b1` passed with zero findings; 36/36 changed validation passed. The live 69 family/552 direction queue and local deterministic generation-brief/ingress architecture are implemented, including real-record family verification and rank-safe NEXT. The paired review measured **0 current receipt-verified 2.5D leaves / 0 verified families** in its default workspace. No live runtime promotion was performed.
-- WB25-6 source-intake bridge (2026-10-10): `operator-2-5d-canonical-idle-workbench-intake` **landed at `26167ea6`**: immutable 1920×1024 RGBA/8×15/128px relaxed idle imported into eight physical, byte-exact, editable WB25-2 Workbench documents (package `6854391909f3dca2ed2b`, evidence `custodian/docs/reports/operator_2_5d/idle_relaxed_01_intake.json`). Fresh independent review archived at `6a37beba` with **blocking R0-01**: source timing is null/unknown but all eight manifests incorrectly set preview default `8 FPS` to `timing_authority=true`; the review path can independently classify physical durations as sufficient. Narrow fix `operator-2-5d-canonical-idle-workbench-intake-review-corrections-1` is now **ready/manual**, with a dependency-gated `ready/auto` fresh review, and must repair future ingress + eight real historical manifests **without modifying their art or generating effective verified receipts**. Runtime remains byte-identical. The seven-family `unarmed_neutral_motion_v1` candidate is idle relaxed/ready, two posture transitions, locomotion idle/walk/run (56 directional leaves total, 0 effectively verified in the measured workspace). This is **not an approved release cohort**. Live unarmed posture currently consumes paired lower+upper art whereas the accepted 2.5D idle is full-body; WB25-6 must resolve that generation/composition seam and prove action-preemption continuity before cutover.
-- WB25-6: **architecture refreshed 2026-10-10; keep draft/manual.** Live runtime sync scans legacy source by default and WB25-5 does not own PUBLISHED. Release must follow a current verified, human-chosen dependency-closed cohort → staged transactional generation switch → confirmed runtime publication and rollback proof. The one accepted idle source family alone is not a coherent release cohort; 0 verified families means no candidate is eligible. See the active WB25-6 packet for full gates.
+- WB25-6 source-intake bridge (2026-10-11): `operator-2-5d-canonical-idle-workbench-intake` landed at `26167ea6`; all eight immutable 1920×128 source strips and 15×128px saved Workbenches were independently byte-checked. Fresh review discovered blocking R0-01: unknown FPS / 8 FPS preview incorrectly given timing authority. Correction implementation `fa955e5e7` and cycle-1 fresh review both **passed**; all eight manifests now have `timing_authority=false` while preview/physical document timing, artwork, candidate, Source Session and runtime hashes remain unchanged. 0 effective receipts, 0 verified families, 0 published directions. The original intake master absolute path is stale due to a retired worktree, but per-direction source/current physical evidence matched independently. **Release remains held**: no human FPS choice, no full candidate art/QA and no dependency-closed user-approved cohort. A new `ready/auto` read-only `operator-2-5d-cohort-dependency-closure` audit and fresh review will establish exact consumer/preemption/weapon/body-composition closure first; it will not activate generation policy.
+- WB25-6: **planning refreshed 2026-10-11 after R0-01 correction; keep draft/manual.** Live runtime sync scans legacy source by default and WB25-5 does not own PUBLISHED. Release must follow a current verified, human-chosen dependency-closed cohort → staged transactional generation switch → confirmed runtime publication and rollback proof. The one accepted idle source family alone is not a coherent release cohort; 0 verified families means no candidate is eligible. See the active WB25-6 packet for full gates.
 
 Each refresh re-derives current public APIs, exact files, locks, profile/reference hashes, validation paths, and any changed completion boundary.
 
 ## Current repository drift / prerequisites
+- Current R0-01 closeout: `Operator2DReview.current_receipt()` rejects preview-only timing, but no user-facing authoritative idle timing selection has been made. Do not treat the physical 8 FPS value as approved or flip the boolean by hand.
+- Latest independent review corrected only ignored art manifests and preserved protected runtime hashes; the old roadmap statements below are historical baseline evidence and must not be used to infer current 2.5D workspace emptiness.
+
 
 Current live-main refresh (2026-10-10):
 - New Animation backend is reviewed complete (`a26982b8d` correction; `0ebea7b6` cycle-1 re-review).
