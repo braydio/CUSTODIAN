@@ -31,10 +31,10 @@
 
 ## Next Handoff
 - Next workstream: `npa-showcase-existing-vaultwing-proof`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: Vaultwing proof has an independent review/runtime gate; this drone review does not automatically release it.
 - Next action: Check actual archived review proof before promoting any successor; retain human gates explicitly.
-- Blockers or open questions: None once implementation is archived. Separate successor planning is still required.
+- Blockers or open questions: Vaultwing proof still depends on separately reviewed hardening and world-spawn integrity; no duplicate review claim is authorized.

@@ -2,10 +2,10 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-broken-warrant-actor`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `npa-showcase-existing-enemy-hardening`
+- Depends on: `review-npa-showcase-existing-enemy-hardening`
 - Locks: `enemy-runtime`
 - Kind: `implementation`
 - Review: `auto`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial actor/showcase integration; independent correctness and source-ownership review`
-- Reviewed main: `6a5a60ddbf`
+- Reviewed main: `b0ff835f8006d5ff6f250e682328512f8aa771d4`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Goal: Create one distinctive Broken Warrant hostile archetype with real melee/reactions/death/corpse/loot and no duplicate Enemy mechanics.
@@ -38,8 +38,12 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh instruction: Verify latest main, actual changed file and test identities; run targeted authoring preflight on this implementation and review before promotion.
 
-## Program Publication Gate
-These packets are authored **draft/manual** on main as a planning series because there is no local Godot checkout/authoring validator in this session. They are not dispatcher-claimable. Execution/promoting agent: inspect main + AGENTS + dispatch audit; run `python3 custodian/tools/agent/validate_task_packet_authoring.py` on each implementation and review pair; reconcile dependency and exact test references; promote mechanically unlocked pairs to ready/auto; rerun validator; regenerate/verify `task_packet_index.py`; land the promotion safely; confirm dispatcher audit/eligibility. A declared implementation dependency also requires its paired review archived complete before consumer claim. Keep external refresh-gated pairs draft until their real evidence is available.
+## Ready/auto dependency and publication contract (2026-10-11)
+The original speculative-design hold has been reconciled: this is an implementation-ready, dependency-gated pair, **not user-manual dispatch timing**. Before a claim, the execution coordinator MUST run the repository-local targeted `validate_task_packet_authoring.py` on both this implementation and its paired review, then `task_packet_index.py` and `dispatch.py audit --json`; stop and repair if those authoritative checks fail. Current-main GitHub-only metadata checks do NOT prove Godot or full local authoring validation, nor authorize a bypass of existing locks/claims. New source art, final human art approval, NPA-8 and unrelated H5 are out of scope.
+
+## Current-main measured clarification
+Existing-enemy showcase hardening and independent review are complete. Broken Warrant, its proposed scene and its new validation smoke do not exist yet. Reuse EnemyGrunt combat/reaction/death authority, disable optional Falcon Punch, and explicitly label donor art provisional.
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Handoff
 - Next workstream: `npa-showcase-escort-frame-m7-actor`

@@ -3,15 +3,15 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-npa-showcase-existing-vaultwing-proof`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `npa-showcase-existing-vaultwing-proof`
 - Locks: `vaultwing-runtime`
 - Review: `none`
 - Review target workstream: `npa-showcase-existing-vaultwing-proof`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_EXISTING_VAULTWING_PROOF.md`
-- Reviewed main: `6a5a60ddbf`
+- Reviewed main: `b0ff835f8006d5ff6f250e682328512f8aa771d4`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -31,10 +31,10 @@
 
 ## Handoff
 - Next workstream: `npa-showcase-broken-warrant-actor`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
+- Refresh reason: Future reviewed-consumer API reconciliation is execution-agent owned, not a new human design gate.
 - Next action: Check actual archived review proof before promoting any successor; retain human gates explicitly.
-- Blockers or open questions: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
+- Blockers or open questions: Preserve original existing review claims and wait for named archived dependency reviews; do not fabricate a PASS.

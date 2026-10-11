@@ -3,15 +3,15 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-npa-showcase-escort-frame-m7-actor`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `npa-showcase-escort-frame-m7-actor`
 - Locks: `drone-runtime`
 - Review: `none`
 - Review target workstream: `npa-showcase-escort-frame-m7-actor`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md`
-- Reviewed main: `6a5a60ddbf`
+- Reviewed main: `b0ff835f8006d5ff6f250e682328512f8aa771d4`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -31,10 +31,10 @@
 
 ## Handoff
 - Next workstream: `npa-showcase-dev-overlays`
-- Next packet state: `refresh-required`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: Refresh required AFTER NPA-7 implementation and independent review land. Resolve their exact main-branch packet IDs; both current runtime and packet pair absent on main at this snapshot. Do not invent a dependency record or implement NPA-7 here.
+- Refresh reason: Future reviewed-consumer API reconciliation is execution-agent owned, not a new human design gate.
 - Next action: Check actual archived review proof before promoting any successor; retain human gates explicitly.
-- Blockers or open questions: Refresh required AFTER NPA-7 implementation and independent review land. Resolve their exact main-branch packet IDs; both current runtime and packet pair absent on main at this snapshot. Do not invent a dependency record or implement NPA-7 here.
+- Blockers or open questions: Preserve original existing review claims and wait for named archived dependency reviews; do not fabricate a PASS.

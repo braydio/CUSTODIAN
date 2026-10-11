@@ -2,10 +2,10 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-existing-vaultwing-proof`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-vaultwing-runtime-hardening`
+- Depends on: `review-vaultwing-runtime-hardening, review-vaultwing-world-spawn-integrity-recovery-v1`
 - Locks: `vaultwing-runtime`
 - Kind: `implementation`
 - Review: `auto`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial actor/showcase integration; independent correctness and source-ownership review`
-- Reviewed main: `6a5a60ddbf`
+- Reviewed main: `b0ff835f8006d5ff6f250e682328512f8aa771d4`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
 - Goal: Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely.
@@ -38,15 +38,19 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh instruction: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
 
-## Program Publication Gate
-These packets are authored **draft/manual** on main as a planning series because there is no local Godot checkout/authoring validator in this session. They are not dispatcher-claimable. Execution/promoting agent: inspect main + AGENTS + dispatch audit; run `python3 custodian/tools/agent/validate_task_packet_authoring.py` on each implementation and review pair; reconcile dependency and exact test references; promote mechanically unlocked pairs to ready/auto; rerun validator; regenerate/verify `task_packet_index.py`; land the promotion safely; confirm dispatcher audit/eligibility. A declared implementation dependency also requires its paired review archived complete before consumer claim. Keep external refresh-gated pairs draft until their real evidence is available.
+## Ready/auto dependency and publication contract (2026-10-11)
+The original speculative-design hold has been reconciled: this is an implementation-ready, dependency-gated pair, **not user-manual dispatch timing**. Before a claim, the execution coordinator MUST run the repository-local targeted `validate_task_packet_authoring.py` on both this implementation and its paired review, then `task_packet_index.py` and `dispatch.py audit --json`; stop and repair if those authoritative checks fail. Current-main GitHub-only metadata checks do NOT prove Godot or full local authoring validation, nor authorize a bypass of existing locks/claims. New source art, final human art approval, NPA-8 and unrelated H5 are out of scope.
+
+## Current-main measured clarification
+Runtime hardening implementation is archived complete, but its reviewer remains on a preserved active claim with an unlanded receipt; real-world Vaultwing spawn implementation/review are still pending. Both reviews must archive PASS before claim. Use live vaultwing.gd, vaultwing_bond_state.gd, ActorRelationshipResolver and the actual npa_showcase_arena level. This proof is not NPA-8 companion commands.
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Handoff
 - Next workstream: `npa-showcase-broken-warrant-actor`
-- Next packet state: `refresh-required`
+- Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
-- Refresh reason: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
+- Refresh reason: Future reviewed-consumer API reconciliation is execution-agent owned, not a new human design gate.
 - Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.
-- Blockers or open questions: Refresh actual runtime APIs AFTER review-vaultwing-runtime-hardening archives complete. Its review is currently a ready/auto predecessor.
+- Blockers or open questions: Preserve original existing review claims and wait for named archived dependency reviews; do not fabricate a PASS.
