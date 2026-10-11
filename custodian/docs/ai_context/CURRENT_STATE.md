@@ -2652,17 +2652,10 @@ The `AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1` presentation continuation is 
 
 ## F15-B1 persistent geography identity foundation (2026-10-10)
 
-`CampaignGeographyRegistry` now provides bounded, deterministic, data-only Domain/Location/Edge identity with length-prefixed address keys, explicit reciprocal or directed adjacency, versioned seed provenance and deep-copy resolution. `CampaignVisitReference` records a distinct visit against an existing Domain without changing campaign-session lifecycle or persistence. The focused fixture covers fixed-seed registration order, repeat visits, dotted IDs, malformed topology/provenance, route/level identity separation and the no-scene-node boundary. This is only the F15-B1 identity foundation: no procedural terrain integration, physical residency, actor handoff, disk save, campaign-flow wiring, or continuous travel is implemented; independent paired review remains pending.
+`CampaignGeographyRegistry` provides bounded deterministic Domain/Location/Edge identity with length-prefixed address keys, reciprocal or directed adjacency, versioned seed provenance and defensive resolution. `CampaignVisitReference` records distinct visits without changing campaign-session lifecycle or persistence. F15-B1's fresh paired review is accepted.
+
+F15-B2 adds `CampaignGeographySemanticRegistry`, a bounded deterministic read-only sidecar keyed by the accepted B1 address. It resolves site sources through the existing F02 `LevelRegistry`, binds only declared logical B1 edges, normalizes optional Hall metadata as references, and leaves ingress `planned` until F02 supplies a real proof. Its focused smoke passes determinism, two-site mapping, domain/address separation, directed transit, atomic rejection, reference-only optional slots, and the data-only boundary. No scene staging, terrain generation, physical edge proof, residency, actor handoff, persistence, numeric world scale or continuous travel is implemented. F02 ingress/seam proof, F14-C2b locality residency and F15-C traversal remain outstanding; independent F15-B2 review is the next step.
 
 ## Awakening interactible affordance Asset V2 contracts (2026-10-10)
 
-Seven current affordance families (`support`, `terminal`, `locker`, `lift`, `port`,
-`wayfinding`, `shared_fx`) are registered from the locked state manifest. The
-required-assets registry contains 27 exact open Asset V2 state targets; all remain
-source-pending. Fourteen recommended states remain optional and 36 future states
-remain outside current required demand. The machine-readable source ledger tracks
-batch/checksum, alpha/dimensions, pipeline, and human-approval gates; null or
-pending evidence does not satisfy a gate. Existing hero families remain preserved
-and no new image availability or gameplay owner is claimed. The Asset V2 doctor
-reports four designation-locker catalog hash mismatches that were present before
-this work; those existing catalog entries and art files were not changed.
+Seven current affordance families (`support`, `terminal`, `locker`, `lift`, `port`, `wayfinding`, `shared_fx`) are registered from the locked state manifest. The required-assets registry contains 27 exact open Asset V2 state targets; all remain source-pending. Fourteen recommended states remain optional and 36 future states remain outside current required demand. The machine-readable source ledger tracks batch/checksum, alpha/dimensions, pipeline, and human-approval gates; null or pending evidence does not satisfy a gate. Existing hero families remain preserved and no new image availability or gameplay owner is claimed. The Asset V2 doctor reports four designation-locker catalog hash mismatches that were present before this work; those existing catalog entries and art files were not changed.

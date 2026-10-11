@@ -55,6 +55,28 @@
       "needs_import": true
     },
     {
+      "id": "campaign_geography_semantic_site",
+      "type": "godot_script",
+      "script": "res://tools/validation/campaign_geography_semantic_site_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "geography",
+        "semantic_site",
+        "determinism",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/geography/campaign_geography_registry.gd",
+        "custodian/game/world/geography/campaign_geography_semantic_registry.gd",
+        "custodian/game/world/geography/campaign_visit_reference.gd",
+        "custodian/game/world/levels/level_definition.gd",
+        "custodian/game/world/levels/level_registry.gd",
+        "custodian/tools/validation/campaign_geography_semantic_site_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "world_simulation_abstract_activity",
       "type": "godot_script",
       "script": "res://tools/validation/world_simulation_abstract_activity_smoke.gd",
