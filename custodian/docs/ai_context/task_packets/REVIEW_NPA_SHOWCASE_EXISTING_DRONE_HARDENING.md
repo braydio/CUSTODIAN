@@ -29,7 +29,7 @@
 - Non-goals: Do not create M-7, assets, gameplay policy, a new squad system, or edit reviewed implementation; no unrelated actor changes.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
-## Handoff
+## Next Handoff
 - Next workstream: `npa-showcase-existing-vaultwing-proof`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
