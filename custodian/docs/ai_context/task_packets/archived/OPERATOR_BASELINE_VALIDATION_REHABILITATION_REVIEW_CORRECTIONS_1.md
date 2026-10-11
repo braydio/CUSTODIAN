@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-baseline-validation-rehabilitation-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-baseline-validation-rehabilitation`
@@ -40,10 +40,31 @@
 ## Execution Feedback
 
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: not-started
-- Friction severity: none
-- What went wrong: n/a
-- Root cause / contributing factors: n/a
-- Prevention / pipeline improvement: n/a
-- Tooling / docs drift discovered: n/a
-- Follow-up: none
+- Outcome: success
+- Friction severity: low
+- What went wrong: The parent review identified that the smoke asserted a counter state but did not count attack-action starts or cover a successful no-buffer release.
+- Root cause / contributing factors: Existing focused assertions verified state presence but did not prove exactly-once callback behavior or the no-buffer negative control.
+- Prevention / pipeline improvement: Count the existing action-entered signal at the behavior boundary and retain an explicit no-buffer success case for future parry changes.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: The existing action-controller signal provided a narrow observation seam without adding production instrumentation.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_ranged_ready_input` passes with exactly one `attack_fast` action-entry event after buffered parry recovery and zero additional events after a successful parry without buffered primary; the post-sync changed-file sweep selected 3, passed 3, failed 0, skipped 0, with complete coverage; existing parry timing and state assertions remain unchanged; `git diff --check`, AI-context, pairing, and packet-index checks pass.
+
+## Next Handoff
+
+- Next workstream: `review-operator-baseline-validation-rehabilitation-review-corrections-1`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: Finish and land this correction, then launch `paired_review_runner.py review-operator-baseline-validation-rehabilitation-review-corrections-1` from the coordination checkout.
+- Blockers or open questions: none
