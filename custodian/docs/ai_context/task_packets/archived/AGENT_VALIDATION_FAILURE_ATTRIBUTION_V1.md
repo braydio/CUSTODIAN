@@ -81,6 +81,6 @@
 - Fixed finding IDs: `none`
 - Next-slice finding IDs: `none`
 - Human-decision finding IDs: `none`
-- Detailed review summary: `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1_REVIEW.md`
+- Detailed review summary: `REVIEW_AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1_CLAUDE_SUMMARY.md`
 - Follow-up workstream: `none required for review acceptance`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1

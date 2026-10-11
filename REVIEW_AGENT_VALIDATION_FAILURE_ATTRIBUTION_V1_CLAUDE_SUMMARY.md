@@ -8,6 +8,12 @@ Fresh paired review of implementation `6b82edac10f3889a8e767765b4aa53bbe7ee64f0`
 
 The review also exercised a fatal stderr child-process fixture through the canonical runner and triage consumer. Both retained `ERROR: fatal stderr fixture`; the runner classified it fatal and failed, while triage preserved it as blocking with unknown attribution. Full findings and disposition are in `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1_REVIEW.md`. No implementation/runtime edits were made. A permanent unit assertion is a non-blocking regression-test improvement.
 
+## Findings and disposition
+
+- R0-01 (initial changed sweep): the isolated reviewer could not write shared `FETCH_HEAD`; triage correctly retained one failed pairing check and 23 dependent skips as blocking/unknown. Resolved by rerunning from the writable claimed worktree. Pairing then passed 67 auto pairs, and the implementation-parent sweep passed 45/45 with complete coverage.
+- R0-02 (fatal stderr): a focused child-process fixture emitted `ERROR: fatal stderr fixture`. The canonical runner marked it failed/fatal and preserved the exact stderr tail. The triage consumer retained that diagnostic and kept the issue blocking with unknown attribution. The fixture result was captured at `/tmp/agent-validation-failure-fatal-stderr-fixture.json` during the review run.
+- Disposition: zero blocking defects, zero material evidence gaps, one optional permanent regression-test recommendation. No implementation/runtime edits were made.
+
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
