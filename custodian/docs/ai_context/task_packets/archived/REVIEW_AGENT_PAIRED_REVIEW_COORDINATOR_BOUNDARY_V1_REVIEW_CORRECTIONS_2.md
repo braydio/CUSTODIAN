@@ -32,8 +32,16 @@
 
 ## Independent Review
 
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-paired-review-coordinator-boundary-v1-review-corrections-2`
+- Review target workstream: `agent-paired-review-coordinator-boundary-v1-review-corrections-2`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
+- Reviewed main: `8a3ff24a5ab6c67e6d759ed82b4cd00279f2df64`
+- Reviewed implementation commit: `b0431ebd29668b597195447f3fff1e85b120bc4d`
 - Reviewed landed commit: `8a3ff24a5ab6c67e6d759ed82b4cd00279f2df64`
 - Verdict: `passed`
 - Findings: `none`
