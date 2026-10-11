@@ -13,7 +13,6 @@ const RELATIONSHIP_RESOLVER := preload("res://game/systems/combat/actor_relation
 
 @export var max_health := 140.0
 @export var health := 140.0
-@export var attack_damage := 12.0
 @export var behavior_enabled := true
 
 @onready var body_sprite: AnimatedSprite2D = $Body
@@ -30,7 +29,6 @@ var bond_state: Node
 
 func _ready() -> void:
 	add_to_group("ambient_creature")
-	add_to_group("hostile_fauna")
 	add_to_group("vaultwing")
 	# The component owns allegiance; its compatibility adapter adds the legacy
 	# enemy group for wild actors without making that group the authority.
@@ -52,10 +50,13 @@ func _ready() -> void:
 	bond_state.configure(self)
 
 func _physics_process(delta: float) -> void:
-	if _dead or not behavior_enabled: return
-	behavior.step(delta)
-	if velocity.length_squared() > 0.001: facing_direction = velocity.normalized()
-	move_and_slide()
+	if _dead: return
+	if behavior_enabled:
+		behavior.step(delta)
+		if velocity.length_squared() > 0.001: facing_direction = velocity.normalized()
+		move_and_slide()
+	if bond_state != null:
+		bond_state.step(delta)
 
 func set_ambient_seed(seed_value: int) -> void:
 	if behavior != null: behavior.set_seed(seed_value)
@@ -189,6 +190,9 @@ func is_wild_population() -> bool:
 func on_bond_completed(feeder: Node2D) -> void:
 	if behavior != null: behavior.clear_operator_hostility(feeder)
 
+func reconcile_restored_bonded_state() -> void:
+	if behavior != null: behavior.reconcile_bonded_restore()
+
 func is_hostile_to(other: Node) -> bool:
 	return allegiance_component != null and allegiance_component.is_hostile_to(other)
 
@@ -237,11 +241,12 @@ func apply_visual_altitude(value: float) -> void:
 	shadow.color = Color(0.04, 0.05, 0.07, lerpf(0.72, 0.22, altitude))
 
 func _damage_result(applied: float, was_alive: bool, before: float, rejected := false) -> Dictionary:
+	var eligible_hostile := RELATIONSHIP_RESOLVER.are_hostile(null, self, &"player")
 	return {
 		"applied_damage": applied, "damage_applied": applied,
 		"target_was_alive": was_alive, "target_health_before": before,
 		"target_health_after": health, "lethal": _dead or health <= 0.0,
-		"blocked": rejected, "eligible_hostile": true, "passive": false,
+		"blocked": rejected, "eligible_hostile": eligible_hostile, "passive": false,
 		"invulnerable": rejected,
 		"structure": false, "deflected": false,
 	}

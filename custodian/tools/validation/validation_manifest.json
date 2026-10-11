@@ -5464,6 +5464,7 @@
         "procgen"
       ],
       "owners": [
+        "custodian/game/actors/ambient/vaultwing/**",
         "custodian/scenes/game.tscn",
         "custodian/game/systems/spawning/vaultwing_spawner.gd",
         "custodian/game/systems/core/systems/contract_world_loader.gd",
