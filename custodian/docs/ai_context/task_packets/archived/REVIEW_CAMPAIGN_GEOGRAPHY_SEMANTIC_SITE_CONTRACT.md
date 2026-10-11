@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-campaign-geography-semantic-site-contract`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `campaign-geography-semantic-site-contract`
@@ -11,7 +11,7 @@
 - Review: `none`
 - Review target workstream: `campaign-geography-semantic-site-contract`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_GEOGRAPHY_SEMANTIC_SITE_CONTRACT.md`
-- Reviewed main: `84c7eb1f8a2ee8c2e4936b9df9afa8ea7e1672d1`
+- Reviewed main: `bb6b17cb8c1ff2456866fa143d2ed82adfba5ef8`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -44,4 +44,36 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31
 - Refresh reason: `Actual B2 F02 binding proof and accepted semantic fields must inform C2b's physical ingress/residency plan and F15-C later visible traversal; neither is approved now.`
 - Next action: Return independent B2 receipt and validated site/edge/ingress semantics to the planning conversation for scoped C2b/F15-C gate evaluation after C2a.
+- Blockers or open questions: `No human art review for metadata-only B2; physical streaming, world scale and valid multi-site ingress remain deferred outside review.`
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: Findings-first independent receipt appended to the archived B2 packet; zero findings; exact implementation SHA and focused validation evidence recorded.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The validation's fresh import attempted shared editor-settings writes and emitted optional MCP socket warnings; Git staging failed because shared index.lock is read-only, and fetch-dependent lifecycle operations cannot write FETCH_HEAD.`
+- Root cause / contributing factors: `The fresh review worktree shares Git metadata and Godot user configuration outside the writable roots in this restricted environment.`
+- Prevention / pipeline improvement: `Provide writable shared Git metadata for claimed review worktrees, or a lifecycle-safe recovery path that preserves packet ownership; preserve this branch if staging or finish cannot write shared metadata.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `Fresh import, focused positive/negative/regression smokes and isolated adversarial mutation probes provided direct evidence.`
+
+## Next Handoff
+
+- Next workstream: `none`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac840d2-afe8-83e9-b449-553998582a31`
+- Refresh reason: `Actual B2 F02 binding proof and accepted semantic fields must inform C2b's physical ingress/residency plan and F15-C later visible traversal; neither is approved now.`
+- Next action: `Return the independent B2 receipt and validated site/edge/ingress semantics to the planning conversation for scoped C2b/F15-C gate evaluation after C2a.`
 - Blockers or open questions: `No human art review for metadata-only B2; physical streaming, world scale and valid multi-site ingress remain deferred outside review.`
