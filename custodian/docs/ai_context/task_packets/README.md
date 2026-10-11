@@ -31,7 +31,6 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
-- `AGENT_PROCESS_FEEDBACK_LEDGER_V1.md` — Create a read-only, source-linked, deterministic ledger of CUSTODIAN process feedback and unresolved follow-ups without modifying task state.
 - `REVIEW_AGENT_PROCESS_FEEDBACK_LEDGER_V1.md` — Independently prove the published feedback ledger is source-verifiable, read-only, deterministic and honest about ambiguity.
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
 - `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...

@@ -2,6 +2,20 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Process Feedback Ledger
+
+The read-only process-feedback inventory scans root closing summaries and active/archived packet receipts. It never changes packet state. Run focused anti-vacuity tests, then compare repeated real-corpus output byte-for-byte:
+
+```bash
+python3 custodian/tools/agent/test_process_feedback.py
+python3 custodian/tools/agent/process_feedback.py scan --json > /tmp/process-feedback-a.json
+python3 custodian/tools/agent/process_feedback.py scan --json > /tmp/process-feedback-b.json
+cmp /tmp/process-feedback-a.json /tmp/process-feedback-b.json
+python3 custodian/tools/agent/process_feedback.py report --markdown
+```
+
+A unique explicit workstream identity is required to pair packet and summary mirrors. Ambiguous identities stay separate; author-reported `fixed-in-scope` is not treated as independently verified closure.
+
 ## Agent Workstream Lifecycle
 
 Every packeted implementation run claims through `dispatch.py claim-next` or
@@ -52,11 +66,9 @@ already tolerates them), and never re-litigates already-archived historical
 packets against today's V2/Completion Truth contract. `task_packet_index.py`
 owns only the bounded `<!-- task_packet_index:managed:start/end -->` block
 inside `task_packets/README.md`'s `### Ready / Auto Dispatch` section; run
-with `--write` to repair drift. The live README does not yet have that block
-initialized — initializing it would replace the section's current hand-curated
-entries with deterministic filename+Goal renderings, which is a deliberate,
-separately reviewable migration, not an automatic side effect of routine
-validation.
+with `--write` to repair drift. The live README has this block initialized. The
+bounded writer owns only the marked Ready/Auto section; other README content
+remains manually maintained.
 
 Task dispatch uses temporary bare remotes and worktrees to verify metadata,
 queue ordering, dependency and lock blocking, stale-main discovery, branch

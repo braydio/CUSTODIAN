@@ -126,9 +126,8 @@ Why first:
 > `<!-- task_packet_index:managed:start -->` / `...:end -->` block inside
 > `task_packets/README.md`'s `### Ready / Auto Dispatch` section. Run
 > `python3 custodian/tools/agent/task_packet_index.py` to check, or `--write`
-> to repair. The live README does not yet have the managed block initialized;
-> migrating its existing hand-curated Ready/Auto Dispatch entries is deferred
-> follow-up, not part of this landing.
+> to repair. The live README has the managed block initialized; the bounded writer
+> updates the generated Ready/Auto entries from active packet metadata.
 
 Queued implementation packet: `custodian/docs/ai_context/task_packets/TASK_PACKET_INDEX_AUTOMODE_HARDENING.md`.
 
@@ -140,6 +139,10 @@ Purpose:
 - preserve manual-ready, in-progress, recently-complete, and prose sections outside the managed block.
 
 The scope is deliberately smaller than full README generation. Automatic lifecycle-state derivation and historical residue cleanup remain separate concerns.
+
+## Process Feedback Ledger — Implemented
+
+`custodian/tools/agent/process_feedback.py` provides a read-only, deterministic inventory of root closing summaries and active/archived packet feedback. `scan --json` emits source-linked observations and logical receipts; `report --markdown` renders the same corpus. It deduplicates only a unique explicit workstream packet/summary pair, preserves source provenance, and leaves ambiguous identities and unknown follow-up owners unclassified. `fixed-in-scope` remains author-reported; `manual-follow-up` remains unowned. Focused anti-vacuity tests are in `test_process_feedback.py` and the suite is registered in `validation_manifest.json`.
 
 ## Priority 2 — Task Packet Linter
 
