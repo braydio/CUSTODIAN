@@ -13,6 +13,7 @@ from pathlib import Path
 POINTER_HEADER = b"version https://git-lfs.github.com/spec/v1"
 SIDECAR_ISSUES = {
     "invalid": "valid=false",
+    "source_file": "missing source file metadata",
     "path": "missing remap path",
     "dest_files": "missing remap destination",
 }
@@ -39,6 +40,8 @@ def _sidecar_metadata(sidecar: Path) -> tuple[str | None, str | None, list[str],
     issues: list[str] = []
     if re.search(r"^valid\s*=\s*false\s*$", remap, re.M):
         issues.append(SIDECAR_ISSUES["invalid"])
+    if not source_match:
+        issues.append(SIDECAR_ISSUES["source_file"])
     if not path_match:
         issues.append(SIDECAR_ISSUES["path"])
     if not destinations:
@@ -97,12 +100,16 @@ def _referenced_sidecars(repository_root: Path, project_dir: Path, malformed: di
 def invalid_referenced_png_sidecars(repository_root: Path, project_dir: Path, tracked_paths: list[str]) -> list[tuple[Path, list[str]]]:
     malformed: dict[str, tuple[str | None, str | None]] = {}
     details: dict[str, list[str]] = {}
+    project_prefix = project_dir.resolve().relative_to(repository_root.resolve()).as_posix().rstrip("/") + "/"
     for relative in tracked_paths:
         if not relative.endswith(".png.import"):
             continue
         source, uid, _destinations, issues = _sidecar_metadata(repository_root / relative)
         if issues:
-            malformed[relative] = (source, uid)
+            inferred_source = relative.removeprefix(project_prefix).removesuffix(".import")
+            # Godot's tracked sidecar filename still identifies its source PNG
+            # when the malformed [deps] section has lost source_file/UID data.
+            malformed[relative] = (source or inferred_source, uid)
             details[relative] = issues
     referenced = _referenced_sidecars(repository_root, project_dir, malformed)
     return [

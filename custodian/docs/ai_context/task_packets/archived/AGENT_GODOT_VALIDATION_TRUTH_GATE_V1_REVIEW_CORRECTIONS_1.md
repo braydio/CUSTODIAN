@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-godot-validation-truth-gate-v1-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -36,13 +36,28 @@
 
 - Task overrides: `none`
 
-## Handoff
+## Completion Truth
+- The malformed tracked sidecar with no source_file or UID is now associated with the PNG implied by its .png.import path, and missing source metadata is reported as malformed.
+- The direct scene-path regression fixture fails preflight as required. Existing valid, invalid, unreferenced, untracked, direct-path, and UID controls pass.
+- Focused smokes passed; import_truth passed 3/3 on retry; changed-file sweep passed 1/1 with complete coverage.
 
-- Next workstream: `review-agent-godot-validation-truth-gate-v1-review-corrections-1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
-- Refresh reason: `none`
-- Next action: `After correction lands and archives, run the paired fresh-context correction review.`
-- Blockers or open questions: `Godot socket bind permission may affect full import validation; preserve that evidence and rerun in a socket-capable environment if needed.`
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: First import_truth run emitted a TLS handshake error and two WAV size warnings; retry passed the import and all three tests.
+- Root cause / contributing factors: Transient Godot TLS/import infrastructure failure; retry did not reproduce it.
+- Prevention / pipeline improvement: none
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Focused fixture reproduced and closed the review finding.
+
+## Next Handoff
+- Next workstream: review-agent-godot-validation-truth-gate-v1-review-corrections-1
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1
+- Refresh reason: none
+- Next action: After correction lands and archives, run the paired fresh-context correction review.
+- Blockers or open questions: none

@@ -18,15 +18,17 @@ def _git(root: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True, text=True)
 
 
-def _sidecar(source: str, uid: str, *, invalid: bool = False, destination: bool = True,
+def _sidecar(source: str | None, uid: str | None, *, invalid: bool = False, destination: bool = True,
              remap_path: bool = True) -> str:
     valid_line = "valid=false\n" if invalid else ""
     dest = 'dest_files=["res://.godot/imported/asset.ctex"]' if destination else "dest_files=[]"
     remap = 'path="res://.godot/imported/asset.ctex"\n' if remap_path else ""
+    uid_line = f'uid="{uid}"\n' if uid else ""
+    source_line = f'source_file="res://{source}"\n' if source else ""
     return (
         "[remap]\nimporter=\"texture\"\ntype=\"CompressedTexture2D\"\n"
-        f'uid="{uid}"\n{valid_line}{remap}\n'
-        f'[deps]\nsource_file="res://{source}"\n{dest}\n'
+        f"{uid_line}{valid_line}{remap}\n"
+        f"[deps]\n{source_line}{dest}\n"
     )
 
 
@@ -113,6 +115,21 @@ def main() -> int:
             stream.write(f'\n[ext_resource type="Texture2D" path="res://{untracked}" id="untracked"]\n')
         if preflight_detail(project) is not None:
             print("FAIL: untracked sidecar should not be treated as tracked import metadata")
+            return 1
+
+        # R0-01: the sidecar filename still identifies its source when both
+        # optional-looking metadata fields were removed from the malformed file.
+        missing_source = "content/vaultwing/bad.png"
+        (assets / "bad.png").write_bytes(b"fixture source")
+        (assets / "bad.png.import").write_text(
+            _sidecar(None, None, invalid=True, destination=False), encoding="utf-8"
+        )
+        with (scenes / "vaultwing.tscn").open("a", encoding="utf-8") as stream:
+            stream.write(f'\n[ext_resource type="Texture2D" path="res://{missing_source}" id="bad"]\n')
+        _git(root, "add", "custodian")
+        detail = preflight_detail(project)
+        if not detail or "bad.png.import" not in detail or "missing source file metadata" not in detail:
+            print(f"FAIL: sidecar without source_file/UID escaped preflight: {detail}")
             return 1
 
         # Missing remap destinations are also rejected when that tracked source
