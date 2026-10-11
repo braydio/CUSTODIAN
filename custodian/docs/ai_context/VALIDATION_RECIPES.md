@@ -1773,9 +1773,17 @@ python3 custodian/tools/validation/operator_art_agent_smoke.py
 python3 custodian/tools/validation/operator_animation_workbench_smoke.py
 python3 custodian/tools/validation/operator_workbench_mirror_publish_smoke.py
 python3 custodian/tools/validation/operator_workbench_ui_smoke.py
+python3 custodian/tools/validation/run_validation.py --test operator_2_5d_review --json
 python3 custodian/tools/validation/operator_art_worktree_smoke.py
 python3 custodian/tools/validation/run_validation.py --changed --json
 ```
+
+The registered `operator_2_5d_review` test has `needs_import: true` because its
+real Godot sandbox scene requires project import data. In a fresh worktree, use
+the validation runner above (which performs the import preflight) or explicitly
+run `godot --headless --path custodian --import --quit` once before invoking the
+smoke script directly. The sandbox itself remains a separate required real
+Godot pass with a finite timeout; a fixture status cannot stand in for it.
 
 The Workbench publisher smoke also checks saved-document contract inspection,
 byte-preserving obsolete frame-migration reconciliation, tracked import metadata

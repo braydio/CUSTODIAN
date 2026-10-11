@@ -490,7 +490,8 @@ class Operator2DReview:
             request_path.write_text(json.dumps(request, indent=2) + "\n", encoding="utf-8")
         return request
 
-    def run_sandbox(self, selection: Any, receipt: dict[str, Any], *, godot: str = "godot") -> dict[str, Any]:
+    def run_sandbox(self, selection: Any, receipt: dict[str, Any], *, godot: str = "godot",
+                    timeout_sec: float = 90.0) -> dict[str, Any]:
         frame_paths = [Path(path) for path in receipt["authority"]["frame_paths"]]
         request = self.make_sandbox_request(selection, receipt, frame_paths)
         request_path = self.preview_root / request["request_id"] / "request.json"
@@ -516,9 +517,27 @@ class Operator2DReview:
         before = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         command = [godot, "--headless", "--path", str(self.repo_root / "custodian"),
                    "--scene", "res://scenes/debug/operator_2_5d_review_sandbox.tscn", "--", "--request", str(request_path)]
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=90, check=False)
-        after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         result_path = request_path.parent / "result.json"
+        result_path.unlink(missing_ok=True)
+        try:
+            completed = subprocess.run(command, capture_output=True, text=True,
+                                       timeout=timeout_sec, check=False)
+        except subprocess.TimeoutExpired as error:
+            after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
+            stdout = error.stdout.decode(errors="replace") if isinstance(error.stdout, bytes) else (error.stdout or "")
+            stderr = error.stderr.decode(errors="replace") if isinstance(error.stderr, bytes) else (error.stderr or "")
+            result = {"error": f"Godot sandbox timed out after {timeout_sec:g}s",
+                      "stdout": stdout[-4000:], "stderr": stderr[-4000:]}
+            timing_authority.atomic_json(result_path, result)
+            return {"status": "FAILED", "request_sha256": request["request_sha256"],
+                    "result_sha256": sha256_file(result_path),
+                    "result_path": str(result_path.resolve()),
+                    "request_path": str(request_path.resolve()),
+                    "production_before": before, "production_after": after,
+                    "production_unchanged": before == after, "godot_exit_code": None,
+                    "timed_out": True, "timeout_sec": timeout_sec,
+                    "result": result, "stdout": stdout[-3000:], "stderr": stderr[-3000:]}
+        after = {str(path): sha256_file(path) for path in production_files if path.is_file()}
         try:
             result = json.loads(result_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):

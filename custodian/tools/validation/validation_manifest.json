@@ -6280,6 +6280,7 @@
         "custodian/tools/operator/operator_2_5d_review.py",
         "custodian/tools/operator/animation_preview.py",
         "custodian/tools/operator/ui/service.py",
+        "custodian/tools/operator/ui/timing_decision_writer.py",
         "custodian/tools/operator/ui/app.py",
         "custodian/tools/operator/ui/screens/main.py",
         "custodian/tools/operator/ui/widgets/polish_panel.py",

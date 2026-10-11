@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-animation-decision-authority-hardening-v1-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-animation-decision-authority-hardening-v1`
@@ -45,19 +45,27 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `<exact correction execution failures or none>`
-- Root cause / contributing factors: `<concise cause or none>`
-- Prevention / pipeline improvement: `<small repeatable improvement or none>`
-- Tooling / docs drift discovered: `<exact drift or none>`
-- Follow-up: `<none | fixed-in-scope | workstream-id | manual-follow-up>`
-- What worked: `<optional, one short line>`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The first UI pilot changed the shared test service's repository root to point at its timing fixture; later live-bridge layer assertions then failed. After isolating only the decision-receipt root, the pilot passed. The first review-smoke rerun also expected a stale-approval status despite there being no approval record; the correct status is preview-required, while consuming the changed-input preview must fail.
+- Root cause / contributing factors: The test fixture reused a mutable service root for unrelated bridge behavior, and the regression conflated an absent decision with an existing-but-stale decision.
+- Prevention / pipeline improvement: Keep isolated timing fixtures scoped to their receipt root, preserve the app's production/test repository root, and test changed-input preview rejection separately from stale persisted-decision status.
+- Tooling / docs drift discovered: A fresh Godot worktree needs project import before directly invoking the renderer smoke. The documented validation recipe now uses `run_validation.py --test operator_2_5d_review --json`, whose `needs_import` preflight performs initialization. Godot import generated an unrelated NPA `.gd.uid` sidecar; it was removed and not committed.
+- Follow-up: `fixed-in-scope`
+- What worked: The real Textual Preview→Confirm pilot and 40-test changed-file validation both passed; the renderer smoke also verified real sandbox output and a bounded stalled-child failure.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: Generic service preview/consume calls are read-only and leave timing approval absent. A Textual pilot drives the actual Preview and Confirm controls and verifies the exact current hash-bound decision. The review smoke performs a real Godot sandbox pass before current-receipt/family controls and checks a deliberately stalled child returns bounded actionable diagnostics. The `operator_2_5d_review` focused validation passed, the real UI pilot passed, `run_validation.py --changed --json` selected 40 tests and all 40 passed with complete coverage, and `git diff --check` passed. No artist workspace was available; no physical art was changed or approved, no FPS was selected, and no publication/cohort activation occurred.
 
 ## Handoff
 
 - Next workstream: `review-operator-animation-decision-authority-hardening-v1-review-corrections-1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38`

@@ -197,6 +197,20 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_current_receipt_") as raw:
         receipt_path.write_text(json.dumps(receipt))
         return receipt_owner.current_receipt(selection)
 
+    # Run the required real renderer pass before receipt/family controls. The
+    # receipt controls below use isolated persisted fixtures to test review
+    # derivation; these fixtures cannot replace this actual Godot result.
+    sandbox_owner = Operator2DReview(service=ReceiptService(), repo_root=ROOT, workspace_root=workbench)
+    sandbox_owner.preview_root = root / "renderer_preflight"
+    renderer_receipt = {"receipt_sha256": "renderer-prerequisite",
+        "authoring_identity": selection.authoring_identity,
+        "authority": {"frame_sha256": [sha256_file(frame_path)],
+            "frame_paths": [str(frame_path)], "durations": [0.125]}}
+    godot = shutil.which("godot")
+    assert godot, "R0-02 requires the real Godot sandbox executable"
+    renderer_result = sandbox_owner.run_sandbox(selection, renderer_receipt, godot=godot)
+    assert renderer_result["status"] == "PASSED" and renderer_result["production_unchanged"]
+
     try:
         assert current_receipt_for({"status": "REQUIRED"})["runtime_verified"] is False
         assert current_receipt_for({"status": "NOT_REQUIRED"}) is None
@@ -273,58 +287,33 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_timing_decision_") as raw:
     manifest["timeline"]["timing_authority"] = True
     manifest_path.write_text(json.dumps(manifest))
     assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
-    try:
-        timing_service._confirm_timing_decision_from_ui(selection, preview_token="missing")
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("caller-supplied confirmation without preview accepted")
+    assert not hasattr(timing_service, "_confirm_timing_decision_from_ui")
     preview = timing_service._preview_timing_decision_from_ui(selection, fps_text="8", loop_text="loop",
         durations_text="1, 2, 1")
     assert preview["status"] == "PREVIEW TIMING" and preview["frame_durations_ms"] == [125.0, 250.0, 125.0]
-    result = timing_service._confirm_timing_decision_from_ui(selection, preview_token=preview["token"])
-    assert result["status"] == "APPROVED TIMING"
-    assert timing_service.timing_approval_status(selection)["status"] == "APPROVED TIMING"
-    # The record does not transfer across a copied receipt or retargeted leaf.
-    copied_selection = replace(selection, direction="e")
-    copied_workspace = timing_service.workspace(copied_selection)
-    copied_workspace.mkdir(parents=True)
-    copied_manifest = json.loads(manifest_path.read_text())
-    copied_manifest["identity"]["direction"] = "e"
-    (copied_workspace / "workbench.json").write_text(json.dumps(copied_manifest))
-    (copied_workspace / "workbench.aseprite").write_bytes(document_path.read_bytes())
-    copied_decision = timing_contract.decision_path(
-        root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", copied_selection)
-    copied_decision.parent.mkdir(parents=True, exist_ok=True)
-    copied_decision.write_bytes(timing_contract.decision_path(
-        root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", selection).read_bytes())
-    assert timing_service.timing_approval_status(copied_selection)["status"] == "TIMING APPROVAL STALE"
-    timing_backend.durations = [0.25, 0.25, 0.125]
-    assert timing_service.timing_approval_status(selection)["status"] == "TIMING APPROVAL STALE"
-    timing_backend.durations = [0.125, 0.25, 0.125]
-    # Each versioned input is independently bound and invalidates the decision.
-    original_plan = plan_path.read_bytes()
-    plan_path.write_text('{"plan":"changed"}')
-    assert timing_service.timing_approval_status(selection)["status"] == "TIMING APPROVAL STALE"
-    plan_path.write_bytes(original_plan)
-    original_profile = profile_path.read_bytes()
-    changed_profile = json.loads(original_profile)
-    changed_profile["profiles"]["operator_2_5d_128"]["profile_sha256"] = "changed-profile"
-    profile_path.write_text(json.dumps(changed_profile))
-    assert timing_service.timing_approval_status(selection)["status"] == "TIMING APPROVAL STALE"
-    profile_path.write_bytes(original_profile)
-    original_reference = ref.read_bytes()
-    ref.write_bytes(original_reference + b"changed")
-    assert timing_service.timing_approval_status(selection)["status"] == "TIMING APPROVAL STALE"
-    ref.write_bytes(original_reference)
+    prepared = timing_service._consume_timing_decision_preview(selection, preview_token=preview["token"])
+    assert prepared["params"]["frame_durations_ms"] == [125.0, 250.0, 125.0]
+    assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
+    decision_path = timing_contract.decision_path(
+        root / ".ai/operator_animation_workbench/review_receipts/operator_2_5d_128", selection)
+    assert not decision_path.exists(), "generic service preview/consume calls must not persist approval"
     try:
-        timing_service._confirm_timing_decision_from_ui(selection, preview_token=preview["token"])
+        timing_service._consume_timing_decision_preview(selection, preview_token=preview["token"])
     except ValueError:
         pass
     else:
         raise AssertionError("one-use Workbench timing preview was reusable")
+    # A saved-input change also expires a preview before any UI writer can run.
+    stale_preview = timing_service._preview_timing_decision_from_ui(selection, fps_text="8", loop_text="loop",
+        durations_text="1, 2, 1")
     document_path.write_bytes(b"mutated saved physical fixture")
-    assert timing_service.timing_approval_status(selection)["status"] == "TIMING APPROVAL STALE"
+    assert timing_service.timing_approval_status(selection)["status"] == "PREVIEW TIMING"
+    try:
+        timing_service._consume_timing_decision_preview(selection, preview_token=stale_preview["token"])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("changed Workbench bytes retained a consumable timing preview")
 
 with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     root = Path(raw)
@@ -383,7 +372,6 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
     assert saved_request["request_sha256"] == request["request_sha256"]
     assert sha256_file(bundle / saved_request["frames"][0]["path"]) == digest
     assert request["durations"] == [0.125] and request["frame_size"] == [128, 128]
-    godot = shutil.which("godot")
     if godot:
         sandbox = sandbox_owner.run_sandbox(selection, receipt)
         assert sandbox["status"] == "PASSED" and sandbox["production_unchanged"]
@@ -417,6 +405,16 @@ with tempfile.TemporaryDirectory(prefix="operator_2d_review_") as raw:
         refused = subprocess.run(command, capture_output=True, text=True, timeout=90, check=False)
         result = json.loads((sandbox_bundle / "result.json").read_text())
         assert refused.returncode != 0 and "frame hash mismatch" in result.get("error", "")
+
+    stalled_godot = root / "stalled-godot"
+    stalled_godot.write_text(f"#!{sys.executable}\nimport time\ntime.sleep(5)\n")
+    stalled_godot.chmod(0o755)
+    timeout_receipt = {**receipt, "receipt_sha256": "bounded-timeout-control"}
+    timed_out = sandbox_owner.run_sandbox(selection, timeout_receipt,
+        godot=str(stalled_godot), timeout_sec=0.05)
+    assert timed_out["status"] == "FAILED" and timed_out["timed_out"] is True
+    assert timed_out["timeout_sec"] == 0.05
+    assert "timed out after 0.05s" in timed_out["result"]["error"]
 
     import operator_animation_targets
     plan = operator_animation_targets.load_plan(ROOT / "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json")

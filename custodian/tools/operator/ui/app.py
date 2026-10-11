@@ -23,6 +23,7 @@ from live_bridge.protocol import MessageType
 from live_bridge.state import ConnectionState, PreviewOwnership
 from .screens import MainScreen
 from .service import WorkbenchService
+from .timing_decision_writer import record_confirmed_timing
 from .state import AnimationSelection, ExistingContextView, WorkbenchUIState
 from .widgets import (ActivityLog, AnimationDetail, AnimationTree, AnimationMatrix, ContextKeyBar, LayerTable,
                       MotionCanvas, MotionControls, MotionMetrics, PlanTable,
@@ -999,6 +1000,9 @@ class OperatorWorkbenchApp(App):
     def action_mode_polish(self): self._set_mode("polish")
 
     async def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "polish-timing-confirm":
+            self.run_worker(self._confirm_timing_from_button_event(event), group="polish", exclusive=True, exit_on_error=False)
+            return
         if event.button.id == "queue-filter":
             index = QUEUE_FILTERS.index(self.queue_filter)
             self.queue_filter = QUEUE_FILTERS[(index + 1) % len(QUEUE_FILTERS)]
@@ -1139,6 +1143,8 @@ class OperatorWorkbenchApp(App):
 
     async def _run_polish_action(self, action: str) -> None:
         try:
+            if action == "timing-confirm":
+                raise RuntimeError("Timing approval is available only from the Workbench confirmation button event")
             if action == "open":
                 selection = self._require_selection()
                 if selection is None: return
@@ -1163,26 +1169,6 @@ class OperatorWorkbenchApp(App):
                     f"PREVIEW TIMING · {result['fps']:g} FPS · {'loop' if result['loop'] else 'once'} · "
                     f"{result['frame_count']} saved frames · {result['total_ms']:g}ms total · [{durations}] · "
                     "confirm only if this is the intended clock")
-            elif action == "timing-confirm":
-                selection = self._require_selection()
-                pending = self.pending_timing_ui
-                if selection is None or pending is None or pending["identity"] != selection.authoring_identity:
-                    raise RuntimeError("Preview the exact timing for this selected Workbench before confirming")
-                values = (self._main_widget("#polish-timing-fps", Input).value,
-                          self._main_widget("#polish-timing-loop", Input).value,
-                          self._main_widget("#polish-timing-durations", Input).value)
-                if values != pending["values"]:
-                    raise RuntimeError("Timing fields changed after preview; preview them again")
-                result = await self._thread(partial(self.service._confirm_timing_decision_from_ui, selection,
-                    preview_token=pending["token"]))
-                self.pending_timing_ui = None
-                self._main_widget("#polish-timing-confirm", Button).disabled = True
-                self._main_widget("#polish-timing-status", Static).update(
-                    f"APPROVED TIMING · {result['fps']:g} FPS · {'loop' if result['loop'] else 'once'} · "
-                    f"decision {result['record_sha256'][:12]} · backup {result['backup']}")
-                family = await self._thread(partial(self.service.review_family, selection.profile,
-                    selection.group, selection.action))
-                self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
             elif action == "review":
                 selection = self._require_selection()
                 approved = self._main_widget("#polish-human-approved", Checkbox).value
@@ -1228,6 +1214,44 @@ class OperatorWorkbenchApp(App):
                 self._show_polish_result(refreshed)
         except Exception as error:
             self._main_widget("#polish-status", Static).update(f"POLISH refused: {error}")
+            self._error(error)
+
+    async def _confirm_timing_from_button_event(self, event: Button.Pressed) -> None:
+        button = self._main_widget("#polish-timing-confirm", Button)
+        if not isinstance(event, Button.Pressed) or event.button is not button or button.disabled:
+            self._main_widget("#polish-timing-status", Static).update(
+                "PREVIEW TIMING · confirmation must come from the active Workbench button")
+            return
+        selection = self._require_selection()
+        pending = self.pending_timing_ui
+        if selection is None or pending is None or pending["identity"] != selection.authoring_identity:
+            self._main_widget("#polish-timing-status", Static).update(
+                "PREVIEW TIMING · preview the exact timing for this selected Workbench before confirming")
+            return
+        values = (self._main_widget("#polish-timing-fps", Input).value,
+                  self._main_widget("#polish-timing-loop", Input).value,
+                  self._main_widget("#polish-timing-durations", Input).value)
+        if values != pending["values"]:
+            self.pending_timing_ui = None
+            button.disabled = True
+            self._main_widget("#polish-timing-status", Static).update(
+                "PREVIEW TIMING · fields changed; preview them again")
+            return
+        button.disabled = True
+        try:
+            prepared = await self._thread(self.service._consume_timing_decision_preview, selection,
+                preview_token=pending["token"])
+            result = await self._thread(record_confirmed_timing, self, event, self.service, selection, prepared)
+            self.pending_timing_ui = None
+            self._main_widget("#polish-timing-status", Static).update(
+                f"APPROVED TIMING · {result['fps']:g} FPS · {'loop' if result['loop'] else 'once'} · "
+                f"decision {result['record_sha256'][:12]} · backup {result['backup']}")
+            family = await self._thread(self.service.review_family, selection.profile,
+                selection.group, selection.action)
+            self._main_widget("#polish-family-review", ReviewFamilyTable).set_family(family)
+        except Exception as error:
+            self.pending_timing_ui = None
+            self._main_widget("#polish-timing-status", Static).update(f"PREVIEW TIMING · approval refused: {error}")
             self._error(error)
 
     async def _load_preview(self, *, generation: int | None = None) -> None:
