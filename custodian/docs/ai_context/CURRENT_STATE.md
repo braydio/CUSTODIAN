@@ -2633,7 +2633,7 @@ workspace manifests, and 0 current receipts; these counts apply only to that
 workspace. The browser scanner also rejected an unrelated legacy `attack_2d.png`
 filename in that 745-commit-behind checkout, so fallback discovery reports an
 explicit unavailable diagnostic instead of turning that scan failure into a
-zero. WB25-6 retains independent runtime publication/promotion authority.
+zero. WB25-5 implementation `69cdfdbf1` landed via `d4efc0234` and its fresh paired review `cd72b90b1` passed with zero findings. The independently measured default workspace still had **0 current receipt-verified leaves / 0 verified 2.5D families** (69/552 targets, 8 projected workspace directions). WB25-6 holds independent runtime publication/promotion authority and its **refreshed draft/manual** first-cohort gate: live sync remains legacy-source-based, the Workbench still disables direct 2.5D publication, and `PUBLISHED` can only be observed after a guarded cohort switch, not required before it. No user-approved complete first production cohort or runtime 2.5D cutover is recorded.
 
 ## Planned Awakening perimeter support (2026-10-09; NOT LIVE)
 
