@@ -1,0 +1,1957 @@
+{
+  "advisory_gaps": [
+    "Accepted 8-direction source master historical absolute path is unavailable; current per-direction strips, sessions, and documents remain independently hash-recorded."
+  ],
+  "blocking_gaps": [
+    "Only 8/56 candidate directions are editable; the other 48 have no canonical art or resolved frame/loop/FPS contract.",
+    "All eight idle documents retain 8 FPS / 125 ms as preview timing with timing_authority=false; no authoritative FPS is selected.",
+    "No current effective review/sandbox receipts, verified candidate directions/families, or published candidate directions exist.",
+    "Existing posture requires modular lower_body+upper_body and east/west projection; 2.5D candidate requires eight-direction full_body.",
+    "Runtime semantic identities are generation-neutral; no proven generation-aware single-body presentation owner prevents 96px modular art from reappearing.",
+    "Guard/parry, dodge, melee, ranged, equip/sheathe, FX/socket, and terminal completion edges include identities outside the proposed seven families."
+  ],
+  "candidate": {
+    "candidate_status": "NOT_RELEASE_ELIGIBLE",
+    "direction_slots": 56,
+    "families": [
+      {
+        "authoring": {
+          "accepted_source_status": "accepted_canonical_source_not_yet_intaken",
+          "workspace_count": 8,
+          "workspace_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": 15,
+          "loop": true,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/posture/idle_relaxed_01",
+        "plan_id": "operator_2_5d_unarmed_posture_idle_relaxed_01",
+        "priority": "P0",
+        "reachability": [
+          {
+            "consumer": "operator._sync_unarmed_posture (RELAXED stance)",
+            "layer": null,
+            "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector().",
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "e",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/posture/idle_ready_01",
+        "plan_id": "operator_2_5d_unarmed_posture_idle_ready_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._sync_unarmed_posture (READY stance)",
+            "layer": null,
+            "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector().",
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "e",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__lower_body__unarmed__posture__idle_ready_01__e__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__e__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__lower_body__unarmed__posture__idle_ready_01__w__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/posture/idle_ready_01/operator__upper_body__unarmed__posture__idle_ready_01__w__5f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/transition/relaxed_to_ready_01",
+        "plan_id": "operator_2_5d_unarmed_transition_relaxed_to_ready_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
+            "layer": null,
+            "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector().",
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "e",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__e__1f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__lower_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/relaxed_to_ready_01/operator__upper_body__unarmed__transition__relaxed_to_ready_01__w__1f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/transition/ready_to_relaxed_01",
+        "plan_id": "operator_2_5d_unarmed_transition_ready_to_relaxed_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._update_unarmed_presentation_posture -> _sync_unarmed_posture",
+            "layer": null,
+            "migration_note": "Live since the unarmed posture runtime slice. Presentation-only: driven by EngagementTracker, resolved through OperatorAnimationSelector on the canonical modular body pair, and never gating gameplay. Authored e/w only; north and south take the caller-owned projection in UnarmedPosturePresentation.authored_sector().",
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "e",
+            "w"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "e",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__lower_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__e__1f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__lower_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 1,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/transition/ready_to_relaxed_01/operator__upper_body__unarmed__transition__ready_to_relaxed_01__w__1f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/locomotion/idle_01",
+        "plan_id": "operator_2_5d_unarmed_locomotion_idle_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._sync_modular_locomotion_layers (unarmed_idle)",
+            "layer": null,
+            "migration_note": null,
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "n",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 10,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__n__10f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__n__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__n__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "ne",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "e",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__e__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__e__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__e__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "se",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__se__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "s",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__s__8f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__s__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__s__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "sw",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__sw__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__w__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__w__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__w__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "nw",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__nw__5f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/locomotion/walk_01",
+        "plan_id": "operator_2_5d_unarmed_locomotion_walk_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._sync_modular_locomotion_layers (unarmed_walk)",
+            "layer": null,
+            "migration_note": null,
+            "reason": null,
+            "status": "LIVE"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "n",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 7,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__full_body__unarmed__locomotion__walk_01__n__7f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__n__8f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__n__8f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "ne",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__ne__6f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "e",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__full_body__unarmed__locomotion__walk_01__e__5f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__e__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__e__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "se",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__se__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__se__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "s",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__full_body__unarmed__locomotion__walk_01__s__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__s__8f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__s__8f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "sw",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__sw__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__sw__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__full_body__unarmed__locomotion__walk_01__w__5f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__w__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__upper_body__unarmed__locomotion__walk_01__w__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "nw",
+              "layers": {
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/walk_01/operator__lower_body__unarmed__locomotion__walk_01__nw__6f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      },
+      {
+        "authoring": {
+          "accepted_source_status": "not_authored",
+          "workspace_count": 0,
+          "workspace_directions": [],
+          "workspace_status": "AVAILABLE"
+        },
+        "candidate_presentation_closure": "OPEN",
+        "closure_reason": "live consumer composition owner has not been proven to select canonical 2.5D full_body identities across entry, exit, and preemption edges",
+        "directions": [
+          "n",
+          "ne",
+          "e",
+          "se",
+          "s",
+          "sw",
+          "w",
+          "nw"
+        ],
+        "effective_review": {
+          "receipts": 0,
+          "status": "UNVERIFIED",
+          "verified_directions": 0
+        },
+        "frame_contract": {
+          "fps": null,
+          "frame_size": [
+            128,
+            128
+          ],
+          "frames": null,
+          "loop": null,
+          "timing_status": "unknown_non_blocking"
+        },
+        "id": "unarmed/locomotion/run_01",
+        "plan_id": "operator_2_5d_unarmed_locomotion_run_01",
+        "priority": "P1",
+        "reachability": [
+          {
+            "consumer": "operator._sync_modular_locomotion_layers (unarmed_run)",
+            "layer": null,
+            "migration_note": null,
+            "reason": null,
+            "status": "LIVE"
+          },
+          {
+            "consumer": null,
+            "layer": "cape",
+            "migration_note": null,
+            "reason": "C2a authoring decision 2026-09-12: the modular head and cape are preserved but retired from the active Operator composition (Operator.ACTIVE_MODULAR_HEAD / ACTIVE_MODULAR_CAPE are false). Source and runtime art stays published; the Operator stops drawing this layer. May return in a dedicated presentation/art pass.",
+            "status": "DORMANT"
+          }
+        ],
+        "required_layers": [
+          "full_body"
+        ],
+        "runtime_manifest": {
+          "catalog_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_is_generation_neutral": true,
+          "runtime_manifest_directions": [
+            "n",
+            "ne",
+            "e",
+            "se",
+            "s",
+            "sw",
+            "w",
+            "nw"
+          ],
+          "runtime_manifest_layers": [
+            {
+              "direction": "n",
+              "layers": {
+                "cape": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__cape__unarmed__locomotion__run_01__n__5f__96.png"
+                },
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__n__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__n__8f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 8,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__n__8f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "ne",
+              "layers": {
+                "cape": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__cape__unarmed__locomotion__run_01__ne__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__ne__6f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__ne__6f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "e",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__e__5f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__e__6f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__e__6f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "se",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 4,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__se__4f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__se__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__se__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "s",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 7,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__s__7f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 12,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__s__12f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 12,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__s__12f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "sw",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 4,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__sw__4f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__sw__5f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__sw__5f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "w",
+              "layers": {
+                "full_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 5,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__full_body__unarmed__locomotion__run_01__w__5f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__w__6f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__w__6f__96.png"
+                }
+              }
+            },
+            {
+              "direction": "nw",
+              "layers": {
+                "cape": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__cape__unarmed__locomotion__run_01__nw__6f__96.png"
+                },
+                "lower_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__lower_body__unarmed__locomotion__run_01__nw__6f__96.png"
+                },
+                "upper_body": {
+                  "frame_size": [
+                    96,
+                    96
+                  ],
+                  "frames": 6,
+                  "path": "content/sprites/operator/runtime/animations/unarmed/locomotion/run_01/operator__upper_body__unarmed__locomotion__run_01__nw__6f__96.png"
+                }
+              }
+            }
+          ]
+        },
+        "source_sha256": null
+      }
+    ],
+    "family_count": 7,
+    "id": "unarmed_neutral_motion_v1"
+  },
+  "edges": [
+    {
+      "classification": "OPEN",
+      "consumer": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance"
+      },
+      "from": "relaxed_idle",
+      "id": "edge-01",
+      "identities_or_seams": [
+        "idle_relaxed_01",
+        "idle_ready_01",
+        "relaxed_to_ready_01"
+      ],
+      "reason": "existing path chooses a modular pair with east/west projection; no 2.5D full-body owner path exists",
+      "to": "ready_idle",
+      "trigger": "engagement becomes active"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._update_unarmed_presentation_posture -> UnarmedPosturePresentation.advance"
+      },
+      "from": "ready_idle",
+      "id": "edge-02",
+      "identities_or_seams": [
+        "idle_ready_01",
+        "idle_relaxed_01",
+        "ready_to_relaxed_01"
+      ],
+      "reason": "same composition mismatch; completion is tied to the legacy transition clip",
+      "to": "relaxed_idle",
+      "trigger": "engagement quiets"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator._sync_animation_from_state",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._sync_animation_from_state"
+      },
+      "from": "relaxed_idle",
+      "id": "edge-03",
+      "identities_or_seams": [
+        "idle_relaxed_01",
+        "idle_01"
+      ],
+      "reason": "posture is skipped during movement; current locomotion prefers modular body layers",
+      "to": "locomotion_idle",
+      "trigger": "movement begins below walk threshold"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
+      },
+      "from": "locomotion_idle",
+      "id": "edge-04",
+      "identities_or_seams": [
+        "idle_01",
+        "walk_01"
+      ],
+      "reason": "selector has legacy identities but no generation-selected full-body composition seam",
+      "to": "walk",
+      "trigger": "movement crosses walk threshold"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
+      },
+      "from": "walk",
+      "id": "edge-05",
+      "identities_or_seams": [
+        "walk_01",
+        "run_01"
+      ],
+      "reason": "run and walk remain on modular layer owner before full-body fallback",
+      "to": "run",
+      "trigger": "sprint input / run threshold"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator._sync_animation_from_state -> _sync_modular_locomotion_layers"
+      },
+      "from": "run",
+      "id": "edge-06",
+      "identities_or_seams": [
+        "run_01",
+        "walk_01"
+      ],
+      "reason": "reverse movement transition has the same owner/generation gap",
+      "to": "walk",
+      "trigger": "sprint ends"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "OperatorBodyPresenter + operator guard/parry presentation",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "OperatorBodyPresenter + operator guard/parry presentation"
+      },
+      "from": "posture_or_locomotion",
+      "id": "edge-07",
+      "identities_or_seams": [
+        "guard",
+        "parry"
+      ],
+      "reason": "exclusive legacy body ownership and FX/socket lifetime must be reconciled with full-body cohort",
+      "to": "guard_or_parry",
+      "trigger": "guard/parry action acquires body"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator dodge presentation / OperatorBodyPresenter",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator dodge presentation / OperatorBodyPresenter"
+      },
+      "from": "posture_or_locomotion",
+      "id": "edge-08",
+      "identities_or_seams": [
+        "dodge_charge",
+        "dodge_flow"
+      ],
+      "reason": "dodge identities are outside candidate; exact outgoing and settle seams remain 96px",
+      "to": "dodge",
+      "trigger": "dodge charge/flow preempts body"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator melee presentation / OperatorBodyPresenter",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator melee presentation / OperatorBodyPresenter"
+      },
+      "from": "posture_or_locomotion",
+      "id": "edge-09",
+      "identities_or_seams": [
+        "melee_attack",
+        "parry_recovery"
+      ],
+      "reason": "profile-specific melee full-body/body-slaved layers, weapon socket and FX ownership are outside cohort",
+      "to": "melee_action",
+      "trigger": "melee attack preempts body"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator ranged presentation / OperatorBodyPresenter",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator ranged presentation / OperatorBodyPresenter"
+      },
+      "from": "posture_or_locomotion",
+      "id": "edge-10",
+      "identities_or_seams": [
+        "ranged_ready",
+        "fire"
+      ],
+      "reason": "ranged upper-body, weapon and muzzle/socket layers are outside unarmed cohort",
+      "to": "ranged_action",
+      "trigger": "ranged aim/fire preempts body"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "operator.start_equip_weapon_presentation / melee and ranged posture sync",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "operator.start_equip_weapon_presentation / melee and ranged posture sync"
+      },
+      "from": "unarmed",
+      "id": "edge-11",
+      "identities_or_seams": [
+        "draw_01",
+        "sheath_01",
+        "idle_ready_01"
+      ],
+      "reason": "equipment transition and following profile posture have separate identity/layer requirements",
+      "to": "equipped_or_sheathed",
+      "trigger": "equip/sheathe changes profile and body owner"
+    },
+    {
+      "classification": "OPEN",
+      "consumer": "OperatorPresentationController completion clock + operator posture settle",
+      "evidence": {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "symbol": "OperatorPresentationController completion clock + operator posture settle"
+      },
+      "from": "action_owner",
+      "id": "edge-12",
+      "identities_or_seams": [
+        "action_recovery",
+        "idle_relaxed_01",
+        "idle_ready_01"
+      ],
+      "reason": "completion callbacks/anchors must settle into the same selected generation without stale modular renderers",
+      "to": "neutral_settle",
+      "trigger": "action completion returns neutral body"
+    }
+  ],
+  "evidence_availability": {
+    "authoring_workspace": {
+      "editable_idle_directions": 8,
+      "effective_receipts": 0,
+      "idle_relaxed_01": [
+        {
+          "direction": "n",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "95495e1f72b126e396ada1dca2e0405181ad1adfb897d87b9fdfbe3043d6c2c3",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "092f624360d5e1ae1be334894cb534fbfe424e2190b60bc36e7b4f8cfeebcafa",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "e68dfbf5cd595405f9fe0f51ef1fb211f657f84a2abf814011e09a826aec07a9",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "a34039e27ae5afa498ae049e1fde8f8a15a0753b565d505088411fb3f1a6ecf7",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "ne",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "69148100a8c02cbf667298ee11686cb51d0d12788abbb394a4caa56baa2e7bcf",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "fbe44638b4de970bcc6f29f248d6cfdfa4c6783fd8bdab4411576332e8aa3b5e",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "6dce4e0930c24b34ec12c65ac33afc23e9da4622cb0db7a207ef38bdc26fb70c",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "70ac3f20b529e79c71284813e46348bb9c43264be098755a5e813d45c534e116",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "e",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "638402e091e9ec7930444eccb3e3e9c59fc94458406f3b775e2d7b42f73cfbd2",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "2ae9e824e418905c988cce3a7398e434e0316c8976f0a043d8278527c4eeda1e",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "2400f5a2e583cbb74845abee74ac147c9f69912c88ec605b6ce3634c7110e31a",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "713996f7c3f23f6f7358dcc80f9860431b07e975310feca460cfc0d3c629ed24",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "se",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "002a4436d91a3e746568e3738fd413f6cac1c543db2739c321a7c26a622e991b",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "b518fcd1772f0d1511831eb4676dc0cd278db6c0fc6959780779565185797099",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "599afb3fe8ad5003cf491c54b7bef169c9fb0a48f07f49872f5fab4941c060b2",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "f5116218edf90be9271e67e6aa3e1a3ed2fb8f7a63653ff1059306cec15abc69",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "s",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "735cdeb5f667267272821a8d050eab14f75d925b6e15a9bb0061e1a5bf24f42c",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "79f72637fb151c887a48f17295c994b9407fee0c3a8a5a206f57cb50bc17ae8e",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "5ec9a78b4f787e6c59b547ce268cae6917697fc953019a59fc42aea16e458c38",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "665faf0c658bdebbc5de85190ecf2aae4fc4a2a6fbffb4bf76aa8b9ac6f5879b",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "sw",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "74f7e69ccf5ba50db064e12f1edc724f1874e324f01db240d408a262130577f0",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "6de9af422be2576fa49e29d3876550e375fd50a5f0e65245a085bad44f33052c",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "1f7f20550aedd243299d99ba8d0f9f78263c16e622cde4078ac98e69f2c9a374",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "192ca98d6b84588fe894f05d161b9edcdc8df8dc023e3028b5677e48da1db4de",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "w",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "e9a6643770dfbaaf7bcc9aac3231659b8b0f3e1b17f01b95927006b67ea8b03a",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "6b37f2f3c30aaaaa37a2cfeb9ebc68cceefb9766b2d69d22e8d4a0263939334d",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "27635f593d12340679fe9a5615b25c708c449944c1f3a1507edf5359055ab6e5",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "a5408757113654fc4ef9a3bae6dba8b530967f1d9f95824e4d071f1d704f0fc3",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        },
+        {
+          "direction": "nw",
+          "durations_ms": [
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0,
+            125.0
+          ],
+          "effective_receipt": false,
+          "frames": 15,
+          "manifest_sha256": "45b44a86aadde270ad36316b23e978e9a597e85f5773df3b820969a8bec22d03",
+          "manifest_status": "PRESENT",
+          "preview_fps": 8.0,
+          "published": false,
+          "saved_document_sha256": "43c9d043ba45fdb065368e09b609d9e94fcd9c4331228176329314ce8f55b8dc",
+          "saved_document_status": "PRESENT",
+          "source_session_hash_matches_correction": true,
+          "source_session_sha256": "2b2f433e0e8aa543805109c45e7a33ed418fc0996dd9da1eb72ac70fd7fe5652",
+          "source_session_status": "PRESENT",
+          "source_strip_hash_matches_correction": true,
+          "source_strip_sha256": "df9ca564ec3922bd4b4f638d35e78eee2038af32c3fdda5e8049555610379d97",
+          "source_strip_status": "PRESENT",
+          "timing_authority": false
+        }
+      ],
+      "other_candidate_workspace_manifests": 0,
+      "receipt_inventory_status": "EMPTY",
+      "status": "AVAILABLE",
+      "workspace_checkout_behind_main": "67",
+      "workspace_checkout_head": "19d466e7817cc15c5a07ffef67054e5c45215b02",
+      "workspace_checkout_porcelain": "?? custodian/asset_drop/inbox/operator_2_5d/\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__e__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__n__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__ne__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__nw__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__s__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__se__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__sw__15f__128.png\n?? custodian/content/sprites/_pipeline/inbox/operator__full_body__unarmed__posture__idle_relaxed_01__w__15f__128.png",
+      "workspace_checkout_status": "DIRTY",
+      "workspace_root": "/home/braydenchaffee/Projects/CUSTODIAN-operator-art/.ai/operator_animation_workbench"
+    },
+    "catalog": "AVAILABLE",
+    "effective_receipt_projection": "CURRENT_RECEIPT_AUTHORITY",
+    "reachability": "AVAILABLE",
+    "runtime_manifest": "AVAILABLE"
+  },
+  "external_consumer_boundaries": [
+    {
+      "classification": "OPEN",
+      "owner": "guard/parry",
+      "requirements": [
+        "preemption",
+        "exclusive-body handoff",
+        "FX retirement",
+        "completion/settle"
+      ]
+    },
+    {
+      "classification": "OPEN",
+      "owner": "dodge",
+      "requirements": [
+        "charge/flow preemption",
+        "full-body owner",
+        "neutral settle"
+      ]
+    },
+    {
+      "classification": "OPEN",
+      "owner": "melee/equipment",
+      "requirements": [
+        "draw/sheathe",
+        "weapon sockets",
+        "body-slaved or weapon layers",
+        "attack/recovery settle"
+      ]
+    },
+    {
+      "classification": "OPEN",
+      "owner": "ranged",
+      "requirements": [
+        "ready/aim/fire",
+        "upper body",
+        "muzzle/socket and overlays"
+      ]
+    },
+    {
+      "classification": "OPEN",
+      "owner": "action completion",
+      "requirements": [
+        "current completion clock",
+        "terminal pose anchor",
+        "no stale continuation after preemption"
+      ]
+    }
+  ],
+  "investigation": {
+    "main_sha": "7d14aa7d697ad39696d873c1547092e6f2acb3f4",
+    "origin_main_sha": "7d14aa7d697ad39696d873c1547092e6f2acb3f4",
+    "read_only": true,
+    "source_evidence_sha256": {
+      "custodian/content/data/operator/generated/operator_animation_catalog.generated.json": "faa200866f16738ab72fd3b912d33418f726c33b4b977423de7ba590ee7e74fb",
+      "custodian/content/data/operator/operator_animation_reachability.json": "3bac292b279c8ce9dea2242aec5f1f05c007c8998d9675d32c3df87993f8e024",
+      "custodian/content/sprites/operator/runtime/operator_runtime_frames.tres": "679265c26b049abfe33d5d56257aff3887ca6d239224c1305b8cb735739afc14",
+      "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json": "df50edf28baf00381828b766329364edb49d15d394046f409d94503e29490d0f",
+      "custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_correction_1.json": "40ceed7b42fb7b897734a7fc9ccbc6b9c9d8295d2cd9b74404703020b662ed24",
+      "custodian/game/actors/operator/animations/operator_animation_selector.gd": "0c341d93b68153f3f8f6023986e29607097f19b0a198a98a55b6d21315422f75",
+      "custodian/game/actors/operator/operator.gd": "b10bf77b3fcf653de116dda0c6b5f8dabd77e8220442aacc2bf9c5c5e8f2df2a",
+      "custodian/game/actors/operator/presentation/operator_body_presenter.gd": "acb1e40c4889d6cc8aaa9002e186e147d456c7a44086f065be49642a2cb2cc29",
+      "custodian/game/actors/operator/presentation/operator_presentation_controller.gd": "49877eafc15fbbdb1654597200409aca8543eb4a8fa562fcd650d461670aa50f",
+      "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd": "9047d72129ec9985cc372357820eaeb8cee47ff9f7ff9c250c5348fc04ac9488",
+      "custodian/tools/operator/operator_2_5d_review.py": "42fca78ab1a38cc9d40f3653f0d22052b4c857ebcef80e8ee782df9f02ff9862",
+      "custodian/tools/operator/operator_animation_targets.py": "879ed88e816d96ae8b617c3998900c1343b64c4180ff870c23cfc48f89312ba2",
+      "design/02_features/animation/OPERATOR_ANIMATION_IMPLEMENTATION_PLAN.json": "93b2c79146d3974f0c085f9e149c0ce1abc21cf09a21ad7ea928ac636ee6e753"
+    },
+    "worktree_branch": "agent/operator-2-5d-cohort-dependency-closure"
+  },
+  "negative_controls": {
+    "legacy_modular_layers_are_not_full_body": {
+      "evidence": "_sync_unarmed_posture requires lower_body+upper_body; plan requires full_body",
+      "pass": true
+    },
+    "planned_family_set_does_not_prove_graph_closure": {
+      "evidence": "12 live transition/preemption seams remain open",
+      "pass": true
+    },
+    "preview_timing_cannot_verify": {
+      "evidence": "operator_2d_review.py::current_receipt requires valid timing authority and evidence-bound review/sandbox",
+      "pass": true
+    }
+  },
+  "presentation_owners": {
+    "exclusive_body_owner": {
+      "candidate_generation_path": "UNKNOWN",
+      "owner": "OperatorBodyPresenter",
+      "owners": [
+        "MODULAR_BODY",
+        "LEGACY_FULL_BODY",
+        "VIGIL_POSTURE_TRANSITION",
+        "VIGIL_FAST_STARTUP",
+        "VIGIL_GUARD"
+      ],
+      "single_body_invariant": "existing authority"
+    },
+    "locomotion": {
+      "candidate_layers": [
+        "full_body"
+      ],
+      "compatibility": "OPEN",
+      "normal_preference": [
+        "lower_body",
+        "upper_body"
+      ],
+      "note": "full-body fallback exists for current identities, but does not establish generation-aware ownership or prevent modular 96px reappearance",
+      "owner": "operator.gd::_sync_modular_locomotion_layers"
+    },
+    "posture": {
+      "candidate_layers": [
+        "full_body"
+      ],
+      "compatibility": "OPEN",
+      "evidence": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd"
+      ],
+      "owner": "operator.gd::_sync_unarmed_posture",
+      "required_layers": [
+        "lower_body",
+        "upper_body"
+      ],
+      "sector_policy": "UnarmedPosturePresentation.authored_sector: west only when direction.x < -0.05; all other headings resolve east"
+    },
+    "selector": {
+      "candidate_registry": "No generation argument or candidate runtime namespace",
+      "generation_neutral": true,
+      "identity": "profile/group/action/direction/layer",
+      "owner": "OperatorAnimationSelector",
+      "south_fallback": "temporary selector fallback exists; caller projection remains distinct"
+    }
+  },
+  "recommended_next_steps": [
+    "Design one generation-coherent body presentation seam under OperatorPresentationController/OperatorBodyPresenter; preserve selector and single SpriteFrames authority.",
+    "Specify exact incoming/outgoing transitions and settle behavior for posture, idle/walk/run, guard/parry, dodge, melee, ranged, equip/sheathe, and terminal actions; include weapon sockets and FX ownership.",
+    "Only after the user chooses the actual cohort, author the missing 48+ directions and resolve physical frame/loop/timing contracts for every included family.",
+    "Select idle timing through the authoritative timing-intent workflow; then obtain current per-direction QA, human disposition where required, sandbox verification, and effective receipts.",
+    "Refresh WB25-6 planning from this report and the resulting human scope/timing decisions; keep production generation legacy until explicit closed-cohort release authorization and rollback proof exist."
+  ],
+  "release_status": "NOT_RELEASE_ELIGIBLE",
+  "schema": "custodian.operator_2_5d_cohort_dependency_closure.v1"
+}

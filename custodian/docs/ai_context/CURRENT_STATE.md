@@ -1,5 +1,31 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator 2.5D Cohort Dependency Closure (2026-10-11)
+
+The read-only `operator-2-5d-cohort-dependency-closure` audit is implemented
+against main `7d14aa7d`. Its deterministic report and focused regression live at
+`custodian/docs/reports/operator_presentation/OPERATOR_2_5D_COHORT_DEPENDENCY_CLOSURE.md`
+and `operator_2_5d_cohort_dependency_closure.json`. The proposed
+`unarmed_neutral_motion_v1` remains **NOT_RELEASE_ELIGIBLE**: 7 families / 56
+direction slots; only relaxed idle has 8 saved editable 2.5D directions; there
+are 0 current effective receipts, 0 verified leaves/families and 0 published
+candidate directions. Idle retains an 8 FPS / 125 ms preview with
+`timing_authority=false`; its 15-frame plan FPS remains null. Frame, loop and FPS
+contracts remain null for the other six families.
+
+The live posture consumer still resolves a modular `lower_body + upper_body`
+pair using east/west projection, while the target plan requires eight-way
+`full_body`. Locomotion normally prefers modular layers, and the runtime selector
+and generated manifest are generation-neutral. The audit traces twelve posture,
+movement, combat, equipment and completion/preemption seams; none is proven
+closed for a full-body generation switch. Keep legacy presentation active and
+WB25-6 held for cohort/timing/verification decisions. The physical artist
+checkout was readable at head `19d466e7`, 67 commits behind main, with preserved
+untracked intake inbox files; the probe did not modify it. Its eight source-strip,
+Source Session, saved-document and corrected-manifest hashes match the landed
+R0-01 evidence. If that workspace is absent on another machine, the report marks
+it `UNAVAILABLE` rather than treating missing evidence as zero.
+
 ## Validation Scratch And Machine-Wide Job Budget (2026-10-11)
 
 Godot validation now keeps its isolated user home under the configurable,
