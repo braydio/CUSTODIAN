@@ -46,3 +46,7 @@ Conceptual pre-access screenshot: west Gate staircase ends at an intact monument
 - One-location image generation only; previous Batch 01 atlas crops were rejected due to AI artifacting. Do not declare resulting textures Asset V2 runtime ready without genuine alpha, exact dimension, correct source scale, scene-composite review and approval.
 - Zone05 Dust Lung V2 separate. Zone09 Chapel already a separate west optional detour. The Hub has `Sepulcher Gardens`, so avoid confusing distinct sites.
 - Current workstream ownership: this exploratory document and Gate stairs/W0 ledger. No new claimable packet by virtue of concept brainstorming.
+
+## Related exploratory concept: occupied/repurposed recovery installation (2026-10-10)
+
+The old Null Warrant *alternate-continuity population ordering* evidence has been rediscovered in `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6, and a lore-compatible **unconfirmed crossing/occupation** hypothesis is documented in [AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md](AWAKENING_FORBIDDEN_LOWER_REGION_OCCUPIED_RECOVERY_HYPOTHESIS_V1.md). A vast ossuary may prove to be a repurposed Crèche whose recovery apparatus is organizing people for purposes nobody understands. This is not confirmation of `NON-RECIPIENT`, Ash-Bell figure identity, Severing cause or an authorized area/map/quest. Preserve the unnamed east overlook and existing Gate stair apertures.
