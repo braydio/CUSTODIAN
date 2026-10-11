@@ -59,25 +59,25 @@ def current_review_authority(content: str) -> str:
     AND the future handoff names a real next workstream. Missing or ambiguous
     scope fails closed.
     """
-    handoff = re.search(r"(?im)^##[ \\t]+(?:handoff|next handoff)[ \\t]*$", content)
+    handoff = re.search(r"(?im)^##[ \t]+(?:handoff|next handoff)[ \t]*$", content)
     authority = content[:handoff.start()] if handoff else content
     if not handoff:
         return authority
     next_workstream = re.search(
-        r"(?im)^\\s*-\\s*Next workstream:\\s*`?([a-z0-9-]+)`?\\s*$",
+        r"(?im)^\s*-\s*Next workstream:\s*`?([a-z0-9-]+)`?\s*$",
         content[handoff.start():],
     )
     if not next_workstream or next_workstream.group(1) == "none":
         return authority
 
-    sections = list(re.finditer(r"(?m)^##[ \\t]+[^\\r\\n]+$", authority))
+    sections = list(re.finditer(r"(?m)^##[ \t]+[^\r\n]+$", authority))
     for index in range(len(sections) - 1, -1, -1):
         heading = sections[index]
         if heading.group(0).strip().casefold() != "## refresh planning authority":
             continue
         end = sections[index + 1].start() if index + 1 < len(sections) else len(authority)
         body = authority[heading.end():end]
-        if re.search(r"(?im)^\\s*-\\s*Refresh applies to:\\s*`?successor`?\\s*$", body):
+        if re.search(r"(?im)^\s*-\s*Refresh applies to:\s*`?successor`?\s*$", body):
             authority = authority[:heading.start()] + authority[end:]
     return authority
 
