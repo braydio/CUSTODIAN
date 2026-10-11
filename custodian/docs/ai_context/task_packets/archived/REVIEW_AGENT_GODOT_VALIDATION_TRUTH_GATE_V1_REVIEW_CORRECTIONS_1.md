@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-godot-validation-truth-gate-v1-review-corrections-1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-godot-validation-truth-gate-v1-review-corrections-1`
@@ -40,3 +40,30 @@
 - Refresh reason: `none`
 - Next action: `Record the correction review receipt and follow its exact bounded outcome.`
 - Blockers or open questions: `none`
+
+## Review Outcome
+- Finding R0-01: fixed. Tracked sidecar filename inference preserves direct source association when `source_file` and UID are absent; the required metadata-free fixture blocks preflight.
+- New R1-NN findings: none.
+- Validation: focused preflight and validation-runner smokes pass; `import_truth` passes 3/3; changed-file sweep passes with complete coverage; AI context, packet index, review pairing, and diff checks pass.
+- Reviewer provenance: same-agent-fresh-context, as recorded in packet metadata.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: First reviewer attempt hit Godot socket/editor-settings failures; first default temp-fixture attempt encountered host `/tmp/.git`. Recovery reruns in the same reviewer worktree passed after using an isolated TMPDIR and retrying Godot validation.
+- Root cause / contributing factors: Host environment state affected Godot editor services and Git ancestry detection for temp fixtures.
+- Prevention / pipeline improvement: Keep temp-repository fixtures outside a host `/tmp` containing `.git`; retry the required validation in the preserved reviewer worktree when infrastructure diagnostics occur.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Recovery evidence was rerun from the exact claimed reviewer worktree without altering reviewed implementation files.
+
+## Next Handoff
+- Next workstream: none
+- Next packet state: none
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1
+- Refresh reason: none
+- Next action: none; review and correction chain is complete.
+- Blockers or open questions: none
