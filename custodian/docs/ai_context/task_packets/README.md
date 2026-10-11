@@ -85,7 +85,6 @@ normal closeout.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_NPA_SHOWCASE_ARENA_FOUNDATION.md` — Independently verify landed npa-showcase-arena-foundation using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_EXISTING_ENEMY_HARDENING.md` — Independently verify landed npa-showcase-existing-enemy-hardening using the actual archived implementation acceptance and real runtime evidence.
-- `REVIEW_OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1.md` — Independently recheck R0-01 after the bounded timing-authority correction lands.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_ART_REGISTRATION_PROFILE_REVIEW_CORRECTIONS_1.md` — Independently verify that correction 1 binds production to the approved normalization plan and closes the Workbench registration-report evidence gap without...
 - `REVIEW_OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Independently verify that the landed riposte completion adds only the missing lightweight post-parry action and does not duplicate or weaken current critical...

@@ -1,0 +1,78 @@
+{
+  "schema": "custodian.paired_review_receipt.v1",
+  "workstream": "review-operator-2-5d-canonical-idle-workbench-intake-review-corrections-1",
+  "review_cycle": 1,
+  "reviewer_context": "fresh",
+  "reviewer_provenance": "different-agent",
+  "review_modes": [
+    "code",
+    "asset-pipeline",
+    "workflow"
+  ],
+  "reviewed_main_sha": "455392871fd95d831feed14d55bd29ee913680bf",
+  "reviewed_implementation_commit": "fa955e5e7",
+  "implementation_packet": "custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_CANONICAL_IDLE_WORKBENCH_INTAKE_REVIEW_CORRECTIONS_1.md",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acaa3ac-a358-83e8-ace1-c21ad7ab3e38",
+  "disposition": "passed",
+  "blocking_findings": 0,
+  "material_evidence_gaps": 0,
+  "non_blocking_findings": 0,
+  "optional_improvements": 0,
+  "prior_findings": [
+    {
+      "id": "R0-01",
+      "disposition": "fixed",
+      "evidence": "specialized 2.5D ingress sets timing_authority=false while preserving 8 FPS preview; Operator2DReview.current_receipt rejects non-authoritative timing and requires a valid authoritative timing payload. Focused negative and positive controls pass."
+    }
+  ],
+  "findings": [],
+  "physical_workspace": {
+    "directions_verified": 8,
+    "directions_total": 8,
+    "corrected_manifests_match_report": 8,
+    "original_backups_match_report": 8,
+    "aseprite_documents_match_report": 8,
+    "source_strips_match_report": 8,
+    "source_sessions_match_report": 8,
+    "preview_fps": 8.0,
+    "frames": 15,
+    "durations_ms_per_frame": 125.0,
+    "timing_authority_false": 8,
+    "effective_receipt_directory_exists": false,
+    "effective_receipts": 0,
+    "verified_families": 0,
+    "published_directions": 0
+  },
+  "protected_runtime_hashes_unchanged": {
+    "runtime_manifest": true,
+    "animation_catalog": true,
+    "spriteframes": true
+  },
+  "verification": [
+    {
+      "command": "python3 custodian/tools/validation/operator_2_5d_ingress_smoke.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 custodian/tools/validation/operator_2_5d_review_smoke.py",
+      "result": "PASS after Godot import-cache initialization; initial cold-cache attempt timed out after 90s"
+    },
+    {
+      "command": "python3 custodian/tools/validation/operator_animation_timing_smoke.py",
+      "result": "PASS"
+    },
+    {
+      "command": "python3 custodian/tools/validation/operator_workbench_production_queue_smoke.py",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS before review-artifact authoring; rerun after authoring"
+    }
+  ],
+  "evidence": [
+    "custodian/docs/reports/operator_2_5d/idle_relaxed_01_timing_authority_correction_1.json",
+    "independent current hash and contract checks against all eight live ignored Workbench manifests, backups, Aseprite documents, source strips and Source Sessions",
+    "focused review smoke tests cover preview-only rejection under green QA/passed sandbox, incomplete eight-direction family, and explicit-authoritative-timing positive control"
+  ]
+}
