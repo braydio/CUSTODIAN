@@ -236,7 +236,14 @@ The default continuation rule is:
    `--sandbox` flag. Write access is added only for its
    `.git/custodian-review-runs/...` evidence directory. Do not directly claim
    the review in the implementation context or ask the user to relay the packet.
-   The runner returns the durable review summary
+   The fresh reviewer writes bounded evidence and a green validation report but
+   does not fetch, stage, commit, push, checkpoint, or finish. The coordinator
+   pins `origin/main`, checks exact archived packet/receipt/summary identity,
+   stages only authorized review artifacts, and completes the existing
+   `workstream.py finish` lifecycle outside the restricted reviewer process.
+   A failed fetch or incomplete receipt remains recoverable and never counts as
+   completion. A later invocation refuses to make another dispatcher claim while
+   prior post-claim run evidence remains unresolved. The runner returns the durable review summary
    and its `Next Handoff`; continue from that exact handoff. A crash after claim
    preserves the branch/worktree and run evidence for recovery.
 6. Repeat this loop through ready implementation, review, correction, and
