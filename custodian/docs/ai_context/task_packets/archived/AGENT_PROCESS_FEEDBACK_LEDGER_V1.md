@@ -36,21 +36,21 @@
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success`
+- Outcome: `partial`
 - Friction severity: `medium`
-- What went wrong: `The required changed-files sweep initially overlapped an already-running sweep from another active workstream; two attempts were interrupted during import. After the shared work completed, this packet's first sweep had one transient world_transition_handoff failure (24 passed, 1 failed, 1 skipped); the focused test and a complete changed-sweep rerun passed. The task branch's stale origin/main base also selected unrelated historical changes.`
-- Root cause / contributing factors: `The coordination checkout's origin/main is still at 80bb914 while the claimed branch contains a much larger historical merge base, so run_validation expands the changed set. Godot validation is a shared machine resource; the first changed-sweep failure did not reproduce in the focused or complete rerun.`
-- Prevention / pipeline improvement: `Wait for active Godot sweeps to finish before starting a changed-files sweep, save the JSON report directly to a file for exact failure attribution, and retain focused tests as the quick feedback loop.`
+- What went wrong: `Two changed-files sweep attempts overlapped other workstreams and were interrupted during import. The pre-sync complete sweep selected 26 checks and had one `world_transition_handoff` failure plus one downstream Moment skip; a focused rerun passed and a complete pre-sync repeat passed 26/26. After synchronizing with current main, the changed sweep again failed `world_transition_handoff` (24 passed, 1 failed, 1 downstream skip), and its focused rerun failed with `Qualified Awakening completion did not enter Hub`. The runtime and smoke files are unchanged by this task.`
+- Root cause / contributing factors: `The managed validation manifest selects broad integration checks when its ownership entries change, and the post-sync current-main baseline reproduces a Hub-entry failure in `world_transition_handoff`; no task-owned runtime or smoke file differs from origin/main. The earlier pre-sync pass shows the failure is not stable across main synchronization.`
+- Prevention / pipeline improvement: `Wait for active Godot sweeps before running another, save reports to files for exact failure attribution, and use focused task-owned checks for the finish gate when the changed sweep exposes an unrelated current-main failure.`
 - Tooling / docs drift discovered: `AGENT_AUTOMATION_BACKLOG.md and VALIDATION_RECIPES.md incorrectly said the managed Ready/Auto packet-index block was not initialized; corrected in scope.`
-- Follow-up: `none`
-- What worked: `Fixtures catch fenced examples, legacy omissions, ambiguous identity, unknown owners, Next Handoff identity leakage, and markdown delimiters. The repeated real-corpus JSON and Markdown outputs are byte-identical.`
+- Follow-up: `manual-follow-up`
+- What worked: `The six fixtures and real-corpus pass prove fenced-example exclusion, legacy omission reporting, explicit mirror identity, ambiguity preservation, follow-up ownership, and byte-stable JSON/Markdown output.`
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `The CLI reports source-linked observations for 976 files (339 summaries and 637 packet files), collapses 19 unique explicit mirrors into 957 logical receipts, marks missing and unparsed feedback, and reports 41 unowned medium/high follow-ups. Five focused anti-vacuity tests pass; repeated JSON and Markdown reports are byte-identical; check_ai_context reports zero findings; validate_review_pairing passes for 66 auto-review packets; task_packet_index passes; its 18 AI-context and 12 packet-index regression tests pass; validation manifest parses and git diff --check passes. The first changed-files sweep selected 26 checks and had one transient `world_transition_handoff` failure plus one downstream skipped Moment check; the focused route check passed, and the complete rerun selected 26 checks with all 26 passing and no skips or infrastructure errors.`
+- Evidence: `The CLI reports source-linked observations for 982 files (341 summaries and 641 packet files), collapses 19 unique explicit mirrors into 963 logical receipts, marks missing and unparsed feedback, and reports 42 unowned medium/high follow-ups in the post-sync corpus snapshot. Six focused anti-vacuity tests pass; repeated JSON and Markdown reports are byte-identical; check_ai_context reports zero findings; validate_review_pairing passes for 66 auto-review packets; task_packet_index passes; its 18 AI-context and 12 packet-index regression tests pass; validation manifest parses and git diff --check passes. The complete pre-sync changed-files rerun selected 26 checks and passed 26/26. After sync, the changed sweep selected 26 checks with 24 passed, `world_transition_handoff` failed, and the lower-tier Moment check skipped; a focused post-sync rerun reproduced the Hub-entry failure. The affected runtime and smoke files are unchanged by this task. The task-owned `process_feedback_ledger_unit` focused runner report passes after sync at `/tmp/process-feedback-ledger-focused-after-sync.json`.`
 
 ## Handoff
 
@@ -61,4 +61,4 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac9c1db-54f4-83e9-b096-2e247319fcf1`
 - Refresh reason: `none`
 - Next action: `After implementation lands and archives, run the fresh-context paired review.`
-- Blockers or open questions: `none`
+- Blockers or open questions: `The post-sync changed-files sweep exposes a reproducible world_transition_handoff Hub-entry failure in unchanged current-main runtime/smoke files; recorded as an unowned manual follow-up.`
