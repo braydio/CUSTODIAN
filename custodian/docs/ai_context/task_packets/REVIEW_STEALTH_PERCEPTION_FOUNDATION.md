@@ -14,6 +14,8 @@
 - Reviewed main: `0c80f6a5a1c64168a39b841fa5de362d98728664`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
 - Summary backlink: Include the exact Authoring chat URL above in every durable review/correction/recovery/closeout summary and final `## Next Handoff`; do not shorten, redirect, or substitute it.
 - Review modes: `code, architecture, runtime`
 - Review cycle: `0`

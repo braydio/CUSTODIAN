@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `stealth-perception-foundation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -33,13 +33,31 @@
 - Task overrides: `none`
 - Deferred: S2 expanded emitters/material response; S3 alarms; S4 awareness UI/readability; S5 occlusion/environment masking; S6 wider cross-family adoption; Vaultwing fixed-step/bond/compatibility hardening belongs to the next packet; NPA-8 remains separately refresh-gated.
 
-## Handoff
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `perception_acoustic_contract`, `cognitive_residue_enemy_objective`, `enemy_grunt_notice_and_attack_cadence`, `vaultwing_runtime`, `actor_relationship_contract`, and `operator_ranged_ready_input` each passed after synchronization with `origin/main@80bb91444`; direct `ranged_combat_balance_smoke.gd` and `combat_resource_feedback_smoke.gd` passed. The final branch-relative `run_validation.py --changed --base origin/main --json` report (`/tmp/stealth-perception-changed-final-80bb.json`) selected 77 checks, passed 77, failed 0, skipped 0, and reported complete coverage across 21 changed files with no uncovered files. Existing Enemy and Vaultwing species behavior policies remain local as required by the acceptance contract.
 
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The original changed-file sweep was blocked by three pre-existing Operator regressions. The root checkout also lacked hydrated LFS assets, making its first `world_transition_handoff` attempt an invalid project-load reproduction. After importing an isolated exact-main checkout, that test passed. Two broad sweeps and one focused branch run intermittently failed at different transition assertions; the focused current-main and branch reruns passed, and the final post-sync 77-check sweep passed without skips.
+- Root cause / contributing factors: The Operator checks were selected because `operator.gd` emits acoustic events and were repaired in the separate `operator-baseline-validation-rehabilitation` workstream. A transient `world_transition_handoff` failure was not reproduced on hydrated current main or the final synchronized sweep; its intermittent cause remains unestablished and no unrelated transition code was changed.
+- Prevention / pipeline improvement: Run the LFS preflight before importing or attributing Godot integration failures, and retain a final branch-relative changed-file report after synchronization. Keep acoustic validation ownership narrow while preserving direct ranged/noise checks.
+- Tooling / docs drift discovered: The paired review packet's fresh-context/provenance fields had been incomplete and were repaired before this closeout. The project-root checkout had unhydrated LFS pointers; validation was performed in isolated imported worktrees. No packet or manifest schema drift remained at closeout.
+- Follow-up: `none`
+- What worked: The shared typed acoustic path and the Enemy, Vaultwing, relationship, and ranged/noise regressions all passed after latest-main synchronization.
+
+## Next Handoff
 - Next workstream: `review-stealth-perception-foundation`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
-- Next action: After this implementation lands, continue autonomously into its fresh-context paired review.
-- Blockers or open questions: `none; current enemy-runtime lock holders may delay claim but do not change packet readiness`
+- Next action: `After implementation landing and archive, run the paired review from a fresh reviewer context.`
+- Blockers or open questions: `none`

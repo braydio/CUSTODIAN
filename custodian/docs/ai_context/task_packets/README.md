@@ -34,7 +34,6 @@ normal closeout.
 - `AGENT_PROCESS_FEEDBACK_LEDGER_V1.md` — Create a read-only, source-linked, deterministic ledger of CUSTODIAN process feedback and unresolved follow-ups without modifying task state.
 - `REVIEW_AGENT_PROCESS_FEEDBACK_LEDGER_V1.md` — Independently prove the published feedback ledger is source-verifiable, read-only, deterministic and honest about ambiguity.
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
-- `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
 - `AGENT_GODOT_VALIDATION_TRUTH_GATE_V1.md` — Reject false-green Godot smoke results and invalid imported runtime resource metadata while preserving narrowly authored expected rollback errors.
 - `AGENT_VALIDATION_FAILURE_ATTRIBUTION_V1.md` — Make changed-file failure reports attributable to exact tests, selection owners, skip reasons and explicit immutable baseline evidence without weakening gree...
 - `AGENT_WORKSTREAM_CLOSEOUT_PREFLIGHT_V1.md` — Expose an accurate, nonmutating workstream-finish readiness report before expensive synchronization and landing while keeping workstream.py finish authoritat...
@@ -347,8 +346,8 @@ Actor/facet authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME
 
 The architecture boundary is now approved. Hearing is a shared perception facet, not a Vaultwing-owned mechanic. The executable chain is deliberately serial:
 
-1. `STEALTH_PERCEPTION_FOUNDATION.md` — P0 ready/auto; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
-2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review; no user refresh required when it passes.
+1. `archived/STEALTH_PERCEPTION_FOUNDATION.md` — P0 implementation complete and landed; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
+2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — ready/auto fresh-context paired review; no user refresh required when it passes.
 3. `VAULTWING_RUNTIME_HARDENING.md` — P1 ready/auto and dependency-gated on the reviewed stealth foundation; owns fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
 4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review and intentional stop boundary.
 
