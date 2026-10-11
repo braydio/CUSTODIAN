@@ -52,7 +52,7 @@
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger` each pass; `run_validation.py --changed --base origin/main --json` selected 49, passed 49, failed 0, skipped 0, and reported complete coverage; `check_ai_context.py --json`, `validate_review_pairing.py`, packet-index check, LFS preflight, and `git diff --check` pass.
+- Evidence: `operator_ranged_ready_input`, `operator_unarmed_fast_chain`, and `operator_vigil_dagger` each pass; `run_validation.py --changed --base origin/main --json` selected 49/passed 49 before sync and 50/passed 50 after sync, with zero failures/skips/timeouts and complete coverage both times; `check_ai_context.py --json`, `validate_review_pairing.py`, packet-index check, LFS preflight, and `git diff --check` pass.
 
 ## Execution Feedback
 
