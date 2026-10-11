@@ -26,6 +26,25 @@
 - The First Return now uses `awakening_designation_locker`; the old field-retention locker remains available only for generic storage if still referenced.
   It is not canonical Crèche weapon-issuance art.
 
+## Interactible affordance overlay V1 (source-pending)
+
+The supplementary affordance art contract is defined by
+`AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md` and its state-level
+source/gate ledger JSON. Seven current Asset V2 families are registered for the
+Crèche, P-9 locker, both lift stations, damaged Port readout, shared dressing,
+and visual-only wayfinding. Their contracts preserve the manifest's exact
+canvases, per-state dimensions, frame layouts, alpha intent, and requirement
+tiers. All 27 current-required states remain source-pending; 14 recommendation
+states remain optional and 36 future states remain deferred. No runtime consumer
+is authorized by family registration alone.
+
+The Crèche console and Dust Lung lift are separate gameplay owners. The Crèche
+console's existing idle art and activation effect are preserved; its FX does not
+use lift motion authority. Existing locker and lift hero art also remains intact.
+Required demand is recorded in `required_assets.registry.json`; exact batch and
+checksum, measured alpha/dimensions, verified Asset V2 status, and human approval
+are per-state gates in the source-plan ledger.
+
 ## Priority model
 
 - **P0** — hero/first-impression art, generate first.
