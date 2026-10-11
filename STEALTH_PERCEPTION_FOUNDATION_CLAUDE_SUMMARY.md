@@ -1,50 +1,42 @@
-# Stealth Perception Foundation — Recovery Checkpoint
+# Stealth Perception Foundation — Closeout
 
 ## Outcome
 
-The implementation is present on the existing `agent/stealth-perception-foundation` branch and remains unlanded. It types `NoiseEvent` through the factory, bus, Operator emission, and consumers; adds `PerceptionObservation` and `AcousticPerceptionSensor`; and routes Enemy and Vaultwing hearing through the shared receiver-side evaluation while leaving their behavior policy local.
+The S0/S1 stealth-perception implementation is complete on the preserved `agent/stealth-perception-foundation` workstream. `NoiseEvent` is typed through creation, the bus, Operator emission, and both consumers. Enemy and Vaultwing use a shared receiver-side acoustic observation while retaining their species-specific behavior and target-selection policy.
 
-The validation blocker is independently confirmed on clean, imported `origin/main@5e7c8e58a4b67dc8c29e85d4ab952e5f3fc07178`. The changed-file sweep selected 75 checks: 56 passed, 3 failed, and 16 higher-tier checks were skipped after actor-tier failures. These same three actor checks failed with the same assertions on the clean baseline:
+The branch was synchronized with `origin/main@6ff9c52b3` through the normal workstream resume merge (`eaac3bd19`). It remains scoped to the original acoustic seam; no NPA-8 or broader awareness work was added.
 
-- `operator_ranged_ready_input`: queued parry counter did not start after guard release.
-- `operator_unarmed_fast_chain`: interruption/collision fixtures had no live carry.
-- `operator_vigil_dagger`: impact probe did not resolve the actor's camera.
+## Validation
 
-The failures are in unrelated Operator behavior and validation fixtures. No gameplay or test changes were made to those areas. `workstream.py finish` requires a green validation report, so this branch must remain active until the baseline failures are resolved by their owning workstream and the changed sweep is rerun.
+After synchronization, these focused checks passed: `perception_acoustic_contract`, `cognitive_residue_enemy_objective`, `enemy_grunt_notice_and_attack_cadence`, `vaultwing_runtime`, `actor_relationship_contract`, and `operator_ranged_ready_input`. The direct `ranged_combat_balance_smoke.gd` and `combat_resource_feedback_smoke.gd` scripts also passed. The latter printed existing ObjectDB/resource leak warnings at process exit.
 
-## Evidence
+The final post-sync branch-relative changed-file report is `/tmp/stealth-perception-changed-postsync-retry.json`: 76 selected, 76 passed, 0 failed, 0 skipped, complete coverage. `git diff --check` passed. A first attempt without `--base` selected zero tests because the branch was already committed; the report above correctly compares against `origin/main`.
 
-- `perception_acoustic_contract`: passed.
-- `actor_relationship_contract`: passed.
-- `vaultwing_runtime`: passed.
-- `cognitive_residue_enemy_objective`: passed.
-- `ranged_combat_balance_smoke.gd`: passed.
-- `combat_resource_feedback_smoke.gd`: passed (Godot reported existing object/resource leaks at exit).
-- `git diff --check`: passed before checkpoint.
-- Clean-main reproduction: all three changed-sweep failures reproduced after LFS preflight and Godot import.
-- New test ownership covers the acoustic seam; changed-file coverage reported complete.
+One earlier broad run failed `world_transition_handoff` at different assertions on separate attempts. The initial root-checkout attempt was invalid because the root lacked hydrated LFS assets. After LFS checkout and import in an isolated exact-main worktree, `world_transition_handoff` passed on main; focused reruns on the stealth branch passed, and the final full post-sync sweep passed. The transient broad-sweep failure was not reproduced in the final report, and no unrelated transition code was changed.
+
+The original three Operator regressions that blocked this workstream were repaired in `operator-baseline-validation-rehabilitation` and landed independently. The final changed sweep is new evidence; it does not reuse the old 56-pass / 3-fail checkpoint.
 
 ## Preserved boundaries
 
-Relationship resolution remains outside the shared sensor. The observation carries source identity and emitted team facts; the Enemy/Vaultwing consumers retain their own response rules. Weapon-authored radius, loudness, threat, and suppression tuning are unchanged. NPA-8 remains unpublished and outside this work.
+Enemy awareness/search policy, Vaultwing wild/bonded behavior, relationship qualification, weapon-authored noise tuning, simulation cadence, and normal-play presentation remain with their existing owners. The shared acoustic seam contains no species behavior or hostility policy. NPA-8 remains downstream of the independent stealth review and Vaultwing runtime-hardening work.
 
 ## Process Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: blocked
+- Outcome: success
 - Friction severity: medium
-- What went wrong: Required changed-file validation failed on three unrelated Operator checks.
-- Root cause / contributing factors: Editing `operator.gd` selects its broad existing validation ownership; the baseline tests fail on clean main too.
-- Prevention / pipeline improvement: Keep stealth coverage scoped to the shared acoustic seam, and resolve the three baseline Operator failures in their owning workstream before retrying finish.
-- Tooling / docs drift discovered: The paired review packet lacked required reviewer context/provenance fields; corrected and targeted authoring validation passed. NPA architecture documentation still marked the NPA-7 review pending; corrected here.
-- Follow-up: manual-follow-up
-- What worked: Focused acoustic, Enemy, Vaultwing, relationship, and ranged/noise checks passed.
+- What went wrong: Three unrelated Operator regressions initially blocked the changed-file sweep. The first project-root transition-test attempt also ran without hydrated LFS assets. Broad runs intermittently failed `world_transition_handoff`, while the imported current-main test, focused branch reruns, and final synchronized full sweep passed.
+- Root cause / contributing factors: `operator.gd` has broad validation ownership because it emits acoustic events; its three baseline regressions required their own workstream. The transition assertion's intermittent cause was not established.
+- Prevention / pipeline improvement: Hydrate/import before attributing Godot integration failures, and run the final changed-file sweep against latest `origin/main` after synchronization. Keep the acoustic test ownership narrow while retaining direct ranged/noise checks.
+- Tooling / docs drift discovered: The paired review packet's fresh-context/provenance fields were corrected before closeout. The first post-land paired review had a summary-path lookup defect after landing; the durable summary was verified on `origin/main`. No unresolved packet or manifest drift remains.
+- Follow-up: none
+- What worked: The focused acoustic, Enemy, Vaultwing, relationship, ranged/noise, and final 76-check changed-file validation all passed.
 
 ## Next Handoff
-- Next workstream: stealth-perception-foundation
-- Next packet state: dependency-gated
+- Next workstream: review-stealth-perception-foundation
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
-- Next action: Resolve the three reproduced baseline Operator validation failures through their owning workstream, resume this preserved claim, rerun the changed-file sweep, then finish and launch the fresh-context paired review.
-- Blockers or open questions: The baseline failures listed above block a green changed-file report; implementation landing and paired review remain gated.
+- Next action: After implementation landing and archive, launch the paired review from a fresh reviewer context.
+- Blockers or open questions: none

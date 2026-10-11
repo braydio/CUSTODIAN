@@ -32,7 +32,6 @@ normal closeout.
 
 <!-- task_packet_index:managed:start -->
 - `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — Independently prove the shared acoustic seam is typed, deterministic, cross-family, and behavior-neutral rather than a new universal AI layer.
-- `STEALTH_PERCEPTION_FOUNDATION.md` — Make Enemy and Vaultwing consume one typed receiver-side acoustic perception seam so hearing is a shared stealth/perception capability rather than duplicated...
 - `ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` — Register a distinct generated Ash-Bell Alpine Highlands route destination that can receive the Operator from the Ritualant route and reserve an outward termi...
 - `ASH_BELL_RITUALANT_RUNTIME_TRUTH_CLOSEOUT.md` — Make the live Forlorn-Ritualant peaceful-resolution and base-animation contracts match the already-authoritative authored-encounter design before further pro...
 - `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` — Publish and wire the 12 already-reviewed Ritualant ritual-prop/chamber-dressing states through Asset Pipeline V2 without reopening encounter behavior or maki...
@@ -338,8 +337,8 @@ Actor/facet authority: `../../../design/04_architecture/NON_PLAYER_ACTOR_RUNTIME
 
 The architecture boundary is now approved. Hearing is a shared perception facet, not a Vaultwing-owned mechanic. The executable chain is deliberately serial:
 
-1. `STEALTH_PERCEPTION_FOUNDATION.md` — P0 ready/auto; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
-2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — fresh-context paired review; no user refresh required when it passes.
+1. `archived/STEALTH_PERCEPTION_FOUNDATION.md` — P0 implementation complete and landed; S0 + narrow S1 typed acoustic event/observation seam for Enemy + Vaultwing.
+2. `REVIEW_STEALTH_PERCEPTION_FOUNDATION.md` — ready/auto fresh-context paired review; no user refresh required when it passes.
 3. `VAULTWING_RUNTIME_HARDENING.md` — P1 ready/auto and dependency-gated on the reviewed stealth foundation; owns fixed-step bond clocks, restore reconciliation, allegiance-sensitive compatibility, and proven Vaultwing residue only.
 4. `REVIEW_VAULTWING_RUNTIME_HARDENING.md` — fresh-context paired review and intentional stop boundary.
 
