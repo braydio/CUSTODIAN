@@ -418,13 +418,19 @@ this decision documentation itself.
 
 **Implementation and proof:** The existing reviewed
 `operator-2-5d-cohort-dependency-closure` report lists all ordinary and
-preemption edges as open, not proven compatible. A bounded
-`operator-2-5d-composition-mode-guard-v1` implementation + fresh review
-should enforce the fail-closed plan/preflight and its negative cases using
-fixtures without any real 2.5D runtime activation. Later WB25-6 may
-implement exact generation-coherent composition after art/timing/QA/human
-release gates; it must not introduce a duplicate presenter/selector or
-rewrite the gameplay simulation to fit pixels.
+preemption edges as open, not proven compatible. The fixture-only
+`OperatorPresentationController.preflight_composition_fixture_only()` checks
+owner/mode fit, complete body-layer count, registered overlays, visible-clock
+membership, exact selector identities and actual SpriteFrames playability
+without transferring ownership or granting movement permission. The focused
+fixture proves full-body, split movement-plus-guard with separate facings,
+exclusive-rig shape, and fail-closed missing-layer/owner-mode cases. Current
+runtime metadata has no trusted per-clip generation provenance, so the API
+reports generation `UNKNOWN/BLOCKED` and will not unlock 2.5D from a caller's
+generation field. This structural fixture result is not a runtime release
+approval. Later WB25-6 may implement exact generation-coherent composition
+after art/timing/QA/human release gates; it must not introduce a duplicate
+presenter/selector or rewrite the gameplay simulation to fit pixels.
 
 **Retired from active composition (C2a authoring decision, 2026-09-12):** the
 modular head and the modular cape. `Operator.ACTIVE_MODULAR_HEAD` and

@@ -5316,6 +5316,19 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_composition_preflight",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_2_5d_composition_preflight_smoke.gd",
+      "tier": "integration",
+      "tags": ["operator", "animation", "presentation", "2_5d", "negative_control"],
+      "owners": [
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "operator_visual_ownership",
       "type": "godot_script",
       "script": "res://tools/validation/operator_visual_ownership_smoke.gd",

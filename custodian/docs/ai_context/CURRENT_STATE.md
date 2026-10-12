@@ -37,6 +37,16 @@ fixture-only, fail-closed preflight/owner/clock/generation test slice,
 with no active 2.5D switch. WB25-6 stays `draft/manual`, now dependent
 on that guard's reviewed result in addition to timing and cohort evidence.
 
+The composition guard now exposes a read-only fixture-only structural
+preflight in `OperatorPresentationController`. It checks complete body shapes,
+owner/mode fit, exact selector identities, playable SpriteFrames, registered
+overlays and completion-clock membership without changing the current owner.
+The focused fixtures cover full-body, split movement plus independently faced
+guard, and exclusive-rig shapes. Runtime metadata still cannot prove a common
+2.5D art generation/profile, so the result remains `UNKNOWN/BLOCKED` for 2.5D;
+no production caller or generation switch was added. See the architecture
+contract and `operator_2_5d_composition_preflight` validation evidence.
+
 ## Operator 2.5D Cohort Dependency Closure (2026-10-11)
 
 The read-only `operator-2-5d-cohort-dependency-closure` audit is implemented

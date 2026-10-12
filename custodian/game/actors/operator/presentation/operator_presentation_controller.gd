@@ -9,6 +9,13 @@ var _animation_player: OperatorAnimationPlayer
 var _animation_selector: OperatorAnimationSelector
 var _completion_clock: AnimatedSprite2D
 
+const COMPOSITION_FULL_BODY := &"full_body"
+const COMPOSITION_SPLIT := &"split_body"
+const COMPOSITION_EXCLUSIVE := &"exclusive_rig"
+const COMPOSITION_READY := &"STRUCTURALLY_READY"
+const COMPOSITION_BLOCKED := &"BLOCKED"
+const COMPOSITION_UNKNOWN := &"UNKNOWN/BLOCKED"
+
 
 func _init(
 	body_presenter: OperatorBodyPresenter = null,
@@ -22,6 +29,112 @@ func _init(
 
 func can_present(plan: OperatorBodyPresentationPlan) -> bool:
 	return _body_presenter != null and _body_presenter.can_present(plan)
+
+
+## Read-only, fixture-only composition guard. It is not called by production
+## presentation paths and cannot authorize a generation switch.
+## A clip record contains sprite/profile/group/action/sector/layer/weapon_id and
+## optional generation. The latter is deliberately never trusted: current
+## runtime SpriteFrames and generated manifests do not bind clip identity to an
+## approved generation. 2.5D requests therefore remain UNKNOWN/BLOCKED until
+## WB25-6 supplies that provenance contract.
+func preflight_composition_fixture_only(
+	plan: OperatorBodyPresentationPlan,
+	mode: StringName,
+	clips: Array,
+	completion_sprite: AnimatedSprite2D = null
+) -> Dictionary:
+	var result := {
+		"status": COMPOSITION_BLOCKED,
+		"structural_status": COMPOSITION_BLOCKED,
+		"generation_status": COMPOSITION_UNKNOWN,
+		"movement_permission": false,
+		"reason": "invalid composition",
+		"mutated": false,
+	}
+	if _body_presenter == null or _animation_player == null or plan == null:
+		result.reason = "presentation authorities or plan are unavailable"
+		return result
+	if mode not in [COMPOSITION_FULL_BODY, COMPOSITION_SPLIT, COMPOSITION_EXCLUSIVE]:
+		result.reason = "unknown composition mode"
+		return result
+	var exclusive_owner := OperatorBodyPresenter.EXCLUSIVE_OWNERS.has(plan.owner)
+	if (mode == COMPOSITION_EXCLUSIVE) != exclusive_owner:
+		result.reason = "composition mode does not match the registered owner class"
+		return result
+	var expected_count := 2 if mode == COMPOSITION_SPLIT else 1
+	if clips.size() != expected_count or plan.body_layers.size() != expected_count:
+		result.reason = "composition has missing or extra body layers"
+		return result
+	var unique_plan_layers: Dictionary = {}
+	for body_layer in plan.body_layers:
+		if unique_plan_layers.has(body_layer):
+			result.reason = "composition repeats a body renderer"
+			return result
+		unique_plan_layers[body_layer] = true
+	if completion_sprite == null:
+		result.reason = "composition has no visible completion clock"
+		return result
+	if not plan.body_layers.has(completion_sprite):
+		result.reason = "completion clock is not part of the proposed body"
+		return result
+	if not _body_presenter.can_present(plan):
+		result.reason = "owner, body renderer, or overlay registration is invalid"
+		return result
+	var requested_25d := false
+	for clip in clips:
+		var profile := StringName(clip.get("profile", ""))
+		requested_25d = requested_25d or profile == &"operator_2_5d_128"
+	if requested_25d:
+		result.status = COMPOSITION_UNKNOWN
+		result.structural_status = COMPOSITION_UNKNOWN
+		result.reason = "runtime metadata does not prove a common approved 2.5D generation and profile"
+		return result
+	var unique_clip_sprites: Dictionary = {}
+	var split_semantic_layers: Dictionary = {}
+	for clip in clips:
+		var sprite := clip.get("sprite") as AnimatedSprite2D
+		var profile := StringName(clip.get("profile", ""))
+		var group := StringName(clip.get("group", ""))
+		var action := StringName(clip.get("action", ""))
+		var sector := StringName(clip.get("sector", ""))
+		var layer := StringName(clip.get("layer", ""))
+		var weapon_id := StringName(clip.get("weapon_id", ""))
+		if sprite == null or not plan.body_layers.has(sprite):
+			result.reason = "clip renderer is not a proposed body layer"
+			return result
+		if unique_clip_sprites.has(sprite):
+			result.reason = "composition assigns multiple clips to one body renderer"
+			return result
+		unique_clip_sprites[sprite] = true
+		if mode == COMPOSITION_FULL_BODY and layer != &"full_body":
+			result.reason = "full-body mode requires the full_body semantic layer"
+			return result
+		if mode == COMPOSITION_SPLIT:
+			if layer not in [&"lower_body", &"upper_body"] or split_semantic_layers.has(layer):
+				result.reason = "split mode requires one lower_body and one upper_body identity"
+				return result
+			split_semantic_layers[layer] = true
+		if _animation_selector == null or not _animation_selector.has_sector_identity(
+			profile, group, action, sector, layer, weapon_id
+		):
+			result.reason = "exact semantic identity is unavailable"
+			return result
+		var identity := OperatorAnimationSelector.animation_name(
+			profile, group, action, sector, layer, weapon_id
+		)
+		if not _animation_player.can_play(sprite, identity):
+			result.reason = "proposed body renderer cannot play its exact identity"
+			return result
+	if mode == COMPOSITION_SPLIT and not (
+		split_semantic_layers.has(&"lower_body") and split_semantic_layers.has(&"upper_body")
+	):
+		result.reason = "split mode is missing a semantic body layer"
+		return result
+	result.status = COMPOSITION_READY
+	result.structural_status = &"READY"
+	result.reason = "complete exact-identity composition is structurally playable"
+	return result
 
 
 func present(plan: OperatorBodyPresentationPlan, report_rejection := true) -> bool:
