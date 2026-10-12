@@ -43,7 +43,7 @@ Potential gated controls: Claim Next (dispatcher-owned), Run Eligible Review (pa
 
 Read-only incremental collectors can poll local changed files every 5–15 s and remote Git roughly every 30–60 s, with cache/stale indicators and bounded CPU/IO. No reparse of full multi-GB rollout archive on every keypress; incremental offset/index strategy and archive rotation tests. Browser/UI must not trigger dispatch or broad validation through refresh.
 
-## Planned bounded implementation slices (NOT YET AUTHORED OR CLAIMABLE)
+## Planned bounded implementation slices (MC1 PAIR AUTHORED AS DRAFT; NONE CLAIMABLE)
 
 Each slice requires its **own V2 implementation packet and post-land fresh-context paired review** in `custodian/docs/ai_context/task_packets/`, using canonical templates, current reviewed SHA, targeted preflight, managed index refresh only for promoted `ready/auto` packets, and normal closeout. Do not create placeholder ready packets without validation.
 
@@ -78,13 +78,13 @@ Proposed entrypoint: `custodian/tools/agent/mission_control.py`; possible packag
 
 ## Explicit non-goals now
 
-This planning change writes no TUI, no action server, no scheduler, no automatic notification daemon, no executable task packets, no process/branch/lease changes, no plugin installation and no gameplay/UI runtime changes. Existing Usage Observatory remains usable until replaced via verified migration.
+This planning effort writes no TUI, no action server, no scheduler, no automatic notification daemon, no process/branch/lease changes, no plugin installation and no gameplay/UI runtime changes. The MC1 V2 packet pair is staged as draft/manual, not executable by auto dispatch. Existing Usage Observatory remains usable until replaced via verified migration.
 
 ## Current drift watch
 
 - `AGENT_AUTOMATION_BACKLOG.md` and `CURRENT_STATE.md` describe OR1/OR2 as not implemented; preserve that truth until evidence changes.
 - `task_packet_index.py` is a bounded managed README generator; it is not claimability.
 - The uploaded `codex_usage_tracker.py` supplies turn-level telemetry and a self-contained browser dashboard but uses its own packet-header inference; it must not become a second lifecycle authority.
-- The new plan has no ready packets. Promote only after exact source/branch refresh, implementation/review pair authoring and validation.
+- MC1 implementation and independent review packets are now authored in active task_packets/ as draft/manual, not ready or claimable. Promote only after exact source/branch refresh, targeted pair preflight and managed index validation.
 
 **Next authoring step:** retrieve this conversation's exact URL, inspect current `origin/main`, then create MC1 and its paired review using `AGENT_TASK_PACKET_TEMPLATE.md` / `AGENT_REVIEW_PACKET_TEMPLATE.md`; establish snapshot schema before writing the remaining packets.
