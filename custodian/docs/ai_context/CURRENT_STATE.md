@@ -1,5 +1,21 @@
 # CURRENT STATE — CUSTODIAN
 
+## Mission Control TUI-first planning (2026-10-12)
+
+The proposed developer operations console is specified at
+`custodian/docs/ai_context/AGENT_MISSION_CONTROL_TUI_V1.md`.
+User-selected interface: Lazygit-style, keyboard-first TUI (Textual candidate),
+not a tile-heavy browser/dashboard UI. Planned MC1–MC8 cover canonical
+read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
+supervisor integration, validation, attention and guarded workflow actions,
+with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
+Dispatcher eligibility, actual Git landing, independent review receipts and
+verified OR1 process identity remain separate authorities; before OR1/OR2
+land, unknown execution ownership must not be shown as LIVE. Source Codex
+usage tracker is user-supplied, not the canonical packet/claim parser.
+Authoring chat: `not-recorded` pending exact current conversation URL.
+
+
 ## Agent session orphan recovery planning (2026-10-11)
 
 An approved architectural plan now separates execution-liveness from durable
