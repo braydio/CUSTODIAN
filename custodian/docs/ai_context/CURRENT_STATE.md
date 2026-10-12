@@ -1,5 +1,21 @@
 # CURRENT STATE — CUSTODIAN
 
+## Mission Control TUI-first planning (2026-10-12)
+
+The proposed developer operations console is specified at
+`custodian/docs/ai_context/AGENT_MISSION_CONTROL_TUI_V1.md`.
+User-selected interface: Lazygit-style, keyboard-first TUI (Textual candidate),
+not a tile-heavy browser/dashboard UI. Planned MC1–MC8 cover canonical
+read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
+supervisor integration, validation, attention and guarded workflow actions,
+with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
+Dispatcher eligibility, actual Git landing, independent review receipts and
+verified OR1 process identity remain separate authorities; before OR1/OR2
+land, unknown execution ownership must not be shown as LIVE. Source Codex
+usage tracker is user-supplied, not the canonical packet/claim parser.
+Authoring chat: `not-recorded` pending exact current conversation URL.
+
+
 ## Agent session orphan recovery planning (2026-10-11)
 
 An approved architectural plan now separates execution-liveness from durable
@@ -192,6 +208,14 @@ chain-link, and dodge-fast presentation plus independent charge/Flow FX remain
 intact. Controller, charge, Flow, overlap telemetry, canonical FX, presentation,
 fixed-tick, input-frame, action-arbitration, and guard-flow focused checks pass;
 see the F4 packet receipt for bounded composite-smoke limitations.
+
+Moving Vigil guard and unarmed parry now share the semantic defensive
+composition path: locomotion owns the lower cadence while guard/parry facing
+owns the upper action, and Vigil's dagger remains paired with its guard action.
+Stationary defense retains authored paired poses, guard break stays committed,
+and parry does not invent a movement lock for contact. The controller validates
+the full composition before ownership transfer and falls back to a complete
+presentation when a required layer is unavailable.
 
 ## Dropbox Handoff And Asset Batch Registry (2026-10-06)
 
@@ -1360,6 +1384,7 @@ Canonical Reciprocal Continuity migration completed. Provenance-as-cosmic-substr
 - New highest-authority doctrine: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 - Runtime knowledge IDs renamed: `ash_bell_ninth_bell` → `ash_bell_ninth_answer`, `ash_bell_bellfall_containment` → `ash_bell_open_interval`
 - No save compatibility required; direct renames applied
+- `custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py` now protects the active doctrine, corrected Ash-Bell history, procedural/Hub ontology, active AI context, and production runtime/content IDs with fail-closed assertions and mutation controls. The legacy shell helper runs this gate first; its broad searches are diagnostic and allow historical/deprecated references.
 
 Documentation updates this session:
 - Created `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md` — draft spec for the melee presentation posture axis (sheathed/drawing/ready/relaxed/sheathing), driven by `EngagementTracker.engagement_active` with its 4 s quiet period, defining `melee_draw` as the melee flavor of `equip_weapon`, READY as the combat neutral replacing the single-frame melee stance placeholder, RELAXED as the exploration neutral, and `ready_up`/`relax` as presentation-only transitions that never gate attack input. No new gameplay states; movement stays lower-body-owned while posture is upper-body/loadout-owned.
@@ -2166,7 +2191,7 @@ Slice D; the small net increase is the new shared FX-resolution helper.
 
 **C2b.2 completed (2026-09-29).** Operator damage reactions now select the canonical east/west `bodyslam_knockdown_01` body+FX pair and south `light_hitreact_01` fallback; the one-second heavy recovery, 0.22-second light window, unmirrored authored directions, and shared incoming-damage package are preserved. Dodge charge/link use exact canonical eight-sector selection. All Operator `AnimationResolver` and `DirectionalAnimationFallback` references are removed, `animation_resolver.gd` is deleted, and the architecture ledger is **75** (95 -> 75), with 38 absolute lookups, 34 animation-state actor-glue calls and 3 weapon-definition runtime-state fields unchanged. The knockdown smoke now covers both heavy directions, fallback light reaction and cleanup, and is registered in validation.
 
-**C2b.2 selection cutover, C2b.3 compatibility-resource residue, and Slice E action arbitration are complete.** `OperatorActionController` and `OperatorPresentationController` are live; the legacy animation-state shells/reflection path is removed. The remaining Operator architecture program is split into F0 dependency binding, F1 loadout/runtime-state, F2 melee, F3 ranged, F4 dodge, F5 interaction, F6 recovery/survivability, then Slice G shell collapse. `OPERATOR_MOBILE_GUARD_COMPOSITION.md` proves the reusable movement-owned-lower/action-owned-upper presentation seam while F0 independently removes absolute scene lookups; F1/F5/F6 wait on both seams, F2/F3 additionally wait on F1's stable loadout/runtime-state APIs, and F4 only needs F0 because dodge deliberately keeps committed full-body presentation. Latest main also contains ten raw east-facing unarmed-defense generator files under `asset_drop/source_work/operator/unarmed_defense_10_generated/`; `temp/ASSET_MANIFEST.json` measures them at 2172x724 each, so they are source-work only. `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` owns Source Session normalization/Asset V2 promotion, and runtime packets continue using canonical art unless an approved promotion has already landed.
+**C2b.2 selection cutover, C2b.3 compatibility-resource residue, Slice E action arbitration, F0 dependency binding, and F1 loadout/runtime-state extraction are complete.** `OperatorActionController`, `OperatorPresentationController`, `OperatorLoadoutController`, and `OperatorWeaponRuntimeState` are live; the three mutable weapon-definition runtime exports are removed and the architecture debt is zero. Loadout selection transactions remain API-compatible, per-weapon magazine/reload state is owned by runtime state, and draw/sheathe uses the movement-preserving modular composition seam. The remaining Operator architecture program is F2 melee, F3 ranged, F4 dodge, F5 interaction, F6 recovery/survivability, then Slice G shell collapse. `OPERATOR_MOBILE_GUARD_COMPOSITION.md` proves the reusable movement-owned-lower/action-owned-upper presentation seam while F0 independently removes absolute scene lookups; F2/F3 consume F1's loadout/runtime-state APIs, and F4 only needs F0 because dodge deliberately keeps committed full-body presentation. Latest main also contains ten raw east-facing unarmed-defense generator files under `asset_drop/source_work/operator/unarmed_defense_10_generated/`; `temp/ASSET_MANIFEST.json` measures them at 2172x724 each, so they are source-work only. `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` owns Source Session normalization/Asset V2 promotion, and runtime packets continue using canonical art unless an approved promotion has already landed.
 - Ranged-ready V1 keeps movement available and grants aim-direction facing to the active ranged presentation. The P-9 starts progression-locked and equipment-gated: the Sundered Keep locker adds `p9_sidearm` to carried inventory, but melee/unarmed offhand secondary continues to route to parry/guard until the player equips it in the Equipment page. Equip-time `Operator.grant_sidearm(...)` initializes pistol ammo and visuals; unequip-time `remove_sidearm()` disables the fallback. The inventory ledger resolves the production P-9 portrait/card art, and the HUD has a dedicated top-left loadout frame for the active primary plus a smaller P-9 badge. An actively selected ranged primary retains priority. Its four-diagonal modular draw/fire stack holds the final complete draw pose while ready. Right-stick aim preserves last aim direction at neutral. Selected two-handed ranged presentation uses `relaxed_01`, forward `aim_01`, held `stance_01`, repeated `fire_01`, return to stance, and faster reverse `aim_01` lowering. Primary fire no longer bypasses ranged-ready; held/pressed fire is accepted at the configured 70% raise threshold. Dodge interrupts and clears a raise/lower presentation instead of being visually blocked by it.
 - Successful parry drops guard quickly (`parry_success_recovery_sec` is `0.03s`) and preserves the release/repress guard rule. Ordinary parried `enemy_grunt` presentation is explicit `critical_open_enter_s -> critical_open_hold_s -> critical_open_recover_s`, with BREACH/countdown owned through enter/hold and cleared on reservation or expiry. A valid primary follow-up atomically reserves the enemy and runs the existing S/E/W 96×96 paired execution. A committed-leap Falcon Punch parry instead automatically reserves the matched E/W Falcon Reversal when available, skips critical-open presentation and second input, and synchronizes the eight-frame 156×156 Operator/victim/FX composition through source-frame-6/index-5 damage and a 130ms freeze. Unsupported reversal directions fall back to the ordinary open-critical flow; neither execution independently mirrors its paired layers. Enemy authority still owns exactly-once damage, lethal/nonlethal resolution, token release, and cancellation cleanup.
 - Combat feel direction is locked around `INPUT -> ATTACK STATE -> FRAME WINDOW -> ARC/RANGE HIT RESOLUTION -> RECOVERY -> CONTROL RETURN`; fast/heavy primary-secondary parity is the next tuning baseline after sprite pipeline loose ends are closed.

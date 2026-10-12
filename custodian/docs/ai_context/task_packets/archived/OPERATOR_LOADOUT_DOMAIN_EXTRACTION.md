@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-loadout-domain-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
@@ -37,3 +37,40 @@
 - Next action: Extract immutable-vs-runtime weapon state first, then migrate draw/sheathe presentation onto the shared mobile composition seam inside the same workstream.
 - Best starting files: `operator_weapon_definition.gd`; `operator.gd` loadout/equip/sheathe functions; action/presentation controllers; sheathe/switch smokes.
 - Blockers or open questions: None.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `OperatorLoadoutController` and `OperatorWeaponRuntimeState` are live under `custodian/game/actors/operator/loadout/`; the three definition runtime fields are removed; focused loadout/sheathe/switch regressions and the 85-test changed-file report passed; the architecture debt audit reports zero findings.
+- The loadout controller now owns selected weapon identity, pending selection, selection snapshots, and switch transaction sequencing. Operator public selection methods remain compatibility delegates.
+- `OperatorWeaponRuntimeState` owns per-weapon loaded magazine and reload clocks. `OperatorWeaponDefinition` contains no mutable magazine/reload fields, and factory initialization no longer mutates definitions.
+- Draw and sheathe requests use `OperatorPresentationController.present_defensive_composition`; moving requests retain the active lower locomotion identity and progress while upper/weapon transitions play. Stationary sheathe remains an authored paired transition.
+- Architecture debt audit reports zero `weapon_definition_runtime_state` findings.
+- Focused validation passed: `operator_melee_sheathe` (including moving cadence assertion), `operator_melee_switch_chain`, `operator_runtime_spine_immutable`, `operator_sword_cleaver`, `operator_ranged_ready_input`, and `operator_weapon_socket`.
+- Changed-file validation passed: 85 selected, 85 passed, zero uncovered files.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial changed-file validation found `weapon_definition_factory.gd` had no test owner; one earlier cleaver smoke also exposed an overlay registration conflict while the composition refactor was being iterated.
+- Root cause / contributing factors: Factory code lives outside the Operator directory glob; the generic body presenter treats registered overlays differently from the legacy melee weapon overlay path.
+- Prevention / pipeline improvement: Added the factory path to the existing Operator runtime-path audit's owner list; retained explicit preflight of weapon overlay art and routed only the body pair through the composition seam.
+- Tooling / docs drift discovered: Changed-file coverage omitted the factory from all owners.
+- Follow-up: none
+- What worked: Focused transaction and presentation smokes caught both issues before the final 85-test sweep.
+
+## Next Handoff
+- Next workstream: operator-ranged-domain-extraction
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: Claim the F3 ranged extraction after this packet archives complete; it now has the stable `OperatorWeaponRuntimeState` seam.
+- Blockers or open questions: none

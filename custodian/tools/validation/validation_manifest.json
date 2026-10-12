@@ -376,6 +376,35 @@
       "needs_import": false
     },
     {
+      "id": "reciprocal_continuity_canon_docs",
+      "type": "python",
+      "script": "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "lore",
+        "canon",
+        "documentation",
+        "reciprocal_continuity"
+      ],
+      "owners": [
+        "design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md",
+        "design/03_world/THE_ASH-BELL_CONTINUITY.md",
+        "design/03_world/lore/CORE_LORE.md",
+        "design/03_world/PROCEDURAL_LORE_GENERATION.md",
+        "design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md",
+        "custodian/docs/ai_context/CONTEXT.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/content/**",
+        "custodian/game/**",
+        "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "tools/lore/validate_reciprocal_continuity_migration.sh"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_authoring_surface_contract",
       "type": "python",
       "script": "custodian/tools/validation/operator_authoring_surface_contract_smoke.py",
@@ -2354,7 +2383,7 @@
         "custodian/tools/validation/operator_melee_low_fps_contact_smoke.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_sword_cleaver",
@@ -2503,7 +2532,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_unarmed_fast_chain",
@@ -2714,7 +2743,7 @@
         "custodian/tools/validation/operator_modular_defense_ranged_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_modular_fast_attack",
@@ -3088,7 +3117,7 @@
         "custodian/game/actors/operator/operator.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_locomotion_socket",
@@ -3383,7 +3412,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 40,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "dev_observatory",
@@ -5271,6 +5300,7 @@
       ],
       "owners": [
         "custodian/game/actors/operator/**",
+        "custodian/game/systems/core/systems/weapon_definition_factory.gd",
         "custodian/game/systems/combat/**",
         "custodian/game/systems/presentation/**",
         "custodian/tools/validation/operator_runtime_path_audit.py"
@@ -5370,7 +5400,7 @@
         "custodian/tools/validation/operator_visual_anchor_smoke.gd"
       ],
       "timeout_sec": 90,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_posture",

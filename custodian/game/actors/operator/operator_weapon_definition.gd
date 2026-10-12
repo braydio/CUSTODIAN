@@ -128,12 +128,6 @@ const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profi
 @export var fast_chain_loops: bool = true
 @export var fast_chain_has_integrated_recovery: bool = false
 
-# === RUNTIME STATE ===
-@export_group("Runtime State")
-@export var current_magazine: int = 0
-@export var is_reloading: bool = false
-@export var reload_timer: float = 0.0
-
 var _cached_weapon_data: Dictionary = {}
 
 

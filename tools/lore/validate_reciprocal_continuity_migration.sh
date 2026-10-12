@@ -4,7 +4,16 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-echo "== Retired ontology =="
+echo "== PASS/FAIL canon acceptance gate =="
+python3 custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py
+echo "PASS: active Reciprocal Continuity canon and mutation controls"
+
+echo
+echo "== Diagnostic search output only (not an acceptance gate) =="
+echo "These broad matches include valid historical, devotional, and negative references."
+
+echo
+echo "== Retired ontology mentions =="
 rg -n -i \
   'unnarrival|bellfall|provenance wound|anti-arrival|anti arrival|cosmic provenance|provenance.*substrate|substrate.*provenance' \
   design custodian \

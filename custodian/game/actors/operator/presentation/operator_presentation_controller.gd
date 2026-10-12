@@ -159,6 +159,76 @@ func present_animation(
 	return played
 
 
+## Reuse the same atomic body-pair seam for defensive actions whose lower layer
+## may stay owned by locomotion. The caller supplies the already-decided
+## gameplay movement legality and exact semantic identities; this method owns
+## only composition choice, complete-pair fallback, validation, and playback.
+## A missing movement clip falls back to the complete authored lower/upper pair.
+func present_defensive_composition(
+	plan: OperatorBodyPresentationPlan,
+	movement_permitted: bool,
+	lower_sprite: AnimatedSprite2D,
+	movement_lower_identity: StringName,
+	paired_lower_identity: StringName,
+	upper_sprite: AnimatedSprite2D,
+	upper_identity: StringName,
+	completion_sprite: AnimatedSprite2D,
+	movement_speed_scale := 1.0,
+	paired_speed_scale := 1.0,
+	upper_speed_scale := 1.0,
+	upper_reverse := false,
+	upper_restart := false,
+	overlay_sprite: AnimatedSprite2D = null,
+	overlay_identity: StringName = &"",
+	overlay_required := false,
+	overlay_restart := false,
+	owner_handoff_callback: Callable = Callable()
+) -> bool:
+	if plan == null or _body_presenter == null or _animation_player == null:
+		return false
+	if lower_sprite == null or upper_sprite == null \
+		or not plan.body_layers.has(lower_sprite) or not plan.body_layers.has(upper_sprite) \
+		or plan.body_layers.size() != 2 or plan.body_layers[0] == plan.body_layers[1]:
+		return false
+	if completion_sprite == null or not plan.body_layers.has(completion_sprite):
+		return false
+	if overlay_required and overlay_sprite == null:
+		return false
+	if overlay_sprite != null and (
+		not plan.overlays.has(overlay_sprite)
+		or not _animation_player.can_play(overlay_sprite, overlay_identity)
+	):
+		return false
+	if not _body_presenter.can_present(plan):
+		return false
+	if not _animation_player.can_play(upper_sprite, upper_identity) \
+		or not _animation_player.can_play(lower_sprite, paired_lower_identity):
+		return false
+	var lower_identity := paired_lower_identity
+	var lower_speed_scale := paired_speed_scale
+	if movement_permitted and _animation_player.can_play(lower_sprite, movement_lower_identity):
+		lower_identity = movement_lower_identity
+		lower_speed_scale = movement_speed_scale
+	if _body_presenter.current_owner() != plan.owner and owner_handoff_callback.is_valid():
+		owner_handoff_callback.call()
+	return present_split_body_action(
+		plan,
+		lower_sprite,
+		lower_identity,
+		upper_sprite,
+		upper_identity,
+		completion_sprite,
+		false,
+		upper_restart,
+		lower_speed_scale,
+		upper_speed_scale,
+		upper_reverse,
+		overlay_sprite,
+		overlay_identity,
+		overlay_restart
+	)
+
+
 ## Present one bounded lower/upper body pair. Callers choose semantic actions,
 ## directions, fallback and which visible layer clocks completion; this method
 ## validates the complete composition before taking ownership, then preserves

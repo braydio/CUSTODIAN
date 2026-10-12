@@ -83,7 +83,8 @@
 
 ## Canon migration
 
-- `custodian/docs/ai_context/task_packets/RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` + paired review — ready fail-closed validation slice that protects the landed Reciprocal Continuity / Ash-Bell history lock from documentation and runtime-ID regression.
+- `custodian/docs/ai_context/task_packets/archived/RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` + `REVIEW_RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — completed fail-closed validation slice plus its pending independent review for the landed Reciprocal Continuity / Ash-Bell history lock.
+- `custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py` — fail-closed active-canon contract with mutation controls for authority/history drift, retired ontology, and production knowledge IDs; `tools/lore/validate_reciprocal_continuity_migration.sh` runs it before its diagnostic-only broad searches.
 
 `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` is the active migration
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route

@@ -79,8 +79,6 @@ func create_weapon_definition(weapon_id: String) -> OperatorWeaponDefinition:
 	def.recoil_translation_px = float(presentation.get("recoil_translation_px", 3.0))
 	def.recoil_rotation_degrees = float(presentation.get("recoil_rotation_degrees", 2.0))
 	
-	def.current_magazine = def.magazine_size
-	
 	var weapon_class = data.get("weapon_class", "carbine")
 	match weapon_class:
 		"pistol":

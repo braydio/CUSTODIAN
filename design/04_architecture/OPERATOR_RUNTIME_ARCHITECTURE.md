@@ -603,7 +603,7 @@ nullable so their established fallback behavior is preserved.
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | **done** |
 | F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **done** |
-| F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **queued** |
+| F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **done** |
 | F2–F3 | Extract melee and ranged behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
 | F4 | Extract Dodge/charge/Flow/chain lifecycle to `OperatorDodgeController`; preserve full-body displacement presentation and chassis movement ownership | one Dodge state authority; actor keeps facade/orchestration and sole `move_and_slide()` | **done** |
 | F5–F6 | Extract interaction and recovery/survivability behind the facade | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
@@ -636,7 +636,9 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   exit carry, and cancellation; the actor applies movement intent through its
   existing chassis and keeps intentional full-body Dodge presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
-  seam for Vigil guard and movement-permissive parry attempt/recovery.
+  seam for Vigil guard and movement-permissive parry attempt/recovery; both use
+  the semantic presentation controller with complete-pair fallback and preserve
+  locomotion progress across upper defensive phase changes.
 - The F1–F6 packets are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
   `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
   `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,
