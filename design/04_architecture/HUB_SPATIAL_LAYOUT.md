@@ -18,13 +18,16 @@ Defines the physical geometry of the hub: major districts, landmarks, traversal 
 > sealed north of South Reach at world `y = -6530`; its coordinates remain
 > authoritative in `custodian/game/world/awakening/awakening_layout.gd`.
 >
-> The post-Awakening first-set geometry is now locked in
+> The post-Awakening first-set geometry is locked in
 > `HUB_FIRST_SET_BLOCKOUT.md` and tracked by
-> `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. H1 now has its runtime blockout,
-> named markers, single-grid collision/navigation, and standalone South Reach
-> Operator playtest. Its macro-topology overview received human approval on
-> 2026-10-05. The paired H1 review is next; H2-H7 lifecycle behavior is not yet
-> live.
+> `HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md`. H1's runtime blockout and paired
+> review are complete. H2's Awakening→Hub handoff, H3's Adjudication Dais /
+> Contract prewarm, and H4's Crown Transfer route are implemented and reviewed.
+> H5's ordinary Continuity Port deployment packet has an active dispatcher
+> claim but is not landed on current main; its paired review, H6 Campaign return,
+> and H7 loop closeout remain downstream. Geometry/markers alone do not imply
+> ownership of future prop states; see
+> `AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md`.
 
 ---
 

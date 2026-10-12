@@ -1,7 +1,7 @@
 # AWAKENING INTERACTIBLE DEFERRED FAMILY HANDOFF V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-interactible-deferred-family-handoff-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -18,7 +18,7 @@
 - Visual review: `none`
 - Goal: Retain a precise future-owner mapping for approved civic/transfer/supply/memorial/gate interactions without installing them in current Awakening.
 - Completion boundary: Every future-only proposed state has explicit owner/reuse/deferred status. No current Awakening interaction, route, active required-asset need or scene changes. Handoff avoids duplicate Hub families and provides a useful future task-packet dependency map.
-- Current measured state: `AWAKENING_FIRST_RETURN.md` explicitly defers Field Terminal, Ashen Forum, Continuity Port and first Contract to later sections. Hub first-set and Muster/Forum packets may already own some corresponding interactions and artwork. The manifest catalogs 36 future-only art states conceptually.
+- Current measured state: On current main `1170afcd386bd98a4fd4471e9542238cc28089fa`, H3 and its review land the `HubAdjudicationDais` first-Contract owner; H4 and its review land the optional Crown Transfer route. H5 ordinary Port deployment has a dispatcher-claimed implementation branch but is not landed on current main. The 36 future-only art states remain conceptual/deferred; no separate Field Terminal, supply restock, memorial, or gate-control owner is posted. The six `awakening_interact_terminal` states and five `awakening_interact_port` states are current Awakening contracts, not Hub art substitutes. See `design/04_architecture/AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md` for the audited owner/packet/anchor/reuse crosswalk.
 - Evidence: `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md`; live files listed in Work surface; human playtest screenshot/feedback in Authoring chat.
 - Task-specific authority: AwakeningLayout owns location/marker kinds; real interactible nodes own gameplay; Asset V2 owns art; presentation-only overlay cannot manufacture gameplay semantics.
 - Work surface: `design/04_architecture/AWAKENING_FIRST_RETURN.md`; `design/04_architecture/AWAKENING_ASSET_MANIFEST.md`; `design/04_architecture/WORLD_TRANSITION_SYSTEM.md`; `design/05_levels/TWIN_SOLARIA.md`; `custodian/docs/ai_context/task_packets/HUB_*.md`; `custodian/docs/ai_context/FILE_INDEX.md`; directly affected focused validation.
@@ -43,30 +43,30 @@
 - Claimable without new images. Do not assert that missing states are available.
 - No gameplay node may bind an unverified runtime art path. Reuse existing authorized hero art first.
 
-## Future-role crosswalk scope (refresh 2026-10-10)
+## Future-role crosswalk scope (refreshed 2026-10-12)
 
-**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@956cf2114458`. Original Authoring chat stays unchanged.
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166. **Refreshed against:** `main@1170afcd386bd98a4fd4471e9542238cc28089fa`. Original Authoring chat stays unchanged.
 
 Inspect current Hub Muster (H5), Forum/Adjudication, CrownTransfer, ContinuityPort, Sepulcher, Field Patch and gate-owner truth before claiming future art ownership. Map only true scene owner vs `planned` vs `not-posted`, reuse verified hero V2 families where available, and never register deferred states as current required art. No runtime edit to Awakening for future-only roles.
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `No interaction gameplay authority replaced.`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md maps all 36 deferred manifest state IDs and separates them from the six source-pending current terminal states and damaged Undergate Port states. Current-main H1–H5/H6 packet states and candidate Asset V2 family status were inspected; no future state was added to required demand, runtime contracts or scenes. Deferred-state completeness and relative links passed; changed-file validation selected 11/11 checks with zero failures and complete coverage; git diff --check passed.`
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `Existing visible-world affordances were weak or future markers lacked explicit status.`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `Art-state provenance and marker/owner parity with gameplay-scale human review.`
-- Tooling / docs drift discovered: `<fill at closeout>`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The crosswalk's earlier owner mapping was too tentative to distinguish completed route/Dais owners, in-progress H5 ownership, and ownerless future art.`
+- Root cause / contributing factors: `Hub implementation/review receipts had landed while the spatial, roadmap, CONTEXT and CURRENT_STATE status snapshots still described earlier H1–H3 positions.`
+- Prevention / pipeline improvement: `Record art-state provenance and marker/owner parity; refresh directly related status documents when a paired Hub slice lands.`
+- Tooling / docs drift discovered: `HUB_SPATIAL_LAYOUT.md, HUB_FIRST_SET_IMPLEMENTATION_ROADMAP.md, CONTEXT.md and CURRENT_STATE.md contained stale H2–H4 statuses; corrected against current main and dispatcher audit.`
 - Follow-up: `review-awakening-interactible-deferred-family-handoff-v1`
-- What worked: `Reuse of Layout, established interactions and existing V2 schema.`
+- What worked: `Live owner code, archived packet receipts, dispatcher state, and Asset V2 status made it possible to distinguish owners from spatial markers and art look-alikes.`
 
 ## Next Handoff
 - Next workstream: `review-awakening-interactible-deferred-family-handoff-v1`

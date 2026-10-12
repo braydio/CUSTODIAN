@@ -1440,6 +1440,7 @@ Last updated: 2026-10-02
 
 - `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md` — main Awakening interactible discoverability presentation contract and six-slice packet DAG, separate from gameplay interaction owners and off-route perimeter support.
 - `design/04_architecture/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md` — 77 state-level source art requirements in 12 conceptual Asset V2 families (27 current required, 14 recommended, 36 deferred); source_work/inbox sizes, frames, alpha and Dropbox art gates; no art is claimed available.
+- `design/04_architecture/AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md` — current-main owner/packet/anchor and exact Asset V2 reuse crosswalk for all 36 future-only transfer, civic, supply, memorial, gate, and FX states; does not register current demand or add gameplay owners.
 - `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_AFFORDANCE_FOUNDATION_V1.md` + paired review — ready/auto no-art visual-host and posted-marker/live-owner reconciliation.
 - `custodian/docs/ai_context/task_packets/AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_V2_CONTRACTS_V1.md` + paired review — ready/auto source-pending V2 family/required-demand registration, no forged art input.
 - `custodian/docs/ai_context/task_packets/{AWAKENING_INTERACTIBLE_CONSOLE_PORT_PRESENTATION_V1,AWAKENING_INTERACTIBLE_LOCKER_LIFT_PRESENTATION_V1,AWAKENING_INTERACTIBLE_MARKER_WAYFINDING_V1}.md` + paired reviews — art-gated blocked/manual integration of current console, locker/lift and scenic-wayfinding layers.
