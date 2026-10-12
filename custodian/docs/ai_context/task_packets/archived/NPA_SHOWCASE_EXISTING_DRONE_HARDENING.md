@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-existing-drone-hardening`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-7-commanded-ally-contracts, review-npa-showcase-existing-enemy-hardening`
@@ -50,3 +50,23 @@ This pair was refreshed against actual NPA-7 and existing-enemy review archives.
 - Refresh reason: `none`
 - Next action: Implement this bounded drone/droid hardening slice, archive it complete, then run the paired review through `paired_review_runner.py` in a fresh reviewer context.
 - Blockers or open questions: `none`
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Registered `drone_follower_commands` executes real `DroneManager` with `allied_infantry_droid.tscn` and verifies FOLLOW/HOLD/FREE_ROAM, guard anchors/marker/reticle, guard leash/return behavior, roster cap, stable DRONE_01/02 identities, prune/replacement inheritance and recall. Registered `main_scene_allied_droid` proves the production `game.tscn` binds that scene and its status/presentation surface; `debug_collector_combat_drone` proves range observability. The canonical `commanded_ally_targeting_contract` remains the sole NPA-7 projectile/policy owner. Focused LFS/import, all six packet-named focused validation IDs, and final changed-file coverage passed; the sweep selected 35 checks with complete coverage and no uncovered files.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: existing direct tests emitted known exit-resource warnings; the actor relationship contract also emitted its existing missing-navigation warning while still passing. No runtime defect was reproduced.
+- Root cause / contributing factors: test harness teardown and a pre-existing actor-relationship fixture without navigation.
+- Prevention / pipeline improvement: kept the test-only manifest hardening scoped and did not introduce runtime churn without a red reproducer.
+- Tooling / docs drift discovered: none; the three direct smoke checks were present but lacked manifest IDs and `FILE_INDEX` text claimed they were unregistered.
+- Follow-up: none
+- What worked: real scene/manager behavior was already covered; explicit manifest ownership now keeps that coverage in changed-file selection.
