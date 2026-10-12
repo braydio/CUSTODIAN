@@ -376,6 +376,35 @@
       "needs_import": false
     },
     {
+      "id": "reciprocal_continuity_canon_docs",
+      "type": "python",
+      "script": "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "lore",
+        "canon",
+        "documentation",
+        "reciprocal_continuity"
+      ],
+      "owners": [
+        "design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md",
+        "design/03_world/THE_ASH-BELL_CONTINUITY.md",
+        "design/03_world/lore/CORE_LORE.md",
+        "design/03_world/PROCEDURAL_LORE_GENERATION.md",
+        "design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md",
+        "custodian/docs/ai_context/CONTEXT.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/content/**",
+        "custodian/game/**",
+        "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "tools/lore/validate_reciprocal_continuity_migration.sh"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_authoring_surface_contract",
       "type": "python",
       "script": "custodian/tools/validation/operator_authoring_surface_contract_smoke.py",

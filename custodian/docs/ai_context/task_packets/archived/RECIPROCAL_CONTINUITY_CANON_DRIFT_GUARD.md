@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `reciprocal-continuity-canon-drift-guard`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -41,7 +41,34 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh instruction: Re-read live main and the two canon authorities at claim time. Mechanical path/helper drift may be reconciled by the execution agent; any newly discovered material lore judgment must stop and return to this chat rather than being silently decided in validation code.
 
-## Handoff
+## Completion Truth
 
-- Next action: Claim `reciprocal-continuity-canon-drift-guard`, implement the fail-closed guard, validate it, land it, then run the paired fresh-context review.
-- Blockers or open questions: None.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py` passes current-canon assertions, eight isolated mutation controls, and a negated historical-reference positive control; `faction_canon_docs_smoke.py` passes; `bash tools/lore/validate_reciprocal_continuity_migration.sh` passes its gate and labels broad grep as diagnostic-only; `python3 -m json.tool custodian/tools/validation/validation_manifest.json` passes; `run_validation.py --changed --json` selects 38, passes 38, and reports complete changed-file coverage; `git diff --check` passes. Report: `/tmp/reciprocal_continuity_changed_validation_closeout.json`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Initial exact-text assumptions did not match the live Hub field shape and Ash-Bell sentence formatting. The first changed-file sweep then exposed a hard-coded validator-selection expectation that needed the new broad runtime/content owner; all were corrected and the final sweep passed.`
+- Root cause / contributing factors: `The packet specified semantic invariants rather than literal prose; the validation-runner self-test also encodes the affected-file selection list directly.`
+- Prevention / pipeline improvement: `Smoke anchors now match live authorities, mutation controls cover each required regression, and the runner selection fixture includes the canon validator's deliberate runtime/content ownership.`
+- Tooling / docs drift discovered: `The existing shell lore helper was report-only despite its validation-oriented name; it now runs the focused gate first and labels grep output diagnostic-only.`
+- Follow-up: `none`
+- What worked: `Live-main authority reads and isolated mutation fixtures produced a narrow, fail-closed contract.`
+
+## Next Handoff
+
+- Next workstream: `review-reciprocal-continuity-canon-drift-guard`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
+- Refresh reason: `none`
+- Next action: `Land the validated implementation, then run the exact paired fresh-context review.`
+- Blockers or open questions: `none`

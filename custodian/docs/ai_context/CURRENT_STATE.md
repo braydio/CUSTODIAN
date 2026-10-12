@@ -1364,6 +1364,7 @@ Canonical Reciprocal Continuity migration completed. Provenance-as-cosmic-substr
 - New highest-authority doctrine: `design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md`
 - Runtime knowledge IDs renamed: `ash_bell_ninth_bell` → `ash_bell_ninth_answer`, `ash_bell_bellfall_containment` → `ash_bell_open_interval`
 - No save compatibility required; direct renames applied
+- `custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py` now protects the active doctrine, corrected Ash-Bell history, procedural/Hub ontology, active AI context, and production runtime/content IDs with fail-closed assertions and mutation controls. The legacy shell helper runs this gate first; its broad searches are diagnostic and allow historical/deprecated references.
 
 Documentation updates this session:
 - Created `design/02_features/combat_feel/OPERATOR_MELEE_PRESENTATION_POSTURE.md` — draft spec for the melee presentation posture axis (sheathed/drawing/ready/relaxed/sheathing), driven by `EngagementTracker.engagement_active` with its 4 s quiet period, defining `melee_draw` as the melee flavor of `equip_weapon`, READY as the combat neutral replacing the single-frame melee stance placeholder, RELAXED as the exploration neutral, and `ready_up`/`relax` as presentation-only transitions that never gate attack input. No new gameplay states; movement stays lower-body-owned while posture is upper-body/loadout-owned.
