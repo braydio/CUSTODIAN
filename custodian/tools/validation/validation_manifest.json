@@ -5249,6 +5249,7 @@
       ],
       "owners": [
         "custodian/game/actors/operator/**",
+        "custodian/game/systems/core/systems/weapon_definition_factory.gd",
         "custodian/game/systems/combat/**",
         "custodian/game/systems/presentation/**",
         "custodian/tools/validation/operator_runtime_path_audit.py"

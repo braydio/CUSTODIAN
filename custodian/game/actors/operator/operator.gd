@@ -19,6 +19,8 @@ const OperatorRuntimeDependenciesScript = preload("res://game/actors/operator/op
 const OperatorDodgeControllerScript = preload("res://game/actors/operator/traversal/operator_dodge_controller.gd")
 const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
 const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
+const OperatorLoadoutControllerScript = preload("res://game/actors/operator/loadout/operator_loadout_controller.gd")
+const OperatorWeaponRuntimeStateScript = preload("res://game/actors/operator/loadout/operator_weapon_runtime_state.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const OperatorAnimationSelectorScript = preload(
 	"res://game/actors/operator/animations/operator_animation_selector.gd"
@@ -404,11 +406,21 @@ var attack_phase: AttackPhase = AttackPhase.NONE
 var current_attack_id: String = ""
 var attack_phase_time_remaining: float = 0.0
 var attack_facing_dir: Vector2 = Vector2.DOWN
-var armed_weapons: Array[OperatorWeaponDefinition] = []
-var armed_weapon_index: int = 0
-var last_armed_weapon_index: int = 0
-var using_unarmed: bool = false
-var pending_weapon_selection: Dictionary = {}
+var _loadout_controller: OperatorLoadoutController
+var armed_weapons: Array[OperatorWeaponDefinition]:
+	get: return _ensure_loadout_controller().armed_weapons
+var armed_weapon_index: int:
+	get: return _ensure_loadout_controller().armed_weapon_index
+	set(value): _ensure_loadout_controller().armed_weapon_index = value
+var last_armed_weapon_index: int:
+	get: return _ensure_loadout_controller().last_armed_weapon_index
+	set(value): _ensure_loadout_controller().last_armed_weapon_index = value
+var using_unarmed: bool:
+	get: return _ensure_loadout_controller().using_unarmed
+	set(value): _ensure_loadout_controller().using_unarmed = value
+var pending_weapon_selection: Dictionary:
+	get: return _ensure_loadout_controller().pending_weapon_selection
+	set(value): _ensure_loadout_controller().pending_weapon_selection = value
 var _active_attack_profile: OperatorWeaponDefinition = null
 var _active_melee_attack_profile: MeleeAttackProfile = null
 var _attack_drive_direction := Vector2.ZERO
@@ -625,14 +637,22 @@ var _counter_window_timer: float:
 var _offhand_secondary_was_pressed: bool = false
 var _melee_recovery_active: bool = false
 var _melee_recovery_timer: float = 0.0
-var _reload_active: bool = false
-var _reload_timer: float = 0.0
-var _reload_total: float = 0.0
+var _reload_active: bool:
+	get: return _get_active_weapon_runtime_state().is_reloading
+	set(value): _get_active_weapon_runtime_state().is_reloading = value
+var _reload_timer: float:
+	get: return _get_active_weapon_runtime_state().reload_remaining
+	set(value): _get_active_weapon_runtime_state().reload_remaining = value
+var _reload_total: float:
+	get: return _get_active_weapon_runtime_state().reload_total
+	set(value): _get_active_weapon_runtime_state().reload_total = value
 var _ammo_standard_loaded: int = 0
 var _ammo_heavy_loaded: int = 0
 var ammo_reserve_by_type: Dictionary = {}
 var ammo_capacity_by_type: Dictionary = {}
-var loaded_ammo_by_weapon_id: Dictionary = {}
+var loaded_ammo_by_weapon_id: Dictionary:
+	get: return _ensure_loadout_controller().runtime_magazines_snapshot()
+	set(value): _ensure_loadout_controller().replace_runtime_magazines(value)
 var weapon_heat_by_id: Dictionary = {}
 var weapon_heat_delay_by_id: Dictionary = {}
 var weapon_overheat_by_id: Dictionary = {}
@@ -947,6 +967,21 @@ func _ensure_dodge_controller() -> OperatorDodgeController:
 		_dodge_controller.chain_ended.connect(_forward_dodge_chain_ended)
 		_dodge_controller.flow_changed.connect(_forward_dodge_flow_changed)
 	return _dodge_controller
+
+
+func _ensure_loadout_controller() -> OperatorLoadoutController:
+	if _loadout_controller == null:
+		_loadout_controller = OperatorLoadoutControllerScript.new()
+	return _loadout_controller
+
+
+func _get_active_weapon_runtime_state() -> OperatorWeaponRuntimeState:
+	var key := _get_active_weapon_state_key()
+	return _ensure_loadout_controller().runtime_state(key)
+
+
+func _set_loaded_ammo(weapon_key: String, amount: int) -> void:
+	_ensure_loadout_controller().runtime_state(weapon_key).loaded_magazine = maxi(0, amount)
 
 
 func _dodge_tuning() -> Dictionary:
@@ -2370,14 +2405,29 @@ func start_equip_weapon_presentation() -> void:
 		if weapon_definition.weapon_presentation_mode == "authored_overlay" \
 		and not uses_authored_weapon_overlay:
 			return
-	_hide_modular_locomotion_layers()
-	_claim_modular_body_owner()
-	_show_body_layer(modular_lower_body_sprite)
-	_show_body_layer(modular_upper_body_sprite)
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.MODULAR_BODY,
+		[modular_lower_body_sprite, modular_upper_body_sprite]
+	)
+	var moving := not _is_movement_locked() and velocity.length_squared() > 0.0001
+	var movement_identity: StringName = modular_lower_body_sprite.animation if moving and String(modular_lower_body_sprite.animation).contains("/locomotion/") else &""
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		plan, moving, modular_lower_body_sprite, movement_identity,
+		lower_animation, modular_upper_body_sprite, upper_animation,
+		modular_lower_body_sprite, modular_lower_body_sprite.speed_scale, 1.0, 1.0,
+		false, false, null, &"", false,
+		false, Callable(self, "_claim_modular_body_owner")
+	)
+	if not presented:
+		return
 	modular_lower_body_sprite.flip_h = false
 	modular_upper_body_sprite.flip_h = false
-	_animation_player.play(modular_lower_body_sprite, lower_animation)
-	_animation_player.play(modular_upper_body_sprite, upper_animation)
+	if uses_authored_weapon_overlay:
+		melee_weapon_overlay_sprite.visible = true
+		melee_weapon_overlay_sprite.flip_h = false
+		_animation_player.play(melee_weapon_overlay_sprite, weapon_animation)
+		if primary_weapon_sprite != null:
+			primary_weapon_sprite.visible = false
 	if uses_authored_weapon_overlay:
 		melee_weapon_overlay_sprite.visible = true
 		melee_weapon_overlay_sprite.flip_h = false
@@ -2452,14 +2502,23 @@ func start_sheathe_weapon_presentation() -> bool:
 		if weapon_definition.weapon_presentation_mode == "authored_overlay" \
 		and not uses_authored_weapon_overlay:
 			return false
-	_hide_modular_locomotion_layers()
-	_claim_modular_body_owner()
-	_show_body_layer(modular_lower_body_sprite)
-	_show_body_layer(modular_upper_body_sprite)
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.MODULAR_BODY,
+		[modular_lower_body_sprite, modular_upper_body_sprite]
+	)
+	var moving := not _is_movement_locked() and velocity.length_squared() > 0.0001
+	var movement_identity: StringName = modular_lower_body_sprite.animation if moving and String(modular_lower_body_sprite.animation).contains("/locomotion/") else &""
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		plan, moving, modular_lower_body_sprite, movement_identity,
+		lower_animation, modular_upper_body_sprite, upper_animation,
+		modular_lower_body_sprite, modular_lower_body_sprite.speed_scale, 1.0, 1.0,
+		false, false, null, &"", false,
+		false, Callable(self, "_claim_modular_body_owner")
+	)
+	if not presented:
+		return false
 	modular_lower_body_sprite.flip_h = false
 	modular_upper_body_sprite.flip_h = false
-	_animation_player.play(modular_lower_body_sprite, lower_animation)
-	_animation_player.play(modular_upper_body_sprite, upper_animation)
 	if uses_authored_weapon_overlay:
 		melee_weapon_overlay_sprite.visible = true
 		melee_weapon_overlay_sprite.flip_h = false
@@ -10608,58 +10667,19 @@ func get_current_combat_profile() -> OperatorWeaponDefinition:
 
 
 func request_toggle_unarmed() -> void:
-	_rebuild_armed_weapon_list()
-	if armed_weapons.is_empty():
-		queue_weapon_selection({"type": "unarmed"})
-		return
-	if using_unarmed:
-		queue_weapon_selection({
-			"type": "armed",
-			"index": clampi(last_armed_weapon_index, 0, armed_weapons.size() - 1),
-		})
-		return
-	last_armed_weapon_index = clampi(armed_weapon_index, 0, armed_weapons.size() - 1)
-	queue_weapon_selection({"type": "unarmed"})
+	_ensure_loadout_controller().request_toggle_unarmed(self)
 
 
 func request_cycle_weapon(direction: int) -> void:
-	_rebuild_armed_weapon_list()
-	if armed_weapons.is_empty():
-		queue_weapon_selection({"type": "unarmed"})
-		return
-	var base_index := last_armed_weapon_index if using_unarmed else armed_weapon_index
-	var next_index := wrapi(base_index + direction, 0, armed_weapons.size())
-	queue_weapon_selection({
-		"type": "armed",
-		"index": next_index,
-	})
+	_ensure_loadout_controller().request_cycle_weapon(self, direction)
 
 
 func queue_weapon_selection(selection: Dictionary) -> void:
-	pending_weapon_selection = selection.duplicate(true)
-	try_apply_pending_weapon_selection()
+	_ensure_loadout_controller().queue_selection(self, selection)
 
 
 func try_apply_pending_weapon_selection() -> void:
-	if pending_weapon_selection.is_empty():
-		return
-	if not can_apply_weapon_selection_now():
-		return
-	_rebuild_armed_weapon_list()
-	if _should_sheathe_before_selection(pending_weapon_selection):
-		_sheathe_source_weapon = _get_equipped_primary_weapon_definition() as OperatorWeaponDefinition
-		_weapon_selection_commit_pending = true
-		_enter_sheathe_weapon_state_if_available()
-		return
-	var selection_type := str(pending_weapon_selection.get("type", ""))
-	match selection_type:
-		"unarmed":
-			_apply_unarmed_selection()
-		"armed":
-			_apply_armed_selection(int(pending_weapon_selection.get("index", armed_weapon_index)))
-	pending_weapon_selection.clear()
-	_refresh_primary_weapon_state()
-	_enter_equip_weapon_state_if_available()
+	_ensure_loadout_controller().try_apply_pending_selection(self)
 
 
 func can_apply_weapon_selection_now() -> bool:
@@ -10716,22 +10736,7 @@ func _should_sheathe_before_selection(selection: Dictionary) -> bool:
 
 
 func commit_pending_weapon_selection_after_sheathe() -> bool:
-	_weapon_selection_commit_pending = false
-	_sheathe_source_weapon = null
-	if not pending_weapon_selection.is_empty():
-		_rebuild_armed_weapon_list()
-		var selection_type := str(pending_weapon_selection.get("type", ""))
-		match selection_type:
-			"unarmed":
-				_apply_unarmed_selection()
-			"armed":
-				_apply_armed_selection(int(pending_weapon_selection.get("index", armed_weapon_index)))
-		pending_weapon_selection.clear()
-		_refresh_primary_weapon_state()
-	var target_is_melee := _is_melee_loadout_active() and not using_unarmed
-	if _melee_posture_state != null and not target_is_melee:
-		_melee_posture_state.mark_sheathed()
-	return target_is_melee
+	return _ensure_loadout_controller().commit_pending_after_sheathe(self)
 
 
 func _enter_equip_weapon_state_if_available() -> void:
@@ -10857,24 +10862,11 @@ func _get_loadout_mode_for_profile(profile: OperatorWeaponDefinition) -> StringN
 
 
 func get_weapon_selection_state() -> Dictionary:
-	return {
-		"using_unarmed": using_unarmed,
-		"armed_weapon_index": armed_weapon_index,
-		"last_armed_weapon_index": last_armed_weapon_index,
-	}
+	return _ensure_loadout_controller().get_selection_state()
 
 
 func apply_weapon_selection_state(selection_state: Dictionary) -> void:
-	_rebuild_armed_weapon_list()
-	using_unarmed = bool(selection_state.get("using_unarmed", using_unarmed))
-	armed_weapon_index = clampi(int(selection_state.get("armed_weapon_index", armed_weapon_index)), 0, max(armed_weapons.size() - 1, 0))
-	last_armed_weapon_index = clampi(int(selection_state.get("last_armed_weapon_index", last_armed_weapon_index)), 0, max(armed_weapons.size() - 1, 0))
-	pending_weapon_selection.clear()
-	if using_unarmed or armed_weapons.is_empty():
-		_apply_unarmed_selection()
-	else:
-		_apply_armed_selection(armed_weapon_index)
-	_refresh_primary_weapon_state()
+	_ensure_loadout_controller().restore_selection(self, selection_state)
 
 
 func _equip_melee_loadout() -> void:
@@ -10989,7 +10981,7 @@ func remove_sidearm() -> Dictionary:
 		var sidearm_type := _get_weapon_ammo_type(sidearm_weapon_definition)
 		var loaded := int(loaded_ammo_by_weapon_id.get(sidearm_key, 0))
 		ammo_reserve_by_type[sidearm_type] = min(int(ammo_capacity_by_type.get(sidearm_type, 0)), int(ammo_reserve_by_type.get(sidearm_type, 0)) + loaded)
-		loaded_ammo_by_weapon_id.erase(sidearm_key)
+		_set_loaded_ammo(sidearm_key, 0)
 		_sync_legacy_ammo_fields()
 	
 	sidearm_slot_equipped = false
@@ -12861,7 +12853,7 @@ func _is_authored_melee_body_stance_active() -> bool:
 func _consume_ammo() -> void:
 	var key := _get_active_weapon_state_key()
 	var cost := _get_current_ammo_per_shot()
-	loaded_ammo_by_weapon_id[key] = max(0, int(loaded_ammo_by_weapon_id.get(key, 0)) - cost)
+	_set_loaded_ammo(key, max(0, int(loaded_ammo_by_weapon_id.get(key, 0)) - cost))
 	_sync_legacy_ammo_fields()
 
 
@@ -12880,7 +12872,7 @@ func _initialize_magazines() -> void:
 		"shell": 0,
 		"scrap_charge": 0,
 	}
-	loaded_ammo_by_weapon_id.clear()
+	_ensure_loadout_controller().clear_runtime_magazines()
 	_register_weapon_ammo_state(primary_weapon_definition, true)
 	if sidearm_slot_equipped:
 		_register_weapon_ammo_state(sidearm_weapon_definition, true)
@@ -12918,7 +12910,7 @@ func _register_weapon_ammo_state(weapon_definition: OperatorWeaponDefinition, fi
 		ammo_reserve_by_type[ammo_type] = clampi(starting_reserve, 0, int(ammo_capacity_by_type[ammo_type]))
 	var key := _get_weapon_state_key(weapon_definition)
 	if not loaded_ammo_by_weapon_id.has(key):
-		loaded_ammo_by_weapon_id[key] = _get_weapon_magazine_size(weapon_definition) if fill_magazine else 0
+		_set_loaded_ammo(key, _get_weapon_magazine_size(weapon_definition) if fill_magazine else 0)
 
 
 func _get_weapon_magazine_size(weapon_definition: OperatorWeaponDefinition) -> int:
@@ -12979,7 +12971,7 @@ func _clamp_loaded_ammo_to_current_weapon() -> void:
 		return
 	var ammo_type := _get_weapon_ammo_type(_get_active_ranged_weapon_definition())
 	var overflow := loaded - capacity
-	loaded_ammo_by_weapon_id[key] = capacity
+	_set_loaded_ammo(key, capacity)
 	ammo_reserve_by_type[ammo_type] = min(int(ammo_capacity_by_type.get(ammo_type, 0)), int(ammo_reserve_by_type.get(ammo_type, 0)) + overflow)
 	_sync_legacy_ammo_fields()
 
@@ -13040,7 +13032,7 @@ func _finish_reload() -> void:
 	var loaded := int(loaded_ammo_by_weapon_id.get(key, 0))
 	var reserve := int(ammo_reserve_by_type.get(ammo_type, 0))
 	var transfer: int = mini(maxi(0, capacity - loaded), reserve)
-	loaded_ammo_by_weapon_id[key] = loaded + transfer
+	_set_loaded_ammo(key, loaded + transfer)
 	ammo_reserve_by_type[ammo_type] = reserve - transfer
 	_sync_legacy_ammo_fields()
 	_cancel_reload()

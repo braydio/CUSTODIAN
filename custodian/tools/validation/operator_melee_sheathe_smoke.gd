@@ -38,6 +38,7 @@ func _run() -> void:
 
 	await _run_sheathe_case(operator, lower, upper, weapon, legacy_body, "e", Vector2.RIGHT, vigil_definition, vigil_index)
 	await _run_sheathe_case(operator, lower, upper, weapon, legacy_body, "w", Vector2.LEFT, vigil_definition, vigil_index)
+	_validate_moving_sheathe_preserves_locomotion(operator, lower, upper, vigil_index)
 
 	operator.free()
 	if _failures.is_empty():
@@ -47,6 +48,28 @@ func _run() -> void:
 		for failure in _failures:
 			push_error(failure)
 		quit(1)
+
+
+func _validate_moving_sheathe_preserves_locomotion(
+	operator: Node,
+	lower: AnimatedSprite2D,
+	upper: AnimatedSprite2D,
+	vigil_index: int
+) -> void:
+	operator.set("pending_weapon_selection", {})
+	operator.call("_apply_armed_selection", vigil_index)
+	operator.set("visual_idle_direction", Vector2.RIGHT)
+	operator.set("velocity", Vector2(48.0, 0.0))
+	_expect(bool(operator.call("_sync_modular_melee_posture", Vector2.RIGHT)), "moving: failed to establish melee posture")
+	var locomotion := &"melee_1h/locomotion/walk_01/e/lower_body"
+	operator.get("_animation_player").play(lower, locomotion, true)
+	lower.set_frame_and_progress(2, 0.35)
+	var expected_progress := lower.frame_progress
+	operator.call("queue_weapon_selection", {"type": "unarmed"})
+	_expect(lower.animation == locomotion, "moving: sheathe replaced the active locomotion clip")
+	_expect(lower.frame == 2 and is_equal_approx(lower.frame_progress, expected_progress), "moving: sheathe restarted lower locomotion progress")
+	_expect(String(upper.animation) == "melee_1h/posture/sheathe_01/e/upper_body", "moving: upper body did not enter sheathe")
+	operator.set("velocity", Vector2.ZERO)
 
 
 func _run_sheathe_case(

@@ -50,7 +50,6 @@ normal closeout.
 - `NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Create one real M-7 escort unit as a distinct actor skin/profile over reviewed CombatDrone/AlliedInfantryDroid, with manager-owned command identity.
 - `NPA_SHOWCASE_EXISTING_VAULTWING_PROOF.md` — Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely.
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
-- `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Make loadout/weapon-selection runtime state a focused authority, remove mutable instance state from `OperatorWeaponDefinition`, and use the established modul...
 - `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` — Extract melee timeline/drive/target/contact state into one focused authority and cash in the existing modular art where it genuinely improves moving combat p...
 - `OPERATOR_PARRY_RIPOSTE_COMPLETION.md` — Finish the one genuinely missing gameplay tail from the legacy Hit Taxonomy/Riposte effort: a dedicated semantic riposte after a successful parry when no val...
 - `OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — Extract primary-ranged/sidearm combat state into one ranged authority and make all movement-permissive ranged presentation use the same lower-locomotion + up...
@@ -271,7 +270,8 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 - `archived/OPERATOR_DEPENDENCY_INJECTION_SPINE.md` — Slice F0 complete: zero absolute scene-tree lookups remain in `operator.gd`; the three mutable weapon-definition findings remain for F1.
 - `archived/OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Slice F4 complete: charge, profile selection, iframe/recovery clocks, Flow/chain, exit carry, and cancellation live in `OperatorDodgeController`; full-body dodge presentation and chassis movement ownership remain intact.
 - `archived/OPERATOR_MOBILE_GUARD_COMPOSITION.md` — complete: movement-owned lower-body locomotion and upper-body unarmed guard presentation were implemented; the active follow-up queue is not this archived slice.
-- `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — P1 ready/auto, dependency-gated on F0 and mobile guard composition; it owns the three remaining weapon-definition runtime-state findings.
+- `archived/OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Slice F1 complete: loadout selection/pending transactions and per-weapon magazine/reload runtime state are owned behind the loadout authority; weapon-definition runtime debt is zero.
+- `OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — F3 ready/auto, dependency-gated on F1; consumes the stable `OperatorWeaponRuntimeState` seam.
 
 ### Active Archive Resolve Presentation Series
 
