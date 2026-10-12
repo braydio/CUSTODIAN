@@ -44,6 +44,7 @@
 ## Independent Review
 
 - Status: `passed`
+- Schema: `custodian.paired_review.v1`
 - Review workstream: `review-operator-workbench-fx-layer-adoption-review-corrections-1`
 - Review target workstream: `operator-workbench-fx-layer-adoption-review-corrections-1`
 - Reviewed main: `2fa21a9a3b83b2d5a14b662833330daa009eddfc`
@@ -51,7 +52,7 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
 - Blocking defects: `0`
-- Material proof gaps: `0`
+- Material gaps: `0`
 
 ### R0-01 — REPLACE source-conflict window
 
