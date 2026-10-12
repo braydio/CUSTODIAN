@@ -402,6 +402,20 @@ coverage lives in `custodian/tools/validation/asset_workbench_ui_smoke.py` and
 is selected by the `asset_workbench_ui` validation owner. Sequencing remains in
 `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md`.
 
+## Asset Workbench REVIEW Studio (2026-10-12)
+
+Slice 2 adds a read-only review service that resolves staged images through
+Asset V2 planning/inspection and runtime images through the generated catalog,
+requiring the catalog SHA and frame contract to match before a runtime image is
+trusted. It diagnoses unhydrated Git LFS pointers before Pillow decoding and
+extracts copy, strip, and row-major grid frames without resampling. The optional
+Textual UI now switches between FAMILY and REVIEW, with representation and
+comparison selection, frame buttons, playback at declared contract FPS, and
+native RGBA output. Focused acceptance is
+`custodian/tools/validation/asset_workbench_review_smoke.py`; Slice 2 remains
+read-only and does not import Operator UI/backend code. Install both optional
+UI dependencies from `custodian/tools/assets/asset_workbench/requirements.txt`.
+
 ## Operator Workbench Isolated Art Checkout (2026-10-05)
 
 The mandatory Fast 02 canvas smoke derives dimensions from current sources and

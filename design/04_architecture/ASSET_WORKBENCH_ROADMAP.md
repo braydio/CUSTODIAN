@@ -4,7 +4,7 @@
 **Baseline reviewed main:** `7287fd62afcda9abe3847f5fea6c60c8ac27bfe3`
 **Owner:** tooling / Asset Pipeline V2  
 **Runtime target:** CUSTODIAN non-Operator asset authoring and review  
-**Last updated:** 2026-09-30
+**Last updated:** 2026-10-12
 
 ## Purpose
 
@@ -102,6 +102,12 @@ As of the baseline above:
 - Operator's preview canvas, filmstrip, controls, and review concepts are proven
   UX references, but they currently live under the Operator package and may not
   become Asset Pipeline authority.
+- Slice 1 is now landed under `custodian/tools/assets/asset_workbench/`:
+  `models.py` owns immutable family/state projections, `service.py` composes
+  Asset V2 family/status truth, `browser.py` owns accepted-snapshot refresh and
+  semantic selection, and `app.py` is the optional Textual FAMILY navigator.
+  The `asset ui` command imports this package only when launched, so existing
+  CLI use remains independent of Textual.
 - `ambient_baby_opossum` is a useful acceptance family: 96×96, 4-direction,
   auto-mirror, many semantic groups, body plus `barrel_prop` states, static
   holds, animated states, and incomplete/unresolved production coverage.
@@ -111,14 +117,14 @@ As of the baseline above:
 | Slice | Workstream | Status | Completion focus | Evidence |
 |---|---|---|---|---|
 | **1. Family Navigator Foundation** | `asset-workbench-family-foundation` | complete | Read-only Asset V2 family/state cockpit and stable UI/read-model boundary | `asset_workbench_ui_smoke.py` passes with Textual Pilot; Asset V2 CLI/requirements regressions pass |
-| **2. Review Studio** | `asset-workbench-review-studio-r1` | ready (queue-recovered from stale contained branch) | Raster preview, playback, filmstrip, source/runtime comparison and diagnostics | `ASSET_WORKBENCH_REVIEW_STUDIO.md` queued; Slice 1 dependency is complete |
+| **2. Review Studio** | `asset-workbench-review-studio-r1` | complete | Read-only source/runtime review, exact frame extraction, integer raster zoom, playback and comparisons | `asset_workbench_review_smoke.py`, `asset_workbench_ui_smoke.py`, Asset V2 and CLI UX smokes pass; final `run_validation.py --changed --json`: 40/40, complete coverage |
 | **3. Safe Pipeline Actions** | `asset-workbench-pipeline-actions` | planned | Plan/ingest UI, isolated mutation checkout, validation, commit/land, refresh | pending |
 | **4. Actor Lens + Sequence Review** | `asset-workbench-actor-sequences` | planned | NPC/enemy/fauna ergonomics and disposable behavioral review sequences | pending |
 | **5. Design Mode** | `asset-workbench-design-mode` | planned | Schema-aware family/state contract editing and reviewed contract publication | pending |
 | **6. Creation + Source Intake** | `asset-workbench-creation-source-intake` | planned | New family/state creation, source staging, crisp conversion and authoring handoff | pending |
 | **7. Platform Hardening + Domain Expansion** | `asset-workbench-platform-hardening` | planned | Proven shared UI extraction, large-family performance, broader domains, docs/QA | pending |
 
-**Last reconciled main:** `7287fd62afcda9abe3847f5fea6c60c8ac27bfe3`
+**Last reconciled main:** `019f46cfb250da374be0058d20a2e3681761e421`
 
 ---
 
@@ -181,6 +187,32 @@ mutation.
 ---
 
 ## Slice 2 — Review Studio
+
+**Status:** complete on `asset-workbench-review-studio-r1`.
+
+The landed Slice 1 boundary is the `AssetWorkbenchBrowser` and immutable
+`AssetWorkbenchService` snapshot, with Textual composition in
+`AssetWorkbenchApp`. REVIEW will extend that selected semantic family/state
+without replacing FAMILY's accepted snapshot or moving image decoding into the
+Asset V2 contract/status authorities. The `asset` launcher keeps the UI
+dependency optional.
+
+The read-only `AssetReviewService` resolves each inbox input through
+`generate_plan()` and its `AssetInspection`, while independently planning
+files so malformed neighbors do not hide a valid selected source. Runtime
+representations come from the generated catalog and are trusted only when the
+file, SHA-256, frame size, frame count, and state frame contract agree. LFS
+pointer text is diagnosed before Pillow. `review.py` splits copy, horizontal,
+vertical, and explicit grid layouts exactly, applies nearest-neighbor integer
+zoom, and reports alpha bounds and pixel-diff counts/bounds. The Textual REVIEW
+panel adds representation/comparison selection, frame filmstrip/scrubbing,
+loop/playback at declared FPS, and side-by-side/overlay/diff modes. It imports
+no Operator UI code; Operator behavior therefore needs no migration regression
+for this slice.
+
+Slice 3 remains a separate mutation boundary. It may build on the disposable
+`ReviewResult` read projection, but plan/ingest actions, mutation isolation,
+confirmation, validation, and landing remain owned by Slice 3 and Asset V2.
 
 ### Goal
 
@@ -395,3 +427,4 @@ Across every slice:
 | 2026-09-29 | `a9be70d` | Initial roadmap created from current Asset V2 and Operator Workbench architecture; V1 defined as Slices 1–3. |
 | 2026-09-29 | `972ea75` | Slice 1 promoted to ready; V2 task packet indexed for auto-dispatch with roadmap maintenance required during implementation. |
 | 2026-09-29 | `24690f8` | Slice 2 Review Studio packet authored from stable Asset V2 review inputs and queued dependency-gated behind Slice 1; Slice 3 intentionally remains unauthored until landed UI/review seams are known. |
+| 2026-10-12 | `019f46c` | Reconciled and completed Slice 2 against the landed Slice 1 service/browser/app; REVIEW remains read-only and uses Asset V2 inspector/plan/catalog truth. Focused REVIEW/FAMILY, Asset V2, CLI UX, and changed-file validations are recorded in the task summary. |
