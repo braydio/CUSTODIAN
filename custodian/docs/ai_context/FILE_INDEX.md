@@ -53,8 +53,8 @@
 
 - `design/04_architecture/ASSET_WORKBENCH_ROADMAP.md` — living slice roadmap for the general non-Operator Asset Workbench; V1 is FAMILY navigator, REVIEW studio, then safe PIPELINE actions, with later actor/sequence, design, creation/source-intake, and hardening slices.
 - `design/04_architecture/ASSET_PIPELINE_V2.md` and `custodian/tools/assets/` — technical authority consumed by Asset Workbench; the UI must project these contracts rather than create parallel asset truth.
-- `custodian/tools/assets/asset_workbench/` — optional Textual FAMILY navigator, immutable Asset V2 projections, and transactional refresh/search state; starts read-only and imports no Operator backend. `requirements.txt` lists its optional UI dependency.
-- `custodian/tools/validation/asset_workbench_ui_smoke.py` — focused fixture/service/Pilot coverage and real `ambient_baby_opossum` projection acceptance, selected by the `asset_workbench_ui` validation owner.
+- `custodian/tools/assets/asset_workbench/` — optional Textual FAMILY navigator and read-only REVIEW studio, immutable Asset V2 projections, exact frame extraction, catalog/hash-verified runtime review, and transactional refresh/search state; imports no Operator backend. `requirements.txt` lists optional Textual raster UI dependencies.
+- `custodian/tools/validation/asset_workbench_ui_smoke.py` and `asset_workbench_review_smoke.py` — focused FAMILY and REVIEW fixture/service coverage, including real `ambient_baby_opossum` projection and static/animated runtime acceptance; selected by their matching validation owners.
 
 ## Asset V2 Handoff Bundles
 

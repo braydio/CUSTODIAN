@@ -3675,6 +3675,22 @@
       "needs_import": false
     },
     {
+      "id": "asset_workbench_review",
+      "type": "python",
+      "script": "custodian/tools/validation/asset_workbench_review_smoke.py",
+      "tier": "unit",
+      "tags": ["assets", "asset_workbench", "review", "tooling"],
+      "owners": [
+        "custodian/tools/assets/asset_workbench/**",
+        "custodian/tools/validation/asset_workbench_review_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/content/metadata/assets/generated/asset_catalog.generated.json",
+        "custodian/content/metadata/assets/families/**"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "persistent_compound_minimap",
       "type": "godot_script",
       "script": "res://tools/validation/persistent_compound_minimap_smoke.gd",

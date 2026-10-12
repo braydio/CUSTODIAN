@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `asset-workbench-review-studio-r1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `asset-workbench-family-foundation`
@@ -176,18 +176,34 @@
 
 Complete before this packet becomes `Status: complete`.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: focused REVIEW/FAMILY smokes, Asset V2/CLI UX smokes, and final 40/40 changed-file validation with complete coverage (details below).
+
+- Outcome: Complete. The optional Asset Workbench now offers a read-only REVIEW panel for selected Asset V2 states, with staged/runtime representations, exact frame extraction, integer RGBA zoom, filmstrip and frame selection, contract-FPS playback, and side-by-side/overlay/diff comparison.
+- Runtime trust: Catalog paths must remain under the project root; runtime files must exist, not be LFS pointers, match catalog SHA-256/frame size/frame count, and agree with a declared state frame count when present.
+- Source trust: Staged input resolution and physical layout come from Asset V2 `generate_plan()` and `AssetInspection`; independently planned inputs allow a malformed/unresolved neighbor to remain diagnostic without suppressing a valid source.
+- Production behavior: Read-only; no ingest, production writes, runtime consumer edits, or Operator UI extraction occurred.
+- Acceptance evidence: `asset_workbench_review_smoke.py` and `asset_workbench_ui_smoke.py` pass with optional Textual raster dependencies installed; Asset V2 and CLI UX smokes pass; changed-file validation passes 40/40 with complete tracked-code coverage.
+- Roadmap: Slice 2 is complete; Slice 3 remains a separate mutation boundary and may consume only the disposable REVIEW read projection.
+
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome:
-- Friction severity:
-- What went wrong:
-- Root cause / contributing factors:
-- Prevention / pipeline improvement:
-- Tooling / docs drift discovered:
-- Follow-up:
-- What worked:
+- Outcome: success
+- Friction severity: low
+- What went wrong: The Textual Pilot exposed a test-service constructor assumption and duplicate IDs from dynamically remounting frame buttons; both were corrected before closeout. The changed sweep generated two unrelated UID sidecars; they were identified as fresh generated files and removed.
+- Root cause / contributing factors: The first UI pass had not exercised optional raster dependencies and repeated frame-list replacement through Textual's asynchronous DOM lifecycle.
+- Prevention / pipeline improvement: Keep the optional-dependency Pilot scenario in the focused REVIEW smoke; the frame strip is now a stable raster widget with a synchronized selector rather than dynamic child remounts. Keep changed-sweep-generated UID sidecars in the final artifact audit.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: Asset V2 planning/catalog authorities and real Baby Opossum fixtures supplied a small deterministic review proof without production mutation.
 
 ## Handoff
 
-- Next action: Do not claim until `asset-workbench-family-foundation` is complete and archived. Then reconcile the living roadmap to the landed Slice 1 implementation before writing review code.
+- Next action: Run the paired fresh-context post-land review through `paired_review_runner.py`; after accepted review, follow its exact `Next Handoff`.
 - Best starting files: the landed Slice 1 Asset Workbench service/state/UI, `asset_inspector.py`, `asset_plan.py`, `asset_catalog.py`, and the three Operator preview widgets as reference.
-- Blockers or open questions: no design blocker. The packet intentionally avoids naming private Slice 1 helpers that do not exist yet.
+- Blockers or open questions: none; the paired review is the immediate lifecycle step.
