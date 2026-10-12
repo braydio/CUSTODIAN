@@ -1,6 +1,6 @@
 # CUSTODIAN Workstream Orphan Recovery Supervisor V1
 
-**Status:** design-approved direction; implementation not yet landed.  
+**Status:** proposed architecture and implementation-ready task packets; implementation not yet landed.  
 **Date:** 2026-10-11. **Investigated main:** `316c984cbb62cc067ab7fc8483994f02573d6f8b`.  
 **Authoring chat:** `not-recorded` (request exact current ChatGPT conversation URL before future handoff relinking).  
 **Implementing workstreams:** `agent-orphan-recovery-observability-v1`, then `agent-orphan-recovery-fenced-parking-v1`, each with an independent paired review.
