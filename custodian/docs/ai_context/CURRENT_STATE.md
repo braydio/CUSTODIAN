@@ -1,5 +1,25 @@
 # CURRENT STATE — CUSTODIAN
 
+## Agent session orphan recovery planning (2026-10-11)
+
+An approved architectural plan now separates execution-liveness from durable
+`agent/<workstream>` branch preservation. Spec:
+`custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
+The OR1 `agent-orphan-recovery-observability-v1` and OR2
+`agent-orphan-recovery-fenced-parking-v1` paired Codex packets are
+**authored but not implemented**; both honor the `agent-workflow` lock.
+An OR1 live-process/journal classifier precedes OR2 exact-owner CAS-fenced
+park/resume. The existing dispatcher still treats agent branches as claimed,
+and the existing review runner still preserves `post_exit_recovery` with no
+automatic resolution. Branch history/dirty files must never be deleted or
+stashed merely because Codex terminates. User timer remains optional and
+uninstalled. Current main already contains complete archived reviews of both
+PF5 correction cycles; those historical recovery reports are evidence, not
+proof of a currently stranded PF5 claim. Exact authoring chat for OR1/OR2
+is `not-recorded` until supplied.
+
+
+
 ## NPA Showcase Dev Overlay (2026-10-12)
 
 The registered NPA showcase arena now owns a dev-only scene overlay and
