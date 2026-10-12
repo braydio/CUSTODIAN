@@ -5,6 +5,7 @@ const OPERATOR_PRESENTATION_RIG_SCENE := preload(
 	"res://game/actors/operator/presentation/operator_presentation_rig_2d.tscn"
 )
 const RITUALANT_SCORE_PATH := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v1.ogg"
+const RITUALANT_STILLING_RELEASE_PATH := "res://content/audio/music/ash_bell/forlorn_ritualant_stilling_release_v1.ogg"
 const LIFT_ASCENT_DISTANCE := 176.0
 const LOWER_LIFT_TRAVEL_DISTANCE := 256.0
 const ARRIVAL_BLACK_HOLD_SEC := 0.20
@@ -85,6 +86,8 @@ const AUTHORING_MARKERS := {
 )
 
 var _ritualant_music_activated := false
+var _restoring_route_state := false
+var _stilling_release_started := false
 var _previous_music_paths: Array[String] = []
 var _departure_running := false
 var _departure_actor: Node = null
@@ -133,7 +136,12 @@ func _restore_music_after_ritualant() -> void:
 	if not _ritualant_music_activated:
 		return
 	var manager := get_node_or_null("/root/MusicManager")
-	if manager == null or manager.get_current_path() != RITUALANT_SCORE_PATH:
+	if manager == null:
+		return
+	if manager.get_current_path() == RITUALANT_STILLING_RELEASE_PATH \
+			and manager.has_method("cancel_one_shot_and_restore"):
+		manager.cancel_one_shot_and_restore()
+	if manager.get_current_path() != RITUALANT_SCORE_PATH:
 		return # Another level already took music authority. Never override it.
 	if _previous_music_paths.is_empty():
 		manager.stop_track()
@@ -152,13 +160,23 @@ func get_environment_region_at_global(world_position: Vector2) -> Dictionary:
 		"weather_exposure": 0.0,
 	}
 
-func _on_ritualant_encounter_completed(_resolution: int) -> void:
-	if lower_quarter_seal == null or lower_quarter_seal.modulate.a <= 0.0:
+func _on_ritualant_encounter_completed(resolution: int) -> void:
+	if lower_quarter_seal != null and lower_quarter_seal.modulate.a > 0.0:
+		var tween := create_tween()
+		tween.set_trans(Tween.TRANS_SINE)
+		tween.set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(lower_quarter_seal, "modulate:a", 0.0, 1.35)
+	if resolution != AshBellEventState.Resolution.SITE_STABILIZED \
+			or _restoring_route_state \
+			or _stilling_release_started:
 		return
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property(lower_quarter_seal, "modulate:a", 0.0, 1.35)
+	var manager := get_node_or_null("/root/MusicManager")
+	if manager == null \
+			or manager.get_current_path() != RITUALANT_SCORE_PATH \
+			or not manager.has_method("play_one_shot_track"):
+		return
+	_stilling_release_started = true
+	manager.play_one_shot_track(RITUALANT_STILLING_RELEASE_PATH, -5.4)
 
 
 func _refresh_initial_camera_profile() -> void:
@@ -484,9 +502,12 @@ func capture_route_state() -> Dictionary:
 func restore_route_state(state: Dictionary) -> bool:
 	if ritualant_site == null:
 		return false
-	return ritualant_site.restore_encounter_state(
+	_restoring_route_state = true
+	var restored := ritualant_site.restore_encounter_state(
 		state.get("encounter", {}) as Dictionary
 	)
+	_restoring_route_state = false
+	return restored
 
 
 func _exit_tree() -> void:

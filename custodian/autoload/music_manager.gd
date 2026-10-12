@@ -13,6 +13,9 @@ var _player: AudioStreamPlayer = null
 var _current_path: String = ""
 var _playlist_paths: Array[String] = []
 var _playlist_index: int = 0
+var _one_shot_return_state: Dictionary = {}
+var _music_transition_generation := 0
+var _music_fade_tween: Tween
 
 
 func _ready() -> void:
@@ -57,6 +60,7 @@ func play_track(path: String) -> void:
 func play_loop_track(path: String) -> void:
 	if path.is_empty():
 		return
+	_cancel_one_shot_for_override()
 	_ensure_player()
 	if _current_path == path and _player.playing:
 		var active_stream := _player.stream as AudioStreamOggVorbis
@@ -76,7 +80,117 @@ func play_loop_track(path: String) -> void:
 	_player.play()
 	_current_path = path
 
+
+func play_one_shot_track(
+	path: String,
+	attenuation_db: float = -5.4,
+	fade_seconds: float = 0.35
+) -> void:
+	if path.is_empty():
+		return
+	var loaded := load(path) as AudioStreamOggVorbis
+	if loaded == null:
+		push_warning("[MusicManager] Could not load one-shot: %s" % path)
+		return
+	_ensure_player()
+	if _player == null:
+		return
+	_cancel_one_shot_for_override()
+	var return_stream := _player.stream as AudioStreamOggVorbis
+	_one_shot_return_state = {
+		"path": _current_path,
+		"paths": _playlist_paths.duplicate(),
+		"index": _playlist_index,
+		"volume_db": _player.volume_db,
+		"loop": return_stream != null and return_stream.loop,
+	}
+	_playlist_paths.clear()
+	_playlist_index = 0
+	_music_transition_generation += 1
+	var generation := _music_transition_generation
+	await _fade_music_to(-60.0, fade_seconds, generation)
+	if generation != _music_transition_generation or _one_shot_return_state.is_empty():
+		return
+	var stream := loaded.duplicate(true) as AudioStreamOggVorbis
+	stream.set_loop(false)
+	stream.set_loop_offset(0.0)
+	_player.stop()
+	_player.stream = stream
+	_player.volume_db = -60.0
+	_player.play()
+	_current_path = path
+	await _fade_music_to(float(_one_shot_return_state["volume_db"]) + attenuation_db,
+		fade_seconds, generation)
+
+
+func cancel_one_shot_and_restore() -> bool:
+	if _one_shot_return_state.is_empty():
+		return false
+	_music_transition_generation += 1
+	if _music_fade_tween != null and _music_fade_tween.is_running():
+		_music_fade_tween.kill()
+	if _player != null:
+		_player.stop()
+		_player.stream = null
+	_restore_one_shot_return_state()
+	return true
+
+
+func _cancel_one_shot_for_override() -> void:
+	if _one_shot_return_state.is_empty():
+		return
+	_music_transition_generation += 1
+	if _music_fade_tween != null and _music_fade_tween.is_running():
+		_music_fade_tween.kill()
+	if _player != null:
+		_player.volume_db = float(_one_shot_return_state["volume_db"])
+		_player.stop()
+		_player.stream = null
+	_one_shot_return_state.clear()
+	_current_path = ""
+
+
+func _fade_music_to(target_db: float, duration: float, generation: int) -> void:
+	if _player == null or duration <= 0.0:
+		if _player != null:
+			_player.volume_db = target_db
+		return
+	if _music_fade_tween != null and _music_fade_tween.is_running():
+		_music_fade_tween.kill()
+	_music_fade_tween = create_tween()
+	_music_fade_tween.tween_property(_player, "volume_db", target_db, duration)
+	await _music_fade_tween.finished
+	if generation != _music_transition_generation:
+		return
+
+
+func _restore_one_shot_return_state(fade_in: bool = false) -> void:
+	if _one_shot_return_state.is_empty():
+		return
+	var state := _one_shot_return_state
+	_one_shot_return_state = {}
+	_playlist_paths.clear()
+	for path: Variant in state["paths"]:
+		_playlist_paths.append(str(path))
+	_playlist_index = int(state["index"])
+	if _player == null:
+		_current_path = ""
+		return
+	var target_volume_db := float(state["volume_db"])
+	_player.volume_db = -60.0 if fade_in else target_volume_db
+	if bool(state["loop"]):
+		play_loop_track(str(state["path"]))
+	elif not _playlist_paths.is_empty():
+		_play_playlist_index()
+	else:
+		_player.stream = null
+		_current_path = ""
+	if fade_in and _player.playing:
+		_music_transition_generation += 1
+		_fade_music_to(target_volume_db, 0.35, _music_transition_generation)
+
 func play_playlist(paths: Array, restart: bool = false) -> void:
+	_cancel_one_shot_for_override()
 	var normalized_paths: Array[String] = []
 	for path_variant: Variant in paths:
 		var path := str(path_variant)
@@ -119,6 +233,9 @@ func _play_playlist_index() -> void:
 
 
 func _on_player_finished() -> void:
+	if not _one_shot_return_state.is_empty():
+		_restore_one_shot_return_state(true)
+		return
 	if _playlist_paths.is_empty():
 		return
 	_playlist_index = (_playlist_index + 1) % _playlist_paths.size()
@@ -126,6 +243,7 @@ func _on_player_finished() -> void:
 
 
 func stop_track() -> void:
+	_cancel_one_shot_for_override()
 	if _player == null:
 		return
 

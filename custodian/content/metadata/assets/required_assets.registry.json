@@ -278,6 +278,18 @@
       }
     },
     {
+      "id": "ash-bell-ritualant-stilling-release-score",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Forlorn Ritualant Stilling Release resolution score",
+      "target": "`custodian/content/audio/music/ash_bell/forlorn_ritualant_stilling_release_v1.ogg`",
+      "purpose": "Play the approved one-shot score after a fresh SITE_STABILIZED completion in the authored Ritualant Underground.",
+      "notes": "Stereo 48 kHz Vorbis, 38.709646 seconds, non-looping. Playback attenuation is -5.4 dB. SHA-256: ef547c4013a4cb7be23a898fdab7a463683e677959de5cd8999b405ea4761173. Separate from the looping exploration score and the still-needed Ash-Bell SFX/room-bed cues. Intake package did not include the WAV authoring master.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "fulfilled"
+      }
+    },
+    {
       "id": "last-routekeeper-residual-projection-animations",
       "section": "Last Routekeeper Event",
       "title": "Last Routekeeper residual projection animations",

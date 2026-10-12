@@ -4597,6 +4597,8 @@
       "owners": [
         "custodian/autoload/music_manager.gd",
         "custodian/asset_drop/inbox/ash_bell_ritualant_score_v1/*.ogg",
+        "custodian/asset_drop/inbox/ash_bell_ritualant_stilling_release_v1/*.ogg",
+        "custodian/asset_drop/inbox/ash_bell_ritualant_stilling_release_v1/README.md",
         "custodian/content/audio/music/ash_bell/*.ogg",
         "custodian/content/metadata/assets/required_assets.registry.json",
         "custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/**",

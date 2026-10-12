@@ -1,44 +1,51 @@
-# Eight Bells Ritualant Score Live V1
+# Ash Bell Ritualant Music Integration
 
 ## Status
 
-Implementation candidate on `agent/ash-bell-ritualant-score-live-v1`. Not landed: the changed-file validation sweep is not green because two existing Ritualant validation owners fail. Keep this branch attached for recovery. The supplied ZIP remains in Downloads because implementation closeout is not complete.
+Implementation candidate on `agent/ash-bell-ritualant-score-live-v1`; not landed. The existing Eight Bells exploration loop and newly supplied Stilling Release resolution cue are wired in the authored Forlorn Ritualant Underground. The ZIP is preserved until full changed-file validation and the required human audible playtest are complete.
 
 ## Implemented
 
-- Added the approved OGG to the audio inbox and runtime music path. Both copies match SHA-256 `4fcfd676ca77d9f36688edf87c92e6ad58da27b7141a7824f0ac49156796afc2`.
-- Added `MusicManager.play_loop_track()` using a duplicated Vorbis stream with loop enabled. Existing sequential playlist playback still sets loop false.
-- Bound cue start/restore to the authored `ForlornRitualantUnderground` lifecycle. Exit restores the previous playlist only if the Underground still owns the current cue.
-- Added an independent fulfilled audio requirement; the existing `ash-bell-audio-cues` SFX/ambience requirement remains `needed`.
-- Added a focused smoke for exact duration, looping, re-entry, playlist restoration, one music player, and another zone taking music authority; registered it in the validation manifest.
-- Updated `CURRENT_STATE.md` to describe this as an unlanded candidate and record the remaining gates.
+- Preserved the existing 48-bar Eight Bells exploration loop, its prior-playlist restore, and the global Causeway playlist semantics.
+- Added `forlorn_ritualant_stilling_release_v1.ogg` to the runtime music directory and audio intake route. The runtime and intake copies match SHA-256 `ef547c4013a4cb7be23a898fdab7a463683e677959de5cd8999b405ea4761173`.
+- Added `MusicManager.play_one_shot_track()`: it fades out the active score, plays one non-looping Vorbis stream through the existing player at -5.4 dB relative playback attenuation, then restores the captured track/playlist and volume.
+- Wired the cue only to a fresh `encounter_completed(SITE_STABILIZED)` signal after the peaceful dialogue/dissolve sequence. Route-state restoration suppresses playback; hostile/defiled completion does not select the cue.
+- On Underground departure, an active one-shot is cancelled and the previous zone playlist is restored only while the Underground still owns music. Another zone's music authority is preserved.
+- Added a distinct fulfilled audio requirement for the one-shot without changing the still-needed Ash-Bell SFX/room-bed requirement.
+- Extended `ash_bell_ritualant_music_smoke.gd` for one-shot loop policy, attenuation, completion restore, restore/hostility gates, exit cancellation, single-player ownership, and cross-zone handoff.
+- Updated `CURRENT_STATE.md` and registered the expanded validation owners.
 
-## Evidence
+## Source and artifact facts
 
-- Bundle SHA-256 checks: all six listed files passed.
-- `ffprobe`: Vorbis, 48 kHz, stereo, 185.806271 seconds.
-- Godot 4.7.2 editor import: completed.
-- `ash_bell_ritualant_music_smoke.gd`: PASS, including re-entry, single-player and authority-handoff cases.
-- `asset.py needs --write`, `asset.py needs --check`, and the new requirement query: PASS.
-- JSON parsing and `git diff --check`: PASS.
-- `run_validation.py --changed --base origin/main --json`: **FAIL**; 37 passed, 2 failed, 2 skipped, coverage complete. Failures: `forlorn_ritualant_mapper_semantics` (`chapel art bounds did not derive from texture size`) and `forlorn_ritualant_runtime` (lower-lift backstop/wing/boarding collision assertions). These files/assertions were not modified by this work. The run also emitted invalid texture UID fallback warnings from the existing Ritualant scene.
-- Direct `ash_bell_scene_smoke.gd`: FAIL, Stilling Pin pickup state assertion.
-- Direct `levels/forlorn_ritualant_underground_smoke.gd`: FAIL, lower-lift spawn placement and chapel outer-blend z assertions.
-- Human in-game listening (entry, full 48-bar loop/seam, exit, re-entry, no double playback): pending. Headless checks cannot establish audible quality.
+- ZIP: `~/Downloads/Stilling_Release_CUSTODIAN_Final_Audio_Pack_v1.zip`.
+- Runtime artifact: stereo Vorbis, 48 kHz, 38.709646 seconds; no re-encoding or other audio processing was performed.
+- The ZIP included three visual analysis images and `measurements.json`; those were inspected as supporting materials and were not copied into runtime content.
+- The ZIP did not contain the WAV authoring master. The intake README records this explicitly; the supplied review notes that the original WAV is separately available.
+- The ZIP is intentionally retained pending final closeout.
 
-The unrelated route/state failures are preserved as owner follow-up; this work did not change encounter mechanics or lift geometry. Do not force a green validation report or land around these failures. Re-run the full changed-file sweep after their owning workstream has resolved the Ritualant validation contract, then finish this branch.
+## Validation
+
+- Archive path-safety and ZIP integrity: PASS.
+- `ffprobe`: PASS, Vorbis / 48 kHz / stereo / 38.709646 seconds.
+- Godot 4.7.2 headless editor import: PASS.
+- `ash_bell_ritualant_music_smoke.gd`: PASS — loop, fresh one-shot, restore/hostile gates, -5.4 dB, exit restoration/cancellation, single player and authority handoff.
+- `asset.py needs --write` / `--check`: PASS.
+- Required-assets registry JSON parse and `git diff --check`: PASS.
+- Broad changed-file validation and human in-game audible review: pending.
+
+The earlier Eight Bells candidate's broad validation reported unrelated pre-existing Ritualant mapper/geometry assertions. They have not been treated as evidence for this new audio path; a fresh changed-file run is still needed against the now-synchronized `origin/main` before landing. Do not land if the required validation remains red. Headless checks cannot establish audible quality.
 
 ## Process Feedback
 
-- Feedback schema: `custodian.task_feedback.v1`
+- Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: the authored-level route validation selected by the changed-file sweep has pre-existing failures that prevent the required green closeout.
-- Root cause / contributing factors: the score attaches to the authored Underground lifecycle, whose validation ownership also covers existing geometry and encounter contracts outside this music slice.
-- Prevention / pipeline improvement: keep the focused score smoke registered and use the full changed-file report to surface cross-owner blockers before landing.
-- Tooling / docs drift discovered: no task packet exists for this named workstream; the user-provided handoff brief is the task authority. Existing Ash-Bell scene texture UID fallbacks remain noisy in headless runs.
+- What went wrong: the new cue arrived while the existing score workstream was already published but not landed; repository import state was also missing the new OGG import cache on first smoke attempt.
+- Root cause / contributing factors: the supplied deployment brief was delivered as a separate ZIP while the compatible Eight Bells integration remained in an unlanded workstream; the first smoke preceded Godot's normal import step.
+- Prevention / pipeline improvement: resolve existing audio ownership before asset changes, preserve the active worktree, and run headless editor import before audio-resource smokes.
+- Tooling / docs drift discovered: the Stilling Release archive omitted its WAV master even though the accompanying review note says the original WAV is separately available; the packaged OGG and its exact playback contract were sufficient for runtime wiring.
 - Follow-up: manual-follow-up
-- What worked: exact bundle hashes and the focused ownership/playlist smoke gave direct evidence for the new music contract.
+- What worked: the single-player cue transition smoke directly verified the lifecycle and authority boundaries.
 
 ## Next Handoff
 
@@ -48,5 +55,5 @@ The unrelated route/state failures are preserved as owner follow-up; this work d
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Refresh reason: none
-- Next action: route the existing Ritualant mapper/runtime validation failures to their owning workstream, then resume this branch, rerun changed-file validation, and land before requesting the human audible playtest.
-- Blockers or open questions: `forlorn_ritualant_mapper_semantics` and `forlorn_ritualant_runtime` fail on existing geometry/encounter assertions; actual in-game listening is also required before the cue is accepted as live.
+- Next action: run the changed-file validation on the current branch, resolve only failures that belong to this audio work, land through `workstream.py finish` when validation is green, then request the required human audible playtest. Delete the ZIP only after the completed integration and validation no longer depend on it.
+- Blockers or open questions: broad changed-file validation and in-game audition remain; the WAV authoring master was not present in the supplied ZIP.
