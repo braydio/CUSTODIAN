@@ -376,6 +376,35 @@
       "needs_import": false
     },
     {
+      "id": "reciprocal_continuity_canon_docs",
+      "type": "python",
+      "script": "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "lore",
+        "canon",
+        "documentation",
+        "reciprocal_continuity"
+      ],
+      "owners": [
+        "design/03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md",
+        "design/03_world/THE_ASH-BELL_CONTINUITY.md",
+        "design/03_world/lore/CORE_LORE.md",
+        "design/03_world/PROCEDURAL_LORE_GENERATION.md",
+        "design/04_architecture/HUB_SYSTEM_META_PROGRESSION.md",
+        "custodian/docs/ai_context/CONTEXT.md",
+        "custodian/docs/ai_context/CURRENT_STATE.md",
+        "custodian/docs/ai_context/FILE_INDEX.md",
+        "custodian/content/**",
+        "custodian/game/**",
+        "custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "tools/lore/validate_reciprocal_continuity_migration.sh"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_authoring_surface_contract",
       "type": "python",
       "script": "custodian/tools/validation/operator_authoring_surface_contract_smoke.py",
@@ -2354,7 +2383,7 @@
         "custodian/tools/validation/operator_melee_low_fps_contact_smoke.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_sword_cleaver",
@@ -2503,7 +2532,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_unarmed_fast_chain",
@@ -2714,7 +2743,7 @@
         "custodian/tools/validation/operator_modular_defense_ranged_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_modular_fast_attack",
@@ -3088,7 +3117,7 @@
         "custodian/game/actors/operator/operator.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_locomotion_socket",
@@ -3383,7 +3412,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 40,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "dev_observatory",
@@ -4007,6 +4036,25 @@
       "needs_import": true
     },
     {
+      "id": "npa_showcase_overlay",
+      "type": "godot_script",
+      "script": "res://tools/validation/npa_showcase_overlay_smoke.gd",
+      "tier": "integration",
+      "tags": ["npa", "showcase", "overlay", "dev_controls"],
+      "owners": [
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.tscn",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_scenario_controller.gd",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_debug_overlay.gd",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.gd",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/systems/combat/actor_relationship_resolver.gd",
+        "custodian/tools/validation/npa_showcase_overlay_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "world_ingress_physics_reentry",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_physics_reentry_smoke.gd",
@@ -4388,6 +4436,61 @@
       ],
       "timeout_sec": 45,
       "needs_import": false
+    },
+    {
+      "id": "drone_follower_commands",
+      "type": "godot_script",
+      "script": "res://tools/validation/drone_follower_commands_smoke.gd",
+      "tier": "actor",
+      "tags": ["drone", "commands", "guard", "replacement", "npa"],
+      "owners": [
+        "custodian/game/actors/allies/allied_infantry_droid.tscn",
+        "custodian/game/actors/allies/allied_infantry_droid.gd",
+        "custodian/game/actors/allies/combat_drone.gd",
+        "custodian/game/systems/drone/drone_manager.gd",
+        "custodian/game/systems/drone/drone_squad_state.gd",
+        "custodian/game/systems/drone/drone_command_profile.gd",
+        "custodian/game/systems/drone/drone_targeting.gd",
+        "custodian/game/actors/effects/drone_guard_order_marker.tscn",
+        "custodian/tools/validation/drone_follower_commands_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "main_scene_allied_droid",
+      "type": "godot_script",
+      "script": "res://tools/validation/main_scene_allied_droid_smoke.gd",
+      "tier": "integration",
+      "tags": ["drone", "production_scene", "presentation", "npa"],
+      "owners": [
+        "custodian/scenes/game.tscn",
+        "custodian/game/actors/allies/allied_infantry_droid.tscn",
+        "custodian/game/actors/allies/allied_infantry_droid.gd",
+        "custodian/game/actors/allies/combat_drone.gd",
+        "custodian/game/systems/drone/drone_manager.gd",
+        "custodian/tools/validation/main_scene_allied_droid_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "debug_collector_combat_drone",
+      "type": "godot_script",
+      "script": "res://tools/validation/debug_collector_combat_drone_smoke.gd",
+      "tier": "actor",
+      "tags": ["drone", "observability", "debug"],
+      "owners": [
+        "custodian/content/tiles/debug/debug_bus.gd",
+        "custodian/content/tiles/debug/debug_collector.gd",
+        "custodian/game/actors/allies/combat_drone.gd",
+        "custodian/tools/validation/debug_collector_combat_drone_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
     },
     {
       "id": "allied_drone_navigation_walkability",
@@ -5175,6 +5278,7 @@
       ],
       "owners": [
         "custodian/game/actors/operator/**",
+        "custodian/game/systems/core/systems/weapon_definition_factory.gd",
         "custodian/game/systems/combat/**",
         "custodian/game/systems/presentation/**",
         "custodian/tools/validation/operator_runtime_path_audit.py"
@@ -5242,6 +5346,19 @@
       "needs_import": false
     },
     {
+      "id": "operator_2_5d_composition_preflight",
+      "type": "godot_script",
+      "script": "res://tools/validation/operator_2_5d_composition_preflight_smoke.gd",
+      "tier": "integration",
+      "tags": ["operator", "animation", "presentation", "2_5d", "negative_control"],
+      "owners": [
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "operator_visual_ownership",
       "type": "godot_script",
       "script": "res://tools/validation/operator_visual_ownership_smoke.gd",
@@ -5261,7 +5378,7 @@
         "custodian/tools/validation/operator_visual_anchor_smoke.gd"
       ],
       "timeout_sec": 90,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_posture",

@@ -8,6 +8,7 @@
 - `custodian/docs/ai_context/task_packets/ASH_BELL_HIGHLANDS_GENERATED_DESTINATION.md` is BF2 ready/auto behind the BF1 correction re-review; BF3–BF7 remain explicit blocked/manual refresh-gated successors through the recorded authoring chat.
 - `design/01_systems/KENNEY_PRESENTATION_FEASIBILITY_ROADMAP.md` — K3D-1/K3D-1P evidence and the human walkaround gate before K3D-2 planning.
 - `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/` — registered DEMO-pack asset gallery with directional actor/animation cycling, Stone/Meridian floor samples, Gold/Glint/UI samples, District Transfer Frame ingress/return presentation, and generated standalone playtest; manifest at `custodian/content/data/dev/lords_of_pain/gallery_manifest.json`.
+- `custodian/game/world/levels/authored/dev/npa_showcase_arena/` — registered dev-only NPA proving ground with five authored actor sockets and a scene-local, bounded live-state overlay/scenario controller; missing Warrant/M-7 actors remain truthful N/A until their implementation packets land.
 - `custodian/tools/validation/levels/lords_of_pain_test_gallery_smoke.gd` — manifest/runtime-output coverage, explicit DEMO exclusions, production-scene ownership, ingress/return presentation, and Gold Drop toggle/reset smoke.
 - `design/05_levels/SUNDERED_KEEP_OVERLOOK_ALTERNATE_ROADMAP.md` — standalone-first program for the fixed-oblique small-shelf / vast-depth Sundered Keep alternate, optional Asset V2 polish, and later authoring-chat-gated production/procgen integration planning.
 - `custodian/docs/ai_context/task_packets/SUNDERED_KEEP_OVERLOOK_ALTERNATE_VERTICAL_SLICE.md` + paired review — reviewed-2.5D-foundation consumer that builds a real-Operator standalone overlook proof from existing donor art before any production-route change.
@@ -82,7 +83,8 @@
 
 ## Canon migration
 
-- `custodian/docs/ai_context/task_packets/RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` + paired review — ready fail-closed validation slice that protects the landed Reciprocal Continuity / Ash-Bell history lock from documentation and runtime-ID regression.
+- `custodian/docs/ai_context/task_packets/archived/RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` + `REVIEW_RECIPROCAL_CONTINUITY_CANON_DRIFT_GUARD.md` — completed fail-closed validation slice plus its pending independent review for the landed Reciprocal Continuity / Ash-Bell history lock.
+- `custodian/tools/validation/reciprocal_continuity_canon_docs_smoke.py` — fail-closed active-canon contract with mutation controls for authority/history drift, retired ontology, and production knowledge IDs; `tools/lore/validate_reciprocal_continuity_migration.sh` runs it before its diagnostic-only broad searches.
 
 `design/03_world/LATTICE_DOMAIN_COSMOLOGY_MIGRATION.md` is the active migration
 lock for persistent Lattice Domains, Archive Fields, Pale geography, route
@@ -709,9 +711,10 @@ Last updated: 2026-10-02
 - `custodian/game/systems/drone/drone_command_profile.gd` — drone tuning and mode constants for HP, speed, range, burst cadence, retreat threshold, tactical modes, follow-distance bands, separation, free-roam patrol timing, and leash behavior
 - `custodian/game/systems/drone/drone_targeting.gd` — deterministic autonomous hostile selection plus explicit-command eligibility, including the passive-Shrumb exception and targetability checks
 - `custodian/game/systems/drone/drone_squad_state.gd` — lightweight resource tracking active/destroyed drone IDs, current tactical mode, fire discipline, current follow distance, reserve, and max active count
-- `custodian/tools/validation/main_scene_allied_droid_smoke.gd` — focused smoke proving `game.tscn` routes `DroneManager` to the animated allied droid scene and manager-owned T/G/J+click/K actions
+- `custodian/tools/validation/main_scene_allied_droid_smoke.gd` — manifest-owned `main_scene_allied_droid` check proving `game.tscn` routes `DroneManager` to the animated allied droid scene and manager-owned T/G/J+click/K actions
 - `custodian/tools/validation/commanded_ally_targeting_contract_smoke.gd` — registered actor-to-projectile proof for inherited ally allegiance, autonomous versus explicit neutral/passive targeting, real projectile damage, stale-burst cancellation, and squad-slot replacement
-- `custodian/tools/validation/drone_follower_commands_smoke.gd` — focused V3 smoke for squad state, Operator/guard anchor transitions, close/far/roam guard goals, return limits, marker lifecycle, propagation, replacement inheritance, complete return-to-Operator-follow behavior, recall compatibility, and hold-fire burst cancellation
+- `custodian/tools/validation/drone_follower_commands_smoke.gd` — manifest-owned `drone_follower_commands` check for squad state, real DroneManager/allied-droid spawn, cap and stable slot identity, Operator/guard anchors, close/far/roam goals, marker lifecycle, replacement inheritance, recall, and hold-fire cancellation
+- `custodian/tools/validation/debug_collector_combat_drone_smoke.gd` — manifest-owned `debug_collector_combat_drone` check for CombatDrone range observability
 - `custodian/tools/validation/allied_drone_navigation_walkability_smoke.gd` — focused spawn projection, deterministic nearest-floor selection, registration ordering, and authoritative no-path stop contract
 - `custodian/tools/validation/enemy_patrol_navigation_smoke.gd` — focused patrol no-path invalidation and fail-closed path-helper contract
 - `custodian/game/systems/core/state/game_state.gd` — fail-state and phase authority autoload; now pauses and mounts the game-over modal on `trigger_game_over(...)`, preserves the existing debug fields, and exposes `reset_run_state(...)` for restart flows.

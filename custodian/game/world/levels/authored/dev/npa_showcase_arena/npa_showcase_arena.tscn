@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.gd" id="1_level"]
 [ext_resource type="Script" path="res://game/world/levels/interactable_level_exit_2d.gd" id="2_exit"]
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_scenario_controller.gd" id="3_scenario"]
+[ext_resource type="Script" path="res://game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_debug_overlay.gd" id="4_overlay"]
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_exit_0"]
 size = Vector2(72, 72)
 
@@ -26,6 +28,13 @@ position = Vector2(96, 0)
 [node name="POIRoot" type="Node2D" parent="."]
 [node name="EventMarkers" type="Node2D" parent="."]
 [node name="EventRuntime" type="Node2D" parent="."]
+[node name="ScenarioController" type="Node" parent="EventRuntime"]
+script = ExtResource("3_scenario")
+[node name="ShowcaseOverlay" type="CanvasLayer" parent="EventRuntime"]
+script = ExtResource("4_overlay")
+[node name="ScenarioActors" type="Node2D" parent="."]
+[node name="Enemies" type="Node2D" parent="ScenarioActors"]
+[node name="Allies" type="Node2D" parent="ScenarioActors"]
 [node name="Exits" type="Node2D" parent="."]
 [node name="Exit_Main" type="Area2D" parent="Exits"]
 position = Vector2(-2200, 300)

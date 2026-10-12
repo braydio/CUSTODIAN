@@ -21,6 +21,26 @@ artifacts use their own workstream worktree. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
 the default implementation surface.
 
+## Planned crash-safe session recovery (NOT IMPLEMENTED)
+
+Design authority: `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
+Two dependency-gated packets (`agent-orphan-recovery-observability-v1`
+and `agent-orphan-recovery-fenced-parking-v1`), each with independent review,
+propose to distinguish the **execution lease** from the preserved
+`agent/<workstream>` Git branch. OR1 will add supervised Codex/review process
+identity and a **read-only** orphan inventory; OR2 will add exact-owner
+CAS-fenced `PARKED` recovery and optional **user-enabled** host-local
+`systemd --user` scanning. A confirmed exited session should release its
+execution lock only after its worktree/commits/untracked files and reviewer
+outcome are preserved. No existing remote ref/lock is currently governed by
+this proposal; the instructions below remain the live supported procedures.
+
+Until both slices pass review: `dispatch.py audit --json` is read-only,
+`workstream.py resume` requires a clean worktree, no automatic branch deletion
+is permitted, and `paired_review_runner.py post_exit_recovery` remains a
+protected manual-resolution state. Do not infer a dead session merely from
+elapsed time, or mark a findings-only review passed to release its lock.
+
 ## Start or resume
 
 Derive one stable lowercase kebab-case ID for a coherent task. Run from the

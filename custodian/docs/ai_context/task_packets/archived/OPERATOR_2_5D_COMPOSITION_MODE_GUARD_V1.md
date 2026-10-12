@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-2-5d-composition-mode-guard-v1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-operator-2-5d-cohort-dependency-closure-review-corrections-1
@@ -36,6 +36,27 @@
 - Validation: Existing `operator_visual_ownership_smoke.gd`, `operator_unarmed_posture_smoke.gd`, `operator_modular_layers_smoke.gd`, `operator_guard_flow_smoke.gd`, `operator_parry_presentation_smoke.gd`, `operator_runtime_animation_authority_smoke.py`, `operator_2_5d_cohort_dependency_closure_smoke.py` if present; focused new fixture/negative-control test registered in `validation_manifest.json`; `python3 custodian/tools/validation/run_validation.py --changed --json`, `check_ai_context.py --json`, `validate_review_pairing.py`, `task_packet_index.py`, `git diff --check`. Use Godot serialized project/import lock; do not run a full runtime suite merely to prove a presentation-only contract.
 - Task overrides: none
 - Deferred: Future WB25-6 generation-aware runtime metadata and cutover, actual 128px split-layer authoring only for evidence-justified combinations, human selection of cohort, artist FPS, final visual subjective release acceptance.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `OperatorPresentationController.preflight_composition_fixture_only()` is a pure structural preflight and has no production caller. It checks mode/owner fit, unique complete body shape, plan registration, exact selector identity and SpriteFrames playback, and completion-clock membership before any owner transfer. The focused `operator_2_5d_composition_preflight` fixture passed full-body, independently faced split movement+guard, and exclusive-rig shapes; it rejected missing/duplicate layers, stale exact identities and mode/owner mismatch without owner mutation, kept movement permission false, and ignored a caller's generation claim. Generation status remains `UNKNOWN/BLOCKED` because current runtime metadata does not bind clip identities to an approved generation/profile. The final changed-file sweep is recorded in the durable summary. The five named Godot presentation regressions and both Python authority/cohort smokes passed. No source assets, generated runtime art, selector policy, target rows, or production generation behavior changed.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The first Godot fixture attempt ran in a cold worktree without its ignored import/class cache and could not resolve global classes. After the required serialized project import, the focused test and changed sweep passed.
+- Root cause / contributing factors: New linked worktrees do not carry the coordination checkout's generated Godot import cache; the validation runner initially timed out when the fixture failed before reaching its quit path.
+- Prevention / pipeline improvement: Initialize/import the Godot project under its shared lock before direct script-based presentation validation in a cold worktree, then ensure failing fixtures always report and quit.
+- Tooling / docs drift discovered: none
+- Follow-up: review-operator-2-5d-composition-mode-guard-v1
+- What worked: Keeping structural fixture readiness separate from generation approval preserved a useful positive contract while refusing to manufacture 2.5D provenance.
 
 ## Handoff
 

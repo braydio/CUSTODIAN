@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-dev-overlays`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-showcase-arena-foundation`
@@ -54,3 +54,23 @@ Actual registered arena lives at custodian/game/world/levels/authored/dev/npa_sh
 - Refresh reason: normal dependency and latest-main reconciliation
 - Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.
 - Blockers or open questions: none beyond repo-local authoring validation/promotion.
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Registered arena now owns the overlay and scenario controller in `custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.tscn`. `npa_showcase_overlay` proves scene scope, absent Warrant/M-7 N/A state, real Marine spawn and relationship/lifecycle projection, bounded event history, viewport bounds and reset. Existing `npa_showcase_arena_foundation` proves the single-Operator wrapper and route foundation remain intact. The final changed-file sweep selected 33 checks, all 33 passed, coverage complete with no uncovered files. `check_ai_context.py`, `validate_review_pairing.py`, packet index and `git diff --check` passed. The required fresh paired review remains a separate post-land workstream.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: initial smoke found a parent-path assumption and two GDScript scope errors; corrected before validation closeout. Existing arena foundation emits renderer/object leak warnings when headless teardown runs, though its assertions pass.
+- Root cause / contributing factors: new controller is nested under EventRuntime and the overlay is a runtime-built Control tree.
+- Prevention / pipeline improvement: the focused smoke now exercises the nested controller path and checks the overlay panel stays within the project viewport.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: focused and changed-file validation were deterministic after import.

@@ -1,8 +1,12 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-09-29
+Last updated: 2026-10-12
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
+
+## Planned — Lazygit-style Mission Control TUI (2026-10-12)
+
+Owning spec: `AGENT_MISSION_CONTROL_TUI_V1.md`. **Planning only; no executable UI, new agent control, or ready task packets landed.** MC1's implementation and independent review packet pair has since been staged as `draft/manual` pending targeted authoring preflight. The user selected a TUI-first, Lazygit-like keyboard-driven workstream console (Textual candidate) in place of a generic boxed analytics dashboard. It combines truthful dispatcher eligibility, Git/paired-review lifecycle, local Codex token telemetry, attention/notifications and evidence-linked actions through existing authorities. Eight bounded MC1–MC8 proposed implementation/review slices are mapped in the spec. MC1–MC4 can supply a read-only TUI before OR2; verified process liveness and recovery controls remain gated on accepted OR1/OR2. This plan does not supersede dispatcher ownership, packet rules, or review receipts. Authoring chat URL is `not-recorded` pending the current conversation link.
 
 ## Current Implementation Audit
 
@@ -27,6 +31,21 @@ Moment Forge is now implemented separately under
 visual/audio/game-feel comparison provides direct production leverage across
 combat, animation, VFX, healing, and vista work.
 
+
+## Planned — Session-aware orphan recovery supervisor (2026-10-11)
+
+See `AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md` and the active
+`AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md` /
+`AGENT_ORPHAN_RECOVERY_FENCED_PARKING_V1.md` paired packet series. Unlike
+the original V1 dispatcher deferral, the proposal deliberately separates a
+time-bounded **execution lease** from retained work branch history. OR1 is
+read-only supervised-process evidence; OR2 is exact-owner, independently
+reviewed `PARKED` recovery that can release only inactive logical locks
+while preserving dirty/untracked data. Optional `systemd --user` support is
+disabled by default and cannot force-claim work from unknown/foreign hosts.
+This is **planned**, not yet part of the active dispatcher. Existing no-stash,
+no-reset, no-age-delete, review receipt and branch archive rules remain in
+force until safely implemented and reviewed.
 
 ## Implemented — Repository Task Dispatcher
 
