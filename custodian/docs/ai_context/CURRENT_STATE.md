@@ -8,7 +8,7 @@ User-selected interface: Lazygit-style, keyboard-first TUI (Textual candidate),
 not a tile-heavy browser/dashboard UI. Planned MC1–MC8 cover canonical
 read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
 supervisor integration, validation, attention and guarded workflow actions,
-with paired reviews. **No implementation or ready packets exist from this plan.**
+with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
 Dispatcher eligibility, actual Git landing, independent review receipts and
 verified OR1 process identity remain separate authorities; before OR1/OR2
 land, unknown execution ownership must not be shown as LIVE. Source Codex
