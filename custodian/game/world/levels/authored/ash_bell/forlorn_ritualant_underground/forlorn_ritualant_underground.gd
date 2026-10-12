@@ -4,6 +4,7 @@ class_name ForlornRitualantUnderground
 const OPERATOR_PRESENTATION_RIG_SCENE := preload(
 	"res://game/actors/operator/presentation/operator_presentation_rig_2d.tscn"
 )
+const RITUALANT_SCORE_PATH := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v1.ogg"
 const LIFT_ASCENT_DISTANCE := 176.0
 const LOWER_LIFT_TRAVEL_DISTANCE := 256.0
 const ARRIVAL_BLACK_HOLD_SEC := 0.20
@@ -83,6 +84,8 @@ const AUTHORING_MARKERS := {
 	$CameraPresentation/AuthoredCameraZoneDirector2D
 )
 
+var _ritualant_music_activated := false
+var _previous_music_paths: Array[String] = []
 var _departure_running := false
 var _departure_actor: Node = null
 var _departure_rig: OperatorPresentationRig2D = null
@@ -109,7 +112,34 @@ func _ready() -> void:
 		)
 		call_deferred("_refresh_initial_camera_profile")
 	call_deferred("_bind_active_operator")
+	_start_ritualant_score()
 
+
+
+# Eight Bells / The Ninth Was Never Cast: level-scoped playback, not a global default.
+func _start_ritualant_score() -> void:
+	var manager := get_node_or_null("/root/MusicManager")
+	if manager == null or not manager.has_method("play_loop_track"):
+		return
+	if not ResourceLoader.exists(RITUALANT_SCORE_PATH):
+		push_warning("[AshBell] Missing Ritualant score; leaving current music unchanged")
+		return
+	_previous_music_paths = manager.get_playlist_paths()
+	manager.play_loop_track(RITUALANT_SCORE_PATH)
+	_ritualant_music_activated = manager.get_current_path() == RITUALANT_SCORE_PATH
+
+
+func _restore_music_after_ritualant() -> void:
+	if not _ritualant_music_activated:
+		return
+	var manager := get_node_or_null("/root/MusicManager")
+	if manager == null or manager.get_current_path() != RITUALANT_SCORE_PATH:
+		return # Another level already took music authority. Never override it.
+	if _previous_music_paths.is_empty():
+		manager.stop_track()
+	else:
+		manager.play_playlist(_previous_music_paths, true)
+	_ritualant_music_activated = false
 
 func get_environment_region_at_global(world_position: Vector2) -> Dictionary:
 	var local_position := to_local(world_position)
@@ -460,6 +490,7 @@ func restore_route_state(state: Dictionary) -> bool:
 
 
 func _exit_tree() -> void:
+	_restore_music_after_ritualant()
 	if _bound_operator != null and is_instance_valid(_bound_operator):
 		var callback := Callable(self, "_on_operator_weapon_feedback")
 		if _bound_operator.is_connected("weapon_feedback_event", callback):

@@ -4555,6 +4555,28 @@
       "needs_import": true
     },
     {
+      "id": "ash_bell_ritualant_music",
+      "type": "godot_script",
+      "script": "res://tools/validation/ash_bell_ritualant_music_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "ash_bell",
+        "audio",
+        "music",
+        "level_lifecycle"
+      ],
+      "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/asset_drop/inbox/ash_bell_ritualant_score_v1/*.ogg",
+        "custodian/content/audio/music/ash_bell/*.ogg",
+        "custodian/content/metadata/assets/required_assets.registry.json",
+        "custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/**",
+        "custodian/tools/validation/ash_bell_ritualant_music_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "ritualant_underground_environment_assets",
       "type": "godot_script",
       "script": "res://tools/validation/ritualant_underground_environment_assets_smoke.gd",

@@ -266,6 +266,18 @@
       }
     },
     {
+      "id": "ash-bell-ritualant-score",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Forlorn Ritualant encounter score",
+      "target": "`custodian/content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v1.ogg`",
+      "purpose": "Provide the approved looping 48-bar score while the authored Ritualant Underground owns music playback.",
+      "notes": "Distinct from the still-needed Ash-Bell SFX and room-bed cues above. Runtime OGG is the published audio asset; the separate Ableton WAV remains the authoring master.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "fulfilled"
+      }
+    },
+    {
       "id": "last-routekeeper-residual-projection-animations",
       "section": "Last Routekeeper Event",
       "title": "Last Routekeeper residual projection animations",

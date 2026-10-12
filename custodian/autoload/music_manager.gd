@@ -52,6 +52,30 @@ func play_track(path: String) -> void:
 	play_playlist([path])
 
 
+
+# Eight Bells: scoped single-cue looping; normal sequential playlists stay non-looping.
+func play_loop_track(path: String) -> void:
+	if path.is_empty():
+		return
+	_ensure_player()
+	if _current_path == path and _player.playing:
+		var active_stream := _player.stream as AudioStreamOggVorbis
+		if active_stream != null and active_stream.loop:
+			return
+	var loaded := load(path) as AudioStreamOggVorbis
+	if loaded == null:
+		push_warning("[MusicManager] Could not load loop: %s" % path)
+		return
+	var stream := loaded.duplicate(true) as AudioStreamOggVorbis
+	stream.set_loop(true)
+	stream.set_loop_offset(0.0)
+	_player.stop()
+	_player.stream = stream
+	_playlist_paths = [path]
+	_playlist_index = 0
+	_player.play()
+	_current_path = path
+
 func play_playlist(paths: Array, restart: bool = false) -> void:
 	var normalized_paths: Array[String] = []
 	for path_variant: Variant in paths:
