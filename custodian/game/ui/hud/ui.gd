@@ -540,6 +540,7 @@ func _register_devconsole_commands() -> void:
 		_register_devconsole_command(console, "show_cognitive", _devconsole_show_cognitive)
 		_register_devconsole_command(console, "test_spawn", _devconsole_test_spawn)
 		_register_devconsole_command(console, "spawn_grunt", _devconsole_spawn_grunt)
+		_register_devconsole_command(console, "spawn_broken_warrant", _devconsole_spawn_broken_warrant)
 		_register_devconsole_command(console, "spawn_vaultwing", _devconsole_spawn_vaultwing)
 		_register_devconsole_command(console, "spawn_pursuit_frame", _devconsole_spawn_pursuit_frame)
 		_register_devconsole_command(console, "spawn_savage", _devconsole_spawn_savage)
@@ -637,6 +638,21 @@ func _devconsole_spawn_grunt(args: Array) -> String:
 		var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "grunt", pos, &"", mode))
 		return "Spawned grunt mode=%s at %s" % [String(mode), str(pos)] if spawned else "Failed to spawn grunt mode=%s" % String(mode)
 	return "EnemyDirector not found or spawn_debug_enemy_type not available"
+
+
+func _devconsole_spawn_broken_warrant(args: Array) -> String:
+	var operator := _get_operator_node()
+	if operator == null:
+		return "Operator not found"
+	var offset := Vector2(96.0, 0.0)
+	if args.size() >= 2 and str(args[0]).is_valid_float() and str(args[1]).is_valid_float():
+		offset = Vector2(float(args[0]), float(args[1]))
+	var enemy_mgr := get_node_or_null("/root/GameRoot/EnemyDirector")
+	if enemy_mgr == null or not enemy_mgr.has_method("spawn_debug_enemy_type"):
+		return "EnemyDirector not found or spawn_debug_enemy_type not available"
+	var position: Vector2 = operator.global_position + offset
+	var spawned := bool(enemy_mgr.call("spawn_debug_enemy_type", "broken_warrant", position))
+	return "Spawned Broken Warrant at %s" % str(position) if spawned else "Failed to spawn Broken Warrant"
 
 
 func _devconsole_spawn_vaultwing(args: Array) -> String:

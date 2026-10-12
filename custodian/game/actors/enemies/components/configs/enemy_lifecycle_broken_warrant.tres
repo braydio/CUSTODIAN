@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyLifecycleConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/components/enemy_lifecycle_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+starting_health = 112.0
+maximum_health = 112.0
+material_drop_min = 2
+material_drop_max = 4
+loot_table_id = "npa_broken_warrant_field_salvage"
+loot_table = [{"resource_id": "ruin_scrap", "min": 2, "max": 4, "chance": 1.0, "label": "crumpled warrant plate and decommissioned patrol fittings"}, {"resource_id": "cracked_field_tag", "min": 1, "max": 1, "chance": 0.35, "label": "shattered enforcement identity tag"}]

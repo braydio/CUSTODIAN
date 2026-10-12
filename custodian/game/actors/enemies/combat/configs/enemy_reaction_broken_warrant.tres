@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyReactionConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/combat/enemy_reaction_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+hit_recoil_duration = 0.16
+stagger_duration = 0.45
+resists_light_flinch = false
+posture_max = 120.0
+posture_recovery_delay = 1.5
+posture_recovery_rate = 22.0
+light_flinch_cooldown = 0.8
+crit_hit_duration = 0.9
+crit_recovery_duration = 0.7

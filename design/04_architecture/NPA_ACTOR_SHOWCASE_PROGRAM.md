@@ -1,8 +1,8 @@
 # NPA Actor Showcase Program
 
-**Status:** arena foundation and existing enemy showcase reviewed complete; four mechanical showcase pairs and their reviews ready/auto with reviewed dependencies; original actor art and final arena approval remain draft/manual.
+**Status:** arena foundation and existing enemy showcase reviewed complete; Broken Warrant runtime implementation is complete pending its paired review; other mechanical showcase pairs remain dependency-gated; original actor art and final arena approval remain draft/manual.
 **Program identity:** `npa-actor-showcase`
-**Refreshed main:** `b0ff835f8006d5ff6f250e682328512f8aa771d4`
+**Refreshed main:** `938f7380dfb96423ab042c5bfc790dd33b3c6f7d`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Objective
@@ -56,12 +56,13 @@ Five distinct *real* actor instances at their own labeled live pads, not screens
 ## Promotion protocol / why drafts are on main
 Publishing task text from an isolated GitHub-only environment is **not** equivalent to running `python3 custodian/tools/agent/validate_task_packet_authoring.py` or Godot. For each still-draft pair: fetch latest main, check AGENTS and dispatcher audit, verify live dependencies/locks, run the targeted authoring validator in a real repo checkout, promote only mechanically unlocked pairs to `ready/auto` together and revalidate, regenerate and verify `task_packet_index.py`, land through normal safe workstream lifecycle, then verify the dispatcher audit. Keep source-gated art and final-consumer pairs parked until their exact external inputs and refresh evidence exist.
 
-**Next action:** finish the arena foundation and its fresh paired review, then reconcile the named existing-enemy-hardening successor against current main before promotion or claim. Exact authoring backlink for every implementation and review summary: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
+**Next action:** complete the Broken Warrant paired review, then continue only through the dispatcher-confirmed NPA dependency chain. Exact authoring backlink for every implementation and review summary: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 
 ## Dependency-truth refresh · 2026-10-11
 
 - Reviewed complete: NPA-7; showcase arena foundation; showcase existing enemy hardening; PF5 coordinator R1-01/R1-02 cycle-2 and cycle-1 review pairs. None needs re-authoring or a duplicate claim.
-- Ready/auto, prerequisite-gated: Broken Warrant and review (enemy review complete); dev overlays and review (arena review complete); M-7 and review (await existing-drone hardening review); Vaultwing same-instance proof and review (await reviewed runtime hardening **and** reviewed world-spawn fix).
+- Broken Warrant implementation now reuses the live Enemy/Grunt authority, registers only a development-console spawn, and does not enter normal wave composition. Its original Asset V2 art family/source remains absent; current Grunt donor visuals are explicitly provisional. Its paired review remains the next gate.
+- Ready/auto, prerequisite-gated: dev overlays and review (arena review complete); M-7 and review (await existing-drone hardening review); Vaultwing same-instance proof and review (await reviewed runtime hardening **and** reviewed world-spawn fix).
 - Vaultwing runtime hardening fresh review reportedly passed but has a preserved post-exit receipt recovery/claim; its active packet must not be archived by metadata edit or separately re-claimed. H5 remains active separately.
 - Original NPA actor art intake, art completion audit and final five-actor arena remain **draft/manual** for actual human-approved art/consumer evidence; donor art and normalized Dropbox sources cannot prove completion.
 - Correct arena root: `custodian/game/world/levels/authored/dev/npa_showcase_arena/`; legacy `npa_actor_showcase` is not present on this main.

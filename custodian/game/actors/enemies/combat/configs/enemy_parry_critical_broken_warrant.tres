@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="EnemyParryCriticalConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/actors/enemies/combat/enemy_parry_critical_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+minimum_window_sec = 0.9
+capture_range_px = 72.0

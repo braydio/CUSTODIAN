@@ -3,6 +3,7 @@ class_name WaveManager
 
 const ENEMY_VARIANT_FACTORY_SCRIPT := preload("res://game/enemies/procgen/enemy_variant_factory.gd")
 const WAVE_ALERT_SOUND: AudioStream = preload("res://content/audio/sfx/environment/wave_alert_01.wav")
+const NPA_BROKEN_WARRANT_DEBUG_SCENE: PackedScene = preload("res://game/actors/enemies/npa_broken_warrant.tscn")
 
 signal wave_started(wave_number: int)
 signal wave_completed(wave_number: int)
@@ -318,7 +319,7 @@ func debug_spawn_enemy_type(enemy_type: String = "drone", spawn_position: Vector
 	var normalized_type := enemy_type.strip_edges().to_lower()
 	if normalized_type.is_empty():
 		normalized_type = "drone"
-	var packed_scene := _scene_for_enemy_type(normalized_type)
+	var packed_scene := _debug_scene_for_enemy_type(normalized_type)
 	if packed_scene == null:
 		push_warning("[WaveManager] Enemy scene missing for debug type %s" % normalized_type)
 		return false
@@ -500,6 +501,12 @@ func _scene_for_enemy_type(enemy_type: String) -> PackedScene:
 			return null
 
 
+func _debug_scene_for_enemy_type(enemy_type: String) -> PackedScene:
+	if enemy_type == "broken_warrant":
+		return NPA_BROKEN_WARRANT_DEBUG_SCENE
+	return _scene_for_enemy_type(enemy_type)
+
+
 func _apply_behavior_profile(enemy: Node, enemy_type: String, profile_id: StringName = &"") -> void:
 	var chosen_profile := profile_id
 	if chosen_profile == &"" and enemy_type == "savage":
@@ -508,6 +515,8 @@ func _apply_behavior_profile(enemy: Node, enemy_type: String, profile_id: String
 		chosen_profile = &"raider_grunt"
 	elif chosen_profile == &"" and enemy_type == "marine":
 		chosen_profile = &"raider_marine"
+	elif chosen_profile == &"" and enemy_type == "broken_warrant":
+		chosen_profile = &"raider_broken_warrant"
 	if chosen_profile == &"":
 		return
 	if enemy.has_method("set_behavior_profile"):

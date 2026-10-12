@@ -78,6 +78,31 @@ class_name EnemyBehaviorProfile
 static func create_profile(id: StringName) -> Resource:
 	var profile = load("res://game/actors/enemies/components/enemy_behavior_profile.gd").new()
 	match id:
+		&"raider_broken_warrant":
+			profile.profile_id = &"raider_broken_warrant"
+			profile.display_name = "Broken Warrant"
+			profile.aggression_weight = 0.78
+			profile.theft_weight = 0.0
+			profile.sabotage_weight = 0.0
+			profile.self_preservation_weight = 0.18
+			profile.curiosity_weight = 0.08
+			profile.vision_range_px = 230.0
+			profile.hearing_range_px = 170.0
+			profile.detection_gain_per_sec = 1.55
+			profile.detection_decay_per_sec = 0.75
+			profile.detection_notice_threshold = 0.34
+			profile.detection_alert_threshold = 1.0
+			profile.can_steal_resources = false
+			profile.can_sabotage_storage = false
+			profile.morale_max = 110.0
+			profile.morale_panic_threshold = 12.0
+			profile.patrol_speed = 52.0
+			profile.investigate_speed = 64.0
+			profile.engage_speed = 74.0
+			profile.flee_speed = 72.0
+			profile.objective_speed = 64.0
+			profile.ambient_activity_weight = 0.08
+			profile.noncombat_warning_seconds = 0.35
 		&"raider_marine":
 			profile.profile_id = &"raider_marine"
 			profile.display_name = "Raider Marine"

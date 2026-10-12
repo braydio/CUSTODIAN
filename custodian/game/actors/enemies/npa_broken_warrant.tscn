@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/enemies/enemy_grunt.tscn" id="1_grunt"]
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/standard_enemy_melee_broken_warrant.tres" id="2_melee"]
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/enemy_reaction_broken_warrant.tres" id="3_reaction"]
+[ext_resource type="Resource" path="res://game/actors/enemies/combat/configs/enemy_parry_critical_broken_warrant.tres" id="4_parry"]
+[ext_resource type="Resource" path="res://game/actors/enemies/components/configs/enemy_lifecycle_broken_warrant.tres" id="5_lifecycle"]
+
+[node name="BrokenWarrant" instance=ExtResource("1_grunt")]
+lifecycle_config = ExtResource("5_lifecycle")
+standard_enemy_melee_config = ExtResource("2_melee")
+reaction_config = ExtResource("3_reaction")
+parry_critical_config = ExtResource("4_parry")
+enemy_name = "BROKEN WARRANT"
+speed = 72.0
+damage = 11.0
+base_tint = Color(0.42, 0.29, 0.13, 1)
+custom_enemy_animation_set = "enemy_grunt"
+grunt_falcon_punch_enabled = false
+behavior_state_machine_enabled = true
+behavior_profile_id = &"raider_broken_warrant"
+metadata/art_status = "PROVISIONAL_GRUNT_DONOR"
+metadata/art_family_id = "npa_broken_warrant"

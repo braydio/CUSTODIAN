@@ -6348,6 +6348,34 @@
       "needs_import": false
     },
     {
+      "id": "npa_broken_warrant",
+      "type": "godot_script",
+      "script": "res://tools/validation/npa_broken_warrant_smoke.gd",
+      "tier": "actor",
+      "tags": ["combat", "enemy", "npa", "broken_warrant", "regression"],
+      "owners": [
+        "custodian/game/actors/enemies/npa_broken_warrant.tscn",
+        "custodian/game/actors/enemies/combat/configs/standard_enemy_melee_broken_warrant.tres",
+        "custodian/game/actors/enemies/combat/configs/enemy_reaction_broken_warrant.tres",
+        "custodian/game/actors/enemies/combat/configs/enemy_parry_critical_broken_warrant.tres",
+        "custodian/game/actors/enemies/components/configs/enemy_lifecycle_broken_warrant.tres",
+        "custodian/game/actors/enemies/components/enemy_behavior_profile.gd",
+        "custodian/game/actors/enemies/combat/standard_enemy_melee.gd",
+        "custodian/game/actors/enemies/combat/enemy_reaction_controller.gd",
+        "custodian/game/actors/enemies/combat/enemy_parry_critical.gd",
+        "custodian/game/actors/enemies/components/enemy_lifecycle.gd",
+        "custodian/game/actors/enemies/components/enemy_corpse_loot.gd",
+        "custodian/game/actors/enemies/enemy.gd",
+        "custodian/game/systems/core/systems/wave_manager.gd",
+        "custodian/game/ui/hud/ui.gd",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/npa_broken_warrant_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_existing_enemy",
       "type": "godot_script",
       "script": "res://tools/validation/npa_showcase_existing_enemy_smoke.gd",

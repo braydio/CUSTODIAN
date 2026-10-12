@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `npa-showcase-broken-warrant-actor`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-npa-showcase-existing-enemy-hardening`
@@ -54,3 +54,10 @@ Existing-enemy showcase hardening and independent review are complete. Broken Wa
 - Refresh reason: normal dependency and latest-main reconciliation
 - Next action: After this pair's independent review, inspect the next roadmap gate and promote only if its realized dependencies are satisfied.
 - Blockers or open questions: none beyond repo-local authoring validation/promotion.
+
+## Execution Feedback
+- Outcome: partial; implementation and focused actor checks are present, but required changed-file sweep did not pass.
+- Validation evidence: changed-file sweep selected 42 checks, passed 38, timed out `command_terminal_tutorial`, `terminal_page_order_regression`, and `terminal_sensors_layout` at 120 seconds, skipped downstream `awakening_late_seams_v1`, and reported complete coverage with no uncovered files. Focused Broken Warrant and shared-authority tests passed independently.
+- Blocker: existing procgen-backed checks remain over the runner's 120-second timeout in this environment. The attempted timeout increase did not resolve it and has been reverted; no broad timeout policy change is retained.
+- Tooling / docs drift discovered: none; the runner reported the changed files and coverage correctly.
+- Recovery: preserve this branch and rerun the changed sweep after the procgen checks or execution environment can complete within their configured budget.

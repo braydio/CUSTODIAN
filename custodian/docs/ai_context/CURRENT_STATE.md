@@ -74,6 +74,16 @@ worktrees, including protected status; it never cleans them. See
 
 Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pairing/validation gated; `ready/manual` waits for explicit claim timing; `blocked/manual` is parked with a concrete refresh or human-decision reason; `draft/auto` is invalid; `complete` packets archive through the lifecycle. The shared packet contract validates active dependency identities and duplicate workstreams while preserving archived history. `dispatch.py status` separates READY, CLAIMED, DEPENDENCY/LOCK BLOCKED, MANUAL READY, PARKED DRAFT, and INVALID/RECOVERY. See the packet README and authoring template.
 
+## NPA Broken Warrant Runtime Actor (2026-10-11)
+
+`npa_broken_warrant.tscn` reuses the Enemy/Grunt combat, reaction, critical,
+death, corpse, and loot owners with its own typed tuning and behavior profile.
+It is reachable through the development console as `spawn_broken_warrant`;
+normal wave composition remains unchanged. Its presentation is explicitly
+provisional Grunt donor art. The original `npa_broken_warrant` Asset V2 family
+and approved source art do not exist yet; this actor slice does not imply art
+completion or runtime verification.
+
 ## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
 
 Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
