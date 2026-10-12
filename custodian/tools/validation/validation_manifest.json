@@ -2354,7 +2354,7 @@
         "custodian/tools/validation/operator_melee_low_fps_contact_smoke.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_sword_cleaver",
@@ -2503,7 +2503,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_unarmed_fast_chain",
@@ -2714,7 +2714,7 @@
         "custodian/tools/validation/operator_modular_defense_ranged_smoke.gd"
       ],
       "timeout_sec": 45,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_modular_fast_attack",
@@ -3088,7 +3088,7 @@
         "custodian/game/actors/operator/operator.gd"
       ],
       "timeout_sec": 30,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_locomotion_socket",
@@ -3383,7 +3383,7 @@
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd"
       ],
       "timeout_sec": 40,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "dev_observatory",
@@ -5348,7 +5348,7 @@
         "custodian/tools/validation/operator_visual_anchor_smoke.gd"
       ],
       "timeout_sec": 90,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "operator_melee_posture",

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-guard-parry-composition-polish`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-mobile-guard-composition`
@@ -35,6 +35,38 @@
 
 ## Handoff
 
-- Next action: Execute after mobile guard lands; reuse its semantic composition seam rather than re-deriving policy in the Vigil/parry helpers.
+- Next action: Implementation complete; F1 loadout extraction can consume the same semantic movement-owned-lower composition seam.
 - Best starting files: `operator_presentation_controller.gd`; `operator.gd` guard/parry helpers; `operator_guard_controller.gd`; focused guard/parry smokes.
 - Blockers or open questions: None.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_guard_flow`, `operator_parry_presentation`, `operator_modular_defense_ranged`, `operator_vigil_dagger`, `operator_visual_ownership`, and `operator_upper_fx_canonical` pass; the guard/parry strafe Moment Forge run passes in `evidence` mode at `reports/moment_forge/combat/operator_mobile_guard_strafe/20261011T213553-0400`; final `run_validation.py --changed --base origin/main --json` selects 89 checks, passes all 89, and reports zero uncovered files. Vigil guard and unarmed guard/parry now use the shared validated semantic composition path; movement-owned lower identity/progress survives upper phase changes, stationary pairs remain authored, required Vigil weapon art fails closed, and the parry path adds no movement lock.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: `git lfs pull` was mistakenly invoked once despite the local-only validation recipe; its output was not captured, so whether it downloaded objects cannot be established from that command record. The first fresh-worktree Godot import reached the runner's 120-second timeout after building the import cache; subsequent focused validation passed. The initial scenario run exposed a stale post-release assertion. Final changed-file validation then found an FX smoke still calling the superseded parry-FX helper; fallback cleanup and the smoke's call path were updated, then the focused smoke passed.
+- Root cause / contributing factors: The new worktree had no Godot import cache, and scene-loading Operator tests were not marked `needs_import`; first-pass command output was not preserved in structured form. One cross-cutting FX smoke also retained a direct call to the replaced implementation helper.
+- Prevention / pipeline improvement: Mark the six scene-loading defensive/FX smokes `needs_import` so fresh worktrees bootstrap through the validation runner; inspect and follow local-only LFS instructions before invoking any LFS command; keep canonical FX tests on the public presentation path.
+- Tooling / docs drift discovered: The six required defensive/FX smoke entries did not request the Godot import needed by their scene/resources; their manifest entries now set `needs_import: true`.
+- Follow-up: none
+- What worked: Focused layer/owner/progress assertions and the sparse guard/parry scenario isolated the presentation contract; the final changed-file sweep was coverage-complete.
+
+## Next Handoff
+
+- Next workstream: `operator-loadout-domain-extraction`
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: Claim the ready F1 loadout extraction through the dispatcher and continue the Operator runtime sequence.
+- Blockers or open questions: none

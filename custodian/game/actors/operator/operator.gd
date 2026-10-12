@@ -4221,41 +4221,6 @@ func _body_presentation_owner() -> int:
 	return _body_presenter.current_owner()
 
 
-## Present the FX beat for one parry action, and report the identity it played.
-##
-## C2a-R2 authoring decisions:
-##
-## Successful parry presents unarmed/defense/parry_success_01. The legacy clip
-## unarmed_parry_success_01_fx was mis-published — its west sourced
-## parry_recovery art and its east sourced interaction/success_01, which is
-## DORMANT_PENDING_INTERACTION_SUCCESS_CONTRACT and must never stand in for
-## parry-success presentation — so it is not preservation authority.
-##
-## Failed parry gets NO separate recovery FX beat: the guard contract keeps the
-## original parry_01 attempt through recovery. parry_recovery_01 fx is published
-## but dormant, and playing it here would invent a beat the design does not define.
-##
-## Returns the canonical identity presented, or an empty name for "no FX".
-func _present_parry_fx(base_animation: String, direction: Vector2) -> StringName:
-	if modular_upper_fx_sprite == null:
-		return &""
-	if base_animation == "unarmed_parry_recovery":
-		_hide_presentation_layer(modular_upper_fx_sprite, true)
-		_modular_upper_fx_action_animation = &""
-		return &""
-	if base_animation == "unarmed_parry_success_01":
-		_play_optional_fx(
-			&"unarmed", &"defense", &"parry_success_01",
-			_reduced_horizontal_sector(direction)
-		)
-		return _modular_upper_fx_action_animation
-	_play_optional_fx(
-		&"unarmed", &"defense", &"parry_01",
-		OperatorAnimationSelector.vector_to_sector(direction)
-	)
-	return _modular_upper_fx_action_animation
-
-
 ## The authored facing for art published east/west only.
 ##
 ## Caller-owned presentation policy, characterized from what the compatibility
@@ -7286,6 +7251,7 @@ func _play_parry_animation(
 
 	var resolved := _resolve_full_body_animation(String(base_animation), direction)
 	if _has_playable_sprite_animation(animated_sprite.sprite_frames, resolved):
+		_hide_parry_fx_overlay()
 		_set_body_presentation_owner(OperatorBodyPresenter.Owner.LEGACY_FULL_BODY)
 		animated_sprite.flip_h = _is_facing_left(direction)
 		_animation_player.play(animated_sprite, resolved)
@@ -7295,7 +7261,15 @@ func _play_parry_animation(
 	if resolved.is_empty():
 		resolved = base_animation
 	_warn_missing_animation_once(String(resolved), String(fallback))
+	_hide_parry_fx_overlay()
 	_play_block_animation(fallback)
+
+
+func _hide_parry_fx_overlay() -> void:
+	if modular_upper_fx_sprite == null:
+		return
+	_hide_presentation_layer(modular_upper_fx_sprite, true)
+	_modular_upper_fx_action_animation = &""
 
 
 func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> bool:
@@ -7305,30 +7279,64 @@ func _play_modular_unarmed_parry(base_animation: String, direction: Vector2) -> 
 		return false
 
 	var resolved_base := "unarmed_parry_success" if base_animation == "unarmed_parry_success" else base_animation
-	var lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
+	var paired_lower_anim := _resolve_modular_body_animation(String(resolved_base), &"lower_body", direction)
 	var upper_anim := _resolve_modular_body_animation(String(resolved_base), &"upper_body", direction)
-	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_anim):
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, paired_lower_anim):
 		return false
 	if not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_anim):
 		return false
-
-	_hide_modular_locomotion_layers()
-	# Declare before configuring: the hide above hands the body back to legacy,
-	# so the modular composition must claim it again before showing its layers.
-	_declare_modular_body_composition()
-	_show_body_layer(modular_lower_body_sprite)
-	modular_lower_body_sprite.flip_h = false
-	modular_lower_body_sprite.speed_scale = 1.0
-	_animation_player.play(modular_lower_body_sprite, lower_anim)
-	_show_body_layer(modular_upper_body_sprite)
-	modular_upper_body_sprite.flip_h = false
-	modular_upper_body_sprite.speed_scale = 1.0
-	_animation_player.play(modular_upper_body_sprite, upper_anim)
+	var movement := movement_direction
+	if movement.length_squared() <= 0.001:
+		movement = velocity.normalized()
+	var locomotion_base := _get_modular_lower_body_motion_base()
+	if locomotion_base == "unarmed_run":
+		locomotion_base = "unarmed_walk"
+	var movement_lower_anim := _resolve_modular_body_animation(
+		locomotion_base, &"lower_body", movement
+	)
+	var moving := _is_mobile_defensive_composition_allowed()
+	var fx_identity := _parry_fx_identity(base_animation, direction)
+	var fx_overlay: AnimatedSprite2D = modular_upper_fx_sprite \
+		if fx_identity != &"" and modular_upper_fx_sprite != null \
+		and _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_identity) \
+		else null
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.MODULAR_BODY,
+		[modular_lower_body_sprite, modular_upper_body_sprite],
+		[fx_overlay] if fx_overlay != null else []
+	)
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		plan, moving, modular_lower_body_sprite, movement_lower_anim, paired_lower_anim,
+		modular_upper_body_sprite, upper_anim, modular_upper_body_sprite,
+		1.0, 1.0, 1.0, false, true,
+		fx_overlay, fx_identity, false, true,
+		Callable(self, "_invalidate_preempted_rig_lifecycles").bind(plan.owner)
+	)
+	if not presented:
+		return false
 	_modular_upper_action_animation = upper_anim
-	_claim_modular_body_owner()
-
-	_present_parry_fx(base_animation, direction)
+	_modular_lower_action_animation = movement_lower_anim if moving \
+		and _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, movement_lower_anim) \
+		else paired_lower_anim
+	if fx_overlay != null:
+		fx_overlay.flip_h = false
+		_modular_upper_fx_action_animation = fx_identity
+	else:
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+		_modular_upper_fx_action_animation = &""
 	return true
+
+
+func _parry_fx_identity(base_animation: String, direction: Vector2) -> StringName:
+	if base_animation == "unarmed_parry_recovery":
+		return &""
+	var action := &"parry_success_01" if base_animation == "unarmed_parry_success_01" else &"parry_01"
+	var sector := _reduced_horizontal_sector(direction) if action == &"parry_success_01" \
+		else OperatorAnimationSelector.vector_to_sector(direction)
+	var selector: OperatorAnimationSelector = _get_operator_animation_selector()
+	if not selector.has_sector_identity(&"unarmed", &"defense", action, sector, &"fx"):
+		return &""
+	return selector.resolve_sector(&"unarmed", &"defense", action, sector, &"fx")
 
 
 func _spawn_parry_success_fx(contact_position: Vector2) -> Node2D:
@@ -8070,29 +8078,75 @@ func _try_play_vigil_semantic_block(phase_key: StringName) -> bool:
 		return false
 	var direction := Vector2.LEFT if _is_facing_left(aim_direction) else Vector2.RIGHT
 	var selector = _get_operator_animation_selector()
-	var lower_animation: StringName = selector.resolve(
-		&"melee_1h", &"defense", action, direction, &"lower_body"
+	var guard_sector := OperatorAnimationSelector.vector_to_sector(direction)
+	var lower_animation := OperatorAnimationSelector.animation_name(
+		&"melee_1h", &"defense", action, guard_sector, &"lower_body"
 	)
-	var upper_animation: StringName = selector.resolve(
-		&"melee_1h", &"defense", action, direction, &"upper_body"
+	var upper_animation := OperatorAnimationSelector.animation_name(
+		&"melee_1h", &"defense", action, guard_sector, &"upper_body"
 	)
-	var weapon_animation: StringName = selector.resolve(
-		&"melee_1h_dagger", &"defense", action, direction, &"weapon",
+	var weapon_animation := OperatorAnimationSelector.animation_name(
+		&"melee_1h_dagger", &"defense", action, guard_sector, &"weapon",
 		&"vigil_pattern_dagger"
 	)
+	if not selector.has_sector_identity(
+		&"melee_1h", &"defense", action, guard_sector, &"lower_body"
+	) or not selector.has_sector_identity(
+		&"melee_1h", &"defense", action, guard_sector, &"upper_body"
+	) or not selector.has_sector_identity(
+		&"melee_1h_dagger", &"defense", action, guard_sector, &"weapon",
+		&"vigil_pattern_dagger"
+	):
+		return false
 	for animation in [lower_animation, upper_animation, weapon_animation]:
-		if animation.is_empty() \
-		or not _has_playable_sprite_animation(OPERATOR_RUNTIME_FRAMES, animation):
+		if not _has_playable_sprite_animation(OPERATOR_RUNTIME_FRAMES, animation):
 			return false
+	var movement := movement_direction
+	if movement.length_squared() <= 0.001:
+		movement = velocity.normalized()
+	var locomotion_action := &"run_01" if is_sprinting else &"walk_01"
+	var movement_sector := OperatorAnimationSelector.vector_to_sector(movement)
+	var movement_lower_identity := OperatorAnimationSelector.animation_name(
+		&"melee_1h", &"locomotion", locomotion_action,
+		movement_sector, &"lower_body"
+	)
+	if not selector.has_sector_identity(
+		&"melee_1h", &"locomotion", locomotion_action,
+		movement_sector, &"lower_body"
+	) or not _has_playable_sprite_animation(
+		OPERATOR_RUNTIME_FRAMES, movement_lower_identity
+	):
+		movement_lower_identity = &""
 	_ensure_vigil_guard_sprites()
-	# The guard rig is a complete authored body, so it takes the body explicitly.
-	# It used to claim MODULAR_BODY and then hide the modular composition behind
-	# itself, which left the real owner of those pixels unnamed.
-	_preempt_body_with_owner(OperatorBodyPresenter.Owner.VIGIL_GUARD)
-	_hide_modular_locomotion_layers()
-	_play_vigil_guard_layer(_vigil_guard_lower, lower_animation, 0)
-	_play_vigil_guard_layer(_vigil_guard_upper, upper_animation, 1)
-	_play_vigil_guard_layer(_vigil_guard_weapon, weapon_animation, 2)
+	var plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.VIGIL_GUARD,
+		[_vigil_guard_lower, _vigil_guard_upper],
+		[_vigil_guard_weapon]
+	)
+	var movement_permitted := _is_mobile_vigil_guard_composition_allowed()
+	var handoff := Callable(self, "_invalidate_preempted_rig_lifecycles").bind(plan.owner)
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		plan,
+		movement_permitted,
+		_vigil_guard_lower,
+		movement_lower_identity,
+		lower_animation,
+		_vigil_guard_upper,
+		upper_animation,
+		_vigil_guard_upper,
+		clampf(block_move_multiplier, 0.2, 1.0),
+		1.0,
+		1.0,
+		false,
+		true,
+		_vigil_guard_weapon,
+		weapon_animation,
+		true,
+		true,
+		handoff
+	)
+	if not presented:
+		return false
 	_vigil_guard_semantic_active = true
 	if melee_weapon_overlay_sprite != null:
 		melee_weapon_overlay_sprite.visible = false
@@ -8114,6 +8168,9 @@ func _ensure_vigil_guard_sprites() -> void:
 		sprite.position = Vector2(0, -18)
 		sprite.sprite_frames = OPERATOR_RUNTIME_FRAMES
 		add_child(sprite)
+	_vigil_guard_lower.z_index = 0
+	_vigil_guard_upper.z_index = 1
+	_vigil_guard_weapon.z_index = 2
 	# The guard rig is a complete authored body, so it is a body OWNER like the
 	# other authored rigs. It was previously built and shown entirely outside the
 	# presenter, which made it invisible to the one-body invariant.
@@ -8127,15 +8184,6 @@ func _ensure_vigil_guard_sprites() -> void:
 	_retire_registered_rig_layers(
 		[_vigil_guard_lower, _vigil_guard_upper, _vigil_guard_weapon]
 	)
-
-
-func _play_vigil_guard_layer(
-	sprite: AnimatedSprite2D, animation: StringName, layer_z_index: int
-) -> void:
-	sprite.z_index = layer_z_index
-	_show_presentation_layer(sprite)
-	sprite.speed_scale = 1.0
-	_animation_player.play(sprite, animation)
 
 
 func _hide_vigil_semantic_block() -> void:
@@ -8195,26 +8243,21 @@ func _present_modular_unarmed_guard_action(
 	else:
 		paired_lower_action = upper_action
 
-	var lower_identity: StringName
-	if moving:
-		var lower_base := _get_modular_lower_body_motion_base()
-		if lower_base == "unarmed_run":
-			lower_base = "unarmed_walk"
-		lower_identity = _resolve_modular_body_animation(
-			lower_base, &"lower_body", lower_direction
-		)
-	else:
-		var lower_action := paired_lower_action
-		if upper_reverse:
-			lower_action = &"block_enter_01"
-		lower_identity = _resolve_unarmed_guard_identity(
-			lower_action, &"lower_body", guard_direction
-		)
+	if upper_reverse:
+		paired_lower_action = &"block_enter_01"
+	var paired_lower_identity := _resolve_unarmed_guard_identity(
+		paired_lower_action, &"lower_body", guard_direction
+	)
+	var lower_base := _get_modular_lower_body_motion_base()
+	if lower_base == "unarmed_run":
+		lower_base = "unarmed_walk"
+	var lower_identity := _resolve_modular_body_animation(
+		lower_base, &"lower_body", lower_direction
+	)
 	var upper_identity := _resolve_unarmed_guard_identity(
 		upper_action, &"upper_body", guard_direction
 	)
-	print("mobile guard identities ", base_animation, " moving=", moving, " lower=", lower_identity, " upper=", upper_identity)
-	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_identity) \
+	if not _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, paired_lower_identity) \
 		or not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_identity):
 		return false
 
@@ -8234,32 +8277,37 @@ func _present_modular_unarmed_guard_action(
 			overlay_list.append(hold_overlay)
 		else:
 			hold_overlay = null
-	if hold_overlay == null:
-		_hide_modular_block_hold_fx()
 	var plan := OperatorBodyPresentationPlan.create(
 		OperatorBodyPresenter.Owner.MODULAR_BODY,
 		[modular_lower_body_sprite, modular_upper_body_sprite], overlay_list
 	)
 	var lower_speed := clampf(block_move_multiplier, 0.2, 1.0) if moving else 1.0
-	var presented := _get_operator_presentation_controller().present_split_body_action(
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
 		plan,
+		moving,
 		modular_lower_body_sprite,
 		lower_identity,
+		paired_lower_identity,
 		modular_upper_body_sprite,
 		upper_identity,
 		modular_upper_body_sprite,
-		false,
-		restart_upper,
 		lower_speed,
+		1.0,
 		guard_exit_speed_scale if upper_reverse else 1.0,
 		upper_reverse,
+		restart_upper,
 		hold_overlay,
 		hold_overlay_identity,
-		restart_upper
+		false,
+		restart_upper,
+		Callable(self, "_invalidate_preempted_rig_lifecycles").bind(plan.owner)
 	)
-	print("mobile guard presented=", presented, " overlay=", hold_overlay_identity, " current_owner=", _body_presenter.current_owner())
 	if not presented:
 		return false
+	if hold_overlay == null:
+		_hide_modular_block_hold_fx()
+	if not moving:
+		lower_identity = paired_lower_identity
 	_modular_lower_action_animation = lower_identity
 	_modular_upper_action_animation = upper_identity
 	_modular_upper_fx_action_animation = hold_overlay_identity if hold_overlay != null else &""
@@ -8303,6 +8351,17 @@ func _get_modular_fx_sector(direction: Vector2) -> StringName:
 
 func _is_mobile_guard_composition_allowed() -> bool:
 	return _is_unarmed_guard_composition_phase() and velocity.length() > 0.01
+
+
+func _is_mobile_defensive_composition_allowed() -> bool:
+	return velocity.length() > 0.01 and not _is_movement_locked() \
+		and _enemy_impact_lock_timer <= 0.0 and not _paired_execution_active \
+		and not _is_dead
+
+
+func _is_mobile_vigil_guard_composition_allowed() -> bool:
+	return _is_mobile_defensive_composition_allowed() \
+		and _guard_controller != null and not _guard_controller.is_break_locked()
 
 
 func _is_unarmed_guard_composition_phase() -> bool:

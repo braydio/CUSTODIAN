@@ -169,6 +169,14 @@ intact. Controller, charge, Flow, overlap telemetry, canonical FX, presentation,
 fixed-tick, input-frame, action-arbitration, and guard-flow focused checks pass;
 see the F4 packet receipt for bounded composite-smoke limitations.
 
+Moving Vigil guard and unarmed parry now share the semantic defensive
+composition path: locomotion owns the lower cadence while guard/parry facing
+owns the upper action, and Vigil's dagger remains paired with its guard action.
+Stationary defense retains authored paired poses, guard break stays committed,
+and parry does not invent a movement lock for contact. The controller validates
+the full composition before ownership transfer and falls back to a complete
+presentation when a required layer is unavailable.
+
 ## Dropbox Handoff And Asset Batch Registry (2026-10-06)
 
 Dropbox now has three intentionally separate lanes. Immutable inbound implementation

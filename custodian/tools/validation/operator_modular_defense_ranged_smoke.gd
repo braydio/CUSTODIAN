@@ -49,6 +49,22 @@ func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 	operator.set("aim_direction", Vector2.RIGHT)
 	operator.set("visual_idle_direction", Vector2.RIGHT)
 	operator.call("_exit_ranged_ready")
+	operator.set("movement_direction", Vector2.LEFT)
+	operator.set("velocity", Vector2.LEFT * 32.0)
+	operator.call("_play_parry_animation", &"unarmed_parry")
+	var moving_lower := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
+	var moving_upper := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
+	_assert_true(moving_lower.animation == &"unarmed/locomotion/walk_01/w/lower_body", "moving parry should retain westward locomotion")
+	_assert_true(moving_upper.animation == &"unarmed/defense/parry_01/e/upper_body", "moving parry should retain east guard facing")
+	moving_lower.set_frame_and_progress(2, 0.35)
+	var lower_frame := moving_lower.frame
+	var lower_progress := moving_lower.frame_progress
+	operator.call("_play_parry_animation", &"unarmed_parry_success_01")
+	_assert_true(moving_lower.animation == &"unarmed/locomotion/walk_01/w/lower_body", "parry contact follow-up should keep moving lower identity when no displacement freeze exists")
+	_assert_lower_progress(moving_lower, lower_frame, lower_progress, "parry upper phase change must preserve lower progress")
+	_assert_true(moving_upper.animation == &"unarmed/attack/parry_recovery_01/e/upper_body", "parry recovery upper should retain canonical success art")
+	_assert_true(float(operator.get("_enemy_impact_lock_timer")) <= 0.0, "parry presentation must not invent an impact lock")
+	operator.set("velocity", Vector2.ZERO)
 
 	_assert_animation_exists(operator, "modular_lower_body_sprite", &"unarmed/attack/parry_recovery_01/e/lower_body")
 	_assert_animation_exists(operator, "modular_upper_body_sprite", &"unarmed/attack/parry_recovery_01/e/upper_body")
@@ -57,6 +73,7 @@ func _validate_parry_attempt_uses_modular_layers(operator: Node) -> void:
 	var lower_sprite := operator.get("modular_lower_body_sprite") as AnimatedSprite2D
 	var upper_sprite := operator.get("modular_upper_body_sprite") as AnimatedSprite2D
 	var fx_sprite := operator.get("modular_upper_fx_sprite") as AnimatedSprite2D
+	_assert_true(lower_sprite.animation == &"unarmed/attack/parry_recovery_01/e/lower_body", "stationary parry recovery should preserve the authored paired lower")
 	_assert_true(lower_sprite != null and lower_sprite.visible, "parry success should show modular lower body")
 	_assert_true(upper_sprite != null and upper_sprite.visible, "parry success should show modular upper body")
 	_assert_true(lower_sprite != null and lower_sprite.animation == &"unarmed/attack/parry_recovery_01/e/lower_body", "parry success recovery should play lower right success_01")

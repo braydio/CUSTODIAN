@@ -636,7 +636,9 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   exit carry, and cancellation; the actor applies movement intent through its
   existing chassis and keeps intentional full-body Dodge presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
-  seam for Vigil guard and movement-permissive parry attempt/recovery.
+  seam for Vigil guard and movement-permissive parry attempt/recovery; both use
+  the semantic presentation controller with complete-pair fallback and preserve
+  locomotion progress across upper defensive phase changes.
 - The F1–F6 packets are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
   `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
   `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,
