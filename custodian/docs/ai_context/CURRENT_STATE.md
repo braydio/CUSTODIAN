@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## NPA Showcase Dev Overlay (2026-10-12)
+
+The registered NPA showcase arena now owns a dev-only scene overlay and
+scenario controller. It projects live actor identity, relationship, target
+eligibility, health/lifecycle and public ability phases; absent actors remain
+N/A. Scene-button controls spawn/reset the existing Marine, Savage and
+Vaultwing consumers and route combat, allegiance, target, damage and DroneManager
+orders through their owners. Broken Warrant and Escort Frame M-7 remain
+unavailable until their implementation packets land. The controls are scoped to
+the registered arena, do not consume gameplay keys, and do not alter normal
+campaign or wave spawning. Focused evidence is
+`npa_showcase_overlay`; see the arena README and packet for validation status.
+
 ## Operator Presentation Composition Doctrine (2026-10-11)
 
 The user approved **full-body-first with selective modular presentation** for

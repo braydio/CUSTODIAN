@@ -34,6 +34,8 @@ Produce a complete, playable NPA proving ground modeled after the existing Lords
 
 **Execution principle:** each paired fresh-context review must be archived *complete/passed* before any dependent implementation claims. During targeted authoring validation, update `Depends on` with the exact paired-review workstream where required by the dispatcher. The foundation pair passed targeted repository-side authoring validation and entered the implementation lifecycle. Remaining draft/manual pairs must be refreshed, validated and promoted individually; do not change manual planning or source-gated pairs.
 
+**Dev overlay implementation state (2026-10-12):** `npa-showcase-dev-overlays` adds a scene-local actor-state overlay and bounded scenario controller to the registered arena. It can spawn the existing Marine, Savage and Vaultwing scenes; Warrant and M-7 remain explicit N/A until their actor packets land. Focused smoke covers scene scope, spawn, live relationship/lifecycle projection and reset. Changed-file validation and its fresh paired review remain required before this slice is considered complete.
+
 ## Three progress gates
 1. **Playability:** arena foundation + real Operator wrapper + test zone access, before original art.
 2. **Real actor mechanics:** existing actor hardening, Warrant, M-7, live overlay and real command/relationship proof, following NPA-7/Vaultwing review gates.

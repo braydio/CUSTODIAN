@@ -4007,6 +4007,25 @@
       "needs_import": true
     },
     {
+      "id": "npa_showcase_overlay",
+      "type": "godot_script",
+      "script": "res://tools/validation/npa_showcase_overlay_smoke.gd",
+      "tier": "integration",
+      "tags": ["npa", "showcase", "overlay", "dev_controls"],
+      "owners": [
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.tscn",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_scenario_controller.gd",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_debug_overlay.gd",
+        "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.gd",
+        "custodian/game/actors/enemies/enemy_marine.tscn",
+        "custodian/game/systems/combat/actor_relationship_resolver.gd",
+        "custodian/tools/validation/npa_showcase_overlay_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "world_ingress_physics_reentry",
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_physics_reentry_smoke.gd",
