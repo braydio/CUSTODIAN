@@ -87,7 +87,6 @@ normal closeout.
 - `REVIEW_NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Independently verify landed npa-showcase-broken-warrant-actor using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_DEV_OVERLAYS.md` — Independently verify landed npa-showcase-dev-overlays using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Independently verify landed npa-showcase-escort-frame-m7-actor using the actual archived implementation acceptance and real runtime evidence.
-- `REVIEW_NPA_SHOWCASE_EXISTING_DRONE_HARDENING.md` — Independently falsify the landed existing commanded drone/droid showcase hardening against actual real-scene command paths, registered validation ownership a...
 - `REVIEW_NPA_SHOWCASE_EXISTING_VAULTWING_PROOF.md` — Independently verify landed npa-showcase-existing-vaultwing-proof using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_OPERATOR_2_5D_COMPOSITION_MODE_GUARD_V1.md` — Independently falsify unsafe full-body/split/exclusive Operator presentation mode handoffs and ensure code-only 2.5D guard coverage does not accidentally ena...
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.

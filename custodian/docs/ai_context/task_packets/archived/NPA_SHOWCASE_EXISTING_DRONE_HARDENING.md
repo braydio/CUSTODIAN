@@ -70,3 +70,17 @@ This pair was refreshed against actual NPA-7 and existing-enemy review archives.
 - Tooling / docs drift discovered: none; the three direct smoke checks were present but lacked manifest IDs and `FILE_INDEX` text claimed they were unregistered.
 - Follow-up: none
 - What worked: real scene/manager behavior was already covered; explicit manifest ownership now keeps that coverage in changed-file selection.
+
+## Independent Review
+
+### Review Receipt: review-npa-showcase-existing-drone-hardening
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-npa-showcase-existing-drone-hardening`
+- Review target workstream: `npa-showcase-existing-drone-hardening`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `68acaf83635439c59302f0844875dc56cb2639c4`
+- Reviewed implementation commit: `68acaf83635439c59302f0844875dc56cb2639c4`
