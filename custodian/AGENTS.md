@@ -58,6 +58,27 @@ Use this map to land on the right material fast:
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
+
 ## Name the Brief
 
 For active work under `custodian/`, a user-supplied task name, slice name, packet nickname, or recognizable brief resolves to the matching active task packet/workstream before implementation.

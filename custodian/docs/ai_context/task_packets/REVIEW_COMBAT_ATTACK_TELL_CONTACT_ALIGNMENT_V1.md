@@ -3,6 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-combat-attack-tell-contact-alignment-v1`
 - Kind: `review`
+- Authoring handoff: `auto`
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P1`

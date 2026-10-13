@@ -158,6 +158,27 @@ commit, or push.` Paired post-land review packets may authorize commits only for
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
 
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
+
 ## Name the Brief
 
 When the user names a CUSTODIAN task, slice, workstream, packet, or recognizable brief, resolve that name to the active task packet before implementing. Claim the packeted workstream through the dispatcher/lifecycle rather than treating the user's short name as a free-form prompt.

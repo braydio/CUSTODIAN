@@ -1,0 +1,42 @@
+name: Automatic Packet Authoring Handoff
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "custodian/docs/ai_context/task_packets/*.md"
+
+permissions:
+  contents: write
+
+# Serialize publisher attempts. Another repo write can still race, in which
+# case the handoff script stops without rewriting origin/main.
+concurrency:
+  group: custodian-packet-authoring-handoff
+  cancel-in-progress: false
+
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Configure isolated authoring checkout
+        run: |
+          git checkout -B main "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Test bounded handoff contract
+        run: python3 -m unittest custodian.tools.agent.test_packet_authoring_handoff -v
+      - name: Validate and publish explicitly authorized pairs
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          python3 custodian/tools/agent/packet_authoring_handoff.py --base "$BEFORE_SHA"

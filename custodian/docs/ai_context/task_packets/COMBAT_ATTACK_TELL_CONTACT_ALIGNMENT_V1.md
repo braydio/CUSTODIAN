@@ -2,6 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `combat-attack-tell-contact-alignment-v1`
+- Authoring handoff: `auto`
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P1`
@@ -41,7 +42,7 @@
   - A5. No damage after cancellation/parry/death, duplicate hit across large `delta`, missing-clip invisible hit, attack-clip interruption mismatch, or off-arc/out-of-range result becomes damaging.
   - A6. The lethal GRUNT reproduction at 25.47 px produces a recorded, visible committed strike before damage. Simulate low FPS/hitch frames (>=0.24 s) and confirm determinism without skipped or duplicated phases.
   - A7. No substantial `enemy.gd`/`operator.gd` growth, no new assets, no per-frame telemetry; preserved affected regressions and one final changed-file suite pass.
-- Validation: First one new deterministic Godot `tools/validation/attack_tell_contact_alignment_smoke.gd` covering actor matrix, cue timing, late/missing clips, contact/cancel/parry/whiff and low-FPS. Reuse only directly relevant `standard_enemy_melee_smoke.gd`, `enemy_hit_spatial_telemetry_smoke.gd`, `combat_exchange_commitment_smoke.gd`, `operator_guard_flow_smoke.gd`, plus existing specific Savage/Marine/Falcon/Vaultwing and Operator timing smokes for touched owners. Minimal frame-index/clip evidence before a single short Moment Forge clip if pixels cannot otherwise verify readability. Then once: `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `python3 custodian/tools/agent/task_packet_index.py`; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `git diff --check`.
+- Validation: Create and run one new deterministic Godot attack-tell-contact alignment smoke covering actor matrix, cue timing, late/missing clips, contact/cancel/parry/whiff and low-FPS. Reuse only directly relevant `standard_enemy_melee_smoke.gd`, `enemy_hit_spatial_telemetry_smoke.gd`, `combat_exchange_commitment_smoke.gd`, `operator_guard_flow_smoke.gd`, plus existing specific Savage/Marine/Falcon/Vaultwing and Operator timing smokes for touched owners. Minimal frame-index/clip evidence before a single short Moment Forge clip if pixels cannot otherwise verify readability. Then once: `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `python3 custodian/tools/agent/task_packet_index.py`; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `git diff --check`.
 - Task overrides: `none`
 - Deferred: Subjective tuning, attack art enhancement and genuinely dormant actor abilities require separate work; this packet must report such exclusions explicitly.
 
