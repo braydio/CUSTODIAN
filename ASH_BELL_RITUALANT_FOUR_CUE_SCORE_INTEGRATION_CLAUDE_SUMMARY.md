@@ -33,7 +33,8 @@
 - PASS: `git diff --check` at checkpoint.
 - PASS: archive/runtime/inbox byte and SHA-256 parity for all four cues; Godot
   4.7.2 imported and loaded the new audio resources.
-- BLOCKED: full changed-file report had complete coverage, with 41 passes, two
+- BLOCKED: post-sync full changed-file report against `origin/main@b05417cc`
+  had complete coverage, with 42 passes, two
   failures, and two Moment Forge checks skipped. Existing failures were
   `forlorn_ritualant_mapper_semantics` (chapel art bounds) and
   `forlorn_ritualant_runtime` (lower lift backstop/wings and boarding collision).
@@ -47,13 +48,14 @@
   positional-audio assertions; none are changed by this score integration.
 - Human in-game audition of dialogue clarity, duck intensity, and loop edges is
   still pending, as required by the audit; it is a post-implementation review.
-- Root `main` has the user's unrelated dirty Operator file, so safe root sync
-  remains pending even after a future landing.
+- The implementation branch was merged normally with latest `origin/main` and
+  checkpoint-pushed at `31bb4695`. Root `main` remains 27 commits behind with
+  the user's unrelated dirty Operator file, so safe root sync is pending.
 
 The current changed-file validation is not green. Do not mark this packet
 complete or land on `main` until its finish gate can accept the required
-validation evidence. The branch is being preserved for recovery and latest-main
-reconciliation.
+validation evidence. The branch is checkpointed on `origin` and the worktree is
+preserved for the required validation-owner resolution.
 
 ## Process Feedback
 
@@ -75,5 +77,5 @@ reconciliation.
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Refresh reason: none
-- Next action: Reconcile this branch with latest origin/main, resolve or obtain accepted ownership for the two existing Ritualant validation failures, then rerun the changed-file finish validation and paired review.
+- Next action: Resolve or obtain accepted ownership for the two existing Ritualant validation failures, then rerun the changed-file finish validation and paired review.
 - Blockers or open questions: `forlorn_ritualant_mapper_semantics` and `forlorn_ritualant_runtime` are red in the changed-file sweep; no source owner for their geometry assertions was confirmed in this workstream.
