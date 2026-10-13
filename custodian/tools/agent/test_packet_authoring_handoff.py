@@ -114,6 +114,10 @@ class PacketHandoffTests(unittest.TestCase):
         for x, contents in old.items():
             self.assertEqual(x.read_text(), contents)
 
+    def test_retry_scan_discovers_opted_pair_only(self):
+        self.assertEqual(sorted(handoff.all_active_packets(self.repo)), sorted(self.changed))
+        self.assertEqual(handoff.discover_pairs(self.repo, handoff.all_active_packets(self.repo)), [(self.impl, self.rev)])
+
     def test_ready_pair_is_idempotent(self):
         self.impl.write_text(implementation(status="ready", dispatch="auto"))
         self.rev.write_text(review(status="ready", dispatch="auto"))

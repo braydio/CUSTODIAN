@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - "custodian/docs/ai_context/task_packets/*.md"
+  # Recover missed promotions without user or Codex involvement.
+  schedule:
+    - cron: "37 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -39,4 +43,8 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
         run: |
           set -euo pipefail
-          python3 custodian/tools/agent/packet_authoring_handoff.py --base "$BEFORE_SHA"
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            python3 custodian/tools/agent/packet_authoring_handoff.py --base "$BEFORE_SHA"
+          else
+            python3 custodian/tools/agent/packet_authoring_handoff.py --scan-opted
+          fi

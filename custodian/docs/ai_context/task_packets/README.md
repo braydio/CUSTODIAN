@@ -18,7 +18,8 @@ only the two packets and the generated README.
 This is opt-in: no marker means no automatic promotion. Do **not** opt in
 planning/human-decision holds, blocked reviews, or unreconciled refreshes.
 Failures stop without publication, force pushing, claiming or overriding
-locks. The GitHub action runs authoring, **not local Codex execution**;
+locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
 `dispatch.py` remains the sole execution/dependency/lock authority.
 A normal Codex dispatcher worker can claim later if the live audit says
 eligible. CI write permission and allowed non-force main push are required.

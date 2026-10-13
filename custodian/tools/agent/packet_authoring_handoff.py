@@ -144,6 +144,11 @@ def promote(repo: Path, pairs: list[tuple[Path, Path]]) -> list[str]:
     return [p.relative_to(repo).as_posix() for p in paths] + [readme.relative_to(repo).as_posix()]
 
 
+def all_active_packets(repo: Path) -> list[str]:
+    """Recheck explicit opt-ins after a main-branch race or interrupted CI run."""
+    return [p.relative_to(repo).as_posix() for p in sorted((repo / PACKET_DIR).glob("*.md")) if p.name != "README.md"]
+
+
 def changed_packets(repo: Path, base: str) -> list[str]:
     if not SHA_RE.fullmatch(base):
         raise HandoffError("--base must be an exact 40-character commit SHA")
@@ -153,7 +158,9 @@ def changed_packets(repo: Path, base: str) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", required=True, help="exact before-push main commit")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--base", help="exact before-push main commit")
+    source.add_argument("--scan-opted", action="store_true", help="retry all remaining explicitly opted-in draft pairs")
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     parser.add_argument("--check-only", action="store_true", help="inspect authorization without modifying files")
     args = parser.parse_args(argv)
@@ -165,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
             raise HandoffError("only an isolated main checkout may perform automatic promotion")
         if git(repo, "rev-parse", "HEAD") != git(repo, "rev-parse", "refs/remotes/origin/main"):
             raise HandoffError("main moved since checkout; retry on a fresh main")
-        pairs = discover_pairs(repo, changed_packets(repo, args.base))
+        pairs = discover_pairs(repo, all_active_packets(repo) if args.scan_opted else changed_packets(repo, args.base))
         if not pairs:
             print("packet_authoring_handoff: no authorized draft/manual pairs in this push")
             return 0
