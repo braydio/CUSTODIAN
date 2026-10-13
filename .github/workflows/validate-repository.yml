@@ -66,6 +66,12 @@ jobs:
             custodian.tools.agent.test_task_packet_repair \
             custodian.tools.agent.test_run_trace
 
+      - name: Validate Dropbox lifecycle Codex packet pair
+        run: >-
+          python3 custodian/tools/agent/validate_task_packet_authoring.py
+          custodian/docs/ai_context/task_packets/DROPBOX_ASSET_LIFECYCLE_RECONCILER_V1.md
+          custodian/docs/ai_context/task_packets/REVIEW_DROPBOX_ASSET_LIFECYCLE_RECONCILER_V1.md
+
       - name: Dropbox asset lifecycle read-only regression tests
         run: python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit -v
 
