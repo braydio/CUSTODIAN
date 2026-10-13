@@ -180,6 +180,14 @@ def plan(project: Path, package: Path, batch_id: str, normalize: bool) -> tuple[
             contract = json.loads(contract_file.read_text(encoding="utf-8"))
             if state["state_id"] not in contract.get("states", {}):
                 raise ValueError("Asset V2 state not registered")
+            registered = contract["states"][state["state_id"]]
+            expected_frames = registered.get("frames", 1)
+            if expected_frames != state.get("frames", 1):
+                raise ValueError("approved source frame count conflicts with Asset V2 runtime contract")
+            actual_size = [registered.get("frame_width", contract.get("canvas", {}).get("width")),
+                           registered.get("frame_height", contract.get("canvas", {}).get("height"))]
+            if actual_size != state.get("target_frame_size"):
+                raise ValueError("approved target frame geometry conflicts with Asset V2 contract")
             if not state.get("target_frame_size"):
                 raise ValueError("approved per-frame target dimensions required")
         operations.append({"source": str(source.relative_to(project)),
