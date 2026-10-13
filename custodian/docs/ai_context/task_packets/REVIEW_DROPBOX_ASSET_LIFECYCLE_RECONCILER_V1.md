@@ -37,3 +37,13 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Next action: Return reviewed scanner to ChatGPT for verified-stage and Dropbox publish design completion.
 - Blockers or open questions: Review requires a landed implementation and real audit evidence.
+
+## Independent Review
+
+### Findings (2026-10-13)
+
+- `DBX-RVW-001` — **Blocking, remote smoke not reproducible.** The required current read-only remote validation could not complete in this claimed checkout: `python3 custodian/tools/assets/dropbox_asset_audit.py --remote git-dropbox-sync scan --json` exited 2 with `Dropbox audit failed: Cannot complete remote lane asset_batches`. A direct `rclone lsf --recursive --files-only git-dropbox-sync:CUSTODIAN/asset_batches` also remained stalled and was interrupted. The historical 2026-10-13 snapshot and completion summary are durable evidence, but do not independently reproduce live discovery. The review must be resumed when remote access responds.
+- `DBX-RVW-002` — **Non-blocking, doctor drift confirmed.** `asset.py doctor` reports four awakening designation-locker catalog hash mismatches, matching the implementation summary's declared pre-existing drift. `asset.py needs --check` passes.
+- Offline test suite passed: `python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit` (6 tests). `python3 custodian/tools/agent/task_packet_index.py` passed. Checkout remained clean after read-only checks.
+- Durable evidence: pinned reviewed main `48646ce06a630d8d524353df6d335d53fbef1747`; implementation commit `7cae2a34874737afd0ecc4c685847702f7051ea0`; remote failure recorded above; historical inventory snapshot `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` records the lift package as source-only and both static packages against the same six-plus-six families.
+- Review result: **blocked** pending reproducible live remote smoke. No passing receipt is issued. No reviewed implementation files were changed.
