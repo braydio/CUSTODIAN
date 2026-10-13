@@ -85,6 +85,17 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
 
+## Dropbox Source Art Review / Ingest
+
+For asset batches delivered through Dropbox, see `../design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md` and `docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md`. Run the read-only audit before accepting a new asset intake task:
+
+```bash
+python3 tools/assets/dropbox_asset_audit.py scan --json
+python3 tools/assets/dropbox_asset_audit.py report --format markdown
+```
+
+Dropbox archive presence or the legacy registry's `active` status is **not** human source approval or runtime publication. A future asset may only be ingested after an explicit review receipt pins its immutable SHA256 and state mapping. Keep full-resolution approved masters in source_work; derive normalized inbox locally using the existing pixel-art/Asset V2 tools, then check `asset.py plan/status/doctor/needs --check`, consumers, and focused scene tests. Do not ingest review-only media or copy remote assets directly into runtime. The audit is read-only and does not require modification of Dropbox index or asset files.
+
 ## Production Asset Requirements
 
 - Discovery: update `content/metadata/assets/required_assets.registry.json`, choose the real fulfillment route, regenerate/check the generated view, and report the added need.

@@ -5,6 +5,9 @@
 **Registry:** `CUSTODIAN/asset_batches/_registry/`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 
+
+> **Lifecycle audit added 2026-10-13:** Use `python3 custodian/tools/assets/dropbox_asset_audit.py scan --json` or `report --format markdown` to reconcile these legacy registry entries with all three Dropbox source lanes and local Asset V2 evidence. Legacy `active` is not review approval; an explicit SHA256-pinned source-review receipt is required for new approval. The index below reflects its original October 7 scope and is not a complete October 13 inventory; see `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` and `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`.
+
 ## Purpose
 
 Use this document to find durable authored asset handoffs in Dropbox without searching arbitrary nested folders or confusing visual-review evidence with implementation input.

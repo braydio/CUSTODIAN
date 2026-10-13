@@ -1,0 +1,5 @@
+{
+  "schema": "custodian.asset_source_reviews.v1",
+  "description": "Explicit source review decisions pinned to immutable ZIP SHA256. Empty until approved per batch/state; Dropbox active does not imply review approved.",
+  "receipts": []
+}

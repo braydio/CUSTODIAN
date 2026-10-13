@@ -66,6 +66,9 @@ jobs:
             custodian.tools.agent.test_task_packet_repair \
             custodian.tools.agent.test_run_trace
 
+      - name: Dropbox asset lifecycle read-only regression tests
+        run: python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit -v
+
       - name: Install Godot 4.7
         uses: chickensoft-games/setup-godot@v2
         with:
