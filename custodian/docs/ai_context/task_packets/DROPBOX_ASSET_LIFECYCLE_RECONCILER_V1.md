@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `dropbox-asset-lifecycle-reconciler-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `asset-pipeline, dropbox-handoff`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `new cross-system source/review/runtime reconciliation and safety-critical no-auto-ingest boundary`
-- Reviewed main: `76c86f4fd52eac4546139925d4c70a50725ed2a0`
+- Reviewed main: `b438c31dec2007acc6d3b6c78efa1f57e7da047f`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `none`
 - Goal: Independently harden, validate on real Dropbox and close out the already-landed audit/source-stage/report-publish toolchain against its approved lifecycle authority, without duplicate implementations or silent ingestion.
@@ -55,4 +55,4 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Next action: Codex performs focused fresh-branch review and corrects failures, runs real Dropbox read-only audit, and publishes first derived lifecycle index explicitly after verifying remote configuration and current approval records.
-- Blockers or open questions: Requires target repo targeted preflight and real local rclone connectivity checks, no user lore questions.
+- Blockers or open questions: Targeted authoring preflight and three focused CLI tests passed in GitHub Validate Repository CI (run 38364205303). Real Dropbox rclone provider checks and initial lifecycle index publication remain execution acceptance.

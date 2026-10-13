@@ -3,15 +3,15 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-dropbox-asset-lifecycle-reconciler-v1`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `dropbox-asset-lifecycle-reconciler-v1`
 - Locks: `asset-pipeline, dropbox-handoff`
 - Review: `none`
 - Review target workstream: `dropbox-asset-lifecycle-reconciler-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/DROPBOX_ASSET_LIFECYCLE_RECONCILER_V1.md`
-- Reviewed main: `76c86f4fd52eac4546139925d4c70a50725ed2a0`
+- Reviewed main: `b438c31dec2007acc6d3b6c78efa1f57e7da047f`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `none`
 - Reviewer context: `fresh`
