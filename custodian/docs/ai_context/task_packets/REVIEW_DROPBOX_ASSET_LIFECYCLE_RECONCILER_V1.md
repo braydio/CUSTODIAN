@@ -26,7 +26,7 @@
 - Review focus: Ensure read-only auditing does not stage binary files or modify checked-in catalogs; report exact proof for each status and explicit lack of proof otherwise.
 - Acceptance: Findings-first passed/failed review receipt with stable finding IDs and narrow correction packets only if necessary.
 - Non-goals: No direct edits to reviewed implementation or auto-ingest.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt/lifecycle metadata and required bounded correction/re-review packets; never edit reviewed implementation.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
