@@ -390,7 +390,14 @@
       "package_receipt_match": "approved; exact SHA-256 plus Dropbox file ID/content hash/size/path matched",
       "registry_status": "unregistered",
       "path_policy": "directly under ash-bell-ritualant; one-batch-one-folder reconciliation deferred",
-      "package_moved": false
+      "package_moved": false,
+      "published": true,
+      "immutable_run": "/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T152916Z.json",
+      "derived_index": "/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json",
+      "package_count": 26,
+      "asset_v2_family_count": 90,
+      "finding_count": 24,
+      "published_package_review_status": "approved; receipt matched exact SHA-256, Dropbox file ID, Dropbox content hash, byte size and path"
     }
   }
 }
