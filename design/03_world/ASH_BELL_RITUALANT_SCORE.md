@@ -8,7 +8,7 @@ room-ambience requirement.
 
 | Cue | Runtime route | Playback |
 | --- | --- | --- |
-| The Ninth Was Never Cast | `CHAPEL_APPROACH` / `CHAPEL_GAMEPLAY_RELEASE` camera reveal | Loop |
+| The Ninth Was Never Cast (gentler-attacks v2) | `CHAPEL_APPROACH` / `CHAPEL_GAMEPLAY_RELEASE` camera reveal | Loop |
 | The Ninth Answers Nothing | committed `PROVOKED_RITUALANT` | Loop |
 | Stilling Release | fresh `SET_STILLING_PIN` action or final WEST/NORTH/EAST anchor | One-shot |
 | The Ninth Was Taken | fresh `SITE_DEFILED` | One-shot |
@@ -38,3 +38,9 @@ See `custodian/tools/validation/ritualant_four_cue_music_smoke.gd` for the
 machine-checked routing, route restore, one-shot, duck, and successor ownership
 contract. Music assets remain independent from `ash-bell-audio-cues`, which
 continues to track thread, silence, pin-drag, and room-bed SFX/ambience.
+
+The exploration source is `forlorn_ritualant_the_ninth_was_never_cast_loop_v2.ogg`,
+from `CUSTODIAN_Eight_Bells_Main_Scene_Gentler_Attacks_v2.zip`. Its SHA-256 and
+source mix details are recorded in the runtime handoff manifest. This v2 cue
+supersedes the prior exploration-loop source; the other three cue arrangements
+are unchanged.

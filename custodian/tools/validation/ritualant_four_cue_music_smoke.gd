@@ -1,7 +1,7 @@
 extends SceneTree
 
 const LEVEL_PATH := "res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn"
-const EXPLORATION := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v1.ogg"
+const EXPLORATION := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v2.ogg"
 const COMBAT := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_answers_nothing_combat_loop_v2.ogg"
 const STILLING := "res://content/audio/music/ash_bell/forlorn_ritualant_stilling_release_v1.ogg"
 const HOSTILE := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_taken_hostile_resolution_v1.ogg"

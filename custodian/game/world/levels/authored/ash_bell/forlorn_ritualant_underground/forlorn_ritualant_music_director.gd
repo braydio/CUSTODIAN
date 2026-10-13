@@ -3,7 +3,7 @@ extends Node
 ## Scene-scoped adapter from authored Ritualant events to the single MusicManager player.
 
 const OWNER_PREFIX := "forlorn_ritualant_underground_"
-const EXPLORATION_TRACK := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v1.ogg"
+const EXPLORATION_TRACK := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v2.ogg"
 const COMBAT_TRACK := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_answers_nothing_combat_loop_v2.ogg"
 const STILLING_TRACK := "res://content/audio/music/ash_bell/forlorn_ritualant_stilling_release_v1.ogg"
 const HOSTILE_TRACK := "res://content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_taken_hostile_resolution_v1.ogg"

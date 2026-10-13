@@ -10,6 +10,14 @@
   archive provenance, codec, channels, sample rate, measured duration, loop
   semantics, and state target; Godot Ogg import descriptors are committed for
   stable editor/runtime import.
+- Refreshed only the exploration cue to the user-approved Gentler Attacks v2
+  package. ZIP SHA-256 is
+  `b7e8e37eb058e5a116966a288389afe0691c633e80eedbb727f7b307148e0f90`; the
+  exact OGG SHA-256 is
+  `51a64027a61ea8db5704e08036bfeb6babdb4c54c130edbaa000db325788f6aa`.
+  The candidate is staged at the package's canonical v2 inbox path and the
+  runtime director and asset inventory now point to v2. The other three cues
+  are unchanged.
 - Added an exclusive `MusicManager` scene lease with loop and one-shot playback,
   transition cancellation, music-only ducking, one-shot completion, and
   conditional playlist restoration. A second scoped owner cannot steal an
@@ -29,13 +37,26 @@
 - PASS: `ritualant_four_cue_music` via the validation runner; also passed after
   testing explicit-pin and final-anchor routes, hostile resolution, restore,
   fresh-only playback, one-player ownership, scoped ducking, and fade takeover.
+- PASS: archive ZIP integrity and all six member SHA-256 entries; candidate
+  codec, stereo 48 kHz rate, 185.806271-second duration, inbox/runtime byte
+  parity; Godot 4.7.2 project import.
+- PASS: current `--changed --base origin/main` validation coverage completed:
+  42 passed, two failed, two skipped. The failed tests remain
+  `forlorn_ritualant_mapper_semantics` (chapel art bounds) and
+  `forlorn_ritualant_runtime` (lower lift backstop/wings and boarding collision).
+  The two skipped checks are Moment Forge checks.
 - PASS: audio requirement projection and `asset_requirements_smoke.py`.
 - PASS: `git diff --check` at checkpoint.
 - PASS: archive/runtime/inbox byte and SHA-256 parity for all four cues; Godot
   4.7.2 imported and loaded the new audio resources.
-- BLOCKED: post-sync full changed-file report against `origin/main@b05417cc`
-  had complete coverage, with 42 passes, two
-  failures, and two Moment Forge checks skipped. Existing failures were
+- BLOCKED: the current changed-file report against fetched `origin/main`
+  reconfirms the two pre-existing geometry failures above. They target
+  unchanged geometry/texture-bound code; this audio refresh does not modify
+  those authorities. A clean baseline checkout comparison previously hit the
+  filesystem quota while generating a 1.2 GB Godot cache. I removed that
+  temporary checkout and did not change unrelated lift or mapper behavior.
+  The earlier post-sync report against `origin/main@b05417cc` also had 42 passes,
+  two failures, and two Moment Forge checks skipped. Existing failures were
   `forlorn_ritualant_mapper_semantics` (chapel art bounds) and
   `forlorn_ritualant_runtime` (lower lift backstop/wings and boarding collision).
   These checks target unchanged geometry/texture-bound code; a clean baseline
@@ -48,9 +69,11 @@
   positional-audio assertions; none are changed by this score integration.
 - Human in-game audition of dialogue clarity, duck intensity, and loop edges is
   still pending, as required by the audit; it is a post-implementation review.
-- The implementation branch was merged normally with latest `origin/main` and
-  checkpoint-pushed at `31bb4695`. Root `main` remains 27 commits behind with
-  the user's unrelated dirty Operator file, so safe root sync is pending.
+- The existing branch was resumed through `workstream.py resume` after its
+  clean attached worktree and branch ownership were verified. The coordination
+  checkout is now clean and synchronized to `origin/main@be58b0b8`. The v2
+  source refresh remains on the existing implementation branch and is not
+  landed.
 
 The current changed-file validation is not green. Do not mark this packet
 complete or land on `main` until its finish gate can accept the required
