@@ -235,6 +235,7 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
+        ".github/workflows/packet-authoring-handoff.yml",
         ".claude/settings.json",
         ".agents/skills/custodian-next/agents/openai.yaml"
       ],
