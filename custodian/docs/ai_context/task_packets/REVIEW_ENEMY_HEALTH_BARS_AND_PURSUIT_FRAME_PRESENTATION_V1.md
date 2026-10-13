@@ -4,8 +4,8 @@
 - Workstream: `review-enemy-health-bars-and-pursuit-frame-presentation-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `enemy-health-bars-and-pursuit-frame-presentation-v1`
 - Locks: `enemy-runtime, combat-feel`
