@@ -4,8 +4,8 @@
 - Workstream: `review-awakening-collision-mapper-authoring-bridge-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `awakening-collision-mapper-authoring-bridge-v1`
 - Locks: `awakening-runtime, authored-level`
