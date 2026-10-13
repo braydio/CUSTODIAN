@@ -1,6 +1,6 @@
 # Agent Longform Session Framework V1
 
-Status: **planning / not implemented**. Reviewed `main@39d9613937c` (2026-10-12). Source: October 12, 2026 transcript-reconciled 15-packet audit; 12 attempted, 9 landed, three unresolved. Authoring Chat: not-recorded (user must provide current link).
+Status: **planning / not implemented**. Reviewed `main@39d9613937c` (2026-10-12). Source: October 12, 2026 transcript-reconciled 15-packet audit; 12 attempted, 9 landed, three unresolved. Authoring Chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62.
 
 ## Contract and entrypoint
 
@@ -66,4 +66,4 @@ Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/c
 
 **LF4** `agent-longform-telemetry-and-standard-adoption-v1`: native JSONL provenance/tokens/cost visibility, low-volume export, common receipt adapters for standard tasks after reviews.
 
-Each slice requires focused mock/bare-repo failure-injection tests, exact manifest ownership, full changed-file closeout and fresh paired review. The eight packets are staged `draft/manual` pending live authoring preflight, user-provided chat URL, explicit promotion and dispatcher claim. Do not treat this branch as production runner.
+Each slice requires focused mock/bare-repo failure-injection tests, exact manifest ownership, full changed-file closeout and fresh paired review. The eight packets are staged `draft/manual` pending live authoring preflight, explicit promotion and dispatcher claim; the current authoring chat URL is now recorded. Do not treat this branch as production runner.

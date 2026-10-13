@@ -16,7 +16,7 @@
 - Max automatic review cycles: 2
 - Review rationale: longform execution safety demands independent falsification
 - Reviewed main: 39d9613937c174cbe2bd9b7dbcaf81d2fa4267ce
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none
 - Goal: Explainable validation planner through the existing CUSTODIAN workflow authorities.
 - Completion boundary: Implement the precise contract below with covered negative tests, final changed-file green and fresh independent post-land review. No false claim or acceptance.
@@ -38,6 +38,6 @@
 - Next packet state: dependency-gated
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Next action: Await explicit draft-pair promotion after targeted authoring preflight, then implement from latest main, land and fresh review.
-- Blockers or open questions: draft/manual authoring publication and actual current chat URL unprovided.
+- Blockers or open questions: draft/manual authoring publication, targeted authoring preflight, and formal promotion to main.

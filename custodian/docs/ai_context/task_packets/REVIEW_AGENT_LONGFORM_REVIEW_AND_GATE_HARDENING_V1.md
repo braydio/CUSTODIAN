@@ -18,7 +18,7 @@
 - Review target workstream: agent-longform-review-and-gate-hardening-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md
 - Reviewed main: <fill at claim>
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
@@ -58,6 +58,6 @@
 - Next packet state: none
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Next action: Only open dependent LF work after passed review; correction otherwise.
 - Blockers or open questions: implementation not landed yet.
