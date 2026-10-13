@@ -47,7 +47,7 @@ class DropboxAssetAuditTests(unittest.TestCase):
 
     def test_pinned_human_receipt(self):
         dest = self.project / audit.REVIEW_FILE
-        dest.parent.mkdir(parents=True)
+        dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(json.dumps({"schema": "custodian.asset_source_reviews.v1",
             "receipts": [{"batch_id": "cliff", "sha256": "a" * 64,
                           "decision": "approved", "reviewed_by": "user",
@@ -59,7 +59,7 @@ class DropboxAssetAuditTests(unittest.TestCase):
 
     def test_reject_incomplete_or_duplicate_receipts(self):
         dest = self.project / audit.REVIEW_FILE
-        dest.parent.mkdir(parents=True)
+        dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(json.dumps({"schema": "custodian.asset_source_reviews.v1",
                                     "receipts": [{"batch_id": "cliff", "decision": "approved"}]}))
         with self.assertRaises(ValueError):
