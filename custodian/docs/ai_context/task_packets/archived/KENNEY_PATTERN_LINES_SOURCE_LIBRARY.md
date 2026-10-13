@@ -154,7 +154,7 @@ The library README must state:
 
 ## Completion Truth
 
-- Completion schema: `custodian.completion_truth.v1`
+- Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
@@ -165,11 +165,11 @@ The library README must state:
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; the source library and PNG files were unaffected, and the whitespace-normalized audit passed.
-- Root cause / contributing factors: The one-off audit script used a contiguous substring check for prose that wrapped across a newline.
-- Prevention / pipeline improvement: Normalize whitespace before checking README content in local source-library audits.
+- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; then closeout preflight caught an incorrect Completion Truth schema identifier. Source/library contents were unaffected; both checks passed after correction.
+- Root cause / contributing factors: The one-off audit script used a contiguous substring check for wrapped prose, and the completion schema was entered without checking the parser's canonical constant.
+- Prevention / pipeline improvement: Normalize whitespace in README assertions and copy the completion schema identifier from `task_packet_contract.py`.
 - Tooling / docs drift discovered: `none`
-- Follow-up: `none`
+- Follow-up: `fixed-in-scope`
 - What worked: Pillow decode checks plus per-file source/destination SHA-256 and strict ID/path checks proved the copy contract without a runtime or Asset V2 ingest.
 
 ## Documentation Drift Check

@@ -25,18 +25,18 @@ The source folders contained `_asset_review_*` subdirectories in addition to the
 - PASS — license copy/checksum, cross-variant ID parity, and README coverage of every immediate/future shortlist ID.
 - PASS — `git diff --check`.
 
-The first audit attempt failed only because its README text assertion expected a phrase to be contiguous across a wrapped line. I corrected the audit to normalize whitespace and reran it successfully; no repository defect or asset mismatch was found.
+The first audit attempt failed only because its README text assertion expected a phrase to be contiguous across a wrapped line. I corrected the audit to normalize whitespace and reran it successfully. Lifecycle preflight then caught an incorrectly entered Completion Truth schema identifier; I corrected it to the parser's canonical `custodian.task_completion.v1`. No repository or asset defect was found.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
 - Friction severity: low
-- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; source assets were unaffected.
-- Root cause / contributing factors: The one-off audit script used a contiguous substring check on wrapped prose.
-- Prevention / pipeline improvement: Normalize whitespace before checking README content in local source-library audits.
+- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; closeout preflight also caught an incorrect Completion Truth schema identifier. Source assets were unaffected.
+- Root cause / contributing factors: The audit used a contiguous substring check on wrapped prose, and the completion schema was entered without checking the parser's canonical constant.
+- Prevention / pipeline improvement: Normalize whitespace in README assertions and copy the completion schema identifier from `task_packet_contract.py`.
 - Tooling / docs drift discovered: none
-- Follow-up: none
+- Follow-up: fixed-in-scope
 - What worked: Per-file decode, path, ID, dimensions, and SHA-256 checks proved the intake without production ingest.
 
 ## Next Handoff
