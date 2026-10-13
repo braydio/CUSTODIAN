@@ -145,6 +145,24 @@ Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pair
 
 Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
 
+## Forlorn Ritualant Four-Cue Music Integration (2026-10-13)
+
+The authored Underground now routes four byte-preserved 48 kHz stereo Vorbis
+assets through its scene-scoped `ForlornRitualantMusicDirector` and the shared
+`MusicManager` lease: chapel reveal exploration loop, committed-hostility loop,
+fresh peaceful Stilling Release, and fresh `SITE_DEFILED` hostile resolution.
+Nonlethal dissolve fades to silence; route restore does not replay one-shots;
+teardown restores the prior playlist only while the scene still owns the lease.
+The Ninth Answer applies a configurable short music duck, leaving combat SFX
+untouched. Provenance and exact file hashes are in
+`custodian/content/audio/music/ash_bell/audio_handoff_manifest.json`; the
+independent `ash-bell-ritualant-music-score` requirement is fulfilled while the
+existing `ash-bell-audio-cues` SFX/room-bed requirement remains needed. The
+focused deterministic contract is
+`ritualant_four_cue_music`. Human in-game level, intelligibility, and loop-edge
+audition remains a post-implementation quality check and is not claimed as
+complete. See `design/03_world/ASH_BELL_RITUALANT_SCORE.md`.
+
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
 The geographic design is now locked at `design/05_levels/ASH_BELL_BRIDGED_FALLS_APPROACH.md`: after the authored Forlorn-Ritualant resolves, its future north egress leads to a **distinct generated Ash-Bell Alpine Highlands region**, which in turn contains a **generated Bridged Falls subregion**. Bridged Falls is not a fixed authored corridor: each accepted seed must compose a new large-scale, connected network of monumental ruined Meridian civic bridge spans, branches/overlooks, cliff descent and Lower Quarter terminal while preserving the first-basin reveal and bridge-commit beats. Waterfalls/mist remain presentation over real CHASM/exterior semantics; Lower Quarter / Station IX stay far visual attractors until the final approach.

@@ -50,13 +50,13 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: `partial`
+- Friction severity: `high`
+- What went wrong: Changed-file validation found existing Ritualant geometry assertion failures, and a separate baseline worktree hit the filesystem quota during Godot import.
+- Root cause / contributing factors: The shared validation manifest selected 45 checks; a clean Godot worktree built a 1.2 GB import cache.
+- Prevention / pipeline improvement: Reuse the current task worktree import cache for focused verification and check available filesystem quota before creating a second imported worktree.
+- Tooling / docs drift discovered: Changed-file routing from the shared validation manifest selects many unrelated checks; asset doctor reports unrelated Awakening catalog hash drift.
+- Follow-up: `manual-follow-up`
 
 ## Next Handoff
 

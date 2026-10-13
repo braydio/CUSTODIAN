@@ -2,6 +2,26 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Forlorn Ritualant Four-Cue Score
+
+Run the focused integration smoke and retain the existing encounter route and
+completion regressions. The smoke verifies the four imported resources, reveal
+and committed combat loops, fresh explicit-pin and final-anchor one-shots,
+violent resolution routing, scoped Ninth Answer duck, single music player,
+restore behavior, and successor-zone ownership:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
+godot --headless --path custodian --script res://tools/validation/ash_bell_scene_smoke.gd
+godot --headless --path custodian --script res://tools/validation/forlorn_ritualant_completion_smoke.gd
+python3 custodian/tools/assets/asset.py needs --check
+python3 custodian/tools/validation/asset_requirements_smoke.py
+```
+
+The smoke is structural/runtime-state evidence; it does not certify subjective
+mix balance, dialogue intelligibility, or seamless loop boundaries. Those
+remain human in-game listening checks.
+
 ## Validation Failure Attribution
 
 When a canonical runner report is red, keep that report unchanged and inspect every failure, timeout, infrastructure error and tier skip with the read-only triage tool. A baseline is used only when explicitly supplied; its exact file SHA-256 is emitted, and only a unique same-test-ID/same-tier result is comparable. Missing or mismatched evidence remains `unknown`. Baseline-red and candidate-only-red classifications are evidence labels; the candidate failure remains blocking.
