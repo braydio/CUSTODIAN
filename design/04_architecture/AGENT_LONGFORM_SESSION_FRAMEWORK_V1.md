@@ -66,7 +66,7 @@ Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/c
 
 **LF4** `agent-longform-telemetry-and-standard-adoption-v1`: native JSONL provenance/tokens/cost visibility, low-volume export, common receipt adapters for standard tasks after reviews.
 
-Each slice requires focused mock/bare-repo failure-injection tests, exact manifest ownership, full changed-file closeout and fresh paired review. The eight packets are staged `draft/manual` pending live authoring preflight, explicit promotion and dispatcher claim; the current authoring chat URL is recorded. Do not treat this branch as production runner.
+Each slice requires focused mock/bare-repo failure-injection tests, exact manifest ownership, full changed-file closeout and fresh paired review. After all four pairs passed targeted authoring preflight and the planning series landed, LF1's implementation/review pair was promoted to `ready/auto`; the dispatcher still blocks its claim behind MC1's retained `agent-workflow` branch/worktree. LF2–LF4 remain `draft/manual`. Do not treat this planning document as the production runner.
 
 ## Reconciliation against current main
 

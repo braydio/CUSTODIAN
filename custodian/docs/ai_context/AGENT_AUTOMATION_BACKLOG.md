@@ -7,9 +7,9 @@ Prioritized automation candidates for CUSTODIAN agent workflow. These are intent
 ## Planned — Longform Codex Session Framework (2026-10-12)
 
 Owning spec: `design/04_architecture/AGENT_LONGFORM_SESSION_FRAMEWORK_V1.md`.
-**Planning only; the implementation and paired-review packets are published as
-`draft/manual`, and no longform runner or `$custodian-longform` skill is
-installed.** The proposed shell entrypoint will orchestrate bounded sequential
+**Planning only; LF1's implementation/review pair is `ready/auto` after
+authoring and design preflight; LF2–LF4 remain `draft/manual`. No longform
+runner or `$custodian-longform` skill is installed.** The proposed shell entrypoint will orchestrate bounded sequential
 work through the existing dispatcher, workstream lifecycle, validation, and
 paired-review authorities. Its ledger will distinguish attempted, landed, and
 independently accepted work; default execution budgets are three attempts, three
@@ -18,7 +18,9 @@ single-pair behavior remains unchanged. This framework does not create claim,
 review, validation, or recovery authority, and it does not implement the
 separately planned OR1/OR2 process lease/recovery controls. LF1 promotion and
 claim remain subject to packet preflight, live dispatcher dependencies, locks,
-and recovery gates. Authoring chat:
+and recovery gates. LF1 currently cannot be claimed because the dispatcher sees
+the retained MC1 agent branch as holding `agent-workflow`, despite its recorded
+remote dispatch claim having been released. Authoring chat:
 `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62`.
 
 ## Planned — Lazygit-style Mission Control TUI (2026-10-12)

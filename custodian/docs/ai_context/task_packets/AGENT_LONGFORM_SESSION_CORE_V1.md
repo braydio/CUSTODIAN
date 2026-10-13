@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: agent-longform-session-core-v1
-- Status: draft
-- Dispatch: manual
+- Status: ready
+- Dispatch: auto
 - Priority: P1
 - Depends on: none
 - Locks: agent-workflow
@@ -15,7 +15,7 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: longform execution safety demands independent falsification
-- Reviewed main: 029c31b0396842bc566a5616c46ab03c0696ad80
+- Reviewed main: 0475b31eb030617aaacba972f0549a2798af3146
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Visual review: none
 - Goal: Real CLI and durable accounting through the existing CUSTODIAN workflow authorities.
@@ -39,5 +39,5 @@
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
-- Next action: Await explicit draft-pair promotion after targeted authoring preflight, then implement from latest main, land and fresh review.
-- Blockers or open questions: draft/manual authoring publication, targeted authoring preflight, and formal promotion to main.
+- Next action: Implement only after dispatcher claim becomes eligible; then land and launch the fresh paired review.
+- Blockers or open questions: dispatcher reports `agent-workflow` held by the retained `agent-mission-control-data-model-v1` branch/worktree; re-audit after owner/recovery resolution.
