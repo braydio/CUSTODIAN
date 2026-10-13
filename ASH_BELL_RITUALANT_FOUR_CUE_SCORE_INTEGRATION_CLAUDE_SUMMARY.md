@@ -8,7 +8,8 @@
   runtime music path and the specialized audio inbox. Source ZIP member, inbox,
   and runtime SHA-256 values match for all four. The handoff manifest records
   archive provenance, codec, channels, sample rate, measured duration, loop
-  semantics, and state target.
+  semantics, and state target; Godot Ogg import descriptors are committed for
+  stable editor/runtime import.
 - Added an exclusive `MusicManager` scene lease with loop and one-shot playback,
   transition cancellation, music-only ducking, one-shot completion, and
   conditional playlist restoration. A second scoped owner cannot steal an
