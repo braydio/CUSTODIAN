@@ -38,7 +38,7 @@ No passing paired-review receipt was issued, and no reviewed implementation/runt
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Refresh reason: none
-- Next action: Resume this review in the same claimed worktree when `git-dropbox-sync` read-only listings are responsive; reproduce all three lanes and then decide whether a passed receipt is warranted
-- Blockers or open questions: live read-only remote smoke for all three required lanes
+- Next action: Follow the repository explicit manual recovery procedure for the protected `post_exit_recovery` state, then obtain a fresh independent review decision against the now-responsive remote
+- Blockers or open questions: paired-review runner `post_exit_recovery` requires manual resolution; review receipt remains outstanding
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20

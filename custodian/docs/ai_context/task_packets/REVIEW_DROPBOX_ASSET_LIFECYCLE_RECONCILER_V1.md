@@ -47,3 +47,8 @@
 - Offline test suite passed: `python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit` (6 tests). `python3 custodian/tools/agent/task_packet_index.py` passed. Checkout remained clean after read-only checks.
 - Durable evidence: pinned reviewed main `48646ce06a630d8d524353df6d335d53fbef1747`; implementation commit `7cae2a34874737afd0ecc4c685847702f7051ea0`; remote failure recorded above; historical inventory snapshot `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` records the lift package as source-only and both static packages against the same six-plus-six families.
 - Review result: **blocked** pending reproducible live remote smoke. No passing receipt is issued. No reviewed implementation files were changed.
+
+
+### Recovery check (2026-10-13)
+
+After the fresh reviewer exited, a new read-only audit from the coordination checkout completed successfully against `git-dropbox-sync`: all three lanes, 26 ZIPs, 88 families, and 24 findings. This confirms the remote listing is responsive again, but it does not constitute an independent review receipt. The prior paired-review runner is in protected `post_exit_recovery` because its reviewer returned blocked validation; preserve this branch and do not reclaim or mark the review complete. Continue only through the repository's explicit manual recovery procedure, then obtain a fresh independent review decision.
