@@ -300,6 +300,8 @@ service_indicator_lamp_v2.png
 
 These are **donor/source studies**, not an instruction to publish every file one-for-one.
 
+The October 13 Surface Lift V2 ZIP at `/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip` is an additional proposed deck/projector/safety-field source package, not a revision to this locked donor decomposition. Its pinned SHA-256 is `fb283369cf3546c7615d1ea51a28c6f6fd95591d36d8c1ccafd5e4c2338bcdbc`; authenticated byte and member checks passed, but its exact-hash source-review receipt remains absent. The compact human review handoff is `/CUSTODIAN/visual_review/ash-bell-surface-lift-v2-asset-intake/20261013T110347Z/REVIEW_MANIFEST.json`. No V2 family is registered from that package pending explicit approval. Its `field_arming` strip contains six distinct frames against an eight-frame target and remains source-pending; do not normalize or publish it as an eight-frame runtime state.
+
 The final V2 ingress family/state count and exact runtime canvases remain **TBD after source decomposition**. The migration should first determine which donors become:
 
 - mountain mass;

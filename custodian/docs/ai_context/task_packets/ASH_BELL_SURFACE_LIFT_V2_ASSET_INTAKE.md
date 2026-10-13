@@ -38,13 +38,29 @@
 - Task overrides: `none`
 - Deferred: Eight-frame `field_arming` is not supplied (only six distinct illustrated stages); this is a scoped **source-pending** state, not permission to guess or downgrade. Runtime wiring owned by integration packet.
 
+## Completion Truth
+
+**Partial; blocked at human source-art approval.** The authenticated Dropbox ZIP matches its pinned SHA-256 and declared byte size. All five manifest PNGs match their individual SHA-256, byte counts, RGBA dimensions, and declared source dimensions. The three strips contain six distinct 362×724 cells each. The existing source review registry remains empty, and the repository baseline marks this package `needs_visual_technical_review`; therefore this execution did not create an approval receipt, register families, stage masters, normalize images, or ingest runtime files. The exact hash-pinned visual handoff is `/CUSTODIAN/visual_review/ash-bell-surface-lift-v2-asset-intake/20261013T110347Z/REVIEW_MANIFEST.json`. `field_arming` remains source-pending because six illustrated frames do not satisfy its eight-frame target.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: The packet described the sources as reviewed direction but the live source receipt registry and baseline show no exact-hash approval; implementation correctly stopped before approval-gated registration/staging.
+- Root cause / contributing factors: Dropbox package presence and prior direction approval do not establish human approval of these exact image bytes or runtime targets.
+- Prevention / pipeline improvement: Keep source receipt validation fail-closed; capture an exact-package and per-state decision in the source receipt after human review.
+- Tooling / docs drift discovered: No technical tool defect. The source manifest and task packet expose the six-versus-eight arming shortfall.
+- Follow-up: manual-follow-up
+- What worked: Authenticated source download, pinned ZIP/member verification, and the compact review handoff supplied reproducible evidence without changing runtime state.
+
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `ash-bell-surface-lift-v2-asset-intake`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
-- Next action: Follow the dependency order; deliver exact validation and artifact/provenance evidence, then let the paired fresh-context review execute.
-- Blockers or open questions: Eight-frame `field_arming` is not supplied (only six distinct illustrated stages); this is a scoped **source-pending** state, not permission to guess or downgrade. Runtime wiring owned by integration packet.
+- Next action: Review `/CUSTODIAN/visual_review/ash-bell-surface-lift-v2-asset-intake/20261013T110347Z/REVIEW_MANIFEST.json` in the linked authoring chat. Record an exact-hash, per-state approval/rejection receipt only for approved files, then resume this workstream. Obtain genuine eight-frame `field_arming` artwork separately before claiming that state is complete.
+- Blockers or open questions: Human approval for the exact ZIP hash and per-state runtime targets is outstanding. Eight-frame `field_arming` is not supplied (only six distinct illustrated stages); leave it **source-pending** until reviewed eight-frame artwork exists. Runtime wiring is owned by the integration packet.
 
