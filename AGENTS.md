@@ -116,6 +116,30 @@ source-to-runtime ingest pipeline.
 
 For long-horizon wanted-feature tracking, use `design/90_codex/` and its tracker at `design/90_codex/TRACKER.md`; codex cards are idea inventory until graduated into active design authority.
 
+## Render Automatic Deploy Isolation
+
+The Render service named `CUSTODIAN` is linked to this repository. Without a
+service-side Build Filter, **every push to the linked branch can trigger a
+deploy**, including Godot implementation work, packet metadata, and reviews that
+have nothing to do with the legacy hosted terminal.
+
+- For a commit that changes **only files outside `python-sim/`** and does not
+  change Render configuration or dependencies used by the hosted terminal, put
+  `[skip render]` in the commit message. Do this for routine task-packet
+  authoring, review receipts, Godot code/art, documentation, and automation.
+  Render recognizes the marker; GitHub still receives and processes the commit.
+- Do **not** use the marker for commits that change the hosted terminal or its
+  runtime/deployment dependencies. Do not rewrite published commits to add it.
+- Commit-message markers are a defense in depth, **not a replacement** for a
+  service-side filter. The existing `python-sim/render.yaml` targets the legacy
+  `custodian-terminal` Blueprint service and already declares an include filter,
+  but that does not prove the live `CUSTODIAN` service is configured with it.
+- For the permanent fix, set **Build Filters > Included Paths** on the existing
+  live Render `CUSTODIAN` service to `python-sim/**` (no ignored paths), after
+  verifying this is the Python-terminal service. This setting controls existing
+  standalone services; merely adding or editing YAML does not apply it.
+  See `RENDER_DEPLOY_POLICY.md` for the safe validation procedure.
+
 ## Commit Policy
 
 Normal implementation work follows `implement → validate → commit → land on
@@ -157,6 +181,28 @@ commit, or push.` Paired post-land review packets may authorize commits only for
   blocker is independently resolved.
   Rebase conflicts and failed required validation are blockers; never force-push.
 - Do not amend or force-push unless explicitly asked.
+
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
 
 ## Name the Brief
 

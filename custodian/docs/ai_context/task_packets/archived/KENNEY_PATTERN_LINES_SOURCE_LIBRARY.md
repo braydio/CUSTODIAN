@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `kenney-pattern-lines-source-library`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -19,15 +19,15 @@
 - Authoring chat: `not-recorded`
 - Goal: Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so future production asset work can reuse individual motifs without re-downloading or rediscovering the pack.
 - Completion boundary: Discover the four actual local Pattern Pack Lines deliveries in `~/Downloads`; verify the common 30-pattern identity set and expected size/thickness variants; copy all 120 PNGs byte-for-byte into one reference-only source_work library; preserve the bundled license/provenance; write one manifest and one concise usage index carrying the approved motif shortlist below; update the AI file index. Done means a later packet can name `pattern_###` plus a variant and resolve exact source bytes without touching the original downloads.
-- Current measured state: The user supplied four galleries of the same 30 motifs, naturally corresponding to `pattern_000.png` through `pattern_029.png`: default 256px, doubled 512px thick, thin 256px, and thin 512px. Live main has task-scoped Kenney experimental source_work under `asset_drop/source_work/experiments/kenney_presentation/`, but no general reusable third-party source-material library. Production Asset V2 remains the required promotion route once any reference material becomes a real game asset.
+- Current measured state: All four extracted Downloads variants were verified: `default_256`, `double_thick_512`, `thin_256`, and `thin_512`, each with source IDs `pattern_0000`–`pattern_0029`; the 256 variants are 256×256 and the doubled variants are 512×512. The reference library now contains 30 byte-identical PNGs per variant (120 total), mapped by numeric value to canonical `pattern_000`–`pattern_029`. Every copied PNG decodes, has the expected dimensions, and matches its source SHA-256. The copied Kenney `License.txt` is CC0 1.0 and matches the Downloads license SHA-256. The extracted source directories' `_asset_review_*` subdirectories were left untouched and excluded from the intake. No inbox/runtime paths or Asset V2 family were added. Live main had no general reusable third-party source-material library; production Asset V2 remains the required promotion route once reference material becomes a real game asset.
 - Evidence: `custodian/docs/ASSET_LAYOUT_CONVENTION.md` keeps source/master art out of runtime and routes registered production families through Asset V2; `custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json` provides the existing Kenney provenance/hash/license pattern; current K3D assets are explicitly experiment-scoped rather than a general material library.
 - Task-specific authority: `custodian/docs/ASSET_LAYOUT_CONVENTION.md`; `custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json`.
 - Work surface: primary owner `custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/`; adjacent docs `custodian/docs/ai_context/FILE_INDEX.md`. Local input discovery is limited to `~/Downloads`.
-- Change: Implement the exact source-library contract below. Discover local roots from their contents rather than assuming download folder/archive names. Preserve source bytes exactly. The library is reference-only and must never be read by runtime code.
+- Change: Implement the exact source-library contract below. Discover local roots from their contents rather than assuming download folder/archive names. Accept the verified four-digit source stems with the strict mapping below, write the existing three-digit canonical destination filenames, and record both identities in provenance. Preserve source bytes exactly. The library is reference-only and must never be read by runtime code.
 - Preserve: Existing K3D experimental families and sources; all current Asset V2 family/catalog/runtime truth; local downloaded originals; Kenney license text and exact source bytes.
 - Non-goals: Do not create an Asset V2 family for the full pattern pack. Do not copy these files into `asset_drop/inbox/` or `res://content/`. Do not wire any pattern into a scene. Do not regenerate, recolor, resize, flatten, or otherwise derive production art in this workstream. Do not commit original ZIP archives.
-- Acceptance: Exactly 30 PNGs exist in each of four variant folders, for 120 PNGs total; every copied file hash matches its local source; default/thin 256 variants are exactly 256x256 and doubled/thin-512 variants are exactly 512x512; pattern IDs are one-to-one across variants; license/provenance is recorded; the usage index includes every approved immediate and future motif listed below; no runtime/inbox files are added; `git diff --check` passes.
-- Validation: Run one local Python verification that checks count, natural-sort pattern IDs, exact dimensions, SHA-256 source/copy equality, and cross-variant ID parity; then `git diff --check`. No Godot or Asset V2 ingest is required because this packet intentionally creates no production asset.
+- Acceptance: Exactly 30 PNGs exist in each of four variant folders, for 120 PNGs total; source stems `pattern_0000`–`pattern_0029` map **by numeric value, without offset**, to repository stems `pattern_000`–`pattern_029` in each variant; original source path/name and mapped canonical ID are both recorded; every copied file SHA-256 matches its local source byte-for-byte; default/thin 256 variants are exactly 256x256 and doubled/thin-512 variants are exactly 512x512; the canonical 30-ID set is identical across all four variants with no duplicates, gaps, extra files, or ID collisions; license/provenance is recorded; the usage index includes every approved immediate and future motif listed below; no runtime/inbox files are added; `git diff --check` passes.
+- Validation: Run one local Python verification that checks the 30 numeric source IDs `0000`–`0029` per variant; the explicit zero-offset four-to-three-digit source-to-canonical mapping; unique and identical 30-ID sets across variants; no ambiguous or extra PNGs; exact dimensions; original-path manifest provenance; SHA-256 source/copy equality; then `git diff --check`. No Godot or Asset V2 ingest is required because this packet intentionally creates no production asset.
 - Task overrides: `none`
 - Deferred: Promotion of selected motifs into production art; Awakening Undergate foreground/underlay regeneration; the Gate wind-dust seam correction; Meridian hardened-floor/hardstand derivative work.
 
@@ -60,7 +60,24 @@ custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/
 
 The repository folder names above are canonical even if the user's downloaded folders use different labels. Resolve the four local roots by inspecting dimensions/content and the bundled license, then copy exact PNG bytes into these normalized reference-library locations.
 
-If the actual delivered filenames differ from `pattern_000.png` through `pattern_029.png`, stop and report the mismatch rather than inventing a mapping.
+### Approved source-name reconciliation (2026-10-13)
+
+**Planning decision:** All four observed Downloads folders use four-digit input basenames `pattern_0000.png` through `pattern_0029.png`. These are approved input filenames. The library layout above remains canonical **three-digit** naming for all four destination variants; changing a filename during the copy does not authorize changing file contents.
+
+For every source PNG matching the exact pattern `^pattern_([0-9]{4})\.png$`, parse its decimal index `n`. Require `0 <= n <= 29`, and copy its **unchanged bytes** to `pattern_{n:03d}.png` in the corresponding canonical variant directory. Examples:
+
+| Original Downloads basename | Canonical library basename | Manifest pattern ID |
+| --- | --- | --- |
+| `pattern_0000.png` | `pattern_000.png` | `pattern_000` |
+| `pattern_0006.png` | `pattern_006.png` | `pattern_006` |
+| `pattern_0017.png` | `pattern_017.png` | `pattern_017` |
+| `pattern_0029.png` | `pattern_029.png` | `pattern_029` |
+
+This is **index-preserving**, never `n+1` or `n-1`. Gallery positions remain 1-based, so gallery #7 is still `pattern_006`. Discover the four source roots by dimension/thickness/content and bundled license as before; never assume Downloads folder names.
+
+A source root may use the original three-digit scheme instead only if it is uniformly `pattern_000.png`–`pattern_029.png`; preserve the same canonical ID and bytes. In **each** of the four roots require exactly one coherent input naming scheme and exactly one file for each index 0–29. Reject mixed-width numbering within a root, a duplicate canonical ID, missing/extra/out-of-range patterns, unexpected PNG basenames, mismatched dimensions, unreadable PNGs, or ambiguous variant assignment. Stop with an exact inventory instead of guessing if those checks fail.
+
+Keep Downloads originals untouched. In `manifest.json`, record **both** each PNG's exact original relative source path/basename (`pattern_0000.png`, etc.) and its canonical `pattern_000` ID and three-digit destination relative path, alongside the existing variant/dimensions/checksum/license fields. Hash the source and copied file and prove equality. This is a packet-only input-name refresh: **resume the existing `kenney-pattern-lines-source-library` claim/worktree**, do not create a second claim, retag another variant, change its locks, generate new art, or route these reference files into Asset V2 production ingest.
 
 ## Manifest Contract
 
@@ -69,8 +86,9 @@ If the actual delivered filenames differ from `pattern_000.png` through `pattern
 - pack title and detected local source root/archive;
 - license ID/text source;
 - canonical variant ID;
-- original relative source path;
-- pattern ID;
+- original relative source path and unchanged source basename (four-digit for the confirmed delivery);
+- canonical three-digit library destination relative path;
+- canonical pattern ID (three-digit, numerically equal to the parsed source index);
 - width/height;
 - SHA-256;
 - exact-copy boolean;
@@ -129,10 +147,30 @@ The library README must state:
 
 1. this folder contains third-party source/reference material, not runtime authority;
 2. all 120 PNGs are retained to avoid destructive preselection;
-3. the manifest owns provenance/hash/variant/usage tags;
+3. the manifest owns provenance/hash/variant/usage tags, including the original four-digit filename → canonical three-digit pattern-ID mapping;
 4. only the shortlist above has current CUSTODIAN design approval;
 5. production use requires copying/deriving a selected source into the real owning Asset V2 family and ingesting it normally;
 6. direct scene/runtime references into this reference folder are forbidden.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/manifest.json`; focused 120-file source/destination checksum, dimensions, decode, ID parity, provenance and shortlist audit; `git diff --check`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; then closeout preflight caught an incorrect Completion Truth schema identifier. Source/library contents were unaffected; both checks passed after correction.
+- Root cause / contributing factors: The one-off audit script used a contiguous substring check for wrapped prose, and the completion schema was entered without checking the parser's canonical constant.
+- Prevention / pipeline improvement: Normalize whitespace in README assertions and copy the completion schema identifier from `task_packet_contract.py`.
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope`
+- What worked: Pillow decode checks plus per-file source/destination SHA-256 and strict ID/path checks proved the copy contract without a runtime or Asset V2 ingest.
 
 ## Documentation Drift Check
 
