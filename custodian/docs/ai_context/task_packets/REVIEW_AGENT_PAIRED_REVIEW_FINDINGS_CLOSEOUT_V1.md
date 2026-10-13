@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-findings-closeout-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-findings-closeout-v1`
 - Locks: `agent-workflow`
