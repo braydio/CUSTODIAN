@@ -10,7 +10,9 @@
 
 ### Live tooling
 
-The read-only audit CLI exists at `custodian/tools/assets/dropbox_asset_audit.py`; the approval-pinned source ZIP tool is `custodian/tools/assets/dropbox_asset_stage.py` and the **opt-in** status-index publisher is `custodian/tools/assets/dropbox_asset_publish.py --apply`. Their test suites are wired into GitHub CI. A source must have an explicit Git review receipt before it is eligible for local staging. The legacy index below is not silently altered by reconciliation; the new derived status view will publish under `/CUSTODIAN/asset_batches/_registry/lifecycle/` when first executed with a real rclone remote.
+**First live lifecycle publication (2026-10-13):** authenticated `git-dropbox-sync` inventory completed all three lanes (26 ZIPs) and reported 24 findings (23 unregistered packages, one registered package missing remotely) across 88 families. Current derived index: `/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json`; immutable run: `/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T103045Z.json` and `.md`. No source package was staged or approved and no Asset V2 ingest occurred.
+
+The read-only audit CLI exists at `custodian/tools/assets/dropbox_asset_audit.py`; the approval-pinned source ZIP tool is `custodian/tools/assets/dropbox_asset_stage.py` and the **opt-in** status-index publisher is `custodian/tools/assets/dropbox_asset_publish.py --apply`. Their test suites are wired into GitHub CI. A source must have an explicit Git review receipt before it is eligible for local staging. The legacy index below remains unchanged by reconciliation; the derived status view is published under `/CUSTODIAN/asset_batches/_registry/lifecycle/`.
 
 ## Purpose
 

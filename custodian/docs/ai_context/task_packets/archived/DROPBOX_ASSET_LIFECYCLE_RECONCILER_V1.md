@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `dropbox-asset-lifecycle-reconciler-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -38,7 +38,34 @@
 - Acceptance: Known unindexed packages detected; the four existing approved Alpine batch records preserved; six+six ritual static states do not double-count closeout source; lift V2 remains source-only; correct last-known and current statuses are distinct; scan/report deterministic and read-only; source/ingest/runtime never collapsed; tests green.
 - Validation: `python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit` (or correct runnable module path), `python3 custodian/tools/assets/asset.py needs --check`, `python3 custodian/tools/assets/asset.py doctor`, scoped AI docs validation where applicable; real `rclone lsf` read-only if available. Confirm clean checkout after read-only scan with `git status --porcelain` excluding intentionally ignored cache only.
 - Task overrides: `none`
-- Deferred: Auto-claim-on-upload, background watching, automatic review approval, automatic Asset V2 ingest, broad migration of older Dropbox packages. Source downloads/staging/publish commands now exist, but first real remote application is pending.
+- Deferred: Auto-claim-on-upload, background watching, automatic review approval, automatic Asset V2 ingest, broad migration of older Dropbox packages. Source staging/normalization and Asset V2 intake remain separately approval-gated.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: Real three-lane Dropbox inventory and derived index/immutable receipt published; focused tests and needs check passed; no source approval or ingest.
+- Result: complete
+- Landed implementation: live inventory and first derived lifecycle publication completed; toolchain verified without staging or ingest.
+- Dropbox findings: 26 ZIPs across all three lanes; 24 findings (23 unregistered, 1 missing registered object); 88 current Asset V2 families.
+- Published index: `/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json`
+- Immutable receipt: `/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T103045Z.json` and `.md`
+- Validation: six focused audit tests passed; `asset.py needs --check` passed; `asset.py doctor` retained four pre-existing designation-locker hash mismatch errors, not modified by this task.
+- Source approvals and ingestion: none; uploaded sources remain unapproved unless an exact Git receipt exists.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: `asset.py doctor` reports four known designation-locker catalog hash mismatches
+- Root cause / contributing factors: pre-existing catalog-to-file hash drift, outside this task's allowed work surface
+- Prevention / pipeline improvement: retain the exact baseline and report doctor findings as existing drift
+- Tooling / docs drift discovered: operational status incorrectly said the live remote scan/publication had not happened; corrected
+- Follow-up: none
+- What worked: complete real remote scan and safe derived-only publication
 
 ## Refresh Planning Authority
 
@@ -49,10 +76,10 @@
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `review-dropbox-asset-lifecycle-reconciler-v1`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
-- Next action: Codex performs focused fresh-branch review and corrects failures, runs real Dropbox read-only audit, and publishes first derived lifecycle index explicitly after verifying remote configuration and current approval records.
-- Blockers or open questions: Targeted authoring preflight and three focused CLI tests passed in GitHub Validate Repository CI (run 38364205303). Real Dropbox rclone provider checks and initial lifecycle index publication remain execution acceptance.
+- Next action: Run the paired post-land review in a fresh reviewer context; Phase 2 remains dependency-gated until review archives complete.
+- Blockers or open questions: four pre-existing designation-locker doctor mismatches; no blocker to derived lifecycle publication.
