@@ -1,5 +1,13 @@
 # CURRENT STATE — CUSTODIAN
 
+## Ritualant Highland Station approved design (2026-10-12)
+
+The user-approved **future** Highland Station redesign is locked in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`; supporting Asset V2 planning and dialogue/idle/ambient intent are recorded in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_ASSET_BRIEF.md` and `design/02_features/enemy_objective/FORLORN_RITUALANT_DIALOGUE_IDLE_AMBIENT_AUDIT.md`. Receiver Key is the approved new quest component, recovered **off-chapel** and seated in station-original local receiver equipment to terminate the exposed return contact and restore the local reference. The chapel is a non-original overlap, and the Ritualant's rite expresses psychological fixation, not new magical continuity authority. The Highland station is one of I–VIII with the exact numeral intentionally reserved; Station IX stays in the Lower Quarter across the generated Highlands and Bridged Falls approach.
+
+**No new key item, receiver state, VFX, artwork, NPC idle, dialogue input, or north exit has landed from this design lock.** Current runtime and tests still use Stilling Pin + wrong basin, and the pending north egress remains separate. Existing runtime is not to be misreported as Receiver Key-complete. Documentation drift reconciliation and independent review packets exist as `draft/manual` awaiting targeted authoring preflight, not dispatcher-claimable implementation.
+
+
+
 ## Mission Control TUI-first planning (2026-10-12)
 
 The proposed developer operations console is specified at
