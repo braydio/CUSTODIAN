@@ -70,6 +70,9 @@ def review(marker="auto", status="draft", dispatch="manual"):
 
 
 class PacketHandoffTests(unittest.TestCase):
+    def test_promotion_commit_skips_unrelated_render_deploy(self):
+        self.assertIn("[skip render]", handoff.PROMOTION_COMMIT_MESSAGE)
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.repo = Path(self.tmp.name)

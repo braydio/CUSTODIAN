@@ -25,6 +25,9 @@ import task_packet_index
 
 PACKET_DIR = Path(PACKET_ROOT)
 MARKER = "Authoring handoff"
+# These commits change only packet metadata; they must not redeploy the legacy
+# Render-hosted terminal on every automated main-branch promotion.
+PROMOTION_COMMIT_MESSAGE = "agent workflow, automatic task packet handoff [skip render]"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
@@ -184,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
         staged = set(git(repo, "diff", "--cached", "--name-only").splitlines())
         if staged != set(touched) and staged != set(touched[:-1]):
             raise HandoffError(f"unexpected staged paths: {staged ^ set(touched)}")
-        git(repo, "commit", "-m", "agent workflow, automatic task packet handoff")
+        git(repo, "commit", "-m", PROMOTION_COMMIT_MESSAGE)
         # Never rewrite remote history or race-push over someone else's main.
         git(repo, "fetch", "origin", "main")
         if git(repo, "rev-parse", "HEAD^") != git(repo, "rev-parse", "refs/remotes/origin/main"):
