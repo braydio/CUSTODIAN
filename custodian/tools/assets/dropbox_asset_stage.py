@@ -17,9 +17,9 @@ import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath
 
-PROJECT = Path(__file__).resolve().parents[2]
+PROJECT = Path(__file__).resolve().parents[3]
 TOOLS = Path(__file__).resolve().parents[1]
-REVIEW_FILE = "content/metadata/assets/source_review_receipts.v1.json"
+REVIEW_FILE = "custodian/content/metadata/assets/source_review_receipts.v1.json"
 MAX_ARCHIVE = 1024 * 1024 * 1024
 MAX_ENTRY = 256 * 1024 * 1024
 
@@ -169,12 +169,12 @@ def plan(project: Path, package: Path, batch_id: str, normalize: bool) -> tuple[
     objects = []
     for state, data in inspected:
         source = project / _safe_path(state["entry"])
-        target = project / "asset_drop/inbox" / state["family_id"] / (state["state_id"] + ".png")
+        target = project / "custodian/asset_drop/inbox" / state["family_id"] / (state["state_id"] + ".png")
         if source.exists() or (normalize and target.exists()):
             raise ValueError("destination exists; replacement requires separate approved workflow")
         # Normalization may only target already registered Asset V2 states.
         if normalize:
-            contract_file = project / "content/metadata/assets/families" / (state["family_id"] + ".asset.json")
+            contract_file = project / "custodian/content/metadata/assets/families" / (state["family_id"] + ".asset.json")
             if not contract_file.is_file():
                 raise ValueError("Asset V2 family not registered")
             contract = json.loads(contract_file.read_text(encoding="utf-8"))

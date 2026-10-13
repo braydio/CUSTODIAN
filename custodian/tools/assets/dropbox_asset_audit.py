@@ -49,7 +49,7 @@ def _rclone_inventory(remote: str, base: str) -> list[dict[str, Any]]:
     for lane in ROOTS:
         target = configured + _remote_root(base, lane)
         try:
-            listing = json.loads(_run(["rclone", "lsjson", "--recursive", "--files-only", target]))
+            listing = json.loads(_run(["rclone", "lsjson", "--hash", "--recursive", "--files-only", target]))
         except (RuntimeError, json.JSONDecodeError) as exc:
             raise RuntimeError("Cannot complete remote lane " + lane) from exc
         if not isinstance(listing, list):
@@ -63,6 +63,7 @@ def _rclone_inventory(remote: str, base: str) -> list[dict[str, Any]]:
                 "bytes": obj.get("Size"),
                 "modified": obj.get("ModTime"),
                 "id": obj.get("ID"),
+                "hashes": obj.get("Hashes", {}),
             })
     return items
 
@@ -156,6 +157,7 @@ def _packages(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "path": path, "name": entry.get("name") or Path(path).name,
             "bytes": entry.get("bytes"), "modified": entry.get("modified"),
             "remote_file_id": entry.get("id"),
+            "dropbox_content_hash": (entry.get("hashes") or {}).get("dropbox"),
         })
     return sorted(packages, key=lambda x: x["path"].lower())
 
@@ -200,9 +202,24 @@ def reconcile(items: list[dict[str, Any]], registry: dict[str, Any], project: Pa
         if pkg["path"] in matched_paths:
             continue
         name = pkg["name"].removesuffix(".zip").lower().replace("_", "-")
-        rows.append({**pkg, "batch_id": name, "registry_status": "unregistered",
-                     "registered_sha256": None, "review_status": "awaiting_review",
-                     "family_ids": [], "family_state": {}, "known_asset_count": None, "receipt_present": False})
+        path_receipts = [receipt for receipt in receipts.values()
+                         if receipt.get("dropbox_path") == pkg["path"]
+                         and receipt.get("dropbox_file_id") == pkg.get("remote_file_id")
+                         and receipt.get("package_size_bytes") == pkg.get("bytes")
+                         and receipt.get("dropbox_content_hash") == pkg.get("dropbox_content_hash")
+                         and pkg.get("dropbox_content_hash")]
+        receipt = path_receipts[0] if len(path_receipts) == 1 else None
+        source_families = sorted({source.get("family_id") for source in receipt.get("sources", [])
+                                  if source.get("family_id")}) if receipt else []
+        rows.append({**pkg,
+                     "batch_id": receipt["batch_id"] if receipt else name,
+                     "registry_status": "unregistered",
+                     "registered_sha256": receipt.get("sha256") if receipt else None,
+                     "review_status": receipt["decision"] if receipt else "awaiting_review",
+                     "family_ids": source_families,
+                     "family_state": {fid: known.get(fid) for fid in source_families},
+                     "known_asset_count": len(receipt.get("sources", [])) if receipt else None,
+                     "receipt_present": receipt is not None})
         findings.append({"id": "DBX-UNREGISTERED-" + name, "type": "unregistered_package", "path": pkg["path"]})
     rows.sort(key=lambda p: p["path"].lower())
     findings.sort(key=lambda x: x["id"])

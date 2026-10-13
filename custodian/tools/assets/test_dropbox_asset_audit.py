@@ -57,6 +57,32 @@ class DropboxAssetAuditTests(unittest.TestCase):
         result = audit.reconcile(self.items[:1], self.registry, self.project)
         self.assertEqual(result["batches"][0]["review_status"], "approved")
 
+    def test_unregistered_package_uses_receipt_only_with_remote_identity_match(self):
+        path = "/CUSTODIAN/asset_batches/ash-bell-ritualant/lift.zip"
+        content_hash = "dropbox-content-hash"
+        receipt_path = self.project / audit.REVIEW_FILE
+        receipt_path.parent.mkdir(parents=True, exist_ok=True)
+        receipt_path.write_text(json.dumps({"schema": "custodian.asset_source_reviews.v1", "receipts": [{
+            "batch_id": "lift-v1", "sha256": "a" * 64, "decision": "approved",
+            "reviewed_by": "user", "reviewed_at": "2026-10-13T00:00:00Z",
+            "authoring_chat": "https://chatgpt.com/c/test", "dropbox_path": path,
+            "dropbox_file_id": "id:lift", "dropbox_content_hash": content_hash,
+            "package_size_bytes": 250,
+            "sources": [{"family_id": "lift_family", "state_id": "idle"}],
+        }]}))
+        item = {"path": path, "name": "lift.zip", "bytes": 250, "id": "id:lift",
+                "hashes": {"dropbox": content_hash}}
+        result = audit.reconcile([item], {}, self.project)
+        package = result["batches"][0]
+        self.assertEqual(package["review_status"], "approved")
+        self.assertTrue(package["receipt_present"])
+        self.assertEqual(package["registry_status"], "unregistered")
+        self.assertEqual(package["family_ids"], ["lift_family"])
+        item["hashes"] = {"dropbox": "different-content"}
+        unmatched = audit.reconcile([item], {}, self.project)["batches"][0]
+        self.assertEqual(unmatched["review_status"], "awaiting_review")
+        self.assertFalse(unmatched["receipt_present"])
+
     def test_reject_incomplete_or_duplicate_receipts(self):
         dest = self.project / audit.REVIEW_FILE
         dest.parent.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,112 @@
 {
   "schema": "custodian.asset_source_reviews.v1",
   "description": "Explicit source review decisions pinned to immutable ZIP SHA256. Empty until approved per batch/state; Dropbox active does not imply review approved.",
-  "receipts": []
+  "receipts": [
+    {
+      "batch_id": "ash-bell-surface-lift-v2-full-resolution-source-20261013",
+      "sha256": "fb283369cf3546c7615d1ea51a28c6f6fd95591d36d8c1ccafd5e4c2338bcdbc",
+      "decision": "approved",
+      "reviewed_by": "user",
+      "reviewed_at": "2026-10-13T15:08:24Z",
+      "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac57cd9-e070-83ea-b432-7bc0082aef7c",
+      "original_authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20",
+      "review_note": "User approved exact package and per-state runtime targets in the current review chat. field_arming is approved as source work only; six supplied frames do not satisfy its eight-frame runtime contract.",
+      "sources": [
+        {
+          "entry": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_ingress_props_v1/lift_deck_source.png",
+          "family_id": "ash_bell_surface_lift_ingress_props_v1",
+          "state_id": "lift_deck",
+          "sha256": "5f37b0f058b7f30d384c632d06cf725fed392c3597f4aacca8e9e2ff0bd38b39",
+          "source_dimensions": [
+            1448,
+            1086
+          ],
+          "frames": 1,
+          "target_frame_size": [
+            448,
+            320
+          ],
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_ingress_props_v1/field_projector_source.png",
+          "family_id": "ash_bell_surface_lift_ingress_props_v1",
+          "state_id": "field_projector",
+          "sha256": "c333d27fdd884d4686436e9874a603f5656912190588ce8f386a3aa416a53a2e",
+          "source_dimensions": [
+            1086,
+            1448
+          ],
+          "frames": 1,
+          "target_frame_size": [
+            64,
+            128
+          ],
+          "state_decision": "approved_runtime",
+          "target_fps": null,
+          "loop": false
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_idle_source.png",
+          "family_id": "ash_bell_surface_lift_safety_field_v1",
+          "state_id": "field_idle",
+          "sha256": "52d04334ff21fc42f9455303159f54c95df2d2bb67dd05b4ebadea47abc80583",
+          "source_dimensions": [
+            2172,
+            724
+          ],
+          "frames": 6,
+          "target_frame_size": [
+            512,
+            192
+          ],
+          "state_decision": "approved_runtime",
+          "target_fps": 6,
+          "loop": true
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_engaged_source.png",
+          "family_id": "ash_bell_surface_lift_safety_field_v1",
+          "state_id": "field_engaged",
+          "sha256": "2126c5a6f8c70712542bfd6f8e62176c3d1fc66f6f514cb248b7c1fbdabc19d9",
+          "source_dimensions": [
+            2172,
+            724
+          ],
+          "frames": 6,
+          "target_frame_size": [
+            512,
+            192
+          ],
+          "state_decision": "approved_runtime",
+          "target_fps": 8,
+          "loop": true
+        },
+        {
+          "entry": "custodian/asset_drop/source_work/ash_bell/ash_bell_surface_lift_safety_field_v1/field_arming_source.png",
+          "family_id": "ash_bell_surface_lift_safety_field_v1",
+          "state_id": "field_arming",
+          "sha256": "989affd1416a85738dbd4c75f7a60e2b664dd77bcfeb683bd3864b18fb4c51e4",
+          "source_dimensions": [
+            2172,
+            724
+          ],
+          "frames": 6,
+          "target_frame_size": [
+            512,
+            192
+          ],
+          "state_decision": "approved_source_work_only",
+          "target_fps": 12,
+          "loop": false
+        }
+      ],
+      "dropbox_file_id": "id:8NXqdXuW6GUAAAAAAAADAA",
+      "dropbox_content_hash": "57e20f97c82063ea9ebe7bd6facd4779145e21c2d0ddf083ffee4b60c8115785",
+      "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip",
+      "package_size_bytes": 7801299
+    }
+  ]
 }
