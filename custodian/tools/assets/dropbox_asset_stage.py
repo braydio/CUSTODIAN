@@ -215,10 +215,11 @@ def stage(project: Path, package: Path, batch_id: str, normalize: bool, apply: b
         try:
             for source_temp, destination in staged:
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                with destination.open("xb") as out, source_temp.open("rb") as src:
-                    while chunk := src.read(1024 * 1024):
-                        out.write(chunk)
-                created.append(destination)
+                with destination.open("xb") as out:
+                    created.append(destination)
+                    with source_temp.open("rb") as src:
+                        while chunk := src.read(1024 * 1024):
+                            out.write(chunk)
         except Exception:
             for destination in reversed(created):
                 destination.unlink(missing_ok=True)
@@ -232,14 +233,40 @@ def stage(project: Path, package: Path, batch_id: str, normalize: bool, apply: b
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("batch_id")
-    parser.add_argument("--zip", type=Path, required=True, help="local full-resolution source ZIP; download via verified Dropbox handoff first")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--zip", type=Path, help="locally available full-resolution source ZIP")
+    group.add_argument("--dropbox-path", help="exact source ZIP path under /CUSTODIAN/asset_batches/")
+    parser.add_argument("--remote", default="", help="rclone remote for direct Dropbox fetch")
     parser.add_argument("--project-dir", type=Path, default=PROJECT)
     parser.add_argument("--normalize", action="store_true", help="also derive reviewed pixels into Asset V2 inbox")
     parser.add_argument("--apply", action="store_true", help="perform staged writes; default dry-run")
     args = parser.parse_args()
     try:
-        payload = stage(args.project_dir.resolve(), args.zip.resolve(), args.batch_id,
-                        args.normalize, args.apply)
+        if args.zip:
+            payload = stage(args.project_dir.resolve(), args.zip.resolve(), args.batch_id,
+                            args.normalize, args.apply)
+        else:
+            remote_path = args.dropbox_path
+            if (not remote_path.startswith("/CUSTODIAN/asset_batches/") or
+                    ".." in PurePosixPath(remote_path).parts or not remote_path.endswith(".zip")):
+                raise ValueError("remote source must be an exact registered source ZIP path")
+            from importlib.util import module_from_spec, spec_from_file_location
+            spec = spec_from_file_location("dropbox_transport_for_source_stage",
+                                           TOOLS / "iteration/dropbox_transport.py")
+            assert spec and spec.loader
+            mod = module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            remote = mod.resolve_remote(args.remote or None,
+                                        env_precedence=("CUSTODIAN_ASSET_REMOTE", "CUSTODIAN_REVIEW_REMOTE"))
+            with tempfile.TemporaryDirectory(prefix="custodian-dropbox-source-") as tmp:
+                local_zip = Path(tmp) / "source.zip"
+                fetch = subprocess.run(["rclone", "copyto", remote + remote_path.lstrip("/"),
+                                        str(local_zip)], capture_output=True, text=True,
+                                       timeout=240, check=False)
+                if fetch.returncode:
+                    raise RuntimeError("Dropbox source download failed; credentials/path may be unavailable")
+                payload = stage(args.project_dir.resolve(), local_zip, args.batch_id,
+                                args.normalize, args.apply)
     except (ValueError, OSError, RuntimeError, zipfile.BadZipFile, json.JSONDecodeError) as exc:
         print("Asset staging rejected: " + str(exc), file=sys.stderr)
         return 2
