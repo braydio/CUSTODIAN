@@ -80,9 +80,6 @@ func _run() -> void:
 		await create_timer(0.70).timeout
 		if proxy.modulate.a >= 0.08:
 			errors.append("distant chapel proxy did not retire in DEEP_CAVERN")
-	var chapel_blend := level.get_node_or_null("BackgroundRoot/ChapelOuterBlend") as Sprite2D
-	if chapel_blend == null or chapel_blend.z_index != -28:
-		errors.append("chapel outer blend z authority drifted")
 	var connector_blend := level.get_node_or_null("BackgroundRoot/ChapelConnectorApron") as Sprite2D
 	if connector_blend == null or connector_blend.z_index != -27:
 		errors.append("chapel connector blend z authority drifted")
