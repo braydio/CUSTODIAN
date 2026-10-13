@@ -94,6 +94,8 @@ python3 tools/assets/dropbox_asset_audit.py scan --json
 python3 tools/assets/dropbox_asset_audit.py report --format markdown
 ```
 
+For explicit source staging, use `python3 tools/assets/dropbox_asset_stage.py <batch-id> --dropbox-path <exact-source-ZIP> [--normalize] --apply` after a SHA256-pinned human approval receipt is committed. Normalization refuses unregistered states, mismatched frame counts and geometry. For durable external status publication, use `python3 tools/assets/dropbox_asset_publish.py --apply` after a clean read-only audit; this writes only derived lifecycle index/immutable audit receipts, not source assets. Neither command ingests or replaces runtime art.
+
 Dropbox archive presence or the legacy registry's `active` status is **not** human source approval or runtime publication. A future asset may only be ingested after an explicit review receipt pins its immutable SHA256 and state mapping. Keep full-resolution approved masters in source_work; derive normalized inbox locally using the existing pixel-art/Asset V2 tools, then check `asset.py plan/status/doctor/needs --check`, consumers, and focused scene tests. Do not ingest review-only media or copy remote assets directly into runtime. The audit is read-only and does not require modification of Dropbox index or asset files.
 
 ## Production Asset Requirements

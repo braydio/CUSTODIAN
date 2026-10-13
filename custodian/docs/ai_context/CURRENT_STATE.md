@@ -1,5 +1,11 @@
 # CURRENT STATE — CUSTODIAN
 
+## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
+
+Three repository-owned tools now exist: `custodian/tools/assets/dropbox_asset_audit.py` (read-only three-lane scan, legacy registry + Asset V2 status projection), `dropbox_asset_stage.py` (explicit approval/SHA-pinned ZIP fetch, source_work staging and optional per-frame pixel-art normalization), and `dropbox_asset_publish.py` (explicit immutable Dropbox audit receipt + derived current index). `custodian/content/metadata/assets/source_review_receipts.v1.json` starts empty: **no new batch is automatically approved**, even if source is uploaded or older registry says `active`. Read-only and write-side focused suites are wired into GitHub Validate Repository CI.
+
+**Operational status:** CLI code is committed, but no authenticated rclone smoke, approved new source intake, actual source normalization, Asset V2 ingestion, or live Dropbox lifecycle index publication has been asserted from this implementation. The October 13 baseline remains an observed snapshot. Draft/manual `dropbox-asset-lifecycle-reconciler-v1` packet/review pair is reserved for Codex fresh-context audit, real remote smoke, resolution of remaining status/CLI issues, and durable lifecycle closeout. See `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`.
+
 ## Ritualant Highland Station approved design (2026-10-12)
 
 The user-approved **future** Highland Station redesign is locked in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`; supporting Asset V2 planning and dialogue/idle/ambient intent are recorded in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_ASSET_BRIEF.md` and `design/02_features/enemy_objective/FORLORN_RITUALANT_DIALOGUE_IDLE_AMBIENT_AUDIT.md`. Receiver Key is the approved new quest component, recovered **off-chapel** and seated in station-original local receiver equipment to terminate the exposed return contact and restore the local reference. The chapel is a non-original overlap, and the Ritualant's rite expresses psychological fixation, not new magical continuity authority. The Highland station is one of I–VIII with the exact numeral intentionally reserved; Station IX stays in the Lower Quarter across the generated Highlands and Bridged Falls approach.

@@ -1,6 +1,6 @@
 # Dropbox source artwork → CUSTODIAN Asset V2: lifecycle reconciliation design
 
-**Status:** approved design proposal for Codex; not implemented
+**Status:** implemented tooling on main; live Dropbox/rclone smoke and fresh-context review pending (2026-10-13)
 **Workstream:** `dropbox-asset-lifecycle-reconciler-v1`
 **Audit date:** 2026-10-13
 **Reviewed Git main:** `76c86f4fd52eac4546139925d4c70a50725ed2a0`
@@ -102,23 +102,42 @@ Review receipts (manual approvals) are immutable and Git-tracked under **propose
 
 ## 5. CLI and roles
 
-New focused CLI **proposed** at `custodian/tools/assets/dropbox_asset_audit.py`, reusing `custodian/tools/iteration/dropbox_transport.py` rather than a new credential system:
+Three focused commands are now implemented on `main`. They reuse the pre-existing `dropbox_transport.py` remote resolution and Asset V2 ownership. **Read-only scan is the default; staging and remote publication require explicit `--apply`.**
 
 ```bash
+# 1. Read-only reconciliation. Scans all three source lanes using rclone.
 python3 custodian/tools/assets/dropbox_asset_audit.py scan --json
 python3 custodian/tools/assets/dropbox_asset_audit.py report --format markdown
-python3 custodian/tools/assets/dropbox_asset_audit.py verify <batch-id> --source
-python3 custodian/tools/assets/dropbox_asset_audit.py stage <batch-id> --dry-run
-python3 custodian/tools/assets/dropbox_asset_audit.py stage <batch-id> --apply
+
+# 2. Approved source ZIP: safe download to temporary staging,
+#    compare immutable package + every PNG hash to Git review receipt.
+python3 custodian/tools/assets/dropbox_asset_stage.py <batch-id> \
+  --dropbox-path /CUSTODIAN/asset_batches/<workstream>/<batch-id>/<package>.zip
+# Write to source_work, and optionally derive normalized inbox with converter.
+python3 custodian/tools/assets/dropbox_asset_stage.py <batch-id> \
+  --dropbox-path /CUSTODIAN/asset_batches/<workstream>/<batch-id>/<package>.zip \
+  --apply --normalize
+
+# 3. Publish an immutable audit-run receipt plus a derived current index
+#    in /CUSTODIAN/asset_batches/_registry/lifecycle/.
+python3 custodian/tools/assets/dropbox_asset_publish.py
+python3 custodian/tools/assets/dropbox_asset_publish.py --apply
+
+# 4. Asset Pipeline V2 retains the exclusive runtime publication authority.
 python3 custodian/tools/assets/asset.py plan <family-id>
+python3 custodian/tools/assets/asset.py ingest <family-id> --yes --godot-import
 python3 custodian/tools/assets/asset.py status <family-id>
 python3 custodian/tools/assets/asset.py doctor
 python3 custodian/tools/assets/asset.py needs --check
 ```
 
-Commands above are target CLI contracts, **not current working commands** until Codex implements the task. `scan`/`report` are safe read-only defaults. `verify` streams exact registered ZIP to temp staging, checks remote metadata, SHA-256, safe ZIP structure, entry SHA256, image signatures, dimensions, frame count and alpha on actual source bytes. Check Dropbox content hash using Dropbox's block-hash scheme, not by assuming it equals ZIP SHA-256. `stage --dry-run` prints mapped source/inbox target paths and review gates; `--apply` requires valid source review, writes source_work and optional normalized inbox under transactional receipts, but **never silently invokes `asset.py ingest`**. Abort on missing/ambiguous family mapping, unverifiable hash, unsafe ZIP traversal/symlink, modified source, collisions, incompatible aspect/frame registration or failed alpha validation.
+`--normalize` is **optional**: only use it when the exact state and frame count are registered in an Asset V2 family contract and an explicit review receipt includes `target_frame_size`. Otherwise stage **source_work only** and first resolve the unregistered family/dimensions. The existing `custodian/tools/art/custodian_pixelart_converter.py` is invoked to derive normalized image(s). Conversion will never invent the extra two missing frames in a 6-frame source intended to become an 8-frame animation; that mismatch is rejected.
 
-Cache under ignored `custodian/asset_drop/cache/dropbox_asset_audit/` and optional bounded reports under `reports/asset_lifecycle/`; never commit remote credentials, huge PNGs, ZIPs, or speculative binary mirrors. Update Dropbox `lifecycle/INDEX.json` via an explicit `publish-report --apply` action with scan provenance, atomic temp and rename + concurrency/digest check. Do not rewrite immutable batch receipts or historical index entries in place without explicit migration boundaries.
+The repository review registry is `custodian/content/metadata/assets/source_review_receipts.v1.json`. It starts empty deliberately; current Dropbox `active` flags and historical packet prose are **not** new approval receipts. To approve a batch, record an exact SHA-256-pinned review decision, human reviewer, timestamp, chat backlink, and per-image source state IDs, `entry`, family, SHA-256, source dimensions, frame count, and (where applicable) per-frame target geometry. The stage tool verifies all entries and refuses overwrites. No task/CI tool should silently approve a batch.
+
+`asset_stage` accepts either `--dropbox-path` (direct temporary rclone download) or `--zip` (already fetched approved source). It does not ingest. The scanner reads metadata and index without downloading ZIPs; staging deliberately downloads bytes only for explicit approval-gated operations. The publisher writes an immutable run first and then a **replaceable derived current index**; it does not rewrite historical `_registry` receipts or uploaded source packages. The current-index update is not a cross-agent compare-and-swap operation, so avoid concurrent publishers and use the immutable run as the recovery/audit record.
+
+**Unverified external steps:** the present ChatGPT environment does not have a configured CUSTODIAN rclone remote. The first full live remote scan, source-staging run, and Dropbox index publication remain operational acceptance tasks for Codex in its connected checkout. Passing local/GitHub unit tests is not proof those operations have run against this Dropbox account.
 
 ## 6. Operating procedure and validation gates
 
@@ -139,7 +158,7 @@ Add a short link rather than a new, independent `AGENTS.md`:
 
 > Before any asset intake or upload closeout, run the Dropbox asset lifecycle audit against fresh `main`. Dropbox stores source masters, not normalized runtime. Treat any new upload as `awaiting_review` until an explicit review receipt approves exact SHA-256 and family states. Only Asset Pipeline V2 and runtime validation establish `ingested/bound/verified`. See `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`. Do not create parallel status ledgers or ingest from `visual_review`.
 
-Do not make this live requirement claim that the not-yet-written CLI exists. Add it in the implementation packet after the tests pass.
+The AGENTS routing note and focused CI suites are now present. Maintain the instructions when the CLI changes.
 
 ## 8. Dependency-aware implementation division
 
@@ -147,4 +166,4 @@ Do not make this live requirement claim that the not-yet-written CLI exists. Add
 - **Slice B (follow-up, separate packet only if needed):** verify/stage exact approved source batches, compute normalization receipts via real pixel-art pipeline, block collisions, leave ingestion explicit.
 - **Slice C (optional):** publish derived index to Dropbox and schedule audit as manual recurring Codex task; no silent cloud mutation by default.
 
-The current task packet covers Slice A only to keep the diff narrow. Use its fresh independent review, then decide whether the staging and publication slices are warranted.
+The three CLI slices have now landed as implementation code. The existing draft/manual packet pair remains the place for Codex to perform fresh-context review, live Dropbox smoke, remediation and lifecycle closeout rather than re-implement the tools.

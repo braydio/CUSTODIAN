@@ -8,6 +8,10 @@
 
 > **Lifecycle audit added 2026-10-13:** Use `python3 custodian/tools/assets/dropbox_asset_audit.py scan --json` or `report --format markdown` to reconcile these legacy registry entries with all three Dropbox source lanes and local Asset V2 evidence. Legacy `active` is not review approval; an explicit SHA256-pinned source-review receipt is required for new approval. The index below reflects its original October 7 scope and is not a complete October 13 inventory; see `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` and `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`.
 
+### Live tooling
+
+The read-only audit CLI exists at `custodian/tools/assets/dropbox_asset_audit.py`; the approval-pinned source ZIP tool is `custodian/tools/assets/dropbox_asset_stage.py` and the **opt-in** status-index publisher is `custodian/tools/assets/dropbox_asset_publish.py --apply`. Their test suites are wired into GitHub CI. A source must have an explicit Git review receipt before it is eligible for local staging. The legacy index below is not silently altered by reconciliation; the new derived status view will publish under `/CUSTODIAN/asset_batches/_registry/lifecycle/` when first executed with a real rclone remote.
+
 ## Purpose
 
 Use this document to find durable authored asset handoffs in Dropbox without searching arbitrary nested folders or confusing visual-review evidence with implementation input.

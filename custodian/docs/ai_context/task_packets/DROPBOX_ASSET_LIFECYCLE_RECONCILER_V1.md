@@ -18,9 +18,9 @@
 - Reviewed main: `76c86f4fd52eac4546139925d4c70a50725ed2a0`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Visual review: `none`
-- Goal: Provide one repeatable read-only Dropbox/Git/Asset Pipeline V2 asset lifecycle report, showing exact source batches, human review, missing states, local ingest/binding evidence, and drift without falsely authorizing ingestion.
-- Completion boundary: Focused CLI `custodian/tools/assets/dropbox_asset_audit.py scan/report`, a backward-compatible adapter for existing `custodian.dropbox_asset_upload_index.v1`, immutable source review receipt parsing, deterministic JSON/Markdown reports and focused offline/real-read-only validation; no runtime or cloud mutation.
-- Current measured state: Dropbox `/CUSTODIAN/asset_batches/_registry/CUSTODIAN_ASSET_UPLOAD_INDEX.json` last updated 2026-10-07 lists four Alpine batches; live Dropbox has newer Ash-Bell/lift source ZIPs plus other source lanes. Repo already has `dropbox_transport.py`, inbound `implementation_handoff.py`, `asset.py` and `asset_status.py`. Baseline `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` maps high-confidence candidates without guessing ZIP contents or live runtime.
+- Goal: Independently harden, validate on real Dropbox and close out the already-landed audit/source-stage/report-publish toolchain against its approved lifecycle authority, without duplicate implementations or silent ingestion.
+- Completion boundary: Fresh-main code inspection, targeted suite + real read-only rclone audit, controlled report publish with immutable receipt where credentials/authorization exist, bounded corrections and post-land reviewer receipt. Do not count existing code as validated without tests. Source package intake stays separately approval-gated.
+- Current measured state: Audit scanner, explicit SHA-pinned source-work staging and pixel-art normalization gate, and opt-in immutable audit-run/current index publisher have landed on main. GitHub focused offline tests are wired to Validate Repository; follow latest CI run. Historical Dropbox upload index remains stale (last updated 2026-10-07). Git source-review registry is initially empty by design. No live rclone remote publication nor Asset V2 ingest is confirmed.
 - Evidence: `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`; `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json`; `custodian/docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md`; `custodian/tools/iteration/dropbox_transport.py`; `custodian/tools/assets/asset.py`; `custodian/content/metadata/assets/required_assets.registry.json`.
 - Task-specific authority: Existing Dropbox registry determines immutable batch identity/discovery; Git design/spec/manual review receipt determines approvals; Asset V2 catalog/status/requirements determine actual ingest/consumer state; current dispatcher governs claimability.
 - Work surface: `custodian/tools/assets/dropbox_asset_audit.py` and one focused helper/schema if needed; `custodian/tools/assets/test_dropbox_asset_audit.py`; optional small source-review receipt schema; `custodian/AGENTS.md` short routing instruction; `custodian/docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md` and validation recipe.
@@ -38,7 +38,7 @@
 - Acceptance: Known unindexed packages detected; the four existing approved Alpine batch records preserved; six+six ritual static states do not double-count closeout source; lift V2 remains source-only; correct last-known and current statuses are distinct; scan/report deterministic and read-only; source/ingest/runtime never collapsed; tests green.
 - Validation: `python3 -m unittest custodian.tools.assets.test_dropbox_asset_audit` (or correct runnable module path), `python3 custodian/tools/assets/asset.py needs --check`, `python3 custodian/tools/assets/asset.py doctor`, scoped AI docs validation where applicable; real `rclone lsf` read-only if available. Confirm clean checkout after read-only scan with `git status --porcelain` excluding intentionally ignored cache only.
 - Task overrides: `none`
-- Deferred: Hash-verified byte download/staging; normalized inbox construction and pixelart script; external Dropbox index publish; optional recurring task.
+- Deferred: Auto-claim-on-upload, background watching, automatic review approval, automatic Asset V2 ingest, broad migration of older Dropbox packages. Source downloads/staging/publish commands now exist, but first real remote application is pending.
 
 ## Refresh Planning Authority
 
@@ -54,5 +54,5 @@
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
-- Next action: Return exact current outstanding source-to-runtime queue to chat, then scope the separate verified-stage/publish follow-up.
+- Next action: Codex performs focused fresh-branch review and corrects failures, runs real Dropbox read-only audit, and publishes first derived lifecycle index explicitly after verifying remote configuration and current approval records.
 - Blockers or open questions: Requires target repo targeted preflight and real local rclone connectivity checks, no user lore questions.
