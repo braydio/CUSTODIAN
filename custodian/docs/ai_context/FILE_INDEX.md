@@ -948,6 +948,7 @@ Last updated: 2026-10-02
 
 ## Active Asset Pipeline
 
+- `custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/` — reference-only Kenney Pattern Pack Lines library retaining all 120 original PNG byte streams across four variants; `manifest.json` records CC0 provenance, source SHA-256, original four-digit Downloads paths, canonical three-digit IDs, and approved motif tiers. It is not runtime authority; production use must promote a selected motif into its owning Asset V2 family.
 - `custodian/tools/art/custodian_pixelart_converter.py` — deterministic high-resolution source-art prep utility, exposed as `pixelart` by `tools/custodian_aliases.sh`; handles single sprites and animation sheets, generates crisp, balanced, and bold clustered candidates with shared sheet palettes, presents a comparison, and writes the interactively or explicitly selected PNG
 - `custodian/tools/art/stage_awakening_inbox.py` — validates and stages normalized Awakening family inputs; writes each `awakening_staging_manifest.json` inside its family inbox and does not overwrite a global catalog/status manifest.
 - `custodian/tools/pipelines/ingest.py` and `ingest_runtime.gd` — manifest-driven sprite ingest that writes into live runtime sprite domains, automatically emits frame-flipped `e↔w`/`ne↔nw`/`se↔sw` counterparts unless explicitly authored or opted out with `--no-mirror`/`"auto_mirror": false`, runs post-process rebuilds including modular Operator runtime refreshes, archives processed intake, and cleans source PNG `.import` sidecars without staging Git changes

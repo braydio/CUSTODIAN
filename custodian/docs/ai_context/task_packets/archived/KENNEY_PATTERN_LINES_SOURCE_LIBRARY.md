@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `kenney-pattern-lines-source-library`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -19,7 +19,7 @@
 - Authoring chat: `not-recorded`
 - Goal: Preserve the user's four downloaded Kenney Pattern Pack Lines variants as a durable, searchable, provenance-complete CUSTODIAN source-material library so future production asset work can reuse individual motifs without re-downloading or rediscovering the pack.
 - Completion boundary: Discover the four actual local Pattern Pack Lines deliveries in `~/Downloads`; verify the common 30-pattern identity set and expected size/thickness variants; copy all 120 PNGs byte-for-byte into one reference-only source_work library; preserve the bundled license/provenance; write one manifest and one concise usage index carrying the approved motif shortlist below; update the AI file index. Done means a later packet can name `pattern_###` plus a variant and resolve exact source bytes without touching the original downloads.
-- Current measured state: The user supplied four galleries of the same 30 motifs: default 256px, doubled 512px thick, thin 256px, and thin 512px. The claimed workstream's 2026-10-13 local intake audit found all four Downloads roots use **`pattern_0000.png` through `pattern_0029.png`** (four-digit source stems), rather than the packet's previously assumed three-digit basenames. This is an approved input-name difference, **not** an asset-content exception: normalize source index `0000`–`0029` to canonical reference-library ID `pattern_000`–`pattern_029` without changing PNG bytes. The operator reported a clean existing worktree; revalidate its actual state on resume. Live main has task-scoped Kenney experimental source_work under `asset_drop/source_work/experiments/kenney_presentation/`, but no general reusable third-party source-material library. Production Asset V2 remains the required promotion route once reference material becomes a real game asset.
+- Current measured state: All four extracted Downloads variants were verified: `default_256`, `double_thick_512`, `thin_256`, and `thin_512`, each with source IDs `pattern_0000`–`pattern_0029`; the 256 variants are 256×256 and the doubled variants are 512×512. The reference library now contains 30 byte-identical PNGs per variant (120 total), mapped by numeric value to canonical `pattern_000`–`pattern_029`. Every copied PNG decodes, has the expected dimensions, and matches its source SHA-256. The copied Kenney `License.txt` is CC0 1.0 and matches the Downloads license SHA-256. The extracted source directories' `_asset_review_*` subdirectories were left untouched and excluded from the intake. No inbox/runtime paths or Asset V2 family were added. Live main had no general reusable third-party source-material library; production Asset V2 remains the required promotion route once reference material becomes a real game asset.
 - Evidence: `custodian/docs/ASSET_LAYOUT_CONVENTION.md` keeps source/master art out of runtime and routes registered production families through Asset V2; `custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json` provides the existing Kenney provenance/hash/license pattern; current K3D assets are explicitly experiment-scoped rather than a general material library.
 - Task-specific authority: `custodian/docs/ASSET_LAYOUT_CONVENTION.md`; `custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json`.
 - Work surface: primary owner `custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/`; adjacent docs `custodian/docs/ai_context/FILE_INDEX.md`. Local input discovery is limited to `~/Downloads`.
@@ -151,6 +151,26 @@ The library README must state:
 4. only the shortlist above has current CUSTODIAN design approval;
 5. production use requires copying/deriving a selected source into the real owning Asset V2 family and ingesting it normally;
 6. direct scene/runtime references into this reference folder are forbidden.
+
+## Completion Truth
+
+- Completion schema: `custodian.completion_truth.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `custodian/asset_drop/source_work/reference/kenney/pattern_pack_lines/manifest.json`; focused 120-file source/destination checksum, dimensions, decode, ID parity, provenance and shortlist audit; `git diff --check`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: An initial local audit assertion treated a README phrase split across lines as missing; the source library and PNG files were unaffected, and the whitespace-normalized audit passed.
+- Root cause / contributing factors: The one-off audit script used a contiguous substring check for prose that wrapped across a newline.
+- Prevention / pipeline improvement: Normalize whitespace before checking README content in local source-library audits.
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: Pillow decode checks plus per-file source/destination SHA-256 and strict ID/path checks proved the copy contract without a runtime or Asset V2 ingest.
 
 ## Documentation Drift Check
 
