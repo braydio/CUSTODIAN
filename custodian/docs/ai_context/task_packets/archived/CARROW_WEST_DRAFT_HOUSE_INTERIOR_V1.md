@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `carrow-west-draft-house-interior-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -55,3 +55,37 @@
 - Refresh reason: `none`
 - Next action: Independent review of named-region identity, full West runtime room and East regression before Operations work becomes eligible.
 - Blockers or open questions: `Runtime presentation screenshots require Godot; current Carrow route workstream must not own the same lock simultaneously.`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `West Draft House is built from the generator-owned west_draft_house site as a 12x10 room with 120 registered floor sprites, eight registered art placements, two art-bound storage interactions, named entry/exit doors, independent camera/environment region, same-runtime storage persistence, and East Machine House parity. Focused and changed-file reports passed; see Validation Evidence and CARROW_WEST_DRAFT_HOUSE_INTERIOR_V1_CLAUDE_SUMMARY.md.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `A negative fixture using a nonexistent art path emitted loader errors, then a guard expression exposed GDScript cast-precedence errors during the follow-up check; both were corrected before final validation.`
+- Root cause / contributing factors: `The resource validation path initially attempted a load before checking path existence, and the typed cast needed explicit parentheses around ResourceLoader.load.`
+- Prevention / pipeline improvement: `Check ResourceLoader.exists before typed loading and keep casts parenthesized in compound boolean expressions; the smoke now verifies missing art fails closed without logging errors.`
+- Tooling / docs drift discovered: `Godot editor scans created unrelated validation .uid sidecars in the worktree; they were explicitly removed as disposable generated metadata.`
+- Follow-up: `review-carrow-west-draft-house-interior-v1`
+- What worked: `The focused smoke exercised real generated-site binding, two-room state, weather/camera transitions, storage persistence, East compatibility, and missing-site/art/overlap negative controls.`
+
+## Validation Evidence
+- Focused checks passed: `carrow_yard_interior`, `persistent_compound_layout`, and `carrow_backdrop_isolation_smoke.gd`.
+- Final changed-file report: `/tmp/carrow-west-changed-final.json`; 4 selected, 4 passed, 0 failed, 0 timed out, 0 skipped, complete coverage.
+- Packet index and review-pairing contract checks passed in the final changed-file sweep. `git diff --check` passed. The task-packet authoring preflight only accepts active packets and therefore cannot be rerun on the archived completion packet.
+
+## Next Handoff
+- Next workstream: `review-carrow-west-draft-house-interior-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: `After implementation lands and archives complete, invoke the paired fresh-context review runner for the named review workstream.`
+- Blockers or open questions: `none`
