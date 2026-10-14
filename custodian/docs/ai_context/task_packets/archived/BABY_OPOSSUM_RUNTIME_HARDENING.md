@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `baby-opossum-runtime-hardening-r1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -17,7 +17,7 @@
 - Reviewed main: `9d8221e4b9fad3d0c6b7d885fab90206ceed4480`
 - Authoring chat: `not-recorded`
 - Goal: Correct the Baby Opossum runtime state-transition and approach/retrieval semantics, tighten determinism and contract validation, and reconcile the active implementation documentation without changing the existing Asset V2 art pipeline.
-- Current measured state: The live actor still has the same bounded defects measured by the original packet: soft-action preemption is inconsistent, approach/retrieval can complete remotely, carrying can be claimed before contact, equal-distance search lacks an explicit stable tie-break, and unpublished-state FPS parity is not fully validated. The old `origin/agent/baby-opossum-runtime-hardening` branch is fully contained by current main with zero unique commits but still exists remotely, so the original workstream identity is permanently seen as claimed. This `-r1` packet is the canonical fresh queue identity. The five production-art requirements remain intentionally open and are not blockers for runtime hardening.
+- Current measured state: All listed runtime transition, approach/retrieval, deterministic selection, and animation-family parity defects are corrected and covered by focused smoke checks. The five production-art requirements remain intentionally open and are not blockers for runtime hardening.
 - Completion boundary: Done when transition priority is explicit and deterministic; treat/retrieve success is arrival/contact-authoritative; carrying and target selection are deterministic; family/runtime timing parity is validated for published and unpublished states; current docs point to the requirement registry as asset-truth; and no new art or behavior-controller architecture is introduced.
 - Evidence: current Baby Opossum runtime/design files and focused smokes; `ambient_baby_opossum.asset.json`; the five active requirement-registry entries; stale remote branch classification above.
 - Task-specific authority: `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md`, `custodian/game/actors/ambient/baby_opossum/baby_opossum.gd`, `baby_opossum_animation_set.gd`, shared ambient presentation/rejection authorities, `ambient_baby_opossum.asset.json`, and the focused Baby Opossum validation smokes.
@@ -212,6 +212,37 @@ Before normal workstream finish:
 
 ## Handoff
 
-- Next action: `python3 custodian/tools/agent/dispatch.py claim baby-opossum-runtime-hardening-r1 --agent codex`
+- Next action: run the paired fresh-context review against the landed implementation.
 - Best starting files: `baby_opossum.gd`, `baby_opossum_runtime_smoke.gd`, `baby_opossum_animation_set.gd`, `ambient_baby_opossum.asset.json`, `BABY_OPOSSUM_RUNTIME.md`.
 - Blockers or open questions: None. Do not wait on the five existing art re-exports to harden runtime semantics. Do not resume the stale original remote branch; it is contained by main and exists only as branch residue.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: transition/arrival/contact/determinism/all-state-FPS runtime smoke and Asset V2 contract smoke passed; five art needs remain open; changed-file report `/tmp/baby-opossum-validation.json` passed 10/10 with complete coverage. Active runtime/current-state docs updated; old production-wiring record archived.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: initial focused smoke needed a cold Godot import; a deliberately freed typed-object fixture emitted an engine error and was removed in favor of clean invalid-input cases.
+- Root cause / contributing factors: first-run class/resource cache was absent; Godot enforces argument type before method-level invalid-instance checks.
+- Prevention / pipeline improvement: run one editor import before focused headless scripts in a fresh worktree; test typed APIs using null and wrong-class inputs rather than freed references.
+- Tooling / docs drift discovered: active runtime/current-state text still named generated REQUIRED_ASSETS.md as authority; corrected to the requirement registry.
+- Follow-up: none
+- What worked: focused runtime and asset-contract smokes passed, including transition, approach, retrieval, deterministic tie, FPS, and alias checks.
+
+## Next Handoff
+
+- Next workstream: review-baby-opossum-runtime-hardening-r1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: run the paired fresh-context review against the landed implementation.
+- Blockers or open questions: none

@@ -32,6 +32,9 @@ func _init() -> void:
 	_check_determinism()
 	await _check_invulnerability(opossum)
 	await _check_treat_sequence(opossum)
+	await _check_transition_policy(opossum)
+	await _check_approach_and_retrieval(opossum)
+	await _check_deterministic_search(opossum)
 	await _check_movement_locks(opossum)
 	await _check_flee_termination(opossum)
 	await _check_attack_rejection(opossum)
@@ -45,7 +48,7 @@ func _check_api(opossum: Node) -> void:
 		"play_action", "take_damage", "set_passive_home_position", "set_ambient_seed",
 		"reject_attack", "is_attack_rejector", "flee_from", "stop_fleeing",
 		"receive_treat", "begin_play_dead", "end_play_dead", "enter_hide", "exit_hide",
-		"search_for_target", "retrieve", "gift_drop", "get_state",
+		"search_for_target", "retrieve", "cancel_retrieval", "gift_drop", "get_state",
 	]:
 		if not opossum.has_method(method): _fail("ambient actor API missing: %s" % method)
 	if not opossum.is_in_group("attack_rejector"): _fail("actor is not registered as an attack rejector")
@@ -109,6 +112,156 @@ func _check_treat_sequence(opossum: Node) -> void:
 		if not observed.has(expected): _fail("treat sequence skipped state %d" % expected)
 	if opossum.get_state() != BabyOpossum.State.IDLE: _fail("treat sequence never returned to ambient behavior")
 
+func _check_transition_policy(opossum: Node) -> void:
+	var retrieve_target := Node2D.new()
+	root.add_child(retrieve_target)
+	retrieve_target.add_to_group("opossum_discoverable")
+	_reset(opossum)
+	if not opossum.receive_treat(): _fail("treat setup was refused from idle")
+	var active_state: int = opossum.get_state()
+	opossum.begin_play_dead()
+	opossum.enter_hide()
+	if opossum.receive_treat(): _fail("direct treat interrupted an active treat sequence")
+	if opossum.search_for_target() != null: _fail("search interrupted an active treat sequence")
+	if opossum.retrieve(retrieve_target): _fail("retrieve interrupted an active treat sequence")
+	if opossum.get_state() != active_state: _fail("soft action changed the active treat state")
+	opossum.sense_threat(opossum.global_position + Vector2.RIGHT * 100.0)
+	if opossum.get_state() != active_state: _fail("sensed threat interrupted an active treat sequence")
+
+	_reset(opossum)
+	opossum.begin_play_dead()
+	opossum.call("_enter_state", BabyOpossum.State.PLAY_DEAD_HOLD)
+	_assert_soft_actions_blocked(opossum, retrieve_target, "play-dead")
+	_reset(opossum)
+	opossum.enter_hide()
+	opossum.call("_enter_state", BabyOpossum.State.HIDE_HOLD)
+	_assert_soft_actions_blocked(opossum, retrieve_target, "hide")
+	_reset(opossum)
+	opossum.receive_treat()
+	opossum.reject_attack({"origin": opossum.global_position + Vector2.RIGHT * 48.0})
+	if opossum.get_state() != BabyOpossum.State.REJECT_HIT: _fail("hard attack rejection did not preempt a soft sequence")
+	_assert_soft_actions_blocked(opossum, retrieve_target, "rejection")
+	retrieve_target.queue_free()
+	await process_frame
+
+func _assert_soft_actions_blocked(opossum: Node, retrieve_target: Node2D, sequence: String) -> void:
+	var active_state: int = opossum.get_state()
+	opossum.begin_play_dead()
+	opossum.enter_hide()
+	if opossum.receive_treat(): _fail("treat interrupted %s" % sequence)
+	if opossum.search_for_target() != null: _fail("search interrupted %s" % sequence)
+	if opossum.retrieve(retrieve_target): _fail("retrieve interrupted %s" % sequence)
+	if opossum.get_state() != active_state: _fail("soft action changed %s state" % sequence)
+
+func _check_approach_and_retrieval(opossum: Node) -> void:
+	_reset(opossum)
+	opossum.global_position = Vector2.ZERO
+	opossum.set_passive_home_position(Vector2.ZERO)
+	var treat := Node2D.new()
+	root.add_child(treat)
+	treat.add_to_group("opossum_treat")
+	treat.global_position = Vector2(68.0, 0.0)
+	if not opossum.receive_treat(treat): _fail("edge-of-detector treat was refused")
+	var reached_sniff := false
+	for i in 600:
+		await physics_frame
+		if opossum.get_state() == BabyOpossum.State.TREAT_SNIFF:
+			reached_sniff = true
+			if opossum.global_position.distance_squared_to(treat.global_position) > BabyOpossum.ARRIVAL_DISTANCE_SQUARED:
+				_fail("treat advanced to sniff before arrival")
+			break
+	if not reached_sniff: _fail("edge-of-detector treat did not reach the sniff beat")
+	treat.queue_free()
+	await process_frame
+
+	_reset(opossum)
+	opossum.global_position = Vector2.ZERO
+	var distant_treat := Node2D.new()
+	root.add_child(distant_treat)
+	distant_treat.global_position = Vector2(1000.0, 0.0)
+	if not opossum.receive_treat(distant_treat): _fail("distant timeout test treat was refused")
+	for i in 120:
+		await physics_frame
+		if opossum.get_state() == BabyOpossum.State.TREAT_APPROACH: break
+	if opossum.get_state() != BabyOpossum.State.TREAT_APPROACH:
+		_fail("distant treat did not enter approach")
+	else:
+		if float(opossum.get("_state_timer")) <= 1.2: _fail("approach timeout was not sized from distance and speed")
+		opossum.set("_state_timer", 0.001)
+		opossum.call("_tick_state", STEP)
+		if opossum.get_state() != BabyOpossum.State.IDLE: _fail("remote treat timeout did not return to ambient state")
+		if opossum.get_state() == BabyOpossum.State.TREAT_SNIFF: _fail("remote treat timeout produced success")
+	distant_treat.queue_free()
+	await process_frame
+
+	_reset(opossum)
+	var invalid_node := Node.new()
+	root.add_child(invalid_node)
+	if opossum.retrieve(null): _fail("retrieve accepted a null target")
+	if opossum.retrieve(invalid_node): _fail("retrieve accepted a non-Node2D target")
+	var matching := Node2D.new()
+	var wrong := Node2D.new()
+	root.add_child(matching)
+	root.add_child(wrong)
+	matching.add_to_group("opossum_discoverable")
+	wrong.add_to_group("opossum_discoverable")
+	if not opossum.retrieve(matching): _fail("valid retrieve target was refused")
+	if opossum.get("carrying_target") != null: _fail("retrieve claimed carrying before contact")
+	opossum.call("_on_contact_detected", wrong)
+	if opossum.get("carrying_target") != null: _fail("wrong discoverable contact satisfied retrieval")
+	opossum.call("_on_contact_detected", matching)
+	if opossum.get("carrying_target") != matching: _fail("matching contact did not set carrying target")
+	if opossum.get_state() != BabyOpossum.State.IDLE: _fail("successful contact did not finish retrieval")
+	opossum.gift_drop()
+	if opossum.get("carrying_target") != null: _fail("gift drop did not clear carried target")
+	opossum.call("_enter_state", BabyOpossum.State.RETRIEVE)
+	opossum.set("_pending_retrieve_target", wrong)
+	opossum.set("_approach_target", wrong.global_position)
+	opossum.set("_state_timer", 0.001)
+	opossum.call("_tick_state", STEP)
+	if opossum.get("_pending_retrieve_target") != null: _fail("retrieve timeout retained pending target")
+	if opossum.get("carrying_target") != null: _fail("retrieve timeout fabricated carrying")
+	if opossum.retrieve(matching):
+		opossum.cancel_retrieval()
+		if opossum.get("_pending_retrieve_target") != null: _fail("retrieve cancellation retained pending target")
+	else:
+		_fail("retrieve could not restart after timeout")
+	var drop_count := [0]
+	opossum.gift_dropped.connect(func(_target: Node) -> void: drop_count[0] += 1)
+	opossum.set("carrying_target", null)
+	opossum.gift_drop()
+	if drop_count[0] != 0: _fail("empty gift_drop emitted a false drop")
+	if opossum.get_state() == BabyOpossum.State.GIFT_DROP: _fail("empty gift_drop started a false drop animation")
+	invalid_node.queue_free()
+	matching.queue_free()
+	wrong.queue_free()
+	await process_frame
+
+func _check_deterministic_search(opossum: Node) -> void:
+	_reset(opossum)
+	opossum.global_position = Vector2.ZERO
+	var right := Node2D.new()
+	var left := Node2D.new()
+	root.add_child(right)
+	root.add_child(left)
+	right.add_to_group("opossum_discoverable")
+	left.add_to_group("opossum_discoverable")
+	right.global_position = Vector2(32.0, 0.0)
+	left.global_position = Vector2(-32.0, 0.0)
+	var found: Array[Node] = []
+	opossum.target_found.connect(func(target: Node) -> void: found.append(target))
+	var selected: Node = opossum.search_for_target()
+	if selected != left: _fail("equal-distance search tie did not use world coordinate ordering")
+	if not found.is_empty(): _fail("target_found emitted before the find-target beat")
+	for expected in [BabyOpossum.State.DIG, BabyOpossum.State.FIND_TARGET]:
+		opossum.set("_state_timer", 0.001)
+		opossum.call("_tick_state", STEP)
+		if opossum.get_state() != expected: _fail("search sequence skipped expected state %d" % expected)
+	if found.size() != 1 or found[0] != left: _fail("target_found did not emit the selected target at the find beat")
+	right.queue_free()
+	left.queue_free()
+	await process_frame
+
 ## Play-dead and hide must structurally suspend ambient movement.
 func _check_movement_locks(opossum: Node) -> void:
 	_reset(opossum)
@@ -168,6 +321,16 @@ func _check_attack_rejection(opossum: Node) -> void:
 	_reset(opossum)
 	opossum.reject_melee()
 	if opossum.get_state() != BabyOpossum.State.REJECT_HIT: _fail("reject_melee did not enter the reject-hit state")
+	for i in 12:
+		await physics_frame
+		opossum.reject_melee()
+		if opossum.get_state() != BabyOpossum.State.REJECT_HIT: _fail("repeated rejection restarted or interrupted hard response")
+	var saw_rejection_flee := false
+	for i in 600:
+		await physics_frame
+		if bool(opossum.get("fleeing")): saw_rejection_flee = true
+		if saw_rejection_flee and not bool(opossum.get("fleeing")): break
+	if not saw_rejection_flee: _fail("repeated rejections prevented eventual flee")
 	_reset(opossum)
 
 ## A live player bullet must be consumed by the rejection path — the opossum is
@@ -280,12 +443,17 @@ func _check_art_coverage() -> void:
 func _check_clip_contract() -> void:
 	var family := _load_family()
 	var fps_by_variant := {}
-	var layer_by_state := {}
-	for state_id in family.get("states", {}):
-		var state: Dictionary = family["states"][state_id]
+	var family_states: Dictionary = family.get("states", {})
+	for state_id in family_states:
+		var state: Dictionary = family_states[state_id]
 		var key := "%s/%s" % [str(state.get("layer", "body")), str(state.get("variant", state_id))]
 		fps_by_variant[key] = float(state.get("fps", 8.0))
-		layer_by_state[key] = true
+		var effective_fps: float = ANIMATION_SET.get_effective_fps(StringName(state.get("variant", state_id)))
+		if absf(effective_fps - fps_by_variant[key]) > 0.01:
+			_fail("unpublished/published family state %s runtime fps %.1f disagrees with family contract %.1f" % [key, effective_fps, fps_by_variant[key]])
+	var family_aliases: Dictionary = family.get("aliases", {})
+	if ANIMATION_SET.aliases != family_aliases:
+		_fail("runtime alias map disagrees with family contract")
 	var seen := {}
 	for value in ANIMATION_SET.clips:
 		var clip: Dictionary = value
@@ -342,6 +510,11 @@ func _load_family() -> Dictionary:
 
 func _reset(opossum: Node) -> void:
 	opossum.set("trust_stage", 0)
+	opossum.set("_pending_retrieve_target", null)
+	opossum.set("_pending_found_target", null)
+	opossum.set("_approach_target_node", null)
+	opossum.set("carrying_target", null)
+	opossum.set("velocity", Vector2.ZERO)
 	opossum.call("_enter_state", BabyOpossum.State.IDLE)
 
 func _fail(message: String) -> void:
