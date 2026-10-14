@@ -51,7 +51,7 @@ Intentionally unresolved. Do not permanently assign Carrow Yard to a major facti
 
 ## Structure expansion status (design pass, 2026-10-14)
 
-The canonical site roles above remain unchanged. The **proposed**, not-yet-implemented spatial and art design for the West Draft House, Operations House, South Gatehouse and Alarm Gantry is in [Carrow Yard Structures Expansion V1](../../../05_levels/CARROW_YARD_STRUCTURES_EXPANSION_V1.md). Its exact room sizes and new asset states are planning targets, not claims that these rooms or art have shipped. The East Machine House is the only current working authored interior. Carrow's separate route-authority migration remains pending and owns world entry/exit semantics; room expansion must not recreate a second router.
+The canonical site roles above remain unchanged. The **proposed**, not-yet-implemented spatial and art design for the West Draft House, Operations House, South Gatehouse and Alarm Gantry is in [Carrow Yard Structures Expansion V1](../../05_levels/CARROW_YARD_STRUCTURES_EXPANSION_V1.md). Its exact room sizes and new asset states are planning targets, not claims that these rooms or art have shipped. The East Machine House is the only current working authored interior. Carrow's separate route-authority migration remains pending and owns world entry/exit semantics; room expansion must not recreate a second router.
 
 ## Environmental role
 
