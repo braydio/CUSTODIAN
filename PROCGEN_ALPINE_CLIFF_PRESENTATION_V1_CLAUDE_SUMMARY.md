@@ -19,13 +19,19 @@ The contact preparation now derives all ten contact states from complete approve
 
 ## Repository checkpoint correction
 
-The previous report was inaccurate: before this correction, both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` pointed at `9827f372`, whose commit is the Vaultwing archive-history audit; the AP2 implementation was dirty and had not been committed. The two unrelated `.uid` files created during validation were removed. This correction will be committed to the AP2 branch and its resulting SHA verified locally and remotely before reporting the checkpoint.
+The previous report was inaccurate: before this correction, both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` pointed at `9827f372`, whose commit is the Vaultwing archive-history audit; the AP2 implementation was dirty and had not been committed. Correction commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a` now contains the AP2 files, and both local `HEAD` and the remote branch resolve to that exact SHA. The two unrelated `.uid` files created during validation were removed.
 
 ## Visual disposition
 
 - Contact/fascia integration: FAIL on prior review; new evidence awaits human review.
 - Attached-geology / crop-wall quality: FAIL on prior review; new evidence awaits human review.
 - Playable-edge readability: PASS on prior review.
+
+## New Visual Review Handoff
+
+- Manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T065730-0400/REVIEW_MANIFEST.json`
+- Retention: `delete-after-review`; use the cleanup command emitted in the manifest after the decision is recorded.
+- Questions: (1) Do the contacts visibly join playable terrace and fascia without a chasm gap or floating slab? (2) Do silhouettes read as attached geology without crop walls or detached masses? (3) Does the playable edge remain clear and truthful in all four directions?
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
