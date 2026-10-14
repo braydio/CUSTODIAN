@@ -266,6 +266,18 @@
       }
     },
     {
+      "id": "ash-bell-ritualant-music-score",
+      "section": "Ash-Bell / Forlorn-Ritualant Encounter",
+      "title": "Forlorn Ritualant four-cue music score",
+      "target": "`custodian/content/audio/music/ash_bell/forlorn_ritualant_the_ninth_was_never_cast_loop_v2.ogg`, `forlorn_ritualant_the_ninth_answers_nothing_combat_loop_v2.ogg`, `forlorn_ritualant_stilling_release_v1.ogg`, and `forlorn_ritualant_the_ninth_was_taken_hostile_resolution_v1.ogg`",
+      "purpose": "Provide authored exploration, committed-combat, peaceful-resolution, and hostile-resolution music for the Forlorn Ritualant Underground.",
+      "notes": "Runtime score integrated through the Underground-scoped director and MusicManager lease. Audio handoff provenance is in `custodian/content/audio/music/ash_bell/audio_handoff_manifest.json`. Separate from SFX/room-bed coverage tracked by ash-bell-audio-cues.",
+      "fulfillment": {
+        "type": "audio",
+        "status": "fulfilled"
+      }
+    },
+    {
       "id": "last-routekeeper-residual-projection-animations",
       "section": "Last Routekeeper Event",
       "title": "Last Routekeeper residual projection animations",

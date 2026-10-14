@@ -2,6 +2,7 @@ class_name ForlornRitualantSite
 extends Node2D
 
 signal encounter_completed(resolution: int)
+signal music_cue_requested(cue_id: StringName)
 signal request_dialogue(dialogue_id: StringName, node_id: StringName)
 signal request_item_grant(item_id: StringName)
 signal request_knowledge_unlock(knowledge_id: StringName)
@@ -342,6 +343,8 @@ func set_stilling_pin() -> void:
 	if not can_set_stilling_pin():
 		return
 
+	# This live interaction edge is distinct from restored SET_STILLING_PIN state.
+	music_cue_requested.emit(&"stilling_release")
 	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
 	event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
 	request_dialogue.emit(dialogue_id, &"set_stilling_pin_pre")
@@ -465,6 +468,7 @@ func resolve_thread_anchor(anchor_id: StringName) -> void:
 	event_state.add_silence_pressure(-8, &"thread_anchor")
 	_anchor_unlock_epoch = _hostile_attack_epoch + 1
 	if _thread_anchor_stage >= THREAD_ANCHOR_ORDER.size():
+		music_cue_requested.emit(&"stilling_release")
 		stabilize_site()
 
 

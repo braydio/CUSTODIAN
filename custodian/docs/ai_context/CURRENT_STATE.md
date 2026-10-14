@@ -10,7 +10,11 @@ Three repository-owned tools now exist: `custodian/tools/assets/dropbox_asset_au
 
 ## Ritualant validation + paired-review workflow repair (2026-10-13)
 
-The four-cue score branch's changed-file gate exposed two stale Ritualant validation contracts on current `main`, not audio regressions. The live Underground no longer owns `BackgroundRoot/ChapelOuterBlend`; mapper/debug validation now uses the current 768×384 `ChapelConnectorApron`. The Oct-4 Underground refresh intentionally changed lower-lift containment to a 223×22 rear stop plus 20×80 front wings; the completion smoke now matches that live geometry. No encounter, route, collision, or score behavior was changed by this repair. The paired-review target identity resolver also now derives the canonical archived-path add/rename commit before falling back through rename history, preventing a completed packet's earlier active-path introduction from making its archive landing appear ambiguous. A focused regression pins the Surface Lift intake archive to implementation landing `f3b94d0768bc110755f2b9be1d1e60d22fe1577c`. The score integration branch must resync current `main` and rerun its full changed-file gate before landing; the Surface Lift review must rerun through the canonical paired-review runner. The checked-in `reports/level_maps/forlorn_ritualant_underground/full_map.json` still contains the retired `ChapelOuterBlend` record from an older mapper export; regenerate that report through the normal mapper export after the validation repair rather than treating the stale JSON as current runtime authority.
+The four-cue score branch's changed-file gate exposed two stale Ritualant validation contracts on current `main`, not audio regressions. The live Underground no longer owns `BackgroundRoot/ChapelOuterBlend`; mapper/debug validation now uses the current 768×384 `ChapelConnectorApron`. The Oct-4 Underground refresh intentionally changed lower-lift containment to a 223×22 rear stop plus 20×80 front wings; the completion smoke samples now sit inside the clear boarding corridor. No encounter, route, collision, or score behavior was changed by this repair. The paired-review target identity resolver also now derives the canonical archived-path add/rename commit before falling back through rename history, preventing a completed packet's earlier active-path introduction from making its archive landing appear ambiguous. A focused regression pins the Surface Lift intake archive to implementation landing `f3b94d0768bc110755f2b9be1d1e60d22fe1577c`. After resyncing to current `main`, the score workstream's full changed-file gate passed all 46 checks; its implementation is closing through the normal lifecycle and requires a fresh paired review. The Surface Lift review remains subject to the dispatcher asset-pipeline lock and must launch through the canonical paired-review runner once eligible. The checked-in `reports/level_maps/forlorn_ritualant_underground/full_map.json` still contains the retired `ChapelOuterBlend` record from an older mapper export; regenerate that report through the normal mapper export after the validation repair rather than treating the stale JSON as current runtime authority.
+
+## Ritualant score source refresh (2026-10-13)
+
+The approved gentler-attacks replacement for The Ninth Was Never Cast is the exact OGG from `~/Downloads/CUSTODIAN_Eight_Bells_Main_Scene_Gentler_Attacks_v2.zip` (ZIP SHA-256 `b7e8e37eb058e5a116966a288389afe0691c633e80eedbb727f7b307148e0f90`; runtime OGG SHA-256 `51a64027a61ea8db5704e08036bfeb6babdb4c54c130edbaa000db325788f6aa`). It is staged at `custodian/asset_drop/inbox/ash_bell_ritualant_score_v2/` and referenced by the Underground exploration cue. The other three arrangements remain unchanged. The four-cue integration's focused checks and complete changed-file validation now pass; the workstream is closing and proceeding to independent review. Human in-game audition remains outstanding and is not implied by implementation or validation completion.
 
 ## Ritualant Highland Station approved design (2026-10-12)
 
@@ -156,6 +160,24 @@ Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pair
 ## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
 
 Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
+
+## Forlorn Ritualant Four-Cue Music Integration (2026-10-13)
+
+The authored Underground now routes four byte-preserved 48 kHz stereo Vorbis
+assets through its scene-scoped `ForlornRitualantMusicDirector` and the shared
+`MusicManager` lease: chapel reveal exploration loop, committed-hostility loop,
+fresh peaceful Stilling Release, and fresh `SITE_DEFILED` hostile resolution.
+Nonlethal dissolve fades to silence; route restore does not replay one-shots;
+teardown restores the prior playlist only while the scene still owns the lease.
+The Ninth Answer applies a configurable short music duck, leaving combat SFX
+untouched. Provenance and exact file hashes are in
+`custodian/content/audio/music/ash_bell/audio_handoff_manifest.json`; the
+independent `ash-bell-ritualant-music-score` requirement is fulfilled while the
+existing `ash-bell-audio-cues` SFX/room-bed requirement remains needed. The
+focused deterministic contract is
+`ritualant_four_cue_music`. Human in-game level, intelligibility, and loop-edge
+audition remains a post-implementation quality check and is not claimed as
+complete. See `design/03_world/ASH_BELL_RITUALANT_SCORE.md`.
 
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
