@@ -19,7 +19,7 @@ The contact preparation now derives all ten contact states from complete approve
 
 ## Repository checkpoint correction
 
-The previous report was inaccurate: before this correction, both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` pointed at `9827f372`, whose commit is the Vaultwing archive-history audit; the AP2 implementation was dirty and had not been committed. Correction commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a` now contains the AP2 files, and both local `HEAD` and the remote branch resolve to that exact SHA. The two unrelated `.uid` files created during validation were removed.
+The previous report was inaccurate: before this correction, both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` pointed at `9827f372`, whose commit is the Vaultwing archive-history audit; the AP2 implementation was dirty and had not been committed. Implementation commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a` contains the AP2 files, and at visual-review upload both local `HEAD` and the remote branch resolved to that exact SHA. Follow-up receipt commit `e80732b53fecb9d8ab941b505fc7b76bebb037d9` records the uploaded manifest and failed-review disposition. The two unrelated `.uid` files created during validation were removed.
 
 ## Visual disposition
 
