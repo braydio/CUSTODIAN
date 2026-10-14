@@ -33,7 +33,7 @@
 - Non-goals: no tuning or runtime edits.
 - Acceptance: no blocking finding/evidence gap; deterministic priority and tiny-pocket closure proven; lifecycle/fingerprints green.
 - Validation: focused priority smoke; pause-aware streaming; chunk lifecycle/cache/unload/runtime-health; S1 quick; changed-file validation.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: presentation behavior belongs to successor.
 
 ## Handoff

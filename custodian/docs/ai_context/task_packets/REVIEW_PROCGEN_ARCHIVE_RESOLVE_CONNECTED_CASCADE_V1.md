@@ -33,7 +33,7 @@
 - Non-goals: no shader rewrite or taste tuning.
 - Acceptance: no blocking finding/evidence gap; focused suite + S1 green.
 - Validation: implementation focused suite plus changed-file validation.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: world-cover successor.
 
 ## Handoff

@@ -33,7 +33,7 @@
 - Non-goals: no smooth-front tuning.
 - Acceptance: machine checks green, human coverage verdict present, no authority leak.
 - Validation: focused layering/cliff/reveal/runtime-health/S1 plus changed-file.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: smooth-front successor.
 
 ## Handoff

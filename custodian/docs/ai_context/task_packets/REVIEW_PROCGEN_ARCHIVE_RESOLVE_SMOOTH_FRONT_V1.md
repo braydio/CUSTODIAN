@@ -33,7 +33,7 @@
 - Non-goals: no new tuning/feature work.
 - Acceptance: no blocking finding/material gap; final human pass recorded; AP2/AP3 ownership unaffected; S1 authority intact.
 - Validation: focused predecessor suites + S1 quick + changed-file validation + `git diff --check`.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: later aesthetic tuning is a new human-directed slice.
 
 ## Handoff
