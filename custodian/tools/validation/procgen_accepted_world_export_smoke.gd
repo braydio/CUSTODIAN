@@ -8,7 +8,9 @@ extends SceneTree
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
-const EXPECTED_LEVEL_DATA_HASH := "2068075335"
+# Semantic accepted-world parity baseline. Presentation-only
+# macro_presentation is validated separately and excluded from this value hash.
+const EXPECTED_LEVEL_DATA_HASH := "562871128"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
 const EXPECTED_LEVEL_DATA_KEY_COUNT := 69
 
@@ -48,11 +50,17 @@ func _run() -> void:
 
 	var level_data := tilemap.get_level_data()
 	var fingerprint := tilemap.debug_get_runtime_authoring_fingerprint()
-	# Excluded from the value hash: random_floor_tiles is RNG-sampled by design,
-	# health is timing counters, foliage holds live Node references. They are
-	# checked structurally below instead.
+	# Excluded from value parity:
+	# - random_floor_tiles is RNG-sampled by design.
+	# - macro_presentation is deterministic presentation output whose values
+	#   legitimately change when the presentation-only TerrainStamp catalog gains
+	#   assets. Dedicated Macro Presentation validation owns its deterministic
+	#   placement/fingerprint contract. It is not accepted-world semantic authority.
+	# Health contains timing counters and foliage holds live Node references; both
+	# are checked structurally below instead.
 	var hashed_level_data := level_data.duplicate(true)
 	hashed_level_data.erase("random_floor_tiles")
+	hashed_level_data.erase("macro_presentation")
 	var hashed_fingerprint := fingerprint.duplicate(true)
 	hashed_fingerprint.erase("foliage")
 	hashed_fingerprint.erase("health")
@@ -85,6 +93,16 @@ func _run() -> void:
 			break
 	if not fingerprint.has("health") or not fingerprint.has("foliage"):
 		failures.append("runtime authoring fingerprint lost health/foliage keys")
+	var macro_presentation: Variant = level_data.get("macro_presentation")
+	if not macro_presentation is Dictionary:
+		failures.append("macro_presentation level-data summary missing or invalid")
+	else:
+		var macro_summary := macro_presentation as Dictionary
+		if String(macro_summary.get("schema", "")) != \
+				"custodian.procgen_macro_presentation.v1":
+			failures.append("macro_presentation schema missing or invalid")
+		if not macro_summary.has("fingerprint"):
+			failures.append("macro_presentation summary lost deterministic fingerprint")
 	# Exports are detached: mutating them must not reach the runtime store.
 	var exported_floor := tilemap.debug_get_generated_floor_cells()
 	exported_floor.clear()
