@@ -16,6 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `the bug is visually simple but the fix changes live HUD layout ownership and should be independently checked across visibility states and viewport sizes`
 - Reviewed main: `cf03b238416fb06c71a4af946242eb9ccf58228a`
+- Implementation commit: `b654ea569e2f212e97a3dd3b22998eff3bfba358`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Visual review: `conditional`
 - Goal: Keep loot/pickup toasts readable and non-overlapping with the live top-left gameplay HUD by replacing the queue's stale fixed Y assumption with one narrow runtime clearance contract derived from the currently visible HUD footprint.
