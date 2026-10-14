@@ -42,6 +42,8 @@ var contact_shoulder_frontier_count := 0
 var contact_suppressed_cell_count := 0
 var attached_contact_count := 0
 var max_socket_error_px := 0.0
+var min_socket_embed_depth_px := 0
+var contact_socket_min_embed_px := 0
 var longest_north_run_tiles := 0
 var longest_east_run_tiles := 0
 var longest_south_run_tiles := 0
@@ -209,6 +211,14 @@ func _process(_delta: float) -> void:
 	contact_west_count = int(direction_counts.get("west", 0))
 	attached_contact_count = int(contact_state.get("attached_contact_count", 0))
 	max_socket_error_px = float(contact_state.get("max_socket_error_px", INF))
+	contact_socket_min_embed_px = int(contact_state.get("socket_embed_min_px", 0))
+	min_socket_embed_depth_px = 2147483647
+	for placement_variant: Variant in contact_state.get("placements", []):
+		var placement := placement_variant as Dictionary
+		if bool(placement.get("attached", false)):
+			min_socket_embed_depth_px = mini(min_socket_embed_depth_px, int(placement.get("socket_embed_depth_px", 0)))
+	if min_socket_embed_depth_px == 2147483647:
+		min_socket_embed_depth_px = 0
 	var longest_runs: Dictionary = contact_state.get("longest_eligible_run_tiles", {})
 	longest_north_run_tiles = int(longest_runs.get("north", 0))
 	longest_east_run_tiles = int(longest_runs.get("east", 0))

@@ -26,6 +26,13 @@ EXPECTED_CONTACT_SIZES = {
     "east_broad_01": [512, 1024], "west_broad_01": [512, 1024], "north_broad_01": [1024, 320],
     "corner_se_01": [768, 768], "corner_sw_01": [768, 768], "corner_ne_01": [768, 768], "corner_nw_01": [768, 768],
 }
+SOCKET_INWARD_DIRECTIONS = {
+    "south_broad_01": ((0, -1),), "south_broken_01": ((0, -1),), "south_rooted_01": ((0, -1),),
+    "east_broad_01": ((-1, 0),), "west_broad_01": ((1, 0),), "north_broad_01": ((0, 1),),
+    "corner_se_01": ((-1, 0), (0, -1)), "corner_sw_01": ((1, 0), (0, -1)),
+    "corner_ne_01": ((-1, 0), (0, 1)), "corner_nw_01": ((1, 0), (0, 1)),
+}
+MIN_SOCKET_EMBED_PX = 24
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -43,6 +50,8 @@ def main() -> int:
         raise SystemExit("unexpected source-master batch identity")
     if derivation.get("source_master_zip_sha256") != EXPECTED_ZIP_SHA256:
         raise SystemExit("derivation report does not retain the approved source-master ZIP checksum")
+    if derivation.get("contact_socket_min_embed_px") != MIN_SOCKET_EMBED_PX:
+        raise SystemExit("derivation report has a stale contact socket support threshold")
     families = {
         "procgen_alpine_cliff_fascia": json.loads((ROOT / "content/metadata/assets/families/procgen_alpine_cliff_fascia.asset.json").read_text()),
         "procgen_alpine_cliff_contact": json.loads((ROOT / "content/metadata/assets/families/procgen_alpine_cliff_contact.asset.json").read_text()),
@@ -113,6 +122,24 @@ def main() -> int:
                     sx, sy = int(socket[0]), int(socket[1])
                     if not (0 <= sx < dimensions[0] and 0 <= sy < dimensions[1]) or alpha.getpixel((sx, sy)) <= ALPHA_CUTOFF:
                         errors.append(f"{family_id}/{state}: socket does not land on opaque geology: {socket}")
+                    else:
+                        embed_depths = []
+                        for dx, dy in SOCKET_INWARD_DIRECTIONS[state]:
+                            depth = 0
+                            x, y = sx, sy
+                            while 0 <= x < dimensions[0] and 0 <= y < dimensions[1] and alpha.getpixel((x, y)) > ALPHA_CUTOFF:
+                                depth += 1
+                                x += dx
+                                y += dy
+                            embed_depths.append(depth)
+                            if depth < MIN_SOCKET_EMBED_PX:
+                                errors.append(f"{family_id}/{state}: socket only touches silhouette on inward axis ({depth}px < {MIN_SOCKET_EMBED_PX}px)")
+                        reported_depths = item.get("socket_embed_depth_px", {})
+                        expected_axes = {"x" if dx else "y" for dx, dy in SOCKET_INWARD_DIRECTIONS[state]}
+                        if set(reported_depths) != expected_axes:
+                            errors.append(f"{family_id}/{state}: derivation report has incomplete socket support depths")
+                        elif any(int(value) < MIN_SOCKET_EMBED_PX for value in reported_depths.values()):
+                            errors.append(f"{family_id}/{state}: derivation report records insufficient socket support: {reported_depths}")
         if digest != item["output_sha256"]:
             errors.append(f"{family_id}/{state}: runtime checksum differs from derivation report")
         if dimensions != item["output_size"]:

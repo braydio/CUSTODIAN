@@ -95,11 +95,11 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `partial`
-- Friction severity: `high`
-- What went wrong: `The first post-correction visual review failed contact/fascia integration and attached-geology while playable-edge readability passed. The previous checkpoint report pointed at a Vaultwing commit because the AP2 worktree changes were still dirty and the branch HEAD was not verified against the task diff.`
-- Root cause / contributing factors: `A point placement derived from a cropped alpha bound proved numeric alignment but not a convincing geological seam. Rectangular source crop boundaries remained on several contact variants. The task checkpoint was reported without confirming the committed branch SHA contained AP2 files.`
-- Prevention / pipeline improvement: `Record final canvas socket coordinates from each prepared alpha mask, reject unowned straight silhouette runs, and test socket-to-frontier round-trip plus suppression ownership. Before reporting a checkpoint, verify HEAD, remote branch SHA, and the commit's changed paths.`
-- Tooling / docs drift discovered: `workstream checkpoint retains/pushes the current HEAD and does not commit dirty AP2 changes; branch identity must be verified explicitly. Corrected checkpoint a9e67bc733c2edc6993f33216af427ecc92d0b8a was verified at both local HEAD and origin/agent/procgen-alpine-cliff-presentation-v1. The fixed-seed review now probes attached-contact count and maximum socket error as well as the prior suppression counters.`
+- Friction severity: `medium`
+- What went wrong: `Human review of 20261014T061508Z failed contact/fascia integration and attached geology while playable-edge readability passed. The first socket implementation accepted opaque pixels on the silhouette edge, so zero positional error did not prove a visible overlap. The first attempt to add support-depth telemetry had a GDScript variable-scope error; the failed run was retained for diagnosis and superseded after the fix.`
+- Root cause / contributing factors: `Socket attachment measured a point round-trip but not opaque geology continuing inward from that point. The summary threshold was initially declared inside the placement loop.`
+- Prevention / pipeline improvement: `Require at least 24 opaque pixels along the authored inward support axis in preparation and runtime; reject insufficient sockets before sprite creation and before fascia suppression. Keep the shallow-socket negative control and validate it before Moment Forge capture.`
+- Tooling / docs drift discovered: `The quick procgen performance profile can run beyond the registered 120-second limit on this host; direct comparisons need an outer timeout of at least 240 seconds. PARITY_KEYS=1 isolated the accepted-world hash difference to macro_presentation while runtime fingerprint and other stable level-data keys matched. The 2068075335 golden remains unchanged because no versioned migration was proven.`
 - Follow-up: `fixed-in-scope`
 
 ## Refresh Planning Authority
@@ -111,12 +111,12 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 
 ## Handoff
 
-- Next workstream: `procgen-alpine-surface-plates-v1`
-- Next packet state: `dependency-gated`
+- Next workstream: `procgen-alpine-cliff-presentation-v1`
+- Next packet state: `human-required`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
 - Refresh reason: `none`
-- Next action: After AP2 completes, verify Gate C and allow the surface-plate packet to become claimable.
-- Blockers or open questions: none at claim time if the registered source-master ZIP verifies. Gate B is produced at AP2 closeout.
+- Next action: Review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T164000Z-socket-embed-contract/REVIEW_MANIFEST.json` and answer the three contact-integration questions. Keep AP2 open until visual review and accepted-world parity disposition are resolved.
+- Blockers or open questions: `macro_presentation` accepted-world hash differs from clean main (AP2 3211326287, main 2068075335); do not update the golden without proof of an intentional versioned migration. A superseded 20261014T065730-0400 upload remains without a visual disposition and is retained under delete-after-review policy.

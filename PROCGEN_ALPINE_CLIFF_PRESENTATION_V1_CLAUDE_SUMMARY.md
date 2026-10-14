@@ -1,55 +1,57 @@
-# Procgen Alpine Cliff Presentation V1 — Correction 1
+# Procgen Alpine Cliff Presentation V1 — Correction 2
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 
 ## Outcome
 
-The first post-correction visual review was recorded as **FAIL** for contact/fascia integration and attached-geology. Playable-edge readability passed. The correction now uses explicit texture-pixel frontier sockets derived from each final contact alpha mask, places the socket on the actual TileMap frontier transform, rejects socket error above 8 px, and grants fascia suppression only to successfully attached contacts.
+The stale visual disposition for evidence run `20261014T061508Z` is recorded as FAIL for contact/fascia integration and attached geology; playable-edge readability passed. Its delete-after-review manifest cleanup completed in the previous run. AP2 remains open and AP3 remains dependency-gated.
 
-The contact preparation now derives all ten contact states from complete approved source-master silhouettes instead of clipped rectangular source crops. It clears only border-connected neutral matte, keeps geological alpha binary/crisp, requires transparent margins, and rejects a straight unowned alpha-bound edge run at or above 25% of a side. The generated derivation report records exact dimensions, actual resolved socket coordinates, and crop-wall validation per state. The Alpine profile carries those coordinates.
+This correction found that a few authored sockets were opaque but lay on the silhouette itself. A zero-error point round trip therefore proved a touch, not an attached overlap. The ten contact PNG payloads already had true irregular binary geology alpha, transparent margins, and no detected crop walls; this correction kept those exact images and moved each authored socket inward. Asset V2 correctly classified the unchanged payloads as duplicates, so no new state IDs or PNG ingest were needed.
+
+The Alpine profile now records all ten inboard socket coordinates and a 24 px minimum opaque support depth. Runtime placement rejects a socket that only touches the alpha silhouette, and such a rejected contact emits neither art nor fascia suppression. The contact composer reports support depth with each successful placement.
 
 ## Evidence
 
-- Focused `procgen_alpine_cliff_presentation_smoke.gd`: PASS. It checks all ten profile sockets against the derived alpha report, attachment state, socket round-trip ≤8 px, alpha validity, suppression ownership, missing-socket fail-closed behavior, deterministic cardinal coverage, and semantic immutability.
-- `verify_alpine_cliff_presentation_assets.py --record`: PASS, all 26 AP2 Asset V2 states recorded; contact alpha is binary with exact runtime dimensions and no detected unowned straight crop walls.
-- Moment Forge `procgen/alpine_plateau_edge_review`, run `20261014T065316-0400`: PASS technically; no run/probe/capture failures. North/east/south/west each produced a contact, `attached_contact_count=4`, and `max_socket_error_px=0.0`. This does not substitute for the pending human judgment of physical integration.
-- Generic cliff-face smoke: PASS (`1001` cells, five representative seeds); wall-integration sequence completed; Region Frame smoke: PASS; Macro Presentation smoke: PASS; elevated-world asset-contract smoke: PASS (`37` sources, `944` face cells). The focused smoke and fixed-seed Moment Forge were rerun after the final socket/profile changes.
-- Changed-file sweep previously reported `procgen_accepted_world_export_parity` hash `3400742901` and `procgen_performance_baseline_quick` timeout at 120 s. Rechecking clean `origin/main` reproduced the expected accepted-world hash `2068075335`; the worktree now hashes to `3211326287` after removing the extra contact debug payload from `region_frame`. The remaining difference is the macro-presentation summary fingerprint after adding AP2 stamp catalog entries; no gameplay fingerprint hash drifted (`2896026968` matches). No golden hash was changed.
-- Asset Doctor reports four unrelated Awakening Designation Locker catalog hash mismatches. The Alpine contact family reports 10/10 ready.
+- `verify_alpine_cliff_presentation_assets.py --record`: PASS, all 26 AP2 states verified; receipt `850f3261b800bdb255c71aa61553e13bc1b9313a7d6b27ac193e484f0cc268ef`. The three AP2 Asset V2 family statuses remain complete: fascia 12/12, contact 10/10, depth chunks 11/11 registered optional states. Contact inbox files remain waiting for ingest because their payload hashes match the current runtime PNGs.
+- Focused `procgen_alpine_cliff_presentation_smoke.gd`: PASS, including a negative control restoring the old east silhouette-edge socket; it fails closed and emits no fascia mask.
+- Generic cliff smoke: PASS (`1001` cells, five representative seeds). Wall integration: PASS (eight seeds; `3531` fascia cells, `3601` wall cells, `1163` wall lips). Region Frame smoke: PASS. Macro Presentation smoke: PASS (`d2d2e420…`). Elevated-world asset contract: PASS (`37` sources, `944` face cells).
+- Moment Forge `procgen/alpine_plateau_edge_review`, evidence run `20261014T164000Z-socket-embed-contract`: PASS, no run/probe/capture failures. North/east/south/west each have four successfully attached cardinal contacts; maximum socket error is `0 px`; minimum measured opaque support and configured minimum are both `24 px`; core/shoulder suppression remains `279` cells and `16` shoulder cells. Scenario assertions explicitly guard these attachment values. Review manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T164000Z-socket-embed-contract/REVIEW_MANIFEST.json`.
+- The first attempt to add the new Moment Forge probe failed because its threshold variable was scoped inside the placement loop. The retained `20261014T163000Z-socket-embed-contract` run is diagnostic-only; the scope error was fixed, the focused smoke passed, and the successful `164000Z` run supersedes it.
+- Accepted-world parity with `PARITY_KEYS=1`: AP2 hash `3211326287`; clean current `origin/main` hash `2068075335`. Fingerprint is `2896026968` on both. The only deterministic level-data key difference is `macro_presentation` (AP2 `2384386495`, main `1599143607`); all other stable keys match. The `2068075335` golden was not changed because no versioned level-data migration was established.
+- Direct quick performance baseline with a 300 s outer timeout: AP2 and clean main both pass `determinism_ok=true` and share generation fingerprint `1773840677`, contract fingerprint `1223064559`, and streaming counts (`19` revealed, `1466` queue peak, `389` nodes). AP2/main generation runs were about `2.8/2.8 s`; contract loop was `55.9/54.2 s`; promotion/materialization was `82.0/78.8 s`; average sampled frame time was `6.894/6.887 ms`. The registered 120 s limit is too short for this host’s quick profile.
+- Asset Doctor’s four Awakening Designation Locker mismatches are unrelated and were not included in AP2 scope.
 
-## Repository checkpoint correction
+## Checkpoint identity
 
-The previous report was inaccurate: before this correction, both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` pointed at `9827f372`, whose commit is the Vaultwing archive-history audit; the AP2 implementation was dirty and had not been committed. Implementation commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a` contains the AP2 files, and at visual-review upload both local `HEAD` and the remote branch resolved to that exact SHA. Follow-up receipt commit `e80732b53fecb9d8ab941b505fc7b76bebb037d9` records the uploaded manifest and failed-review disposition. The two unrelated `.uid` files created during validation were removed.
+At correction start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `841769bee66d6f5a98f273a2b1af6f760c0a71a0`, whose subject is `alpine remote checkpoint history, review link [skip render]`. That branch contains the actual Alpine implementation commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a`; it is not the Vaultwing commit that had occupied the ref before the earlier checkpoint repair. After fetching, the branch was 3 commits ahead and 10 behind `origin/main` (`8decfc1fc51fa10c6dbca2e88be50d7b059040e3`). The new correction is being committed and pushed on the same stable workstream branch.
 
-## Visual disposition
+## Visual review handoff
 
-- Contact/fascia integration: FAIL on prior review; new evidence awaits human review.
-- Attached-geology / crop-wall quality: FAIL on prior review; new evidence awaits human review.
-- Playable-edge readability: PASS on prior review.
-
-## New Visual Review Handoff
-
-- Manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T065730-0400/REVIEW_MANIFEST.json`
-- Retention: `delete-after-review`; use the cleanup command emitted in the manifest after the decision is recorded.
-- Questions: (1) Do the contacts visibly join playable terrace and fascia without a chasm gap or floating slab? (2) Do silhouettes read as attached geology without crop walls or detached masses? (3) Does the playable edge remain clear and truthful in all four directions?
+- Current run: `20261014T164000Z-socket-embed-contract`.
+- Manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T164000Z-socket-embed-contract/REVIEW_MANIFEST.json`.
+- Retention: `delete-after-review`; after the decision, run `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T164000Z-socket-embed-contract/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
+- Questions: (1) Do contacts visibly join the playable terrace and fascia in all four directions without a chasm gap or floating slab? (2) Do the silhouettes read as attached geology without crop walls or detached masses? (3) Does the playable floor edge remain clear and truthful?
+- A prior `20261014T065730-0400` upload has no recorded visual decision. It is superseded as the active review gate by this fresh run; its cloud bundle remains untouched because delete-after-review cleanup requires a recorded decision.
 
 ## Process Feedback
+
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: high
-- What went wrong: initial visual correction evidence failed the contact/fascia and attached-geology questions; the prior checkpoint report referenced an unrelated commit while AP2 changes remained dirty.
-- Root cause / contributing factors: a numeric endpoint was mistaken for proof of a visual seam; source crops retained straight boundaries; the checkpoint process was reported without checking the committed diff and remote SHA.
-- Prevention / pipeline improvement: record and validate final alpha-derived sockets and edge runs; prove only attached contacts own suppression; verify `HEAD`, remote SHA, and committed AP2 paths before reporting any checkpoint.
-- Tooling / docs drift discovered: `workstream.py checkpoint` retains/pushes the existing `HEAD` and does not commit dirty changes. The Moment Forge fixture now records attached-contact count and maximum socket error in addition to suppression counts.
+- Friction severity: medium
+- What went wrong: the original attachment smoke treated an opaque boundary point with zero positional error as proof of physical attachment; the first probe-enhancement run also exposed a GDScript scope mistake.
+- Root cause / contributing factors: the contract did not measure solid alpha support inward from the socket; the probe variable was declared inside a narrower block than its summary use.
+- Prevention / pipeline improvement: require at least 24 opaque pixels of inward support in both preparation and runtime; keep the negative control that restores a boundary-touch socket; rerun focused smoke before producing evidence.
+- Tooling / docs drift discovered: the quick performance profile includes a large accepted contract and can exceed its registered 120 s timeout; use an outer timeout of at least 240 s for direct comparisons on this host.
 - Follow-up: fixed-in-scope
-- What worked: the per-state alpha and socket report provides a reproducible asset/runtime contract.
+- What worked: comparing current AP2 and clean-main outputs with `PARITY_KEYS=1` isolated the golden mismatch to `macro_presentation`.
 
 ## Next Handoff
+
 - Next workstream: procgen-alpine-cliff-presentation-v1
 - Next packet state: human-required
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 - Refresh reason: none
-- Next action: review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T065730-0400/REVIEW_MANIFEST.json` and answer its three contact-integration questions.
-- Blockers or open questions: accepted-world export hash mismatch remains (`3211326287` versus `2068075335`) because the macro-presentation catalog fingerprint changed; the performance baseline check timed out at 120 s; unrelated Asset Doctor mismatches remain.
+- Next action: review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T164000Z-socket-embed-contract/REVIEW_MANIFEST.json`, answer the three contact-integration questions, then continue the same AP2 workstream.
+- Blockers or open questions: the `macro_presentation` accepted-world hash mismatch remains unexplained as a versioned migration; AP2 cannot close until the current visual decision and parity disposition are resolved.

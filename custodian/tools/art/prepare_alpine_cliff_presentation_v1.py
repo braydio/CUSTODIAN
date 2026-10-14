@@ -49,21 +49,33 @@ CONTACT = {
 }
 CONTACT_ROTATIONS: dict[str, int] = {}
 CONTACT_SOCKETS = {
-    # Pixel coordinates on the final canvases, where each contact's authored
-    # frontier edge must meet the semantic playable boundary.
-    "south_broad_01": (512, 16),
-    "south_broken_01": (512, 16),
-    "south_rooted_01": (512, 16),
-    # The east/west frontier socket sits on the upper cliff shoulder, not at
-    # the lower rubble foot around the vertical canvas midpoint.
-    "east_broad_01": (16, 400),
-    "west_broad_01": (496, 470),
-    "north_broad_01": (512, 303),
-    "corner_se_01": (24, 24),
-    "corner_sw_01": (750, 20),
-    "corner_ne_01": (16, 752),
-    "corner_nw_01": (752, 752),
+    # Authored pixels on the final canvases. Each socket sits inside the
+    # geology, far enough from its frontier-facing silhouette that the art
+    # overlaps the playable edge instead of meeting it at a single pixel.
+    "south_broad_01": (482, 100),
+    "south_broken_01": (474, 76),
+    "south_rooted_01": (474, 76),
+    "east_broad_01": (75, 400),
+    "west_broad_01": (462, 486),
+    "north_broad_01": (529, 270),
+    "corner_se_01": (152, 126),
+    "corner_sw_01": (541, 240),
+    "corner_ne_01": (132, 581),
+    "corner_nw_01": (716, 674),
 }
+CONTACT_SOCKET_INWARD_DIRECTIONS = {
+    "south_broad_01": ((0, -1),),
+    "south_broken_01": ((0, -1),),
+    "south_rooted_01": ((0, -1),),
+    "east_broad_01": ((-1, 0),),
+    "west_broad_01": ((1, 0),),
+    "north_broad_01": ((0, 1),),
+    "corner_se_01": ((-1, 0), (0, -1)),
+    "corner_sw_01": ((1, 0), (0, -1)),
+    "corner_ne_01": ((-1, 0), (0, 1)),
+    "corner_nw_01": ((1, 0), (0, 1)),
+}
+MIN_SOCKET_EMBED_PX = 24
 DEPTH = {
     "rocky_upland_descending_conifer_ledge": ("procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png", (80, 340, 1174, 1044), (896, 576)),
     "rocky_upland_broken_retaining_drop": ("procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png", (80, 340, 1174, 1044), (896, 576)),
@@ -227,10 +239,25 @@ def validate_contact_alpha(image: Image.Image, state: str) -> dict[str, object]:
         raise ValueError(f"{state}: transparent contact margin below 16 px: {margins}")
 
     # A straight crop wall spans a long, nearly continuous opaque run along
-    # the alpha silhouette's bounds. The single authored socket side is
-    # allowed to meet the frontier; other sides must remain irregular.
+    # the alpha silhouette's bounds. The frontier socket is authored inside
+    # the silhouette; unrelated canvas edges must remain irregular.
     pixels = alpha.load()
     socket = resolve_contact_socket(image, state)
+    socket_embed_depth: dict[str, int] = {}
+    for dx, dy in CONTACT_SOCKET_INWARD_DIRECTIONS[state]:
+        depth = 0
+        x, y = socket
+        while 0 <= x < width and 0 <= y < height and pixels[x, y] > ALPHA_CUTOFF:
+            depth += 1
+            x += dx
+            y += dy
+        axis = "x" if dx else "y"
+        socket_embed_depth[axis] = depth
+        if depth < MIN_SOCKET_EMBED_PX:
+            raise ValueError(
+                f"{state}: frontier socket only touches the silhouette on {axis}; "
+                f"needs {MIN_SOCKET_EMBED_PX}px opaque overlap, got {depth}px"
+            )
     socket_sides: set[str] = set()
     declared_socket = contact_socket(state, (width, height))
     if declared_socket[0] <= 16: socket_sides.add("left")
@@ -268,6 +295,7 @@ def validate_contact_alpha(image: Image.Image, state: str) -> dict[str, object]:
         "socket_sides": sorted(socket_sides),
         "alpha_crop_wall_ok": True,
         "socket_px": list(socket),
+        "socket_embed_depth_px": socket_embed_depth,
     }
 
 
@@ -278,6 +306,7 @@ def main() -> int:
         "alpha_cutoff": ALPHA_CUTOFF,
         "contact_alpha_rule": "preserve geology-only alpha silhouette; clear only border-connected neutral matte within RGB distance 24; reject unowned opaque canvas-edge spans >=25%; add at least 16 px transparent canvas margin",
         "contact_sockets": CONTACT_SOCKETS,
+        "contact_socket_min_embed_px": MIN_SOCKET_EMBED_PX,
         "source_master_batch": "alpine-cliff-source-family-v1",
         "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
         "outputs": [],

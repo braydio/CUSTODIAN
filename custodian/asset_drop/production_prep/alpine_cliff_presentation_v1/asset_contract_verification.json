@@ -2,7 +2,7 @@
   "schema": "custodian.alpine_cliff_presentation_asset_verification.v1",
   "source_master_batch": "alpine-cliff-source-family-v1",
   "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
-  "verified_at_utc": "2026-10-14T10:53:12+00:00",
+  "verified_at_utc": "2026-10-14T16:29:05+00:00",
   "state_counts": {
     "procgen_alpine_cliff_fascia": 12,
     "procgen_alpine_cliff_contact": 10,

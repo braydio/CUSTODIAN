@@ -87,6 +87,8 @@
         "contact_west_count",
         "attached_contact_count",
         "max_socket_error_px",
+        "contact_socket_min_embed_px",
+        "min_socket_embed_depth_px",
         "contact_core_frontier_count",
         "contact_shoulder_frontier_count",
         "contact_suppressed_cell_count",
@@ -129,6 +131,33 @@
     {
       "type": "output_exists",
       "path": "telemetry.json",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 40,
+      "field": "attached_contact_count",
+      "op": "eq",
+      "value": 4,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 40,
+      "field": "max_socket_error_px",
+      "op": "lte",
+      "value": 8.0,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 40,
+      "field": "min_socket_embed_depth_px",
+      "op": "gte",
+      "value": 24,
       "severity": "error"
     }
   ],

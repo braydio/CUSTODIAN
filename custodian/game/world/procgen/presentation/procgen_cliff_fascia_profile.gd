@@ -21,6 +21,8 @@ extends Resource
 @export var ensure_cardinal_broad_contact := true
 ## Authored texture-pixel frontier sockets. Missing states fail closed.
 @export var contact_socket_by_state: Dictionary = {}
+## Opaque geology must continue this many pixels inward from each socket.
+@export_range(8, 64, 1) var contact_socket_min_embed_px := 24
 
 @export_group("Fascia Variation")
 @export_range(2, 12, 1) var tangential_variant_run_tiles := 5

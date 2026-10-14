@@ -73,6 +73,7 @@ func apply_frontier_plan(
 	var frontier_centers := {}
 	var placements: Array[Dictionary] = []
 	var attached_frontiers: Dictionary = {}
+	var minimum_embed := profile.contact_socket_min_embed_px if profile != null else 24
 	for direction in CARDINALS:
 		if not runs_by_direction.has(direction):
 			continue
@@ -90,6 +91,10 @@ func apply_frontier_plan(
 			socket_px = profile.contact_socket_by_state[StringName(state)] as Vector2
 		if not is_finite(socket_px.x) or not is_finite(socket_px.y) or socket_px.x < 0.0 or socket_px.y < 0.0 or socket_px.x >= texture.get_width() or socket_px.y >= texture.get_height():
 			placements.append({"frontier_cell": cells[cells.size() / 2], "outward_direction": direction, "contact_state": state, "attached": false, "reason": "missing_or_invalid_authored_socket", "socket_error_px": INF})
+			continue
+		var socket_embed_depth := _socket_embed_depth(texture_image, state, Vector2i(roundi(socket_px.x), roundi(socket_px.y)))
+		if socket_embed_depth < minimum_embed:
+			placements.append({"frontier_cell": cells[cells.size() / 2], "outward_direction": direction, "contact_state": state, "attached": false, "reason": "contact_frontier_socket_only_touches_silhouette", "socket_error_px": INF, "socket_embed_depth_px": socket_embed_depth})
 			continue
 		var midpoint := cells[cells.size() / 2]
 		var scale_factor := _contact_scale(direction, alpha_bounds.size, cells.size())
@@ -125,6 +130,7 @@ func apply_frontier_plan(
 			"socket_world_position": socket_world,
 			"sprite_world_position": root.to_global(sprite.position),
 			"socket_error_px": socket_error_px,
+			"socket_embed_depth_px": socket_embed_depth,
 			"attached": true,
 		}
 		sprite.set_meta("placement", placement)
@@ -137,6 +143,7 @@ func apply_frontier_plan(
 		frontier_centers[_direction_name(direction)] = midpoint
 	refresh_streaming_visibility(root, streaming_enabled, null, null)
 	var summary := _summary(created, runs_by_direction.size(), direction_counts, true, longest_run_by_direction)
+	summary["socket_embed_min_px"] = minimum_embed
 	summary["frontier_centers"] = frontier_centers
 	summary["placements"] = placements
 	summary["attached_frontiers"] = attached_frontiers
@@ -195,6 +202,31 @@ func _contact_scale(direction: Vector2i, alpha_size: Vector2i, run_tiles: int) -
 	return float(maxi(1, run_tiles) * 32) / float(maxi(1, tangential_pixels))
 
 
+func _socket_embed_depth(image: Image, state: String, socket: Vector2i) -> int:
+	if image == null or image.is_empty():
+		return 0
+	var inward_directions: Array[Vector2i] = []
+	match state:
+		"south_broad_01", "south_broken_01", "south_rooted_01": inward_directions = [Vector2i.UP]
+		"east_broad_01": inward_directions = [Vector2i.LEFT]
+		"west_broad_01": inward_directions = [Vector2i.RIGHT]
+		"north_broad_01": inward_directions = [Vector2i.DOWN]
+		"corner_se_01": inward_directions = [Vector2i.LEFT, Vector2i.UP]
+		"corner_sw_01": inward_directions = [Vector2i.RIGHT, Vector2i.UP]
+		"corner_ne_01": inward_directions = [Vector2i.LEFT, Vector2i.DOWN]
+		"corner_nw_01": inward_directions = [Vector2i.RIGHT, Vector2i.DOWN]
+		_: return 0
+	var minimum_depth := 2147483647
+	for direction: Vector2i in inward_directions:
+		var cell := socket
+		var depth := 0
+		while cell.x >= 0 and cell.y >= 0 and cell.x < image.get_width() and cell.y < image.get_height() and image.get_pixelv(cell).a > 0.0:
+			depth += 1
+			cell += direction
+		minimum_depth = mini(minimum_depth, depth)
+	return minimum_depth if minimum_depth != 2147483647 else 0
+
+
 func _record_fascia_blend_for_contact(covered_frontier: Array[Vector2i], shoulder_tiles: int) -> void:
 	if covered_frontier.is_empty(): return
 	var shoulder := mini(maxi(1, shoulder_tiles), maxi(1, covered_frontier.size() / 3))
@@ -234,6 +266,7 @@ func _summary(created: int, qualified: int, direction_counts: Dictionary = {}, c
 		"attached_frontiers": {},
 		"attached_contact_count": 0,
 		"max_socket_error_px": 0.0,
+		"socket_embed_min_px": 24,
 	}
 
 

@@ -24,9 +24,12 @@ func _initialize() -> void:
 				failures.append("Alpine profile socket does not match derived source alpha for %s" % String(state))
 			if not bool(item.get("alpha_crop_wall_ok", false)):
 				failures.append("contact derivation lacks alpha/crop-wall proof for %s" % String(state))
+			for depth: Variant in (item.get("socket_embed_depth_px", {}) as Dictionary).values():
+				if int(depth) < 24:
+					failures.append("contact derivation has insufficient socket overlap for %s" % String(state))
 	if not PROFILE.is_valid(): failures.append("Alpine fascia profile is invalid")
-	if not PROFILE.ensure_cardinal_broad_contact or PROFILE.contact_min_run_tiles != 10 or PROFILE.contact_shoulder_tiles != 2:
-		failures.append("Alpine contact profile does not enforce the evidence-tuned 10/2/cardinal contract")
+	if not PROFILE.ensure_cardinal_broad_contact or PROFILE.contact_min_run_tiles != 10 or PROFILE.contact_shoulder_tiles != 2 or PROFILE.contact_socket_min_embed_px != 24:
+		failures.append("Alpine contact profile does not enforce the evidence-tuned 10/2/24px/cardinal contract")
 	for source_id in range(219, 231):
 		if not TILESET.has_source(source_id): failures.append("missing Alpine fascia source %d" % source_id)
 	if PROFILE.depth_bias(Vector2i.UP) >= PROFILE.depth_bias(Vector2i.DOWN):
@@ -182,6 +185,21 @@ func _initialize() -> void:
 	var unattached: Dictionary = composer.apply_frontier_plan(contact_plan, exterior, {}, contact_root, 99, false, Vector2.ONE, missing_socket_profile)
 	if int(unattached.get("sprite_count", 0)) != 0 or not composer.get_fascia_blend_frontiers().get("core", {}).is_empty():
 		failures.append("contact without an authored socket emitted art or fascia suppression")
+	var shallow_socket_profile := PROFILE.duplicate() as ProcgenCliffFasciaProfile
+	shallow_socket_profile.contact_socket_by_state[StringName("east_broad_01")] = Vector2(52, 400)
+	var east_plan: Dictionary = {}
+	var east_exterior: Dictionary = {}
+	for index in range(14):
+		var east_cell := Vector2i(50, index)
+		east_plan[east_cell] = {"frontier_cell": east_cell, "outward_direction": Vector2i.RIGHT, "wall_backed": false}
+		east_exterior[east_cell] = true
+	var shallow_socket: Dictionary = composer.apply_frontier_plan(east_plan, east_exterior, {}, contact_root, 99, false, Vector2.ONE, shallow_socket_profile)
+	if int(shallow_socket.get("sprite_count", 0)) != 0 or not composer.get_fascia_blend_frontiers().get("core", {}).is_empty():
+		failures.append("silhouette-edge socket was accepted or emitted fascia suppression")
+	else:
+		var shallow_placements: Array = shallow_socket.get("placements", [])
+		if shallow_placements.is_empty() or not str((shallow_placements[0] as Dictionary).get("reason", "")).contains("only_touches_silhouette"):
+			failures.append("shallow socket rejection did not identify the silhouette-touch defect")
 	var snapshot := floor_cells.duplicate(true)
 	if floor_cells != snapshot:
 		failures.append("presentation changed semantic floor cells")
@@ -236,6 +254,8 @@ func _assert_attached_placements(summary: Dictionary, alpha_contract_by_state: D
 			failures.append("contact placement failed attachment: %s" % str(placement))
 		if float(placement.get("socket_error_px", INF)) > 8.0:
 			failures.append("contact socket error exceeds 8 px: %s" % str(placement))
+		if int(placement.get("socket_embed_depth_px", 0)) < PROFILE.contact_socket_min_embed_px:
+			failures.append("contact socket lacks opaque geological overlap: %s" % str(placement))
 		var state := StringName(placement.get("contact_state", ""))
 		var asset_contract := alpha_contract_by_state.get(state, {}) as Dictionary
 		if not bool(asset_contract.get("alpha_crop_wall_ok", false)):

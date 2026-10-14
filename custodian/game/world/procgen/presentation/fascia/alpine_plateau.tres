@@ -20,14 +20,15 @@ contact_shoulder_tiles = 2
 ensure_cardinal_broad_contact = true
 tangential_variant_run_tiles = 5
 contact_socket_by_state = {
-&"south_broad_01": Vector2(491, 80),
-&"south_broken_01": Vector2(474, 53),
-&"south_rooted_01": Vector2(474, 53),
-&"east_broad_01": Vector2(52, 400),
-&"west_broad_01": Vector2(481, 475),
-&"north_broad_01": Vector2(516, 288),
-&"corner_se_01": Vector2(133, 114),
-&"corner_sw_01": Vector2(545, 208),
-&"corner_ne_01": Vector2(118, 601),
-&"corner_nw_01": Vector2(735, 696),
+&"south_broad_01": Vector2(482, 100),
+&"south_broken_01": Vector2(474, 76),
+&"south_rooted_01": Vector2(474, 76),
+&"east_broad_01": Vector2(75, 400),
+&"west_broad_01": Vector2(462, 486),
+&"north_broad_01": Vector2(529, 270),
+&"corner_se_01": Vector2(152, 126),
+&"corner_sw_01": Vector2(541, 240),
+&"corner_ne_01": Vector2(132, 581),
+&"corner_nw_01": Vector2(716, 674),
 }
+contact_socket_min_embed_px = 24
