@@ -2626,6 +2626,17 @@ baseline clip by clip instead of accepting any single PNG, and both
 validation manifest. `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` is the
 implementation authority.
 
+Runtime transition policy now gates all soft actions and sensed threats to
+ambient `IDLE`/`WANDER`; attack rejection and explicit flee can preempt, while
+repeated hard responses do not restart an active rejection/flee chain. Treat
+approach advances only on arrival and returns to ambient behavior on its
+distance/speed-derived timeout. Retrieval claims carrying only on matching
+contact, and timeout/cancel clears the pending target. Search ties use distance,
+world y/x, and stable node path, with `target_found` emitted at the find beat.
+Runtime smoke checks effective FPS for every family state (including unpublished
+states) and verifies alias-map parity. The five unresolved art needs are owned by
+`required_assets.registry.json`; root `REQUIRED_ASSETS.md` is its generated view.
+
 # Vaultwing Wild Predator Slice A Closeout (2026-09-23)
 
 The Common Vaultwing Slice A runtime is closed out under
