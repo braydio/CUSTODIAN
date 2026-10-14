@@ -1,0 +1,35 @@
+# REVIEW PROCGEN ARCHIVE RESOLVE WORLD COVER V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-procgen-archive-resolve-world-cover-v1`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `procgen-archive-resolve-world-cover-v1`
+- Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `fresh render-coverage ownership review`
+- Review target workstream: `procgen-archive-resolve-world-cover-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_WORLD_COVER_V1.md`
+- Reviewed main: `<fill at claim>`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Visual review: `required`
+- Goal: Prove world coverage is presentation-only, complete and legible.
+- Completion boundary: Verify explicit coverage, cliff read-only mapping, underfield bounds/no semantic leakage, Operator/HUD readability and recorded human verdict.
+- Current measured state: Reconstruct from landed main.
+- Evidence: landed code/tests and exact review manifest.
+- Task-specific authority: Archive Resolve + existing cliff owner.
+- Work surface: landed slice only.
+- Change: Mutation restoring actor-above-veil or removing cliff companion coverage must fail; inspect NOT_REQUESTED/REQUESTED/READY/SETTLED cases.
+- Preserve: gameplay authority and one presentation state machine.
+- Non-goals: no smooth-front tuning.
+- Acceptance: machine checks green, human coverage verdict present, no authority leak.
+- Validation: focused layering/cliff/reveal/runtime-health/S1 plus changed-file.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Deferred: smooth-front successor.

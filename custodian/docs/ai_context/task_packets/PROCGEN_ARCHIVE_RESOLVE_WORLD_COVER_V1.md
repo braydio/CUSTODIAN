@@ -1,0 +1,43 @@
+# PROCGEN ARCHIVE RESOLVE WORLD COVER V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `procgen-archive-resolve-world-cover-v1`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `review-procgen-archive-resolve-connected-cascade-v1`
+- Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `review-procgen-archive-resolve-world-cover-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `changes render coverage across terrain, actors and cliff presentation`
+- Reviewed main: `f00b95e98120660402e945cfe9190f3cb072b833`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Visual review: `required`
+- Goal: Make unresolved space read as one graphite world layer, not black holes with rendered props/mobs/structures/cliffs floating above it.
+- Completion boundary: Explicit world-presentation coverage masks ordinary terrain/walls/cliff/props/items/enemies but stays below HUD; Operator remains readable through the resolved safety pocket; NOT_REQUESTED in-bounds space gets a quiet abstract graphite underfield without semantic terrain disclosure.
+- Current measured state: `ArchiveResolveVeil` is one z2 MultiMesh; historical AR2 ordering allowed ordinary actors above it. Cliff/fascia is separate. NOT_REQUESTED space has no dedicated abstract underfield.
+- Evidence: `proc_gen_map.tscn`; reveal owner/shader; cliff owner; broad playtest packet; Authoring-chat screenshot.
+- Task-specific authority: Archive Resolve owns cover state; cliff owner supplies only read-only painted-cell/frontier mapping; gameplay remains independent.
+- Work surface: scene layering, reveal owner, cliff read-only adapter, focused shader/coverage tests.
+- Change: Establish explicit cover ordering; adapt cliff footprint without reclassification; add one bounded world-space graphite underfield for NOT_REQUESTED in-bounds space and opaque cover for REQUESTED-uncommitted; SETTLED remains normal art. Underfield may not expose semantic classes/routes/actors.
+- Preserve: HUD isolation; Operator safety halo; cliff/gameplay authority; one presentation state machine; reduced/disabled parity.
+- Non-goals: no smooth-contour implementation yet; no new art; no AI/spawn/discovery changes.
+- Acceptance: objective coverage masks representative terrain/cliff/prop/item/enemy pixels while unresolved; Operator/HUD remain readable; underfield stays within generated bounds with no semantic leakage; settled world restores ordinary presentation; compact human screenshot review passes coverage/readability.
+- Validation: shader/layering; cliff face/wall integration; reveal presentation; runtime health; S1 quick; compact human screenshot; changed-file validation.
+- Task overrides: `none`
+- Deferred: non-blocky contour rendering successor.
+
+## Handoff
+- Next workstream: `review-procgen-archive-resolve-world-cover-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Refresh reason: `none`
+- Next action: `Land coverage, record compact human verdict, then smooth-front slice.`
+- Blockers or open questions: `none`

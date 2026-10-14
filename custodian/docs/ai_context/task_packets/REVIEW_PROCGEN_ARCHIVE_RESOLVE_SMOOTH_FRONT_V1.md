@@ -1,0 +1,35 @@
+# REVIEW PROCGEN ARCHIVE RESOLVE SMOOTH FRONT V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-procgen-archive-resolve-smooth-front-v1`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `procgen-archive-resolve-smooth-front-v1`
+- Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, runtime, visual`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `fresh final series review`
+- Review target workstream: `procgen-archive-resolve-smooth-front-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_SMOOTH_FRONT_V1.md`
+- Reviewed main: `<fill at claim>`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Visual review: `required`
+- Goal: Close the split Archive Resolve polish series after validating smooth contour, upstream near-player priority, connected cascade and world coverage together.
+- Completion boundary: Fresh reviewer reconstructs all four landed slices, verifies focused regressions/S1 quick and exact clean-SHA human visual pass, with no gameplay authority moved into presentation.
+- Current measured state: Reconstruct from landed main/predecessor summaries.
+- Evidence: four implementation/review receipts; final Moment Forge bundle; human disposition in Authoring chat.
+- Task-specific authority: M3/M4 streaming owners + Archive Resolve presentation owner.
+- Work surface: review only.
+- Change: Falsify local-hole closure, cascade connectivity, cover completeness, contour smoothness, pause/determinism/performance and disabled parity. Reuse durable media unless stale.
+- Preserve: all streaming/gameplay semantics.
+- Non-goals: no new tuning/feature work.
+- Acceptance: no blocking finding/material gap; final human pass recorded; AP2/AP3 ownership unaffected; S1 authority intact.
+- Validation: focused predecessor suites + S1 quick + changed-file validation + `git diff --check`.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Deferred: later aesthetic tuning is a new human-directed slice.

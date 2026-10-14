@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-archive-resolve-playtest-polish-v1`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `procgen-archive-resolve-playtest-polish-v1`
 - Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
@@ -18,7 +18,7 @@
 - Review target workstream: `procgen-archive-resolve-playtest-polish-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_PLAYTEST_POLISH_V1.md`
 - Reviewed main: `<fill at claim>`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `required`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
@@ -78,6 +78,10 @@
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: Any additional purely subjective polish after a human pass is a new human-directed tuning slice, not an automatic review finding.
 
+## 2026-10-14 Split Execution Refresh
+
+Do not claim this broad review. Its acceptance is now distributed across the four focused implementation/review pairs ending in `review-procgen-archive-resolve-smooth-front-v1`.
+
 ## Review Receipt
 
 - Status: `pending`
@@ -102,7 +106,7 @@
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none`
 - Next action: `If passed, Archive Resolve post-playtest presentation is closed. If objective findings exist, author only bounded corrections tied to those findings.`
 - Blockers or open questions: `implementation dependency and required human visual disposition only`
