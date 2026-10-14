@@ -90,7 +90,6 @@
 - Next action: `After implementation lands and archives complete, invoke the paired fresh-context review runner for the named review workstream.`
 - Blockers or open questions: `none`
 
-
 ## Independent Review
 
 ### Review Receipt: review-carrow-west-draft-house-interior-v1
