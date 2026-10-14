@@ -1,8 +1,8 @@
 # REVIEW PROCGEN STREAMING NEAR PLAYER PRIORITY V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-procgen-streaming-near-player-priority-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `procgen-streaming-near-player-priority-v1`

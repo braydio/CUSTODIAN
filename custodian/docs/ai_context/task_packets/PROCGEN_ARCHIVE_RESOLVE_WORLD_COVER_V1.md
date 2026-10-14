@@ -1,8 +1,8 @@
 # PROCGEN ARCHIVE RESOLVE WORLD COVER V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-world-cover-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-procgen-archive-resolve-connected-cascade-v1`
