@@ -20,6 +20,8 @@
 - Reviewed main: `<fill at claim>`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
 - Goal: Prove near-player/pocket promotion changes ordering only, not streaming semantics or budgets.
 - Completion boundary: Fresh reviewer traces the reorder seam, reproduces backlog relocation + 1-3-cell closure, and verifies pause/prepared/lifecycle/cache/unload determinism.
 - Current measured state: Reconstruct from landed main.
@@ -33,3 +35,13 @@
 - Validation: focused priority smoke; pause-aware streaming; chunk lifecycle/cache/unload/runtime-health; S1 quick; changed-file validation.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
 - Deferred: presentation behavior belongs to successor.
+
+## Handoff
+- Next workstream: `none`
+- Next packet state: `none`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Refresh reason: `draft/manual only while the automatic authoring handoff validates and promotes this paired packet; do not claim manually before that preflight succeeds`
+- Next action: `After automatic promotion, wait for the implementation dependency and then claim through normal dispatcher authority.`
+- Blockers or open questions: `implementation dependency only`
