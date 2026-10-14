@@ -67,8 +67,8 @@ func _validate_runtime_geometry() -> void:
 		if str(record.get("group", "")) == "camera":
 			camera_count += 1
 	_check(camera_count == 5, "mapper did not expose all five runtime camera zones")
-	var chapel_art := by_id.get("art.chapel_outer_blend", {}) as Dictionary
-	_check(chapel_art.get("texture_size", Vector2.ZERO) == Vector2(1280.0, 1024.0), "chapel art bounds did not derive from texture size")
+	var chapel_art := by_id.get("art.chapel_connector_apron", {}) as Dictionary
+	_check(chapel_art.get("texture_size", Vector2.ZERO) == Vector2(768.0, 384.0), "chapel connector apron bounds did not derive from current texture size")
 	var arena_art := by_id.get("art.ritualant_arena_expanded_base", {}) as Dictionary
 	_check(arena_art.get("texture_size", Vector2.ZERO) == Vector2(2594.0, 1737.0), "expanded arena master is not mapper-visible at 2594x1737")
 	var seal_art := by_id.get("art.lower_quarter_seal", {}) as Dictionary

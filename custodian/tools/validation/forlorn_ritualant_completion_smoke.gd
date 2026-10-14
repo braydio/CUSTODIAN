@@ -440,9 +440,9 @@ func _validate_lower_lift() -> void:
 		var back := boarding_bounds.get_node("BackStop") as CollisionShape2D
 		var left := boarding_bounds.get_node("LeftFrontWing") as CollisionShape2D
 		var right := boarding_bounds.get_node("RightFrontWing") as CollisionShape2D
-		_check((back.shape as RectangleShape2D).size == Vector2(223.0, 16.0), "lower lift backstop contract drifted")
-		_check((left.shape as RectangleShape2D).size == Vector2(48.0, 18.0), "lower lift left wing contract drifted")
-		_check((right.shape as RectangleShape2D).size == Vector2(48.0, 18.0), "lower lift right wing contract drifted")
+		_check((back.shape as RectangleShape2D).size == Vector2(223.0, 22.0), "lower lift backstop contract drifted")
+		_check((left.shape as RectangleShape2D).size == Vector2(20.0, 80.0), "lower lift left wing contract drifted")
+		_check((right.shape as RectangleShape2D).size == Vector2(20.0, 80.0), "lower lift right wing contract drifted")
 	var actor := FakeOperator.new()
 	actor.name = "Operator"
 	actor.add_test_visual()

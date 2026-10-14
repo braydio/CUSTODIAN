@@ -129,6 +129,22 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertIsNone(error)
         self.assertEqual(receipt["Reviewed implementation commit"], implementation)
 
+    def test_real_surface_lift_archive_resolves_unique_landing_without_follow_ambiguity(self):
+        pinned_main = "be58b0b845499f1e4340c8217c09304ab3667904"
+        target_path = (
+            "custodian/docs/ai_context/task_packets/archived/"
+            "ASH_BELL_SURFACE_LIFT_V2_ASSET_INTAKE.md"
+        )
+        target_workstream = "ash-bell-surface-lift-v2-asset-intake"
+        baseline = read_git_text(ROOT, pinned_main, target_path)
+
+        self.assertFalse(re.search(r"(?m)^- Implementation commit:", baseline))
+        implementation, error = resolve_target_implementation_commit(
+            ROOT, pinned_main, target_path, target_workstream, baseline,
+        )
+        self.assertIsNone(error)
+        self.assertEqual(implementation, "f3b94d0768bc110755f2b9be1d1e60d22fe1577c")
+
     def test_legacy_archive_identity_rejects_ambiguous_reintroduction_and_wrong_target(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)

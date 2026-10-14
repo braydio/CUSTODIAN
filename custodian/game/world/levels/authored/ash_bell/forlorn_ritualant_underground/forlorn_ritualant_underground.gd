@@ -598,7 +598,7 @@ func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 		"BackgroundRoot/LandingConnectorBridge",
 		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
 		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
-		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",
+		"OcclusionRoot/ChapelThreshold",
 		"OcclusionRoot/LowerQuarterSeal",
 		"PlayableRoot/ForlornRitualantSite/Floor",
 		"PlayableRoot/ForlornRitualantSite/PerimeterRubble",
