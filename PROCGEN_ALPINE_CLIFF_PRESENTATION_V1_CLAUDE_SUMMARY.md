@@ -4,7 +4,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 ## Outcome
 
-The human disposition for `20261014T061508Z` remains FAIL for contact/fascia integration and attached geology; playable-edge readability passed. That reviewed bundle was cleaned under its delete-after-review policy. The later `20261014T164000Z-socket-embed-contract` run is not valid for final acceptance because its manifest records commit `841769be...`, although it captured the socket correction as dirty worktree state. AP2 remains open and AP3 remains dependency-gated.
+The human disposition for `20261014T061508Z` remains FAIL for contact/fascia integration and attached geology; playable-edge readability passed. That reviewed bundle was cleaned under its delete-after-review policy. The `20261014T164000Z-socket-embed-contract` run is invalid for final acceptance because its manifest records `841769be...`. A fresh replacement run has now passed from a clean checkout at pushed commit `14148e47ab436e4f5081c90434277590c7190b96`; its manifest commit matches `HEAD` and reports `dirty=false`. AP2 remains open pending human visual review, and AP3 remains dependency-gated.
 
 This correction found that a few authored sockets were opaque but lay on the silhouette itself. A zero-error point round trip therefore proved a touch, not an attached overlap. The ten contact PNG payloads already had true irregular binary geology alpha, transparent margins, and no detected crop walls; this correction kept those exact images and moved each authored socket inward. Asset V2 correctly classified the unchanged payloads as duplicates, so no new state IDs or PNG ingest were needed.
 
@@ -24,13 +24,13 @@ The Alpine profile now records all ten inboard socket coordinates and a 24 px mi
 
 ## Checkpoint identity
 
-At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `f22fb17b1ce5cc59b5fdde2a7adcdcc1b1f6a9b0`. After fetch, the branch was 7 commits ahead and 10 behind `origin/main@8decfc1fc51fa10c6dbca2e88be50d7b059040e3`; a normal merge incorporated current main cleanly before these changes. The earlier socket correction `d6acb605d8a86ec4c5053302653fd235806bbb46` remains in AP2 history. A fresh evidence run from the final pushed SHA is still required because the 164000Z manifest does not identify the reviewed socket implementation commit.
+At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `f22fb17b1ce5cc59b5fdde2a7adcdcc1b1f6a9b0`. After fetch, the branch was 7 commits ahead and 10 behind `origin/main@8decfc1fc51fa10c6dbca2e88be50d7b059040e3`; a normal merge incorporated current main cleanly before these changes. The earlier socket correction `d6acb605d8a86ec4c5053302653fd235806bbb46` remains in AP2 history. The replacement evidence run `20261014T-socket-embed-verified-14148e47` was captured from clean detached checkout `14148e47ab436e4f5081c90434277590c7190b96`; its local Moment Forge manifest records the same commit and `dirty=false`. The uploaded review manifest was fetched back from Dropbox and its `git.commit` also matches `14148e47...`.
 
 ## Visual review handoff
 
-- Current run: replacement committed-SHA evidence pending.
-- The 164000Z manifest is provenance-invalid for final acceptance (`git.commit=841769bee66d6f5a98f273a2b1af6f760c0a71a0`); do not use it as final evidence. Capture after pushing this correction, verify manifest `git.commit` equals the clean capture checkout `git rev-parse HEAD`, then publish.
-- Retention: `delete-after-review`; cleanup only after a visual decision is recorded for the replacement bundle.
+- Current run: `20261014T-socket-embed-verified-14148e47`, Moment Forge scenario `procgen/alpine_plateau_edge_review`; PASS with no run, probe, or capture failures. All four directions report attached contacts; maximum socket error is `0 px`, minimum support depth is `24 px`, core suppression is `279` cells, and shoulder frontier count is `16`.
+- Uploaded manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json`. Fetched manifest `git.commit=14148e47ab436e4f5081c90434277590c7190b96`, equal to capture `HEAD`; source Moment Forge manifest reports `dirty=false`. The prior 164000Z manifest remains invalid and should not be used for this gate.
+- Retention: `delete-after-review`; after a human decision, run `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
 - Questions: (1) Do contacts visibly join the playable terrace and fascia in all four directions without a chasm gap or floating slab? (2) Do the silhouettes read as attached geology without crop walls or detached masses? (3) Does the playable floor edge remain clear and truthful?
 - A prior `20261014T065730-0400` upload has no recorded visual decision. It is superseded as the active review gate by this fresh run; its cloud bundle remains untouched because delete-after-review cleanup requires a recorded decision.
 
@@ -54,5 +54,5 @@ At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presenta
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 - Refresh reason: none
-- Next action: push the validation-contract correction, capture and publish fresh four-direction Moment Forge evidence from a clean checkout of the pushed SHA, verify manifest SHA equality, then answer the three contact-integration questions.
-- Blockers or open questions: replacement visual review is pending; the changed-file batch had one concurrent Region Frame timeout although the isolated test passed. AP2 cannot close or AP3 start until visual review is recorded.
+- Next action: review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` and answer the three contact-integration questions.
+- Blockers or open questions: human visual disposition is pending; changed-file validation had one `procgen_region_frame` timeout during host contention, and its isolated rerun passed in 112431 ms. Keep AP2 open and do not claim AP3 until visual review is recorded.
