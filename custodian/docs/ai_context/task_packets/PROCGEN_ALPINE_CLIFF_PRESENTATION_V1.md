@@ -94,13 +94,13 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none`
-- Root cause / contributing factors: `none`
-- Prevention / pipeline improvement: `none`
-- Tooling / docs drift discovered: `none`
-- Follow-up: `none | fixed-in-scope | procgen-alpine-surface-plates-v1 | manual-follow-up`
+- Outcome: `partial`
+- Friction severity: `high`
+- What went wrong: `The first post-correction visual review failed contact/fascia integration and attached-geology while playable-edge readability passed. The previous checkpoint report pointed at a Vaultwing commit because the AP2 worktree changes were still dirty and the branch HEAD was not verified against the task diff.`
+- Root cause / contributing factors: `A point placement derived from a cropped alpha bound proved numeric alignment but not a convincing geological seam. Rectangular source crop boundaries remained on several contact variants. The task checkpoint was reported without confirming the committed branch SHA contained AP2 files.`
+- Prevention / pipeline improvement: `Record final canvas socket coordinates from each prepared alpha mask, reject unowned straight silhouette runs, and test socket-to-frontier round-trip plus suppression ownership. Before reporting a checkpoint, verify HEAD, remote branch SHA, and the commit's changed paths.`
+- Tooling / docs drift discovered: `workstream checkpoint retains/pushes the current HEAD and does not commit dirty AP2 changes; branch identity must be verified explicitly. The fixed-seed review now probes attached-contact count and maximum socket error as well as the prior suppression counters.`
+- Follow-up: `fixed-in-scope`
 
 ## Refresh Planning Authority
 

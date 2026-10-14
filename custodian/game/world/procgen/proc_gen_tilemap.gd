@@ -32,6 +32,9 @@ const ROAD_AUTHORITY_SCRIPT := preload("res://game/world/procgen/roads/procgen_r
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
+const ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT := preload(
+	"res://game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd"
+)
 const DRESSING_CLUSTER_PLANNER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_planner.gd")
 const DRESSING_CLUSTER_REALIZER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_realizer.gd")
 const DRESSING_CLUSTER_CATALOG := preload("res://content/procgen/dressing_clusters/dressing_cluster_catalog_v1.tres")
@@ -754,6 +757,8 @@ var _biome_field: BiomeField = null
 var _biome_id_by_cell: Dictionary = {}
 var _biome_summary: Dictionary = {}
 var _macro_presentation_composer: RefCounted = null
+var _alpine_cliff_contact_composer: RefCounted = null
+var _alpine_cliff_contact_summary: Dictionary = {}
 var _macro_presentation_plan: Dictionary = {}
 var _macro_presentation_summary: Dictionary = {}
 var _macro_presentation_dressing_clearance_cells: Dictionary = {}
@@ -7988,6 +7993,8 @@ func debug_get_biome_field() -> Dictionary:
 func _ensure_macro_presentation_composer() -> void:
 	if _macro_presentation_composer == null:
 		_macro_presentation_composer = MACRO_PRESENTATION_COMPOSER_SCRIPT.new()
+	if _alpine_cliff_contact_composer == null:
+		_alpine_cliff_contact_composer = ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT.new()
 
 
 func _macro_presentation_roots() -> Dictionary:
@@ -8003,6 +8010,7 @@ func _clear_macro_presentation() -> void:
 		_macro_presentation_composer.clear(_macro_presentation_roots())
 	_macro_presentation_plan.clear()
 	_macro_presentation_summary.clear()
+	_alpine_cliff_contact_summary.clear()
 	_macro_presentation_dressing_clearance_cells.clear()
 	_publish_macro_presentation_gauges()
 
@@ -8124,6 +8132,11 @@ func _macro_presentation_surface_claims() -> Dictionary:
 func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 	_build_macro_presentation_plan(map_size)
 	if _macro_presentation_plan.is_empty():
+		var fallback_scale := Vector2.ONE
+		if macro_presentation_back != null:
+			fallback_scale = macro_presentation_back.global_transform.get_scale()
+		_refresh_alpine_cliff_contacts(fallback_scale)
+		_refresh_macro_streaming_visibility()
 		return
 	var world_scale := Vector2.ONE
 	if macro_presentation_back != null:
@@ -8136,17 +8149,61 @@ func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 		walls_tilemap,
 		world_scale
 	)
+	_refresh_alpine_cliff_contacts(world_scale)
 	_refresh_macro_streaming_visibility()
 
 
 func _refresh_macro_streaming_visibility() -> void:
-	if _macro_presentation_composer == null or _macro_presentation_plan.is_empty():
+	if _macro_presentation_composer != null and not _macro_presentation_plan.is_empty():
+		_macro_presentation_composer.refresh_streaming_visibility(
+			_macro_presentation_plan,
+			_macro_presentation_roots(),
+			floor_tilemap,
+			walls_tilemap
+		)
+	if _alpine_cliff_contact_composer != null:
+		_alpine_cliff_contact_composer.refresh_streaming_visibility(
+			macro_presentation_back,
+			enable_streaming_reveal,
+			floor_tilemap,
+			walls_tilemap
+		)
+
+
+func _refresh_alpine_cliff_contacts(world_scale: Vector2 = Vector2.ONE) -> void:
+	if macro_presentation_back == null:
 		return
-	_macro_presentation_composer.refresh_streaming_visibility(
-		_macro_presentation_plan,
-		_macro_presentation_roots(),
-		floor_tilemap,
-		walls_tilemap
+	_ensure_macro_presentation_composer()
+	var frame_state := _resolve_region_frame_state()
+	if frame_state.get("cliff_fascia_profile") == null or void_cliff_face == null:
+		_alpine_cliff_contact_composer.clear(macro_presentation_back)
+		_alpine_cliff_contact_summary = {"sprite_count": 0, "qualified_runs": 0}
+		return
+	var fascia_profile := frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
+	var blocked_frontier_cells := _macro_presentation_protected_cells()
+	for cell: Variant in _macro_presentation_dressing_clearance_cells:
+		if cell is Vector2i:
+			blocked_frontier_cells[cell] = true
+	_alpine_cliff_contact_summary = _alpine_cliff_contact_composer.apply_frontier_plan(
+		void_cliff_face.get_debug_paint_plan(),
+		_exterior_chasm_cells,
+		blocked_frontier_cells,
+		macro_presentation_back,
+		_get_generation_seed(),
+		enable_streaming_reveal,
+		world_scale,
+		fascia_profile,
+		Callable(self, "_tile_to_world_position")
+	)
+	var contact_blend: Dictionary = _alpine_cliff_contact_composer.get_fascia_blend_frontiers()
+	void_cliff_face.configure_from_surface_cells(
+		_generated_floor_cells,
+		_chasm_cells,
+		_get_generation_seed(),
+		_generated_wall_cells,
+		fascia_profile,
+		contact_blend.get("core", {}),
+		contact_blend.get("shoulder", {})
 	)
 
 
@@ -10275,9 +10332,11 @@ func _resolve_region_frame_state() -> Dictionary:
 		"fallback_reason": "",
 		"underlay_source": "default",
 		"underlay": ENDLESS_FOREST_UNDERLAY,
+		"cliff_fascia_profile": null,
 	}
 	if frame != null and frame.is_valid():
 		state["underlay"] = frame.underlay_profile
+		state["cliff_fascia_profile"] = frame.cliff_fascia_profile
 		state["underlay_source"] = "region_frame"
 		state["visual_fallback"] = frame.visual_fallback
 		state["fallback_reason"] = frame.fallback_reason
@@ -10320,6 +10379,12 @@ func get_region_frame_debug_snapshot() -> Dictionary:
 	}
 
 
+func debug_get_alpine_cliff_contact_state() -> Dictionary:
+	var result := _alpine_cliff_contact_summary.duplicate(true)
+	result["fascia"] = void_cliff_face.get_debug_state() if void_cliff_face != null else {}
+	return result
+
+
 func debug_get_exterior_chasm_cells() -> Dictionary:
 	return _exterior_chasm_cells.duplicate(true)
 
@@ -10346,13 +10411,21 @@ func _refresh_void_cliff_face() -> void:
 	if _generated_floor_cells.is_empty() or _chasm_cells.is_empty():
 		void_cliff_face.clear()
 		void_cliff_face.visible = false
+		if _alpine_cliff_contact_composer != null and macro_presentation_back != null:
+			_alpine_cliff_contact_composer.clear(macro_presentation_back)
 		return
+	var frame_state := _resolve_region_frame_state()
 	void_cliff_face.configure_from_surface_cells(
 		_generated_floor_cells,
 		_chasm_cells,
 		_get_generation_seed(),
-		_generated_wall_cells
+		_generated_wall_cells,
+		frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
 	)
+	var presentation_scale := Vector2.ONE
+	if macro_presentation_back != null:
+		presentation_scale = macro_presentation_back.global_transform.get_scale()
+	_refresh_alpine_cliff_contacts(presentation_scale)
 
 
 func _get_chasm_presentation_cells() -> Array:

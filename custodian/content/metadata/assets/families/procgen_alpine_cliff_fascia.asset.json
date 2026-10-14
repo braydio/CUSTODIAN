@@ -1,0 +1,127 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_alpine_cliff_fascia",
+  "kind": "tile",
+  "runtime": {
+    "domain": "tiles/mountain_cliffs/alpine_fascia",
+    "owner": "alpine_plateau",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "top_clean_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "top_clean_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "top_broken_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "top_broken_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "top_snow_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "top_snow_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "top_retained_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "top_retained_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_strata_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_strata_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_strata_02": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_strata_02",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_cracked_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_cracked_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_snow_streak_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_snow_streak_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_rooted_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_rooted_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "body_retaining_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "body_retaining_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "bottom_mist_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "bottom_mist_01",
+      "layout": "copy",
+      "frames": 1
+    },
+    "bottom_mist_broken_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "fascia",
+      "variant": "bottom_mist_broken_01",
+      "layout": "copy",
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "resource",
+      "path": "res://content/tiles/tilesets/procgen_world_tileset.tres"
+    },
+    {
+      "type": "script",
+      "path": "res://game/world/procgen/presentation/procgen_void_cliff_face.gd"
+    }
+  ]
+}

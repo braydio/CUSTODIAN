@@ -149,6 +149,18 @@
 [ext_resource type="Texture2D" uid="uid://b0taqpd68sows" path="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_body_cracked_01_32.png" id="152_void_cliff_face_body_cracked"]
 [ext_resource type="Texture2D" uid="uid://4q7yop0x37gd" path="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_01_32.png" id="153_void_cliff_face_bottom"]
 [ext_resource type="Texture2D" uid="uid://ytpvv76o03bm" path="res://content/tiles/mountain_cliffs/void_fascia/void_cliff_face_bottom_broken_01_32.png" id="154_void_cliff_face_bottom_broken"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/top_clean_01.png" id="219_alpine_cliff_top_clean_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/top_broken_01.png" id="220_alpine_cliff_top_broken_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/top_snow_01.png" id="221_alpine_cliff_top_snow_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/top_retained_01.png" id="222_alpine_cliff_top_retained_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_strata_01.png" id="223_alpine_cliff_body_strata_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_strata_02.png" id="224_alpine_cliff_body_strata_02"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_cracked_01.png" id="225_alpine_cliff_body_cracked_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_snow_streak_01.png" id="226_alpine_cliff_body_snow_streak_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_rooted_01.png" id="227_alpine_cliff_body_rooted_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/body_retaining_01.png" id="228_alpine_cliff_body_retaining_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_01.png" id="229_alpine_cliff_bottom_mist_01"]
+[ext_resource type="Texture2D" path="res://content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_broken_01.png" id="230_alpine_cliff_bottom_mist_broken_01"]
 [ext_resource type="Texture2D" uid="uid://dwuinukh3sbox" path="res://content/tiles/interiors/runtime/floor_carrow_access_panel_01_32.png" id="155_interior_floor_carrow_access_panel_01_32"]
 [ext_resource type="Texture2D" uid="uid://ct1xsbjcaf50c" path="res://content/tiles/interiors/runtime/floor_carrow_access_panel_02_32.png" id="156_interior_floor_carrow_access_panel_02_32"]
 [ext_resource type="Texture2D" uid="uid://b6jy8n3j0k0p5" path="res://content/tiles/interiors/runtime/floor_carrow_brace_x_01_32.png" id="157_interior_floor_carrow_brace_x_01_32"]
@@ -808,6 +820,66 @@ texture_region_size = Vector2i(32, 32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_void_cliff_face_bottom_broken"]
 texture = ExtResource("154_void_cliff_face_bottom_broken")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_top_clean_01"]
+texture = ExtResource("219_alpine_cliff_top_clean_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_top_broken_01"]
+texture = ExtResource("220_alpine_cliff_top_broken_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_top_snow_01"]
+texture = ExtResource("221_alpine_cliff_top_snow_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_top_retained_01"]
+texture = ExtResource("222_alpine_cliff_top_retained_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_strata_01"]
+texture = ExtResource("223_alpine_cliff_body_strata_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_strata_02"]
+texture = ExtResource("224_alpine_cliff_body_strata_02")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_cracked_01"]
+texture = ExtResource("225_alpine_cliff_body_cracked_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_snow_streak_01"]
+texture = ExtResource("226_alpine_cliff_body_snow_streak_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_rooted_01"]
+texture = ExtResource("227_alpine_cliff_body_rooted_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_body_retaining_01"]
+texture = ExtResource("228_alpine_cliff_body_retaining_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_bottom_mist_01"]
+texture = ExtResource("229_alpine_cliff_bottom_mist_01")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_alpine_cliff_bottom_mist_broken_01"]
+texture = ExtResource("230_alpine_cliff_bottom_mist_broken_01")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
@@ -1976,3 +2048,15 @@ sources/215 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_scuffe
 sources/216 = SubResource("TileSetAtlasSource_interior_floor_carrow_tread_worn_01_32")
 sources/217 = SubResource("TileSetAtlasSource_interior_floor_carrow_vent_square_01_32")
 sources/218 = SubResource("TileSetAtlasSource_interior_floor_carrow_vent_triple_01_32")
+sources/219 = SubResource("TileSetAtlasSource_alpine_cliff_top_clean_01")
+sources/220 = SubResource("TileSetAtlasSource_alpine_cliff_top_broken_01")
+sources/221 = SubResource("TileSetAtlasSource_alpine_cliff_top_snow_01")
+sources/222 = SubResource("TileSetAtlasSource_alpine_cliff_top_retained_01")
+sources/223 = SubResource("TileSetAtlasSource_alpine_cliff_body_strata_01")
+sources/224 = SubResource("TileSetAtlasSource_alpine_cliff_body_strata_02")
+sources/225 = SubResource("TileSetAtlasSource_alpine_cliff_body_cracked_01")
+sources/226 = SubResource("TileSetAtlasSource_alpine_cliff_body_snow_streak_01")
+sources/227 = SubResource("TileSetAtlasSource_alpine_cliff_body_rooted_01")
+sources/228 = SubResource("TileSetAtlasSource_alpine_cliff_body_retaining_01")
+sources/229 = SubResource("TileSetAtlasSource_alpine_cliff_bottom_mist_01")
+sources/230 = SubResource("TileSetAtlasSource_alpine_cliff_bottom_mist_broken_01")

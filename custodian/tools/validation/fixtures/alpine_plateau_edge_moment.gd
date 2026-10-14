@@ -33,6 +33,19 @@ var parallax_near_px := 0.0
 var coverage_ok := false
 var direction := ""
 var review_combo := ""
+var contact_north_count := 0
+var contact_east_count := 0
+var contact_south_count := 0
+var contact_west_count := 0
+var contact_core_frontier_count := 0
+var contact_shoulder_frontier_count := 0
+var contact_suppressed_cell_count := 0
+var attached_contact_count := 0
+var max_socket_error_px := 0.0
+var longest_north_run_tiles := 0
+var longest_east_run_tiles := 0
+var longest_south_run_tiles := 0
+var longest_west_run_tiles := 0
 
 var _map: ProcGenTilemap = null
 var _operator: Node2D = null
@@ -165,6 +178,15 @@ func _pick_edge_tiles() -> void:
 		if cell.y > (best["south"] as Vector2i).y: best["south"] = cell
 		if cell.x < (best["west"] as Vector2i).x: best["west"] = cell
 		if cell.x > (best["east"] as Vector2i).x: best["east"] = cell
+	var contact_state: Dictionary = _map.debug_get_alpine_cliff_contact_state()
+	var centers: Dictionary = contact_state.get("frontier_centers", {})
+	var floor_set: Dictionary = _map.get("_generated_floor_cells")
+	var outward_by_name := {"north": Vector2i.UP, "east": Vector2i.RIGHT, "south": Vector2i.DOWN, "west": Vector2i.LEFT}
+	for direction_name: String in ["north", "east", "south", "west"]:
+		if not centers.has(direction_name): continue
+		var frontier := centers[direction_name] as Vector2i
+		var candidate := frontier - (outward_by_name[direction_name] as Vector2i)
+		if floor_set.has(candidate): best[direction_name] = candidate
 	_edge_tiles = best
 	edge_tile_x = (best["north"] as Vector2i).x
 	edge_tile_y = (best["north"] as Vector2i).y
@@ -179,6 +201,23 @@ func _process(_delta: float) -> void:
 	visual_fallback = bool(snap.get("visual_fallback", true))
 	backdrop_mode = String(snap.get("backdrop_mode", ""))
 	backdrop_visible = _map.depth_backdrop != null and _map.depth_backdrop.visible
+	var contact_state: Dictionary = _map.debug_get_alpine_cliff_contact_state()
+	var direction_counts: Dictionary = contact_state.get("direction_counts", {})
+	contact_north_count = int(direction_counts.get("north", 0))
+	contact_east_count = int(direction_counts.get("east", 0))
+	contact_south_count = int(direction_counts.get("south", 0))
+	contact_west_count = int(direction_counts.get("west", 0))
+	attached_contact_count = int(contact_state.get("attached_contact_count", 0))
+	max_socket_error_px = float(contact_state.get("max_socket_error_px", INF))
+	var longest_runs: Dictionary = contact_state.get("longest_eligible_run_tiles", {})
+	longest_north_run_tiles = int(longest_runs.get("north", 0))
+	longest_east_run_tiles = int(longest_runs.get("east", 0))
+	longest_south_run_tiles = int(longest_runs.get("south", 0))
+	longest_west_run_tiles = int(longest_runs.get("west", 0))
+	var fascia_state: Dictionary = contact_state.get("fascia", {})
+	contact_core_frontier_count = int(fascia_state.get("contact_core_frontier_count", 0))
+	contact_shoulder_frontier_count = int(fascia_state.get("contact_shoulder_frontier_count", 0))
+	contact_suppressed_cell_count = int(fascia_state.get("contact_suppressed_cell_count", 0))
 	if _map.depth_backdrop != null:
 		var indices: Dictionary = _map.depth_backdrop.get_selected_variant_indices()
 		variant_far = int(indices.get("far", -1))

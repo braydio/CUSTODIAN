@@ -21,7 +21,7 @@ func _init() -> void:
 	var composer := COMPOSER.new() as ProcgenMacroPresentationComposer
 	var production_report: Dictionary = PRODUCTION_CATALOG.validation_report(true)
 	_require((production_report.rejected as Array).is_empty(), "production macro catalog has rejected profiles")
-	_require((production_report.valid as Array).size() == 36, "production macro catalog does not contain thirty-six profiles")
+	_require((production_report.valid as Array).size() == 40, "production macro catalog does not contain forty profiles")
 	var production_chasm_count := 0
 	var production_surface_count := 0
 	for production_profile: TerrainStampProfile in production_report.valid:
@@ -30,7 +30,7 @@ func _init() -> void:
 			_require(production_profile.depth_band == TerrainStampProfile.DepthBand.BACK, "production depth profile is not BACK")
 		else:
 			production_surface_count += 1
-	_require(production_chasm_count == 16, "production catalog does not retain sixteen CHASM profiles")
+	_require(production_chasm_count == 20, "production catalog does not contain twenty CHASM profiles")
 	_require(production_surface_count == 20, "production catalog does not contain twenty SURFACE profiles")
 	var first := composer.build_plan(context, catalog)
 	var second := composer.build_plan(context, catalog)
@@ -407,6 +407,10 @@ func _validate_production_catalog_selection(composer: ProcgenMacroPresentationCo
 		&"rocky_upland_cliff_bowl_v1": &"rocky_upland",
 		&"rocky_upland_talus_ravine_v1": &"rocky_upland",
 		&"rocky_upland_exposed_ledge_v1": &"rocky_upland",
+		&"rocky_upland_descending_conifer_ledge_v1": &"rocky_upland",
+		&"rocky_upland_broken_retaining_drop_v1": &"rocky_upland",
+		&"rocky_upland_lower_ledge_mist_v1": &"rocky_upland",
+		&"rocky_upland_service_ruin_drop_v1": &"rocky_upland",
 	}
 	for stamp_id: StringName in follow_on:
 		var profile := PRODUCTION_CATALOG.get_profile(stamp_id)
@@ -419,10 +423,10 @@ func _validate_production_catalog_selection(composer: ProcgenMacroPresentationCo
 		_require(profile.depth_band == TerrainStampProfile.DepthBand.BACK, "follow-on profile is not BACK %s" % stamp_id)
 		_require(not profile.claims_dressing_clearance, "follow-on profile claims dressing clearance %s" % stamp_id)
 	var expected := {
-		&"woodland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_woodland", "procgen_depth_chunks"]), "allow": [&"woodland_overgrown_works_v1"], "deny": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"]},
-		&"wetland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1"], "deny": [&"woodland_overgrown_works_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
-		&"rocky_upland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
-		&"scrubland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_scrubland"]), "allow": [], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1"]},
+		&"woodland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_woodland", "procgen_depth_chunks"]), "allow": [&"woodland_overgrown_works_v1"], "deny": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"rocky_upland_descending_conifer_ledge_v1", &"rocky_upland_broken_retaining_drop_v1", &"rocky_upland_lower_ledge_mist_v1", &"rocky_upland_service_ruin_drop_v1"]},
+		&"wetland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1"], "deny": [&"woodland_overgrown_works_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"rocky_upland_descending_conifer_ledge_v1", &"rocky_upland_broken_retaining_drop_v1", &"rocky_upland_lower_ledge_mist_v1", &"rocky_upland_service_ruin_drop_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
+		&"rocky_upland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_chunks"]), "allow": [&"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"rocky_upland_descending_conifer_ledge_v1", &"rocky_upland_broken_retaining_drop_v1", &"rocky_upland_lower_ledge_mist_v1", &"rocky_upland_service_ruin_drop_v1"], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"dry_basin_v1", &"wash_channel_v1", &"service_scar_v1"]},
+		&"scrubland": {"families": PackedStringArray(["procgen_depth_universal", "procgen_depth_scrubland"]), "allow": [], "deny": [&"woodland_overgrown_works_v1", &"wetland_flooded_basin_v1", &"wetland_reed_channels_v1", &"wetland_drowned_service_platform_v1", &"rocky_upland_cliff_bowl_v1", &"rocky_upland_talus_ravine_v1", &"rocky_upland_exposed_ledge_v1", &"rocky_upland_descending_conifer_ledge_v1", &"rocky_upland_broken_retaining_drop_v1", &"rocky_upland_lower_ledge_mist_v1", &"rocky_upland_service_ruin_drop_v1"]},
 	}
 	for biome: StringName in expected:
 		var filtered := PRODUCTION_CATALOG.filter_profiles(expected[biome]["families"], &"depth_south_edge", biome)

@@ -1,0 +1,1234 @@
+{
+  "schema": "custodian.alpine_cliff_presentation_derivation.v1",
+  "resampling": "Pillow LANCZOS once after authored crop; aspect-preserving contain on transparent canvas",
+  "alpha_cutoff": 8,
+  "contact_alpha_rule": "preserve geology-only alpha silhouette; clear only border-connected neutral matte within RGB distance 24; reject unowned opaque canvas-edge spans >=25%; add at least 16 px transparent canvas margin",
+  "contact_sockets": {
+    "south_broad_01": [
+      512,
+      16
+    ],
+    "south_broken_01": [
+      512,
+      16
+    ],
+    "south_rooted_01": [
+      512,
+      16
+    ],
+    "east_broad_01": [
+      16,
+      400
+    ],
+    "west_broad_01": [
+      496,
+      470
+    ],
+    "north_broad_01": [
+      512,
+      303
+    ],
+    "corner_se_01": [
+      24,
+      24
+    ],
+    "corner_sw_01": [
+      750,
+      20
+    ],
+    "corner_ne_01": [
+      16,
+      752
+    ],
+    "corner_nw_01": [
+      752,
+      752
+    ]
+  },
+  "source_master_batch": "alpine-cliff-source-family-v1",
+  "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
+  "outputs": [
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_clean_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_clean_granite_master_source.png",
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        160,
+        32,
+        1190,
+        1062
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_clean_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/top_clean_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "0da9f4f031b1770bbb7486dfc6f4bce1539b471eabc6edffcbcbd24ef75092ba",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 0.834961
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_broken_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png",
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        110,
+        24,
+        1140,
+        1054
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_broken_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/top_broken_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "a3a4280f36a8df3fabc0ef68c575abc3ce5b2017028a904bfd0e98fde010360d",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 0.779297
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_snow_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_natural_plateau_master_source.png",
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        80,
+        32,
+        1110,
+        1062
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_snow_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/top_snow_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "7bc24e93e54d2420be4d5a56a3341515125da9459f2248da4425954c01093af6",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 0.773438
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_retained_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png",
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        100,
+        32,
+        1130,
+        1062
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_retained_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/top_retained_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "decec3e5f925e926bed8d51084f66f59060728e34ff2a60f08e1ace74402ba24",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 0.826172
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_strata_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_strata_01_source.png",
+      "source_sha256": "fef9d1732e289bf3e30d7a0e8434942f3b59d9c57da231961f914072cf91e8ed",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        220,
+        300,
+        1034,
+        1114
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_strata_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_strata_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "cd348e88f90fd055c2a021efafa354a00c02220fbbef0ecc1fc1a680358b1ef5",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_strata_02",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_strata_02_source.png",
+      "source_sha256": "e8ddc24c5dca38174c873ce87dd6b0e4a5d33ba3487e4f01769a180408d7ec9c",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        140,
+        180,
+        954,
+        994
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_strata_02.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_strata_02.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "0a85bc0c1800d81afbd38410c5f13f8363663b4e2390bb337d4840ef93cfa602",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_cracked_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_cracked_01_source.png",
+      "source_sha256": "ca58728b78e4e8aa840884e10c156d8430307934feda1fe049714dfb19d7ecf8",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        180,
+        200,
+        994,
+        1014
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_cracked_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_cracked_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "269100a8902bb43b9b5ee665ad53a1fbdc68f3d7cf093ec830e1be7028216c49",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_snow_streak_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_snow_streak_01_source.png",
+      "source_sha256": "42bbdf39427323d02d9d65d69268c0e90239be14dffb4e6bc57ca61fd46bcc30",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        200,
+        160,
+        1014,
+        974
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_snow_streak_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_snow_streak_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "adaef3b4da6bb33d2da6ce444745202e8ea9328f447730fb297d355a6f822aab",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_rooted_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_rooted_01_source.png",
+      "source_sha256": "c722566f403a33927b7bff7ffc4e01781680743de0b27dc4543d85e035776e8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        180,
+        200,
+        994,
+        1014
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_rooted_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_rooted_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "c87d8860da9cff76474ed6a4a181cfc25f7b36bd0fc9378a166e9badd502ae76",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_retaining_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/body_retaining_01_source.png",
+      "source_sha256": "235df502bbec0effaaf37a28e177e49ef4fcb814f2bb0992256963f6053d9784",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        160,
+        180,
+        974,
+        994
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_retaining_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/body_retaining_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "df1739227b3cec985c0cb3348e4867a3141f9fae35eeeb7e3592ebd9afaaa4b4",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "bottom_mist_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/bottom_mist_01_source.png",
+      "source_sha256": "3d616872f3ac2b5388c285f8841eb6477e3af05f85095eb68668e296e61c6087",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        180,
+        160,
+        994,
+        974
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/bottom_mist_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "d08ec8edea454fabbf4aebdd2ccf2f8544cba00b9ac1c39a4afb5b2d3317abe6",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "bottom_mist_broken_01",
+      "source": "procgen/procgen_alpine_cliff_fascia/bottom_mist_broken_01_source.png",
+      "source_sha256": "357f52c1be38f731f3fd45874ca2eb2ace924315bbe6973eb92fce10db816c2c",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        240,
+        200,
+        1054,
+        1014
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_fascia/bottom_mist_broken_01.png",
+      "output": "custodian/content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_broken_01.png",
+      "output_size": [
+        32,
+        32
+      ],
+      "output_sha256": "7b0396f996be3ce4b1005406d4013b77b379df68f43b45bae7de743ab03fc197",
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        32,
+        32
+      ],
+      "alpha_coverage": 1.0
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_broad_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_natural_plateau_master_source.png",
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        491,
+        80
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broad_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broad_01.png",
+      "output_size": [
+        1024,
+        512
+      ],
+      "output_sha256": "1b16b555622c2ff20382d5528e4dad3eee3099fd59d00a6b7665c73a291b0e8e",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        268,
+        16,
+        755,
+        496
+      ],
+      "alpha_coverage": 0.2864,
+      "transparent_margins": {
+        "left": 268,
+        "top": 16,
+        "right": 269,
+        "bottom": 16
+      },
+      "opaque_edge_coverage": {
+        "left": 0.00625,
+        "right": 0.091667,
+        "top": 0.002053,
+        "bottom": 0.039014
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 2,
+        "right": 16,
+        "top": 1,
+        "bottom": 7
+      },
+      "socket_sides": [
+        "top"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_broken_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png",
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        474,
+        53
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broken_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broken_01.png",
+      "output_size": [
+        1024,
+        512
+      ],
+      "output_sha256": "ddf7432f489022c3ec2cdce4a2f4c86c9375febbf159a3bfc06c822e79a3e9c5",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        270,
+        16,
+        754,
+        496
+      ],
+      "alpha_coverage": 0.283258,
+      "transparent_margins": {
+        "left": 270,
+        "top": 16,
+        "right": 270,
+        "bottom": 16
+      },
+      "opaque_edge_coverage": {
+        "left": 0.00625,
+        "right": 0.00625,
+        "top": 0.002066,
+        "bottom": 0.008264
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 3,
+        "top": 1,
+        "bottom": 4
+      },
+      "socket_sides": [
+        "top"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_rooted_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png",
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        474,
+        53
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_rooted_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_rooted_01.png",
+      "output_size": [
+        1024,
+        512
+      ],
+      "output_sha256": "ddf7432f489022c3ec2cdce4a2f4c86c9375febbf159a3bfc06c822e79a3e9c5",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        270,
+        16,
+        754,
+        496
+      ],
+      "alpha_coverage": 0.283258,
+      "transparent_margins": {
+        "left": 270,
+        "top": 16,
+        "right": 270,
+        "bottom": 16
+      },
+      "opaque_edge_coverage": {
+        "left": 0.00625,
+        "right": 0.00625,
+        "top": 0.002066,
+        "bottom": 0.008264
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 3,
+        "top": 1,
+        "bottom": 4
+      },
+      "socket_sides": [
+        "top"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "east_broad_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png",
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        52,
+        400
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/east_broad_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/east_broad_01.png",
+      "output_size": [
+        512,
+        1024
+      ],
+      "output_sha256": "6ebf54d789d34947adc5e69b8ff4a099736c74a5918e09e24237686685738e3c",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        273,
+        496,
+        750
+      ],
+      "alpha_coverage": 0.295547,
+      "transparent_margins": {
+        "left": 16,
+        "top": 273,
+        "right": 16,
+        "bottom": 274
+      },
+      "opaque_edge_coverage": {
+        "left": 0.006289,
+        "right": 0.035639,
+        "top": 0.0125,
+        "bottom": 0.010417
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 9,
+        "top": 4,
+        "bottom": 5
+      },
+      "socket_sides": [
+        "left"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "west_broad_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_clean_granite_master_source.png",
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        481,
+        475
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/west_broad_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/west_broad_01.png",
+      "output_size": [
+        512,
+        1024
+      ],
+      "output_sha256": "d9cf128ca0404ee2e815309639a83441043ea4a716a856a2a08f651bc2672746",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        273,
+        496,
+        750
+      ],
+      "alpha_coverage": 0.2929,
+      "transparent_margins": {
+        "left": 16,
+        "top": 273,
+        "right": 16,
+        "bottom": 274
+      },
+      "opaque_edge_coverage": {
+        "left": 0.008386,
+        "right": 0.004193,
+        "top": 0.002083,
+        "bottom": 0.016667
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 4,
+        "right": 2,
+        "top": 1,
+        "bottom": 5
+      },
+      "socket_sides": [
+        "right"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "north_broad_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_clean_granite_master_source.png",
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        516,
+        288
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/north_broad_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/north_broad_01.png",
+      "output_size": [
+        1024,
+        320
+      ],
+      "output_sha256": "fd5508ee5d8e32bdc9ad5f9e32de318710ea56ddd7388bfe74690382879906af",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        367,
+        16,
+        657,
+        304
+      ],
+      "alpha_coverage": 0.170932,
+      "transparent_margins": {
+        "left": 367,
+        "top": 16,
+        "right": 367,
+        "bottom": 16
+      },
+      "opaque_edge_coverage": {
+        "left": 0.010417,
+        "right": 0.006944,
+        "top": 0.003448,
+        "bottom": 0.027586
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 2,
+        "top": 1,
+        "bottom": 4
+      },
+      "socket_sides": [],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_se_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png",
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        133,
+        114
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_se_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_se_01.png",
+      "output_size": [
+        768,
+        768
+      ],
+      "output_sha256": "9acadc11b840a790919357db89f5af444ed5d666e6835d4037b21cf067d0b457",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        18,
+        752,
+        749
+      ],
+      "alpha_coverage": 0.617282,
+      "transparent_margins": {
+        "left": 16,
+        "top": 18,
+        "right": 16,
+        "bottom": 19
+      },
+      "opaque_edge_coverage": {
+        "left": 0.004104,
+        "right": 0.00684,
+        "top": 0.005435,
+        "bottom": 0.004076
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 5,
+        "top": 4,
+        "bottom": 3
+      },
+      "socket_sides": [],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_sw_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png",
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        545,
+        208
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_sw_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_sw_01.png",
+      "output_size": [
+        768,
+        768
+      ],
+      "output_sha256": "1684994be1ca466e8a1d73f873f76305e08b659e8d15bdc34580a9c7975da77c",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        19,
+        752,
+        748
+      ],
+      "alpha_coverage": 0.581418,
+      "transparent_margins": {
+        "left": 16,
+        "top": 19,
+        "right": 16,
+        "bottom": 20
+      },
+      "opaque_edge_coverage": {
+        "left": 0.005487,
+        "right": 0.002743,
+        "top": 0.001359,
+        "bottom": 0.001359
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 4,
+        "right": 2,
+        "top": 1,
+        "bottom": 1
+      },
+      "socket_sides": [],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_ne_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_clean_granite_master_source.png",
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        118,
+        601
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_ne_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_ne_01.png",
+      "output_size": [
+        768,
+        768
+      ],
+      "output_sha256": "f032588c2877e227e0ccc5d6921cc8104257aa755fe00bf6a5ac2d5a32320391",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        18,
+        752,
+        749
+      ],
+      "alpha_coverage": 0.61166,
+      "transparent_margins": {
+        "left": 16,
+        "top": 18,
+        "right": 16,
+        "bottom": 19
+      },
+      "opaque_edge_coverage": {
+        "left": 0.00684,
+        "right": 0.001368,
+        "top": 0.001359,
+        "bottom": 0.006793
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 5,
+        "right": 1,
+        "top": 1,
+        "bottom": 4
+      },
+      "socket_sides": [
+        "bottom",
+        "left"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_nw_01",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_natural_plateau_master_source.png",
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "rotation_degrees": 0,
+      "socket_px": [
+        735,
+        696
+      ],
+      "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_nw_01.png",
+      "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_nw_01.png",
+      "output_size": [
+        768,
+        768
+      ],
+      "output_sha256": "32aa0668cc1c86e58bcf814f2ff0cfd646006aa8ef8a31327fd255b4c81e9362",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        16,
+        21,
+        752,
+        747
+      ],
+      "alpha_coverage": 0.58197,
+      "transparent_margins": {
+        "left": 16,
+        "top": 21,
+        "right": 16,
+        "bottom": 21
+      },
+      "opaque_edge_coverage": {
+        "left": 0.004132,
+        "right": 0.035813,
+        "top": 0.001359,
+        "bottom": 0.017663
+      },
+      "opaque_edge_longest_run_px": {
+        "left": 3,
+        "right": 15,
+        "top": 1,
+        "bottom": 5
+      },
+      "socket_sides": [
+        "bottom",
+        "right"
+      ],
+      "alpha_crop_wall_ok": true
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_descending_conifer_ledge",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png",
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        80,
+        340,
+        1174,
+        1044
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_descending_conifer_ledge.png",
+      "output": "custodian/content/backgrounds/procgen/depth_chunks/depth_rocky_upland_descending_conifer_ledge_v1.png",
+      "output_size": [
+        896,
+        576
+      ],
+      "output_sha256": "427228149f9facdfbe15aa6d6cfcdba935c4cd841a8d3d11e22a50ad3468c430",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        895,
+        576
+      ],
+      "alpha_coverage": 0.893349
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_broken_retaining_drop",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png",
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        80,
+        340,
+        1174,
+        1044
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_broken_retaining_drop.png",
+      "output": "custodian/content/backgrounds/procgen/depth_chunks/depth_rocky_upland_broken_retaining_drop_v1.png",
+      "output_size": [
+        896,
+        576
+      ],
+      "output_sha256": "4774896986796575dc34cdc033216abd01d22da604d7883ea5de07f2a711ce30",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        895,
+        576
+      ],
+      "alpha_coverage": 0.936895
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_lower_ledge_mist",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_natural_plateau_master_source.png",
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        180,
+        300,
+        994,
+        870
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_lower_ledge_mist.png",
+      "output": "custodian/content/backgrounds/procgen/depth_chunks/depth_rocky_upland_lower_ledge_mist_v1.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "output_sha256": "0b07db12f4366879e88270e605fc75a608c33ad1e77b4cf79a64c90b5163336f",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        640,
+        448
+      ],
+      "alpha_coverage": 0.947729
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_service_ruin_drop",
+      "source": "procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png",
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "crop_box": [
+        180,
+        300,
+        994,
+        870
+      ],
+      "rotation_degrees": 0,
+      "socket_px": null,
+      "inbox_output": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_service_ruin_drop.png",
+      "output": "custodian/content/backgrounds/procgen/depth_chunks/depth_rocky_upland_service_ruin_drop_v1.png",
+      "output_size": [
+        640,
+        448
+      ],
+      "output_sha256": "eeb83f7418bea2c67c2bcc44e7df03a61bcd8d983422100d3fc29aab4a629c0f",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_bounds": [
+        0,
+        0,
+        640,
+        448
+      ],
+      "alpha_coverage": 0.992986
+    }
+  ]
+}

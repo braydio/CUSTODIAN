@@ -21,6 +21,7 @@ const BODY_02_CUTOFF := 85
 const BOTTOM_CUTOFF := 75
 const BODY_VARIATION_SALT := 0x2f31a5
 const BOTTOM_VARIATION_SALT := 0x5b7d19
+const DEFAULT_VARIATION_PATCH_TILES := 4
 
 @export_group("Presentation")
 @export var presentation_enabled := true
@@ -41,15 +42,22 @@ var _last_painted_cell_count := 0
 var _last_suppressed_pocket_count := 0
 var _last_wall_lip_frontier_count := 0
 var _last_wall_excluded_cell_count := 0
+var _last_contact_suppressed_cell_count := 0
+var _last_contact_core_frontier_count := 0
+var _last_contact_shoulder_frontier_count := 0
 var _last_role_counts := _empty_role_counts()
 var _last_paint_plan: Dictionary = {}
+var _active_profile_id: StringName = &""
 
 
 func configure_from_surface_cells(
 	floor_cells: Dictionary,
 	chasm_cells: Dictionary,
 	seed: int,
-	wall_cells: Dictionary = {}
+	wall_cells: Dictionary = {},
+	frame_fascia_profile: ProcgenCliffFasciaProfile = null,
+	contact_core_frontiers: Dictionary = {},
+	contact_shoulder_frontiers: Dictionary = {}
 ) -> void:
 	clear()
 	_last_seed = seed
@@ -58,8 +66,12 @@ func configure_from_surface_cells(
 	_last_suppressed_pocket_count = 0
 	_last_wall_lip_frontier_count = 0
 	_last_wall_excluded_cell_count = 0
+	_last_contact_suppressed_cell_count = 0
+	_last_contact_core_frontier_count = contact_core_frontiers.size()
+	_last_contact_shoulder_frontier_count = contact_shoulder_frontiers.size()
 	_last_role_counts = _empty_role_counts()
 	_last_paint_plan.clear()
+	_active_profile_id = &""
 
 	if not presentation_enabled:
 		visible = false
@@ -68,12 +80,24 @@ func configure_from_surface_cells(
 		visible = false
 		push_warning("[ProcgenVoidCliffFace] Missing TileSet.")
 		return
+	var source_pools: Dictionary = {}
+	var use_frame_profile := frame_fascia_profile != null and frame_fascia_profile.is_valid()
 	for role: String in FASCIA_SOURCE_IDS:
-		var source_id := int(FASCIA_SOURCE_IDS[role])
-		if not tile_set.has_source(source_id):
-			visible = false
-			push_warning("[ProcgenVoidCliffFace] Missing %s TileSet source %d." % [role, source_id])
-			return
+		var pool: Array = frame_fascia_profile.source_pool(role) if use_frame_profile else [int(FASCIA_SOURCE_IDS[role])]
+		if pool.is_empty():
+			pool = [int(FASCIA_SOURCE_IDS[role])]
+		for source_value: Variant in pool:
+			var source_id := int(source_value)
+			if not tile_set.has_source(source_id):
+				visible = false
+				push_warning("[ProcgenVoidCliffFace] Missing %s TileSet source %d." % [role, source_id])
+				return
+		source_pools[role] = pool.duplicate()
+	if use_frame_profile:
+		_active_profile_id = frame_fascia_profile.profile_id
+		variation_patch_tiles = frame_fascia_profile.tangential_variant_run_tiles
+	else:
+		variation_patch_tiles = DEFAULT_VARIATION_PATCH_TILES
 	if floor_cells.is_empty() or chasm_cells.is_empty():
 		visible = false
 		return
@@ -122,6 +146,12 @@ func configure_from_surface_cells(
 		if wall_lip_depth > 0 and frontier_directions.has(visible_start):
 			continue
 		var depth_limit := _depth_limit_for_frontier(frontier_cell, seed)
+		if use_frame_profile:
+			depth_limit = clampi(
+				depth_limit + frame_fascia_profile.depth_bias(outward_direction),
+				mini(min_depth_tiles, max_depth_tiles),
+				maxi(min_depth_tiles, max_depth_tiles)
+			)
 		var candidate := {
 			"distance": 1,
 			"depth_limit": depth_limit,
@@ -174,15 +204,23 @@ func configure_from_surface_cells(
 	for cell_variant: Variant in _last_paint_plan:
 		var cell := cell_variant as Vector2i
 		var paint_data := _last_paint_plan[cell] as Dictionary
+		var frontier_cell := paint_data["frontier_cell"] as Vector2i
+		var distance := int(paint_data["distance"])
+		if contact_core_frontiers.has(frontier_cell) or (contact_shoulder_frontiers.has(frontier_cell) and distance > 1):
+			_last_contact_suppressed_cell_count += 1
+			continue
 		var role := _role_for_cell(
 			cell,
-			int(paint_data["distance"]),
+			distance,
 			int(paint_data["depth_limit"]),
 			seed,
-			bool(paint_data["wall_backed"])
+			bool(paint_data["wall_backed"]),
+			paint_data["outward_direction"] as Vector2i
 		)
 		paint_data["role"] = role
-		var source_id := int(FASCIA_SOURCE_IDS[role])
+		var role_pool: Array = source_pools.get(role, [int(FASCIA_SOURCE_IDS[role])])
+		var role_pick := _stable_hash(cell, seed ^ 0x64b8c1) % role_pool.size()
+		var source_id := int(role_pool[role_pick])
 		set_cell(cell, source_id, ATLAS_COORD, 0)
 		_last_role_counts[role] = int(_last_role_counts[role]) + 1
 
@@ -202,7 +240,11 @@ func get_debug_state() -> Dictionary:
 		"suppressed_pocket_count": _last_suppressed_pocket_count,
 		"wall_lip_frontier_count": _last_wall_lip_frontier_count,
 		"wall_excluded_cell_count": _last_wall_excluded_cell_count,
+		"contact_suppressed_cell_count": _last_contact_suppressed_cell_count,
+		"contact_core_frontier_count": _last_contact_core_frontier_count,
+		"contact_shoulder_frontier_count": _last_contact_shoulder_frontier_count,
 		"source_ids": FASCIA_SOURCE_IDS.duplicate(true),
+		"frame_profile_id": String(_active_profile_id),
 		"top_count": int(_last_role_counts["top"]),
 		"body_01_count": int(_last_role_counts["body_01"]),
 		"body_02_count": int(_last_role_counts["body_02"]),
@@ -215,6 +257,8 @@ func get_debug_state() -> Dictionary:
 		"deep_section_percent": deep_section_percent,
 		"min_enclosed_chasm_cells_for_fascia": min_enclosed_chasm_cells_for_fascia,
 		"variation_patch_tiles": variation_patch_tiles,
+		"contact_core_frontiers": _last_contact_core_frontier_count,
+		"contact_shoulder_frontiers": _last_contact_shoulder_frontier_count,
 		"seed": _last_seed,
 	}
 
@@ -228,17 +272,18 @@ func _role_for_cell(
 		distance: int,
 		depth_limit: int,
 		seed: int,
-		wall_backed: bool
+		wall_backed: bool,
+		outward_direction: Vector2i
 ) -> String:
 	if distance == 1 and not wall_backed:
 		return "top"
 	if distance >= depth_limit:
 		return (
 			"bottom"
-			if _clustered_roll(cell, seed, BOTTOM_VARIATION_SALT) < BOTTOM_CUTOFF
+			if _clustered_roll(cell, outward_direction, seed, BOTTOM_VARIATION_SALT) < BOTTOM_CUTOFF
 			else "bottom_broken"
 		)
-	var body_roll := _clustered_roll(cell, seed, BODY_VARIATION_SALT)
+	var body_roll := _clustered_roll(cell, outward_direction, seed, BODY_VARIATION_SALT)
 	if body_roll < BODY_01_CUTOFF:
 		return "body_01"
 	if body_roll < BODY_02_CUTOFF:
@@ -246,15 +291,16 @@ func _role_for_cell(
 	return "body_cracked"
 
 
-func _clustered_roll(cell: Vector2i, seed: int, salt: int) -> int:
-	var patch_size := maxi(1, variation_patch_tiles)
-	var patch := Vector2i(
-		floori(float(cell.x) / float(patch_size)),
-		floori(float(cell.y) / float(patch_size))
-	)
+func _clustered_roll(cell: Vector2i, outward_direction: Vector2i, seed: int, salt: int) -> int:
+	var tangent := Vector2i(-outward_direction.y, outward_direction.x)
+	var along := cell.x * tangent.x + cell.y * tangent.y
+	var depth := cell.x * outward_direction.x + cell.y * outward_direction.y
+	var along_patch := maxi(1, variation_patch_tiles)
+	var depth_patch := maxi(2, floori(float(variation_patch_tiles) * 0.5))
+	var patch := Vector2i(floori(float(along) / float(along_patch)), floori(float(depth) / float(depth_patch)))
 	var patch_roll := _stable_hash(patch, seed ^ salt) % 100
 	var cell_roll := _stable_hash(cell, seed ^ (salt * 3)) % 100
-	return (patch_roll * 3 + cell_roll) / 4
+	return (patch_roll * 7 + cell_roll) / 8
 
 
 func _empty_role_counts() -> Dictionary:

@@ -1,0 +1,253 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261014T060309Z_b2056c84",
+  "timestamp": "2026-10-14T06:03:09.778642+00:00",
+  "family": "procgen_alpine_cliff_contact",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_ne_01.png",
+      "sha256": "9e4009da87a8764e766a8697b72ebd8d334078bb3b997bca40bf29b87e1f4e03"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_nw_01.png",
+      "sha256": "472d257290c830e762446dc9babc784929505ef1fa263ac7fc807adcb148a324"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_se_01.png",
+      "sha256": "2d36173c84d7ff2f710fc569ad7c256919086584fa63c1e9a6b6a09e8b990dac"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/corner_sw_01.png",
+      "sha256": "d27bb83751c0756f230487895bfec7c1bff5d8b8de5b07515731759bad61b3e0"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/east_broad_01.png",
+      "sha256": "7a90f16040f2676da61b00e7fab597685b6a39d6abaa11c9e6aef3140cce5645"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/north_broad_01.png",
+      "sha256": "bd53955f37cee79f56ada34d3cba521ffdabe22cb2c54bbe85eea6bbdce0b94e"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broad_01.png",
+      "sha256": "35391d87735e0eb05fc1179cad7dc67b188f1fc8d91d035094b9028f20798a81"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broken_01.png",
+      "sha256": "291814e0d4057960f64adb273d5635ec25400f47d4060411906fe12270d82033"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/south_rooted_01.png",
+      "sha256": "291814e0d4057960f64adb273d5635ec25400f47d4060411906fe12270d82033"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_contact/west_broad_01.png",
+      "sha256": "7944ac786200a402e413141524fdf844701fe3bbd05418e9e0db6639e49b0f86"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "corner_ne_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "corner_ne_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_ne_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "9e4009da87a8764e766a8697b72ebd8d334078bb3b997bca40bf29b87e1f4e03",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "corner_nw_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "corner_nw_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_nw_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "472d257290c830e762446dc9babc784929505ef1fa263ac7fc807adcb148a324",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "corner_se_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "corner_se_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_se_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "2d36173c84d7ff2f710fc569ad7c256919086584fa63c1e9a6b6a09e8b990dac",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "corner_sw_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "corner_sw_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_sw_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d27bb83751c0756f230487895bfec7c1bff5d8b8de5b07515731759bad61b3e0",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "east_broad_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "east_broad_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/east_broad_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7a90f16040f2676da61b00e7fab597685b6a39d6abaa11c9e6aef3140cce5645",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "north_broad_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "north_broad_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/north_broad_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "bd53955f37cee79f56ada34d3cba521ffdabe22cb2c54bbe85eea6bbdce0b94e",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "south_broad_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "south_broad_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broad_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "35391d87735e0eb05fc1179cad7dc67b188f1fc8d91d035094b9028f20798a81",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "south_broken_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "south_broken_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broken_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "291814e0d4057960f64adb273d5635ec25400f47d4060411906fe12270d82033",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "south_rooted_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "south_rooted_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_rooted_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "291814e0d4057960f64adb273d5635ec25400f47d4060411906fe12270d82033",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "west_broad_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "backdrop",
+        "body",
+        "alpine_cliff_contact",
+        "west_broad_01",
+        "omni"
+      ],
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/west_broad_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7944ac786200a402e413141524fdf844701fe3bbd05418e9e0db6639e49b0f86",
+      "operation": "replace",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

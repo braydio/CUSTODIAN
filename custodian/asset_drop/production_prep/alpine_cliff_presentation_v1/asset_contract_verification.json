@@ -1,0 +1,454 @@
+{
+  "schema": "custodian.alpine_cliff_presentation_asset_verification.v1",
+  "source_master_batch": "alpine-cliff-source-family-v1",
+  "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
+  "verified_at_utc": "2026-10-14T10:53:12+00:00",
+  "state_counts": {
+    "procgen_alpine_cliff_fascia": 12,
+    "procgen_alpine_cliff_contact": 10,
+    "procgen_depth_chunks": 4
+  },
+  "total_states": 26,
+  "states": [
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_clean_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_clean_01.png",
+      "size_bytes": 2932,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "0da9f4f031b1770bbb7486dfc6f4bce1539b471eabc6edffcbcbd24ef75092ba",
+      "alpha_bounds": null,
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_broken_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_broken_01.png",
+      "size_bytes": 2837,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "a3a4280f36a8df3fabc0ef68c575abc3ce5b2017028a904bfd0e98fde010360d",
+      "alpha_bounds": null,
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_snow_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_snow_01.png",
+      "size_bytes": 2862,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "7bc24e93e54d2420be4d5a56a3341515125da9459f2248da4425954c01093af6",
+      "alpha_bounds": null,
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "top_retained_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_retained_01.png",
+      "size_bytes": 3047,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "decec3e5f925e926bed8d51084f66f59060728e34ff2a60f08e1ace74402ba24",
+      "alpha_bounds": null,
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_strata_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_strata_01.png",
+      "size_bytes": 2732,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "cd348e88f90fd055c2a021efafa354a00c02220fbbef0ecc1fc1a680358b1ef5",
+      "alpha_bounds": null,
+      "source_sha256": "fef9d1732e289bf3e30d7a0e8434942f3b59d9c57da231961f914072cf91e8ed",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_strata_02",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_strata_02.png",
+      "size_bytes": 2837,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "0a85bc0c1800d81afbd38410c5f13f8363663b4e2390bb337d4840ef93cfa602",
+      "alpha_bounds": null,
+      "source_sha256": "e8ddc24c5dca38174c873ce87dd6b0e4a5d33ba3487e4f01769a180408d7ec9c",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_cracked_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_cracked_01.png",
+      "size_bytes": 2771,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "269100a8902bb43b9b5ee665ad53a1fbdc68f3d7cf093ec830e1be7028216c49",
+      "alpha_bounds": null,
+      "source_sha256": "ca58728b78e4e8aa840884e10c156d8430307934feda1fe049714dfb19d7ecf8",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_snow_streak_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_snow_streak_01.png",
+      "size_bytes": 2863,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "adaef3b4da6bb33d2da6ce444745202e8ea9328f447730fb297d355a6f822aab",
+      "alpha_bounds": null,
+      "source_sha256": "42bbdf39427323d02d9d65d69268c0e90239be14dffb4e6bc57ca61fd46bcc30",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_rooted_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_rooted_01.png",
+      "size_bytes": 2773,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "c87d8860da9cff76474ed6a4a181cfc25f7b36bd0fc9378a166e9badd502ae76",
+      "alpha_bounds": null,
+      "source_sha256": "c722566f403a33927b7bff7ffc4e01781680743de0b27dc4543d85e035776e8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "body_retaining_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_retaining_01.png",
+      "size_bytes": 2966,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "df1739227b3cec985c0cb3348e4867a3141f9fae35eeeb7e3592ebd9afaaa4b4",
+      "alpha_bounds": null,
+      "source_sha256": "235df502bbec0effaaf37a28e177e49ef4fcb814f2bb0992256963f6053d9784",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "bottom_mist_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_01.png",
+      "size_bytes": 2718,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "d08ec8edea454fabbf4aebdd2ccf2f8544cba00b9ac1c39a4afb5b2d3317abe6",
+      "alpha_bounds": null,
+      "source_sha256": "3d616872f3ac2b5388c285f8841eb6477e3af05f85095eb68668e296e61c6087",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_fascia",
+      "state": "bottom_mist_broken_01",
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_broken_01.png",
+      "size_bytes": 3029,
+      "dimensions": [
+        32,
+        32
+      ],
+      "mode": "RGBA",
+      "sha256": "7b0396f996be3ce4b1005406d4013b77b379df68f43b45bae7de743ab03fc197",
+      "alpha_bounds": null,
+      "source_sha256": "357f52c1be38f731f3fd45874ca2eb2ace924315bbe6973eb92fce10db816c2c",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_broad_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broad_01.png",
+      "size_bytes": 421609,
+      "dimensions": [
+        1024,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "1b16b555622c2ff20382d5528e4dad3eee3099fd59d00a6b7665c73a291b0e8e",
+      "alpha_bounds": [
+        268,
+        16,
+        755,
+        496
+      ],
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_broken_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broken_01.png",
+      "size_bytes": 422689,
+      "dimensions": [
+        1024,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "ddf7432f489022c3ec2cdce4a2f4c86c9375febbf159a3bfc06c822e79a3e9c5",
+      "alpha_bounds": [
+        270,
+        16,
+        754,
+        496
+      ],
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "south_rooted_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_rooted_01.png",
+      "size_bytes": 422689,
+      "dimensions": [
+        1024,
+        512
+      ],
+      "mode": "RGBA",
+      "sha256": "ddf7432f489022c3ec2cdce4a2f4c86c9375febbf159a3bfc06c822e79a3e9c5",
+      "alpha_bounds": [
+        270,
+        16,
+        754,
+        496
+      ],
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "east_broad_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/east_broad_01.png",
+      "size_bytes": 428160,
+      "dimensions": [
+        512,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "6ebf54d789d34947adc5e69b8ff4a099736c74a5918e09e24237686685738e3c",
+      "alpha_bounds": [
+        16,
+        273,
+        496,
+        750
+      ],
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "west_broad_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/west_broad_01.png",
+      "size_bytes": 414108,
+      "dimensions": [
+        512,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "d9cf128ca0404ee2e815309639a83441043ea4a716a856a2a08f651bc2672746",
+      "alpha_bounds": [
+        16,
+        273,
+        496,
+        750
+      ],
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "north_broad_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/north_broad_01.png",
+      "size_bytes": 157169,
+      "dimensions": [
+        1024,
+        320
+      ],
+      "mode": "RGBA",
+      "sha256": "fd5508ee5d8e32bdc9ad5f9e32de318710ea56ddd7388bfe74690382879906af",
+      "alpha_bounds": [
+        367,
+        16,
+        657,
+        304
+      ],
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_se_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_se_01.png",
+      "size_bytes": 986382,
+      "dimensions": [
+        768,
+        768
+      ],
+      "mode": "RGBA",
+      "sha256": "9acadc11b840a790919357db89f5af444ed5d666e6835d4037b21cf067d0b457",
+      "alpha_bounds": [
+        16,
+        18,
+        752,
+        749
+      ],
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_sw_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_sw_01.png",
+      "size_bytes": 949545,
+      "dimensions": [
+        768,
+        768
+      ],
+      "mode": "RGBA",
+      "sha256": "1684994be1ca466e8a1d73f873f76305e08b659e8d15bdc34580a9c7975da77c",
+      "alpha_bounds": [
+        16,
+        19,
+        752,
+        748
+      ],
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_ne_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_ne_01.png",
+      "size_bytes": 954780,
+      "dimensions": [
+        768,
+        768
+      ],
+      "mode": "RGBA",
+      "sha256": "f032588c2877e227e0ccc5d6921cc8104257aa755fe00bf6a5ac2d5a32320391",
+      "alpha_bounds": [
+        16,
+        18,
+        752,
+        749
+      ],
+      "source_sha256": "5d9804654d789245f3e2c7a69d070a851a7148088b5419feba9dade94678c8f0",
+      "imported": true
+    },
+    {
+      "family": "procgen_alpine_cliff_contact",
+      "state": "corner_nw_01",
+      "path": "content/tiles/procgen_macro/runtime/alpine_cliff_contact/corner_nw_01.png",
+      "size_bytes": 934499,
+      "dimensions": [
+        768,
+        768
+      ],
+      "mode": "RGBA",
+      "sha256": "32aa0668cc1c86e58bcf814f2ff0cfd646006aa8ef8a31327fd255b4c81e9362",
+      "alpha_bounds": [
+        16,
+        21,
+        752,
+        747
+      ],
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "imported": true
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_descending_conifer_ledge",
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_descending_conifer_ledge_v1.png",
+      "size_bytes": 1252153,
+      "dimensions": [
+        896,
+        576
+      ],
+      "mode": "RGBA",
+      "sha256": "427228149f9facdfbe15aa6d6cfcdba935c4cd841a8d3d11e22a50ad3468c430",
+      "alpha_bounds": null,
+      "source_sha256": "5d407c517cf1a886869e792c37b9a773a82a5178b9d3c9213646efb6b69f6b8e",
+      "imported": true
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_broken_retaining_drop",
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_broken_retaining_drop_v1.png",
+      "size_bytes": 1274155,
+      "dimensions": [
+        896,
+        576
+      ],
+      "mode": "RGBA",
+      "sha256": "4774896986796575dc34cdc033216abd01d22da604d7883ea5de07f2a711ce30",
+      "alpha_bounds": null,
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "imported": true
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_lower_ledge_mist",
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_lower_ledge_mist_v1.png",
+      "size_bytes": 716859,
+      "dimensions": [
+        640,
+        448
+      ],
+      "mode": "RGBA",
+      "sha256": "0b07db12f4366879e88270e605fc75a608c33ad1e77b4cf79a64c90b5163336f",
+      "alpha_bounds": null,
+      "source_sha256": "9b387b2479afc21f634dd4d4d6bb710ca714aad421ca403ea907ea37d57a4f07",
+      "imported": true
+    },
+    {
+      "family": "procgen_depth_chunks",
+      "state": "rocky_upland_service_ruin_drop",
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_service_ruin_drop_v1.png",
+      "size_bytes": 755975,
+      "dimensions": [
+        640,
+        448
+      ],
+      "mode": "RGBA",
+      "sha256": "eeb83f7418bea2c67c2bcc44e7df03a61bcd8d983422100d3fc29aab4a629c0f",
+      "alpha_bounds": null,
+      "source_sha256": "604df52abb6606169d32f1000acfc968daed4a86e303a2486e7f4328a7815c81",
+      "imported": true
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ProcgenCliffFasciaProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_cliff_fascia_profile.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+profile_id = &"alpine_plateau_cliff_fascia"
+top_source_ids = Array[int]([219, 219, 220, 221, 221, 222])
+body_01_source_ids = Array[int]([223, 223, 224, 227, 228])
+body_02_source_ids = Array[int]([224, 224, 225, 226, 227, 228])
+body_cracked_source_ids = Array[int]([225, 226, 227, 228])
+bottom_source_ids = Array[int]([229, 229, 230])
+bottom_broken_source_ids = Array[int]([230, 229])
+north_depth_bias = -2
+east_depth_bias = 0
+south_depth_bias = 2
+west_depth_bias = 0
+contact_min_run_tiles = 10
+contact_shoulder_tiles = 2
+ensure_cardinal_broad_contact = true
+tangential_variant_run_tiles = 5
+contact_socket_by_state = {
+&"south_broad_01": Vector2(491, 80),
+&"south_broken_01": Vector2(474, 53),
+&"south_rooted_01": Vector2(474, 53),
+&"east_broad_01": Vector2(52, 400),
+&"west_broad_01": Vector2(481, 475),
+&"north_broad_01": Vector2(516, 288),
+&"corner_se_01": Vector2(133, 114),
+&"corner_sw_01": Vector2(545, 208),
+&"corner_ne_01": Vector2(118, 601),
+&"corner_nw_01": Vector2(735, 696),
+}

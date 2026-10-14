@@ -1,0 +1,299 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261013T233843Z_2a8f6dd5",
+  "timestamp": "2026-10-13T23:38:43.128438+00:00",
+  "family": "procgen_alpine_cliff_fascia",
+  "kind": "tile",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_cracked_01.png",
+      "sha256": "269100a8902bb43b9b5ee665ad53a1fbdc68f3d7cf093ec830e1be7028216c49"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_retaining_01.png",
+      "sha256": "df1739227b3cec985c0cb3348e4867a3141f9fae35eeeb7e3592ebd9afaaa4b4"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_rooted_01.png",
+      "sha256": "c87d8860da9cff76474ed6a4a181cfc25f7b36bd0fc9378a166e9badd502ae76"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_snow_streak_01.png",
+      "sha256": "adaef3b4da6bb33d2da6ce444745202e8ea9328f447730fb297d355a6f822aab"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_strata_01.png",
+      "sha256": "cd348e88f90fd055c2a021efafa354a00c02220fbbef0ecc1fc1a680358b1ef5"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/body_strata_02.png",
+      "sha256": "0a85bc0c1800d81afbd38410c5f13f8363663b4e2390bb337d4840ef93cfa602"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/bottom_mist_01.png",
+      "sha256": "d08ec8edea454fabbf4aebdd2ccf2f8544cba00b9ac1c39a4afb5b2d3317abe6"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/bottom_mist_broken_01.png",
+      "sha256": "7b0396f996be3ce4b1005406d4013b77b379df68f43b45bae7de743ab03fc197"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_broken_01.png",
+      "sha256": "a3a4280f36a8df3fabc0ef68c575abc3ce5b2017028a904bfd0e98fde010360d"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_clean_01.png",
+      "sha256": "0da9f4f031b1770bbb7486dfc6f4bce1539b471eabc6edffcbcbd24ef75092ba"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_retained_01.png",
+      "sha256": "decec3e5f925e926bed8d51084f66f59060728e34ff2a60f08e1ace74402ba24"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_alpine_cliff_fascia/top_snow_01.png",
+      "sha256": "7bc24e93e54d2420be4d5a56a3341515125da9459f2248da4425954c01093af6"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "body_cracked_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_cracked_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_cracked_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "269100a8902bb43b9b5ee665ad53a1fbdc68f3d7cf093ec830e1be7028216c49",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_retaining_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_retaining_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_retaining_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "df1739227b3cec985c0cb3348e4867a3141f9fae35eeeb7e3592ebd9afaaa4b4",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_rooted_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_rooted_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_rooted_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "c87d8860da9cff76474ed6a4a181cfc25f7b36bd0fc9378a166e9badd502ae76",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_snow_streak_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_snow_streak_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_snow_streak_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "adaef3b4da6bb33d2da6ce444745202e8ea9328f447730fb297d355a6f822aab",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_strata_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_strata_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_strata_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "cd348e88f90fd055c2a021efafa354a00c02220fbbef0ecc1fc1a680358b1ef5",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "body_strata_02",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "body_strata_02",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/body_strata_02.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0a85bc0c1800d81afbd38410c5f13f8363663b4e2390bb337d4840ef93cfa602",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "bottom_mist_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "bottom_mist_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d08ec8edea454fabbf4aebdd2ccf2f8544cba00b9ac1c39a4afb5b2d3317abe6",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "bottom_mist_broken_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "bottom_mist_broken_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/bottom_mist_broken_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7b0396f996be3ce4b1005406d4013b77b379df68f43b45bae7de743ab03fc197",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "top_broken_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "top_broken_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_broken_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "a3a4280f36a8df3fabc0ef68c575abc3ce5b2017028a904bfd0e98fde010360d",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "top_clean_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "top_clean_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_clean_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0da9f4f031b1770bbb7486dfc6f4bce1539b471eabc6edffcbcbd24ef75092ba",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "top_retained_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "top_retained_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_retained_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "decec3e5f925e926bed8d51084f66f59060728e34ff2a60f08e1ace74402ba24",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "top_snow_01",
+      "direction": "omni",
+      "semantic_identity": [
+        "alpine_plateau",
+        "tile",
+        "body",
+        "fascia",
+        "top_snow_01",
+        "omni"
+      ],
+      "path": "content/tiles/mountain_cliffs/alpine_fascia/top_snow_01.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "7bc24e93e54d2420be4d5a56a3341515125da9459f2248da4425954c01093af6",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

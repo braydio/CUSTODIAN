@@ -1,0 +1,127 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "procgen_alpine_cliff_contact",
+  "kind": "backdrop",
+  "runtime": {
+    "domain": "tiles/procgen_macro/runtime/alpine_cliff_contact",
+    "owner": "alpine_plateau",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "canvas": {
+    "width": 1024,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "south_broad_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "south_broad_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 512,
+      "frames": 1
+    },
+    "south_broken_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "south_broken_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 512,
+      "frames": 1
+    },
+    "south_rooted_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "south_rooted_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 512,
+      "frames": 1
+    },
+    "east_broad_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "east_broad_01",
+      "layout": "copy",
+      "frame_width": 512,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "west_broad_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "west_broad_01",
+      "layout": "copy",
+      "frame_width": 512,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "north_broad_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "north_broad_01",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 320,
+      "frames": 1
+    },
+    "corner_se_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "corner_se_01",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 768,
+      "frames": 1
+    },
+    "corner_sw_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "corner_sw_01",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 768,
+      "frames": 1
+    },
+    "corner_ne_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "corner_ne_01",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 768,
+      "frames": 1
+    },
+    "corner_nw_01": {
+      "required": true,
+      "layer": "body",
+      "action_group": "alpine_cliff_contact",
+      "variant": "corner_nw_01",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 768,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd"
+    }
+  ]
+}

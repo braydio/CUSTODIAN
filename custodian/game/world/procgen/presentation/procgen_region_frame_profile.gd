@@ -8,6 +8,8 @@ extends Resource
 @export var profile_id: StringName = &""
 @export var display_name := ""
 @export var underlay_profile: ProcgenUnderlayProfile
+## Optional frame-specific vocabulary for the presentation-only exterior cliff.
+@export var cliff_fascia_profile: ProcgenCliffFasciaProfile
 ## True while the bound underlay is a stand-in for art that does not exist yet.
 ## Reported through telemetry so a fallback is never mistaken for final art.
 @export var visual_fallback := false

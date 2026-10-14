@@ -1,0 +1,115 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261013T234024Z_684e11a7",
+  "timestamp": "2026-10-13T23:40:24.361112+00:00",
+  "family": "procgen_depth_chunks",
+  "kind": "backdrop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_broken_retaining_drop.png",
+      "sha256": "4774896986796575dc34cdc033216abd01d22da604d7883ea5de07f2a711ce30"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_descending_conifer_ledge.png",
+      "sha256": "427228149f9facdfbe15aa6d6cfcdba935c4cd841a8d3d11e22a50ad3468c430"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_lower_ledge_mist.png",
+      "sha256": "0b07db12f4366879e88270e605fc75a608c33ad1e77b4cf79a64c90b5163336f"
+    },
+    {
+      "path": "asset_drop/inbox/procgen_depth_chunks/rocky_upland_service_ruin_drop.png",
+      "sha256": "eeb83f7418bea2c67c2bcc44e7df03a61bcd8d983422100d3fc29aab4a629c0f"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "rocky_upland_broken_retaining_drop",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_chunks",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "rocky_upland_broken_retaining_drop",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_broken_retaining_drop_v1.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "4774896986796575dc34cdc033216abd01d22da604d7883ea5de07f2a711ce30",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rocky_upland_descending_conifer_ledge",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_chunks",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "rocky_upland_descending_conifer_ledge",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_descending_conifer_ledge_v1.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "427228149f9facdfbe15aa6d6cfcdba935c4cd841a8d3d11e22a50ad3468c430",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rocky_upland_lower_ledge_mist",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_chunks",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "rocky_upland_lower_ledge_mist",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_lower_ledge_mist_v1.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "0b07db12f4366879e88270e605fc75a608c33ad1e77b4cf79a64c90b5163336f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "rocky_upland_service_ruin_drop",
+      "direction": "omni",
+      "semantic_identity": [
+        "procgen_depth_chunks",
+        "backdrop",
+        "body",
+        "rocky_upland",
+        "rocky_upland_service_ruin_drop",
+        "omni"
+      ],
+      "path": "content/backgrounds/procgen/depth_chunks/depth_rocky_upland_service_ruin_drop_v1.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "eeb83f7418bea2c67c2bcc44e7df03a61bcd8d983422100d3fc29aab4a629c0f",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}
