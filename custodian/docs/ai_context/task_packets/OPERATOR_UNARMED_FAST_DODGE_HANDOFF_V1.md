@@ -1,49 +1,58 @@
-# OPERATOR UNARMED FAST → DODGE HANDOFF V1
+# Operator Fists Fast → Dodge Handoff Fix
 
-- Packet schema: `custodian.task_packet.v2`
-- Workstream: `operator-unarmed-fast-dodge-handoff-v1`
-- Status: `draft`
-- Dispatch: `manual`
-- Priority: `P1`
-- Depends on: `none`
-- Locks: `operator-runtime`
-- Kind: `implementation`
-- Review: `auto`
-- Review stage: `post-land`
-- Review modes: `code, runtime, animation`
-- Paired review workstream: `review-operator-unarmed-fast-dodge-handoff-v1`
-- Review cycle: `0`
-- Max automatic review cycles: `2`
-- Review rationale: shared melee/dodge action arbitration and FX playback have player-visible control and timing regressions; independently falsify the exact input/visual seam
-- Reviewed main: `b654ea569e2f212e97a3dd3b22998eff3bfba358`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62`
-- Visual review: `conditional`
-- Goal: During unarmed Fists Fast 01–04, a roll press is reliably registered and transitions to a legal tap dodge; the outgoing melee FX never repeats or survives the transition.
-- Completion boundary: Resolve fast→dodge input latching, visible animation-clock comparison, end-of-action handling, failed-dodge cleanup, and single-play FX ownership in one narrow correction, with real-frame integration tests. No new art.
-- Current measured state: On inspected main `b654ea569e2f212e97a3dd3b22998eff3bfba358`, `operator.gd:_handle_dodge_input` consumes every dodge press during authored fast chains, but buffers only when the *rhythm* window is open and `_buffered_attack_kind` empty; the rest return silently. `_update_melee_attack` compares `_fast_chain_presentation_frame()` (visible owning modular clock) to final frame count of `animated_sprite` (possibly hidden legacy), and returns unconditionally while `dodge` remains buffered. `_start_buffered_fast_chain_dodge` clears melee state before calling a fallible `_try_start_dodge_with_profile`, without checking `false`. `_sync_unarmed_fast_chain_action` drives `_play_optional_fx` every update, whose `OperatorAnimationPlayer.play` invokes `sprite.play` even if a non-looping clip has finished. User reproduced apparent final Fast VFX repetition and loss of roll control. Not yet reproduced with a committed automated fixture; preserve the distinction between source-exposed risks and run-verified cause.
-- Evidence: `custodian/game/actors/operator/operator.gd` functions `_handle_dodge_input`, `_fast_chain_queue_window_state`, `_update_melee_attack`, `_start_buffered_fast_chain_dodge`, `_get_dodge_start_rejection_reason`, `_presentation_clock_sprite`, `_sync_unarmed_fast_chain_action`, `_play_optional_fx`; `custodian/game/actors/operator/presentation/operator_animation_player.gd`; `custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd` and `operator_modular_fast_attack_smoke.gd`. The latter mainly tests **roll→fast attack**, not the reported **fast attack→roll** path.
-- Task-specific authority: `custodian/docs/ai_context/task_packets/archived/OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`; `design/02_features/operator/DODGE_CHARGED_LONG_ROLL.md`; current Fists 6/6/7/8 presentation-duration and committed-contact contracts; `design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md`. Historical superseded cadence documents are not live tuning authority.
-- Work surface: Operator melee/dodge seam in `custodian/game/actors/operator/operator.gd`, existing dodge controller/presentation utilities only as needed, exact relevant smoke tests and the validation manifest. The coordination checkout may carry user-owned changes to `operator.gd`; only modify an authorized isolated claimed worktree and never force root sync.
-- Change:
-  1. Add deterministic fast→roll integration reproduction through real input-frame sampling/handling, measured visible action clock and actual dodge controller state; include Fast 01, 02, 03 and terminal 04, early/open/late presses, current chain buffered `fast` competition, and button-release handling with dodge-charge enabled. Establish intended input arbitration explicitly: roll becomes a persistent, bounded defensive intent at the legal attack-cancel boundary (not an immediate iframe grant); an already-queued subsequent fast link must not silently consume a newer roll request.
-  2. In buffered dodge commit, use the current *visible owning* fast-chain clock, its actual animation identity, correct frame count and deterministic elapsed-phase fallback; never use hidden legacy sprite frame count for a modular link. Remove the unconditional infinite return at an unreachable frame. Preserve weapon-defined contact / rhythm timing and nonlooping chain semantics. Do not let a missing/retired presentation clock immobilize gameplay forever.
-  3. Handle `_try_start_dodge_with_profile(...)` rejection transactionally. A rejected tap roll must not erase attack/recovery state, leave the hitbox active, leave buffered intent frozen, or preserve attack/FX overlay ownership indefinitely. Record one explicit rejection reason and settle cleanly at the correct phase; respect cooldown, stamina, impact/UI/death/portal and dodge profile rules.
-  4. Make the optional authored Fists Fast FX play once per logical link/sector activation; do not retrigger a finished nonlooping clip just because `_update_animation` runs again. Explicitly stop and hide all outgoing melee FX/body overlays on successful roll ownership transfer, normal completion, and interruption; protect correct new-link restarts and legitimate facing changes.
-  5. Check `OperatorActionController` completion, lingering `_melee_animation_finished`, queued attack kind, `_dodge_fast_attack_presentation_active`, and body-presenter owner across transitions; avoid split-brain action/presentation owners or double dodge/attack starts. Prefer existing APIs/authorities to a new state machine.
-  6. Add bounded telemetry for accepted roll intent, legal handoff, and rejected roll (with profile, chain link, visible frame/action, buffered kind and rejection reason); no per-frame logs. Update only genuinely drifted docs and registered validation ownership.
-- Preserve: Fists 6/6/7/8-frame contact and speed/timing, target solutions, attack-drive carry budgets, stamina and cancel semantics, active dodge iframe rules, charged long/committed roll commitment, roll→fast attack buffer, tap roll→fast attack cancel, armed melee and block/guard, existing animation source assets and Alpha pipeline.
-- Non-goals: no new VFX/art generation or re-ingestion; no generalized ability-to-dodge-at-any-time, invulnerability during strike/recovery, input rebinding, new combat state machine, broader Operator domain extraction, balance changes, unrelated main/workflow lock repair.
-- Acceptance: (A) fast→roll produces exactly one tap dodge at permitted handoff, for all four authored links, without input loss; (B) late/early/full buffer cases have documented deterministic disposition, never indefinite melee; (C) wrong hidden legacy frame count cannot block visible-clock completion; (D) rejected roll produces no dodge iframe, keeps a valid gameplay state and finite cleanup; (E) final melee FX plays once, stops/hides on handoff, never loops or persists after roll; (F) no duplicate contact/hit and no early iframe; (G) existing roll→fast, fast-chain, charged roll, Flow, melee cadence, animation/body-owner guards remain green; (H) a small in-engine Moment Forge attack→roll sequence demonstrates one transition without large new visual capture. No asset edits.
-- Validation: Add/extend narrow real actor smoke in `custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd` or a new registered focused test for input-frame driven Fast 01–04→dodge; extend `operator_modular_fast_attack_smoke.gd` with FX restart/cleanup and keep roll→fast cases; run `operator_charged_long_roll_smoke.gd`, `operator_dodge_flow_smoke.gd`, `operator_attack_phase_cadence_smoke.gd`, action-arbitration/body composition contracts. Validate no skipped or zero-selected tests and final canonical `run_validation.py --changed --json` with full coverage, `check_ai_context.py --json`, `validate_review_pairing.py`, `task_packet_index.py`, `git diff --check`. One minimal in-engine Moment Forge reproduction if objective tests pass.
+- Packet schema: custodian.task_packet.v2
+- Workstream: operator-unarmed-fast-dodge-handoff-v1
+- Status: draft
+- Dispatch: manual
+- Authoring handoff: auto
+- Priority: P1
+- Depends on: none
+- Locks: operator-runtime
+- Kind: implementation
+- Review: auto
+- Review stage: post-land
+- Review modes: code, runtime, visual
+- Paired review workstream: review-operator-unarmed-fast-dodge-handoff-v1
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Review rationale: player-control handoff and one-shot presentation regression
+- Reviewed main: b654ea569e2f212e97a3dd3b22998eff3bfba358
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+- Visual review: conditional
+- Goal: Fast 01–04 → roll does not lose input, freeze melee, or replay lingering FX.
+- Completion boundary: One narrow fast-chain/dodge/FX correction and focused regression; no new art, animation timing, damage or roll balance.
+- Current measured state: `operator.gd` consumes fast-chain dodge presses outside the rhythm window; buffered dodge compares visible modular frame to hidden `animated_sprite` count and returns each tick; clears melee before fallible dodge start; `_play_optional_fx` replays on repeated presentation updates. Observed player symptom, source-backed risks; no runtime repro yet.
+- Evidence: `custodian/game/actors/operator/operator.gd` and `custodian/tools/validation/operator_{unarmed_fast_chain,modular_fast_attack,charged_long_roll}_smoke.gd`.
+- Task-specific authority: current `design/02_features/operator/DODGE_CHARGED_LONG_ROLL.md` and archived `OPERATOR_UNARMED_FAST_CHAIN_CONSOLIDATION.md`; visible attack clock owns presentation observations, dodge controller owns dodge state.
+- Work surface: `custodian/game/actors/operator/operator.gd` only for narrow orchestration; `custodian/game/actors/operator/presentation/operator_animation_player.gd` only if reusable playback needs correction; existing tests/validation manifest if changed.
+- Change: Use exact implementation targets below; prefer existing helpers and no added persistent state unless indispensable.
+- Preserve: 6/6/7/8 Fists frames and contact cadence, intentional late *attack* rhythm rejection, stamina/cooldown/iframe, charged-roll rules, buffered roll→attack, other weapons, contact/hitbox, existing asset pipeline.
+- Non-goals: New animations, broad melee controller extraction, gameplay retuning, controller rebinding, force-syncing user's dirty root `operator.gd`.
+- Acceptance: Roll press from each Fast 01–04 reaches exactly one legal dodge or a deterministic reported rejection, never indefinite attack; FX starts once per link/sector and retires at dodge/completion; no lost hits, premature iframe, duplicate attack or regression.
+- Validation: Focused `custodian/tools/validation/operator_unarmed_fast_chain_smoke.gd` and `custodian/tools/validation/operator_modular_fast_attack_smoke.gd` first; `custodian/tools/validation/operator_charged_long_roll_smoke.gd`, `custodian/tools/validation/operator_dodge_flow_smoke.gd`, `custodian/tools/validation/operator_attack_phase_cadence_smoke.gd`; then `custodian/tools/validation/run_validation.py --changed --json`, `custodian/tools/agent/validate_review_pairing.py`, `custodian/tools/agent/task_packet_index.py`, and `git diff --check`. No zero-selected/skipped/timeout pass.
 - Task overrides: none
-- Deferred: broader Operator melee domain extraction is separately scoped; do not absorb this correction.
+- Deferred: independently queued melee domain extraction.
+
+## Specific patch guidance (not a replacement implementation)
+
+1. `operator.gd:_handle_dodge_input()` (~9910): the fast-chain early return is unconditional. Record a *one-shot* dodge intent even when `_fast_chain_queue_window_state()` is `early`/`late` or `_buffered_attack_kind == "fast"`; define roll priority over a pending next punch, but **commit only at a legal attack recovery/cancel boundary**. Preserve hold/release consumption with `dodge_charge_enabled`; do not convert a roll press into immediate i-frames. Route through the existing dodge controller. Explicitly report blocked stamina/cooldown.
+2. `_update_melee_attack()` (~6750): replace `animated_sprite.sprite_frames.get_frame_count(animated_sprite.animation)` in the buffered-`dodge` branch with `var clock := _presentation_clock_sprite()` and `clock.sprite_frames.get_frame_count(clock.animation)`, guarding missing/invalid clock. Do not loop forever on a missing finished signal or mismatched legacy/modular frame; use the authoritative melee timeline/phase as bounded fallback, never a generic extra animation loop.
+3. `_start_buffered_fast_chain_dodge()` (~6884): the current implementation calls `_reset_fast_chain()` and clears melee **before** `_try_start_dodge_with_profile()` returns. Preflight `_get_dodge_start_rejection_reason()` and explicitly settle a failed start; preserve hitbox, melee/action state and finite end-of-chain cleanup. Successful transfer must clear active overlays, attack buffer/drive and relinquish old body owner exactly once. Do not weaken `_can_start_dodge` globally.
+4. `_sync_unarmed_fast_chain_action()` (~2594) calls `_play_optional_fx()` (~4319) every render tick. Gate playback on a *new action/link/sector identity*, e.g. compare `_modular_upper_fx_action_animation` plus clip identity; `OperatorAnimationPlayer.play()` must not retrigger an already-finished nonlooping FX on repeated sync. Reset link identity on genuine new attack, hide/stop on roll/terminal cleanup; check SpriteFrames loop flags without mutating unrelated clip resources.
+
+## Focused test matrix
+
+- Four Fast links × early/open/late roll input; existing queued `fast`; terminal link; visible modular vs intentionally different hidden legacy frame counts.
+- Accepted roll: one dodge, accurate stamina/cooldown/iframe and no stale melee VFX; rejected roll: no iframe, explicit rejection and finite melee cleanup.
+- Repeated `_update_animation()` after short FX completion must not restart FX; next attack link must play its own FX once.
+- Preserve existing roll→fast buffer, authored hit frames, action-controller ownership; one minimal Moment Forge attack→roll replay only after focused code tests.
 
 ## Handoff
 
-- Next workstream: `review-operator-unarmed-fast-dodge-handoff-v1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `execution-agent`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62`
-- Next action: Validate the packet/review pair against current main, inspect exact owner availability, promote only under ordinary authoring procedure, claim implementation on an eligible `operator-runtime` lock, and run a fresh independent review after landed code.
-- Blockers or open questions: draft/manual pending targeted authoring checks; actual in-engine reproduction must select the precise intended defensive-input boundary. Existing unrelated `agent-workflow` locks do not authorize changing this packet's ownership.
+- Next workstream: review-operator-unarmed-fast-dodge-handoff-v1
+- Next packet state: dependency-gated
+- Refresh owner: execution-agent
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+- Next action: Run opt-in authoring handoff; dispatcher claim only if eligible, then focused implementation + fresh paired review.
+- Blockers or open questions: Draft/manual pending targeted automatic preflight; do not claim before promoted. Exact cancellation boundary must respect existing attack commitment.
