@@ -29,7 +29,7 @@
 - Focused validation: Independently run Carrow interior and backdrop isolation smokes, new W1 fixture, generator validator and changed-file sweep. Verify 120 floor cells, original 140/13 East state, and the exact three-cell exit. Inspect relevant small game-scale screenshots, not a giant unrelated render suite.
 - Acceptance: Fresh-context, findings-first independent verdict. Only a legitimate passing review receipt accepts this expansion for the Operations successor; findings/human_required do not count as a PASS.
 - Non-goals: No runtime implementation modifications in reviewer branch; do not alter Carrow global route authority, generated art, canon ownership or new resource economy.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; never edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 

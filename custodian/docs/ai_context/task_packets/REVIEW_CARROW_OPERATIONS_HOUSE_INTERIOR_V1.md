@@ -29,7 +29,7 @@
 - Focused validation: Run Ops fixture, W1 regression, East smoke, Carrow backdrop isolation, generator/route checks and changed-file report independently; verify failed path control (missing site, collision route).
 - Acceptance: Fresh findings-first review; only PASS after exact source/room/route assertions and plausible native-scale presentation review. Findings do not unblock any subsequent Gatehouse iteration.
 - Non-goals: Implement or edit Ops runtime, create new artwork or implement Gatehouse/Gantry/alarm gameplay.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, required closing summary and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 
