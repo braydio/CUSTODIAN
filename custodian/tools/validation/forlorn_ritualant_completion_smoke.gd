@@ -463,7 +463,9 @@ func _validate_lower_lift() -> void:
 	level.ritualant_site.event_state.set_resolution(
 		AshBellEventState.Resolution.SITE_DEFILED
 	)
-	for offset_x in [-68.0, 0.0, 68.0]:
+	# The current front wings leave a narrower collision-free boarding corridor.
+	# Probe points inside that clear opening, not positions that overlap the wings.
+	for offset_x in [-50.0, 0.0, 50.0]:
 		actor.global_position = lift.global_position + Vector2(offset_x, 0.0)
 		_check(
 			lift.is_actor_boarded(actor),
