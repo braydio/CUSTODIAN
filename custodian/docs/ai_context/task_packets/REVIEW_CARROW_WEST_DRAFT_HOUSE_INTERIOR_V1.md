@@ -4,8 +4,8 @@
 - Workstream: `review-carrow-west-draft-house-interior-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `carrow-west-draft-house-interior-v1`
 - Locks: `carrow-yard-route`
