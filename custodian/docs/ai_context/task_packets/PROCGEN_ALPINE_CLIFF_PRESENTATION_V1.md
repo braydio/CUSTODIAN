@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `frame-specific edge art and final gameplay-scale composition require human visual approval after objective technical checks`
 - Reviewed main: `b086e552de00cea8551d62884c996558d33f12e6`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Goal: Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic 32 px fascia strip, while retaining exterior CHASM, Region Frame selection and `ProcgenVoidCliffFace` as presentation/semantic authorities.
 - Completion boundary: Done when the approved `alpine-cliff-source-family-v1` source-master batch is fetched and verified; Codex derives and normalizes the exact 12-state `procgen_alpine_cliff_fascia` family, 10-state `procgen_alpine_cliff_contact` family and four new `procgen_depth_chunks` states through Asset Pipeline V2; the resulting exact 26-state Gate B handoff is published/verified as the AP2 closeout receipt; Alpine Region Frame data selects the frame-specific fascia vocabulary while the generic six-state `void_cliff_face` remains fallback; large contact compositions derive from the same exterior frontier/outward-direction evidence; directional visual depth is coherent; cliff bottoms disappear into the permanent fog stack; collision/navigation/topology remain unchanged; and compact fixed-seed multi-direction edge evidence receives human approval.
 - Current measured state: Generic `void_cliff_face` is a six-state 32×32 Asset V2 family consumed by `procgen_world_tileset.tres` and `ProcgenVoidCliffFace`. The presenter currently hard-codes source IDs 149–154 for `top`, three body roles and two bottom roles, already derives outward direction, supports wall-backed frontiers, deterministic clustered role/depth variation, and paints only presentation TileMap cells. This is the correct owner to extend rather than replace. The visual audit found that six repeated generic roles cannot carry the Alpine geographic scale by themselves. Existing Macro Presentation and `procgen_depth_chunks` already provide the correct BACK-band system for larger CHASM compositions. AP1 is now complete/landed. The approved AP2 source-master batch is present in Dropbox at `CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/`; its primary ZIP SHA-256 is `e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3`. The final Gate B runtime handoff is intentionally not present yet because AP2 produces it after source derivation and validation.
@@ -82,6 +82,19 @@ CUSTODIAN/implementation_inputs/
 
 Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisite source input.
 
+
+## 2026-10-14 Fresh Visual Disposition — 20261014T195049Z
+
+- Provenance: valid. Review manifest records clean capture commit `14148e47ab436e4f5081c90434277590c7190b96`, matching capture HEAD; source Moment Forge manifest records `dirty=false`.
+- Human/ChatGPT visual answers: terrace/fascia attachment `FAIL`; attached-geology silhouette `FAIL`; playable-floor edge truthfulness `PASS`.
+- Blocking direction: `south` only. North/east/west are acceptable for this gate and must not be redesigned without new evidence.
+- Observed defect: the south contact reads as a detached/floating escarpment because visible backdrop/fog remains between the playable terrace and the large rock mass.
+- Correction boundary: keep the existing 24 px source-space socket-support invariant, but add a final world-space attachment invariant after the actual placement transform and fascia-suppression contract. The final transformed contact alpha component must cross the authoritative frontier and intersect both an inward terrace-side band and outward cliff-side band; a source-valid socket that leaves a rendered gap must fail.
+- Prefer correcting south authored socket/placement transform and/or south-specific suppression footprint. Do not replace source art first; do not disturb north/east/west unless a shared correction objectively requires it.
+- After correction: synchronize with latest main; rerun focused Alpine + seam regression + changed-file validation; recapture the identical four-direction Moment Forge review from a clean committed SHA and verify uploaded manifest SHA equals capture HEAD.
+- Retention: after recording this disposition, clean `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` using its emitted delete-after-review command.
+- AP2 remains open. AP3 remains unclaimed/dependency-gated.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -106,7 +119,7 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `no`
-- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh instruction: AP1 is complete. No design refresh is required before claim if the registered `alpine-cliff-source-family-v1` batch and checksum match this packet. At claim time, re-derive exact source IDs/profile seams and public helper names from live main. Escalate only if live cliff ownership materially changes the authority boundary or the registered source batch cannot be verified.
 
 ## Handoff
@@ -115,8 +128,8 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Next packet state: `human-required`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
-- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none`
-- Next action: Review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` and answer the three contact-integration questions. The fresh four-direction run passed from clean pushed commit `14148e47ab436e4f5081c90434277590c7190b96`; the fetched Dropbox manifest git commit equals `HEAD`. Keep AP2 open until that visual disposition is recorded.
-- Blockers or open questions: The 164000Z bundle has invalid provenance and cannot serve as final evidence. The replacement bundle is under delete-after-review policy. Changed-file validation had one concurrent `procgen_region_frame` timeout; its isolated run passed in 112431 ms. Do not close AP2 or claim AP3 before human visual review.
+- Next action: Synchronize against latest main, correct the south final-world-space attachment seam only, add the final transformed-alpha frontier-crossing regression, rerun focused/changed validation, and publish one new clean-SHA four-direction review bundle.
+- Blockers or open questions: `south final-world-space terrace/contact continuity is the sole visual blocker; AP3 remains gated until the corrected clean-SHA human review passes`
