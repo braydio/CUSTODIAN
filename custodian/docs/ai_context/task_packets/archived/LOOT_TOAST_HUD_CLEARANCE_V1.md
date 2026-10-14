@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `loot-toast-hud-clearance-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -112,21 +112,21 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `the fixed toast top=126 placement contract is superseded by live HUD-derived clearance; toast queue semantics remain unchanged`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `loot_toast_queue_smoke PASS; pause_only_minimap_hud_smoke PASS; command_terminal_tutorial and terminal_page_order_regression passed on extended direct reruns; changed-file validation 42/42 passed (final3 receipt); git diff --check PASS.`
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `the toast scene hard-coded a Y anchor that no longer matches the live HUD footprint`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `layout smoke owns real HUD clearance instead of only queue semantics`
-- Tooling / docs drift discovered: `LOOT_PICKUP_FEEDBACK.md still claims fixed (18,126) placement`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `the toast scene hard-coded a Y anchor that no longer matches the live HUD footprint; changed-file validation exposed a stochastic unrelated Ritualant ingress error and initially undersized ProcGen smoke timeouts`
+- Root cause / contributing factors: `HUD growth invalidated the fixed anchor; ProcGen-backed UI smoke tests can exceed 60 seconds, and one random world seed failed to resolve the existing Ritualant ingress although an isolated rerun passed.`
+- Prevention / pipeline improvement: `layout smoke owns real HUD clearance instead of only queue semantics; affected ProcGen-backed smoke budgets are now 300 seconds.`
+- Tooling / docs drift discovered: `LOOT_PICKUP_FEEDBACK.md still claimed fixed (18,126) placement; three HUD-owned ProcGen smoke budgets were too short for variable generation cost.`
 - Follow-up: `paired fresh-context review`
 - What worked: `the centralized queue/group contract means the repair can stay inside UI presentation without touching pickup producers`
 

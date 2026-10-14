@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 signal terminal_command_executed(normalized_command: String, handled: bool)
+signal loot_toast_hud_clearance_changed
 
 const TerminalCommandRouterScript := preload("res://game/ui/terminal/terminal_command_router.gd")
 const TerminalSnapshotScript := preload("res://game/ui/terminal/terminal_snapshot.gd")
@@ -1354,7 +1355,7 @@ func _process(delta):
 			lives_label.modulate = Color(0.55, 0.95, 0.65, 1.0)
 		if field_patch_prompt is Label:
 			var prompt := field_patch_prompt as Label
-			prompt.visible = patch_prompt_visible and not _terminal_open
+			_set_toast_clearance_control_visible(prompt, patch_prompt_visible and not _terminal_open)
 			if prompt.visible:
 				prompt.text = "!! FIELD PATCH [P] — CRITICAL !!" if patch_prompt_critical else "+ FIELD PATCH READY [P]"
 				var pulse := 0.72 + 0.28 * sin(float(Time.get_ticks_msec()) * (0.012 if patch_prompt_critical else 0.006))
@@ -1433,7 +1434,7 @@ func _process(delta):
 				if ammo_text != _last_legacy_weapon_hud_text:
 					ammo_label.text = ammo_text
 					_last_legacy_weapon_hud_text = ammo_text
-				ammo_label.visible = true
+				_set_toast_clearance_control_visible(ammo_label, true)
 			if cooldown_bar and cooldown_label:
 				var cooldown_total = max(0.001, float(ws.get("cooldown_total", 0.001)))
 				var cooldown_remaining = max(0.0, float(ws.get("cooldown_remaining", 0.0)))
@@ -1466,9 +1467,9 @@ func _process(delta):
 			if line != _last_director_text:
 				director_label.text = line
 				_last_director_text = line
-			director_label.visible = true
+			_set_toast_clearance_control_visible(director_label, true)
 		else:
-			director_label.visible = false
+			_set_toast_clearance_control_visible(director_label, false)
 
 	if crosshair_label:
 		crosshair_label.visible = false
@@ -1482,14 +1483,14 @@ func _process(delta):
 				var drops = supply_status.get("drops_queued", 0)
 				if next_drop > 0:
 					supply_drop_label.text = "SUPPLY DROP: %.0fs (%d queued)" % [next_drop, drops]
-					supply_drop_label.visible = true
+					_set_toast_clearance_control_visible(supply_drop_label, true)
 				elif drops > 0:
 					supply_drop_label.text = "SUPPLY DROP: INCOMING (%d)" % drops
-					supply_drop_label.visible = true
+					_set_toast_clearance_control_visible(supply_drop_label, true)
 				else:
-					supply_drop_label.visible = false
+					_set_toast_clearance_control_visible(supply_drop_label, false)
 			else:
-				supply_drop_label.visible = false
+				_set_toast_clearance_control_visible(supply_drop_label, false)
 
 	if _main_hud_hidden:
 		if power_label:
@@ -1667,6 +1668,52 @@ func _get_essential_hud_nodes() -> Array:
 	]
 
 
+## Read-only union of the visible top-left gameplay HUD controls. The toast
+## queue owns placement; this HUD only reports the space its live controls use.
+func get_loot_toast_hud_clearance_rect() -> Rect2:
+	return calculate_loot_toast_hud_clearance_rect(_get_loot_toast_hud_controls())
+
+
+static func calculate_loot_toast_hud_clearance_rect(controls: Array) -> Rect2:
+	var bounds := Rect2()
+	var has_bounds := false
+	for value in controls:
+		if not value is Control:
+			continue
+		var control := value as Control
+		if not control.is_visible_in_tree():
+			continue
+		var rect := control.get_global_rect()
+		if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+			continue
+		bounds = rect if not has_bounds else bounds.merge(rect)
+		has_bounds = true
+	return bounds
+
+
+func _get_loot_toast_hud_controls() -> Array:
+	var controls := _get_essential_hud_nodes()
+	for node in _get_debug_hud_nodes():
+		# The centered crosshair and right-offset power widget are outside the
+		# top-left toast lane. Other legacy/debug rows count only while visible.
+		if node == power_display or node == power_label or node == power_bar or node == crosshair_label:
+			continue
+		if node != null and not controls.has(node):
+			controls.append(node)
+	return controls
+
+
+func _notify_loot_toast_hud_clearance_changed() -> void:
+	loot_toast_hud_clearance_changed.emit()
+
+
+func _set_toast_clearance_control_visible(control: Control, visible: bool) -> void:
+	if control == null or control.visible == visible:
+		return
+	control.visible = visible
+	_notify_loot_toast_hud_clearance_changed()
+
+
 func _fit_legacy_hud_text(text: String, max_chars: int) -> String:
 	if text.length() <= max_chars:
 		return text
@@ -1709,6 +1756,7 @@ func _set_main_hud_hidden(hidden: bool) -> void:
 	if ranged_reticle:
 		ranged_reticle.visible = false
 	_set_external_gameplay_overlays_hidden(effective_hidden)
+	_notify_loot_toast_hud_clearance_changed()
 
 
 func _handle_minimap_toggle_input(event: InputEvent) -> bool:
