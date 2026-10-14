@@ -23,7 +23,7 @@ The Alpine profile now records all ten inboard socket coordinates and a 24 px mi
 
 ## Checkpoint identity
 
-At correction start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `841769bee66d6f5a98f273a2b1af6f760c0a71a0`, whose subject is `alpine remote checkpoint history, review link [skip render]`. That branch contains the actual Alpine implementation commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a`; it is not the Vaultwing commit that had occupied the ref before the earlier checkpoint repair. After fetching, the branch was 3 commits ahead and 10 behind `origin/main` (`8decfc1fc51fa10c6dbca2e88be50d7b059040e3`). The new correction is being committed and pushed on the same stable workstream branch.
+At correction start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `841769bee66d6f5a98f273a2b1af6f760c0a71a0`, whose subject is `alpine remote checkpoint history, review link [skip render]`. That branch contains the actual Alpine implementation commit `a9e67bc733c2edc6993f33216af427ecc92d0b8a`; it is not the Vaultwing commit that had occupied the ref before the earlier checkpoint repair. After fetching, the branch was 3 commits ahead and 10 behind `origin/main` (`8decfc1fc51fa10c6dbca2e88be50d7b059040e3`). Correction commit `d6acb605d8a86ec4c5053302653fd235806bbb46` is now verified at both local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1`; the branch is 4 commits ahead and 10 behind that same `origin/main`.
 
 ## Visual review handoff
 
