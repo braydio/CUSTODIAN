@@ -247,7 +247,6 @@ Before normal workstream finish:
 - Next action: run the paired fresh-context review against the landed implementation.
 - Blockers or open questions: none
 
-
 ## Independent Review
 
 ### Review Receipt: review-baby-opossum-runtime-hardening-r1
