@@ -10,11 +10,20 @@ ammo, field patches, and stolen vault resources a shared readable channel.
 
 ## Runtime contract
 
-`LootToastQueue` is mounted beneath the main HUD at `(18,126)` and registers
-the `loot_toast_queue` group. Producers call `push_pickup(item_id, display_name,
-quantity, accent, icon, detail)`. Four entries remain visible at most; matching
-items merge for `0.75s`. Entries animate in for `0.12s`, hold for `1.80s`, and
-fade/slide out for `0.25s`.
+`LootToastQueue` is mounted as a sibling of the main HUD under the UI CanvasLayer
+and registers the `loot_toast_queue` group. It keeps an 18px left inset and
+places its top at the larger of the 126px fallback or 11px below the union of
+currently visible top-left gameplay HUD controls. The UI reports actual visible
+control rectangles through a read-only clearance provider; visibility changes
+and viewport resizing refresh the queue without a per-frame UI scan. Hidden HUD
+controls reserve no space. The queue clamps its rectangle to the viewport and
+uses the nearest available top-left placement when the below-HUD region is too
+short for its four-entry stack.
+
+Producers call `push_pickup(item_id, display_name, quantity, accent, icon,
+detail)`. Four entries remain visible at most; matching items merge for
+`0.75s`. Entries animate in for `0.12s`, hold for `1.80s`, and fade/slide out
+for `0.25s`.
 
 The queue is presentation-only. Inventory, material, vault, ammo, and consumable
 authorities remain in their existing owning systems. Stolen resources use one

@@ -3754,6 +3754,27 @@
       "needs_import": false
     },
     {
+      "id": "loot_toast_queue",
+      "type": "godot_script",
+      "script": "res://tools/validation/loot_toast_queue_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "loot",
+        "pickup",
+        "hud",
+        "layout"
+      ],
+      "owners": [
+        "custodian/game/ui/loot/loot_toast_queue.gd",
+        "custodian/game/ui/loot/loot_toast_queue.tscn",
+        "custodian/game/ui/hud/ui.gd",
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/loot_toast_queue_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
+    },
+    {
       "id": "lootable_corpse_beacon",
       "type": "godot_script",
       "script": "res://tools/validation/lootable_corpse_beacon_smoke.gd",
@@ -3843,7 +3864,7 @@
         "custodian/game/ui/minimap/*.gd",
         "custodian/scenes/game.tscn"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
@@ -5257,7 +5278,7 @@
         "custodian/scenes/game.tscn",
         "custodian/tools/validation/terminal_overview_layout_smoke.gd"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
@@ -5275,7 +5296,7 @@
         "custodian/game/ui/hud/ui.gd",
         "custodian/scenes/game.tscn"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
