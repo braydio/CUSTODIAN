@@ -110,6 +110,9 @@ func _initialize() -> void:
 	face.configure_from_surface_cells(blend_floor, blend_chasm, 99, {}, PROFILE)
 	var contact_plan := face.get_debug_paint_plan()
 	var contact_root := Node2D.new()
+	contact_root.position = Vector2(137.0, -83.0)
+	contact_root.rotation = 0.17
+	contact_root.scale = Vector2(1.25, 0.8)
 	root.add_child(contact_root)
 	var composer := CONTACT_COMPOSER.new()
 	var first_contact: Dictionary = composer.apply_frontier_plan(contact_plan, exterior, {}, contact_root, 99, false, Vector2.ONE, PROFILE)
@@ -117,7 +120,8 @@ func _initialize() -> void:
 		failures.append("eligible long exterior frontier did not receive one contact plate")
 	if int((first_contact.get("direction_counts", {}) as Dictionary).get("south", 0)) != 1:
 		failures.append("qualified south frontier was not guaranteed a broad contact")
-	_assert_attached_placements(first_contact, alpha_contract_by_state, failures)
+	_assert_attached_placements(first_contact, contact_root, alpha_contract_by_state, failures)
+	_assert_south_socket_in_final_world(contact_root, first_contact, PROFILE, failures)
 	var contact_names := _contact_names(contact_root)
 	composer.apply_frontier_plan(contact_plan, exterior, {}, contact_root, 99, false, Vector2.ONE, PROFILE)
 	if _contact_names(contact_root) != contact_names:
@@ -166,7 +170,7 @@ func _initialize() -> void:
 		var summary: Dictionary = composer.apply_frontier_plan(directional_plan, directional_exterior, {}, contact_root, 99, false, Vector2.ONE, PROFILE)
 		if int((summary.get("direction_counts", {}) as Dictionary).get(_direction_name(direction), 0)) != 1:
 			failures.append("qualified %s frontier was not guaranteed a broad contact" % _direction_name(direction))
-		_assert_attached_placements(summary, alpha_contract_by_state, failures)
+		_assert_attached_placements(summary, contact_root, alpha_contract_by_state, failures)
 		if int(summary.get("core_frontier_count", 0)) < 14 or int(summary.get("shoulder_frontier_count", 0)) != 4:
 			failures.append("%s contact mask did not retain its core and two-cell shoulders" % _direction_name(direction))
 
@@ -244,7 +248,7 @@ func _contact_names(node: Node2D) -> Array[String]:
 	return result
 
 
-func _assert_attached_placements(summary: Dictionary, alpha_contract_by_state: Dictionary, failures: PackedStringArray) -> void:
+func _assert_attached_placements(summary: Dictionary, contact_root: Node2D, alpha_contract_by_state: Dictionary, failures: PackedStringArray) -> void:
 	var placements: Array = summary.get("placements", [])
 	if placements.is_empty():
 		failures.append("eligible contact direction returned no placement evidence")
@@ -254,6 +258,13 @@ func _assert_attached_placements(summary: Dictionary, alpha_contract_by_state: D
 			failures.append("contact placement failed attachment: %s" % str(placement))
 		if float(placement.get("socket_error_px", INF)) > 8.0:
 			failures.append("contact socket error exceeds 8 px: %s" % str(placement))
+		var direction := placement.get("outward_direction", Vector2i.ZERO) as Vector2i
+		var sprite_name := "AlpineCliffContact_%s_%s" % [_direction_name(direction), String(placement.get("contact_state", ""))]
+		var contact_sprite := contact_root.get_node_or_null(sprite_name) as Sprite2D
+		if contact_sprite == null:
+			failures.append("attached placement has no final Sprite2D transform: %s" % sprite_name)
+		elif contact_sprite.to_global(PROFILE.contact_socket_by_state.get(StringName(placement.get("contact_state", "")), Vector2.ZERO)).distance_to(placement.get("socket_world_position", Vector2.INF)) > 8.0:
+			failures.append("final Sprite2D socket does not meet its world frontier: %s" % sprite_name)
 		if int(placement.get("socket_embed_depth_px", 0)) < PROFILE.contact_socket_min_embed_px:
 			failures.append("contact socket lacks opaque geological overlap: %s" % str(placement))
 		var state := StringName(placement.get("contact_state", ""))
@@ -262,6 +273,28 @@ func _assert_attached_placements(summary: Dictionary, alpha_contract_by_state: D
 			failures.append("contact asset lacks validated irregular alpha: %s" % String(state))
 		if PROFILE.contact_socket_by_state.get(state, Vector2.INF) != Vector2(asset_contract.get("socket_px", [-1, -1])[0], asset_contract.get("socket_px", [-1, -1])[1]):
 			failures.append("profile socket differs from authored asset socket: %s" % String(state))
+
+
+func _assert_south_socket_in_final_world(contact_root: Node2D, summary: Dictionary, profile: ProcgenCliffFasciaProfile, failures: PackedStringArray) -> void:
+	var placements: Array = summary.get("placements", [])
+	for placement_variant: Variant in placements:
+		var placement := placement_variant as Dictionary
+		if placement.get("outward_direction", Vector2i.ZERO) != Vector2i.DOWN:
+			continue
+		var state := StringName(placement.get("contact_state", ""))
+		var socket_px: Vector2 = profile.contact_socket_by_state.get(state, Vector2.INF)
+		var sprite_name := "AlpineCliffContact_south_%s" % String(state)
+		var sprite := contact_root.get_node_or_null(sprite_name) as Sprite2D
+		if sprite == null:
+			failures.append("south contact is missing from the transformed final-world fixture")
+			return
+		var frontier_cell := placement.get("frontier_cell", Vector2i.ZERO) as Vector2i
+		var frontier_local := Vector2(frontier_cell) * 32.0 + Vector2(16.0, 16.0) - Vector2(Vector2i.DOWN) * 16.0
+		var expected_world := contact_root.to_global(frontier_local)
+		if sprite.to_global(socket_px).distance_to(expected_world) > 0.5:
+			failures.append("south socket misses its transformed frontier in final world space")
+		return
+	failures.append("south final-world seam regression had no placement to inspect")
 
 
 func _direction_name(direction: Vector2i) -> String:

@@ -2,6 +2,17 @@
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 
+## Latest continuation — SOUTH final-world seam
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+
+The existing AP2 worktree was synced by merging `origin/main@5b3d1806692c941bf0d300763a33f868d3101dcc`; the merge completed without conflicts. The SOUTH contact PNG and authored socket were retained. `ProcgenAlpineCliffContactComposer` now attaches the sprite before resolving its authored socket with `Sprite2D.to_global()`, applies the resulting world-space translation, and records both target and resolved socket positions. The focused Alpine smoke now creates a translated, rotated, nonuniformly scaled parent and verifies the SOUTH socket against its final world-space frontier. The smoke is registered in `validation_manifest.json` as the owner for the composer and focused contract.
+
+- Focused `procgen_alpine_cliff_presentation_smoke.gd`: PASS.
+- Changed-file validation: coverage complete; 32 passed, 1 failed, 1 higher-tier test skipped. `procgen_meridian_hardstand_macro` fails its existing exact `report.valid.size() == 36` assertion on current merged content. It is outside the SOUTH/AP2 code surface and was selected through broad presentation ownership. Do not close AP2 while this required validation result remains unresolved.
+- An initial changed-file run also exposed `/tmp/.git`, an empty directory that makes the standalone-project LFS fixture misclassify temporary directories. The final run used `TMPDIR=/dev/shm`; it passed that fixture.
+- Fresh four-direction Moment Forge capture and human review remain pending; no new evidence is being represented as accepted.
+
 ## Outcome
 
 The human disposition for `20261014T061508Z` remains FAIL for contact/fascia integration and attached geology; playable-edge readability passed. That reviewed bundle was cleaned under its delete-after-review policy. The `20261014T164000Z-socket-embed-contract` run is invalid for final acceptance because its manifest records `841769be...`. A fresh replacement run has now passed from a clean checkout at pushed commit `14148e47ab436e4f5081c90434277590c7190b96`; its manifest commit matches `HEAD` and reports `dirty=false`. AP2 remains open pending human visual review, and AP3 remains dependency-gated.

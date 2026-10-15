@@ -113,22 +113,29 @@ func apply_frontier_plan(
 		var frontier_local := root.to_local(frontier_world)
 		var socket_world := frontier_world
 		sprite.position = frontier_local - socket_px * local_scale
-		var resolved_socket_world := root.to_global(sprite.position + socket_px * local_scale)
+		root.add_child(sprite)
+		# Resolve the authored pixel through the final Sprite2D transform after it
+		# has inherited its presentation root. Parent-local arithmetic can miss a
+		# seam when the root is transformed or the sprite transform later changes.
+		var initial_socket_world := sprite.to_global(socket_px)
+		sprite.global_position += socket_world - initial_socket_world
+		var resolved_socket_world := sprite.to_global(socket_px)
 		var socket_error_px := resolved_socket_world.distance_to(socket_world)
 		if socket_error_px > 8.0:
-			placements.append({"frontier_cell": midpoint, "outward_direction": direction, "contact_state": state, "socket_world_position": socket_world, "sprite_world_position": root.to_global(sprite.position), "attached": false, "reason": "contact_frontier_socket_misaligned", "socket_error_px": socket_error_px})
+			placements.append({"frontier_cell": midpoint, "outward_direction": direction, "contact_state": state, "socket_world_position": socket_world, "resolved_socket_world_position": resolved_socket_world, "sprite_world_position": sprite.global_position, "attached": false, "reason": "contact_frontier_socket_misaligned", "socket_error_px": socket_error_px})
+			root.remove_child(sprite)
 			sprite.free()
 			continue
 		sprite.visible = not streaming_enabled
 		sprite.set_meta(CONTACT_META, true)
 		sprite.set_meta("frontier_probes", _probe_cells(cells, direction))
-		root.add_child(sprite)
 		var placement := {
 			"frontier_cell": midpoint,
 			"outward_direction": direction,
 			"contact_state": state,
 			"socket_world_position": socket_world,
-			"sprite_world_position": root.to_global(sprite.position),
+			"resolved_socket_world_position": resolved_socket_world,
+			"sprite_world_position": sprite.global_position,
 			"socket_error_px": socket_error_px,
 			"socket_embed_depth_px": socket_embed_depth,
 			"attached": true,
