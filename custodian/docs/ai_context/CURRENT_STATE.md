@@ -2918,3 +2918,7 @@ Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 con
 ## Awakening Gate western precinct spatial proposal (2026-10-11)
 
 A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.
+
+## Compound archetypes and assault/recovery planning (2026-10-15)
+
+Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.

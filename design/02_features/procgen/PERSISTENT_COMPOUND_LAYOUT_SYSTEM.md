@@ -118,3 +118,7 @@ safe presentation fallback.
 Replace individual procedural room shells with authored `template_family`
 variants through the existing `.tmj` pipeline while preserving this semantic
 reservation, topology, level-data, Sector, and minimap contract.
+
+## Compound archetypes (planning, 2026-10-15)
+
+Legacy deterministic 10-13 room layout remains implemented. Approved planning adds explicit walled_yard (closed secure perimeter, independent buildings, yard) and connected_bunker (separate surface housings, one continuous subsurface room/tunnel graph). Profile+seed must be deterministic, and selection must preserve existing RoomGraph IDs, Sector mapping, minimap and ProcGenTilemap authority. Neither profile is shipped by this documentation update. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.
