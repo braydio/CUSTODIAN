@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: awakening-perimeter-support-foundation-v1
-- Status: complete
+- Status: blocked
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-awakening-handoff-readiness-art-convergence-v1
@@ -40,34 +40,25 @@
 - The predecessor Awakening handoff-convergence review is archived complete on current main. The orphaned implementation claim was resumed and fast-forwarded to `041717c3` before edits.
 - AP0 implementation evidence: `custodian/docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`; `awakening_perimeter_support_smoke.gd` reports 34 samples, ten zone plate records, nine families and 27 deterministic state placements. No source artwork was fabricated or ingested.
 
-## Completion Truth
-
-- Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: yes
-- Completion boundary satisfied: yes
-- Acceptance satisfied: yes
-- Superseded/legacy production path disposition: intentionally-preserved
-- Evidence: focused perimeter smoke PASS (10 zones, 9 families, 27 states, 34 samples); six existing Awakening smokes PASS; changed-file validation PASS (49/49); all nine Asset V2 plans PASS and status 0/3 required; needs --check and git diff --check PASS. Global Asset V2 doctor retains four unchanged catalog-hash errors for `awakening_designation_locker`.
-
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: success
-- Friction severity: low
-- What went wrong: one early registry-generation command ran in the coordination checkout; only that command's own generated registry/view edits were restored, preserving the unrelated dirty packet. A pre-existing 42-test ownership fan-out selected 49 checks after manifest changes.
-- Root cause / contributing factors: one invocation omitted its scoped worktree path; the manifest itself is an owner for many validation tests.
-- Prevention / pipeline improvement: use the absolute claimed-worktree path for writes and verify `git status` before staging; retain manifest-driven changed-file coverage.
-- Tooling / docs drift discovered: Asset V2 `source_pending` means real source is staged or receipt-approved; absent sources correctly remain `needed` with missing states. The packet's SOURCE_PENDING wording was corrected. The global doctor has four inherited designation-locker catalog hash mismatches outside this change.
+- Outcome: blocked
+- Friction severity: medium
+- What went wrong: after syncing to `origin/main@075025f4`, the required full changed-file sweep failed twice. `review_pairing_contract` reports 11 unrelated Compound review packets whose target paths are not archived as expected. `godot_import_lfs_preflight` also failed in the sweep with “standalone project should not require a Git LFS check,” although a direct rerun passed. The AP0-tagged suite passed 22/22 after sync; the pre-sync changed-file sweep had passed 49/49.
+- Root cause / contributing factors: inherited validation-contract drift on current main, plus a transient/inconsistent LFS-preflight result. The failing Compound packets and the validation harness are outside this AP0 change.
+- Prevention / pipeline improvement: repair the stale Compound review-pairing fixtures and make the LFS preflight deterministic in a separate scoped task, then rerun changed-file validation before landing AP0.
+- Tooling / docs drift discovered: changed-file validation selects global `review_pairing_contract` and LFS preflight checks unrelated to AP0; current main has 11 stale Compound target locations. Global Asset V2 doctor also retains four unchanged designation-locker catalog-hash errors.
 - Follow-up: manual-follow-up
 - What worked: live Sprite2D bounds and camera reveal values produced a deterministic coverage report without changing route authority.
 
 ## Next Handoff
 
-- Next workstream: review-awakening-perimeter-support-foundation-v1
-- Next packet state: dependency-gated
+- Next workstream: none
+- Next packet state: none
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 - Refresh reason: none
-- Next action: land AP0, then run the paired fresh-context post-land review.
-- Blockers or open questions: inherited global Asset V2 doctor errors for the unchanged awakening_designation_locker catalog hashes; review whether these affect the paired review contract.
+- Next action: resolve inherited changed-file validation failures on current main, rerun the required suite, then finish AP0 and run its paired fresh-context review.
+- Blockers or open questions: full changed-file validation remains red because of 11 stale Compound paired-review target paths and an inconsistent standalone Git LFS preflight failure; four unchanged awakening_designation_locker catalog-hash doctor errors remain separately inherited.
