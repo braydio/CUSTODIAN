@@ -10,6 +10,7 @@ class_name AwakeningFirstReturn
 ## campaign handoff belong to later sections and are deliberately absent here.
 
 const Layout := preload("res://game/world/awakening/awakening_layout.gd")
+const PerimeterSupport := preload("res://game/world/awakening/awakening_perimeter_support.gd")
 const Catalog := preload("res://game/ui/theme/black_reliquary_asset_catalog.gd")
 const Palette := preload("res://game/ui/theme/black_reliquary_palette.gd")
 const Plaque := preload("res://game/world/awakening/awakening_plaque_interactable.gd")
@@ -89,6 +90,7 @@ var _last_art_visibility_position := Vector2.INF
 
 func _ready() -> void:
 	_build_void_backdrop()
+	_build_perimeter_support()
 	_build_world_geometry()
 	_cache_zone_art_visibility_targets()
 	_build_hero_presentation()
@@ -138,6 +140,16 @@ func _build_void_backdrop() -> void:
 	backdrop.z_index = Layout.Z_FLOOR - 10
 	world.add_child(backdrop)
 	world.move_child(backdrop, 0)
+
+
+func _build_perimeter_support() -> void:
+	if world == null or world.get_node_or_null("AwakeningPerimeterSupport") != null:
+		return
+	var support := Node2D.new()
+	support.set_script(PerimeterSupport)
+	support.name = "AwakeningPerimeterSupport"
+	support.call("configure", Layout)
+	world.add_child(support)
 
 
 ## Scope the shared camera's existing zoom profiles to this authored scene.

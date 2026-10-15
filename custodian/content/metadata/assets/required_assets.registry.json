@@ -1816,6 +1816,159 @@
         "type": "manual",
         "status": "needed"
       }
+    },
+    {
+      "id": "awakening-creche-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 01 creche perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/01_creche/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_creche_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-ambulatory-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 02 ambulatory perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/02_ambulatory/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_ambulatory_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-attestation-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 03 attestation perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/03_attestation/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_attestation_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-locker-reliquary-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 04 locker reliquary perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/04_locker_reliquary/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_locker_reliquary_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-undergate-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 06 undergate perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/06_undergate/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_undergate_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-gate-of-dust-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 07 gate of dust perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/07_gate_of_dust/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_gate_of_dust_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-approach-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 08 approach perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/08_approach/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_approach_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-late-service-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 09 late service perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/09_late_service/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_late_service_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
+    },
+    {
+      "id": "awakening-road-south-reach-perimeter-support-27-state-set",
+      "section": "Awakening / The First Return (sections 01-10)",
+      "title": "Awakening 10 road south reach perimeter support (3 states)",
+      "target": "`custodian/content/levels/awakening/perimeter_support/10_road_south_reach/`",
+      "purpose": "Provide nonplayable structural rim, inaccessible distant architecture, and edge transition outside the unchanged authored playable footprint.",
+      "notes": "Asset V2 pending contract: structural_support 512x512, distant_structures 1024x512, edge_transition 256x256; static omni copy states. No image is claimed to exist. Zone 05 is intentionally excluded and owned by Dust Lung V2.",
+      "fulfillment": {
+        "type": "asset_v2",
+        "targets": [
+          {
+            "family": "awakening_road_south_reach_perimeter_support",
+            "scope": "required_states"
+          }
+        ]
+      }
     }
   ],
   "section_notes": {

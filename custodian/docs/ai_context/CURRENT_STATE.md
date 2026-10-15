@@ -2580,6 +2580,19 @@ collision radius, and proves a continuous route from `(0, 160)` to `(0, -6464)`
 across every mandatory section — it caught a real 16px pinch in the Locker
 Reliquary during implementation.
 
+## Awakening perimeter support foundation (2026-10-15)
+
+AP0 Awakening perimeter support foundation is implemented as a no-art technical
+layer. The deterministic 34-sample camera ledger measures all ten zones and the
+three authored reveals against live room plate bounds; the only measured plate
+gaps are a 32px strip at wake/Zone01 entry and a 96px strip at the 05→06 join.
+Nine non-Dust Asset V2 backdrop families (27 required states) are registered as
+unfulfilled demand. `AwakeningPerimeterSupport` checks for exact runtime files
+before loading, remains below canonical floor art, has no collision, and leaves
+the neutral void backdrop intact. Zone 05 generic support remains excluded for
+Dust Lung V2. See `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`
+and `docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+
 # Baby Opossum Ambient Creature Runtime (2026-09-06)
 
 Baby Opossum now has a first-class `ambient_creature` V2 family and runtime

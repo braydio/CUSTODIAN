@@ -1582,6 +1582,23 @@ save-manager integration.
 
 ## Awakening Registration and Handoff
 
+For the AP0 perimeter foundation, run the deterministic camera coverage ledger
+and no-art presentation contract before the existing Awakening route checks:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/awakening_perimeter_support_smoke.gd
+python3 tools/assets/asset.py plan awakening_creche_perimeter_support --json
+python3 tools/assets/asset.py status awakening_creche_perimeter_support --json
+python3 tools/assets/asset.py needs --check
+```
+
+The smoke refreshes
+`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+Run all nine family plans/statuses and `asset doctor` when validating AP0; the
+global doctor can report pre-existing unrelated catalog hash mismatches, which
+must be separated from this foundation’s pending contracts.
+
 Run after changing Awakening plate registration, seam probes, or South Reach
 completion. The evidence pass emits five authored-region captures in this order:
 05→06, 06→07, 07→08, 08→10, and optional 08↔09. Pixel metrics are technical

@@ -24,6 +24,17 @@ Nine independently named **generic** nonplayable perimeter regions (Zones 01–0
 | AP3 | `awakening-perimeter-exterior-v1` | `review-awakening-perimeter-exterior-v1` | draft/manual, art approval gate | Integrate 07–09 Gate, Approach and optional Chapel; preserve Gate route and 08↔09. |
 | AP4 | `awakening-perimeter-south-reach-v1` | `review-awakening-perimeter-south-reach-v1` | draft/manual, art approval gate | Integrate 10 around Road-owned South Reach without replacing its five modular plates or spilling into later Hub; final focused route/performance/coverage review. |
 
+### AP0 implementation receipt (2026-10-15)
+
+The AP0 implementation is complete on its scoped branch; paired post-land review
+remains the next gate. The deterministic ledger covers ten live plate bounds
+and 34 camera samples. It finds two repeated uncovered presentation windows:
+704×32 px at wake/Zone01 entry and 704×96 px at the 05→06 seam. All three
+authored camera reveals remain inside measured plate rectangles. Nine generic
+families and 27 required states are registered, but no art exists or is claimed
+fulfilled. Zone 05 remains excluded for Dust Lung V2. See the AP0 receipt in
+`custodian/docs/ai_context/task_packets/archived/AWAKENING_PERIMETER_SUPPORT_FOUNDATION_V1.md`.
+
 ```text
 review-awakening-handoff-readiness-art-convergence-v1
   ↓

@@ -1445,7 +1445,9 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/task_packets/VEHICLE_PART_FABRICATION_RECOVERY_V1.md` / `REVIEW_VEHICLE_PART_FABRICATION_RECOVERY_V1.md` — dependency-gated generic R0/R1/R2 recovery-grade, FabPipeline inventory-item, and atomic component-consumption slice plus paired review.
 - `custodian/docs/ai_context/task_packets/VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` / `REVIEW_VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` — dependency-gated shared recovery Asset V2 family registration and paired review; no production pixels.
 
-- `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md` — approved planning authority for ten nonplayable Awakening off-route support regions and their art/runtime/seam invariants; not yet implemented.
+- `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md` — approved authority for ten nonplayable Awakening off-route support regions; AP0 camera ledger, no-art host and nine pending family contracts are live, while AP1–AP4 artwork remains unfulfilled.
+- `custodian/game/world/awakening/awakening_perimeter_support.gd` — optional no-collision presenter with deterministic placements for nine non-Dust Asset V2 families; skips absent files and preserves the neutral fallback.
+- `custodian/tools/validation/awakening_perimeter_support_smoke.gd` and `custodian/docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json` — 34-sample live camera/plate coverage ledger plus absent-art, Zone05 exclusion, determinism, floor-order and collision-free contracts.
 - `design/04_architecture/AWAKENING_PERIMETER_ASSET_PROMPTS_V1.md` — all 30 exact image-generation prompts, per-state sizes, source_work and inbox paths for Asset V2 staging; no images exist yet.
 - `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_IMPLEMENTATION_ROADMAP.md` — AP0–AP4 implementation/review dependency chain and human art acceptance gates.
 
