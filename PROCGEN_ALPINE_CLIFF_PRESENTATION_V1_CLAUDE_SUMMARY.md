@@ -1,6 +1,6 @@
 # Procgen Alpine Cliff Presentation V1 — Validation Contract Correction
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
 ## Latest continuation — SOUTH final-world seam
 
@@ -63,7 +63,15 @@ At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presenta
 - Next packet state: human-required
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 - Refresh reason: none
 - Next action: review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` and answer the three contact-integration questions.
 - Blockers or open questions: human visual disposition is pending; changed-file validation had one `procgen_region_frame` timeout during host contention, and its isolated rerun passed in 112431 ms. Keep AP2 open and do not claim AP3 until visual review is recorded.
+
+## Human visual disposition — 20261014T195049Z
+
+The fresh clean-SHA bundle is valid evidence but does not close AP2. Human/ChatGPT review recorded `FAIL / FAIL / PASS`: terrace/fascia attachment failed, attached-geology silhouette failed, and playable-floor edge truthfulness passed. The blocker is south only; north/east/west are acceptable for this gate.
+
+The remaining correction is narrower than the earlier socket problem. The source socket can satisfy 24 px opaque support while final transformed/suppressed composition still leaves a visible world-space gap. Preserve that source-space check and add a post-placement connected-alpha frontier-crossing assertion. Prefer south placement/socket/suppression correction over new art. AP3 remains blocked.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
