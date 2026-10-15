@@ -10,10 +10,9 @@ runtime systems. Reset-on-entry ingress/return preserves the same Operator.
 The gallery is a shell only: generated map realization, exhibit catalog,
 controls, and runtime inspection remain later PGA slices. Its implementation
 and independent fresh-context review are archived **passed** (6 focused checks,
-46/46 changed-file checks, zero blocking defects or material gaps). PGA-2
-exhibit catalog is ready/auto with the review dependency satisfied; PGA-3's
-post-review architecture refresh requires automatic authoring verification
-before claim. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+46/46 changed-file checks, zero blocking defects or material gaps). PGA-2 exhibit catalog and PGA-3 generated arena are both ready/auto with
+PGA-1's review dependency satisfied; PGA-3's refreshed paired authoring gate
+and managed index passed at `95c89d47`. Neither implementation has landed. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
 
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 

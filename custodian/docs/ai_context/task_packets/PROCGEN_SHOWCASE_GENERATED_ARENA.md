@@ -53,7 +53,7 @@
 - Accept no speculative generator tuning, altered candidate ordering, second physical corridor or new asset families. PGA-4 owns repeated seeds/regeneration and controls.
 
 ## Publication Gate
-This packet and its paired review are **draft/manual** until the GitHub paired authoring handoff performs targeted preflight, promotes both to ready/auto and updates the canonical managed index. This refresh alone does not permit a claim.
+**Satisfied:** GitHub automatic packet authoring handoff passed targeted preflight and published both PGA-3 implementation/review packets as `ready/auto`, with the canonical managed index updated, at `95c89d47ac893f1c78d6cc91910a97960cac8802` (2026-10-15). The dispatcher remains the sole claim/lock authority. Passing authoring is not evidence of landed runtime implementation or independent review.
 
 ## Next Handoff
 - Next workstream: `review-procgen-showcase-generated-arena`
