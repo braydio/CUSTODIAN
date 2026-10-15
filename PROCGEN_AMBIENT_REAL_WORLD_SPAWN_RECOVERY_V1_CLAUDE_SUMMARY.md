@@ -4,7 +4,7 @@ Workstream: `procgen-ambient-real-world-spawn-recovery-v1`
 
 ## Outcome
 
-Implemented and validated the ambient real-world spawn recovery. The exact-seed smoke completes under its unchanged 180-second bound, exercises the production `NavigationSystem` contract, and spawns both required enemy families. The streaming worktree was not accessed or modified.
+Implemented and validated the ambient real-world spawn recovery. The exact-seed smoke completes under its unchanged 180-second bound, exercises the production `NavigationSystem` contract, and spawns both required enemy families. Commit `1dc7f5883e4047cd7852d9ceaff346a1dc17a0ae` is pushed to the workstream branch but is not landed: lifecycle finish stopped before main synchronization because three unrelated untracked generated `.uid` files remain in this worktree. Latest `origin/main` is `041717c3abaa6a960e4c1849542c22365c1586f8`; the finish gate must be resumed after those artifacts are safely resolved. The streaming worktree was not accessed or modified.
 
 ## Evidence
 
@@ -37,5 +37,5 @@ The live refreshed packet assigns `procgen-generation` and `ambient-spawn-activa
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166
 - Refresh reason: none
-- Next action: Finish and land this implementation packet, then run its paired review in a fresh context.
-- Blockers or open questions: none; reviewer should falsify exact attempt fingerprints, 180-second completion, and real navigation/actor-spawn evidence.
+- Next action: Preserve and resolve the three pre-existing/unrelated generated `.uid` artifacts without including them in task commits; rerun `workstream.py finish` so it synchronizes latest main and lands this implementation, then launch paired review in a fresh context.
+- Blockers or open questions: Finish preflight classifies `custodian/tools/validation/carrow_operations_house_interior_smoke.gd.uid`, `custodian/tools/validation/npa_showcase_existing_enemy_smoke.gd.uid`, and `custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd.uid` as unclassified untracked artifacts. Preserve them until their owning session/intent is established; do not run paired review before implementation is on origin/main.
