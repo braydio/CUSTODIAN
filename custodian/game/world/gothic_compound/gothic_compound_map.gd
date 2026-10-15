@@ -42,6 +42,23 @@ const WEST_DRAFT_HOUSE_LAYOUT := [
 	"X..........X",
 	"XXXXXDDDXXXX",
 ]
+const OPERATIONS_HOUSE_SIZE := Vector2i(20, 14)
+const OPERATIONS_HOUSE_LAYOUT := [
+	"XXXXXXXXXXXXXXXXXXXX",
+	"X..................X",
+	"XCCCCCCC.....RRRRRRX",
+	"XCCCCCCC.....RRRRRRX",
+	"X..................X",
+	"XKKK.......SSS.....X",
+	"XKKK.......SSS.....X",
+	"X..................X",
+	"X..................X",
+	"XWWWW..............X",
+	"XWWWW..............X",
+	"X..................X",
+	"X..................X",
+	"XXXXXXXXXDDDXXXXXXXX",
+]
 const INTERIOR_ROOM_DEFINITIONS := {
 	"east_machine_house": {
 		"site_id": "machine_house",
@@ -66,6 +83,19 @@ const INTERIOR_ROOM_DEFINITIONS := {
 		"spawn_offset": Vector2(6.5, 8.25),
 		"exit_cell": Vector2i(6, 9),
 		"profile_path": "res://content/lighting/profiles/carrow_machine_house_interior.tres",
+		"environment_exposure": 0.10,
+		"weather_exposure": 0.0,
+		"floor_states": MACHINE_HOUSE_FLOOR_STATES,
+	},
+	"operations_house": {
+		"site_id": "operations_house",
+		"node_name": "OperationsHouseInterior",
+		"size": OPERATIONS_HOUSE_SIZE,
+		"layout": OPERATIONS_HOUSE_LAYOUT,
+		"origin_offset": Vector2i(8, 40),
+		"spawn_offset": Vector2(9.5, 12.25),
+		"exit_cell": Vector2i(10, 13),
+		"profile_path": "res://content/lighting/profiles/carrow_operations_house_interior.tres",
 		"environment_exposure": 0.10,
 		"weather_exposure": 0.0,
 		"floor_states": MACHINE_HOUSE_FLOOR_STATES,
@@ -240,6 +270,7 @@ func _add_return_gate() -> void:
 func _add_registered_interiors(result: Variant) -> void:
 	_add_east_machine_house_interior(result)
 	_add_west_draft_house_interior(result)
+	_add_operations_house_interior(result)
 
 
 func _interior_definition(room_id: StringName) -> Dictionary:
@@ -268,6 +299,15 @@ func _interior_definition(room_id: StringName) -> Dictionary:
 		definition["exit_door_name"] = "LeaveWestDraftHouse"
 		definition["entry_prompt"] = "ENTER WEST DRAFT HOUSE"
 		definition["exit_prompt"] = "LEAVE WEST DRAFT HOUSE"
+	elif room_id == &"operations_house":
+		definition["art"] = _operations_house_art()
+		definition["resource_bindings"] = [
+			{"id": "carrow_operations_emergency_spares", "display_name": "Emergency Spares Rack", "tile_offset": Vector2i(11, 5), "resources": {&"ruin_scrap": 22, &"structural_alloy": 3, &"power_components": 1}, "art_name": "EmergencySparesRack"},
+		]
+		definition["entry_door_name"] = "EnterOperationsHouse"
+		definition["exit_door_name"] = "LeaveOperationsHouse"
+		definition["entry_prompt"] = "ENTER OPERATIONS HOUSE"
+		definition["exit_prompt"] = "LEAVE OPERATIONS HOUSE"
 	else:
 		return {}
 	return definition
@@ -342,6 +382,70 @@ func _add_west_draft_house_interior(result: Variant) -> void:
 	_add_interior_lighting(root, definition, room_origin, "WestDraftHouse", true)
 	_add_definition_doors(root, &"west_draft_house", site, room_origin, definition)
 	_register_interior_room(&"west_draft_house", root, room_origin, site)
+
+
+func _add_operations_house_interior(result: Variant) -> void:
+	if VAULT_STORAGE_SCENE == null or result == null:
+		return
+	var site := _structure_sites.get("operations_house", {}) as Dictionary
+	var definition := _interior_definition(&"operations_house")
+	if not _is_valid_structure_site(site) or not _is_valid_interior_definition(definition):
+		if not site.is_empty():
+			push_warning("[CarrowYard] Operations House site or room definition is invalid; interior unavailable")
+		return
+	if not _interior_assets_available(definition, definition.art as Array[Dictionary]):
+		push_warning("[CarrowYard] Operations House registered art is incomplete; interior unavailable")
+		return
+	var room_origin := Vector2i(map_size_tiles.x + int(definition.origin_offset.x), int(definition.origin_offset.y))
+	var room_size: Vector2i = definition.size
+	var room_rect := Rect2(_tile_to_local(room_origin), Vector2(room_size) * TILE_SIZE)
+	var camera_bounds := room_rect.grow(TILE_SIZE * 2.0)
+	if not _interior_bounds_available(room_rect, camera_bounds):
+		push_warning("[CarrowYard] Operations House bounds overlap an existing interior; interior unavailable")
+		return
+	var interior_root := Node2D.new()
+	interior_root.name = String(definition.node_name)
+	interior_root.add_to_group("carrow_named_interior")
+	interior_root.add_to_group("carrow_operations_house_interior")
+	add_child(interior_root)
+	_build_interior_floor(interior_root, room_origin, room_size, "OperationsHouse", definition.floor_states)
+	var art_count := _build_interior_art(interior_root, room_origin, definition.art as Array[Dictionary], true)
+	if art_count != (definition.art as Array).size():
+		interior_root.queue_free()
+		return
+	_build_interior_layout(interior_root, room_origin, definition.layout)
+	_add_definition_storage(interior_root, room_origin, definition)
+	_add_operations_house_lighting(interior_root, definition, room_origin)
+	_add_definition_doors(interior_root, &"operations_house", site, room_origin, definition)
+	_register_interior_room(&"operations_house", interior_root, room_origin, site)
+
+
+func _operations_house_art() -> Array[Dictionary]:
+	return [
+		{"name": "NorthControlBay", "path": "walls/wall_carrow_control_bay_01.png", "cell": Vector2i(4, 2), "z": -18},
+		{"name": "NorthRecordsWall", "path": "walls/wall_carrow_wall_run_panelled_long_01.png", "cell": Vector2i(15, 2), "z": -18},
+		{"name": "DispatchRelayBank", "path": "props/carrow_machine_house_relay_bank.png", "cell": Vector2i(4, 3), "z": -12},
+		{"name": "DispatchWorkbench", "path": "props/carrow_machine_house_workbench.png", "cell": Vector2i(2, 5), "z": -10},
+		{"name": "EmergencySparesRack", "path": "props/carrow_machine_house_replacement_modules.png", "cell": Vector2i(11, 5), "z": -10},
+		{"name": "MunicipalRecordsBoard", "path": "props/carrow_machine_house_tool_board.png", "cell": Vector2i(15, 3), "z": -12},
+		{"name": "WestLogisticsCabinet", "path": "props/carrow_machine_house_service_cabinet.png", "cell": Vector2i(2, 9), "z": -10},
+		{"name": "ServiceCart", "path": "props/carrow_machine_house_maintenance_cart.png", "cell": Vector2i(3, 10), "z": -9},
+	]
+
+
+func _add_operations_house_lighting(root: Node2D, definition: Dictionary, room_origin: Vector2i) -> void:
+	_add_interior_lighting(root, definition, room_origin, "OperationsHouse", true)
+	var amber_light := root.get_node_or_null("DraftHouseServiceLight") as LightRig2D
+	if amber_light != null:
+		amber_light.name = "DispatchDeskPracticalLight"
+		amber_light.position = _tile_to_local(room_origin + Vector2i(5, 7)) + Vector2.ONE * TILE_SIZE * 0.5
+	var status_light := root.get_node_or_null("ColdDeadVentLight") as LightRig2D
+	if status_light != null:
+		status_light.name = "NorthStatusPanelLight"
+		status_light.position = _tile_to_local(room_origin + Vector2i(15, 3)) + Vector2.ONE * TILE_SIZE * 0.5
+		status_light.light_color = Color(0.55, 0.69, 0.82, 1.0)
+		status_light.energy = 0.10
+		status_light.glow_scale = 0.7
 
 
 func _add_machine_house_floor(room_origin: Vector2i) -> void:
@@ -667,6 +771,7 @@ func get_interior_debug_state(room_id: StringName) -> Dictionary:
 	return {
 		"id": room_id,
 		"site_id": room.get("site_id", ""),
+		"origin": room.get("origin", Vector2i.ZERO),
 		"interior_rect": room.get("world_rect", Rect2()),
 		"camera_bounds": room.get("camera_bounds", Rect2()),
 		"layout": layout,
@@ -712,6 +817,12 @@ func get_machine_house_debug_state() -> Dictionary:
 
 func get_west_draft_house_debug_state() -> Dictionary:
 	var state := get_interior_debug_state(&"west_draft_house")
+	state["structure_sites"] = _structure_sites.duplicate(true)
+	return state
+
+
+func get_operations_house_debug_state() -> Dictionary:
+	var state := get_interior_debug_state(&"operations_house")
 	state["structure_sites"] = _structure_sites.duplicate(true)
 	return state
 
@@ -771,7 +882,7 @@ func _is_valid_interior_definition(definition: Dictionary) -> bool:
 	var room_size := size as Vector2i
 	if room_size.x < 3 or room_size.y < 3 or layout.size() != room_size.y:
 		return false
-	var allowed := "X.DRFHVCPRSLW"
+	var allowed := "X.DRFHVCPRSLWK"
 	for row_index in range(layout.size()):
 		var row_variant: Variant = layout[row_index]
 		var row := String(row_variant)

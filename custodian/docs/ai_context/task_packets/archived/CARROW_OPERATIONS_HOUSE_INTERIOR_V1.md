@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `carrow-operations-house-interior-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-carrow-west-draft-house-interior-v1`
@@ -21,7 +21,7 @@
 - Visual review: `conditional`
 - Goal: Add distinct accessible 20×14 Operations House dispatch/control/records room to Carrow using the W1-accepted named-interior mechanism, while leaving Machine and West rooms and the municipal site identity unchanged.
 - Completion boundary: Ops exterior `operations_house` 11×10 placed site opens a 640×448px (280 tile) civic-industrial room with functional north controls, west dispatch, east records/stock, open center and one safe three-cell south return; correct lighting/weather/camera and limited diegetic inspect/storage anchors, all via existing reusable Carrow room seam.
-- Current measured state: Only East is currently produced by pre-W1 main. W1 defines new `active_interior_id` and room registration and must land/pass review before this packet starts. Generator site `structure_sites["operations_house"]` uses `command_keep` asset 11×10. Original `CARROW_YARD.md` expressly defines civilian dispatch, inventories and emergency response, not a fortress throne hall or faction command HQ. See `design/05_levels/CARROW_YARD_STRUCTURES_EXPANSION_V1.md` for exact 20×14 symbol grid.
+- Current measured state: At execution start, current main included the independently passed W1 named-room seam: East Machine House 14×10 and West Draft House 12×10. The generated `structure_sites["operations_house"]` remained an 11×10 `command_keep` anchor without an accessible interior. Original `CARROW_YARD.md` defines civilian dispatch, inventories and emergency response, not a fortress throne hall or faction command HQ. The separate `carrow-yard-route-authority-migration` remains gated and unchanged. See `design/05_levels/CARROW_YARD_STRUCTURES_EXPANSION_V1.md` for the exact 20×14 grid.
 - Evidence: Proposed Carrow structures design; `gothic_compound_map.gd`, `gothic_compound_generator.gd` and `gothic_compound_asset_defs.gd`; W1 accepted new Carrow room seam; relevant `carrow_machine_house_{floor,walls,props}.asset.json` states; current Carrow lighting, weather and storage smokes.
 - Task-specific authority: Approved named Carrow-room builder/registry from W1; exterior site metadata from generator; existing world environment/lighting, VaultStorage and Carrow door interactions. Do not create an Operations-only global travel system or implicitly launch pending `carrow-yard-route-authority-migration`.
 - Work surface: New Operations House room definition, focused decoration/config and optional matching light profile under `custodian/content/lighting/profiles/`; minimal Carrow map wiring; focused Carrow environment/re-entry tests and validation manifest registration. No new world route, sprite PNG, asset family or NPC/quest behavior.
@@ -52,5 +52,35 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
-- Next action: Fresh-context Ops interior acceptance review with cross-room restoration regression.
-- Blockers or open questions: `Blocked on genuine accepted West Draft review; preserve pending world route migration ownership.`
+- Next action: After this implementation lands and archives complete, run the paired fresh-context Operations House review and verify its native-scale presentation and collider/doorway geometry.
+- Blockers or open questions: `none; preserve pending world route migration ownership.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: n/a
+- Evidence: `operations_house` now binds the generated 11×10 site to a 20×14/640×448 room with exactly 280 floor sprites, aligned three-cell south exit, non-overlapping camera/environment region, civic dispatch/records/stock presentation, one art-bound persistent spares cache, and existing-room state preserved. The focused smoke and complete changed-file report passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first smoke run used a fresh worktree before Godot initialized its global-class cache. After initialization, it found that the shared room-grid validator omitted the design's `K` dispatch symbol; a fixture also initially checked the wrong x-coordinate for the south exit.
+- Root cause / contributing factors: The new room symbol vocabulary was not represented in the generic named-room allowlist, and the initial fixture's doorway coordinates did not match the accepted grid.
+- Prevention / pipeline improvement: Add each accepted layout symbol to the common validator and derive test coordinates directly from the authored row; initialize project metadata before focused Godot validation in a fresh checkout.
+- Tooling / docs drift discovered: `CURRENT_STATE.md` still described only the East Machine House after W1 had landed; it now records all three interiors. The new Carrow backdrop smoke is included in manifest owner coverage.
+- Follow-up: review-carrow-operations-house-interior-v1
+- What worked: The focused smoke covers the exact grid/collider mapping, clear aisle and door, multiple generated seeds, all three named rooms in forward/reverse order, same-Operator and camera/weather restoration, and same-runtime cache depletion.
+
+## Validation Evidence
+
+- `carrow_operations_house_interior`: PASS, 1/1; exact 20×14 grid, 280 floors, generated-site/door binding, collider-cell mapping, clear central aisle, fail-closed malformed/missing inputs, camera/weather/backdrop isolation, both traversal directions, and persistent cache depletion.
+- `carrow_yard_interior`: PASS; existing East/West and route behavior preserved.
+- `persistent_compound_layout`: PASS; fixed-seed and alternate-seed generator layout contracts.
+- `carrow_backdrop_isolation_smoke.gd`: PASS; eight Carrow/room/procgen transitions.
+- Changed-file validation: PASS, 39 selected / 39 passed / 0 failed / 0 timed out / 0 skipped; coverage complete. Report: `/tmp/carrow-operations-changed-final.json`.
+- `git diff --check`: PASS.
