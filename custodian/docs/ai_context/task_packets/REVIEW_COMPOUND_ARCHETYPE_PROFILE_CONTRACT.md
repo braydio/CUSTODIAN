@@ -11,7 +11,7 @@
 - Kind: review
 - Review: none
 - Review target workstream: compound-archetype-profile-contract
-- Review target packet: custodian/docs/ai_context/task_packets/COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md
+- Review target packet: custodian/docs/ai_context/task_packets/archived/COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md
 - Reviewed main: 9b8ae05581e3194876d8b4763946d1f74d77fa50
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Review modes: code, architecture, runtime, visual
