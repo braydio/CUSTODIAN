@@ -40,3 +40,17 @@
 - Refresh reason: H5 must refresh against latest main after both independent spawn owner lanes land and pass review.
 - Next action: Resume H5, synchronize current main, and require a complete green changed-file report before finish; then launch its independent review in fresh context.
 - Blockers or open questions: none from H5 ownership. If the landed implementation changes loader/bootstrap behavior or candidate/ingress decisions rather than only measured evaluation cost + the smoke fixture, treat that as a blocking scope violation.
+
+
+## Protected Post-Exit Recovery Authority
+
+- Recovery trigger: The fresh reviewer already reran exact seed `3348744079` successfully on the landed implementation and observed both required enemy families, but the remaining packet-required validation could not start because the restricted Codex sandbox could not write the shared machine-wide Godot cache/lock namespace. The paired runner preserved the exact claimed branch, worktree and run as `post_exit_recovery`; this is infrastructure failure, not a review finding and not permission to mark the review passed.
+- Existing run identity: `20261015T224943Z-5a721f81880e`
+- Existing review worktree: `/home/braydenchaffee/Projects/.custodian-worktrees/review-procgen-ambient-real-world-spawn-recovery-v1-20261015T224946Z-9fd03b95314f`
+- Existing evidence root: `.git/custodian-review-runs/review-procgen-ambient-real-world-spawn-recovery-v1/20261015T224943Z-5a721f81880e/`
+- Recovery rule: Do not reclaim, recreate, or launch a second reviewer. Preserve the existing reviewer-authored findings/summary/receipt edits exactly. From the writable coordination context, execute only the missing environment-sensitive validation **against the preserved review worktree** using the ordinary shared Godot job budget/lock; do not use `--no-godot-lock`, do not modify reviewed implementation/runtime files, and do not substitute a different checkout.
+- Required coordinator recovery tests: `procgen_encounter_cadence`, `ambient_actor_spawn_walkability`, `contract_world_ingress_spawn_clearance`, `contract_world_playable_region_spawn_validity`, `world_contract_prewarm`, plus the packet-required navigation/loader regression selected by the current manifest. The exact-seed `procgen_ambient_enemy_real_world_spawn` reviewer PASS remains required evidence and may be rerun coordinator-side if needed to produce one canonical green report; its manifest timeout stays 180 seconds.
+- Closeout rule: Save a real green `custodian.validation.result.v1` report in the existing run evidence directory. Then use coordinator-owned bounded review closeout to verify the existing fresh reviewer receipt, archived target identity, exact implementation SHA `075025f41a6a7f6bafb6df13a816d54a23dc87af`, closing summary, and authorized review-only file delta before landing. Do not fabricate a receipt or accept a findings-only/incomplete reviewer state.
+- Persistent project checkout: Leave the user's dirty/ahead/behind persistent checkout untouched. It is not the recovery execution surface.
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
