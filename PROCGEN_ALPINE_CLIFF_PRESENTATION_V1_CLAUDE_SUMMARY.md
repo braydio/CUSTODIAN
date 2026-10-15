@@ -73,3 +73,11 @@ The fresh clean-SHA bundle is valid evidence but does not close AP2. Human/ChatG
 The remaining correction is narrower than the earlier socket problem. The source socket can satisfy 24 px opaque support while final transformed/suppressed composition still leaves a visible world-space gap. Preserve that source-space check and add a post-placement connected-alpha frontier-crossing assertion. Prefer south placement/socket/suppression correction over new art. AP3 remains blocked.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+
+## Human review — SOUTH recapture evidence mismatch
+
+The `20261014T-south-frontier-final-35ad6afe` manifest is provenance-clean at `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`, but its visual artifacts are byte-for-byte identical to the prior failed human-review media. The contact sheet SHA remains `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`, with the same retained keyframe hashes. Therefore this recapture does not demonstrate a visual change. The human disposition remains `FAIL / FAIL / PASS`: SOUTH visible join fail, SOUTH attached-geology fail, north/east/west and playable-edge truthfulness pass.
+
+The focused final-world seam regression is still useful and should be retained. Next work is to determine why the Moment Forge fixture/capture does not reflect the corrected path, rather than redesigning the art again.
+
+The changed-file `procgen_meridian_hardstand_macro` failure is AP2-adjacent, not unrelated: AP2 adds four depth-chunk profiles to the shared terrain-stamp catalog (36 -> 40), while that Meridian-specific smoke hard-codes the global catalog size as 36. Its meaningful assertions are no rejected profiles and exactly 10 Meridian profiles. Remove or replace the stale global total coupling, rerun changed validation, then recapture after the visual path is demonstrably different.

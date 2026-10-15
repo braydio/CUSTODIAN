@@ -109,6 +109,17 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Human review pending. Questions: (1) Does SOUTH visibly join terrace/fascia without a backdrop/fog gap? (2) Does SOUTH read as attached geology without crop wall/detached mass? (3) Are north/east/west acceptable and is the playable edge clear and truthful?
 - AP2 remains open; AP3 remains dependency-gated.
 
+
+## 2026-10-14 Human Review — SOUTH Frontier Recapture
+
+- Review bundle: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json`.
+- Provenance is internally valid: manifest/capture commit `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`, detached clean capture, `dirty=false`.
+- However, the visual evidence is byte-identical to the previously reviewed failing bundle. `current_contact_sheet.png` SHA-256 is still `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`; `tick_000010.png` is still `32afca88cfbc62cd2847a0741e5f22484363158daa02466602d7350513576253`; `tick_000125.png` is still `de8b1e0b5f51491f8806f8710b4c4bfb323e999b23486b8019a7813ab52bdcaa`.
+- Therefore the new bundle cannot establish a changed SOUTH visual result. Because the contact sheet is exactly the same bytes as the previously failed review, the human answers remain: SOUTH terrace/fascia visible join `FAIL`; SOUTH attached-geology read `FAIL`; north/east/west + playable-edge truthfulness `PASS`.
+- This is now an evidence/runtime-fixture mismatch, not grounds to redesign the source art. The final-world seam smoke may be correct while the Moment Forge fixture does not exercise the corrected transform/suppression path, or the report pipeline may be reusing stale media. Diagnose why the corrected commit produced identical visual bytes before another human gate.
+- The changed-file blocker is not actually unrelated to AP2: this branch expands `terrain_stamp_catalog_v1.tres` from 36 to 40 profiles by adding four AP2 depth-chunk profiles, while `procgen_meridian_hardstand_macro_smoke.gd` hard-codes the entire shared catalog total to 36 even though its real family contract is Meridian count 10. Resolve that stale cross-family assertion in scope, preferably by removing the global exact-total assertion and retaining `report.rejected.is_empty()` plus the exact Meridian-family count/contract checks. Do not merely label the failure unrelated.
+- AP2 remains open and AP3 remains gated.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -145,5 +156,5 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none`
-- Next action: Review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json` and record the three contact-integration answers. Then run the emitted delete-after-review cleanup. AP2 closeout also requires resolving the unrelated changed-file Meridian catalog-count failure; only after validation and visual review pass may AP3 become eligible.
-- Blockers or open questions: `new human visual disposition pending; changed-file validation still fails procgen_meridian_hardstand_macro exact catalog-count assertion; AP3 remains dependency-gated`
+- Next action: Diagnose why the corrected SOUTH runtime path produced byte-identical Moment Forge media to the prior failed bundle; fix the fixture/capture path or runtime integration so the correction is actually visible, remove the stale shared-catalog total assertion from the Meridian family smoke while preserving its family-specific checks, rerun complete changed-file validation, then publish one genuinely changed clean-SHA four-direction review bundle.
+- Blockers or open questions: `SOUTH human gate still fails because the new contact sheet is byte-identical to the prior failed evidence; Moment Forge/runtime-fixture mismatch must be resolved. The Meridian global catalog-count assertion is stale because AP2 itself expands the shared catalog from 36 to 40. AP3 remains gated.`
