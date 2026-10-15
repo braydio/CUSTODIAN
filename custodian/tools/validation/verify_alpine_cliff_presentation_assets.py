@@ -33,6 +33,9 @@ SOCKET_INWARD_DIRECTIONS = {
     "corner_ne_01": ((-1, 0), (0, 1)), "corner_nw_01": ((1, 0), (0, 1)),
 }
 MIN_SOCKET_EMBED_PX = 24
+SOCKET_EMBED_MIN_BY_STATE = {
+    "south_broad_01": 96, "south_broken_01": 96, "south_rooted_01": 96,
+}
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -52,6 +55,8 @@ def main() -> int:
         raise SystemExit("derivation report does not retain the approved source-master ZIP checksum")
     if derivation.get("contact_socket_min_embed_px") != MIN_SOCKET_EMBED_PX:
         raise SystemExit("derivation report has a stale contact socket support threshold")
+    if derivation.get("contact_socket_min_embed_by_state") != SOCKET_EMBED_MIN_BY_STATE:
+        raise SystemExit("derivation report has stale state-specific socket support thresholds")
     families = {
         "procgen_alpine_cliff_fascia": json.loads((ROOT / "content/metadata/assets/families/procgen_alpine_cliff_fascia.asset.json").read_text()),
         "procgen_alpine_cliff_contact": json.loads((ROOT / "content/metadata/assets/families/procgen_alpine_cliff_contact.asset.json").read_text()),
@@ -132,13 +137,14 @@ def main() -> int:
                                 x += dx
                                 y += dy
                             embed_depths.append(depth)
-                            if depth < MIN_SOCKET_EMBED_PX:
-                                errors.append(f"{family_id}/{state}: socket only touches silhouette on inward axis ({depth}px < {MIN_SOCKET_EMBED_PX}px)")
+                            minimum_embed = SOCKET_EMBED_MIN_BY_STATE.get(state, MIN_SOCKET_EMBED_PX)
+                            if depth < minimum_embed:
+                                errors.append(f"{family_id}/{state}: socket only touches silhouette on inward axis ({depth}px < {minimum_embed}px)")
                         reported_depths = item.get("socket_embed_depth_px", {})
                         expected_axes = {"x" if dx else "y" for dx, dy in SOCKET_INWARD_DIRECTIONS[state]}
                         if set(reported_depths) != expected_axes:
                             errors.append(f"{family_id}/{state}: derivation report has incomplete socket support depths")
-                        elif any(int(value) < MIN_SOCKET_EMBED_PX for value in reported_depths.values()):
+                        elif any(int(value) < SOCKET_EMBED_MIN_BY_STATE.get(state, MIN_SOCKET_EMBED_PX) for value in reported_depths.values()):
                             errors.append(f"{family_id}/{state}: derivation report records insufficient socket support: {reported_depths}")
         if digest != item["output_sha256"]:
             errors.append(f"{family_id}/{state}: runtime checksum differs from derivation report")

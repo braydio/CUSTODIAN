@@ -20,9 +20,9 @@ contact_shoulder_tiles = 2
 ensure_cardinal_broad_contact = true
 tangential_variant_run_tiles = 5
 contact_socket_by_state = {
-&"south_broad_01": Vector2(482, 100),
-&"south_broken_01": Vector2(474, 76),
-&"south_rooted_01": Vector2(474, 76),
+&"south_broad_01": Vector2(482, 180),
+&"south_broken_01": Vector2(474, 180),
+&"south_rooted_01": Vector2(474, 180),
 &"east_broad_01": Vector2(75, 400),
 &"west_broad_01": Vector2(462, 486),
 &"north_broad_01": Vector2(529, 270),
@@ -32,3 +32,9 @@ contact_socket_by_state = {
 &"corner_nw_01": Vector2(716, 674),
 }
 contact_socket_min_embed_px = 24
+contact_socket_min_embed_by_state = {
+&"south_broad_01": 96,
+&"south_broken_01": 96,
+&"south_rooted_01": 96,
+}
+contact_frontier_min_overlap_world_px = 64

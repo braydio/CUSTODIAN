@@ -205,6 +205,37 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Next action: commit and push the capture-path and validation fixes, run the same four-direction Moment Forge scenario from the exact clean committed SHA, compare the new SOUTH frame hash against `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`, and only request human review if it differs.
 - Blockers or open questions: final clean committed-SHA evidence has not yet been generated; AP2 remains open and AP3 remains gated.
 
+## SOUTH Render Mismatch Correction — 2026-10-15
+
+- Root cause: the SOUTH authored frontier socket was near the silhouette edge. `south_broad_01` had only 24 opaque source pixels inward from its socket, and the final-world crossing contract required only 8 px on each side. The contract therefore passed without a visibly meaningful terrace embed; this explains why the previous SOUTH viewport remained byte-identical even though displacement and ownership controls passed.
+- Correction: move SOUTH sockets for `south_broad_01`, `south_broken_01`, and `south_rooted_01` to y=180; require at least 96 opaque source pixels inward; and require the connected final-world SOUTH alpha component to overlap each seam side by at least 64 world px. Both thresholds now come from the Alpine profile and are checked by derivation, Asset V2 verification, runtime placement, and focused smoke.
+- Asset payloads: the preparation script regenerated all 26 normalized states. PNG hashes and dimensions remained unchanged; only socket metadata and derivation report changed. Asset V2 verification passed for all 26 states.
+- Validation: focused `procgen_alpine_cliff_presentation_smoke.gd` passed. Changed-file routing selected five owners and all five passed (Asset V2, Alpine, canon docs, macro presentation, Meridian); runner `complete=false` because pre-existing untracked Moment Forge report artifacts and unrelated `.uid` files have no changed-file owners. Those user/worktree artifacts were preserved.
+- Capture gate: rerun the identical four-direction `procgen/alpine_plateau_edge_review` from the committed clean branch SHA. Compare its dedicated SOUTH keyframe SHA directly with rejected `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`. Do not publish or request human review if the SHA is identical. AP2 remains open; AP3 remains gated.
+- Cleanup: the previous delete-after-review command was already run by the user; the manifest was absent when this turn retried it.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `A weak 8 px frontier crossing allowed a shallow SOUTH socket to pass while the viewport remained identical to rejected evidence.`
+- Root cause / contributing factors: `The source socket lay only 24 opaque pixels into geology and the seam contract had no meaningful depth requirement.`
+- Prevention / pipeline improvement: `Alpine profile now owns per-state opaque socket depth and SOUTH final-world overlap thresholds; derivation, asset verification, composer, and smoke all enforce the same values.`
+- Tooling / docs drift discovered: `Changed-file runner saw existing untracked report and UID artifacts without owners; five selected validation owners passed but the aggregate complete flag remained false.`
+- Follow-up: `fixed-in-scope`
+
+## Handoff
+
+- Next workstream: `procgen-alpine-cliff-presentation-v1`
+- Next packet state: `human-required`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Refresh reason: `none`
+- Next action: `Run the identical four-direction Moment Forge scenario from the clean committed SHA and compare the SOUTH keyframe hash with 4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa. Publish for human review only if it differs.`
+- Blockers or open questions: `Capture result is not yet known; AP2 remains open and AP3 remains gated.`
+
 
 ## Fresh SOUTH visual gate — 20261014T-south-visible-frame-7611635d
 

@@ -15,7 +15,6 @@ const CONTACT_TEXTURES := {
 }
 const CARDINALS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 const CONTACT_META := &"alpine_cliff_contact"
-const FRONTIER_CROSSING_MIN_OVERLAP_WORLD_PX := 8.0
 
 var _fascia_core_frontiers: Dictionary = {}
 var _fascia_shoulder_frontiers: Dictionary = {}
@@ -94,6 +93,7 @@ func apply_frontier_plan(
 			placements.append({"frontier_cell": cells[cells.size() / 2], "outward_direction": direction, "contact_state": state, "attached": false, "reason": "missing_or_invalid_authored_socket", "socket_error_px": INF})
 			continue
 		var socket_embed_depth := _socket_embed_depth(texture_image, state, Vector2i(roundi(socket_px.x), roundi(socket_px.y)))
+		minimum_embed = profile.socket_min_embed(StringName(state)) if profile != null else 24
 		if socket_embed_depth < minimum_embed:
 			placements.append({"frontier_cell": cells[cells.size() / 2], "outward_direction": direction, "contact_state": state, "attached": false, "reason": "contact_frontier_socket_only_touches_silhouette", "socket_error_px": INF, "socket_embed_depth_px": socket_embed_depth})
 			continue
@@ -135,7 +135,7 @@ func apply_frontier_plan(
 				socket_px,
 				socket_world,
 				outward_world,
-				FRONTIER_CROSSING_MIN_OVERLAP_WORLD_PX
+				profile.frontier_min_overlap(direction) if profile != null else 8.0
 			)
 		if not bool(frontier_crossing.get("crosses_frontier", false)):
 			placements.append({"frontier_cell": midpoint, "outward_direction": direction, "contact_state": state, "socket_world_position": socket_world, "resolved_socket_world_position": resolved_socket_world, "frontier_crossing": frontier_crossing, "sprite_world_position": sprite.global_position, "attached": false, "reason": "contact_alpha_does_not_cross_final_world_frontier", "socket_error_px": socket_error_px})

@@ -6,15 +6,15 @@
   "contact_sockets": {
     "south_broad_01": [
       482,
-      100
+      180
     ],
     "south_broken_01": [
       474,
-      76
+      180
     ],
     "south_rooted_01": [
       474,
-      76
+      180
     ],
     "east_broad_01": [
       75,
@@ -46,6 +46,11 @@
     ]
   },
   "contact_socket_min_embed_px": 24,
+  "contact_socket_min_embed_by_state": {
+    "south_broad_01": 96,
+    "south_broken_01": 96,
+    "south_rooted_01": 96
+  },
   "source_master_batch": "alpine-cliff-source-family-v1",
   "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
   "outputs": [
@@ -499,7 +504,7 @@
       "rotation_degrees": 0,
       "socket_px": [
         482,
-        100
+        180
       ],
       "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broad_01.png",
       "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broad_01.png",
@@ -540,7 +545,7 @@
       "socket_sides": [],
       "alpha_crop_wall_ok": true,
       "socket_embed_depth_px": {
-        "y": 24
+        "y": 104
       }
     },
     {
@@ -561,7 +566,7 @@
       "rotation_degrees": 0,
       "socket_px": [
         474,
-        76
+        180
       ],
       "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_broken_01.png",
       "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_broken_01.png",
@@ -602,7 +607,7 @@
       "socket_sides": [],
       "alpha_crop_wall_ok": true,
       "socket_embed_depth_px": {
-        "y": 24
+        "y": 128
       }
     },
     {
@@ -623,7 +628,7 @@
       "rotation_degrees": 0,
       "socket_px": [
         474,
-        76
+        180
       ],
       "inbox_output": "asset_drop/inbox/procgen_alpine_cliff_contact/south_rooted_01.png",
       "output": "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/south_rooted_01.png",
@@ -664,7 +669,7 @@
       "socket_sides": [],
       "alpha_crop_wall_ok": true,
       "socket_embed_depth_px": {
-        "y": 24
+        "y": 128
       }
     },
     {

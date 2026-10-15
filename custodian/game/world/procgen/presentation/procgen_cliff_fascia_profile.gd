@@ -23,6 +23,10 @@ extends Resource
 @export var contact_socket_by_state: Dictionary = {}
 ## Opaque geology must continue this many pixels inward from each socket.
 @export_range(8, 64, 1) var contact_socket_min_embed_px := 24
+## Direction/state-specific authored geology depth. SOUTH uses a deeper socket
+## to guarantee a visible overlap with the playable terrace.
+@export var contact_socket_min_embed_by_state: Dictionary = {}
+@export_range(8, 128, 1) var contact_frontier_min_overlap_world_px := 8
 
 @export_group("Fascia Variation")
 @export_range(2, 12, 1) var tangential_variant_run_tiles := 5
@@ -45,6 +49,16 @@ func depth_bias(direction: Vector2i) -> int:
 	if direction == Vector2i.DOWN: return south_depth_bias
 	if direction == Vector2i.LEFT: return west_depth_bias
 	return 0
+
+
+func socket_min_embed(state: StringName) -> int:
+	return int(contact_socket_min_embed_by_state.get(state, contact_socket_min_embed_px))
+
+
+func frontier_min_overlap(direction: Vector2i) -> float:
+	if direction == Vector2i.DOWN:
+		return float(contact_frontier_min_overlap_world_px)
+	return 8.0
 
 
 func is_valid() -> bool:

@@ -52,9 +52,9 @@ CONTACT_SOCKETS = {
     # Authored pixels on the final canvases. Each socket sits inside the
     # geology, far enough from its frontier-facing silhouette that the art
     # overlaps the playable edge instead of meeting it at a single pixel.
-    "south_broad_01": (482, 100),
-    "south_broken_01": (474, 76),
-    "south_rooted_01": (474, 76),
+    "south_broad_01": (482, 180),
+    "south_broken_01": (474, 180),
+    "south_rooted_01": (474, 180),
     "east_broad_01": (75, 400),
     "west_broad_01": (462, 486),
     "north_broad_01": (529, 270),
@@ -76,6 +76,11 @@ CONTACT_SOCKET_INWARD_DIRECTIONS = {
     "corner_nw_01": ((1, 0), (0, 1)),
 }
 MIN_SOCKET_EMBED_PX = 24
+SOCKET_EMBED_MIN_BY_STATE = {
+    "south_broad_01": 96,
+    "south_broken_01": 96,
+    "south_rooted_01": 96,
+}
 DEPTH = {
     "rocky_upland_descending_conifer_ledge": ("procgen/procgen_alpine_cliff_contact/contact_vegetated_broken_master_source.png", (80, 340, 1174, 1044), (896, 576)),
     "rocky_upland_broken_retaining_drop": ("procgen/procgen_alpine_cliff_contact/contact_industrial_master_source.png", (80, 340, 1174, 1044), (896, 576)),
@@ -253,10 +258,11 @@ def validate_contact_alpha(image: Image.Image, state: str) -> dict[str, object]:
             y += dy
         axis = "x" if dx else "y"
         socket_embed_depth[axis] = depth
-        if depth < MIN_SOCKET_EMBED_PX:
+        minimum_embed = SOCKET_EMBED_MIN_BY_STATE.get(state, MIN_SOCKET_EMBED_PX)
+        if depth < minimum_embed:
             raise ValueError(
                 f"{state}: frontier socket only touches the silhouette on {axis}; "
-                f"needs {MIN_SOCKET_EMBED_PX}px opaque overlap, got {depth}px"
+                f"needs {minimum_embed}px opaque overlap, got {depth}px"
             )
     socket_sides: set[str] = set()
     declared_socket = contact_socket(state, (width, height))
@@ -307,6 +313,7 @@ def main() -> int:
         "contact_alpha_rule": "preserve geology-only alpha silhouette; clear only border-connected neutral matte within RGB distance 24; reject unowned opaque canvas-edge spans >=25%; add at least 16 px transparent canvas margin",
         "contact_sockets": CONTACT_SOCKETS,
         "contact_socket_min_embed_px": MIN_SOCKET_EMBED_PX,
+        "contact_socket_min_embed_by_state": SOCKET_EMBED_MIN_BY_STATE,
         "source_master_batch": "alpine-cliff-source-family-v1",
         "source_master_zip_sha256": "e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3",
         "outputs": [],

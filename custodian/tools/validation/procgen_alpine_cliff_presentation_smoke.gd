@@ -24,12 +24,15 @@ func _initialize() -> void:
 				failures.append("Alpine profile socket does not match derived source alpha for %s" % String(state))
 			if not bool(item.get("alpha_crop_wall_ok", false)):
 				failures.append("contact derivation lacks alpha/crop-wall proof for %s" % String(state))
+			var minimum_embed := PROFILE.socket_min_embed(state)
 			for depth: Variant in (item.get("socket_embed_depth_px", {}) as Dictionary).values():
-				if int(depth) < 24:
+				if int(depth) < minimum_embed:
 					failures.append("contact derivation has insufficient socket overlap for %s" % String(state))
 	if not PROFILE.is_valid(): failures.append("Alpine fascia profile is invalid")
 	if not PROFILE.ensure_cardinal_broad_contact or PROFILE.contact_min_run_tiles != 10 or PROFILE.contact_shoulder_tiles != 2 or PROFILE.contact_socket_min_embed_px != 24:
 		failures.append("Alpine contact profile does not enforce the evidence-tuned 10/2/24px/cardinal contract")
+	if PROFILE.contact_frontier_min_overlap_world_px != 64:
+		failures.append("Alpine SOUTH contact lacks the required 64 px final-world seam overlap")
 	for source_id in range(219, 231):
 		if not TILESET.has_source(source_id): failures.append("missing Alpine fascia source %d" % source_id)
 	if PROFILE.depth_bias(Vector2i.UP) >= PROFILE.depth_bias(Vector2i.DOWN):
@@ -259,15 +262,15 @@ func _assert_attached_placements(summary: Dictionary, contact_root: Node2D, alph
 		if float(placement.get("socket_error_px", INF)) > 8.0:
 			failures.append("contact socket error exceeds 8 px: %s" % str(placement))
 		var direction := placement.get("outward_direction", Vector2i.ZERO) as Vector2i
+		var state := StringName(placement.get("contact_state", ""))
 		var sprite_name := "AlpineCliffContact_%s_%s" % [_direction_name(direction), String(placement.get("contact_state", ""))]
 		var contact_sprite := contact_root.get_node_or_null(sprite_name) as Sprite2D
 		if contact_sprite == null:
 			failures.append("attached placement has no final Sprite2D transform: %s" % sprite_name)
 		elif contact_sprite.to_global(PROFILE.contact_socket_by_state.get(StringName(placement.get("contact_state", "")), Vector2.ZERO)).distance_to(placement.get("socket_world_position", Vector2.INF)) > 8.0:
 			failures.append("final Sprite2D socket does not meet its world frontier: %s" % sprite_name)
-		if int(placement.get("socket_embed_depth_px", 0)) < PROFILE.contact_socket_min_embed_px:
+		if int(placement.get("socket_embed_depth_px", 0)) < PROFILE.socket_min_embed(state):
 			failures.append("contact socket lacks opaque geological overlap: %s" % str(placement))
-		var state := StringName(placement.get("contact_state", ""))
 		var asset_contract := alpha_contract_by_state.get(state, {}) as Dictionary
 		if not bool(asset_contract.get("alpha_crop_wall_ok", false)):
 			failures.append("contact asset lacks validated irregular alpha: %s" % String(state))
@@ -297,8 +300,9 @@ func _assert_south_socket_in_final_world(contact_root: Node2D, composer: RefCoun
 		var crossing := placement.get("frontier_crossing", {}) as Dictionary
 		if not bool(crossing.get("crosses_frontier", false)):
 			failures.append("south connected alpha does not cross the final-world frontier: %s" % str(crossing))
-		if float(crossing.get("inward_overlap_world_px", 0.0)) < 8.0 or float(crossing.get("outward_overlap_world_px", 0.0)) < 8.0:
-			failures.append("south alpha component does not intersect both final-world seam bands")
+		var required_overlap := profile.frontier_min_overlap(Vector2i.DOWN)
+		if float(crossing.get("inward_overlap_world_px", 0.0)) < required_overlap or float(crossing.get("outward_overlap_world_px", 0.0)) < required_overlap:
+			failures.append("south alpha component does not intersect both final-world seam bands by the required 64 px")
 		# Negative control: a displaced image with an intact source socket and alpha
 		# silhouette must fail the final-world frontier-crossing contract.
 		var original_position := sprite.global_position
@@ -308,7 +312,7 @@ func _assert_south_socket_in_final_world(contact_root: Node2D, composer: RefCoun
 			socket_px,
 			expected_world,
 			outward_world,
-			8.0
+			required_overlap
 		)
 		if bool(displaced.get("crosses_frontier", false)):
 			failures.append("final-world frontier regression accepted a displaced south contact")
