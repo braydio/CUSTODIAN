@@ -95,6 +95,20 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Retention: after recording this disposition, clean `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` using its emitted delete-after-review command.
 - AP2 remains open. AP3 remains unclaimed/dependency-gated.
 
+
+
+## SOUTH Seam Correction and Fresh Evidence — 20261014T-south-frontier-35ad6afe
+
+- Branch sync: latest `origin/main@1326220d8172cee9322363b7a5c020acaf41f64c` was merged cleanly; pushed AP2 branch checkpoint includes merge commit `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`.
+- Correction: SOUTH contact is attached from the final `Sprite2D.to_global()` socket transform. Its socket-connected alpha component must extend at least 8 world pixels to both sides of the authoritative frontier before attachment or fascia suppression is accepted. The SOUTH smoke uses translated, rotated, nonuniform parent transforms and rejects an intact contact displaced 1,024 px outward.
+- Focused Alpine smoke: PASS.
+- Changed-file validation: complete coverage; 3 passed, 1 failed, 0 skipped. The unrelated `procgen_meridian_hardstand_macro` smoke fails `report.valid.size() == 36` against the current catalog. Keep this validation blocker open; do not change that adjacent contract as part of the SOUTH correction.
+- Moment Forge: `20261014T-south-frontier-35ad6afe`, scenario `procgen/alpine_plateau_edge_review`, evidence mode PASS; four contacts attached, max socket error 0 px, minimum support depth 24 px. Local manifest commit `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc` equals capture `HEAD`, and `dirty=false`.
+- Uploaded/fetched Dropbox manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json`; fetched `git.commit` equals `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`.
+- Retention: new evidence is `delete-after-review`; after recording the new human disposition, run its emitted cleanup command. Prior reviewed run `20261014T195049Z` was deleted using its emitted cleanup command.
+- Human review pending. Questions: (1) Does SOUTH visibly join terrace/fascia without a backdrop/fog gap? (2) Does SOUTH read as attached geology without crop wall/detached mass? (3) Are north/east/west acceptable and is the playable edge clear and truthful?
+- AP2 remains open; AP3 remains dependency-gated.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -109,10 +123,10 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `partial`
 - Friction severity: `medium`
-- What went wrong: `Human review of 20261014T061508Z failed contact/fascia integration and attached geology while playable-edge readability passed. The first socket implementation accepted opaque pixels on the silhouette edge, so zero positional error did not prove overlap. The SOUTH continuation now checks the actual Sprite2D socket and its connected alpha component in final world space under a transformed parent; the component must extend at least 8 px onto both terrace and cliff sides before suppression is granted, and an outward-displaced negative control is rejected. Focused Alpine validation passed. Changed-file validation has complete coverage and reports 32 passed, 1 failed, 1 skipped: procgen_meridian_hardstand_macro fails its existing exact report.valid.size() == 36 assertion against current merged content. An initial run also hit an empty /tmp/.git fixture issue; the final rerun used TMPDIR=/dev/shm.`
+- What went wrong: `Human review of 20261014T061508Z failed contact/fascia integration and attached geology while playable-edge readability passed. The first socket implementation accepted opaque pixels on the silhouette edge, so zero positional error did not prove overlap. The SOUTH continuation now checks the actual Sprite2D socket and its connected alpha component in final world space under a transformed parent; the component must extend at least 8 px onto both terrace and cliff sides before suppression is granted, and an outward-displaced negative control is rejected. Focused Alpine validation passed. Latest changed-file validation has complete coverage and reports 3 passed, 1 failed, 0 skipped: procgen_meridian_hardstand_macro fails its existing exact report.valid.size() == 36 assertion against current merged content. An initial run also hit an empty /tmp/.git fixture issue; the final rerun used TMPDIR=/dev/shm.`
 - Root cause / contributing factors: `Composer placement formerly reconstructed socket position from parent-local arithmetic. Broad changed-file ownership selects the Meridian macro test, whose fixed catalog-size assertion is stale against the current catalog. An empty /tmp/.git directory misled the standalone-project import-preflight fixture.`
 - Prevention / pipeline improvement: `Resolve placement through Sprite2D.to_global() after parenting; retain the transformed-parent SOUTH final-world regression and register the Alpine smoke as a changed-file owner. Keep the Meridian assertion issue separate from this SOUTH-only correction. Use TMPDIR=/dev/shm for validation on this host until the unrelated /tmp marker is resolved.`
-- Tooling / docs drift discovered: `Changed-file validation coverage was initially missing the focused Alpine smoke owner; added procgen_alpine_cliff_presentation to validation_manifest.json. The final changed-file suite remains blocked by procgen_meridian_hardstand_macro. The 164000Z evidence remains invalid; the prior 195049Z visual review is superseded by this SOUTH correction.`
+- Tooling / docs drift discovered: `Changed-file validation coverage was initially missing the focused Alpine smoke owner; added procgen_alpine_cliff_presentation to validation_manifest.json. The final changed-file suite remains blocked by procgen_meridian_hardstand_macro. The 164000Z evidence remains invalid. The 195049Z visual disposition is recorded and its bundle was deleted under delete-after-review; the new SOUTH evidence bundle is now the active human gate.`
 - Follow-up: `manual-follow-up`
 
 ## Refresh Planning Authority
@@ -131,5 +145,5 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none`
-- Next action: Synchronize against latest main, correct the south final-world-space attachment seam only, add the final transformed-alpha frontier-crossing regression, rerun focused/changed validation, and publish one new clean-SHA four-direction review bundle.
-- Blockers or open questions: `south final-world-space terrace/contact continuity is the sole visual blocker; AP3 remains gated until the corrected clean-SHA human review passes`
+- Next action: Review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json` and record the three contact-integration answers. Then run the emitted delete-after-review cleanup. AP2 closeout also requires resolving the unrelated changed-file Meridian catalog-count failure; only after validation and visual review pass may AP3 become eligible.
+- Blockers or open questions: `new human visual disposition pending; changed-file validation still fails procgen_meridian_hardstand_macro exact catalog-count assertion; AP3 remains dependency-gated`

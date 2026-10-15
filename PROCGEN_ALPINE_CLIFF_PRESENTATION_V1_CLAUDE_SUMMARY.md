@@ -2,7 +2,7 @@
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
-## Latest continuation — SOUTH final-world seam
+## Latest continuation — SOUTH final-world seam and review handoff
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
@@ -11,15 +11,13 @@ The existing AP2 worktree was synced by merging `origin/main@5b3d1806692c941bf0d
 - Focused `procgen_alpine_cliff_presentation_smoke.gd`: PASS.
 - Latest changed-file validation: coverage complete; 3 passed, 1 failed, 0 skipped. The focused Alpine, Reciprocal Continuity docs, and Macro Presentation tests passed. `procgen_meridian_hardstand_macro` fails its existing exact `report.valid.size() == 36` assertion on current merged content. It is outside the SOUTH/AP2 code surface and was selected through broad presentation ownership. Do not close AP2 while this required validation result remains unresolved.
 - An initial changed-file run also exposed `/tmp/.git`, an empty directory that makes the standalone-project LFS fixture misclassify temporary directories. The final run used `TMPDIR=/dev/shm`; it passed that fixture.
-- The human review of `20261014T195049Z` recorded terrace/fascia `FAIL`, attached geology `FAIL`, playable edge `PASS`, with the blocker isolated to SOUTH. Fresh four-direction Moment Forge capture and human review remain pending; no new evidence is being represented as accepted.
+- The human review of `20261014T195049Z` recorded terrace/fascia `FAIL`, attached geology `FAIL`, playable edge `PASS`, with the blocker isolated to SOUTH. Its delete-after-review cleanup completed. Fresh run `20261014T-south-frontier-35ad6afe` passed with four attached contacts, 0 px maximum socket error, and the focused connected-alpha regression. Local manifest and fetched Dropbox manifest both record `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`; local source manifest has `dirty=false`. Uploaded manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json`. New human review is pending.
 
 ## Outcome
 
-The human disposition for `20261014T061508Z` remains FAIL for contact/fascia integration and attached geology; playable-edge readability passed. That reviewed bundle was cleaned under its delete-after-review policy. The `20261014T164000Z-socket-embed-contract` run is invalid for final acceptance because its manifest records `841769be...`. A fresh replacement run has now passed from a clean checkout at pushed commit `14148e47ab436e4f5081c90434277590c7190b96`; its manifest commit matches `HEAD` and reports `dirty=false`. AP2 remains open pending human visual review, and AP3 remains dependency-gated.
+AP2 remains open. Human review of the valid `20261014T195049Z` bundle recorded terrace/fascia `FAIL`, attached geology `FAIL`, playable-edge readability `PASS`; SOUTH was the sole failing direction. That reviewed bundle was deleted under its recorded delete-after-review policy. The latest SOUTH correction is committed and pushed; a fresh clean-SHA evidence run is published for human review. AP3 remains dependency-gated.
 
-This correction found that a few authored sockets were opaque but lay on the silhouette itself. A zero-error point round trip therefore proved a touch, not an attached overlap. The ten contact PNG payloads already had true irregular binary geology alpha, transparent margins, and no detected crop walls; this correction kept those exact images and moved each authored socket inward. Asset V2 correctly classified the unchanged payloads as duplicates, so no new state IDs or PNG ingest were needed.
-
-The Alpine profile now records all ten inboard socket coordinates and a 24 px minimum opaque support depth. Runtime placement rejects a socket that only touches the alpha silhouette, and such a rejected contact emits neither art nor fascia suppression. The contact composer reports support depth with each successful placement.
+The source masters and ten contact PNG payloads were preserved. The correction resolves the socket through the final `Sprite2D` transform and validates that the socket-connected alpha component crosses the final world frontier, with at least 8 world pixels on each side, before the contact can emit fascia suppression. The focused smoke includes a transformed-parent SOUTH case and a 1,024 px outward-displacement negative control.
 
 ## Evidence
 
@@ -33,17 +31,15 @@ The Alpine profile now records all ten inboard socket coordinates and a 24 px mi
 - Changed-file validation selected 69 tests: 38 passed, 0 failed, 1 timed out (`procgen_region_frame` at 120 s), and 30 were skipped after the actor-tier timeout. The timed-out test passed alone in `112431 ms`; other Godot/reviewer work was competing during the batch. Focused Alpine and Macro Presentation smokes passed after the changes. Asset Doctor’s four Awakening Designation Locker mismatches are unrelated and were not included in AP2 scope.
 - The Procgen Runtime Optimization Roadmap planning-chat link now points to the current AP2 authoring chat.
 
-## Checkpoint identity
+## Checkpoint identity and current visual handoff
 
-At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presentation-v1` both resolved to `f22fb17b1ce5cc59b5fdde2a7adcdcc1b1f6a9b0`. After fetch, the branch was 7 commits ahead and 10 behind `origin/main@8decfc1fc51fa10c6dbca2e88be50d7b059040e3`; a normal merge incorporated current main cleanly before these changes. The earlier socket correction `d6acb605d8a86ec4c5053302653fd235806bbb46` remains in AP2 history. The replacement evidence run `20261014T-socket-embed-verified-14148e47` was captured from clean detached checkout `14148e47ab436e4f5081c90434277590c7190b96`; its local Moment Forge manifest records the same commit and `dirty=false`. The uploaded review manifest was fetched back from Dropbox and its `git.commit` also matches `14148e47...`.
+Latest main `1326220d8172cee9322363b7a5c020acaf41f64c` was merged cleanly. The AP2 branch checkpoint used for capture is `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`. Moment Forge run `20261014T-south-frontier-35ad6afe` used scenario `procgen/alpine_plateau_edge_review` in evidence mode, passed, and its local manifest records `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc` with `dirty=false`. The uploaded review manifest was fetched from Dropbox; its `git.commit` also equals `35ad6afe6d92ad0e6b9c442139d1f092de0d01fc`.
 
-## Visual review handoff
-
-- Current run: `20261014T-socket-embed-verified-14148e47`, Moment Forge scenario `procgen/alpine_plateau_edge_review`; PASS with no run, probe, or capture failures. All four directions report attached contacts; maximum socket error is `0 px`, minimum support depth is `24 px`, core suppression is `279` cells, and shoulder frontier count is `16`.
-- Uploaded manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json`. Fetched manifest `git.commit=14148e47ab436e4f5081c90434277590c7190b96`, equal to capture `HEAD`; source Moment Forge manifest reports `dirty=false`. The prior 164000Z manifest remains invalid and should not be used for this gate.
-- Retention: `delete-after-review`; after a human decision, run `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
-- Questions: (1) Do contacts visibly join the playable terrace and fascia in all four directions without a chasm gap or floating slab? (2) Do the silhouettes read as attached geology without crop walls or detached masses? (3) Does the playable floor edge remain clear and truthful?
-- A prior `20261014T065730-0400` upload has no recorded visual decision. It is superseded as the active review gate by this fresh run; its cloud bundle remains untouched because delete-after-review cleanup requires a recorded decision.
+- Uploaded manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json`
+- Retention: `delete-after-review`; after recording the human decision, run `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-frontier-final-35ad6afe/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
+- Questions: (1) Does SOUTH visibly join the playable terrace and fascia without a backdrop/fog gap? (2) Does SOUTH read as attached geology without a crop wall or detached mass? (3) Are north/east/west acceptable and is the playable floor edge clear and truthful?
+- The earlier `20261014T195049Z` bundle was deleted after its disposition was recorded. Do not use it for the current gate.
+- Current changed-file validation has complete coverage, 3 passed, 1 failed, 0 skipped. The unrelated `procgen_meridian_hardstand_macro` exact catalog-size assertion remains the technical blocker; AP2 closeout and AP3 eligibility remain gated.
 
 ## Process Feedback
 
@@ -66,7 +62,7 @@ At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presenta
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 - Refresh reason: none
 - Next action: review `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T195049Z/REVIEW_MANIFEST.json` and answer the three contact-integration questions.
-- Blockers or open questions: human visual disposition is pending; changed-file validation had one `procgen_region_frame` timeout during host contention, and its isolated rerun passed in 112431 ms. Keep AP2 open and do not claim AP3 until visual review is recorded.
+- Blockers or open questions: human visual disposition is pending. Latest changed-file validation has complete coverage with 3 passes and 1 failure: `procgen_meridian_hardstand_macro` fails its unrelated exact catalog count assertion (`report.valid.size() == 36`). Keep AP2 open and do not claim AP3 until the validation issue is resolved and visual review passes.
 
 ## Human visual disposition — 20261014T195049Z
 
