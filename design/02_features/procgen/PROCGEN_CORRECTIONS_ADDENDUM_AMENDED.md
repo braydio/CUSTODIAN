@@ -198,9 +198,9 @@ Required result:
 
 Explicitly document:
 
-> Elevation traversal query API is live; actor/enemy pathfinding enforcement is deferred.
+> Historical Phase-8 note superseded on 2026-10-15: NavigationSystem now consumes elevation traversal edges and navigation-driven enemies use it; Operator/vehicle/direct-special movement remains incomplete. See `design/02_features/world/VERTICAL_TRAVERSAL_SYSTEM.md`.
 
-Do not claim that elevation affects enemy navigation yet.
+Do not claim universal actor support; NavigationSystem enemy pathing is elevation-aware while other movement paths remain explicitly scoped.
 ```
 
 ## 8. Validation list can now include roads smoke
