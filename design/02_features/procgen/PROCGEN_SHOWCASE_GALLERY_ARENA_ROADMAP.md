@@ -3,7 +3,7 @@
 **Status:** authorized planning program; packet promotion / manual refresh follows live DAG and per-pair authoring preflight.
 **Baseline inspected:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
 **Workstream family:** `procgen-showcase-`
-**Authoring chat:** not-recorded (replace with exact current conversation URL once provided; never substitute an older planning URL).
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e
 **Estimate locked:** **8 implementation workstreams + 8 fresh-context paired reviews = 16 task packets**, plus this roadmap; corrections spawned by findings are not pre-counted.
 
 ## Observed live authority and decision
@@ -64,6 +64,19 @@ One dev-only registered authored destination, with five accessible curated wings
 - PGA-6: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md` and `custodian/docs/ai_context/task_packets/REVIEW_PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md`
 - PGA-7: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_SEED_COMPARISON.md` and `custodian/docs/ai_context/task_packets/REVIEW_PROCGEN_SHOWCASE_SEED_COMPARISON.md`
 - PGA-8: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md` and `custodian/docs/ai_context/task_packets/REVIEW_PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md`
+
+## PGA-1 Gallery Shell (2026-10-15)
+
+`procgen_showcase_gallery` is now registered as a reset-on-entry dev destination.
+Its authored floor regions connect the Terrain, Topology, Sites, Population,
+and Presentation wings around a central concourse; the arena threshold remains
+collision-sealed and labeled as unloaded. The production destination owns no
+Operator, controller, camera, generator, or generated map. Its standalone
+playtest wrapper owns one real Operator/controller/camera, and the registered
+ingress/return path reuses the same Operator across reset-on-entry visits.
+PGA-1 implementation and its focused validation are complete; its immediate
+fresh-context paired review is the next gate. The catalog and generated arena
+remain outside this shell's scope.
 
 ## Future scope, deliberately not included
 

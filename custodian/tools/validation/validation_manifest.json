@@ -4096,6 +4096,28 @@
       "needs_import": true
     },
     {
+      "id": "procgen_showcase_gallery_shell",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen_showcase",
+        "authored_level",
+        "walkability",
+        "ingress",
+        "return"
+      ],
+      "owners": [
+        "custodian/content/levels/dev/procgen_showcase_gallery/**",
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
+        "design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_arena_foundation",
       "type": "godot_script",
       "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",

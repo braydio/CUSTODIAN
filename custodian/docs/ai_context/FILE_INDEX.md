@@ -1280,6 +1280,10 @@ Last updated: 2026-10-02
 
 ## Elevated Procgen Presentation
 
+- `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md` — PGA-1–PGA-8 implementation sequence and current gallery-shell boundary.
+- `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/` — registered authored showcase shell, sealed threshold, Collision/POI authoring view, ingress, and single-Operator playtest wrapper.
+- `custodian/tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd` — checks wing-floor connectivity, closed arena threshold, dev registration, wrapper ownership, and Operator-preserving ingress/return.
+
 - `design/02_features/procgen/PROCGEN_REGION_FRAME_PROFILES.md` — locked architecture separating local biome, permanent region-border/underlay frame, and Archive Resolve; defines the first `ALPINE_PLATEAU` frame and future frame catalogue.
 - `design/02_features/procgen/ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` — locked resolved art direction for the first generated Alpine Plateau starting region, including terrain, hardstand, structures/vehicles, field UI and marker/beacon grammar.
 - `design/02_features/procgen/FIRST_CAMPAIGN_WORLD_VISUAL_LOCK.md` — compatibility/supersession note for the earlier over-broad visual lock.

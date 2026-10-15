@@ -1,5 +1,17 @@
 # CURRENT STATE — CUSTODIAN
 
+## Procgen Showcase Gallery Shell (2026-10-15)
+
+The registered dev-only `procgen_showcase_gallery` destination provides five
+connected authored exhibit wings and an intentionally sealed central arena
+threshold. The production scene contains no Operator/controller/camera or map
+generator; its standalone playtest wrapper owns the real Operator and standard
+runtime systems. Reset-on-entry ingress/return preserves the same Operator.
+The gallery is a shell only: generated map realization, exhibit catalog,
+controls, and runtime inspection remain later PGA slices. The implementation
+and changed-file validation passed; the paired fresh-context review is the next
+gate. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 
 Three repository-owned tools now exist: `custodian/tools/assets/dropbox_asset_audit.py` (read-only three-lane scan, legacy registry + Asset V2 status projection), `dropbox_asset_stage.py` (explicit approval/SHA-pinned ZIP fetch, source_work staging and optional per-frame pixel-art normalization), and `dropbox_asset_publish.py` (explicit immutable Dropbox audit receipt + derived current index). `custodian/content/metadata/assets/source_review_receipts.v1.json` starts empty: **no new batch is automatically approved**, even if source is uploaded or older registry says `active`. Read-only and write-side focused suites are wired into GitHub Validate Repository CI.
