@@ -107,3 +107,9 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - Contact sheet SHA `eedacf7581ee1da64a47447c17f6044bacfdc83430da5223aa07b36574267f58`, differs from prior failed sheet `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`. SOUTH `tick_000075.png` SHA `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`.
 - Questions: (1) Does SOUTH visibly join the playable terrace and fascia without a backdrop or fog gap? (2) Does SOUTH read as attached geology without a crop wall or detached mass? (3) Are north/east/west acceptable and is the playable floor edge clear and truthful?
 - Cleanup after the user decision: `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
+
+## Human disposition — SOUTH visible frame 7611635d
+
+The clean capture and validation are technically green, but the human gate remains `FAIL / FAIL / PASS`. The new dedicated SOUTH frame `tick_000075.png` has SHA-256 `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`, exactly matching the previously failed SOUTH `tick_000085.png`. The differing contact-sheet SHA therefore reflects sheet composition/tick selection, not changed SOUTH pixels.
+
+Retain the final-world seam validator and displacement ownership control, but do not close AP2. Diagnose the gap between that machine contract and the actual rendered SOUTH composition. A future review bundle must show a genuinely changed SOUTH viewport hash before requesting another human disposition. AP3 remains gated.

@@ -120,6 +120,19 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - The changed-file blocker is not actually unrelated to AP2: this branch expands `terrain_stamp_catalog_v1.tres` from 36 to 40 profiles by adding four AP2 depth-chunk profiles, while `procgen_meridian_hardstand_macro_smoke.gd` hard-codes the entire shared catalog total to 36 even though its real family contract is Meridian count 10. Resolve that stale cross-family assertion in scope, preferably by removing the global exact-total assertion and retaining `report.rejected.is_empty()` plus the exact Meridian-family count/contract checks. Do not merely label the failure unrelated.
 - AP2 remains open and AP3 remains gated.
 
+
+## 2026-10-14 Human Disposition — SOUTH Visible Frame 7611635d
+
+- Provenance/validation: PASS. Capture commit `7611635d00aa3e110d0e08786b3d74a6dfbb82be`; `dirty=false`; changed-file validation 38/38 PASS with complete coverage.
+- Human visual gate: `FAIL / FAIL / PASS`.
+  - SOUTH terrace/fascia visible join: `FAIL`.
+  - SOUTH attached-geology read: `FAIL`.
+  - North/east/west acceptability + playable-edge truthfulness: `PASS`.
+- Decisive evidence: the new dedicated SOUTH frame is byte-identical to the previously failed SOUTH frame. Prior failed `tick_000085.png` SHA-256 = `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; new `tick_000075.png` SHA-256 = the same value. Therefore the changed contact-sheet hash does not prove changed SOUTH pixels; it reflects changed contact-sheet composition/tick selection.
+- Consequence: the final-world seam validator and displacement ownership control may be correct, but the production-visible SOUTH composition still does not differ from the already rejected visual state. Do not close AP2 and do not claim AP3.
+- Next correction should trace why the validated seam contract does not alter the rendered SOUTH result. Compare final sprite transform, fascia-suppression output, and actual rendered SOUTH viewport against the prior failed state. A future human-gate bundle must contain a SOUTH frame whose SHA differs from `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`, not merely a different contact-sheet wrapper.
+- Retention: this bundle is reviewed and may now be cleaned with its recorded delete-after-review command.
+
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
@@ -156,8 +169,8 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Summary backlink: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none`
-- Next action: Diagnose why the corrected SOUTH runtime path produced byte-identical Moment Forge media to the prior failed bundle; fix the fixture/capture path or runtime integration so the correction is actually visible, remove the stale shared-catalog total assertion from the Meridian family smoke while preserving its family-specific checks, rerun complete changed-file validation, then publish one genuinely changed clean-SHA four-direction review bundle.
-- Blockers or open questions: `SOUTH human gate still fails because the new contact sheet is byte-identical to the prior failed evidence; Moment Forge/runtime-fixture mismatch must be resolved. The Meridian global catalog-count assertion is stale because AP2 itself expands the shared catalog from 36 to 40. AP3 remains gated.`
+- Next action: Trace why the validated SOUTH final-world seam/suppression contract still renders the exact same SOUTH pixels as the prior failed state. Produce a correction that changes the actual SOUTH viewport, rerun focused + changed validation, and only request another human gate if the SOUTH frame hash differs from `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`.
+- Blockers or open questions: `SOUTH visual result is still byte-identical to the prior failed SOUTH frame despite green seam validation; AP2 remains open and AP3 remains gated.`
 
 
 ## Capture-path diagnosis and validation correction — 2026-10-14
