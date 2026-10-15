@@ -10,7 +10,7 @@
 - Locks: `procgen-showcase-level, procgen-showcase-inspector`
 - Review: `none`
 - Review target workstream: `procgen-showcase-integration-closeout`
-- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
@@ -27,7 +27,7 @@
 - Review focus: Scope, single authority, accepted-map fidelity, real runtime proof, negative controls and bounded performance/capture.
 - Acceptance: Findings-first independent receipt with zero blocking defects and zero material evidence gaps to pass; log stable R<cycle>-NN findings, allow bounded correction/re-review per root AGENTS, never modify reviewed implementation as part of review.
 - Non-goals: No opportunistic fixes, duplicate new feature code or self-approved subjective aesthetics.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only a durable review receipt, review-packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 - Next workstream: `none`
@@ -38,3 +38,6 @@
 - Refresh reason: `none`
 - Next action: `Complete final closeout and update roadmap actuals`
 - Blockers or open questions: `none after valid independent review`
+
+## Publication Gate
+Do not claim this draft review until the matching implementation archives complete and authoring/preflight promotion has made this review ready/auto on live main.

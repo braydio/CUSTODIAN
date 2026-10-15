@@ -10,7 +10,7 @@
 - Locks: `procgen-showcase-exemplar`
 - Review: `none`
 - Review target workstream: `procgen-showcase-exemplar-search`
-- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
 - Authoring chat: `not-recorded`
 - Visual review: `none`
@@ -27,7 +27,7 @@
 - Review focus: Scope, single authority, accepted-map fidelity, real runtime proof, negative controls and bounded performance/capture.
 - Acceptance: Findings-first independent receipt with zero blocking defects and zero material evidence gaps to pass; log stable R<cycle>-NN findings, allow bounded correction/re-review per root AGENTS, never modify reviewed implementation as part of review.
 - Non-goals: No opportunistic fixes, duplicate new feature code or self-approved subjective aesthetics.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only a durable review receipt, review-packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 - Next workstream: `procgen-showcase-seed-comparison`
@@ -38,3 +38,6 @@
 - Refresh reason: `Next generated-world/inspection integration must be rederived from newly landed owner and review receipt`
 - Next action: `Verify dependency archive and manually refresh only if successor's packet requires it; then run targeted authoring preflight before promotion`
 - Blockers or open questions: `none after valid independent review`
+
+## Publication Gate
+Do not claim this draft review until the matching implementation archives complete and authoring/preflight promotion has made this review ready/auto on live main.
