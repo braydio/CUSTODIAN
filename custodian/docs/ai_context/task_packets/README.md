@@ -51,6 +51,8 @@ normal closeout.
 
 
 <!-- task_packet_index:managed:start -->
+- [`REVIEW_AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md`](REVIEW_AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md) — Independently verify restricted reviewer Godot cache access preserves real concurrency locks and Git restrictions.
+- [`AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md`](AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md) — Let restricted paired-review Codex sessions use the shared CUSTODIAN Godot cache/job-budget namespace without granting Git metadata write access.
 - `AGENT_PAIRED_REVIEW_FINDINGS_CLOSEOUT_V1.md` — Allow a real independent paired review to conclude administratively with passed, findings, or human_required, without passing an unaccepted implementation or...
 - `LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Guarantee **at most one pending or consumed physical allocation per F14-managed logical actor identity**, including cancel, rollback, stale callback and camp...
 - `REVIEW_AGENT_NEXT_EXECUTION_BOUNDARY_V1.md` — Independently falsify Agent Next Execution Boundary V1 against the landed code and all numbered implementation acceptance items.
