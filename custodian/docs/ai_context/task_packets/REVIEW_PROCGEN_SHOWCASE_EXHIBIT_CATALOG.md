@@ -13,7 +13,7 @@
 - Review target workstream: `procgen-showcase-exhibit-catalog`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_EXHIBIT_CATALOG.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `conditional`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -35,7 +35,7 @@
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `Next generated-world/inspection integration must be rederived from newly landed owner and review receipt`
 - Next action: `Verify dependency archive and manually refresh only if successor's packet requires it; then run targeted authoring preflight before promotion`
 - Blockers or open questions: `none after valid independent review`

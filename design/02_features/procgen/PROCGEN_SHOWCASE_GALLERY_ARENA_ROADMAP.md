@@ -1,7 +1,9 @@
 # Procgen Showcase Gallery Arena · Implementation Roadmap
 
-**Status:** authorized planning program; packet promotion / manual refresh follows live DAG and per-pair authoring preflight.
-**Baseline inspected:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
+**Status:** executing. PGA-1 landed and independently reviewed/passed; PGA-2 published ready/auto; PGA-3 post-review architecture refresh submitted for paired authoring preflight; PGA-4–8 remain manual planning drafts.
+**Original architecture baseline:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
+**PGA-1 verified:** implementation `b7ba5f154cbdee49ad9f56506868b95a0c02d301`; passed fresh-context review archived on main with 6 focused and 46/46 changed-file checks, zero blocking defects/gaps (2026-10-15).
+**Post-review refresh:** verified against `main@8edc7252b1f1f71d057d7d9b92977b58922bfbdc` (2026-10-15); promotion/claim status must be confirmed against newer live main after authoring workflow.
 **Workstream family:** `procgen-showcase-`
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e
 **Estimate locked:** **8 implementation workstreams + 8 fresh-context paired reviews = 16 task packets**, plus this roadmap; corrections spawned by findings are not pre-counted.
@@ -25,21 +27,21 @@ One dev-only registered authored destination, with five accessible curated wings
 
 | Slice | Implementation (paired review is `review-<id>`) | Depends on completed *reviews* | Publication now | Scope |
 | --- | --- | --- | --- | --- |
-| PGA-1 | `procgen-showcase-gallery-shell` | `none` | draft/manual + automatic authoring handoff → ready/auto on validator PASS | initial gallery-shell |
-| PGA-2 | `procgen-showcase-exhibit-catalog` | `review-procgen-showcase-gallery-shell` | draft/manual + automatic authoring handoff → ready/auto on validator PASS | catalog after gallery-shell review |
-| PGA-3 | `procgen-showcase-generated-arena` | `review-procgen-showcase-gallery-shell` | draft/manual; explicit ChatGPT/user refresh after dependencies land | generated-world host |
+| PGA-1 | `procgen-showcase-gallery-shell` | `none` | **complete/archived; independent review passed** | initial gallery-shell |
+| PGA-2 | `procgen-showcase-exhibit-catalog` | `review-procgen-showcase-gallery-shell` | **ready/auto; review prerequisite archived/passed; dispatcher claim still controls** | catalog after gallery-shell review |
+| PGA-3 | `procgen-showcase-generated-arena` | `review-procgen-showcase-gallery-shell` | **draft/manual; post-PGA-1 architecture refreshed; targeted paired authoring promotion pending** | generated-world host |
 | PGA-4 | `procgen-showcase-generation-controls` | `review-procgen-showcase-generated-arena` | draft/manual; explicit ChatGPT/user refresh after dependencies land | seed/session lifecycle |
 | PGA-5 | `procgen-showcase-runtime-inspector` | `review-procgen-showcase-generation-controls, review-procgen-showcase-exhibit-catalog` | draft/manual; explicit ChatGPT/user refresh after dependencies land | read-only runtime diagnostics |
 | PGA-6 | `procgen-showcase-exemplar-search` | `review-procgen-showcase-exhibit-catalog, review-procgen-showcase-generation-controls, review-procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after dependencies land | semantic exemplar lookup |
 | PGA-7 | `procgen-showcase-seed-comparison` | `review-procgen-showcase-generation-controls, review-procgen-showcase-runtime-inspector` | draft/manual; explicit ChatGPT/user refresh after dependencies land | seed comparison/capture |
 | PGA-8 | `procgen-showcase-integration-closeout` | `review-procgen-showcase-exemplar-search, review-procgen-showcase-seed-comparison` | draft/manual; explicit ChatGPT/user refresh after dependencies land | integration validation |
 
-**Count:** 16 packets. PGA-1 is root. PGA-2 has the mechanical PGA-1 review dependency but its manifest/selection semantics are already specified; it can be auto-promoted after targeted preflight. PGA-3 through PGA-8 intentionally require a **manual architecture/API refresh** after upstream reviews land; their contracts are durable scopes, not authorization to claim prematurely. A completed implementation alone does **not** unblock its review-dependent successor.
+**Count:** 16 packets. PGA-1's implementation and independent review are archived. PGA-2's packet pair was already promoted to ready/auto and its PGA-1 review dependency is now satisfied; check dispatcher claims/locks before claiming. PGA-3 has received its required post-PGA-1 architecture refresh and opts into the existing targeted validation/automatic authoring promotion, but remains draft/manual until that workflow explicitly passes and publishes the pair. PGA-4 through PGA-8 retain their mandatory future manual/API refresh after their upstream reviews. A completed implementation alone does **not** unblock a review-dependent successor.
 
 ## Workflow, asset and acceptance guardrails
 
-- Root `AGENTS.md`, `custodian/AGENTS.md` and `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` own worktree/dispatch/paired-review policy. For PGA-1/PGA-2 both sides have `Authoring handoff: auto` and start `draft/manual`; GitHub workflow promotion is contingent on passing the targeted validator and queue checks. Until promoted and observed on main they are **not confirmed claimable**.
-- PGA-3+ have no auto-handoff marker; an intentional live-main refresh, targeted authoring preflight, index generation and safe publication are necessary first. Use exact `Review:` pairing and never bypass dispatch locks.
+- Root `AGENTS.md`, `custodian/AGENTS.md` and `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md` own worktree/dispatch/paired-review policy. PGA-1 and PGA-2 pairs already passed automatic authoring promotion; PGA-1 also passed implementation/review closeout. PGA-3's newly refreshed draft/manual pair opts into the existing GitHub targeted authoring handoff. An opt-in is **not** proof of successful promotion or dispatcher eligibility.
+- PGA-4+ have no auto-handoff marker and retain explicit future manual review/architecture-refresh gates. Use exact `Review:` pairing and never bypass dispatch locks.
 - No new images are required for the first eight slices. Existing ingested production art and canonical metadata only. If later explicitly commissioned: separate Asset Pipeline V2 family under `custodian/content/metadata/assets/families/`, source in `custodian/asset_drop/source_work/procgen_showcase/<family>/<state>_source.png`, normalized intake `custodian/asset_drop/inbox/<family>/<state>.png`; exact source/normalized pixels and frames must be established against the actual family/consumer before creating a claimable art task. Do not invent them now.
 - Each implementation adds its own focused smoke under `custodian/tools/validation/levels/` and registers ownership in `validation_manifest.json`. Run existing directly affected smoke before changed-file closeout. Gallery controls must never mutate Hub, world acceptance, candidate selection, real actor health, or canonical collision/nav.
 - Inspect performance of generated seeds before offering unbounded search or concurrent maps. Exemplar search must be bounded and may truthfully fail; comparison stores lightweight receipts and at most one active generated world.
@@ -74,9 +76,38 @@ collision-sealed and labeled as unloaded. The production destination owns no
 Operator, controller, camera, generator, or generated map. Its standalone
 playtest wrapper owns one real Operator/controller/camera, and the registered
 ingress/return path reuses the same Operator across reset-on-entry visits.
-PGA-1 implementation and its focused validation are complete; its immediate
-fresh-context paired review is the next gate. The catalog and generated arena
-remain outside this shell's scope.
+PGA-1 implementation and its fresh-context independent review are **complete**.
+The archived review reports zero blocking defects/material gaps and a green
+46/46 changed-file sweep. PGA-2's catalog is next claimable **subject to the
+dispatcher's current locks/claims**. The generated arena remains outside the
+PGA-1 shell's scope.
+
+## PGA-3 post-PGA-1 architecture refresh (2026-10-15)
+
+The landed shell provides `Markers/ArenaThreshold` at `Vector2(0, -520)`,
+a collision-backed sealed north threshold `(-210,-520) -> (210,-520)`, and a
+single standalone playtest Operator/controller/camera under
+`GameRoot/World`. The threshold remains **sealed**: PGA-3 must use a deliberate
+interaction and validated transfer, not open the collision rail or connect
+arbitrary generation to the authored floor.
+
+`GeneratedRegionLevel.prepare_generated_region(request)` is the existing
+real-map staging/validation authority. It takes `scene_path`, `seed`,
+`map_size`, `room_count`, `profile` and `spawns`, then verifies the
+canonical main playable component, spawn and runtime navigation; it exposes
+`has_spawn`, `get_spawn_position`, `activate_route_node` and camera refresh.
+PGA-3 should wrap that adapter in one disposable child host, preserve the
+outer gallery as the sole LevelLoader active destination, and refuse transfer
+until staged map/spawn/camera/nav state is valid. Compute map/gallery spatial
+separation from actual bounds rather than inventing an authored corridor.
+
+A failed or interrupted stage must retain gallery walkability, Operator
+identity and camera binding. On return, restore the gallery camera via
+`AuthoredLevel2D.refresh_route_camera` before releasing/discarding generated
+state; the existing outer `return_world` path remains untouched. No change
+to the agreed five-wing layout, seal or encounter/candidate authority is
+authorized. The PGA-3 implementation and review packets contain exact-path
+handoffs. Automatic authoring publication remains a separate required gate.
 
 ## Future scope, deliberately not included
 
