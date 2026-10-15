@@ -1,8 +1,8 @@
 # TRANSIT LIFT RUNTIME FOUNDATION V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `transit-lift-runtime-foundation-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `none`

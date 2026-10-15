@@ -1,8 +1,8 @@
 # REVIEW OPERATOR ELEVATION TRAVERSAL ENFORCEMENT V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-elevation-traversal-enforcement-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `operator-elevation-traversal-enforcement-v1`
