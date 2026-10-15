@@ -167,7 +167,7 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Diagnostic evidence: `south-diagnostic-63d1b3a8-r2` completed successfully before the final scenario assertion cleanup. The SOUTH frame hash was `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; the displacement response recorded `attached_before=4`, `attached_after=3`, `suppression_ownership_invalidated=true`, and the sprite outside the viewport. This is local diagnostic evidence only, not a final clean-SHA visual bundle.
 - Meridian correction: removed exact global catalog size 36; retained `report.rejected.is_empty()` and Meridian family count 10.
 - Final changed-file validation after the scoped edits: PASS, complete coverage, 38 passed, 0 failed, 0 skipped, 0 timeout. Focused Alpine and Meridian smokes pass.
-- Current gate: do not close AP2 or claim AP3. A final clean committed-SHA Moment Forge capture is still required, and the human must review a genuinely changed SOUTH image.
+- Current gate: do not close AP2 or claim AP3. Clean committed-SHA capture `7611635d00aa3e110d0e08786b3d74a6dfbb82be` now passes with dirty=false; its contact-sheet SHA `eedacf7581ee1da64a47447c17f6044bacfdc83430da5223aa07b36574267f58` differs from the prior failed bundle. Fresh bundle is published for human review at `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json`.
 
 ## Execution Feedback
 
@@ -191,3 +191,14 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Refresh reason: none
 - Next action: commit and push the capture-path and validation fixes, run the same four-direction Moment Forge scenario from the exact clean committed SHA, compare the new SOUTH frame hash against `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`, and only request human review if it differs.
 - Blockers or open questions: final clean committed-SHA evidence has not yet been generated; AP2 remains open and AP3 remains gated.
+
+
+## Fresh SOUTH visual gate — 20261014T-south-visible-frame-7611635d
+
+- Exact review manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json`.
+- Capture and manifest SHA: `7611635d00aa3e110d0e08786b3d74a6dfbb82be`; clean provenance (`dirty=false`).
+- New contact sheet SHA: `eedacf7581ee1da64a47447c17f6044bacfdc83430da5223aa07b36574267f58`; prior failed sheet was `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`.
+- Dedicated SOUTH keyframe: `tick_000075.png`, SHA `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`.
+- Visual questions: SOUTH terrace/fascia join; SOUTH attached-geology read without crop wall/detached mass; N/E/W acceptability and playable-edge truthfulness.
+- Retention: delete-after-review. Cleanup command after disposition: `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
+- AP2 remains open pending human visual disposition; do not claim AP3.

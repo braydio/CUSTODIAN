@@ -86,7 +86,7 @@ The changed-file `procgen_meridian_hardstand_macro` failure is AP2-adjacent, not
 
 The latest `origin/agent/procgen-alpine-cliff-presentation-v1` handoff commit `63d1b3a8e528604fb00b2cad955f043df08a0342` was fast-forwarded into this worktree. The repeated visual hashes were not caused by report-file reuse: they match the deterministic renderer’s north (`tick 10`) and west (`tick 125`) viewport frames. The old scenario sampled SOUTH at tick 85 only; the human-referenced keyframes did not show SOUTH. Its SOUTH contact screen bounds extended below the viewport, so displacing it farther did not alter full-frame pixels.
 
-The Moment Forge scenario now includes a tick-75 SOUTH keyframe, explicit viewport and contact-alpha hashes, and a displacement negative control. The fixture moves the SOUTH contact out of view and records attachment ownership dropping from 4 to 3; the action driver awaits async fixture commands and propagates returned `{ok:false}` values. A successful local diagnostic capture at `south-diagnostic-63d1b3a8-r2` produced SOUTH tick hash `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; the negative control confirms displacement. Later diagnostic attempts exposed a stale assertion configuration and one incomplete run; no new review bundle was published.
+The Moment Forge scenario now includes a tick-75 SOUTH keyframe, explicit viewport and contact-alpha hashes, and a displacement negative control. The fixture moves the SOUTH contact out of view and records attachment ownership dropping from 4 to 3; the action driver awaits async fixture commands and propagates returned `{ok:false}` values. A clean committed-SHA capture at `south-committed-7611635d` passed with manifest commit `7611635d00aa3e110d0e08786b3d74a6dfbb82be` and `dirty=false`. The SOUTH keyframe `tick_000075.png` hash is `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; the contact sheet is `eedacf7581ee1da64a47447c17f6044bacfdc83430da5223aa07b36574267f58`, which differs from the previously failed `4045a234...`. The negative control records 4→3 attached contacts and confirms the displaced SOUTH sprite is outside the viewport.
 
 The Meridian smoke no longer asserts a global catalog size of 36. It retains rejection-free catalog validation and its exact Meridian family count of 10. The AP2 catalog extension can therefore add presentation profiles without breaking a family-specific contract.
 
@@ -94,6 +94,16 @@ The Meridian smoke no longer asserts a global catalog size of 36. It retains rej
 - Focused Meridian smoke: PASS.
 - Final changed-file validation: PASS, complete coverage, 38/38 tests, 0 failed, 0 skipped, 0 timed out.
 - `git diff --check`: PASS.
-- No final visual review bundle was published; the capture-path changes need a clean committed-SHA evidence run. AP2 remains open; AP3 remains gated.
+- Fresh visual review bundle uploaded: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json`; retention is delete-after-review. Human review is now required. AP2 remains open; AP3 remains gated.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+
+
+## Fresh SOUTH visual gate — 20261014T-south-visible-frame-7611635d
+
+- Exact manifest: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+- Capture SHA equals manifest commit `7611635d00aa3e110d0e08786b3d74a6dfbb82be`; `dirty=false`.
+- Contact sheet SHA `eedacf7581ee1da64a47447c17f6044bacfdc83430da5223aa07b36574267f58`, differs from prior failed sheet `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`. SOUTH `tick_000075.png` SHA `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`.
+- Questions: (1) Does SOUTH visibly join the playable terrace and fascia without a backdrop or fog gap? (2) Does SOUTH read as attached geology without a crop wall or detached mass? (3) Are north/east/west acceptable and is the playable floor edge clear and truthful?
+- Cleanup after the user decision: `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
