@@ -988,6 +988,32 @@
       "needs_import": false
     },
     {
+      "id": "carrow_operations_house_interior",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_operations_house_interior_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "environment",
+        "lighting",
+        "connected_map",
+        "interior"
+      ],
+      "owners": [
+        "custodian/game/world/gothic_compound/**",
+        "custodian/game/world/procgen/gothic_compound/**",
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**",
+        "custodian/tools/validation/carrow_backdrop_isolation_smoke.gd",
+        "custodian/content/lighting/profiles/carrow_operations_house_interior.tres",
+        "custodian/content/sprites/environment/structure/carrow_machine_house/runtime/**",
+        "custodian/content/tiles/interiors/runtime/floor_carrow_*_32.png",
+        "custodian/tools/validation/carrow_operations_house_interior_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+	{
       "id": "carrow_yard_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_yard_interior_smoke.gd",
@@ -1003,6 +1029,7 @@
         "custodian/game/world/gothic_compound/**",
         "custodian/game/world/procgen/gothic_compound/**",
         "custodian/content/lighting/profiles/carrow_machine_house_interior.tres",
+        "custodian/content/lighting/profiles/carrow_operations_house_interior.tres",
         "custodian/content/sprites/environment/structure/carrow_machine_house/runtime/**",
         "custodian/content/sprites/environment/structure/district_transfer_frame/runtime/**",
         "custodian/content/tiles/interiors/runtime/floor_carrow_*_32.png",
