@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-compound-walled-yard-blockout
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: compound-walled-yard-blockout
 - Locks: compound-layout

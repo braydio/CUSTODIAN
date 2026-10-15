@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-recovery-damage-coupling
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: review-compound-archetype-playable-proof
 - Locks: compound-recovery

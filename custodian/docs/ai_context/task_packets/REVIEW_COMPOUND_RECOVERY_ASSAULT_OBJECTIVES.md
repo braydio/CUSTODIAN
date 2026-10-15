@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-compound-recovery-assault-objectives
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: compound-recovery-assault-objectives
 - Locks: compound-assault
