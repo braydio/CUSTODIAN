@@ -121,7 +121,7 @@ func _initialize() -> void:
 	if int((first_contact.get("direction_counts", {}) as Dictionary).get("south", 0)) != 1:
 		failures.append("qualified south frontier was not guaranteed a broad contact")
 	_assert_attached_placements(first_contact, contact_root, alpha_contract_by_state, failures)
-	_assert_south_socket_in_final_world(contact_root, first_contact, PROFILE, failures)
+	_assert_south_socket_in_final_world(contact_root, composer, first_contact, PROFILE, failures)
 	var contact_names := _contact_names(contact_root)
 	composer.apply_frontier_plan(contact_plan, exterior, {}, contact_root, 99, false, Vector2.ONE, PROFILE)
 	if _contact_names(contact_root) != contact_names:
@@ -275,7 +275,7 @@ func _assert_attached_placements(summary: Dictionary, contact_root: Node2D, alph
 			failures.append("profile socket differs from authored asset socket: %s" % String(state))
 
 
-func _assert_south_socket_in_final_world(contact_root: Node2D, summary: Dictionary, profile: ProcgenCliffFasciaProfile, failures: PackedStringArray) -> void:
+func _assert_south_socket_in_final_world(contact_root: Node2D, composer: RefCounted, summary: Dictionary, profile: ProcgenCliffFasciaProfile, failures: PackedStringArray) -> void:
 	var placements: Array = summary.get("placements", [])
 	for placement_variant: Variant in placements:
 		var placement := placement_variant as Dictionary
@@ -293,6 +293,26 @@ func _assert_south_socket_in_final_world(contact_root: Node2D, summary: Dictiona
 		var expected_world := contact_root.to_global(frontier_local)
 		if sprite.to_global(socket_px).distance_to(expected_world) > 0.5:
 			failures.append("south socket misses its transformed frontier in final world space")
+		var outward_world := contact_root.to_global(Vector2(Vector2i.DOWN)) - contact_root.to_global(Vector2.ZERO)
+		var crossing := placement.get("frontier_crossing", {}) as Dictionary
+		if not bool(crossing.get("crosses_frontier", false)):
+			failures.append("south connected alpha does not cross the final-world frontier: %s" % str(crossing))
+		if float(crossing.get("inward_overlap_world_px", 0.0)) < 8.0 or float(crossing.get("outward_overlap_world_px", 0.0)) < 8.0:
+			failures.append("south alpha component does not intersect both final-world seam bands")
+		# Negative control: a displaced image with an intact source socket and alpha
+		# silhouette must fail the final-world frontier-crossing contract.
+		var original_position := sprite.global_position
+		sprite.global_position += outward_world.normalized() * 1024.0
+		var displaced: Dictionary = composer._validate_final_world_frontier_crossing(
+			sprite,
+			socket_px,
+			expected_world,
+			outward_world,
+			8.0
+		)
+		if bool(displaced.get("crosses_frontier", false)):
+			failures.append("final-world frontier regression accepted a displaced south contact")
+		sprite.global_position = original_position
 		return
 	failures.append("south final-world seam regression had no placement to inspect")
 

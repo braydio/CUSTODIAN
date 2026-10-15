@@ -15,6 +15,7 @@ const CONTACT_TEXTURES := {
 }
 const CARDINALS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 const CONTACT_META := &"alpine_cliff_contact"
+const FRONTIER_CROSSING_MIN_OVERLAP_WORLD_PX := 8.0
 
 var _fascia_core_frontiers: Dictionary = {}
 var _fascia_shoulder_frontiers: Dictionary = {}
@@ -126,6 +127,21 @@ func apply_frontier_plan(
 			root.remove_child(sprite)
 			sprite.free()
 			continue
+		var frontier_crossing := {"crosses_frontier": true, "inward_overlap_world_px": 0.0, "outward_overlap_world_px": 0.0}
+		if direction == Vector2i.DOWN:
+			var outward_world := root.to_global(Vector2(direction)) - root.to_global(Vector2.ZERO)
+			frontier_crossing = _validate_final_world_frontier_crossing(
+				sprite,
+				socket_px,
+				socket_world,
+				outward_world,
+				FRONTIER_CROSSING_MIN_OVERLAP_WORLD_PX
+			)
+		if not bool(frontier_crossing.get("crosses_frontier", false)):
+			placements.append({"frontier_cell": midpoint, "outward_direction": direction, "contact_state": state, "socket_world_position": socket_world, "resolved_socket_world_position": resolved_socket_world, "frontier_crossing": frontier_crossing, "sprite_world_position": sprite.global_position, "attached": false, "reason": "contact_alpha_does_not_cross_final_world_frontier", "socket_error_px": socket_error_px})
+			root.remove_child(sprite)
+			sprite.free()
+			continue
 		sprite.visible = not streaming_enabled
 		sprite.set_meta(CONTACT_META, true)
 		sprite.set_meta("frontier_probes", _probe_cells(cells, direction))
@@ -135,6 +151,7 @@ func apply_frontier_plan(
 			"contact_state": state,
 			"socket_world_position": socket_world,
 			"resolved_socket_world_position": resolved_socket_world,
+			"frontier_crossing": frontier_crossing,
 			"sprite_world_position": sprite.global_position,
 			"socket_error_px": socket_error_px,
 			"socket_embed_depth_px": socket_embed_depth,
@@ -165,6 +182,61 @@ func apply_frontier_plan(
 
 func get_fascia_blend_frontiers() -> Dictionary:
 	return {"core": _fascia_core_frontiers.duplicate(true), "shoulder": _fascia_shoulder_frontiers.duplicate(true)}
+
+
+func _validate_final_world_frontier_crossing(
+		sprite: Sprite2D,
+		socket_px: Vector2,
+		frontier_world: Vector2,
+		outward_world: Vector2,
+		minimum_overlap_world_px: float
+) -> Dictionary:
+	if sprite == null or sprite.texture == null or outward_world.length_squared() <= 0.000001:
+		return {"crosses_frontier": false, "reason": "invalid_sprite_or_frontier_direction"}
+	var image := sprite.texture.get_image()
+	if image == null or image.is_empty():
+		return {"crosses_frontier": false, "reason": "contact_alpha_image_unavailable"}
+	var socket := Vector2i(roundi(socket_px.x), roundi(socket_px.y))
+	var width := image.get_width()
+	var height := image.get_height()
+	if socket.x < 0 or socket.y < 0 or socket.x >= width or socket.y >= height or image.get_pixelv(socket).a <= 0.0:
+		return {"crosses_frontier": false, "reason": "frontier_socket_is_transparent"}
+	var visited := PackedByteArray()
+	visited.resize(width * height)
+	var queue := PackedInt32Array([socket.y * width + socket.x])
+	visited[queue[0]] = 1
+	var queue_head := 0
+	var outward := outward_world.normalized()
+	var sprite_transform := sprite.global_transform
+	var inward_overlap := 0.0
+	var outward_overlap := 0.0
+	while queue_head < queue.size():
+		var index := queue[queue_head]
+		queue_head += 1
+		var x := index % width
+		var y := floori(float(index) / float(width))
+		var world_pixel := sprite_transform * (Vector2(x, y) + Vector2(0.5, 0.5))
+		var signed_depth := (world_pixel - frontier_world).dot(outward)
+		if signed_depth < 0.0:
+			inward_overlap = maxf(inward_overlap, -signed_depth)
+		else:
+			outward_overlap = maxf(outward_overlap, signed_depth)
+		for neighbor: Vector2i in [Vector2i(x - 1, y), Vector2i(x + 1, y), Vector2i(x, y - 1), Vector2i(x, y + 1)]:
+			if neighbor.x < 0 or neighbor.y < 0 or neighbor.x >= width or neighbor.y >= height:
+				continue
+			var neighbor_index := neighbor.y * width + neighbor.x
+			if visited[neighbor_index] != 0 or image.get_pixelv(neighbor).a <= 0.0:
+				continue
+			visited[neighbor_index] = 1
+			queue.append(neighbor_index)
+	var crosses := inward_overlap >= minimum_overlap_world_px and outward_overlap >= minimum_overlap_world_px
+	return {
+		"crosses_frontier": crosses,
+		"inward_overlap_world_px": inward_overlap,
+		"outward_overlap_world_px": outward_overlap,
+		"minimum_overlap_world_px": minimum_overlap_world_px,
+		"component_pixel_count": queue.size(),
+	}
 
 
 func refresh_streaming_visibility(root: Node2D, streaming: bool, floor_layer: TileMapLayer, wall_layer: TileMapLayer) -> void:

@@ -4,14 +4,14 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 ## Latest continuation — SOUTH final-world seam
 
-Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
-The existing AP2 worktree was synced by merging `origin/main@5b3d1806692c941bf0d300763a33f868d3101dcc`; the merge completed without conflicts. The SOUTH contact PNG and authored socket were retained. `ProcgenAlpineCliffContactComposer` now attaches the sprite before resolving its authored socket with `Sprite2D.to_global()`, applies the resulting world-space translation, and records both target and resolved socket positions. The focused Alpine smoke now creates a translated, rotated, nonuniformly scaled parent and verifies the SOUTH socket against its final world-space frontier. The smoke is registered in `validation_manifest.json` as the owner for the composer and focused contract.
+The existing AP2 worktree was synced by merging `origin/main@5b3d1806692c941bf0d300763a33f868d3101dcc`; the merge completed without conflicts. The SOUTH contact PNG and authored socket were retained. `ProcgenAlpineCliffContactComposer` now attaches the sprite before resolving its authored socket with `Sprite2D.to_global()`, applies the resulting world-space translation, and records both target and resolved socket positions. The focused Alpine smoke now creates a translated, rotated, nonuniformly scaled parent and verifies the SOUTH socket against its final world-space frontier. Runtime also flood-fills the socket-connected alpha component in final sprite space and requires at least 8 world pixels of connected geology on both terrace and cliff sides before the contact can emit fascia suppression. A negative control shifts the intact contact 1,024 px outward and confirms rejection. The smoke is registered in `validation_manifest.json` as the owner for the composer and focused contract.
 
 - Focused `procgen_alpine_cliff_presentation_smoke.gd`: PASS.
-- Changed-file validation: coverage complete; 32 passed, 1 failed, 1 higher-tier test skipped. `procgen_meridian_hardstand_macro` fails its existing exact `report.valid.size() == 36` assertion on current merged content. It is outside the SOUTH/AP2 code surface and was selected through broad presentation ownership. Do not close AP2 while this required validation result remains unresolved.
+- Latest changed-file validation: coverage complete; 3 passed, 1 failed, 0 skipped. The focused Alpine, Reciprocal Continuity docs, and Macro Presentation tests passed. `procgen_meridian_hardstand_macro` fails its existing exact `report.valid.size() == 36` assertion on current merged content. It is outside the SOUTH/AP2 code surface and was selected through broad presentation ownership. Do not close AP2 while this required validation result remains unresolved.
 - An initial changed-file run also exposed `/tmp/.git`, an empty directory that makes the standalone-project LFS fixture misclassify temporary directories. The final run used `TMPDIR=/dev/shm`; it passed that fixture.
-- Fresh four-direction Moment Forge capture and human review remain pending; no new evidence is being represented as accepted.
+- The human review of `20261014T195049Z` recorded terrace/fascia `FAIL`, attached geology `FAIL`, playable edge `PASS`, with the blocker isolated to SOUTH. Fresh four-direction Moment Forge capture and human review remain pending; no new evidence is being represented as accepted.
 
 ## Outcome
 
@@ -69,6 +69,8 @@ At this pass start, local `HEAD` and `origin/agent/procgen-alpine-cliff-presenta
 - Blockers or open questions: human visual disposition is pending; changed-file validation had one `procgen_region_frame` timeout during host contention, and its isolated rerun passed in 112431 ms. Keep AP2 open and do not claim AP3 until visual review is recorded.
 
 ## Human visual disposition — 20261014T195049Z
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
 The fresh clean-SHA bundle is valid evidence but does not close AP2. Human/ChatGPT review recorded `FAIL / FAIL / PASS`: terrace/fascia attachment failed, attached-geology silhouette failed, and playable-floor edge truthfulness passed. The blocker is south only; north/east/west are acceptable for this gate.
 
