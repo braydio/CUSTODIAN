@@ -246,3 +246,35 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Visual questions: SOUTH terrace/fascia join; SOUTH attached-geology read without crop wall/detached mass; N/E/W acceptability and playable-edge truthfulness.
 - Retention: delete-after-review. Cleanup command after disposition: `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261014T-south-visible-frame-7611635d/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
 - AP2 remains open pending human visual disposition; do not claim AP3.
+
+## Clean SOUTH Capture — 20261015T060324Z
+
+- Capture commit: `e2c7b7de038e799c5af16b11c63f66a8f86d75a0`.
+- Capture manifest: `dirty=false`; stable assertions passed; scenario `procgen/alpine_plateau_edge_review`, scenario SHA `0b1b14582ccf83d4c1833fc14c6c26fa0f2bfbe62edf81626d4c509682a91255`.
+- Dedicated SOUTH `tick_000075.png` SHA-256: `c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b`, differs from rejected `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`.
+- The changed-pixel gate passed, so the compact visual bundle was published for human disposition: `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json`.
+- Review questions: Does SOUTH visibly join terrace/fascia? Does SOUTH read as attached geology without crop wall or detached mass? Are N/E/W and playable-edge truthfulness still acceptable?
+- Retention: delete-after-review. After disposition run: `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`.
+- AP2 remains open pending human disposition; do not claim AP3.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `A clean capture checkout required a full Godot import; initial attempts ran from the dirty worktree or retained temporary diagnostic output, so those manifests were rejected.`
+- Root cause / contributing factors: `The active worktree contained existing untracked files, and Moment Forge writes under reports/moment_forge before recording Git state.`
+- Prevention / pipeline improvement: `Use an isolated clean checkout, import Godot caches first, remove only self-created temporary capture outputs, and use the repository timestamp run-id ignore pattern before final capture.`
+- Tooling / docs drift discovered: `Moment Forge output is constrained to reports/moment_forge.`
+- Follow-up: `fixed-in-scope`
+
+## Handoff
+
+- Next workstream: `procgen-alpine-cliff-presentation-v1`
+- Next packet state: `human-required`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Refresh reason: `none`
+- Next action: `Record the human disposition for /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json and run delete-after-review cleanup. Close AP2 only if accepted.`
+- Blockers or open questions: `Human disposition pending; AP2 open; AP3 gated.`

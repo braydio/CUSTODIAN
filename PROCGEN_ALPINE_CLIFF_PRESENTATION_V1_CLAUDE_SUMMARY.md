@@ -15,7 +15,9 @@ Moved sockets for `south_broad_01`, `south_broken_01`, and `south_rooted_01` to 
 - `godot --headless --path custodian --script res://tools/validation/procgen_alpine_cliff_presentation_smoke.gd` — PASS.
 - `python3 custodian/tools/validation/verify_alpine_cliff_presentation_assets.py` — PASS, 26 states.
 - `TMPDIR=/dev/shm python3 custodian/tools/validation/run_validation.py --changed --json` — all five selected owners passed. Aggregate `complete=false` because existing untracked Moment Forge report files and unrelated `.uid` files have no changed-file owners; those artifacts were preserved.
-- The final SOUTH render hash is still pending a committed-SHA capture. Compare directly with rejected SHA `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; do not publish for human review if unchanged.
+- Clean committed-SHA capture passed from detached checkout `e2c7b7de038e799c5af16b11c63f66a8f86d75a0`: manifest records `dirty=false`, Moment Forge assertions passed, and scenario SHA is `0b1b14582ccf83d4c1833fc14c6c26fa0f2bfbe62edf81626d4c509682a91255`.
+- Dedicated SOUTH frame `tick_000075.png` SHA is `c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b`, changed from rejected `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`. The mechanical pre-review hash gate therefore passed.
+- Published the compact human-review handoff at `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json` (delete-after-review). Questions: SOUTH terrace/fascia join; attached geology/no crop wall; N/E/W and playable-edge truthfulness.
 - User had already executed the prior delete-after-review cleanup. The manifest was absent when this turn retried it.
 
 ## Process Feedback
@@ -38,5 +40,5 @@ Moved sockets for `south_broad_01`, `south_broken_01`, and `south_rooted_01` to 
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 - Refresh reason: none
-- Next action: Capture the same four-direction Moment Forge scenario from the clean committed SHA. Compare its SOUTH keyframe hash against 4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa and publish only if it differs.
-- Blockers or open questions: Capture result unknown; AP2 remains open and AP3 remains gated.
+- Next action: Record the human visual disposition for `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json`; run its delete-after-review cleanup after disposition. Close AP2 only if the human gate passes.
+- Blockers or open questions: Human visual disposition pending; AP2 remains open and AP3 remains gated.
