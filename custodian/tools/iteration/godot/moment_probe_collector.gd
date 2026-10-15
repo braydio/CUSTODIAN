@@ -66,6 +66,8 @@ func _read_field(node: Node, field: String) -> Variant:
 			return _visible_visual_anchor_nodes(node)
 		"global_position":
 			return node.global_position if node is Node2D else null
+		"viewport_image_sha256":
+			return _viewport_image_sha256(node)
 		"position":
 			return node.position if node is Node2D else null
 		"animation":
@@ -129,6 +131,23 @@ func _texture_size(node: Node) -> Variant:
 			var size: Vector2 = texture.get_size()
 			return [size.x, size.y]
 	return null
+
+
+func _viewport_image_sha256(node: Node) -> String:
+	var viewport := node.get_viewport()
+	if viewport == null:
+		return ""
+	var texture := viewport.get_texture()
+	var image := texture.get_image() if texture != null else null
+	if image == null or image.is_empty():
+		return ""
+	var path := "user://moment_probe_%d.png" % Time.get_ticks_usec()
+	if image.save_png(path) != OK:
+		return ""
+	var global_path := ProjectSettings.globalize_path(path)
+	var digest := FileAccess.get_sha256(global_path)
+	DirAccess.remove_absolute(global_path)
+	return digest
 
 
 func _local_presentation_rect(node: Node) -> Variant:

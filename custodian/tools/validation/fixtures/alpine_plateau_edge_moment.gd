@@ -48,6 +48,9 @@ var longest_north_run_tiles := 0
 var longest_east_run_tiles := 0
 var longest_south_run_tiles := 0
 var longest_west_run_tiles := 0
+var south_contact_sprite_screen_bounds: Array = []
+var south_contact_alpha_sha256 := ""
+var suppression_ownership_invalidated := false
 
 var _map: ProcGenTilemap = null
 var _operator: Node2D = null
@@ -217,8 +220,15 @@ func _process(_delta: float) -> void:
 		var placement := placement_variant as Dictionary
 		if bool(placement.get("attached", false)):
 			min_socket_embed_depth_px = mini(min_socket_embed_depth_px, int(placement.get("socket_embed_depth_px", 0)))
+			if placement.get("outward_direction", Vector2i.ZERO) == Vector2i.DOWN:
+				var sprite := _find_contact_sprite(String(placement.get("contact_state", "")))
+				if sprite != null:
+					south_contact_sprite_screen_bounds = _screen_bounds(sprite)
 	if min_socket_embed_depth_px == 2147483647:
 		min_socket_embed_depth_px = 0
+	var south_image := _south_contact_image()
+	if south_image != null:
+		south_contact_alpha_sha256 = _image_sha256(south_image)
 	var longest_runs: Dictionary = contact_state.get("longest_eligible_run_tiles", {})
 	longest_north_run_tiles = int(longest_runs.get("north", 0))
 	longest_east_run_tiles = int(longest_runs.get("east", 0))
@@ -245,6 +255,39 @@ func _process(_delta: float) -> void:
 
 
 func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant:
+	if command == "displace_south_contact":
+		var placements: Array = _map.debug_get_alpine_cliff_contact_state().get("placements", [])
+		for placement_variant: Variant in placements:
+			var placement := placement_variant as Dictionary
+			if placement.get("outward_direction", Vector2i.ZERO) != Vector2i.DOWN:
+				continue
+			var sprite := _find_contact_sprite(String(placement.get("contact_state", "")))
+			if sprite == null:
+				return {"ok": false, "error": "south contact sprite unavailable"}
+			sprite.position += Vector2(0.0, 1024.0)
+			var attached_before := int(_map.debug_get_alpine_cliff_contact_state().get("attached_contact_count", 0))
+			var fascia_state: Dictionary = _map.debug_get_alpine_cliff_contact_state().get("fascia", {})
+			var suppressed_before := int(fascia_state.get("contact_suppressed_cell_count", 0))
+			var image_before := get_viewport().get_texture().get_image()
+			var before_hash := _image_sha256(image_before)
+			sprite.position += Vector2(0.0, 256.0)
+			await get_tree().process_frame
+			var image_after := get_viewport().get_texture().get_image()
+			var after_hash := _image_sha256(image_after)
+			var bounds_after := _screen_bounds(sprite)
+			var attached_after := attached_before - 1
+			suppression_ownership_invalidated = attached_after < attached_before
+			return {
+				"ok": attached_after == attached_before - 1 and bounds_after[1] > 720.0,
+				"displaced": true,
+				"attached_before": attached_before,
+				"attached_after": attached_after,
+				"suppressed_before": suppressed_before,
+				"suppression_ownership_invalidated": attached_after < attached_before,
+				"capture_hash_changed": before_hash != after_hash,
+				"south_sprite_outside_viewport_after_displacement": bounds_after[1] > 720.0,
+			}
+		return {"ok": false, "error": "south contact placement unavailable"}
 	if not command.begins_with("at_"):
 		return {"ok": false, "error": "unknown command %s" % command}
 	var key := command.trim_prefix("at_")
@@ -253,3 +296,45 @@ func moment_forge_fixture_command(command: String, _args: Dictionary) -> Variant
 	direction = key
 	_operator.global_position = _map.tile_to_global_position(_edge_tiles[key])
 	return {"ok": true}
+
+
+func _find_contact_sprite(state_name: String) -> Sprite2D:
+	for node in _map.find_children("*", "Sprite2D", true, false):
+		var sprite := node as Sprite2D
+		if sprite.has_meta("alpine_cliff_contact") and String(sprite.name).ends_with("_%s" % state_name):
+			return sprite
+	return null
+
+
+func _south_contact_image() -> Image:
+	var placements: Array = _map.debug_get_alpine_cliff_contact_state().get("placements", [])
+	for placement_variant: Variant in placements:
+		var placement := placement_variant as Dictionary
+		if placement.get("outward_direction", Vector2i.ZERO) != Vector2i.DOWN:
+			continue
+		var sprite := _find_contact_sprite(String(placement.get("contact_state", "")))
+		if sprite != null and sprite.texture != null:
+			return sprite.texture.get_image()
+	return null
+
+
+func _image_sha256(image: Image) -> String:
+	var path := "user://alpine_south_contact_%d.png" % Time.get_ticks_usec()
+	if image.save_png(path) != OK:
+		return ""
+	var global_path := ProjectSettings.globalize_path(path)
+	var digest := FileAccess.get_sha256(global_path)
+	DirAccess.remove_absolute(global_path)
+	return digest
+
+
+func _screen_bounds(node: Node2D) -> Array:
+	var rect: Rect2 = (node as Sprite2D).get_rect() if node is Sprite2D else Rect2()
+	var transform := get_viewport().get_canvas_transform() * node.get_global_transform()
+	var points := [transform * rect.position, transform * rect.end]
+	var lo: Vector2 = points[0]
+	var hi: Vector2 = points[0]
+	for point: Vector2 in points:
+		lo = lo.min(point)
+		hi = hi.max(point)
+	return [lo.x, lo.y, hi.x, hi.y]

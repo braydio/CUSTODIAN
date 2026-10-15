@@ -22,7 +22,7 @@
       10,
       25,
       55,
-      85,
+      75,
       115,
       125
     ],
@@ -61,6 +61,11 @@
       "name": "at_south"
     },
     {
+      "tick": 78,
+      "action": "fixture_command",
+      "name": "displace_south_contact"
+    },
+    {
       "tick": 95,
       "action": "fixture_command",
       "name": "at_west"
@@ -80,7 +85,8 @@
         "visual_fallback",
         "backdrop_visible",
         "backdrop_mode",
-        "direction","review_combo",
+        "direction",
+        "review_combo",
         "contact_north_count",
         "contact_east_count",
         "contact_south_count",
@@ -88,6 +94,9 @@
         "attached_contact_count",
         "max_socket_error_px",
         "contact_socket_min_embed_px",
+        "viewport_image_sha256",
+        "south_contact_alpha_sha256",
+        "south_contact_sprite_screen_bounds",
         "min_socket_embed_depth_px",
         "contact_core_frontier_count",
         "contact_shoulder_frontier_count",
@@ -102,7 +111,8 @@
         "stack_scale",
         "parallax_far_px",
         "parallax_near_px",
-        "coverage_ok"
+        "coverage_ok",
+        "suppression_ownership_invalidated"
       ],
       "ticks": [
         10,
@@ -110,7 +120,7 @@
         40,
         55,
         70,
-        85,
+        75,
         100,
         115,
         125
@@ -158,6 +168,42 @@
       "field": "min_socket_embed_depth_px",
       "op": "gte",
       "value": 24,
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 75,
+      "field": "direction",
+      "op": "eq",
+      "value": "south",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 75,
+      "field": "south_contact_alpha_sha256",
+      "op": "ne",
+      "value": "",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 75,
+      "field": "viewport_image_sha256",
+      "op": "ne",
+      "value": "",
+      "severity": "error"
+    },
+    {
+      "type": "probe_compare",
+      "probe": "frame",
+      "tick": 85,
+      "field": "suppression_ownership_invalidated",
+      "op": "eq",
+      "value": true,
       "severity": "error"
     }
   ],

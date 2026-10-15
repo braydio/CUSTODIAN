@@ -81,3 +81,19 @@ The `20261014T-south-frontier-final-35ad6afe` manifest is provenance-clean at `3
 The focused final-world seam regression is still useful and should be retained. Next work is to determine why the Moment Forge fixture/capture does not reflect the corrected path, rather than redesigning the art again.
 
 The changed-file `procgen_meridian_hardstand_macro` failure is AP2-adjacent, not unrelated: AP2 adds four depth-chunk profiles to the shared terrain-stamp catalog (36 -> 40), while that Meridian-specific smoke hard-codes the global catalog size as 36. Its meaningful assertions are no rejected profiles and exactly 10 Meridian profiles. Remove or replace the stale global total coupling, rerun changed validation, then recapture after the visual path is demonstrably different.
+
+## Continuation — capture-path diagnosis and Meridian catalog contract
+
+The latest `origin/agent/procgen-alpine-cliff-presentation-v1` handoff commit `63d1b3a8e528604fb00b2cad955f043df08a0342` was fast-forwarded into this worktree. The repeated visual hashes were not caused by report-file reuse: they match the deterministic renderer’s north (`tick 10`) and west (`tick 125`) viewport frames. The old scenario sampled SOUTH at tick 85 only; the human-referenced keyframes did not show SOUTH. Its SOUTH contact screen bounds extended below the viewport, so displacing it farther did not alter full-frame pixels.
+
+The Moment Forge scenario now includes a tick-75 SOUTH keyframe, explicit viewport and contact-alpha hashes, and a displacement negative control. The fixture moves the SOUTH contact out of view and records attachment ownership dropping from 4 to 3; the action driver awaits async fixture commands and propagates returned `{ok:false}` values. A successful local diagnostic capture at `south-diagnostic-63d1b3a8-r2` produced SOUTH tick hash `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; the negative control confirms displacement. Later diagnostic attempts exposed a stale assertion configuration and one incomplete run; no new review bundle was published.
+
+The Meridian smoke no longer asserts a global catalog size of 36. It retains rejection-free catalog validation and its exact Meridian family count of 10. The AP2 catalog extension can therefore add presentation profiles without breaking a family-specific contract.
+
+- Focused Alpine smoke: PASS.
+- Focused Meridian smoke: PASS.
+- Final changed-file validation: PASS, complete coverage, 38/38 tests, 0 failed, 0 skipped, 0 timed out.
+- `git diff --check`: PASS.
+- No final visual review bundle was published; the capture-path changes need a clean committed-SHA evidence run. AP2 remains open; AP3 remains gated.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391

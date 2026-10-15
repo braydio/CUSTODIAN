@@ -286,7 +286,7 @@ func _run_ticks() -> bool:
 		current_tick = tick
 		driver.begin_tick(tick)
 		for action: Dictionary in by_tick.get(tick, []):
-			var result: Dictionary = driver.perform(action, tick)
+			var result: Dictionary = await driver.perform(action, tick)
 			if not bool(result.ok):
 				failures.append("tick %d action failed: %s" % [tick, result.get("error", "")])
 			if bool(result.get("finish", false)):

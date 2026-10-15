@@ -874,6 +874,11 @@
       "owners": [
         "custodian/game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd",
         "custodian/tools/validation/procgen_alpine_cliff_presentation_smoke.gd",
+        "custodian/tools/validation/fixtures/alpine_plateau_edge_moment.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/godot/moment_action_driver.gd",
+        "custodian/tools/iteration/godot/moment_probe_collector.gd",
+        "custodian/tools/iteration/scenarios/procgen/alpine_plateau_edge_review.json",
         "custodian/game/world/procgen/presentation/fascia/alpine_plateau.tres",
         "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/**"
       ],

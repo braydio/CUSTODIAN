@@ -158,3 +158,36 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Refresh reason: `none`
 - Next action: Diagnose why the corrected SOUTH runtime path produced byte-identical Moment Forge media to the prior failed bundle; fix the fixture/capture path or runtime integration so the correction is actually visible, remove the stale shared-catalog total assertion from the Meridian family smoke while preserving its family-specific checks, rerun complete changed-file validation, then publish one genuinely changed clean-SHA four-direction review bundle.
 - Blockers or open questions: `SOUTH human gate still fails because the new contact sheet is byte-identical to the prior failed evidence; Moment Forge/runtime-fixture mismatch must be resolved. The Meridian global catalog-count assertion is stale because AP2 itself expands the shared catalog from 36 to 40. AP3 remains gated.`
+
+
+## Capture-path diagnosis and validation correction — 2026-10-14
+
+- Repeated-media diagnosis: report paths create fresh output directories and capture live viewport pixels; no screenshot copy/cache path was found. The earlier human-referenced `tick_000010` and `tick_000125` are the deterministic north and west views. The scenario previously had only one SOUTH capture at tick 85, omitted from the review bundle’s retained keyframes. The SOUTH sprite’s screen bounds extended below the viewport at the fixed fixture framing, explaining why the displacement negative control did not change a full-frame hash.
+- Fixture change: preserve the four-direction scenario, add a SOUTH keyframe at tick 75, and expose viewport hash, SOUTH alpha hash, and SOUTH sprite bounds. Add a SOUTH displacement command; it verifies the contact leaves the viewport and attachment accounting drops from 4 to 3. Moment Forge now awaits async fixture commands and reports fixture response failures.
+- Diagnostic evidence: `south-diagnostic-63d1b3a8-r2` completed successfully before the final scenario assertion cleanup. The SOUTH frame hash was `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`; the displacement response recorded `attached_before=4`, `attached_after=3`, `suppression_ownership_invalidated=true`, and the sprite outside the viewport. This is local diagnostic evidence only, not a final clean-SHA visual bundle.
+- Meridian correction: removed exact global catalog size 36; retained `report.rejected.is_empty()` and Meridian family count 10.
+- Final changed-file validation after the scoped edits: PASS, complete coverage, 38 passed, 0 failed, 0 skipped, 0 timeout. Focused Alpine and Meridian smokes pass.
+- Current gate: do not close AP2 or claim AP3. A final clean committed-SHA Moment Forge capture is still required, and the human must review a genuinely changed SOUTH image.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: prior “fresh” bundles repeated pixels because the retained keyframe hashes were north/west and the SOUTH sprite lay outside the fixture viewport; an initial async negative-control action also was not awaited and its result was not propagated.
+- Root cause / contributing factors: scenario keyframes were not direction-aligned with the disputed SOUTH view; fixture commands lacked async completion/error propagation; Meridian validation asserted a shared catalog total instead of only its owned family contract.
+- Prevention / pipeline improvement: retain a dedicated SOUTH keyframe/hash and displacement control; await fixture command completion; keep shared catalog tests extensible and family-specific.
+- Tooling / docs drift discovered: three Moment Forge scenario paths lacked changed-file owners; added them to `procgen_alpine_cliff_presentation`.
+- Follow-up: fixed-in-scope
+
+## Handoff
+
+- Next workstream: procgen-alpine-cliff-presentation-v1
+- Next packet state: human-required
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+- Summary backlink: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+- Refresh reason: none
+- Next action: commit and push the capture-path and validation fixes, run the same four-direction Moment Forge scenario from the exact clean committed SHA, compare the new SOUTH frame hash against `4045a23440949a81e72170155ab3b203267725ee0c8b2c9bb46b4316115c82ba`, and only request human review if it differs.
+- Blockers or open questions: final clean committed-SHA evidence has not yet been generated; AP2 remains open and AP3 remains gated.
