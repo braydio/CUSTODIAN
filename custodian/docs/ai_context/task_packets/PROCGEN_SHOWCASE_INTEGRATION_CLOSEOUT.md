@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `new game-world/dev-tool boundary; fresh independent proof`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `conditional`
 - Goal: Deliver and independently prove the complete real-Operator gallery-to-generated-arena workflow with functional five-wing exhibits, debug provenance, exemplar queries and comparison.
 - Completion boundary: Ship the exact PGA-8 scoped behavior on real repository owners, register its focused smoke and pass the paired fresh-context review; no proxy closure or speculative ownership changes.
@@ -37,6 +37,21 @@
 - Use existing functions and read-only APIs whenever possible; add just a focused controller or accessor, not large stateful blocks in `proc_gen_tilemap.gd`.
 - If real code diverges materially from the packet's ownership boundary, stop and request the scoped architecture refresh instead of improvising a second system.
 
+## Preparatory implementation audit (2026-10-15; live main `96c44f5444abb87eb5c054ad883e69d023ff845f`)
+
+**This is a preparatory exact-path implementation plan, not the final realized-API refresh.** PGA-8 is still `draft/manual`; the relevant predecessor reviews and direct API checks named below remain mandatory. Do not add `Authoring handoff: auto`, promote, or claim as a result of this section.
+
+### End-to-end proof matrix (predecessors still outstanding)
+- Use only reviewed components and their actual source owners: PGA-1 gallery shell (`procgen_showcase_gallery.gd/.tscn`); PGA-2 `procgen_exhibit_catalog.gd` / `procgen_exhibit_presenter.gd`; PGA-3 `procgen_arena_host.gd`; PGA-4 `procgen_arena_session.gd` / `procgen_gallery_controls.gd`; PGA-5 `procgen_gallery_inspector.gd` / `procgen_gallery_overlay.gd`; PGA-6 `procgen_exemplar_resolver.gd`; PGA-7 `procgen_seed_comparison.gd`. Do not implement missing predecessor behavior inside closeout.
+- `custodian/tools/validation/levels/procgen_showcase_integration_smoke.gd` (planned): real Operator comes via registered dev gallery ingress, visits each of five wings, inspects canonical entry and honest N/A, stages a real accepted generated map, crosses sealed threshold only through explicit valid transfer, checks actual spawn/nav/camera, inspects source-parity live data, returns to gallery then to origin.
+- Negative proof: no map or invalid spawn blocks transfer; cancellation/stale seed request preserves Operator/camera/outer return; unsupported exemplar predicate is unavailable, a real matching query gives accepted evidence or finite NOT_FOUND; A/B/C receipts are capped and structural fingerprints deterministic; no leaked map/actor/scene state after repeated cycles.
+- Preserve `LevelLoader` single-active-level and actual `GeneratedRegionLevel.prepare_generated_region` ownership; never relax accepted-world ingress/spawn rules or replace real data with gallery stubs to pass validation.
+- Closeout drift scope only: update `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`, `custodian/docs/ai_context/CURRENT_STATE.md`, `custodian/docs/ai_context/FILE_INDEX.md` and directly affected active specs to **actual shipped status**. Avoid sweeping unrelated docs; preserve separate completed-packet and review identities.
+- Validation order: each predecessor's registered focused smoke, integrated real-Operator smoke, level/route and procgen safety regressions, full changed-file manifest sweep, `git diff --check`, packet/queue lifecycle checks. Record measured runtime generation/capture budgets and optional narrow human visual handoff, not invented performance numbers.
+
+### Required *final* refresh after PGA-6 and PGA-7 reviews
+Inventory the exact seven predecessor implementation+review archives, approved catalog/query capabilities, real world/camera/Operator transitions, and executable capture/receipt APIs. If any predecessor has nonpassing review or material open finding, do not promote closeout. The originally locked eight-pair program stays unchanged; corrections are separate bounded workstreams only if findings justify them.
+
 ## Refresh Planning Authority
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
@@ -48,7 +63,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `normal independent fresh-context review of landed implementation`
 - Next action: `Land, archive implementation, then run fresh paired review; do not advance the subsequent PGA slice until review archives complete.`
 - Blockers or open questions: `Explicit architecture/API refresh required before promotion`

@@ -12,7 +12,7 @@
 - Review target workstream: `procgen-showcase-generation-controls`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_GENERATION_CONTROLS.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -29,12 +29,21 @@
 - Non-goals: No opportunistic fixes, duplicate new feature code or self-approved subjective aesthetics.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Preparatory independent review probes (2026-10-15)
+
+**Do not claim this review until its implementation has landed, archived and passed implementation validation.**
+
+- Verify session is the ONLY authority for request tokens and active/staging host identity; PGA-3's host remains the only real-map transfer/teardown owner.
+- Fault-inject staggered completion A/B, cancelled active generation, invalid preset/profile, input spam and actor currently in generated arena. Require no old callback to supersede a newer world, no duplicate camera/Operator, and no leaked node/map.
+- Compare two complete identical requests using the canonical semantic/world fingerprint, not timings or rendering frame counts. Validate the real PGA-3 host and the existing `generated_region_route_lifecycle` / PGA-1 shell proofs.
+- Require a green registered focused smoke and complete changed-file sweep. Review cannot pass solely on unit-model state diagrams or an increased timeout.
+
 ## Next Handoff
 - Next workstream: `procgen-showcase-runtime-inspector`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `Next generated-world/inspection integration must be rederived from newly landed owner and review receipt`
 - Next action: `Verify dependency archive and manually refresh only if successor's packet requires it; then run targeted authoring preflight before promotion`
 - Blockers or open questions: `none after valid independent review`

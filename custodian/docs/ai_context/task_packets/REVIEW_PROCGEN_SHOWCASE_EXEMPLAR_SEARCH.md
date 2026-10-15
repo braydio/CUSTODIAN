@@ -12,7 +12,7 @@
 - Review target workstream: `procgen-showcase-exemplar-search`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_EXEMPLAR_SEARCH.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -29,12 +29,21 @@
 - Non-goals: No opportunistic fixes, duplicate new feature code or self-approved subjective aesthetics.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Preparatory independent review probes (2026-10-15)
+
+**Do not claim this review until its implementation has landed, archived and passed implementation validation.**
+
+- Verify every enabled query has a real catalog `candidate_query` predicate and semantic field projected from an accepted generated world. No renderer-only, rejected-candidate or inspect_only false positives.
+- Force finite NOT_FOUND, unsupported, cancelled, newer-search-stales-older and accepted-world-error paths. Assert no hidden change to seed order, required ingress acceptance, generation authority or Operator.
+- Confirm cache keys include relevant seed/settings/predicate/generator versions and a cache hit never counts as runtime proof without verifying the realized map.
+- Check generation cost/budget against current production baseline; require full changed-file validation and focused manifest smoke without increasing timeouts merely to pass.
+
 ## Next Handoff
 - Next workstream: `procgen-showcase-seed-comparison`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `Next generated-world/inspection integration must be rederived from newly landed owner and review receipt`
 - Next action: `Verify dependency archive and manually refresh only if successor's packet requires it; then run targeted authoring preflight before promotion`
 - Blockers or open questions: `none after valid independent review`
