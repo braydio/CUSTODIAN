@@ -4,7 +4,7 @@
 - Workstream: `review-carrow-operations-house-interior-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `carrow-operations-house-interior-v1`
@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review target workstream: `carrow-operations-house-interior-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CARROW_OPERATIONS_HOUSE_INTERIOR_V1.md`
-- Reviewed main: `06c8a7445b2da3bc206390e7b5a33340db031143`
+- Reviewed main: `fea61dc39c34e7a2d5bc50c8f5fd1a34e29713d1`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
 - Reviewer context: `fresh`

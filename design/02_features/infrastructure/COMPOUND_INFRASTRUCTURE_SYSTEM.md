@@ -873,3 +873,7 @@ custodian/content/fabrication/fab_recipes.json
 - Power allocation and reserve formulas are deterministic.
 - Minimum, standard, and overdrive passes accumulate final per-consumer grants in memory; the grid calls `apply_power_allocation()` exactly once per enabled consumer per distribution tick. Stable allocation/tier/output state emits neither `allocation_changed` nor duplicate Observatory tier transitions.
 - Every Milestone 1 acceptance criterion maps to a focused smoke test.
+
+## Archetype assault/recovery integration (planning, 2026-10-15)
+
+Both compound archetypes reuse ResourceLedger, FabPipeline, BuildInventory, ConstructionPlacementController, InfrastructureStructure, InfrastructureRegistry and grid ownership. Damage, field repair, Capacitor Bank commissioning and enemy objective integration are separate review-gated packets. No new power simulation or second structure integrity ledger. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.

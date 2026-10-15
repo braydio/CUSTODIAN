@@ -8,9 +8,11 @@ threshold. The production scene contains no Operator/controller/camera or map
 generator; its standalone playtest wrapper owns the real Operator and standard
 runtime systems. Reset-on-entry ingress/return preserves the same Operator.
 The gallery is a shell only: generated map realization, exhibit catalog,
-controls, and runtime inspection remain later PGA slices. The implementation
-and changed-file validation passed; the paired fresh-context review is the next
-gate. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+controls, and runtime inspection remain later PGA slices. Its implementation
+and independent fresh-context review are archived **passed** (6 focused checks,
+46/46 changed-file checks, zero blocking defects or material gaps). PGA-2 exhibit catalog and PGA-3 generated arena are both ready/auto with
+PGA-1's review dependency satisfied; PGA-3's refreshed paired authoring gate
+and managed index passed at `95c89d47`. Neither implementation has landed. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
 
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 
@@ -2916,3 +2918,7 @@ Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 con
 ## Awakening Gate western precinct spatial proposal (2026-10-11)
 
 A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.
+
+## Compound archetypes and assault/recovery planning (2026-10-15)
+
+Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.

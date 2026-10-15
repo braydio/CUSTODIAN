@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `new game-world/dev-tool boundary; fresh independent proof`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `conditional`
 - Goal: Expose canonical, inspectable examples of the existing procgen semantic vocabulary in five gallery wings without replacing game data authorities.
 - Completion boundary: Ship the exact PGA-2 scoped behavior on real repository owners, register its focused smoke and pass the paired fresh-context review; no proxy closure or speculative ownership changes.
@@ -43,10 +43,10 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `normal independent fresh-context review of landed implementation`
 - Next action: `Land, archive implementation, then run fresh paired review; do not advance the subsequent PGA slice until review archives complete.`
-- Blockers or open questions: `Automated authoring preflight/promotion remains to be verified on live main`
+- Blockers or open questions: `No outstanding PGA-1 review dependency; verify current dispatcher claim/locks before claim`
 
 ## Publication Gate
-Do not claim this draft implementation until the opted-in authoring handoff has validated the pair, promoted both to ready/auto, and verified the canonical queue index on live main.
+Satisfied: implementation and paired review are `ready/auto` on live main following automatic handoff (`ea66eb3cb3d779ed9630b9acc35670df5c64402b`). The prerequisite `review-procgen-showcase-gallery-shell` is archived passed. This does **not** override live dispatcher claims/locks or the implementation's required validation/review.
