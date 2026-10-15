@@ -84,3 +84,17 @@
 - `carrow_backdrop_isolation_smoke.gd`: PASS; eight Carrow/room/procgen transitions.
 - Changed-file validation: PASS, 39 selected / 39 passed / 0 failed / 0 timed out / 0 skipped; coverage complete. Report: `/tmp/carrow-operations-changed-final.json`.
 - `git diff --check`: PASS.
+
+## Independent Review
+
+### Review Receipt: review-carrow-operations-house-interior-v1
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-carrow-operations-house-interior-v1`
+- Review target workstream: `carrow-operations-house-interior-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `fea61dc39c34e7a2d5bc50c8f5fd1a34e29713d1`
+- Reviewed implementation commit: `fea61dc39c34e7a2d5bc50c8f5fd1a34e29713d1`
