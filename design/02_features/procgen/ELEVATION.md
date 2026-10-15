@@ -1,5 +1,13 @@
 # Elevation Suite
 
+> **2026-10-15 runtime-truth refresh:** Active cross-system authority is now
+> `design/02_features/world/VERTICAL_TRAVERSAL_SYSTEM.md`. NavigationSystem
+> already consumes ProcGen elevation edges and navigation-driven enemies use
+> that graph. Operator local displacement is the primary actor-enforcement gap.
+> The legacy 32 px elevation/cliff/ramp/stair PNGs are compatibility assets only;
+> human review rejects them as production-readable vertical traversal art.
+
+
 Implementation status as of 2026-05-20: the metadata-first elevation slice is live under `custodian/game/world/elevation/` and `custodian/game/world/procgen/terrain/`. Clean runtime PNGs exist under `custodian/content/tiles/elevation/industrial/` and `custodian/content/tiles/mountain_cliffs/`; `procgen_world_tileset.tres` registers those tiles as source IDs `32..59`, and `ProcGenTilemap` maps terrain-builder symbolic tile IDs onto those sources. Remaining work is dedicated elevation/shadow layer separation if needed, movement/pathing enforcement beyond current spawn/prop filtering and contract scoring, and visual tuning in live maps.
 
 Treat this tileset as a contained elevation module, not as a whole new terrain system yet. In CUSTODIAN terms: it becomes a raised industrial platform / ruined military slab kit that your procgen can stamp into rooms, roads, compounds, and exterior ruins.
