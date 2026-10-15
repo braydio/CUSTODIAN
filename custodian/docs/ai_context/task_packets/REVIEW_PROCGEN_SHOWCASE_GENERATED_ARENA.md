@@ -10,7 +10,7 @@
 - Locks: `procgen-showcase-level`
 - Review: `none`
 - Review target workstream: `procgen-showcase-generated-arena`
-- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_GENERATED_ARENA.md` (after implementation completion, inspect its archived counterpart instead)
+- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_GENERATED_ARENA.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`

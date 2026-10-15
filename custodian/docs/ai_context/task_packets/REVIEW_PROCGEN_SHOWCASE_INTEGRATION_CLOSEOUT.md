@@ -10,7 +10,7 @@
 - Locks: `procgen-showcase-level, procgen-showcase-inspector`
 - Review: `none`
 - Review target workstream: `procgen-showcase-integration-closeout`
-- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md` (after implementation completion, inspect its archived counterpart instead)
+- Review target packet: `custodian/docs/ai_context/task_packets/PROCGEN_SHOWCASE_INTEGRATION_CLOSEOUT.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
