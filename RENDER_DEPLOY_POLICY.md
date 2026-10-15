@@ -32,6 +32,49 @@ and editing it does not update a standalone service.
    match the include filter before relying on it. Manual deployments and
    service-setting changes are not restricted by Build Filters.
 
+## Live service inspection (2026-10-15)
+
+Render connection confirmed the existing web service, not the old Blueprint:
+
+- ID: `srv-d6gl7r9aae7s73beudcg`; name: `CUSTODIAN`
+- Linked repository: `https://github.com/braydio/CUSTODIAN`, branch `main`
+- Automatic deploy mode: `checksPass`
+- **Live root directory: empty** (repository root)
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --chdir custodian-terminal server:app`
+- Latest failed deploy inspected: `dep-db7n6fm0tbcc73c32ph0` at 2026-10-14T12:31:53Z
+- The build succeeded, but the new instance logged `Error: can't chdir to 'custodian-terminal'` and exited with code 1. The directory exists at `python-sim/custodian-terminal`, **not** at the repository root.
+- Render Events contain many `commit_ignored` entries on October 14–15, confirming the repository's `[skip render]` commit-message guard is already skipping deployments.
+
+### Single live-service correction for BOTH problems
+
+In [CUSTODIAN service settings](https://dashboard.render.com/web/srv-d6gl7r9aae7s73beudcg), update **Build & Deploy > Root Directory** from empty to **`python-sim`**. In the confirmation dialog retain/verify:
+
+```text
+Build command: pip install -r requirements.txt
+Start command: gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --chdir custodian-terminal server:app
+```
+
+Both commands are now relative to `python-sim`. This fixes the missing
+`custodian-terminal` working directory **and** automatically ignores Git
+changes outside `python-sim/` on future commits. Render's own documentation
+says root-directory scope restricts automatic deploys in monorepos.
+Use a build filter with Included Paths `python-sim/**` (and no ignored paths)
+if additional path filtering is desired. Build-filter paths are repo-root
+relative regardless of rootDir.
+
+**Important:** Changing Render service configuration can itself trigger a
+redeploy, which is expected; inspect its status afterward. Do not confuse
+the no-redeploy objective (unrelated future commits) with suppressing this one
+intentional configuration update. Do not create a new Render service.
+
+**Connector limitation:** This specific connected Render integration exposes
+service reads, logs and deploys, but no update-service/rootDir/buildFilter
+write action. Consequently the live settings change must be applied in the
+Render Dashboard or through an independently authorized Render API client.
+A repository-only commit or standalone YAML edit cannot change this existing
+service.
+
 ## Repository-side fallback
 
 The root `AGENTS.md` directs agents to append `[skip render]` to commits
