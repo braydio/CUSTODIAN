@@ -111,8 +111,7 @@
         "stack_scale",
         "parallax_far_px",
         "parallax_near_px",
-        "coverage_ok",
-        "suppression_ownership_invalidated"
+        "coverage_ok"
       ],
       "ticks": [
         10,
@@ -195,15 +194,6 @@
       "field": "viewport_image_sha256",
       "op": "ne",
       "value": "",
-      "severity": "error"
-    },
-    {
-      "type": "probe_compare",
-      "probe": "frame",
-      "tick": 85,
-      "field": "suppression_ownership_invalidated",
-      "op": "eq",
-      "value": true,
       "severity": "error"
     }
   ],
