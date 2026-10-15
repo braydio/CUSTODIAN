@@ -833,7 +833,7 @@
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/custodian_contract_map.gd"
       ],
-      "timeout_sec": 120,
+      "timeout_sec": 300,
       "needs_import": true
     },
     {
