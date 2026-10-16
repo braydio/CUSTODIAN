@@ -96,7 +96,7 @@ The mapper instantiates the actual production `SunderedKeepMap`, rather than a
 blank or legacy approach scene. It combines the unique tools from the retired
 approach-collision, underlay-collision, and gameplay-tile mappers:
 
-- 127 capsule-rail collision editing;
+- capsule-rail collision editing against the current authored underlay JSON (207 mapped rails as of the 2026-10-16 contract reconciliation; do not freeze the count in tests);
 - exact runtime marker editing;
 - stable `01–99` floor/wall/gate/door/stair palette;
 - underlay-region stamp sampling;

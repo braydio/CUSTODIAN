@@ -1040,7 +1040,8 @@ godot --headless --script tools/validation/sundered_keep_mapper_smoke.gd
 
 The underlay debug smoke retains the focused underlay-only runtime check.
 The unified mapper smoke proves the tool previews the actual production Keep,
-owns the level and collision documents, retains 127 rails and the 01–99
+owns the level and collision documents, verifies authored-rail-to-runtime parity
+rather than an obsolete hard-coded rail count, retains the 01–99
 palette/stamp/undo toolset, exposes on-map selection/movement/creation for
 complete spatial and siege placement authority, and keeps Return Mooring's
 linked records aligned under one bundle operation.
