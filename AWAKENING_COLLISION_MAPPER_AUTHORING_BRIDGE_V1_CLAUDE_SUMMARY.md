@@ -1,12 +1,11 @@
-# Awakening Collision Mapper Authoring Bridge V1 — Checkpoint Summary
+# Awakening Collision Mapper Authoring Bridge V1 — Completion Summary
 
 ## Outcome
 
-Partial implementation is committed to the workstream branch and remains open.
-The Awakening-specific authoring bridge and its changed-file suite are green, but
-the packet's required existing Sundered Keep mapper smoke fails against current
-main's existing Sundered data. AP0 was not retried because this implementation
-pair is not finished and main has not been landed/synchronized.
+Implementation is complete and committed to the workstream branch. The
+workstream was reconciled with current main, the Awakening authoring bridge and
+Sundered preservation smoke pass, and changed-file validation passes with full
+coverage.
 
 ## Changes
 
@@ -26,6 +25,10 @@ pair is not finished and main has not been landed/synchronized.
   threshold overlap, 05→06 passage closure, 128px route narrowing, 11px Operator
   clearance, protected spawn/locker/lift overlap, and a 16px occupancy route
   failure. Production Layout and runtime scene/script remain untouched.
+- Reconciled the Sundered mapper preservation smoke with its current production
+  document expectations, corrected its post-reload preview lookup, and
+  registered it in the validation manifest so changed-file coverage includes
+  the standalone smoke.
 
 ## Validation
 
@@ -35,14 +38,12 @@ pair is not finished and main has not been landed/synchronized.
   serialization, provenance/route negatives, and source-owner undo/redo.
 - `awakening_first_return`: PASS (1/1).
 - `awakening_first_return_geometry`: PASS (1/1).
+- `sundered_keep_mapper_semantics`: PASS (1/1); standalone
+  `sundered_keep_mapper_smoke.gd`: PASS.
 - `authored_level_mapper_framework_smoke.gd`: PASS.
 - `level_collision_poi_mapper_smoke.gd`: PASS.
-- `sundered_keep_mapper_smoke.gd`: FAIL (5 assertions). The underlying current
-  level JSON already has `mapper_placements`, contrary to the smoke's expected
-  empty initial placement set; the same test reports preview, rail-count, and
-  spawn-parity mismatches. Generic/Sundered mapper code and data were not changed.
-- `run_validation.py --changed --base origin/main --json`: PASS, 40 selected,
-  40 passed, 0 failed, 0 timed out, 0 skipped.
+- `run_validation.py --changed --base origin/main --json`: PASS, 42 selected,
+  42 passed, 0 failed, 0 timed out, 0 skipped, coverage complete.
 - `check_ai_context.py --json`: PASS; `task_packet_index.py`: PASS;
   `validate_review_pairing.py`: PASS (101 pairs); `git diff --check`: PASS.
 - Moment Forge: not run — this changes the mapper authoring tool, not game feel,
@@ -53,31 +54,31 @@ pair is not finished and main has not been landed/synchronized.
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: blocked
+- Outcome: success
 - Friction severity: medium
-- What went wrong: the explicit Sundered Keep preservation smoke failed despite
-  40/40 changed-file checks passing.
-- Root cause / contributing factors: the Sundered smoke's initial-placement,
-  preview, rail-count, and spawn expectations disagree with current main's
-  authored Sundered documents; those files are outside this workstream.
-- Prevention / pipeline improvement: reconcile that smoke in its own scoped
-  task before using it as a green preserve gate.
-- Tooling / docs drift discovered: standalone Sundered regression failure is not
-  selected by changed-file validation when no Sundered owner files changed.
-- Follow-up: manual-follow-up
-- What worked: keeping all new preview/persistence behavior Awakening-specific
-  preserved the generic mapper implementation.
+- What went wrong: main's Sundered smoke reconciliation retained a stale
+  preview Node after the smoke's scene reload, and the standalone smoke was not
+  registered for changed-file validation.
+- Root cause / contributing factors: the test reused a Node reference from its
+  pre-reload state snapshot; absent manifest ownership also caused coverage to
+  report the changed smoke file as uncovered.
+- Prevention / pipeline improvement: query the current mapper state after the
+  reload and register the smoke against mapper/runtime data owners.
+- Tooling / docs drift discovered: the Sundered mapper preservation smoke was
+  missing from validation_manifest.json.
+- Follow-up: fixed-in-scope
+- What worked: Awakening preview/persistence remains isolated; the Sundered
+  preservation gate and all 42 changed-file checks pass.
 
 ## Next Handoff
 
-- Next workstream: awakening-collision-mapper-authoring-bridge-v1
+- Next workstream: review-awakening-collision-mapper-authoring-bridge-v1
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: reconcile the Sundered smoke against current main in a scoped
-  change or obtain an authoritative baseline result, then rerun the required
-  focused preserve set and finish the mapper packet through workstream.py.
-- Blockers or open questions: Sundered smoke fails five assertions; user-authored
-  collision promotion remains deferred; paired post-land review remains required.
+- Next action: finish the implementation packet through workstream.py, then
+  initiate the fresh-context paired post-land review before inviting user drawing.
+- Blockers or open questions: user-authored collision promotion remains
+  deferred; paired post-land review remains required.

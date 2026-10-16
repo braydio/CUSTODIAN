@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-collision-mapper-authoring-bridge-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -59,11 +59,11 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `success`
 - Friction severity: `medium`
-- What went wrong: `The required standalone Sundered Keep mapper smoke failed five assertions after the shared mapper overlay was restored unchanged; changed-file validation passed 40/40.`
-- Root cause / contributing factors: `The current Sundered level JSON already contains saved mapper placements while the smoke requires zero; the same smoke also expects outdated placement previews, 127 collision segments, and matching spawn coordinates. This mismatch is outside the Awakening work surface.`
-- Prevention / pipeline improvement: `Reconcile the Sundered smoke against its current production data in its own scoped task, then rerun it before declaring this preserve gate green.`
-- Tooling / docs drift discovered: `The task's shared Sundered regression is not green at the claimed main baseline; the failure is not selected by changed-file validation because no Sundered owner files changed.`
-- Follow-up: `manual-follow-up`
-- What worked: `Awakening-specific overlay and draft bridge remained isolated; all 40 changed-file checks passed.`
+- What went wrong: `The Sundered preservation smoke first failed against stale production-data assumptions; after main reconciled those expectations, it exposed a freed preview reference and was not registered for changed-file coverage.`
+- Root cause / contributing factors: `The smoke retained a Node from before its immediate-placement helper reloaded the preview. Its standalone script also had no manifest entry, so changed-file validation reported it uncovered.`
+- Prevention / pipeline improvement: `The smoke now queries the current preview after reload and is registered with its mapper and production-data owners, making future related changes select it.`
+- Tooling / docs drift discovered: `The active validation manifest omitted the Sundered mapper preservation smoke.`
+- Follow-up: `fixed-in-scope`
+- What worked: `The Awakening bridge stayed isolated from generic runtime behavior; the Sundered smoke and all 42 changed-file checks now pass.`
