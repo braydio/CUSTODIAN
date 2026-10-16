@@ -75,3 +75,67 @@ source/Workbench gates. The diagnostic experiment does not grant any of these.
 Use the compact `contact_sheet.png`, clean strip, Aseprite tracks and `report.json`
 for the smallest next correction. Verify the intended rig master first if its pivot
 geometry is surprising; do not edit source pivots just to get green metrics.
+
+## Master audit and recovery checkpoint
+
+`MASTER_AUDIT_BRIEF.md` is the supplied audit instruction. Reproduce its comparison
+and create a disposable segmentation-restored candidate with:
+
+```bash
+python3 custodian/tools/operator/ne_walk_retarget/master_audit.py \
+  --original ~/Downloads/SINGLE_FRAME.aseprite \
+  --recovered ~/Downloads/custodian_operator_ne_rig_recovery_audit_v1/operator_ne_rig_RECOVERED_FROM_V6_UNVERIFIED.aseprite \
+  --output ~/Downloads/operator_ne_master_audit_new
+```
+
+The tool exports with real Aseprite, verifies exact visible ownership and neutral
+pixel identity, records all 18 parsed pivots, checks both boots and shin art, and
+compares the two locked sources. The recovered foot's original owners are counted
+by pixel coordinate. A round-tripped candidate preserves every original `__RIG_`
+layer byte-for-byte, strips old working references, and adds a hidden QA guide.
+This restores pre-regression segmentation as an **incomplete candidate**. It does
+not invent missing boot pixels or approve the older source. Input files are hashed
+before/after. No source parts are mixed across versions.
+
+`run.py` now performs this structural rig preflight before launching V6. Empty shin
+art, missing/invalid boots, anomalously short shin geometry needing review, or a
+toe outside the boot envelope block the solver. The 0.4 shin/thigh review trigger
+is a conservative diagnostic, not a universal anatomical law or replacement for
+human inspection. The V6 `batch.lua` and all its tolerances are unchanged.
+
+The portable `operator_ne_rig_master_audit_smoke.py` checks lossless partitions,
+duplicate ownership, recoloring, empty-shin misclassification, missing boot,
+short-chain and toe-envelope rejection. It supplies validation ownership for this
+experiment; it does not replace a real Aseprite run or a human anatomy decision.
+
+## Human-selected anatomy recovery
+
+`RECOVERY_DECISION.md` records the user's selected immutable original and authoring
+route. `recover.py` accepts only that exact SHA256 and writes to a new local directory:
+
+```bash
+python3 custodian/tools/operator/ne_walk_retarget/recover.py \
+  --original ~/Downloads/SINGLE_FRAME.aseprite \
+  --output ~/Downloads/operator_ne_anatomy_recovery_new
+```
+
+`recover_far_leg.lua` traces provisional far-leg ownership from the selected rendered
+anatomy: visible proximal leg y78–83, distal leg y84–88, cuff/sole y89–91. Proposed
+far pivots are hip (53,75), knee (52,83), ankle (50,88), toe (48,91). The hip remains
+an occluded inference; marker opacity is not an acceptance rule. The shortened far
+projected chain (8.062px thigh + 5.385px shin) needs human visual review against the
+near chain (14.142 + 11.045px); numeric gate success does not approve proportions.
+
+Reclassification moves 39 distal thigh pixels to shin and 21 original distal shin
+pixels to the boot. It retains independent 52px thigh / 47px shin / 21px boot art.
+Two hidden shin and two hidden boot joint-cover pixels copy exact selected-source
+colors and are fully covered by the original visible owners in neutral. No newer
+V6 source pixel, rescaling, mirroring or near-boot copy is involved.
+
+The driver verifies the selected locked source and neutral composite pixel-exactly,
+all unrelated rig layers unchanged, the 18-pivot parse, palette subset, visible
+ownership, positive segment lengths, and six IK/raster contact probes at -15/0/+15
+degrees for both sides. It reopens the saved candidate through real Aseprite before
+reporting technical success. Run V6 separately against that candidate only after
+these checks pass. The solver and its tolerances remain unchanged; source/timing
+publication is not part of this tool. The candidate remains visually unaccepted.

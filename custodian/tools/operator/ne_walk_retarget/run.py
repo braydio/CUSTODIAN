@@ -181,6 +181,14 @@ def main():
     start=core.index('local KNIGHT_F1_EMBEDDED =')
     end=core.index('local function clamp(v,lo,hi)',start)
     core=core[:start]+core[end:]
+    # Rig validation is separate from the unchanged V6 solver. Refuse the
+    # known empty-shin / missing-foot regression before rendering 15 frames.
+    from master_audit import export as audit_rig
+    rig_audit,_,_=audit_rig(a.aseprite,a.rig,a.output/'rig_preflight',core)
+    if not rig_audit['structural_gate_passed']:
+        write(a.output/'RIG_BLOCKED.json',{'rig_sha256':rig_sha,
+              'blocking_findings':rig_audit['blocking_findings'],'v6_solver_started':False})
+        raise RuntimeError('Rig gate refused before V6: '+', '.join(rig_audit['blocking_findings']))
     driver=a.output/'batch_generated.lua';driver.write_text(core+'\n'+(HERE/'batch.lua').read_text())
     cfg={'bundle':str(a.bundle),'output':str(a.output),'annotations':annotations}
     command=[a.aseprite,'-b',str(a.rig),'--script-param','config='+json.dumps(cfg,separators=(',',':')),'--script',str(driver)]

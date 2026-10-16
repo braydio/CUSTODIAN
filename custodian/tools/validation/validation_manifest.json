@@ -37,6 +37,19 @@
   ],
   "tests": [
     {
+      "id": "operator_ne_rig_master_audit",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_rig_master_audit_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "rig", "negative_control", "tooling"],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/**",
+        "custodian/tools/validation/operator_ne_rig_master_audit_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "campaign_geography_identity",
       "type": "godot_script",
       "script": "res://tools/validation/campaign_geography_identity_smoke.gd",
