@@ -28,7 +28,7 @@
 - Review focus: Independent code archaeology of provenance and branch pinning; test the original `--ephemeral` context loss; reviewer-only authorship of disposition; no `--no-godot-lock`; no shared .git write; preserve original run evidence and dirty persistent checkout. Distinguish successful continuation from mere green coordinator reports.
 - Acceptance: Findings-first fresh-context review with zero blocking defects/material gaps and the full exact review receipt only if all guards and fault tests pass. If runtime continuation cannot safely be authorized, record findings and leave protected run unclaimed by a new dispatcher and unpassed.
 - Non-goals: No editor/runtime procgen changes, no reviewer-fabricated PASS, no generic orphan branch parking or altering Godot cache ownership.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Publication Gate
 - Do not claim until implementation completes/archives and targeted authoring promotion confirms ready/auto on current main. The ambient review remains a distinct protected run and does not automatically pass when this tool passes.
