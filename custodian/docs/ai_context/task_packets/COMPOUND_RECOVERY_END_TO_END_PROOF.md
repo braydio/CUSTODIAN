@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-recovery-end-to-end-proof
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: review-compound-recovery-assault-objectives, review-compound-recovery-field-repair, review-compound-recovery-build-restoration
 - Locks: compound-proof

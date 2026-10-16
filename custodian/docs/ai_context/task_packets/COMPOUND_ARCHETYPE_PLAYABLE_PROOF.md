@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-archetype-playable-proof
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: review-compound-secure-access-fixtures
 - Locks: compound-proof

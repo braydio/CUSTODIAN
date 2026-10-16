@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `new game-world/dev-tool boundary; fresh independent proof`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `conditional`
 - Goal: Inspect live accepted generated-world truth through read-only terrain/route/playability/POI/asset provenance overlays without new authority.
 - Completion boundary: Ship the exact PGA-5 scoped behavior on real repository owners, register its focused smoke and pass the paired fresh-context review; no proxy closure or speculative ownership changes.
@@ -37,6 +37,21 @@
 - Use existing functions and read-only APIs whenever possible; add just a focused controller or accessor, not large stateful blocks in `proc_gen_tilemap.gd`.
 - If real code diverges materially from the packet's ownership boundary, stop and request the scoped architecture refresh instead of improvising a second system.
 
+## Preparatory implementation audit (2026-10-15; live main `96c44f5444abb87eb5c054ad883e69d023ff845f`)
+
+**This is a preparatory exact-path implementation plan, not the final realized-API refresh.** PGA-5 is still `draft/manual`; the relevant predecessor reviews and direct API checks named below remain mandatory. Do not add `Authoring handoff: auto`, promote, or claim as a result of this section.
+
+### Canonical snapshot boundaries (pre-PGA-2/PGA-4 API freeze)
+- `custodian/game/world/procgen/generation/accepted_world_export.gd::ProcgenAcceptedWorldExport.LEVEL_DATA_SCHEMA` owns the exported generated-world keys and detached copies. Consume exported `floor_cells`, `wall_cells`, `region_tiles`, `road_semantics`, `main_route_cells`, `route_playability`, `biome_summary`, `encounter_plan`, `faction_activity_sites` and other **present** keys as data. Do NOT invoke its mutating `capture_tile_state` from a debug overlay.
+- `ProcGenTilemap.get_level_data()`, `get_runtime_health_snapshot()` and `ProcgenPerformanceSnapshot.generation_snapshot(tilemap)` are existing read APIs. `CandidateSemanticAdapter.fingerprint_runtime_state` is the existing fingerprint authority. Stage/report facts must be scoped to the gallery host's accepted map, not arbitrary `SceneTree` first-node selection.
+- `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_inspector.gd` should project one detached, versioned readout per accepted `generation_id` / session request, with `available`, `unavailable` or `not_applicable` per field. Compare counts to source dictionaries, not painted/unpainted streaming visibility when those differ.
+- `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_gallery_overlay.gd` is presentation-only. Build bounded spatial glyphs/lines from the snapshot (and only for explicit enabled layers or changed events); no continual full-map scan, render-side collision inference, accepting input as gameplay data, or write into `ProcGenTilemap`.
+- Provenance: resolve catalog `exhibit_id` to actual loaded `source authority` and optional runtime asset reference from **landed PGA-2**, with truthful N/A if unresolved. Do not render pending Asset V2 inbox items or claim an unavailable actor/biome.
+- Planned `procgen_showcase_inspector_smoke.gd` under `custodian/tools/validation/levels/`: fixed accepted map + source parity, disabled overlay cost bounded, clear on seed/session change/host disposal, missing-data N/A and absence of source mutation. Run `procgen_accepted_world_export_parity`, `procgen_candidate_semantic_model` and the PGA-2/PGA-4 focused smokes.
+
+### Required *final* refresh after PGA-2 and PGA-4 reviews
+Resolve the exact catalog lookup API and session accepted-map/level_data getter from their landed sources/review receipts. Choose a narrow read-only host/session projection if needed; do not access private fields or create a second map-export authority. Retain `draft/manual` until this is inspected on main.
+
 ## Refresh Planning Authority
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
@@ -48,7 +63,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `normal independent fresh-context review of landed implementation`
 - Next action: `Land, archive implementation, then run fresh paired review; do not advance the subsequent PGA slice until review archives complete.`
 - Blockers or open questions: `Explicit architecture/API refresh required before promotion`

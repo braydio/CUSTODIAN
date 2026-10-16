@@ -12,7 +12,7 @@
 - Review target workstream: `procgen-showcase-seed-comparison`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_SHOWCASE_SEED_COMPARISON.md`
 - Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -29,12 +29,21 @@
 - Non-goals: No opportunistic fixes, duplicate new feature code or self-approved subjective aesthetics.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Preparatory independent review probes (2026-10-15)
+
+**Do not claim this review until its implementation has landed, archived and passed implementation validation.**
+
+- Verify A/B/C stores only JSON-safe detached receipts and never retains discarded map/Node/Resource references; prove one resident map after serial captures.
+- Same-seed structural fields/fingerprint must match even when `elapsed_ms` differs. Failed/rejected/unsupported fields must not masquerade as accepted-world metrics.
+- Test cap=3, slot reset, interrupted generation, re-entry/return safety and no node growth after clearing data. Optional screenshots are opt-in evidence, not runtime media or Asset V2.
+- Require PGA-4 and PGA-5 reviewed interfaces plus focused registered comparison smoke and green changed-file sweep.
+
 ## Next Handoff
 - Next workstream: `procgen-showcase-integration-closeout`
 - Next packet state: `refresh-required`
 - Refresh owner: `chatgpt-user`
 - ChatGPT/user planning refresh required: `yes`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `Next generated-world/inspection integration must be rederived from newly landed owner and review receipt`
 - Next action: `Verify dependency archive and manually refresh only if successor's packet requires it; then run targeted authoring preflight before promotion`
 - Blockers or open questions: `none after valid independent review`

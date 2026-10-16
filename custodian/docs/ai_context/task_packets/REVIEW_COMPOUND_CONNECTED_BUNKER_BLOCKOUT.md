@@ -3,15 +3,15 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-compound-connected-bunker-blockout
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: compound-connected-bunker-blockout
 - Locks: compound-layout
 - Kind: review
 - Review: none
 - Review target workstream: compound-connected-bunker-blockout
-- Review target packet: custodian/docs/ai_context/task_packets/COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md
+- Review target packet: custodian/docs/ai_context/task_packets/archived/COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md
 - Reviewed main: 9b8ae05581e3194876d8b4763946d1f74d77fa50
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Review modes: code, architecture, runtime, visual

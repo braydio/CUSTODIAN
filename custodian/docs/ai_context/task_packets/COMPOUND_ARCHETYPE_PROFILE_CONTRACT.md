@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-archetype-profile-contract
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: none
 - Locks: compound-layout
