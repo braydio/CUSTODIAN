@@ -67,3 +67,11 @@
 - Tooling / docs drift discovered: `The active validation manifest omitted the Sundered mapper preservation smoke.`
 - Follow-up: `fixed-in-scope`
 - What worked: `The Awakening bridge stayed isolated from generic runtime behavior; the Sundered smoke and all 42 changed-file checks now pass.`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The Awakening-specific mapper displays actual instantiated colliders and registered art, saves/reopens an atomic provenance-bound draft, rejects route/staleness negatives, and leaves production collision/Layout untouched. Gate pylon geometry and 272px clearance pass. Awakening mapper, first-return, geometry, generic framework, collision-POI and Sundered preservation smokes pass; changed-file validation passes 42/42 with complete coverage. The paired post-land review owns the independently rendered 04→05 and gate-pylon crop inspection before user collision authoring.`
