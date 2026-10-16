@@ -66,7 +66,7 @@ Return changed files, measured acceptance, focused test evidence, documentation 
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-9156-be4e5c2851c0
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Refresh reason: none
 - Next action: after implementation lands and archives complete, launch the fresh-context paired review through `paired_review_runner.py`.
 - Blockers or open questions: none; physical walled-yard geometry, subsurface bunker travel, and gameplay remain deferred to downstream packets.
