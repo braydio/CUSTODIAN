@@ -2,8 +2,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codex-art-import-shared-transform`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-art-registration-profile-review-corrections-1-r1`
