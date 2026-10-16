@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `carrow-interior-scale-calibration-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-carrow-operations-house-interior-v1`
@@ -57,6 +57,26 @@
 - Validation: Create and run one new deterministic fixture smoke for exact config/equipment/doorway/waypoints/Operator shape/camera/asset/negative checks, then run EXISTING `custodian/tools/validation/carrow_yard_interior_smoke.gd`, `custodian/tools/validation/carrow_operations_house_interior_smoke.gd`, and `custodian/tools/validation/carrow_backdrop_isolation_smoke.gd` (plus the existing West test by live discovery). Run changed-file validation and AI-context/packet-pair checks. The new fixture file is not a pre-existing validation dependency and MUST be authored before execution. Do not run headless aesthetic evaluation.
 - Task overrides: `none`
 - Deferred: User picks actual production size (or requests further fixed variants) after playtesting. Only a later approved task changes production East/West/Ops and refreshes Gatehouse dimensions.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `Three separately launchable scenes use 24x18, 30x22 and 36x26 native 32px geometry. The shared controller reuses the actual Operator, CameraController, Carrow production floor/art resources and East storage scene without instantiating GothicCompoundMap or changing production room data. Fixture smoke verifies exact floor/collider/art/storage counts, actual capsule clearance, controls, negative geometry/art inputs and all three camera profiles. Nine native 768x576 renderer captures plus three geometry.json files and comparison.json are present under ignored reports/carrow_scale_calibration/; local retained evidence is under .git/custodian-review-runs/carrow-interior-scale-calibration-v1/20261016T012240Z-44c5ccfe48e1/. Validation was green: changed-file coverage 34/34, new fixture, East/West/Ops and backdrop regressions.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The packet specified an ignored reports/carrow_scale_calibration output path, but the repository had no matching ignore rule. A narrowly scoped root .gitignore rule was added. The first fresh Godot editor scan also had to import the project asset cache.`
+- Root cause / contributing factors: `The packet's local-artifact assumption was not represented in the repository ignore policy.`
+- Prevention / pipeline improvement: `Keep task-specific generated-evidence paths and their ignore rules authored together.`
+- Tooling / docs drift discovered: `reports/carrow_scale_calibration/ was not ignored despite the packet calling it an ignored output path.`
+- Follow-up: `review-carrow-interior-scale-calibration-v1`
+- What worked: `The fixture smoke queries the real Operator capsule against the actual PhysicsServer2D space, while deterministic cell ownership checks prove the exact layout without inferring collision from art.`
 
 ## Next Handoff
 

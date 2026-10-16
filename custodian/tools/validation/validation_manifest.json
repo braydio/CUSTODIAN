@@ -1039,6 +1039,26 @@
       "needs_import": false
     },
     {
+      "id": "carrow_machine_house_scale_calibration",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_machine_house_scale_calibration_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "interior",
+        "scale_calibration",
+        "negative_control",
+        "geometry"
+      ],
+      "owners": [
+        "custodian/tools/level_authoring/carrow_machine_house_scale_fixture.gd",
+        "custodian/scenes/debug/carrow_machine_house_scale_*.tscn",
+        "custodian/tools/validation/carrow_machine_house_scale_calibration_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "command_pressure_scenario_setup",
       "type": "godot_script",
       "script": "res://tools/validation/command_pressure_scenario_setup_smoke.gd",
