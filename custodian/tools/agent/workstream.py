@@ -340,7 +340,7 @@ def _nonpassing_review_artifact_error(workstream_id: str, path: Path, review_pac
     if not target_workstream or not target_packet_path:
         return f"paired review artifact gate requires Review target workstream/packet for {workstream_id}"
     try:
-        changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
+        changed_paths = git("diff", "--no-renames", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
     except WorkstreamError as exc:
         return f"paired review artifact gate cannot inspect changed paths: {exc}"
     allowed = {

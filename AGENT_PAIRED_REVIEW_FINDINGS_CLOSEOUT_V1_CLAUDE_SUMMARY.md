@@ -35,10 +35,18 @@ holders (this one and the stranded review) — expected for the exception.
 
 ## Validation
 
-- From `custodian/tools/agent`: 266 tests passed (paired-review runner, dispatch, workstream,
+- From `custodian/tools/agent`: 274 tests passed (paired-review runner, dispatch, workstream,
   workstream artifacts, task-packet contract, review contract, review outcome, closeout/recovery,
   land_main, next-execution-boundary, run-trace); `test_workflow_control` (11) passed from the repo
-  root; `git diff --check` clean.
+  root; changed-file validation against origin/main passed (8 tests, complete coverage); `git diff
+  --check` clean.
+- Independent pre-land review (fresh read-only reviewer): round 1 FINDINGS — B1 recovery did not
+  bound the review branch's own commits to evidence paths (arbitrary committed files would have
+  landed), M1 no late claim release, M2 unconditional remote delete, M3 finish gate did not bind
+  review cycle/finding evidence, minor substring IDs and CR heading. All fixed with tests. Round 2
+  PASS; its minor rename-hiding and late-release HEAD items were fixed too. Known remaining
+  weakness: a finding ID that appears only in header text still counts as evidence. The packet's
+  separate post-land paired review is still required.
 - New tests use real Git (bare remote, stranded review branch, protected sidecar, run directory).
   A negative control (review gate disabled) turns four of the five dispatcher tests red.
 - Not exercised: a real end-to-end `workstream.py finish` of a findings closeout (finish stubbed in

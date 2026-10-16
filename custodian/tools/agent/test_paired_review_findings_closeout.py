@@ -497,6 +497,15 @@ class RecoverCloseoutTests(FixtureCase):
         self.assertNotEqual(subprocess.run(["git", "-C", str(fx.repo), "cat-file", "-e", "origin/main:game_code.gd"],
                                            capture_output=True).returncode, 0)
 
+    def test_a_rename_into_an_allowed_path_cannot_hide_a_deleted_source_file(self):
+        fx = self.fx
+        sh(fx.worktree, "mv", "implementation.py", ARCHIVE)
+        sh(fx.worktree, "commit", "-qam", "rename a source file into an allowed path")
+        allowed = {ACTIVE, ARCHIVE, README, SUMMARY}
+        error = runner._branch_scope_error(fx.worktree, "HEAD", allowed)
+        self.assertIsNotNone(error, "the deleted source must be reported, not only the allowed destination")
+        self.assertIn("implementation.py", error)
+
     def test_a_preseeded_recovery_checkout_with_an_extra_commit_is_refused_before_publishing(self):
         fx = self.fx
         branch = f"recovery/{WORKSTREAM}-{RUN_ID.rsplit('-', 1)[1]}"

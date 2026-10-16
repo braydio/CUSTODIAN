@@ -849,7 +849,9 @@ def _branch_scope_error(worktree: Path, revision: str, allowed: set[str]) -> str
     Working-tree cleanliness is not enough: committed arbitrary files would otherwise ride a
     recovery landing onto main.
     """
-    outside = sorted(set(_changed_paths(worktree, "diff", "--name-only", f"origin/main...{revision}")) - allowed)
+    # --no-renames: default rename detection prints only the destination and would hide a deleted source.
+    outside = sorted(set(_changed_paths(worktree, "diff", "--no-renames", "--name-only",
+                                        f"origin/main...{revision}")) - allowed)
     if outside:
         return "review branch commits change files outside the bounded evidence scope: " + ", ".join(outside)
     return None
@@ -974,10 +976,12 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
         if release_claim and not result.get("claim_released"):
             # A completed recovery may release its claim later, but only with the protected
             # original still byte-identical to what was journaled before any write.
-            if _worktree_inventory(original) != journal.get("inventory"):
+            if (_worktree_inventory(original) != journal.get("inventory")
+                    or git(original, "rev-parse", "HEAD") != journal["intent"]["published_tip"]):
                 raise RunnerError("the protected original worktree changed; refusing to release the claim")
             released = _release_claim(repo, branch)
-            result = {**result, "claim_released": released, "claim_release_pending": not released}
+            result = {**result, "claim_released": released, "claim_release_pending": not released,
+                      "claim_release_requested": True}
             _write_atomic(journal_path, json.dumps({**journal, "result": result}, indent=2, sort_keys=True) + "\n")
         return result
     if journal:
