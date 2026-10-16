@@ -161,12 +161,13 @@ developer's dirty art worktree.
 ## Persistent Compound Layout
 
 ```bash
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/compound_archetype_profile_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
 ```
 
-These cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
+The profile smoke covers repeatability for the seven fixed seeds, legacy geometry preservation, rejection of unknown IDs, room/connector identity, and level-data metadata export. The existing smokes cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
 
 ## Terminal Sensors Intelligence
 

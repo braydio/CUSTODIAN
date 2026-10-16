@@ -389,6 +389,7 @@ enum WorldShapeMode {
 
 ## Compound generation (structured base area)
 @export var enable_compound_zone: bool = true
+@export_enum("legacy", "walled_yard", "connected_bunker") var compound_archetype_id: String = "legacy"
 @export_range(0.1, 0.2, 0.01) var compound_area_ratio: float = 0.14
 @export var compound_min_size: Vector2i = Vector2i(64, 52)
 @export var compound_max_size: Vector2i = Vector2i(76, 60)
@@ -489,6 +490,9 @@ var _last_compound_terminal_anchor := Vector2i.ZERO
 var _last_compound_fabricator_anchor := Vector2i.ZERO
 var _last_compound_construction_zone_anchor := Vector2i.ZERO
 var _last_compound_diagnostics: Dictionary = {}
+var _last_compound_archetype_id := ""
+var _last_compound_layer_id := ""
+var _last_compound_profile_version := 0
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
@@ -4179,6 +4183,9 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_courtyard_cells.clear()
 		_last_compound_fabricator_anchor = Vector2i.ZERO
 		_last_compound_construction_zone_anchor = Vector2i.ZERO
+		_last_compound_archetype_id = ""
+		_last_compound_layer_id = ""
+		_last_compound_profile_version = 0
 		_last_compound_diagnostics = compound.get("diagnostics", {}).duplicate(true)
 		push_warning("[ProcGenTilemap] Semantic compound generation failed: %s" % _last_compound_diagnostics.get("failure_reason", "unknown"))
 		return
@@ -4195,6 +4202,9 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_courtyard_cells.clear()
 		_last_compound_fabricator_anchor = Vector2i.ZERO
 		_last_compound_construction_zone_anchor = Vector2i.ZERO
+		_last_compound_archetype_id = ""
+		_last_compound_layer_id = ""
+		_last_compound_profile_version = 0
 		return
 
 	_last_compound_rect = rect
@@ -4208,6 +4218,9 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 	_last_compound_terminal_anchor = compound.get("terminal_anchor", Vector2i.ZERO)
 	_last_compound_fabricator_anchor = compound.get("fabricator_anchor", Vector2i.ZERO)
 	_last_compound_construction_zone_anchor = compound.get("construction_zone_anchor", Vector2i.ZERO)
+	_last_compound_archetype_id = String(compound.get("archetype_id", "legacy"))
+	_last_compound_layer_id = String(compound.get("layer_id", "surface"))
+	_last_compound_profile_version = int(compound.get("archetype_profile_version", 1))
 	_last_compound_diagnostics = (compound.get("diagnostics", {}) as Dictionary).duplicate(true)
 
 	for x in range(rect.position.x, rect.end.x):
@@ -4280,7 +4293,8 @@ func _build_compound_layout(map_size: Vector2i) -> Dictionary:
 	return planner.generate_layout(
 		_get_generation_seed(),
 		bounds_result.get("rect", Rect2i()),
-		bounds_result.get("ingress", [])
+		bounds_result.get("ingress", []),
+		StringName(compound_archetype_id)
 	)
 
 
@@ -11936,6 +11950,9 @@ func get_level_data() -> Dictionary:
 		"compound_terminal_anchor": _last_compound_terminal_anchor,
 		"compound_fabricator_anchor": _last_compound_fabricator_anchor,
 		"compound_construction_zone_anchor": _last_compound_construction_zone_anchor,
+		"compound_archetype_id": _last_compound_archetype_id,
+		"compound_layer_id": _last_compound_layer_id,
+		"compound_archetype_profile_version": _last_compound_profile_version,
 		"compound_diagnostics": _last_compound_diagnostics,
 		"main_road_tiles": get_main_road_tiles(),
 		"ruined_road_tiles": get_ruined_road_tiles(),

@@ -106,7 +106,11 @@ func _run() -> void:
 		"mapper-authored spawn overlaps a collision rail"
 	)
 
-	var preview := state.get("underlay_scene") as Node
+	# The immediate-placement test reloads the production preview and frees the
+	# earlier scene instance. Read the mapper state again so these assertions
+	# inspect the live preview instead of retaining a stale Node reference.
+	var current_state := mapper.call("get_sundered_keep_mapper_state") as Dictionary
+	var preview := current_state.get("underlay_scene") as Node
 	_assert(preview != null and preview.name == "ProductionSunderedKeepPreview", "mapper does not preview actual runtime level")
 	_assert(
 		preview != null
