@@ -368,9 +368,14 @@ def _nonpassing_review_artifact_error(workstream_id: str, path: Path, review_pac
     binding = review_outcome.outcome_identity_error(
         outcome, review_workstream=workstream_id, target_workstream=target_workstream,
         reviewed_main=reviewed_main, implementation_commit=commit,
+        review_cycle=parse_packet(str(review_packet), packet_text).review_cycle,
     )
     if binding:
         return f"paired review artifact gate rejects the Review Outcome: {binding}"
+    evidence = packet_text.split("## Review Outcome")[0]
+    for finding in review_outcome.finding_ids(outcome):
+        if not review_outcome.finding_evidenced(evidence, finding):
+            return f"paired review artifact gate finds no written evidence for {finding} in the review packet"
     for revision in (reviewed_main, commit):
         if subprocess.run(["git", "merge-base", "--is-ancestor", revision, "HEAD"], cwd=path,
                           text=True, capture_output=True).returncode:

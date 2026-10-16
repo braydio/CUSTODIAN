@@ -481,6 +481,97 @@ class RecoverCloseoutTests(FixtureCase):
             fx.recover(release_claim=True)
         self.assertTrue(fx.remote_branch_exists())
 
+    def test_review_branch_commits_outside_the_bounded_paths_never_ride_a_landing(self):
+        fx = self.fx
+        (fx.worktree / "game_code.gd").write_text("extends Node # not review evidence\n")
+        sh(fx.worktree, "add", "game_code.gd")
+        sh(fx.worktree, "commit", "-qm", "unbounded commit on the review branch")
+        sh(fx.worktree, "push", "-q", "origin", f"agent/{WORKSTREAM}")
+        for apply in (False, True):
+            with self.subTest(apply=apply):
+                with self.assertRaisesRegex(runner.RunnerError, "outside the bounded evidence scope: game_code.gd"):
+                    fx.recover(apply=apply)
+        self.assertFalse((fx.run_dir / runner.JOURNAL_NAME).exists())
+        self.assertFalse(fx.checkout.exists())
+        sh(fx.repo, "fetch", "-q", "origin", "main")
+        self.assertNotEqual(subprocess.run(["git", "-C", str(fx.repo), "cat-file", "-e", "origin/main:game_code.gd"],
+                                           capture_output=True).returncode, 0)
+
+    def test_a_preseeded_recovery_checkout_with_an_extra_commit_is_refused_before_publishing(self):
+        fx = self.fx
+        branch = f"recovery/{WORKSTREAM}-{RUN_ID.rsplit('-', 1)[1]}"
+        sh(fx.repo, "worktree", "add", "-qb", branch, str(fx.checkout), f"origin/agent/{WORKSTREAM}")
+        sh(fx.checkout, "config", "user.name", "test")
+        sh(fx.checkout, "config", "user.email", "test@example.invalid")
+        (fx.checkout / "planted.gd").write_text("extends Node\n")
+        sh(fx.checkout, "add", "planted.gd")
+        sh(fx.checkout, "commit", "-qm", "planted commit")
+        remote_tip = sh(fx.repo, "ls-remote", "origin", f"refs/heads/agent/{WORKSTREAM}")
+        with self.assertRaisesRegex(runner.RunnerError, "outside the bounded evidence scope: planted.gd"):
+            fx.recover()
+        self.assertEqual(sh(fx.repo, "ls-remote", "origin", f"refs/heads/agent/{WORKSTREAM}"), remote_tip)
+        self.assertEqual(fx.main_commits_touching("planted.gd"), 0)
+
+    def test_a_rewound_checkout_no_longer_descends_from_the_journaled_recovery_head(self):
+        fx = self.fx
+
+        def failing_lander(_checkout):
+            raise runner.RunnerError("land_main blocked; simulated interruption")
+        with self.assertRaises(runner.RunnerError):
+            fx.recover(lander=failing_lander)
+        sh(fx.checkout, "reset", "-q", "--hard", fx.tip)
+        with self.assertRaisesRegex(runner.RunnerError, "no longer descends from the journaled recovery head|outcome"):
+            fx.recover()
+        self.assertEqual(fx.main_commits_touching(ARCHIVE), 0)
+
+    def test_a_completed_recovery_can_release_its_claim_later_and_only_once_safe(self):
+        fx = self.fx
+        first = fx.recover()
+        self.assertTrue(first["claim_release_pending"])
+        self.assertTrue(fx.remote_branch_exists())
+        released = fx.recover(release_claim=True)
+        self.assertTrue(released["claim_released"])
+        self.assertFalse(released["claim_release_pending"])
+        self.assertFalse(fx.remote_branch_exists())
+        self.assertEqual(fx.recover(release_claim=True), released, "a further release request is a no-op")
+        self.assertEqual(fx.recover(), released)
+
+    def test_late_release_refuses_when_the_protected_original_changed(self):
+        fx = self.fx
+        fx.recover()
+        (fx.worktree / SIDECAR).write_bytes(b"uid://tampered-after-completion\n")
+        with self.assertRaisesRegex(runner.RunnerError, "protected original worktree changed"):
+            fx.recover(release_claim=True)
+        self.assertTrue(fx.remote_branch_exists())
+
+    def test_release_never_deletes_a_branch_that_moved_after_verification(self):
+        fx = self.fx
+        fx.recover()
+        real_git = runner.git
+        pushed = []
+
+        def racing_git(repo, *args, **kwargs):
+            output = real_git(repo, *args, **kwargs)
+            if args[:2] == ("rev-parse", "--verify") and any("origin/agent/" in part for part in args) and not pushed:
+                other = fx.base / "late-clone"
+                subprocess.run(["git", "clone", "-q", str(fx.remote), str(other)], check=True)
+                sh(other, "config", "user.name", "late")
+                sh(other, "config", "user.email", "late@example.invalid")
+                sh(other, "checkout", "-q", f"agent/{WORKSTREAM}")
+                (other / "late.txt").write_text("a live reviewer pushed after the check\n")
+                sh(other, "add", "late.txt")
+                sh(other, "commit", "-qm", "late push")
+                sh(other, "push", "-q", "origin", f"HEAD:refs/heads/agent/{WORKSTREAM}")
+                pushed.append(1)
+            return output
+        with patch.object(runner, "git", side_effect=racing_git):
+            with self.assertRaises(runner.RunnerError):
+                runner._release_claim(fx.repo, f"agent/{WORKSTREAM}")
+        self.assertTrue(pushed)
+        self.assertTrue(fx.remote_branch_exists(), "the late push must survive")
+        self.assertIn("late push", sh(fx.repo, "log", "-1", "--format=%s", f"origin/agent/{WORKSTREAM}")
+                      if sh(fx.repo, "fetch", "-q", "origin") == "" else "")
+
     def test_cli_requires_an_explicit_mode_and_prints_the_plan(self):
         with self.assertRaises(SystemExit):
             runner.main(["recover-closeout", WORKSTREAM, "--run-id", RUN_ID, "--outcome", "findings",
@@ -528,6 +619,10 @@ class WorkstreamNonpassingGateTests(FixtureCase):
                                              "Review Outcome Review workstream"),
             "malformed outcome": (fx.outcome().replace("Finding IDs: `R0-01`", "Finding IDs: `none`"), None,
                                   "rejects the Review Outcome"),
+            "finding without written evidence": (fx.outcome(ids=("R0-01", "R0-02")), None,
+                                                 "no written evidence for R0-02"),
+            "wrong review cycle": (fx.outcome(review_cycle=1, ids=("R1-01",)), None,
+                                   "Review Outcome Review cycle"),
         }
         for label, (section, mutate, expected) in cases.items():
             with self.subTest(label):

@@ -24,7 +24,7 @@ FIELDS = (
     "Review cycle", "Finding IDs",
 )
 
-_SECTION_RE = re.compile(r"(?m)^## Review Outcome[ \t]*$")
+_SECTION_RE = re.compile(r"(?m)^## Review Outcome[ \t\r]*$")
 _NEXT_SECTION_RE = re.compile(r"(?m)^## [^\r]*$")
 _LINE_RE = re.compile(r"- ([A-Za-z][A-Za-z ]*): `([^`\r\n]+)`")
 _SHA_RE = re.compile(r"^[0-9a-f]{40,64}$")
@@ -90,6 +90,11 @@ def parse_review_outcome(text: str) -> tuple[dict[str, str] | None, str | None]:
 def finding_ids(outcome: dict[str, str]) -> tuple[str, ...]:
     ids = [item.strip() for item in outcome["Finding IDs"].split(",")]
     return () if ids == ["none"] else tuple(ids)
+
+
+def finding_evidenced(text: str, finding_id: str) -> bool:
+    """True when ``finding_id`` appears as a whole token (``R0-01`` must not match ``R0-011``)."""
+    return re.search(rf"(?<![A-Za-z0-9-]){re.escape(finding_id)}(?![A-Za-z0-9-])", text) is not None
 
 
 def render_review_outcome(*, outcome: str, review_workstream: str, target_workstream: str,

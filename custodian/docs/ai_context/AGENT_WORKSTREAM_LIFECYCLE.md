@@ -406,15 +406,23 @@ implementation commit, originating run ID, review cycle and stable finding IDs
 - **Same-run recovery of a stranded review.**
   `paired_review_runner.py recover-closeout <review-workstream> --run-id <id>
   --outcome findings|human_required --finding-ids R0-01[,...] --provenance <p>
-  --isolated-checkout <path> (--plan | --apply) [--release-claim]`. `--plan` is
-  read-only. `--apply` works only in a recovery-branch checkout at the exact published
-  tip, never in the original worktree; it journals each stage atomically in the original
-  run directory (`closeout-journal.json`), converges on retry, preserves the original
-  claim, branch, worktree, untracked files and run evidence byte-for-byte (verified by
-  hash before and after), never calls `dispatch.py claim`, and refuses a dirty
-  coordination checkout. The claim (the remote `agent/<id>` branch) is released only
-  with `--release-claim` and only after every commit on it is on `origin/main`. A pass
-  is never recovered this way.
+  --isolated-checkout <path> (--plan | --apply) [--release-claim]`. `--plan` changes
+  no worktree, branch, journal or run evidence (it only refreshes remote-tracking refs
+  and the review lock file). `--apply` works only in a recovery-branch checkout at the
+  exact published tip, never in the original worktree. Every commit the review branch
+  made since its merge-base with `origin/main` must stay inside the bounded paths
+  (review packet active/archived, index, canonical summary) before anything is written
+  and again before anything is published. It journals each stage atomically in the
+  original run directory (`closeout-journal.json` and `closeout-integrity.json` are the
+  only files added there), converges on retry, never calls `dispatch.py claim`, and
+  refuses a dirty coordination checkout. The original claim, branch, worktree and run
+  evidence are preserved; the original worktree's modified and untracked files are
+  verified by SHA-256 before and after (ignored files, file modes and symlink targets
+  are not covered by that inventory). The claim (the remote `agent/<id>` branch) is
+  released only with `--release-claim`, either during apply or later on a completed
+  recovery, only while the protected original is unchanged, only after every commit on
+  it is on `origin/main`, and the delete is conditional on the exact verified SHA. A
+  pass is never recovered this way.
 
 ## Exit paths
 

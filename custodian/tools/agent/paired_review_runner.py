@@ -349,7 +349,7 @@ def nonpassing_review_reasons(archived_text: str, summary_text: str, target_text
             reasons.append(binding)
         evidence = archived_text[:archived_text.index("## Review Outcome")]
         for finding in review_outcome.finding_ids(outcome):
-            if finding not in evidence:
+            if not review_outcome.finding_evidenced(evidence, finding):
                 reasons.append(f"finding {finding} has no written evidence in the review packet")
     if target_text != target_content:
         reasons.append("reviewed target packet bytes changed; a nonpassing review must not touch it")
@@ -843,6 +843,40 @@ CLOSEOUT_STAGES = ("prepared", "outcome_written", "committed", "published", "lan
 _RUN_ID_RE = re.compile(r"^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$")
 
 
+def _branch_scope_error(worktree: Path, revision: str, allowed: set[str]) -> str | None:
+    """The branch's own commits (merge-base with origin/main .. revision) must stay in bounded paths.
+
+    Working-tree cleanliness is not enough: committed arbitrary files would otherwise ride a
+    recovery landing onto main.
+    """
+    outside = sorted(set(_changed_paths(worktree, "diff", "--name-only", f"origin/main...{revision}")) - allowed)
+    if outside:
+        return "review branch commits change files outside the bounded evidence scope: " + ", ".join(outside)
+    return None
+
+
+def _remote_branch_exists(repo: Path, branch: str) -> bool:
+    return bool(subprocess.run(["git", "ls-remote", "--heads", "origin", f"refs/heads/{branch}"], cwd=repo,
+                               text=True, capture_output=True).stdout.strip())
+
+
+def _release_claim(repo: Path, branch: str) -> bool:
+    """Delete the remote claim branch only when every commit on it is already on origin/main.
+
+    The delete is conditional on the exact SHA that was verified, so a push by a reviewer
+    that is somehow still alive between the check and the delete is never destroyed.
+    """
+    if not _remote_branch_exists(repo, branch):
+        return True
+    git(repo, "fetch", "origin", "main", branch)
+    sha = git(repo, "rev-parse", "--verify", f"origin/{branch}^{{commit}}")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", sha, "origin/main"], cwd=repo,
+                      capture_output=True).returncode:
+        raise RunnerError("claim release refused: the published review branch has commits not on origin/main")
+    git(repo, "push", "origin", f"--force-with-lease=refs/heads/{branch}:{sha}", f":refs/heads/{branch}")
+    return not _remote_branch_exists(repo, branch)
+
+
 def _worktree_inventory(worktree: Path) -> dict[str, str]:
     """SHA-256 of every modified or untracked file, so a protected checkout can be proven untouched."""
     raw = subprocess.run(["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"], cwd=worktree,
@@ -936,7 +970,16 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
             Path(metadata.get("worktree", "")).resolve()):
         raise RunnerError("claim receipt, run metadata and branch do not name the same claimed worktree")
     if journal and journal.get("stage") == "complete":
-        return journal["result"]
+        result = journal["result"]
+        if release_claim and not result.get("claim_released"):
+            # A completed recovery may release its claim later, but only with the protected
+            # original still byte-identical to what was journaled before any write.
+            if _worktree_inventory(original) != journal.get("inventory"):
+                raise RunnerError("the protected original worktree changed; refusing to release the claim")
+            released = _release_claim(repo, branch)
+            result = {**result, "claim_released": released, "claim_release_pending": not released}
+            _write_atomic(journal_path, json.dumps({**journal, "result": result}, indent=2, sort_keys=True) + "\n")
+        return result
     if journal:
         # Retries trust only the tip recorded before any write: publishing advances origin/<branch>.
         tip = journal["intent"]["published_tip"]
@@ -967,10 +1010,14 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
         raise RunnerError("published review branch changed the reviewed target packet")
     evidence = tip_packet.split("## Review Outcome")[0]
     for finding in ids:
-        if finding not in evidence:
+        if not review_outcome.finding_evidenced(evidence, finding):
             raise RunnerError(f"finding {finding} has no written evidence in the preserved review packet")
     summary_path = expected_summary_path(workstream)
     summary_text = _show_at(repo, tip, summary_path)
+    allowed = {active_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path}
+    scope_error = _branch_scope_error(repo, tip, allowed)
+    if scope_error:
+        raise RunnerError(scope_error)
     inventory = _worktree_inventory(original)
     intent = _closeout_intent(workstream, run_id, outcome, ids, provenance, tip, reviewed_main, implementation_commit)
     if journal and (journal.get("intent") != intent or journal.get("inventory") != inventory):
@@ -1006,7 +1053,6 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
     if subprocess.run(["git", "merge-base", "--is-ancestor", tip, "HEAD"], cwd=checkout,
                       capture_output=True).returncode:
         raise RunnerError("isolated checkout does not descend from the exact published review tip")
-    allowed = {active_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path}
     dirty = {line[3:] for line in _changed_paths(checkout, "status", "--porcelain=v1", "--untracked-files=all")}
     if dirty - allowed:
         raise RunnerError("isolated checkout has unexpected changes: " + ", ".join(sorted(dirty - allowed)))
@@ -1043,8 +1089,16 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
         advance("committed", recovery_head=git(checkout, "rev-parse", "HEAD"))
 
     def verified() -> dict:
+        head = git(checkout, "rev-parse", "HEAD")
+        scope = _branch_scope_error(checkout, head, allowed)
+        if scope:
+            raise RunnerError(scope)
+        recorded = (journal or {}).get("recovery_head")
+        if recorded and subprocess.run(["git", "merge-base", "--is-ancestor", recorded, head], cwd=checkout,
+                                       capture_output=True).returncode:
+            raise RunnerError("isolated checkout no longer descends from the journaled recovery head")
         state = landed_nonpassing_review_state(
-            repo, git(checkout, "rev-parse", "HEAD"), workstream, active_path, target_workstream, target_path,
+            repo, head, workstream, active_path, target_workstream, target_path,
             target_content, header.authoring_chat, reviewed_main, run_id)
         if not state["complete"]:
             raise RunnerError("recovered closeout failed exact verification: " + "; ".join(state["reasons"]))
@@ -1078,17 +1132,7 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
     if _worktree_inventory(original) != inventory or git(original, "rev-parse", "HEAD") != tip:
         raise RunnerError("the protected original worktree changed during recovery; stopping without release")
 
-    released = False
-    remote_head = subprocess.run(["git", "ls-remote", "--heads", "origin", f"refs/heads/{branch}"], cwd=repo,
-                                 text=True, capture_output=True).stdout.strip()
-    if release_claim and remote_head:
-        git(repo, "fetch", "origin", branch)
-        if subprocess.run(["git", "merge-base", "--is-ancestor", f"origin/{branch}", "origin/main"], cwd=repo,
-                          capture_output=True).returncode:
-            raise RunnerError("claim release refused: the published review branch has commits not on origin/main")
-        git(repo, "push", "origin", "--delete", branch)
-        remote_head = ""
-    released = not remote_head
+    released = _release_claim(repo, branch) if release_claim else not _remote_branch_exists(repo, branch)
     result = {**plan, "mode": "apply", "stage": "complete", "outcome": state["outcome"],
               "landed_commit": journal["landed_commit"], "claim_released": released,
               "claim_release_pending": not released,

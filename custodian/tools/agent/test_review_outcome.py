@@ -69,6 +69,28 @@ class ReviewOutcomeParserTests(unittest.TestCase):
         self.assertTrue(ro.outcome_identity_error(parsed, **{**kwargs, "implementation_commit": None}))
 
 
+class FindingEvidenceTests(unittest.TestCase):
+    def test_ids_match_whole_tokens_only(self):
+        self.assertTrue(ro.finding_evidenced("**R0-01 - defect**", "R0-01"))
+        self.assertTrue(ro.finding_evidenced("see R0-01, R0-02.", "R0-02"))
+        self.assertFalse(ro.finding_evidenced("**R0-011 - defect**", "R0-01"))
+        self.assertFalse(ro.finding_evidenced("prefixXR0-01", "R0-01"))
+        self.assertFalse(ro.finding_evidenced("R0-01-extra", "R0-01"))
+        self.assertFalse(ro.finding_evidenced("", "R0-01"))
+
+    def test_a_crlf_section_is_read_as_the_same_outcome_not_as_absent(self):
+        # A heading with a trailing CR must never be mistaken for "no outcome" (which would
+        # fall through to the legacy pass path).
+        parsed, error = ro.parse_review_outcome(render().replace("\n", "\r\n"))
+        self.assertIsNone(error)
+        self.assertEqual(parsed["Outcome"], "findings")
+        crlf_findings = render().replace("\n", "\r\n")
+        accepted, name, _ = ro.review_acceptance(
+            crlf_findings, "## Independent Review\n\n- Status: `passed`\n", "review-x")
+        self.assertFalse(accepted, "a CRLF findings outcome must not fall back to a legacy pass")
+        self.assertEqual(name, "findings")
+
+
 class AcceptedReviewTests(unittest.TestCase):
     RECEIPT = ("## Independent Review\n\n### Review Receipt: review-x\n- Status: `passed`\n"
                "- Blocking defects: `0`\n- Material gaps: `0`\n")
