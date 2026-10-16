@@ -55,3 +55,15 @@
 - Refresh reason: `none`
 - Next action: Independent fresh-context review of real-collider overlay, pixel-coordinate draft round trip and guard tests before inviting user to draw collision.
 - Blockers or open questions: `Actual LFS artwork pixels must be checked in a rendered Godot environment; manual authored geometry and V2 cutover remain later steps.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The required standalone Sundered Keep mapper smoke failed five assertions after the shared mapper overlay was restored unchanged; changed-file validation passed 40/40.`
+- Root cause / contributing factors: `The current Sundered level JSON already contains saved mapper placements while the smoke requires zero; the same smoke also expects outdated placement previews, 127 collision segments, and matching spawn coordinates. This mismatch is outside the Awakening work surface.`
+- Prevention / pipeline improvement: `Reconcile the Sundered smoke against its current production data in its own scoped task, then rerun it before declaring this preserve gate green.`
+- Tooling / docs drift discovered: `The task's shared Sundered regression is not green at the claimed main baseline; the failure is not selected by changed-file validation because no Sundered owner files changed.`
+- Follow-up: `manual-follow-up`
+- What worked: `Awakening-specific overlay and draft bridge remained isolated; all 40 changed-file checks passed.`

@@ -5106,6 +5106,32 @@
       "needs_import": false
     },
     {
+      "id": "awakening_collision_mapper_bridge",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_collision_mapper_bridge_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "collision_mapper",
+        "draft_roundtrip",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/scenes/debug/awakening_first_return_mapper.tscn",
+        "custodian/scenes/debug/awakening_first_return_collision_overlay.gd",
+        "custodian/tools/level_authoring/mapper/awakening_collision_mapper_bridge.gd",
+        "custodian/tools/level_authoring/mapper/awakening_first_return_collision_mapper.gd",
+        "custodian/tools/level_authoring/mapper/adapters/awakening_first_return_mapper_adapter.gd",
+        "custodian/tools/validation/awakening_collision_mapper_bridge_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "awakening_first_return_geometry",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_first_return_geometry_smoke.gd",
