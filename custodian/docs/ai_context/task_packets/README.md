@@ -80,7 +80,6 @@ normal closeout.
 - `CODEX_ART_IMPORT_SHARED_TRANSFORM.md` — Provide one deterministic, reusable source-sheet geometry and conversion-plan API for both generic Asset V2 and specialized Operator intake without introduci...
 - `COMBAT_ATTACK_TELL_CONTACT_ALIGNMENT_V1.md` — Every live attack-capable actor presents a readable attack cue whose committed contact/damage phase agrees with gameplay timing; legal parries can actually i...
 - `COMPOUND_ARCHETYPE_PLAYABLE_PROOF.md` — Prove enter/circulate/operate/exit/revisit without blockers for both Type A and Type B.
-- `COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md` — Build Type B separate surface housings and a single continuous below-ground room/tunnel topology.
 - `COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` — Make Type A separately accessible building interiors and Type B reversible surface access with one continuous bunker interior.
 - `COMPOUND_RECOVERY_ASSAULT_OBJECTIVES.md` — Direct intermittent enemy assaults through real reachable routes to actual compound infrastructure.
 - `COMPOUND_RECOVERY_BUILD_RESTORATION.md` — Place and commission an existing Capacitor Bank as additional infrastructure through valid sites in either compound.
@@ -88,7 +87,6 @@ normal closeout.
 - `COMPOUND_RECOVERY_END_TO_END_PROOF.md` — Verify full defend, damage, resource-choice, repair/build and restoration cycle in both archetypes.
 - `COMPOUND_RECOVERY_FIELD_REPAIR.md` — Repair infrastructure by locally holding the existing Operator repair control and paying finite resources.
 - `COMPOUND_SECURE_ACCESS_FIXTURES.md` — Introduce one shared functional secure threshold/access-panel fixture for both archetypes.
-- `COMPOUND_WALLED_YARD_BLOCKOUT.md` — Make Type A a secure, close-packed compound with physically enclosed perimeter, two authorized entries and traversable yard.
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
 - `DOWNLOADS_ASSET_RECONCILIATION_V1.md` — Audit the user's entire real Downloads directory against Dropbox source lanes and live CUSTODIAN runtime, classifying every byte before any removal or move.
 - `DOWNLOADS_VERIFIED_CLEANOUT_V1.md` — Execute the reviewed Downloads tidy-up, retain Kenney isometric source under dev/, preserve missing unique project inputs in Dropbox and remove verified clut...
@@ -148,7 +146,6 @@ normal closeout.
 - `REVIEW_CODEX_ART_IMPORT_SHARED_TRANSFORM.md` — Independently falsify every implementation Acceptance clause of `codex-art-import-shared-transform` against landed source/tests and the immutable authority c...
 - `REVIEW_COMBAT_ATTACK_TELL_CONTACT_ALIGNMENT_V1.md` — Prove that the shipped actor-wide cue/contact alignment fixes unfair invisible or prematurely resolved contact without breaking damage, parry, dash or ranged...
 - `REVIEW_COMPOUND_ARCHETYPE_PLAYABLE_PROOF.md` — Independently verify the landed implementation of compound-archetype-playable-proof.
-- `REVIEW_COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md` — Independently verify the landed implementation of compound-archetype-profile-contract.
 - `REVIEW_COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md` — Independently verify the landed implementation of compound-connected-bunker-blockout.
 - `REVIEW_COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` — Independently verify the landed implementation of compound-interior-traversal-integration.
 - `REVIEW_COMPOUND_RECOVERY_ASSAULT_OBJECTIVES.md` — Independently verify the landed implementation of compound-recovery-assault-objectives.
