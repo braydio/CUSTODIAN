@@ -1,16 +1,16 @@
-# REVIEW: CODEX ART IMPORT ASSET V2 HANDOFF
+# REVIEW: CODEX ART IMPORT QUALITY GATES
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-codex-art-import-asset-v2-handoff`
+- Workstream: `review-codex-art-import-quality-gates`
 - Kind: `review`
 - Status: `draft`
 - Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `codex-art-import-asset-v2-handoff`
+- Depends on: `codex-art-import-quality-gates`
 - Locks: `none`
 - Review: `none`
-- Review target workstream: `codex-art-import-asset-v2-handoff`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX ART IMPORT ASSET V2 HANDOFF.md`
+- Review target workstream: `codex-art-import-quality-gates`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX_ART_IMPORT_QUALITY_GATES.md`
 - Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
@@ -19,22 +19,22 @@
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Goal: Independently falsify every implementation Acceptance clause of `codex-art-import-asset-v2-handoff` against landed source/tests and the immutable authority chain.
-- Reviewed implementation acceptance: Single command/safe MCP sequence can stage synthetic fixture family as correctly routed inbox with provenance; 0 silent replacements; fails closed on wrong frame count/missing approval/altered digest; deterministic output+QA; existing Asset V2 status truth unchanged until actual ingest; Operator specialized handoff and tests pass; README/roadmap/current state report reality.
+- Goal: Independently falsify every implementation Acceptance clause of `codex-art-import-quality-gates` against landed source/tests and the immutable authority chain.
+- Reviewed implementation acceptance: Every blocking corruption fixture is rejected with stable reason; allowed jump is not auto-corrected; byte-repeat reports stable; no extra pixels/layers in output; 0 bypass paths from preview to handoff; focus tests and existing review regression green.
 - Review evidence: Reconstruct from archived implementation packet, authored closing summary, landed main diff, exact source+plan+QA hashes and focused fixture evidence; do not use implementation-session interpretation as proof.
 - Correction threshold: Blocking correctness, security, data-integrity, authority-confusion or material unverified-acceptance defects require bounded correction + new paired review. Subjective artistic preferences are not code failures.
-- Focused validation: Run custodian/tools/validation/asset_pipeline_v21_production_smoke.py, custodian/tools/validation/asset_pipeline_transaction_smoke.py, custodian/tools/validation/asset_pipeline_plan_smoke.py, custodian/tools/validation/operator_art_source_smoke.py and custodian/tools/validation/operator_art_agent_mcp_smoke.py; add/run an end-to-end import handoff smoke, register focused validation; then changed-file validation and asset doctor/needs check.
-- Review focus: Verify source_work immutability, exact inbox routing, family identity, replacement and rollback safety, Operator segregation, no automatic runtime truth inflation, full reproducible fixture and documentation drift fixes.
+- Focused validation: Run custodian/tools/validation/pixelart_colors_smoke.py, custodian/tools/validation/asset_workbench_review_smoke.py and custodian/tools/validation/operator_art_source_smoke.py; add/run focused import QA smoke, register ownership; then changed-file validation.
+- Review focus: Try to pass checkerboard, matte, clipping, bleed, stale output and empty required frames; prove advisory aesthetic warnings cannot be mistaken for objective failure or human visual approval.
 - Acceptance: Findings-first independent review with stable `R0-NN` IDs, tested negative controls, explicit PASS/FAIL/needs-human disposition and durable receipt. Do not modify reviewed implementation; initiate narrow correction/re-review only for material defects.
 - Non-goals: No new feature scope, runtime-art generation, stylistic reauthoring or production-code fixes during review.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
-- Next workstream: `none`
-- Next packet state: `none`
+- Next workstream: `codex-art-import-mcp`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
-- Next action: On PASS, publish the reusable pipeline closeout and queue-independent Codex usage recipe.
+- Next action: On PASS, allow dispatcher to consider the next implementation workstream after review archives.
 - Blockers or open questions: `none beyond actual recorded findings`.

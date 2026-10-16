@@ -10,7 +10,7 @@
 - Locks: `none`
 - Review: `none`
 - Review target workstream: `codex-art-import-mcp`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX ART IMPORT MCP CONTROL.md`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX_ART_IMPORT_MCP_CONTROL.md`
 - Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`

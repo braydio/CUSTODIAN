@@ -1,16 +1,16 @@
-# REVIEW: CODEX ART IMPORT QUALITY GATES
+# REVIEW: CODEX ART IMPORT SEMANTIC REGISTRATION
 - Packet schema: `custodian.task_packet.v2`
-- Workstream: `review-codex-art-import-quality-gates`
+- Workstream: `review-codex-art-import-registration`
 - Kind: `review`
 - Status: `draft`
 - Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P1`
-- Depends on: `codex-art-import-quality-gates`
+- Depends on: `codex-art-import-registration`
 - Locks: `none`
 - Review: `none`
-- Review target workstream: `codex-art-import-quality-gates`
-- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX ART IMPORT QUALITY GATES.md`
+- Review target workstream: `codex-art-import-registration`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/CODEX_ART_IMPORT_SEMANTIC_REGISTRATION.md`
 - Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
@@ -19,18 +19,18 @@
 - Review modes: `code, architecture, asset-pipeline, workflow`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Goal: Independently falsify every implementation Acceptance clause of `codex-art-import-quality-gates` against landed source/tests and the immutable authority chain.
-- Reviewed implementation acceptance: Every blocking corruption fixture is rejected with stable reason; allowed jump is not auto-corrected; byte-repeat reports stable; no extra pixels/layers in output; 0 bypass paths from preview to handoff; focus tests and existing review regression green.
+- Goal: Independently falsify every implementation Acceptance clause of `codex-art-import-registration` against landed source/tests and the immutable authority chain.
+- Reviewed implementation acceptance: Stationary actor baseline/root is invariant; intentional 6px jump survives output; no independently computed frame centers/scales; conflicts fail or warn with explicit authorization; accepted Operator anchor unchanged; out-of-range shifts rejected with no partial output; all tests deterministic.
 - Review evidence: Reconstruct from archived implementation packet, authored closing summary, landed main diff, exact source+plan+QA hashes and focused fixture evidence; do not use implementation-session interpretation as proof.
 - Correction threshold: Blocking correctness, security, data-integrity, authority-confusion or material unverified-acceptance defects require bounded correction + new paired review. Subjective artistic preferences are not code failures.
-- Focused validation: Run custodian/tools/validation/pixelart_colors_smoke.py, custodian/tools/validation/asset_workbench_review_smoke.py and custodian/tools/validation/operator_art_source_smoke.py; add/run focused import QA smoke, register ownership; then changed-file validation.
-- Review focus: Try to pass checkerboard, matte, clipping, bleed, stale output and empty required frames; prove advisory aesthetic warnings cannot be mistaken for objective failure or human visual approval.
+- Focused validation: Run custodian/tools/validation/operator_art_registration_profile_smoke.py, custodian/tools/validation/operator_art_source_smoke.py and custodian/tools/validation/asset_pipeline_plan_smoke.py; add/run focused registration smoke, update validation_manifest.json; then changed-file validation.
+- Review focus: Demonstrate actual preserved six-pixel jump; enforce root vs feet vs bbox distinction; test near/far ambiguity, rejected clipping, accepted 128 roots, no false automatic scale observation.
 - Acceptance: Findings-first independent review with stable `R0-NN` IDs, tested negative controls, explicit PASS/FAIL/needs-human disposition and durable receipt. Do not modify reviewed implementation; initiate narrow correction/re-review only for material defects.
 - Non-goals: No new feature scope, runtime-art generation, stylistic reauthoring or production-code fixes during review.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
-- Next workstream: `codex-art-import-mcp`
+- Next workstream: `codex-art-import-quality-gates`
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
