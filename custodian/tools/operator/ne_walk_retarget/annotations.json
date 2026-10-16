@@ -1,0 +1,1629 @@
+{
+  "schema": "custodian.ne_walk_annotations.v1",
+  "source_sha256": "707efe8a3d0438473d87fdf112c9127c2b034454d3d383bc1829dda3a632b1d1",
+  "status": "provisional_agent_annotations_needs_human_review",
+  "timing_fps": null,
+  "registration": {
+    "center_x": 64,
+    "root": [
+      64,
+      106
+    ],
+    "ground_y": 107
+  },
+  "controls": {
+    "swing_reference_blend": 0.5,
+    "upper_body_counter_motion_degrees": 0,
+    "robe_response_gain": 0,
+    "max_knee_fit_error_px": 8,
+    "max_joint_step_px": 8,
+    "max_rotation_step_degrees": 60
+  },
+  "frames": [
+    {
+      "frame": 1,
+      "source_sha256": "e217d2e25f457ecb1b76bc6636d1ed1d6bd74771df6f4e88d726c5ee15e03025",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f01.pelvis",
+          "xy": [
+            65,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f01.hip_near",
+          "xy": [
+            66,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f01.knee_near",
+          "xy": [
+            66,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f01.ankle_near",
+          "xy": [
+            64,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f01.toe_near",
+          "xy": [
+            69,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f01.hip_far",
+          "xy": [
+            62,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f01.knee_far",
+          "xy": [
+            61,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f01.ankle_far",
+          "xy": [
+            58,
+            82
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f01.toe_far",
+          "xy": [
+            61,
+            82
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 2,
+      "source_sha256": "efb0c67e12995aaf6c408111be69956ee8b0d59bbfa1be85a30d0b26a95d2e90",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f02.pelvis",
+          "xy": [
+            65,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f02.hip_near",
+          "xy": [
+            66,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f02.knee_near",
+          "xy": [
+            64,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f02.ankle_near",
+          "xy": [
+            61,
+            89
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f02.toe_near",
+          "xy": [
+            65,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f02.hip_far",
+          "xy": [
+            62,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f02.knee_far",
+          "xy": [
+            66,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f02.ankle_far",
+          "xy": [
+            68,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f02.toe_far",
+          "xy": [
+            72,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 3,
+      "source_sha256": "3cf843af5007fed798ccb569c74992e5f9c393452f7d012fe52ffdfdda12e110",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f03.pelvis",
+          "xy": [
+            65,
+            69
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f03.hip_near",
+          "xy": [
+            67,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f03.knee_near",
+          "xy": [
+            72,
+            75
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f03.ankle_near",
+          "xy": [
+            74,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f03.toe_near",
+          "xy": [
+            79,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f03.hip_far",
+          "xy": [
+            62,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f03.knee_far",
+          "xy": [
+            62,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f03.ankle_far",
+          "xy": [
+            57,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f03.toe_far",
+          "xy": [
+            62,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 4,
+      "source_sha256": "0f7ecbf27cfbe616bb5e17695a12b0336d3cc4ff535dd770c8a218ede724330e",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f04.pelvis",
+          "xy": [
+            65,
+            69
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f04.hip_near",
+          "xy": [
+            67,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f04.knee_near",
+          "xy": [
+            73,
+            75
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f04.ankle_near",
+          "xy": [
+            76,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f04.toe_near",
+          "xy": [
+            81,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f04.hip_far",
+          "xy": [
+            62,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f04.knee_far",
+          "xy": [
+            60,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f04.ankle_far",
+          "xy": [
+            54,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f04.toe_far",
+          "xy": [
+            59,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 5,
+      "source_sha256": "de2cd2bc7ef8cf110e2ab421bf6288d249caea3a29c39940b6296eb350ee5ec3",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f05.pelvis",
+          "xy": [
+            64,
+            69
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f05.hip_near",
+          "xy": [
+            66,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f05.knee_near",
+          "xy": [
+            72,
+            76
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f05.ankle_near",
+          "xy": [
+            75,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f05.toe_near",
+          "xy": [
+            80,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f05.hip_far",
+          "xy": [
+            61,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f05.knee_far",
+          "xy": [
+            57,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f05.ankle_far",
+          "xy": [
+            51,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f05.toe_far",
+          "xy": [
+            55,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 6,
+      "source_sha256": "e821923af459b93910163a1dd8427e5fd21727b6389d64c2bd77bc24c816db1c",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f06.pelvis",
+          "xy": [
+            64,
+            68
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f06.hip_near",
+          "xy": [
+            66,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f06.knee_near",
+          "xy": [
+            70,
+            75
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f06.ankle_near",
+          "xy": [
+            69,
+            82
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f06.toe_near",
+          "xy": [
+            74,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f06.hip_far",
+          "xy": [
+            61,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f06.knee_far",
+          "xy": [
+            55,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f06.ankle_far",
+          "xy": [
+            49,
+            86
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f06.toe_far",
+          "xy": [
+            51,
+            91
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 7,
+      "source_sha256": "30b40fb9b3e647ed532494495c54028429411bc3c7e4975541588760cb3d183e",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f07.pelvis",
+          "xy": [
+            64,
+            68
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f07.hip_near",
+          "xy": [
+            66,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f07.knee_near",
+          "xy": [
+            68,
+            77
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f07.ankle_near",
+          "xy": [
+            65,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f07.toe_near",
+          "xy": [
+            70,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f07.hip_far",
+          "xy": [
+            61,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f07.knee_far",
+          "xy": [
+            57,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f07.ankle_far",
+          "xy": [
+            56,
+            86
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f07.toe_far",
+          "xy": [
+            56,
+            89
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 8,
+      "source_sha256": "da75c544e5428d48b0a642bd1240c6a62da4179b3c78cd601f1a68a2a653fc19",
+      "support": "far",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f08.pelvis",
+          "xy": [
+            63,
+            68
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f08.hip_near",
+          "xy": [
+            65,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f08.knee_near",
+          "xy": [
+            67,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f08.ankle_near",
+          "xy": [
+            61,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f08.toe_near",
+          "xy": [
+            64,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f08.hip_far",
+          "xy": [
+            60,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f08.knee_far",
+          "xy": [
+            60,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f08.ankle_far",
+          "xy": [
+            63,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f08.toe_far",
+          "xy": [
+            64,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 9,
+      "source_sha256": "4fd47d37c3c2a1059c46d7d885092199fb2250072ee0a1c33c9a58f1e67687bb",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f09.pelvis",
+          "xy": [
+            63,
+            69
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f09.hip_near",
+          "xy": [
+            65,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f09.knee_near",
+          "xy": [
+            66,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f09.ankle_near",
+          "xy": [
+            66,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f09.toe_near",
+          "xy": [
+            70,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f09.hip_far",
+          "xy": [
+            60,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f09.knee_far",
+          "xy": [
+            60,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f09.ankle_far",
+          "xy": [
+            60,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f09.toe_far",
+          "xy": [
+            59,
+            86
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 10,
+      "source_sha256": "6a10be32f12017db89adfc33b113ea1e2a207744fa6602efb2dea3369c609f36",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f10.pelvis",
+          "xy": [
+            62,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f10.hip_near",
+          "xy": [
+            64,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f10.knee_near",
+          "xy": [
+            69,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f10.ankle_near",
+          "xy": [
+            73,
+            89
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f10.toe_near",
+          "xy": [
+            79,
+            92
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f10.hip_far",
+          "xy": [
+            59,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f10.knee_far",
+          "xy": [
+            57,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f10.ankle_far",
+          "xy": [
+            55,
+            85
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f10.toe_far",
+          "xy": [
+            59,
+            85
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 11,
+      "source_sha256": "d8c30b2ec4e660964a0fba14e7048902dc5a4a7f6c2d293c8be7ffee32feed95",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f11.pelvis",
+          "xy": [
+            61,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f11.hip_near",
+          "xy": [
+            63,
+            74
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f11.knee_near",
+          "xy": [
+            69,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f11.ankle_near",
+          "xy": [
+            76,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f11.toe_near",
+          "xy": [
+            83,
+            90
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f11.hip_far",
+          "xy": [
+            58,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f11.knee_far",
+          "xy": [
+            56,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f11.ankle_far",
+          "xy": [
+            52,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f11.toe_far",
+          "xy": [
+            56,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 12,
+      "source_sha256": "b77572871ea719451295f6f0c13ce6558d4ff6ce7d4e75e2d6cf4057b1d1d111",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f12.pelvis",
+          "xy": [
+            60,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f12.hip_near",
+          "xy": [
+            62,
+            74
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f12.knee_near",
+          "xy": [
+            69,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f12.ankle_near",
+          "xy": [
+            77,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f12.toe_near",
+          "xy": [
+            84,
+            92
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f12.hip_far",
+          "xy": [
+            57,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f12.knee_far",
+          "xy": [
+            53,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f12.ankle_far",
+          "xy": [
+            49,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f12.toe_far",
+          "xy": [
+            52,
+            83
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 13,
+      "source_sha256": "1c9f1159d7d83ba4daf9bbef3fe036edf30643f2f4e1c101a7e5ebfbd881c207",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f13.pelvis",
+          "xy": [
+            59,
+            70
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f13.hip_near",
+          "xy": [
+            61,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f13.knee_near",
+          "xy": [
+            69,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f13.ankle_near",
+          "xy": [
+            75,
+            89
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f13.toe_near",
+          "xy": [
+            80,
+            92
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f13.hip_far",
+          "xy": [
+            56,
+            72
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f13.knee_far",
+          "xy": [
+            52,
+            75
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f13.ankle_far",
+          "xy": [
+            46,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f13.toe_far",
+          "xy": [
+            49,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 14,
+      "source_sha256": "d215c0267c89dceb918e8eb3b12b150a6bedba74c81f23e0955a662153dee22e",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f14.pelvis",
+          "xy": [
+            61,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f14.hip_near",
+          "xy": [
+            63,
+            74
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f14.knee_near",
+          "xy": [
+            68,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f14.ankle_near",
+          "xy": [
+            69,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f14.toe_near",
+          "xy": [
+            74,
+            92
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f14.hip_far",
+          "xy": [
+            58,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f14.knee_far",
+          "xy": [
+            55,
+            77
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f14.ankle_far",
+          "xy": [
+            53,
+            78
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f14.toe_far",
+          "xy": [
+            53,
+            82
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    },
+    {
+      "frame": 15,
+      "source_sha256": "89b07078a87688e5e164edbf535ee9e6efbc97d8e8b610ca3eb31eae02beb6e5",
+      "support": "near",
+      "support_status": "provisional_not_human_accepted",
+      "landmarks": {
+        "pelvis": {
+          "id": "f15.pelvis",
+          "xy": [
+            64,
+            71
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "hip_near": {
+          "id": "f15.hip_near",
+          "xy": [
+            66,
+            74
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_near": {
+          "id": "f15.knee_near",
+          "xy": [
+            66,
+            81
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_near": {
+          "id": "f15.ankle_near",
+          "xy": [
+            66,
+            88
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_near": {
+          "id": "f15.toe_near",
+          "xy": [
+            71,
+            92
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "hip_far": {
+          "id": "f15.hip_far",
+          "xy": [
+            61,
+            73
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "occluded_inference",
+          "confidence": null,
+          "note": "Armor hides joint center; continuity-guided estimate."
+        },
+        "knee_far": {
+          "id": "f15.knee_far",
+          "xy": [
+            59,
+            79
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "ankle_far": {
+          "id": "f15.ankle_far",
+          "xy": [
+            55,
+            80
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        },
+        "toe_far": {
+          "id": "f15.toe_far",
+          "xy": [
+            59,
+            84
+          ],
+          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "visibility": "visible_estimate",
+          "confidence": null,
+          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+        }
+      }
+    }
+  ]
+}

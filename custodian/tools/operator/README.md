@@ -1,5 +1,9 @@
 # Operator Authoring Tools
 
+Local Knight NE gait experiments: [V6 batch retarget](ne_walk_retarget/README.md).
+This preview-only tool preserves rig pixels and reports failed frames; it grants
+no source, timing, Workbench, or runtime approval.
+
 ## Semantic animation workbench
 
 Canonical PNG source is authority. The ignored `.aseprite` workbench is a
