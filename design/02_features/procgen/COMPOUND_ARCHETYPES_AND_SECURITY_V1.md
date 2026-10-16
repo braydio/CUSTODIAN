@@ -1,6 +1,6 @@
 # Compound Archetypes and Security V1
 
-**Status:** Approved planning; runtime not yet shipped.
+**Status:** Approved planning; profile-selection contract shipped, archetype geometry and gameplay remain deferred.
 **Workstream:** compound-archetypes-v1 + compound-recovery-v1
 **Reviewed main:** 512226d488d3b5db63335b2357b4b566e44ccb03
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
@@ -26,6 +26,15 @@ Two explicit initial archetypes share existing game mechanics but differ in phys
 ## Proposed additive data contract
 
 Profile enum walled_yard | connected_bunker; deterministic seed; stable room IDs and sector_id; versioned layer_id (surface | subsurface), room/yard/tunnel zones, stable connection IDs and typed edges (yard, gate, door, tunnel, vertical_entry); paired entry/return anchors and per-fixture IDs. Generated topology is immutable data; mutable doors/integrity/power/resources are held by existing runtime owners. Keep old level_data keys and legacy default behavior.
+
+The shipped profile-selection contract is intentionally narrower: the optional
+`legacy`, `walled_yard`, or `connected_bunker` ID is validated from
+`custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json`.
+All three currently select the existing surface topology. Explicit selection
+adds versioned archetype/layer metadata to planner rooms, connectors, and
+exported level data; omitted selection preserves the legacy planner output.
+No subsurface layer, yard gate, or archetype-specific geometry is implied by
+this metadata.
 
 ## Security and traversal V1
 

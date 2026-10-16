@@ -3730,6 +3730,26 @@
       "needs_import": false
     },
     {
+      "id": "compound_archetype_profile",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_archetype_profile_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "profile"
+      ],
+      "owners": [
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "persistent_compound_runtime",
       "type": "godot_script",
       "script": "res://tools/validation/persistent_compound_runtime_smoke.gd",

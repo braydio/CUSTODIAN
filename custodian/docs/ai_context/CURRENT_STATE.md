@@ -1,5 +1,17 @@
 # CURRENT STATE — CUSTODIAN
 
+## Compound Archetype Profile Contract (2026-10-16)
+
+`PersistentCompoundLayoutPlanner` now validates optional `legacy`,
+`walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
+The runtime selector defaults to `legacy`; explicit archetype selection keeps
+the same generated surface layout and adds archetype, layer, and profile-version
+metadata to rooms, connectors, and exported level data. Omitting the planner
+profile argument preserves its prior output dictionary. This is selection and
+metadata support only: physical walled-yard and subsurface bunker layouts
+remain in their dependency-gated follow-up workstreams. Focused checks are in
+`compound_archetype_profile_smoke.gd`.
+
 ## Procgen Showcase Gallery Shell (2026-10-15)
 
 The registered dev-only `procgen_showcase_gallery` destination provides five

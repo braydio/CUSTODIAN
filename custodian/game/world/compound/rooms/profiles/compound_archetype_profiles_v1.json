@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "legacy": {
+      "archetype_id": "legacy",
+      "profile_version": 1,
+      "layer_id": "surface",
+      "geometry_id": "persistent_compound_layout_v1"
+    },
+    "walled_yard": {
+      "archetype_id": "walled_yard",
+      "profile_version": 1,
+      "layer_id": "surface",
+      "geometry_id": "persistent_compound_layout_v1"
+    },
+    "connected_bunker": {
+      "archetype_id": "connected_bunker",
+      "profile_version": 1,
+      "layer_id": "surface",
+      "geometry_id": "persistent_compound_layout_v1"
+    }
+  }
+}
