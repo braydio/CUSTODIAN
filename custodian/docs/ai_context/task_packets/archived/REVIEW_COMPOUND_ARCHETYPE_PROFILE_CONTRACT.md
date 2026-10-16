@@ -9,10 +9,10 @@
 - Depends on: compound-archetype-profile-contract
 - Locks: compound-layout
 - Kind: review
-- Review: passed
+- Review: none
 - Review target workstream: compound-archetype-profile-contract
 - Review target packet: custodian/docs/ai_context/task_packets/archived/COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md
-- Reviewed main: 9b8ae05581e3194876d8b4763946d1f74d77fa50
+- Reviewed main: b414f16e9e61e78ed9bcc0dbcee99372698e2869
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
 - Review modes: code, architecture, runtime, visual
 - Review cycle: 0
@@ -49,11 +49,11 @@
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
-- Friction severity: low
-- What went wrong: initial validation attempts used a cold Godot project cache and failed before test execution; warming the import/class cache resolved the issue.
-- Root cause / contributing factors: the restricted reviewer checkout had no initialized Godot import cache.
-- Prevention / pipeline improvement: initialize the project import cache before invoking the focused smokes in a fresh reviewer checkout.
-- Tooling / docs drift discovered: none
+- Friction severity: medium
+- What went wrong: initial validation attempts used a cold Godot project cache and failed before test execution; after validation passed, the runner's post-exit verifier blocked because the archived review packet lacked its own canonical receipt and used `Review: passed`, which is outside the packet contract's allowed intent values.
+- Root cause / contributing factors: the reviewer wrote the target receipt and review verdict but omitted the separate review-packet receipt, then stored the verdict in the packet's `Review` intent field.
+- Prevention / pipeline improvement: require both packet receipts in reviewer closeout checks and keep `Review` intent metadata to `auto`, `manual`, or `none`; record verdict only in the canonical receipt.
+- Tooling / docs drift discovered: paired-review closeout instructions did not make the required independent receipt inside the archived review packet prominent enough; its metadata parser correctly rejected the invalid `Review: passed` value.
 - Follow-up: none
 - What worked: deterministic profile coverage and the official structured validation runner.
 
