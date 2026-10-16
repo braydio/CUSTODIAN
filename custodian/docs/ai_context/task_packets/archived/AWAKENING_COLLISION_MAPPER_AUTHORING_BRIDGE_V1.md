@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `awakening-collision-mapper-authoring-bridge-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -55,3 +55,23 @@
 - Refresh reason: `none`
 - Next action: Independent fresh-context review of real-collider overlay, pixel-coordinate draft round trip and guard tests before inviting user to draw collision.
 - Blockers or open questions: `Actual LFS artwork pixels must be checked in a rendered Godot environment; manual authored geometry and V2 cutover remain later steps.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The Sundered preservation smoke first failed against stale production-data assumptions; after main reconciled those expectations, it exposed a freed preview reference and was not registered for changed-file coverage.`
+- Root cause / contributing factors: `The smoke retained a Node from before its immediate-placement helper reloaded the preview. Its standalone script also had no manifest entry, so changed-file validation reported it uncovered.`
+- Prevention / pipeline improvement: `The smoke now queries the current preview after reload and is registered with its mapper and production-data owners, making future related changes select it.`
+- Tooling / docs drift discovered: `The active validation manifest omitted the Sundered mapper preservation smoke.`
+- Follow-up: `fixed-in-scope`
+- What worked: `The Awakening bridge stayed isolated from generic runtime behavior; the Sundered smoke and all 42 changed-file checks now pass.`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The Awakening-specific mapper displays actual instantiated colliders and registered art, saves/reopens an atomic provenance-bound draft, rejects route/staleness negatives, and leaves production collision/Layout untouched. Gate pylon geometry and 272px clearance pass. Awakening mapper, first-return, geometry, generic framework, collision-POI and Sundered preservation smokes pass; changed-file validation passes 42/42 with complete coverage. The paired post-land review owns the independently rendered 04→05 and gate-pylon crop inspection before user collision authoring.`

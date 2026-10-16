@@ -42,3 +42,19 @@ A trustworthy mapper shows actual node collision, named ownership, real artwork 
 ## Documentation drift
 
 `design/04_architecture/AWAKENING_FIRST_RETURN.md` correctly names Layout the canonical spatial authority, but its claim that 'mapper' queries the Layout under-describes the broken editor write seam and absence of true instantiated collision overlay. Correct the mapper capability statement after the bridge is implemented; do not imply interactive edits work before then.
+
+## Implementation status — 2026-10-15
+
+The Awakening-specific bridge now keeps Layout/runtime collision read-only,
+overlays enumerated instantiated `CollisionShape2D` and `CollisionPolygon2D`
+geometry over the real production scene, outlines the registered 04→05 sprite
+transforms, and writes proposals only to the atomic JSON draft path documented
+in `design/04_architecture/AWAKENING_FIRST_RETURN.md`. The draft records stable
+proposal IDs, exact world vertices, scene/Layout blob SHAs, owner, purpose,
+geometry kind, source-collider replacement intent, and source-art coordinates
+when a sprite covers the proposal. The 16px occupancy route probe and explicit
+protected-route/marker checks fail closed. The generic and Sundered Keep mapper
+scripts remain unchanged. Focused smoke evidence covers pylon extents and gap,
+occupancy/void/Road colliders, draft serialization, owner/provenance failures,
+protected-route negatives, and source-owner undo/redo. Independent post-land
+review remains required before user-authored geometry is promoted.
