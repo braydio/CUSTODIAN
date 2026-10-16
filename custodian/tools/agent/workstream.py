@@ -25,6 +25,7 @@ from task_packet_contract import (
     completion_truth_required, parse_completion_truth, parse_packet,
 )
 from review_receipt_delta import read_git_text, resolve_target_implementation_commit, verify_review_receipt_delta
+import review_outcome
 
 class WorkstreamError(RuntimeError):
     pass
@@ -257,6 +258,11 @@ def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, revi
     ).returncode == 0
     if not has_main:
         return "paired review artifact gate cannot inspect changed paths because cached origin/main is missing"
+    outcome, outcome_error = review_outcome.parse_review_outcome(packet_text)
+    if outcome_error:
+        return f"paired review artifact gate rejects the Review Outcome: {outcome_error}"
+    if outcome is not None and outcome["Outcome"] in review_outcome.NONPASSING:
+        return _nonpassing_review_artifact_error(workstream_id, path, review_packet, packet_text, outcome)
     try:
         changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
     except WorkstreamError as exc:
@@ -324,6 +330,52 @@ def _paired_review_artifact_preflight_error(workstream_id: str, path: Path, revi
         workstream_id, review_packet, packet_text, changed_paths,
         artifact_contents=artifact_contents,
     )
+
+
+def _nonpassing_review_artifact_error(workstream_id: str, path: Path, review_packet: Path,
+                                      packet_text: str, outcome: dict[str, str]) -> str | None:
+    """Gate a findings/human_required review: evidence only, reviewed target never touched."""
+    target_workstream = _packet_header_value(packet_text, "Review target workstream")
+    target_packet_path = _packet_header_value(packet_text, "Review target packet")
+    if not target_workstream or not target_packet_path:
+        return f"paired review artifact gate requires Review target workstream/packet for {workstream_id}"
+    try:
+        changed_paths = git("diff", "--name-only", "origin/main...HEAD", cwd=path).splitlines()
+    except WorkstreamError as exc:
+        return f"paired review artifact gate cannot inspect changed paths: {exc}"
+    allowed = {
+        f"custodian/docs/ai_context/task_packets/{review_packet.name}",
+        f"custodian/docs/ai_context/task_packets/archived/{review_packet.name}",
+        "custodian/docs/ai_context/task_packets/README.md",
+        _expected_summary_filename(workstream_id),
+    }
+    outside = sorted(item for item in changed_paths if item.replace("\\", "/") not in allowed)
+    if outside:
+        return f"paired review artifact gate rejects a nonpassing review changing {outside[0]}"
+    reviewed_main = outcome["Reviewed main"]
+    try:
+        baseline = read_git_text(path, reviewed_main, target_packet_path)
+        current = (path / target_packet_path).read_bytes().decode("utf-8")
+    except (ValueError, OSError, UnicodeDecodeError):
+        return "paired review artifact gate cannot compare the reviewed packet with its pinned baseline"
+    if current != baseline:
+        return "paired review artifact gate rejects any change to the reviewed packet in a nonpassing review"
+    commit, identity_error = resolve_target_implementation_commit(
+        path, reviewed_main, target_packet_path, target_workstream, baseline,
+    )
+    if identity_error:
+        return f"paired review artifact gate cannot identify the pinned implementation: {identity_error}"
+    binding = review_outcome.outcome_identity_error(
+        outcome, review_workstream=workstream_id, target_workstream=target_workstream,
+        reviewed_main=reviewed_main, implementation_commit=commit,
+    )
+    if binding:
+        return f"paired review artifact gate rejects the Review Outcome: {binding}"
+    for revision in (reviewed_main, commit):
+        if subprocess.run(["git", "merge-base", "--is-ancestor", revision, "HEAD"], cwd=path,
+                          text=True, capture_output=True).returncode:
+            return "paired review artifact gate's pinned reviewed commit is not an ancestor of the review branch"
+    return None
 
 
 def _artifact_class(path: str) -> str:
@@ -486,7 +538,9 @@ def _review_receipt_report(repo: Path, packet: Path, text: str) -> dict[str, obj
     if _packet_header_value(text, "Kind") != "review":
         return None
     target_rel = _packet_header_value(text, "Review target packet")
+    outcome, _ = review_outcome.parse_review_outcome(text)
     result: dict[str, object] = {
+        "outcome": outcome["Outcome"] if outcome else None,
         "target_packet": target_rel,
         "target_exists": False,
         "receipt_present": False,
@@ -650,6 +704,7 @@ def closeout_preflight(
     review_blockers = [
         item["path"] for item in packet_reports
         if item["review_receipt"] is not None and not item["review_receipt"]["receipt_present"]
+        and item["review_receipt"].get("outcome") not in review_outcome.NONPASSING
     ]
     review_artifact_reports = []
     for packet in packets:
