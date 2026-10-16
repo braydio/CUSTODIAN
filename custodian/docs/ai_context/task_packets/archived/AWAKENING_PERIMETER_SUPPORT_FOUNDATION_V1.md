@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: awakening-perimeter-support-foundation-v1
-- Status: blocked
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-awakening-handoff-readiness-art-convergence-v1
@@ -14,8 +14,9 @@
 - Paired review workstream: review-awakening-perimeter-support-foundation-v1
 - Review cycle: 0
 - Max automatic review cycles: 2
-- Reviewed main: 041717c3abaa6a960e4c1849542c22365c1586f8
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Reviewed main: 3e84bb10845fd708b2ab58ff17237817cca3b912
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+- Prior authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
 - Visual review: none
 - Goal: Establish measured off-route camera-footprint coverage, an Asset V2-compatible **nine-family** generic perimeter pending-art contract, and a collision-free Awakening perimeter support layer that safely preserves existing presentation whenever art is absent. Zone 05 Dust Lung is explicitly excluded and owned by the dedicated Dust Lung V2 design/asset program.
 - Completion boundary: Produce a deterministic coverage/gap ledger from current Layout, exact live room plate bounds and actual camera reveals; implement a compact scene presentation host with no art required and a deterministic optional support-placement description; register pending Asset V2 families and corresponding required-assets entries without pretending images exist; add focused regression coverage and docs truth.
@@ -40,25 +41,34 @@
 - The predecessor Awakening handoff-convergence review is archived complete on current main. The orphaned implementation claim was resumed and fast-forwarded to `041717c3` before edits.
 - AP0 implementation evidence: `custodian/docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`; `awakening_perimeter_support_smoke.gd` reports 34 samples, ten zone plate records, nine families and 27 deterministic state placements. No source artwork was fabricated or ingested.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: synchronized merge `5397fa93` contains current `origin/main@3e84bb10845fd708b2ab58ff17237817cca3b912`; `validate_review_pairing.py` PASS (102 auto-review packets); `godot_import_lfs_preflight` PASS (1/1); Awakening tag suite PASS (22/22); changed-file validation PASS (50/50, complete coverage); nine family plans/statuses PASS; `asset needs --check`, focused perimeter smoke, and `git diff --check` PASS.
+
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: blocked
+- Outcome: success
 - Friction severity: medium
-- What went wrong: after syncing to `origin/main@075025f4`, the required full changed-file sweep failed twice. `review_pairing_contract` reports 11 unrelated Compound review packets whose target paths are not archived as expected. `godot_import_lfs_preflight` also failed in the sweep with “standalone project should not require a Git LFS check,” although a direct rerun passed. The AP0-tagged suite passed 22/22 after sync; the pre-sync changed-file sweep had passed 49/49.
-- Root cause / contributing factors: inherited validation-contract drift on current main, plus a transient/inconsistent LFS-preflight result. The failing Compound packets and the validation harness are outside this AP0 change.
-- Prevention / pipeline improvement: repair the stale Compound review-pairing fixtures and make the LFS preflight deterministic in a separate scoped task, then rerun changed-file validation before landing AP0.
-- Tooling / docs drift discovered: changed-file validation selects global `review_pairing_contract` and LFS preflight checks unrelated to AP0; current main has 11 stale Compound target locations. Global Asset V2 doctor also retains four unchanged designation-locker catalog-hash errors.
+- What went wrong: the first post-sync full sweep was blocked by 11 stale Compound review-target paths and an inconsistent standalone LFS preflight fixture. Those inherited defects were corrected on main at `b9c94e6677f3a73b38fc1cd438d1c19a438be305`; the full sweep then passed 50/50.
+- Root cause / contributing factors: inherited cross-workstream review-pairing references and the standalone LFS preflight fixture were stale on the earlier main baseline.
+- Prevention / pipeline improvement: the mainline correction now checks paired targets against archived paths and makes the standalone project's no-LFS expectation explicit.
+- Tooling / docs drift discovered: the global Asset V2 doctor still reports four `awakening_designation_locker` catalog/runtime hash mismatches. The published job `job_20261007T205424Z_80b02bf4` and catalog contain the original published hashes; runtime PNG bytes were subsequently changed in commits `6775cc844` and `eb3cdc9e9`, with no matching updated source-work/inbox input or newer Asset V2 publication receipt. Pixel comparisons confirm all four differ from the archived job outputs. No catalog hashes were rewritten; the unrelated asset provenance correction remains a separate follow-up.
 - Follow-up: manual-follow-up
 - What worked: live Sprite2D bounds and camera reveal values produced a deterministic coverage report without changing route authority.
 
 ## Next Handoff
 
-- Next workstream: none
-- Next packet state: none
+- Next workstream: review-awakening-perimeter-support-foundation-v1
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Refresh reason: none
-- Next action: resolve inherited changed-file validation failures on current main, rerun the required suite, then finish AP0 and run its paired fresh-context review.
-- Blockers or open questions: full changed-file validation remains red because of 11 stale Compound paired-review target paths and an inconsistent standalone Git LFS preflight failure; four unchanged awakening_designation_locker catalog-hash doctor errors remain separately inherited.
+- Next action: land AP0 through the workstream finish lifecycle, then initiate the paired fresh-context post-land review.
+- Blockers or open questions: four `awakening_designation_locker` catalog/runtime hash mismatches remain outside AP0; the recorded publication and source inputs do not authorize replacing catalog hashes without a new provenance-backed Asset V2 publication.

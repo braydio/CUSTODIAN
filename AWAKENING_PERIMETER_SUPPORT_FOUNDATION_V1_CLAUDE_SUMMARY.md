@@ -1,9 +1,10 @@
-# Awakening Perimeter Support Foundation V1 — Blocked Closeout
+# Awakening Perimeter Support Foundation V1
 
 **Workstream:** `awakening-perimeter-support-foundation-v1`
 
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
-**Base:** resumed orphaned claim and fast-forwarded from `8c5a50a` to `origin/main@041717c3` before editing.
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+**Prior authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+**Base:** preserved recovery branch `d3358181`; lifecycle resume merged current `origin/main@3e84bb10845fd708b2ab58ff17237817cca3b912` as `5397fa93` before the final validation pass.
 
 ## Delivered
 
@@ -17,35 +18,38 @@
 
 - Focused perimeter smoke: PASS, 10 zones, 9 families, 27 planned states, 34 camera samples; deterministic ledger; absent-art fallback; no collision authority.
 - Existing Awakening scene, geometry, progression, art-registration, lower/upper traversal and lighting smokes: PASS.
-- Changed-file validation before current-main sync: PASS, 49/49. After syncing to `origin/main@075025f4`, the focused Awakening-tag suite passed 22/22, but the required full changed-file validation failed twice. `review_pairing_contract` reports 11 unrelated Compound review packets whose target paths are not archived as expected. `godot_import_lfs_preflight` failed in the sweep with “standalone project should not require a Git LFS check”; a direct rerun passed, so that result is inconsistent. The full sweep selected 50 tests, passed 21, failed 2 and skipped 27 due tier gating.
+- `validate_review_pairing.py`: PASS, 102/102 auto-review packets.
+- `godot_import_lfs_preflight`: PASS, 1/1.
+- Awakening tag suite: PASS, 22/22, 0 failed, 0 skipped.
+- Changed-file validation after current-main sync: PASS, 50/50, 0 failed, 0 skipped, complete coverage. Report: `/tmp/awakening-changed-validation-resumed.json`.
 - Asset V2 plans: PASS for all nine families. Status: 0/3 required and unbound for each. `asset needs --check`, JSON parsing and `git diff --check`: PASS.
 
 ## Open findings
 
-- Global `asset doctor --json` reports four catalog-hash mismatches in the unchanged `awakening_designation_locker` family. AP0 did not alter those images or catalog records; the new family contracts/status are individually clean.
-- Required post-sync changed-file validation is blocked by inherited validation drift: 11 Compound review-pairing fixtures point at target packet locations that the contract considers incorrect, and the standalone LFS preflight result differs between the sweep and direct rerun. These failures are outside AP0; the dependent post-land review cannot run until AP0 lands.
+- Global `asset doctor --json` still reports four `awakening_designation_locker` catalog/runtime hash mismatches. Audit: the `job_20261007T205424Z_80b02bf4` publication receipt and generated catalog carry the original output hashes; current runtime bytes differ for all four states, and commits `6775cc844` / `eb3cdc9e9` changed those runtime PNGs afterward. The current source-work images match neither the changed runtime PNGs nor a newer publication receipt. Pixel comparisons against the archived publication outputs show substantial changes (8,738 closed, 14,794 empty, 14,707 open_loaded, and 64,024 authorize_open pixels). No catalog hashes were changed. A provenance-backed Asset V2 re-publication is separate from AP0.
+- The initial post-sync sweep was blocked by inherited Compound and LFS-fixture defects. Mainline correction `b9c94e6677f3a73b38fc1cd438d1c19a438be305` fixed all 11 Compound review targets and the standalone LFS fixture; the requested validators and full changed-file sweep now pass.
 - Asset V2’s `source_pending` flag requires a real staged or receipt-approved source. With no perimeter artwork supplied, the correct state is `needed` with three missing states, not `source_pending`; the task packet wording now reflects this.
 - The coverage ledger reports existing visual windows for future presentation work. No gameplay geometry adjustment is authorized by those measurements.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: blocked
+- Outcome: success
 - Friction severity: medium
-- What went wrong: after main advanced, the mandatory full changed-file sweep failed on inherited checks even though AP0’s 22-test tag suite passed. The direct LFS preflight passed while the same test failed inside the changed-file sweep.
-- Root cause / contributing factors: 11 stale Compound review target paths make the global pairing contract fail; the LFS preflight result is inconsistent. Neither failing contract belongs to AP0.
-- Prevention / pipeline improvement: fix the inherited pairing fixtures and make the LFS preflight deterministic in a separate task, then rerun changed-file validation before AP0 landing.
-- Tooling / docs drift discovered: changed-file validation invokes cross-project checks with stale Compound packet assumptions; the global Asset V2 doctor also continues to report four unchanged designation-locker hash mismatches.
+- What went wrong: main advanced while AP0 was blocked, so finish required reconciliation and a fresh full sweep. The later mainline correction resolved the stale pairing and LFS fixture failures. The separate locker doctor errors stem from runtime edits after its recorded Asset V2 publication.
+- Root cause / contributing factors: inherited mainline validation drift was corrected at `b9c94e667`; the locker catalog still describes the prior four-state publication while its runtime PNGs were edited in subsequent commits without updated source-work inputs or Asset V2 receipt.
+- Prevention / pipeline improvement: require runtime art edits to travel through source-work/inbox and Asset V2 publication so catalog, receipt, and actual bytes stay aligned.
+- Tooling / docs drift discovered: four locker runtime files have no matching current approved-source/publication evidence; `asset doctor` correctly reports the mismatch. This remains a separate provenance follow-up; AP0’s nine family plans/statuses and needs check are clean.
 - Follow-up: manual-follow-up
 - What worked: using the scene’s live sprite transforms and authored reveal values generated the ledger without duplicating Layout authority.
 
 ## Next Handoff
 
-- Next workstream: none
-- Next packet state: none
+- Next workstream: review-awakening-perimeter-support-foundation-v1
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/local-chatgpt%3Aeecfd882-488a-4da3-ab77-b2fbd36b114a
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Refresh reason: none
-- Next action: repair inherited changed-file validation failures, rerun the full required suite, then finish AP0 and run its paired fresh-context review.
-- Blockers or open questions: 11 Compound review-pairing target-path failures and an inconsistent standalone LFS preflight failure block landing; four unchanged designation-locker hash errors remain separately inherited.
+- Next action: land AP0 through `workstream.py finish`, then initiate the paired fresh-context post-land review.
+- Blockers or open questions: four designation-locker catalog/runtime hash mismatches remain; no new provenance-backed Asset V2 publication exists for the edited runtime bytes.
