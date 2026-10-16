@@ -136,7 +136,6 @@ normal closeout.
 - `REVIEW_BRIDGED_FALLS_GENERATED_REGION_LIFECYCLE_REVIEW_CORRECTIONS_1.md` — Independently verify correction R0-01 without redesigning the generated-region lifecycle.
 - `REVIEW_BRIDGED_FALLS_LOWER_QUARTER_HANDOFF.md` — Independently verify the final Bridged Falls -> Lower Quarter production cutover and single-state-authority claim.
 - `REVIEW_BRIDGED_FALLS_PROCGEN_TOPOLOGY.md` — Independently verify that Bridged Falls is genuinely seed-generated and structurally valid, not a fixed authored corridor with cosmetic variation.
-- `REVIEW_CARROW_INTERIOR_SCALE_CALIBRATION_V1.md` — Independently prove that three exact native-scale Carrow debug variants are reproducible, technically correct and cannot change the live three-interior runtime.
 - `REVIEW_COMBAT_ATTACK_TELL_CONTACT_ALIGNMENT_V1.md` — Prove that the shipped actor-wide cue/contact alignment fixes unfair invisible or prematurely resolved contact without breaking damage, parry, dash or ranged...
 - `REVIEW_COMPOUND_ARCHETYPE_PLAYABLE_PROOF.md` — Independently verify the landed implementation of compound-archetype-playable-proof.
 - `REVIEW_COMPOUND_ARCHETYPE_PROFILE_CONTRACT.md` — Independently verify the landed implementation of compound-archetype-profile-contract.
