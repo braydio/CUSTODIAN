@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review target workstream: `carrow-interior-scale-calibration-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CARROW_INTERIOR_SCALE_CALIBRATION_V1.md`
-- Reviewed main: `200fb5ba3`
+- Reviewed main: `200fb5ba35c41526e339198c156d0afc7c4455f1`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0`
 - Visual review: `conditional`
 - Reviewer context: `fresh`

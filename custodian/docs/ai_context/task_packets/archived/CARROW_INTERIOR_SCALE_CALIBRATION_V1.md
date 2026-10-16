@@ -91,18 +91,14 @@
 
 ## Independent Review
 
-- Status: `passed`
+### Review Receipt: review-carrow-interior-scale-calibration-v1
+- Schema: `custodian.paired_review.v1`
 - Review workstream: `review-carrow-interior-scale-calibration-v1`
-- Reviewed on main: `200fb5ba3`
+- Review target workstream: `carrow-interior-scale-calibration-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
-- Review modes: `code, architecture, runtime, visual`
-- Blocking defects: `0`
-- Material evidence gaps: `0`
-- Non-blocking issues: `0`
-- Optional improvements: `0`
-- Correction finding IDs: `none`
-- Next-slice finding IDs: `none`
-- Human-decision finding IDs: `none`
-- Detailed review summary: `REVIEW_CARROW_INTERIOR_SCALE_CALIBRATION_V1_CLAUDE_SUMMARY.md`
-- Follow-up workstream: `none`
+- Reviewed main: `200fb5ba35c41526e339198c156d0afc7c4455f1`
+- Reviewed implementation commit: `200fb5ba35c41526e339198c156d0afc7c4455f1`
