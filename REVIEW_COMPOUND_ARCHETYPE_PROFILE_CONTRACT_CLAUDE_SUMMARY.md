@@ -6,6 +6,10 @@ Workstream: `review-compound-archetype-profile-contract`
 
 No blocking defects or material gaps found in the reviewed implementation slice.
 
+## Protected recovery
+
+The original fresh reviewer session completed with a clean verdict and the target packet's canonical receipt, but the coordinator entered protected `post_exit_recovery` because the review packet itself lacked its separate canonical receipt and had invalid `Review: passed` intent metadata. The coordinator preserved the original branch, worktree, claim, run evidence, and reviewer output; verified the original verdict, exact target receipt delta, provenance, implementation SHA, and all three focused checks; then appended the missing receipt, corrected the review packet metadata, and regenerated the managed index. No implementation files were changed.
+
 ## Reviewed provenance
 
 - Reviewed main: `b414f16e9e61e78ed9bcc0dbcee99372698e2869`
@@ -34,11 +38,11 @@ No visual review was needed: this slice changes selection and metadata contracts
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
-- Friction severity: low
-- What went wrong: initial validations ran against a cold import/class cache and failed before exercising the checks.
-- Root cause / contributing factors: the restricted reviewer checkout had no initialized Godot import cache.
-- Prevention / pipeline improvement: initialize project imports before focused validation in a fresh reviewer checkout.
-- Tooling / docs drift discovered: none
+- Friction severity: medium
+- What went wrong: initial validations ran against a cold import/class cache; after the warmed rerun passed, review closeout stopped in protected recovery because the archived review packet omitted its own receipt and used an invalid `Review: passed` intent value.
+- Root cause / contributing factors: the restricted reviewer checkout had no initialized Godot import cache, and reviewer closeout wrote the target receipt without writing the corresponding review-packet receipt or respecting the packet intent enum.
+- Prevention / pipeline improvement: initialize imports before focused validation; enforce both receipts and valid packet metadata before allowing reviewer exit to enter coordinator landing.
+- Tooling / docs drift discovered: paired-review closeout instructions did not make the review-packet receipt and intent-field contract sufficiently explicit; the parser and landing checks correctly failed closed.
 - Follow-up: none
 - What worked: the focused profile smoke provides deterministic, fixed-seed coverage of all acceptance cases.
 
