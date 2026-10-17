@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: worktree-backlog-queue-invalid-claim-triage-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: review-worktree-backlog-census-and-safety-ledger-v1

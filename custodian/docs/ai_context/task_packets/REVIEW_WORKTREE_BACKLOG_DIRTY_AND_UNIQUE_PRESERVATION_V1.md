@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-worktree-backlog-dirty-and-unique-preservation-v1
 - Kind: review
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P0
 - Depends on: worktree-backlog-dirty-and-unique-preservation-v1

@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: worktree-backlog-owned-work-recovery-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: review-worktree-backlog-dirty-and-unique-preservation-v1
