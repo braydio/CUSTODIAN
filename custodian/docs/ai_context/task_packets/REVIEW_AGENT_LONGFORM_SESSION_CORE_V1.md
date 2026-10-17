@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-agent-longform-session-core-v1
-- Status: draft
-- Dispatch: manual
+- Status: ready
+- Dispatch: auto
 - Priority: P1
 - Depends on: agent-longform-session-core-v1
 - Locks: agent-workflow
@@ -33,7 +33,7 @@
 - Non-goals: code feature changes or acceptance waivers.
 - Acceptance: exact reviewed commit main reachability, focused and changed green, all negative controls, no material evidence gaps; findings remain unresolved.
 - Validation: temporary two-clone bare Git remote; fake Codex process; crash between claim/event, torn append, concurrent supervisors, duplicate resume, bad commit/validation, busy claim lock, parked attempt count, dirty root preservation, stop during child; existing test_next_execution_boundary, test_dispatch, test_workstream, paired_review runner, context/index/changed checks. and checked review receipt scope.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
 ## Review Receipt
 

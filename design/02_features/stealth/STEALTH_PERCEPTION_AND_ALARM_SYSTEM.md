@@ -581,3 +581,7 @@ to shared stealth code.
 typed contract, Enemy and Vaultwing consume one acoustic evaluation seam,
 receiver sensitivity remains data-driven, and focused noise/perception
 regressions are deterministic.
+
+## Compound fixture consumer (planning, 2026-10-15)
+
+Compound security needs physical gate/door control, power-dependent access panels and local sensor observations with stable source and zone. Existing acoustic perception does not mean a production alarm network exists. Global alerts, live-feed cameras, radar, drone feeds and surveillance UI remain deliberately deferred. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.

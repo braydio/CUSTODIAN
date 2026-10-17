@@ -1,6 +1,6 @@
 # Agent Longform Session Framework V1
 
-Status: **planning / not implemented**. Reviewed `main@39d9613937c` (2026-10-12). Source: October 12, 2026 transcript-reconciled 15-packet audit; 12 attempted, 9 landed, three unresolved. Authoring Chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62.
+Status: **planning / not implemented**. Reviewed `main@029c31b0396842bc566a5616c46ab03c0696ad80` (2026-10-13; reconciled after PR #70). Source: October 12, 2026 transcript-reconciled 15-packet audit; 12 attempted, 9 landed, three unresolved. Authoring Chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62.
 
 ## Contract and entrypoint
 
@@ -24,7 +24,7 @@ An *attempt* increments exactly once on a verified dispatcher implementation cla
 
 ## Durable state and recovery
 
-Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/custodian-longform/<id>/`: fsync+atomic `session.json` snapshot, append-only sequenced/hash-linked redacted `events.jsonl`, immutable per-claim receipts, sanitized capped child Codex JSONL/stderr, and a `RECOVERY.md` with exact branch/worktree/claim/review IDs. Event identities include executor, actual model when evidenced (otherwise unknown), session/child/claim IDs, SHA, validation selection and source hashes. Never infer executor from required legacy `*_CLAUDE_SUMMARY.md` filename. Rebuild state on resume from events plus revalidated live Git/RunTrace; never trust a mutable summary alone. Use supervisor `flock`, exact process identity, bounded claim backoff. Never delete locks, force reset/stash/clean, terminate live/foreign processes, steal claims, auto-park foreign claims, or erase untracked/user files. OR1/OR2 pending work owns future orphan fencing; this supervisor fails closed until its reviewed authority exists.
+Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/custodian-longform/<id>/`: fsync+atomic `session.json` snapshot, append-only sequenced/hash-linked redacted `events.jsonl`, immutable per-claim receipts, sanitized capped child Codex JSONL/stderr, and a `RECOVERY.md` with exact branch/worktree/claim/review IDs. Event identities include executor, actual model when evidenced (otherwise unknown), session/child/claim IDs, SHA, validation selection and source hashes. Never infer executor from required legacy `*_CLAUDE_SUMMARY.md` filename. Rebuild state on resume from events plus revalidated live Git/RunTrace; never trust a mutable summary alone. Use supervisor `flock`, exact process identity, bounded claim backoff. Never delete locks, force reset/stash/clean, terminate live/foreign processes, steal claims, auto-park foreign claims, or erase untracked/user files. OR1/OR2 own orphan observation/fenced parking, and the existing paired-review findings-closeout, Godot-cache-access, same-run-continuation and coordination-root-guard workstreams own their own maintenance mechanisms. These implementations may land before their independent reviews pass. The supervisor differentiates implemented from independently accepted and cannot duplicate an unaccepted authority.
 
 ## Operational gates
 
@@ -33,7 +33,7 @@ Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/c
 3. **Execute:** one fresh bounded implementation Codex subprocess per packet in its claimed worktree; use bounded context pack when available, avoid giant AGENTS/CURRENT_STATE dumps and repetitive media. Preserve raw logs privately with redaction/limits.
 4. **Validate:** focused owned tests first; actual packet-specific end-to-end and Moment Forge checks remain required (packet #8 sidearm red despite 51/51 intermediate). The canonical final changed-file suite must be fresh and fully passing: failures, timeouts, skips, uncovered files or zero tests are red. Triage/baselines label cause but never waive. No invented timeout increase.
 5. **Finish:** only `workstream.py finish` manages landing; supervisor independently verifies origin/main reachability and archival; safe fast-forward root sync or durable `ROOT_SYNC_BLOCKED`. No force operations.
-6. **Review:** preflight writable Git common metadata and Godot import/cache **before** reviewer claim. Launch exact `paired_review_runner.py` fresh-context review. Findings, no selected tests, post-exit recovery and sandbox errors stay not accepted. Preserve exact existing claim and evidence, no fresh duplicate claim.
+6. **Review:** preflight read-only shared Git metadata and the reviewed least-privilege CUSTODIAN Godot cache/job-budget access **before** reviewer claim. Launch the exact `paired_review_runner.py` fresh-context review. An administratively concluded `findings` or `human_required` outcome is NOT an accepted PASS. Recover an exact previous run only with the separately reviewed same-claim continuation authority, a genuinely fresh reviewer decision and canonical summary/receipt; a coordinator green report alone does not decide PASS. Preserve existing claim and evidence; no duplicate claim.
 7. **Human:** where required, publish explicit source Authoring chat and Dropbox manifest with reviewer questions; **both** subjective approval and technical green are necessary (packet #9 visual gate + 70/1 timeout/1 skip). Cleanup only after verdict. No automatic general-next on human gate.
 8. **Checkpoint:** flush ledger before another claim. Stop on uncertain ownership, unresolved review/human gate or violation. Preserve partial work, count attempt. Cooperative stop/resume with exact provenance.
 9. **Usage:** collect native Codex JSONL delta/cumulative token and cache fields without double counting; unknown values are null, not zero. Distinguish wall time/tool elapsed, compactions, retries, review overhead, tokens per *accepted* pair. Redact prompts/secrets.
@@ -56,6 +56,26 @@ Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/c
 | Unknown native tokens | null/unknown; deduplicate cumulative events |
 | Abrupt worker death | preserve original branch, owner/run/evidence before resume |
 
+
+## Bounded maintenance and deadlock recovery (planned, not installed)
+
+**Read-only first.** LF1 shall expose a maintenance status/plan for a stalled longform session: exact owner/lock, run ID, process/lease evidence, remote branch/claim, main and worktree SHAs, packet status, review outcome, dependent packet DAG, hashed dirty-file preservation evidence, validated reports and recommended next action. No `--force-unlock`, implicit apply, or unrestricted workflow bypass. Inactive PID or old branch alone is not abandonment. An unknown/foreign/live owner remains protected. A denied shell permission stops the operation, rather than triggering an alternate command.
+
+| Failure / flow | Existing owner (reuse) | Non-negotiable gate |
+|---|---|---|
+| Blocking review findings, human decision | `agent-paired-review-findings-closeout-v1` and `paired_review_runner.py recover-closeout` | Conclude original run administratively, never write target PASS. Accepted-review dependencies require independently verified passed receipt; bounded correction lineage may use verified findings IDs. |
+| Godot reviewer cache and shared job capacity | `agent-paired-review-godot-cache-access-v1` | Writable *narrow* cache, real shared Godot budget and lock, reviewer Git metadata still read-only. |
+| Ephemeral reviewer exits before verdict | `agent-paired-review-same-run-continuation-v1` | Same original claim/run/worktree and pinned target; new *independent* reviewer context and actual reviewer-authored outcome/summary, not recreated prior model session. Previously green raw reports (including ambient's eight exact-seed reports) are reusable only with proven identical identity/coverage/freshness. |
+| Orphaned executor / dirty UID sidecars | OR1 observability and OR2 fenced parking | No implicit lease release or branch retirement. Exact-hash preservation, protected owner, explicit accepted recovery authority. |
+| Dirty persistent checkout | `coordination-root-dirty-prevention-recovery-v1` and `persistent_checkout_sync.py` | Read-only default; never reset, clean, stash, force-sync or delete user files. |
+| Repair needs a lock held by the very broken review | The existing findings-closeout packet's isolated maintenance exception | User-approved, one-time, auditable narrow maintenance branch; preserve original owner, independent technical review and ordinary validation. Exact shell permission must separately permit the proposed command. No wildcard allow list, no disguised `git worktree add` after denial, no general dispatcher lock override. |
+
+**Maintenance handoff:** LF1 records blocked/partial attempts and emits a compact evidence-based plan. LF2 may *delegate* maintenance only after each underlying owner has landed **and passed its independent review**. LF2 must not create a parallel dispatcher/review/claim/lease implementation. An authorized maintainer exception operates outside normal queue claims under its explicit policy, creates its own reviewer evidence, and never touches the blocked owner or treats an exception as review acceptance. LF3 accounts for report freshness and machine-wide resource cost; LF4 exports permission/exception/owner and administrative-versus-accepted statuses without leaking secrets or fabricating cost.
+
+**Permission boundary:** Conversation authorization is not an execution-tool permission grant. Request interactive approval for one exact maintenance command when needed; if denied, preserve all state and report the blocker, never try another route around it. A properly archived findings review may free a lock but must not release downstream accepted-review dependencies or authorize LF1 unless its own live dispatcher audit approves.
+
+**Validation:** Synthetic two-clone original-run/foreign-owner cases, a protected dirty pair of .gd.uid sidecars, interrupted maintenance journal, exact permission-denied no-fallback, concluded-findings dependency remains red, real accepted PASS, reviewer cache lock sharing, same-claim fresh review with stale eight-report rejection, and root dirty/AHEAD preservation.
+
 ## Implementation sequence
 
 **LF1** `agent-longform-session-core-v1`: real command and skill, bounded session engine, fsynced event ledger, verified claim/land status, safe stop/resume.
@@ -66,4 +86,10 @@ Store owner-private, gitignored evidence in `$(git rev-parse --git-common-dir)/c
 
 **LF4** `agent-longform-telemetry-and-standard-adoption-v1`: native JSONL provenance/tokens/cost visibility, low-volume export, common receipt adapters for standard tasks after reviews.
 
-Each slice requires focused mock/bare-repo failure-injection tests, exact manifest ownership, full changed-file closeout and fresh paired review. The eight packets are staged `draft/manual` pending live authoring preflight, explicit promotion and dispatcher claim; the current authoring chat URL is now recorded. Do not treat this branch as production runner.
+Each slice requires focused mock/bare-repo negative controls, current complete changed-file validation, an exact reviewed landing and an independent paired review.
+
+## Planning PR reconciliation, 2026-10-17
+
+Inspected origin/main at 418a719d69c59ca8ace43031fc342a7f8edf557f. PR #70's original October 12 branch contains nine files already published in newer form on main. Merge this reconciliation on top of CURRENT main, preserving the existing LF1 ready/auto packet and exact Authoring chat. LF2–LF4 and their paired reviews are authorized for the existing opt-in targeted authoring handoff: they remain draft/manual until the preflight promotes both sides to ready/auto and updates the managed index. Ready/auto never overrides real dependencies, active locks, or the passed-review acceptance requirement.
+
+The original review-agent-next-execution-boundary-v1 review is now archived with a genuine findings outcome, R0-01 unresolved, **not** a passing target receipt. The findings-closeout and Godot-cache-access implementations are archived complete, but their independent paired reviews remained active at inspection; their implementations must not be counted as accepted until exact passed receipts exist. The old claim that MC1 still holds the active LF1 lock is stale. Always run dispatch.py audit --json at claim time; no lock occupancy is inferred from old prose. The proposed Longform supervisor and maintenance plan commands are not installed by this planning merge. OR1/OR2, same-run continuation and root hygiene remain separate original workstreams; no duplicate packets are created.

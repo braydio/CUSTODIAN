@@ -1,0 +1,69 @@
+{
+  "schema": "custodian.asset_ingest_job.v2",
+  "job_id": "job_20261013T151138Z_83e73ea6",
+  "timestamp": "2026-10-13T15:11:38.932538+00:00",
+  "family": "ash_bell_surface_lift_ingress_props_v1",
+  "kind": "world_prop",
+  "inputs": [
+    {
+      "path": "asset_drop/inbox/ash_bell_surface_lift_ingress_props_v1/field_projector.png",
+      "sha256": "388836af8b858c838822f3073ffcbbecbec7161d9b6ef886002dc2db78f0b6a7"
+    },
+    {
+      "path": "asset_drop/inbox/ash_bell_surface_lift_ingress_props_v1/lift_deck.png",
+      "sha256": "d4dc3ae70bffb04b8389055bc39d83185e64fa6ee3df08031a890fb63825efdc"
+    }
+  ],
+  "outputs": [
+    {
+      "state_id": "field_projector",
+      "direction": "omni",
+      "semantic_identity": [
+        "ash_bell_surface_lift_ingress_props_v1",
+        "world_prop",
+        "body",
+        "interaction",
+        "field_projector",
+        "omni"
+      ],
+      "path": "content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__field_projector__omni__1f__64x128.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "388836af8b858c838822f3073ffcbbecbec7161d9b6ef886002dc2db78f0b6a7",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    },
+    {
+      "state_id": "lift_deck",
+      "direction": "omni",
+      "semantic_identity": [
+        "ash_bell_surface_lift_ingress_props_v1",
+        "world_prop",
+        "body",
+        "interaction",
+        "lift_deck",
+        "omni"
+      ],
+      "path": "content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__lift_deck__omni__1f__448x320.png",
+      "provenance": "authored",
+      "source_asset": null,
+      "sha256": "d4dc3ae70bffb04b8389055bc39d83185e64fa6ee3df08031a890fb63825efdc",
+      "operation": "create",
+      "superseded_paths": [],
+      "backend": "runtime_ready"
+    }
+  ],
+  "retired_states": [],
+  "retired_files": [],
+  "backends": [
+    "runtime_ready"
+  ],
+  "post_process_hooks": [],
+  "godot_import": {
+    "attempted": true,
+    "ok": true
+  },
+  "validation_evidence": [],
+  "result": "success"
+}

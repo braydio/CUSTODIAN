@@ -383,6 +383,9 @@ func generate_contract(seed_value: int) -> void:
 		_last_generation_attempts.append({
 			"attempt": attempt,
 			"attempt_seed": attempt_seed,
+			"candidate_key": "attempt_%02d_seed_%d" % [attempt, attempt_seed],
+			"semantic_fingerprint": str(candidate_snapshot.get("fingerprint", "")),
+			"world_fingerprint": str(candidate_snapshot.get("runtime_fingerprint", "")),
 			"t_instantiate_ms": _t_instantiate,
 			"t_generate_ms": _t_generate,
 			"t_metrics_ms": _t_metrics,
@@ -392,6 +395,17 @@ func generate_contract(seed_value: int) -> void:
 			"terrain_failed": candidate_terrain_failed,
 			"metrics": candidate_metrics.duplicate(true),
 		})
+		print("[CustodianContractMap] ATTEMPT_DECISION_JSON:%s" % JSON.stringify({
+			"attempt": attempt,
+			"candidate_key": "attempt_%02d_seed_%d" % [attempt, attempt_seed],
+			"semantic_fingerprint": str(candidate_snapshot.get("fingerprint", "")),
+			"world_fingerprint": str(candidate_snapshot.get("runtime_fingerprint", "")),
+			"candidate_count": attempts_run,
+			"required_ingresses_valid": required_ingresses_valid,
+			"required_ingress_failures": candidate_metrics.get("required_ingress_failures", []),
+			"semantic_stage_timing_ms": candidate_snapshot.get("stage_timing_ms", {}),
+			"accepted": accepted,
+		}))
 		print("[CustodianContractMap] Attempt %d: instantiate=%.1fs generate=%.1fs metrics=%.1fs total=%.1fs layout_valid=%s candidate_valid=%s connected=%.2f ingress=%.2f pre_terrain_connected=%.2f pre_terrain_missing=%d baseline_rescue=%d terrain_fallback=%s terrain_connectivity=%s terrain_rescue=%d terrain_rescue_limit=%d terrain_rescue_ok=%s rejection_reasons=%s accepted=%s score=%.2f" % [
 			attempt,
 			_t_instantiate / 1000.0,

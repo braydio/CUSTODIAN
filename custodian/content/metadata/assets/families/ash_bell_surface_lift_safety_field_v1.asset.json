@@ -1,0 +1,55 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "ash_bell_surface_lift_safety_field_v1",
+  "kind": "effect",
+  "runtime": {
+    "domain": "sprites/effects/ash_bell_surface_lift",
+    "owner": "ash_bell_surface_lift_safety_field_v1"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 192
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "field_idle": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "effect",
+      "variant": "field_idle",
+      "layout": "horizontal_strip",
+      "frame_width": 512,
+      "frame_height": 192,
+      "animation": true,
+      "frames": 6,
+      "fps": 6
+    },
+    "field_engaged": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "effect",
+      "variant": "field_engaged",
+      "layout": "horizontal_strip",
+      "frame_width": 512,
+      "frame_height": 192,
+      "animation": true,
+      "frames": 6,
+      "fps": 8
+    },
+    "field_arming": {
+      "required": true,
+      "layer": "fx",
+      "action_group": "effect",
+      "variant": "field_arming",
+      "layout": "horizontal_strip",
+      "frame_width": 512,
+      "frame_height": 192,
+      "animation": true,
+      "frames": 8,
+      "fps": 12
+    }
+  },
+  "aliases": {},
+  "consumers": []
+}

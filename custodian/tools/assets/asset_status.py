@@ -1,6 +1,7 @@
 """Truthful directional lifecycle status."""
 from __future__ import annotations
 from dataclasses import dataclass
+import json
 from pathlib import Path
 from asset_catalog import file_hash,load_catalog
 from asset_contract import AssetFamilyContract
@@ -14,6 +15,26 @@ class FamilyStatus:
     inbox_exists:bool; inbox_files:list[str]; runtime_outputs:list[str]; consumers:list[dict]; completeness:str; states:dict[str,StateStatus]
 def get_family_status(family:AssetFamilyContract,project_dir:Path)->FamilyStatus:
     inbox=project_dir/"asset_drop/inbox"/family.id; inbox_files=sorted(p.name for p in inbox.glob("*.png")) if inbox.exists() else []
+    # Exact-hash reviewed source masters that are intentionally not eligible
+    # for normalization (for example a short animation against a longer
+    # runtime contract) remain source-pending even though they are not inbox
+    # inputs. Receipt entry paths are repository-root relative.
+    source_only:set[str]=set()
+    receipt_path=project_dir/"content/metadata/assets/source_review_receipts.v1.json"
+    if receipt_path.is_file():
+        try:
+            receipts=json.loads(receipt_path.read_text(encoding="utf-8")).get("receipts",[])
+        except (OSError,json.JSONDecodeError):
+            receipts=[]
+        for receipt in receipts:
+            if receipt.get("decision")!="approved": continue
+            for source in receipt.get("sources",[]):
+                if source.get("family_id")!=family.id or source.get("state_decision")!="approved_source_work_only": continue
+                entry=source.get("entry","")
+                if not entry.startswith("custodian/asset_drop/source_work/") or ".." in Path(entry).parts: continue
+                path=project_dir/entry.removeprefix("custodian/")
+                if path.is_file() and source.get("sha256")==file_hash(path):
+                    source_only.add(source.get("state_id",""))
     catalog=load_catalog(project_dir/"content/metadata/assets/generated/asset_catalog.generated.json")
     assets=catalog.get("families",{}).get(family.id,{}).get("assets",{}); statuses={}; runtime=[]
     for sid,state in family.states.items():
@@ -27,7 +48,7 @@ def get_family_status(family:AssetFamilyContract,project_dir:Path)->FamilyStatus
             imported=imported and output.with_name(output.name+".import").exists(); verified=verified or bool(entry.get("validation_evidence"))
             bound=bound or _is_bound(family.consumers,project_dir,"res://"+rel)
         present=set(authored+mirrored); art=len(present)>=state.min_direction_count and set(state.required_directions).issubset(present)
-        pending=any((Path(name).stem==sid or Path(name).stem.startswith(sid+"__")) for name in inbox_files)
+        pending=sid in source_only or any((Path(name).stem==sid or Path(name).stem.startswith(sid+"__")) for name in inbox_files)
         statuses[sid]=StateStatus(sid,pending,art,valid_count>0 and imported,bound,verified,first,tuple(sorted(authored)),tuple(sorted(mirrored)),state.min_direction_count,state.required_directions)
     def group(pred): return [(sid,statuses[sid].art_present) for sid,state in family.states.items() if pred(state)]
     required=group(lambda s:s.required); recommended=group(lambda s:not s.required and s.recommended); optional=group(lambda s:not s.required and not s.recommended)

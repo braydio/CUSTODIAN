@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import review_outcome
 from workflow_control import (
     RunTrace, WorkflowControlError, acquire_remote_claim, common_mutex,
     release_remote_claim, resolve_agent_id, workstream_mutex,
@@ -67,6 +68,44 @@ def _packet_texts(repo: Path, packets: list[Packet], tree: str = "origin/main") 
     return {packet.path: git(repo, "show", f"{tree}:{packet.path}") for packet in packets}
 
 
+def _review_gate(
+    repo: Path, packets: list[Packet], archived: list[Packet], tree: str = "origin/main",
+) -> tuple[dict[str, tuple[str | None, str]], set[tuple[str, str]]]:
+    """Judge every archived paired review by its verified outcome, never by status alone.
+
+    ``rejected`` maps a review workstream that is archived complete but did NOT earn
+    an accepted-review dependency to ``(outcome, reason)``. ``correction_ok`` holds
+    ``(correction, review)`` pairs where a bounded correction may consume a concluded
+    findings review after its cycle, finding IDs and target lineage verified.
+    """
+    rejected: dict[str, tuple[str | None, str]] = {}
+    outcomes: dict[str, dict[str, str] | None] = {}
+    for review in archived:
+        if review.error or review.status != "complete" or review.kind != "review" or not review.workstream:
+            continue
+        text = git(repo, "show", f"{tree}:{review.path}", check=False)
+        target_text = None
+        if review.review_target_packet:
+            target_text = git(repo, "show", f"{tree}:{review.review_target_packet}", check=False) or None
+        accepted, outcome_name, reason = review_outcome.review_acceptance(text, target_text, review.workstream)
+        parsed, _ = review_outcome.parse_review_outcome(text)
+        outcomes[review.workstream] = parsed
+        if not accepted:
+            rejected[review.workstream] = (outcome_name, reason)
+    correction_ok: set[tuple[str, str]] = set()
+    for packet in packets:
+        if packet.error or packet.kind != "correction" or not packet.workstream:
+            continue
+        for dependency in packet.dependencies:
+            if dependency in rejected and outcomes.get(dependency) is not None:
+                text = git(repo, "show", f"{tree}:{packet.path}", check=False)
+                if review_outcome.correction_lineage_error(
+                    packet.workstream, text, dependency, outcomes[dependency],
+                ) is None:
+                    correction_ok.add((packet.workstream, dependency))
+    return rejected, correction_ok
+
+
 def _claimed(repo: Path) -> set[str]:
     # Remote refs are claim authority. A successful dispatcher claim always has
     # either a temporary dispatch-claim ref during acquisition or a published
@@ -93,6 +132,8 @@ def _decision(
     validation_errors: dict[str, str] | None = None,
     queue_errors: dict[str, str] | None = None,
     interrupted_claims: set[str] | None = None,
+    review_rejections: dict[str, tuple[str | None, str]] | None = None,
+    correction_ok: set[tuple[str, str]] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
@@ -117,6 +158,10 @@ def _decision(
     for dependency in packet.dependencies:
         if dependency not in complete:
             return False, f"dependency: {dependency}"
+        if review_rejections and dependency in review_rejections:
+            if (packet.workstream, dependency) in (correction_ok or set()):
+                continue
+            return False, f"dependency: review not accepted: {dependency} ({review_rejections[dependency][1]})"
     by_id = {p.workstream: p for p in packets if p.workstream and not p.error}
     for holder in sorted(claimed):
         claimed_packet = next((p for p in packets if p.workstream == holder), None)
@@ -232,6 +277,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     packet_texts = _packet_texts(repo, packets)
     queue_errors = validate_queue_contract(packets, archived, packet_texts)
+    review_rejections, correction_ok = _review_gate(repo, packets, archived)
     for work_id in sorted(claims - branches):
         groups["INVALID/RECOVERY"].append(
             f"{work_id} — remote dispatch claim interrupted; recovery required. "
@@ -269,6 +315,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 packet, packets, archived, claimed, auto_only=False,
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
+                review_rejections=review_rejections, correction_ok=correction_ok,
             )
             if ok:
                 groups["MANUAL READY"].append(f"{name} [{packet.path}]")
@@ -282,6 +329,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 packet, packets, archived, claimed, auto_only=True,
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
+                review_rejections=review_rejections, correction_ok=correction_ok,
             )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
@@ -328,6 +376,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
     queue_errors = validate_queue_contract(packets, archived, texts)
+    review_rejections, correction_ok = _review_gate(repo, packets, archived)
     active_counts: dict[str, int] = {}
     for packet in packets:
         if packet.workstream:
@@ -340,11 +389,13 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             packet, packets, archived, claimed, auto_only=False,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
+                review_rejections=review_rejections, correction_ok=correction_ok,
         )
         auto_ok, _ = _decision(
             packet, packets, archived, claimed, auto_only=True,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
+                review_rejections=review_rejections, correction_ok=correction_ok,
         )
         reasons = []
         for error_map, label in (
@@ -363,6 +414,8 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             complete_ids = {p.workstream for p in archived if not p.error and p.status == "complete"}
             if dependency not in complete_ids:
                 reasons.append(f"dependency not archived complete: {dependency}")
+            elif dependency in review_rejections and (packet.workstream, dependency) not in correction_ok:
+                reasons.append(f"dependency review not accepted: {dependency} ({review_rejections[dependency][1]})")
         if packet.workstream in claimed:
             reasons.append("already claimed by published agent branch")
         if packet.workstream in interrupted_claims:
@@ -523,6 +576,7 @@ def claim(
                 pairing_errors = validate_review_pairing(packets)
                 validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
                 queue_errors = validate_queue_contract(packets, archived, _packet_texts(repo, packets))
+                review_rejections, correction_ok = _review_gate(repo, packets, archived)
                 ordered = sorted(packets, key=lambda p: (PRIORITY.get(p.priority, 9), p.path))
                 candidates = [p for p in ordered if p.workstream == workstream_id] if workstream_id else ordered
                 selected = None
@@ -532,6 +586,7 @@ def claim(
                         packet, packets, archived, claimed, auto_only=auto_only,
                         pairing_errors=pairing_errors, validation_errors=validation_errors,
                         queue_errors=queue_errors, interrupted_claims=remote_claims - remote_branches,
+                        review_rejections=review_rejections, correction_ok=correction_ok,
                     )
                     if ok:
                         selected = packet

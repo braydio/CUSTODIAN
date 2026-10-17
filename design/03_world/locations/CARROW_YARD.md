@@ -48,6 +48,13 @@ What makes Carrow notable is survival. Its walls, machine buildings, stores, and
 
 Intentionally unresolved. Do not permanently assign Carrow Yard to a major faction until the faction redesign establishes its current political geography. The site's original identity predates and is independent of its eventual occupants.
 
+
+## Structure expansion status (design pass, 2026-10-14)
+
+The canonical site roles above remain unchanged. The **proposed**, not-yet-implemented spatial and art design for the West Draft House, Operations House, South Gatehouse and Alarm Gantry is in [Carrow Yard Structures Expansion V1](../../05_levels/CARROW_YARD_STRUCTURES_EXPANSION_V1.md). The first three interiors are now implemented and the West/Operations independent reviews have passed: East Machine House 14×10, West Draft House 12×10, and Operations House 20×14 (32px cells). Those exact dimensions are **shipped runtime facts**, not an approval that the rooms have the desired experiential scale. Gatehouse, Alarm Gantry presentation and the proposed new art families remain unimplemented. Carrow's separate route-authority migration remains pending and owns world entry/exit semantics; room expansion must not recreate a second router.
+
 ## Environmental role
 
-Carrow Yard is the first canonical site used to validate exterior-to-interior environment transitions. The East Machine House is the first accessible building interior. This implementation role is not itself in-world canon.
+Carrow Yard is the first canonical site used to validate exterior-to-interior environment transitions. East Machine House was the initial prototype; West Draft House and Operations House now also have accessible, independently reviewed interiors. These implementation milestones are not themselves in-world canon.
+
+See [Carrow Yard post-interiors planning refresh](../../05_levels/CARROW_YARD_POST_INTERIORS_PLANNING_V1.md) before authoring additional structures or changing production room sizes.

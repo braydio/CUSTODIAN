@@ -75,8 +75,10 @@ central civic axis. Even in greybox that reads as place.
 `game/world/awakening/awakening_layout.gd` owns every coordinate: world bounds,
 section envelopes, walkable polygons, void polygons, connectors, thresholds, set
 pieces, markers, camera reveals, the Road offset, and the temporary South Reach
-seal. The runtime scene, the mapper, the debug tour, and the geometry validator
-all query it. Coordinates are not duplicated into the `.tscn`, the controller, or
+seal. The runtime scene, the mapper's protected-route and candidate checks, the
+debug tour, and the geometry validator all query it. The mapper separately reads
+the instantiated runtime collision nodes for preview; proposals remain a draft
+and do not change Layout. Coordinates are not duplicated into the `.tscn`, the controller, or
 the tests — except where `awakening_first_return_smoke.gd` deliberately asserts a
 locked value so drift is caught.
 
@@ -292,7 +294,18 @@ completion trigger sits at `(0, -6464)`.
 spine at `(0, -3200)` / zoom `0.18` and overlays section envelopes, entries and
 exits, the critical path, the optional branch, camera reveal points, encounter
 placeholders, interaction markers, and future-art anchors — all read from
-`awakening_layout.gd`.
+`awakening_layout.gd`. It displays actual instantiated collision contributors
+and the registered 04→05 composition bounds. Number keys focus zones 01–10;
+F1–F5 switch overlay views. Collision proposals save atomically to
+`reports/level_maps/awakening_first_return/collision_draft.json` with scene and
+Layout Git blob provenance, exact world-pixel vertices, stable IDs, ownership,
+purpose, snap and source-art transforms when a sprite covers the proposal.
+Enter/U only finish a chain; Ctrl+S saves the draft. Neither operation edits
+`awakening_first_return.gd`, the scene, or Layout. Draft route checks fail closed
+on protected connector/passage overlap, 128px route-width loss, 11px Operator
+clearance, protected spawn/locker/lift overlap, stale provenance, missing owner,
+or a disconnected 16px occupancy route. Marker/region authoring modes remain
+disabled until they have a safe Awakening-specific persistence contract.
 
 `res://scenes/debug/awakening_first_return_debug.tscn` instances the real scene and
 adds a dev-only panel: zone selector, teleport to entry, show collision, show zone
