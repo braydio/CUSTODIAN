@@ -86,7 +86,19 @@ because they are reached through vertical entries rather than by walking from th
 so reachability repair cannot carve a tunnel through the separator. The generic constructed
 interior region is skipped for a layered compound, which owns all of its interior space.
 
-Validated by `compound_connected_bunker_smoke.gd` (planner contract plus the real generator).
+The paired entries are usable at runtime. `CompoundVerticalEntryController` (attached by
+`ProcGenTilemap` to a layered compound) moves the operator between a housing threshold and its
+paired underground anchor, reversibly, with a lockout until the operator leaves the arrival tile.
+The active layer is derived from where the operator stands (`get_compound_layer_at_tile`), never
+stored, so `ProcGenTilemap` stays the only layer authority. While underground the camera's authored
+bounds are set to the subsurface content (`get_compound_layer_world_bounds`) and restored on
+return, so the view never reaches the surface layer. Only entry anchors trigger; walking between
+underground rooms changes nothing.
+
+Validated by `compound_connected_bunker_smoke.gd`: the planner contract, the real generator on all
+seven seeds, and on a subset of seeds real wall collision (physics point queries), the real
+`NavigationSystem` graph, both entries traversed in both directions, and the real
+`CameraController` bounds.
 
 ## Security and traversal V1
 

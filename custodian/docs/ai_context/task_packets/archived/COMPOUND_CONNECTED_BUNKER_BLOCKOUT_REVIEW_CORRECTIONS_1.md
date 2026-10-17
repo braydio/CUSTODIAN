@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `compound-connected-bunker-blockout-review-corrections-1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-compound-connected-bunker-blockout`
@@ -47,3 +47,36 @@
 - Refresh reason: `none`
 - Next action: Implement the bounded correction, finish and land normally, then run the exact fresh cycle-1 re-review.
 - Blockers or open questions: `none`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: R0-01: `CompoundVerticalEntryController`, attached by `ProcGenTilemap`, moves the operator through either housing to its own paired underground anchor and back, derives the active layer from position, locks out an immediate bounce, and never triggers while walking underground rooms. R0-02: the extended `compound_connected_bunker_smoke.gd` enables real wall collision (every separator cell blocks physics; spine, rooms and yard are clear), builds the project's real `NavigationSystem` graph (underground rooms mutually navigable, no path from the surface into the underground) and drives the real `CameraController` (bounds clamp to the underground content, never intersect the surface, and are restored). Two negative controls fail the smoke: removing the controller, and removing the sealed-cell guard.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The scene NavigationRegion2D bakes to an empty polygon, so a first navigation check using the navigation server passed or failed for the wrong reason; the controller also cannot type-reference ProcGenTilemap because the tilemap preloads it.`
+- Root cause / contributing factors: `The project navigates with NavigationSystem (AStar over the generated tilemaps), not the baked region; a typed back-reference would be a script cycle.`
+- Prevention / pipeline improvement: `The smoke now asserts the real navigation graph was built before using it, and the controller keeps its tilemap reference untyped with a comment saying why.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `Negative controls on both the transfer and the sealed-cell guard proved the new checks can fail.`
+
+## Next Handoff
+
+- Next workstream: `review-compound-connected-bunker-blockout-review-corrections-1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488`
+- Refresh reason: `none`
+- Next action: `Run the exact fresh cycle-1 re-review through paired_review_runner.py; require independent verification before releasing the dependency-gated successor.`
+- Blockers or open questions: `none`
+

@@ -3801,6 +3801,7 @@
       ],
       "owners": [
         "custodian/game/ui/minimap/minimap_view.gd",
+        "custodian/game/world/compound/compound_vertical_entry_controller.gd",
         "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
         "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
         "custodian/game/world/procgen/generation/accepted_world_export.gd",

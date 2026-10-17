@@ -10,6 +10,7 @@ extends Node
 ##
 ## Set tile coordinates in inspector, then call generate()
 
+const COMPOUND_VERTICAL_ENTRY_CONTROLLER_SCRIPT := preload("res://game/world/compound/compound_vertical_entry_controller.gd")
 const RUNTIME_WALL_SEGMENT_SCRIPT := preload("res://game/world/procgen/runtime_wall_segment.gd")
 const RUNTIME_WALL_CHUNK_SCRIPT := preload("res://game/world/procgen/runtime_wall_chunk.gd")
 const RUNTIME_WALKABLE_BOUNDARY_CHUNK_SCRIPT := preload(
@@ -500,6 +501,7 @@ var _last_compound_compartment_thresholds: Array[Dictionary] = []
 var _last_compound_spine_cells: Array[Vector2i] = []
 # Subsurface/separator cells that must stay solid: no later pass may write floor here.
 var _compound_sealed_cells: Dictionary = {}
+var _vertical_entry_controller: Node = null
 var _last_compound_perimeter: Dictionary = {}
 var _last_compound_gates: Array[Dictionary] = []
 var _last_compound_building_doorways: Array[Dictionary] = []
@@ -1178,6 +1180,8 @@ func _on_procgen_finished() -> void:
 	if auto_bake_nav and nav_region and not generation_evaluation_mode:
 		nav_region.bake_navigation_polygon(false)
 		_t_nav = Time.get_ticks_msec() - _t_start - _t_fill - _t_shadows
+
+	_ensure_vertical_entry_controller()
 
 	# Emit level data for game systems to use
 	var data = get_level_data()
@@ -7592,6 +7596,46 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"is_tile_inside_map": Callable(self, "_is_tile_inside_map"),
 	})
 	return _without_subsurface_required_entries(entries)
+
+
+## Read-only view of the paired surface/subsurface entries (empty for non-layered compounds).
+func get_compound_vertical_entries() -> Array[Dictionary]:
+	return _last_compound_vertical_entries
+
+
+## The layer that owns `tile`: the subsurface region (including its separator) or the surface.
+func get_compound_layer_at_tile(tile: Vector2i) -> String:
+	var subsurface: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("rect", Rect2i())
+	if subsurface.size.x > 0 and subsurface.size.y > 0 and subsurface.has_point(tile):
+		return "subsurface"
+	return "surface"
+
+
+## World-space bounds of a layer's playable content, for camera isolation. Empty for the surface.
+func get_compound_layer_world_bounds(layer_id: String) -> Rect2:
+	if layer_id != "subsurface" or floor_tilemap == null:
+		return Rect2()
+	var content: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("content_rect", Rect2i())
+	if content.size.x <= 0 or content.size.y <= 0:
+		return Rect2()
+	var half := get_runtime_tile_size() * 0.5
+	var top_left := floor_tilemap.to_global(floor_tilemap.map_to_local(content.position)) - half
+	var bottom_right := floor_tilemap.to_global(floor_tilemap.map_to_local(content.end - Vector2i.ONE)) + half
+	return Rect2(top_left, bottom_right - top_left)
+
+
+## A layered compound gets a controller that consumes its vertical entries; others get none.
+func _ensure_vertical_entry_controller() -> void:
+	if _last_compound_vertical_entries.is_empty():
+		if _vertical_entry_controller != null and is_instance_valid(_vertical_entry_controller):
+			_vertical_entry_controller.queue_free()
+		_vertical_entry_controller = null
+		return
+	if _vertical_entry_controller == null or not is_instance_valid(_vertical_entry_controller):
+		_vertical_entry_controller = COMPOUND_VERTICAL_ENTRY_CONTROLLER_SCRIPT.new()
+		_vertical_entry_controller.name = "CompoundVerticalEntryController"
+		add_child(_vertical_entry_controller)
+	_vertical_entry_controller.call("setup", self)
 
 
 ## Underground cells are reached through vertical entries, never by walking from the
