@@ -5,6 +5,9 @@ import hashlib
 import io
 import json
 import re
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 from PIL import Image, ImageDraw
 
@@ -156,9 +159,22 @@ def write_reference_operator_sheet(bundle: Path, output: Path, report: dict, rev
     (review_dir/'REFERENCE_OPERATOR_PROVENANCE.json').write_text(json.dumps(provenance,indent=2,allow_nan=False)+'\n')
     return provenance
 
-def write_viewer(out: Path,bundle: Path,report: dict):
+def check_viewer_script(html_text: str) -> dict:
+    """Parse the exact JavaScript emitted in the self-contained review HTML."""
+    scripts=re.findall(r'<script\b[^>]*>(.*?)</script\s*>',html_text,re.IGNORECASE|re.DOTALL)
+    if len(scripts)!=1:raise ValueError(f'generated viewer must contain exactly one script block; found {len(scripts)}')
+    node=shutil.which('node')
+    if not node:raise RuntimeError('Node.js is required to validate generated review viewer JavaScript')
+    with tempfile.TemporaryDirectory(prefix='operator-ne-viewer-js-') as temp:
+        script=Path(temp)/'viewer.js';script.write_text(scripts[0])
+        result=subprocess.run([node,'--check',str(script)],capture_output=True,text=True,check=False)
+    if result.returncode:
+        raise ValueError(f'generated viewer JavaScript failed node --check:\n{result.stderr.strip()}')
+    return {'validator':'node --check','status':'PASS','script_sha256':_sha_bytes(scripts[0].encode('utf-8'))}
+
+def write_viewer(out: Path,bundle: Path,report: dict,destination: Path|None=None):
     def data(path):return 'data:image/png;base64,'+base64.b64encode(path.read_bytes()).decode('ascii')
-    html='''<!doctype html><meta charset="utf-8"><title>Operator NE walk — review preview</title>
+    html=r'''<!doctype html><meta charset="utf-8"><title>Operator NE walk — review preview</title>
 <style>body{font:16px system-ui;background:#202126;color:#eee;max-width:1250px;margin:24px auto}canvas{width:384px;height:384px;image-rendering:pixelated;background:repeating-conic-gradient(#292c33 0% 25%,#353840 0% 50%) 0/16px 16px}#zoom{width:480px;height:480px}button,select{font:inherit;padding:6px;margin:4px}section{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}pre{white-space:pre-wrap}.warn{color:#ffd68d;font-weight:bold}</style>
 <h1>Operator NE walk — review preview</h1>
 <p class="warn">PREVIEW ONLY / TIMING UNKNOWN / ART NOT ACCEPTED. Select a review playback rate explicitly. This viewer records no timing or approval.</p>
@@ -184,15 +200,45 @@ document.onkeydown=e=>{if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')s
     html=html.replace('const rows=REPORT','const rows='+json.dumps(report['frames'],separators=(',',':')))
     html=html.replace('op.src=OPDATA','op.src='+json.dumps(data(out/'operator_ne_walk_v6_15f.png')))
     html=html.replace('ref.src=REFDATA','ref.src='+json.dumps(data(bundle/'reference/knight_ne_walk_reference_15f_128.png')))
-    (out/'LOOP_REVIEW.html').write_text(html)
+    target=(destination or (out/'LOOP_REVIEW.html')).resolve()
+    check_viewer_script(html)
+    target.write_text(html)
+    return target
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='Verify Iteration 001 image provenance and create a Knight/Operator pair sheet without rerendering.')
     parser.add_argument('--bundle',required=True,type=Path)
-    parser.add_argument('--output',required=True,type=Path,help='existing Iteration 001 output directory; read-only')
-    parser.add_argument('--review-dir',required=True,type=Path,help='new or empty directory for the sheet and provenance JSON')
+    parser.add_argument('--output',required=True,type=Path,help='existing animation output directory; read-only')
+    parser.add_argument('--review-dir',required=True,type=Path,help='new or empty directory for review evidence')
+    parser.add_argument('--repair-viewer-only',action='store_true',help='regenerate only a repaired viewer from locked Iteration 004 files')
     args=parser.parse_args(argv);output=args.output.resolve();review_dir=args.review_dir.resolve()
     if not output.is_dir():parser.error(f'Iteration 001 output directory does not exist: {output}')
+    if args.repair_viewer_only:
+        expected_report='88aa6469a76b986d0d3ccd2592dfed62903b5461ebe3e6e25c0fdb7f9519e83a'
+        expected_candidate='e06daea3f55b6bb8c2787b5874978a72644a7607f0eb37519c03828b3b61bb6a'
+        report_path=output/'report.json';candidate_path=output/'operator_ne_walk_v6_15f.png'
+        donor_path=args.bundle.resolve()/'reference/knight_ne_walk_reference_15f_128.png'
+        if not report_path.is_file() or _sha_file(report_path)!=expected_report:parser.error('Iteration 004 report SHA-256 does not match the locked baseline')
+        if not candidate_path.is_file() or _sha_file(candidate_path)!=expected_candidate:parser.error('Iteration 004 Operator strip SHA-256 does not match the locked baseline')
+        if not donor_path.is_file() or _sha_file(donor_path)!=DONOR_SHA256:parser.error('Knight NE donor SHA-256 does not match the locked baseline')
+        if review_dir.exists() and (not review_dir.is_dir() or any(review_dir.iterdir())):
+            parser.error(f'repair staging directory must be new or empty: {review_dir}')
+        review_dir.mkdir(parents=True,exist_ok=True)
+        try:
+            report=json.loads(report_path.read_text())
+            target=write_viewer(output,args.bundle.resolve(),report,review_dir/'LOOP_REVIEW.html')
+            embedded_donor=_read_html_png(target,'ref');embedded_candidate=_read_html_png(target,'op')
+            if _sha_bytes(embedded_donor)!=DONOR_SHA256:raise ValueError('regenerated ref.src does not match the pinned Knight NE donor')
+            if _sha_bytes(embedded_candidate)!=expected_candidate:raise ValueError('regenerated op.src does not match the pinned Iteration 004 Operator strip')
+            parser_receipt=check_viewer_script(target.read_text())
+        except (OSError,ValueError,KeyError,json.JSONDecodeError,RuntimeError) as exc:
+            parser.error(str(exc))
+        print(json.dumps({'status':'PASS','mode':'repair-viewer-only','viewer':str(target),
+            'html_sha256':_sha_file(target),'report_sha256':_sha_file(report_path),
+            'candidate_strip_sha256':_sha_file(candidate_path),'donor_sha256':_sha_file(donor_path),
+            'embedded_donor_sha256':_sha_bytes(embedded_donor),'embedded_candidate_sha256':_sha_bytes(embedded_candidate),
+            'script':parser_receipt}))
+        return 0
     report_path=output/'report.json'
     if not report_path.is_file():parser.error(f'Iteration 001 report missing: {report_path}')
     if review_dir.exists():

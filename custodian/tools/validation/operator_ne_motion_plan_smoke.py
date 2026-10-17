@@ -5,6 +5,7 @@ import copy
 import hashlib
 import json
 import math
+import re
 import sys
 import tempfile
 from PIL import Image
@@ -12,7 +13,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'custodian/tools/opera
 from motion_plan import two_bone, transition_cost, validate_plan, dist
 from run import (build_upper_body_comparison, pitch_quality_gate,
                  upper_body_terms, validate_upper_body_angles, wrapped_pitch_error_deg)
-from review_viewer import BACKGROUND, _write_pair_sheet
+from review_viewer import (BACKGROUND, _read_html_png, _write_pair_sheet,
+                           check_viewer_script, write_viewer)
 
 LIMITS={'max_knee_fit_error_px':8,'max_joint_step_px':8,'max_rotation_step_degrees':60}
 def pose(x=0):
@@ -22,6 +24,7 @@ def pose(x=0):
 def main():
     upper_body_regressions()
     reference_pairing_regressions()
+    generated_viewer_regressions()
     assert abs(abs(wrapped_pitch_error_deg(179,-179))-2.0)<1e-10
     weighted=pitch_quality_gate([{'near':4,'far':8}],[{'near':4,'far':8}],['near'])
     assert weighted['baseline_weighted']==9.0 and weighted['candidate_weighted']==9.0
@@ -160,6 +163,32 @@ def reference_pairing_regressions():
         reject(donor_path,candidate_path,'0'*64)  # Spoofed donor digest.
         reject(donor_path,donor_path,expected_donor_sha)  # Same-sprite substitution.
     print('PASS reference pairing: 15 ordered gray/gold frame pairs, alpha compositing, source hashes, layout, swap/spoof/duplicate negative controls')
+
+def generated_viewer_regressions():
+    with tempfile.TemporaryDirectory(prefix='operator-ne-viewer-') as temp:
+        root=Path(temp);bundle=root/'bundle';(bundle/'reference').mkdir(parents=True)
+        output=root/'output';output.mkdir();review=root/'review';review.mkdir()
+        donor=Image.new('RGBA',(1920,128),(70,80,90,255))
+        candidate=Image.new('RGBA',(1920,128),(180,90,25,255))
+        donor.save(bundle/'reference/knight_ne_walk_reference_15f_128.png')
+        candidate.save(output/'operator_ne_walk_v6_15f.png')
+        frames=[{'frame':i,'support':'near' if i%2 else 'far','pass':True,
+            'legs':{'near':{'reference_pitch_filter_signed_deviation_deg':0},
+                    'far':{'reference_pitch_filter_signed_deviation_deg':0}},
+            'contact':{'dx':0,'dy':0},'enclosed_alpha_voids':[], 'secondary':{}}
+            for i in range(1,16)]
+        report={'maximum_reference_filter_deviation_px':1.0,'frames':frames}
+        target=write_viewer(output,bundle,report,review/'LOOP_REVIEW.html')
+        html=target.read_text();check_viewer_script(html)
+        assert _read_html_png(target,'ref')== (bundle/'reference/knight_ne_walk_reference_15f_128.png').read_bytes()
+        assert _read_html_png(target,'op')==(output/'operator_ne_walk_v6_15f.png').read_bytes()
+        scripts=re.findall(r'<script\b[^>]*>(.*?)</script\s*>',html,re.IGNORECASE|re.DOTALL)
+        assert len(scripts)==1 and r"'\nPitch error overlay hidden'" in scripts[0]
+        defective=scripts[0].replace(r"'\nPitch error overlay hidden'", "'\nPitch error overlay hidden'".replace(r'\n','\n'),1)
+        try:check_viewer_script('<script>'+defective+'</script>')
+        except ValueError as exc:assert 'node --check' in str(exc)
+        else:raise AssertionError('negative control with a literal newline in a quoted JS string must fail parsing')
+    print('PASS generated viewer: emitted HTML JavaScript parses; embedded PNG identities match; original unescaped-newline defect rejected')
 def crossover_regressions():
     from crossover import calibration_plan, audit_annotations, branch
     from run import HERE

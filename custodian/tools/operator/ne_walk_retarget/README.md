@@ -273,3 +273,39 @@ source images.
 Portable motion tests and a real-Aseprite filled-shape raster test are registered
 in the repository validation manifest. Actual per-frame JSON remains the evidence
 for real rig contact/continuity; fixture tests do not approve animation aesthetics.
+
+## Iteration 005 — playback viewer syntax repair
+
+The Iteration 004 comparison HTML had a real generated-JavaScript defect: the
+ordinary Python triple-quoted template interpreted `\n` escapes and emitted
+literal line breaks inside a single-quoted JavaScript string. `write_viewer`
+now uses a raw HTML template and parses the exact generated `<script>` with
+`node --check` before writing it. The focused motion-plan smoke generates a
+synthetic 15-frame HTML player, verifies its embedded donor/candidate PNG bytes,
+and confirms the original literal-newline defect fails the parser.
+
+The explicit `--repair-viewer-only` mode checks the locked Iteration 004 report,
+Operator strip and Knight NE donor hashes, then writes only a self-contained
+viewer into a new staging directory. The original report, frames, strip, viewer,
+source art and Aseprite project were not changed; Aseprite and the animation
+renderer were not invoked. The repaired viewer has SHA-256
+`fedc0ca4cb3ba4d17d11257b175b9b16e3172c5cad9287f463e4fa825f615117`.
+
+Firefox headless 158 loaded the generated HTML with zero JavaScript console
+errors. The donor, Operator and detail canvases all rendered nonblank, and the
+donor/Operator canvases were distinct. Previous/Next, keyboard stepping,
+F15→F01 wrap, enclosed-alpha and pitch toggles, the unset-rate play guard, 2/8
+fps review playback and Pause all passed. These selected rates are preview
+controls only; authoritative FPS remains unknown. Browser validation does not
+judge animation aesthetics or accept the gait.
+
+The four-artifact Dropbox handoff is at
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-005-playback-viewer-syntax-repair/REVIEW_MANIFEST.json`
+with default `delete-after-review` retention. Its precise reviewer questions
+and cleanup command are in the manifest. Authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
+
+The next action is human playback review of crossover readability, support
+handoffs, F15→F01 continuity, late-cycle leg excursions, upper-body/robe motion
+and marked transparency. No further gait change, timing decision, landing or
+runtime publication is authorized by this viewer-only iteration.
