@@ -1235,6 +1235,24 @@
       "needs_import": true
     },
     {
+      "id": "ash_bell_scene_interactions",
+      "type": "godot_script",
+      "script": "res://tools/validation/ash_bell_scene_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "ash_bell",
+        "ritualant",
+        "interactions",
+        "scene_lifecycle"
+      ],
+      "owners": [
+        "custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd",
+        "custodian/tools/validation/ash_bell_scene_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "operator_animation_workbench",
       "type": "python",
       "script": "custodian/tools/validation/operator_animation_workbench_smoke.py",

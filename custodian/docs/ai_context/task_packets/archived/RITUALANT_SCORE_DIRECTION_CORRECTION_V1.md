@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-score-direction-correction-v1`
 - Authoring handoff: auto
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P1
 - Depends on: none
@@ -44,21 +44,21 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `<fill at closeout>`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: `ritualant_four_cue_music` passed; `ash_bell_scene_interactions` passed; `ash_bell_scene_smoke.gd` passed; `forlorn_ritualant_completion_smoke.gd` passed; Asset V2 needs and requirement smoke passed; changed-file validation passed 47/47 with complete coverage; `git diff --check` passed; paired review is the next lifecycle step. Human in-game listening remains pending.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill at closeout>`
-- Friction severity: `<fill at closeout>`
-- What went wrong: `<fill at closeout>`
-- Root cause / contributing factors: `<fill at closeout>`
-- Prevention / pipeline improvement: `<fill at closeout>`
-- Tooling / docs drift discovered: `<fill at closeout>`
-- Follow-up: `<fill at closeout>`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first focused smoke used a premature arrival/reveal expectation and sampled one transition before its fade ended; a later required Ash-Bell smoke lacked the live core-dialogue prerequisites and initially failed. The first changed-file report also flagged that smoke as uncovered.
+- Root cause / contributing factors: The smoke fixture did not model the initial camera reveal or wait for actual scoped-silence completion. The legacy interaction smoke relied on dialogue side effects despite disconnecting its presenter callback, and was not registered in the validation manifest.
+- Prevention / pipeline improvement: Gate exploration on the manager's actual silence-completion signal; use timed two-deck checks; make the interaction fixture mark its required completed topics and register it under `ash_bell_scene_interactions`.
+- Tooling / docs drift discovered: `ash_bell_scene_smoke.gd` had no changed-file manifest owner; fixed in-scope by registering its existing contract.
+- Follow-up: fixed-in-scope
 
 ## Handoff
 - Next workstream: review-ritualant-score-direction-correction-v1

@@ -1,6 +1,6 @@
 # Agent Task Packets
 
-Last updated: 2026-10-12
+Last updated: 2026-10-17
 
 Task packets are optional, task-scoped risk-control and handoff files for CUSTODIAN agents.
 
@@ -201,7 +201,6 @@ normal closeout.
 - `REVIEW_VEHICLE_PART_FABRICATION_RECOVERY_V1.md` — Independently prove that the reusable recovery spine is assembly-driven for R1+, knowledge-gates recipes rather than repairs, preserves explicit R0 direct-ma...
 - `REVIEW_VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` — Independently verify the shared recovery art contracts are exact, Asset V2-native, reusable, and truthfully remain missing until real production art arrives.
 - `REVIEW_VISUAL_REVIEW_QUESTION_ANSWER_CAPTURE_V1.md` — Independently prove that important visual-review handoffs cannot lose their questions, that human/ChatGPT answers are paired and recorded deterministically b...
-- `RITUALANT_SCORE_DIRECTION_CORRECTION_V1.md` — Make the four already-landed Ritualant cues start, change, and finish at the correct scene beats with coherent musical transitions, robust dialogue ducking,...
 - `TRANSIT_LIFT_RUNTIME_FOUNDATION_V1.md` — Replace Awakening-only two-stop lift mechanics with one reusable same-map local transit authority, then migrate Awakening through a thin compatibility consumer.
 - `TWIN_SOLARIA_CROWN_INCIDENT_FORENSICS.md` — Implement Twin Solaria Slice C as a deterministic, local Crown Incident forensic progression layered onto the already-live V1 authored level, without introdu...
 - `TWIN_SOLARIA_ROUTE_REVIEW_AUTHORITY.md` — Implement Twin Solaria Slice D as one focused, fail-closed route-review authority that models a candidate route, classifies evidence, enforces Home Index and...
@@ -424,6 +423,10 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/ASH_BELL_FORLORN_RITUALANT_AUTHORED_ENCOUNTER.md` — authored-route migration and Encounter Completion V2 runtime are landed; historical mixed code+art packet is no longer executable.
 - `ASH_BELL_FORLORN_RITUALANT_PRODUCTION_ART_CLOSEOUT.md` — draft/manual Asset V2 closeout for the remaining production art; unresolved human-owned cadence/direction/source decisions keep the packet parked. Known locked targets include an 8f 128×128 rise (1024×128), 32×48 procession-cell intent, 64×96 apparition intent, and static ritual props at 96×96 / 32×32 / 32×64 / 16×16. Walk/drag/turn/reaction direction/frame/FPS contracts remain deliberately unresolved and must be human-locked before claim.
 - The current required-assets registry remains the open-need authority. Do not resume the archived encounter packet or hand-copy new art into legacy runtime paths.
+
+### Completed Ash-Bell Score Direction Correction
+
+- `archived/RITUALANT_SCORE_DIRECTION_CORRECTION_V1.md` — the four-cue scoped music lifecycle, timed crossfades, independent ducking, terminal quiet, and zone restoration are implemented and validated; the paired fresh-context review follows landing.
 
 ### Cross-cutting Stealth / Vaultwing Pre-NPA-8 Chain
 

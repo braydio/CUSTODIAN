@@ -1,5 +1,18 @@
 # CURRENT STATE — CUSTODIAN
 
+## Ritualant score direction and scoped playback (2026-10-17)
+
+The Underground claims scoped music on arrival, fades the previous zone into
+silence, and waits for the chapel reveal before starting exploration. `MusicManager`
+uses two overlapping music decks for cue changes and a duck controller separate
+from transition state. Dialogue and Ninth Answer ducks therefore cannot cancel a
+pending cue. Combat begins on committed hostility; Stilling Pin and the third
+valid ordered anchor trigger the peaceful one-shot; fresh violent resolution
+triggers its one-shot; survival and completed one-shots leave scene music quiet.
+The level fades music on departure and releases that fade during failed-exit
+rollback. Focused state checks do not certify mix balance, intelligibility, or
+loop-boundary listening; those remain human audition items.
+
 ## Compound Archetype Profile Contract (2026-10-16)
 
 `PersistentCompoundLayoutPlanner` now validates optional `legacy`,

@@ -41,6 +41,10 @@ func _run() -> void:
 	scene.call("trigger_intro")
 	scene.call("interact_with_ritualant")
 	scene.call("touch_thread")
+	# This fixture advances the scene without a live dialogue presenter, so mark
+	# the required core topics as completed before exercising the Pin actions.
+	for topic_id: StringName in [&"first_interaction", &"ask_bell", &"ask_thread", &"ask_orra"]:
+		scene.event_state.mark_dialogue_seen(topic_id)
 	scene.call("take_stilling_pin")
 	scene.call("set_stilling_pin")
 

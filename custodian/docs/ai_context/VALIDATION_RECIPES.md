@@ -5,10 +5,10 @@ Canonical validation guide for CUSTODIAN agent work.
 ## Forlorn Ritualant Four-Cue Score
 
 Run the focused integration smoke and retain the existing encounter route and
-completion regressions. The smoke verifies the four imported resources, reveal
-and committed combat loops, fresh explicit-pin and final-anchor one-shots,
-violent resolution routing, scoped Ninth Answer duck, single music player,
-restore behavior, and successor-zone ownership:
+completion regressions. The smoke verifies the four imported resources, arrival
+fade and reveal, real overlapping cue decks, dialogue duck during a switch,
+fresh explicit-pin and final-anchor one-shots, terminal quiet, survival, scene
+restore, and successor-zone ownership:
 
 ```bash
 python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
