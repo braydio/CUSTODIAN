@@ -53,3 +53,18 @@ verified dynamically. Authorize continuity/transition fitting, bounded local
 occlusion review, then full 15-frame preview regeneration. Preserve accepted
 mapping, annotations, rig/source, donor and existing thresholds. No donor/rig
 recovery, whole-limb swaps, merge, runtime publication or timing approval.
+
+## Continuity preview implementation and next review
+
+Implementation `a69aa5f4094a3e1b6d9d2d12d214552d95ce1dec` produces 15/15 rendered
+mechanical frame/contact passes, with both crossover reversals retained and zero
+branch flips. All six known transition failures are corrected under unchanged
+acceptance thresholds. Accepted calibration inputs stay immutable; fitted pose
+deviations are disclosed, including F12/F15. Full animation remains unaccepted.
+
+Published full-loop review (default delete-after-review):
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-crossover-continuity-loop-r1/REVIEW_MANIFEST.json`
+
+Review gait alternation/crossover, support handoffs 6/7 and 13/14, F12/F15 fit and
+15→1 seam, upper-body/robe motion and costume gaps. Record the human decision
+before emitted cleanup. No merge, runtime publication or timing authorization.

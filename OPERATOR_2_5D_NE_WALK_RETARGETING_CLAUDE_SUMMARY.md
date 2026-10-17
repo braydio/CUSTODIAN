@@ -159,10 +159,17 @@ Final local output:
 
 ## Full-cycle review handoff
 
-Prepared manifest target:
+Published manifest:
 `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-crossover-continuity-loop-r1/REVIEW_MANIFEST.json`.
-Publish after committing implementation so the manifest points at the code that
-produced it; record upload receipt in the same durable summary afterward.
+Publisher confirmed `uploaded`, seven files including manifest, default
+`delete-after-review`. Implementation commit:
+`a69aa5f4094a3e1b6d9d2d12d214552d95ce1dec`. The manifest points at committed code
+and the final report records matching implementation hashes. Exact cleanup after
+recording the next human decision:
+
+```bash
+python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-crossover-continuity-loop-r1/REVIEW_MANIFEST.json --reviewed-by chatgpt-user
+```
 
 The compact packet contains a single interactive full-loop viewer, native all-15
 Knight/Operator sheet, five accepted→fitted comparisons and machine evidence/notes.
@@ -200,5 +207,5 @@ publish runtime assets or approve timing under this slice.
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
 - Refresh reason: complete 15-frame visual-loop review after accepted calibration and bounded continuity fit.
-- Next action: publish committed full-cycle review, obtain human frame/part-specific decision, record it and clean reviewed manifest; retain branch/checkpoint.
+- Next action: inspect published full-cycle review, obtain human frame/part-specific decision, record it and clean reviewed manifest; retain branch/checkpoint.
 - Blockers or open questions: full animation aesthetics/crossover rhythm, fitted F12/F15, working support transitions and gaps/secondary motion remain human-owned; merge/runtime/timing explicitly unauthorized.
