@@ -41,7 +41,7 @@
   - The durable record explicitly distinguishes non-mutating census evidence from private-file backup receipts and assigns backup creation to W2.
   - The correction and paired review lineage retain the original R0-01 finding unchanged; no passing outcome is authored by the implementation.
   - Census fixtures, dispatcher and branch-hygiene tests, correction-lineage/review-acceptance checks, canonical changed-file validation, and `git diff --check` pass.
-- Validation: Run `python3 custodian/tools/agent/test_worktree_backlog_census.py`, `test_dispatch.py`, `test_branch_hygiene.py`, correction lineage/review acceptance tests identified by repository tooling, and `python3 custodian/tools/agent/run_validation.py --changed --json`. Capture before/after evidence on the host and verify its manifest hashes. Preserve and compare original refs/worktrees; do not run cleanup.
+- Validation: Run `python3 custodian/tools/agent/test_worktree_backlog_census.py`, `test_dispatch.py`, `test_branch_hygiene.py`, correction lineage/review acceptance tests identified by repository tooling, and `python3 custodian/tools/validation/run_validation.py --changed --json`. Capture before/after evidence on the host and verify its manifest hashes. Preserve and compare original refs/worktrees; do not run cleanup.
 - Task overrides: `none`
 - Deferred: W2 private-file/unique-commit preservation receipts; W5 queue-invalid-claim triage; any irreducible owner or path ambiguity.
 
