@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: agent-longform-review-and-gate-hardening-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P1
 - Depends on: review-agent-longform-session-core-v1, review-agent-paired-review-findings-closeout-v1, review-agent-paired-review-godot-cache-access-v1
