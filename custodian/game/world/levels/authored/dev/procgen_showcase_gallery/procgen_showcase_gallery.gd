@@ -52,6 +52,10 @@ const AUTHORING_MARKERS := {
 func _ready() -> void:
 	super._ready()
 	_build_gallery()
+	var presenter_script := preload("res://game/world/levels/authored/dev/procgen_showcase_gallery/procgen_exhibit_presenter.gd")
+	var presenter := presenter_script.new()
+	presenter.name = "ExhibitPresenter"
+	add_child(presenter)
 
 
 func get_boundary_segments() -> Array:
@@ -92,7 +96,7 @@ func _build_gallery() -> void:
 		_add_exhibit_marker(props, wing)
 	_add_floor(background, Rect2(-210, -500, 420, 18), Color("#b58c49"), "SEALED ARENA THRESHOLD")
 	_add_label(background, "ARENA SEALED · GENERATED MAP NOT LOADED", Vector2(-330, -590), 18)
-	_add_label(background, "PROCGEN SHOWCASE · PGA-1 SHELL", Vector2(-470, -80), 22)
+	_add_label(background, "PROCGEN SHOWCASE · PGA-2 EXHIBIT CATALOG", Vector2(-470, -80), 22)
 
 
 func _add_floor(parent: Node, rect: Rect2, color: Color, node_name: String) -> void:

@@ -4185,6 +4185,21 @@
       "needs_import": true
     },
     {
+      "id": "procgen_showcase_exhibit_catalog",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+      "tier": "integration",
+      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "owners": [
+        "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_arena_foundation",
       "type": "godot_script",
       "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
