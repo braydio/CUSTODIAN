@@ -8,7 +8,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-host-godot-validation-v1`
-- Locks: `agent-workflow`
+- Locks: `paired-review-host-validation`
 - Review: `none`
 - Review target workstream: `agent-paired-review-host-godot-validation-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_HOST_GODOT_VALIDATION_V1.md`
@@ -39,6 +39,9 @@
 - Refresh reason: `refresh the existing exact-claim continuation packet against the actual accepted host-validator API; do not conflate green host evidence with reviewer PASS`
 - Next action: `After accepted review, continue the already-published same-run tool workstream, then independently recover preserved PGA-2 and Ritualant reviews without a second dispatcher claim.`
 - Blockers or open questions: `No recovery of an expired reviewer without explicit new fresh context and verified pinned evidence.`
+
+## Bootstrap review isolation
+- This review uses `paired-review-host-validation`, not the old `agent-workflow` lock. Review only the exact host-validation implementation and its pinned dependent code; do not stage or close the original cache-access, PGA-2, or Ritualant review. Those remain separate independent verdicts.
 
 ## Publication Gate
 - Both new packets are `draft/manual` with explicit automatic authoring handoff; promotion to `ready/auto` requires passing paired preflight and publication on live main.

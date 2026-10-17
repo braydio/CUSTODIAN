@@ -7,8 +7,8 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-paired-review-godot-cache-access-v1`
-- Locks: `agent-workflow`
+- Depends on: `agent-paired-review-godot-cache-access-v1`
+- Locks: `paired-review-host-validation`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
@@ -47,7 +47,11 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `independent verification of trusted-host/restricted-reviewer split`
 - Next action: `Land and archive; independently review; then reconcile continuation V1 against this host evidence API before retrying the preserved PGA-2 and Ritualant reviews.`
-- Blockers or open questions: `Cache-access review dependency must be accepted; host validation cannot be performed through restricted GitHub connector, so local/CI execution evidence is mandatory.`
+- Blockers or open questions: `Bootstrap exception: existing cache-access independent review is currently claimed under agent-workflow and itself may need the trusted Godot host validator. This narrowly scoped fix depends on the landed cache-access implementation rather than its unaccepted review and uses a distinct paired-review-host-validation lock. It does not approve that review. The cache review must still receive its own independent disposition. Host execution evidence is mandatory.`
+
+## Bootstrap dependency rationale
+- This task is deliberately **not** gated on `review-agent-paired-review-godot-cache-access-v1`: that active review requires the host validation seam to overcome restricted reviewer socket failures. Depending on the stuck review would deadlock the repair.
+- The new `paired-review-host-validation` lock is distinct from the old `agent-workflow` lock so the repair can be claimed without stealing/releasing the original cache reviewer. During implementation do not enter/edit the old claimed review worktree; operate only in the new dispatcher checkout. Independently review this new change before any positive recovery of the old claims.
 
 ## Publication Gate
 - Explicit `draft/manual` with `Authoring handoff: auto`: the existing GitHub authoring-handoff workflow may promote **both** paired packets only if its targeted preflight passes; do not treat this authored packet or the dependency as an implementation claim.
