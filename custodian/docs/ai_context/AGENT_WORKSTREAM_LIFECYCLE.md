@@ -246,9 +246,11 @@ For each pair:
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. The runner preflights Codex, claims the exact
    review through dispatch, and launches `codex exec --ephemeral` in the receipt's
-   worktree. A failed fetch or incomplete receipt is recoverable and does not
-   count as completion. Preserve claimed branches, worktrees, and evidence after
-   runner failure.
+   worktree. The launch also grants writable access to the exact CUSTODIAN
+   validation cache roots used by `GodotJobBudget` and the isolated Godot HOME;
+   shared Git metadata remains restricted. A failed fetch or incomplete receipt
+   is recoverable and does not count as completion. Preserve claimed branches,
+   worktrees, and evidence after runner failure.
 5. At the accepted review boundary, record the landing SHA, review status,
    elapsed time, validation summary, pair count, and next eligibility. The
    default one-pair mode stops here even if a successor is ready. Explicit
@@ -377,6 +379,56 @@ wall time.
 
 This is instruction/contract hardening, not a requirement to build a general
 subagent manager.
+
+## Paired review outcomes and administrative closeout
+
+A paired review concludes with exactly one outcome: `passed`, `findings` or
+`human_required`. The outcome is a flat `## Review Outcome` section in the archived
+*review* packet (`custodian/tools/agent/review_outcome.py` is the only parser). It is
+bound to the review workstream, reviewed target, pinned reviewed main, immutable
+implementation commit, originating run ID, review cycle and stable finding IDs
+(`R<cycle>-NN`). A missing, duplicate, malformed or unbound section fails closed.
+
+- **Accepted-review dependencies.** An archived review releases an ordinary
+  `Depends on:` successor only when it is a verified `passed` (a `passed` outcome plus
+  exactly one canonical passing receipt in the target, or, for reviews archived before
+  this section existed, an unambiguous flat pass in the target). `findings`,
+  `human_required`, malformed or contradictory outcomes and ambiguous legacy reviews
+  never release it. `archived complete` alone does not mean accepted. The dispatcher
+  applies this identically in `status`, `audit` and `claim`. Only the explicitly linked
+  next bounded correction (`<root>-review-corrections-<N+1>`, with `Findings addressed`
+  IDs the review recorded) may consume a concluded `findings` review.
+- **Nonpassing closeout.** `paired_review_runner.coordinator_finish_nonpassing_review`
+  lands a findings/human_required review without ever touching the reviewed target
+  packet: it must stay byte-identical to its pinned baseline and gains no receipt. Only
+  the review packet (active and archived), the index and the canonical closing summary
+  may change. The validation report is a closeout-**integrity** report; it makes no
+  claim about the behavior under review, and the failing-behavior evidence stays in the
+  review as findings. `workstream.py finish` applies the matching gate.
+- **Same-run recovery of a stranded review.**
+  `paired_review_runner.py recover-closeout <review-workstream> --run-id <id>
+  --outcome findings|human_required --finding-ids R0-01[,...] --provenance <p>
+  --isolated-checkout <path> (--plan | --apply) [--release-claim]`. `--plan` changes
+  no worktree, branch, journal or run evidence (it only refreshes remote-tracking refs
+  and the review lock file). `--apply` works only in a recovery-branch checkout at the
+  exact published tip, never in the original worktree. Every commit the review branch
+  made since its merge-base with `origin/main` must stay inside the bounded paths
+  (review packet active/archived, index, canonical summary) before anything is written
+  and again before anything is published. It journals each stage atomically in the
+  original run directory (`closeout-journal.json` and `closeout-integrity.json` are the
+  only files added there), converges on retry, never calls `dispatch.py claim`, and
+  refuses a dirty coordination checkout. The original claim is read from the structured
+  dispatcher receipt; if an older run stored `claim.stdout` truncated mid-JSON, only that
+  parse failure falls back to the plain `CLAIMED` header lines, which must match
+  `metadata.json` exactly on workstream, branch, worktree and packet and are then
+  verified in Git (a receipt that parses but does not verify never falls back). The original claim, branch, worktree and run
+  evidence are preserved; the original worktree's modified and untracked files are
+  verified by SHA-256 before and after (ignored files, file modes and symlink targets
+  are not covered by that inventory). The claim (the remote `agent/<id>` branch) is
+  released only with `--release-claim`, either during apply or later on a completed
+  recovery, only while the protected original is unchanged, only after every commit on
+  it is on `origin/main`, and the delete is conditional on the exact verified SHA. A
+  pass is never recovered this way.
 
 ## Exit paths
 

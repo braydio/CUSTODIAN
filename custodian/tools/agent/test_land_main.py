@@ -170,6 +170,41 @@ class LandMainTests(unittest.TestCase):
         self.assertIn("already published", result.stderr)
         self.assertIn("refs/remotes/origin/unrelated", result.stderr)
 
+    def test_allowed_published_ref_is_tolerated_only_for_a_fast_forward(self) -> None:
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
+        self._task_commit("task.txt", "task\n")
+        run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
+        run_git(self.task, "branch", "--set-upstream-to", "origin/unrelated")
+        refused = self._land()
+        self.assertEqual(refused.returncode, 2)
+        env = os.environ.copy()
+        env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+        allowed = subprocess.run(
+            ["python3", str(SCRIPT), "--allow-published-ref", "refs/remotes/origin/unrelated"],
+            cwd=self.task, env=env, text=True, capture_output=True)
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
+        run_git(self.seed, "fetch", "origin", "main")
+        self.assertEqual(run_git(self.seed, "rev-parse", "origin/main"), run_git(self.task, "rev-parse", "HEAD"))
+
+    def test_allowed_published_ref_is_still_refused_when_a_rebase_is_needed(self) -> None:
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
+        self._task_commit("task.txt", "task\n")
+        run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
+        run_git(self.task, "branch", "--set-upstream-to", "origin/unrelated")
+        (self.seed / "main.txt").write_text("main\n")
+        run_git(self.seed, "add", "main.txt")
+        run_git(self.seed, "commit", "-m", "concurrent main change")
+        run_git(self.seed, "push", "origin", "main")
+        env = os.environ.copy()
+        env["CUSTODIAN_WORKSTREAM_FINISH"] = "1"
+        result = subprocess.run(
+            ["python3", str(SCRIPT), "--allow-published-ref", "refs/remotes/origin/unrelated"],
+            cwd=self.task, env=env, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("already published", result.stderr)
+
     def test_rebase_conflict_aborts_and_reports_blocker(self) -> None:
         self._task_commit("shared.txt", "task side\n")
         original_head = run_git(self.task, "rev-parse", "HEAD")

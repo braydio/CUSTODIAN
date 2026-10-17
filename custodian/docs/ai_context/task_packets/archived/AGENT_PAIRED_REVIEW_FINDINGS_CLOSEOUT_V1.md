@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-findings-closeout-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -50,6 +50,26 @@
 ## Execution boundary
 
 Published `ready/auto` means the **authoring preflight passed**, not that the P0 maintenance is claimable during the existing `agent-workflow` lock. A fresh dispatcher audit decides eligibility. If blocked, an operator-authorized, isolated maintenance procedure must be reviewed and documented separately; no direct `claim-next`, lock removal or same-branch takeover is authorized by this packet alone. Do not use `workstream.py finish` on the original dirty review worktree.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: New `review_outcome.py` defines the single canonical `## Review Outcome` contract and accepted-review semantics. `dispatch.py` applies it identically in `status`, `audit` and `claim` (A3, A4); six dispatcher tests plus a negative control (gate disabled turns four of them red) cover findings, human_required, verified pass, legacy flat pass, forged/ambiguous/malformed evidence, unchanged implementation dependencies and correction lineage. `paired_review_runner.py` adds `coordinator_finish_nonpassing_review` and `landed_nonpassing_review_state` (A1, A2, A7) and `recover_closeout` with `recover-closeout --plan|--apply` (A5, A6): atomically journaled stages, original claim/worktree/sidecar/run-evidence hashes verified unchanged, claim released only on an explicit flag after landing is on `origin/main`. `workstream.py` gates (`_paired_review_artifact_preflight_error`, `closeout_preflight`) accept a bounded findings closeout and still require the target receipt otherwise. Suites run from `custodian/tools/agent`: 274 tests across paired-review runner, dispatch, workstream, workstream artifacts, task-packet contract, review contract, outcome, closeout/recovery, land_main, next-execution-boundary and run-trace passed; `test_workflow_control` (11) passed from the repository root; changed-file validation against origin/main passed (8 tests, complete coverage of 7 files); `git diff --check` clean. Pre-land independent review by a fresh read-only reviewer: round 1 returned FINDINGS (B1 recovery did not bound the review branch's own commits to evidence paths; M1 late claim release; M2 unconditional remote delete; M3 finish gate did not bind review cycle or finding evidence; minor: substring finding IDs, CR heading) and all were fixed with tests that exercise each case; round 2 returned PASS with only minor items, of which rename-hiding and late-release HEAD re-check were also fixed (header-only finding evidence remains a known weakness). This is the packet's pre-land review; its separate post-land paired review (`review-agent-paired-review-findings-closeout-v1`) is still required. Measured on the real queue: six archived reviews no longer release dependents (five concluded `findings`; one, `review-vehicle-wreck-restoration-foundation-v1-review-corrections-1`, records two passing receipt sections and is held as legacy ambiguity). Not exercised: a real end-to-end `workstream.py finish` landing of a findings closeout (the finish subprocess is stubbed in the coordinator tests; its gates are tested for real) and the real R0-01 recovery, both deliberately deferred until this change passes independent review.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: Normal dispatch could not claim this repair because the stranded review it repairs held `agent-workflow`; the maintenance start and several gate-file edits needed repeated explicit operator permission. A scripted rewrite of a gate file and one relaxation of the legacy-review rule were rightly refused and dropped. One real bug surfaced in testing: `git add -A -- <path>` fails for a bounded path already gone from index and disk, which would have broken retry after an interrupted commit.
+- Root cause / contributing factors: The lock, the repair and the stranded owner formed a deadlock with no supported maintenance start; `archived complete` was treated as review acceptance everywhere.
+- Prevention / pipeline improvement: A supported, auditable maintenance-recovery command with narrowly defined capabilities should replace special shell permissions when the workflow deadlocks. Legacy reviews with duplicated receipt sections should be re-recorded rather than accepted by loosening the check.
+- Tooling / docs drift discovered: Five already-archived reviews concluded `findings` yet released their dependents; the lifecycle doc did not describe nonpassing outcomes or same-run closeout (now documented).
+- Follow-up: `manual-follow-up`
+- What worked: Reusing existing primitives (receipt-delta identity resolution, per-workstream flock, `workstream.py finish`, `land_main.py`) and testing recovery on real Git repositories with a protected sidecar and run directory.
 
 ## Next Handoff
 

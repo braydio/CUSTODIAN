@@ -6529,6 +6529,7 @@
         "fresh_context"
       ],
       "owners": [
+        "custodian/tools/godot_project_lock.py",
         "custodian/tools/agent/paired_review_runner.py",
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/tools/agent/task_packet_contract.py",

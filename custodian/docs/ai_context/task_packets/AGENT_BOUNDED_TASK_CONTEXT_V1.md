@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-agent-next-execution-boundary-v1`
+- Depends on: `review-agent-next-execution-boundary-v1-review-corrections-1`
 - Locks: `agent-workflow`
 - Kind: `implementation`
 - Review: `auto`

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-next-execution-boundary-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-next-execution-boundary-v1`
@@ -46,3 +46,29 @@
 - Refresh reason: `none`
 - Next action: `After accepted review, follow named next workstream if eligible under the invocation budget; otherwise stop with the exact successor.`
 - Blockers or open questions: `none`
+
+## Independent Review Findings
+
+**R0-01 — Blocking defect: explicit scope is bypassed by the general-next fallback.**
+
+Acceptance #2 requires explicit `continuous-chain` execution to honor the user-designated scope and never select unrelated successors. A reproduced request with `scope: ["allowed-task"]`, `explicit_general_next: true`, no named successor, and an eligible general candidate identified as `outside-scope-task` returns `claim_general_next`. The fallback checks only `general_candidate_eligible` and `general_candidate_kind`; it never checks `general_candidate_workstream` against scope. Because the global `dispatch.py claim-next` interface does not accept a scope, that action cannot enforce the requested scope.
+
+Evidence: `custodian/tools/agent/next_execution_boundary.py` general fallback; `custodian/tools/agent/test_next_execution_boundary.py` has no scoped general-fallback case, and its explicit fallback fixture omits scope. The exact reproduced input and output are preserved in the run evidence adjudication log.
+
+Required resolution: Make scoped general fallback fail closed unless the dispatcher supplies a candidate identity that can be checked against scope; add in-scope and out-of-scope regressions. Preserve dispatcher claim authority and the explicit finite pair budget.
+
+Review disposition: BLOCKED pending bounded correction and fresh re-review. No PASS receipt is issued. The initial reviewer appended a PASS receipt to this review packet, but the coordinator requires the sole canonical receipt delta under the archived implementation target; that draft receipt was removed. The target packet remains byte-identical to its pinned baseline.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-agent-next-execution-boundary-v1`
+- Review target workstream: `agent-next-execution-boundary-v1`
+- Reviewed main: `938f7380dfb96423ab042c5bfc790dd33b3c6f7d`
+- Reviewed implementation commit: `938f7380dfb96423ab042c5bfc790dd33b3c6f7d`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Run ID: `20261011T233501Z-61ac2d68e601`
+- Review cycle: `0`
+- Finding IDs: `R0-01`

@@ -15,6 +15,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
+from godot_project_lock import (
+    BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
+    GodotJobBudget, godot_home, job_budget_root,
+)
 from review_receipt_delta import (
     read_git_text,
     resolve_target_implementation_commit,
@@ -97,6 +101,81 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_reviewer_writable_roots_are_the_exact_custodian_namespaces(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            repo = base / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            scratch = base / "review-scratch"
+            xdg = base / "xdg-cache"
+            with patch.dict(os.environ, {
+                "CUSTODIAN_SCRATCH_DIR": str(scratch),
+                "XDG_CACHE_HOME": str(xdg),
+            }):
+                roots = runner.reviewer_cache_roots(repo)
+                home = godot_home()
+                self.assertEqual(home, scratch / "godot-home")
+                home_probe = home / "reviewer-home-write-probe"
+                home_probe.write_text("writable\n")
+                self.assertEqual(home_probe.read_text(), "writable\n")
+            self.assertEqual(roots, sorted([scratch.resolve(), (xdg / "custodian").resolve()], key=str))
+            self.assertTrue(scratch.is_dir())
+            self.assertTrue((xdg / "custodian").is_dir())
+            common = runner.common_dir(repo).resolve()
+            self.assertTrue(all(root != common and root not in common.parents and common not in root.parents
+                                for root in roots))
+            with patch.dict(os.environ, {
+                "CUSTODIAN_SCRATCH_DIR": str(xdg / "custodian"),
+                "XDG_CACHE_HOME": str(xdg),
+            }):
+                self.assertEqual(runner.reviewer_cache_roots(repo), [(xdg / "custodian").resolve()])
+
+    def test_reviewer_cache_permission_shares_the_coordinator_job_slot(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            repo = base / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            cache_home = base / "cache-home"
+            env = os.environ.copy()
+            env["XDG_CACHE_HOME"] = str(cache_home)
+            env[MAX_JOBS_ENV] = "1"
+            env.pop(BUDGET_REENTRANCY_ENV, None)
+            env.pop(BUDGET_FD_ENV, None)
+            code = (
+                "import sys; sys.path.insert(0, %r); "
+                "from godot_project_lock import GodotJobBudget; "
+                "with_budget = GodotJobBudget('reviewer-probe', timeout_sec=5); "
+                "with_budget.__enter__(); print('ACQUIRED', flush=True); with_budget.__exit__(None, None, None)"
+            ) % str(ROOT / "custodian/tools")
+            with patch.dict(os.environ, env, clear=True):
+                roots = runner.reviewer_cache_roots(repo)
+                self.assertIn(job_budget_root(), roots)
+                with GodotJobBudget("coordinator-probe", timeout_sec=2) as coordinator:
+                    self.assertTrue(coordinator.acquired)
+                    self.assertIn(coordinator.path.parent.parent.resolve(), roots)
+                    child = subprocess.Popen([sys.executable, "-c", code], env=env,
+                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    with self.assertRaises(subprocess.TimeoutExpired):
+                        child.communicate(timeout=0.3)
+                stdout, stderr = child.communicate(timeout=5)
+                self.assertEqual(child.returncode, 0, stderr)
+                self.assertIn("ACQUIRED", stdout)
+
+    def test_reviewer_cache_root_refuses_shared_git_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            common = runner.common_dir(repo)
+            with patch.dict(os.environ, {
+                "CUSTODIAN_SCRATCH_DIR": str(common / "scratch"),
+                "XDG_CACHE_HOME": str(Path(temp) / "cache"),
+            }):
+                with self.assertRaisesRegex(runner.RunnerError, "overlaps shared Git metadata"):
+                    runner.reviewer_cache_roots(repo)
+
     def test_real_archived_correction_target_keeps_exact_blob_and_resolves_landing(self):
         pinned_main = "607c76aba831ed5fcc313f00489e10df75a8a375"
         target_path = (
@@ -733,6 +812,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
             worktree = base / "review-worktree"
             subprocess.run(["git", "-C", str(repo), "worktree", "add", "-qb", "agent/review-sample", str(worktree)], check=True)
+            cache_root = base / "review-cache" / "custodian"
+            cache_root.mkdir(parents=True)
 
             receipt = {"result": "claimed", "workstream": "review-sample", "verified": True,
                        "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path}
@@ -794,10 +875,25 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                     self_test.assertEqual(self.argv[self.argv.index("--cd") + 1], str(worktree))
                     self_test.assertIn("--approve-for-me", self.argv)
                     self_test.assertNotIn("--sandbox", self.argv)
+                    add_dirs = [self.argv[index + 1] for index, value in enumerate(self.argv[:-1])
+                                if value == "--add-dir"]
+                    self_test.assertEqual(len(add_dirs), 2)
+                    self_test.assertIn("custodian-review-runs/review-sample/", add_dirs[0])
+                    self_test.assertEqual(add_dirs[1], str(cache_root))
+                    common = runner.common_dir(repo).resolve()
+                    writable = [Path(str(worktree)).resolve(), *(Path(path).resolve() for path in add_dirs)]
+                    for forbidden in (common / "FETCH_HEAD", common / "index"):
+                        self_test.assertFalse(any(path == forbidden or path in forbidden.parents
+                                                  for path in writable), str(forbidden))
+                    self_test.assertFalse(any(Path(path).resolve() == common or
+                                              Path(path).resolve() in common.parents or
+                                              common in Path(path).resolve().parents
+                                              for path in add_dirs[1:]))
                     self_test.assertIn("Do not use, request, or infer the implementation-session transcript", self.prompt)
-                    report_path = Path(self.argv[self.argv.index("--add-dir") + 1]) / "validation.json"
+                    report_path = Path(add_dirs[0]) / "validation.json"
                     report_path.write_text(json.dumps({"schema": "custodian.validation.result.v1", "passed": True,
                                                        "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
+                    (cache_root / "reviewer-write-probe").write_text("writable\n")
                     output_path = Path(self.argv[self.argv.index("--output-last-message") + 1])
                     output_path.write_text("review complete\n")
                     return self.returncode
@@ -808,6 +904,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                  patch.object(runner.subprocess, "Popen", side_effect=lambda argv, **kwargs: FakeCodex(argv, **kwargs)), \
                  patch.object(runner, "git", side_effect=git_side_effect), \
                  patch.object(runner, "coordinator_finish_review", return_value="a" * 40), \
+                 patch.object(runner, "reviewer_cache_roots", return_value=[cache_root]), \
                  patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
                  patch.object(runner, "landed_review_state", side_effect=lambda *args: {
                      "complete": summary_available["value"], "summary_path": summary_path,
