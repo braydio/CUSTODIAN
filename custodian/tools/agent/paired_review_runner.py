@@ -957,7 +957,12 @@ def _closeout_intent(workstream: str, run_id: str, outcome: str, ids: tuple[str,
 
 
 def _default_lander(worktree: Path) -> None:
-    landed = subprocess.run([sys.executable, str(Path(__file__).with_name("land_main.py"))], cwd=worktree,
+    # The runner publishes the recovery commits on the claim branch before landing, so landing must
+    # tolerate exactly that ref (and only for a fast-forward; land_main still refuses it for a rebase).
+    upstream = subprocess.run(["git", "rev-parse", "--symbolic-full-name", "@{upstream}"], cwd=worktree,
+                              text=True, capture_output=True).stdout.strip()
+    allow = ["--allow-published-ref", upstream] if upstream.startswith("refs/remotes/origin/agent/") else []
+    landed = subprocess.run([sys.executable, str(Path(__file__).with_name("land_main.py")), *allow], cwd=worktree,
                             env={**os.environ, "CUSTODIAN_WORKSTREAM_FINISH": "1"}, text=True, capture_output=True)
     if landed.returncode:
         raise RunnerError("land_main blocked; recovery state preserved: " + redact(landed.stderr or landed.stdout))
