@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-same-run-continuation-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -67,3 +67,28 @@
 - Refresh reason: `new scoped same-run reviewer continuation tool needs independent code/workflow review before being used for ambient protected recovery`
 - Next action: `Implement and independently review the bounded same-run continuation API; then authorize the existing ambient claimed run's exact ID and let a fresh reviewer write a real disposition. Do not release ambient claim or manufacture a pass.`
 - Blockers or open questions: `The old cache-access reviewer retains its independent claim and unresolved verdict. Only read-only reviewer overlap is allowed under the scoped lock; any concurrent runner writer fails closed. Original ephemeral reviewer context cannot be resurrected.`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `The continuation CLI requires explicit fresh-context authorization, verifies the exact original claim/worktree/branch and pinned host evidence, protects prior artifacts, requires a fresh reviewer-authored outcome, and retries coordinator closeout without relaunching the reviewer. All five changed-file validation jobs and 45 focused runner tests pass.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The protected ambient run named by the packet lacks coordinator host-validation metadata and its validation report is not green; its claim stdout JSON is truncated after the verified header.`
+- Root cause / contributing factors: `The host-validation dependency was added after that older run was created; the old runner also length-limited claim stdout before structured claim-receipt.json persistence was introduced.`
+- Prevention / pipeline improvement: `New runs persist a create-only structured claim receipt. Continuation validates the legacy truncated header against metadata and Git, and fails closed when host evidence is absent or red.`
+- Tooling / docs drift discovered: `Crash-after-commit testing showed coordinator retry needed a no-reviewer replay path. Added safe exact-PASS closeout retry and documented immutable run evidence behavior.`
+- Follow-up: `none`
+- What worked: `Temporary Git/worktree fixtures exercised claim identity, evidence preservation, independent verdict and idempotent closeout.`
+
+## Implementation Validation
+- Focused tests: `45 paired-review-runner tests passed; combined focused runner, workstream and artifact suites passed before module-path-specific workflow-control rerun.`
+- Changed-file validation: `run_validation.py --changed --json passed all 5 selected jobs with complete coverage.`
+- Static checks: `py_compile, git diff --check, check_ai_context.py and task_packet_index.py passed.`
+- Protected ambient run: `20261015T224943Z-5a721f81880e remains blocked: metadata has no host_validation object and records a failed/incomplete sandbox validation.json. The new continuation command will refuse it until authoritative immutable host-validation evidence is generated and pinned.`
