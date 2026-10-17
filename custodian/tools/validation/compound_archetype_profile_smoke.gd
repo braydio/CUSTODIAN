@@ -29,8 +29,12 @@ func _init() -> void:
 				# Type B owns real layered geometry; its detailed checks live in compound_connected_bunker_smoke.
 				_expect(_topology(first) != _topology(baseline), "connected_bunker must generate its own layered topology for seed %d" % seed)
 				_expect(first.has("layers"), "connected_bunker exports its layer reservation for seed %d" % seed)
+			elif profile_id == &"walled_yard":
+				# Type A owns clustered geometry and gates; its detailed checks live in compound_walled_yard_smoke.
+				_expect(not first.has("layers"), "walled_yard must not claim a subsurface layer for seed %d" % seed)
+				_expect(first.has("gates") and first.has("perimeter"), "walled_yard exports its perimeter and gates for seed %d" % seed)
 			else:
-				_expect(not first.has("layers"), "%s must not claim a subsurface layer for seed %d" % [profile_id, seed])
+				_expect(not first.has("layers") and not first.has("gates"), "%s must not claim archetype geometry for seed %d" % [profile_id, seed])
 				_expect(_topology(first) == _topology(baseline), "%s must preserve legacy geometry and connectors for seed %d" % [profile_id, seed])
 			_validate_identities(first, profile_id, seed)
 

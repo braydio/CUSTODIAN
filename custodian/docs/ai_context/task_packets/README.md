@@ -86,7 +86,6 @@ normal closeout.
 - `COMPOUND_RECOVERY_END_TO_END_PROOF.md` — Verify full defend, damage, resource-choice, repair/build and restoration cycle in both archetypes.
 - `COMPOUND_RECOVERY_FIELD_REPAIR.md` — Repair infrastructure by locally holding the existing Operator repair control and paying finite resources.
 - `COMPOUND_SECURE_ACCESS_FIXTURES.md` — Introduce one shared functional secure threshold/access-panel fixture for both archetypes.
-- `COMPOUND_WALLED_YARD_BLOCKOUT.md` — Make Type A a secure, close-packed compound with physically enclosed perimeter, two authorized entries and traversable yard.
 - `CUSTODIAN_POST_RECOVERY_REINTEGRATION.md` — Make ordinary campaign-ending Custodian death complete through Post recovery and reintegration instead of the R1 compatibility Game Over, while reusing the r...
 - `DOWNLOADS_ASSET_RECONCILIATION_V1.md` — Audit the user's entire real Downloads directory against Dropbox source lanes and live CUSTODIAN runtime, classifying every byte before any removal or move.
 - `DOWNLOADS_VERIFIED_CLEANOUT_V1.md` — Execute the reviewed Downloads tidy-up, retain Kenney isometric source under dev/, preserve missing unique project inputs in Dropbox and remove verified clut...

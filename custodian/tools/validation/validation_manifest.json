@@ -3768,6 +3768,27 @@
       "needs_import": false
     },
     {
+      "id": "compound_walled_yard",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_walled_yard_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "navigation"
+      ],
+      "owners": [
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/compound_walled_yard_smoke.gd"
+      ],
+      "timeout_sec": 600,
+      "needs_import": false
+    },
+    {
       "id": "compound_connected_bunker",
       "type": "godot_script",
       "script": "res://tools/validation/compound_connected_bunker_smoke.gd",

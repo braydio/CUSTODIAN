@@ -1,6 +1,6 @@
 # Compound Archetypes and Security V1
 
-**Status:** Approved planning; profile-selection contract and the Type B (`connected_bunker`) layered blockout shipped. Type A geometry, interior traversal integration and security/gameplay remain deferred.
+**Status:** Approved planning; profile-selection contract and the Type B (`connected_bunker`) layered blockout and the Type A (`walled_yard`) blockout shipped. Interior traversal integration and security/gameplay remain deferred.
 **Workstream:** compound-archetypes-v1 + compound-recovery-v1
 **Reviewed main:** 512226d488d3b5db63335b2357b4b566e44ccb03
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
@@ -35,6 +35,30 @@ adds versioned archetype/layer metadata to planner rooms, connectors, and
 exported level data; omitted selection preserves the legacy planner output.
 No subsurface layer, yard gate, or archetype-specific geometry is implied by
 this metadata for `legacy` and `walled_yard`.
+
+### Shipped: `walled_yard` close-packed blockout
+
+`walled_yard` selects geometry `walled_yard_close_packed_v1` on the single surface layer. The
+planner runs the semantic room planner on a progressively tighter placement area (the tightest
+inset that still places every mandatory building and reserves at least 22 percent open yard),
+then adds:
+
+- exactly two perimeter gates (`gate_primary`, `gate_secondary`) on different edges, each a
+  corridor crossing the full perimeter thickness; `ingress` is exactly these two cells;
+- one yard-facing exterior doorway per building with a stable ID (`door_<room>_exterior`),
+  whose doorway and two apron cells open onto free yard rather than another building;
+- a `perimeter` record (`perimeter_main`, rect, thickness, gate IDs) and the yard contract
+  (`diagnostics.yard_ratio`, `cluster_margin_extra`, `gate_count`, `doorway_count`).
+
+The planner fails closed (`walled_yard_gates_unplaceable`, `walled_yard_yard_too_small`,
+`walled_yard_room_unreachable` and similar) if any gate, doorway, building or anchor is not
+reachable from the gates over modelled floor. `ProcGenTilemap` stamps the perimeter in the
+existing floor/wall layer and seals every ring wall cell that is not a gate, so roads, routes and
+terrain cannot breach the boundary. Level data adds `compound_perimeter`, `compound_gates` and
+`compound_building_doorways`. Opening or closing a gate is a physical crossing question only; no
+gate state machine ships here.
+
+Validated by `compound_walled_yard_smoke.gd` (planner contract plus the real generator).
 
 ### Shipped: `connected_bunker` layered blockout
 

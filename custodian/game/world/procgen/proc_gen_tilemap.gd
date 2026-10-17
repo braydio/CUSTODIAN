@@ -500,6 +500,9 @@ var _last_compound_compartment_thresholds: Array[Dictionary] = []
 var _last_compound_spine_cells: Array[Vector2i] = []
 # Subsurface/separator cells that must stay solid: no later pass may write floor here.
 var _compound_sealed_cells: Dictionary = {}
+var _last_compound_perimeter: Dictionary = {}
+var _last_compound_gates: Array[Dictionary] = []
+var _last_compound_building_doorways: Array[Dictionary] = []
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
@@ -4195,6 +4198,9 @@ func _is_compound_sealed_cell(tile: Vector2i) -> bool:
 
 func _clear_compound_layer_state() -> void:
 	_compound_sealed_cells.clear()
+	_last_compound_perimeter = {}
+	_last_compound_gates.clear()
+	_last_compound_building_doorways.clear()
 	_last_compound_layers = {}
 	_last_compound_surface_housings.clear()
 	_last_compound_vertical_entries.clear()
@@ -4262,6 +4268,10 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 		_last_compound_spine_cells = (compound.get("spine_cells", []) as Array).duplicate()
 		_apply_connected_bunker_geometry(compound)
 		return
+	if compound.has("perimeter"):
+		_last_compound_perimeter = (compound.get("perimeter", {}) as Dictionary).duplicate(true)
+		_last_compound_gates = _dictionary_array_copy(compound.get("gates", []))
+		_last_compound_building_doorways = _dictionary_array_copy(compound.get("building_doorways", []))
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
@@ -4324,6 +4334,21 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 				else:
 					_set_floor_tile(tile)
 				_set_region_tile(tile, "compound_room", String(room.get("type", "room")))
+	if not _last_compound_perimeter.is_empty():
+		_seal_compound_perimeter(rect, t)
+
+
+## A walled-yard perimeter stays closed: every ring wall cell that is not a gate is sealed
+## against later floor writers (roads, routes, terrain), so only the enumerated gates cross it.
+func _seal_compound_perimeter(rect: Rect2i, thickness: int) -> void:
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			var ring_tile := Vector2i(x, y)
+			var in_ring := x < rect.position.x + thickness or x >= rect.end.x - thickness \
+				or y < rect.position.y + thickness or y >= rect.end.y - thickness
+			if in_ring and floor_tilemap.get_cell_source_id(ring_tile) < 0:
+				_compound_sealed_cells[ring_tile] = true
+
 
 func _dictionary_array_copy(source: Variant) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
@@ -4426,6 +4451,7 @@ func _build_compound_layout(map_size: Vector2i) -> Dictionary:
 	var planner := PersistentCompoundLayoutPlanner.new()
 	if not planner.load_default_graph():
 		return {"valid": false, "diagnostics": {"failure_reason": "graph_load_failed"}}
+	planner.perimeter_thickness = maxi(1, compound_wall_thickness)
 	return planner.generate_layout(
 		_get_generation_seed(),
 		bounds_result.get("rect", Rect2i()),
@@ -12123,6 +12149,9 @@ func get_level_data() -> Dictionary:
 		"compound_vertical_entries": _last_compound_vertical_entries,
 		"compound_compartment_thresholds": _last_compound_compartment_thresholds,
 		"compound_spine_cells": _last_compound_spine_cells,
+		"compound_perimeter": _last_compound_perimeter,
+		"compound_gates": _last_compound_gates,
+		"compound_building_doorways": _last_compound_building_doorways,
 		"compound_diagnostics": _last_compound_diagnostics,
 		"main_road_tiles": get_main_road_tiles(),
 		"ruined_road_tiles": get_ruined_road_tiles(),

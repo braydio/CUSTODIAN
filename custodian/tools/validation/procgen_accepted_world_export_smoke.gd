@@ -8,9 +8,9 @@ extends SceneTree
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
-const EXPECTED_LEVEL_DATA_HASH := "3489417708"
+const EXPECTED_LEVEL_DATA_HASH := "1404166550"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
-const EXPECTED_LEVEL_DATA_KEY_COUNT := 77
+const EXPECTED_LEVEL_DATA_KEY_COUNT := 80
 
 
 func _init() -> void:
