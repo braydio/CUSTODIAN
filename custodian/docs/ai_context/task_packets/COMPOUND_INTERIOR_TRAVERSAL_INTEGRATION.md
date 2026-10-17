@@ -39,6 +39,11 @@
 
 After `review-compound-connected-bunker-blockout-review-corrections-1` PASSES, first inspect its accepted transfer and camera contract. Type A: register stable building-to-interior threshold/return identities and reversible enter/exit from at least three different rooms using existing world placement/route authority; never copy Carrow's router. Type B: call/observe the reviewed vertical-entry controller, do not implement a second trigger, bounce-lockout, layer state or camera clamp. Wire its `layer_changed`/actual active layer through ContractWorldLoader, environment/lighting/weather, minimap and interactions as needed. Preserve one Operator instance, position/inventory/simulation state and safe reentry. Missing or blocked endpoints fail closed without moving the Operator.
 
+## Claimed correction preservation (Codex handoff 2026-10-17)
+
+- Do NOT implement/reclaim `compound-connected-bunker-blockout-review-corrections-1`. Local Claude correction code is protected by the existing claim and unresolved merge; its recovery instructions live at `custodian/docs/ai_context/workstream_handoffs/COMPOUND_BUNKER_R1_CODEX_TAKEOVER_20261017.md`.
+- This traversal implementation remains blocked until `review-compound-connected-bunker-blockout-review-corrections-1` and `review-compound-walled-yard-blockout` both PASS. Reuse the accepted B controller rather than creating a competing transfer/camera layer.
+
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.

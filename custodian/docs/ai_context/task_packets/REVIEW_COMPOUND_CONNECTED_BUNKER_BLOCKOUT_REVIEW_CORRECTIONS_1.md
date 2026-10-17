@@ -30,6 +30,12 @@
 - Non-goals: No feature work, no visual or feel judgement, no edit to the archived parent review or its recovered `findings` outcome.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Codex takeover validation gate (2026-10-17)
+
+- Recovery/evidence: `custodian/docs/ai_context/workstream_handoffs/COMPOUND_BUNKER_R1_CODEX_TAKEOVER_20261017.md`. The original Claude code was locally committed in an active claimed worktree but NOT landed when export ended. Its 77/77 run followed an unresolved design-spec merge conflict; it is not valid final acceptance evidence.
+- Before THIS review, verify the original correction packet is archived complete on current main, its local merge finished with fresh post-merge validation, and a real review runner can claim this exact workstream. Run `paired_review_runner.py` as a FRESH reviewer; do not first `dispatch claim` the same review.
+- Falsify R0-01 and R0-02 on actual code: two surface↔subsurface anchors, no bounce/room-to-room transfer, one layer authority, camera clamp/restoration, collision enabled and canonical `NavigationSystem` AStar2D (not the empty `NavigationRegion2D`). Preserve historical findings and fail closed on missing proof.
+
 ## Procedure
 
 Use `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` from a fresh reviewer context. Verify the pinned correction from its archived packet, then try to break the transfer before accepting it. A passing smoke alone is not sufficient: compare the evidence with the original R0-01 and R0-02 wording.
