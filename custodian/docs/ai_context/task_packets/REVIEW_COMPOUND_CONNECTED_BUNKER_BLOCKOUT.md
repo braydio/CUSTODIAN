@@ -34,3 +34,12 @@
 
 - Next action: On genuine PASS, release review-gated descendants; on defect create one minimal correction and a fresh review.
 - Blockers or open questions: None for deterministic acceptance; human feel/art remains separate.
+
+## Independent Review Findings
+
+Transcribed verbatim by the coordinator from the fresh different-agent reviewer's closing summary (run `20261017T093022Z-53c824e8e5a6`); the reviewer ran without Git access.
+
+- **R0-01 — Blocking defect: surface access does not connect to the underground network.** The planner creates paired `surface_anchor` / `subsurface_anchor` metadata, but runtime code has no consumer that transfers the player or changes the active layer. Outside planner generation, `compound_vertical_entries` is stored/exported by ProcGenTilemap, drawn on the minimap, and inspected by validation. The smoke performs separate floods from the surface spawn and underground anchor; it never traverses between paired anchors. Neither surface housing can currently be used to reach the underground network, contrary to the acceptance that both surface access points reach it.
+- **R0-02 — Material evidence gap: collision, navigation, and camera isolation are not verified.** The new smoke sets `build_runtime_wall_collision = false` and `auto_bake_nav = false`. It verifies floor/wall cell connectivity, but does not exercise generated collision or navigation, and it has no camera-layer assertion. The review packet explicitly requires physical two-layer geometry/navigation evidence and no collision/camera or other-layer leaks.
+
+These findings fail the review correction threshold for incomplete accepted behavior and missing proof. No PASS receipt was appended to the target packet. The active review packet and claimed worktree remain recoverable for the bounded correction/re-review lifecycle.
