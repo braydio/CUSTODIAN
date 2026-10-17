@@ -253,11 +253,28 @@ Corrected paired sheet SHA-256:
 provenance receipt records each frame's hashes, crop/panel coordinates and
 post-composite pixel identity.
 
-The six-file corrected handoff is published at
+The six-file corrected handoff from Iteration 002 was published at
 `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-002-reference-sheet-integrity/REVIEW_MANIFEST.json`
 with the exact authoring chat https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe. It preserves the Iteration 001 report,
 viewer and pitch comparison. The corrected pixels are now available for human
 review; no gait, transition, timing or artistic approval is claimed.
+
+## Iteration 003 — visual-byte bridge (transport only)
+
+The exact packet-authorized two-image Dropbox bridge was published at
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-003-visual-byte-bridge/REVIEW_MANIFEST.json`
+with delete-after-review retention. The manifest lists exactly four source artifacts:
+`REVIEW_PIXELS.json` (`e204311250cd008f8634ca4f59f6fd0121149a75abc4166eb8004a9813f9aef4`),
+`REFERENCE_OPERATOR_15_POSES.png`
+(`adde4812e067e8f39c38fc2eab34187e0d798db8af809c31f1dd80c743e9bcfd`),
+`TRANSITION_ALPHA_DETAIL.png`
+(`783dc8ebfa9ee64ab0858bd6f30fb181c27a95311d7c49ed42712fcdb25969e2`), and
+`REVIEW_NOTES.md`
+(`c5ddd7b89fd4a790cae3d380ea6bf78639fee7c3e331b2d0a7a4d11bc312e12b`). Dropbox text fetch returned the full JSON; both embedded PNGs were locally decoded and SHA/dimension verified. The corrected contact sheet and ROI bridge payload hashes match; source candidate strip and report hashes remain `ba512279d2e153fd84ca3093d638f63877785ffdda5923d8e4f932b6b01dcb85` and `3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4`.
+
+The ROI sheet contains 4x nearest-neighbor crops from F01/F02/F05/F06/F07/F09/F10/F11/F12/F13/F14/F15 at source rectangle x=40..101, y=63..111, with support, void pixel totals and magenta outlines from the unchanged report. No source/runtime/animation files were changed. The publisher ran from the clean coordination checkout, so the Dropbox manifest's `git.commit` is `934805e71ac4e82c4588365f5e7e1dddea912eaa` on `main`; this is transport metadata and does not identify the retained implementation checkpoint `c834aa20faea6bb7d21fec54c1b998f63b9dadc8`. The packet requires this iteration to stop for the human visual verdict.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
@@ -277,5 +294,5 @@ review; no gait, transition, timing or artistic approval is claimed.
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 - Refresh reason: visual acceptance of the NE gait requires review of the authentic Knight-versus-Operator pair; support transitions and enclosed regions remain subjective.
-- Next action: inspect the new six-file Dropbox handoff, record the frame-specific human verdict, then run the emitted delete-after-review cleanup command.
+- Next action: inspect the Iteration 003 Dropbox visual-byte bridge, record the frame-specific human verdict, then run the emitted delete-after-review cleanup command.
 - Blockers or open questions: final gait acceptance, timing, runtime publication and landing remain unapproved.
