@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: worktree-backlog-census-and-safety-ledger-v1
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P0
@@ -21,7 +21,7 @@
 - Visual review: none
 - Goal: Produce one exact, reproducible, read-only machine-local ledger for every attached, detached, claim-only and packet-invalid identity, without altering any claimant.
 - Completion boundary: Introduce a bounded read-only census/report command and durable scrubbed ledger; resolve the reported 36 versus 35 named mismatch, including transit-lift, and mark unknown owners protected. No cleanup, automatic parking, packet status edits, or worktree writes.
-- Current measured state: User host-local read-only census on 2026-10-17 reports 36 unfinished attachments, 17 dirty, 19 clean, but names 17 dirty + 18 clean only; 10 unique-ahead HEADs include a transit-lift identity not named in either list. Also 2 archived residue, 11 detached, 65 invalid-recovery and 2 claim-only refs. This is source-reported evidence, not independently rerun in the user's machine. Consult custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md and refetch main/host before mutation.
+- Current measured state: W1 independently captured 62 canonical worktree paths on 2026-10-17 at `origin/main@2f38903cd8c44c8dff95841b6bc2701b57c3adfd`: 38 attached agent worktrees map to active packets (20 dirty, 18 clean), 2 attached archived packet worktrees, 11 detached worktrees, and 2 additional agent branches have no matching active or archived packet. The 35 originally named unfinished identities plus `transit-lift-runtime-foundation-v1` reconcile the reported 36. There are 11 attached agent HEADs ahead of origin/main, 65 dispatcher invalid-recovery rows, and 2 interrupted/claim-only refs. Full normalized rows and fingerprints are in `custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md`; no owner liveness is inferred.
 - Evidence: custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md; custodian/tools/agent/dispatch.py audit --json; git worktree list --porcelain; workstream/branch_hygiene source and current remote claims.
 - Task-specific authority: AGENTS.md; custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md; custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md; branch_hygiene.py and task_packet_contract.py; reviewed OR1/OR2 outcomes when those authorities are required.
 - Work surface: custodian/tools/agent/worktree_backlog_census.py (new read-only orchestration); custodian/tools/agent/dispatch.py (read-only API/use, no new claim authority); custodian/tools/agent/workstream.py (read-only); custodian/tools/agent/branch_hygiene.py (read-only); custodian/tools/agent/test_worktree_backlog_census.py (new); custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md (measured row update).
@@ -33,12 +33,34 @@
 - Task overrides: none
 - Deferred: Irreducible user decisions, foreign live owners, unsupported local preservation/retirement and materially distinct code corrections must be left explicitly protected and separately authorized.
 
-## Handoff
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `worktree_backlog_census.py --json` captured 62 unique canonical paths and normalized all requested worktree, packet, claim, ancestry, dirtiness, process-provenance, and protection fields. The measured ledger resolves the named-count discrepancy and retains every path row without raw status paths or file contents.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial census prototype tests exposed malformed path conversion and fixture interception errors; corrected before validation. The first live snapshot also showed that archived rows and unrelated attached roots must remain distinct from active packet-bearing checkouts.
+- Root cause / contributing factors: The baseline enumerated only named unfinished branches while `git worktree list` also includes detached, archived, auxiliary, and new active worktrees.
+- Prevention / pipeline improvement: Keep the census as a one-row-per-canonical-path inventory and reconcile packet, archived, and branch-only identities as separate evidence classes. Preserve raw porcelain only as a local hash, never filenames or file contents.
+- Tooling / docs drift discovered: Dispatcher audit reports queue identity but not process liveness; the census correctly leaves execution provenance unknown. Two local agent branches have no active/archived packet mapping, and the ahead-head count increased from 10 to 11.
+- Follow-up: worktree-backlog-dirty-and-unique-preservation-v1
+- What worked: Temporary bare-remote tests cover attached dirty/ahead state, detached support, fake interrupted claims, malformed packet identity, missing paths, and before/after refs/status.
+
+## Next Handoff
 
 - Next workstream: review-worktree-backlog-census-and-safety-ledger-v1
 - Next packet state: dependency-gated
 - Refresh owner: execution-agent
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
-- Next action: Do not begin destructive or claim-releasing action; release the reviewed normalized census to W2 and W5. Independently re-audit live origin/main and dispatcher at claim and closeout; follow original workstream's ownership gate.
-- Blockers or open questions: Targeted authoring preflight pending; dependency- and lock-gated until live dispatcher authorizes. Historical count discrepancy is a required W1 acceptance blocker, not permission to skip a checkout.
+- Refresh reason: none
+- Next action: Land and archive W1 through the normal lifecycle; then start its fresh-context paired review. Preserve the census as the input to W2 and W5; do not clean or release any discovered owner.
+- Blockers or open questions: Two agent branches lack packet identity and remain UNKNOWN_PROTECT; W2/W5 must inspect their authority before any mutation.
