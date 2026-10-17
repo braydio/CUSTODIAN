@@ -138,6 +138,6 @@ Result: completed without new script load errors. Existing exit resource leak wa
 
 ## Archetypes and layered interiors (planning, 2026-10-15)
 
-Current one-map constructed interior does not establish subsurface level simulation. Type B needs an isolated layer with one walkable underground room and tunnel graph; the only V1 reversible transfer seam is surface to subsurface. Type A may use bounded separate interior transfers. Keep floor/wall, region metadata, collision and spawn-filter authority in ProcGenTilemap. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.
+The earlier one-map constructed interior did not itself implement Type B. Type B now has an isolated subsurface region with a continuous underground room/tunnel graph in the same tile authority, while usable paired surface↔subsurface entry and real collision/nav/camera proof are **not accepted yet** (R0-01/R0-02 correction/re-review). Type A still needs independent building interior transfers. Keep floor/wall, region metadata, collision and spawn-filter authority in ProcGenTilemap. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.
 
 Shipped for Type B: the layers are disjoint reservations inside the compound rect (surface band, solid separator, wall-filled subsurface region), with no second generator or tile authority. Cells outside the surface band that are not planned underground floor are sealed against every later floor writer, underground cells are excluded from terrain-required reachability, and the generic constructed interior region is skipped for a layered compound.

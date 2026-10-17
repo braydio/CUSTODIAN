@@ -20,13 +20,13 @@
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
 - Visual review: conditional
-- Goal: Independently verify the landed implementation of compound-interior-traversal-integration.
-- Reviewed implementation acceptance: Every Acceptance item in custodian/docs/ai_context/task_packets/COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md.
+- Goal: Independently prove Type A interior return plus Type B world integration, without reimplementing or re-accepting the separately reviewed bunker vertical-entry correction.
+- Reviewed implementation acceptance: All updated `Acceptance` items of `custodian/docs/ai_context/task_packets/COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` at its landed revision, including no duplicate B transfer and no redundant camera/layer authority.
 - Review evidence: Actual landed code, provenance, deterministic traces, smoke outputs and scoped changed-file validation.
 - Correction threshold: Missing proof, second runtime authority, invalid geometry/nav, double state, broken backwards-compatibility or incomplete accepted behavior yields findings and correction, not PASS.
-- Review focus: A: traverse/return three distinct interiors. B: enter via housing A, cross three underground rooms continuously, exit via housing B. Multiple revisits retain all state, no bounce, duplicate Operator, backdrop or weather leak.
-- Focused validation: Existing Carrow interior/backdrop and contract-world smokes, NEW layer re-entry/identity fixture.
-- Acceptance: Findings-first pass or bounded correction/re-review DAG with reproduction and exact impacted files; user visual acceptance not agent-owned.
+- Review focus: Type A three distinct reversible interiors; Type B uses the previously accepted `review-compound-connected-bunker-blockout-review-corrections-1` controller (both housings, both directions, no room-to-room jump); ONE Operator and no duplicate layer/route/camera state; real minimap/environment and state preservation over repeated revisits.
+- Focused validation: Discover current manifest names; run walled-yard, connected-bunker, persistent-compound runtime and focused new traversal/revisit tests. Inspect exact accepted R1 controller path before claiming no duplicate implementation, then verify one actor and current route identity.
+- Acceptance: Independent findings-first decision against accepted predecessor R1 and landed traversal changes. A duplicated B transfer, stale environment/viewport, actor or inventory loss, failed return anchor or changed legacy behavior is blocking; visual/game feel remains user-owned.
 - Non-goals: New runtime implementation, gameplay feel certification or retroactive art approval.
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
@@ -34,3 +34,7 @@
 
 - Next action: On genuine PASS, release review-gated descendants; on defect create one minimal correction and a fresh review.
 - Blockers or open questions: None for deterministic acceptance; human feel/art remains separate.
+
+## Planning refresh (2026-10-17)
+
+- Based on main `934805e71ac4e82c4588365f5e7e1dddea912eaa`. R1 bunker correction review owns the first independent proof of physical vertical-entry/camera/collision navigation; this review checks integration reuse, not replacement. Do not pass while R1 remains unresolved.

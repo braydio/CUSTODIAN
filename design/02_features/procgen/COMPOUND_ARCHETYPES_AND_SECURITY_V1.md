@@ -1,6 +1,6 @@
 # Compound Archetypes and Security V1
 
-**Status:** Approved planning; profile-selection contract and the Type B (`connected_bunker`) layered blockout and the Type A (`walled_yard`) blockout shipped. Interior traversal integration and security/gameplay remain deferred.
+**Status (2026-10-17):** Profile contract accepted; Type A and Type B physical blockouts landed, but Type A independent review remains active and Type B review concluded `findings` (R0-01, R0-02). Type B correction and fresh review are active dependency gates. Interior traversal, powered security and assault/recovery remain unshipped.
 **Workstream:** compound-archetypes-v1 + compound-recovery-v1
 **Reviewed main:** 512226d488d3b5db63335b2357b4b566e44ccb03
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
@@ -30,11 +30,12 @@ Profile enum walled_yard | connected_bunker; deterministic seed; stable room IDs
 The shipped profile-selection contract is intentionally narrower: the optional
 `legacy`, `walled_yard`, or `connected_bunker` ID is validated from
 `custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json`.
-All three currently select the existing surface topology. Explicit selection
-adds versioned archetype/layer metadata to planner rooms, connectors, and
-exported level data; omitted selection preserves the legacy planner output.
-No subsurface layer, yard gate, or archetype-specific geometry is implied by
-this metadata for `legacy` and `walled_yard`.
+That **initial profile-contract-only release** retained the same surface geometry
+for all IDs while adding versioned room/connector/level-data identity. Later
+review-gated code has since implemented distinct `walled_yard_close_packed_v1`
+and `connected_bunker_subsurface_v1` geometry. Omitted selection still preserves
+the legacy planner output. Do not use the original profile-contract behavior as
+current evidence that the archetypes share geometry.
 
 ### Shipped: `walled_yard` close-packed blockout
 
@@ -86,7 +87,7 @@ because they are reached through vertical entries rather than by walking from th
 so reachability repair cannot carve a tunnel through the separator. The generic constructed
 interior region is skipped for a layered compound, which owns all of its interior space.
 
-Validated by `compound_connected_bunker_smoke.gd` (planner contract plus the real generator).
+The initial `compound_connected_bunker_smoke.gd` verifies planner topology and generator geometry, **not** an accepted physical entry/exit or collision/nav/camera proof. Fresh independent review `REVIEW_COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md` closed with `findings`: R0-01 (surface/subsurface anchors have no usable runtime transfer consumer) and R0-02 (the smoke disables real collision and nav baking and never checks camera bounds). Existing `compound-connected-bunker-blockout-review-corrections-1` owns the transfer/controller/camera/isolation fix and `review-compound-connected-bunker-blockout-review-corrections-1` must pass before integration. Do not describe B as playable/accepted yet.
 
 ## Security and traversal V1
 
@@ -96,11 +97,20 @@ Powered actual gates and compartment doors, explicit authorized physical entry/e
 
 Prepare or fabricate resources -> establish defenses and build infrastructure -> director sends bounded objective-based pressure -> real structural damage reduces power/defense/fabrication service -> local resource-consuming Operator repair OR a valid new Capacitor Bank build -> restore service, preserve state and prepare next attack. The critical choice is finite supply between repair and expansion. No free repair of destroyed structures, duplicate HP or double resource debits.
 
-## Dependency-gated implementation order
+## Dependency-gated implementation order (reconciled 2026-10-17)
 
-profile-contract -> (walled-yard-blockout + connected-bunker-blockout) -> interior-traversal-integration -> secure-access-fixtures -> archetype-playable-proof -> recovery-damage-coupling -> (recovery-assault-objectives + recovery-field-repair + recovery-build-restoration) -> recovery-end-to-end-proof.
+```
+profile-contract + passed review [complete]
+  ├─ walled-yard-blockout [landed] -> walled-yard paired review [active]
+  └─ connected-bunker-blockout [landed] -> review [findings R0-01/R0-02]
+       -> bunker-review-corrections-1 [claimed] -> correction paired review
+  BOTH accepted reviews -> interior-traversal-integration -> secure-access-fixtures
+       -> archetype-playable-proof -> recovery-damage-coupling
+       -> (recovery-assault-objectives | recovery-field-repair | recovery-build-restoration)
+       -> recovery-end-to-end-proof
+```
 
-Every arrow means predecessor PAIRED REVIEW passes; no downstream runtime work should start based only on implementation claim. No new art is necessary for mechanical blockouts.
+The `interior-traversal-integration` packet must **reuse** the B correction's accepted paired-anchor transfer and camera ownership. It owns Type A independent room transitions and layer-aware world/Operator/environment integration, not another B transfer controller. Every ordinary successor waits for an accepted `passed` independent review; the parent B `findings` result gates only its bounded correction, not downstream gameplay. Runtime and asset intake remain separable: no unapproved PNG blocks mechanical geometry/repair tests.
 
 ## Technical acceptance
 
