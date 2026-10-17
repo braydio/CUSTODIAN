@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-host-godot-validation-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -21,7 +21,7 @@
 - Visual review: `none`
 - Goal: Remove the recurring restricted-Codex Godot TCP-listener/import failure from independent paired review validation without broadening Codex sandbox network or Git authority.
 - Completion boundary: The existing paired-review coordinator runs canonical import-dependent validation with ordinary host socket capability, real Godot locks and the original claimed worktree; the independent restricted reviewer reads exact pinned, immutable coordinator evidence and authors its own verdict; the existing receipt/finish gate fails closed on any absent or mismatched validation.
-- Current measured state: `paired_review_runner.py::run` launches the fresh reviewer with `codex exec --ephemeral --approve-for-me`, then its prompt tells that restricted subprocess to run `run_validation.py`. The canonical `run_validation.py::_run_import` launches headless Godot editor import; Codex's restricted sandbox rejects editor loopback socket creation. This blocked both `review-procgen-showcase-exhibit-catalog` and `review-ritualant-score-direction-correction-v1`; host localhost-bind and writable isolated Godot HOME probes passed for Ritualant. The earlier cache-access fix only exposes CUSTODIAN filesystem cache/lock roots and does NOT grant socket permissions. An earlier Asset Workbench review was completed after a coordinator-side exact changed-file validation rerun, demonstrating the boundary works operationally.
+- Current measured state: Paired reviews now run canonical changed-file validation in the trusted coordinator before launching the restricted fresh reviewer. The coordinator pins the implementation parent, claimed worktree and target SHA; records atomic raw report and provenance evidence; and rechecks report and implementation source hashes before closeout. The reviewer prompt names its exact root summary output and protects the implementation summary as read-only. The complete changed-file suite passed 42/42 with zero failures, skips, timeouts or infrastructure errors.
 - Evidence: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/validation/run_validation.py`; `custodian/tools/godot_project_lock.py`; `custodian/tools/agent/review_receipt_delta.py`; `REVIEW_ASSET_WORKBENCH_REVIEW_STUDIO_R1_CLAUDE_SUMMARY.md`; the archived PGA-2 implementation `675ccf726bb79397b7242ef3059971a6f1a39448`. The Ritualant and PGA-2 stranded reviewer run evidence is host-local and must not be rewritten.
 - Task-specific authority: Coordinator `paired_review_runner.py` owns trusted process launch and run evidence; `run_validation.py` owns tests and import truth; `godot_project_lock.py` owns machine-wide budget and per-project lock; `review_receipt_delta.py` / `workstream.py finish` retain their existing immutable review and landing gates.
 - Work surface: `custodian/tools/agent/paired_review_runner.py`, `custodian/tools/agent/test_paired_review_runner.py`, optional focused `custodian/tools/agent/paired_review_host_validation.py` and tests only if needed, and `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md` for exact host/reviewer separation. Use the existing `run_validation.py` unchanged where possible.
@@ -38,6 +38,24 @@
 - Validation: Focused `python3 -m unittest test_paired_review_runner` and new helper tests; `godot_project_lock_smoke.py`, paired receipt-delta/workstream fixtures, targeted authoring/index and complete changed-file validation with canonical locks; `git diff --check`. Do not claim executable Godot success without actually running it.
 - Task overrides: `none`
 - Deferred: The distinct `agent-paired-review-same-run-continuation-v1` supplies guarded continuation for already-protected PGA-2 and Ritualant claims **after** this host execution seam is reviewed and available; do not turn old blocked runs into an automatic PASS.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `test_paired_review_runner` (34/34); `test_workstream` and `test_workstream_artifacts`; `godot_project_lock_smoke.py`; targeted packet-authoring preflight; complete changed-file report `/tmp/agent-paired-review-host-validation-changed-final.json` (42/42 passed, complete coverage).
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The original reviewer prompt did not name its summary output or protect the implementation summary, enabling a reviewer write to collide with the implementation handoff.`
+- Root cause / contributing factors: `The prompt described a durable summary generically while the coordinator bounded allowed paths but did not make the two exact summary identities explicit to the reviewer.`
+- Prevention / pipeline improvement: `The prompt now names the exact review summary and read-only implementation summary; the coordinator verifies bounded changed paths, and host validation evidence is atomically written and digest-checked.`
+- Tooling / docs drift discovered: `The changed-file manifest did not list the new host-validation helper as an owner; its paired-review unit route now covers it.`
+- Follow-up: `agent-paired-review-same-run-continuation-v1`
+- What worked: `Pinned host-side validation preserves the existing Godot lock and job budget while keeping verdict ownership with the fresh reviewer.`
 
 ## Next Handoff
 - Next workstream: `review-agent-paired-review-host-godot-validation-v1`

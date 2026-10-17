@@ -21,6 +21,11 @@ TOOLS_ROOT = Path(__file__).resolve().parents[1]
 if str(TOOLS_ROOT) not in sys.path:
     sys.path.insert(0, str(TOOLS_ROOT))
 from godot_project_lock import job_budget_root, scratch_root
+from paired_review_host_validation import (
+    HostValidationError,
+    run_coordinator_validation,
+    verify_coordinator_validation,
+)
 
 import review_outcome
 from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
@@ -187,15 +192,19 @@ def parse_claim_receipt(stdout: str, workstream: str, repo: Path) -> dict:
 
 def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: Path | None = None,
                authoring_chat: str | None = None, reviewed_main: str | None = None,
-               implementation_commit: str | None = None) -> str:
+               implementation_commit: str | None = None,
+               implementation_summary_path: str | None = None,
+               validation_sha256: str | None = None) -> str:
     validation_path = str(run_dir / "validation.json") if run_dir else "the run evidence directory's validation.json"
+    review_summary_path = expected_summary_path(workstream)
+    implementation_summary = implementation_summary_path or "the target implementation's exact root summary path"
     backlink = f"Use this exact Authoring chat URL in the summary: {authoring_chat}" if authoring_chat else "Preserve the packet's exact Authoring chat URL in the summary."
     pinned = f"Review the immutable baseline `origin/main` at `{reviewed_main}`; report this exact SHA in the review receipt." if reviewed_main else "Record the exact immutable reviewed-main SHA in the review receipt."
     implementation = (f"The exact reviewed implementation SHA derived from the pinned archived packet history is `{implementation_commit}`; report this exact SHA in the review receipt."
                       if implementation_commit else "Derive the implementation SHA from the exact archived target history; do not guess or use a reviewer-supplied value without verifying it.")
     return f"""You are the fresh independent paired reviewer for CUSTODIAN workstream `{workstream}`.
 
-Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, the target's root closing summary, and the landed diff/current main. {pinned} {implementation} Run every validation and fault-check required by the review packet. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code. Record findings first, write the durable review receipt and required root summary. {backlink}
+Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, `{implementation_summary}`, and the landed diff/current main. {pinned} {implementation} Inspect the coordinator-authored validation report at `{validation_path}` (SHA-256 `{validation_sha256 or 'provided in coordinator-validation.json'}`) as immutable execution evidence. Do not run or replace the host validation report. Independently assess the implementation and report your own verdict. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code or `{implementation_summary}`; treat it as read-only. Record findings first. Write the canonical review summary only to `{review_summary_path}` and the required review receipt. Choose `passed`, `findings`, or `human_required` from your own evidence-backed conclusion; do not default to PASS. {backlink}
 
 This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. If the target packet needs its receipt, append exactly one `### Review Receipt: {workstream}` block under `## Independent Review` (or append that section at EOF), preserving all existing target bytes. Use this exact field layout, substituting the review packet's exact target identity and the pinned main and implementation SHAs:
 
@@ -204,16 +213,16 @@ This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git
 - Schema: `custodian.paired_review.v1`
 - Review workstream: `{workstream}`
 - Review target workstream: `<exact target workstream>`
-- Status: `passed`
-- Blocking defects: `0`
-- Material gaps: `0`
+- Status: `<passed | findings | human_required>`
+- Blocking defects: `<count supported by your findings>`
+- Material gaps: `<count supported by your findings>`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent` or `same-agent-fresh-context`
 - Reviewed main: `<full pinned main SHA>`
 - Reviewed implementation commit: `<full implementation SHA>`
 ```
 
-Do not edit any other target bytes. Run the required validation and save its green structured JSON result to `{validation_path}` (schema `custodian.validation.result.v1`, with `passed: true`, `coverage.complete: true`, and all test statuses passed). Update/archive only the authorized review packet and managed index. If blocked, write the durable summary explaining the blocker and leave the packet/worktree recoverable. Do not claim another packet or hop to the global queue. Report the exact result and evidence paths."""
+Do not edit any other target bytes. The coordinator owns `{validation_path}`; never overwrite or author it. Update/archive only the authorized review packet and managed index. If blocked, write the canonical review summary explaining the blocker and leave the packet/worktree recoverable. Do not claim another packet or hop to the global queue. Report the exact result and evidence paths."""
 
 
 def validation_report_is_green(path: Path) -> bool:
@@ -238,9 +247,17 @@ def _changed_paths(repo: Path, *args: str) -> list[str]:
 
 def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, active_packet_path: str,
                               target_workstream: str, target_packet_path: str, target_content: str,
-                              authoring_chat: str | None, reviewed_main: str, run_dir: Path) -> str:
+                              authoring_chat: str | None, reviewed_main: str, run_dir: Path,
+                              host_evidence: dict) -> str:
     """Commit only bounded reviewer evidence and delegate landing to workstream.py."""
     report = run_dir / "validation.json"
+    try:
+        verify_coordinator_validation(repo=worktree, run_dir=run_dir, reviewed_main=reviewed_main,
+                                      implementation_commit=host_evidence["implementation_commit"],
+                                      expected_report_sha256=host_evidence["report_sha256"],
+                                      expected_metadata_sha256=host_evidence["metadata_sha256"])
+    except (HostValidationError, KeyError) as exc:
+        raise RunnerError(f"coordinator validation evidence failed immutable verification: {exc}") from exc
     if not validation_report_is_green(report):
         raise RunnerError(f"reviewer did not provide a green structured validation report: {report}")
     summary_path = expected_summary_path(workstream)
@@ -764,6 +781,18 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         )
         if identity_error:
             raise RunnerError("claimed review target implementation identity is invalid: " + identity_error)
+        try:
+            host_evidence = run_coordinator_validation(worktree, run_dir, reviewed_main, implementation_commit)
+        except HostValidationError as exc:
+            metadata.update({"phase": "host_validation_recovery", "reviewed_main": reviewed_main,
+                             "implementation_commit": implementation_commit,
+                             "host_validation_error": redact(str(exc)), "recovery_worktree": str(worktree)})
+            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+            _write(run_dir / "RECOVERY.md", f"Trusted coordinator host validation failed before reviewer launch: {redact(str(exc))}. Preserve branch `{receipt['branch']}` and worktree `{worktree}`. Run evidence: `{run_dir}`. No reviewer verdict was requested. Do not reclaim.\n")
+            raise RunnerError(f"host validation failed before reviewer launch; claim preserved at {worktree}; evidence: {run_dir}") from exc
+        metadata["host_validation"] = {key: value for key, value in host_evidence.items()
+                                       if key in {"implementation_parent", "report_path", "report_sha256",
+                                                  "metadata_sha256", "summary", "selected"}}
         metadata.update({"phase": "claimed", "branch": receipt["branch"], "worktree": str(worktree),
                          "packet": actual_path, "codex": str(executable), "fresh": True})
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
@@ -785,7 +814,9 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
                                       packet.review_target_packet or "", run_dir=run_dir,
                                       authoring_chat=packet.authoring_chat,
                                       reviewed_main=reviewed_main,
-                                      implementation_commit=implementation_commit), run_dir, timeout)
+                                      implementation_commit=implementation_commit,
+                                      implementation_summary_path=expected_summary_path(packet.review_target_workstream or ""),
+                                      validation_sha256=host_evidence["report_sha256"]), run_dir, timeout)
         except subprocess.TimeoutExpired:
             metadata.update({"phase": "codex_timeout_recovery", "elapsed_seconds": round(time.monotonic() - started, 3),
                              "recovery_worktree": str(worktree)})
@@ -813,10 +844,17 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             # A failed fetch cannot be replaced with stale refs or reviewer-local files.
             pinned_main = fetch_and_pin_main(repo)
             if exit_code == 0:
+                try:
+                    verify_coordinator_validation(worktree, run_dir, reviewed_main, implementation_commit,
+                                                  expected_report_sha256=host_evidence["report_sha256"],
+                                                  expected_metadata_sha256=host_evidence["metadata_sha256"])
+                except HostValidationError as exc:
+                    raise RunnerError(f"coordinator validation evidence failed post-review verification: {exc}") from exc
                 pinned_main = coordinator_finish_review(repo, workstream, worktree, actual_path,
                                                        packet.review_target_workstream or "",
                                                        packet.review_target_packet or "", target_content,
-                                                       packet.authoring_chat, reviewed_main, run_dir)
+                                                       packet.authoring_chat, reviewed_main, run_dir,
+                                                       host_evidence)
             state = landed_review_state(repo, pinned_main, workstream, actual_path,
                                         packet.review_target_workstream or "",
                                         packet.review_target_packet or "", target_content,

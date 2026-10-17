@@ -382,6 +382,18 @@ subagent manager.
 
 ## Paired review outcomes and administrative closeout
 
+`paired_review_runner.py` runs the canonical changed-file validation from the
+trusted coordinator before starting its restricted fresh reviewer. The base is
+the exact parent of the pinned implementation commit, and validation runs in
+the claimed review worktree under `run_validation.py`'s normal Godot project
+lock and job budget. The run evidence stores the raw report and coordinator
+provenance; the reviewer inspects that report and authors an independent
+`passed`, `findings`, or `human_required` disposition. The coordinator verifies
+the report digest, pinned identities, and implementation source fingerprint
+again before closeout. A green report is necessary evidence, never a substitute
+for reviewer judgment. If host validation fails or evidence changes, preserve
+the claim and worktree for recovery.
+
 A paired review concludes with exactly one outcome: `passed`, `findings` or
 `human_required`. The outcome is a flat `## Review Outcome` section in the archived
 *review* packet (`custodian/tools/agent/review_outcome.py` is the only parser). It is

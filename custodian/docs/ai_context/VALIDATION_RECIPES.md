@@ -1725,6 +1725,16 @@ as evidence that rebuild work has been batched yet.
 
 ## Review Validation
 
+The paired review runner executes `run_validation.py --changed --base
+<implementation-parent-sha> --json` from the exact claimed review worktree on
+the trusted coordinator before launching the restricted reviewer. This keeps
+Godot import sockets and the existing project lock/job budget on the host side.
+The reviewer receives the pinned report and independently decides the outcome;
+it must not replace the report or treat green tests as its verdict. The
+coordinator rechecks the report hash, implementation identity, and source
+fingerprint before landing. See `paired_review_runner.py` and
+`paired_review_host_validation.py` for the fail-closed evidence contract.
+
 ## Enemy Hit Spatial Diagnostics
 
 From `custodian/`:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import fcntl
+import hashlib
 import io
 import os
 import re
@@ -15,6 +16,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
+import paired_review_host_validation as host_validation
 from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
     GodotJobBudget, godot_home, job_budget_root,
@@ -402,13 +404,18 @@ class PairedReviewRunnerTests(unittest.TestCase):
             (run_dir / "validation.json").write_text(json.dumps({
                 "schema": "custodian.validation.result.v1", "passed": True,
                 "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
+            host_evidence = {"implementation_commit": implementation_sha,
+                             "report_sha256": "report-digest", "metadata_sha256": "metadata-digest"}
 
-            (worktree / "unauthorized.py").write_text("reviewer must not add this\n")
-            with self.assertRaisesRegex(runner.RunnerError, "outside its bounded evidence scope"):
+            implementation_summary = worktree / runner.expected_summary_path("sample-impl")
+            implementation_summary.write_text("reviewer must not replace the implementation summary\n")
+            with patch.object(runner, "verify_coordinator_validation"), \
+                 self.assertRaisesRegex(runner.RunnerError, "outside its bounded evidence scope"):
                 runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
                                                  target_path, baseline_target,
-                                                 "https://chatgpt.com/c/example", target_sha, run_dir)
-            (worktree / "unauthorized.py").unlink()
+                                                 "https://chatgpt.com/c/example", target_sha, run_dir,
+                                                 host_evidence)
+            implementation_summary.unlink()
 
             original_run = subprocess.run
             finish_calls = []
@@ -419,10 +426,12 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                                         f"finished agent/review-sample; verified {target_sha} reachable from origin/main", "")
                 return original_run(argv, *args, **kwargs)
 
-            with patch.object(runner.subprocess, "run", side_effect=intercept_finish):
+            with patch.object(runner.subprocess, "run", side_effect=intercept_finish), \
+                 patch.object(runner, "verify_coordinator_validation"):
                 landed_sha = runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
                                                              target_path, baseline_target,
-                                                             "https://chatgpt.com/c/example", target_sha, run_dir)
+                                                             "https://chatgpt.com/c/example", target_sha, run_dir,
+                                                             host_evidence)
             self.assertEqual(landed_sha, target_sha)
             self.assertEqual(len(finish_calls), 1)
             self.assertEqual(Path(finish_calls[0][1]), repo)
@@ -728,6 +737,10 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             with patch.object(runner, "git", return_value=str(repo)), \
                  patch.object(runner, "validate_eligible_review", return_value=(receipt["packet"], packet_text, packet)), \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
+                 patch.object(runner, "run_coordinator_validation", return_value={
+                     "implementation_commit": "a" * 40, "implementation_parent": "b" * 40,
+                     "report_path": str(common / "validation.json"), "report_sha256": "c" * 64,
+                     "metadata_sha256": "d" * 64, "summary": {}, "selected": []}), \
                  patch.object(runner, "common_dir", return_value=common), \
                  patch.object(runner, "parse_claim_receipt", return_value=receipt), \
                  patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
@@ -757,11 +770,17 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                 runner.parse_claim_receipt(runner.CLAIM_SENTINEL + json.dumps(receipt), "review-sample", repo)
 
     def test_prompt_is_durable_evidence_only_and_safe_logs_redact_secrets(self):
-        prompt = runner.prompt_for("review-sample", "review.md", "archived/impl.md")
+        prompt = runner.prompt_for("review-sample", "review.md", "archived/impl.md",
+                                   implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md",
+                                   validation_sha256="abc123")
         self.assertIn("Do not use, request, or infer the implementation-session transcript", prompt)
         self.assertIn("Do not run `git fetch`, `git push`, `git add`, `git commit`", prompt)
         self.assertIn("workstream.py finish", prompt)
         self.assertIn("validation.json", prompt)
+        self.assertIn("Write the canonical review summary only to `REVIEW_SAMPLE_CLAUDE_SUMMARY.md`", prompt)
+        self.assertIn("Do not edit reviewed implementation/runtime code or `SAMPLE_IMPL_CLAUDE_SUMMARY.md`", prompt)
+        self.assertIn("Choose `passed`, `findings`, or `human_required`", prompt)
+        self.assertIn("SHA-256 `abc123`", prompt)
         self.assertNotIn("transcript contents", prompt)
         line = json.dumps({"type": "event", "api_key": "private-value", "message": "Bearer abcdefghijklmnop"})
         safe = runner.safe_output(line)
@@ -891,15 +910,28 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                                               for path in add_dirs[1:]))
                     self_test.assertIn("Do not use, request, or infer the implementation-session transcript", self.prompt)
                     report_path = Path(add_dirs[0]) / "validation.json"
-                    report_path.write_text(json.dumps({"schema": "custodian.validation.result.v1", "passed": True,
-                                                       "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
+                    self_test.assertEqual(json.loads(report_path.read_text())["passed"], True)
+                    self_test.assertIn("REVIEW_SAMPLE_CLAUDE_SUMMARY.md", self.prompt)
+                    self_test.assertIn("SAMPLE_IMPL_CLAUDE_SUMMARY.md", self.prompt)
+                    self_test.assertIn("abc123", self.prompt)
                     (cache_root / "reviewer-write-probe").write_text("writable\n")
                     output_path = Path(self.argv[self.argv.index("--output-last-message") + 1])
                     output_path.write_text("review complete\n")
                     return self.returncode
 
+            def fake_host_validation(_worktree, run_dir, _reviewed_main, implementation_commit):
+                report = {"schema": "custodian.validation.result.v1", "passed": True,
+                          "coverage": {"complete": True}, "tests": [{"id": "focused", "status": "passed"}]}
+                (run_dir / "validation.json").write_text(json.dumps(report))
+                (run_dir / "coordinator-validation.json").write_text("{}")
+                return {"implementation_commit": implementation_commit, "implementation_parent": "b" * 40,
+                        "report_path": str(run_dir / "validation.json"), "report_sha256": "abc123",
+                        "metadata_sha256": "def456", "summary": {"passed": 1}, "selected": ["focused"]}
+
             with patch.object(runner, "validate_eligible_review", return_value=(packet_path, review_packet(), runner.parse_packet(packet_path, review_packet()))), \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
+                 patch.object(runner, "run_coordinator_validation", side_effect=fake_host_validation), \
+                 patch.object(runner, "verify_coordinator_validation"), \
                  patch.object(runner.subprocess, "run", side_effect=run_side_effect), \
                  patch.object(runner.subprocess, "Popen", side_effect=lambda argv, **kwargs: FakeCodex(argv, **kwargs)), \
                  patch.object(runner, "git", side_effect=git_side_effect), \
@@ -925,6 +957,129 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             self.assertEqual(metadata["next_handoff"].splitlines()[0], "- Next workstream: none")
             failed_run = next(path for path in run_dirs if json.loads((path / "metadata.json").read_text())["phase"] == "failed_missing_durable_review_state")
             self.assertTrue((failed_run / "RECOVERY.md").is_file())
+
+
+class PairedReviewHostValidationTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "repo"
+        self.root.mkdir()
+        self.run_dir = Path(self.temp.name) / "run"
+        self.run_dir.mkdir()
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        subprocess.run(["git", "-C", str(self.root), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(self.root), "config", "user.email", "test@example.invalid"], check=True)
+        (self.root / "README.md").write_text("base\n")
+        self._commit("base")
+        self.base = self._git("rev-parse", "HEAD")
+        self.changed_paths = [
+            "custodian/game/world/transfer.gd",
+            "custodian/tools/validation/transfer_smoke.gd",
+        ]
+        for path in self.changed_paths:
+            target = self.root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("extends RefCounted\n")
+        self._commit("implementation")
+        self.implementation = self._git("rev-parse", "HEAD")
+        self.reviewed_main = self.implementation
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def _git(self, *args):
+        return subprocess.run(["git", *args], cwd=self.root, check=True, text=True,
+                              capture_output=True).stdout.strip()
+
+    def _commit(self, message):
+        subprocess.run(["git", "add", "."], cwd=self.root, check=True)
+        subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)
+
+    def _report(self, *, passed=True, changed_paths=None, selected=True):
+        files = list(self.changed_paths if changed_paths is None else changed_paths)
+        ids = ["transfer_smoke"] if selected else []
+        return {
+            "schema": "custodian.validation.result.v1",
+            "passed": passed,
+            "changed_files": files,
+            "selected": ids,
+            "tests": ([{"id": "transfer_smoke", "status": "passed"}] if selected else []),
+            "summary": {"selected": len(ids), "passed": len(ids), "failed": 0,
+                        "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
+            "coverage": {"complete": True, "covered_files": files, "uncovered_files": [],
+                         "excluded_files": [], "covered_by": {path: ids for path in files}},
+        }
+
+    def _run(self, report, *, source_edit=False):
+        def execute(command, cwd):
+            self.assertEqual(Path(cwd), self.root)
+            self.assertEqual(command[-4:], ["--changed", "--base", self.base, "--json"])
+            self.assertNotIn("--no-godot-lock", command)
+            if source_edit:
+                (self.root / self.changed_paths[0]).write_text("modified after validation\n")
+            return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+        return execute
+
+    def _run_validation(self, report=None, **kwargs):
+        return host_validation.run_coordinator_validation(
+            self.root, self.run_dir, self.reviewed_main, self.implementation,
+            run_validation=self._run(report or self._report(), **kwargs),
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+
+    def test_host_runs_canonical_changed_gate_from_pinned_parent_and_verifies_evidence(self):
+        evidence = self._run_validation()
+
+        self.assertEqual(evidence["implementation_parent"], self.base)
+        self.assertEqual(evidence["implementation_commit"], self.implementation)
+        self.assertEqual(evidence["reviewed_main"], self.reviewed_main)
+        self.assertEqual(set(evidence["implementation_paths"]), set(self.changed_paths))
+        self.assertEqual(evidence["report_sha256"], hashlib.sha256(
+            (self.run_dir / "validation.json").read_bytes()).hexdigest())
+        verified = host_validation.verify_coordinator_validation(
+            self.root, self.run_dir, self.reviewed_main, self.implementation,
+            expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+
+    def test_host_rejects_vacuous_or_failed_validation_reports(self):
+        for report in (self._report(selected=False), self._report(passed=False)):
+            with self.subTest(report=report):
+                with self.assertRaises(host_validation.HostValidationError):
+                    self._run_validation(report)
+
+    def test_host_rejects_report_that_does_not_cover_implementation_diff(self):
+        report = self._report(changed_paths=["README.md"])
+        with self.assertRaisesRegex(host_validation.HostValidationError, "implementation diff"):
+            self._run_validation(report)
+
+    def test_host_rejects_source_drift_during_validation(self):
+        with self.assertRaisesRegex(host_validation.HostValidationError, "source changed"):
+            self._run_validation(source_edit=True)
+
+    def test_host_socket_preflight_failure_stops_before_validation(self):
+        def socket_denied():
+            raise host_validation.HostValidationError("sandbox socket bind denied")
+
+        with self.assertRaisesRegex(host_validation.HostValidationError, "socket bind denied"):
+            host_validation.run_coordinator_validation(
+                self.root, self.run_dir, self.reviewed_main, self.implementation,
+                run_validation=lambda *_: self.fail("validation must not launch after failed preflight"),
+                capability_probe=socket_denied,
+            )
+        self.assertFalse((self.run_dir / "validation.json").exists())
+
+    def test_host_rejects_report_modified_after_reviewer_execution(self):
+        evidence = self._run_validation()
+        (self.run_dir / "validation.json").write_text(json.dumps(self._report(passed=False)))
+        with self.assertRaisesRegex(host_validation.HostValidationError, "digest"):
+            host_validation.verify_coordinator_validation(
+                self.root, self.run_dir, self.reviewed_main, self.implementation,
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
 
 
 if __name__ == "__main__":
