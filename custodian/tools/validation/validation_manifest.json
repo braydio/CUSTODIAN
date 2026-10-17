@@ -4207,6 +4207,21 @@
       "needs_import": true
     },
     {
+      "id": "procgen_showcase_exhibit_catalog",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+      "tier": "integration",
+      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "owners": [
+        "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_arena_foundation",
       "type": "godot_script",
       "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
@@ -6858,6 +6873,21 @@
         "custodian/game/ui/debug/dev_console_style.gd",
         "custodian/tools/validation/dev_console_ui_smoke.gd",
         "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "sprite_import_shared_transform",
+      "type": "python",
+      "script": "custodian/tools/validation/sprite_import_shared_transform_smoke.py",
+      "tier": "unit",
+      "tags": ["assets", "sprites", "normalization", "determinism", "negative_control"],
+      "owners": [
+        "custodian/tools/assets/sprite_import/**",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/validation/sprite_import_shared_transform_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
