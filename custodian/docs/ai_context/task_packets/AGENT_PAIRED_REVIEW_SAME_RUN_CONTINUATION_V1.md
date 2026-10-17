@@ -7,7 +7,7 @@
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
-- Depends on: `review-agent-paired-review-godot-cache-access-v1`
+- Depends on: `review-agent-paired-review-host-godot-validation-v1`
 - Locks: `agent-workflow`
 - Review: `auto`
 - Review stage: `post-land`
@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `resume of an already claimed review under pinned immutable source, independently authored disposition and coordinator-only receipt publication requires fresh verification`
 - Reviewed main: `4a88985f8b6d3c2f56c45b147d527c7288c57af9`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`
 - Goal: Allow an explicitly authorized, exact-claim continuation of a protected `post_exit_recovery` paired-review run without reclaiming, laundering coordinator validation into a reviewer PASS, losing old reviewer notes or bypassing post-land review gates.
 - Completion boundary: Add a guarded `paired_review_runner.py` continuation CLI keyed by exact existing review workstream and run ID; prove it does not create a new claim, does not overwrite preexisting evidence, verifies original checkout/provenance, requires a freshly reviewer-authored passing disposition after the original ephemeral review session was lost, then delegates only to the existing bounded coordinator verification and `workstream.py finish`.
@@ -41,6 +41,11 @@
 - Task overrides: `none`
 - Deferred: The separately audited four `awakening_designation_locker` Asset V2 catalog/runtime hash mismatches require their own source/receipt-backed publication workstream; this tool neither accepts nor repairs them.
 
+## Host validation dependency (2026-10-17)
+- The cache-access review alone does not solve Godot loopback socket failure inside restricted Codex. Host/coordinator validation must be implemented and independently accepted first via `review-agent-paired-review-host-godot-validation-v1`.
+- Fresh continuation reuses the coordinator's pinned, immutable host validation evidence, checks its digest/provenance and must still obtain a reviewer-authored verdict. Original PGA-2 and Ritualant run evidence is never rewritten or marked passed merely because a host report is green.
+- This is an execution dependency, not permission to reclaim original review branches or bypass original `run_validation.py` truth gates.
+
 ## Publication / dependency gate
 - This packet and its fresh paired review are drafted for opt-in targeted authoring validation; do not claim until the exact `review-agent-paired-review-godot-cache-access-v1` dependency has passed and archived, the automatic authoring handoff has promoted BOTH to `ready/auto`, and the dispatcher permits the `agent-workflow` lock.
 - The protected ambient review remains separate, active and unpassed until an independently reviewer-authored receipt actually lands. Never reclaim or duplicate it.
@@ -50,7 +55,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `new scoped same-run reviewer continuation tool needs independent code/workflow review before being used for ambient protected recovery`
 - Next action: `Implement and independently review the bounded same-run continuation API; then authorize the existing ambient claimed run's exact ID and let a fresh reviewer write a real disposition. Do not release ambient claim or manufacture a pass.`
 - Blockers or open questions: `P0 Godot cache-access implementation/review must land first; original ephemeral reviewer context cannot be resurrected`

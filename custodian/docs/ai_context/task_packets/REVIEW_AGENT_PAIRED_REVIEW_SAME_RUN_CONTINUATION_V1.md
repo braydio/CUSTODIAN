@@ -13,7 +13,7 @@
 - Review target workstream: `agent-paired-review-same-run-continuation-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_SAME_RUN_CONTINUATION_V1.md`
 - Reviewed main: `4a88985f8b6d3c2f56c45b147d527c7288c57af9`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -30,6 +30,9 @@
 - Non-goals: No editor/runtime procgen changes, no reviewer-fabricated PASS, no generic orphan branch parking or altering Godot cache ownership.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Host validation precondition (2026-10-17)
+- Independently verify that the implementation uses only immutable coordinator-side host validation evidence after the reviewed `agent-paired-review-host-godot-validation-v1` seam has landed. Any original run with a failed report remains blocked until fresh reviewer authorship plus a verified green report. Never treat a host validation report as an independent verdict.
+
 ## Publication Gate
 - Do not claim until implementation completes/archives and targeted authoring promotion confirms ready/auto on current main. The ambient review remains a distinct protected run and does not automatically pass when this tool passes.
 
@@ -38,7 +41,7 @@
 - Next packet state: `preserved-claimed-recovery`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `operator must explicitly authorize new fresh reviewer context inside original preserved run; original ephemeral session is not resumable`
 - Next action: `Use the independently reviewed same-run continuation tool only on original ambient run ID 20261015T224943Z-5a721f81880e; obtain authentic independent reviewer disposition; then coordinator-owned bounded closeout.`
 - Blockers or open questions: `Do not mark ambient review passed from coordinator validation alone.`
