@@ -114,7 +114,9 @@ for i,f in ipairs(cfg.annotations.frames) do
         local candidate=solve_frame(i,adjust)
         local leg=candidate[f.support]
         local k=sub(leg.knee,leg.hip);local a=sub(leg.ankle,leg.hip)
-        local compatible=not leg.target_clamped and leg.knee_fit_error<=cfg.annotations.controls.max_knee_fit_error_px
+        local donor_dx=refs[i].ankle_near.x-refs[i].ankle_far.x
+        local candidate_dx=candidate.near.ankle.x-candidate.far.ankle.x
+        local compatible=candidate_dx*donor_dx>0 and not leg.target_clamped and leg.knee_fit_error<=cfg.annotations.controls.max_knee_fit_error_px
           and (k.x*a.y-k.y*a.x)*cfg.motion_plan.branches[f.support]>0
         for _,neighbor in ipairs({((i-2)%15)+1,(i%15)+1}) do
           local planned=cfg.motion_plan.frames[neighbor].legs[f.support]
@@ -144,6 +146,8 @@ for i,f in ipairs(cfg.annotations.frames) do
     row.legs={};row.missing_hidden=missing
     for _,side in ipairs({'near','far'}) do
       local leg=solved[side];row.legs[side]=leg
+      leg.continuity_ankle_correction_px=cfg.motion_plan.frames[i].legs[side].continuity_ankle_correction_px
+      leg.continuity_knee_correction_px=cfg.motion_plan.frames[i].legs[side].continuity_knee_correction_px
       if leg.target_clamped then table.insert(row.failures,side..'_unreachable') end
       if leg.knee_fit_error>cfg.annotations.controls.max_knee_fit_error_px then table.insert(row.failures,side..'_knee_fit') end
       if leg.reference_filter_deviation_px>3 then table.insert(row.warnings,side..'_reference_trajectory_filter_deviation') end
@@ -153,6 +157,7 @@ for i,f in ipairs(cfg.annotations.frames) do
     end
     local result=Image(128,128,ColorMode.RGB);result:clear()
     for _,entry in ipairs(DRAW_ORDER) do if parts[entry.name] then result:drawImage(parts[entry.name]) end end
+    row.occlusion=audit_pose_occlusion(parts,DRAW_ORDER,f.support)
     local qa=make_reference_qa(refs[i],solved,solved.derived_preset,feet,check)
     app.activeSprite=output
     output:newCel(clean_layer,i,result,Point(0,0))

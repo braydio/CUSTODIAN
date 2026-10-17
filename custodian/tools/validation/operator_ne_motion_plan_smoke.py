@@ -5,8 +5,6 @@ import copy
 import json
 import math
 import sys
-import subprocess
-import tempfile
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'custodian/tools/operator/ne_walk_retarget'))
 from motion_plan import two_bone, transition_cost, validate_plan, dist
 
@@ -55,7 +53,7 @@ def crossover_regressions():
     annotations=json.loads((HERE/'annotations.json').read_text())
     authority=json.loads((HERE/'donor_authority.json').read_text())
     assert annotations['source_sha256']==authority['source_sha256']
-    assert authority['full_cycle_regeneration_authorized'] is False
+    assert authority['full_cycle_regeneration_authorized'] is True
     assert len(set(authority['calibration_frames']))==5
     pivots={'near':[(63,75),(65,89),(66,100),(75,104)],'far':[(53,75),(52,83),(50,88),(48,91)]}
     rig={'pivots':{'pelvis':{'x':61,'y':66}},'metrics':{}}
@@ -85,11 +83,29 @@ def crossover_regressions():
     try:calibration_plan(bad,rig)
     except ValueError:pass
     else:raise AssertionError('calibration may not relax V6 thresholds')
-    with tempfile.TemporaryDirectory() as folder:
-        output=Path(folder)/'full-cycle-must-not-exist'
-        attempt=subprocess.run([sys.executable,str(HERE/'run.py'),'--bundle',folder,'--rig',str(Path(folder)/'missing.aseprite'),'--output',str(output)],capture_output=True,text=True)
-        assert attempt.returncode!=0 and 'five crossover calibration poses require review' in attempt.stderr
-        assert not output.exists(),'full-cycle gate must stop before rendering/writing output'
+    from continuity import fit, validate_crossover, require_authority
+    acceptance=json.loads((HERE/'crossover_acceptance.json').read_text())
+    require_authority(annotations,authority,acceptance)
+    for gate in ('authorization','receipt','annotations'):
+        aa,dd,rr=copy.deepcopy(annotations),copy.deepcopy(authority),copy.deepcopy(acceptance)
+        if gate=='authorization':dd['full_cycle_regeneration_authorized']=False
+        if gate=='receipt':rr['accepted_by']='agent'
+        if gate=='annotations':aa['frames'][3]['landmarks']['ankle_near']['xy'][0]+=1
+        try:require_authority(aa,dd,rr)
+        except ValueError:pass
+        else:raise AssertionError('missing/changed acceptance must block '+gate)
+    fitted=fit(annotations,rig,acceptance)
+    validate_plan(fitted,annotations,rig)
+    validate_crossover(fitted,annotations,acceptance)
+    assert all(math.isfinite(transition_cost(fitted['frames'][i-1],fitted['frames'][i],LIMITS)) for i in range(15))
+    for defect in ('lead','envelope'):
+        bad=copy.deepcopy(fitted)
+        if defect=='lead':bad['frames'][4]['legs']['near']['ankle']['x']=bad['frames'][4]['legs']['far']['ankle']['x']+1
+        else:bad['frames'][11]['legs']['near']['toe']['x']+=20
+        try:validate_crossover(bad,annotations,acceptance)
+        except ValueError:pass
+        else:raise AssertionError('crossover validation missed '+defect)
+    print('PASS continuity: six transition failures corrected; accepted mapping/input locks, bounded calibration deviations, cyclic branches, lead order, missing-acceptance and geometry negative controls')
     print('PASS crossover calibration: exact donor lock, 15 traces, two lead reversals, stable branches, five-pose gate, full-cycle failure disclosure')
 
 if __name__=='__main__':main()

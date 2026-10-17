@@ -1,0 +1,266 @@
+{
+  "schema": "custodian.ne_crossover_acceptance.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "checkpoint": "65369509d",
+  "accepted_by": "human_user",
+  "scope": "five-pose crossover foundation; continuity fitting and full-cycle preview authorized",
+  "annotations_sha256": "a96b58383aaf38f3215c929e4411eb45e10e0e73bf031a93e25d31e2ce751f58",
+  "mapping_sha256": "b7ad5dc37a494aff39d4f8a4d95a72b8ee8f63d99197dfbb03a9f6dbcf386431",
+  "rig_sha256": "b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5",
+  "source_sha256": "20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba",
+  "calibration_frames": [
+    12,
+    2,
+    7,
+    5,
+    15
+  ],
+  "leg_identities": "accepted",
+  "f07_hidden_far_sole": "accepted_legitimate_occlusion_do_not_force_exposure",
+  "f05_robe_coverage": "accepted_with_caution_local_distal_review_only",
+  "support_handoffs": [
+    [
+      6,
+      7
+    ],
+    [
+      13,
+      14
+    ]
+  ],
+  "support_status": "provisionally_accepted_working_handoffs_verify_dynamically",
+  "animation_accepted": false,
+  "runtime_publication_accepted": false,
+  "timing_fps": null,
+  "reviewed_manifest": "/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json",
+  "calibration_report_sha256": "dc7fbcd46ea55387f669264add055a159a6bca926a4e98344f16c7c0cc8ee00d",
+  "pose_locks": {
+    "12": {
+      "far": {
+        "hip": {
+          "x": 53,
+          "y": 75
+        },
+        "knee": {
+          "x": 50.013482503860445,
+          "y": 82.48870571228782
+        },
+        "ankle": {
+          "x": 47.165368110293535,
+          "y": 87.0590716058632
+        },
+        "toe": {
+          "x": 46.55848712423573,
+          "y": 90.6131812649426
+        },
+        "thigh_delta": 14.617240093481398,
+        "shin_delta": 10.128508331809444,
+        "foot_delta": -24
+      },
+      "near": {
+        "hip": {
+          "x": 63,
+          "y": 75
+        },
+        "knee": {
+          "x": 74.76696810829101,
+          "y": 82.8446454055274
+        },
+        "ankle": {
+          "x": 85.0223283551621,
+          "y": 86.94678950427578
+        },
+        "toe": {
+          "x": 94.87118404624871,
+          "y": 86.94034154716398
+        },
+        "thigh_delta": -48.179830119864036,
+        "shin_delta": -63.004161605913644,
+        "foot_delta": -24
+      }
+    },
+    "2": {
+      "far": {
+        "hip": {
+          "x": 53,
+          "y": 75
+        },
+        "knee": {
+          "x": 54.58113883008421,
+          "y": 82.90569415042094
+        },
+        "ankle": {
+          "x": 53.27504451766216,
+          "y": 88.13007140010906
+        },
+        "toe": {
+          "x": 52.66816353160436,
+          "y": 91.68418105918846
+        },
+        "thigh_delta": -18.434948822922134,
+        "shin_delta": -7.765166018425153,
+        "foot_delta": -24
+      },
+      "near": {
+        "hip": {
+          "x": 63,
+          "y": 75
+        },
+        "knee": {
+          "x": 60.660172315676434,
+          "y": 88.94722934520233
+        },
+        "ankle": {
+          "x": 55.635234053687576,
+          "y": 98.78338690103685
+        },
+        "toe": {
+          "x": 63.8299790865636,
+          "y": 104.24655025628752
+        },
+        "thigh_delta": 17.653525834798447,
+        "shin_delta": 32.25527972085845,
+        "foot_delta": 9.72757855140159
+      }
+    },
+    "7": {
+      "far": {
+        "hip": {
+          "x": 53,
+          "y": 75
+        },
+        "knee": {
+          "x": 54.32542700921504,
+          "y": 82.95256205529031
+        },
+        "ankle": {
+          "x": 53.26930930015767,
+          "y": 88.23315060057723
+        },
+        "toe": {
+          "x": 52.66242831409987,
+          "y": 91.78726025965663
+        },
+        "thigh_delta": -16.587338556927335,
+        "shin_delta": -10.491477012331758,
+        "foot_delta": -24
+      },
+      "near": {
+        "hip": {
+          "x": 63,
+          "y": 75
+        },
+        "knee": {
+          "x": 58.52786404500039,
+          "y": 88.41640786499873
+        },
+        "ankle": {
+          "x": 52.107878358395176,
+          "y": 97.4043878262461
+        },
+        "toe": {
+          "x": 58.70284090487539,
+          "y": 104.7191994444987
+        },
+        "thigh_delta": 26.565051177078107,
+        "shin_delta": 40.73210669970901,
+        "foot_delta": 24
+      }
+    },
+    "5": {
+      "far": {
+        "hip": {
+          "x": 53,
+          "y": 75
+        },
+        "knee": {
+          "x": 59.91332898443715,
+          "y": 79.1479973906623
+        },
+        "ankle": {
+          "x": 64.91332898443716,
+          "y": 77.1479973906623
+        },
+        "toe": {
+          "x": 64.30644799837935,
+          "y": 80.7021070497417
+        },
+        "thigh_delta": -66.16125981682823,
+        "shin_delta": -133.6028189727036,
+        "foot_delta": -24
+      },
+      "near": {
+        "hip": {
+          "x": 63,
+          "y": 75
+        },
+        "knee": {
+          "x": 55.163278460348714,
+          "y": 86.77224683354736
+        },
+        "ankle": {
+          "x": 50.26901700378029,
+          "y": 96.67407518970202
+        },
+        "toe": {
+          "x": 57.233211142372355,
+          "y": 103.63826932829409
+        },
+        "thigh_delta": 41.781595606856015,
+        "shin_delta": 31.496628856107012,
+        "foot_delta": 21.03751102542181
+      }
+    },
+    "15": {
+      "far": {
+        "hip": {
+          "x": 53,
+          "y": 75
+        },
+        "knee": {
+          "x": 50.54555997386877,
+          "y": 82.67956536257911
+        },
+        "ankle": {
+          "x": 48.02469356641235,
+          "y": 87.43826608396913
+        },
+        "toe": {
+          "x": 47.41781258035455,
+          "y": 90.99237574304853
+        },
+        "thigh_delta": 10.599208197983728,
+        "shin_delta": 6.110476436313098,
+        "foot_delta": -24
+      },
+      "near": {
+        "hip": {
+          "x": 63,
+          "y": 75
+        },
+        "knee": {
+          "x": 61.264186271330516,
+          "y": 89.03520397783241
+        },
+        "ankle": {
+          "x": 58.51739356691825,
+          "y": 99.73357440696728
+        },
+        "toe": {
+          "x": 66.71213859979427,
+          "y": 105.19673776221795
+        },
+        "thigh_delta": 15.180397310424555,
+        "shin_delta": 19.594017168330293,
+        "foot_delta": 9.72757855140159
+      }
+    }
+  },
+  "pose_png_sha256": {
+    "12": "1614342278d52b88cc60e7dbf7dea268af3328c44f32a1588118f3fe0c36613a",
+    "2": "2e9db71a186ce60e650944c4c826226f7659875e32a7350d3739fbc40676a0e4",
+    "7": "e5f18acef722ad4560a559e120626f6c57ab5216815a993ea8713a85f1e96658",
+    "5": "6c4cb775b172959d272877b71363a09990fa28c5d88e3ad046ad4dc2528cb003",
+    "15": "55bbd999dcf9190d80d59cf99985eee3f2bb31c7c738797984bc0fb6acfd85a4"
+  }
+}

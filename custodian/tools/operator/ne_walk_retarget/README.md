@@ -1,10 +1,65 @@
-# Operator NE walk V6 — donor correction / crossover calibration
+# Operator NE walk V6 — continuity after accepted crossover calibration
+
+Workstream: `operator-2-5d-ne-walk-retargeting`
+
+## Current slice and authority
+
+The human accepted the five-pose calibration at checkpoint `65369509d`, including
+F07's legitimate hidden sole, F05's readability caution and working support handoffs
+6/7 and 13/14. `crossover_acceptance.json` pins the exact annotations, mapping code,
+reviewed pose geometry/pixels, donor and rig. It authorizes continuity fitting and
+full-cycle **preview**, not animation acceptance, runtime publication or timing.
+The calibration review manifest has been cleaned after recording this decision.
+
+```bash
+python3 custodian/tools/operator/ne_walk_retarget/run.py \
+  --bundle ~/Downloads/operator_ne_master_audit_implementation_v1/authoritative_ne_donor_v1 \
+  --rig ~/Downloads/operator_ne_master_audit_implementation_v1/anatomy_recovery_verified/operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite \
+  --output ~/Downloads/operator_ne_master_audit_implementation_v1/continuity_preview_new
+```
+
+Requires the prior Python/Pillow + Aseprite dependencies and the tested NumPy/SciPy
+versions in `requirements-continuity.txt`. Nothing installs dependencies silently.
+The CLI verifies human acceptance before writing output or starting Aseprite.
+Accepted `annotations.json` and `crossover.py` are unchanged and hash-checked.
+
+`continuity.py` fits joint angles around that same segment-direction mapping using
+SLSQP. It retains exact rig lengths, pelvis/hip geometry, one knee branch per leg,
+all-frame lead ordering, and at least 75% of target ankle separation. The five
+reviewed poses stay immutable as reference targets, with a 6px maximum fitted
+joint deviation; actual deviations are recorded separately. They cannot all stay
+exact in a continuous cycle: F12→F15 near-toe displacement is 33.56px across three
+steps, while the unchanged 8px step limit permits at most 24px. No accepted input
+pose, source art, annotation or mapping is rewritten to fit this constraint.
+
+The fitter uses tighter internal 7.6px / 58° guards to leave room for bounded raster
+contact correction. Acceptance remains 8px fit / 8px joint step / 60° rotation,
+2px x / 1px y rendered sole contact. The old ±24° pitch cap remains and its known
+far-toe mismatch is not an exact-pose claim. Objective conditioning does not
+change any geometric acceptance threshold. Five reviewed targets receive greater
+fit weight; a small cyclic acceleration cost distributes correction without the
+old phase filter, neutral ankle bias or swing attenuation.
+
+The ordinary batch uses the fitted knee as IK preference, preventing the varying
+near-straight branch choices in the five static renders from leaking into the
+cycle. Existing independent 2° upper-body and robe phase controls are retained.
+`occlusion.lua` only measures overlap, visible limb pixels and support-sole
+occluders; it never changes draw order. No local repainting or forced exposure of
+F07's sole is performed. F05 remains a focused human readability question.
+
+Outputs include all 15 clean cells, a 1920×128 strip, editable Aseprite preview,
+QA, per-frame contacts and seam checks, calibrated-pose deviations and an HTML
+loop viewer. Playback requires an explicit review-rate selection; mandatory
+Aseprite editor durations are placeholders and timing remains unknown. Full-cycle
+visual acceptance is a separate human gate. No merge or runtime publication.
+
+## Accepted calibration implementation (retained reference)
 
 Workstream: `operator-2-5d-ne-walk-retargeting`
 
 `CROSSOVER_CORRECTION_BRIEF.md` is the current bounded slice. `BRIEF.md` and
 `MASTER_AUDIT_BRIEF.md` remain underlying contracts. The prior full-cycle animation
-was rejected; the rig is still accepted. `donor_authority.json` pins the actual
+was rejected; the rig and subsequent crossover calibration are accepted. `donor_authority.json` pins the actual
 `~/Knight_NE_Reference.png` NE strip. Do not investigate the revoked direction concern.
 No merge, source/runtime publication, or timing decision is authorized.
 
@@ -27,7 +82,9 @@ ZIP/bundle remain untouched. Source reference is not a runtime asset family.
 sheet, stable anatomical identities, visibility/inference notes and provisional
 support. An opaque brown boot tip has an explicit sampled-material review; dark
 or transparent pixels alone never authenticate anatomy. Inferred occluded pivots
-are allowed to fall off opaque pixels. All annotations need human review.
+are allowed to fall off opaque pixels. The human acceptance receipt now accepts
+this crossover foundation; the frozen trace provenance/status text is historical.
+Support handoffs remain provisionally accepted for dynamic full-cycle review.
 
 Screen ankle order reverses at 2→3 and 7→8. Provisional support changes at 6→7 and
 13→14; support and foreground depth are separate from screen lead. Calibration
@@ -59,10 +116,8 @@ The human must judge whether this presentation preserves readable crossover.
 
 Outputs include five clean native 128px PNGs, a compact comparison, five ownership
 masks, 15 annotated donor cells, complete annotations/plan/metrics and a run receipt.
-No animation, GIF, editor timing or runtime output is generated. The old `run.py`
-full-cycle entrypoint now refuses regeneration until the calibration decision is
-recorded in donor authority. Any later decision needs a bounded implementation;
-do not flip the gate merely to improve pass counts.
+No animation, GIF, editor timing or runtime output is generated. The full-cycle entrypoint now requires the recorded human acceptance and pinned
+calibration inputs; the continuity fitter above handles the newly authorized slice.
 
 Mechanical fixture tests are in `operator_ne_motion_plan_smoke.py`; real Aseprite
 and the accepted rig remain necessary to establish rendered pose/contact evidence.

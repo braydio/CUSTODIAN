@@ -1,0 +1,3 @@
+# Tested numerical environment for the bounded authoring-only continuity fitter.
+numpy==2.5.4
+scipy==1.18.1

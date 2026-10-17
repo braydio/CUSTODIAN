@@ -42,3 +42,14 @@ pre-implementation HEAD; Codex removed that upload without a visual approval.
 The v2 calibration decision is pending. After recording the human decision, run
 the emitted delete-after-review cleanup command. Full-cycle regeneration remains
 gated; neither calibration upload nor static 5/5 constitutes animation acceptance.
+
+## Human calibration decision — checkpoint 65369509d
+
+ACCEPTED for continuity fitting. See `crossover_acceptance.json` for hash-bound
+inputs. Identities and crossover are accepted. F07 hidden far sole is legitimate;
+do not force exposure. F05 remains acceptable with a local distal readability
+caution. Support handoffs 6/7 and 13/14 are accepted provisionally and must be
+verified dynamically. Authorize continuity/transition fitting, bounded local
+occlusion review, then full 15-frame preview regeneration. Preserve accepted
+mapping, annotations, rig/source, donor and existing thresholds. No donor/rig
+recovery, whole-limb swaps, merge, runtime publication or timing approval.

@@ -82,7 +82,7 @@ def alpha_voids(image):
 
 def analyze(out, annotations, preflight, rig_sha, core_sha):
     r=json.loads((out/'aseprite_report.json').read_text())
-    r.update(implementation_sha256={name:sha(HERE/name) for name in ('motion_plan.py','batch.lua','rigid_raster.lua','run.py','review_viewer.py')},controls=annotations['controls'],input_validation=preflight, rig_sha256=rig_sha, v55_sha256=core_sha,
+    r.update(implementation_sha256={name:sha(HERE/name) for name in ('motion_plan.py','continuity.py','occlusion.lua','batch.lua','rigid_raster.lua','run.py','review_viewer.py')},controls=annotations['controls'],input_validation=preflight, rig_sha256=rig_sha, v55_sha256=core_sha,
              annotations_sha256=sha(out/'annotations.json'),timing_fps=None,
              accepted=False,human_visual_review='pending',timing_authority=False)
     limits=annotations['controls']
@@ -138,6 +138,17 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
         t['changed_pixels']=sum(a!=b for a,b in zip(fa.getdata(),fb.getdata()))
         t['max_joint_step_px']=max(t['joint_steps'].values())
         transitions.append(t)
+    from continuity import validate_crossover
+    acceptance=json.loads((HERE/'crossover_acceptance.json').read_text())
+    rendered={'frames':r['frames']}
+    try:validate_crossover(rendered,annotations,acceptance)
+    except ValueError as e:
+        r['crossover_validation_error']=str(e)
+        for row in r['frames']:row['failures'].append('accepted_crossover_contract')
+    r['calibration_acceptance']=acceptance
+    r['continuity_plan']=json.loads((out/'motion_plan.json').read_text())
+    r['maximum_continuity_target_deviation_px']=max(l.get('reference_filter_deviation_px',0) for f in r['frames'] for l in f['legs'].values())
+    r['calibration_deviations']={key:{s:{j:distance(r['frames'][int(key)-1]['legs'][s][j],expected[j]) for j in ('hip','knee','ankle','toe')} for s,expected in legs.items()} for key,legs in acceptance['pose_locks'].items()}
     r['reference_transitions']=[]
     for i,f in enumerate(annotations['frames']):
         prev=annotations['frames'][i-1]
@@ -163,7 +174,7 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
     assert r['palette_identity_passed'], 'preview invented source colors'
     r['rig_diagnostics']={side:{'shin_length_px':m['shin_len'],'thigh_length_px':m['thigh_len'],
         'shin_to_thigh_ratio':m['shin_len']/m['thigh_len']} for side,m in r['rig_metrics'].items()}
-    r['limitations']=['Provisional agent traces and support schedule require human confirmation.',
+    r['limitations']=['Crossover identities accepted; support handoffs 6/7 and 13/14 provisionally accepted for dynamic review.',
         'Upper body and robe additions use explicit phase controls; timing remains unknown.',
         'Source rig neutral far/near soles lie on different screen-depth planes.',
         'No true world-space support-plane or swing-clearance inference from this single view.',
@@ -203,12 +214,14 @@ def main():
     annotations=json.loads(a.annotations.read_text())
     authority=json.loads((HERE/'donor_authority.json').read_text())
     assert annotations['source_sha256']==authority['source_sha256'], 'superseded donor authority'
-    assert authority['full_cycle_regeneration_authorized'], 'five crossover calibration poses require review before full-cycle regeneration'
+    from continuity import require_authority
+    require_authority(annotations,authority,json.loads((HERE/'crossover_acceptance.json').read_text()))
     preflight=validate(a.bundle,annotations)
     dep=json.loads((HERE/'v55_dependency.json').read_text());assert sha(a.v55)==dep['sha256'],'V5.5 dependency drift'
     rig_sha=sha(a.rig)
     acceptance=json.loads((HERE/'rig_acceptance.json').read_text())
     assert rig_sha==acceptance['rig_sha256'],'V6 must use the human-accepted rig baseline'
+    assert rig_sha==json.loads((HERE/'crossover_acceptance.json').read_text())['rig_sha256'],'crossover rig identity changed'
     a.output.mkdir(parents=True)
     write(a.output/'annotations.json',annotations)
     write(a.output/'input_validation.json',preflight)
@@ -228,10 +241,10 @@ def main():
         write(a.output/'RIG_BLOCKED.json',{'rig_sha256':rig_sha,
               'blocking_findings':rig_audit['blocking_findings'],'v6_solver_started':False})
         raise RuntimeError('Rig gate refused before V6: '+', '.join(rig_audit['blocking_findings']))
-    from motion_plan import plan
-    motion=plan(annotations,rig_audit)
+    from continuity import fit
+    motion=fit(annotations,rig_audit)
     write(a.output/'motion_plan.json',motion)
-    driver=a.output/'batch_generated.lua';driver.write_text(core+'\n'+(HERE/'rigid_raster.lua').read_text()+'\n'+(HERE/'batch.lua').read_text())
+    driver=a.output/'batch_generated.lua';driver.write_text(core+'\n'+(HERE/'rigid_raster.lua').read_text()+'\n'+(HERE/'occlusion.lua').read_text()+'\n'+(HERE/'batch.lua').read_text())
     cfg={'bundle':str(a.bundle),'output':str(a.output),'annotations':annotations,'motion_plan':motion}
     command=[a.aseprite,'-b',str(a.rig),'--script-param','config='+json.dumps(cfg,separators=(',',':')),'--script',str(driver)]
     result=subprocess.run(command,capture_output=True,text=True)

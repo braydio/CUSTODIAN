@@ -28,6 +28,8 @@
     "opposite_leg_lead",
     "return_toward_seam"
   ],
-  "full_cycle_regeneration_authorized": false,
-  "timing_fps": null
+  "full_cycle_regeneration_authorized": true,
+  "timing_fps": null,
+  "calibration_decision": "accepted_for_continuity_fitting",
+  "calibration_acceptance_checkpoint": "65369509d"
 }

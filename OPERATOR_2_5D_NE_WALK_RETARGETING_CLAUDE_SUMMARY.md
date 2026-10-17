@@ -1,174 +1,197 @@
-# Operator V6 — exact NE donor and crossover calibration checkpoint
+# Operator V6 — accepted crossover, full-cycle continuity checkpoint
 
 Workstream: operator-2-5d-ne-walk-retargeting
 Authoring chat: not-recorded
-Status: **five calibration poses uploaded; human calibration review required**.
-This is a retained branch checkpoint, not a completed/merged animation workstream.
-No runtime publication or timing decision. Rig recovery remains closed.
+Status: **bounded continuity implementation validated; full 15-frame visual review
+pending**. Retain branch/worktree/checkpoints. No main merge, runtime publication
+or timing approval. Human calibration acceptance does not accept this animation.
 
-## Current human decision and source lock
+## Human decision recorded
 
-The user rejects the previous V6 animation and revokes the east-facing donor
-concern. The actual NE donor is `~/Knight_NE_Reference.png`, SHA256
-`20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba`.
-It is 1920x128 RGBA, 15 native 128px cells. It differs from the old ZIP strip in
-26,103 RGBA pixels. `donor_authority.json` pins exact bytes and raw RGBA pixels;
-`CROSSOVER_CORRECTION_BRIEF.md` records the human correction and five-pose boundary.
+At checkpoint `65369509d`, the human ACCEPTED the five-pose crossover foundation:
+leg identities and gait alternation credible; F07 hidden far sole legitimate;
+F05 robe coverage acceptable with caution; support handoffs 6/7 and 13/14 accepted
+provisionally as working transitions. Authorized bounded continuity/transition
+fitting, local occlusion review if needed and full 15-frame regeneration.
 
-Immutable source-only bundle/crops:
-`~/Downloads/operator_ne_master_audit_implementation_v1/authoritative_ne_donor_v1/`.
-All 15 file hashes and exact reassembly pass. Original home source and previous
-ZIP/bundle are preserved. No generic runtime asset family or ingest was created.
+`crossover_acceptance.json` records that decision, exact source/rig/annotation/
+mapping hashes, reviewed pose geometry and PNG hashes. `donor_authority.json`
+authorizes full preview regeneration; CLI requires the human receipt and unchanged
+accepted inputs before writing output. `CROSSOVER_CORRECTION_BRIEF.md` carries the
+native decision continuation. No new/duplicate task packet was invented.
 
-Accepted rig remains `operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite`, SHA256
-`b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5`.
-Locked original `SINGLE_FRAME.aseprite` remains SHA256
-`0f5b3346044e60581db6e38e41fc292bd2b49ca05c291ada9591495765166149`
-(as pinned in rig_acceptance.json and measured locked_input_hashes.json).
-The accepted far pivots (53,75)/(52,83)/(50,88)/(48,91), 52/47/21 segmentation,
-four hidden cover pixels and neutral identity are unchanged. No recovered-source
-11-pixel differences were incorporated. Final hash checks confirm all three inputs
-unchanged. Original checkpoints 230a0b207, 8a254e0f1, 78598929a and 2ff294117 remain
-in ancestry; resume merged fetched origin/main at 2d005547d without landing this work.
+The accepted calibration Dropbox manifest
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json`
+was cleaned after recording the decision; publisher returned `deleted` and removed
+its latest pointer. This decision and receipt remain durable in Git.
 
-## What this slice changed
+## Immutable authority preserved
 
-- Replaced all 135 provisional landmarks with exact-sheet traces; recorded stable
-  anatomical identity, visible/occluded estimates, editable support hypotheses,
-  crossing metadata and no invented numeric confidence. Inferred coordinates need
-  not hit opaque pixels. Frame 7's dark brown toe has a source-sampled material
-  note; visibility validation does not silently mistake its boot color for shadow.
-- New `crossover.py` / `calibration.lua` render exactly five static poses, using
-  the pinned V5.5 helper core and shared inverse rigid raster. No full cycle is
-  regenerated. Segment-direction transfer removes the former per-ankle neutral
-  bias, swing attenuation and cyclic smoothing from this isolated calibration.
-- Stable near+ / far− IK retains exact accepted lengths. Explicit inward target
-  corrections ≤0.051px respect the existing .05px reach safety margin. Existing
-  fit/contact/step/rotation thresholds remain unchanged. Secondary motion is
-  neutral to isolate the leg presentation; old secondary implementation is retained.
-- The actual pose masks quantify limb/distal overlap, costume coverage, visible
-  limb pixels and support-sole occluders. No whole-limb draw-order swaps were added.
-- `run.py` rejects superseded donor authority and refuses full-cycle regeneration
-  until the calibration gate is explicitly resolved. Negative controls exercise
-  these refusals; existing annotations cannot silently feed the old full batch.
-- Updated native README and FILE_INDEX; extended the existing motion smoke test
-  with source lock, all-15 crossover/branch/length checks and pre-write full-cycle
-  gate rejection. No task packet was duplicated; native briefs remain authority.
+- Actual NE donor `~/Knight_NE_Reference.png`, SHA256
+  `20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba`.
+- Original `~/Downloads/SINGLE_FRAME.aseprite`, 2191 opaque pixels, SHA256
+  `0f5b3346044e60581db6e38e41fc292bd2b49ca05c291ada9591495765166149`.
+- Accepted `operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite`, SHA256
+  `b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5`.
+- All 135 annotated coordinates and `crossover.py` are byte-unchanged; accepted
+  52/47/21 far ownership, four hidden covers, pivots/lengths/palette and neutral
+  reconstruction remain intact. Recovered source's 11 differing pixels excluded.
+- Original source-only donor bundle remains under
+  `~/Downloads/operator_ne_master_audit_implementation_v1/authoritative_ne_donor_v1/`.
+  All 15 hashes and exact reassembly pass. No source/runtime ingest or asset family.
 
-## Observed results and limits
+Final `locked_input_hashes.json` confirms unchanged donor/original/rig bytes. Earlier
+checkpoints including 8a254e0f1, 2ff294117 and 65369509d remain in branch ancestry.
+No donor direction or rig recovery work was reopened.
 
-Ankle x-order reversals: **2→3 and 7→8**. Provisional support transitions:
-**6→7 and 13→14** (near 14–6, far 7–13). Lead, support and foreground ownership
-are separate concepts. These traces/support labels remain human-unaccepted.
+## Implementation and why exact static locks were infeasible
 
-Five sparse comparison poses, **12/2/7/5/15**, cover near lead, approach, crossing,
-opposite lead and seam return. They are not a five-frame animation.
+New `continuity.py` fits angles around the same accepted segment-direction mapping.
+It retains exact lengths, fixed pelvis/hips and consistent near+ / far− knee branches.
+It preserves every donor lead sign, at least 75% target ankle separation and a .5px
+internal sign margin. No old neutral ankle bias, swing attenuation or phase filter.
+Five accepted poses stay immutable as comparison targets, weighted four times the
+intermediate target cost, with a 6px maximum fitted-joint deviation.
 
-| Frame | Donor ankle dx | Operator ankle dx | Visible far pixels | Sole dx / dy px |
-|---|---:|---:|---:|---:|
-| 12 | 29 | 37.857 | 110 | 0.335 / -0.059 |
-| 2 | 3 | 2.360 | 88 | 0.467 / -0.033 |
-| 7 | -1 | -1.161 | 72 | 0.231 / 0.767 |
-| 5 | -13 | -14.644 | 17 | 0.231 / 0.326 |
-| 15 | 11 | 10.493 | 109 | 0.585 / 0.266 |
+Exact full-cycle keyframe locking is mathematically impossible under the unchanged
+8px step limit: F12→F15 near toe covers 33.56px in three steps (maximum allowed
+24px). F5→F7 far ankle also exceeds 16px in two steps. The implementation preserves
+accepted mapping/annotation/reference pixels and reports necessary fitted deviations;
+it does not overwrite those inputs or silently relax their temporal thresholds.
 
-**5/5 static pose checks pass**: contact, reach, accepted segment lengths, ≤8px
-knee fit, palette subset, binary alpha, cell bounds and donor ankle lead sign.
-Only frame 2 needs a quarter-pixel support correction (0,-0.25), re-solving IK.
-Maximum sole residuals 0.585px x / 0.767px y remain below the original 2 / 1 limits.
+The five static renders also used varying near-straight IK branches. Full-cycle
+fitting starts from stable branches in the unchanged numerical mapping, weights the
+actual accepted rendered geometry as targets and passes planned knees into render
+IK. This removes branch switching without reopening anatomical source recovery.
 
-The retained near foreground order allows both lead signs. It did not by itself
-prevent crossing once targets changed. At frame 7 the near shin covers the far
-boot's single lowest sole pixel: transformed-boot contact passes, visible sole
-count is zero. This is explicitly a visibility finding, not a claim of exposed
-support. Frame 5 has only 17 visible far-limb pixels after near leg/costume
-coverage (36 far pixels covered by costume). Human review must decide readability
-and whether any local distal correction is anatomically warranted. Do not reverse
-whole limbs to manufacture visible contact.
+SLSQP operates in exact-length angular coordinates with fixed branches, original
+fit/reach gates, cyclic seam and all-frame crossover guards. Initial solver scaling
+was poorly conditioned; normalizing objective/constraints resolved convergence.
+`requirements-continuity.txt` records tested NumPy 2.5.4 / SciPy 1.18.1; no package
+was installed or external service used. Reports record versions/iterations/residual.
 
-The old ±24° foot-pitch cap remains. Far toe mismatch after clamping is 36–126°
-in this set; near maximum 18.4°. These are not exact matched toe orientations.
-The far projected toe vector/occluded donor toe inference need review; do not
-reinterpret this as the revoked donor-facing diagnosis. Enclosed transparency
-remains a diagnostic: 7/11/8/1/3 pixels for frames 12/2/7/5/15 respectively. No hole,
-secondary-motion or overall aesthetic acceptance is claimed.
+The first mechanically valid 7.95px planning guard left F14 contact y error
+-1.136px; rendered result was 14/15 and was rejected. Planning now uses tighter
+7.6px / 58° guards to reserve raster correction room. Acceptance remains **8px fit,
+8px adjacent joint, 60° rotation, sole 2px x / 1px y**. No threshold was relaxed.
+Only F7 needs (0,-0.25)px quarter-pixel support correction, with IK re-solved.
 
-The unsmoothed all-15 numerical proposal still fails existing 8px joint / 60°
-rotation transition checks at **2→3, 6→7, 9→10, 10→11, 12→13, 13→14**.
-Branch changes and knee-fit failures: zero. The numerical 15→1 transition is within
-limits. These failures are deliberately not smoothed away before calibration.
-There is **no new 15-frame full-pass count**. Previous 3/15 → 5/15 → 15/15 numeric
-progress remains historical evidence from the superseded donor; the last animation
-is rejected. Static 5/5 is not full-cycle acceptance.
+`occlusion.lua` measures actual transformed owner masks, visible limb pixels,
+costume coverage and support-sole occluders. It never changes compositing order.
+No repaint, whole-limb swap or visibility-driven forced exposure was added. Existing
+independent upper-body 2° and robe phase controls remain. `run.py` checks rendered
+lead ordering and the calibration fitting envelope, exposes per-joint deviations
+and includes full plan/acceptance data. Viewer labels fitting deviation accurately
+and still requires an explicit non-authoritative playback rate.
 
-## Validation evidence
+## Final measured result
+
+| Measure | Current rendered result | Existing limit |
+|---|---:|---:|
+| Full frame checks | **15/15** | 15 |
+| Rendered support contacts | **15/15** | 15 |
+| Max adjacent joint step | 7.600px | 8px |
+| Max adjacent rotation | 58.000° | 60° |
+| Max knee fit | 5.395px | 8px |
+| Max sole residual x / y | 1.086 / 0.999162px | 2 / 1px |
+| Knee branch flips | 0 | 0 |
+| 15→1 max joint step | 7.600px | 8px |
+| Max enclosed transparency | 14px/frame | diagnostic, not approval |
+
+All six known transitions now pass: **2→3, 6→7, 9→10, 10→11, 12→13, 13→14**.
+Both lead-order reversals remain **2→3 and 7→8**. All cells 128×128 RGBA, strip
+1920×128, palette subset/binary alpha/bounds pass. No edge clipping. Original
+3/15 → accepted-rig 5/15 baselines are historical. The old-donor 15/15 animation was
+rejected; this is a new 15/15 result on the human-accepted crossover foundation.
+
+| Frame | Working support | Near-minus-far ankle x | Sole dx / dy px | Visible far pixels |
+|---|---|---:|---:|---:|
+| 5 | near | -14.998 | 0.064 / -0.476 | 21 |
+| 6 | near | -11.128 | 0.472 / 0.481 | 30 |
+| 7 | far | -2.482 | -0.601 / -0.280 | 75 |
+| 13 | far | 29.485 | 0.647 / -0.999 | 106 |
+| 14 | near | 23.194 | -0.158 / 0.147 | 108 |
+
+Working 6/7 and 13/14 contact/continuity checks pass, but dynamic perceptual support
+and a world-space ground plane cannot be established solely from one projection.
+F07 now has two visible sole pixels as a consequence of fitting, not forced exposure
+or a layer-order change. F05 has 21 visible far pixels vs 17 in the accepted static;
+no local occlusion edit was necessary. Human readability judgment remains required.
+
+## Fidelity costs and unresolved visual questions
+
+Max deviation from the unchanged raw mapping ankle targets is **7.340px**, including
+intermediate poses not part of the five-pose review. Exact per-joint comparisons:
+
+| Reviewed frame | Near max joint change | Far max joint change |
+|---|---:|---:|
+| 12 | 5.755px | 0.866px |
+| 2 | 1.555px | 2.071px |
+| 7 | 0.536px | 1.626px |
+| 5 | 1.365px | 0.596px |
+| 15 | 5.439px | 0.898px |
+
+All remain inside the explicit 6px reviewed-target fitting envelope. F12/F15 need
+the largest near-foot changes to meet the transition limit. The inherited ±24°
+boot-pitch cap and significant far-toe donor mismatch remain; no exact toe matching
+or new direction diagnosis. Enclosed transparent regions may be intended gaps or
+costume seams; their maximum 14px is not aesthetic approval. Numeric success is
+not acceptance of gait rhythm, secondary motion, seam or animation timing.
+
+## Concrete validation
 
 Final local output:
-`~/Downloads/operator_ne_master_audit_implementation_v1/crossover_calibration_review_v1/`
+`~/Downloads/operator_ne_master_audit_implementation_v1/v6_accepted_crossover_continuity_review_v1/`
 
-- Exact-source and accepted-rig Aseprite execution via `crossover.py`: five static
-  poses, 15 source-frame hashes/reassembly, structural rig gate and source hash
-  unchanged; `calibration_report.json`, `motion_plan.json`, `run_receipt.json`.
-- `python3 custodian/tools/validation/operator_ne_motion_plan_smoke.py`: PASS,
-  including all-15 length/branch/lead checks, unchanged-threshold negative control,
-  and full-cycle CLI refusal before writing any output.
+- Actual Aseprite `run.py` against accepted rig/exact donor: **15/15** final rendered
+  checks, source/preflight hashes/reassembly, lengths/fit/contacts/branches/crossover,
+  all 15 cyclic transitions, palette and bounds. Raw Lua log/report preserved.
+- `python3 custodian/tools/validation/operator_ne_motion_plan_smoke.py`: PASS;
+  reproduces the six baseline failures and verifies fitted cyclic invariants,
+  missing acceptance, changed annotations, inverted lead, fitting-envelope breach,
+  original segment/root/threshold and seam negative controls.
 - `python3 custodian/tools/validation/run_validation.py --changed --base HEAD --json`:
-  **11/11 PASS**, no failed/skipped/timed-out/infrastructure checks, complete changed
-  coverage. `changed_validation.json` stays local. Memory checked before sweep.
-- Old ZIP donor against corrected annotations: rejected `source hash mismatch`.
-- `git diff --check`: PASS. `locked_input_hashes.json` confirms three exact inputs.
+  **11/11 PASS**, full changed coverage, no failed/skipped/timed-out/infrastructure
+  checks. Memory checked first; one sweep. JSON stays local.
+- `node --check .../viewer_syntax_check.js`: PASS for generated HTML viewer script.
+- `git diff --check`: PASS. Accepted mapping/annotation hash checks and final three
+  source-file hashes unchanged. No active runtime file was edited.
 
-The first direct-angle diagnostic exposed straight-limb reach margin hits and
-lost ordering on unequal projected limbs. Trace reinspection corrected distal
-coordinates; stable-branch IK and explicit tiny inward reach corrections resolve
-static geometry without relaxing its gates. A temporary added visible-sole check
-caught the frame 7 occlusion; visibility is now reported separately because hidden
-contact is legitimate and was never an existing contact requirement.
+## Full-cycle review handoff
 
-## Review workflow
+Prepared manifest target:
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-crossover-continuity-loop-r1/REVIEW_MANIFEST.json`.
+Publish after committing implementation so the manifest points at the code that
+produced it; record upload receipt in the same durable summary afterward.
 
-Prior rejected review
-`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-cyclic-loop-r1/REVIEW_MANIFEST.json`
-was deleted with its default policy after recording the decision.
+The compact packet contains a single interactive full-loop viewer, native all-15
+Knight/Operator sheet, five accepted→fitted comparisons and machine evidence/notes.
+A full cycle is required to judge phase rhythm, support transitions, secondary
+motion and seam; scalar checks cannot decide those. No video/GIF, asset resizing
+or repeated runtime captures. Review playback FPS never approves authoritative timing.
 
-The five-pose packet contains one native comparison sheet, one 15-cell donor
-annotation sheet and one ownership sheet plus exact annotations/metrics/questions.
-Five sparse phases are explicitly requested; numbers cannot decide anatomical
-identity or crossover readability. No motion capture was produced.
+Exact reviewer questions:
+1. Does the full loop preserve accepted NE gait alternation and both crossovers,
+   including readable opposite lead around F5?
+2. Are support handoffs 6→7 and 13→14 smooth and plausible, without treating hidden
+   support soles as defects by themselves?
+3. Are fitted F12/F15 changes and 15→1 acceptable? Inspect upper-body/robe motion
+   and marked enclosed regions for unintended costume gaps.
 
-Published review manifest:
-`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json`.
-Publisher receipt: uploaded, nine files including manifest, delete-after-review;
-implementation commit `43edaf3d7b11c44f7d937df31f10ce432aa10945`. The initial v1
-upload carried pre-implementation HEAD metadata and was deleted as a superseded
-upload by Codex, explicitly **not** a visual approval. Local evidence is preserved.
-The corrected manifest points at the committed implementation. Its exact cleanup:
-
-```bash
-python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json --reviewed-by chatgpt-user
-```
-
-Reviewer questions:
-1. Are all 15 limb identities and inferred far-leg coordinates credible through
-   2→3 and 7→8? Specify frame/joint corrections if needed.
-2. Do five Operator poses preserve readable crossover, especially frame 7's hidden
-   far sole and frame 5's robe coverage?
-3. Confirm/correct support 6/7 and 13/14. Is calibration ready for continuity fitting
-   with the reported boot-pitch limit, or which pose/annotation must change first?
-
-After recording the decision, execute the new manifest's emitted cleanup command.
-Rig acceptance persists. Animation, timing and runtime publication remain unapproved.
+After a human decision, record it before cleaning the emitted delete-after-review
+manifest. Retain rig and calibration acceptance independently. Do not merge,
+publish runtime assets or approve timing under this slice.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: previous mechanical success did not establish donor crossover fidelity; supplied authoritative source differs from the prior bundle; first review upload used pre-implementation HEAD metadata.
-- Root cause / contributing factors: per-limb neutral target bias and phase filtering obscured crossover; reference anatomy/support stayed provisional; upload preceded the code checkpoint.
-- Prevention / pipeline improvement: exact donor authority lock, explicit lead-order regression, sparse calibration gate before another full render, committed implementation before replacement review upload.
-- Tooling / docs drift discovered: old README donor/support/mapping descriptions were historical; marked superseded and replaced current run instructions.
+- What went wrong: literal static-pose locking cannot satisfy the existing step budget; static renderer branch choices differed; first full rendered fit left F14 contact outside tolerance.
+- Root cause / contributing factors: accepted visual poses were sparse references, not a feasible exact temporal path; near-straight IK ambiguity; numeric planning did not reserve sufficient raster-phase correction room; initial optimizer scaling was poor.
+- Prevention / pipeline improvement: endpoint feasibility checks, immutable target hashes with explicit fitted deviations, stable planned-knee rendering, tighter internal guards and final rendered contact/crossover validation.
+- Tooling / docs drift discovered: five-pose hold and old viewer labels were updated to accepted calibration/full continuity state; tested numerical dependencies recorded.
 - Follow-up: operator-2-5d-ne-walk-retargeting
-- What worked: retained rig acceptance and narrow mask/contact evidence isolated the remaining gait/occlusion questions.
+- What worked: no reannotation or recovery; existing mechanical limits rejected the failed candidate and the final rendered result established all 15 checks.
 
 ## Next Handoff
 - Next workstream: operator-2-5d-ne-walk-retargeting
@@ -176,6 +199,6 @@ Rig acceptance persists. Animation, timing and runtime publication remain unappr
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: review corrected donor annotations, five crossover poses, support hypothesis and occlusion readability before full-cycle fitting.
-- Next action: review the published calibration packet, obtain frame/joint-specific human decision, record it, clean reviewed manifest, then resume bounded continuity/occlusion correction.
-- Blockers or open questions: six proposed adjacent transitions still fail; boot-pitch mismatch, frame 7 hidden far sole and frame 5 robe coverage need explicit review. No main merge/runtime/timing authorization.
+- Refresh reason: complete 15-frame visual-loop review after accepted calibration and bounded continuity fit.
+- Next action: publish committed full-cycle review, obtain human frame/part-specific decision, record it and clean reviewed manifest; retain branch/checkpoint.
+- Blockers or open questions: full animation aesthetics/crossover rhythm, fitted F12/F15, working support transitions and gaps/secondary motion remain human-owned; merge/runtime/timing explicitly unauthorized.
