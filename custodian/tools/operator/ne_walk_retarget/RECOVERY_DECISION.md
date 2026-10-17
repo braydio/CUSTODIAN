@@ -20,3 +20,15 @@ acceptance before becoming authoritative.
 
 The earlier source-choice review was recorded and its Dropbox evidence was deleted
 through the emitted delete-after-review cleanup command.
+
+## Human visual acceptance — checkpoint 8a254e0f1
+
+The user accepted `operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite`, SHA256
+`b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5`, as the
+V6 authoring/retargeting baseline. Accepted chain: hip (53,75), knee (52,83),
+ankle (50,88), toe (48,91); shorter NE projection, 52/47/21 ownership, and four
+hidden joint-cover pixels under the verified neutral/articulation contracts.
+Rig recovery is closed. The 15-frame animation, canonical runtime publication,
+and timing remain unapproved. Continue V6 with fixed geometry and thresholds.
+The anatomy-recovery review's delete-after-review cleanup was requested after
+recording this decision.

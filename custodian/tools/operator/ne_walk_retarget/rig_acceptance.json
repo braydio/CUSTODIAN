@@ -1,0 +1,37 @@
+{
+  "schema": "custodian.ne_rig_acceptance.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "checkpoint": "8a254e0f1",
+  "accepted_by": "human_user",
+  "accepted_scope": "V6 authoring/retargeting rig baseline",
+  "rig_filename": "operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite",
+  "rig_sha256": "b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5",
+  "locked_source_sha256": "0f5b3346044e60581db6e38e41fc292bd2b49ca05c291ada9591495765166149",
+  "accepted_far_pivots": {
+    "hip": [
+      53,
+      75
+    ],
+    "knee": [
+      52,
+      83
+    ],
+    "ankle": [
+      50,
+      88
+    ],
+    "toe": [
+      48,
+      91
+    ]
+  },
+  "accepted_far_visible_pixels": {
+    "thigh": 52,
+    "shin": 47,
+    "boot": 21
+  },
+  "accepted_hidden_joint_cover_pixels": 4,
+  "animation_accepted": false,
+  "runtime_publication_accepted": false,
+  "timing_fps": null
+}
