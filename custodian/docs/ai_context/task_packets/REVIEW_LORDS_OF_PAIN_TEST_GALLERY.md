@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-lords-of-pain-test-gallery`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `lords-of-pain-test-gallery`
@@ -37,4 +37,12 @@
 - Authoring chat: `not-recorded`
 - Refresh reason: `none unless review finds a design-sensitive gap`
 - Next action: `Review the landed gallery and either pass it or scaffold the bounded correction cycle required by confirmed findings.`
-- Blockers or open questions: `none`
+- Blockers or open questions: `The pinned review baseline cannot identify the archived target implementation: the review packet's Reviewed main predates the archived target path; the archived target's Reviewed main is only a 12-character abbreviation, while review_outcome requires an exact full-SHA binding. This review cannot create a valid receipt without a bounded packet-authority refresh outside reviewer scope.`
+
+## Review Blocker
+
+- Exact review pin: `977488efdecf8bea72ffb2218b8bd0672e04f6ac`
+- Target archive path at that pin: absent (`git cat-file -e 977488efdecf8bea72ffb2218b8bd0672e04f6ac:custodian/docs/ai_context/task_packets/archived/LORDS_OF_PAIN_TEST_GALLERY.md` fails).
+- Target archive at current main: present, but records `Reviewed main: 76b91527c17d` (12-character SHA).
+- Identity resolver: `review_receipt_delta.resolve_target_implementation_commit(..., reviewed_main=675ccf726bb79397b7242ef3059971a6f1a39448, target=lords-of-pain-test-gallery)` returns `pinned target is not one complete identified implementation packet` because its recorded Reviewed main is not a full 40-64 character SHA.
+- Consequence: the reviewer cannot truthfully bind a `Review Outcome` to an immutable implementation commit. This is a metadata/provenance blocker, not a gallery behavior finding. The reviewed target packet and implementation were not modified.
