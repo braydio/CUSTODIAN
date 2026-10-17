@@ -2,7 +2,7 @@
 
 Workstream: operator-2-5d-ne-walk-retargeting
 Authoring chat: not-recorded
-Status: **five calibration poses prepared; human calibration review required**.
+Status: **five calibration poses uploaded; human calibration review required**.
 This is a retained branch checkpoint, not a completed/merged animation workstream.
 No runtime publication or timing decision. Rig recovery remains closed.
 
@@ -136,12 +136,17 @@ annotation sheet and one ownership sheet plus exact annotations/metrics/question
 Five sparse phases are explicitly requested; numbers cannot decide anatomical
 identity or crossover readability. No motion capture was produced.
 
-Prepared review target:
+Published review manifest:
 `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json`.
-Publication receipt will be recorded after the implementation checkpoint exists.
-An initial v1 upload carried the pre-implementation HEAD in publisher metadata;
-it is superseded and will be removed without implying a visual decision. Local
-evidence is preserved. The corrected upload will point at committed implementation.
+Publisher receipt: uploaded, nine files including manifest, delete-after-review;
+implementation commit `43edaf3d7b11c44f7d937df31f10ce432aa10945`. The initial v1
+upload carried pre-implementation HEAD metadata and was deleted as a superseded
+upload by Codex, explicitly **not** a visual approval. Local evidence is preserved.
+The corrected manifest points at the committed implementation. Its exact cleanup:
+
+```bash
+python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json --reviewed-by chatgpt-user
+```
 
 Reviewer questions:
 1. Are all 15 limb identities and inferred far-leg coordinates credible through
@@ -172,5 +177,5 @@ Rig acceptance persists. Animation, timing and runtime publication remain unappr
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
 - Refresh reason: review corrected donor annotations, five crossover poses, support hypothesis and occlusion readability before full-cycle fitting.
-- Next action: publish committed calibration packet, obtain frame/joint-specific human decision, record it, clean reviewed manifest, then resume bounded continuity/occlusion correction.
+- Next action: review the published calibration packet, obtain frame/joint-specific human decision, record it, clean reviewed manifest, then resume bounded continuity/occlusion correction.
 - Blockers or open questions: six proposed adjacent transitions still fail; boot-pitch mismatch, frame 7 hidden far sole and frame 5 robe coverage need explicit review. No main merge/runtime/timing authorization.

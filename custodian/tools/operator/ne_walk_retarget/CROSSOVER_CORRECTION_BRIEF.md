@@ -30,3 +30,15 @@ acceptance. No merge, runtime publication, or timing approval.
 Prior animation review decision: rejected (crossover/lead-leg transfer).
 Prior Dropbox review: /CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/v6-cyclic-loop-r1/REVIEW_MANIFEST.json
 Record this decision before executing its delete-after-review cleanup.
+
+## Review transport receipt
+
+Prior rejected animation manifest cleanup completed (delete-after-review).
+Five-pose calibration is published at:
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/ne-donor-crossover-calibration-v2/REVIEW_MANIFEST.json`
+Implementation commit: `43edaf3d7b11c44f7d937df31f10ce432aa10945`.
+The earlier v1 upload was superseded because publisher metadata referenced the
+pre-implementation HEAD; Codex removed that upload without a visual approval.
+The v2 calibration decision is pending. After recording the human decision, run
+the emitted delete-after-review cleanup command. Full-cycle regeneration remains
+gated; neither calibration upload nor static 5/5 constitutes animation acceptance.
