@@ -51,7 +51,20 @@
 - Blockers or open questions: `Do not mark ambient review passed from coordinator validation alone.`
 
 
-## Independent Review Findings
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Review target workstream: `agent-paired-review-same-run-continuation-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `175647457545bf3dd25c03f2137ee5a3aa3c6879`
+- Reviewed implementation commit: `257b90e9bf3878e0e3dee8ce2f36cad46ef28ab4`
+
+### Findings
 
 No blocking defects or material evidence gaps were found. The exact-run continuation checks pinned identity and immutable host evidence, protects prior run artifacts, requires a fresh reviewer-authored disposition, and bounds PASS closeout behind receipt and outcome verification. The coordinator validation report is correctly kept separate from reviewer judgment.
 
