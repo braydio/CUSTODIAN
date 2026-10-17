@@ -17,6 +17,11 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+TOOLS_ROOT = Path(__file__).resolve().parents[1]
+if str(TOOLS_ROOT) not in sys.path:
+    sys.path.insert(0, str(TOOLS_ROOT))
+from godot_project_lock import job_budget_root, scratch_root
+
 import review_outcome
 from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
 from review_receipt_delta import (
@@ -32,6 +37,20 @@ CLAIM_SENTINEL = "CUSTODIAN_DISPATCH_RESULT_JSON:"
 
 class RunnerError(RuntimeError):
     pass
+
+
+def reviewer_cache_roots(repo: Path) -> list[Path]:
+    """Return the narrow writable CUSTODIAN roots used by validation locks and HOME."""
+    roots = {scratch_root(create=False).resolve(), job_budget_root(create=False)}
+    common = common_dir(repo).resolve()
+    for root in roots:
+        if root == common or root in common.parents or common in root.parents:
+            raise RunnerError(f"CUSTODIAN cache root overlaps shared Git metadata: {root}")
+        if len(root.parts) < 3 or root == Path.home().resolve():
+            raise RunnerError(f"refusing broad reviewer cache permission: {root}")
+    scratch_root(create=True)
+    job_budget_root(create=True)
+    return sorted(roots, key=str)
 
 
 def git(repo: Path, *args: str, check: bool = True) -> str:
@@ -685,6 +704,7 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             raise RunnerError("test/injected Codex executable lacks ephemeral exec support")
 
     common = common_dir(repo)
+    cache_roots = reviewer_cache_roots(repo)
     run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:12]}"
     run_dir = common / "custodian-review-runs" / workstream / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
@@ -749,11 +769,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         last_message = run_dir / "last-message.txt"
         argv = [str(executable), "exec", "--ephemeral", "--json", "--approve-for-me",
-                "--cd", str(worktree), "--add-dir", str(run_dir),
-                "--output-last-message", str(last_message), "-"]
+                "--cd", str(worktree), "--add-dir", str(run_dir)]
+        for cache_root in cache_roots:
+            argv.extend(("--add-dir", str(cache_root)))
+        argv.extend(("--output-last-message", str(last_message), "-"))
         metadata["phase"] = "codex_running"
         metadata["invocation"] = ["codex", "exec", "--ephemeral", "--json", "--approve-for-me",
                                   "--cd", str(worktree), "--add-dir", "<run-dir>",
+                                  *(item for root in cache_roots for item in ("--add-dir", str(root))),
                                   "--output-last-message", "<run-dir>/last-message.txt", "-"]
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         started = time.monotonic()

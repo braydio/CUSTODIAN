@@ -246,9 +246,11 @@ For each pair:
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. The runner preflights Codex, claims the exact
    review through dispatch, and launches `codex exec --ephemeral` in the receipt's
-   worktree. A failed fetch or incomplete receipt is recoverable and does not
-   count as completion. Preserve claimed branches, worktrees, and evidence after
-   runner failure.
+   worktree. The launch also grants writable access to the exact CUSTODIAN
+   validation cache roots used by `GodotJobBudget` and the isolated Godot HOME;
+   shared Git metadata remains restricted. A failed fetch or incomplete receipt
+   is recoverable and does not count as completion. Preserve claimed branches,
+   worktrees, and evidence after runner failure.
 5. At the accepted review boundary, record the landing SHA, review status,
    elapsed time, validation summary, pair count, and next eligibility. The
    default one-pair mode stops here even if a successor is ready. Explicit
