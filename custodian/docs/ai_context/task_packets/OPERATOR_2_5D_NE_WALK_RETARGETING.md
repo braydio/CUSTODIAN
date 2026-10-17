@@ -50,7 +50,7 @@
 ## Authorized Iteration
 
 - Iteration ID: `pending-007`
-- State: `HOLD / NO IMPLEMENTATION OR ART CHANGES AUTHORIZED`
+- State: `AUTHORIZED MANUAL R2 REVIEW PREVIEW; EXECUTOR ONLY, THEN STOP`
 - Review authority: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe`
 - R1 executed review: `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-006-silhouette-transplant-r1/REVIEW_MANIFEST.json` (six artifacts, candidate SHA256 `066f2c66eec48d42a3ab2a87273c8119e6de67cc26b2a390ffceb4757a3698ba`, CLEANUP_REPORT SHA256 `f09ac2cdf27101fb4e9ceb1830b7f8290e26f2c4a7140bfba592eaaf78762c3e`). Manifest names Git `8413c67f`, the existing retained branch; it is not proof the newly extracted script/source assets were committed.
 - Human/ChatGPT art verdict (2026-10-17): **REJECT Iteration 006 R1 as a replacement walk.** The genuine before/after 15-frame and 10-frame contact sheets show significantly cleaner near-leg/boot contour and apron material, including improved NE visual orientation. However wholesale per-index `y≈62–66` apron/leg transplantation replaces key **pose silhouettes and positions** from an independent 15-frame reference instead of reconstructing the active validated motion. F05's swing/opposite lead, F11–F13 especially F12's strong near-leg extension, and F15→F01 approach lose source gait semantics or move significantly. The apron drape now corresponds to the alternate strip's stride, not reliably to validated support transitions. No final animation, foot-contact, timing, runtime or art acceptance.
