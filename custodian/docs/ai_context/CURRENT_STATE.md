@@ -1,5 +1,11 @@
 # CURRENT STATE — CUSTODIAN
 
+## Compound archetypes: code landed, review-gated (2026-10-17)
+
+`compound-archetype-profile-contract` and its paired review are archived as passed. `compound-walled-yard-blockout` has shipped surface close-packed perimeter geometry with two declared crossings and yard-facing room doors; its independent review `review-compound-walled-yard-blockout` remains active. `compound-connected-bunker-blockout` has shipped disjoint surface/separator/subsurface geometry and vertical-entry metadata, but its independent parent review is **findings**, not passed: R0-01 lacks a runtime controller that actually uses paired anchors, and R0-02 lacks live collision/navigation/camera proof. The existing `compound-connected-bunker-blockout-review-corrections-1` and paired `review-compound-connected-bunker-blockout-review-corrections-1` are the **only** owners of this bounded repair; at audit time its remote `agent/` claim branch exists. Do not reclaim or duplicate it.
+
+The successor `compound-interior-traversal-integration` stays `ready/auto` but dependency-gated on `review-compound-walled-yard-blockout` and `review-compound-connected-bunker-blockout-review-corrections-1`. It now owns Type A named-room entry/return and cross-world integration using the accepted B transfer controller, not a second Type B teleport/state system. Secure-access fixtures, playable proof, structural damage, assault targeting, Operator field repair, construction and end-to-end proof remain queued behind successive accepted reviews. Source authority: `design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md`; contract/runtime owner: `PersistentCompoundLayoutPlanner` and `ProcGenTilemap`.
+
 ## Ritualant score direction and scoped playback (2026-10-17)
 
 The Underground claims scoped music on arrival, fades the previous zone into
@@ -17,12 +23,11 @@ loop-boundary listening; those remain human audition items.
 
 `PersistentCompoundLayoutPlanner` now validates optional `legacy`,
 `walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
-The runtime selector defaults to `legacy`; explicit archetype selection keeps
-the same generated surface layout and adds archetype, layer, and profile-version
-metadata to rooms, connectors, and exported level data. Omitting the planner
-profile argument preserves its prior output dictionary. This is selection and
-metadata support only: physical walled-yard and subsurface bunker layouts
-remain in their dependency-gated follow-up workstreams. Focused checks are in
+At the **2026-10-16 profile-contract milestone**, selection still retained
+legacy surface geometry and added versioned archetype/layer metadata. Omitted
+selection preserved the original planner output dictionary. Physical Type A
+and Type B generation landed after that milestone; see the current 2026-10-17
+compound status above for the accurate runtime/review split. Focused checks are in
 `compound_archetype_profile_smoke.gd`.
 
 ## Procgen Showcase Gallery Shell (2026-10-15)
