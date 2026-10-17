@@ -1,7 +1,7 @@
 {
   "schema": "custodian.ne_walk_annotations.v1",
-  "source_sha256": "707efe8a3d0438473d87fdf112c9127c2b034454d3d383bc1829dda3a632b1d1",
-  "status": "provisional_agent_annotations_needs_human_review",
+  "source_sha256": "20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba",
+  "status": "corrected_NE_source_agent_trace_pending_crossover_review",
   "timing_fps": null,
   "registration": {
     "center_x": 64,
@@ -22,780 +22,832 @@
   "frames": [
     {
       "frame": 1,
-      "source_sha256": "e217d2e25f457ecb1b76bc6636d1ed1d6bd74771df6f4e88d726c5ee15e03025",
+      "source_sha256": "05fcfbfbf1aa997f9331971097adfbf58550afb1a43db8a51981ed6b6f76bfb3",
       "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f01.pelvis",
           "xy": [
-            65,
+            64,
             70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f01.hip_near",
           "xy": [
-            66,
-            73
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f01.knee_near",
           "xy": [
-            66,
+            68,
             81
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f01.ankle_near",
           "xy": [
-            64,
-            88
+            66,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f01.toe_near",
           "xy": [
             69,
-            90
+            88
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f01.hip_far",
           "xy": [
-            62,
-            72
+            60,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f01.knee_far",
           "xy": [
-            61,
-            78
+            58,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f01.ankle_far",
           "xy": [
-            58,
-            82
+            57,
+            83
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f01.toe_far",
           "xy": [
-            61,
-            82
+            60,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 9,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 2,
-      "source_sha256": "efb0c67e12995aaf6c408111be69956ee8b0d59bbfa1be85a30d0b26a95d2e90",
+      "source_sha256": "42caefee78c6ab3de7a8eec2068681c2f70961d08ab1f14bb5fe1342788d1418",
       "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f02.pelvis",
           "xy": [
-            65,
+            64,
             70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f02.hip_near",
           "xy": [
-            66,
-            73
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f02.knee_near",
           "xy": [
-            64,
+            67,
             81
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f02.ankle_near",
           "xy": [
-            61,
-            89
+            65,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f02.toe_near",
           "xy": [
-            65,
-            90
+            68,
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f02.hip_far",
           "xy": [
             62,
-            72
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f02.knee_far",
           "xy": [
-            66,
-            78
+            63,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f02.ankle_far",
           "xy": [
-            68,
+            62,
             83
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f02.toe_far",
           "xy": [
-            72,
+            64,
             84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 3,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 3,
-      "source_sha256": "3cf843af5007fed798ccb569c74992e5f9c393452f7d012fe52ffdfdda12e110",
-      "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "bea881cbc94046c45e30928d357b0b3b3b982f21d8d11e5546a9a440777bd2aa",
+      "support": "near",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f03.pelvis",
           "xy": [
-            65,
-            69
+            64,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f03.hip_near",
           "xy": [
-            67,
-            72
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f03.knee_near",
           "xy": [
-            72,
-            75
+            65,
+            82
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f03.ankle_near",
           "xy": [
-            74,
-            81
+            62,
+            88
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f03.toe_near",
           "xy": [
-            79,
-            81
+            64,
+            91
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f03.hip_far",
           "xy": [
             62,
-            71
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f03.knee_far",
           "xy": [
-            62,
-            80
+            67,
+            77
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f03.ankle_far",
           "xy": [
-            57,
-            88
+            72,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f03.toe_far",
           "xy": [
-            62,
-            90
+            74,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": -10,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 4,
-      "source_sha256": "0f7ecbf27cfbe616bb5e17695a12b0336d3cc4ff535dd770c8a218ede724330e",
-      "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "d332d6da1c11ab25b20bef3915dfcc6edcb65f4505d77645460e41a11f24a3ba",
+      "support": "near",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f04.pelvis",
           "xy": [
-            65,
-            69
+            64,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f04.hip_near",
           "xy": [
-            67,
-            72
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f04.knee_near",
           "xy": [
-            73,
-            75
+            64,
+            83
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f04.ankle_near",
           "xy": [
-            76,
-            81
+            61,
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f04.toe_near",
           "xy": [
-            81,
-            80
+            63,
+            92
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f04.hip_far",
           "xy": [
             62,
-            71
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f04.knee_far",
           "xy": [
-            60,
-            80
+            68,
+            76
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f04.ankle_far",
           "xy": [
-            54,
-            88
+            73,
+            72
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f04.toe_far",
           "xy": [
-            59,
-            90
+            74,
+            72
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": -12,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 5,
-      "source_sha256": "de2cd2bc7ef8cf110e2ab421bf6288d249caea3a29c39940b6296eb350ee5ec3",
-      "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "79fc4451a08ebe2c3505592401ac98a51d8a00d6c4a6f0119c2fc371a80aadbf",
+      "support": "near",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f05.pelvis",
           "xy": [
             64,
-            69
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f05.hip_near",
           "xy": [
-            66,
-            72
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f05.knee_near",
           "xy": [
-            72,
-            76
+            63,
+            84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f05.ankle_near",
           "xy": [
-            75,
-            81
+            59,
+            91
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f05.toe_near",
           "xy": [
-            80,
-            81
+            61,
+            93
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f05.hip_far",
           "xy": [
-            61,
-            71
+            62,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f05.knee_far",
           "xy": [
-            57,
-            81
+            67,
+            77
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f05.ankle_far",
           "xy": [
-            51,
-            88
+            72,
+            75
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f05.toe_far",
           "xy": [
-            55,
-            90
+            74,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": -13,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 6,
-      "source_sha256": "e821923af459b93910163a1dd8427e5fd21727b6389d64c2bd77bc24c816db1c",
-      "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "b145712dcb3185c4609b4a32a116495c4099fff88bc90ca263afcf0aaf893d24",
+      "support": "near",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f06.pelvis",
           "xy": [
             64,
-            68
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f06.hip_near",
           "xy": [
-            66,
-            71
+            68,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f06.knee_near",
           "xy": [
-            70,
-            75
+            63,
+            83
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f06.ankle_near",
           "xy": [
-            69,
-            82
+            59,
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f06.toe_near",
           "xy": [
-            74,
-            83
+            60,
+            90
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f06.hip_far",
           "xy": [
-            61,
-            70
+            62,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f06.knee_far",
           "xy": [
-            55,
-            81
+            64,
+            78
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f06.ankle_far",
           "xy": [
-            49,
-            86
+            67,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f06.toe_far",
           "xy": [
-            51,
-            91
+            69,
+            78
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": -8,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 7,
-      "source_sha256": "30b40fb9b3e647ed532494495c54028429411bc3c7e4975541588760cb3d183e",
+      "source_sha256": "8fec31be1c73c92a384f082c46bf48f0edd87855f467fde8bc7278c5520a1e36",
       "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f07.pelvis",
           "xy": [
-            64,
-            68
+            63,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f07.hip_near",
           "xy": [
-            66,
-            71
+            67,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f07.knee_near",
           "xy": [
-            68,
-            77
+            65,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f07.ankle_near",
           "xy": [
-            65,
-            83
+            60,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f07.toe_near",
           "xy": [
-            70,
-            83
+            62,
+            90
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x.",
+          "sample_review": {
+            "decision": "opaque_boot_material",
+            "rgba": [
+              43,
+              34,
+              26,
+              255
+            ],
+            "evidence": "Brown toe at end of connected metal boot contour in exact source, not black semitransparent cast shadow. Human annotation review pending."
+          }
         },
         "hip_far": {
           "id": "f07.hip_far",
           "xy": [
             61,
-            70
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f07.knee_far",
           "xy": [
-            57,
-            81
+            62,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "ankle_far": {
           "id": "f07.ankle_far",
           "xy": [
-            56,
-            86
+            61,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         },
         "toe_far": {
           "id": "f07.toe_far",
           "xy": [
-            56,
-            89
+            62,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
-          "visibility": "visible_estimate",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
+          "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Partially occluded contour; anatomical joint center inferred from visible proximal/distal metal and neighboring frames. Not snapped to opacity."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": -1,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 8,
-      "source_sha256": "da75c544e5428d48b0a642bd1240c6a62da4179b3c78cd601f1a68a2a653fc19",
+      "source_sha256": "2ded5e9788800909f285d8a9fdc5c9e4f1d57a8d3af2ef0ea5ca2cc8b5f34720",
       "support": "far",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f08.pelvis",
           "xy": [
             63,
-            68
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f08.hip_near",
           "xy": [
-            65,
-            71
+            68,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f08.knee_near",
@@ -803,827 +855,876 @@
             67,
             79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f08.ankle_near",
           "xy": [
-            61,
-            84
+            64,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f08.toe_near",
           "xy": [
-            64,
-            84
+            66,
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f08.hip_far",
           "xy": [
             60,
-            70
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f08.knee_far",
           "xy": [
-            60,
-            80
+            61,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f08.ankle_far",
           "xy": [
-            63,
-            88
+            61,
+            84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f08.toe_far",
           "xy": [
-            64,
-            90
+            62,
+            86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 3,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 9,
-      "source_sha256": "4fd47d37c3c2a1059c46d7d885092199fb2250072ee0a1c33c9a58f1e67687bb",
-      "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "d5e9d790f0f2774ce4ce605dcd4aed4a5fe9bd7dec675348bba370a45779f567",
+      "support": "far",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f09.pelvis",
           "xy": [
             63,
-            69
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f09.hip_near",
           "xy": [
-            65,
-            72
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f09.knee_near",
           "xy": [
-            66,
+            69,
             80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f09.ankle_near",
           "xy": [
-            66,
-            88
+            68,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f09.toe_near",
           "xy": [
             70,
-            90
+            88
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f09.hip_far",
           "xy": [
             60,
-            71
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f09.knee_far",
           "xy": [
             60,
-            79
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f09.ankle_far",
           "xy": [
-            60,
+            59,
             84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f09.toe_far",
           "xy": [
-            59,
+            62,
             86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 9,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 10,
-      "source_sha256": "6a10be32f12017db89adfc33b113ea1e2a207744fa6602efb2dea3369c609f36",
-      "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "a8e0e0af3967a157b4df384821e01a7b206f0e49a199dafcca8a37d2ae4bb252",
+      "support": "far",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f10.pelvis",
           "xy": [
-            62,
+            63,
             70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f10.hip_near",
           "xy": [
-            64,
-            73
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f10.knee_near",
           "xy": [
-            69,
-            80
+            72,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f10.ankle_near",
           "xy": [
-            73,
-            89
+            74,
+            82
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f10.toe_near",
           "xy": [
-            79,
-            92
+            78,
+            84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f10.hip_far",
           "xy": [
-            59,
-            72
+            60,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f10.knee_far",
           "xy": [
             57,
-            78
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f10.ankle_far",
           "xy": [
-            55,
-            85
+            56,
+            86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f10.toe_far",
           "xy": [
             59,
-            85
+            88
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 18,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 11,
-      "source_sha256": "d8c30b2ec4e660964a0fba14e7048902dc5a4a7f6c2d293c8be7ffee32feed95",
-      "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "fdb119986428922427c32c1847867e5785407b07985971a07d62d6b7a20aa085",
+      "support": "far",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f11.pelvis",
           "xy": [
-            61,
-            71
+            63,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f11.hip_near",
           "xy": [
-            63,
+            69,
             74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f11.knee_near",
           "xy": [
-            69,
-            80
+            75,
+            78
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f11.ankle_near",
           "xy": [
-            76,
-            88
+            79,
+            81
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f11.toe_near",
           "xy": [
-            83,
-            90
+            82,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f11.hip_far",
           "xy": [
-            58,
+            59,
             73
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f11.knee_far",
           "xy": [
             56,
-            78
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f11.ankle_far",
           "xy": [
-            52,
-            83
+            54,
+            86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f11.toe_far",
           "xy": [
-            56,
-            84
+            57,
+            88
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 25,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 12,
-      "source_sha256": "b77572871ea719451295f6f0c13ce6558d4ff6ce7d4e75e2d6cf4057b1d1d111",
-      "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "8dbd6d527e7ab1f1f52a287b9cff113904a3a9078174f5e05323651c32a75433",
+      "support": "far",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f12.pelvis",
           "xy": [
-            60,
-            71
+            63,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f12.hip_near",
           "xy": [
-            62,
+            69,
             74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f12.knee_near",
           "xy": [
-            69,
-            79
+            75,
+            78
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f12.ankle_near",
           "xy": [
-            77,
-            88
+            80,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f12.toe_near",
           "xy": [
-            84,
-            92
+            83,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f12.hip_far",
           "xy": [
-            57,
+            58,
             73
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f12.knee_far",
           "xy": [
-            53,
-            78
+            55,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f12.ankle_far",
           "xy": [
-            49,
-            80
+            51,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f12.toe_far",
           "xy": [
-            52,
-            83
+            54,
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 29,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 13,
-      "source_sha256": "1c9f1159d7d83ba4daf9bbef3fe036edf30643f2f4e1c101a7e5ebfbd881c207",
-      "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "source_sha256": "832367ceed42e9ad62f6a9ede6ae69332776456feeb09098427e2775dc82f845",
+      "support": "far",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f13.pelvis",
           "xy": [
-            59,
+            63,
             70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f13.hip_near",
           "xy": [
-            61,
-            73
+            69,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f13.knee_near",
           "xy": [
-            69,
-            78
+            75,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f13.ankle_near",
           "xy": [
-            75,
-            89
+            76,
+            81
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f13.toe_near",
           "xy": [
-            80,
-            92
+            79,
+            82
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f13.hip_far",
           "xy": [
-            56,
-            72
+            58,
+            73
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f13.knee_far",
           "xy": [
-            52,
-            75
+            54,
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f13.ankle_far",
           "xy": [
-            46,
-            79
+            48,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f13.toe_far",
           "xy": [
             49,
-            81
+            89
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 28,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 14,
-      "source_sha256": "d215c0267c89dceb918e8eb3b12b150a6bedba74c81f23e0955a662153dee22e",
+      "source_sha256": "52cb31a1294d04875c2102e5a0cec24412f2ad7c42f81fb2c9d652042638444a",
       "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f14.pelvis",
           "xy": [
-            61,
-            71
+            63,
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f14.hip_near",
           "xy": [
-            63,
+            69,
             74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f14.knee_near",
           "xy": [
-            68,
-            79
+            70,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f14.ankle_near",
           "xy": [
             69,
-            88
+            84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f14.toe_near",
           "xy": [
-            74,
-            92
+            73,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f14.hip_far",
           "xy": [
-            58,
-            73
+            59,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f14.knee_far",
           "xy": [
             55,
-            77
+            79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f14.ankle_far",
           "xy": [
-            53,
-            78
+            52,
+            83
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f14.toe_far",
           "xy": [
-            53,
-            82
+            50,
+            86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 17,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     },
     {
       "frame": 15,
-      "source_sha256": "89b07078a87688e5e164edbf535ee9e6efbc97d8e8b610ca3eb31eae02beb6e5",
+      "source_sha256": "2b22eb3cb60f6a91909adef54eae710bdd5104259cdca4b7f1c7a76229bc7d8a",
       "support": "near",
-      "support_status": "provisional_not_human_accepted",
+      "support_status": "provisional_anatomy_and_lift_trace_not_shadow_or_human_accepted",
       "landmarks": {
         "pelvis": {
           "id": "f15.pelvis",
           "xy": [
             64,
-            71
+            70
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "hip_near": {
           "id": "f15.hip_near",
           "xy": [
-            66,
+            69,
             74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_near": {
           "id": "f15.knee_near",
           "xy": [
-            66,
-            81
+            68,
+            80
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_near": {
           "id": "f15.ankle_near",
           "xy": [
-            66,
-            88
+            67,
+            85
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_near": {
           "id": "f15.toe_near",
           "xy": [
-            71,
-            92
+            70,
+            87
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "hip_far": {
           "id": "f15.hip_far",
           "xy": [
-            61,
-            73
+            60,
+            74
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "occluded_inference",
           "confidence": null,
-          "note": "Armor hides joint center; continuity-guided estimate."
+          "note": "Stable anatomical side across crossing; joint center inferred behind armor/other leg."
         },
         "knee_far": {
           "id": "f15.knee_far",
           "xy": [
-            59,
+            58,
             79
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "ankle_far": {
           "id": "f15.ankle_far",
           "xy": [
-            55,
-            80
+            56,
+            84
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         },
         "toe_far": {
           "id": "f15.toe_far",
           "xy": [
-            59,
-            84
+            57,
+            86
           ],
-          "provenance": "agent_visual_trace_source_coordinate_grid_v1",
+          "provenance": "agent_manual_trace_exact_NE_sheet_grid_v2",
           "visibility": "visible_estimate",
           "confidence": null,
-          "note": "Metal limb/boot anatomy; excludes black cast shadow."
+          "note": "Traced metal/boot anatomy on exact NE sheet, excluding black cast shadow; not a side assignment from screen x."
         }
+      },
+      "support_evidence": "Near boot descends/plants in 14-6; far boot swings forward under occlusion in 3-6, then extends back in 7-13. Exact handoff 6/7 and 13/14 remains a review question.",
+      "crossover": {
+        "ankle_x_near_minus_far": 11,
+        "distal_foreground": "near",
+        "evidence": "Continuous near thigh/shin contour remains in front where visible; screen lead changes do not by themselves reverse depth ownership."
       }
     }
-  ]
+  ],
+  "annotation_revision": "exact_ne_donor_trace_v2"
 }

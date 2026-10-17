@@ -1,80 +1,78 @@
-# NE walk retarget experiment V6
+# Operator NE walk V6 — donor correction / crossover calibration
 
-Preview-only adaptation of the user's local V5.5 Aseprite rig solver. The external
-handoff is preserved in `BRIEF.md`; it remains the acceptance contract. No asset
-family, canonical source, Workbench approval, timing decision, or runtime is changed.
+Workstream: `operator-2-5d-ne-walk-retargeting`
 
-## Run
+`CROSSOVER_CORRECTION_BRIEF.md` is the current bounded slice. `BRIEF.md` and
+`MASTER_AUDIT_BRIEF.md` remain underlying contracts. The prior full-cycle animation
+was rejected; the rig is still accepted. `donor_authority.json` pins the actual
+`~/Knight_NE_Reference.png` NE strip. Do not investigate the revoked direction concern.
+No merge, source/runtime publication, or timing decision is authorized.
 
-Requires Python + Pillow, Aseprite with Lua support, the exact V5.5 script pinned
-in `v55_dependency.json`, and a saved finalized 128px RGBA rig master. The original
-V5.5 script stays intact; the generated batch removes its obsolete embedded Knight
-pixels/landmarks and UI, then reuses its pivot, source-part, IK and raster functions.
-No V5.5 one-frame retarget function is called.
+## Current run: five poses only
 
 ```bash
-python3 custodian/tools/operator/ne_walk_retarget/run.py \
-  --bundle ~/Downloads/custodian_operator_ne_knight_15f_reference_v1 \
-  --rig ~/Temp/RigPivotBuildingTemp.aseprite \
-  --output ~/Downloads/custodian_operator_ne_knight_15f_reference_v1/preview_v6_new
+python3 custodian/tools/operator/ne_walk_retarget/crossover.py \
+  --bundle ~/Downloads/operator_ne_master_audit_implementation_v1/authoritative_ne_donor_v1 \
+  --rig ~/Downloads/operator_ne_master_audit_implementation_v1/anatomy_recovery_verified/operator_ne_rig_ANATOMY_RECOVERY_CANDIDATE.aseprite \
+  --output ~/Downloads/operator_ne_master_audit_implementation_v1/crossover_calibration_new
 ```
 
-Output must be a new directory outside the active Godot project. Each run records
-its full invocation, rig/dependency/annotation hashes, source-frame verification,
-Aseprite log, per-frame failures, contacts, knee-fit errors, clamps, swing reduction,
-branch flips, adjacent angular/joint steps and 15→1 pixel/joint discontinuity.
-Exit 0 means the implemented geometry checks passed; exit 2 means a diagnostic
-preview was generated with failed frames. Neither exit means art or timing approval.
-Aseprite sometimes returns exit 0 on Lua errors, so the driver also requires its
-completed report. An exception stops before a successful receipt.
+Requires Python/Pillow, Aseprite and the exact installed V5.5 dependency pinned in
+`v55_dependency.json`. Output must be fresh and outside the active project. Source
+bundle contains the exact supplied strip, 15 exact native crops and MANIFEST.json;
+all are hash-checked and reassembled pixel-exactly. The original home file and old
+ZIP/bundle remain untouched. Source reference is not a runtime asset family.
 
-`operator_ne_walk_v6_PREVIEW_ONLY.aseprite` has 15 clean preview cels, hidden QA,
-reference and marker tracks, plus hidden locked copies of the original source rig
-layers/pivots. Its mandatory editor durations are placeholders (100ms), not timing
-authority. No GIF or runtime clock is generated. The clean PNG is 1920×128 RGBA;
-individual cells are exactly 128×128. No resizing occurs.
+`annotations.json` contains 15 newly traced nine-landmark records against this
+sheet, stable anatomical identities, visibility/inference notes and provisional
+support. An opaque brown boot tip has an explicit sampled-material review; dark
+or transparent pixels alone never authenticate anatomy. Inferred occluded pivots
+are allowed to fall off opaque pixels. All annotations need human review.
 
-## Annotation and contact model
+Screen ankle order reverses at 2→3 and 7→8. Provisional support changes at 6→7 and
+13→14; support and foreground depth are separate from screen lead. Calibration
+frames 12/2/7/5/15 cover near lead, approach, crossing, opposite lead and seam return.
+They are a sparse set, **not a five-frame playback sequence**.
 
-`annotations.json` contains nine independently traced landmarks per frame, unique
-IDs, image hashes, editable coordinates, visible/occluded estimates and provenance.
-They are provisional agent traces, with **no human approval or numeric confidence**.
-Metal/boot sampling catches shadow/empty markers conservatively; brightness alone
-is not an anatomy detector or proof of correct limb ownership.
+The calibration normalizes donor segment directions to the accepted projected
+lengths. It exposes explicit reach/lead corrections, then solves stable near+ /
+far− IK under the existing limits. It does not apply the previous per-ankle neutral
+bias, 0.5 swing attenuation or cyclic filter. Secondary motion stays neutral for
+this isolated leg review. Boot pitch retains the existing ±24° cap, with its donor
+mismatch reported; no exact toe-pitch match is claimed.
 
-Near/far identities persist across crossings. The supplied near 1–2 → far 3–8 →
-near 9–15 schedule is carried as a hypothesis. Contact interval timing and world-space
-support/swing clearance cannot be established from the shadow or one projection.
-Do not call a low contact residual proof of accepted gait.
+`calibration.lua` renders only five poses with the shared inverse rigid raster and
+sole-aware contact checks. Quarter-pixel support correction stays within ±3px and
+re-solves IK. Reports check unchanged segment lengths, fit ≤8px, source palette,
+binary alpha, cell bounds and ankle lead sign. All 15 proposed numerical poses are
+also audited against 8px adjacent-joint / 60° rotation limits, including the seam;
+failures stay failures. Static calibration passes do not grant cyclic acceptance.
 
-The batch uses one cohort reference scale, preserves each canonical segment length,
-and maps each limb's phase displacement about its own mean onto its source ankle.
-Pelvis bob follows donor pelvis displacement about its cohort mean, with explicit
-7px/6px bounds and the existing bounded support-reach correction. Foot targets move
-through treadmill phases; no fixed-support-coordinate template is repeated. The
-rig's source neutral depth planes are preserved. Root (64,106), center x=64, and
-semantic ground y=107 stay fixed; neither alpha bottom nor every sole is forced
-to y=107. Failed reach/contact fits remain failures.
+## Occlusion and review boundary
 
-Swing displacement blends toward neutral using the explicit 0.5 experiment control;
-reductions are reported. The raster correction tries at most ±3px and re-solves IK
-for every candidate. Upper-body counter-motion and robe response are independent,
-disabled controls until authored. The output palette must be a subset of exact rig
-part colors. Hole detection has no authored coverage mask and is explicitly unproven.
+The exact donor's near contour remains foreground at traced overlaps; a screen
+lead reversal does not imply a depth swap. Keep the anatomical part order for now,
+and quantify actual overlap, costume coverage, visible leg pixels and support-sole
+occluders. Frame 7's far sole is hidden by the near shin; its boot contact is still
+measured. Do not reorder an entire limb just to expose a legitimately hidden sole.
+The human must judge whether this presentation preserves readable crossover.
 
-Edit JSON for reproducible marker overrides and rerun to a fresh directory. The
-hidden marker cels are an editable inspection copy; edits to those cels do not
-silently replace JSON input authority. No automatic publication exists.
+Outputs include five clean native 128px PNGs, a compact comparison, five ownership
+masks, 15 annotated donor cells, complete annotations/plan/metrics and a run receipt.
+No animation, GIF, editor timing or runtime output is generated. The old `run.py`
+full-cycle entrypoint now refuses regeneration until the calibration decision is
+recorded in donor authority. Any later decision needs a bounded implementation;
+do not flip the gate merely to improve pass counts.
 
-## Review boundary
+Mechanical fixture tests are in `operator_ne_motion_plan_smoke.py`; real Aseprite
+and the accepted rig remain necessary to establish rendered pose/contact evidence.
+The original 15/15 mechanical result belongs to a rejected animation using the
+superseded donor. It is not evidence for the corrected cycle.
 
-A candidate needs all 15 individual geometry checks, reference annotation/support
-confirmation, authored coverage/hole review, coherent upper-body/robe motion,
-visual 15→1 loop acceptance, explicit timing and the existing specialized Operator
-source/Workbench gates. The diagnostic experiment does not grant any of these.
-Use the compact `contact_sheet.png`, clean strip, Aseprite tracks and `report.json`
-for the smallest next correction. Verify the intended rig master first if its pivot
-geometry is surprising; do not edit source pivots just to get green metrics.
+## Historical tooling retained
+
+The following records the recovery and previous cyclic implementation. Accepted
+rig geometry is current; previous donor annotations/support and animation are not.
 
 ## Master audit and recovery checkpoint
 
@@ -138,9 +136,9 @@ ownership, positive segment lengths, and six IK/raster contact probes at -15/0/+
 degrees for both sides. It reopens the saved candidate through real Aseprite before
 reporting technical success. Run V6 separately against that candidate only after
 these checks pass. The solver and its tolerances remain unchanged; source/timing
-publication is not part of this tool. The candidate remains visually unaccepted.
+publication is not part of this tool. The candidate was subsequently human-accepted; see `rig_acceptance.json`. Recovery remains closed.
 
-## Accepted rig and cyclic V6 continuation
+## Historical cyclic V6 implementation — animation rejected
 
 `rig_acceptance.json` records the user's hash-bound rig acceptance. V6 checks that
 exact file before planning; source/geometry recovery is closed. Animation and timing

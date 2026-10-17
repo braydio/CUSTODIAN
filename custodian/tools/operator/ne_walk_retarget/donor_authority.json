@@ -1,0 +1,33 @@
+{
+  "schema": "custodian.ne_donor_authority.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "source_filename": "Knight_NE_Reference.png",
+  "source_sha256": "20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba",
+  "rgba_sha256": "cff7cca675f071c05353b11d74a9580645a295d2f3f62eef84f3ba7dd4f7464a",
+  "dimensions": [
+    1920,
+    128
+  ],
+  "frames": 15,
+  "direction": "NE",
+  "direction_authority": "explicit_human_correction",
+  "superseded_source_sha256": "707efe8a3d0438473d87fdf112c9127c2b034454d3d383bc1829dda3a632b1d1",
+  "animation_decision": "rejected_previous_v6_animation",
+  "rig_decision": "accepted_unchanged",
+  "calibration_frames": [
+    12,
+    2,
+    7,
+    5,
+    15
+  ],
+  "calibration_roles": [
+    "near_leg_lead",
+    "approach_to_first_crossover",
+    "second_crossover",
+    "opposite_leg_lead",
+    "return_toward_seam"
+  ],
+  "full_cycle_regeneration_authorized": false,
+  "timing_fps": null
+}

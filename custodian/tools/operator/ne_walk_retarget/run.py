@@ -56,7 +56,10 @@ def validate(bundle, annotations):
             x,y=l['xy'];assert isinstance(x,int) and isinstance(y,int) and 0<=x<128 and 0<=y<128
             pixel=frame.getpixel((x,y))
             # Black/dim pixels cannot authenticate a visible anatomy marker.
-            if name.startswith(('ankle','toe')) and (pixel[3]<255 or max(pixel[:3])<55):
+            if l['visibility']=='visible_estimate' and name.startswith(('ankle','toe')) and (pixel[3]<255 or max(pixel[:3])<55):
+                review=l.get('sample_review',{})
+                if pixel[3]==255 and review.get('decision')=='opaque_boot_material' and review.get('rgba')==list(pixel) and review.get('evidence'):
+                    continue
                 marker_findings.append({'frame':i+1,'joint':name,'rgba':pixel,'reason':'visible_boot_marker_not_established'})
         assert len({tuple(l['xy']) for l in record['landmarks'].values()})==9
     assert rebuilt.tobytes()==source.tobytes()
@@ -198,6 +201,9 @@ def main():
     repo=HERE.parents[3]
     assert not a.output.is_relative_to(repo/'custodian'), 'output must stay outside active project'
     annotations=json.loads(a.annotations.read_text())
+    authority=json.loads((HERE/'donor_authority.json').read_text())
+    assert annotations['source_sha256']==authority['source_sha256'], 'superseded donor authority'
+    assert authority['full_cycle_regeneration_authorized'], 'five crossover calibration poses require review before full-cycle regeneration'
     preflight=validate(a.bundle,annotations)
     dep=json.loads((HERE/'v55_dependency.json').read_text());assert sha(a.v55)==dep['sha256'],'V5.5 dependency drift'
     rig_sha=sha(a.rig)

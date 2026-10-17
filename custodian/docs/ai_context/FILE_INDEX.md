@@ -41,7 +41,7 @@
 
 ## Operator Workbench UX Hierarchy
 
-- `custodian/tools/operator/ne_walk_retarget/` — preview-only, pinned V5.5 Aseprite batch adapter for the 15-frame Knight NE reference; editable provisional annotations, per-frame contact/reach/loop QA, immutable master comparison/recovery, a pre-solver rig gate, cyclic bounded IK/branch planning, inverse nearest raster, and explicit-rate loop review; no source/runtime publication.
+- `custodian/tools/operator/ne_walk_retarget/` — preview-only, pinned V5.5 Aseprite batch adapter for the 15-frame Knight NE reference; editable provisional annotations, per-frame contact/reach/loop QA, immutable master comparison/recovery, a pre-solver rig gate, cyclic bounded IK/branch planning, inverse nearest raster, and explicit-rate loop review; current exact-NE donor lock, 15 revised traces and five-pose crossover calibration hold full-cycle regeneration; no source/runtime publication.
 
 - `custodian/docs/ai_context/task_packets/OPERATOR_WORKBENCH_BROWSER_PREVIEW_DISCONNECT_OWNERSHIP_CORRECTION.md` + paired review — P0 human-authorized successor to exhausted Browser/PREVIEW review finding R2-01; binds accepted live preview results to the exact Live Bridge connection/session lifetime and gates FX-layer adoption on a fresh real-disconnect/reconnect review.
 - `custodian/docs/ai_context/task_packets/PERSISTENT_CHECKOUT_SYNC_HARDENING.md` + paired review — ready P1 persistent Git hygiene slice that centralizes safe FF-only synchronization for the coordination root and `workbench/operator-art`, adds `csync`/`opui-sync`, and makes clean OPUI sessions start from current main without rewriting blocked local state.
