@@ -415,7 +415,11 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   and again before anything is published. It journals each stage atomically in the
   original run directory (`closeout-journal.json` and `closeout-integrity.json` are the
   only files added there), converges on retry, never calls `dispatch.py claim`, and
-  refuses a dirty coordination checkout. The original claim, branch, worktree and run
+  refuses a dirty coordination checkout. The original claim is read from the structured
+  dispatcher receipt; if an older run stored `claim.stdout` truncated mid-JSON, only that
+  parse failure falls back to the plain `CLAIMED` header lines, which must match
+  `metadata.json` exactly on workstream, branch, worktree and packet and are then
+  verified in Git (a receipt that parses but does not verify never falls back). The original claim, branch, worktree and run
   evidence are preserved; the original worktree's modified and untracked files are
   verified by SHA-256 before and after (ignored files, file modes and symlink targets
   are not covered by that inventory). The claim (the remote `agent/<id>` branch) is

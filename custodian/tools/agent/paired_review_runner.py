@@ -857,6 +857,54 @@ def _branch_scope_error(worktree: Path, revision: str, allowed: set[str]) -> str
     return None
 
 
+_CLAIM_PARSE_ERRORS = ("dispatcher claim receipt was malformed",
+                       "dispatcher did not return exactly one structured claim receipt")
+
+
+def _claim_identity(run_dir: Path, workstream: str, repo: Path, metadata: dict) -> dict:
+    """The original claim's branch/worktree/packet identity, verified.
+
+    The structured dispatcher receipt is preferred and judged strictly. Older runs stored a
+    truncated ``claim.stdout`` whose JSON receipt is cut off mid-string. Only for that
+    parse failure, the plain header lines of the same file must agree exactly with
+    ``metadata.json`` on all four identity fields, and the worktree, branch, repository
+    and packet path are then verified in Git exactly as for a structured receipt. A
+    receipt that parses but does not verify, or any disagreement, still fails closed.
+    """
+    text = (run_dir / "claim.stdout").read_text(encoding="utf-8")
+    try:
+        return parse_claim_receipt(text, workstream, repo)
+    except RunnerError as structured:
+        if not any(marker in str(structured) for marker in _CLAIM_PARSE_ERRORS):
+            raise
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "CLAIMED":
+        raise RunnerError("claim.stdout has neither a parseable receipt nor a CLAIMED header")
+    header: dict[str, str] = {}
+    for line in lines[1:]:
+        if not line.strip():
+            break
+        key, separator, value = line.partition(": ")
+        if separator and key in ("workstream", "branch", "worktree", "packet"):
+            if key in header:
+                raise RunnerError(f"claim.stdout header repeats {key}")
+            header[key] = value.strip()
+    expected = {"workstream": workstream, "branch": metadata.get("branch"),
+                "worktree": metadata.get("worktree"), "packet": metadata.get("packet")}
+    if header != expected:
+        raise RunnerError("claim.stdout header does not match the run metadata identity")
+    worktree = Path(header["worktree"]).resolve()
+    if not worktree.is_dir() or git(worktree, "branch", "--show-current") != header["branch"]:
+        raise RunnerError("claimed worktree/branch identity could not be verified")
+    if common_dir(worktree) != common_dir(repo):
+        raise RunnerError("claimed worktree belongs to another repository")
+    if header["packet"] != f"{PACKET_ROOT}/{Path(header['packet']).name}":
+        raise RunnerError("claimed packet path is not a root task packet")
+    return {"schema": "custodian.dispatch.claim.v1", "result": "claimed", "verified": True,
+            "workstream": workstream, "branch": header["branch"], "worktree": str(worktree),
+            "packet": header["packet"], "source": "claim.stdout header (receipt truncated)"}
+
+
 def _remote_branch_exists(repo: Path, branch: str) -> bool:
     return bool(subprocess.run(["git", "ls-remote", "--heads", "origin", f"refs/heads/{branch}"], cwd=repo,
                                text=True, capture_output=True).stdout.strip())
@@ -966,7 +1014,7 @@ def recover_closeout(repo: Path, workstream: str, run_id: str, *, isolated_check
 def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal, journal_path,
                     isolated_checkout, outcome, ids, provenance, apply, release_claim, lander) -> dict:
     git(repo, "fetch", "origin", "main")
-    claim = parse_claim_receipt((run_dir / "claim.stdout").read_text(encoding="utf-8"), workstream, repo)
+    claim = _claim_identity(run_dir, workstream, repo, metadata)
     branch, original = claim["branch"], Path(claim["worktree"]).resolve()
     if branch != f"agent/{workstream}" or branch != metadata.get("branch") or str(original) != str(
             Path(metadata.get("worktree", "")).resolve()):

@@ -408,6 +408,65 @@ class RecoverCloseoutTests(FixtureCase):
                 self.assertFalse((fx.run_dir / runner.JOURNAL_NAME).exists())
                 self.assertFalse(fx.checkout.exists())
 
+    def write_truncated_claim(self, *, header=None, drop=(), worktree=None):
+        """The real stranded run stored claim.stdout cut off mid-JSON after the plain header."""
+        fx = self.fx
+        values = {"workstream": WORKSTREAM, "branch": f"agent/{WORKSTREAM}",
+                  "worktree": worktree or str(fx.worktree), "packet": ACTIVE}
+        values.update(header or {})
+        lines = ["CLAIMED"] + [f"{key}: {value}" for key, value in values.items() if key not in drop]
+        lines += ["visual review: none", "", "NEXT:", "Read AGENTS.md.", "agent: codex-reviewer",
+                  runner.CLAIM_SENTINEL + '{"schema": "custodian.dispatch.claim.v1", "result": "claimed", "work']
+        (fx.run_dir / "claim.stdout").write_text("\n".join(lines))
+
+    def test_a_truncated_claim_receipt_falls_back_to_the_verified_header_and_recovers(self):
+        fx = self.fx
+        self.write_truncated_claim()
+        before = fx.snapshot()
+        plan = fx.recover(apply=False)
+        self.assertEqual(plan["original_worktree"], str(fx.worktree))
+        result = fx.recover()
+        self.assertEqual(result["stage"], "complete")
+        self.assertEqual(fx.snapshot(), before)
+
+    def test_a_truncated_claim_receipt_still_fails_closed_on_any_disagreement(self):
+        fx = self.fx
+        cases = {
+            "header worktree differs from metadata": (dict(worktree=str(fx.base / "elsewhere")),
+                                                      "does not match the run metadata identity"),
+            "header branch differs from metadata": (dict(header={"branch": "agent/review-other"}),
+                                                    "does not match the run metadata identity"),
+            "header packet differs from metadata": (dict(header={"packet": f"{runner.PACKET_ROOT}/OTHER.md"}),
+                                                    "does not match the run metadata identity"),
+            "header omits a field": (dict(drop=("packet",)), "does not match the run metadata identity"),
+            "header repeats a field": (None, "repeats workstream"),
+        }
+        for label, (kwargs, expected) in cases.items():
+            with self.subTest(label):
+                if kwargs is None:
+                    self.write_truncated_claim()
+                    path = fx.run_dir / "claim.stdout"
+                    path.write_text(path.read_text().replace("branch:", f"workstream: {WORKSTREAM}\nbranch:", 1))
+                else:
+                    self.write_truncated_claim(**kwargs)
+                with self.assertRaisesRegex(runner.RunnerError, expected):
+                    fx.recover(apply=False)
+        (fx.run_dir / "claim.stdout").write_text("garbage with no header\n")
+        with self.assertRaisesRegex(runner.RunnerError, "neither a parseable receipt nor a CLAIMED header"):
+            fx.recover(apply=False)
+
+    def test_a_parseable_but_unverified_receipt_never_falls_back_to_the_header(self):
+        fx = self.fx
+        self.write_truncated_claim()
+        receipt = {"schema": "custodian.dispatch.claim.v1", "result": "started", "workstream": WORKSTREAM,
+                   "branch": f"agent/{WORKSTREAM}", "worktree": str(fx.worktree), "packet": ACTIVE,
+                   "verified": True}
+        path = fx.run_dir / "claim.stdout"
+        text = path.read_text().rsplit(runner.CLAIM_SENTINEL, 1)[0]
+        path.write_text(text + runner.CLAIM_SENTINEL + json.dumps(receipt) + "\n")
+        with self.assertRaisesRegex(runner.RunnerError, "does not verify the requested review claim"):
+            fx.recover(apply=False)
+
     def test_an_unpublished_or_moved_original_head_is_refused(self):
         fx = self.fx
         (fx.worktree / "local_only.txt").write_text("unpublished\n")
