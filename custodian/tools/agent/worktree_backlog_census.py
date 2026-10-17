@@ -8,13 +8,16 @@ is abandoned and never changes a worktree, branch, claim, or packet.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+from uuid import uuid4
 
 
 SCHEMA = "custodian.worktree_backlog_census.v1"
@@ -102,6 +105,122 @@ def status_counts(raw: bytes) -> tuple[int, int, int, str]:
     return staged, unstaged, untracked, hashlib.sha256(raw).hexdigest()
 
 
+def dispatch_audit(repo: Path) -> dict:
+    process = subprocess.run([sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "audit", "--json"],
+                             cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if process.returncode:
+        raise CensusError("dispatch.py audit --json failed: " + process.stderr.decode("utf-8", "replace").strip())
+    try:
+        audit = json.loads(process.stdout)
+    except json.JSONDecodeError as error:
+        raise CensusError(f"dispatcher audit returned malformed JSON: {error}") from error
+    if audit.get("schema") != "custodian.task_packet_queue_audit.v1":
+        raise CensusError("unexpected dispatcher audit schema")
+    return audit
+
+
+def host_state_snapshot(repo: Path) -> dict:
+    """Capture private host identity/status hashes without reading dirty file bytes."""
+    refs = git_text(["for-each-ref", "--format=%(refname) %(objectname)"], repo).splitlines()
+    refs = sorted(refs)
+    claim_refs = [row for row in refs if "/dispatch-claims/" in row]
+    common = Path(git_text(["rev-parse", "--git-common-dir"], repo))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    fetch_head = common / "FETCH_HEAD"
+    fetch_head_hash = hashlib.sha256(fetch_head.read_bytes()).hexdigest() if fetch_head.exists() else None
+    worktrees = []
+    for identity in parse_worktrees(run(["worktree", "list", "--porcelain"], repo)):
+        path = Path(str(identity["worktree_path"]))
+        row = {key: identity.get(key) for key in ("worktree_path", "branch", "detached", "locked", "prunable")}
+        row["HEAD"] = identity["HEAD"]
+        row["workstream_identity"] = (str(identity.get("branch", "")).removeprefix("refs/heads/agent/")
+                                       if str(identity.get("branch", "")).startswith("refs/heads/agent/") else None)
+        row["process_owner"] = "unknown; census does not infer process liveness"
+        try:
+            if not path.is_dir():
+                raise CensusError("worktree path missing")
+            row["observed_HEAD"] = git_text(["-C", str(path), "rev-parse", "--verify", "HEAD"], repo)
+            status = run(["-C", str(path), "status", "--porcelain=v2", "-z", "--untracked-files=all"], repo)
+            staged, unstaged, untracked, fingerprint = status_counts(status)
+            row["status"] = {"staged": staged, "unstaged": unstaged, "untracked": untracked,
+                              "porcelain_sha256": fingerprint}
+        except (OSError, CensusError) as error:
+            row["error"] = str(error)
+        worktrees.append(row)
+    return {"refs": refs, "claim_refs": claim_refs, "fetch_head_sha256": fetch_head_hash,
+            "worktrees": worktrees}
+
+
+def capture_host_evidence(repo: Path) -> dict:
+    """Run one normal census bracketed by private before/after host snapshots."""
+    repo = repo.resolve(strict=True)
+    top = Path(git_text(["rev-parse", "--show-toplevel"], repo)).resolve(strict=True)
+    if top != repo:
+        raise CensusError(f"repo must be the coordination checkout root: {top}")
+    # Refresh dispatcher-visible remote refs before the baseline. The census
+    # runs its normal audit again; any intervening ref/status change fails the
+    # exact comparison instead of being mistaken for a read-only pass.
+    dispatch_audit(repo)
+    before = host_state_snapshot(repo)
+    report = census(repo)
+    after = host_state_snapshot(repo)
+    report_by_path = {row["worktree_path"]: row for row in report["worktrees"]}
+    before_paths = {row["worktree_path"] for row in before["worktrees"]}
+    after_paths = {row["worktree_path"] for row in after["worktrees"]}
+    report_paths = set(report_by_path)
+    comparisons = {
+        "refs_unchanged": before["refs"] == after["refs"],
+        "claim_refs_unchanged": before["claim_refs"] == after["claim_refs"],
+        "fetch_head_unchanged": before["fetch_head_sha256"] == after["fetch_head_sha256"],
+        "worktree_status_and_identity_unchanged": before["worktrees"] == after["worktrees"],
+        "census_path_coverage_exact": before_paths == after_paths == report_paths,
+    }
+    classified = []
+    for row in after["worktrees"]:
+        result = report_by_path.get(row["worktree_path"])
+        classified.append({"worktree_path": row["worktree_path"], "branch": row.get("branch"),
+                           "HEAD": row.get("HEAD"), "classification": result.get("classification") if result else "UNKNOWN_PROTECT",
+                           "action": result.get("action") if result else "preserve; missing census row"})
+    evidence = {"schema": "custodian.worktree_backlog_host_evidence.v1",
+                "captured_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "coordination_repo": str(repo), "coordination_HEAD": git_text(["rev-parse", "HEAD"], repo),
+                "origin_main_SHA": report["origin_main_sha"], "before": before, "after": after,
+                "census_path_classifications": classified, "census_report": report,
+                "comparisons": comparisons,
+                "exact_non_mutation_verified": all(comparisons.values()),
+                "privacy_note": "Status contents and dirty paths are not stored; porcelain bytes are represented by SHA-256 and counts only."}
+    common = Path(git_text(["rev-parse", "--git-common-dir"], repo))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    private_root = common / "custodian-private-evidence"
+    private_root.mkdir(mode=0o700, exist_ok=True)
+    private_root.chmod(0o700)
+    evidence_dir = private_root / "worktree-backlog-census"
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    evidence_dir.chmod(0o700)
+    evidence_path = evidence_dir / f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid4().hex[:12]}.json"
+    payload = (json.dumps(evidence, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    fd = os.open(evidence_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(payload)
+        stream.flush()
+        os.fsync(stream.fileno())
+    digest = hashlib.sha256(payload).hexdigest()
+    receipt = {"schema": "custodian.worktree_backlog_host_evidence_receipt.v1",
+               "artifact": str(evidence_path.relative_to(common)), "sha256": digest,
+               "exact_non_mutation_verified": evidence["exact_non_mutation_verified"],
+               "worktree_count": report["worktree_count"], "classification_counts": report["classification_counts"]}
+    receipt_path = evidence_path.with_suffix(".receipt.json")
+    receipt_payload = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    fd = os.open(receipt_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(receipt_payload)
+        stream.flush()
+        os.fsync(stream.fileno())
+    return {**receipt, "private_path": str(evidence_path), "receipt_path": str(receipt_path)}
+
+
 def packet_index(repo: Path, audit: dict) -> tuple[dict[str, dict], list[dict]]:
     identities: dict[str, dict] = {}
     invalid: list[dict] = []
@@ -149,16 +268,7 @@ def census(repo: Path) -> dict:
     main_sha = git_text(["rev-parse", "refs/remotes/origin/main"], repo)
     # The dispatcher's own audit is authoritative for queue eligibility. It may
     # refresh origin tracking refs, as documented by dispatch.py audit.
-    audit_process = subprocess.run([sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "audit", "--json"],
-                                   cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if audit_process.returncode:
-        raise CensusError("dispatch.py audit --json failed: " + audit_process.stderr.decode("utf-8", "replace").strip())
-    try:
-        audit = json.loads(audit_process.stdout)
-    except json.JSONDecodeError as error:
-        raise CensusError(f"dispatcher audit returned malformed JSON: {error}") from error
-    if audit.get("schema") != "custodian.task_packet_queue_audit.v1":
-        raise CensusError("unexpected dispatcher audit schema")
+    audit = dispatch_audit(repo)
     packets, invalid = packet_index(repo, audit)
     trace_process = subprocess.run([sys.executable, str(repo / "custodian/tools/agent/run_trace.py"), "list"],
                                    cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -267,7 +377,8 @@ def census(repo: Path) -> dict:
     return {"schema": SCHEMA, "captured_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "coordination_repo": str(repo), "origin_main_sha": main_sha,
             "dispatcher_audit": {key: audit.get(key) for key in ("schema", "raw_active_markdown_count", "managed_packet_count", "claimable_auto_count", "class_counts", "interrupted_dispatch_claim_count", "claim_only_orphan_dispatch_claim_count")},
-            "worktree_count": len(rows), "worktrees": rows, "invalid_queue_records": invalid,
+            "worktree_count": len(rows), "classification_counts": dict(sorted(Counter(row["classification"] for row in rows).items())),
+            "worktrees": rows, "invalid_queue_records": invalid,
             "claim_only_or_interrupted_claims": claim_only,
             "reported_baselines": {"unfinished_attached": 36, "dirty": 17, "clean": 19, "named_dirty": 17, "named_clean": 18,
                                    "unique_ahead_heads": 10, "archived_residue": 2, "detached": 11, "invalid_recovery": 65, "claim_only": 2}}
@@ -297,8 +408,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="clean CUSTODIAN coordination checkout")
     parser.add_argument("--json", action="store_true", help="emit normalized JSON")
+    parser.add_argument("--capture-host-evidence", action="store_true",
+                        help="privately save before/after host identity and status fingerprints under the git common directory")
     args = parser.parse_args()
     try:
+        if args.capture_host_evidence:
+            receipt = capture_host_evidence(args.repo)
+            print(json.dumps(receipt, indent=2, sort_keys=True))
+            return 0 if receipt["exact_non_mutation_verified"] else 3
         report = census(args.repo)
         print(json.dumps(report, indent=2, sort_keys=True) if args.json else markdown(report), end="\n")
         return 0

@@ -152,6 +152,46 @@ class CensusTests(unittest.TestCase):
         self.assertEqual(before_work, git(self.workstream, "status", "--porcelain=v2", "--untracked-files=all"))
         self.assertEqual(before_detached, git(self.detached, "status", "--porcelain=v2", "--untracked-files=all"))
 
+    def test_host_snapshot_pins_refs_heads_status_and_claim_identity_without_names(self):
+        (self.workstream / "private-local.uid").write_text("private\n")
+        snapshot = census_tool.host_state_snapshot(self.repo)
+        self.assertTrue(any(row.startswith("refs/heads/agent/sample-work ") for row in snapshot["refs"]))
+        row = next(item for item in snapshot["worktrees"] if item["worktree_path"] == str(self.workstream.resolve()))
+        self.assertEqual(row["workstream_identity"], "sample-work")
+        self.assertEqual(row["process_owner"], "unknown; census does not infer process liveness")
+        self.assertEqual(len(row["status"]["porcelain_sha256"]), 64)
+        self.assertNotIn("private-local.uid", json.dumps(snapshot))
+
+    def test_host_evidence_capture_verifies_unchanged_state_and_private_hash(self):
+        report = self._census()
+        with patch.object(census_tool, "dispatch_audit", return_value=self.audit), \
+             patch.object(census_tool, "census", return_value=report):
+            receipt = census_tool.capture_host_evidence(self.repo)
+        artifact = Path(receipt["private_path"])
+        payload = artifact.read_bytes()
+        self.assertEqual(census_tool.hashlib.sha256(payload).hexdigest(), receipt["sha256"])
+        evidence = json.loads(payload)
+        self.assertTrue(receipt["exact_non_mutation_verified"])
+        self.assertTrue(evidence["comparisons"]["census_path_coverage_exact"])
+        self.assertEqual(evidence["before"]["worktrees"], evidence["after"]["worktrees"])
+        self.assertEqual(artifact.stat().st_mode & 0o777, 0o600)
+        self.assertEqual(Path(receipt["receipt_path"]).stat().st_mode & 0o777, 0o600)
+        self.assertEqual(artifact.parent.stat().st_mode & 0o777, 0o700)
+
+    def test_host_evidence_reports_mutation_as_non_pass(self):
+        report = self._census()
+
+        def mutating_census(_repo):
+            (self.workstream / "unexpected-change.uid").write_text("changed\n")
+            return report
+
+        with patch.object(census_tool, "dispatch_audit", return_value=self.audit), \
+             patch.object(census_tool, "census", side_effect=mutating_census):
+            receipt = census_tool.capture_host_evidence(self.repo)
+        evidence = json.loads(Path(receipt["private_path"]).read_text())
+        self.assertFalse(receipt["exact_non_mutation_verified"])
+        self.assertFalse(evidence["comparisons"]["worktree_status_and_identity_unchanged"])
+
 
 if __name__ == "__main__":
     unittest.main()

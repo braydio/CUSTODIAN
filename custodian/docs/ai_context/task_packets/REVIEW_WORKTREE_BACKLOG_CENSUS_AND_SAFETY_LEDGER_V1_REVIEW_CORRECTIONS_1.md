@@ -21,7 +21,7 @@
 - Review cycle: `1`
 - Max automatic review cycles: `2`
 - Goal: Independently determine whether correction cycle 1 resolves original finding R0-01 for W1's read-only inventory acceptance, without changing or erasing the original findings outcome.
-- Reviewed implementation acceptance: The correction packet's R0-01 claims: census leaves host worktree paths, HEADs, branch/ref and claim identities, and status fingerprints unchanged; all 62 dated paths reconcile; W1 read-only inventory is distinct from W2 backup receipts; private evidence is integrity checked without exposing contents.
+- Reviewed implementation acceptance: The correction packet's R0-01 claims: census leaves host worktree paths, HEADs, branch/ref and claim identities, and status fingerprints unchanged; the original 62-path ledger and pinned 63-path host capture reconcile; W1 read-only inventory is distinct from W2 backup receipts; private evidence is integrity checked without exposing contents.
 - Review evidence: Archived original W1 packet, original review finding and receipt, correction implementation SHA, private host evidence manifest/hash, current census output, source/tests, and canonical validation output. Inspect the private evidence only in place and report its verified digest and nonsecret summary.
 - Correction threshold: Any mismatch in before/after identities/status, missing or ambiguous path classification, unverified evidence provenance, claim that status hashes prove backups, or unsupported historical preservation claim blocks PASS. Preserve R0-01 as unresolved if W1 read-only acceptance remains uncertain.
 - Focused validation: Independently recompute evidence-manifest hashes; inspect census diff and fixtures; rerun census tests, dispatcher and branch-hygiene checks, correction lineage/review acceptance, and changed-file validation. Confirm original review remains `findings` and no original reviewer/worktree/ref was altered.
@@ -33,6 +33,10 @@
 ## Procedure
 
 Follow `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md` and the repository workstream lifecycle. Start a fresh reviewer context from archived repository evidence. Verify the correction against its exact landed implementation SHA and inspect the host evidence artifact in place without copying private contents into Git. Keep the original R0-01 finding and outcome unchanged. If accepted, archive this packet and land its legitimate structured review receipt through the normal lifecycle.
+
+## User-Authorized Post-Pass Handoff
+
+After this review is passed and archived, the execution owner must separately update only the `Depends on` fields in `WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` and `WORKTREE_BACKLOG_QUEUE_INVALID_CLAIM_TRIAGE_V1.md` to this review workstream, regenerate and validate `task_packets/README.md`, and confirm dispatcher eligibility. This user-authorized dependency release is outside the review commit's bounded staging set; do not edit those packets in this review worktree.
 
 ## Handoff
 
