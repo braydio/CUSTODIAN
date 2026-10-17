@@ -8,7 +8,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 Review blocked by finding R0-01. The pinned reviewed main and implementation commit are both `aaa1b0f69ee15e97026b97ede608b1d5369ecaed`. The implementation adds a read-only worktree census, a fixture suite, and the measured 62-path ledger. The inspected code classifies dirty/unique, detached, archived, invalid, ambiguous, and unknown identities conservatively; hashes porcelain status rather than storing its file names; and fails closed for missing paths and malformed status records.
 
-The review packet requires independent host evidence for preservation receipts, exact owner dispositions, and original HEAD/claim bytes. The ledger records `preservation_receipt: null` and `protected_user_files: uninspected; no file contents read`; the designated review-run directory has no preservation receipt artifact. This prevents independent verification that no local work or claimant evidence was lost, so no passed receipt is recorded and no downstream cleanup is authorized. The review packet remains active and recoverable with the finding appended under `## Independent Review`.
+The review packet requires independent host evidence for preservation receipts, exact owner dispositions, and original HEAD/claim bytes. The ledger records `preservation_receipt: null` and `protected_user_files: uninspected; no file contents read`; the designated review-run directory has no preservation receipt artifact. This prevents independent verification that no local work or claimant evidence was lost, so no passed receipt is recorded and no downstream cleanup is authorized. Finding `R0-01` and this summary are preserved on the original review branch at `5d6598cd91c802609012e889242aa556c3ee8417`. The runner entered `post_exit_recovery` because its passing-receipt verifier rejected the candidate; the supported findings-only closeout is being used to preserve the truthful nonpassing result without releasing the claim.
 
 ## Validation
 
@@ -34,11 +34,11 @@ The review packet requires independent host evidence for preservation receipts, 
 
 ## Next Handoff
 
-- Next workstream: `review-worktree-backlog-census-and-safety-ledger-v1`
+- Next workstream: `worktree-backlog-dirty-and-unique-preservation-v1`
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
 - Refresh reason: none
-- Next action: Preserve this review worktree and packet. Add the missing scrubbed host preservation receipt and original owner/claim evidence to durable repository evidence, then resume this same review and verify R0-01 before recording an outcome.
-- Blockers or open questions: The host preservation evidence is not present in the reviewed commit or authorized review-run artifacts; no implementation correction or cleanup verdict is supported yet.
+- Next action: Keep the original review branch/worktree and finding intact. W2 may proceed only after dispatcher confirms its dependency gate; it must produce the private preservation evidence needed to resolve R0-01 before any accepted review or retirement decision.
+- Blockers or open questions: Required preservation receipt hashes and exact owner/claim evidence remain absent; the review is concluded as findings and is not an accepted pass.
