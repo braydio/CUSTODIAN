@@ -1,7 +1,7 @@
 # Paired Review Godot Cache Access V1 — Implementation Summary
 
 Workstream: `agent-paired-review-godot-cache-access-v1`
-Implementation checkpoint: `a27cdda3cf820075b082c0c1bff70ad1ab1e1dd9`; synchronized main at `246d7c1606c74800a870e829259844efb0cff4d6`.
+Code checkpoint: `a27cdda3cf820075b082c0c1bff70ad1ab1e1dd9`; synchronized main: `246d7c1606c74800a870e829259844efb0cff4d6`; closeout files and final test assertion are in the subsequent task commit.
 
 The paired-review runner now resolves writable cache locations through `godot_project_lock.py`: the isolated Godot scratch/HOME root and the shared machine-wide job-budget namespace. It creates those directories before claiming/launching a reviewer, deduplicates them when they resolve to the same root, and refuses cache roots that overlap shared Git metadata or are too broad. The reviewer argv retains the existing run-evidence directory and adds only these CUSTODIAN roots; shared Git metadata receives no added permission and no lock-disable setting is injected.
 

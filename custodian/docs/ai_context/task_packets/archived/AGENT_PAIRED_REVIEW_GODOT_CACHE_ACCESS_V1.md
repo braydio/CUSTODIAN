@@ -33,9 +33,12 @@
 - Deferred: A generic paired-review `recover` CLI for already-protected runs remains owned by the existing orphan/recovery roadmap; this slice only fixes future sandbox validation access.
 
 ## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `40/40` changed-file tests passed with complete coverage and no skips, timeouts, failures or infrastructure errors; paired-review runner unit suite passed `28/28`; Godot project-lock smoke passed; paired packet and task-index checks passed; final report: `/tmp/agent-paired-review-cache-access-final.json`.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
