@@ -2,7 +2,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codex-art-import-shared-transform`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -44,3 +44,38 @@
 - Refresh owner: `none`; ChatGPT/user planning refresh required: `no` for objective tooling; human art approval remains separate.
 - Current chat URL: `not-recorded`; add the exact user-supplied URL before the next material packet refresh.
 - Completion report: changed files, final data/API contract, tests+results, architecture debt/drift, deferred risks only.
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The registered shared-transform smoke proves canonical deterministic plan and replay hashes, exact 8f/6f/prop output dimensions, explicit soft versus binary alpha, semantic adapters, and fail-closed refusal controls. All four packet-required existing Python smokes pass. The broader changed-file run is recorded as blocked by Godot importer exit -11 before tests.`
+- Implemented the reusable deterministic sprite import plan and shared transform API in `custodian/tools/assets/sprite_import/`, backed by converter geometry/resampling helpers. Added explicit Asset V2 and Operator profile adapters, input and allocation guards, and a narrow Operator session contract adapter; the Operator production path remains `pixelart --choose 1`.
+- Golden geometry: eight 512px cells produce a 1024x128 strip; six 256px grid cells produce a 768x128 strip; 128x160 one-frame props retain exact dimensions. Repeated plans and replay output hashes match.
+- Explicit soft illustrated alpha retains intermediate alpha; pixel-crisp remains nearest-neighbor with binary alpha. Invalid/ambiguous input, empty frames, digest mismatch, excessive preparation, source overwrite, and single-image replay-plan misuse are rejected.
+- Validation: focused shared-transform smoke, Operator source smoke, Operator registration profile smoke, pixelart colors smoke, and Asset V2 plan smoke passed. `run_validation.py --changed --json` failed before test execution because Godot import/reimport exited -11; the focused registered manifest test passed with a green report.
+- No production art or runtime output changed. No new publishing authority was added.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: Godot import/reimport crashed with exit -11 during changed-file validation before any selected tests ran.
+- Root cause / contributing factors: the failure occurred inside the Godot importer at 99% reimport; no code-level diagnostic was emitted.
+- Prevention / pipeline improvement: retain the successful focused Python manifest report and rerun changed-file validation after the Godot import environment is healthy.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: focused Python geometry and existing art intake smokes were deterministic and green.
+
+## Next Handoff
+- Next workstream: review-codex-art-import-shared-transform
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0
+- Refresh reason: none
+- Next action: run the fresh-context paired post-land review after this implementation lands; then dispatch `codex-art-import-registration` when its dependency is complete.
+- Blockers or open questions: changed-file validation needs a rerun because Godot import/reimport crashed with exit -11.
