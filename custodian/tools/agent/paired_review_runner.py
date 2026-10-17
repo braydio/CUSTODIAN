@@ -877,6 +877,8 @@ def _claim_identity(run_dir: Path, workstream: str, repo: Path, metadata: dict) 
     except RunnerError as structured:
         if not any(marker in str(structured) for marker in _CLAIM_PARSE_ERRORS):
             raise
+        if sum(line.startswith(CLAIM_SENTINEL) for line in text.splitlines()) > 1:
+            raise  # conflicting receipts are not a truncation
     lines = text.splitlines()
     if not lines or lines[0].strip() != "CLAIMED":
         raise RunnerError("claim.stdout has neither a parseable receipt nor a CLAIMED header")

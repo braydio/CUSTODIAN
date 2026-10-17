@@ -429,6 +429,21 @@ class RecoverCloseoutTests(FixtureCase):
         self.assertEqual(result["stage"], "complete")
         self.assertEqual(fx.snapshot(), before)
 
+    def test_the_fallback_is_used_and_conflicting_or_unverifiable_claims_are_refused(self):
+        fx = self.fx
+        self.write_truncated_claim()
+        claim = runner._claim_identity(fx.run_dir, WORKSTREAM, fx.repo, json.loads((fx.run_dir / "metadata.json").read_text()))
+        self.assertIn("header", claim["source"])
+        path = fx.run_dir / "claim.stdout"
+        path.write_text(path.read_text() + "\n" + runner.CLAIM_SENTINEL + "{}")
+        with self.assertRaises(runner.RunnerError):
+            runner._claim_identity(fx.run_dir, WORKSTREAM, fx.repo, json.loads((fx.run_dir / "metadata.json").read_text()))
+        self.write_truncated_claim(header={"worktree": str(fx.base / "missing")})
+        meta = json.loads((fx.run_dir / "metadata.json").read_text())
+        meta["worktree"] = str(fx.base / "missing")
+        with self.assertRaisesRegex(runner.RunnerError, "could not be verified"):
+            runner._claim_identity(fx.run_dir, WORKSTREAM, fx.repo, meta)
+
     def test_a_truncated_claim_receipt_still_fails_closed_on_any_disagreement(self):
         fx = self.fx
         cases = {
