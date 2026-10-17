@@ -37,3 +37,15 @@ The same stationary mask alignment drives underlay clipping, edge shadow, and ed
 Intensity control:
 
 `ForlornRitualantShaderFX` exposes `encounter_intensity` and `set_encounter_intensity(value)` to tune shader parameters through exported `ShaderMaterial` references. This is intended for later state-driven presentation changes only; it must not become encounter logic authority.
+
+## Actor-local silhouette readability
+
+The production `NPCs/ForlornRitualant/AnimatedSprite2D` also owns a separate,
+scene-local `ritualant_silhouette_readability_material.tres`. It applies a
+small midtone lift and an internal alpha-edge tint to the existing sprite.
+The shader samples only the current texture fragment and uses alpha derivatives
+for its edge cue, so it never reads neighboring 128px AtlasTexture frames. The
+source alpha and existing NPC modulate remain the final coverage/phase controls.
+This is a quiet ash/continuity boundary cue, not a spell, shield, aura, status
+indicator, or White Thread emission. It does not replace or alter the room-wide
+FX authority described above.

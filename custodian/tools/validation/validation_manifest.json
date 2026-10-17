@@ -4795,6 +4795,28 @@
       "needs_import": true
     },
     {
+      "id": "forlorn_ritualant_presentation",
+      "type": "godot_script",
+      "script": "res://tools/validation/forlorn_ritualant_presentation_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "ash_bell",
+        "authored",
+        "presentation",
+        "shader"
+      ],
+      "owners": [
+        "custodian/game/world/events/ash_bell/forlorn_ritualant_site.tscn",
+        "custodian/game/world/events/ash_bell/shaders/ritualant_silhouette_readability.gdshader",
+        "custodian/game/world/events/ash_bell/materials/ritualant_silhouette_readability_material.tres",
+        "custodian/tools/validation/forlorn_ritualant_presentation_smoke.gd",
+        "custodian/tools/validation/fixtures/forlorn_ritualant_completion_moment.gd",
+        "custodian/tools/iteration/scenarios/validation/forlorn_ritualant_silhouette_readability.json"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "ritualant_underground_environment_assets",
       "type": "godot_script",
       "script": "res://tools/validation/ritualant_underground_environment_assets_smoke.gd",

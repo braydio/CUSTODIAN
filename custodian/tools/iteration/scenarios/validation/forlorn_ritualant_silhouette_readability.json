@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "validation/forlorn_ritualant_silhouette_readability",
+  "description": "Matched kneeling Ritualant/floor ROI with only its actor-local readability material toggled.",
+  "scene": "res://tools/validation/fixtures/forlorn_ritualant_completion_moment.tscn",
+  "seed": 104729,
+  "duration_ticks": 10,
+  "simulation": {"physics_hz": 60, "warmup_ticks": 4, "max_wall_seconds": 20, "pause_during_setup": true},
+  "capture": {"width": 1280, "height": 720, "fps": 60, "audio": false, "start_tick": 0, "end_tick": 9, "contact_sheet_ticks": [0, 1, 3, 4, 7, 9], "required_keyframes": true, "background": "opaque"},
+  "setup": {
+    "remove_nodes": [],
+    "roles": {
+      "fixture": {"node_path": "."},
+      "level": {"node_path": "ForlornRitualantUnderground"},
+      "operator": {"node_path": "Operator"},
+      "ritualant": {"node_path": "ForlornRitualantUnderground/PlayableRoot/ForlornRitualantSite/NPCs/ForlornRitualant"}
+    },
+    "spawns": [], "properties": [], "processing": [],
+    "fixture": {"id": "forlorn_ritualant_completion", "config": {"review": "silhouette_readability_before_after"}}
+  },
+  "timeline": [
+    {"tick": 1, "action": "fixture_command", "name": "silhouette_before"},
+    {"tick": 4, "action": "fixture_command", "name": "silhouette_after"},
+    {"tick": 9, "action": "finish"}
+  ],
+  "probes": [
+    {"id": "encounter_state", "role": "fixture", "fields": ["checkpoint", "active_attack"], "ticks": [1, 4], "required": true}
+  ],
+  "assertions": [
+    {"type": "role_exists", "role": "level", "severity": "error"},
+    {"type": "role_exists", "role": "ritualant", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 1, "field": "checkpoint", "op": "eq", "value": "silhouette_before", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 4, "field": "checkpoint", "op": "eq", "value": "silhouette_after", "severity": "error"},
+    {"type": "probe_compare", "probe": "encounter_state", "tick": 4, "field": "active_attack", "op": "eq", "value": "none", "severity": "error"},
+    {"type": "output_exists", "path": "telemetry.json", "severity": "error"}
+  ],
+  "stable_fingerprint": {"event_payload_fields": {}, "counters": [], "probes": ["encounter_state"], "position_quantum_px": 0.25, "float_quantum": 0.0001},
+  "tags": ["ash_bell", "forlorn_ritualant", "presentation", "readability"]
+}

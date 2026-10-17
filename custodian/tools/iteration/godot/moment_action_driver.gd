@@ -191,6 +191,8 @@ func _fixture_command(action: Dictionary, result: Dictionary) -> void:
 			"anchor_east",
 			"return_lift",
 			"begin_return",
+			"silhouette_before",
+			"silhouette_after",
 		],
 		"ritualant_underground_landing_visual": [
 			"begin_landing_descent",

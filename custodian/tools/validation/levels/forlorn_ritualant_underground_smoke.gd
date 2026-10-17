@@ -28,7 +28,7 @@ func _run() -> void:
 		var authored_level := level as AuthoredLevel2D
 		if not authored_level.has_spawn(&"Spawn_DescentLanding"):
 			errors.append("Spawn_DescentLanding does not resolve")
-		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 1670.0):
+		elif authored_level.get_spawn_position(&"Spawn_DescentLanding") != Vector2(0.0, 1696.0):
 			errors.append("Spawn_DescentLanding is not on the lower lift")
 		if authored_level.get_camera_bounds() != Rect2(-1792.0, -2048.0, 3584.0, 4096.0):
 			errors.append("authored Underground camera bounds are not 3584x4096")

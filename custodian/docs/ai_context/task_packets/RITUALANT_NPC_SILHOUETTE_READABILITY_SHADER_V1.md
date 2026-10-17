@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -41,29 +41,29 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill>`
-- Completion boundary satisfied: `<fill>`
-- Acceptance satisfied: `<fill>`
-- Superseded/legacy production path disposition: `<fill>`
-- Evidence: `<fill>`
+- Goal satisfied: `Implementation is present and objectively validated; the final aesthetic acceptance remains pending human review.`
+- Completion boundary satisfied: `No. The packet requires human approval of the paired ROI before implementation closeout.`
+- Acceptance satisfied: `Mechanical and runtime contracts pass. Human visual acceptance is not yet recorded.`
+- Superseded/legacy production path disposition: `The hidden legacy Visual placeholder remains hidden and unchanged; production AnimatedSprite2D remains the sole Ritualant sprite.`
+- Evidence: `forlorn_ritualant_presentation PASS; forlorn_ritualant_runtime PASS; forlorn_ritualant_underground_smoke PASS; traversal/forlorn_ritualant_completion capture-mode none PASS; validation run --changed --json PASS (42/42). Final before/after ROI is published at /CUSTODIAN/visual_review/ritualant-npc-silhouette-readability-shader-v1/ritualant-readability-human-gate/REVIEW_MANIFEST.json.`
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `<fill>`
-- Friction severity: `<fill>`
-- What went wrong: `<fill>`
-- Root cause / contributing factors: `<fill>`
-- Prevention / pipeline improvement: `<fill>`
-- Tooling / docs drift discovered: `<fill>`
-- Follow-up: `<fill>`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The original Moment Forge completion fixture kept its camera near the lift, leaving the Ritualant offscreen; the first shader pass also multiplied the sampled texture twice, and a reserved shader identifier prevented compilation.`
+- Root cause / contributing factors: `The fixture camera did not follow authored Operator placement, so initial captures compared an unrelated foreground object. Renderer capture exposed the shader compile and COLOR-input contract issues before review.`
+- Prevention / pipeline improvement: `The fixture now follows the Operator at scene commands, and the focused presentation smoke checks production binding, per-scene material isolation, canonical animations, atlas bounds, no neighbor sampling, and alpha pass-through. A dedicated short Moment Forge scenario captures matched pre/post material frames.`
+- Tooling / docs drift discovered: `The authored Underground smoke still expected the retired lower-lift Y=1670; live LOWER_LIFT_DOCK/SPAWN_DESCENT_LANDING authority is Y=1696. Updated only that stale assertion, not scene geometry.`
+- Follow-up: `human-required`
 
 ## Handoff
 - Next workstream: `review-ritualant-npc-silhouette-readability-shader-v1`
-- Next packet state: `dependency-gated`
+- Next packet state: `human-required`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff.
 - Refresh reason: `none`
-- Next action: After human acceptance and successful implementation closeout, independently review the landed shader, regression evidence, and approved ROI presentation.
-- Blockers or open questions: Human-owned approval of the final visual treatment is a completion gate, not permission to skip objective validation.
+- Next action: `Review the published matched kneeling ROI at the original gameplay zoom. Decide whether the actor is immediately legible, the edge reads as ash/continuity separation rather than magic, and the treatment remains natural in hostile/dissolve phases. After approval, resume and finish this implementation through workstream.py, then allow the paired review to run in fresh context.`
+- Blockers or open questions: `Human-owned visual approval is outstanding; do not close AP2-equivalent implementation acceptance or launch the paired review before that decision.`

@@ -33,6 +33,7 @@
 [ext_resource type="Texture2D" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__hazard__thread_zone_decal_01__384x96.png" id="40_decal"]
 [ext_resource type="SpriteFrames" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/thread_warning_sweep_frames.tres" id="41_warning"]
 [ext_resource type="SpriteFrames" path="res://content/sprites/effects/runtime/ritualant_underground_hazard/thread_activation_burst_frames.tres" id="42_activation"]
+[ext_resource type="Material" path="res://game/world/events/ash_bell/materials/ritualant_silhouette_readability_material.tres" id="43_actor_readability"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_thread"]
 size = Vector2(288, 64)
@@ -351,6 +352,7 @@ shape = SubResource("RectangleShape2D_ritualant")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="NPCs/ForlornRitualant" unique_id=1302765729]
 z_index = 2
 sprite_frames = ExtResource("35_npc_animations")
+material = ExtResource("43_actor_readability")
 animation = &""
 
 [node name="RitualantInteract" type="Area2D" parent="NPCs" unique_id=321342900]
