@@ -8,7 +8,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-same-run-continuation-v1`
-- Locks: `agent-workflow`
+- Locks: `paired-review-same-run-continuation`
 - Review: `none`
 - Review target workstream: `agent-paired-review-same-run-continuation-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_SAME_RUN_CONTINUATION_V1.md`
@@ -29,6 +29,10 @@
 - Acceptance: Findings-first fresh-context review with zero blocking defects/material gaps and the full exact review receipt only if all guards and fault tests pass. If runtime continuation cannot safely be authorized, record findings and leave protected run unclaimed by a new dispatcher and unpassed.
 - Non-goals: No editor/runtime procgen changes, no reviewer-fabricated PASS, no generic orphan branch parking or altering Godot cache ownership.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Scoped-lock falsification (2026-10-17)
+- This review shares the implementation's `paired-review-same-run-continuation` lock. Inspect exact dispatcher claim/lock evidence and falsify the new conflict guard against both a review-only cache-access claimant and an active implementation/correction capable of writing the shared runner. Passing the cache review is not a prerequisite for this bounded continuation tool, but the cache review claim is NEVER released, modified, reclassified or implicitly accepted here.
+- Independently test the protected bunker contradiction: an older PASS receipt and a later canonical findings/one-material-gap result cannot yield a PASS merely from coordinator validation or a preserved target receipt. Verify source and overwritten-summary hashes stay protected across any fresh-context continuation.
 
 ## Host validation precondition (2026-10-17)
 - Independently verify that the implementation uses only immutable coordinator-side host validation evidence after the reviewed `agent-paired-review-host-godot-validation-v1` seam has landed. Any original run with a failed report remains blocked until fresh reviewer authorship plus a verified green report. Never treat a host validation report as an independent verdict.

@@ -8,7 +8,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-host-godot-validation-v1`
-- Locks: `agent-workflow`
+- Locks: `paired-review-same-run-continuation`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
@@ -46,8 +46,16 @@
 - Fresh continuation reuses the coordinator's pinned, immutable host validation evidence, checks its digest/provenance and must still obtain a reviewer-authored verdict. Original PGA-2 and Ritualant run evidence is never rewritten or marked passed merely because a host report is green.
 - This is an execution dependency, not permission to reclaim original review branches or bypass original `run_validation.py` truth gates.
 
+## Scoped lock and protected-run recovery authority (2026-10-17)
+- The accepted host-validation review `review-agent-paired-review-host-godot-validation-v1` is the canonical dependency. An older note below that says to wait for `review-agent-paired-review-godot-cache-access-v1` is superseded: its cache-access reviewer is still independently claimed and uses the broad `agent-workflow` logical lock; that is not a failed dependency here.
+- The implementation/review pair now uses its own `paired-review-same-run-continuation` logical lock. This is a reviewed-scope correction, NOT deletion/release/override of the existing cache review claim or the dispatch assignment mutex. The cache-access reviewer is review-only: its authorized changes are its own review packet, closing summary, and target receipt. It cannot modify `paired_review_runner.py` or its tests.
+- **Mandatory fail-closed claim-time check:** inspect all remotely claimed workstreams declaring `agent-workflow` on fetched `origin/main`, and their work surfaces. If ANY is an active implementation/correction or can modify `paired_review_runner.py`, `test_paired_review_runner.py`, or the same shared execution code, stop before editing and report the exact conflict. If the only holder is the review-only cache-access reviewer, continue in the dispatcher-assigned isolated worktree without touching that claimant. Do not override `agent-workflow`, remove its branch, or modify its review receipt.
+- The freshly accepted host validator runs Godot from the coordinator and writes immutable evidence. The continuation must reuse the same authority and keep reviewer disposition independent; never treat `validation.json` as a PASS receipt.
+- The protected bunker review `review-compound-connected-bunker-blockout-review-corrections-1` has run ID `20261017T140651Z-decf3304e1aa`, reviewed main `6101a443dd9550c33456abee23625dfb580f2a0d` and implementation `a74977eaf0b721e980703f7f0b8478a17d32d731`. Its original reviewer authored a PASS target receipt but ended with findings/1 material gap; this contradictory evidence MUST NOT be interpreted as an accepted pass. Treat it as a protected source for an independently authored, consistent new disposition under exact-run continuation, or explicit nonpassing closeout.
+- Preserve the bunker run's `overwritten-implementation-summary.sha256.json` record and both original SHA-256 strings: overwritten=`091bde4cfadf155a0bfd317a3d7f8b452b7610f2a51553d932c5bd4507b6c7ee`, pinned original=`f765ae76f291405c85ab117be577a57b204dd7b79acd7cb21429a4f68cda798c`. Do not rewrite or delete either summary without independently verified byte-exact durable preservation. The Type A Walled Yard and traversal dependencies remain blocked until their own accepted independent reviews.
+
 ## Publication / dependency gate
-- This packet and its fresh paired review are drafted for opt-in targeted authoring validation; do not claim until the exact `review-agent-paired-review-godot-cache-access-v1` dependency has passed and archived, the automatic authoring handoff has promoted BOTH to `ready/auto`, and the dispatcher permits the `agent-workflow` lock.
+- Both packets are already published `ready/auto`; the only required upstream acceptance is `review-agent-paired-review-host-godot-validation-v1`, now archived passed. Claim only when the dispatcher confirms the NEW scoped `paired-review-same-run-continuation` lock is free and the claim-time remote-writer conflict guard above passes. Do not change or release the old `agent-workflow` claim.
 - The protected ambient review remains separate, active and unpassed until an independently reviewer-authored receipt actually lands. Never reclaim or duplicate it.
 
 ## Next Handoff
@@ -58,4 +66,4 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
 - Refresh reason: `new scoped same-run reviewer continuation tool needs independent code/workflow review before being used for ambient protected recovery`
 - Next action: `Implement and independently review the bounded same-run continuation API; then authorize the existing ambient claimed run's exact ID and let a fresh reviewer write a real disposition. Do not release ambient claim or manufacture a pass.`
-- Blockers or open questions: `P0 Godot cache-access implementation/review must land first; original ephemeral reviewer context cannot be resurrected`
+- Blockers or open questions: `The old cache-access reviewer retains its independent claim and unresolved verdict. Only read-only reviewer overlap is allowed under the scoped lock; any concurrent runner writer fails closed. Original ephemeral reviewer context cannot be resurrected.`
