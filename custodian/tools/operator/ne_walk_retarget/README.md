@@ -286,7 +286,9 @@ and confirms the original literal-newline defect fails the parser.
 
 The explicit `--repair-viewer-only` mode checks the locked Iteration 004 report,
 Operator strip and Knight NE donor hashes, then writes only a self-contained
-viewer into a new staging directory. The original report, frames, strip, viewer,
+viewer into a new staging directory. It verifies both images embedded in the
+original Iteration 004 viewer before regeneration, then rechecks the new viewer.
+The original report, frames, strip, viewer,
 source art and Aseprite project were not changed; Aseprite and the animation
 renderer were not invoked. The repaired viewer has SHA-256
 `fedc0ca4cb3ba4d17d11257b175b9b16e3172c5cad9287f463e4fa825f615117`.

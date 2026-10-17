@@ -221,6 +221,12 @@ def main(argv=None):
         if not report_path.is_file() or _sha_file(report_path)!=expected_report:parser.error('Iteration 004 report SHA-256 does not match the locked baseline')
         if not candidate_path.is_file() or _sha_file(candidate_path)!=expected_candidate:parser.error('Iteration 004 Operator strip SHA-256 does not match the locked baseline')
         if not donor_path.is_file() or _sha_file(donor_path)!=DONOR_SHA256:parser.error('Knight NE donor SHA-256 does not match the locked baseline')
+        original_viewer=output/'LOOP_REVIEW.html'
+        try:
+            original_donor=_read_html_png(original_viewer,'ref');original_candidate=_read_html_png(original_viewer,'op')
+        except (OSError,ValueError) as exc:parser.error(f'Iteration 004 viewer image identity check failed: {exc}')
+        if _sha_bytes(original_donor)!=DONOR_SHA256:parser.error('original Iteration 004 ref.src does not match the pinned Knight NE donor')
+        if _sha_bytes(original_candidate)!=expected_candidate:parser.error('original Iteration 004 op.src does not match the locked Operator strip')
         if review_dir.exists() and (not review_dir.is_dir() or any(review_dir.iterdir())):
             parser.error(f'repair staging directory must be new or empty: {review_dir}')
         review_dir.mkdir(parents=True,exist_ok=True)
@@ -236,6 +242,7 @@ def main(argv=None):
         print(json.dumps({'status':'PASS','mode':'repair-viewer-only','viewer':str(target),
             'html_sha256':_sha_file(target),'report_sha256':_sha_file(report_path),
             'candidate_strip_sha256':_sha_file(candidate_path),'donor_sha256':_sha_file(donor_path),
+            'original_embedded_donor_sha256':_sha_bytes(original_donor),'original_embedded_candidate_sha256':_sha_bytes(original_candidate),
             'embedded_donor_sha256':_sha_bytes(embedded_donor),'embedded_candidate_sha256':_sha_bytes(embedded_candidate),
             'script':parser_receipt}))
         return 0
