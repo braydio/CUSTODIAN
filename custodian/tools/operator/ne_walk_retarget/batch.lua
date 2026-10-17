@@ -67,13 +67,22 @@ local function solve_frame(i,adjust)
   solved.derived_preset=preset
   return solved
 end
+local function upper_body_visual_angle(solved)
+  local p=cfg.motion_plan.frames[solved.reference_frame]
+  local nd=p.legs.near.ankle.x-p.legs.near.hip.x
+  local fd=p.legs.far.ankle.x-p.legs.far.hip.x
+  local stride=clamp((nd-fd)/25.0,-1,1)
+  local base=cfg.annotations.controls.upper_body_counter_motion_degrees*math.sin((solved.reference_frame-1)*2*math.pi/15)
+  local bias=-0.75*stride
+  local angle=base+bias
+  if angle~=angle or math.abs(angle)>3.0 then error('upper-body angle outside authorized finite 3-degree bound') end
+  return {upper_body=angle,upper_body_base=base,upper_body_stride_bias=bias,normalized_stride=stride}
+end
 local original_transform_special=transform_special
 transform_special=function(src,special,preset,solved)
-  -- Independent upper-body control: zero by default until separately authored.
-  local amount=cfg.annotations.controls.upper_body_counter_motion_degrees
-  if amount~=0 and (special=='torso' or special=='hood' or special:find('arm')) then
-    local a=amount*math.sin((solved.reference_frame-1)*2*math.pi/15)
-    return place_rigid(src,point('pelvis'),solved.pelvis,a)
+  if special=='torso' or special=='hood' or special:find('arm') then
+    local motion=upper_body_visual_angle(solved)
+    return place_rigid(src,point('pelvis'),solved.pelvis,motion.upper_body)
   end
   return original_transform_special(src,special,preset,solved)
 end
@@ -139,7 +148,9 @@ for i,f in ipairs(cfg.annotations.frames) do
       end
     end
     row.contact=check; row.pelvis=solved.pelvis;row.raw_pelvis=solved.raw_pelvis
-    row.secondary={upper_body=cfg.annotations.controls.upper_body_counter_motion_degrees*math.sin((i-1)*2*math.pi/15),
+    local upper_body=upper_body_visual_angle(solved)
+    row.secondary={upper_body=upper_body.upper_body,upper_body_base=upper_body.upper_body_base,
+      upper_body_stride_bias=upper_body.upper_body_stride_bias,normalized_stride=upper_body.normalized_stride,
       robe_far=solved.derived_preset.robe.far,robe_near=solved.derived_preset.robe.near,robe_center=solved.derived_preset.robe.center}
     if not check.pass then table.insert(row.failures,'rendered_support_contact') end
     if solved.pelvis_clamped then table.insert(row.failures,'pelvis_clamped') end

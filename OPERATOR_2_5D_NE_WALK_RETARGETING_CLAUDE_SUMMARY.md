@@ -276,16 +276,32 @@ The ROI sheet contains 4x nearest-neighbor crops from F01/F02/F05/F06/F07/F09/F1
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 
+## Iteration 004 — upper-body lead follow-through
+
+Implemented one candidate using the packet's fixed formula: `base_angle - 0.75 * normalized_stride`, where normalized stride comes from the unchanged motion plan's near/far ankle-minus-hip x offsets. The same shared Lua calculation drives torso/hood/arm rotation and the per-frame report; robe response remains unchanged. The pelvis pivot, all support and limb pose data, source art, IK, palette, layer order, contact/continuity thresholds and timing authority remain unchanged.
+
+The optional `--upper-body-baseline` path verifies the exact Iteration 001 report SHA-256 `3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4`, donor/rig/annotation identity, support and every hip/knee/ankle/toe coordinate. It emits `UPPER_BODY_COMPARISON.json`, verifies each applied angle/term against the motion plan, and fails closed on angle, adjacent-step, seam, source or geometry drift. The report comparison records all 15 before/after angles and confirms 0px maximum leg-coordinate change.
+
+One Aseprite preview was rendered at `~/Downloads/operator_ne_master_audit_implementation_v1/iter_004_upper_body_followthrough/`. It passed 15/15 frames with zero per-frame failures. Torso checks: maximum absolute angle **2.7362476°** (limit 3°), maximum adjacent step **1.1146091°** (limit 2°), F15→F01 seam **0.9770249°** (limit 1°). Locked identities passed: Knight NE donor `20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba`, rig `b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5`, original source `0f5b3346044e60581db6e38e41fc292bd2b49ca05c291ada9591495765166149`; baseline report exact as above. Candidate strip SHA-256: `e06daea3f55b6bb8c2787b5874978a72644a7607f0eb37519c03828b3b61bb6a`.
+
+Focused motion-plan and rigid-raster smokes passed. The one changed-file sweep passed **2/2** selected checks and complete coverage of all three changed source/test files; `py_compile` and `git diff --check` passed. A test fixture initially used a mistyped baseline digest, which made its geometry negative control fail at the earlier identity gate; the fixture digest was corrected and the focused motion-plan smoke passed again.
+
+Review bundle staging contains the authentic Knight/Operator pair sheet, original/new torso comparison, 15-frame comparison JSON, report, loop viewer marked preview-only/timing-unknown, and a two-image text-readable bridge. Artifact hashes: pair sheet `830b9416095e5763dcbcefd69edd1757105c2847709ea7d06122a181124afdc5`; original/new comparison image `ea2a5c7fe57b31cdb75c00e08abe9eec34fa3e428faaa2cba4a6e13147f841aa`; comparison JSON `16e32b3f9d157b468ff200cbf8c69260f59ced149de02e962b4f0ed4a1ab7354`; report `88aa6469a76b986d0d3ccd2592dfed62903b5461ebe3e6e25c0fdb7f9519e83a`; loop viewer `294ca6f56e7f418e6523fd997ea17d11e29f1b908e3a1e5629b35c3876a6335a`. The bridge payload will be regenerated with the retained commit checkpoint before Dropbox publication.
+
+Visual judgment remains human-owned: F10–F13 upper-body follow-through, static comparison at F02/F05/F07/F11/F12/F13, support/seam appearance, and robe negative spaces. The preview is not timing, final animation, merge, source promotion or runtime acceptance.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
+
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
-- Friction severity: medium
-- What went wrong: the Iteration 001 staging script mislabeled a prior Operator render as the Knight. I also launched this workstream's changed-file validation while another worktree's broad sweep was active; this run selected two Python unit checks and passed, but the launch ordering violated the resource guidance.
-- Root cause / contributing factors: the handoff script selected a convenient prior render instead of the locked donor bundle; the validation command was chained after a process listing rather than gated on its result.
-- Prevention / pipeline improvement: generate future pair sheets only through the shared provenance builder and keep the synthetic identity negative controls; treat any active validation process as a stop condition before launching a changed-file sweep.
-- Tooling / docs drift discovered: the review README now documents the erroneous Iteration 001 panel, exact hashes and the verified one-shot repair route.
-- Follow-up: manual-follow-up
-- What worked: source strips, viewer-embedded PNGs, output frames and published report were all hash-bound; the faulty old review run was preserved and the corrected bundle used a fresh run ID.
+- Outcome: success
+- Friction severity: low
+- What went wrong: one new negative-control fixture had a mistyped pinned report digest and initially exercised the identity gate instead of the intended leg-geometry gate.
+- Root cause / contributing factors: the test duplicated a long immutable hash literal.
+- Prevention / pipeline improvement: keep fixture identity constants adjacent to the comparison setup and confirm each negative control reaches its target gate.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: the exact same shared formula drives the render and report; the baseline comparator proved source/support/leg invariance before visual handoff.
 
 ## Next Handoff
 - Next workstream: operator-2-5d-ne-walk-retargeting
@@ -294,5 +310,5 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 - Refresh reason: visual acceptance of the NE gait requires review of the authentic Knight-versus-Operator pair; support transitions and enclosed regions remain subjective.
-- Next action: inspect the Iteration 003 Dropbox visual-byte bridge, record the frame-specific human verdict, then run the emitted delete-after-review cleanup command.
-- Blockers or open questions: final gait acceptance, timing, runtime publication and landing remain unapproved.
+- Next action: inspect the Iteration 004 Dropbox candidate, record the frame-specific visual verdict, then run its emitted delete-after-review cleanup command.
+- Blockers or open questions: final gait acceptance, dynamic loop quality, timing, runtime publication and landing remain unapproved.

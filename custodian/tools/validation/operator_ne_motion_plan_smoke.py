@@ -10,7 +10,8 @@ import tempfile
 from PIL import Image
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'custodian/tools/operator/ne_walk_retarget'))
 from motion_plan import two_bone, transition_cost, validate_plan, dist
-from run import pitch_quality_gate, wrapped_pitch_error_deg
+from run import (build_upper_body_comparison, pitch_quality_gate,
+                 upper_body_terms, validate_upper_body_angles, wrapped_pitch_error_deg)
 from review_viewer import BACKGROUND, _write_pair_sheet
 
 LIMITS={'max_knee_fit_error_px':8,'max_joint_step_px':8,'max_rotation_step_degrees':60}
@@ -19,6 +20,7 @@ def pose(x=0):
     return {'legs':{'near':copy.deepcopy(leg),'far':copy.deepcopy(leg)}}
 
 def main():
+    upper_body_regressions()
     reference_pairing_regressions()
     assert abs(abs(wrapped_pitch_error_deg(179,-179))-2.0)<1e-10
     weighted=pitch_quality_gate([{'near':4,'far':8}],[{'near':4,'far':8}],['near'])
@@ -61,6 +63,55 @@ def main():
     else:raise AssertionError('widened thresholds must be rejected')
     crossover_regressions()
     print('PASS operator_ne_motion_plan: wrapped pitch, swing/stance weighting, masked-regression negative control, exact lengths, branches, unreachable target, toe pitch, cyclic seam, fixed limits')
+
+def upper_body_regressions():
+    amount=2.0
+    terms=upper_body_terms(10,25,0,amount)
+    assert terms['normalized_stride']==1.0 and terms['upper_body_stride_bias']==-0.75
+    assert terms['upper_body']==terms['upper_body_base']-0.75
+    negative=upper_body_terms(1,0,25,amount)
+    assert negative['normalized_stride']==-1.0 and negative['upper_body_stride_bias']==0.75
+    zero=upper_body_terms(4,12,12,amount)
+    assert zero['normalized_stride']==0.0 and zero['upper_body_stride_bias']==0.0
+    assert upper_body_terms(1,100,0,amount)['normalized_stride']==1.0
+    assert upper_body_terms(1,0,100,amount)['normalized_stride']==-1.0
+    try:validate_upper_body_angles([0.0,3.0]+[0.0]*13)
+    except ValueError:pass
+    else:raise AssertionError('adjacent upper-body step above 2 degrees must fail')
+    try:validate_upper_body_angles([0.0]*14+[1.01])
+    except ValueError:pass
+    else:raise AssertionError('upper-body loop seam above 1 degree must fail')
+
+    baseline={'schema':'custodian.ne_walk_preview.v1','rig_sha256':'b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5','annotations_sha256':'annotations',
+        'input_validation':{'source_hash':'20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba'},'frames':[]}
+    candidate={'schema':'custodian.ne_walk_preview.v1','rig_sha256':baseline['rig_sha256'],'annotations_sha256':'annotations',
+        'input_validation':{'source_hash':baseline['input_validation']['source_hash']},'frames':[]}
+    plan={'frames':[]}
+    for i in range(1,16):
+        nd=10*math.sin(i*math.pi/7);fd=0.0
+        legs={'near':{'hip':{'x':1,'y':2},'ankle':{'x':1+nd,'y':8}},
+              'far':{'hip':{'x':3,'y':2},'ankle':{'x':3+fd,'y':8}}}
+        plan['frames'].append({'legs':legs})
+        baseline['frames'].append({'frame':i,'support':'near' if i<7 else 'far',
+            'legs':copy.deepcopy({side:{**copy.deepcopy(legs[side]),'knee':{'x':4,'y':5},'toe':{'x':6,'y':7}} for side in legs}),
+            'secondary':{'upper_body':0.0}})
+        terms=upper_body_terms(i,legs['near']['ankle']['x']-legs['near']['hip']['x'],
+            legs['far']['ankle']['x']-legs['far']['hip']['x'],amount)
+        candidate['frames'].append({'frame':i,'support':baseline['frames'][-1]['support'],
+            'legs':copy.deepcopy(baseline['frames'][-1]['legs']),
+            'secondary':{'upper_body':terms['upper_body'],'upper_body_base':terms['upper_body_base'],
+                'upper_body_stride_bias':terms['upper_body_stride_bias'],'normalized_stride':terms['normalized_stride']}})
+    result=build_upper_body_comparison(candidate,baseline,plan,amount,'3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4')
+    assert len(result['frames'])==15 and result['geometry_unchanged'] and result['passed']
+    bad=copy.deepcopy(candidate);bad['frames'][9]['secondary']['upper_body']+=0.02
+    try:build_upper_body_comparison(bad,baseline,plan,amount,'3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4')
+    except ValueError:pass
+    else:raise AssertionError('tampered applied-angle report must fail')
+    bad=copy.deepcopy(candidate);bad['frames'][4]['legs']['near']['toe']['x']+=0.002
+    try:build_upper_body_comparison(bad,baseline,plan,amount,'3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4')
+    except ValueError:pass
+    else:raise AssertionError('changed leg geometry must fail')
+    print('PASS upper-body follow-through: stride sign/bounds, signed bias, report formula, unchanged leg geometry, adjacent/seam gates, tamper negative controls')
 
 def reference_pairing_regressions():
     with tempfile.TemporaryDirectory(prefix='operator-ne-reference-pair-') as temp:

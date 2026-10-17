@@ -15,6 +15,9 @@ warnings.filterwarnings('ignore', category=DeprecationWarning, message='Image.Im
 
 HERE = Path(__file__).resolve().parent
 JOINTS = ('pelvis','hip_near','knee_near','ankle_near','toe_near','hip_far','knee_far','ankle_far','toe_far')
+UPPER_BODY_BASELINE_SHA256 = '3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4'
+UPPER_BODY_RIG_SHA256 = 'b7002e66df5928a53d4a42e7b74e7bdf82f6ef8006a2bed11a8dcdae815a0ff5'
+UPPER_BODY_DONOR_SHA256 = '20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba'
 
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -274,6 +277,74 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
     contact.save(out/'contact_sheet.png')
     return r
 
+
+def upper_body_terms(frame, near_stride, far_stride, amount):
+    stride=max(-1.0,min(1.0,(near_stride-far_stride)/25.0))
+    base=amount*math.sin((frame-1)*2*math.pi/15)
+    bias=-0.75*stride
+    return {'upper_body':base+bias,'upper_body_base':base,
+        'upper_body_stride_bias':bias,'normalized_stride':stride}
+
+def validate_upper_body_angles(angles):
+    if len(angles)!=15 or any(not math.isfinite(value) or abs(value)>3.0 for value in angles):
+        raise ValueError('upper-body angles must be 15 finite values within 3 degrees')
+    steps=[abs((angles[(i+1)%15]-angles[i]+180)%360-180) for i in range(15)]
+    if max(steps[:14])>2.0+1e-9:
+        raise ValueError(f'upper-body adjacent angular step exceeds 2 degrees: {max(steps[:14]):.6f}')
+    if steps[14]>1.0+1e-9:
+        raise ValueError(f'upper-body loop seam exceeds 1 degree: {steps[14]:.6f}')
+    return {'maximum_absolute_angle_degrees':max(abs(v) for v in angles),
+        'maximum_adjacent_step_degrees':max(steps[:14]),'loop_seam_step_degrees':steps[14]}
+
+def build_upper_body_comparison(candidate, baseline, motion_plan, amount, baseline_sha256):
+    if baseline_sha256!=UPPER_BODY_BASELINE_SHA256:
+        raise ValueError('upper-body baseline report SHA-256 mismatch')
+    for label,report in (('baseline',baseline),('candidate',candidate)):
+        if report.get('schema')!='custodian.ne_walk_preview.v1' or len(report.get('frames',[]))!=15:
+            raise ValueError(f'{label} report schema/frame count mismatch')
+        if report.get('rig_sha256')!=UPPER_BODY_RIG_SHA256:
+            raise ValueError(f'{label} rig identity mismatch')
+        if report.get('input_validation',{}).get('source_hash')!=UPPER_BODY_DONOR_SHA256:
+            raise ValueError(f'{label} donor identity mismatch')
+    if baseline.get('annotations_sha256')!=candidate.get('annotations_sha256'):
+        raise ValueError('baseline/candidate annotation identity mismatch')
+    if baseline.get('rig_sha256')!=candidate.get('rig_sha256') or baseline.get('input_validation',{}).get('source_hash')!=candidate.get('input_validation',{}).get('source_hash'):
+        raise ValueError('baseline/candidate source or rig identity mismatch')
+    if len(motion_plan.get('frames',[]))!=15:
+        raise ValueError('candidate motion plan must contain 15 frames')
+    rows=[];angles=[]
+    for index,(old,new,planned) in enumerate(zip(baseline['frames'],candidate['frames'],motion_plan['frames']),1):
+        if old.get('frame')!=index or new.get('frame')!=index:
+            raise ValueError('baseline/candidate frame order mismatch')
+        if old.get('support')!=new.get('support'):
+            raise ValueError(f'frame {index} support changed')
+        for side in ('near','far'):
+            for joint in ('hip','knee','ankle','toe'):
+                a=old.get('legs',{}).get(side,{}).get(joint,{})
+                b=new.get('legs',{}).get(side,{}).get(joint,{})
+                if any(k not in a or k not in b or abs(float(a[k])-float(b[k]))>0.001 for k in ('x','y')):
+                    raise ValueError(f'frame {index} {side} {joint} geometry changed')
+        near=planned['legs']['near'];far=planned['legs']['far']
+        terms=upper_body_terms(index,near['ankle']['x']-near['hip']['x'],far['ankle']['x']-far['hip']['x'],amount)
+        actual=new.get('secondary',{})
+        for field,value in terms.items():
+            if field not in actual or not math.isfinite(float(actual[field])) or abs(float(actual[field])-value)>0.01:
+                raise ValueError(f'frame {index} reported {field} does not match applied formula')
+        old_angle=old.get('secondary',{}).get('upper_body')
+        if old_angle is None or not math.isfinite(float(old_angle)):
+            raise ValueError(f'frame {index} baseline upper-body angle missing')
+        angles.append(float(actual['upper_body']))
+        rows.append({'frame':index,'support':new['support'],'baseline_angle_degrees':float(old_angle),
+            'candidate_angle_degrees':float(actual['upper_body']),'base_angle_degrees':terms['upper_body_base'],
+            'stride_bias_degrees':terms['upper_body_stride_bias'],'normalized_stride':terms['normalized_stride']})
+    gates=validate_upper_body_angles(angles)
+    return {'schema':'custodian.operator_ne_upper_body_comparison.v1','baseline_report_sha256':baseline_sha256,
+        'rig_sha256':candidate['rig_sha256'],'annotations_sha256':candidate['annotations_sha256'],
+        'source_sha256':candidate['input_validation']['source_hash'],'geometry_unchanged':True,
+        'support_unchanged':True,'formula':{'base':'upper_body_counter_motion_degrees * sin((frame-1)*2*pi/15)',
+            'stride':'clamp((near_dx-far_dx)/25.0,-1,1)','bias':'-0.75 * normalized_stride'},
+        **gates,'frames':rows,'passed':True,'accepted':False}
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--bundle',required=True,type=Path)
@@ -282,6 +353,7 @@ def main():
     p.add_argument('--annotations',type=Path,default=HERE/'annotations.json')
     p.add_argument('--output',required=True,type=Path)
     p.add_argument('--baseline-report',type=Path,help='immutable preceding review report for bounded pitch comparison')
+    p.add_argument('--upper-body-baseline',type=Path,help='immutable Iteration 001 report for upper-body-only comparison')
     p.add_argument('--aseprite',default='aseprite')
     a=p.parse_args();a.bundle=a.bundle.resolve();a.rig=a.rig.resolve();a.output=a.output.resolve()
     # An immutable run directory prevents old successful frames masking failures.
@@ -300,6 +372,12 @@ def main():
     assert rig_sha==acceptance['rig_sha256'],'V6 must use the human-accepted rig baseline'
     assert rig_sha==json.loads((HERE/'crossover_acceptance.json').read_text())['rig_sha256'],'crossover rig identity changed'
     baseline=None
+    upper_body_baseline=None
+    if a.upper_body_baseline:
+        a.upper_body_baseline=a.upper_body_baseline.resolve()
+        upper_body_baseline=validate_baseline(a.upper_body_baseline,rig_sha,sha(a.annotations),preflight['source_hash'])
+        if sha(a.upper_body_baseline)!=UPPER_BODY_BASELINE_SHA256:
+            raise ValueError('upper-body baseline report SHA-256 mismatch')
     annotations_sha=hashlib.sha256(json.dumps(annotations,indent=2,allow_nan=False).encode()).hexdigest()
     if a.baseline_report:
         a.baseline_report=a.baseline_report.resolve()
@@ -342,16 +420,36 @@ def main():
         r['pitch_comparison_gate']=comparison['quality_gate']
         r['pitch_comparison_passed']=comparison['passed']
         write(a.output/'report.json',r)
+    upper_body_comparison=None
+    if upper_body_baseline is not None:
+        try:
+            upper_body_comparison=build_upper_body_comparison(r,upper_body_baseline,motion,
+                annotations['controls']['upper_body_counter_motion_degrees'],sha(a.upper_body_baseline))
+            write(a.output/'UPPER_BODY_COMPARISON.json',upper_body_comparison)
+        except (KeyError,TypeError,ValueError) as exc:
+            failure={'schema':'custodian.operator_ne_upper_body_comparison.v1','passed':False,
+                'accepted':False,'baseline_report_sha256':sha(a.upper_body_baseline),'failure':str(exc)}
+            write(a.output/'UPPER_BODY_COMPARISON.json',failure)
+            write(a.output/'report.json',r)
+            write(a.output/'run_receipt.json',{'command':command,'source_rig_unchanged':True,'rig_sha256':rig_sha,
+                'output':str(a.output),'upper_body_comparison_passed':False,'accepted':False})
+            print(json.dumps({'report':str(a.output/'report.json'),'upper_body_comparison_passed':False,'failure':str(exc),'accepted':False}))
+            return 4
+    write(a.output/'report.json',r)
     from review_viewer import write_viewer,write_reference_operator_sheet
     write_viewer(a.output,a.bundle,r)
     if r['preview_geometry_passed'] and (comparison is None or comparison['passed']):
         write_reference_operator_sheet(a.bundle,a.output,r,a.output)
     write(a.output/'run_receipt.json',{'command':command,'source_rig_unchanged':True,'rig_sha256':rig_sha,
           'output':str(a.output),'baseline_report':str(a.baseline_report) if baseline is not None else None,
-          'preview_geometry_passed':r['preview_geometry_passed'],'pitch_comparison_passed':comparison['passed'] if comparison else None,'accepted':False})
-    print(json.dumps({'report':str(a.output/'report.json'),'passing_frames':r['passing_frames'],'frames':15,'pitch_comparison_passed':comparison['passed'] if comparison else None,'accepted':False}))
+          'preview_geometry_passed':r['preview_geometry_passed'],'pitch_comparison_passed':comparison['passed'] if comparison else None,
+          'upper_body_comparison_passed':upper_body_comparison['passed'] if upper_body_comparison else None,'accepted':False})
+    print(json.dumps({'report':str(a.output/'report.json'),'passing_frames':r['passing_frames'],'frames':15,'pitch_comparison_passed':comparison['passed'] if comparison else None,
+          'upper_body_comparison_passed':upper_body_comparison['passed'] if upper_body_comparison else None,'accepted':False}))
     if not r['preview_geometry_passed']:return 2
-    return 0 if comparison is None or comparison['passed'] else 3
+    if comparison is not None and not comparison['passed']:return 3
+    if upper_body_comparison is not None and not upper_body_comparison['passed']:return 4
+    return 0
 
 if __name__=='__main__':
     sys.exit(main())
