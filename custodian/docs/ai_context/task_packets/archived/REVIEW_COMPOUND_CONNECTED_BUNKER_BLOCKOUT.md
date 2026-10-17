@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-compound-connected-bunker-blockout
 - Authoring handoff: auto
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P1
 - Depends on: compound-connected-bunker-blockout
@@ -43,3 +43,17 @@ Transcribed verbatim by the coordinator from the fresh different-agent reviewer'
 - **R0-02 — Material evidence gap: collision, navigation, and camera isolation are not verified.** The new smoke sets `build_runtime_wall_collision = false` and `auto_bake_nav = false`. It verifies floor/wall cell connectivity, but does not exercise generated collision or navigation, and it has no camera-layer assertion. The review packet explicitly requires physical two-layer geometry/navigation evidence and no collision/camera or other-layer leaks.
 
 These findings fail the review correction threshold for incomplete accepted behavior and missing proof. No PASS receipt was appended to the target packet. The active review packet and claimed worktree remain recoverable for the bounded correction/re-review lifecycle.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-compound-connected-bunker-blockout`
+- Review target workstream: `compound-connected-bunker-blockout`
+- Reviewed main: `2f3c0def9b5297e149816f34660bad6040ed16d7`
+- Reviewed implementation commit: `475ad8d85b45fda792351ea14c19152567d9a4bc`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261017T093022Z-53c824e8e5a6`
+- Review cycle: `0`
+- Finding IDs: `R0-01, R0-02`
