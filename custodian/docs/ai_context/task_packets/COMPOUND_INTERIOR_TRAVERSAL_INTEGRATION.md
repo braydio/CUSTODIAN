@@ -6,7 +6,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: P1
-- Depends on: review-compound-walled-yard-blockout, review-compound-connected-bunker-blockout
+- Depends on: review-compound-walled-yard-blockout, review-compound-connected-bunker-blockout-review-corrections-1
 - Locks: compound-traversal
 - Kind: implementation
 - Review: auto
