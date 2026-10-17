@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-art-registration-profile-review-corrections-1-r1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-art-registration-profile-review-corrections-1`
@@ -44,5 +44,39 @@ Queue recovery note: the original remote review branch is fully contained by cur
 
 ## Handoff
 
-- Next action: Auto-dispatch after correction 1 lands.
+- Next action: After this review lands, auto-dispatch `codex-art-import-shared-transform`.
 - Blockers or open questions: none.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: The in-bounds plan mutation is rejected by CLI replay and Source Session verification/report/review/handoff; explicit replanning and registration update the trusted digest and remove prior proof. Crisp CLI output matches the internal candidate byte-for-byte. The Workbench report exposes profile/frame/anchor context, current and transformed landmarks, measured scale ratios and advisory residuals, and states that Source Session normalization was not applied. All five focused smokes passed.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The old paired-review claim remained attached after its identity blocker was corrected on main; a fresh runner claim was refused, so the clean published branch was resumed and the review completed there.
+- Root cause / contributing factors: The runner has no fresh-context pass-resume path for a published review branch left by a pre-review claim failure.
+- Prevention / pipeline improvement: Add a bounded, auditable resume path for that state.
+- Tooling / docs drift discovered: Paired-review claim recovery is incomplete for clean branches left by preflight-only blockers.
+- Follow-up: manual-follow-up
+- What worked: Exact target identity and the focused negative controls made the review reproducible.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `passed`
+- Review workstream: `review-operator-art-registration-profile-review-corrections-1-r1`
+- Review target workstream: `operator-art-registration-profile-review-corrections-1`
+- Reviewed main: `15847096c8f590881cff274614c72cff210c0e73`
+- Reviewed implementation commit: `38bb47320650ede8f45a7455feebd004020b9a66`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Run ID: `20261017T081311Z-d57c93a35993`
+- Review cycle: `1`
+- Finding IDs: `none`
