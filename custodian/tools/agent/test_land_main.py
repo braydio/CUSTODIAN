@@ -171,6 +171,8 @@ class LandMainTests(unittest.TestCase):
         self.assertIn("refs/remotes/origin/unrelated", result.stderr)
 
     def test_allowed_published_ref_is_tolerated_only_for_a_fast_forward(self) -> None:
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
         self._task_commit("task.txt", "task\n")
         run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
         run_git(self.task, "branch", "--set-upstream-to", "origin/unrelated")
@@ -186,6 +188,8 @@ class LandMainTests(unittest.TestCase):
         self.assertEqual(run_git(self.seed, "rev-parse", "origin/main"), run_git(self.task, "rev-parse", "HEAD"))
 
     def test_allowed_published_ref_is_still_refused_when_a_rebase_is_needed(self) -> None:
+        run_git(self.task, "fetch", "origin", "main")
+        run_git(self.task, "checkout", "-B", "task/work", "origin/main")
         self._task_commit("task.txt", "task\n")
         run_git(self.task, "push", "origin", "HEAD:refs/heads/unrelated")
         run_git(self.task, "branch", "--set-upstream-to", "origin/unrelated")
