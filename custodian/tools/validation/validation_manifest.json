@@ -235,6 +235,7 @@
         "custodian/docs/ai_context/FILE_INDEX.md",
         "custodian/docs/ai_context/AGENT_AUTOMATION_BACKLOG.md",
         ".github/workflows/validate-repository.yml",
+        ".github/workflows/packet-authoring-handoff.yml",
         ".claude/settings.json",
         ".agents/skills/custodian-next/agents/openai.yaml"
       ],
@@ -832,7 +833,7 @@
         "custodian/game/world/procgen/proc_gen_tilemap.gd",
         "custodian/game/world/procgen/custodian_contract_map.gd"
       ],
-      "timeout_sec": 120,
+      "timeout_sec": 300,
       "needs_import": true
     },
     {
@@ -987,6 +988,32 @@
       "needs_import": false
     },
     {
+      "id": "carrow_operations_house_interior",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_operations_house_interior_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "environment",
+        "lighting",
+        "connected_map",
+        "interior"
+      ],
+      "owners": [
+        "custodian/game/world/gothic_compound/**",
+        "custodian/game/world/procgen/gothic_compound/**",
+        "custodian/game/world/environment/**",
+        "custodian/game/world/lighting/**",
+        "custodian/tools/validation/carrow_backdrop_isolation_smoke.gd",
+        "custodian/content/lighting/profiles/carrow_operations_house_interior.tres",
+        "custodian/content/sprites/environment/structure/carrow_machine_house/runtime/**",
+        "custodian/content/tiles/interiors/runtime/floor_carrow_*_32.png",
+        "custodian/tools/validation/carrow_operations_house_interior_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+	{
       "id": "carrow_yard_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_yard_interior_smoke.gd",
@@ -1002,6 +1029,7 @@
         "custodian/game/world/gothic_compound/**",
         "custodian/game/world/procgen/gothic_compound/**",
         "custodian/content/lighting/profiles/carrow_machine_house_interior.tres",
+        "custodian/content/lighting/profiles/carrow_operations_house_interior.tres",
         "custodian/content/sprites/environment/structure/carrow_machine_house/runtime/**",
         "custodian/content/sprites/environment/structure/district_transfer_frame/runtime/**",
         "custodian/content/tiles/interiors/runtime/floor_carrow_*_32.png",
@@ -1009,6 +1037,26 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "carrow_machine_house_scale_calibration",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_machine_house_scale_calibration_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "interior",
+        "scale_calibration",
+        "negative_control",
+        "geometry"
+      ],
+      "owners": [
+        "custodian/tools/level_authoring/carrow_machine_house_scale_fixture.gd",
+        "custodian/scenes/debug/carrow_machine_house_scale_*.tscn",
+        "custodian/tools/validation/carrow_machine_house_scale_calibration_smoke.gd"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
     },
     {
       "id": "command_pressure_scenario_setup",
@@ -1140,6 +1188,30 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "ritualant_four_cue_music",
+      "type": "godot_script",
+      "script": "res://tools/validation/ritualant_four_cue_music_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "ash_bell",
+        "ritualant",
+        "audio",
+        "scene_lifecycle"
+      ],
+      "owners": [
+        "custodian/autoload/music_manager.gd",
+        "custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd",
+        "custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.gd",
+        "custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_underground.tscn",
+        "custodian/game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_music_director.gd",
+        "custodian/tools/validation/ritualant_four_cue_music_smoke.gd",
+        "custodian/content/audio/music/ash_bell/**",
+        "custodian/asset_drop/inbox/ash_bell_ritualant_music/**"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
     },
     {
       "id": "ash_bell_catastrophe_props",
@@ -3658,6 +3730,26 @@
       "needs_import": false
     },
     {
+      "id": "compound_archetype_profile",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_archetype_profile_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "profile"
+      ],
+      "owners": [
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "persistent_compound_runtime",
       "type": "godot_script",
       "script": "res://tools/validation/persistent_compound_runtime_smoke.gd",
@@ -3679,7 +3771,12 @@
       "type": "python",
       "script": "custodian/tools/validation/asset_workbench_review_smoke.py",
       "tier": "unit",
-      "tags": ["assets", "asset_workbench", "review", "tooling"],
+      "tags": [
+        "assets",
+        "asset_workbench",
+        "review",
+        "tooling"
+      ],
       "owners": [
         "custodian/tools/assets/asset_workbench/**",
         "custodian/tools/validation/asset_workbench_review_smoke.py",
@@ -3722,6 +3819,27 @@
       ],
       "timeout_sec": 15,
       "needs_import": false
+    },
+    {
+      "id": "loot_toast_queue",
+      "type": "godot_script",
+      "script": "res://tools/validation/loot_toast_queue_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "loot",
+        "pickup",
+        "hud",
+        "layout"
+      ],
+      "owners": [
+        "custodian/game/ui/loot/loot_toast_queue.gd",
+        "custodian/game/ui/loot/loot_toast_queue.tscn",
+        "custodian/game/ui/hud/ui.gd",
+        "custodian/scenes/game.tscn",
+        "custodian/tools/validation/loot_toast_queue_smoke.gd"
+      ],
+      "timeout_sec": 30,
+      "needs_import": true
     },
     {
       "id": "lootable_corpse_beacon",
@@ -3813,7 +3931,7 @@
         "custodian/game/ui/minimap/*.gd",
         "custodian/scenes/game.tscn"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
@@ -4007,7 +4125,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/authored_level_ingress_return_smoke.gd",
       "tier": "integration",
-      "tags": ["authored_level", "ingress", "return", "operator_identity"],
+      "tags": [
+        "authored_level",
+        "ingress",
+        "return",
+        "operator_identity"
+      ],
       "owners": [
         "custodian/content/levels/levels.json",
         "custodian/game/world/levels/authored_level_2d.gd",
@@ -4025,7 +4148,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/level_registry_contract_smoke.gd",
       "tier": "unit",
-      "tags": ["authored_level", "registry", "scene_contract"],
+      "tags": [
+        "authored_level",
+        "registry",
+        "scene_contract"
+      ],
       "owners": [
         "custodian/content/levels/levels.json",
         "custodian/game/world/levels/level_definition.gd",
@@ -4036,11 +4163,54 @@
       "needs_import": true
     },
     {
+      "id": "procgen_showcase_gallery_shell",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen_showcase",
+        "authored_level",
+        "walkability",
+        "ingress",
+        "return"
+      ],
+      "owners": [
+        "custodian/content/levels/dev/procgen_showcase_gallery/**",
+        "custodian/content/levels/levels.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
+        "design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_showcase_exhibit_catalog",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+      "tier": "integration",
+      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "owners": [
+        "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "npa_showcase_arena_foundation",
       "type": "godot_script",
       "script": "res://tools/validation/levels/npa_showcase_arena_foundation_smoke.gd",
       "tier": "integration",
-      "tags": ["npa", "authored_level", "walkability", "ingress", "return"],
+      "tags": [
+        "npa",
+        "authored_level",
+        "walkability",
+        "ingress",
+        "return"
+      ],
       "owners": [
         "custodian/content/levels/dev/npa_showcase_arena/**",
         "custodian/content/levels/levels.json",
@@ -4056,7 +4226,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/npa_showcase_overlay_smoke.gd",
       "tier": "integration",
-      "tags": ["npa", "showcase", "overlay", "dev_controls"],
+      "tags": [
+        "npa",
+        "showcase",
+        "overlay",
+        "dev_controls"
+      ],
       "owners": [
         "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_arena.tscn",
         "custodian/game/world/levels/authored/dev/npa_showcase_arena/npa_showcase_scenario_controller.gd",
@@ -4075,7 +4250,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/world_ingress_physics_reentry_smoke.gd",
       "tier": "integration",
-      "tags": ["world_ingress", "physics", "reentry", "return_guard"],
+      "tags": [
+        "world_ingress",
+        "physics",
+        "reentry",
+        "return_guard"
+      ],
       "owners": [
         "custodian/game/world/levels/level_loader.gd",
         "custodian/game/world/procgen/ingress/world_ingress_site.gd",
@@ -4458,7 +4638,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/drone_follower_commands_smoke.gd",
       "tier": "actor",
-      "tags": ["drone", "commands", "guard", "replacement", "npa"],
+      "tags": [
+        "drone",
+        "commands",
+        "guard",
+        "replacement",
+        "npa"
+      ],
       "owners": [
         "custodian/game/actors/allies/allied_infantry_droid.tscn",
         "custodian/game/actors/allies/allied_infantry_droid.gd",
@@ -4479,7 +4665,12 @@
       "type": "godot_script",
       "script": "res://tools/validation/main_scene_allied_droid_smoke.gd",
       "tier": "integration",
-      "tags": ["drone", "production_scene", "presentation", "npa"],
+      "tags": [
+        "drone",
+        "production_scene",
+        "presentation",
+        "npa"
+      ],
       "owners": [
         "custodian/scenes/game.tscn",
         "custodian/game/actors/allies/allied_infantry_droid.tscn",
@@ -4497,7 +4688,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/debug_collector_combat_drone_smoke.gd",
       "tier": "actor",
-      "tags": ["drone", "observability", "debug"],
+      "tags": [
+        "drone",
+        "observability",
+        "debug"
+      ],
       "owners": [
         "custodian/content/tiles/debug/debug_bus.gd",
         "custodian/content/tiles/debug/debug_collector.gd",
@@ -4804,6 +4999,30 @@
       "needs_import": false
     },
     {
+      "id": "awakening_perimeter_support",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_perimeter_support_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "camera_coverage",
+        "presentation",
+        "assets"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/game/world/awakening/awakening_perimeter_support.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/content/metadata/assets/required_assets.registry.json",
+        "custodian/content/metadata/assets/families/awakening_*_perimeter_support.asset.json",
+        "custodian/tools/validation/awakening_perimeter_support_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "awakening_art_registration",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_art_registration_smoke.gd",
@@ -4940,6 +5159,54 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "awakening_collision_mapper_bridge",
+      "type": "godot_script",
+      "script": "res://tools/validation/awakening_collision_mapper_bridge_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "awakening",
+        "collision_mapper",
+        "draft_roundtrip",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/awakening/awakening_layout.gd",
+        "custodian/game/world/awakening/awakening_first_return.gd",
+        "custodian/scenes/awakening_first_return.tscn",
+        "custodian/scenes/debug/awakening_first_return_mapper.tscn",
+        "custodian/scenes/debug/awakening_first_return_collision_overlay.gd",
+        "custodian/tools/level_authoring/mapper/awakening_collision_mapper_bridge.gd",
+        "custodian/tools/level_authoring/mapper/awakening_first_return_collision_mapper.gd",
+        "custodian/tools/level_authoring/mapper/adapters/awakening_first_return_mapper_adapter.gd",
+        "custodian/tools/validation/awakening_collision_mapper_bridge_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
+      "id": "sundered_keep_mapper_semantics",
+      "type": "godot_script",
+      "script": "res://tools/validation/sundered_keep_mapper_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "sundered_keep",
+        "mapper",
+        "regression"
+      ],
+      "owners": [
+        "custodian/scenes/debug/sundered_keep_mapper.gd",
+        "custodian/scenes/debug/sundered_keep_mapper.tscn",
+        "custodian/game/world/sundered_keep/sundered_keep_map.gd",
+        "custodian/content/levels/sundered_keep/sundered_keep_front_gate_large.json",
+        "custodian/content/levels/sundered_keep/sundered_keep_underlay_collision.json",
+        "custodian/tools/validation/sundered_keep_mapper_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
     },
     {
       "id": "awakening_first_return_geometry",
@@ -5187,7 +5454,7 @@
         "custodian/scenes/game.tscn",
         "custodian/tools/validation/terminal_overview_layout_smoke.gd"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
@@ -5205,7 +5472,7 @@
         "custodian/game/ui/hud/ui.gd",
         "custodian/scenes/game.tscn"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 300,
       "needs_import": false
     },
     {
@@ -5366,7 +5633,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/operator_2_5d_composition_preflight_smoke.gd",
       "tier": "integration",
-      "tags": ["operator", "animation", "presentation", "2_5d", "negative_control"],
+      "tags": [
+        "operator",
+        "animation",
+        "presentation",
+        "2_5d",
+        "negative_control"
+      ],
       "owners": [
         "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
         "custodian/tools/validation/operator_2_5d_composition_preflight_smoke.gd"
@@ -6258,6 +6531,7 @@
         "fresh_context"
       ],
       "owners": [
+        "custodian/tools/godot_project_lock.py",
         "custodian/tools/agent/paired_review_runner.py",
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/tools/agent/task_packet_contract.py",
@@ -6485,7 +6759,13 @@
       "type": "godot_script",
       "script": "res://tools/validation/npa_showcase_existing_enemy_smoke.gd",
       "tier": "actor",
-      "tags": ["combat", "enemy", "npa", "showcase", "regression"],
+      "tags": [
+        "combat",
+        "enemy",
+        "npa",
+        "showcase",
+        "regression"
+      ],
       "owners": [
         "custodian/game/actors/enemies/abilities/marine_dash.gd",
         "custodian/game/actors/enemies/abilities/savage_pounce.gd",

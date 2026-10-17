@@ -46,7 +46,7 @@ audit. Terrain blockers inside the playability hard-clearance mask are repaired
 before final road presentation; authored role transitions and ramp/stair
 visuals remain authoritative.
 
-Elevation traversal query API is live; actor/enemy pathfinding enforcement is deferred.
+Elevation traversal query API is live. NavigationSystem consumes `can_actor_move_between_tiles()` for directed graph edges and navigation-driven enemies use that graph. Operator local displacement, vehicles, and enemy movement paths that bypass NavigationSystem remain follow-up work; see `design/02_features/world/VERTICAL_TRAVERSAL_SYSTEM.md`.
 
 ## Files
 
@@ -80,7 +80,7 @@ Constraints:
 - Use shared procgen authority claim APIs for any authored/setpiece footprint.
 - Keep random foliage and roads subordinate to authored/reserved region and impassable terrain authority.
 - Do not move final tile art into simulation authority.
-- Do not claim elevation affects actor pathfinding until NavigationSystem consumes the query APIs.
+- Do not claim universal actor support: NavigationSystem/pathfinding enemies consume elevation edges, while Operator local displacement, vehicles and direct/special enemy movement still need explicit enforcement.
 
 Acceptance checks:
 

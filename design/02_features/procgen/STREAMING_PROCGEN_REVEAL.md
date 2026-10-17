@@ -6,6 +6,16 @@
 **Last Updated:** 2026-10-01
 **Content Canon Authority:** `design/03_world/GAME_PROTOCOLS_AND_WORLD_LORE.md`
 
+## 2026-10-14 Near-Player Priority Follow-up
+
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+
+A live gameplay capture exposed a scheduling weakness below Archive Resolve: `_queue_chunk_for_reveal()` orders a chunk once against the player/center tile at enqueue time, while the shared M3 pending/prepared work later drains in that established order. When the Operator moves, already-requested tiles that have become very near can therefore remain behind older farther backlog, leaving small 1–3-cell unresolved pockets close to the character.
+
+The corrective workstream is `procgen-streaming-near-player-priority-v1`. It may reprioritize only already-requested pending/prepared work through the existing M3 seam. The priority contract is: bounded near-player urgency first; closure of tiny local unresolved 4-connected components next; existing semantic/distance priority after that, with deterministic ties. It must not increase the normal per-frame COMMIT budget merely to hide ordering, add a second lifecycle owner, or whole-map sort every frame. M4/M5/M6 lifecycle/cache/unload authority and deterministic world output remain unchanged.
+
+Archive Resolve visual cascade, world cover, and smooth-contour rendering are separate presentation successors and may not substitute for this runtime-ordering correction.
+
 ## Goal
 
 Make the procgen world appear to build itself around the player during play instead of fully appearing before the run starts.

@@ -82,6 +82,9 @@ const AUTHORING_MARKERS := {
 @onready var camera_zone_director: AuthoredCameraZoneDirector2D = (
 	$CameraPresentation/AuthoredCameraZoneDirector2D
 )
+@onready var ritualant_music_director: ForlornRitualantMusicDirector = (
+	$RitualantMusicDirector
+)
 
 var _departure_running := false
 var _departure_actor: Node = null
@@ -454,9 +457,14 @@ func capture_route_state() -> Dictionary:
 func restore_route_state(state: Dictionary) -> bool:
 	if ritualant_site == null:
 		return false
-	return ritualant_site.restore_encounter_state(
+	if ritualant_music_director != null:
+		ritualant_music_director.begin_route_restore()
+	var restored := ritualant_site.restore_encounter_state(
 		state.get("encounter", {}) as Dictionary
 	)
+	if ritualant_music_director != null:
+		ritualant_music_director.complete_route_restore(restored)
+	return restored
 
 
 func _exit_tree() -> void:
@@ -590,7 +598,7 @@ func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 		"BackgroundRoot/LandingConnectorBridge",
 		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
 		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
-		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",
+		"OcclusionRoot/ChapelThreshold",
 		"OcclusionRoot/LowerQuarterSeal",
 		"PlayableRoot/ForlornRitualantSite/Floor",
 		"PlayableRoot/ForlornRitualantSite/PerimeterRubble",

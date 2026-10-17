@@ -3,6 +3,9 @@
 **Status:** route migration complete; authored cavern journey V3 implemented
 **Decision date:** 2026-07-30
 
+> **Future design lock (approved 2026-10-12; not implemented):** See `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md` for station-original service/receiver infrastructure, off-chapel Receiver Key, later chapel overlap and local dual-reality VFX. The V3 geometry, Stilling Pin/Basin runtime and currently nontraversable north seal described here remain current until dedicated migration packets land. Do not describe the new receiver as already built or confuse it with Station IX beyond Bridged Falls.
+
+
 ## Decision
 
 The Forlorn-Ritualant encounter is no longer a procgen special room. It is a fixed authored subterranean destination entered through a world cave ingress and loaded through the authored-level route pipeline.

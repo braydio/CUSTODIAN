@@ -1,6 +1,19 @@
 class_name WorldIngressPlacementResolver
 extends RefCounted
 
+## Required-ingress validation retries one immutable generated candidate many
+## times with only the rejected tile set changing. Reuse the expensive ordered
+## edge-floor projection for the lifetime of this resolver; all candidate
+## acceptance and rejection checks still run on every call.
+var _edge_candidate_cache: Dictionary = {}
+var _walkability_cache: Dictionary = {}
+var _spawn_clearance_cache: Dictionary = {}
+var _reserved_cache: Dictionary = {}
+var _inward_corridor_cache: Dictionary = {}
+var _floor_cell_set: Dictionary = {}
+var _floor_cell_set_ready := false
+var _authoring_candidate_rank_cache: Dictionary = {}
+
 
 func resolve(
 	placement: Dictionary,
@@ -71,12 +84,17 @@ func _violates_spawn_clearance(
 		if map_instance != null and map_instance.has_method("get_player_spawn")
 		else level_data.get("player_spawn")
 	)
-	return (
+	var cache_key := "%s|%s|%d" % [str(tile), str(spawn), minimum_distance]
+	if _spawn_clearance_cache.has(cache_key):
+		return bool(_spawn_clearance_cache[cache_key])
+	var rejected := (
 		minimum_distance > 0
 		and spawn is Vector2i
 		and tile.distance_squared_to(spawn as Vector2i)
 			< minimum_distance * minimum_distance
 	)
+	_spawn_clearance_cache[cache_key] = rejected
+	return rejected
 
 
 func _resolve_procgen_landmark_terminal(
@@ -185,7 +203,7 @@ func _resolve_edge_overlook(
 	)
 	var allowed_edges := _allowed_edges(placement, str(placement.get("strategy", "edge_overlook")))
 	var edge_order := _rotated_edges(allowed_edges, level_data)
-	var candidates := _interleaved_edge_candidates(
+	var candidates := _cached_interleaved_edge_candidates(
 		map_size, max_edge_distance, level_data, anchor, edge_order
 	)
 
@@ -335,44 +353,64 @@ func _best_edge_authoring_candidate(
 	rejected_tiles: Array[Vector2i] = [],
 	minimum_spawn_distance: int = 0
 ) -> Dictionary:
-	var best: Dictionary = {}
-	var best_score := -INF
-	var entries := _interleaved_edge_candidates(map_size, max_edge_distance, {}, anchor, edge_order)
-	for entry: Dictionary in entries:
+	var cache_key := "%s|%s|%d|%d|%s|%s|%d|%d" % [
+		str(anchor), str(map_size), max_edge_distance, approach_depth,
+		str(edge_order), str(occupied_tiles), minimum_spacing,
+		minimum_spawn_distance,
+	]
+	if not _authoring_candidate_rank_cache.has(cache_key):
+		var ranked: Array[Dictionary] = []
+		var entries := _cached_interleaved_edge_candidates(
+			map_size, max_edge_distance, {}, anchor, edge_order
+		)
+		var order_index := 0
+		for entry: Dictionary in entries:
+			var candidate := entry.tile as Vector2i
+			var outward := entry.outward as Vector2i
+			var inward := -outward
+			if _violates_spawn_clearance(candidate, {
+				"minimum_distance_from_player_spawn_tiles": minimum_spawn_distance,
+			}, level_data, map_instance):
+				order_index += 1
+				continue
+			# The authored fallback creates floor, so the candidate itself need
+			# not already be walkable. Use the innermost allowed edge band.
+			if _edge_distance(candidate, map_size, outward) != max_edge_distance:
+				order_index += 1
+				continue
+			if _is_reserved(candidate, level_data):
+				order_index += 1
+				continue
+			if not _has_spacing(candidate, occupied_tiles, minimum_spacing):
+				order_index += 1
+				continue
+			var existing_inward_floor := 0
+			for step in range(approach_depth):
+				if _is_walkable(candidate + inward * step, level_data, map_instance):
+					existing_inward_floor += 1
+			var lateral_penalty := float(
+				_lateral_distance(candidate, anchor, outward)
+			) * 0.01
+			ranked.append({
+				"entry": entry,
+				"score": float(existing_inward_floor) - lateral_penalty,
+				"order": order_index,
+			})
+			order_index += 1
+		ranked.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+			if float(a.score) != float(b.score):
+				return float(a.score) > float(b.score)
+			return int(a.order) < int(b.order)
+		)
+		_authoring_candidate_rank_cache[cache_key] = ranked
+	var ranked_candidates := _authoring_candidate_rank_cache[cache_key] as Array[Dictionary]
+	for ranked_candidate: Dictionary in ranked_candidates:
+		var entry := ranked_candidate.entry as Dictionary
 		var candidate := entry.tile as Vector2i
-		var outward := entry.outward as Vector2i
-		var inward := -outward
 		if rejected_tiles.has(candidate):
 			continue
-		if _violates_spawn_clearance(candidate, {
-			"minimum_distance_from_player_spawn_tiles": minimum_spawn_distance,
-		}, level_data, map_instance):
-			continue
-		# The authored fallback creates floor, so the candidate itself need not
-		# already be walkable. Use the innermost allowed edge band to keep the
-		# new pocket as close to mainland as the placement contract permits.
-		if _edge_distance(candidate, map_size, outward) != max_edge_distance:
-			continue
-		if _is_reserved(candidate, level_data):
-			continue
-		if not _has_spacing(candidate, occupied_tiles, minimum_spacing):
-			continue
-		var existing_inward_floor := 0
-		for step in range(approach_depth):
-			if _is_walkable(
-				candidate + inward * step,
-				level_data,
-				map_instance
-			):
-				existing_inward_floor += 1
-		var lateral_penalty := float(
-			_lateral_distance(candidate, anchor, outward)
-		) * 0.01
-		var score := float(existing_inward_floor) - lateral_penalty
-		if score > best_score:
-			best_score = score
-			best = entry
-	return best
+		return entry
+	return {}
 
 
 func _allowed_edges(placement: Dictionary, strategy: String) -> Array[Vector2i]:
@@ -417,6 +455,31 @@ func _interleaved_edge_candidates(map_size: Vector2i, max_edge_distance: int, le
 	return result
 
 
+func _cached_interleaved_edge_candidates(
+	map_size: Vector2i,
+	max_edge_distance: int,
+	level_data: Dictionary,
+	anchor: Vector2i,
+	edges: Array[Vector2i]
+) -> Array[Dictionary]:
+	var floor_cells: Array = level_data.get("floor_cells", [])
+	if floor_cells.is_empty():
+		floor_cells = level_data.get("random_floor_tiles", [])
+	var floor_fingerprint := str(floor_cells.hash())
+	var key := "%s|%d|%s|%s|%s" % [
+		str(map_size),
+		max_edge_distance,
+		str(anchor),
+		str(edges),
+		floor_fingerprint,
+	]
+	if not _edge_candidate_cache.has(key):
+		_edge_candidate_cache[key] = _interleaved_edge_candidates(
+			map_size, max_edge_distance, level_data, anchor, edges
+		)
+	return _edge_candidate_cache[key] as Array[Dictionary]
+
+
 func _edge_distance(tile: Vector2i, map_size: Vector2i, outward: Vector2i) -> int:
 	if outward == Vector2i.UP: return tile.y
 	if outward == Vector2i.DOWN: return map_size.y - 1 - tile.y
@@ -435,12 +498,17 @@ func _has_inward_corridor(
 	level_data: Dictionary,
 	map_instance: Node
 ) -> bool:
+	var cache_key := "%s|%s|%d" % [str(origin), str(inward_direction), depth]
+	if _inward_corridor_cache.has(cache_key):
+		return bool(_inward_corridor_cache[cache_key])
 	var walkable_count := 0
 	for step: int in range(depth):
 		var tile := origin + inward_direction * step
 		if _is_walkable(tile, level_data, map_instance):
 			walkable_count += 1
-	return walkable_count >= ceili(float(depth) * 0.80)
+	var valid := walkable_count >= ceili(float(depth) * 0.80)
+	_inward_corridor_cache[cache_key] = valid
+	return valid
 
 
 func _resolve_anchor(placement: Dictionary, level_data: Dictionary) -> Vector2i:
@@ -483,25 +551,41 @@ func _ring_offsets(radius: int) -> Array[Vector2i]:
 
 
 func _is_walkable(tile: Vector2i, level_data: Dictionary, map_instance: Node) -> bool:
+	if _walkability_cache.has(tile):
+		return bool(_walkability_cache[tile])
 	if map_instance != null:
 		for method_name in [&"is_walkable_floor_tile", &"is_walkable_tile", &"is_floor_tile"]:
 			if map_instance.has_method(method_name):
-				return bool(map_instance.call(method_name, tile))
+				var walkable := bool(map_instance.call(method_name, tile))
+				_walkability_cache[tile] = walkable
+				return walkable
 	var source: Array = level_data.get("floor_cells", [])
 	if source.is_empty():
 		source = level_data.get("random_floor_tiles", [])
 	if source.is_empty():
+		_walkability_cache[tile] = true
 		return true
-	return source.has(tile)
+	if not _floor_cell_set_ready:
+		_floor_cell_set_ready = true
+		for raw: Variant in source:
+			_floor_cell_set[raw] = true
+	var walkable := _floor_cell_set.has(tile)
+	_walkability_cache[tile] = walkable
+	return walkable
 
 
 func _is_reserved(tile: Vector2i, level_data: Dictionary) -> bool:
+	if _reserved_cache.has(tile):
+		return bool(_reserved_cache[tile])
 	for raw: Variant in level_data.get("reserved_world_ingress_tiles", []):
 		if raw is Vector2i and raw == tile:
+			_reserved_cache[tile] = true
 			return true
 	for raw: Variant in level_data.get("reserved_regions", []):
 		if raw is Rect2i and (raw as Rect2i).has_point(tile):
+			_reserved_cache[tile] = true
 			return true
+	_reserved_cache[tile] = false
 	return false
 
 

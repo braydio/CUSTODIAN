@@ -118,3 +118,20 @@ safe presentation fallback.
 Replace individual procedural room shells with authored `template_family`
 variants through the existing `.tmj` pipeline while preserving this semantic
 reservation, topology, level-data, Sector, and minimap contract.
+
+## Compound archetypes (planning, 2026-10-15)
+
+Legacy deterministic 10-13 room layout remains implemented. Approved planning adds explicit walled_yard (closed secure perimeter, independent buildings, yard) and connected_bunker (separate surface housings, one continuous subsurface room/tunnel graph). Profile+seed must be deterministic, and selection must preserve existing RoomGraph IDs, Sector mapping, minimap and ProcGenTilemap authority. Neither profile is shipped by this documentation update. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.
+
+### Profile contract
+
+`PersistentCompoundLayoutPlanner.generate_layout()` accepts an optional
+archetype ID validated against
+`game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json`.
+Omitting it preserves the legacy planner dictionary and geometry. The runtime
+selector defaults to `legacy`; explicit `walled_yard` and `connected_bunker`
+selections currently retain the same surface geometry and add versioned
+archetype/layer metadata to layout rooms, connectors, and exported level data.
+This is a selection and data contract only. Secure-yard geometry, subsurface
+travel, and other archetype-specific behavior remain deferred to their
+dependency-gated blockout and traversal workstreams.

@@ -347,15 +347,17 @@ Witness what we could not stop.”
 
 This is post-disaster Penitent theology, not an operational record.
 
-### Ninth-Station Stilling Pin
+### Historical Stilling Pin concept (superseded for the Highland Ritualant)
+
+The earlier Ninth-Station Stilling Pin fragment below is **retired encounter-artifact planning**, not authoritative identification of the Highland relic or a claim that the Highland site is Station IX:
 
 ```text
 A black iron stilling pin used to arrest a station's audible Answer.
-
 No matching assembly was manufactured in the active continuity.
-
 Ash-Bell maintenance marks identify it as Ninth Station equipment.
 ```
+
+**Approved future direction (not yet runtime):** the displaced Highland Ritualant site contains surviving machinery from one of Stations **I–VIII** with a local residual receiver fault. A recovered **Receiver Key** is returned to its original receiver socket to isolate the exposed return contact and restore the station-local reference. The historical Station IX remains in the Meridian Lower Quarter; Orra's accepted Ninth Answer already ended the Open Interval. The Ritualant's private funerary reading of the act is not a literal technical explanation. See `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`.
 
 ---
 

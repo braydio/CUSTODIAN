@@ -135,3 +135,7 @@ godot --headless --path custodian --quit
 ```
 
 Result: completed without new script load errors. Existing exit resource leak warnings remain.
+
+## Archetypes and layered interiors (planning, 2026-10-15)
+
+Current one-map constructed interior does not establish subsurface level simulation. Type B needs an isolated layer with one walkable underground room and tunnel graph; the only V1 reversible transfer seam is surface to subsurface. Type A may use bounded separate interior transfers. Keep floor/wall, region metadata, collision and spawn-filter authority in ProcGenTilemap. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.

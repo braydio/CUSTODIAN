@@ -1,0 +1,1071 @@
+{
+  "schema": "custodian.downloads_seed_inventory.v1",
+  "collected_at": "2026-10-13",
+  "origin": "user-provided Downloads listing; names only, not local filesystem evidence",
+  "current_repository_main": "48646ce06a630d8d524353df6d335d53fbef1747",
+  "user_list_count": 98,
+  "entries": [
+    {
+      "name": "2D HD Character Knight",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "2D HD Character Knight.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "ASSET_MANIFEST.json",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_04_05_seam_refs",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_04_05_seam_refs.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_next10_generation_reference_bundle",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_next10_generation_reference_bundle.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_service_basin_b_handoff_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_service_basin_b_reference_bundle",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "awakening_service_basin_b_reference_bundle.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "cathedral_of_the_mechanical_necropolis.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "center_operator_frames(1).lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "center_operator_source_to_anchor.lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "cleanup_operator_outline_miscolor.lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "clip.mp4",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "codex_usage_dashboard_preview.html",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "codex_usage_tracker(1).py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "codex_usage_tracker(2).py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "codex_usage_tracker.py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "collect_awakening_teaser_reference_package(1).py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "collect_awakening_teaser_reference_package.py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "connector.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CONTACT_SHEET.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(1).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(2).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(3).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(4).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_detail_asset_review.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_detail_batch_01_asset_handoff_v1",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_detail_batch_02_asset_handoff_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_interactible_hero_set_v1",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Awakening_Production_Plates_05_07_10.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_remaining_detail_assets_handoff_v1(1).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_awakening_remaining_detail_assets_handoff_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2(1).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2(2).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Awakening_Two_View_Teaser_References_8c3ed99e.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_bridged_falls_region_frame_underlays_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_codex_observatory(1).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_f15a_review_recovery_probe.sh",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN-fast-chain-east-reference",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN-fast-chain-east-reference.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Heraldry_Revision2_Review_Comparison.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_PARKED_REVIEW_PAIR_FIX.py",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Playable_Knight_reference.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_procgen_presentation_reference.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Ritualant_Combat_V2_Runtime_Candidate (1).zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_Ritualant_Four_Cue_Scene_Audit_IMPLEMENTATION_DIRECTED_v2.md",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_rocky_upland_10_reference_bundle.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN_The_Ninth_Was_Taken_Hostile_Resolution_Runtime_Candidate_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "CUSTODIAN-unarmed-fast-east-vfx-reference",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_vaultwing_reference_20260925T194717Z_3542193",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_vaultwing_reference_20260925T194717Z_3542193(1)",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "custodian_vaultwing_reference_20260925T194717Z_3542193(2)",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "del",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "dust.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "Eight_Bells_CUSTODIAN_Live_Handoff_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "enemy_scout_design.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "F15A_WB25_ARCHIVED_TEST_FIX.patch",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "f15b1_validate_and_publish.sh",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "f15b2_c2a_pair_promotion.sh",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_1_north.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_2_south.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_3_north.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_3_south.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_4_north.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "fast_4_south.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "H5_vaultwing_owner_lane_suggested(1).patch",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "H5_vaultwing_owner_lane_suggested(2).patch",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "H5_vaultwing_owner_lane_suggested.patch",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "handoff",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "heraldry_r3_reduced_mark_test.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_city-kit-industrial_2.0.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_factory-kit_3.0.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_isometric-miniature-bases.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_isometric-miniature-prototype.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_modular-space-kit_1.0.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_pattern-pack-lines.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_prototype-kit.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney-shape-1.6.0-linux.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "kenney_space-station-kit.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "License.txt",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "locker.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "NPA_7_PLANNING_AND_PACKETS.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "operator_ne_pose_builder_v0_1(1).lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "operator_ne_pose_builder_v0_3(1).lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "overlay.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "PNG",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "Preview.png",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "procgen_surface_meridian_hardstand_normalized_v1",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "register_operator_idle_to_anchor.lua",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "Stilling_Release_CUSTODIAN_Final_Audio_Pack_v1.zip",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "tailscale",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "Tilesheet",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "TWIN_SOLARIA_RUNTIME_V1_AWAKENING_HARDENING_CODEX_PACKET.md",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    },
+    {
+      "name": "Vector",
+      "observed_local": "not_verified",
+      "kind": "unknown_until_stat",
+      "sha256": null,
+      "bytes": null,
+      "remote_match": "not_verified",
+      "runtime_proof": "not_verified",
+      "operation": "none_until_proven"
+    }
+  ],
+  "candidate_duplicate_groups": [
+    {
+      "group": "creche-teaser",
+      "files": [
+        "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(1).zip",
+        "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(2).zip",
+        "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(3).zip",
+        "custodian_awakening_creche_northeast_teaser_asset_handoff_v1(4).zip",
+        "custodian_awakening_creche_northeast_teaser_asset_handoff_v1.zip"
+      ],
+      "verify": "SHA256 equality to one Dropbox copy; do not assume filename suffix means identical"
+    },
+    {
+      "group": "two-view-collector",
+      "files": [
+        "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2(1).zip",
+        "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2(2).zip",
+        "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2.zip"
+      ],
+      "verify": "compare with exact Dropbox source, version and archive members"
+    },
+    {
+      "group": "remaining-detail",
+      "files": [
+        "custodian_awakening_remaining_detail_assets_handoff_v1(1).zip",
+        "custodian_awakening_remaining_detail_assets_handoff_v1.zip"
+      ],
+      "verify": "outer ZIP and member hashes"
+    },
+    {
+      "group": "vaultwing-reference",
+      "files": [
+        "custodian_vaultwing_reference_20260925T194717Z_3542193",
+        "custodian_vaultwing_reference_20260925T194717Z_3542193(1)",
+        "custodian_vaultwing_reference_20260925T194717Z_3542193(2)"
+      ],
+      "verify": "recursive folder contents and exact hashes; no directory deletion before closure"
+    },
+    {
+      "group": "kenney-isometric",
+      "files": [
+        "kenney_isometric-miniature-bases.zip",
+        "kenney_isometric-miniature-prototype.zip"
+      ],
+      "verify": "preserve original archives under ~/dev/kenney_isometric after exact-byte match to archived K3D inventory"
+    }
+  ],
+  "remote_roots_checked": [
+    "/CUSTODIAN/asset_batches",
+    "/CUSTODIAN/implementation_inputs",
+    "/CUSTODIAN/generated_asset_batches"
+  ],
+  "observed_dropbox_filename_examples": [
+    "awakening_service_basin_b_handoff_v1.zip",
+    "CUSTODIAN_Awakening_Two_View_Reference_Collector_v2.zip",
+    "custodian_awakening_creche_northeast_teaser_asset_handoff_v1.zip",
+    "custodian_meridian_hardstand_6_asset_handoff_v1.zip"
+  ],
+  "preserve_by_default": [
+    "clip.mp4",
+    "tailscale",
+    "del",
+    "PNG",
+    "Tilesheet",
+    "Vector",
+    "handoff"
+  ],
+  "explicit_dev_move": [
+    "kenney_isometric-miniature-bases.zip",
+    "kenney_isometric-miniature-prototype.zip"
+  ],
+  "proven_prior_repo_evidence": [
+    "custodian/docs/ai_context/reports/kenney_presentation/k3d1_source_inventory.json",
+    "custodian/docs/ai_context/reports/kenney_presentation/K3D1_ISOMETRIC_BLOCKOUT_REPORT.md",
+    "ASSET_DOWNLOADS_INTAKE_SWEEP_CLAUDE_SUMMARY.md"
+  ],
+  "notes": [
+    "This seed is NOT a delete list",
+    "All counterparts and run-time ingestion must be reverified by exact hash and state on current main",
+    "The attached user Downloads filesystem is inaccessible from the ChatGPT tool container",
+    "Dropbox listing alone is not proof of matching ZIP bytes or runtime binding"
+  ]
+}

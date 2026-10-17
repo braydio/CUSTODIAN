@@ -61,8 +61,23 @@ scavenge         SEARCH -> DIG -> FIND_TARGET -> LOOK_BACK -> EXCITED_IDLE -> ID
                  RETRIEVE -> IDLE, GIFT_DROP -> IDLE
 ```
 
-Only `_is_interruptible()` states (`IDLE`, `WANDER`) accept a new reaction, so an
-ambient beat can never cut a treat or hide sequence short.
+One transition policy gates API and detector entry. Soft actions and sensed
+threats begin only in `IDLE`/`WANDER`; an ambient beat cannot cut a treat or hide
+sequence short. Attack rejection and explicit flee requests may preempt an
+active soft sequence, while duplicate hard responses cannot restart an active
+rejection or flee chain and prevent it from terminating.
+
+Treat approach uses the live treat position and reaches `TREAT_SNIFF` only inside
+the arrival radius. Its timeout is derived from current distance and movement
+speed with a grace period and hard bound; expiry returns to ambient behavior
+without a remote sniff/take/eat success. Retrieval keeps its requested target as
+pending until matching contact occurs. Arrival alone does not claim possession,
+unrequested contact is ignored, and timeout/cancel clears pending state. Empty
+`gift_drop()` calls are silent.
+
+Search ties resolve by distance, then world y, world x, and stable node path.
+`target_found` is emitted when the `FIND_TARGET` beat begins, not when search is
+requested.
 
 ## Determinism
 
@@ -127,7 +142,8 @@ Published today (22 strips, body layer): `idle_south` s/n/e/w, `waddle` n/e/w,
 `hide_hold`, `hide_peek`, `play_dead_enter`, `play_dead_hold`, `notice_treat`,
 `approach_wary`. `w` variants come from the family's `auto_mirror`.
 
-Not published, tracked in `REQUIRED_ASSETS.md`: `waddle`/`scurry` south, `look`,
+Not published, tracked in the Asset V2 requirement registry (with
+`REQUIRED_ASSETS.md` as its generated view): `waddle`/`scurry` south, `look`,
 `hiss`, `startle`, `disapprove`, `eat`, `friend_happy`, `hide_exit`, and the whole
 `barrel_prop` layer. Their approved source renders sit on a non-uniform pose grid
 (or, for the barrel, disagree on canvas framing between hide states), so slicing
@@ -141,7 +157,7 @@ this audit, so the bad art is preserved for re-export rather than deleted.
 
 | Command | Covers |
 | --- | --- |
-| `godot --headless --path . --script res://tools/validation/baby_opossum_runtime_smoke.gd` | home anchoring, determinism, sequence timing, movement locks, flee termination, live bullet rejection, layer separation, clip/contract agreement |
+| `godot --headless --path . --script res://tools/validation/baby_opossum_runtime_smoke.gd` | home anchoring, determinism, sequence timing, transition policy, arrival/contact semantics, movement locks, flee termination, live bullet rejection, layer separation, all-state FPS/alias parity |
 | `OPOSSUM_REQUIRE_ART=1 …` (same script) | additionally requires the published production baseline, clip by clip |
 | `python tools/validation/baby_opossum_asset_contract_smoke.py` | 96px geometry, real alpha, frame-count token, sliced-pose detection, body/prop pairing |
 | `python tools/assets/stage_baby_opossum_source_work.py` | audits inbox staging and quarantines mis-sliced strips (dry run by default) |

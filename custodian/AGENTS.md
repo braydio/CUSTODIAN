@@ -58,6 +58,28 @@ Use this map to land on the right material fast:
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
+## Automatic Task Packet Handoff
+
+### Automatic task packet authoring handoff
+
+For a newly authorized V2 implementation/correction packet and its paired
+post-land review, set `- Authoring handoff: auto` on **both** and publish them
+together to `origin/main` as `draft/manual`. The push-triggered
+`.github/workflows/packet-authoring-handoff.yml` runs the targeted
+`packet_authoring_handoff.py` tool. It validates the pair, promotes both
+to `ready/auto`, checks their queue and referenced validation scripts,
+updates the bounded Ready/Auto index, then commits and fast-forward pushes
+only the two packets and the generated README.
+
+This is opt-in: no marker means no automatic promotion. Do **not** opt in
+planning/human-decision holds, blocked reviews, or unreconciled refreshes.
+Failures stop without publication, force pushing, claiming or overriding
+locks. An hourly retry checks only remaining explicit opt-ins, so a main-branch
+race does not require another user/Codex preflight. The GitHub action runs authoring, **not local Codex execution**;
+`dispatch.py` remains the sole execution/dependency/lock authority.
+A normal Codex dispatcher worker can claim later if the live audit says
+eligible. CI write permission and allowed non-force main push are required.
+
 ## Name the Brief
 
 For active work under `custodian/`, a user-supplied task name, slice name, packet nickname, or recognizable brief resolves to the matching active task packet/workstream before implementation.
@@ -84,6 +106,19 @@ Use the indexed scripts before inventing one-off commands. `docs/ai_context/FILE
 - Operator animation reports: use `custodian/tools/validation/operator_animation_contract_report.py` for required/optional/missing/suspicious asset coverage. Reports belong under `reports/`, not active runtime folders.
 - Preview/review helpers: use `custodian/tools/pipelines/operator_action_preview.py` and the review tools listed in `docs/ai_context/AGENT_TOOLING_BY_ASK.md`; generated preview output is review-only.
 - Agent memory: check `agentmemory status`, start the worker with `agentmemory` when needed, and use it selectively for durable cross-session decisions or handoffs while keeping repository docs authoritative.
+
+## Dropbox Source Art Review / Ingest
+
+For asset batches delivered through Dropbox, see `../design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md` and `docs/ai_context/DROPBOX_ASSET_BATCH_REGISTRY.md`. Run the read-only audit before accepting a new asset intake task:
+
+```bash
+python3 tools/assets/dropbox_asset_audit.py scan --json
+python3 tools/assets/dropbox_asset_audit.py report --format markdown
+```
+
+For explicit source staging, use `python3 tools/assets/dropbox_asset_stage.py <batch-id> --dropbox-path <exact-source-ZIP> [--normalize] --apply` after a SHA256-pinned human approval receipt is committed. Normalization refuses unregistered states, mismatched frame counts and geometry. For durable external status publication, use `python3 tools/assets/dropbox_asset_publish.py --apply` after a clean read-only audit; this writes only derived lifecycle index/immutable audit receipts, not source assets. Neither command ingests or replaces runtime art.
+
+Dropbox archive presence or the legacy registry's `active` status is **not** human source approval or runtime publication. A future asset may only be ingested after an explicit review receipt pins its immutable SHA256 and state mapping. Keep full-resolution approved masters in source_work; derive normalized inbox locally using the existing pixel-art/Asset V2 tools, then check `asset.py plan/status/doctor/needs --check`, consumers, and focused scene tests. Do not ingest review-only media or copy remote assets directly into runtime. The audit is read-only and does not require modification of Dropbox index or asset files.
 
 ## Production Asset Requirements
 
