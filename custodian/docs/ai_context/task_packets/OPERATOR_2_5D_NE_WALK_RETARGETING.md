@@ -44,7 +44,7 @@
 | Iteration 003 | `2498949b` · Dropbox `iter-003-visual-byte-bridge` | **VISUAL REVIEW EVIDENCE VERIFIED** | Authentic Knight/Operator contact sheet and alpha closeups inspected; no animation modified. |
 | Iteration 004 | `5119bdf0` implementation · `ae346fbf` receipt · Dropbox `iter-004-upper-body-lead-followthrough` | **TECHNICAL PASS; static visual acceptance for continued authoring, final animation PENDING** | 15/15 checks, zero leg drift, 2.736° maximum torso rotation; subtle improved follow-through. F13 alpha diagnostics and dynamic seam/handoffs need final inspection. |
 | Iteration 005 | `8413c67f` · Dropbox `iter-005-playback-viewer-syntax-repair` | **TECHNICAL PASS; playback UI functional; subjective gait verdict pending** | Firefox headless 158 zero JS errors, all review controls and 2/8fps playback pass. No animation pixels or source changed. |
-| Iteration 006 | `authorized 2026-10-17` · ChatGPT ZIP `67c682d9...8b1d7ae` | **AUTHORED PROGRAMMATIC ART CLEANUP, EXECUTE ONLY** | Human rejected raster silhouette after playback, preserving the useful movement authority. Codex runs exact packaged script with native 15-frame clean art, style and idle refs; report/Dropbox preview, no runtime or FPS. |
+| Iteration 006 | `authorized 2026-10-17` · corrected R1.1 ZIP `c5d4a89d...80a74bca` | **AUTHORED PROGRAMMATIC ART CLEANUP, EXECUTE ONLY** | Human rejected raster silhouette after playback, preserving the useful movement authority. Codex runs exact packaged script with native 15-frame clean art, style and idle refs; report/Dropbox preview, no runtime or FPS. |
 
 ## Authorized Iteration
 
