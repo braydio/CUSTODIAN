@@ -6887,6 +6887,21 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "sprite_import_shared_transform",
+      "type": "python",
+      "script": "custodian/tools/validation/sprite_import_shared_transform_smoke.py",
+      "tier": "unit",
+      "tags": ["assets", "sprites", "normalization", "determinism", "negative_control"],
+      "owners": [
+        "custodian/tools/assets/sprite_import/**",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/validation/sprite_import_shared_transform_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }

@@ -229,3 +229,31 @@ def shared_transform_from_plan(plan: NormalizationPlan) -> SharedFrameTransform:
         anchor=plan.anchor,
         fit="contain",
     )
+
+
+def shared_import_contract_for_session(session: SourceSession):
+    """Expose an Operator session's explicit identity/geometry to the shared plan API.
+
+    Conversion and publication remain on the established Source Session and
+    ``pixelart --choose 1`` pathway; this adapter only shares the immutable
+    source-sheet contract and geometry authority.
+    """
+    from custodian.tools.assets.sprite_import import contract_from_operator_profile
+
+    is_2_5d = (session.target_binding or {}).get("art_generation") == "operator_2_5d_128"
+    profile = load_active_authoring_profile() if is_2_5d else load_profile()
+    geometry = session.geometry
+    if geometry.rows == 1 and geometry.columns == 1:
+        layout = "single_image"
+    elif geometry.rows == 1:
+        layout = "horizontal_strip"
+    elif geometry.columns == 1:
+        layout = "vertical_strip"
+    else:
+        layout = "grid"
+    return contract_from_operator_profile(
+        profile["registry"], profile_id=profile["profile_id"],
+        frame_count=geometry.frame_count, columns=geometry.columns, rows=geometry.rows,
+        source_cell=(geometry.source_cell_width, geometry.source_cell_height),
+        layout=layout, target_size=(session.target_width, session.target_height),
+    )

@@ -2,7 +2,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `codex-art-import-shared-transform`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `reusable production-art geometry, safety, and authoring semantics require independent falsification`
 - Reviewed main: `d099e541941c5f7525f7c9af38f6e36536f9d574`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0`
 - Visual review: `conditional`
 - Goal: Provide one deterministic, reusable source-sheet geometry and conversion-plan API for both generic Asset V2 and specialized Operator intake without introducing a second resize engine.
 - Completion boundary: Same verified source+contract+options yield byte-identical plan and derived geometry; 8f and 6f golden dimensions exact; one global scale in every frame; no mixed-frame resizes, no clip, no smoothing; missing/ambiguous contracts fail; Operator existing tests remain green; no new publishing authority.
@@ -27,9 +27,9 @@
 - Change:
   1. Factor/reuse converter core as a side-effect-free geometry service, not a copied algorithm. Inputs: source bytes+SHA256; explicit rows/columns/frame count and cell width/height; explicit family/state/direction or Operator profile; exact target WxH; orientation/layout; alpha policy; one animation-wide crop, uniform scale, placement and output horizontal-strip contract. Inference is advisory: ambiguous grids, uneven division, invalid alpha, bad RGBA, unknown target geometry and missing semantic identity fail with actionable diagnostics; never guess frames by filename alone.
   2. Return a versioned canonical JSON plan with source digest, semantic/family or Operator profile digest, input layout/cell geometry, frame order, alpha-union bbox, one shared scale, global placement, target frame WxH, frame count, candidate method, expected strip WxH, per-frame integer registration initialized at [0,0], plan SHA256, and no write side effects. Canonicalize digest input deterministically with stable key order.
-  3. Reuse current nearest-neighbor crisp engine for production-sized pixel art. Constrain all output to exact fixed cells; no independent per-frame alpha crop, scaling, smoothing, intelligent relayout or transparent-color bleeding. Preserve fully transparent RGB semantics/true alpha; reject clipping rather than shrink a single frame. Allow fully opaque tiles only when declared by an Asset V2 contract, not by fallback guess.
+  3. Reuse the current crisp nearest-neighbor engine for production pixel-art/Operator profiles, **without changing Operator's mandatory crisp default**. For non-Operator illustrated/2.5D architectural sources, admit an explicitly approved separate resampling/alpha policy (e.g. BOX/Lanczos with preserved soft edge alpha) *only* when the semantic conversion plan declares it. Never infer policy from file size, silently convert pixel-art profiles, resize frames independently, mix alpha modes, or blur a locked pixel-art source. Constrain fixed cells, preserve transparent RGB semantics, and fail on unapproved clip/overflow. Opaque tiles are allowed only with declared family policy. See `design/04_architecture/PIXELART_DETERMINISTIC_NORMALIZATION_HARDENING_V1.md`.
   4. Keep Operator's required `source tools/custodian_aliases.sh; pixelart <source> --choose 1 --normalization-plan ...` production pathway; generic callers may use the reusable Python core. Do not change 96px legacy profiles, accepted 128px profile, accepted plan-digest rules, Workbench publication or runtime sources.
-  5. Add deterministic tests using 8x512 source to 8x128 strip (1024x128), 3x2 of 256x256 cells to six 128x128 strip (768x128), a 128x160 1-frame prop, uneven/ambiguous input, repeated replay hashes and overflow refusal. Register focused ownership in validation_manifest.json.
+  5. Add deterministic tests using 8x512 source to 8x128 strip (1024x128), 3x2 of 256x256 cells to six 128x128 strip (768x128), a 128x160 1-frame prop, uneven/ambiguous input, repeated replay hashes and overflow refusal; include a high-frequency illustrated prop showing that the explicit environment-soft preset retains intermediate alpha while legacy crisp remains binary; reject empty required sources, nonpositive dimensions, excessive preparation-canvas allocations and source==output when forced. For single-image input, reject a supplied replay plan unless the plan schema actually covers that path; do not silently ignore it. Register focused ownership in validation_manifest.json.
 - Preserve: Canonical source masters, existing Asset V2 and specialized Operator contract owners, authored frame timing and pose motion, existing accepted profile geometry, no new art-generation authority.
 - Non-goals: No production artwork alterations, no new character design, no gameplay/timing/balance changes, no auto-publishing via MCP, no new runtime output naming database, and no repeated per-frame normalization.
 - Acceptance: Same verified source+contract+options yield byte-identical plan and derived geometry; 8f and 6f golden dimensions exact; one global scale in every frame; no mixed-frame resizes, no clip, no smoothing; missing/ambiguous contracts fail; Operator existing tests remain green; no new publishing authority.
@@ -44,3 +44,38 @@
 - Refresh owner: `none`; ChatGPT/user planning refresh required: `no` for objective tooling; human art approval remains separate.
 - Current chat URL: `not-recorded`; add the exact user-supplied URL before the next material packet refresh.
 - Completion report: changed files, final data/API contract, tests+results, architecture debt/drift, deferred risks only.
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The registered shared-transform smoke proves canonical deterministic plan and replay hashes, exact 8f/6f/prop output dimensions, explicit soft versus binary alpha, semantic adapters, and fail-closed refusal controls. All four packet-required existing Python smokes pass. The broader changed-file run is recorded as blocked by Godot importer exit -11 before tests.`
+- Implemented the reusable deterministic sprite import plan and shared transform API in `custodian/tools/assets/sprite_import/`, backed by converter geometry/resampling helpers. Added explicit Asset V2 and Operator profile adapters, input and allocation guards, and a narrow Operator session contract adapter; the Operator production path remains `pixelart --choose 1`.
+- Golden geometry: eight 512px cells produce a 1024x128 strip; six 256px grid cells produce a 768x128 strip; 128x160 one-frame props retain exact dimensions. Repeated plans and replay output hashes match.
+- Explicit soft illustrated alpha retains intermediate alpha; pixel-crisp remains nearest-neighbor with binary alpha. Invalid/ambiguous input, empty frames, digest mismatch, excessive preparation, source overwrite, and single-image replay-plan misuse are rejected.
+- Validation: focused shared-transform smoke, Operator source smoke, Operator registration profile smoke, pixelart colors smoke, and Asset V2 plan smoke passed. `run_validation.py --changed --json` failed before test execution because Godot import/reimport exited -11; the focused registered manifest test passed with a green report.
+- No production art or runtime output changed. No new publishing authority was added.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: Godot import/reimport crashed with exit -11 during changed-file validation before any selected tests ran.
+- Root cause / contributing factors: the failure occurred inside the Godot importer at 99% reimport; no code-level diagnostic was emitted.
+- Prevention / pipeline improvement: retain the successful focused Python manifest report and rerun changed-file validation after the Godot import environment is healthy.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: focused Python geometry and existing art intake smokes were deterministic and green.
+
+## Next Handoff
+- Next workstream: review-codex-art-import-shared-transform
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0
+- Refresh reason: none
+- Next action: run the fresh-context paired post-land review after this implementation lands; then dispatch `codex-art-import-registration` when its dependency is complete.
+- Blockers or open questions: changed-file validation needs a rerun because Godot import/reimport crashed with exit -11.
