@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-godot-cache-access-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -32,13 +32,31 @@
 - Task overrides: `none`
 - Deferred: A generic paired-review `recover` CLI for already-protected runs remains owned by the existing orphan/recovery roadmap; this slice only fixes future sandbox validation access.
 
-## Handoff
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `40/40` changed-file tests passed with complete coverage and no skips, timeouts, failures or infrastructure errors; paired-review runner unit suite passed `28/28`; Godot project-lock smoke passed; paired packet and task-index checks passed; final report: `/tmp/agent-paired-review-cache-access-final.json`.
 
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The initial claim command outlived its short tool wait; the dispatcher kept its lock until the verified claim completed. One test fixture initially read the default HOME outside its configured environment block; the assertion was corrected and rerun.`
+- Root cause / contributing factors: `The first claim call did not preserve its long-running session handle in the displayed result; the fixture's HOME assertion was outside the environment override scope.`
+- Prevention / pipeline improvement: `Allow sufficient wait for dispatcher claims and retain the returned process session; keep environment-dependent assertions inside their configured environment scope.`
+- Tooling / docs drift discovered: `Paired-review launches previously exposed only run evidence, leaving Godot validation's shared cache/job-budget paths outside the sandbox.`
+- Follow-up: `fixed-in-scope`
+- What worked: `The lock module now supplies the job-budget root used by both validation and paired-review sandbox setup.`
+
+## Handoff
 - Next workstream: `review-agent-paired-review-godot-cache-access-v1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac95a34-c8fc-83ea-a2d0-28a1dc72f166`
 - Refresh reason: `none`
-- Next action: `Implement the narrow paired-review sandbox cache access change, then run its fresh independent review.`
-- Blockers or open questions: `none; live dispatcher locks still decide claimability at execution time`
+- Next action: `Launch the exact fresh paired review through paired_review_runner.py after this implementation lands.`
+- Blockers or open questions: `none`
