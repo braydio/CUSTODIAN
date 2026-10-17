@@ -13,8 +13,8 @@
   },
   "controls": {
     "swing_reference_blend": 0.5,
-    "upper_body_counter_motion_degrees": 0,
-    "robe_response_gain": 0,
+    "upper_body_counter_motion_degrees": 2,
+    "robe_response_gain": 0.08,
     "max_knee_fit_error_px": 8,
     "max_joint_step_px": 8,
     "max_rotation_step_degrees": 60

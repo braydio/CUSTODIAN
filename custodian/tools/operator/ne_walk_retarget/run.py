@@ -62,12 +62,29 @@ def validate(bundle, annotations):
     assert rebuilt.tobytes()==source.tobytes()
     return {'source_hash':sha(strip),'frame_hashes_passed':15,'pixel_reassembly_exact':True,'marker_findings':marker_findings}
 
+
+def alpha_voids(image):
+    """Return enclosed transparent components; topology is a diagnostic, not art approval."""
+    alpha=image.getchannel('A');w,h=image.size
+    empty={(x,y) for y in range(h) for x in range(w) if alpha.getpixel((x,y))==0}
+    components=[]
+    while empty:
+        seed=empty.pop();todo=[seed];edge=False
+        for x,y in todo:
+            edge |= x in (0,w-1) or y in (0,h-1)
+            for p in ((x-1,y),(x+1,y),(x,y-1),(x,y+1)):
+                if p in empty:empty.remove(p);todo.append(p)
+        if not edge:components.append({'pixels':len(todo),'bbox':[min(x for x,y in todo),min(y for x,y in todo),max(x for x,y in todo)+1,max(y for x,y in todo)+1]})
+    return sorted(components,key=lambda c:(c['bbox'][1],c['bbox'][0]))
+
 def analyze(out, annotations, preflight, rig_sha, core_sha):
     r=json.loads((out/'aseprite_report.json').read_text())
-    r.update(input_validation=preflight, rig_sha256=rig_sha, v55_sha256=core_sha,
+    r.update(implementation_sha256={name:sha(HERE/name) for name in ('motion_plan.py','batch.lua','rigid_raster.lua','run.py','review_viewer.py')},controls=annotations['controls'],input_validation=preflight, rig_sha256=rig_sha, v55_sha256=core_sha,
              annotations_sha256=sha(out/'annotations.json'),timing_fps=None,
              accepted=False,human_visual_review='pending',timing_authority=False)
     limits=annotations['controls']
+    from motion_plan import check_limits
+    check_limits(limits)
     for finding in preflight['marker_findings']:
         r['frames'][finding['frame']-1]['failures'].append(f"reference_{finding['joint']}_not_established")
     sheet=Image.open(out/'operator_ne_walk_v6_15f.png')
@@ -80,9 +97,21 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
         assert frame.mode=='RGBA' and frame.size==(128,128)
         colors=set(frame.getdata());palette|={c for c in colors if c[3]}
         if any(c[3] not in (0,255) for c in colors): row['failures'].append('partial_alpha')
+        row['enclosed_alpha_voids']=alpha_voids(frame)
         bb=frame.getbbox();row['alpha_bbox']=bb
         if bb and (bb[0]==0 or bb[1]==0 or bb[2]==128 or bb[3]==128): row['failures'].append('canvas_edge_clipping_risk')
+        row['pelvis_within_bounds']=abs(row['pelvis']['x']-61)<=7 and abs(row['pelvis']['y']-66)<=6
+        if not row['pelvis_within_bounds']:row['failures'].append('pelvis_motion_bounds')
         for side,leg in row['legs'].items():
+            metric=r['rig_metrics'][side]
+            marker=annotations['frames'][row['frame']-1]['landmarks']
+            ankle_ref=marker['ankle_'+side]['xy'];toe_ref=marker['toe_'+side]['xy']
+            raw_pitch=math.degrees(math.atan2(toe_ref[1]-ankle_ref[1],toe_ref[0]-ankle_ref[0])-metric['source_foot_angle'])
+            raw_pitch=max(-24,min(24,(raw_pitch+180)%360-180))
+            leg['reference_pitch_filter_deviation_deg']=abs((leg['foot_delta']-raw_pitch+180)%360-180)
+            leg['thigh_length_error']=abs(distance(leg['hip'],leg['knee'])-metric['thigh_len'])
+            leg['shin_length_error']=abs(distance(leg['knee'],leg['ankle'])-metric['shin_len'])
+            if max(leg['thigh_length_error'],leg['shin_length_error'])>1e-6:row['failures'].append(side+'_accepted_segment_length_changed')
             boot=leg.get('rendered_boot_contact')
             # Different neutral near/far planes are preserved; this residual is
             # descriptive, not a false common-screen-ground assertion.
@@ -123,6 +152,8 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
     for row in r['frames']:row['pass']=not row['failures']
     r['passing_frames']=sum(row['pass'] for row in r['frames'])
     r['preview_geometry_passed']=r['passing_frames']==15
+    r['maximum_reference_filter_deviation_px']=max(l.get('reference_filter_deviation_px',0) for f in r['frames'] for l in f.get('legs',{}).values())
+    r['maximum_enclosed_alpha_void_pixels']=max(sum(c['pixels'] for c in f.get('enclosed_alpha_voids',[])) for f in r['frames'])
     r['output_palette_size']=len(palette)
     source_colors={c for c in Image.open(out/'source_palette.png').getdata() if c[3]}
     r['palette_identity_passed']=palette <= source_colors
@@ -130,10 +161,10 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
     r['rig_diagnostics']={side:{'shin_length_px':m['shin_len'],'thigh_length_px':m['thigh_len'],
         'shin_to_thigh_ratio':m['shin_len']/m['thigh_len']} for side,m in r['rig_metrics'].items()}
     r['limitations']=['Provisional agent traces and support schedule require human confirmation.',
-        'Upper body counter-motion and robe additions are independent controls, disabled in baseline.',
+        'Upper body and robe additions use explicit phase controls; timing remains unknown.',
         'Source rig neutral far/near soles lie on different screen-depth planes.',
         'No true world-space support-plane or swing-clearance inference from this single view.',
-        'Pixel holes require an authored coverage mask; none is supplied, so no pixel-hole PASS is claimed.',
+        'Enclosed transparent components are reported; intentional limb gaps require human interpretation.',
         'Loop metrics measure adjacent authored poses; no interpolated in-betweens are generated.',
         'Aseprite 100ms editor durations are placeholders, not selected timing.',
         'No Godot runtime tests: no runtime/source/ingress mutation is permitted.']
@@ -170,6 +201,8 @@ def main():
     preflight=validate(a.bundle,annotations)
     dep=json.loads((HERE/'v55_dependency.json').read_text());assert sha(a.v55)==dep['sha256'],'V5.5 dependency drift'
     rig_sha=sha(a.rig)
+    acceptance=json.loads((HERE/'rig_acceptance.json').read_text())
+    assert rig_sha==acceptance['rig_sha256'],'V6 must use the human-accepted rig baseline'
     a.output.mkdir(parents=True)
     write(a.output/'annotations.json',annotations)
     write(a.output/'input_validation.json',preflight)
@@ -189,8 +222,11 @@ def main():
         write(a.output/'RIG_BLOCKED.json',{'rig_sha256':rig_sha,
               'blocking_findings':rig_audit['blocking_findings'],'v6_solver_started':False})
         raise RuntimeError('Rig gate refused before V6: '+', '.join(rig_audit['blocking_findings']))
-    driver=a.output/'batch_generated.lua';driver.write_text(core+'\n'+(HERE/'batch.lua').read_text())
-    cfg={'bundle':str(a.bundle),'output':str(a.output),'annotations':annotations}
+    from motion_plan import plan
+    motion=plan(annotations,rig_audit)
+    write(a.output/'motion_plan.json',motion)
+    driver=a.output/'batch_generated.lua';driver.write_text(core+'\n'+(HERE/'rigid_raster.lua').read_text()+'\n'+(HERE/'batch.lua').read_text())
+    cfg={'bundle':str(a.bundle),'output':str(a.output),'annotations':annotations,'motion_plan':motion}
     command=[a.aseprite,'-b',str(a.rig),'--script-param','config='+json.dumps(cfg,separators=(',',':')),'--script',str(driver)]
     result=subprocess.run(command,capture_output=True,text=True)
     (a.output/'aseprite.log').write_text(result.stdout+result.stderr)
@@ -198,6 +234,8 @@ def main():
     if result.returncode or not (a.output/'aseprite_report.json').exists():
         raise RuntimeError('Aseprite failed: '+result.stdout+result.stderr)
     r=analyze(a.output,annotations,preflight,rig_sha,sha(a.v55))
+    from review_viewer import write_viewer
+    write_viewer(a.output,a.bundle,r)
     write(a.output/'run_receipt.json',{'command':command,'source_rig_unchanged':True,'rig_sha256':rig_sha,
           'output':str(a.output),'preview_geometry_passed':r['preview_geometry_passed'],'accepted':False})
     print(json.dumps({'report':str(a.output/'report.json'),'passing_frames':r['passing_frames'],'frames':15,'accepted':False}))

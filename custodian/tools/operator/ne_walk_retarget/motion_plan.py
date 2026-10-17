@@ -36,6 +36,7 @@ def transition_cost(a,b,limits):
     return cost
 
 def plan(annotations,rig):
+    check_limits(annotations['controls'])
     frames=annotations['frames'];limits=annotations['controls'];metrics=rig['metrics'];origin=rig['pivots']['pelvis']
     refs=[{n:{'x':v['xy'][0],'y':v['xy'][1]} for n,v in f['landmarks'].items()} for f in frames]
     n=len(refs)
@@ -98,6 +99,36 @@ def plan(annotations,rig):
             for table in reversed(parents):path.append(table[path[-1]])
             path.reverse();best=(score,[states[i][k] for i,k in enumerate(path)],branches)
     if best is None:raise ValueError('no cyclic trajectory satisfies fixed reach/fit/joint/rotation limits')
-    return {'schema':'custodian.ne_cyclic_motion_plan.v1','reference_scale':scale,
+    result={'schema':'custodian.ne_cyclic_motion_plan.v1','reference_scale':scale,
             'filter':'cyclic [1,4,6,4,1]/16 applied to canonical reference ankle positions and boot pitches before IK',
             'score':best[0],'branches':best[2],'frames':best[1]}
+    validate_plan(result,annotations,rig)
+    return result
+
+
+def check_limits(limits):
+    expected={'max_knee_fit_error_px':8,'max_joint_step_px':8,'max_rotation_step_degrees':60}
+    if any(limits.get(k)!=v for k,v in expected.items()):
+        raise ValueError('V6 accepted QA limits must remain 8px fit / 8px step / 60deg rotation')
+
+
+def validate_plan(result,annotations,rig):
+    check_limits(annotations['controls'])
+    rows=result['frames'];limits=annotations['controls'];origin=rig['pivots']['pelvis']
+    if len(rows)!=15:raise ValueError('15 planned frames required')
+    for i,row in enumerate(rows):
+        if abs(row['pelvis']['x']-origin['x'])>7 or abs(row['pelvis']['y']-origin['y'])>6:
+            raise ValueError('pelvis motion bound exceeded')
+        for side in SIDES:
+            m=rig['metrics'][side];l=row['legs'][side]
+            if dist(l['hip'],add(m['hip'],sub(row['pelvis'],origin)))>1e-7:
+                raise ValueError('hip detached from accepted pelvis geometry')
+            if abs(dist(l['hip'],l['knee'])-m['thigh_len'])>1e-7 or abs(dist(l['knee'],l['ankle'])-m['shin_len'])>1e-7:
+                raise ValueError('accepted segment length changed')
+            if l['knee_fit_error']>limits['max_knee_fit_error_px']:
+                raise ValueError('knee fit exceeded')
+            k=sub(l['knee'],l['hip']);a=sub(l['ankle'],l['hip'])
+            if (k['x']*a['y']-k['y']*a['x'])*result['branches'][side]<=0:
+                raise ValueError('knee branch changed')
+        if not math.isfinite(transition_cost(rows[i-1],row,limits)):
+            raise ValueError('cyclic joint/rotation discontinuity')

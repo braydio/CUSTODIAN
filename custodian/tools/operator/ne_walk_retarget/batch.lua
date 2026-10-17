@@ -38,55 +38,32 @@ for i,f in ipairs(cfg.annotations.frames) do
 end
 local scale_sum=0
 for _,r in ipairs(refs) do scale_sum=scale_sum+reference_scale_to_custodian(r)/15 end
+local function copy_point(p) return {x=p.x,y=p.y} end
 local function solve_frame(i,adjust)
-  local r=refs[i]; local f=cfg.annotations.frames[i]; local controls=cfg.annotations.controls
-  local src_p=point('pelvis')
-  local raw=add(src_p,{x=(r.pelvis.x-mean.pelvis.x)*scale_sum,y=(r.pelvis.y-mean.pelvis.y)*scale_sum})
-  local pelvis={x=src_p.x+clamp(raw.x-src_p.x,-7,7),y=src_p.y+clamp(raw.y-src_p.y,-6,6)}
-  local support=f.support
-  local m=metrics[support]
-  local support_delta={x=(r['ankle_'..support].x-mean['ankle_'..support].x)*scale_sum,
-    y=(r['ankle_'..support].y-mean['ankle_'..support].y)*scale_sum}
-  local target=add(add(m.ankle,support_delta),adjust or {x=0,y=0})
-  local corrected,reach_corrected=support_reach_corrected_pelvis(pelvis,0,support,target)
-  if math.abs(corrected.x-src_p.x)<=7 and math.abs(corrected.y-src_p.y)<=6 then pelvis=corrected end
-  local solved={pelvis=pelvis,raw_pelvis=raw,pelvis_rot=0,reference_scale=scale_sum,
-    pelvis_reach_corrected=reach_corrected,
-    pelvis_clamped=math.abs(raw.x-src_p.x)>7 or math.abs(raw.y-src_p.y)>6,reference_frame=i}
-  local preset={pelvis_rot=0,body_dx=pelvis.x-src_p.x,body_dy=pelvis.y-src_p.y,
-    support=f.support,robe={near=0,far=0,center=0}}
+  local planned=cfg.motion_plan.frames[i]
+  local preset={pelvis_rot=0,body_dx=planned.pelvis.x-point('pelvis').x,
+    body_dy=planned.pelvis.y-point('pelvis').y,support=cfg.annotations.frames[i].support,
+    robe={near=0,far=0,center=0}}
+  local solved={pelvis=copy_point(planned.pelvis),raw_pelvis=copy_point(planned.raw_pelvis),pelvis_rot=0,
+    reference_scale=cfg.motion_plan.reference_scale,pelvis_clamped=false,reference_frame=i}
   for _,side in ipairs({'near','far'}) do
-    local m=metrics[side];local geo=feet[side]
-    local hip=add(m.hip,sub(pelvis,src_p))
-    local ref_ankle=r['ankle_'..side]; local ref_mean=mean['ankle_'..side]
-    local donor_delta={x=(ref_ankle.x-ref_mean.x)*scale_sum,y=(ref_ankle.y-ref_mean.y)*scale_sum}
-    local raw_ankle=add(m.ankle,donor_delta)
-    local max_span=m.thigh_len+m.shin_len
-    local desired=raw_ankle
-    local swing_reduction=0
-    if side~=f.support then
-      desired=add(m.ankle,{x=donor_delta.x*controls.swing_reference_blend,y=donor_delta.y*controls.swing_reference_blend})
-      swing_reduction=distance(raw_ankle,desired)
-    end
-    local foot_rot=reference_foot_rotation(r,side)
-    local offset=rendered_rotated_foot_offset(geo,foot_rot)
-    -- Targets travel along the donor's in-place phase path. Root/floor stay fixed.
-    local sole=add(desired,offset)
-    if side==f.support then desired=add(desired,adjust or {x=0,y=0}) end
-    local v=sub(r['knee_'..side],r['hip_'..side]);local norm=length(v)
-    assert(norm>1.5,'collapsed reference thigh')
-    local preferred=add(hip,{x=v.x/norm*m.thigh_len,y=v.y/norm*m.thigh_len})
-    local knee,ankle,was_clamped=solve_two_bone_retarget(hip,desired,m.thigh_len,m.shin_len,preferred)
-    local leg={hip=hip,knee=knee,ankle=ankle,toe=add(ankle,rotate_vec(sub(m.toe,m.ankle),foot_rot)),
-      mapped_ankle=desired,mapped_knee=preferred,raw_ankle=raw_ankle,
-      thigh_delta=deg(angle_of(sub(knee,hip))-m.source_thigh_angle),
-      shin_delta=deg(angle_of(sub(ankle,knee))-m.source_shin_angle),foot_delta=foot_rot,
-      target_clamped=was_clamped,knee_fit_error=distance(knee,preferred),
-      ankle_fit_error=distance(ankle,desired),swing_reduction_px=swing_reduction,
-      desired_sole=side==f.support and sole or nil}
-    solved[side]=leg
-    preset.robe[side]=clamp(-leg.thigh_delta*controls.robe_response_gain,-12,12)
+    local m=metrics[side];local l=planned.legs[side]
+    local target=copy_point(l.ankle)
+    if side==preset.support then target=add(target,adjust or {x=0,y=0}) end
+    local knee,ankle,clamped=solve_two_bone_retarget(l.hip,target,m.thigh_len,m.shin_len,l.knee)
+    local offset=rendered_rotated_foot_offset(feet[side],l.foot_delta)
+    solved[side]={hip=copy_point(l.hip),knee=knee,ankle=ankle,
+      toe=add(ankle,rotate_vec(sub(m.toe,m.ankle),l.foot_delta)),
+      mapped_knee=copy_point(l.preferred_knee),mapped_ankle=copy_point(target),raw_ankle=copy_point(planned.raw_targets[side]),
+      thigh_delta=deg(angle_of(sub(knee,l.hip))-m.source_thigh_angle),
+      shin_delta=deg(angle_of(sub(ankle,knee))-m.source_shin_angle),foot_delta=l.foot_delta,
+      target_clamped=clamped,knee_fit_error=distance(knee,l.preferred_knee),
+      ankle_fit_error=distance(ankle,target),swing_reduction_px=0,
+      reference_filter_deviation_px=distance(planned.raw_targets[side],l.ankle),
+      desired_sole=side==preset.support and add(l.ankle,offset) or nil}
+    preset.robe[side]=20*cfg.annotations.controls.robe_response_gain*math.sin((i-1)*2*math.pi/15+(side=='far' and -math.pi/3 or math.pi/6))
   end
+  preset.robe.center=10*cfg.annotations.controls.robe_response_gain*math.sin((i-1)*2*math.pi/15)
   solved.derived_preset=preset
   return solved
 end
@@ -122,18 +99,46 @@ for i,f in ipairs(cfg.annotations.frames) do
     local best=math.abs(check.dx or 999)+math.abs(check.dy or 999)
     -- Keep V5.5's bounded correction: re-solve IK and rasterize, never slide art.
     if not check.pass then
-      for dy=-3,3 do for dx=-3,3 do
-        local candidate=solve_frame(i,{x=dx,y=dy})
-        local cp,cm=rasterize_reference_parts(candidate)
-        local cc=verify_support_contact(candidate.derived_preset,candidate,cp)
-        local score=math.abs(cc.dx or 999)+math.abs(cc.dy or 999)
-        if cc.pass and score<best and not candidate[f.support].target_clamped then
-          solved,parts,missing,check,best=candidate,cp,cm,cc,score
-          row.raster_correction={x=dx,y=dy}
-        end
+      local candidates={}
+      -- Quarter-pixel changes alter raster phase; integer shifts alone cannot
+      -- change which pitched boot pixels own the lowest sole row.
+      for iy=-12,12 do for ix=-12,12 do
+        if ix~=0 or iy~=0 then table.insert(candidates,{x=ix*.25,y=iy*.25}) end
       end end
+      table.sort(candidates,function(a,b)
+        local aa=a.x*a.x+a.y*a.y;local bb=b.x*b.x+b.y*b.y
+        if aa==bb then if a.x==b.x then return a.y<b.y end return a.x<b.x end
+        return aa<bb
+      end)
+      for _,adjust in ipairs(candidates) do
+        local candidate=solve_frame(i,adjust)
+        local leg=candidate[f.support]
+        local k=sub(leg.knee,leg.hip);local a=sub(leg.ankle,leg.hip)
+        local compatible=not leg.target_clamped and leg.knee_fit_error<=cfg.annotations.controls.max_knee_fit_error_px
+          and (k.x*a.y-k.y*a.x)*cfg.motion_plan.branches[f.support]>0
+        for _,neighbor in ipairs({((i-2)%15)+1,(i%15)+1}) do
+          local planned=cfg.motion_plan.frames[neighbor].legs[f.support]
+          for _,joint in ipairs({'hip','knee','ankle','toe'}) do
+            if distance(leg[joint],planned[joint])>cfg.annotations.controls.max_joint_step_px then compatible=false end
+          end
+          for _,part in ipairs({'thigh','shin','foot'}) do
+            if math.abs(normalize_deg(leg[part..'_delta']-planned[part..'_delta']))>cfg.annotations.controls.max_rotation_step_degrees then compatible=false end
+          end
+        end
+        if compatible then
+          local cp,cm=rasterize_reference_parts(candidate)
+          local cc=verify_support_contact(candidate.derived_preset,candidate,cp)
+          if cc.pass then
+            solved,parts,missing,check=candidate,cp,cm,cc
+            row.raster_correction=adjust
+            break
+          end
+        end
+      end
     end
     row.contact=check; row.pelvis=solved.pelvis;row.raw_pelvis=solved.raw_pelvis
+    row.secondary={upper_body=cfg.annotations.controls.upper_body_counter_motion_degrees*math.sin((i-1)*2*math.pi/15),
+      robe_far=solved.derived_preset.robe.far,robe_near=solved.derived_preset.robe.near,robe_center=solved.derived_preset.robe.center}
     if not check.pass then table.insert(row.failures,'rendered_support_contact') end
     if solved.pelvis_clamped then table.insert(row.failures,'pelvis_clamped') end
     row.legs={};row.missing_hidden=missing
@@ -141,7 +146,7 @@ for i,f in ipairs(cfg.annotations.frames) do
       local leg=solved[side];row.legs[side]=leg
       if leg.target_clamped then table.insert(row.failures,side..'_unreachable') end
       if leg.knee_fit_error>cfg.annotations.controls.max_knee_fit_error_px then table.insert(row.failures,side..'_knee_fit') end
-      if leg.swing_reduction_px>3 then table.insert(row.warnings,side..'_swing_reduction') end
+      if leg.reference_filter_deviation_px>3 then table.insert(row.warnings,side..'_reference_trajectory_filter_deviation') end
       local contact=bottom_contact(combined_transformed_foot(parts,side))
       leg.rendered_boot_contact=contact
       leg.knee_branch=(leg.knee.x-leg.hip.x)*(leg.ankle.y-leg.hip.y)-(leg.knee.y-leg.hip.y)*(leg.ankle.x-leg.hip.x)

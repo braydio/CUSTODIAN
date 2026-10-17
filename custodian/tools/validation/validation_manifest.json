@@ -37,6 +37,26 @@
   ],
   "tests": [
     {
+      "id": "operator_ne_rigid_raster",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_rigid_raster_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "aseprite", "tooling"],
+      "owners": ["custodian/tools/operator/ne_walk_retarget/rigid_raster.lua", "custodian/tools/validation/operator_ne_rigid_raster_smoke.py"],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_ne_motion_plan",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_motion_plan_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "negative_control", "tooling"],
+      "owners": ["custodian/tools/operator/ne_walk_retarget/motion_plan.py", "custodian/tools/operator/ne_walk_retarget/batch.lua", "custodian/tools/operator/ne_walk_retarget/run.py", "custodian/tools/validation/operator_ne_motion_plan_smoke.py"],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_ne_rig_master_audit",
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_rig_master_audit_smoke.py",

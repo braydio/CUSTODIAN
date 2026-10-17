@@ -139,3 +139,44 @@ degrees for both sides. It reopens the saved candidate through real Aseprite bef
 reporting technical success. Run V6 separately against that candidate only after
 these checks pass. The solver and its tolerances remain unchanged; source/timing
 publication is not part of this tool. The candidate remains visually unaccepted.
+
+## Accepted rig and cyclic V6 continuation
+
+`rig_acceptance.json` records the user's hash-bound rig acceptance. V6 checks that
+exact file before planning; source/geometry recovery is closed. Animation and timing
+are separate pending decisions.
+
+`motion_plan.py` searches a cyclic path inside the original ±7px x / ±6px y pelvis
+box, retaining exact accepted segment lengths. The old per-frame projection could
+throw away reachable bounded solutions. The new planner chooses one knee branch
+per limb over the whole cycle and includes frame 15→1 in path selection.
+
+A declared cyclic `[1,4,6,4,1]/16` filter operates on canonical reference ankle
+positions and boot pitches before IK. It removes the discontinuities introduced by
+frame-local support/swing mapping. Its deviation from raw reference targets is
+reported independently of IK/contact residual, including warnings above 3px.
+The current maximum is 6.423px; gait fidelity requires human animation review.
+This filtering does not change rig geometry or source art.
+
+The planner rejects changes to the existing 8px knee-fit, 8px joint-step and 60°
+rotation limits. Every rendered result is checked again after raster correction.
+Quarter-pixel support-ankle corrections remain inside the existing ±3px budget;
+each re-solves IK and checks branch/neighbor compatibility. They are not boot slides.
+Inverse nearest-neighbor rigid sampling avoids forward-splat interior holes and
+preserves source colors/binary alpha. Enclosed transparent regions are still
+reported because separate moving parts can expose gaps; do not auto-approve them
+as intentional or paint over them.
+
+Upper-body counter-motion is a separate 2° phase sinusoid; robe far/near/center
+motion uses separate phase curves (1.6° far/near amplitude, 0.8° center). Robe motion
+no longer follows thigh rotation. These additions do not imply authored timing.
+
+`LOOP_REVIEW.html` embeds the clean Operator strip and Knight reference, supports
+manual forward/reverse stepping across 15→1, and requires an explicit rate selection
+before playback. Its review rate creates no timing decision. The optional transparent-
+region overlay and per-frame deviation/contact readings support the human loop
+review. The PNG and Aseprite clean tracks remain free of guides/donor pixels.
+
+Portable motion tests and a real-Aseprite filled-shape raster test are registered
+in the repository validation manifest. Actual per-frame JSON remains the evidence
+for real rig contact/continuity; fixture tests do not approve animation aesthetics.
