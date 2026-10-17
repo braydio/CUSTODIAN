@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-walled-yard-blockout
 - Authoring handoff: auto
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P1
 - Depends on: review-compound-archetype-profile-contract
@@ -40,3 +40,36 @@ For walled_yard profile ONLY, cluster independent room footprints with distinct 
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `walled_yard` now generates geometry `walled_yard_close_packed_v1`: buildings clustered on the tightest placement area that still holds every mandatory room, exactly two enumerated perimeter gates on different edges, one stable yard-facing exterior doorway per building, at least 22 percent open yard, and valid fabrication/construction/terminal anchors. `compound_walled_yard_smoke.gd` passes for seeds 1, 2, 3, 10, 42, 99, 1337 on the planner (three compound sizes) and on the real ProcGenTilemap: the only walkable ring cells are the two gate corridors, each gate alone admits the outside, with both shut the interior is unreachable, and every building, doorway and anchor is reachable from the gates. A negative control with the perimeter seal disabled fails the smoke with about 1,750 breached ring cells. `legacy` output is unchanged and `connected_bunker` is unaffected.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Nothing blocked the work. The accepted-world export parity pin had to be repinned again for three new level-data keys, and a fresh worktree needed one Godot import before the compound smokes parsed.`
+- Root cause / contributing factors: `The export schema pins an exact key count and hash, and worktrees do not inherit the import cache.`
+- Prevention / pipeline improvement: `The perimeter seal reuses the sealed-cell guard added for the connected bunker, so later floor writers cannot breach the ring, and the smoke was checked with a negative control.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `Reusing the existing sealed-cell guard made the closed-perimeter guarantee small and testable.`
+
+## Next Handoff
+
+- Next workstream: `review-compound-walled-yard-blockout`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488`
+- Refresh reason: `none`
+- Next action: `Run the exact paired post-land review in fresh context; visual judgement stays with the later human visual gate.`
+- Blockers or open questions: `none`
+

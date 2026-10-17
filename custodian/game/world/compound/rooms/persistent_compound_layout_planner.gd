@@ -12,6 +12,9 @@ const CARDINALS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, 
 # Connected-bunker geometry (Type B). One compound reservation is split into two
 # disjoint layers: a surface yard with access housings in the north band, and a
 # wall-filled subsurface region below a solid separator. No cell belongs to both.
+const WALLED_YARD_GEOMETRY_ID := "walled_yard_close_packed_v1"
+const WALLED_YARD_MIN_YARD_RATIO := 0.22
+const WALLED_YARD_CLUSTER_MARGINS: Array[int] = [6, 4, 2, 0]
 const BUNKER_GEOMETRY_ID := "connected_bunker_subsurface_v1"
 const LAYER_SURFACE := "surface"
 const LAYER_SUBSURFACE := "subsurface"
@@ -30,6 +33,10 @@ var _seed := 0
 var _config: Dictionary = {}
 var _archetype_profiles: Dictionary = {}
 var _target_room_count := 0
+## Extra inset applied to the room-placement area; walled_yard uses it to cluster buildings.
+var _cluster_extra_margin := 0
+## Perimeter wall thickness the tilemap will stamp; the planner models gate corridors with it.
+var perimeter_thickness := 2
 
 
 func _init(graph: RoomGraph = null) -> void:
@@ -60,7 +67,9 @@ func generate_layout(
 	_config = _graph.get_layout_config()
 	if String(archetype_profile.get("geometry_id", "")) == BUNKER_GEOMETRY_ID:
 		return _generate_connected_bunker(compound_rect, ingress, archetype_profile)
-	var inner := compound_rect.grow(-int(_config.get("outer_clearance_tiles", 4)))
+	if String(archetype_profile.get("geometry_id", "")) == WALLED_YARD_GEOMETRY_ID:
+		return _generate_walled_yard(seed, compound_rect, ingress, archetype_profile)
+	var inner := compound_rect.grow(-(int(_config.get("outer_clearance_tiles", 4)) + _cluster_extra_margin))
 	if inner.size.x < 24 or inner.size.y < 20:
 		return _invalid("compound_bounds_too_small", compound_rect, ingress)
 
@@ -659,6 +668,263 @@ func _stable_rect_rank(room_id: Variant, rect: Rect2i) -> int:
 
 func _stable_cell_rank(cell: Vector2i) -> int:
 	return abs(hash("%d:%d:%d" % [cell.x, cell.y, _seed]))
+
+
+func _generate_walled_yard(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i], profile: Dictionary) -> Dictionary:
+	# Type A reuses the semantic room planner on a tighter cluster area, then adds the
+	# enumerated perimeter gates, yard-facing building doorways and the yard contract.
+	var last_failure := "walled_yard_cluster_failed"
+	var margin := int(_config.get("outer_clearance_tiles", 4))
+	var base_inner := compound_rect.grow(-margin)
+	for extra in WALLED_YARD_CLUSTER_MARGINS:
+		_cluster_extra_margin = extra
+		var layout := generate_layout(seed, compound_rect, ingress, &"")
+		_cluster_extra_margin = 0
+		if not bool(layout.get("valid", false)):
+			last_failure = String((layout.get("diagnostics", {}) as Dictionary).get("failure_reason", last_failure))
+			continue
+		var failure := _complete_walled_yard(layout, base_inner, ingress, profile, extra)
+		if failure.is_empty():
+			return layout
+		last_failure = failure
+	return _invalid(last_failure, compound_rect, ingress)
+
+
+func _complete_walled_yard(layout: Dictionary, base_inner: Rect2i, ingress: Array[Vector2i], profile: Dictionary, extra: int) -> String:
+	var compound_rect: Rect2i = layout["rect"]
+	var rooms: Array = layout["rooms"]
+	var gates := _walled_yard_gates(compound_rect, ingress)
+	if gates.size() != 2:
+		return "walled_yard_gates_unplaceable"
+	var gate_cells := {}
+	for gate in gates:
+		for cell in gate["cells"]:
+			gate_cells[cell] = true
+
+	var room_cells := _rect_cell_set(rooms)
+	var interior := compound_rect.grow(-perimeter_thickness)
+	var doorways: Array[Dictionary] = []
+	var used_doors := {}
+	for room in rooms:
+		var doorway := _walled_yard_doorway(room, rooms, interior, gates)
+		if doorway.is_empty():
+			return "walled_yard_doorway_unplaceable"
+		for cell in doorway["door_cells"]:
+			if not (room["door_cells"] as Array).has(cell):
+				(room["door_cells"] as Array).append(cell)
+		doorways.append(doorway)
+		used_doors[doorway["id"]] = true
+
+	var courtyard_cells: Array[Vector2i] = []
+	for y in range(base_inner.position.y, base_inner.end.y):
+		for x in range(base_inner.position.x, base_inner.end.x):
+			var cell := Vector2i(x, y)
+			if not room_cells.has(cell):
+				courtyard_cells.append(cell)
+	var yard_ratio := float(courtyard_cells.size()) / float(maxi(1, base_inner.get_area()))
+	if yard_ratio < WALLED_YARD_MIN_YARD_RATIO:
+		return "walled_yard_yard_too_small"
+
+	var gate_records: Array[Dictionary] = []
+	var gate_ingress: Array[Vector2i] = []
+	for gate in gates:
+		gate_ingress.append(gate["cell"])
+		gate_records.append({
+			"id": gate["id"],
+			"role": gate["role"],
+			"edge": gate["edge"],
+			"cell": gate["cell"],
+			"inward": gate["inward"],
+			"cells": gate["cells"],
+			"layer_id": "surface",
+		})
+	layout["ingress"] = gate_ingress
+	layout["courtyard_cells"] = courtyard_cells
+	layout["gates"] = gate_records
+	layout["building_doorways"] = doorways
+	layout["perimeter"] = {
+		"id": "perimeter_main",
+		"rect": compound_rect,
+		"thickness": perimeter_thickness,
+		"gate_ids": [gate_records[0]["id"], gate_records[1]["id"]],
+	}
+	var diagnostics: Dictionary = layout["diagnostics"]
+	diagnostics["negative_space_ratio"] = yard_ratio
+	diagnostics["yard_ratio"] = yard_ratio
+	diagnostics["cluster_margin_extra"] = extra
+	diagnostics["gate_count"] = gate_records.size()
+	diagnostics["doorway_count"] = doorways.size()
+
+	var selected_id := String(profile.get("archetype_id", ""))
+	var layer_id := String(profile.get("layer_id", ""))
+	var profile_version := int(profile.get("profile_version", 0))
+	layout["archetype_id"] = selected_id
+	layout["layer_id"] = layer_id
+	layout["archetype_profile_version"] = profile_version
+	for room in rooms:
+		room["archetype_id"] = selected_id
+		room["layer_id"] = layer_id
+		room["archetype_profile_version"] = profile_version
+	for connection in layout["connections"]:
+		connection["archetype_id"] = selected_id
+		connection["layer_id"] = layer_id
+		connection["archetype_profile_version"] = profile_version
+	return _walled_yard_reachability_failure(layout, interior, room_cells)
+
+
+func _walled_yard_gates(compound_rect: Rect2i, ingress: Array[Vector2i]) -> Array[Dictionary]:
+	var candidates: Array[Vector2i] = []
+	for cell in ingress:
+		if not _edge_of(compound_rect, cell).is_empty() and not candidates.has(cell):
+			candidates.append(cell)
+	var center := compound_rect.get_center()
+	# Fallback gates on opposite edges, so a two-entry compound never depends on caller input.
+	var fallback: Array[Vector2i] = [
+		Vector2i(center.x, compound_rect.position.y),
+		Vector2i(center.x, compound_rect.end.y - 1),
+	]
+	var primary := candidates[0] if not candidates.is_empty() else fallback[0]
+	var secondary := Vector2i.ZERO
+	var have_secondary := false
+	for cell in candidates:
+		if _edge_of(compound_rect, cell) != _edge_of(compound_rect, primary):
+			secondary = cell
+			have_secondary = true
+			break
+	if not have_secondary:
+		for cell in fallback:
+			if _edge_of(compound_rect, cell) != _edge_of(compound_rect, primary):
+				secondary = cell
+				have_secondary = true
+				break
+	var gates: Array[Dictionary] = []
+	if not have_secondary:
+		return gates
+	for entry in [["gate_primary", "primary", primary], ["gate_secondary", "secondary", secondary]]:
+		var cell: Vector2i = entry[2]
+		var edge := _edge_of(compound_rect, cell)
+		var inward := _inward_of(edge)
+		var cells: Array[Vector2i] = []
+		for step in range(perimeter_thickness + 1):
+			cells.append(cell + inward * step)
+		gates.append({"id": entry[0], "role": entry[1], "edge": edge, "cell": cell, "inward": inward, "cells": cells})
+	return gates
+
+
+func _edge_of(rect: Rect2i, cell: Vector2i) -> String:
+	if cell.x < rect.position.x or cell.x >= rect.end.x or cell.y < rect.position.y or cell.y >= rect.end.y:
+		return ""
+	var on_x := cell.x == rect.position.x or cell.x == rect.end.x - 1
+	var on_y := cell.y == rect.position.y or cell.y == rect.end.y - 1
+	if on_x and on_y:
+		return ""
+	if cell.y == rect.position.y:
+		return "north"
+	if cell.y == rect.end.y - 1:
+		return "south"
+	if cell.x == rect.position.x:
+		return "west"
+	if cell.x == rect.end.x - 1:
+		return "east"
+	return ""
+
+
+func _inward_of(edge: String) -> Vector2i:
+	match edge:
+		"north":
+			return Vector2i.DOWN
+		"south":
+			return Vector2i.UP
+		"west":
+			return Vector2i.RIGHT
+	return Vector2i.LEFT
+
+
+func _walled_yard_doorway(room: Dictionary, rooms: Array, interior: Rect2i, gates: Array[Dictionary]) -> Dictionary:
+	var rect: Rect2i = room["rect"]
+	var center := Vector2i(rect.get_center())
+	var sides: Array[Dictionary] = [
+		{"name": "north", "door": Vector2i(center.x, rect.position.y), "outward": Vector2i.UP},
+		{"name": "east", "door": Vector2i(rect.end.x - 1, center.y), "outward": Vector2i.RIGHT},
+		{"name": "south", "door": Vector2i(center.x, rect.end.y - 1), "outward": Vector2i.DOWN},
+		{"name": "west", "door": Vector2i(rect.position.x, center.y), "outward": Vector2i.LEFT},
+	]
+	var best := {}
+	var best_distance := INF
+	for side in sides:
+		var door: Vector2i = side["door"]
+		var outward: Vector2i = side["outward"]
+		var outside := door + outward
+		var clear := true
+		# The doorway and its two apron cells must open onto free yard, not another building.
+		for step in range(1, 3):
+			var apron := door + outward * step
+			if not interior.has_point(apron) or _cell_in_any_room(apron, rooms):
+				clear = false
+		if not clear:
+			continue
+		var nearest := INF
+		for gate in gates:
+			nearest = minf(nearest, Vector2(outside).distance_to(Vector2(gate["cell"])))
+		if nearest < best_distance:
+			best_distance = nearest
+			best = {
+				"id": "door_%s_exterior" % room["id"],
+				"room_id": room["id"],
+				"side": side["name"],
+				"cell": door,
+				"outside_cell": outside,
+				"door_cells": _door_width_cells(rect, door),
+				"layer_id": "surface",
+			}
+	return best
+
+
+func _cell_in_any_room(cell: Vector2i, rooms: Array) -> bool:
+	for room in rooms:
+		if (room["rect"] as Rect2i).has_point(cell):
+			return true
+	return false
+
+
+func _walled_yard_reachability_failure(layout: Dictionary, interior: Rect2i, room_cells: Dictionary) -> String:
+	var walkable := {}
+	for y in range(interior.position.y, interior.end.y):
+		for x in range(interior.position.x, interior.end.x):
+			var cell := Vector2i(x, y)
+			if not room_cells.has(cell):
+				walkable[cell] = true
+	for room in layout["rooms"]:
+		var rect: Rect2i = room["rect"]
+		var doors := {}
+		for door in room["door_cells"]:
+			doors[door] = true
+		for y in range(rect.position.y, rect.end.y):
+			for x in range(rect.position.x, rect.end.x):
+				var cell := Vector2i(x, y)
+				var perimeter := x == rect.position.x or x == rect.end.x - 1 or y == rect.position.y or y == rect.end.y - 1
+				if not perimeter or doors.has(cell):
+					walkable[cell] = true
+	for cell in layout["corridor_cells"]:
+		walkable[cell] = true
+	var gates: Array = layout["gates"]
+	for gate in gates:
+		for cell in gate["cells"]:
+			walkable[cell] = true
+	var reached := _flood_cells(gates[0]["cells"][0], walkable)
+	for gate in gates:
+		if not reached.has(gate["cells"][0]):
+			return "walled_yard_gates_disconnected"
+	for room in layout["rooms"]:
+		if not reached.has((room["rect"] as Rect2i).get_center()):
+			return "walled_yard_room_unreachable"
+	for doorway in layout["building_doorways"]:
+		if not reached.has(doorway["outside_cell"]):
+			return "walled_yard_doorway_unreachable"
+	for key in ["terminal_anchor", "fabricator_anchor", "construction_zone_anchor"]:
+		if not reached.has(layout[key]):
+			return "walled_yard_anchor_unreachable"
+	return ""
 
 
 func _generate_connected_bunker(compound_rect: Rect2i, ingress: Array[Vector2i], profile: Dictionary) -> Dictionary:
