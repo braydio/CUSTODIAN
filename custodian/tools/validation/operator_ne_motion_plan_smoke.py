@@ -2,12 +2,16 @@
 """Numerical regressions independent of Aseprite and the user's local master."""
 from pathlib import Path
 import copy
+import hashlib
 import json
 import math
 import sys
+import tempfile
+from PIL import Image
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'custodian/tools/operator/ne_walk_retarget'))
 from motion_plan import two_bone, transition_cost, validate_plan, dist
 from run import pitch_quality_gate, wrapped_pitch_error_deg
+from review_viewer import BACKGROUND, _write_pair_sheet
 
 LIMITS={'max_knee_fit_error_px':8,'max_joint_step_px':8,'max_rotation_step_degrees':60}
 def pose(x=0):
@@ -15,6 +19,7 @@ def pose(x=0):
     return {'legs':{'near':copy.deepcopy(leg),'far':copy.deepcopy(leg)}}
 
 def main():
+    reference_pairing_regressions()
     assert abs(abs(wrapped_pitch_error_deg(179,-179))-2.0)<1e-10
     weighted=pitch_quality_gate([{'near':4,'far':8}],[{'near':4,'far':8}],['near'])
     assert weighted['baseline_weighted']==9.0 and weighted['candidate_weighted']==9.0
@@ -56,6 +61,54 @@ def main():
     else:raise AssertionError('widened thresholds must be rejected')
     crossover_regressions()
     print('PASS operator_ne_motion_plan: wrapped pitch, swing/stance weighting, masked-regression negative control, exact lengths, branches, unreachable target, toe pitch, cyclic seam, fixed limits')
+
+def reference_pairing_regressions():
+    with tempfile.TemporaryDirectory(prefix='operator-ne-reference-pair-') as temp:
+        root=Path(temp);donor_dir=root/'donor';candidate_dir=root/'candidate';donor_dir.mkdir();candidate_dir.mkdir()
+        donor_strip=Image.new('RGBA',(1920,128));candidate_strip=Image.new('RGBA',(1920,128))
+        donor_paths=[];candidate_paths=[];donor_file_hashes=[];supports=[]
+        for i in range(15):
+            gray=Image.new('RGBA',(128,128));gold=Image.new('RGBA',(128,128))
+            for y in range(128):
+                for x in range(128):
+                    alpha=0 if (x+y+i)%19==0 else 255
+                    shade=35+(i*7+x+y)%90
+                    gray.putpixel((x,y),(shade,shade,shade,alpha))
+                    gold.putpixel((x,y),(150+(i%8),82+(x%40),20+(y%30),alpha))
+            donor_strip.paste(gray,(i*128,0));candidate_strip.paste(gold,(i*128,0))
+            dp=donor_dir/f'f{i+1:02}.png';cp=candidate_dir/f'f{i+1:02}.png';gray.save(dp);gold.save(cp)
+            donor_paths.append(dp);candidate_paths.append(cp);donor_file_hashes.append(hashlib.sha256(dp.read_bytes()).hexdigest())
+            supports.append('near' if i%2==0 else 'far')
+        donor_path=root/'knight_ne.png';candidate_path=candidate_dir/'operator_ne_walk_v6_15f.png'
+        donor_strip.save(donor_path);candidate_strip.save(candidate_path)
+        report={'frames':[{'frame':i+1,'support':supports[i]} for i in range(15)]}
+        (candidate_dir/'report.json').write_text(json.dumps(report))
+        review=root/'review';review.mkdir()
+        expected_donor_sha=hashlib.sha256(donor_path.read_bytes()).hexdigest()
+        provenance=_write_pair_sheet(donor_path,candidate_path,donor_paths,candidate_paths,
+            report,review,expected_donor_sha,donor_file_hashes)
+        sheet=Image.open(review/'REFERENCE_OPERATOR_15_POSES.png').convert('RGB')
+        assert sheet.size==(1280,480) and len(provenance['frames'])==15
+        for i in range(15):
+            col=i%5;row=i//5;x=col*256;y=row*160+20
+            expected_gray=Image.new('RGBA',(128,128),BACKGROUND);expected_gray.alpha_composite(Image.open(donor_paths[i]).convert('RGBA'))
+            expected_gold=Image.new('RGBA',(128,128),BACKGROUND);expected_gold.alpha_composite(Image.open(candidate_paths[i]).convert('RGBA'))
+            assert sheet.crop((x,y,x+128,y+128)).tobytes()==expected_gray.convert('RGB').tobytes()
+            assert sheet.crop((x+128,y,x+256,y+128)).tobytes()==expected_gold.convert('RGB').tobytes()
+            receipt=provenance['frames'][i]
+            assert receipt['frame']==i+1 and receipt['support']==supports[i]
+            assert receipt['donor_rgba_pixels_sha256']==hashlib.sha256(Image.open(donor_paths[i]).tobytes()).hexdigest()
+            assert receipt['candidate_rgba_pixels_sha256']==hashlib.sha256(Image.open(candidate_paths[i]).tobytes()).hexdigest()
+            assert receipt['donor_background_composited_match'] and receipt['candidate_background_composited_match']
+        def reject(donor,candidate,expected):
+            target=root/f'reject_{len(list(root.glob("reject_*")))}';target.mkdir()
+            try:_write_pair_sheet(donor,candidate,donor_paths,candidate_paths,report,target,expected,donor_file_hashes)
+            except ValueError:return
+            raise AssertionError('invalid reference-pair identity was accepted')
+        reject(candidate_path,donor_path,expected_donor_sha)  # Swapped left/right source inputs.
+        reject(donor_path,candidate_path,'0'*64)  # Spoofed donor digest.
+        reject(donor_path,donor_path,expected_donor_sha)  # Same-sprite substitution.
+    print('PASS reference pairing: 15 ordered gray/gold frame pairs, alpha compositing, source hashes, layout, swap/spoof/duplicate negative controls')
 def crossover_regressions():
     from crossover import calibration_plan, audit_annotations, branch
     from run import HERE

@@ -342,8 +342,10 @@ def main():
         r['pitch_comparison_gate']=comparison['quality_gate']
         r['pitch_comparison_passed']=comparison['passed']
         write(a.output/'report.json',r)
-    from review_viewer import write_viewer
+    from review_viewer import write_viewer,write_reference_operator_sheet
     write_viewer(a.output,a.bundle,r)
+    if r['preview_geometry_passed'] and (comparison is None or comparison['passed']):
+        write_reference_operator_sheet(a.bundle,a.output,r,a.output)
     write(a.output/'run_receipt.json',{'command':command,'source_rig_unchanged':True,'rig_sha256':rig_sha,
           'output':str(a.output),'baseline_report':str(a.baseline_report) if baseline is not None else None,
           'preview_geometry_passed':r['preview_geometry_passed'],'pitch_comparison_passed':comparison['passed'] if comparison else None,'accepted':False})

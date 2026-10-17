@@ -220,16 +220,55 @@ handoff is published at
 with delete-after-review retention. It records the exact authoring chat:
 https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 
+## Iteration 002 — reference-sheet integrity
+
+The user confirmed the Iteration 001 pair sheet used Operator pixels in both
+columns. Its uploaded `REFERENCE_OPERATOR_15_POSES.png` SHA-256 is
+`f9d283a638d6cd9abd37fe3bce296b47705964563bd44c99f18dcfee18e898db`. The error
+was in review-packet assembly: the left side was copied from a prior Operator
+render. The Iteration 001 report remains unchanged and still matches its published
+SHA-256 `3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4`;
+its 15/15 geometry/contact evidence and 42.41% pitch improvement remain technical
+evidence only.
+
+Iteration 002 added a shared, fail-closed Knight/Operator sheet builder and a
+one-shot CLI in `review_viewer.py`. Before generating, it checks accepted donor
+and rig receipts, the Iteration 001 report identity, 1920x128 RGBA strips, all
+15 donor/candidate frame crops and exact reassembly, and both PNGs embedded in
+the existing `LOOP_REVIEW.html`. The CLI wrote only to the new local staging
+directory; it did not modify the prior output or rerender Aseprite. `run.py` now
+uses the same builder on future successful renders. The registered smoke tests
+synthetic gray/gold strips, alpha compositing, all 15 pair positions/order and
+per-frame pixel hashes, and rejects swapped inputs, spoofed donor hashes and
+same-sprite inputs.
+
+Verified Knight donor strip SHA-256:
+`20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba` (RGBA-pixel
+SHA-256 `cff7cca675f071c05353b11d74a9580645a295d2f3f62eef84f3ba7dd4f7464a`).
+The retained Operator strip SHA-256 is
+`ba512279d2e153fd84ca3093d638f63877785ffdda5923d8e4f932b6b01dcb85`. The
+unchanged self-contained viewer embeds those exact Knight and Operator bytes.
+Corrected paired sheet SHA-256:
+`adde4812e067e8f39c38fc2eab34187e0d798db8af809c31f1dd80c743e9bcfd`; its
+provenance receipt records each frame's hashes, crop/panel coordinates and
+post-composite pixel identity.
+
+The six-file corrected handoff is published at
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-002-reference-sheet-integrity/REVIEW_MANIFEST.json`
+with the exact authoring chat https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe. It preserves the Iteration 001 report,
+viewer and pitch comparison. The corrected pixels are now available for human
+review; no gait, transition, timing or artistic approval is claimed.
+
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: low
-- What went wrong: the publisher did not discover the custom-named six-file review packet through its default filename patterns; the explicit artifact list resolved this without changing evidence.
-- Root cause / contributing factors: publisher auto-discovery is optimized for Moment Forge names and standard report filenames.
-- Prevention / pipeline improvement: pass the six intended `--artifact` paths explicitly for custom review packets.
-- Tooling / docs drift discovered: none
+- Friction severity: medium
+- What went wrong: the Iteration 001 staging script mislabeled a prior Operator render as the Knight. I also launched this workstream's changed-file validation while another worktree's broad sweep was active; this run selected two Python unit checks and passed, but the launch ordering violated the resource guidance.
+- Root cause / contributing factors: the handoff script selected a convenient prior render instead of the locked donor bundle; the validation command was chained after a process listing rather than gated on its result.
+- Prevention / pipeline improvement: generate future pair sheets only through the shared provenance builder and keep the synthetic identity negative controls; treat any active validation process as a stop condition before launching a changed-file sweep.
+- Tooling / docs drift discovered: the review README now documents the erroneous Iteration 001 panel, exact hashes and the verified one-shot repair route.
 - Follow-up: manual-follow-up
-- What worked: focused numeric gates rejected per-foot regressions independently of aggregate pitch improvement; the existing same-source render and review pipeline produced compact evidence.
+- What worked: source strips, viewer-embedded PNGs, output frames and published report were all hash-bound; the faulty old review run was preserved and the corrected bundle used a fresh run ID.
 
 ## Next Handoff
 - Next workstream: operator-2-5d-ne-walk-retargeting
@@ -237,6 +276,6 @@ https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
-- Refresh reason: subjective gait/pitch/crossover and enclosed-alpha classification remains human-owned after the authorized technical candidate.
-- Next action: review the six-file Dropbox handoff, record a visual verdict and exact next packet delta if needed, then execute the emitted delete-after-review cleanup command.
-- Blockers or open questions: final animation acceptance, authoritative timing, merge, and runtime publication remain unauthorized.
+- Refresh reason: visual acceptance of the NE gait requires review of the authentic Knight-versus-Operator pair; support transitions and enclosed regions remain subjective.
+- Next action: inspect the new six-file Dropbox handoff, record the frame-specific human verdict, then run the emitted delete-after-review cleanup command.
+- Blockers or open questions: final gait acceptance, timing, runtime publication and landing remain unapproved.

@@ -230,6 +230,46 @@ before playback. Its review rate creates no timing decision. The optional transp
 region overlay and per-frame deviation/contact readings support the human loop
 review. The PNG and Aseprite clean tracks remain free of guides/donor pixels.
 
+## Knight / Operator review-pair provenance
+
+The Iteration 001 `REFERENCE_OPERATOR_15_POSES.png` handoff was defective: its
+panels labeled `NE donor` came from an older Operator render, not the Knight source.
+The defective uploaded sheet SHA-256 was
+`f9d283a638d6cd9abd37fe3bce296b47705964563bd44c99f18dcfee18e898db`; its report
+SHA-256 was `3cc70f881d04cae1ab8217aa46481cf40344c30a4a0523270488d26da0acded4` and
+remains byte-identical. Iteration 002's corrected sheet SHA-256 is
+`adde4812e067e8f39c38fc2eab34187e0d798db8af809c31f1dd80c743e9bcfd`.
+The separately embedded donor in `LOOP_REVIEW.html` is correct: its raw PNG SHA-256
+is `20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba`, while its
+Operator strip matches the retained candidate SHA-256
+`ba512279d2e153fd84ca3093d638f63877785ffdda5923d8e4f932b6b01dcb85`. The previous
+sheet must not be used to approve Knight-to-Operator fidelity.
+
+For future successful renders, `run.py` calls
+`write_reference_operator_sheet()` after the self-contained viewer is written. It
+requires the locked 1920×128 Knight and Operator strips, verifies all 15 source and
+candidate crops/reassemblies and embedded HTML image hashes, then writes a paired
+5×3 native-pixel sheet plus `REFERENCE_OPERATOR_PROVENANCE.json`. The provenance
+receipt records strip and per-frame hashes, crop/panel rectangles, compositing
+background, and pixel equality for each declared panel. It does not establish
+animation acceptance.
+
+To repair a prior review without rerendering, run the one-shot read-only verifier
+against that output and a new empty review directory:
+
+```bash
+python3 custodian/tools/operator/ne_walk_retarget/review_viewer.py \
+  --bundle ~/Downloads/operator_ne_master_audit_implementation_v1/authoritative_ne_donor_v1 \
+  --output ~/Downloads/operator_ne_master_audit_implementation_v1/iter_001_pitch_review \
+  --review-dir ~/Downloads/operator_ne_master_audit_implementation_v1/iter_002_reference_sheet_integrity
+```
+
+It writes only the corrected pair sheet and provenance JSON to `--review-dir`;
+the prior report, HTML and Operator strip are read-only. The registered motion-plan
+smoke uses synthetic gray/gold sources to check all 15 left/right pairs, alpha
+compositing, frame order and SHA receipts, and rejects swapped, spoofed or duplicate
+source images.
+
 Portable motion tests and a real-Aseprite filled-shape raster test are registered
 in the repository validation manifest. Actual per-frame JSON remains the evidence
 for real rig contact/continuity; fixture tests do not approve animation aesthetics.
