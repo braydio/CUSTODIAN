@@ -12,7 +12,7 @@
 - Review target workstream: `operator-2-5d-ne-walk-retargeting`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_2_5D_NE_WALK_RETARGETING.md`
 - Reviewed main: `675ccf726bb79397b7242ef3059971a6f1a39448`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe`
 - Visual review: `conditional`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -33,7 +33,7 @@
 
 This draft review is not a current dispatch target. The implementation is a single continuing workstream with explicit human visual review after each local branch checkpoint. Until ChatGPT/user has accepted the entire loop, and the implementation has been legitimately landed/archived, DO NOT claim or promote this review packet.
 
-The authoritative human visual lane is **only**:
+The authoritative review conversation is this exact [CUSTODIAN planning/review chat](https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe). The authoritative human visual lane is **only**:
 `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/` through `publish_review_artifacts.py`, using its exact iteration manifests and the user-authored ChatGPT conversation. A fresh technical reviewer reuses durable evidence and cannot grant subjective approval.
 
 ## Procedure
@@ -51,7 +51,7 @@ The authoritative human visual lane is **only**:
 - Next packet state: `none`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe`
 - Refresh reason: `none; final post-land technical acceptance review`
 - Next action: `Review final accepted landed implementation only after the dependency is complete; do not claim while human iteration remains open`
 - Blockers or open questions: `Implementation is active and animation visual approval is pending`
