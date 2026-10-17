@@ -1,38 +1,37 @@
-extends Node2D
+extends "res://game/world/traversal/local_transit_lift_2d.gd"
 class_name AwakeningTransitLift
 
-## Bidirectional service lift between the Dust Lung Cistern's lower and upper
-## stations.
-##
-## Deliberately not a Z-axis system: the Operator steps into a station, input is
-## locked, the screen dims, and they are relocated to the paired station. Later
-## art can replace the dim with an animated cage travelling the shaft without
-## changing this interaction contract.
-
+## Thin Dust Lung compatibility consumer for the reusable same-map lift owner.
 signal transit_started(from_station: int)
 signal transit_finished(to_station: int)
 
 enum Station { LOWER, UPPER }
 
-const FADE_SEC := 0.15
-const SHAKE_SEC := 0.20
 const STATION_RADIUS := 48.0
 const LIFT_TEXTURE := preload("res://content/sprites/environment/props/awakening/awakening_dust_lung_lift/runtime/body/awakening_dust_lung_lift__body__interaction__idle__omni__1f__192x256.png")
 
 @export var lower_station := Vector2(384, -3008)
 @export var upper_station := Vector2(384, -3424)
-@export var interaction_distance: float = 72.0
 
-var current_station: int = Station.LOWER
-var _busy := false
-var _operator: Node2D = null
-var _lift_sprite: Sprite2D = null
-var _cycle_generation := 0
-var _ride_tween: Tween = null
+var current_station: int:
+	get:
+		return Station.UPPER if current_station_id == &"upper" else Station.LOWER
+var _lift_sprite: Sprite2D
+var _ride_tween: Tween
 
 
 func _ready() -> void:
+	interaction_prompt = "SERVICE LIFT"
+	configure_stations([
+		StationDefinition.new(&"lower", lower_station, STATION_RADIUS),
+		StationDefinition.new(&"upper", upper_station, STATION_RADIUS),
+	], &"lower")
+	cycle_started.connect(_on_cycle_started)
+	cycle_departed.connect(_on_cycle_departed)
+	cycle_arrived.connect(_on_cycle_arrived)
+	cycle_cancelled.connect(_on_cycle_cancelled)
 	add_to_group("interactable")
+	super._ready()
 	_build_station_visuals()
 
 
@@ -46,120 +45,63 @@ func _build_station_visuals() -> void:
 
 
 func station_position(station: int) -> Vector2:
-	return upper_station if station == Station.UPPER else lower_station
+	return super.station_position_for(&"upper" if station == Station.UPPER else &"lower")
 
 
 func other_station(station: int) -> int:
 	return Station.LOWER if station == Station.UPPER else Station.UPPER
 
 
-## The station the actor is standing on, or -1.
 func station_under(actor: Node2D) -> int:
-	if actor == null:
-		return -1
-	for station in [Station.LOWER, Station.UPPER]:
-		if actor.global_position.distance_to(station_position(station)) <= STATION_RADIUS:
-			return station
+	var station_id := super.station_id_under(actor)
+	if station_id == &"lower": return Station.LOWER
+	if station_id == &"upper": return Station.UPPER
 	return -1
 
 
-# --- Interactable contract ---------------------------------------------------
-
-func get_interaction_prompt() -> String:
-	return "SERVICE LIFT"
-
-
-## Report whichever station the Operator is actually standing on so the prompt
-## and the ride agree.
 func get_interaction_position() -> Vector2:
 	var operator := get_node_or_null("/root/GameRoot/World/Operator") as Node2D
 	if operator != null:
 		var nearest := station_under(operator)
-		if nearest >= 0: return station_position(nearest)
-		if operator.global_position.distance_to(station_position(Station.UPPER)) \
-				< operator.global_position.distance_to(station_position(Station.LOWER)):
-			return station_position(Station.UPPER)
-	return station_position(current_station)
+		if nearest >= 0: return to_global(station_position(nearest))
+		if operator.global_position.distance_to(to_global(upper_station)) < operator.global_position.distance_to(to_global(lower_station)):
+			return to_global(upper_station)
+	return to_global(station_position(current_station))
 
 
 func can_interact(actor: Node) -> bool:
-	return not _busy and station_under(actor as Node2D) >= 0
+	return not is_busy() and station_under(actor as Node2D) >= 0
 
 
-func get_interaction_distance() -> float:
-	return interaction_distance
-
-
-func interact(actor: Node) -> void:
-	ride(actor as Node2D)
-
-
-## Rides from whichever station the actor occupies to its pair. Returns false if
-## the lift is mid-cycle or the actor is not on a station.
 func ride(actor: Node2D) -> bool:
-	if _busy or actor == null:
-		return false
-	var from_station := station_under(actor)
-	if from_station < 0:
-		return false
-	_operator = actor
-	current_station = from_station
-	_run_cycle(from_station, other_station(from_station))
-	return true
+	return request_next_station(actor)
 
 
-func _run_cycle(from_station: int, to_station: int) -> void:
-	_cycle_generation += 1
-	var generation := _cycle_generation
-	_busy = true
-	transit_started.emit(from_station)
-	_set_operator_input_enabled(false)
-	await _wait(FADE_SEC)
-	if generation != _cycle_generation: return
-	if _lift_sprite != null:
-		_ride_tween = create_tween()
-		_ride_tween.tween_property(_lift_sprite, "position", station_position(to_station), SHAKE_SEC).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await _wait(SHAKE_SEC)
-	if generation != _cycle_generation: return
-	if _operator != null and is_instance_valid(_operator):
-		_operator.global_position = station_position(to_station)
-		if _operator is CharacterBody2D:
-			(_operator as CharacterBody2D).velocity = Vector2.ZERO
-	current_station = to_station
-	await _wait(FADE_SEC)
-	if generation != _cycle_generation: return
-	_set_operator_input_enabled(true)
-	_busy = false
-	transit_finished.emit(to_station)
+func _on_cycle_started(origin: StringName, _destination: StringName, _token: int) -> void:
+	transit_started.emit(Station.UPPER if origin == &"upper" else Station.LOWER)
 
 
-func _wait(seconds: float) -> void:
-	if get_tree() == null:
-		return
-	await get_tree().create_timer(seconds).timeout
+func _on_cycle_departed(_origin: StringName, destination: StringName, _token: int) -> void:
+	if _lift_sprite == null: return
+	if _ride_tween != null and _ride_tween.is_running(): _ride_tween.kill()
+	_ride_tween = create_tween()
+	_ride_tween.tween_property(_lift_sprite, "position", station_position(Station.UPPER if destination == &"upper" else Station.LOWER), TRAVEL_DURATION_SEC).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
-## Reuses the Operator's existing transition lock rather than introducing a
-## second way to suspend player input.
-func _set_operator_input_enabled(enabled: bool) -> void:
-	if _operator != null and is_instance_valid(_operator) \
-			and _operator.has_method("set_portal_transition_locked"):
-		_operator.call("set_portal_transition_locked", not enabled)
+func _on_cycle_arrived(station: StringName, _token: int) -> void:
+	transit_finished.emit(Station.UPPER if station == &"upper" else Station.LOWER)
 
 
-func is_busy() -> bool:
-	return _busy
-
-
-## Abort an in-flight ride when the Awakening debug tour returns to the wake.
-func reset_transient_state() -> void:
-	_cycle_generation += 1
-	if _ride_tween != null and _ride_tween.is_running():
-		_ride_tween.kill()
+func _on_cycle_cancelled(_origin: StringName, _destination: StringName, _reason: StringName, _token: int) -> void:
+	if _ride_tween != null and _ride_tween.is_running(): _ride_tween.kill()
 	_ride_tween = null
-	_set_operator_input_enabled(true)
-	_busy = false
-	_operator = null
-	current_station = Station.LOWER
 	if _lift_sprite != null:
-		_lift_sprite.position = lower_station
+		_lift_sprite.position = station_position(current_station)
+	transit_finished.emit(current_station)
+
+
+func reset_transient_state(station: StringName = &"") -> void:
+	super.reset_transient_state(&"lower" if station.is_empty() else station)
+	if _ride_tween != null and _ride_tween.is_running(): _ride_tween.kill()
+	_ride_tween = null
+	if _lift_sprite != null: _lift_sprite.position = lower_station

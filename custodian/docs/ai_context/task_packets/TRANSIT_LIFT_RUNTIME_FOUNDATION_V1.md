@@ -54,3 +54,21 @@
 - Refresh reason: `none`
 - Next action: `Implement reusable mechanics + Awakening migration, land, then run fresh paired review.`
 - Blockers or open questions: `none`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `Required changed-file validation is blocked by the existing operator_2_5d_cohort_dependency_closure source-strip hash assertion.`
+- Root cause / contributing factors: `The same assertion fails on clean origin/main@675ccf726bb79397b7242ef3059971a6f1a39448; the failure is unrelated to this transit-lift diff.`
+- Prevention / pipeline improvement: `Keep baseline comparison for shared validation-manifest failures; do not weaken or exclude the failing assertion.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `manual-follow-up`
+- What worked: `Dedicated lifecycle, Awakening progression, affordance, and lower/upper traversal checks all pass.`
+
+## Blocker Handoff
+- Stream state: `checkpointed, not landed`
+- Failing gate: `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`
+- Exact baseline failure: `operator_2_5d_cohort_dependency_closure_smoke.py:42: assert all(item["source_strip_hash_matches_correction"] for item in idle)`
+- Baseline evidence: `same failure on clean coordination checkout at origin/main@675ccf726bb79397b7242ef3059971a6f1a39448`
+- Resume condition: `Fix or otherwise resolve the independently owned baseline validation failure, then resume this existing workstream and rerun changed-file validation.`

@@ -1013,7 +1013,7 @@
       "timeout_sec": 45,
       "needs_import": false
     },
-	{
+    {
       "id": "carrow_yard_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_yard_interior_smoke.gd",
@@ -4189,7 +4189,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
       "tier": "integration",
-      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "tags": [
+        "procgen_showcase",
+        "catalog",
+        "authored_level"
+      ],
       "owners": [
         "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
         "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
@@ -5046,6 +5050,25 @@
       "needs_import": false
     },
     {
+      "id": "local_transit_lift_lifecycle",
+      "type": "godot_script",
+      "script": "res://tools/validation/local_transit_lift_lifecycle_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "traversal",
+        "local_transit",
+        "lifecycle"
+      ],
+      "owners": [
+        "custodian/game/world/traversal/**",
+        "custodian/game/world/awakening/awakening_transit_lift.gd",
+        "custodian/tools/validation/local_transit_lift_lifecycle_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "awakening_first_return_progression",
       "type": "godot_script",
       "script": "res://tools/validation/awakening_first_return_progression_smoke.gd",
@@ -5064,7 +5087,8 @@
         "custodian/game/world/interactions/world_readout_interactable.gd",
         "custodian/game/world/home/sidearm_locker_interactable.gd",
         "custodian/game/actors/props/sidearm_locker.tscn",
-        "custodian/game/world/camera.gd"
+        "custodian/game/world/camera.gd",
+        "custodian/game/actors/operator/operator.gd"
       ],
       "timeout_sec": 120,
       "needs_import": true

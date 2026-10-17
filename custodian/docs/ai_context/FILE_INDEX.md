@@ -624,6 +624,7 @@ Last updated: 2026-10-02
 - `custodian/docs/ai_context/reports/assets/awakening_handoff_seams_v1/` — five ordered compact late-seam ROI captures with the technical metric report, portable capture manifest, and optional contact sheet; the packet requires human visual approval.
 - `custodian/asset_drop/archive/historical/awakening_ingest_manifest_legacy_snapshot_20261003.json` — archived, explicitly non-authoritative Awakening catalog snapshot; live family contracts/catalog are current authority.
 - `custodian/game/world/awakening/awakening_transit_lift.gd` — Dust Lung bidirectional service lift.
+- `custodian/game/world/traversal/local_transit_lift_2d.gd` and `local_transit_station_2d.gd` — reusable same-map station/cycle authority and stable station definition; Awakening is its compatibility consumer.
 - `custodian/game/world/awakening/awakening_plaque_interactable.gd` — read-only Crèche console and Undergate port readout.
 - `custodian/game/world/awakening/awakening_undergate_lighting.tscn` — authored Dust Lung-to-Undergate lighting zones, sparse local light pools, and major machinery occluders.
 - `custodian/content/lighting/profiles/awakening/` — neutral Awakening baseline plus Dust Lung, Undergate threshold/core, and north-threshold lighting profiles.

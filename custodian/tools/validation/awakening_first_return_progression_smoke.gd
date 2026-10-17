@@ -235,6 +235,7 @@ func _check_lift(awakening: Node) -> void:
 	var lower := Vector2(lift.get("lower_station"))
 	var upper := Vector2(lift.get("upper_station"))
 	operator.global_position = lower
+	operator.call("set_portal_transition_locked", true)
 	await physics_frame
 	if not bool(lift.call("ride", operator)):
 		_fail("lift refused a ride from the lower station")
@@ -243,6 +244,9 @@ func _check_lift(awakening: Node) -> void:
 		_fail("lift did not deliver to the upper station: %s" % str(operator.global_position))
 	if lift_sprite != null and lift_sprite.position.distance_to(upper) > 1.0:
 		_fail("production lift art did not travel to the upper station: %s" % str(lift_sprite.position))
+	if not bool(operator.get("_portal_transition_locked")):
+		_fail("local lift release cleared an independently owned portal transition lock")
+	operator.call("set_portal_transition_locked", false)
 
 	if not bool(lift.call("ride", operator)):
 		_fail("lift refused the return ride from the upper station")

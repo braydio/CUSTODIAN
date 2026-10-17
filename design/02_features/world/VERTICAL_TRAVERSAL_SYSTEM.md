@@ -37,7 +37,8 @@ Ordinary Alpine cliffs continue to use the AP2 cliff/fascia/contact presentation
 | Navigation | `game/systems/core/systems/navigation_system.gd` | directional AStar edges call `can_actor_move_between_tiles()`; navigation-driven enemies already consume this graph |
 | Operator | `game/actors/operator/operator.gd` | owns final movement chassis and sole normal `move_and_slide()`; local displacement does not yet query elevation |
 | Alpine presentation | Region Frame/AP2 cliff authorities | presentation-only ordinary cliff geology/contact/fog; no traversal authority |
-| Awakening lift | `game/world/awakening/awakening_transit_lift.gd` | fixed two-stop scene-specific owner using await/Tween/teleport and portal-lock compatibility |
+| Local same-map transit | `game/world/traversal/local_transit_lift_2d.gd` + `local_transit_station_2d.gd` | reusable stable-ID station/cycle authority; token-guarded timers, cancellation, and exactly-once actor lock cleanup |
+| Awakening lift | `game/world/awakening/awakening_transit_lift.gd` | thin Dust Lung adapter preserving LOWER/UPPER compatibility, prompt, production sprite, and legacy signals |
 
 This corrects stale documentation: enemy navigation is not wholly elevation-blind anymore. The remaining enforcement gaps are Operator local displacement, vehicles, and enemy movement paths that intentionally bypass NavigationSystem.
 
@@ -89,7 +90,7 @@ The connector exports its geometry and presentation anchors as semantic level da
 
 ## Reusable local lift
 
-Create one reusable same-map local transit authority under `game/world/traversal/` and migrate Awakening to a thin compatibility consumer. Do not merge campaign/level route-transition lifts merely because they use the word "lift".
+The reusable same-map local transit authority lives under `game/world/traversal/`; Awakening consumes it through a thin compatibility adapter. Do not merge campaign/level route-transition lifts merely because they use the word "lift".
 
 Required mechanics:
 - stable StringName station IDs and 2+ station support;

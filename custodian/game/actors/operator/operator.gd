@@ -695,6 +695,8 @@ var _damage_reaction_duration := 0.22
 var _damage_reaction_animation: StringName = &""
 var _damage_reaction_modular_handled := false
 var _portal_transition_locked := false
+var _portal_transition_lock_requested := false
+var _local_transit_locked := false
 var _portal_arrival_animation_active := false
 var _arrn_stabilization_locked := false
 var _enemy_impact_lock_timer: float = 0.0
@@ -12721,7 +12723,8 @@ func play_portal_arrival_animation() -> bool:
 		animation_name = PORTAL_ARRIVAL_ANIMATION
 	if not animated_sprite.sprite_frames.has_animation(animation_name):
 		return false
-	_portal_transition_locked = false
+	_portal_transition_lock_requested = false
+	_portal_transition_locked = _local_transit_locked
 	_portal_arrival_animation_active = true
 	velocity = Vector2.ZERO
 	is_sprinting = false
@@ -12738,12 +12741,26 @@ func play_portal_arrival_animation() -> bool:
 
 
 func set_portal_transition_locked(locked: bool) -> void:
-	_portal_transition_locked = locked
+	_portal_transition_lock_requested = locked
+	_portal_transition_locked = _portal_transition_lock_requested or _local_transit_locked
 	if locked:
-		_cancel_attack_drive(true)
-		velocity = Vector2.ZERO
-		is_sprinting = false
-		_reset_fast_chain()
+		_apply_transition_lock_effects()
+
+
+## Same-map transit has an independent control-lock owner so it cannot release
+## a simultaneous portal/route transition lock when its cycle ends.
+func set_local_transit_locked(locked: bool) -> void:
+	_local_transit_locked = locked
+	_portal_transition_locked = _portal_transition_lock_requested or _local_transit_locked
+	if locked:
+		_apply_transition_lock_effects()
+
+
+func _apply_transition_lock_effects() -> void:
+	_cancel_attack_drive(true)
+	velocity = Vector2.ZERO
+	is_sprinting = false
+	_reset_fast_chain()
 
 
 func set_arrn_stabilization_locked(locked: bool) -> void:
@@ -14388,6 +14405,8 @@ func _finish_death() -> void:
 	_field_patch_committed = false
 	_field_patch_recovery_timer = 0.0
 	_pending_ranged_shot.clear()
+	_portal_transition_lock_requested = false
+	_local_transit_locked = false
 	_portal_transition_locked = false
 	_portal_arrival_animation_active = false
 	_arrn_stabilization_locked = false

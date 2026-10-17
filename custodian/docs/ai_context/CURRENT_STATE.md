@@ -2566,7 +2566,7 @@ it.
 
 Implemented gameplay interactions include the Crèche console (locks the opening state and sets the
 persistent RETURN TO POST objective), the existing locker (grants `p9_sidearm`),
-the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)`, and the
+the Dust Lung bidirectional transit lift `(384, -3008)` ⇄ `(384, -3424)` (a compatibility adapter over the reusable stable-station local transit authority), and the
 Undergate damaged port readout. Awakening now refreshes its prompt from the
 Operator's authoritative `interaction_target`, while the HUD retains the
 two-frame stale-prompt lease for ordinary callers. World readouts use a
