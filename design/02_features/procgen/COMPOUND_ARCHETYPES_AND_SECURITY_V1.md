@@ -1,6 +1,6 @@
 # Compound Archetypes and Security V1
 
-**Status:** Approved planning; profile-selection contract shipped, archetype geometry and gameplay remain deferred.
+**Status:** Approved planning; profile-selection contract and the Type B (`connected_bunker`) layered blockout shipped. Type A geometry, interior traversal integration and security/gameplay remain deferred.
 **Workstream:** compound-archetypes-v1 + compound-recovery-v1
 **Reviewed main:** 512226d488d3b5db63335b2357b4b566e44ccb03
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488
@@ -34,7 +34,35 @@ All three currently select the existing surface topology. Explicit selection
 adds versioned archetype/layer metadata to planner rooms, connectors, and
 exported level data; omitted selection preserves the legacy planner output.
 No subsurface layer, yard gate, or archetype-specific geometry is implied by
-this metadata.
+this metadata for `legacy` and `walled_yard`.
+
+### Shipped: `connected_bunker` layered blockout
+
+`connected_bunker` now selects geometry `connected_bunker_subsurface_v1`. The compound
+reservation is split into two disjoint layers inside one tile authority (`ProcGenTilemap`):
+
+- **surface**: the north band holds the yard and two stable access housings (`surface_housing_NN`).
+  Only this band opens to the outside; ingress cells outside it are dropped.
+- **separator**: a solid band at least two tiles thick.
+- **subsurface**: a wall-filled region below the separator. One continuous underground network
+  holds all mandatory rooms along a 3-wide corridor spine; every room has a compartment threshold
+  cell on the spine. Room-to-room travel is physical, never a transfer.
+
+Each housing is paired with an underground spine anchor through a reversible `vertical_entry`
+edge (`surface_anchor` and `subsurface_anchor`). Level data adds `compound_layers`,
+`compound_surface_housings`, `compound_vertical_entries`, `compound_compartment_thresholds`
+and `compound_spine_cells`; room and connector entries carry their owning `layer_id`
+(`subsurface` for the network, `surface` for housings) while the top-level `layer_id` stays the
+`surface` entry layer. The minimap projects both layers.
+
+Layer ownership is enforced, not assumed. Every compound cell outside the surface band that is
+not planned underground floor is sealed in `ProcGenTilemap`; the floor writers (roads, routes,
+terrain, intent floors) refuse sealed cells. Underground cells are not terrain-required cells,
+because they are reached through vertical entries rather than by walking from the surface spawn,
+so reachability repair cannot carve a tunnel through the separator. The generic constructed
+interior region is skipped for a layered compound, which owns all of its interior space.
+
+Validated by `compound_connected_bunker_smoke.gd` (planner contract plus the real generator).
 
 ## Security and traversal V1
 

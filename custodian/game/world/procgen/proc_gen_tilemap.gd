@@ -493,6 +493,13 @@ var _last_compound_diagnostics: Dictionary = {}
 var _last_compound_archetype_id := ""
 var _last_compound_layer_id := ""
 var _last_compound_profile_version := 0
+var _last_compound_layers: Dictionary = {}
+var _last_compound_surface_housings: Array[Dictionary] = []
+var _last_compound_vertical_entries: Array[Dictionary] = []
+var _last_compound_compartment_thresholds: Array[Dictionary] = []
+var _last_compound_spine_cells: Array[Vector2i] = []
+# Subsurface/separator cells that must stay solid: no later pass may write floor here.
+var _compound_sealed_cells: Dictionary = {}
 var _last_interior_region_rect: Rect2i = Rect2i()
 var _last_interior_rooms: Array[Rect2i] = []
 var _last_interior_thresholds: Array[Vector2i] = []
@@ -1315,6 +1322,7 @@ func _fill_tilemaps() -> void:
 		_rebuild_runtime_wall_collision_debug()
 	_marks["setup_clear"] = Time.get_ticks_msec() - _last
 	_last = Time.get_ticks_msec()
+	_clear_compound_layer_state()
 	_apply_planet_visual_profile()
 
 	var map_size = procgen_node.map_size
@@ -1337,7 +1345,9 @@ func _fill_tilemaps() -> void:
 
 	if enable_compound_zone:
 		_apply_compound_layout(map_size)
-	if interior_region_enabled:
+	# A layered compound owns all of its interior space; the generic constructed
+	# interior region would otherwise stamp floor through the separator.
+	if interior_region_enabled and _last_compound_layers.is_empty():
 		_apply_constructed_interior_region(map_size)
 	if intent_spawn_clearing_enabled:
 		_stamp_spawn_clearing(map_size)
@@ -1917,6 +1927,8 @@ func _count_wall_neighbors(pos: Vector2i) -> int:
 
 
 func _set_floor_tile(pos: Vector2i) -> void:
+	if _is_compound_sealed_cell(pos):
+		return
 	var source_id := _select_floor_source_id(pos)
 	floor_tilemap.set_cell(pos, source_id, _select_floor_coord(pos))
 	walls_tilemap.erase_cell(pos)
@@ -1951,6 +1963,8 @@ func _set_wall_tile(pos: Vector2i) -> void:
 
 
 func _set_interior_floor_tile(pos: Vector2i, zone: String = "") -> void:
+	if _is_compound_sealed_cell(pos):
+		return
 	if not interior_use_dedicated_tiles or interior_floor_source_ids.is_empty():
 		_set_floor_tile(pos)
 		return
@@ -3656,6 +3670,8 @@ func _force_authored_scene_floor_authority(
 	refresh_collision_debug: bool = true,
 	render_base_floor_visual: bool = true
 ) -> void:
+	if _is_compound_sealed_cell(tile):
+		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -3686,6 +3702,8 @@ func _force_authored_scene_floor_authority(
 
 
 func _clear_procgen_wall_authority_at(tile: Vector2i, refresh_collision_debug: bool = true) -> void:
+	if _is_compound_sealed_cell(tile):
+		return
 	# M6 streaming-paint guard on the visual erase only; collision removal
 	# and foliage invalidation below are genuine semantic effects of clearing
 	# wall authority and apply regardless of streaming residency.
@@ -4171,7 +4189,21 @@ func _carve_path_brush(center: Vector2i, width: int, map_size: Vector2i) -> void
 			_set_region_tile(tile, "soft_path", "travel")
 
 
+func _is_compound_sealed_cell(tile: Vector2i) -> bool:
+	return not _compound_sealed_cells.is_empty() and _compound_sealed_cells.has(tile)
+
+
+func _clear_compound_layer_state() -> void:
+	_compound_sealed_cells.clear()
+	_last_compound_layers = {}
+	_last_compound_surface_housings.clear()
+	_last_compound_vertical_entries.clear()
+	_last_compound_compartment_thresholds.clear()
+	_last_compound_spine_cells.clear()
+
+
 func _apply_compound_layout(map_size: Vector2i) -> void:
+	_clear_compound_layer_state()
 	var compound := _build_compound_layout(map_size)
 	if not bool(compound.get("valid", false)):
 		_last_compound_rect = Rect2i()
@@ -4222,6 +4254,14 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 	_last_compound_layer_id = String(compound.get("layer_id", "surface"))
 	_last_compound_profile_version = int(compound.get("archetype_profile_version", 1))
 	_last_compound_diagnostics = (compound.get("diagnostics", {}) as Dictionary).duplicate(true)
+	if compound.has("layers"):
+		_last_compound_layers = (compound.get("layers", {}) as Dictionary).duplicate(true)
+		_last_compound_surface_housings = _dictionary_array_copy(compound.get("surface_housings", []))
+		_last_compound_vertical_entries = _dictionary_array_copy(compound.get("vertical_entries", []))
+		_last_compound_compartment_thresholds = _dictionary_array_copy(compound.get("compartment_thresholds", []))
+		_last_compound_spine_cells = (compound.get("spine_cells", []) as Array).duplicate()
+		_apply_connected_bunker_geometry(compound)
+		return
 
 	for x in range(rect.position.x, rect.end.x):
 		for y in range(rect.position.y, rect.end.y):
@@ -4284,6 +4324,102 @@ func _apply_compound_layout(map_size: Vector2i) -> void:
 				else:
 					_set_floor_tile(tile)
 				_set_region_tile(tile, "compound_room", String(room.get("type", "room")))
+
+func _dictionary_array_copy(source: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if source is Array:
+		for item in source:
+			if item is Dictionary:
+				result.append((item as Dictionary).duplicate(true))
+	return result
+
+
+## Stamps a layered compound. The compound reservation holds two disjoint layers:
+## the surface band (yard and access housings) and a wall-filled subsurface region
+## below a solid separator. Every cell is owned by exactly one layer, so surface and
+## underground collision/navigation share the single tile authority without overlap.
+func _apply_connected_bunker_geometry(compound: Dictionary) -> void:
+	var rect: Rect2i = compound.get("rect", Rect2i())
+	var ingress: Array[Vector2i] = compound.get("ingress", []) as Array[Vector2i]
+	var surface_layer: Dictionary = _last_compound_layers.get("surface", {})
+	var subsurface_layer: Dictionary = _last_compound_layers.get("subsurface", {})
+	var surface_rect: Rect2i = surface_layer.get("rect", Rect2i())
+	var subsurface_rect: Rect2i = subsurface_layer.get("rect", Rect2i())
+
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			var compound_tile := Vector2i(x, y)
+			if surface_rect.has_point(compound_tile):
+				_set_floor_tile(compound_tile)
+				_clear_road_blocking_wall(compound_tile)
+			else:
+				_set_wall_tile(compound_tile)
+
+	var ingress_set := {}
+	for tile in ingress:
+		ingress_set[tile] = true
+	var t: int = max(1, compound_wall_thickness)
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.position.y + t):
+			var top_tile := Vector2i(x, y)
+			if not ingress_set.has(top_tile):
+				_set_wall_tile(top_tile)
+	for y in range(rect.position.y, surface_rect.end.y):
+		for x in range(rect.position.x, rect.position.x + t):
+			var left_tile := Vector2i(x, y)
+			if not ingress_set.has(left_tile):
+				_set_wall_tile(left_tile)
+		for x in range(rect.end.x - t, rect.end.x):
+			var right_tile := Vector2i(x, y)
+			if not ingress_set.has(right_tile):
+				_set_wall_tile(right_tile)
+	for tile in ingress:
+		_carve_compound_ingress(tile, rect, t)
+		if intent_decorate_compound_ingress:
+			_decorate_compound_ingress(tile, rect)
+	_seal_unreachable_compound_pockets(surface_rect, ingress)
+
+	for tile in _last_compound_courtyard_cells:
+		_set_region_tile(tile, "compound_courtyard", "compound")
+	for housing in _last_compound_surface_housings:
+		_stamp_compound_room_shell(housing.get("rect", Rect2i()), housing.get("door_cells", []), "compound_surface_housing", String(housing.get("id", "housing")))
+		_set_region_tile(housing.get("threshold_cell", Vector2i.ZERO), "compound_vertical_entry", String(housing.get("vertical_entry_id", "")))
+
+	for tile in _last_compound_spine_cells:
+		if subsurface_rect.has_point(tile):
+			_set_floor_tile(tile)
+			_set_region_tile(tile, "compound_corridor", "compound_subsurface")
+	for room in _last_compound_rooms:
+		_stamp_compound_room_shell(room.get("rect", Rect2i()), room.get("door_cells", []), "compound_room", String(room.get("type", "room")))
+	for entry in _last_compound_vertical_entries:
+		var anchor: Vector2i = entry.get("subsurface_anchor", Vector2i.ZERO)
+		_set_region_tile(anchor, "compound_vertical_entry", String(entry.get("id", "")))
+
+	# Layer ownership: every compound cell outside the surface band that is not planned
+	# underground floor is sealed against later floor writers (roads, routes, terrain).
+	for x in range(rect.position.x, rect.end.x):
+		for y in range(rect.position.y, rect.end.y):
+			var sealed_tile := Vector2i(x, y)
+			if not surface_rect.has_point(sealed_tile) and floor_tilemap.get_cell_source_id(sealed_tile) < 0:
+				_compound_sealed_cells[sealed_tile] = true
+
+
+func _stamp_compound_room_shell(room_rect: Rect2i, door_cells: Array, region_type: String, zone: String) -> void:
+	var doors := {}
+	for door in door_cells:
+		if door is Vector2i:
+			doors[door] = true
+	for x in range(room_rect.position.x, room_rect.end.x):
+		for y in range(room_rect.position.y, room_rect.end.y):
+			var tile := Vector2i(x, y)
+			var perimeter := x == room_rect.position.x or x == room_rect.end.x - 1 \
+				or y == room_rect.position.y or y == room_rect.end.y - 1
+			if perimeter and not doors.has(tile):
+				_set_wall_tile(tile)
+			else:
+				_set_floor_tile(tile)
+			_set_region_tile(tile, region_type, zone)
+
 
 func _build_compound_layout(map_size: Vector2i) -> Dictionary:
 	var bounds_result := _build_compound_bounds_and_ingress(map_size)
@@ -4685,6 +4821,8 @@ func _is_reserved_pre_terrain_traversal_cell(tile: Vector2i, map_size: Vector2i)
 
 
 func _preserve_reserved_pre_terrain_floor_authority(tile: Vector2i) -> void:
+	if _is_compound_sealed_cell(tile):
+		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -5407,6 +5545,8 @@ func _enforce_route_playability_walkability(
 
 
 func _set_ascent_field_floor_authority(tile: Vector2i, region_type: String, zone: String) -> void:
+	if _is_compound_sealed_cell(tile):
+		return
 	var source_id := _select_floor_source_id(tile)
 	var atlas := _select_floor_coord(tile)
 	_generated_floor_cells[tile] = {
@@ -5504,6 +5644,8 @@ func _apply_worldgen_intent_floor_cells(map_size: Vector2i) -> void:
 			continue
 		var tile := key as Vector2i
 		if not _is_tile_inside_map(tile, map_size, 0):
+			continue
+		if _is_compound_sealed_cell(tile):
 			continue
 		var source_id := _select_floor_source_id(tile)
 		var atlas := _select_floor_coord(tile)
@@ -7130,6 +7272,8 @@ func _set_hole_tile(pos: Vector2i) -> void:
 
 
 func _set_destroyed_wall_floor_tile(pos: Vector2i) -> void:
+	if _is_compound_sealed_cell(pos):
+		return
 	if floor_tilemap == null or walls_tilemap == null:
 		return
 	var source_id := _select_floor_source_id(pos)
@@ -7406,7 +7550,7 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 	var intent_required_cells: Array = []
 	if _worldgen_intent_graph != null:
 		intent_required_cells = _worldgen_intent_graph.get_required_cells()
-	return REQUIRED_CELL_CLASSIFIER_SCRIPT.collect_required_cell_entries({
+	var entries: Array[Dictionary] = REQUIRED_CELL_CLASSIFIER_SCRIPT.collect_required_cell_entries({
 		"map_size": map_size,
 		"spawn": get_player_spawn(),
 		"is_ascent_field": world_shape_mode == WorldShapeMode.ASCENT_FIELD,
@@ -7421,6 +7565,23 @@ func _collect_terrain_required_cell_entries(map_size: Vector2i) -> Array[Diction
 		"intent_graph_required_cells": intent_required_cells,
 		"is_tile_inside_map": Callable(self, "_is_tile_inside_map"),
 	})
+	return _without_subsurface_required_entries(entries)
+
+
+## Underground cells are reached through vertical entries, never by walking from the
+## surface spawn. Terrain reachability repair must not carve a tunnel through the
+## separator to satisfy them, so they are not terrain-required cells.
+func _without_subsurface_required_entries(entries: Array[Dictionary]) -> Array[Dictionary]:
+	var subsurface_rect: Rect2i = (_last_compound_layers.get("subsurface", {}) as Dictionary).get("rect", Rect2i())
+	if subsurface_rect.size.x <= 0 or subsurface_rect.size.y <= 0:
+		return entries
+	var kept: Array[Dictionary] = []
+	for entry in entries:
+		var tile: Variant = entry.get("tile", Vector2i.ZERO)
+		if tile is Vector2i and subsurface_rect.has_point(tile as Vector2i):
+			continue
+		kept.append(entry)
+	return kept
 
 
 func _get_terrain_reserved_regions() -> Array[Dictionary]:
@@ -7764,6 +7925,8 @@ func _apply_terrain_tile_visual(cell: Vector2i, tile_id: String) -> bool:
 
 
 func _set_terrain_floor_visual(cell: Vector2i, source_id: int) -> void:
+	if _is_compound_sealed_cell(cell):
+		return
 	if floor_tilemap == null:
 		return
 	# M6 streaming-paint guard: during initial generation (`enable_streaming_
@@ -9155,6 +9318,8 @@ func _set_floor_tile_and_generated_state(
 	zone: String = "",
 	render_base_floor_visual: bool = true
 ) -> void:
+	if _is_compound_sealed_cell(pos):
+		return
 	if floor_tilemap == null or walls_tilemap == null:
 		return
 	var source_id := _select_floor_source_id(pos)
@@ -11953,6 +12118,11 @@ func get_level_data() -> Dictionary:
 		"compound_archetype_id": _last_compound_archetype_id,
 		"compound_layer_id": _last_compound_layer_id,
 		"compound_archetype_profile_version": _last_compound_profile_version,
+		"compound_layers": _last_compound_layers,
+		"compound_surface_housings": _last_compound_surface_housings,
+		"compound_vertical_entries": _last_compound_vertical_entries,
+		"compound_compartment_thresholds": _last_compound_compartment_thresholds,
+		"compound_spine_cells": _last_compound_spine_cells,
 		"compound_diagnostics": _last_compound_diagnostics,
 		"main_road_tiles": get_main_road_tiles(),
 		"ruined_road_tiles": get_ruined_road_tiles(),

@@ -17,7 +17,7 @@
       "archetype_id": "connected_bunker",
       "profile_version": 1,
       "layer_id": "surface",
-      "geometry_id": "persistent_compound_layout_v1"
+      "geometry_id": "connected_bunker_subsurface_v1"
     }
   }
 }

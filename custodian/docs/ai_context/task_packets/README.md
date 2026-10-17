@@ -81,7 +81,6 @@ normal closeout.
 - `CODEX_ART_IMPORT_SHARED_TRANSFORM.md` — Provide one deterministic, reusable source-sheet geometry and conversion-plan API for both generic Asset V2 and specialized Operator intake without introduci...
 - `COMBAT_ATTACK_TELL_CONTACT_ALIGNMENT_V1.md` — Every live attack-capable actor presents a readable attack cue whose committed contact/damage phase agrees with gameplay timing; legal parries can actually i...
 - `COMPOUND_ARCHETYPE_PLAYABLE_PROOF.md` — Prove enter/circulate/operate/exit/revisit without blockers for both Type A and Type B.
-- `COMPOUND_CONNECTED_BUNKER_BLOCKOUT.md` — Build Type B separate surface housings and a single continuous below-ground room/tunnel topology.
 - `COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` — Make Type A separately accessible building interiors and Type B reversible surface access with one continuous bunker interior.
 - `COMPOUND_RECOVERY_ASSAULT_OBJECTIVES.md` — Direct intermittent enemy assaults through real reachable routes to actual compound infrastructure.
 - `COMPOUND_RECOVERY_BUILD_RESTORATION.md` — Place and commission an existing Capacitor Bank as additional infrastructure through valid sites in either compound.

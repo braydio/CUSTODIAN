@@ -25,7 +25,13 @@ func _init() -> void:
 			_expect(bool(first.get("valid", false)), "%s seed %d must be valid" % [profile_id, seed])
 			_expect(String(first.get("archetype_id", "")) == String(profile_id), "%s identity must be preserved" % profile_id)
 			_expect(String(first.get("layer_id", "")) == "surface", "%s uses the current surface layer" % profile_id)
-			_expect(_topology(first) == _topology(baseline), "%s must preserve legacy geometry and connectors for seed %d" % [profile_id, seed])
+			if profile_id == &"connected_bunker":
+				# Type B owns real layered geometry; its detailed checks live in compound_connected_bunker_smoke.
+				_expect(_topology(first) != _topology(baseline), "connected_bunker must generate its own layered topology for seed %d" % seed)
+				_expect(first.has("layers"), "connected_bunker exports its layer reservation for seed %d" % seed)
+			else:
+				_expect(not first.has("layers"), "%s must not claim a subsurface layer for seed %d" % [profile_id, seed])
+				_expect(_topology(first) == _topology(baseline), "%s must preserve legacy geometry and connectors for seed %d" % [profile_id, seed])
 			_validate_identities(first, profile_id, seed)
 
 	var unknown := _generate(42, &"unknown_profile")
@@ -70,6 +76,7 @@ func _topology(layout: Dictionary) -> Dictionary:
 
 
 func _validate_identities(layout: Dictionary, profile_id: StringName, seed: int) -> void:
+	var content_layer := "subsurface" if profile_id == &"connected_bunker" else "surface"
 	var room_by_id := {}
 	for room_variant in layout.get("rooms", []):
 		var room := room_variant as Dictionary
@@ -78,7 +85,7 @@ func _validate_identities(layout: Dictionary, profile_id: StringName, seed: int)
 		_expect(not room_by_id.has(room_id), "%s seed %d room IDs must be unique" % [profile_id, seed])
 		room_by_id[room_id] = room
 		_expect(String(room.get("archetype_id", "")) == String(profile_id), "room metadata carries selected archetype")
-		_expect(String(room.get("layer_id", "")) == "surface", "room metadata carries current layer")
+		_expect(String(room.get("layer_id", "")) == content_layer, "room metadata carries its owning layer")
 	var connection_ids := {}
 	for connection_variant in layout.get("connections", []):
 		var connection := connection_variant as Dictionary
@@ -93,7 +100,7 @@ func _validate_identities(layout: Dictionary, profile_id: StringName, seed: int)
 			_expect((room_by_id[from_id].get("connection_ids", []) as Array).has(connection_id), "source room must retain connector identity")
 			_expect((room_by_id[to_id].get("connection_ids", []) as Array).has(connection_id), "target room must retain connector identity")
 		_expect(String(connection.get("archetype_id", "")) == String(profile_id), "connector metadata carries selected archetype")
-		_expect(String(connection.get("layer_id", "")) == "surface", "connector metadata carries current layer")
+		_expect(String(connection.get("layer_id", "")) == content_layer, "connector metadata carries its owning layer")
 	for room_id in room_by_id:
 		for connection_id in room_by_id[room_id].get("connection_ids", []):
 			_expect(connection_ids.has(String(connection_id)), "room connector list cannot reference a missing connector")

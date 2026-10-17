@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: compound-connected-bunker-blockout
 - Authoring handoff: auto
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P1
 - Depends on: review-compound-archetype-profile-contract
@@ -40,3 +40,36 @@ Generate at least two stable surface-access housings with physically paired subs
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `connected_bunker` now generates geometry `connected_bunker_subsurface_v1`: two stable surface housings with paired vertical-entry anchors, one continuous underground network holding all eight mandatory rooms on a 3-wide spine with a compartment threshold per room, and a solid separator between the layers. `compound_connected_bunker_smoke.gd` passes for seeds 1, 2, 3, 10, 42, 99, 1337 on the planner (three compound sizes) and on the real ProcGenTilemap: underground rooms are traversed over physical floor with no room transfer, both housings reach the network and the outside, and no walkable cell crosses the separator or leaks between layers. Existing compound profile, layout, minimap and runtime smokes still pass; `legacy` and `walled_yard` output is unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The first real-generator run showed later pipeline stages writing floor through the separator: terrain required-cell reachability repair, the ascent-route walkability enforcement, and the generic constructed interior region (placed over the compound by its fallback position).`
+- Root cause / contributing factors: `Underground rooms were terrain-required cells reached only from the surface spawn, and floor writers had no notion of a sealed region.`
+- Prevention / pipeline improvement: `Sealed layer cells are refused by every floor writer in ProcGenTilemap, subsurface tiles are excluded from terrain-required cells, and the generic interior region is skipped for a layered compound. The smoke verifies the real generator, not only the planner.`
+- Tooling / docs drift discovered: `A fresh worktree has no Godot import cache, so the compound smokes fail to parse until one import is run; the import also leaves unrelated untracked .uid sidecars.`
+- Follow-up: `fixed-in-scope`
+- What worked: `Bisecting the separator leak per generation stage with a throwaway probe found all three writers quickly.`
+
+## Next Handoff
+
+- Next workstream: `review-compound-connected-bunker-blockout`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488`
+- Refresh reason: `none`
+- Next action: `Run the exact paired post-land review in fresh context; a visual or gameplay judgement stays with the later human visual gate.`
+- Blockers or open questions: `none`
+

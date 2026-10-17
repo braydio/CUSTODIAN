@@ -5,7 +5,7 @@ This directory contains the live semantic compound graph plus the authored Tiled
 ## Runtime authority
 
 - `graphs/persistent_compound_layout_v1.json` is the live persistent-compound catalog and topology authority. `PersistentCompoundLayoutPlanner` uses it to reserve deterministic 10–13-room procedural shells, corridors, doors, labels, and Sector associations without requiring authored art.
-- `profiles/compound_archetype_profiles_v1.json` validates the optional `legacy`, `walled_yard`, and `connected_bunker` selection IDs. The latter two currently preserve the existing surface topology and publish profile metadata only; their physical archetype layouts remain downstream work.
+- `profiles/compound_archetype_profiles_v1.json` validates the optional `legacy`, `walled_yard`, and `connected_bunker` selection IDs. `walled_yard` still preserves the existing surface topology and publishes profile metadata only. `connected_bunker` (geometry `connected_bunker_subsurface_v1`) generates a physically separated surface yard with two access housings and one continuous underground room/tunnel network joined by paired vertical entries; see `design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md`.
 - `graphs/default_compound.json` is the dormant legacy EDGAR sample. Its five-type catalog is retained for compatibility/debug callers and is not the live persistent compound.
 - `templates/*.tmj` is the authored-content layer. Those maps can eventually replace procedural interiors within semantic reservations; missing templates do not block V1 generation.
 
