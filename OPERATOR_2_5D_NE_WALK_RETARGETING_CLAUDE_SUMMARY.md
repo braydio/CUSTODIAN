@@ -1,7 +1,7 @@
 # Operator V6 — accepted crossover, full-cycle continuity checkpoint
 
 Workstream: operator-2-5d-ne-walk-retargeting
-Authoring chat: not-recorded
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 Status: **bounded continuity implementation validated; full 15-frame visual review
 pending**. Retain branch/worktree/checkpoints. No main merge, runtime publication
 or timing approval. Human calibration acceptance does not accept this animation.
@@ -189,23 +189,54 @@ After a human decision, record it before cleaning the emitted delete-after-revie
 manifest. Retain rig and calibration acceptance independently. Do not merge,
 publish runtime assets or approve timing under this slice.
 
+## Iteration 001 — pitch fidelity and alpha-gap audit
+
+The latest packet authorized a single objective correction on the retained
+`agent/operator-2-5d-ne-walk-retargeting` branch. `continuity.py` now adds the
+specified 64.0 wrapped pitch-fit term, with swing weight 1.0 and stance weight
+0.25, while leaving the IK envelope, support, crossover, calibration locks and
+pitch bounds intact. `run.py` validates an immutable same-source baseline and
+writes per-frame pitch/contact/calibration/crossover comparisons; its quality
+gate requires at least 10% aggregate improvement and rejects any side/frame
+worsening above 5 degrees. The viewer adds the requested 6x nearest-neighbor
+ROI and void/pitch diagnostics without altering rendered pixels. Numerical
+negative controls cover angular wrapping, swing/stance weights and a masked
+per-foot regression.
+
+Candidate evidence was generated from the exact accepted NE donor and rig. The
+weighted absolute pitch error fell from 207.892° to 119.727° (42.41%); the
+largest per-frame/side worsening was 2.985°. All 15 rendered frames passed,
+including contact, geometry and continuity; the lead reversals stayed 2→3 and
+7→8, support handoffs stayed 6→7 and 13→14, there were zero branch flips, and
+the 15→1 seam step was 7.600px. The 6px calibration envelope, palette and
+immutable source hashes passed. This is a technical candidate, not visual or
+timing acceptance.
+
+Focused motion-plan and rigid-raster smokes passed. `run_validation.py
+--changed --base HEAD --json` passed 2/2 selected checks with full changed-file
+coverage; `py_compile` and `git diff --check` passed. The six-file visual
+handoff is published at
+`/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-001-pitch-and-gap-audit/REVIEW_MANIFEST.json`
+with delete-after-review retention. It records the exact authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
+
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: medium
-- What went wrong: literal static-pose locking cannot satisfy the existing step budget; static renderer branch choices differed; first full rendered fit left F14 contact outside tolerance.
-- Root cause / contributing factors: accepted visual poses were sparse references, not a feasible exact temporal path; near-straight IK ambiguity; numeric planning did not reserve sufficient raster-phase correction room; initial optimizer scaling was poor.
-- Prevention / pipeline improvement: endpoint feasibility checks, immutable target hashes with explicit fitted deviations, stable planned-knee rendering, tighter internal guards and final rendered contact/crossover validation.
-- Tooling / docs drift discovered: five-pose hold and old viewer labels were updated to accepted calibration/full continuity state; tested numerical dependencies recorded.
-- Follow-up: operator-2-5d-ne-walk-retargeting
-- What worked: no reannotation or recovery; existing mechanical limits rejected the failed candidate and the final rendered result established all 15 checks.
+- Friction severity: low
+- What went wrong: the publisher did not discover the custom-named six-file review packet through its default filename patterns; the explicit artifact list resolved this without changing evidence.
+- Root cause / contributing factors: publisher auto-discovery is optimized for Moment Forge names and standard report filenames.
+- Prevention / pipeline improvement: pass the six intended `--artifact` paths explicitly for custom review packets.
+- Tooling / docs drift discovered: none
+- Follow-up: manual-follow-up
+- What worked: focused numeric gates rejected per-foot regressions independently of aggregate pitch improvement; the existing same-source render and review pipeline produced compact evidence.
 
 ## Next Handoff
 - Next workstream: operator-2-5d-ne-walk-retargeting
 - Next packet state: human-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: not-recorded
-- Refresh reason: complete 15-frame visual-loop review after accepted calibration and bounded continuity fit.
-- Next action: inspect published full-cycle review, obtain human frame/part-specific decision, record it and clean reviewed manifest; retain branch/checkpoint.
-- Blockers or open questions: full animation aesthetics/crossover rhythm, fitted F12/F15, working support transitions and gaps/secondary motion remain human-owned; merge/runtime/timing explicitly unauthorized.
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
+- Refresh reason: subjective gait/pitch/crossover and enclosed-alpha classification remains human-owned after the authorized technical candidate.
+- Next action: review the six-file Dropbox handoff, record a visual verdict and exact next packet delta if needed, then execute the emitted delete-after-review cleanup command.
+- Blockers or open questions: final animation acceptance, authoritative timing, merge, and runtime publication remain unauthorized.

@@ -7,6 +7,7 @@ import math
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[3]/'custodian/tools/operator/ne_walk_retarget'))
 from motion_plan import two_bone, transition_cost, validate_plan, dist
+from run import pitch_quality_gate, wrapped_pitch_error_deg
 
 LIMITS={'max_knee_fit_error_px':8,'max_joint_step_px':8,'max_rotation_step_degrees':60}
 def pose(x=0):
@@ -14,6 +15,14 @@ def pose(x=0):
     return {'legs':{'near':copy.deepcopy(leg),'far':copy.deepcopy(leg)}}
 
 def main():
+    assert abs(abs(wrapped_pitch_error_deg(179,-179))-2.0)<1e-10
+    weighted=pitch_quality_gate([{'near':4,'far':8}],[{'near':4,'far':8}],['near'])
+    assert weighted['baseline_weighted']==9.0 and weighted['candidate_weighted']==9.0
+    # A large swing improvement can hide a visually important stance-foot
+    # regression in the weighted aggregate; the per-side 5-degree gate catches it.
+    masked=pitch_quality_gate([{'near':10,'far':10}],[{'near':16,'far':2}],['near'])
+    assert masked['improvement_fraction']>=.10
+    assert masked['maximum_single_frame_worsening_deg']==6.0 and not masked['passed']
     hip={'x':0,'y':0};ankle={'x':0,'y':8}
     for sign in (-1,1):
         k=two_bone(hip,ankle,5,5,sign)
@@ -46,7 +55,7 @@ def main():
     except ValueError:pass
     else:raise AssertionError('widened thresholds must be rejected')
     crossover_regressions()
-    print('PASS operator_ne_motion_plan: exact lengths, branches, unreachable target, toe pitch, cyclic seam, fixed limits')
+    print('PASS operator_ne_motion_plan: wrapped pitch, swing/stance weighting, masked-regression negative control, exact lengths, branches, unreachable target, toe pitch, cyclic seam, fixed limits')
 def crossover_regressions():
     from crossover import calibration_plan, audit_annotations, branch
     from run import HERE

@@ -80,6 +80,80 @@ def alpha_voids(image):
         if not edge:components.append({'pixels':len(todo),'bbox':[min(x for x,y in todo),min(y for x,y in todo),max(x for x,y in todo)+1,max(y for x,y in todo)+1]})
     return sorted(components,key=lambda c:(c['bbox'][1],c['bbox'][0]))
 
+def validate_baseline(path,rig_sha,annotations_sha,source_hash):
+    baseline=json.loads(path.read_text())
+    if baseline.get('schema')!='custodian.ne_walk_preview.v1':raise ValueError('baseline report schema mismatch')
+    if baseline.get('rig_sha256')!=rig_sha:raise ValueError('baseline rig SHA mismatch')
+    if baseline.get('annotations_sha256')!=annotations_sha:raise ValueError('baseline annotations SHA mismatch')
+    if baseline.get('input_validation',{}).get('source_hash')!=source_hash:raise ValueError('baseline donor source hash mismatch')
+    frames=baseline.get('frames')
+    if not isinstance(frames,list) or len(frames)!=15 or [f.get('frame') for f in frames]!=list(range(1,16)):
+        raise ValueError('baseline frame count/schema mismatch')
+    if any(not isinstance(f.get('legs'),dict) or set(('near','far'))-set(f['legs']) or
+           'reference_pitch_filter_deviation_deg' not in f['legs']['near'] or
+           'reference_pitch_filter_deviation_deg' not in f['legs']['far'] or
+           not isinstance(f.get('contact'),dict) for f in frames):
+        raise ValueError('baseline frame pitch/contact schema mismatch')
+    if not isinstance(baseline.get('calibration_deviations'),dict):raise ValueError('baseline calibration envelope schema mismatch')
+    return baseline
+
+def crossover_signs(report):
+    return [1 if row['legs']['near']['ankle']['x']-row['legs']['far']['ankle']['x']>0 else -1
+            for row in report['frames']]
+
+def wrapped_pitch_error_deg(actual,target):
+    delta=math.radians(actual-target)
+    return math.degrees(math.atan2(math.sin(delta),math.cos(delta)))
+
+def pitch_quality_gate(baseline_errors,candidate_errors,supports):
+    baseline_weighted=candidate_weighted=0.0;max_worsening=0.0;worst=None
+    for i,(old,new,support) in enumerate(zip(baseline_errors,candidate_errors,supports),1):
+        for side in ('near','far'):
+            weight=1.0 if support!=side else .25
+            old_abs=abs(float(old[side]));new_abs=abs(float(new[side]))
+            baseline_weighted+=weight*old_abs;candidate_weighted+=weight*new_abs
+            worsening=new_abs-old_abs
+            if worsening>max_worsening:max_worsening=worsening;worst={'frame':i,'side':side,'degrees':worsening}
+    improvement=(baseline_weighted-candidate_weighted)/baseline_weighted if baseline_weighted else 0.0
+    gates={'weighted_error_improved_by_at_least_10_percent':improvement>=.10,
+        'no_frame_side_worsened_by_more_than_5_degrees':max_worsening<=5.0}
+    return {'baseline_weighted':baseline_weighted,'candidate_weighted':candidate_weighted,
+        'improvement_fraction':improvement,'maximum_single_frame_worsening_deg':max_worsening,
+        'worst_worsening':worst,'quality_gate':gates,'passed':all(gates.values())}
+
+def pitch_comparison(candidate,baseline):
+    frames=[];baseline_errors=[];candidate_errors=[];supports=[]
+    for old,new in zip(baseline['frames'],candidate['frames']):
+        frame={'frame':new['frame'],'support':new['support'],'sides':{}}
+        old_row_errors={};new_row_errors={}
+        for side in ('near','far'):
+            old_leg,new_leg=old['legs'][side],new['legs'][side]
+            old_abs=float(old_leg['reference_pitch_filter_deviation_deg'])
+            new_signed=float(new_leg['reference_pitch_filter_signed_deviation_deg'])
+            new_abs=abs(new_signed);weight=1.0 if new['support']!=side else .25
+            old_row_errors[side]=old_abs;new_row_errors[side]=new_abs
+            frame['sides'][side]={'weight':weight,'baseline_abs_error_deg':old_abs,
+                'candidate_signed_error_deg':new_signed,'candidate_abs_error_deg':new_abs,
+                'delta_abs_error_deg':new_abs-old_abs}
+        old_cal=baseline.get('calibration_deviations',{}).get(str(new['frame']))
+        new_cal=candidate.get('calibration_deviations',{}).get(str(new['frame']))
+        frame['contacts']={'baseline':old.get('contact'),'candidate':new.get('contact')}
+        frame['calibration_joint_envelope']={'baseline':old_cal,'candidate':new_cal}
+        frames.append(frame)
+        baseline_errors.append(old_row_errors);candidate_errors.append(new_row_errors);supports.append(new['support'])
+    old_signs=crossover_signs(baseline);new_signs=crossover_signs(candidate)
+    def changes(signs):return [[i,i+1] for i in range(1,len(signs)) if signs[i]!=signs[i-1]]
+    quality=pitch_quality_gate(baseline_errors,candidate_errors,supports)
+    return {'schema':'custodian.operator_ne_pitch_comparison.v1','baseline_schema':baseline['schema'],
+        'candidate_schema':candidate['schema'],'frames':frames,
+        'weighted_absolute_error_sum_deg':{'baseline':quality['baseline_weighted'],'candidate':quality['candidate_weighted'],
+            'improvement_fraction':quality['improvement_fraction']},
+        'maximum_single_frame_worsening_deg':quality['maximum_single_frame_worsening_deg'],
+        'worst_worsening':quality['worst_worsening'],'baseline_crossover_signs':old_signs,'candidate_crossover_signs':new_signs,
+        'baseline_crossover_changes':changes(old_signs),'candidate_crossover_changes':changes(new_signs),
+        'quality_gate':quality['quality_gate'],'passed':quality['passed'],
+        'visual_approval':'not claimed'}
+
 def analyze(out, annotations, preflight, rig_sha, core_sha):
     r=json.loads((out/'aseprite_report.json').read_text())
     r.update(implementation_sha256={name:sha(HERE/name) for name in ('motion_plan.py','continuity.py','occlusion.lua','batch.lua','rigid_raster.lua','run.py','review_viewer.py')},controls=annotations['controls'],input_validation=preflight, rig_sha256=rig_sha, v55_sha256=core_sha,
@@ -111,7 +185,9 @@ def analyze(out, annotations, preflight, rig_sha, core_sha):
             ankle_ref=marker['ankle_'+side]['xy'];toe_ref=marker['toe_'+side]['xy']
             raw_pitch=math.degrees(math.atan2(toe_ref[1]-ankle_ref[1],toe_ref[0]-ankle_ref[0])-metric['source_foot_angle'])
             raw_pitch=max(-24,min(24,(raw_pitch+180)%360-180))
-            leg['reference_pitch_filter_deviation_deg']=abs((leg['foot_delta']-raw_pitch+180)%360-180)
+            leg['reference_pitch_filter_signed_deviation_deg']=wrapped_pitch_error_deg(leg['foot_delta'],raw_pitch)
+            leg['reference_pitch_filter_deviation_deg']=abs(leg['reference_pitch_filter_signed_deviation_deg'])
+            leg['reference_pitch_target_deg']=raw_pitch
             leg['thigh_length_error']=abs(distance(leg['hip'],leg['knee'])-metric['thigh_len'])
             leg['shin_length_error']=abs(distance(leg['knee'],leg['ankle'])-metric['shin_len'])
             if max(leg['thigh_length_error'],leg['shin_length_error'])>1e-6:row['failures'].append(side+'_accepted_segment_length_changed')
@@ -205,6 +281,7 @@ def main():
     p.add_argument('--v55',type=Path,default=Path.home()/'.config/aseprite/scripts/operator_ne_pose_builder_v0_5_5_swing_stride_control.lua')
     p.add_argument('--annotations',type=Path,default=HERE/'annotations.json')
     p.add_argument('--output',required=True,type=Path)
+    p.add_argument('--baseline-report',type=Path,help='immutable preceding review report for bounded pitch comparison')
     p.add_argument('--aseprite',default='aseprite')
     a=p.parse_args();a.bundle=a.bundle.resolve();a.rig=a.rig.resolve();a.output=a.output.resolve()
     # An immutable run directory prevents old successful frames masking failures.
@@ -222,6 +299,11 @@ def main():
     acceptance=json.loads((HERE/'rig_acceptance.json').read_text())
     assert rig_sha==acceptance['rig_sha256'],'V6 must use the human-accepted rig baseline'
     assert rig_sha==json.loads((HERE/'crossover_acceptance.json').read_text())['rig_sha256'],'crossover rig identity changed'
+    baseline=None
+    annotations_sha=hashlib.sha256(json.dumps(annotations,indent=2,allow_nan=False).encode()).hexdigest()
+    if a.baseline_report:
+        a.baseline_report=a.baseline_report.resolve()
+        baseline=validate_baseline(a.baseline_report,rig_sha,sha(a.annotations),preflight['source_hash'])
     a.output.mkdir(parents=True)
     write(a.output/'annotations.json',annotations)
     write(a.output/'input_validation.json',preflight)
@@ -253,12 +335,21 @@ def main():
     if result.returncode or not (a.output/'aseprite_report.json').exists():
         raise RuntimeError('Aseprite failed: '+result.stdout+result.stderr)
     r=analyze(a.output,annotations,preflight,rig_sha,sha(a.v55))
+    comparison=None
+    if baseline is not None:
+        comparison=pitch_comparison(r,baseline)
+        write(a.output/'PITCH_COMPARISON.json',comparison)
+        r['pitch_comparison_gate']=comparison['quality_gate']
+        r['pitch_comparison_passed']=comparison['passed']
+        write(a.output/'report.json',r)
     from review_viewer import write_viewer
     write_viewer(a.output,a.bundle,r)
     write(a.output/'run_receipt.json',{'command':command,'source_rig_unchanged':True,'rig_sha256':rig_sha,
-          'output':str(a.output),'preview_geometry_passed':r['preview_geometry_passed'],'accepted':False})
-    print(json.dumps({'report':str(a.output/'report.json'),'passing_frames':r['passing_frames'],'frames':15,'accepted':False}))
-    return 0 if r['preview_geometry_passed'] else 2
+          'output':str(a.output),'baseline_report':str(a.baseline_report) if baseline is not None else None,
+          'preview_geometry_passed':r['preview_geometry_passed'],'pitch_comparison_passed':comparison['passed'] if comparison else None,'accepted':False})
+    print(json.dumps({'report':str(a.output/'report.json'),'passing_frames':r['passing_frames'],'frames':15,'pitch_comparison_passed':comparison['passed'] if comparison else None,'accepted':False}))
+    if not r['preview_geometry_passed']:return 2
+    return 0 if comparison is None or comparison['passed'] else 3
 
 if __name__=='__main__':
     sys.exit(main())

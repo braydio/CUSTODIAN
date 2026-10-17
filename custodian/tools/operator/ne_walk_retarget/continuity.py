@@ -45,6 +45,12 @@ def fit(annotations,rig,acceptance=None):
             bend=abs((b-a+math.pi)%(2*math.pi)-math.pi)
             angles[i,s]=[a,bend,math.radians(l['foot_delta'])]
     original=angles.copy()
+    # The accepted NE donor's already-clamped calibration pitches are the
+    # fidelity target. Swing-foot pitch matters more to the visible gait arc;
+    # planted-foot contact remains independently enforced by rendered checks.
+    target_pitch=original[:,:,2].copy()
+    is_swing=np.array([[annotations['frames'][i]['support']!=side for side in SIDES] for i in range(15)],dtype=bool)
+    pitch_weights=np.where(is_swing,1.0,0.25)
     preferred=np.array([[[row['legs'][s]['preferred_knee'][k] for k in ('x','y')] for s in SIDES] for row in base['frames']])
     hips=np.array([[[row['legs'][s]['hip'][k] for k in ('x','y')] for s in SIDES] for row in base['frames']])
     lengths=np.array([[rig['metrics'][s]['thigh_len'],rig['metrics'][s]['shin_len']] for s in SIDES])
@@ -71,7 +77,9 @@ def fit(annotations,rig,acceptance=None):
         e=(g-baseline)**2
         acceleration=np.roll(g,1,axis=0)-2*g+np.roll(g,-1,axis=0)
         weights=np.ones((15,1,1,1));weights[list(locked)]=4
-        return float(np.sum(e*weights)+.025*np.sum(acceleration**2))/1000
+        dp=np.arctan2(np.sin(a[:,:,2]-target_pitch),np.cos(a[:,:,2]-target_pitch))
+        pitch_cost=64.0*np.sum(pitch_weights*dp**2)
+        return float(np.sum(e*weights)+.025*np.sum(acceleration**2)+pitch_cost)/1000
     def constraints(x):
         a=decode(x);g,rot=geometry(a);step=g-np.roll(g,1,axis=0)
         dr=(rot-np.roll(rot,1,axis=0)+np.pi)%(2*np.pi)-np.pi
@@ -106,7 +114,18 @@ def fit(annotations,rig,acceptance=None):
             l['knee_fit_error']=dist(l['knee'],l['preferred_knee'])
             l['continuity_ankle_correction_px']=dist(l['ankle'],raw['frames'][i]['legs'][side]['ankle'])
             l['continuity_knee_correction_px']=dist(l['knee'],raw['frames'][i]['legs'][side]['knee'])
-    base.update(schema='custodian.ne_continuity_plan.v1',filter='bounded constrained angle fit around immutable reviewed mapping targets; all-frame lead sign and 75% separation floor',
+    pitch_error=np.arctan2(np.sin(a[:,:,2]-target_pitch),np.cos(a[:,:,2]-target_pitch))
+    pitch_fit={'target_source':'already-clamped NE donor/calibration foot targets',
+        'target_degrees':np.degrees(target_pitch).tolist(),'coefficient':64.0,
+        'swing_weight':1.0,'stance_weight':0.25,
+        'wrapped_error_degrees':np.degrees(pitch_error).tolist(),
+        'absolute_error_degrees':np.abs(np.degrees(pitch_error)).tolist(),
+        'weighted_absolute_error_sum':float(np.sum(pitch_weights*np.abs(np.degrees(pitch_error)))),
+        'weighted_squared_error_sum_degrees_squared':float(np.sum(pitch_weights*np.degrees(pitch_error)**2)),
+        'worst_absolute_error_degrees':float(np.max(np.abs(np.degrees(pitch_error)))),
+        'worst_frame_side':{'frame':int(np.unravel_index(np.argmax(np.abs(pitch_error)),pitch_error.shape)[0])+1,
+                            'side':SIDES[int(np.unravel_index(np.argmax(np.abs(pitch_error)),pitch_error.shape)[1])]}}
+    base.update(schema='custodian.ne_continuity_plan.v1',filter='bounded constrained angle fit around immutable reviewed mapping targets; all-frame lead sign and 75% separation floor',pitch_fit=pitch_fit,
         calibration_target_frames=sorted(i+1 for i in locked),calibration_max_joint_deviation_px=6,optimizer={'method':'SLSQP','scipy':scipy.__version__,'numpy':np.__version__,
         'iterations':int(result.nit),'objective':float(result.fun),'minimum_constraint':residual},
         internal_guards={'max_joint_step_px':7.6,'max_rotation_step_degrees':58,'calibration_max_joint_deviation_px':6,'minimum_lead_fraction':.75},
