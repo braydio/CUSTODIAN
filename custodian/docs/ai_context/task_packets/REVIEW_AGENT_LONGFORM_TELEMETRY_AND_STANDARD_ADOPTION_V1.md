@@ -34,7 +34,7 @@
 - Non-goals: code feature changes or acceptance waivers.
 - Acceptance: exact reviewed commit main reachability, focused and changed green, all negative controls, no material evidence gaps; findings remain unresolved.
 - Validation: cumulative-event duplicate, missing cache/token=unknown, interrupted JSONL, 9 landed of 12 attempted, scrub secret content, context compaction, review replay, standard task single-pair regression, manifest/index/changed validation. and checked review receipt scope.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Review Receipt
 

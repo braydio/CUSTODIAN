@@ -34,7 +34,7 @@
 - Non-goals: code feature changes or acceptance waivers.
 - Acceptance: exact reviewed commit main reachability, focused and changed green, all negative controls, no material evidence gaps; findings remain unresolved.
 - Validation: synthetic shared manifest 38 passes/3 timeout/1 skip; changed owner mutation, bogus test exclusion, missing coverage, stale hashes, same-test baseline red, zero selected, Godot concurrency, one-per-test source ownership; final canonical --changed. and checked review receipt scope.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Review Receipt
 
