@@ -880,6 +880,15 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                     self_test.assertEqual(len(add_dirs), 2)
                     self_test.assertIn("custodian-review-runs/review-sample/", add_dirs[0])
                     self_test.assertEqual(add_dirs[1], str(cache_root))
+                    common = runner.common_dir(repo).resolve()
+                    writable = [Path(str(worktree)).resolve(), *(Path(path).resolve() for path in add_dirs)]
+                    for forbidden in (common / "FETCH_HEAD", common / "index"):
+                        self_test.assertFalse(any(path == forbidden or path in forbidden.parents
+                                                  for path in writable), str(forbidden))
+                    self_test.assertFalse(any(Path(path).resolve() == common or
+                                              Path(path).resolve() in common.parents or
+                                              common in Path(path).resolve().parents
+                                              for path in add_dirs[1:]))
                     self_test.assertIn("Do not use, request, or infer the implementation-session transcript", self.prompt)
                     report_path = Path(add_dirs[0]) / "validation.json"
                     report_path.write_text(json.dumps({"schema": "custodian.validation.result.v1", "passed": True,
