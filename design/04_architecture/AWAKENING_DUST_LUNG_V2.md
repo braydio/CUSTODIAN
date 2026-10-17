@@ -196,8 +196,11 @@ The cistern shafts are hard non-traversal space.
 
 ### 6.3 Transit lift
 
-The existing `AwakeningTransitLift` gameplay owner remains the intended
-interaction authority.
+The existing `AwakeningTransitLift` remains the production fallback until the
+`transit-lift-runtime-foundation-v1` migration lands. The long-term mechanics
+authority is the reusable same-map local transit owner defined by
+`design/02_features/world/VERTICAL_TRAVERSAL_SYSTEM.md`; Awakening consumes it
+through one compatibility owner rather than preserving a scene-specific second system.
 
 Required presentation around it:
 

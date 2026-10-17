@@ -63,6 +63,9 @@ Repo/process note: your active runtime is Godot under `custodian/`, with active 
 
 # Feature Spec: Ash-Bell Encounter — “The Forlorn-Ritualant and the Unarrived”
 
+> **Approved redesign, not current runtime (2026-10-12):** `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md` governs the future Highland receiver station, off-chapel **Receiver Key**, non-original overlapping chapel, and physical/psychological resolution. The Stilling Pin/basin implementation and historical Bell-Clapper example below document **current or superseded material only**, not an approved future item or completed migration. The companion asset and dialogue/idle briefs supply production targets; until implementation, live Godot code remains runtime truth.
+
+
 ## 0. One-line pitch
 
 A ruined chapel chamber contains an ordinary broken chapel bell, the wrong

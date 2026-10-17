@@ -183,6 +183,9 @@ func validate_required_ingresses(
 					"diagnostic": (
 						result.get("connector_diagnostic", {}) as Dictionary
 					).duplicate(true),
+					"decision_profile": (
+						result.get("decision_profile", {}) as Dictionary
+					).duplicate(true),
 				})
 			continue
 		occupied_tiles.append(
@@ -205,6 +208,10 @@ func _resolve_authored_ingress_candidate(
 	commit_pocket: bool = true
 ) -> Dictionary:
 	var rejected: Array[Vector2i] = []
+	var decision_rows := PackedStringArray()
+	var resolver_usec := 0
+	var pocket_plan_usec := 0
+	var connector_usec := 0
 	var candidate_attempt_limit := maxi(
 		1,
 		int(placement.get(
@@ -213,18 +220,39 @@ func _resolve_authored_ingress_candidate(
 		))
 	)
 	for attempt in range(candidate_attempt_limit):
+		var resolver_start := Time.get_ticks_usec()
 		var result := resolver.call(
 			"resolve", placement, level_data, map_instance, occupied_tiles, rejected
 		) as Dictionary
+		resolver_usec += Time.get_ticks_usec() - resolver_start
 		if not bool(result.get("ok", false)):
+			decision_rows.append("%d:%s:resolve_failed:%s" % [attempt + 1, str(result.get("tile", Vector2i.ZERO)), str(result.get("reason", ""))])
+			result["decision_profile"] = _ingress_decision_profile(
+				decision_rows, resolver_usec, pocket_plan_usec, connector_usec
+			)
 			return result
 		if not bool(result.get("requires_authored_pocket", false)):
+			decision_rows.append("%d:%s:accepted" % [attempt + 1, str(result.get("tile", Vector2i.ZERO))])
+			result["decision_profile"] = _ingress_decision_profile(
+				decision_rows, resolver_usec, pocket_plan_usec, connector_usec
+			)
 			return result
 		var tile := result.get("tile", Vector2i.ZERO) as Vector2i
+		var pocket_start := Time.get_ticks_usec()
 		var pocket_plan := _plan_overlook_pocket(map_instance, result)
+		pocket_plan_usec += Time.get_ticks_usec() - pocket_start
 		if bool(pocket_plan.get("ok", false)):
 			result["pocket_plan"] = pocket_plan
-		if bool(pocket_plan.get("ok", false)) and _validate_unlock_causeway_contract(map_instance, result):
+		var connector_ok := false
+		if bool(pocket_plan.get("ok", false)):
+			var connector_start := Time.get_ticks_usec()
+			connector_ok = _validate_unlock_causeway_contract(map_instance, result)
+			connector_usec += Time.get_ticks_usec() - connector_start
+		if bool(pocket_plan.get("ok", false)) and connector_ok:
+			decision_rows.append("%d:%s:accepted:%s" % [attempt + 1, str(tile), str(result.get("connector_preflight_mode", ""))])
+			result["decision_profile"] = _ingress_decision_profile(
+				decision_rows, resolver_usec, pocket_plan_usec, connector_usec
+			)
 			if not commit_pocket:
 				result["placement_attempt"] = attempt + 1
 				return result
@@ -234,6 +262,16 @@ func _resolve_authored_ingress_candidate(
 				continue
 			result["placement_attempt"] = attempt + 1
 			return result
+		var rejection_reason := str(pocket_plan.get("reason", ""))
+		if rejection_reason.is_empty():
+			var connector_diagnostic: Dictionary = result.get("connector_diagnostic", {})
+			var canonical_diagnostic: Dictionary = connector_diagnostic.get("canonical", {})
+			var fallback_diagnostic: Dictionary = connector_diagnostic.get("fallback", {})
+			rejection_reason = "%s|%s" % [
+				str(canonical_diagnostic.get("reason", "")),
+				str(fallback_diagnostic.get("reason", "")),
+			]
+		decision_rows.append("%d:%s:rejected:%s" % [attempt + 1, str(tile), rejection_reason])
 		rejected.append(tile)
 		_observe(&"level_ingress_candidate_rejected", {
 			"identity": identity,
@@ -247,6 +285,26 @@ func _resolve_authored_ingress_candidate(
 		"ok": false,
 		"reason": "no canonically connector-resolvable authored pocket after %d deterministic candidates" % candidate_attempt_limit,
 		"rejected_tiles": rejected,
+		"decision_profile": _ingress_decision_profile(
+			decision_rows, resolver_usec, pocket_plan_usec, connector_usec
+		),
+	}
+
+
+func _ingress_decision_profile(
+	decision_rows: PackedStringArray,
+	resolver_usec: int,
+	pocket_plan_usec: int,
+	connector_usec: int
+) -> Dictionary:
+	return {
+		"candidate_count": decision_rows.size(),
+		"decision_fingerprint": str(("\n".join(decision_rows)).hash()),
+		"first_candidate": decision_rows[0] if not decision_rows.is_empty() else "",
+		"last_candidate": decision_rows[-1] if not decision_rows.is_empty() else "",
+		"resolver_ms": float(resolver_usec) / 1000.0,
+		"pocket_plan_ms": float(pocket_plan_usec) / 1000.0,
+		"connector_ms": float(connector_usec) / 1000.0,
 	}
 
 

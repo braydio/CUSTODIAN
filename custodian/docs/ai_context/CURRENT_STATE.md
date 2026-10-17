@@ -1,5 +1,55 @@
 # CURRENT STATE — CUSTODIAN
 
+## Compound Archetype Profile Contract (2026-10-16)
+
+`PersistentCompoundLayoutPlanner` now validates optional `legacy`,
+`walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
+The runtime selector defaults to `legacy`; explicit archetype selection keeps
+the same generated surface layout and adds archetype, layer, and profile-version
+metadata to rooms, connectors, and exported level data. Omitting the planner
+profile argument preserves its prior output dictionary. This is selection and
+metadata support only: physical walled-yard and subsurface bunker layouts
+remain in their dependency-gated follow-up workstreams. Focused checks are in
+`compound_archetype_profile_smoke.gd`.
+
+## Procgen Showcase Gallery Shell (2026-10-15)
+
+The registered dev-only `procgen_showcase_gallery` destination provides five
+connected authored exhibit wings and an intentionally sealed central arena
+threshold. The production scene contains no Operator/controller/camera or map
+generator; its standalone playtest wrapper owns the real Operator and standard
+runtime systems. Reset-on-entry ingress/return preserves the same Operator.
+The gallery is a shell only: generated map realization, exhibit catalog,
+controls, and runtime inspection remain later PGA slices. Its implementation
+and independent fresh-context review are archived **passed** (6 focused checks,
+46/46 changed-file checks, zero blocking defects or material gaps). PGA-2 exhibit catalog and PGA-3 generated arena are both ready/auto with
+PGA-1's review dependency satisfied; PGA-3's refreshed paired authoring gate
+and managed index passed at `95c89d47`. Neither implementation has landed. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+
+## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
+
+Three repository-owned tools now exist: `custodian/tools/assets/dropbox_asset_audit.py` (read-only three-lane scan, legacy registry + Asset V2 status projection), `dropbox_asset_stage.py` (explicit approval/SHA-pinned ZIP fetch, source_work staging and optional per-frame pixel-art normalization), and `dropbox_asset_publish.py` (explicit immutable Dropbox audit receipt + derived current index). `custodian/content/metadata/assets/source_review_receipts.v1.json` starts empty: **no new batch is automatically approved**, even if source is uploaded or older registry says `active`. Read-only and write-side focused suites are wired into GitHub Validate Repository CI.
+
+**Operational status (verified 2026-10-13):** The authenticated `git-dropbox-sync` remote scan covered all three source lanes (26 ZIPs) and 88 Asset V2 families. It produced 24 findings: 23 unregistered packages and one registered package missing from Dropbox. The first derived index and immutable audit pair were published at `/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json` and `/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T103045Z.{json,md}`. Upload presence remains `awaiting_review`; the source-review receipt registry is empty, and this operation performed no source staging, approval, or Asset V2 ingest. The focused audit suite (6 tests) and `asset.py needs --check` pass. `asset.py doctor` still reports four previously documented designation-locker catalog hash mismatches. See `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`.
+
+**Surface Lift V2 intake status (2026-10-13):** The authenticated Dropbox ZIP `/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip` matches SHA-256 `fb283369cf3546c7615d1ea51a28c6f6fd95591d36d8c1ccafd5e4c2338bcdbc` (7,801,299 bytes). The current review-chat decision is recorded against that exact hash in `source_review_receipts.v1.json`; the original authoring-chat backlink remains distinct. All five source PNG hashes, sizes, RGBA modes and dimensions match. Families `ash_bell_surface_lift_ingress_props_v1` and `ash_bell_surface_lift_safety_field_v1` are registered. `lift_deck` (448×320), `field_projector` (64×128), `field_idle` (6×512×192 @6 FPS loop), and `field_engaged` (6×512×192 @8 FPS loop) are normalized and imported. The original six-frame `field_arming` master remains historical source-work-only evidence. The user has now approved a genuine fixed-grid 8f replacement master in the current planning chat: 2048×256 RGBA, 8×256×256 cells, SHA-256 `fccc2a81b0abd2d5f3bf755a9dd9f465c35050c45c1155f821688df1317842ef`; the target remains 8×512×192 @12 FPS one-shot. It is not runtime-published yet. The active presentation packet now requires the repository `custodian_pixelart_converter.py` fixed-sheet path with aspect-preserving `contain`, shared registration, exact 4096×192 output, and a fail-closed projector-envelope review rather than stretching. No scene or traversal integration has occurred. Full original intake evidence remains in `custodian/docs/ai_context/asset_audits/ASH_BELL_SURFACE_LIFT_V2_INTAKE_20261013.json`. The original package remains unregistered directly under `ash-bell-ritualant`; reconcile that registry/path drift separately after intake review.
+
+## Ritualant validation + paired-review workflow repair (2026-10-13)
+
+The four-cue score branch's changed-file gate exposed two stale Ritualant validation contracts on current `main`, not audio regressions. The live Underground no longer owns `BackgroundRoot/ChapelOuterBlend`; mapper/debug validation now uses the current 768×384 `ChapelConnectorApron`. The Oct-4 Underground refresh intentionally changed lower-lift containment to a 223×22 rear stop plus 20×80 front wings; the completion smoke samples now sit inside the clear boarding corridor. No encounter, route, collision, or score behavior was changed by this repair. The paired-review target identity resolver also now derives the canonical archived-path add/rename commit before falling back through rename history, preventing a completed packet's earlier active-path introduction from making its archive landing appear ambiguous. A focused regression pins the Surface Lift intake archive to implementation landing `f3b94d0768bc110755f2b9be1d1e60d22fe1577c`. After resyncing to current `main`, the score workstream's full changed-file gate passed all 46 checks; its implementation is closing through the normal lifecycle and requires a fresh paired review. The Surface Lift review remains subject to the dispatcher asset-pipeline lock and must launch through the canonical paired-review runner once eligible. The checked-in `reports/level_maps/forlorn_ritualant_underground/full_map.json` still contains the retired `ChapelOuterBlend` record from an older mapper export; regenerate that report through the normal mapper export after the validation repair rather than treating the stale JSON as current runtime authority.
+
+## Ritualant score source refresh (2026-10-13)
+
+The approved gentler-attacks replacement for The Ninth Was Never Cast is the exact OGG from `~/Downloads/CUSTODIAN_Eight_Bells_Main_Scene_Gentler_Attacks_v2.zip` (ZIP SHA-256 `b7e8e37eb058e5a116966a288389afe0691c633e80eedbb727f7b307148e0f90`; runtime OGG SHA-256 `51a64027a61ea8db5704e08036bfeb6babdb4c54c130edbaa000db325788f6aa`). It is staged at `custodian/asset_drop/inbox/ash_bell_ritualant_score_v2/` and referenced by the Underground exploration cue. The other three arrangements remain unchanged. The four-cue integration's focused checks and complete changed-file validation now pass; the workstream is closing and proceeding to independent review. Human in-game audition remains outstanding and is not implied by implementation or validation completion.
+
+## Ritualant Highland Station approved design (2026-10-12)
+
+The user-approved **future** Highland Station redesign is locked in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`; supporting Asset V2 planning and dialogue/idle/ambient intent are recorded in `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_ASSET_BRIEF.md` and `design/02_features/enemy_objective/FORLORN_RITUALANT_DIALOGUE_IDLE_AMBIENT_AUDIT.md`. Receiver Key is the approved new quest component, recovered **off-chapel** and seated in station-original local receiver equipment to terminate the exposed return contact and restore the local reference. The chapel is a non-original overlap, and the Ritualant's rite expresses psychological fixation, not new magical continuity authority. The Highland station is one of I–VIII with the exact numeral intentionally reserved; Station IX stays in the Lower Quarter across the generated Highlands and Bridged Falls approach.
+
+**No new key item, receiver state, VFX, artwork, NPC idle, dialogue input, or north exit has landed from this design lock.** Current runtime and tests still use Stilling Pin + wrong basin, and the pending north egress remains separate. Existing runtime is not to be misreported as Receiver Key-complete. Documentation drift reconciliation and independent review packets exist as `draft/manual` awaiting targeted authoring preflight, not dispatcher-claimable implementation.
+
+
+
 ## Mission Control TUI-first planning (2026-10-12)
 
 The proposed developer operations console is specified at
@@ -136,6 +186,24 @@ Active V2 packet queue states are explicit: `ready/auto` is dependency/lock/pair
 ## Ash-Bell Ritualant Static Asset Intake (2026-10-09)
 
 Twelve reviewed static Ritualant source states are now available as a durable Dropbox source batch at `/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/`: 6 ritual props and 6 chamber-dressing/decals. They are **not live runtime yet**. `ASH_BELL_RITUALANT_STATIC_ASSET_INTAKE.md` is ready/auto behind the fresh runtime-truth review and contains exact package hashes, zero-search rclone staging commands, repo-relative source/inbox paths, Asset Pipeline V2 commands, live scene consumer nodes, requirement migration, and validation. Its paired review gates the remaining broad Ritualant production-art closeout. The existing broken chapel bell remains production truth; the new `empty_bell_frame` is a support/frame layer, not a replacement Ninth Bell.
+
+## Forlorn Ritualant Four-Cue Music Integration (2026-10-13)
+
+The authored Underground now routes four byte-preserved 48 kHz stereo Vorbis
+assets through its scene-scoped `ForlornRitualantMusicDirector` and the shared
+`MusicManager` lease: chapel reveal exploration loop, committed-hostility loop,
+fresh peaceful Stilling Release, and fresh `SITE_DEFILED` hostile resolution.
+Nonlethal dissolve fades to silence; route restore does not replay one-shots;
+teardown restores the prior playlist only while the scene still owns the lease.
+The Ninth Answer applies a configurable short music duck, leaving combat SFX
+untouched. Provenance and exact file hashes are in
+`custodian/content/audio/music/ash_bell/audio_handoff_manifest.json`; the
+independent `ash-bell-ritualant-music-score` requirement is fulfilled while the
+existing `ash-bell-audio-cues` SFX/room-bed requirement remains needed. The
+focused deterministic contract is
+`ritualant_four_cue_music`. Human in-game level, intelligibility, and loop-edge
+audition remains a post-implementation quality check and is not claimed as
+complete. See `design/03_world/ASH_BELL_RITUALANT_SCORE.md`.
 
 ## Ash-Bell Bridged Falls / Lower Quarter Approach Program (2026-10-07)
 
@@ -692,12 +760,13 @@ Awakening→Hub runtime handoff with one context authority, exact `Spawn_SouthRe
 camera/navigation binding before input unlock, and source rollback with the
 South Reach barrier intact; its independent paired review passed. H4 connects the
 H1 Crown Transfer to the registered Twin Solaria route and restores the same Hub
-host at `Spawn_TwinReturn`; its paired review passed with no findings. H3 now adds
+host at `Spawn_TwinReturn`; its paired review passed with no findings. H3 adds
 the production Adjudication Dais selection owner, stores one typed accepted
 scenario in `HubState`, and starts the existing Contract bootstrap exactly once
-while the Hub remains active. Twin traversal retains that state. H3 implementation
-is complete and awaits its fresh-context paired review. Port deployment and
-campaign return remain deferred to H5 and H6. H2 rollback now keeps Awakening
+while the Hub remains active. Twin traversal retains that state. H3 and its
+fresh-context paired review are complete. H5's ordinary Port deployment has a
+dispatcher-claimed implementation branch but is not yet landed on current main;
+its paired review gates H6 campaign return. H2 rollback now keeps Awakening
 completion latched until the failed overlap clears and validates the Operator's
 current position against the South Reach trigger, so a deferred stale
 `body_entered` callback cannot submit a second transition after rollback.
@@ -1658,7 +1727,7 @@ Documentation updates this session:
   still subject to renderer review rather than assumed from headless smokes.
 
 - Developer Observatory owns one non-echo F9 presentation edge and never pauses or changes time scale. Its wall-clock Performance Incident Recorder is independent of overlay pages; opening F9 freezes an active incident before bounded rendering. Focus, pause, overlay, capture, and reset boundaries invalidate the clock origin, while >=2-second external stalls remain exported but cannot contaminate gameplay statistics or auto-triggering. Automatic capture latches for one degraded episode and rearms only after three continuous seconds below 25 ms. F10 performs one final tree scan, builds one frozen `custodian.dev_observatory.performance_incident.v1` payload, and writes it to both timestamped and stable paths. The overlay refreshes at 2 Hz on Performance and 4 Hz elsewhere, avoids unchanged text assignment, caps rows/events/value length, and exposes build/text/line/refresh gauges.
-- Loot pickup feedback now has one HUD-owned `LootToastQueue` mounted beneath the top-left HUD. Parts, cognitive items, stolen vault resources, ammo, and Field Patches retain their existing world-space floating text but also publish a shared accent/icon/detail toast; matching entries merge within `0.75s`, four entries remain visible, and stolen resources render one summary detail line. The queue and merge contract have a focused smoke.
+- Loot pickup feedback now has one `LootToastQueue` mounted as a sibling of the top-left HUD. Parts, cognitive items, stolen vault resources, ammo, and Field Patches retain their existing world-space floating text but also publish a shared accent/icon/detail toast; matching entries merge within `0.75s`, four entries remain visible, and stolen resources render one summary detail line. Its 18px left inset is retained while the top edge follows the live visible top-left HUD clearance, refreshes on HUD/viewport changes, and clamps the four-entry stack to the viewport. The queue and geometry/merge contract have a focused smoke.
 - Vigil-Pattern Dagger combat uses a deliberate three-beat grammar rather than a generic short input buffer. Per-link rhythm windows accept one continuation and preserve it to commit; swing audio begins at visible acceleration; hit-stop escalates across the chain. Runtime Fast 02 uses authored eight-frame Chain 02, while Fast 03 uses the nine-frame Chain 03 two-contact finisher at 18 FPS. Fast 03 resolves contact-owned cuts on runtime frames 4 and 8 with target-plus-contact deduplication, holds frame 8 for `1.5x`, and executes queued Fast 01/dodge only on `animation_finished`. Nearby enemy melee is composed by the `EnemyEngagementCoordinator`: one committed attacker inside 260 px, concurrent long tells allowed, token transfer on recovery/interruption/expiry. Grunt tracking locks for the final 0.12 s, and dagger-specific grunt/marine/savage reactions preserve the offensive beat according to archetype.
 - Ash Bell and Sundered Keep edge presentation ownership is isolated. Ash Bell interleaves deterministic north/east/south/west pocket candidates, rotates only its map-facing approach composition, keeps lift/rider/shaft travel screen-upright, and transforms its `832x608` dressing clearance into an oriented world AABB. Its semantic isolated-overlook floor suppresses generic Floor TileMap visuals, and the inward-side pocket gap feeds the unchanged direction-independent Threadway runtime. The Sundered Keep procgen storm/ocean plate remains frontage-local and independently activated.
 - Procgen presentation is now explicitly split into three independent axes: local ecological biome (`rocky_upland`/`woodland`/`scrubland`/`wetland`), permanent `RegionFrameProfile` target semantics (design authority `PROCGEN_REGION_FRAME_PROFILES.md`), and Archive Resolve streaming presentation (`STREAMING_REVEAL_PRESENTATION_V1.md`). The first generated starting region is fixed to the `ALPINE_PLATEAU` frame, while its local biome field remains deterministic/generative; `ALPINE_PLATEAU_STARTING_REGION_VISUAL_LOCK.md` owns that starting-region resolved art direction. Future generated regions may use different frame/border/underlay profiles without changing Archive Resolve.
@@ -1988,7 +2057,7 @@ Documentation updates this session:
 - Fabrication/resource balance now has an offline deterministic report pipeline at `custodian/tools/balance/fabrication_balance_pipeline.py`. It reads live recipe/resource JSON plus `custodian/content/balance/scenarios/default_fabrication_run.json`, simulates 30-minute runs across build priorities and drop-rate profiles, checks lore-aware drop-table rules, and writes proposal-only outputs under `reports/fabrication_balance/` instead of mutating runtime data.
 - `enemy_marine` has a first runtime scene at `res://game/actors/enemies/enemy_marine.tscn` and consumes the full 8-direction idle suite from `res://content/sprites/enemies/enemy_marine/runtime/body/` through `GruntAnimationLibrary`. Its dash attack is now a tuned tactical heavy commitment move owned by `res://game/actors/enemies/abilities/marine_dash.gd`, with typed values in `marine_dash_config.gd` / `configs/marine_dash_default.tres`; `enemy.gd` supplies the shared actor/combat services and public request seam: the marine seeks a launch band, chooses quick or charged commits deterministically from range/target motion/previous result, spends a bounded charge budget between extra distance and extra damage, performs one predictive target lock during the final windup third, then commits without steering. The latest tuning pass raised the base impact to 32 damage / 105 knockback, widened the active hit window and contact reach, and nudged prediction/reset timing so the dash connects more often without becoming homing. Hit contact remains limited to the middle travel frames and a body-contact lane; impact/recovery are followed by an alternating lateral reset, preventing immediate dash trampling. The Great Hall ambush now wakes and hands control to this shared tactical runtime instead of maintaining a separate dash-spam controller. The move applies chunky damage plus poise/knockback feel through victim hitstop, forced slide/stagger hooks on the Operator, attacker hitstop, and camera feedback instead of relying only on HP loss. An east-facing 8-frame dash attack body strip and matching FX strip now live under `res://content/sprites/enemies/enemy_marine/runtime/{body,fx}/` and are used by the Sundered Keep Great Hall ambush plus generic marine combat playback. Directional body/FX variants and the servo/armor/impact/recovery audio stack remain required production assets tracked in `REQUIRED_ASSETS.md`. `WaveManager`, `EnemyDirector`, `EnemyFactory`, and `scenes/game.tscn` expose `marine_scene` / `"marine"` as a late-unlock enemy type. Until full directional movement/combat/death sheets are supplied, marine movement still uses directional idle as a visual fallback outside scripted dash moments.
 - The first game-over UX slice is implemented from `design/02_features/game_over/GAME_OVER_FLOW.md`. `GameState` remains the fail-state authority, pauses the tree, emits `game_over_triggered`, and mounts `res://game/ui/game_over/game_over_modal.tscn` when `trigger_game_over(...)` is called. `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost; `WaveManager` records completed waves, and enemy death records destroyed enemies. The modal is now a full-screen loss overlay with stats, a clear Restart button that resets run state and reloads the current scene, and a Return-to-Menu fallback that uses the configured main scene until a production menu exists. Custodian death is immediate game over (`total_lives = 1`) with Custodian-facing defeat copy, and Sundered Keep siege objective collapse routes through the same global game-over modal. Direct smoke coverage lives at `res://tools/validation/game_over_flow_smoke.gd`, with Sundered Keep collapse coverage in `res://tools/validation/sundered_keep_large_layout_smoke.gd`.
-- Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output now anchors the accessible East Machine House. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the off-map Machine House interior. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
+- Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output anchors three separate accessible interiors: the 14×10 East Machine House, 12×10 West Draft House, and 20×14 Operations House. Each room has its own camera/environment region and three-cell south return; the Operations House adds civic dispatch/records/stock dressing and one persistent emergency-spares cache using existing Carrow art. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the East Machine House. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
 - The Sundered Keep phase-1 slice is live as a directed authored route. The
   front-gate layout is mapper-owned through
   `sundered_keep_front_gate_large.json`; intentional `mapper_placements`,
@@ -2523,6 +2592,19 @@ collision radius, and proves a continuous route from `(0, 160)` to `(0, -6464)`
 across every mandatory section — it caught a real 16px pinch in the Locker
 Reliquary during implementation.
 
+## Awakening perimeter support foundation (2026-10-15)
+
+AP0 Awakening perimeter support foundation is implemented as a no-art technical
+layer. The deterministic 34-sample camera ledger measures all ten zones and the
+three authored reveals against live room plate bounds; the only measured plate
+gaps are a 32px strip at wake/Zone01 entry and a 96px strip at the 05→06 join.
+Nine non-Dust Asset V2 backdrop families (27 required states) are registered as
+unfulfilled demand. `AwakeningPerimeterSupport` checks for exact runtime files
+before loading, remains below canonical floor art, has no collision, and leaves
+the neutral void backdrop intact. Zone 05 generic support remains excluded for
+Dust Lung V2. See `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`
+and `docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+
 # Baby Opossum Ambient Creature Runtime (2026-09-06)
 
 Baby Opossum now has a first-class `ambient_creature` V2 family and runtime
@@ -2582,6 +2664,17 @@ baseline clip by clip instead of accepting any single PNG, and both
 `baby_opossum_runtime` and `baby_opossum_asset_contract` are registered in the
 validation manifest. `design/02_features/ambient/BABY_OPOSSUM_RUNTIME.md` is the
 implementation authority.
+
+Runtime transition policy now gates all soft actions and sensed threats to
+ambient `IDLE`/`WANDER`; attack rejection and explicit flee can preempt, while
+repeated hard responses do not restart an active rejection/flee chain. Treat
+approach advances only on arrival and returns to ambient behavior on its
+distance/speed-derived timeout. Retrieval claims carrying only on matching
+contact, and timeout/cancel clears the pending target. Search ties use distance,
+world y/x, and stable node path, with `target_found` emitted at the find beat.
+Runtime smoke checks effective FPS for every family state (including unpublished
+states) and verifies alias-map parity. The five unresolved art needs are owned by
+`required_assets.registry.json`; root `REQUIRED_ASSETS.md` is its generated view.
 
 # Vaultwing Wild Predator Slice A Closeout (2026-09-23)
 
@@ -2850,3 +2943,7 @@ Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 con
 ## Awakening Gate western precinct spatial proposal (2026-10-11)
 
 A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.
+
+## Compound archetypes and assault/recovery planning (2026-10-15)
+
+Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.

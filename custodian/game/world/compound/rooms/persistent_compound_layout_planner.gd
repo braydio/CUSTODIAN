@@ -5,6 +5,7 @@ extends RefCounted
 ## runtime or simulation state.
 
 const DEFAULT_GRAPH_PATH := "res://game/world/compound/rooms/graphs/persistent_compound_layout_v1.json"
+const ARCHETYPE_PROFILES_PATH := "res://game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json"
 const COMMAND_TYPE := "command_post"
 const CARDINALS: Array[Vector2i] = [Vector2i.UP, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT]
 
@@ -12,6 +13,7 @@ var _graph: RoomGraph
 var _rng := RandomNumberGenerator.new()
 var _seed := 0
 var _config: Dictionary = {}
+var _archetype_profiles: Dictionary = {}
 var _target_room_count := 0
 
 
@@ -21,14 +23,25 @@ func _init(graph: RoomGraph = null) -> void:
 
 func load_default_graph() -> bool:
 	_graph = RoomGraph.new()
-	return _graph.load_from_json_file(DEFAULT_GRAPH_PATH)
+	if not _graph.load_from_json_file(DEFAULT_GRAPH_PATH):
+		return false
+	return _load_archetype_profiles()
 
 
-func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] = []) -> Dictionary:
+func generate_layout(
+	seed: int,
+	compound_rect: Rect2i,
+	ingress: Array[Vector2i] = [],
+	archetype_id: StringName = &""
+) -> Dictionary:
 	_seed = seed
 	_rng.seed = seed
 	if _graph == null and not load_default_graph():
 		return _invalid("graph_load_failed", compound_rect, ingress)
+	var profile_result := _resolve_archetype_profile(archetype_id)
+	if not profile_result.get("valid", false):
+		return _invalid("unknown_archetype_id", compound_rect, ingress)
+	var archetype_profile: Dictionary = profile_result.get("profile", {})
 	_config = _graph.get_layout_config()
 	var inner := compound_rect.grow(-int(_config.get("outer_clearance_tiles", 4)))
 	if inner.size.x < 24 or inner.size.y < 20:
@@ -87,7 +100,7 @@ func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] 
 	if fabricator_anchor == Vector2i.ZERO or construction_zone_anchor == Vector2i.ZERO:
 		return _invalid("population_anchor_placement_failed", compound_rect, ingress)
 
-	return {
+	var layout := {
 		"valid": true,
 		"schema_version": int(_config.get("schema_version", 1)),
 		"rect": compound_rect,
@@ -112,6 +125,61 @@ func generate_layout(seed: int, compound_rect: Rect2i, ingress: Array[Vector2i] 
 			"fallbacks_used": 0,
 		},
 	}
+	if not archetype_profile.is_empty():
+		var selected_id := String(archetype_profile.get("archetype_id", ""))
+		var layer_id := String(archetype_profile.get("layer_id", ""))
+		var profile_version := int(archetype_profile.get("profile_version", 0))
+		layout["archetype_id"] = selected_id
+		layout["layer_id"] = layer_id
+		layout["archetype_profile_version"] = profile_version
+		for room in layout["rooms"]:
+			room["archetype_id"] = selected_id
+			room["layer_id"] = layer_id
+			room["archetype_profile_version"] = profile_version
+		for connection in layout["connections"]:
+			connection["archetype_id"] = selected_id
+			connection["layer_id"] = layer_id
+			connection["archetype_profile_version"] = profile_version
+	return layout
+
+
+func _load_archetype_profiles() -> bool:
+	_archetype_profiles.clear()
+	if not FileAccess.file_exists(ARCHETYPE_PROFILES_PATH):
+		return false
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ARCHETYPE_PROFILES_PATH))
+	if not parsed is Dictionary:
+		return false
+	var source := parsed as Dictionary
+	if int(source.get("schema_version", 0)) != 1:
+		return false
+	var profiles: Variant = source.get("profiles", {})
+	if not profiles is Dictionary:
+		return false
+	for required_id in ["legacy", "walled_yard", "connected_bunker"]:
+		var profile: Variant = profiles.get(required_id)
+		if not profile is Dictionary:
+			return false
+		var entry := (profile as Dictionary).duplicate(true)
+		if String(entry.get("archetype_id", "")) != required_id:
+			return false
+		if String(entry.get("layer_id", "")) != "surface":
+			return false
+		if int(entry.get("profile_version", 0)) != 1:
+			return false
+		_archetype_profiles[required_id] = entry
+	return true
+
+
+func _resolve_archetype_profile(archetype_id: StringName) -> Dictionary:
+	# An omitted ID is the compatibility path: preserve the exact legacy layout
+	# dictionary so existing callers and serialized baselines remain unchanged.
+	if archetype_id == &"":
+		return {"valid": true, "profile": {}}
+	var profile: Variant = _archetype_profiles.get(String(archetype_id))
+	if not profile is Dictionary:
+		return {"valid": false}
+	return {"valid": true, "profile": (profile as Dictionary).duplicate(true)}
 
 
 func _pick_fabricator_anchor(rooms: Array[Dictionary]) -> Vector2i:

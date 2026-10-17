@@ -36,7 +36,9 @@ and visual-only wayfinding. Their contracts preserve the manifest's exact
 canvases, per-state dimensions, frame layouts, alpha intent, and requirement
 tiers. All 27 current-required states remain source-pending; 14 recommendation
 states remain optional and 36 future states remain deferred. No runtime consumer
-is authorized by family registration alone.
+is authorized by family registration alone. See the [Deferred-Family Ownership
+Crosswalk](AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md) for the current-main
+Hub owners, packet gates, anchors, and Asset V2 reuse audit.
 
 The Crèche console and Dust Lung lift are separate gameplay owners. The Crèche
 console's existing idle art and activation effect are preserved; its FX does not
@@ -633,4 +635,4 @@ source set is reviewed and an implementation cutover lands.
 
 The [Awakening Interactible Affordance Overlay](AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md) is a separately owned presentation-only continuation. Its [state-level V2 art manifest](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md) contains **77 conceptual art states across 12 families**: 27 live-required, 14 recommended and 36 future-deferred. These are **not published assets**. The registered Crèche Console, four-state P-9 Designation Locker and Dust Lung lift art remain existing canonical production sources; new states must supplement or reuse them, not replace them.
 
-Implementation is sliced into independently claimable marker/runtime-parity foundation and Asset V2 contract/required-demand registration; art-consuming Crèche/Port, Locker/Lift, and marker/wayfinding packets are blocked/manual until their exact approved Dropbox inputs and verified Asset V2 states exist. The later Field Terminal, Continuity Port, Witness/Forum/Adjudication, supply, Sepulcher and gate-access concepts remain deferred pending real gameplay owner posting. This overlay is distinct from the off-route perimeter-support AP0–AP4 families described above.
+Implementation is sliced into independently claimable marker/runtime-parity foundation and Asset V2 contract/required-demand registration; art-consuming Crèche/Port, Locker/Lift, and marker/wayfinding packets are blocked/manual until their exact approved Dropbox inputs and verified Asset V2 states exist. Future art remains deferred: the Hub's Adjudication Dais and optional Crown Transfer route are real owners, ordinary Port deployment is in the claimed H5 packet but not landed, and no separate service, memorial, or gate-control owner is posted. The [Deferred-Family Ownership Crosswalk](AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md) records the full 36-state map. This overlay is distinct from the off-route perimeter-support AP0–AP4 families described above.

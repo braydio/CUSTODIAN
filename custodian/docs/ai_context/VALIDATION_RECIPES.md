@@ -2,6 +2,26 @@
 
 Canonical validation guide for CUSTODIAN agent work.
 
+## Forlorn Ritualant Four-Cue Score
+
+Run the focused integration smoke and retain the existing encounter route and
+completion regressions. The smoke verifies the four imported resources, reveal
+and committed combat loops, fresh explicit-pin and final-anchor one-shots,
+violent resolution routing, scoped Ninth Answer duck, single music player,
+restore behavior, and successor-zone ownership:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
+godot --headless --path custodian --script res://tools/validation/ash_bell_scene_smoke.gd
+godot --headless --path custodian --script res://tools/validation/forlorn_ritualant_completion_smoke.gd
+python3 custodian/tools/assets/asset.py needs --check
+python3 custodian/tools/validation/asset_requirements_smoke.py
+```
+
+The smoke is structural/runtime-state evidence; it does not certify subjective
+mix balance, dialogue intelligibility, or seamless loop boundaries. Those
+remain human in-game listening checks.
+
 ## Validation Failure Attribution
 
 When a canonical runner report is red, keep that report unchanged and inspect every failure, timeout, infrastructure error and tier skip with the read-only triage tool. A baseline is used only when explicitly supplied; its exact file SHA-256 is emitted, and only a unique same-test-ID/same-tier result is comparable. Missing or mismatched evidence remains `unknown`. Baseline-red and candidate-only-red classifications are evidence labels; the candidate failure remains blocking.
@@ -141,12 +161,13 @@ developer's dirty art worktree.
 ## Persistent Compound Layout
 
 ```bash
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/compound_archetype_profile_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
 ```
 
-These cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
+The profile smoke covers repeatability for the seven fixed seeds, legacy geometry preservation, rejection of unknown IDs, room/connector identity, and level-data metadata export. The existing smokes cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
 
 ## Terminal Sensors Intelligence
 
@@ -1020,7 +1041,8 @@ godot --headless --script tools/validation/sundered_keep_mapper_smoke.gd
 
 The underlay debug smoke retains the focused underlay-only runtime check.
 The unified mapper smoke proves the tool previews the actual production Keep,
-owns the level and collision documents, retains 127 rails and the 01–99
+owns the level and collision documents, verifies authored-rail-to-runtime parity
+rather than an obsolete hard-coded rail count, retains the 01–99
 palette/stamp/undo toolset, exposes on-map selection/movement/creation for
 complete spatial and siege placement authority, and keeps Return Mooring's
 linked records aligned under one bundle operation.
@@ -1561,6 +1583,23 @@ versioned `InfrastructureRegistry` boundary. It does not imply project-wide
 save-manager integration.
 
 ## Awakening Registration and Handoff
+
+For the AP0 perimeter foundation, run the deterministic camera coverage ledger
+and no-art presentation contract before the existing Awakening route checks:
+
+```bash
+cd custodian
+godot --headless --path . --script res://tools/validation/awakening_perimeter_support_smoke.gd
+python3 tools/assets/asset.py plan awakening_creche_perimeter_support --json
+python3 tools/assets/asset.py status awakening_creche_perimeter_support --json
+python3 tools/assets/asset.py needs --check
+```
+
+The smoke refreshes
+`docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+Run all nine family plans/statuses and `asset doctor` when validating AP0; the
+global doctor can report pre-existing unrelated catalog hash mismatches, which
+must be separated from this foundation’s pending contracts.
 
 Run after changing Awakening plate registration, seam probes, or South Reach
 completion. The evidence pass emits five authored-region captures in this order:

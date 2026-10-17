@@ -1,8 +1,8 @@
 # Streaming Reveal Presentation V1 — Archive Resolve
 
 **Project:** CUSTODIAN  
-**Status:** AR1–AR4 technical lineage complete; 2026-10-10 human gameplay refinement approved as target for the active playtest-polish successor; revised visual judgment pending  
-**Last updated:** 2026-10-10  
+**Status:** AR1–AR4 technical lineage complete; 2026-10-14 live playtest reconfirmed near-player singleton, connected-cascade, world-cover, and blocky-front defects; split successor series authored/ready  
+**Last updated:** 2026-10-14  
 **Runtime authority:** presentation only  
 **Parent streaming contract:** `design/02_features/procgen/STREAMING_PROCGEN_REVEAL.md`
 
@@ -23,14 +23,12 @@ navigation, residency, or world semantics.
 
 ## 2026-10-10 Live Playtest Revision (Target, Not Yet Runtime Truth)
 
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
 The user likes the current graphite/brass dissolve but says the visual frontier is
 too close to the Operator, individual square cells and a sketched lattice dominate,
 apparently unrequested/unstreamed space looks dead, and neighboring parts of a
-region often resolve as late singletons. The targeted successor is
-`PROCGEN_ARCHIVE_RESOLVE_PLAYTEST_POLISH_V1.md` and its paired review, not an
-AR4 correction. Numeric values below are **design targets** until landed and
+region often resolve as late singletons. The original broad successor has been parked and split into four lower-token execution slices: `PROCGEN_STREAMING_NEAR_PLAYER_PRIORITY_V1.md`, `PROCGEN_ARCHIVE_RESOLVE_CONNECTED_CASCADE_V1.md`, `PROCGEN_ARCHIVE_RESOLVE_WORLD_COVER_V1.md`, and `PROCGEN_ARCHIVE_RESOLVE_SMOOTH_FRONT_V1.md`, each with its paired review. Numeric values below are **design targets** until landed and
 visually approved; AR4's current live production distance cap is still 11.
 
 - Increase normal visual-start radial reach initially to **18 +/-2 tiles**
@@ -66,11 +64,19 @@ visually approved; AR4's current live production distance cap is still 11.
   that show connected outward currents, a calmer larger lead distance,
   non-static abstract unresolved space, and no late square afterthoughts.
 
-**Implementation and validation owner:** the active playtest-polish
-implementation/review packet pair. This subsection supersedes the old **11-tile
+**Implementation and validation owner:** the split four-slice implementation/review series above. The first slice owns authoritative streaming priority; the latter three remain presentation-only. This subsection supersedes the old **11-tile
 numeric target** and any older instructions to preserve the exact AR4 distance
 without human permission; it does not retroactively claim the new behavior is
 already in production.
+
+
+## 2026-10-14 Execution Split And New Runtime Finding
+
+The new gameplay capture distinguishes two causes that must not be conflated. First, authoritative streaming work is chunk-sorted only at enqueue time and later drains through shared FIFO-style pending/prepared queues; after the Operator moves, already-requested work is not automatically reprioritized around the new player position. That is why tiny 1–3-cell unresolved pockets can remain close to the Operator even before Archive Resolve presentation ordering is considered. `procgen-streaming-near-player-priority-v1` owns that runtime-ordering correction.
+
+Second, committed READY cells are still visually started by Archive Resolve's rotating READY scan, so presentation can independently create late singleton squares. `procgen-archive-resolve-connected-cascade-v1` owns connected wavefront ordering. `procgen-archive-resolve-world-cover-v1` then makes unresolved space one coherent world layer, and `procgen-archive-resolve-smooth-front-v1` replaces the visible tile-stepped silhouette with a continuous world-space contour while leaving tile truth underneath.
+
+This split is intentional: runtime proximity/pocket closure must be correct even with presentation disabled, while visual cascade/coverage/contour must remain presentation-only.
 
 ## Core Design Lock
 

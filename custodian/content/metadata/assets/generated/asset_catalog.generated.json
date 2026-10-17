@@ -14256,6 +14256,100 @@
           "source_asset": null
         }
       }
+    },
+    "ash_bell_surface_lift_ingress_props_v1": {
+      "kind": "world_prop",
+      "assets": {
+        "field_projector::omni": {
+          "state_id": "field_projector",
+          "direction": "omni",
+          "semantic_identity": [
+            "ash_bell_surface_lift_ingress_props_v1",
+            "world_prop",
+            "body",
+            "interaction",
+            "field_projector",
+            "omni"
+          ],
+          "path": "content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__field_projector__omni__1f__64x128.png",
+          "frames": 1,
+          "frame_size": [
+            64,
+            128
+          ],
+          "sha256": "388836af8b858c838822f3073ffcbbecbec7161d9b6ef886002dc2db78f0b6a7",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "lift_deck::omni": {
+          "state_id": "lift_deck",
+          "direction": "omni",
+          "semantic_identity": [
+            "ash_bell_surface_lift_ingress_props_v1",
+            "world_prop",
+            "body",
+            "interaction",
+            "lift_deck",
+            "omni"
+          ],
+          "path": "content/sprites/environment/ash_bell_surface_lift/ash_bell_surface_lift_ingress_props_v1/runtime/body/ash_bell_surface_lift_ingress_props_v1__body__interaction__lift_deck__omni__1f__448x320.png",
+          "frames": 1,
+          "frame_size": [
+            448,
+            320
+          ],
+          "sha256": "d4dc3ae70bffb04b8389055bc39d83185e64fa6ee3df08031a890fb63825efdc",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
+    },
+    "ash_bell_surface_lift_safety_field_v1": {
+      "kind": "effect",
+      "assets": {
+        "field_engaged::omni": {
+          "state_id": "field_engaged",
+          "direction": "omni",
+          "semantic_identity": [
+            "ash_bell_surface_lift_safety_field_v1",
+            "effect",
+            "fx",
+            "effect",
+            "field_engaged",
+            "omni"
+          ],
+          "path": "content/sprites/effects/ash_bell_surface_lift/runtime/ash_bell_surface_lift_safety_field_v1/ash_bell_surface_lift_safety_field_v1__fx__effect__field_engaged__omni__6f__512x192.png",
+          "frames": 6,
+          "frame_size": [
+            512,
+            192
+          ],
+          "sha256": "32e3a5740dee73b4d27699577bb32770e66240892403c5aaea3513a36c347730",
+          "provenance": "authored",
+          "source_asset": null
+        },
+        "field_idle::omni": {
+          "state_id": "field_idle",
+          "direction": "omni",
+          "semantic_identity": [
+            "ash_bell_surface_lift_safety_field_v1",
+            "effect",
+            "fx",
+            "effect",
+            "field_idle",
+            "omni"
+          ],
+          "path": "content/sprites/effects/ash_bell_surface_lift/runtime/ash_bell_surface_lift_safety_field_v1/ash_bell_surface_lift_safety_field_v1__fx__effect__field_idle__omni__6f__512x192.png",
+          "frames": 6,
+          "frame_size": [
+            512,
+            192
+          ],
+          "sha256": "c9d8e42fed0a3244be1904eb9117b189260d1e6a35410d8e3d0ecfa1db68c68c",
+          "provenance": "authored",
+          "source_asset": null
+        }
+      }
     }
   }
 }
