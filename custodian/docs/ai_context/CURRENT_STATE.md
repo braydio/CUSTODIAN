@@ -19,12 +19,15 @@ connected authored exhibit wings and an intentionally sealed central arena
 threshold. The production scene contains no Operator/controller/camera or map
 generator; its standalone playtest wrapper owns the real Operator and standard
 runtime systems. Reset-on-entry ingress/return preserves the same Operator.
-The gallery is a shell only: generated map realization, exhibit catalog,
-controls, and runtime inspection remain later PGA slices. Its implementation
-and independent fresh-context review are archived **passed** (6 focused checks,
-46/46 changed-file checks, zero blocking defects or material gaps). PGA-2 exhibit catalog and PGA-3 generated arena are both ready/auto with
-PGA-1's review dependency satisfied; PGA-3's refreshed paired authoring gate
-and managed index passed at `95c89d47`. Neither implementation has landed. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+The gallery's PGA-1 shell and independent fresh-context review are archived
+**passed**. PGA-2 implementation now supplies a validated manifest and gallery-local,
+inspect-only selector for real biome profiles, region-kind semantics, site API
+references, and registered terrain-stamp previews; population is explicitly
+N/A because this slice has no safe read-only query. It does not generate a map
+or alter world authority. PGA-2 passed its focused catalog and shell smokes plus
+42/42 changed-file checks; its paired review follows implementation landing.
+PGA-3 arena status remains governed by its packet and dispatcher lifecycle. See
+`design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
 
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 
