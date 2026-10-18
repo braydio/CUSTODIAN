@@ -52,6 +52,7 @@ Ready/Auto view, never selection authority.
 - Evidence:
 - Task-specific authority:
 - Work surface:
+- Publication inputs: `<comma-separated repository paths already required at claim time | none>`
 - Change:
 - Preserve:
 - Non-goals:
@@ -81,6 +82,23 @@ The command runs in the **claimed worktree** and writes ignored output under
 coordination checkout. Do not use broad patterns such as `custodian/**` when
 the packet can name the actual owners/consumers/tests. The pack is a convenience
 snapshot; exact live files and the current worktree diff remain authority.
+
+### Publication completeness
+
+A packet is executable only when every **existing input it requires at claim**
+is published to `origin/main` atomically with that packet and its paired
+review, including necessary scripts, tests, data contracts, schemas, manifests,
+and working notes. List exact repo-relative paths in `Publication inputs:`;
+use `none` only when no additional claim-time artifacts are needed. Files the
+packet *plans to create* are outputs, not pre-existing publication inputs.
+
+Do not use an exclusively chat-hosted ZIP, sandbox file, screenshot or snippet
+as a required implementation input. Provide an auditable tracked file on
+`origin/main`, and verify those paths exist at the main commit before dispatch.
+Host-private evidence must remain private; if it is indispensable, explicitly
+pin the safe owner-controlled local verification route and fail closed when
+unavailable. Publication does not bypass claim locks, dependency truth or
+independent review. Enforce the same rule when authoring correction packets.
 
 ## Refresh Planning Authority
 

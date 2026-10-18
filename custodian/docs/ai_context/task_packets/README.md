@@ -48,6 +48,16 @@ normal closeout.
 
 ### Ready / Auto Dispatch
 
+**Index semantics:** the following Ready/Auto list reflects authored
+metadata, not the dispatcher's live eligibility. A packet can appear here
+while dependencies, locks, original claims or review acceptance block it.
+Use `python3 custodian/tools/agent/dispatch.py audit --json` for the live
+executable count and `python3 custodian/tools/agent/queue_frontier.py` on
+that audit for a read-only ranking of root blockers. New packets must include
+their existing required tools/files in the same main publication as the
+packet and its paired review, not as chat-only downloads.
+
+
 
 
 <!-- task_packet_index:managed:start -->
@@ -55,6 +65,7 @@ normal closeout.
 - `AGENT_PAIRED_REVIEW_SOURCE_BEARING_ARCHIVE_GATE_V1.md` — Allow one trace-pinned source-bearing archive transition to validate without weakening the existing archive-only and main-sync-merge provenance gates.
 - `COORDINATION_ROOT_DIRTY_PREVENTION_RECOVERY_V1.md` — Stop task/agent tooling from leaving the persistent CUSTODIAN coordination checkout dirty, and give the user a safe, observable, low-effort way to recover un...
 - `LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Guarantee **at most one pending or consumed physical allocation per F14-managed logical actor identity**, including cancel, rollback, stale callback and camp...
+- `QUEUE_EXECUTION_FRONTIER_RESTORATION_V1.md` — Restore a truthful P0 executable frontier; rank root blockers and resolve only safely authorized gates without claim theft.
 - `REVIEW_AGENT_NEXT_EXECUTION_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` — Independently establish that R0-01 is fixed: scoped general fallback fails closed without weakening dispatcher authority or the pair budget.
 - `REVIEW_AGENT_PAIRED_REVIEW_FINDINGS_CLOSEOUT_V1.md` — Independently falsify the new nonpassing administrative-closeout, accepted-review dependency and same-run recovery contracts without touching the preserved R...
 - `REVIEW_AGENT_PAIRED_REVIEW_GODOT_CACHE_ACCESS_V1.md` — Independently prove the paired-review sandbox gains only the CUSTODIAN validation cache access it needs while retaining real Godot concurrency controls and r...
@@ -63,6 +74,7 @@ normal closeout.
 - `REVIEW_AGENT_PAIRED_REVIEW_SOURCE_SPAN_MAIN_SYNC_RECOVERY_V1.md` — Independently falsify main-sync trace binding and source-span integrity without touching either preserved review run.
 - `REVIEW_COORDINATION_ROOT_DIRTY_PREVENTION_RECOVERY_V1.md` — Independently falsify the prevention/snapshot/recovery claims, specifically that no user-owned coordination-root file or Git index can be modified without ve...
 - `REVIEW_LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Independently verify managed spawn **at-most-once** reservation, cancellation/replay safety and camp/global quota convergence at the real F04 scheduler queue...
+- `REVIEW_QUEUE_EXECUTION_FRONTIER_RESTORATION_V1.md` — Independently falsify frontier classification and protection of existing claims, recovery evidence and review truth.
 - `REVIEW_WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md` — Independently determine whether correction cycle 1 resolves original finding R0-01 for W1's read-only inventory acceptance, without changing or erasing the o...
 - `REVIEW_WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Independently verify the worktree backlog worktree backlog dirty and unique preservation v1 implementation against exact proof of no lost work, no stolen cla...
 - `WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Prove that all original dirty work and unique unlanded HEAD history have byte-safe recovery copies before any archive, adoption or retirement decision.

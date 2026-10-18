@@ -140,6 +140,27 @@ have nothing to do with the legacy hosted terminal.
   standalone services; merely adding or editing YAML does not apply it.
   See `RENDER_DEPLOY_POLICY.md` for the safe validation procedure.
 
+## Atomic Task Packet Publication (required)
+
+When a new implementation/correction packet and its paired review are published,
+publish every existing task-required supporting tool, script, test fixture, schema,
+configuration, manifest, and authoring note in the **same atomic main publication**
+as those packets. The packet must enumerate these concrete paths under
+`Publication inputs:` (or `none` if no auxiliary inputs are needed). Confirm
+that every declared input is tracked at the landed `origin/main` SHA before
+claiming. A sandbox download, pasted script, private chat attachment, stale
+branch, or unmerged worktree is **not** a published dependency. Do not instruct
+Codex to retrieve required implementation inputs exclusively from ChatGPT.
+
+Distinguish already-required inputs from source files the workstream is expressly
+tasked with creating. If a prerequisite is host-private or cannot safely be
+committed, describe the original owner and local verification procedure; do not
+pretend the data was published or silently bypass its gate. Such a packet cannot
+claim readiness if that prerequisite is indispensable and unavailable. This rule
+does **not** authorize altering third-party claims, review verdicts, locks, or
+worktree preservation requirements. Preserve the ordinary workflow and review
+contracts.
+
 ## Commit Policy
 
 Normal implementation work follows `implement → validate → commit → land on
