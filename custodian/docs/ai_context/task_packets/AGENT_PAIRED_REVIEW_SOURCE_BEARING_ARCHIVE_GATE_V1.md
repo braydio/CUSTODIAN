@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `security-sensitive archive/source provenance and same-run reviewer recovery require a fresh independent negative-control review`
 - Reviewed main: `099c44353dfd258c233016b88cc50ba2dd502ef1`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Visual review: `none`
 - Goal: `Allow one trace-pinned source-bearing archive transition to validate without weakening the existing archive-only and main-sync-merge provenance gates.`
 - Completion boundary: `One narrowly extended source-span resolver and real-Git regression tests, landed with a SEPARATE code/test implementation commit followed by archive-only closeout, then an independent paired review. The two earlier preserved review runs are not resumed or altered by this implementation.`
@@ -39,7 +39,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Refresh reason: `none`
 - Next action: `Fresh independent review of the actual source-bearing-archive case, historical archive-only/main-sync behavior and negative controls. After acceptance, attempt read-only same-run recovery plan for preserved 20261018T065436Z-f77aa52cf7a1, never a new claim.`
 - Blockers or open questions: `The existing source-span review holds a separate source-span-provenance claim; no reviewer launched. A narrowly distinct maintenance lock is used only to avoid modifying that preserved review identity; no parallel reviewer launch is authorized.`

@@ -13,7 +13,7 @@
 - Review target workstream: `agent-paired-review-source-bearing-archive-gate-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_SOURCE_BEARING_ARCHIVE_GATE_V1.md`
 - Reviewed main: `099c44353dfd258c233016b88cc50ba2dd502ef1`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -36,7 +36,7 @@
 - Next packet state: `host_validation_recovery; resume exact preserved 20261018T065436Z-f77aa52cf7a1 after accepted review`
 - Refresh owner: `execution-agent`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Refresh reason: `none`
 - Next action: `After independent PASS, re-plan exact existing source-span reviewer run from clean coordinator using pinned claim and immutable evidence; authorize same-run recovery only if plan and evidence manifest match. If that review passes, similarly recover existing host-validation correction review 20261018T014101Z-f4fd619029aa; only then regenerate/apply authorized W1 plan.`
 - Blockers or open questions: `Original review claims and evidence preserved; W2/W5 remain blocked. Never create replacement review runs to work around a failed same-run continuation.`
