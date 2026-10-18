@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-integrator-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-vehicle-presentation-runtime-v1, review-vehicle-art-derivation-v1`
