@@ -2,7 +2,7 @@
 
 **Status:** active  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b  
-**Current reviewed main:** `ce07a578c39bad0b4eacf8bb02ee09eb59241801`
+**Current reviewed main:** `f12717e61213d7d30ae6b3e670d45e71507cd784`
 
 ## Program boundary
 
@@ -31,7 +31,7 @@ The first real advanced R2 vehicle is a later content slice that proves reuse; i
 | V5R | paired review of V5 | ready/auto | independent asset/runtime proof | V5 |
 | V6 | `vehicle-recovery-presentation-manifests-v1` | ready/auto, dependency-gated | shared recovery FX/component family contracts | V5R |
 | V6R | paired review of V6 | ready/auto | independent Asset V2 contract proof | V6 |
-| V7 | production recovery art creation/ingest | not authored yet; human-art boundary | image generation/source masters + Asset V2 ingest | V6R |
+| V7 | `vehicle-recovery-fx-production-v1` | authored draft/manual; authoring handoff auto, dependency-gated | six shared recovery FX source normalization + Asset V2 ingest + runtime wiring | V6R |
 | V8 | first real R2 TECHNICAL vehicle | future content slice | new vehicle class using reviewed reusable systems | V3R minimum; ideally V7 |
 
 ## V0 — Lifecycle hardening
@@ -196,13 +196,15 @@ See `VEHICLE_RECOVERY_ART_MANIFEST.md`.
 
 The goal is reuse: every advanced vehicle should not require a bespoke scan beam, missing-part icon vocabulary, and tool-spark system unless its design genuinely needs one.
 
-## V7 — Production art
+## V7 — Shared recovery FX production
 
-V7 begins only after family contracts and consumers are stable.
+The first authored V7 production slice is `vehicle-recovery-fx-production-v1`, paired with `review-vehicle-recovery-fx-production-v1`.
 
-Human/art-generation work creates source masters under the exact `asset_drop/source_work/.../` paths, normalizes them to the family inboxes, ingests through Asset V2, then performs gameplay-scale visual review.
+Six human-selected shared recovery FX source masters now have one immutable implementation-input handoff. V7 preserves those source bytes, performs deterministic technical normalization to the reviewed 256px family contract, ingests them through Asset Pipeline V2, builds one shared SpriteFrames presentation resource, and wires the real scanner/install/recovery event seams to a reusable presenter.
 
-Do not hand-copy generated PNGs into runtime folders.
+The V7 packet does **not** reopen art direction or mechanics. The six selected states are `scan_sweep_01`, `fault_ping_01`, `install_sparks_01`, `power_route_01`, `bootstrap_01`, and `restore_success_01`. Component icons/props, optional `restore_failure_01`, Field Scout body polish, and post-destroy smoke remain separate later art work.
+
+Do not hand-copy generated PNGs into runtime folders and do not let presentation become a second recovery state machine.
 
 ## V8 — First advanced R2 vehicle proof
 
