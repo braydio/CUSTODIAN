@@ -41,6 +41,40 @@ is permitted, and `paired_review_runner.py post_exit_recovery` remains a
 protected manual-resolution state. Do not infer a dead session merely from
 elapsed time, or mark a findings-only review passed to release its lock.
 
+### Paired-review prelaunch host-validation recovery
+
+The paired-review runner supports a bounded continuation for a run stopped in
+`host_validation_recovery`, before any reviewer was launched. This is a
+same-claim recovery: it never dispatches a second claim and never edits the
+original failed report or run metadata. Start from a clean coordination checkout
+on `main` or detached exactly at cached `origin/main`, confirm the supervisor
+lock is not held, and inspect a read-only plan:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --plan
+```
+
+The plan pins the run, claim receipt, original worktree/branch, reviewed main,
+canonical archived implementation identity, lifecycle-proven source span and
+complete original evidence manifest. Apply only the exact freshly emitted
+`plan_sha256`, with explicit authorization to launch a new independent reviewer:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --apply \
+  --plan-sha256 <exact-plan-sha256> --authorize-fresh-reviewer-context
+```
+
+Corrected host validation and reviewer evidence are created exclusively under
+`continuation-01/`; a validation failure, interruption, changed parent evidence,
+or nonpassing reviewer remains preserved and blocks replay. The canonical
+implementation receipt SHA remains the archive-introduction commit. When that
+commit contains only packet archival/index changes, the host validates the
+separately provenance-pinned source-bearing span immediately preceding it.
+Neither a green validation report nor an incomplete continuation is a review
+PASS. Inspect the child metadata and artifacts before any further recovery.
+
 ## Start or resume
 
 Derive one stable lowercase kebab-case ID for a coherent task. Run from the
