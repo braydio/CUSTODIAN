@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-source-span-main-sync-recovery-v1`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-source-span-main-sync-recovery-v1`
