@@ -1,41 +1,39 @@
-# Operator 2.5D NE Walk Retargeting — Iteration 005 checkpoint
+# Operator 2.5D NE Walk Retargeting — Iteration 008 R3 checkpoint
 
 Workstream: `operator-2-5d-ne-walk-retargeting`
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
 
 ## Result
 
-Repaired the generated review viewer only. The Python HTML template now preserves JavaScript `\\n` escapes as intended. `write_viewer` extracts the single script from the generated HTML and runs `node --check` before writing. The focused regression builds a synthetic 15-frame viewer, verifies the embedded donor and Operator image bytes, and proves the original literal-newline defect is rejected.
+Executed the authenticated R3 boot-continuity package exactly once on the retained workstream. R3 reproduced the staged R2 candidate pixel-for-pixel before applying bounded, owner-labeled distal-component repairs. The accepted 15-frame motion report, target joints, support schedule, source planted sole, and upper 68 rows remained locked. No solver, Aseprite, runtime art, or FPS changes were made.
 
-The `--repair-viewer-only` command verifies the locked Iteration 004 input hashes, reuses its report and image strips, and writes only a new viewer into a clean staging directory. No animation code, Aseprite project, art, report, frame, or strip changed; Aseprite and rerendering were not invoked.
+The R3 candidate is a review-only preview. It is not final art, runtime-ready, or animation-approved.
 
 ## Evidence and validation
 
-- Iteration 004 report SHA-256: `88aa6469a76b986d0d3ccd2592dfed62903b5461ebe3e6e25c0fdb7f9519e83a`
-- Operator strip SHA-256: `e06daea3f55b6bb8c2787b5874978a72644a7607f0eb37519c03828b3b61bb6a`
-- Knight NE donor SHA-256: `20d462e69e172785d91a8f2b450b1127ea33f32ebc92b96a7216c20fc85383ba`
-- Repaired HTML SHA-256: `fedc0ca4cb3ba4d17d11257b175b9b16e3172c5cad9287f463e4fa825f615117`
-- `operator_ne_motion_plan_smoke.py`: PASS, including generated-script syntax and the original-defect negative control.
-- Firefox headless 158: zero JavaScript console errors; Operator, Knight and detail canvases nonblank (2165, 1286 and 18180 nontransparent pixels); donor and Operator images distinct.
-- Previous/Next, keyboard stepping, F15→F01, enclosed-alpha and pitch toggles, unset-rate guard, 2/8 fps preview advance, and Pause: PASS.
-- `run_validation.py --changed --base HEAD --json`: 2/2 passed, full changed-file coverage.
-- `py_compile` and `git diff --check`: PASS.
+- R3 ZIP SHA-256: `164608648271483e4d080eb556034b0de031c6d10cdf3118b2ee264fd9e221b4`
+- Packet authorization on `origin/main`: `d28646a80000855cd7c1c344222702f6c051314c`
+- Retained branch before implementation checkpoint: `8413c67f6e12b0044b2eb85c9faf0494c6b661b5`
+- Candidate: 15 frames, `1920x128` RGBA, SHA-256 `043d4f43c13e96e5010d5db2a1f58c2118b425c69e668264e613ab5802abc1b1`
+- Compared with R2, R3 added four pixels total: two pixels to a one-pixel distal island in F04 and two to a one-pixel distal island in F05. No support-sole bridge was necessary; per-frame `new_bridge_pixels` is zero in all 15 frames.
+- All 15 report `support_connected_after=true`; 42 original sole pixels across the frames were preserved exactly; all 15 final distal-orphan counts are zero. F07 still reports three total composite components before and after, so these metrics do not establish visual coherence or prove that every component is a defect.
+- R3 changed 3,078 RGBA pixels versus the active source in total, compared with R2's 3,076. The 15-to-1 alpha seam metric remains 230, unchanged from R2.
+- Synthetic moving-frame, support-handoff, topology, detached-sole, bounded-repair, negative-control, hash-lock, and idempotent-registration checks passed. Changed-file validation against `origin/main`: **47/47 passed; zero uncovered files**. `git diff --check` passed.
+- Dropbox review: `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-008-boot-continuity-art-r3/REVIEW_MANIFEST.json` (`delete-after-review`). The publisher returned six review artifacts plus the manifest. Questions cover F07 distal fragments, F05/F12/F13 sole/apron appearance, and F15/F01 continuity.
 
-The playback rates are non-authoritative review controls. Human visual review of gait, crossovers, support handoffs, seam, secondary motion and transparency remains pending.
+## Limits and process feedback
 
-Four curated artifacts were uploaded to `/CUSTODIAN/visual_review/operator-2-5d-ne-walk-retargeting/iter-005-playback-viewer-syntax-repair/REVIEW_MANIFEST.json`; upload succeeded with `delete-after-review` retention. The manifest carries three questions covering the crossovers, support/seam continuity and late-cycle motion/transparency.
-
-## Process Feedback
-
-- Feedback schema: `custodian.task_feedback.v1`
+- Human review is still required for the final raster. The topology metrics are not aesthetic acceptance or runtime/contact approval.
+- The changed-file validator selected 47 checks because the validation registry itself changed; this included unrelated integration checks and a Moment Forge validation. All passed, but the registry change has a broad validation fanout.
+- Process feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
-- Friction severity: low
-- What went wrong: Earlier syntax validation checked a separate JavaScript file and missed the actual generated page.
-- Root cause / contributing factors: A normal Python triple-quoted string interpreted JavaScript `\\n` escapes as physical line breaks.
-- Prevention / pipeline improvement: Use a raw template, parse generated HTML before writing, and retain the emitted-script negative control.
-- Tooling / docs drift discovered: Prior generated-viewer syntax evidence was incomplete; corrected in-scope.
-- Follow-up: fixed-in-scope
-- What worked: Firefox BiDi exercised the actual viewer without adding repository browser dependencies.
+- Friction severity: medium
+- What went wrong: The registry edit expanded the changed-file validation run to 47 checks, and validation generated three unrelated untracked Godot `.gd.uid` files.
+- Root cause / contributing factors: `run_validation.py --changed --base origin/main` maps a changed validation registry to all registered checks; Godot smoke runs generate UID sidecars in the worktree.
+- Prevention / pipeline improvement: Keep the mandated validation result, but consider a future registry-scope preview and deliberate classification of generated UID sidecars.
+- Tooling / docs drift discovered: None in R3's focused topology or reference ownership checks.
+- Follow-up: manual-follow-up
+- What worked: The authored runner verified the prior R2 output and stopped publication on validation failure; no executor-authored art decisions were needed.
 
 ## Next Handoff
 
@@ -44,6 +42,6 @@ Four curated artifacts were uploaded to `/CUSTODIAN/visual_review/operator-2-5d-
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe
-- Refresh reason: Human playback acceptance is required before specifying any further gait correction.
-- Next action: Review the Iteration 005 Dropbox viewer and answer the three manifest questions; update the existing packet before further animation work.
-- Blockers or open questions: Crossover readability, 6→7 and 13→14 handoffs, F15→F01 seam, late-cycle leg excursions, upper-body/robe motion and enclosed transparency remain for human review. Authoritative FPS, landing and runtime publication are not approved.
+- Refresh reason: Human review of Iteration 008 R3 raster and F07/F04/F05 component composition is required before any further art correction.
+- Next action: Review the Dropbox manifest artifacts and decide whether R3 resolves the visible fragments and improves the boot/apron contours; record that verdict in the existing packet before another execution.
+- Blockers or open questions: Visual coherence of F07 and late-cycle boot/apron contours; F15-to-F01 continuity; final art, FPS, main landing, and runtime publication remain unapproved.

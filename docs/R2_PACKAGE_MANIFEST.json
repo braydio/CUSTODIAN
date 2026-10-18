@@ -1,0 +1,24 @@
+{
+  "schema": "custodian.operator_ne_r2_package.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "iteration": "iter-007-motion-anchored-art-r2",
+  "source_authority": "accepted Iteration 004 report plus human-approved semantic Aseprite rig",
+  "art_status": "review_only",
+  "asset_family": "operator_ne_authoring_reference",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe",
+  "files": {
+    "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/alternate_walk_10f_source.png": "897de4c4ca235fab60fa92c8d3f040f997fc14d20c6916ed059b5c924f1e7b06",
+    "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/alternate_walk_15f_source.png": "2ecbde5f764bea4b86666abb26f5acf54e18f103d180290b491663b5129de2ea",
+    "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/idle_lock_15f_source.png": "451eed81d8451aa0b5f81ce50144af05253d641c19cf04be74c96f348c1de802",
+    "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/single_frame_style_source.png": "00a04e87a93ebf6c4de9040538453c2e44f72fbdf1a417bc8529aa22a2cc5551",
+    "custodian/tools/operator/ne_walk_retarget/clean_silhouette_r2.py": "9f96809956afe538df519cd62fa9fd0390b41de206392dea026121244c019b68",
+    "custodian/tools/operator/ne_walk_retarget/fixtures/SINGLE_FRAME.aseprite": "0f5b3346044e60581db6e38e41fc292bd2b49ca05c291ada9591495765166149",
+    "custodian/tools/operator/ne_walk_retarget/register_r2_validation.py": "e27b8335437260509b0c11cff37c9c828c051281413b198a63dfcb46a1acf5fe",
+    "custodian/tools/operator/ne_walk_retarget/run_silhouette_cleanup_r2.sh": "ffb960a74b450ca423a89ae32ddf468f2a1ee510feb4f4da8578962a38a206f2",
+    "custodian/tools/operator/ne_walk_retarget/smoke_clean_silhouette_r2.py": "b3bdb9f54f2f5f15fa8b933ed25676dab6bd160da507842a56d55cbc6d2de580",
+    "custodian/tools/validation/operator_ne_r2_reference_smoke.py": "d7ec01f9249f48632d21238f3adcea4932e892efd222548ac95e8e51c25f560d",
+    "docs/R2_AUTHORING_SPEC.md": "0b8f85c9de70e06805bc27d6333d1f4b005c81239327779ceee8e98982544d18",
+    "docs/R2_EXECUTION.md": "4a4f136620186ce82e5823a5b730ec68dc8ee6288ac92b13d44fee2ad2bd3d8b",
+    "docs/REFERENCE_MANIFEST.json": "d9e7bcc0102149cbde8226148594183b483e8d9bb7f64936bca34b6bc6d4756c"
+  }
+}

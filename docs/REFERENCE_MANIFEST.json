@@ -1,0 +1,57 @@
+{
+  "schema": "custodian.operator_ne_cleanup_intake.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe",
+  "asset_family": "operator_ne_authoring_reference",
+  "state": "review_source_only",
+  "character": "operator",
+  "direction": "NE",
+  "frame_dimensions": [
+    128,
+    128
+  ],
+  "layout": "horizontal",
+  "alpha": "binary RGBA",
+  "runtime_fps": null,
+  "files": [
+    {
+      "source_path": "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/alternate_walk_10f_source.png",
+      "sha256": "897de4c4ca235fab60fa92c8d3f040f997fc14d20c6916ed059b5c924f1e7b06",
+      "frames": 10,
+      "dimensions": [
+        1280,
+        128
+      ]
+    },
+    {
+      "source_path": "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/single_frame_style_source.png",
+      "sha256": "00a04e87a93ebf6c4de9040538453c2e44f72fbdf1a417bc8529aa22a2cc5551",
+      "frames": 1,
+      "dimensions": [
+        128,
+        128
+      ]
+    },
+    {
+      "source_path": "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/alternate_walk_15f_source.png",
+      "sha256": "2ecbde5f764bea4b86666abb26f5acf54e18f103d180290b491663b5129de2ea",
+      "frames": 15,
+      "dimensions": [
+        1920,
+        128
+      ]
+    },
+    {
+      "source_path": "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/idle_lock_15f_source.png",
+      "sha256": "451eed81d8451aa0b5f81ce50144af05253d641c19cf04be74c96f348c1de802",
+      "frames": 15,
+      "dimensions": [
+        1920,
+        128
+      ]
+    }
+  ],
+  "script_path": "custodian/tools/operator/ne_walk_retarget/clean_silhouette_r1.py",
+  "runner_path": "custodian/tools/operator/ne_walk_retarget/run_silhouette_cleanup_r1.sh",
+  "output_accepted": false
+}

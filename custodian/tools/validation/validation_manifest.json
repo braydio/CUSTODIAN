@@ -37,6 +37,56 @@
   ],
   "tests": [
     {
+      "id": "operator_ne_r3_topology",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_r3_topology_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "art",
+        "source",
+        "negative_control",
+        "topology"
+      ],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/clean_silhouette_r3.py",
+        "custodian/tools/operator/ne_walk_retarget/smoke_clean_silhouette_r3.py",
+        "custodian/tools/operator/ne_walk_retarget/register_r3_validation.py",
+        "custodian/tools/operator/ne_walk_retarget/run_silhouette_cleanup_r3.sh",
+        "custodian/tools/validation/operator_ne_r3_topology_smoke.py",
+        "docs/R3_AUTHORING_SPEC.md",
+        "docs/R3_EXECUTION.md",
+        "docs/R3_PACKAGE_MANIFEST.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
+      "id": "operator_ne_r2_reference_manifest",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_r2_reference_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "art",
+        "source",
+        "negative_control"
+      ],
+      "owners": [
+        "docs/REFERENCE_MANIFEST.json",
+        "custodian/asset_drop/source_work/operator/operator_ne_walk_cleanup_r1/**",
+        "custodian/tools/operator/ne_walk_retarget/clean_silhouette_r2.py",
+        "custodian/tools/operator/ne_walk_retarget/smoke_clean_silhouette_r2.py",
+        "custodian/tools/operator/ne_walk_retarget/run_silhouette_cleanup_r2.sh",
+        "custodian/tools/operator/ne_walk_retarget/register_r2_validation.py",
+        "custodian/tools/operator/ne_walk_retarget/fixtures/SINGLE_FRAME.aseprite",
+        "docs/R2_PACKAGE_MANIFEST.json",
+        "custodian/tools/validation/operator_ne_r2_reference_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_ne_rigid_raster",
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_rigid_raster_smoke.py",

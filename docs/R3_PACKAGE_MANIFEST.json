@@ -1,0 +1,18 @@
+{
+  "schema": "custodian.operator_ne_r3_package.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "iteration": "iter-008-boot-continuity-art-r3",
+  "source_authority": "locked Iteration 004 geometry; exact R2 candidate at 51e196c0; accepted rig",
+  "code_ownership": "ChatGPT authored / Luna execute only",
+  "art_status": "REVIEW_ONLY",
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe",
+  "files": {
+    "custodian/tools/operator/ne_walk_retarget/clean_silhouette_r3.py": "2a348c1ee0b8b27f1617fade487d3a9aaf87567acc76a650f6ffc806448efe3e",
+    "custodian/tools/operator/ne_walk_retarget/smoke_clean_silhouette_r3.py": "abf55c057ab64388abcca8b0936340abe884413c83bb6656b012c865f7e1a8b6",
+    "custodian/tools/operator/ne_walk_retarget/register_r3_validation.py": "58821e144160f10f70e47362bac811ea2844030dc376c518f21368fb65438fea",
+    "custodian/tools/operator/ne_walk_retarget/run_silhouette_cleanup_r3.sh": "1176e45d08c36ca1b2bfa9a3e2b091ec5cae09da00fce7a7ceaa0a2c61f52fec",
+    "custodian/tools/validation/operator_ne_r3_topology_smoke.py": "9d2ed8de9e88951fba3d6c3058083cfa199e13f3dbe2d9ff2afe4a32bfb190e7",
+    "docs/R3_AUTHORING_SPEC.md": "a58b975f6374f3ff7817b411f2010ea624763dec7f4fadacc546773e1baa1afe",
+    "docs/R3_EXECUTION.md": "8e5eabb7587efc3dfbca66686eb73a3b645563fad1e917e8aa8e866b86b1b67b"
+  }
+}
