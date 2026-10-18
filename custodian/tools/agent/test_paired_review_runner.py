@@ -417,6 +417,12 @@ class PairedReviewRunnerTests(unittest.TestCase):
         lock.touch(exist_ok=True)
         return runner._file_manifest(fixture["run_dir"])
 
+    def _make_host_recovery_worktree_clean(self, fixture):
+        subprocess.run(["git", "-C", str(fixture["worktree"]), "restore", "--source",
+                        fixture["reviewed_main"], "--staged", "--worktree", "--", fixture["active"]],
+                       check=True)
+        fixture["prior_summary"].unlink(missing_ok=True)
+
     def _host_recovery_fakes(self, fixture, *, outcome="findings", fail_validation=False):
         packet = runner.parse_packet(fixture["active"], fixture["review"])
         source_span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
@@ -763,6 +769,117 @@ class PairedReviewRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(runner.RunnerError, "another local process"):
                 runner.plan_host_validation_recovery(
                     fixture["repo"], "review-sample", fixture["run_id"])
+
+    def test_host_recovery_plan_verifies_legacy_header_when_stdout_truncated_before_receipt(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture)
+        self._make_host_recovery_worktree_clean(fixture)
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        claim = fixture["receipt"]
+        stdout = ("CLAIMED\n"
+                  f"workstream: {claim['workstream']}\n"
+                  f"branch: {claim['branch']}\n"
+                  f"worktree: {claim['worktree']}\n"
+                  f"packet: {claim['packet']}\n\n"
+                  "NEXT:\ncd /truncated/worktree\nImplement only this workstr")
+        (fixture["run_dir"] / "claim.stdout").write_text(stdout)
+        (fixture["run_dir"] / "claim-receipt.json").unlink()
+        original_manifest = runner._file_manifest(fixture["run_dir"])
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "commits": [], "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"])
+        self.assertEqual(plan["branch"], claim["branch"])
+        self.assertEqual(plan["packet"], claim["packet"])
+        self.assertEqual(plan["worktree"], str(fixture["worktree"].resolve()))
+        self.assertEqual(plan["reviewed_main"], fixture["reviewed_main"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
+        self.assertFalse((fixture["run_dir"] / "claim-receipt.json").exists())
+
+    def test_host_recovery_legacy_header_and_structured_receipt_disagreements_fail_closed(self):
+        for structured in (False, True):
+            with self.subTest(structured=structured):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_host_recovery(fixture)
+                self._make_host_recovery_worktree_clean(fixture)
+                metadata_path = fixture["run_dir"] / "metadata.json"
+                metadata = json.loads(metadata_path.read_text())
+                metadata["implementation_commit"] = fixture["reviewed_main"]
+                metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+                claim = fixture["receipt"]
+                stdout = ("CLAIMED\n"
+                          f"workstream: {claim['workstream']}\n"
+                          f"branch: {claim['branch']}\n"
+                          f"worktree: {claim['worktree']}\n"
+                          f"packet: {claim['packet']}\n\nNEXT:\ncut")
+                (fixture["run_dir"] / "claim.stdout").write_text(stdout)
+                if structured:
+                    bad = {**claim, "worktree": str(fixture["repo"] / "foreign-worktree")}
+                    (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(bad))
+                else:
+                    (fixture["run_dir"] / "claim-receipt.json").unlink()
+                    (fixture["run_dir"] / "claim.stdout").write_text(
+                        stdout.replace(f"worktree: {claim['worktree']}", "worktree: /foreign/worktree"))
+                span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                        "commits": [], "paths": ["custodian/tools/agent/sample.py"],
+                        "provenance": {"kind": "test-fixture"}}
+                with patch.object(runner, "resolve_target_implementation_commit",
+                                  return_value=(fixture["reviewed_main"], None)), \
+                     patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+                     self.assertRaisesRegex(runner.RunnerError, "claim|worktree|identity"):
+                    runner.plan_host_validation_recovery(
+                        fixture["repo"], "review-sample", fixture["run_id"])
+
+    def test_host_recovery_apply_reuses_legacy_verifier_before_any_child_write(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture)
+        self._make_host_recovery_worktree_clean(fixture)
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        claim = fixture["receipt"]
+        stdout = ("CLAIMED\n"
+                  f"workstream: {claim['workstream']}\n"
+                  f"branch: {claim['branch']}\n"
+                  f"worktree: {claim['worktree']}\n"
+                  f"packet: {claim['packet']}\n\nNEXT:\ncut")
+        (fixture["run_dir"] / "claim.stdout").write_text(stdout)
+        (fixture["run_dir"] / "claim-receipt.json").unlink()
+        original_manifest = runner._file_manifest(fixture["run_dir"])
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "commits": [], "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test-fixture"}}
+        parsed = runner.parse_packet(fixture["active"], fixture["review"])
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             patch.object(runner, "validate_eligible_review",
+                          return_value=(fixture["active"], fixture["review"], parsed)), \
+             patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
+             patch.object(runner, "_worktree_review_artifacts",
+                          side_effect=runner.RunnerError("stopped after exact claim verification")) as stop:
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"])
+            with self.assertRaisesRegex(runner.RunnerError, "stopped after exact claim verification"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                    plan_sha256=plan["plan_sha256"],
+                )
+        stop.assert_called_once()
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
 
     def test_completed_host_continuation_is_reusable_only_with_exact_parent_manifest(self):
         fixture = self._continuation_fixture()

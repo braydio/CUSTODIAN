@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-host-validation-recovery-v1-review-corrections-1`
 - Kind: `correction`
-- Status: `ready`
+- Status: `in_progress`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -26,7 +26,7 @@
 - Summary backlink: `Repeat the exact Authoring chat URL in correction/review summaries and Next Handoff.`
 - Goal: `The read-only recovery planner can verify and plan the exact preserved W1 claim whose historical dispatcher output is truncated, without changing any original evidence.`
 - Completion boundary: `Unify strict structured-claim verification and narrowly bounded legacy-header verification across host recovery planning and apply; add adversarial regression coverage for the exact old run shape.`
-- Current measured state: `The preserved W1 run is still host_validation_recovery at 20261017T200919Z-e0b32b5c1a3b. It has no claim-receipt.json; claim.stdout contains a complete CLAIMED identity header but its trailing structured sentinel is truncated. metadata.json omits branch/worktree/packet, while recovery_worktree records the exact worktree. The new read-only plan fails with “dispatcher did not return exactly one structured claim receipt” because _host_recovery_plan_unlocked calls parse_claim_receipt directly. The continuation path has a legacy helper but it requires the absent metadata fields.`
+- Current measured state: `The preserved W1 run is host_validation_recovery at 20261017T200919Z-e0b32b5c1a3b. Its claim.stdout has no claim-receipt.json or structured sentinel; the complete CLAIMED identity header is intact and the output is cut off during NEXT instructions. The corrected planner verifies that header, but then fails its required pinned-worktree gate: local branch HEAD e621d0329f49447f41d61e95b4df9220690625bb is three commits ahead of reviewed_main b5b85ca47a1eacad9879c6abf55257d378ae0c91. origin/agent/review-worktree-backlog-census-and-safety-ledger-v1-review-corrections-1 remains at b5b85ca4. The worktree is clean; all three unique commits change only OPERATOR_2_5D_NE_WALK_RETARGETING.md. The runner correctly refuses to review from the moved local branch.`
 - Evidence: `The original private run directory under .git/custodian-review-runs/review-worktree-backlog-census-and-safety-ledger-v1-review-corrections-1/20261017T200919Z-e0b32b5c1a3b; its unchanged metadata.json, claim.stdout, RECOVERY.md, validation.json and coordinator-validation.json; current paired_review_runner.py::_host_recovery_plan_unlocked and _legacy_claim_receipt; the reproduced read-only plan failure.`
 - Task-specific authority: `The archived parent implementation and accepted review; paired_review_runner.py owns same-claim recovery; dispatch.py owns current claim/ref eligibility; the original W1 run's claim, metadata and reports are immutable evidence.`
 - Work surface: `custodian/tools/agent/paired_review_runner.py and custodian/tools/agent/test_paired_review_runner.py; bounded lifecycle wording only if needed.`
@@ -47,21 +47,22 @@
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success | partial | blocked`
-- Friction severity: `none | low | medium | high`
-- What went wrong: `none | ...`
-- Root cause / contributing factors: `none | ...`
-- Prevention / pipeline improvement: `none | ...`
-- Tooling / docs drift discovered: `none | ...`
-- Follow-up: `none | fixed-in-scope | <workstream-id> | manual-follow-up`
+- Outcome: `blocked`
+- Friction severity: `high`
+- What went wrong: `The exact W1 plan advanced beyond the legacy claim-header failure but stopped because the preserved local claim branch has three unique commits beyond its pinned baseline.`
+- Root cause / contributing factors: `The W1 worktree branch contains three unrelated Operator task-packet commits absent from its remote claim ref; those bytes and commits must remain preserved.`
+- Prevention / pipeline improvement: `Keep the moved-branch gate fail-closed; resolve ownership and choose a preservation-safe review checkout strategy before any reviewer launch.`
+- Tooling / docs drift discovered: `The W1 host_validation_recovery metadata records recovery_worktree and the remote claim remains pinned, but the attached local branch has advanced beyond reviewed_main.`
+- Follow-up: `manual-follow-up`
+- What worked: `The legacy claim header is now checked against canonical claim identity, and the planner exposes the later moved-branch blocker without changing the original run.`
 
 ## Next Handoff
 
-- Next workstream: `review-agent-paired-review-host-validation-recovery-v1-review-corrections-1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `none`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62`
-- Refresh reason: `none`
-- Next action: `Run the fresh independent correction review after the implementation lands and archives.`
-- Blockers or open questions: `The exact legacy claim must continue to validate against the preserved original run; no W1 continuation may launch if identity verification fails.`
+- Refresh reason: `The exact W1 claim's attached local branch is three commits beyond reviewed_main while its remote claim remains pinned; a safe route must preserve all commits and avoid reviewing unrelated branch content.`
+- Next action: `Review the exact W1 branch/worktree evidence and authorize a separate preservation-safe recovery design before any continuation or reviewer launch.`
+- Blockers or open questions: `The W1 review remains in host_validation_recovery. Its worktree and three unique commits, claim ref, and failed run evidence remain protected. W2 and W5 remain blocked.`

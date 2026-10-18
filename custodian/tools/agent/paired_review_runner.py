@@ -1526,19 +1526,11 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
     branch = f"agent/{workstream}"
     if original.get("branch") not in (None, branch):
         raise RunnerError("original run branch identity is not the canonical review branch")
-    receipt_file = run_dir / "claim-receipt.json"
-    if receipt_file.is_file():
-        try:
-            receipt_value = json.loads(receipt_file.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise RunnerError("original structured claim receipt is malformed") from exc
-        receipt_text = CLAIM_SENTINEL + json.dumps(receipt_value, sort_keys=True)
-    else:
-        try:
-            receipt_text = (run_dir / "claim.stdout").read_text(encoding="utf-8")
-        except OSError as exc:
-            raise RunnerError("original dispatcher claim receipt is missing") from exc
+    receipt, receipt_source = _host_validation_claim_receipt(
+        run_dir, workstream, repo, original, active_path,
+    )
     if completed_child:
+        receipt_text = CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True)
         sentinels = [line for line in receipt_text.splitlines() if line.startswith(CLAIM_SENTINEL)]
         if len(sentinels) != 1:
             raise RunnerError("completed run's original claim receipt is missing or ambiguous")
@@ -1550,8 +1542,6 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
                 or receipt_value.get("verified") is not True or receipt_value.get("workstream") != workstream):
             raise RunnerError("completed run's original claim receipt identity is invalid")
         receipt = receipt_value
-    else:
-        receipt = parse_claim_receipt(receipt_text, workstream, repo)
     worktree = Path(receipt["worktree"]).resolve()
     recorded_worktree = original.get("recovery_worktree") if original.get("phase") == "host_validation_recovery" else original.get("worktree")
     if (receipt.get("branch") != branch or receipt.get("packet") != active_path
@@ -1664,16 +1654,19 @@ def _verify_run_evidence(run_dir: Path, expected: dict[str, str], continuation_d
         raise RunnerError("original paired-review run evidence changed during continuation")
 
 
-def _legacy_claim_receipt(stdout: str, workstream: str, repo: Path, metadata: dict) -> dict:
-    """Verify the human claim header only when an older sentinel was truncated mid-JSON."""
-    expected = {
+def _legacy_claim_receipt(stdout: str, workstream: str, repo: Path, metadata: dict, *,
+                          expected_identity: dict[str, str] | None = None) -> dict:
+    """Verify a complete historical identity header against independently pinned identity."""
+    expected = expected_identity or {
         "workstream": workstream,
         "branch": str(metadata.get("branch", "")),
         "worktree": str(metadata.get("worktree", "")),
         "packet": str(metadata.get("packet", "")),
     }
-    if "CLAIMED" not in stdout.splitlines():
-        raise RunnerError("truncated claim receipt has no CLAIMED header")
+    if set(expected) != {"workstream", "branch", "worktree", "packet"}:
+        raise RunnerError("legacy claim identity is incomplete")
+    if stdout.count("CLAIMED\n") != 1:
+        raise RunnerError("truncated claim receipt has no unique CLAIMED header")
     observed: dict[str, str] = {}
     for field in expected:
         values = re.findall(rf"(?m)^{re.escape(field)}:[ \t]*(.+?)[ \t]*$", stdout)
@@ -1687,6 +1680,66 @@ def _legacy_claim_receipt(stdout: str, workstream: str, repo: Path, metadata: di
                "branch": observed["branch"], "worktree": observed["worktree"],
                "packet": observed["packet"]}
     return parse_claim_receipt(CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True), workstream, repo)
+
+
+def _host_validation_claim_receipt(run_dir: Path, workstream: str, repo: Path, metadata: dict,
+                                   packet: str) -> tuple[dict, str]:
+    """Resolve structured or specifically truncated legacy claim evidence without writing it."""
+    branch = f"agent/{workstream}"
+    recorded_worktree = metadata.get("recovery_worktree")
+    if not isinstance(recorded_worktree, str) or not recorded_worktree:
+        raise RunnerError("legacy host-validation claim omits its recorded recovery worktree")
+    expected = {"workstream": workstream, "branch": branch,
+                "worktree": str(Path(recorded_worktree).resolve()), "packet": packet}
+    for name, value in (("branch", branch), ("worktree", expected["worktree"]), ("packet", packet)):
+        recorded = metadata.get(name)
+        if recorded is not None:
+            normalized = str(Path(recorded).resolve()) if name == "worktree" else str(recorded)
+            if normalized != value:
+                raise RunnerError(f"original run metadata {name} conflicts with canonical claim identity")
+
+    claim_file = run_dir / "claim-receipt.json"
+    if claim_file.is_file():
+        try:
+            value = json.loads(claim_file.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RunnerError("structured original claim receipt is malformed") from exc
+        receipt = parse_claim_receipt(CLAIM_SENTINEL + json.dumps(value, sort_keys=True), workstream, repo)
+        source = "claim-receipt.json"
+    else:
+        try:
+            stdout = (run_dir / "claim.stdout").read_text(encoding="utf-8")
+        except OSError as exc:
+            raise RunnerError("original dispatcher claim output is missing") from exc
+        sentinels = [line for line in stdout.splitlines() if line.startswith(CLAIM_SENTINEL)]
+        if len(sentinels) > 1:
+            raise RunnerError("original claim output contains conflicting structured receipts")
+        if sentinels:
+            payload = sentinels[0][len(CLAIM_SENTINEL):]
+            try:
+                json.loads(payload)
+            except json.JSONDecodeError as exc:
+                if not _claim_json_was_truncated(payload, exc):
+                    raise RunnerError("original claim receipt is malformed rather than truncated") from exc
+                receipt = _legacy_claim_receipt(stdout, workstream, repo, metadata,
+                                                expected_identity=expected)
+                source = "verified-truncated-claim.stdout-header"
+            else:
+                # A parseable receipt is authoritative and cannot fall back on a disagreeing header.
+                receipt = parse_claim_receipt(stdout, workstream, repo)
+                source = "claim.stdout"
+        else:
+            # Historical dispatcher output was cut off before its sentinel. An unterminated capture
+            # is required in addition to the complete, unique identity header and live Git checks.
+            if not stdout or stdout.endswith(("\n", "\r")):
+                raise RunnerError("original structured claim receipt is missing or ambiguous")
+            receipt = _legacy_claim_receipt(stdout, workstream, repo, metadata,
+                                           expected_identity=expected)
+            source = "verified-truncated-claim.stdout-header"
+
+    if any(receipt.get(field) != value for field, value in expected.items()):
+        raise RunnerError("original dispatcher receipt differs from canonical claim identity")
+    return receipt, source
 
 
 def _claim_json_was_truncated(payload: str, error: json.JSONDecodeError) -> bool:
@@ -2058,35 +2111,40 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
         if identity_error:
             raise RunnerError("pinned implementation identity failed verification: " + identity_error)
 
-        claim_file = run_dir / "claim-receipt.json"
-        if claim_file.is_file():
-            try:
-                receipt_value = json.loads(claim_file.read_text(encoding="utf-8"))
-            except json.JSONDecodeError as exc:
-                raise RunnerError("structured original claim receipt is malformed") from exc
-            receipt_source = CLAIM_SENTINEL + json.dumps(receipt_value, sort_keys=True)
-            receipt = parse_claim_receipt(receipt_source, workstream, repo)
-            receipt_source_name = "claim-receipt.json"
+        if recover_host_validation:
+            receipt, receipt_source_name = _host_validation_claim_receipt(
+                run_dir, workstream, repo, original, active_path,
+            )
         else:
-            try:
-                receipt_source = (run_dir / "claim.stdout").read_text(encoding="utf-8")
-            except OSError as exc:
-                raise RunnerError("original structured claim receipt is missing") from exc
-            sentinels = [line for line in receipt_source.splitlines() if line.startswith(CLAIM_SENTINEL)]
-            if len(sentinels) != 1:
-                raise RunnerError("original structured claim receipt is missing or ambiguous")
-            payload = sentinels[0][len(CLAIM_SENTINEL):]
-            try:
-                json.loads(payload)
-            except json.JSONDecodeError as exc:
-                if not _claim_json_was_truncated(payload, exc):
-                    raise RunnerError("original claim receipt is malformed rather than truncated") from exc
-                receipt = _legacy_claim_receipt(receipt_source, workstream, repo, original)
-                receipt_source_name = "verified-truncated-claim.stdout-header"
-            else:
-                # A parseable but unverified receipt never falls back to human-readable fields.
+            claim_file = run_dir / "claim-receipt.json"
+            if claim_file.is_file():
+                try:
+                    receipt_value = json.loads(claim_file.read_text(encoding="utf-8"))
+                except json.JSONDecodeError as exc:
+                    raise RunnerError("structured original claim receipt is malformed") from exc
+                receipt_source = CLAIM_SENTINEL + json.dumps(receipt_value, sort_keys=True)
                 receipt = parse_claim_receipt(receipt_source, workstream, repo)
-                receipt_source_name = "claim.stdout"
+                receipt_source_name = "claim-receipt.json"
+            else:
+                try:
+                    receipt_source = (run_dir / "claim.stdout").read_text(encoding="utf-8")
+                except OSError as exc:
+                    raise RunnerError("original structured claim receipt is missing") from exc
+                sentinels = [line for line in receipt_source.splitlines() if line.startswith(CLAIM_SENTINEL)]
+                if len(sentinels) != 1:
+                    raise RunnerError("original structured claim receipt is missing or ambiguous")
+                payload = sentinels[0][len(CLAIM_SENTINEL):]
+                try:
+                    json.loads(payload)
+                except json.JSONDecodeError as exc:
+                    if not _claim_json_was_truncated(payload, exc):
+                        raise RunnerError("original claim receipt is malformed rather than truncated") from exc
+                    receipt = _legacy_claim_receipt(receipt_source, workstream, repo, original)
+                    receipt_source_name = "verified-truncated-claim.stdout-header"
+                else:
+                    # A parseable but unverified receipt never falls back on human-readable fields.
+                    receipt = parse_claim_receipt(receipt_source, workstream, repo)
+                    receipt_source_name = "claim.stdout"
         worktree = Path(receipt["worktree"]).resolve()
         branch = f"agent/{workstream}"
         if recover_host_validation:
