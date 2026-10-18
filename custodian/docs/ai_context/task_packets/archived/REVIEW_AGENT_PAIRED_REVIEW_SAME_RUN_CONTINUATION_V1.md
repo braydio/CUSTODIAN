@@ -3,12 +3,12 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-same-run-continuation-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-same-run-continuation-v1`
-- Locks: `agent-workflow`
+- Locks: `paired-review-same-run-continuation`
 - Review: `none`
 - Review target workstream: `agent-paired-review-same-run-continuation-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_SAME_RUN_CONTINUATION_V1.md`
@@ -30,6 +30,10 @@
 - Non-goals: No editor/runtime procgen changes, no reviewer-fabricated PASS, no generic orphan branch parking or altering Godot cache ownership.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Scoped-lock falsification (2026-10-17)
+- This review shares the implementation's `paired-review-same-run-continuation` lock. Inspect exact dispatcher claim/lock evidence and falsify the new conflict guard against both a review-only cache-access claimant and an active implementation/correction capable of writing the shared runner. Passing the cache review is not a prerequisite for this bounded continuation tool, but the cache review claim is NEVER released, modified, reclassified or implicitly accepted here.
+- Independently test the protected bunker contradiction: an older PASS receipt and a later canonical findings/one-material-gap result cannot yield a PASS merely from coordinator validation or a preserved target receipt. Verify source and overwritten-summary hashes stay protected across any fresh-context continuation.
+
 ## Host validation precondition (2026-10-17)
 - Independently verify that the implementation uses only immutable coordinator-side host validation evidence after the reviewed `agent-paired-review-host-godot-validation-v1` seam has landed. Any original run with a failed report remains blocked until fresh reviewer authorship plus a verified green report. Never treat a host validation report as an independent verdict.
 
@@ -45,3 +49,35 @@
 - Refresh reason: `operator must explicitly authorize new fresh reviewer context inside original preserved run; original ephemeral session is not resumable`
 - Next action: `Use the independently reviewed same-run continuation tool only on original ambient run ID 20261015T224943Z-5a721f81880e; obtain authentic independent reviewer disposition; then coordinator-owned bounded closeout.`
 - Blockers or open questions: `Do not mark ambient review passed from coordinator validation alone.`
+
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Review target workstream: `agent-paired-review-same-run-continuation-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `175647457545bf3dd25c03f2137ee5a3aa3c6879`
+- Reviewed implementation commit: `257b90e9bf3878e0e3dee8ce2f36cad46ef28ab4`
+
+### Findings
+
+No blocking defects or material evidence gaps were found. The exact-run continuation checks pinned identity and immutable host evidence, protects prior run artifacts, requires a fresh reviewer-authored disposition, and bounds PASS closeout behind receipt and outcome verification. The coordinator validation report is correctly kept separate from reviewer judgment.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `passed`
+- Review workstream: `review-agent-paired-review-same-run-continuation-v1`
+- Review target workstream: `agent-paired-review-same-run-continuation-v1`
+- Reviewed main: `175647457545bf3dd25c03f2137ee5a3aa3c6879`
+- Reviewed implementation commit: `257b90e9bf3878e0e3dee8ce2f36cad46ef28ab4`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261017T203250Z-22a362074fb3`
+- Review cycle: `0`
+- Finding IDs: `none`

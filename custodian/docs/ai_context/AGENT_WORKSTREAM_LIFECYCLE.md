@@ -442,6 +442,34 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   it is on `origin/main`, and the delete is conditional on the exact verified SHA. A
   pass is never recovered this way.
 
+### Fresh reviewer continuation of one protected post-exit run
+
+When the original ephemeral reviewer session is gone but the exact claimed
+review needs a new independent disposition, use:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-original-run-id> --authorize-fresh-reviewer-context
+```
+
+Both flags are required. This starts a new fresh reviewer context attached to
+the same preserved claim and checkout; it does not restore the old Codex
+session, dispatch another claim, or resume a workstream. The command requires a
+clean coordinator checkout on `main`, the exact original structured claim
+receipt/worktree/branch, the pinned archived target and SHA, and immutable,
+green coordinator host-validation evidence. It holds the same nonblocking
+per-review runner lock, writes continuation evidence only under a new exclusive
+`continuation-01/` child of the original run, and verifies hashes of all
+preexisting run files before and after the reviewer. Existing reviewer notes,
+summaries and reports are copied byte-for-byte into that child before the
+reviewer starts. Findings, human-required outcomes, interruptions, and any
+ambiguous closeout leave the claim and branch protected. A PASS alone may enter
+the existing exact receipt verification and coordinator finish path.
+Repeating a completed run independently verifies the landed receipt and returns
+success; an incomplete continuation is never replayed automatically. New
+ordinary review claims persist the full structured receipt in
+`claim-receipt.json` because the human-readable `claim.stdout` is length-limited.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure

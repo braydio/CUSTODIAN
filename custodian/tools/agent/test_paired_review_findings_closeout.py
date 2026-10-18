@@ -273,10 +273,13 @@ class NonpassingCoordinatorTests(FixtureCase):
         (self.fx.run_dir / "validation.json").write_text(json.dumps({
             "schema": "custodian.validation.result.v1", "passed": True, "coverage": {"complete": True},
             "tests": [{"status": "passed"}]}))
-        with self.assertRaisesRegex(runner.RunnerError, "receipt-delta verification"):
-            runner.coordinator_finish_review(
-                self.fx.repo, WORKSTREAM, self.fx.worktree, ACTIVE, TARGET_WORKSTREAM, TARGET,
-                self.fx.baseline, CHAT, self.fx.reviewed_main, self.fx.run_dir)
+        host_evidence = {"implementation_commit": self.fx.implementation,
+                         "report_sha256": "pinned-report", "metadata_sha256": "pinned-metadata"}
+        with patch.object(runner, "verify_coordinator_validation"):
+            with self.assertRaisesRegex(runner.RunnerError, "receipt-delta verification"):
+                runner.coordinator_finish_review(
+                    self.fx.repo, WORKSTREAM, self.fx.worktree, ACTIVE, TARGET_WORKSTREAM, TARGET,
+                    self.fx.baseline, CHAT, self.fx.reviewed_main, self.fx.run_dir, host_evidence)
 
 
 class RecoverCloseoutTests(FixtureCase):
