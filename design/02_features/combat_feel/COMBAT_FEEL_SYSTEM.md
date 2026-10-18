@@ -284,8 +284,13 @@ and reversed-entry exit retain their existing guard timing and gameplay semantic
 hold, non-breaking recoil, and exit, movement remains slowed by `block_move_multiplier`; the lower layer uses
 movement-owned modular `unarmed_walk` locomotion while the upper layer plays the aim-facing guard action. Stationary guard
 enter and recoil retain their authored paired lower/upper poses. Guard break remains impact-locked and uses the complete
-paired presentation. Parry gameplay now uses the same state path for timing, plays the generated
-modular `parry_01` lower/upper/FX stack when available, and falls back to block animations when `unarmed_parry*` clips are missing. The curated `parry_01` playback is intentionally
+paired presentation. The same movement-owned lower/aim-facing upper composition applies to Vigil armed guard, with the
+dagger kept on its canonical guard identity; stationary Vigil guard keeps its authored lower/upper/weapon composition.
+Parry gameplay now uses the same state path for timing, keeps movement-owned lower locomotion through moving attempt and
+recovery phases, and plays the generated modular `parry_01` upper/FX stack when available. Stationary parry retains the
+authored paired lower/upper pose. Parry contact does not add an Operator movement lock: a planted beat is permitted only
+when an existing simulation freeze actually stops displacement. Missing semantic layers fall back to a complete existing
+presentation. The curated `parry_01` playback is intentionally
 registered at 12 FPS for a slightly heavier read. Successful parries spawn the authored five-frame
 `operator__fx__unarmed__defense__parry_success_01` sheet as an independent world-space success burst at the captured
 contact point. The dedicated one-shot scene survives post-parry body/neutral transitions, mirrors the authored east

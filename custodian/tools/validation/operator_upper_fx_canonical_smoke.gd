@@ -53,6 +53,9 @@ func _run() -> void:
 	_operator = OPERATOR_SCENE.instantiate()
 	root.add_child(_operator)
 	await process_frame
+	_operator.set("combat_loadout_mode", "melee")
+	_operator.set("primary_weapon_equipped", false)
+	_operator.set("using_unarmed", true)
 	# FX overlays are scoped to the body owner; establish the ordinary body
 	# presentation the runtime would own before exercising its shared FX layer.
 	_operator.call("_set_body_presentation_owner", BODY_PRESENTER.Owner.LEGACY_FULL_BODY)
@@ -130,10 +133,11 @@ func _check_parry_family() -> void:
 	if fx != null:
 		fx.visible = true
 		var recovery: StringName = _operator.call(
-			"_present_parry_fx", "unarmed_parry_recovery", Vector2.RIGHT)
+			"_parry_fx_identity", "unarmed_parry_recovery", Vector2.RIGHT)
 		if not recovery.is_empty():
-			_fail("failed-parry recovery presented FX %s; the contract defines no recovery beat"
+			_fail("failed-parry recovery selected FX %s; the contract defines no recovery beat"
 				% recovery)
+		_operator.call("_play_parry_animation", &"unarmed_parry_recovery", Vector2.RIGHT)
 		if fx.visible:
 			_fail("failed-parry recovery left the FX layer visible")
 	# The published recovery art must still exist, dormant rather than deleted.
@@ -141,8 +145,8 @@ func _check_parry_family() -> void:
 		"_has_fx_animation", &"unarmed", &"attack", &"parry_recovery_01", &"e")):
 		_fail("parry_recovery_01 fx should remain published for a future contract")
 	# And the success path must route through the same decision.
-	var success: StringName = _operator.call(
-		"_present_parry_fx", "unarmed_parry_success_01", Vector2.LEFT)
+	_operator.call("_play_parry_animation", &"unarmed_parry_success_01", Vector2.LEFT)
+	var success := fx.animation if fx != null else &""
 	if success != &"unarmed/defense/parry_success_01/w/fx":
 		_fail("parry success decision presented %s" % success)
 

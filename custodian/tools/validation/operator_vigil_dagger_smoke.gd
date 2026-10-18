@@ -263,6 +263,33 @@ func _validate_semantic_guard_playback(operator: Node) -> void:
 	_assert(weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_loop_01/e/weapon", "Vigil guard loop weapon identity is wrong")
 	for sprite in [lower, upper, weapon]:
 		_assert(sprite.sprite_frames.get_animation_loop(sprite.animation), "%s must loop" % sprite.name)
+	operator.set("movement_direction", Vector2.LEFT)
+	operator.set("velocity", Vector2.LEFT * 32.0)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
+	_assert(lower.animation == &"melee_1h/locomotion/walk_01/w/lower_body", "moving Vigil guard should keep westward locomotion")
+	_assert(upper.animation == &"melee_1h/defense/block_enter_01/e/upper_body", "moving Vigil guard should keep east guard-facing upper")
+	_assert(weapon.visible and weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_enter_01/e/weapon", "moving Vigil guard should keep its required east dagger")
+	lower.set_frame_and_progress(2, 0.35)
+	var saved_frame := lower.frame
+	var saved_progress := lower.frame_progress
+	operator.call("guard_play_block_animation", &"melee_2h_block_hold")
+	_assert(lower.animation == &"melee_1h/locomotion/walk_01/w/lower_body", "Vigil guard phase change should retain movement lower identity")
+	_assert(lower.frame == saved_frame and is_equal_approx(lower.frame_progress, saved_progress), "Vigil upper phase change should preserve lower progress")
+	_assert(upper.animation == &"melee_1h/defense/block_loop_01/e/upper_body" and weapon.animation == &"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_loop_01/e/weapon", "moving Vigil hold should synchronize upper and dagger")
+	var original_weapon_frames := weapon.sprite_frames
+	var incomplete_weapon_frames := original_weapon_frames.duplicate(true) as SpriteFrames
+	incomplete_weapon_frames.remove_animation(
+		&"weapon/vigil_pattern_dagger/melee_1h_dagger/defense/block_enter_01/e/weapon"
+	)
+	weapon.sprite_frames = incomplete_weapon_frames
+	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
+	var legacy_body := operator.get("animated_sprite") as AnimatedSprite2D
+	_assert(legacy_body.visible and not lower.visible and not upper.visible and not weapon.visible, "missing required Vigil dagger should fall back to one complete body")
+	weapon.sprite_frames = original_weapon_frames
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("aim_direction", Vector2.RIGHT)
+	operator.call("guard_play_block_animation", &"melee_2h_block_enter")
 	operator.call("guard_play_block_animation", &"melee_2h_block_hitreact")
 	_assert(lower.animation == &"melee_1h/defense/block_hit_01/e/lower_body", "Vigil block-hit lower identity is wrong")
 	_assert(upper.animation == &"melee_1h/defense/block_hit_01/e/upper_body", "Vigil block-hit upper identity is wrong")

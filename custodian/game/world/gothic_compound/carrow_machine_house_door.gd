@@ -8,6 +8,7 @@ enum TravelMode { ENTER_MACHINE_HOUSE, LEAVE_MACHINE_HOUSE }
 @export_range(32.0, 192.0, 1.0) var interaction_distance := 72.0
 
 var carrow_map: Node = null
+var interior_id: StringName = &"east_machine_house"
 
 
 func _ready() -> void:
@@ -16,6 +17,14 @@ func _ready() -> void:
 
 func configure(map: Node, mode: TravelMode, prompt: String) -> void:
 	carrow_map = map
+	travel_mode = mode
+	prompt_text = prompt
+	interior_id = &"east_machine_house"
+
+
+func configure_interior(map: Node, room_id: StringName, mode: TravelMode, prompt: String) -> void:
+	carrow_map = map
+	interior_id = room_id
 	travel_mode = mode
 	prompt_text = prompt
 
@@ -34,6 +43,12 @@ func get_interaction_distance() -> float:
 
 func interact(actor: Node) -> void:
 	if carrow_map == null or not is_instance_valid(carrow_map):
+		return
+	if carrow_map.has_method("enter_carrow_interior") and carrow_map.has_method("leave_carrow_interior"):
+		if travel_mode == TravelMode.ENTER_MACHINE_HOUSE:
+			carrow_map.call("enter_carrow_interior", interior_id, actor)
+		else:
+			carrow_map.call("leave_carrow_interior", interior_id, actor)
 		return
 	if travel_mode == TravelMode.ENTER_MACHINE_HOUSE:
 		carrow_map.call("enter_machine_house", actor)

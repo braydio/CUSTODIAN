@@ -26,6 +26,61 @@ func _run() -> void:
 	var structure_sites := state.structure_sites as Dictionary
 	for site_id in ["operations_house", "west_draft_house", "machine_house", "terminal"]:
 		_require(structure_sites.has(site_id), "generator omitted named structure site: %s" % site_id)
+	var west_state := map.get_west_draft_house_debug_state()
+	var west_rect: Rect2 = west_state.get("interior_rect", Rect2())
+	var west_layout: Array = west_state.get("layout", [])
+	_require(west_rect.size == Vector2(384, 320), "West Draft House is not 12x10 at 32 px")
+	_require(west_layout == ["XXXXXXXXXXXX", "X..........X", "XFFFF..HHHHX", "XFFFF..HHHHX", "X..........X", "XVV.......CX", "XVV......PPX", "X..........X", "X..........X", "XXXXXDDDXXXX"], "West Draft House grid differs from the approved W1 contract")
+	_require(bool(west_state.get("has_entry_door", false)) and bool(west_state.get("has_exit_door", false)), "West Draft House doorway pair is incomplete")
+	_require(int(west_state.get("floor_tile_count", 0)) == 120, "West Draft House floor does not fill its 12x10 footprint")
+	_require(int(west_state.get("production_art_count", 0)) == 8, "West Draft House reused-art placement count mismatch")
+	var west_root := west_state.get("root") as Node2D
+	_require(west_root != null, "West Draft House room root is missing")
+	for art_name in ["NorthFanBay", "NorthHeatExchanger", "WestFilterVent", "EastDraftControls", "PressureSwitchgear", "FilterCradle", "EmergencyPartsRack", "AuxiliaryPowerJunction"]:
+		var west_art := west_root.get_node_or_null("ProductionArt/" + art_name) as Sprite2D if west_root != null else null
+		_require(west_art != null and west_art.texture != null, "missing reused West production art: %s" % art_name)
+	for storage_name in ["CarrowDraftFilterCradle", "CarrowEmergencyPartsRack"]:
+		var west_storage := west_root.get_node_or_null(storage_name) as VaultStorage if west_root != null else null
+		_require(west_storage != null and west_storage.has_resources(), "missing West storage interaction: %s" % storage_name)
+	var filter_art := west_root.get_node_or_null("ProductionArt/FilterCradle") as Sprite2D if west_root != null else null
+	var filter_storage := west_root.get_node_or_null("CarrowDraftFilterCradle") as VaultStorage if west_root != null else null
+	if filter_art != null and filter_art.texture != null and filter_storage != null:
+		_require(filter_storage.position == filter_art.position + Vector2(0.0, float(filter_art.texture.get_height()) * 0.5), "Filter Cradle interaction is detached from its visible art anchor")
+	var east_camera: Rect2 = state.get("camera_bounds", Rect2())
+	var west_camera: Rect2 = west_state.get("camera_bounds", Rect2())
+	_require(not east_camera.intersects(west_camera), "East and West interior camera regions overlap")
+	_require(not interior_rect.intersects(west_rect), "East and West room AABBs overlap")
+	for row in west_layout:
+		_require(String(row).length() == 12, "West Draft House contains a malformed row width")
+	var west_site := (west_state.structure_sites as Dictionary).get("west_draft_house", {}) as Dictionary
+	var west_site_cell: Vector2i = west_site.get("cell", Vector2i.ZERO)
+	var west_site_footprint: Vector2i = west_site.get("footprint", Vector2i.ZERO)
+	var expected_west_return := Vector2(west_site_cell + Vector2i(int(west_site_footprint.x / 2), west_site_footprint.y + 2)) * 32.0
+	_require(west_state.exterior_return_position == expected_west_return, "West exterior return is not derived from the generated site footprint")
+	var malformed_definition := {
+		"size": Vector2i(12, 10),
+		"layout": west_layout.duplicate(),
+		"spawn_offset": Vector2(6.5, 8.25),
+		"exit_cell": Vector2i(6, 9),
+	}
+	malformed_definition["layout"][0] = "XXXXXXXXXXX"
+	_require(not map._is_valid_interior_definition(malformed_definition), "malformed room row did not fail closed")
+	malformed_definition["layout"] = west_layout.duplicate()
+	malformed_definition["layout"][9] = "XXXXXXXXXXXX"
+	_require(not map._is_valid_interior_definition(malformed_definition), "blocked/missing doorway did not fail closed")
+	_require(not map._is_valid_structure_site({}), "missing structure site was accepted")
+	_require(not map._interior_bounds_available(interior_rect, east_camera), "overlapping room/camera allocation was accepted")
+	var unavailable_definition := map._interior_definition(&"west_draft_house")
+	var unavailable_art := unavailable_definition.art as Array[Dictionary]
+	unavailable_art[0]["path"] = "walls/missing_review_fixture.png"
+	_require(not map._interior_assets_available(unavailable_definition, unavailable_art), "missing registered room texture did not fail closed")
+	var west_children_before_missing_site := map.get_child_count()
+	var west_entry_before_missing_site := map.get_node_or_null("EnterWestDraftHouse")
+	map._structure_sites.erase("west_draft_house")
+	map._add_west_draft_house_interior({})
+	_require(map.get_child_count() == west_children_before_missing_site, "missing site created an orphan West interior")
+	_require(map.get_node_or_null("EnterWestDraftHouse") == west_entry_before_missing_site, "missing site created an orphan West entrance")
+	map._structure_sites["west_draft_house"] = west_site
 
 	var interior_region := map.get_environment_region_at_global(map.to_global(interior_rect.get_center()))
 	_require(bool(interior_region.get("indoor", false)), "interior was not classified indoors")
@@ -58,6 +113,56 @@ func _run() -> void:
 	_require(not map.get_machine_house_debug_state().inside, "exit did not restore yard camera state")
 	environment.advance_environment(1.25)
 	_require(float(environment.get_presentation_state().precipitation_alpha) > 0.9, "yard rain did not resume after exit")
+
+	var west_entry := map.get_node_or_null("EnterWestDraftHouse") as CarrowMachineHouseDoor
+	var west_exit := west_root.get_node_or_null("LeaveWestDraftHouse") as CarrowMachineHouseDoor if west_root != null else null
+	_require(west_entry != null and west_exit != null, "West Draft House room-bound doors are missing")
+	if west_entry != null and west_exit != null:
+		west_entry.interact(actor)
+		_require(map.get_active_interior_id() == &"west_draft_house", "West entry did not select the named interior")
+		_require(west_rect.has_point(map.to_local(actor.global_position)), "West entry did not use its safe interior spawn")
+		_require(map.get_camera_bounds().position == west_camera.position, "West entry did not select the West camera bounds")
+		var west_environment := map.get_environment_region_at_global(map.to_global(west_rect.get_center()))
+		_require(bool(west_environment.get("indoor", false)), "West room was not classified indoors")
+		_require(is_zero_approx(float(west_environment.get("weather_exposure", 1.0))), "West indoor weather exposure is not zero")
+		environment.advance_environment(1.25)
+		_require(is_zero_approx(float(environment.get_presentation_state().precipitation_alpha)), "West room did not suppress outdoor rain")
+		var selected_position := actor.global_position
+		map.enter_machine_house(actor)
+		map.enter_carrow_interior(&"stale_room_id", actor)
+		map.leave_carrow_interior(&"east_machine_house", actor)
+		_require(map.get_active_interior_id() == &"west_draft_house" and actor.global_position == selected_position, "stale or premature room switch changed the active room")
+		var impostor := Node2D.new()
+		root.add_child(impostor)
+		map.leave_carrow_interior(&"west_draft_house", impostor)
+		_require(map.get_active_interior_id() == &"west_draft_house", "a second actor stole the active interior's exit")
+		impostor.queue_free()
+		var west_filter_storage := west_root.get_node_or_null("CarrowDraftFilterCradle") as VaultStorage
+		_require(west_filter_storage != null and west_filter_storage.has_resources(), "West Filter Cradle did not receive its bounded resources")
+		if west_filter_storage != null:
+			west_filter_storage.remove_resources(8, 1000)
+			_require(not west_filter_storage.has_resources(), "West Filter Cradle resource depletion failed")
+		west_exit.interact(actor)
+		_require(map.get_active_interior_id() == &"", "West exit did not clear active_interior_id")
+		_require(not west_rect.has_point(map.to_local(actor.global_position)), "West exit did not return the actor outside the room")
+		var west_return_region := map.get_environment_region_at_global(actor.global_position)
+		_require(bool(west_return_region.get("contains", false)) and not bool(west_return_region.get("indoor", true)), "West return point is not in the yard environment")
+		west_entry.interact(actor)
+		_require(not west_filter_storage.has_resources(), "West storage refilled on same-runtime revisit")
+		west_exit.interact(actor)
+		_require(not map.get_west_draft_house_debug_state().inside, "West same-runtime revisit did not return outside")
+		var east_after_west := map.get_machine_house_debug_state()
+		_require(east_after_west.interior_rect == interior_rect and east_after_west.layout == state.layout, "West visit changed East Machine House geometry or layout")
+		_require(int(east_after_west.floor_tile_count) == 140 and int(east_after_west.production_art_count) == 13, "West visit changed East Machine House content counts")
+		_require(map.get_active_interior_id() == &"", "Carrow retained a room selection after leaving both interiors")
+
+	var alternate_map := CARROW_MAP.new() as GothicCompoundMap
+	alternate_map.world_seed = 420777
+	root.add_child(alternate_map)
+	await process_frame
+	var alternate_west := alternate_map.get_west_draft_house_debug_state()
+	_require((alternate_west.structure_sites as Dictionary).has("west_draft_house"), "alternate seed omitted the named West structure site")
+	_require(int(alternate_west.floor_tile_count) == 120 and bool(alternate_west.has_entry_door) and bool(alternate_west.has_exit_door), "alternate seed did not bind a complete West room to its generated site")
 
 	var room := map.get_node_or_null("EastMachineHouseInterior")
 	_require(room != null, "East Machine House root missing")
@@ -153,7 +258,7 @@ func _run() -> void:
 	if _failed:
 		quit(1)
 		return
-	print("carrow_yard_interior_smoke: PASS interior=14x10 provider=connected_map")
+	print("carrow_yard_interior_smoke: PASS interiors=east_14x10,west_12x10 provider=connected_map")
 	quit(0)
 
 

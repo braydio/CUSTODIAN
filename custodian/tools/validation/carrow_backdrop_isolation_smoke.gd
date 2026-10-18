@@ -35,13 +35,21 @@ func _run() -> void:
 	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "Machine House entry re-exposed procgen backdrop")
 	map.leave_machine_house(actor)
 	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "Machine House exit re-exposed procgen backdrop while in Carrow")
+	map.enter_carrow_interior(&"operations_house", actor)
+	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "Operations House entry re-exposed procgen backdrop")
+	map.leave_carrow_interior(&"operations_house", actor)
+	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "Operations House exit re-exposed procgen backdrop while in Carrow")
+	map.enter_carrow_interior(&"west_draft_house", actor)
+	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "West Draft House entry re-exposed procgen backdrop")
+	map.leave_carrow_interior(&"west_draft_house", actor)
+	_require(not backdrop.visible and backdrop.is_connected_map_isolated(), "West Draft House exit re-exposed procgen backdrop while in Carrow")
 	map.return_to_main(actor)
 	_require(backdrop.visible and not backdrop.is_connected_map_isolated(), "Carrow return did not restore procgen backdrop")
 
 	if _failed:
 		quit(1)
 		return
-	print("carrow_backdrop_isolation_smoke: PASS transitions=4")
+	print("carrow_backdrop_isolation_smoke: PASS transitions=8")
 	quit(0)
 
 

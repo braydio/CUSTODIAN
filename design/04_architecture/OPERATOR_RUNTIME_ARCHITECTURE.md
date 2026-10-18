@@ -418,13 +418,19 @@ this decision documentation itself.
 
 **Implementation and proof:** The existing reviewed
 `operator-2-5d-cohort-dependency-closure` report lists all ordinary and
-preemption edges as open, not proven compatible. A bounded
-`operator-2-5d-composition-mode-guard-v1` implementation + fresh review
-should enforce the fail-closed plan/preflight and its negative cases using
-fixtures without any real 2.5D runtime activation. Later WB25-6 may
-implement exact generation-coherent composition after art/timing/QA/human
-release gates; it must not introduce a duplicate presenter/selector or
-rewrite the gameplay simulation to fit pixels.
+preemption edges as open, not proven compatible. The fixture-only
+`OperatorPresentationController.preflight_composition_fixture_only()` checks
+owner/mode fit, complete body-layer count, registered overlays, visible-clock
+membership, exact selector identities and actual SpriteFrames playability
+without transferring ownership or granting movement permission. The focused
+fixture proves full-body, split movement-plus-guard with separate facings,
+exclusive-rig shape, and fail-closed missing-layer/owner-mode cases. Current
+runtime metadata has no trusted per-clip generation provenance, so the API
+reports generation `UNKNOWN/BLOCKED` and will not unlock 2.5D from a caller's
+generation field. This structural fixture result is not a runtime release
+approval. Later WB25-6 may implement exact generation-coherent composition
+after art/timing/QA/human release gates; it must not introduce a duplicate
+presenter/selector or rewrite the gameplay simulation to fit pixels.
 
 **Retired from active composition (C2a authoring decision, 2026-09-12):** the
 modular head and the modular cape. `Operator.ACTIVE_MODULAR_HEAD` and
@@ -597,7 +603,7 @@ nullable so their established fallback behavior is preserved.
 | D | `InputFrame` + `InputRouter` + `AimController`; deterministic device ownership; fixed-step migration; `_process()` becomes presentation-only | `input_calls_outside_input_dir` 65 → 0, `gameplay_mutation_in_process` 12 → 0 | **done** |
 | E | `OperatorActionController` replacing animation-state glue; `OperatorPresentationController` translating semantic requests into body plans | `animation_state_actor_glue` 34 → 0 | **done** |
 | F0 | Bind/inject Operator external dependencies before domain extraction | `absolute_scene_lookups` 38 → 0 | **done** |
-| F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **queued** |
+| F1 | Extract loadout + per-weapon runtime state | `weapon_definition_runtime_state` 3 → 0 | **done** |
 | F2–F3 | Extract melee and ranged behind the facade; move scoped presentation policy with the owning domain | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
 | F4 | Extract Dodge/charge/Flow/chain lifecycle to `OperatorDodgeController`; preserve full-body displacement presentation and chassis movement ownership | one Dodge state authority; actor keeps facade/orchestration and sole `move_and_slide()` | **done** |
 | F5–F6 | Extract interaction and recovery/survivability behind the facade | no new debt family; removes overlapping actor authority and temporary seams | **queued** |
@@ -630,7 +636,9 @@ gameplay facts instead of becoming another cross-cutting actor subsystem:
   exit carry, and cancellation; the actor applies movement intent through its
   existing chassis and keeps intentional full-body Dodge presentation.
 - `OPERATOR_GUARD_PARRY_COMPOSITION_POLISH.md` consumes the mobile composition
-  seam for Vigil guard and movement-permissive parry attempt/recovery.
+  seam for Vigil guard and movement-permissive parry attempt/recovery; both use
+  the semantic presentation controller with complete-pair fallback and preserve
+  locomotion progress across upper defensive phase changes.
 - The F1–F6 packets are `OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md`,
   `OPERATOR_MELEE_DOMAIN_EXTRACTION.md`, `OPERATOR_RANGED_DOMAIN_EXTRACTION.md`,
   `OPERATOR_DODGE_DOMAIN_EXTRACTION.md`,

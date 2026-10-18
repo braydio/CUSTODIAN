@@ -212,6 +212,9 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	var first := manager.spawn_drone(0)
 	var second := manager.spawn_drone(1)
 	assert(first != null and second != null, "DroneManager should spawn two droids.")
+	assert(first.get("drone_id") == "DRONE_01" and second.get("drone_id") == "DRONE_02", "Manager slots should assign stable squad-local DRONE_01/DRONE_02 identities.")
+	assert(manager.spawn_drone(2) == null, "Manager must reject a third live droid at the active cap.")
+	assert(int(manager.get_squad_summary().get("live_count", -1)) == 2, "Rejected spawn must preserve the two-member live roster.")
 
 	manager.set_fire_at_will(false)
 	manager.set_follow_distance(DroneCommandProfileScript.FollowDistance.FAR)
@@ -271,6 +274,7 @@ func _verify_manager_propagation_and_spawn_inheritance() -> void:
 	await process_frame
 	var replacement := manager.spawn_drone(0)
 	assert(replacement != null, "DroneManager should spawn a replacement after pruning freed droids.")
+	assert(replacement.get("drone_id") == "DRONE_01", "Replacement should reclaim its freed manager-scoped slot identity.")
 	assert(replacement.get("fire_at_will") == true, "Newly spawned droid should inherit current fire discipline.")
 	assert(replacement.get("follow_distance_mode") == DroneCommandProfileScript.FollowDistance.FAR, "Newly spawned droid should inherit current follow distance.")
 	assert(replacement.get("order_anchor_active") == true, "Newly spawned droid should inherit active guard order.")

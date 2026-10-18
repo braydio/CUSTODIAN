@@ -1,0 +1,70 @@
+# Procgen Showcase Exhibit Catalog
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `procgen-showcase-exhibit-catalog`
+- Kind: `implementation`
+- Status: `complete`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `review-procgen-showcase-gallery-shell`
+- Locks: `procgen-showcase-catalog`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, visual`
+- Paired review workstream: `review-procgen-showcase-exhibit-catalog`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `new game-world/dev-tool boundary; fresh independent proof`
+- Reviewed main: `1326220d8172cee9322363b7a5c020acaf41f64c`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Visual review: `conditional`
+- Goal: Expose canonical, inspectable examples of the existing procgen semantic vocabulary in five gallery wings without replacing game data authorities.
+- Completion boundary: Ship the exact PGA-2 scoped behavior on real repository owners, register its focused smoke and pass the paired fresh-context review; no proxy closure or speculative ownership changes.
+- Current measured state: The PGA-2 manifest and gallery-local presenter now expose validated biome, topology, site API and presentation examples; Population is explicitly unavailable without a safe read-only query. Existing generation, playability and site authorities remain unchanged.
+- Evidence: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `custodian/game/world/levels/authored/dev/lords_of_pain_test_gallery/`; `custodian/game/world/levels/authored/dev/npa_showcase_arena/`; `custodian/game/world/levels/generated_region_level.gd`; `custodian/game/world/procgen/proc_gen_tilemap.gd`.
+- Task-specific authority: `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`; `design/02_features/procgen/PROCGEN_PLAYABILITY_PASS_V1.md`; `custodian/game/world/levels/level_loader.gd`; `design/04_architecture/ASSET_PIPELINE_V2.md`.
+- Work surface: `custodian/content/data/dev/procgen_showcase/exhibits.v1.json`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_exhibit_catalog.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_exhibit_presenter.gd`, `custodian/game/world/levels/authored/dev/procgen_showcase_gallery/procgen_showcase_gallery.gd`, `custodian/tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd`, `custodian/tools/validation/validation_manifest.json`.
+- Change: Define a dev-only JSON manifest with stable exhibit_id, wing, title, category, source authority path/id, supported runtime preview reference, and semantic selector capability (inspect_only or candidate_query). Validate every reference against actual registered runtime assets or semantic APIs, not raw Asset V2 inbox/source_work. Build bounded exhibit label/detail/readout selection and visually display only proven available states. Populate at least two canonical available examples each for Terrain/Topology/Sites; truthful available-or-N/A entries for Population and Presentation. Never infer walkability/collision from textures or export a parallel biome/route catalog.
+- Preserve: Actual procgen profile, terrain, path, site, actor and Asset V2 ownership; no fabricated missing assets. Selected exhibit must be data-only, no unvalidated seed generation.
+- Non-goals: Do not add a second generator, parallel gameplay authority, fake telemetry, noncanonical runtime art files, generic procgen refactor, or unrelated NPA/LoP modifications.
+- Acceptance: Every available exhibit resolves real provenance; duplicates/missing refs rejected or explicitly N/A; five wings render truthful entries; selection does not alter generation or global game state; LoP/NPA unchanged.
+- Validation: NEW exhibit-catalog smoke using real catalog/runtime reference fixtures and manifest registration; existing Asset V2 status/catalog checks only where touched; shell smoke; changed/diff.
+- Task overrides: `none`
+- Deferred: Semantic exemplar search and live-world selection deferred to PGA-6. No artwork generation.
+
+## Implementation detail
+- Follow the exact consumer/owner paths above; when a new file is named it is the intended destination, not a claim it already exists.
+- Use existing functions and read-only APIs whenever possible; add just a focused controller or accessor, not large stateful blocks in `proc_gen_tilemap.gd`.
+- If real code diverges materially from the packet's ownership boundary, stop and request the scoped architecture refresh instead of improvising a second system.
+
+## Next Handoff
+- Next workstream: `review-procgen-showcase-exhibit-catalog`
+- Next packet state: `dependency-gated`
+- Refresh owner: `execution-agent`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Refresh reason: `normal independent fresh-context review of landed implementation`
+- Next action: `Land and archive this implementation, then launch the paired review in a fresh context; do not advance to PGA-3 until review archives complete.`
+- Blockers or open questions: `none; paired review remains the required next lifecycle gate`
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `The focused procgen_showcase_exhibit_catalog smoke passed all 11 assertions; procgen_showcase_gallery_shell passed; changed-file validation selected and passed 42/42 checks with complete coverage and no failures, timeouts, skips, infrastructure errors or uncovered files. The paired fresh-context review is the next lifecycle packet after this implementation lands.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The first catalog smoke timed out after a compile error because JSON.parse_string was inferred as Variant under warnings-as-errors. A later workstream.py resume attempt correctly refused to adopt the dirty active checkout; the existing claimed worktree was preserved and work continued there.`
+- Root cause / contributing factors: `The initial script omitted an explicit Variant type, and resume intentionally accepts only a clean linked checkout.`
+- Prevention / pipeline improvement: `Annotate dynamic JSON results explicitly in GDScript and continue in the existing active worktree when it is already dirty; use resume only after a clean checkpoint.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `The import-aware validation runner resolved project classes; the focused and changed-file runs then produced clean structured reports.`
+
+## Publication Gate
+Satisfied: implementation and paired review are `ready/auto` on live main following automatic handoff (`ea66eb3cb3d779ed9630b9acc35670df5c64402b`). The prerequisite `review-procgen-showcase-gallery-shell` is archived passed. This does **not** override live dispatcher claims/locks or the implementation's required validation/review.

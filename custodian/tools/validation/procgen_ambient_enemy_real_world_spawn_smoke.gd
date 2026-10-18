@@ -19,6 +19,9 @@ const CONTRACT_SCENE := preload(
 const LOADER_SCRIPT := preload(
 	"res://game/systems/core/systems/contract_world_loader.gd"
 )
+const NAVIGATION_SYSTEM_SCRIPT := preload(
+	"res://game/systems/core/systems/navigation_system.gd"
+)
 const SPAWNER_SCRIPT := preload(
 	"res://game/systems/spawning/ambient_enemy_spawner.gd"
 )
@@ -39,7 +42,49 @@ func _run() -> void:
 
 	var contract_map := CONTRACT_SCENE.instantiate() as CustodianContractMap
 	contract_map.auto_generate_on_ready = false
-	root.add_child(contract_map)
+	var game_root := Node2D.new()
+	game_root.name = "GameRoot"
+	root.add_child(game_root)
+	var world := Node2D.new()
+	world.name = "World"
+	game_root.add_child(world)
+	contract_map.name = "ContractMap"
+	world.add_child(contract_map)
+	await process_frame
+	# ContractWorldLoader's production navigation initialization inspects the
+	# active SceneTree and generated map ownership. Mount the GameRoot/World rig
+	# and contract map at its configured path before loader activation.
+	var enemies_root := Node2D.new()
+	enemies_root.name = "Enemies"
+	world.add_child(enemies_root)
+	var operator := CharacterBody2D.new()
+	operator.name = "Operator"
+	operator.add_to_group("player")
+	var operator_collision := CollisionShape2D.new()
+	var operator_shape := CircleShape2D.new()
+	operator_shape.radius = 8.0
+	operator_collision.shape = operator_shape
+	operator.add_child(operator_collision)
+	world.add_child(operator)
+	for child_name in [
+		"SpawnNodes", "Camera2D", "CommandTerminal",
+		"FieldFabricatorMk1", "FabricationConstructionZone", "Items", "Sectors",
+	]:
+		var placeholder := Node2D.new()
+		placeholder.name = child_name
+		world.add_child(placeholder)
+	var nav_system := NAVIGATION_SYSTEM_SCRIPT.new() as NavigationSystem
+	nav_system.name = "NavigationSystem"
+	game_root.add_child(nav_system)
+	var spawner := SPAWNER_SCRIPT.new() as AmbientEnemySpawner
+	spawner.name = "AmbientEnemySpawner"
+	spawner.enemy_scene = GRUNT_SCENE
+	spawner.enemy_scenes = [GRUNT_SCENE, PURSUIT_SCENE]
+	spawner.enemy_container_path = NodePath("../World/Enemies")
+	game_root.add_child(spawner)
+	var loader := LOADER_SCRIPT.new() as ContractWorldLoader
+	loader.name = "ContractWorldLoader"
+	root.add_child(loader)
 	await process_frame
 
 	await contract_map.generate_contract(seed_arg)
@@ -67,49 +112,9 @@ func _run() -> void:
 			% str(encounter_plan.get("skipped", []))
 		)
 
-	# --- Real GameRoot/World rig, mirroring ContractWorldLoader's defaults ---
-	var game_root := Node2D.new()
-	game_root.name = "GameRoot"
-	root.add_child(game_root)
-	var world := Node2D.new()
-	world.name = "World"
-	game_root.add_child(world)
-	var enemies_root := Node2D.new()
-	enemies_root.name = "Enemies"
-	world.add_child(enemies_root)
-	var operator := CharacterBody2D.new()
-	operator.name = "Operator"
-	operator.add_to_group("player")
-	var operator_collision := CollisionShape2D.new()
-	var operator_shape := CircleShape2D.new()
-	operator_shape.radius = 8.0
-	operator_collision.shape = operator_shape
-	operator.add_child(operator_collision)
-	world.add_child(operator)
-	for child_name in [
-		"SpawnNodes", "Camera2D", "CommandTerminal",
-		"FieldFabricatorMk1", "FabricationConstructionZone", "Items", "Sectors",
-	]:
-		var placeholder := Node2D.new()
-		placeholder.name = child_name
-		world.add_child(placeholder)
-	var nav_system := Node.new()
-	nav_system.name = "NavigationSystem"
-	game_root.add_child(nav_system)
-
-	var spawner := SPAWNER_SCRIPT.new() as AmbientEnemySpawner
-	spawner.name = "AmbientEnemySpawner"
-	spawner.enemy_scene = GRUNT_SCENE
-	spawner.enemy_scenes = [GRUNT_SCENE, PURSUIT_SCENE]
-	spawner.enemy_container_path = NodePath("../World/Enemies")
-	game_root.add_child(spawner)
-
 	if not map_instance.is_in_group("procgen_walkability_provider"):
 		errors.append("generated map_instance did not join procgen_walkability_provider group")
 
-	var loader := LOADER_SCRIPT.new() as ContractWorldLoader
-	loader.name = "ContractWorldLoader"
-	root.add_child(loader)
 	loader.call("_on_contract_generated", contract)
 	for i in 3:
 		await process_frame
@@ -121,6 +126,15 @@ func _run() -> void:
 	var camps := get_nodes_in_group("ambient_enemy_camp")
 	if camps.is_empty():
 		errors.append("no AmbientEnemyCamp nodes were created from the placed markers")
+	var navigation_snapshot: Dictionary = nav_system.call(
+		"get_navigation_authority_debug_snapshot"
+	)
+	if not bool(navigation_snapshot.get("initialized", false)):
+		errors.append("real NavigationSystem did not initialize during contract activation")
+	if int(navigation_snapshot.get("authoritative_floor_count", 0)) <= 0:
+		errors.append("real NavigationSystem did not receive generated-map walkability authority")
+	if int(navigation_snapshot.get("navigation_point_count", 0)) <= 0:
+		errors.append("real NavigationSystem rebuilt zero walkable navigation points")
 
 	# Bring the player to the nearest camp so activation range engages, then
 	# pump both idle (camp activation) and physics (spawn queue drain) frames
@@ -155,6 +169,10 @@ func _run() -> void:
 			seed_arg, encounters.size(), markers.size(), camps.size(),
 			spawner.get_active_enemy_count(), grunts, pursuit_frames,
 		]
+	)
+	print(
+		"[ProcgenAmbientEnemyRealWorldSpawnSmoke] navigation=%s"
+		% JSON.stringify(navigation_snapshot)
 	)
 
 	if grunts == 0:

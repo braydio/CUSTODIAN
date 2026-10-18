@@ -39,6 +39,10 @@ func _init() -> void:
 	_scan_directory(ROOT)
 	refresh()
 
+## Effective runtime clock used by every clip, including variants not yet published.
+func get_effective_fps(action: StringName) -> float:
+	return float(ACTION_FPS.get(String(action), DEFAULT_FPS))
+
 func _scan_directory(path: String) -> void:
 	var directory := DirAccess.open(path)
 	if directory == null: return
@@ -65,7 +69,7 @@ func _parse_clip(path: String, filename: String) -> Dictionary:
 		"action": action, "variant": action, "layer": layer, "action_group": StringName(parts[2]),
 		"direction": StringName(direction), "path": "%s/%s" % [path, filename],
 		"frame_count": frame_count, "frame_size": size,
-		"fps": float(ACTION_FPS.get(String(action), DEFAULT_FPS)),
+		"fps": get_effective_fps(action),
 		"loop": LOOP_ACTIONS.has(String(action)),
 		"animation_name": StringName("%s__%s" % [String(action), direction])
 	}

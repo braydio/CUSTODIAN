@@ -43,6 +43,7 @@
 *.wasm filter=lfs diff=lfs merge=lfs -text
 
 # Git LFS does not create pointer objects for empty placeholders.
+asset_drop/source_work/reference/kenney/pattern_pack_lines/LICENSE.txt -text !eol whitespace=-blank-at-eol
 content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__e__6__96.png !filter !diff !merge text=auto eol=lf
 content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__n__6__96.png !filter !diff !merge text=auto eol=lf
 content/sprites/operator/runtime/body/melee/operator__body__melee__fast_01__s__6__96.png !filter !diff !merge text=auto eol=lf

@@ -36,6 +36,7 @@
 [ext_resource type="Texture2D" uid="uid://i7vnti83qnqu" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__prop__mineral_seep_01__256x192.png" id="35"]
 [ext_resource type="Script" uid="uid://d1eku7gy7kkhf" path="res://game/world/levels/presentation/authored_camera_zone_director_2d.gd" id="36"]
 [ext_resource type="Script" uid="uid://c50io6l71qrc8" path="res://game/world/levels/presentation/authored_camera_zone_2d.gd" id="37"]
+[ext_resource type="Script" path="res://game/world/levels/authored/ash_bell/forlorn_ritualant_underground/forlorn_ritualant_music_director.gd" id="45_music"]
 [ext_resource type="Texture2D" uid="uid://om83n78xjlhq" path="res://assets/sprites/world/ingress/ash_bell/ash_bell__underground_ingress_fx__descent_dust__burst__omni__6f__192x192.png" id="38"]
 [ext_resource type="Script" uid="uid://06rjkucsag52" path="res://game/world/levels/presentation/authored_threshold_blend_2d.gd" id="39"]
 [ext_resource type="Texture2D" uid="uid://b0fg7nd5j481c" path="res://content/tiles/encounters/ritualant_set/underground/ritualant_underground__overlay__landing_connector_bridge_01__320x192.png" id="40"]
@@ -534,6 +535,9 @@ position = Vector2(0, 1696)
 [node name="EventMarkers" type="Node2D" parent="." unique_id=970297813]
 
 [node name="EventRuntime" type="Node2D" parent="." unique_id=639737994]
+
+[node name="RitualantMusicDirector" type="Node" parent="."]
+script = ExtResource("45_music")
 
 [node name="Exits" type="Node2D" parent="." unique_id=1212211479]
 

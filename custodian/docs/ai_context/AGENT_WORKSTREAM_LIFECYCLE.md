@@ -21,6 +21,60 @@ artifacts use their own workstream worktree. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
 the default implementation surface.
 
+## Planned crash-safe session recovery (NOT IMPLEMENTED)
+
+Design authority: `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
+Two dependency-gated packets (`agent-orphan-recovery-observability-v1`
+and `agent-orphan-recovery-fenced-parking-v1`), each with independent review,
+propose to distinguish the **execution lease** from the preserved
+`agent/<workstream>` Git branch. OR1 will add supervised Codex/review process
+identity and a **read-only** orphan inventory; OR2 will add exact-owner
+CAS-fenced `PARKED` recovery and optional **user-enabled** host-local
+`systemd --user` scanning. A confirmed exited session should release its
+execution lock only after its worktree/commits/untracked files and reviewer
+outcome are preserved. No existing remote ref/lock is currently governed by
+this proposal; the instructions below remain the live supported procedures.
+
+Until both slices pass review: `dispatch.py audit --json` is read-only,
+`workstream.py resume` requires a clean worktree, no automatic branch deletion
+is permitted, and `paired_review_runner.py post_exit_recovery` remains a
+protected manual-resolution state. Do not infer a dead session merely from
+elapsed time, or mark a findings-only review passed to release its lock.
+
+### Paired-review prelaunch host-validation recovery
+
+The paired-review runner supports a bounded continuation for a run stopped in
+`host_validation_recovery`, before any reviewer was launched. This is a
+same-claim recovery: it never dispatches a second claim and never edits the
+original failed report or run metadata. Start from a clean coordination checkout
+on `main` or detached exactly at cached `origin/main`, confirm the supervisor
+lock is not held, and inspect a read-only plan:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --plan
+```
+
+The plan pins the run, claim receipt, original worktree/branch, reviewed main,
+canonical archived implementation identity, lifecycle-proven source span and
+complete original evidence manifest. Apply only the exact freshly emitted
+`plan_sha256`, with explicit authorization to launch a new independent reviewer:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-run-id> --recover-host-validation --apply \
+  --plan-sha256 <exact-plan-sha256> --authorize-fresh-reviewer-context
+```
+
+Corrected host validation and reviewer evidence are created exclusively under
+`continuation-01/`; a validation failure, interruption, changed parent evidence,
+or nonpassing reviewer remains preserved and blocks replay. The canonical
+implementation receipt SHA remains the archive-introduction commit. When that
+commit contains only packet archival/index changes, the host validates the
+separately provenance-pinned source-bearing span immediately preceding it.
+Neither a green validation report nor an incomplete continuation is a review
+PASS. Inspect the child metadata and artifacts before any further recovery.
+
 ## Start or resume
 
 Derive one stable lowercase kebab-case ID for a coherent task. Run from the
@@ -226,9 +280,11 @@ For each pair:
    `python3 custodian/tools/agent/paired_review_runner.py <review-workstream-id>`
    from the coordination checkout. The runner preflights Codex, claims the exact
    review through dispatch, and launches `codex exec --ephemeral` in the receipt's
-   worktree. A failed fetch or incomplete receipt is recoverable and does not
-   count as completion. Preserve claimed branches, worktrees, and evidence after
-   runner failure.
+   worktree. The launch also grants writable access to the exact CUSTODIAN
+   validation cache roots used by `GodotJobBudget` and the isolated Godot HOME;
+   shared Git metadata remains restricted. A failed fetch or incomplete receipt
+   is recoverable and does not count as completion. Preserve claimed branches,
+   worktrees, and evidence after runner failure.
 5. At the accepted review boundary, record the landing SHA, review status,
    elapsed time, validation summary, pair count, and next eligibility. The
    default one-pair mode stops here even if a successor is ready. Explicit
@@ -357,6 +413,96 @@ wall time.
 
 This is instruction/contract hardening, not a requirement to build a general
 subagent manager.
+
+## Paired review outcomes and administrative closeout
+
+`paired_review_runner.py` runs the canonical changed-file validation from the
+trusted coordinator before starting its restricted fresh reviewer. The base is
+the exact parent of the pinned implementation commit, and validation runs in
+the claimed review worktree under `run_validation.py`'s normal Godot project
+lock and job budget. The run evidence stores the raw report and coordinator
+provenance; the reviewer inspects that report and authors an independent
+`passed`, `findings`, or `human_required` disposition. The coordinator verifies
+the report digest, pinned identities, and implementation source fingerprint
+again before closeout. A green report is necessary evidence, never a substitute
+for reviewer judgment. If host validation fails or evidence changes, preserve
+the claim and worktree for recovery.
+
+A paired review concludes with exactly one outcome: `passed`, `findings` or
+`human_required`. The outcome is a flat `## Review Outcome` section in the archived
+*review* packet (`custodian/tools/agent/review_outcome.py` is the only parser). It is
+bound to the review workstream, reviewed target, pinned reviewed main, immutable
+implementation commit, originating run ID, review cycle and stable finding IDs
+(`R<cycle>-NN`). A missing, duplicate, malformed or unbound section fails closed.
+
+- **Accepted-review dependencies.** An archived review releases an ordinary
+  `Depends on:` successor only when it is a verified `passed` (a `passed` outcome plus
+  exactly one canonical passing receipt in the target, or, for reviews archived before
+  this section existed, an unambiguous flat pass in the target). `findings`,
+  `human_required`, malformed or contradictory outcomes and ambiguous legacy reviews
+  never release it. `archived complete` alone does not mean accepted. The dispatcher
+  applies this identically in `status`, `audit` and `claim`. Only the explicitly linked
+  next bounded correction (`<root>-review-corrections-<N+1>`, with `Findings addressed`
+  IDs the review recorded) may consume a concluded `findings` review.
+- **Nonpassing closeout.** `paired_review_runner.coordinator_finish_nonpassing_review`
+  lands a findings/human_required review without ever touching the reviewed target
+  packet: it must stay byte-identical to its pinned baseline and gains no receipt. Only
+  the review packet (active and archived), the index and the canonical closing summary
+  may change. The validation report is a closeout-**integrity** report; it makes no
+  claim about the behavior under review, and the failing-behavior evidence stays in the
+  review as findings. `workstream.py finish` applies the matching gate.
+- **Same-run recovery of a stranded review.**
+  `paired_review_runner.py recover-closeout <review-workstream> --run-id <id>
+  --outcome findings|human_required --finding-ids R0-01[,...] --provenance <p>
+  --isolated-checkout <path> (--plan | --apply) [--release-claim]`. `--plan` changes
+  no worktree, branch, journal or run evidence (it only refreshes remote-tracking refs
+  and the review lock file). `--apply` works only in a recovery-branch checkout at the
+  exact published tip, never in the original worktree. Every commit the review branch
+  made since its merge-base with `origin/main` must stay inside the bounded paths
+  (review packet active/archived, index, canonical summary) before anything is written
+  and again before anything is published. It journals each stage atomically in the
+  original run directory (`closeout-journal.json` and `closeout-integrity.json` are the
+  only files added there), converges on retry, never calls `dispatch.py claim`, and
+  refuses a dirty coordination checkout. The original claim is read from the structured
+  dispatcher receipt; if an older run stored `claim.stdout` truncated mid-JSON, only that
+  parse failure falls back to the plain `CLAIMED` header lines, which must match
+  `metadata.json` exactly on workstream, branch, worktree and packet and are then
+  verified in Git (a receipt that parses but does not verify never falls back). The original claim, branch, worktree and run
+  evidence are preserved; the original worktree's modified and untracked files are
+  verified by SHA-256 before and after (ignored files, file modes and symlink targets
+  are not covered by that inventory). The claim (the remote `agent/<id>` branch) is
+  released only with `--release-claim`, either during apply or later on a completed
+  recovery, only while the protected original is unchanged, only after every commit on
+  it is on `origin/main`, and the delete is conditional on the exact verified SHA. A
+  pass is never recovered this way.
+
+### Fresh reviewer continuation of one protected post-exit run
+
+When the original ephemeral reviewer session is gone but the exact claimed
+review needs a new independent disposition, use:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
+  --continue-run <exact-original-run-id> --authorize-fresh-reviewer-context
+```
+
+Both flags are required. This starts a new fresh reviewer context attached to
+the same preserved claim and checkout; it does not restore the old Codex
+session, dispatch another claim, or resume a workstream. The command requires a
+clean coordinator checkout on `main`, the exact original structured claim
+receipt/worktree/branch, the pinned archived target and SHA, and immutable,
+green coordinator host-validation evidence. It holds the same nonblocking
+per-review runner lock, writes continuation evidence only under a new exclusive
+`continuation-01/` child of the original run, and verifies hashes of all
+preexisting run files before and after the reviewer. Existing reviewer notes,
+summaries and reports are copied byte-for-byte into that child before the
+reviewer starts. Findings, human-required outcomes, interruptions, and any
+ambiguous closeout leave the claim and branch protected. A PASS alone may enter
+the existing exact receipt verification and coordinator finish path.
+Repeating a completed run independently verifies the landed receipt and returns
+success; an incomplete continuation is never replayed automatically. New
+ordinary review claims persist the full structured receipt in
+`claim-receipt.json` because the human-readable `claim.stdout` is length-limited.
 
 ## Exit paths
 

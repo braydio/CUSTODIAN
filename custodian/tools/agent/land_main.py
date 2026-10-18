@@ -51,7 +51,8 @@ def commits_to_replay(root: Path, base: str) -> list[str]:
     return [line for line in raw.splitlines() if line]
 
 
-def already_published_elsewhere(root: Path, commits: list[str], target_ref: str) -> str | None:
+def already_published_elsewhere(root: Path, commits: list[str], target_ref: str,
+                                allowed_refs: frozenset[str] = frozenset()) -> str | None:
     remote_refs = git("for-each-ref", "--format=%(refname)", "refs/remotes", cwd=root).stdout.splitlines()
     # A push-first workstream intentionally publishes its own commits before
     # landing. Ignore only that branch's configured upstream; other remote refs
@@ -66,7 +67,7 @@ def already_published_elsewhere(root: Path, commits: list[str], target_ref: str)
     )
     for commit in commits:
         for ref in remote_refs:
-            if ref in {target_ref, own_upstream}:
+            if ref in {target_ref, own_upstream} or ref in allowed_refs:
                 continue
             contained = git("merge-base", "--is-ancestor", commit, ref, check=False, cwd=root)
             if contained.returncode == 0:
@@ -86,6 +87,7 @@ def fetch_main(root: Path, remote: str, target: str) -> str:
 def land(
     remote: str = "origin", target: str = "main", attempts: int = 3,
     dry_run: bool = False, approved_operator_publication: bool = False,
+    allow_published_refs: tuple[str, ...] = (),
 ) -> int:
     operator_publication = approved_operator_publication
     if operator_publication and (remote != "origin" or target != "main" or branch_name(repo_root()) != "workbench/operator-art"):
@@ -123,7 +125,9 @@ def land(
             print(f"already up to date with {remote}/{target}; nothing to land")
             return 0
 
-        published = already_published_elsewhere(root, original_commits, target_ref)
+        # Explicitly allowed refs are tolerated only here: a fast-forward rewrites nothing. The
+        # rebase path below stays strict because rebasing rewrites the published commits.
+        published = already_published_elsewhere(root, original_commits, target_ref, frozenset(allow_published_refs))
         if published:
             raise LandingError(published)
 
@@ -203,6 +207,11 @@ def main() -> int:
     parser.add_argument(
         "--approved-operator-publication", action="store_true", help=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        "--allow-published-ref", action="append", default=[], metavar="REMOTE_REF",
+        help="remote-tracking ref (refs/remotes/...) whose copy of these commits is tolerated when "
+             "landing is a pure fast-forward; a rebase still refuses it",
+    )
     args = parser.parse_args()
     if args.max_attempts < 1:
         parser.error("--max-attempts must be at least 1")
@@ -219,7 +228,8 @@ def main() -> int:
             except Exception:
                 trace = None
         try:
-            result = land(args.remote, args.target, args.max_attempts, args.dry_run, args.approved_operator_publication)
+            result = land(args.remote, args.target, args.max_attempts, args.dry_run, args.approved_operator_publication,
+                          tuple(args.allow_published_ref))
             if trace:
                 trace.record("landing_completed", outcome="landed", head=git("rev-parse", "HEAD", cwd=root).stdout.strip())
                 trace.publish()

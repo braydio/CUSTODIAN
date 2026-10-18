@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import subprocess
 import tempfile
@@ -32,8 +33,27 @@ def _sidecar(source: str | None, uid: str | None, *, invalid: bool = False, dest
     )
 
 
+def _standalone_temp_parent() -> str:
+    """Do not mistake an ambient /tmp/.git checkout for fixture ownership.
+
+    The first fixture represents a *standalone* project, while the second
+    creates its own nested Git repository and tests real Git/LFS behavior.
+    Keep the standalone fixture outside any Git ancestry rather than
+    weakening the production preflight's fail-closed Git detection.
+    """
+    for candidate in (Path(tempfile.gettempdir()), Path("/dev/shm"), Path("/var/tmp")):
+        if not candidate.is_dir() or not os.access(candidate, os.W_OK):
+            continue
+        if any((ancestor / ".git").exists() for ancestor in (candidate, *candidate.parents)):
+            continue
+        return str(candidate)
+    raise RuntimeError("no writable standalone temporary root outside a Git checkout")
+
+
 def main() -> int:
-    with tempfile.TemporaryDirectory(prefix="godot-import-preflight-") as temp:
+    with tempfile.TemporaryDirectory(
+        prefix="godot-import-preflight-", dir=_standalone_temp_parent()
+    ) as temp:
         root = Path(temp)
         project = root / "project"
         project.mkdir()

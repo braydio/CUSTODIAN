@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "combat/operator_mobile_guard_strafe",
-  "description": "Runtime-scale westward strafe through the unarmed guard enter, hold, and exit while aiming east.",
+  "description": "Runtime-scale westward strafe through unarmed guard and parry attempt while aiming east.",
   "scene": "res://scenes/debug/combat_playground.tscn",
   "seed": 104729,
   "duration_ticks": 120,
@@ -31,12 +31,13 @@
     {"tick": 12, "action": "aim_at_role", "role": "operator", "target_role": "target"},
     {"tick": 18, "action": "input_press", "name": "attack_secondary"},
     {"tick": 19, "action": "input_press", "name": "move_left"},
+    {"tick": 40, "action": "input_tap", "name": "attack_primary", "hold_ticks": 1},
     {"tick": 66, "action": "input_release", "name": "attack_secondary"},
     {"tick": 84, "action": "input_release", "name": "move_left"},
     {"tick": 118, "action": "finish"}
   ],
   "probes": [
-    {"id": "operator_state", "role": "operator", "fields": ["global_position", "movement_direction", "aim_direction", "_block_phase", "_enemy_impact_lock_timer"], "ticks": [20, 24, 48, 78], "required": true},
+    {"id": "operator_state", "role": "operator", "fields": ["global_position", "movement_direction", "aim_direction", "_block_phase", "_parry_phase", "_enemy_impact_lock_timer"], "ticks": [20, 24, 48, 78], "required": true},
     {"id": "lower_body_state", "role": "lower_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "ticks": [20, 24, 48, 78], "required": true},
     {"id": "upper_body_state", "role": "upper_body", "fields": ["animation", "frame", "frame_progress", "effective_visible", "global_bounds"], "ticks": [20, 24, 48, 78], "required": true}
   ],
@@ -45,10 +46,11 @@
     {"type": "probe_compare", "probe": "lower_body_state", "tick": 20, "field": "animation", "op": "eq", "value": "unarmed/locomotion/walk_01/w/lower_body", "severity": "error"},
     {"type": "probe_compare", "probe": "upper_body_state", "tick": 20, "field": "animation", "op": "eq", "value": "unarmed/defense/block_enter_01/e/upper_body", "severity": "error"},
     {"type": "probe_compare", "probe": "upper_body_state", "tick": 24, "field": "animation", "op": "eq", "value": "unarmed/defense/block_hold_01/e/upper_body", "severity": "error"},
-    {"type": "probe_compare", "probe": "upper_body_state", "tick": 78, "field": "animation", "op": "eq", "value": "unarmed/defense/block_enter_01/e/upper_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 78, "field": "animation", "op": "eq", "value": "unarmed/locomotion/walk_01/w/upper_body", "severity": "error"},
     {"type": "probe_compare", "probe": "operator_state", "tick": 48, "field": "movement_direction", "op": "eq", "value": [-1.0, 0.0], "severity": "error"},
     {"type": "probe_compare", "probe": "operator_state", "tick": 48, "field": "aim_direction", "op": "eq", "value": [1.0, 0.0], "severity": "error"},
     {"type": "probe_compare", "probe": "lower_body_state", "tick": 48, "field": "animation", "op": "eq", "value": "unarmed/locomotion/walk_01/w/lower_body", "severity": "error"},
+    {"type": "probe_compare", "probe": "upper_body_state", "tick": 48, "field": "animation", "op": "eq", "value": "unarmed/defense/parry_01/e/upper_body", "severity": "error"},
     {"type": "probe_sequence_equal", "probe": "lower_body_state", "field": "animation", "points": [{"probe": "lower_body_state", "tick": 20}, {"probe": "lower_body_state", "tick": 24}, {"probe": "lower_body_state", "tick": 48}, {"probe": "lower_body_state", "tick": 78}], "tolerance": 0.0, "severity": "error"},
     {"type": "probe_compare", "probe": "lower_body_state", "tick": 24, "field": "effective_visible", "op": "eq", "value": true, "severity": "error"},
     {"type": "probe_compare", "probe": "upper_body_state", "tick": 24, "field": "effective_visible", "op": "eq", "value": true, "severity": "error"},

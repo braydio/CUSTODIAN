@@ -9,6 +9,9 @@
 
 ## Design Lock
 
+> **Ritualant upstream design lock (2026-10-12; planned, not current runtime):** The authored Highland cavern will present original/displaced station infrastructure and an off-chapel Receiver Key before the chapel overlap. This does not change the route order: Ritualant north egress → **generated Alpine Highlands** → **generated Bridged Falls** → Lower Quarter/Station IX. See `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`. Existing north-egress packet remains independently dependency-gated.
+
+
 Bridged Falls is the physical transition between the Ash-Bell highlands and the
 Lower Quarter lowlands.
 

@@ -2,6 +2,11 @@
 
 2.5D isometric real-time tactical base defense game.
 
+
+# Just kidding
+
+# I have no idea what the rest of this document says but I'm certain it is not even close to correct
+
 Status: Active implementation runtime.
 
 ## Start Here

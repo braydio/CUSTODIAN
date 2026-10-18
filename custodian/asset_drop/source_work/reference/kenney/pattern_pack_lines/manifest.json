@@ -1,0 +1,2126 @@
+{
+  "schema": "custodian.kenney_pattern_lines_reference_library.v1",
+  "pack": {
+    "title": "Pattern Pack Lines",
+    "version": "1.0",
+    "creator": "Kenney",
+    "source_root_from_downloads": "PNG/",
+    "source_archive": null,
+    "source_archive_note": "No matching source archive was present in Downloads; the four extracted PNG folders and License.txt were used."
+  },
+  "license": {
+    "id": "CC0 1.0",
+    "text_source_relative_to_downloads": "License.txt",
+    "repository_copy": "LICENSE.txt",
+    "sha256": "4d45f50ee40d90f79eaf8924a288f94497d6678deb68ac0a86a4d6d532926ab1",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+  },
+  "source_name_mapping": {
+    "rule": "Parse four-digit source index n and copy unchanged bytes to pattern_{n:03d}.png; no offset.",
+    "source_pattern": "pattern_{index:04d}.png",
+    "destination_pattern": "pattern_{index:03d}.png",
+    "pattern_id_pattern": "pattern_{index:03d}",
+    "numeric_range_inclusive": [
+      0,
+      29
+    ]
+  },
+  "variants": {
+    "default_256": {
+      "source_root_relative_to_downloads": "PNG/Thick/Default (256px)",
+      "width": 256,
+      "height": 256,
+      "pattern_count": 30
+    },
+    "double_thick_512": {
+      "source_root_relative_to_downloads": "PNG/Thick/Double (512px)",
+      "width": 512,
+      "height": 512,
+      "pattern_count": 30
+    },
+    "thin_256": {
+      "source_root_relative_to_downloads": "PNG/Thin/Default (256px)",
+      "width": 256,
+      "height": 256,
+      "pattern_count": 30
+    },
+    "thin_512": {
+      "source_root_relative_to_downloads": "PNG/Thin/Double (512px)",
+      "width": 512,
+      "height": 512,
+      "pattern_count": 30
+    }
+  },
+  "pattern_count_per_variant": 30,
+  "png_count_total": 120,
+  "entries": [
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0000.png",
+      "source_basename": "pattern_0000.png",
+      "canonical_library_relative_path": "default_256/pattern_000.png",
+      "pattern_id": "pattern_000",
+      "source_numeric_index": 0,
+      "width": 256,
+      "height": 256,
+      "sha256": "64b68757fa142a4b6dc68c02485293993c9eaa5f30b8f8450586a7b479076aec",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "civic slab",
+        "four-quadrant registration geometry"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0001.png",
+      "source_basename": "pattern_0001.png",
+      "canonical_library_relative_path": "default_256/pattern_001.png",
+      "pattern_id": "pattern_001",
+      "source_numeric_index": 1,
+      "width": 256,
+      "height": 256,
+      "sha256": "c7e1db303d63f5c2c460355c6016b0e7109f0b33ecd728738e26baf8aaa2171c",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0002.png",
+      "source_basename": "pattern_0002.png",
+      "canonical_library_relative_path": "default_256/pattern_002.png",
+      "pattern_id": "pattern_002",
+      "source_numeric_index": 2,
+      "width": 256,
+      "height": 256,
+      "sha256": "369ddf16891c8e6fd05da4ba848c1f5cb966facac4291640ff2a9233d04dfa82",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0003.png",
+      "source_basename": "pattern_0003.png",
+      "canonical_library_relative_path": "default_256/pattern_003.png",
+      "pattern_id": "pattern_003",
+      "source_numeric_index": 3,
+      "width": 256,
+      "height": 256,
+      "sha256": "47cded19f022cd2dabd3d77a2a9e66f21ec6289cca4222314c46c6a21284d273",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0004.png",
+      "source_basename": "pattern_0004.png",
+      "canonical_library_relative_path": "default_256/pattern_004.png",
+      "pattern_id": "pattern_004",
+      "source_numeric_index": 4,
+      "width": 256,
+      "height": 256,
+      "sha256": "45101d2509b948dfc2542a76680691032f1dfb4cf7221c99da7f34bdc1229347",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "simple diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0005.png",
+      "source_basename": "pattern_0005.png",
+      "canonical_library_relative_path": "default_256/pattern_005.png",
+      "pattern_id": "pattern_005",
+      "source_numeric_index": 5,
+      "width": 256,
+      "height": 256,
+      "sha256": "d34e8805a69fd1b3c19e049c2bef9179c2b52b8cd437e88d1a82394005cab871",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0006.png",
+      "source_basename": "pattern_0006.png",
+      "canonical_library_relative_path": "default_256/pattern_006.png",
+      "pattern_id": "pattern_006",
+      "source_numeric_index": 6,
+      "width": 256,
+      "height": 256,
+      "sha256": "8afbac3be6b6c661f6f251bac0be17ddaf2c1ffdbd6ae03077125fdb343d386f",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "anti-slip herringbone",
+        "service tread",
+        "broken catwalk fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0007.png",
+      "source_basename": "pattern_0007.png",
+      "canonical_library_relative_path": "default_256/pattern_007.png",
+      "pattern_id": "pattern_007",
+      "source_numeric_index": 7,
+      "width": 256,
+      "height": 256,
+      "sha256": "3c02facae099420a1e334c9ab89e7cc4f8aa1a3752fea4703a8759fcff7da069",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "machinery grille",
+        "louver/register face",
+        "technical panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0008.png",
+      "source_basename": "pattern_0008.png",
+      "canonical_library_relative_path": "default_256/pattern_008.png",
+      "pattern_id": "pattern_008",
+      "source_numeric_index": 8,
+      "width": 256,
+      "height": 256,
+      "sha256": "fbdbea85a65c329065fb6102af9151551da2a2db21a7ff8b92410632a9c92f00",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "woven service grate",
+        "industrial tread",
+        "dense maintenance fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0009.png",
+      "source_basename": "pattern_0009.png",
+      "canonical_library_relative_path": "default_256/pattern_009.png",
+      "pattern_id": "pattern_009",
+      "source_numeric_index": 9,
+      "width": 256,
+      "height": 256,
+      "sha256": "4e24bc0698168d5f102525ea25024d23c0893b13087deacd8c4c8643eb926e72",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "registered square/diamond civic grid",
+        "separate from brass Authority Inlays"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0010.png",
+      "source_basename": "pattern_0010.png",
+      "canonical_library_relative_path": "default_256/pattern_010.png",
+      "pattern_id": "pattern_010",
+      "source_numeric_index": 10,
+      "width": 256,
+      "height": 256,
+      "sha256": "0da1468f8db0452e203fcced93edb7928b2769ef951346e81ff35604d3e4b364",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0011.png",
+      "source_basename": "pattern_0011.png",
+      "canonical_library_relative_path": "default_256/pattern_011.png",
+      "pattern_id": "pattern_011",
+      "source_numeric_index": 11,
+      "width": 256,
+      "height": 256,
+      "sha256": "886f3ced6b0a2c7c45782d331dc7e9ccffff54caf8eed1eb3ee08300f2e51c93",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0012.png",
+      "source_basename": "pattern_0012.png",
+      "canonical_library_relative_path": "default_256/pattern_012.png",
+      "pattern_id": "pattern_012",
+      "source_numeric_index": 12,
+      "width": 256,
+      "height": 256,
+      "sha256": "9f4aed1dd229ab737cce4d91872ad565b25baf0b45f07de0cf51b770535a6f27",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0013.png",
+      "source_basename": "pattern_0013.png",
+      "canonical_library_relative_path": "default_256/pattern_013.png",
+      "pattern_id": "pattern_013",
+      "source_numeric_index": 13,
+      "width": 256,
+      "height": 256,
+      "sha256": "b0694557d4ff8745941893e5f80a604c9666492baa30ebcdda03d0b0d58135df",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "truss mesh",
+        "gantry lattice",
+        "braced screen"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0014.png",
+      "source_basename": "pattern_0014.png",
+      "canonical_library_relative_path": "default_256/pattern_014.png",
+      "pattern_id": "pattern_014",
+      "source_numeric_index": 14,
+      "width": 256,
+      "height": 256,
+      "sha256": "112cf14ea650773d35992594e65fc23694cdc256d0367a53741ee32f11f3be7b",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "maintenance plate seams",
+        "service-panel subdivision"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0015.png",
+      "source_basename": "pattern_0015.png",
+      "canonical_library_relative_path": "default_256/pattern_015.png",
+      "pattern_id": "pattern_015",
+      "source_numeric_index": 15,
+      "width": 256,
+      "height": 256,
+      "sha256": "d9efda8056f66c1949f1880adf12a444d3065a91eb4a623aa5dad7b3ba0daaf8",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0016.png",
+      "source_basename": "pattern_0016.png",
+      "canonical_library_relative_path": "default_256/pattern_016.png",
+      "pattern_id": "pattern_016",
+      "source_numeric_index": 16,
+      "width": 256,
+      "height": 256,
+      "sha256": "a43ba95985ea5b57c3799d50d41acef4b4a8dbeac01f379abeb0c7d58facd163",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "large quadrant/grid seam"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0017.png",
+      "source_basename": "pattern_0017.png",
+      "canonical_library_relative_path": "default_256/pattern_017.png",
+      "pattern_id": "pattern_017",
+      "source_numeric_index": 17,
+      "width": 256,
+      "height": 256,
+      "sha256": "3b9814c64efe290fd3c5009da8c020acea38139abf3f7f2dd46741cd170c0506",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "square service grid",
+        "hatch matrix",
+        "modular floor panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0018.png",
+      "source_basename": "pattern_0018.png",
+      "canonical_library_relative_path": "default_256/pattern_018.png",
+      "pattern_id": "pattern_018",
+      "source_numeric_index": 18,
+      "width": 256,
+      "height": 256,
+      "sha256": "3e36e947f896f01b2312cadc889325af69596712b3b8628b8f16bd7772efddea",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0019.png",
+      "source_basename": "pattern_0019.png",
+      "canonical_library_relative_path": "default_256/pattern_019.png",
+      "pattern_id": "pattern_019",
+      "source_numeric_index": 19,
+      "width": 256,
+      "height": 256,
+      "sha256": "94d47f35f50cb67f026738c11e581ceef42f93f23626eccfb00487a60e121a91",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0020.png",
+      "source_basename": "pattern_0020.png",
+      "canonical_library_relative_path": "default_256/pattern_020.png",
+      "pattern_id": "pattern_020",
+      "source_numeric_index": 20,
+      "width": 256,
+      "height": 256,
+      "sha256": "022227a8368bb60d3c879447ac56d3229fa846b756298cb4f5652d9ba041cf01",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0021.png",
+      "source_basename": "pattern_0021.png",
+      "canonical_library_relative_path": "default_256/pattern_021.png",
+      "pattern_id": "pattern_021",
+      "source_numeric_index": 21,
+      "width": 256,
+      "height": 256,
+      "sha256": "22d02f48c54e17bea017c270e3dec00aab610bb634923fc55af7027282cd4e05",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0022.png",
+      "source_basename": "pattern_0022.png",
+      "canonical_library_relative_path": "default_256/pattern_022.png",
+      "pattern_id": "pattern_022",
+      "source_numeric_index": 22,
+      "width": 256,
+      "height": 256,
+      "sha256": "c3cca725f3d41d0c8a086bed4b66c6c6840ddfcad00aea1cb52d0d6b91cd236d",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "structural X-brace",
+        "large frame reinforcement"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0023.png",
+      "source_basename": "pattern_0023.png",
+      "canonical_library_relative_path": "default_256/pattern_023.png",
+      "pattern_id": "pattern_023",
+      "source_numeric_index": 23,
+      "width": 256,
+      "height": 256,
+      "sha256": "69a5442d82aa11177be0b56ecd27b997ef503691a99ec8cbda278a2ccbd808cd",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "diamond guard mesh",
+        "catwalk/vent lattice"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0024.png",
+      "source_basename": "pattern_0024.png",
+      "canonical_library_relative_path": "default_256/pattern_024.png",
+      "pattern_id": "pattern_024",
+      "source_numeric_index": 24,
+      "width": 256,
+      "height": 256,
+      "sha256": "48c650ee6c9ef022be809c84b21212ca19315dd105755e7cb1189427e594ede0",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "octagonal structural frame"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0025.png",
+      "source_basename": "pattern_0025.png",
+      "canonical_library_relative_path": "default_256/pattern_025.png",
+      "pattern_id": "pattern_025",
+      "source_numeric_index": 25,
+      "width": 256,
+      "height": 256,
+      "sha256": "a8a0557273596387a5625aa5862b757e9cbe84362874ab4ef83e5f88e3c1ab8b",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0026.png",
+      "source_basename": "pattern_0026.png",
+      "canonical_library_relative_path": "default_256/pattern_026.png",
+      "pattern_id": "pattern_026",
+      "source_numeric_index": 26,
+      "width": 256,
+      "height": 256,
+      "sha256": "89908d5dd8720069de4885db3e6d389caed984196d8942062c528005230d276b",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "sparse diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0027.png",
+      "source_basename": "pattern_0027.png",
+      "canonical_library_relative_path": "default_256/pattern_027.png",
+      "pattern_id": "pattern_027",
+      "source_numeric_index": 27,
+      "width": 256,
+      "height": 256,
+      "sha256": "626045b1a421c7ff7c52a2ee659eb328a2dc3f87be6398d738ff0f68f8ff7961",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "dense guard lattice",
+        "grille field",
+        "industrial mesh"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0028.png",
+      "source_basename": "pattern_0028.png",
+      "canonical_library_relative_path": "default_256/pattern_028.png",
+      "pattern_id": "pattern_028",
+      "source_numeric_index": 28,
+      "width": 256,
+      "height": 256,
+      "sha256": "6f9b3cf91812de4052f7259c0b5da24f44c13625caf35e674df84bc007f7c7aa",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "broad directional chevron",
+        "threshold/service direction band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "default_256",
+      "source_relative_path": "PNG/Thick/Default (256px)/pattern_0029.png",
+      "source_basename": "pattern_0029.png",
+      "canonical_library_relative_path": "default_256/pattern_029.png",
+      "pattern_id": "pattern_029",
+      "source_numeric_index": 29,
+      "width": 256,
+      "height": 256,
+      "sha256": "b32501485661666b6f0605c1c62394aa2d2e095a7cb52aa281cb6c11efee58a9",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "repeated directional chevrons",
+        "airflow/route band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0000.png",
+      "source_basename": "pattern_0000.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_000.png",
+      "pattern_id": "pattern_000",
+      "source_numeric_index": 0,
+      "width": 512,
+      "height": 512,
+      "sha256": "79c10d357765e9a31b3f59c9230c30fe5fba929e5e6b598242d12763f1036306",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "civic slab",
+        "four-quadrant registration geometry"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0001.png",
+      "source_basename": "pattern_0001.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_001.png",
+      "pattern_id": "pattern_001",
+      "source_numeric_index": 1,
+      "width": 512,
+      "height": 512,
+      "sha256": "10ade97c5dfe1fb6ab1e05834bd460a202b1688f95acd4765d6232a9b4401793",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0002.png",
+      "source_basename": "pattern_0002.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_002.png",
+      "pattern_id": "pattern_002",
+      "source_numeric_index": 2,
+      "width": 512,
+      "height": 512,
+      "sha256": "ba459dfece9b86b2bf67e410686b9615e215e49d4d4f221e6836656928d0b21d",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0003.png",
+      "source_basename": "pattern_0003.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_003.png",
+      "pattern_id": "pattern_003",
+      "source_numeric_index": 3,
+      "width": 512,
+      "height": 512,
+      "sha256": "93864a76bf3097f5d5134f78372ddbdaed09843187121b5b7c58812032856f16",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0004.png",
+      "source_basename": "pattern_0004.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_004.png",
+      "pattern_id": "pattern_004",
+      "source_numeric_index": 4,
+      "width": 512,
+      "height": 512,
+      "sha256": "b5ee36f6f86671f82d4c6b3a1a3eda97002da852bb12a5ddd0af80115c3e92b1",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "simple diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0005.png",
+      "source_basename": "pattern_0005.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_005.png",
+      "pattern_id": "pattern_005",
+      "source_numeric_index": 5,
+      "width": 512,
+      "height": 512,
+      "sha256": "120d885fa9f0208f10fe60b7e509f5e5e239cef01d6e3ec27406fa4b9e34ff7c",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0006.png",
+      "source_basename": "pattern_0006.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_006.png",
+      "pattern_id": "pattern_006",
+      "source_numeric_index": 6,
+      "width": 512,
+      "height": 512,
+      "sha256": "8c823e1a9a3c20d9ddf02756ab9e592a34e5003a2c9b1df1d322090002ae43a2",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "anti-slip herringbone",
+        "service tread",
+        "broken catwalk fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0007.png",
+      "source_basename": "pattern_0007.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_007.png",
+      "pattern_id": "pattern_007",
+      "source_numeric_index": 7,
+      "width": 512,
+      "height": 512,
+      "sha256": "4d576c2125fc8fe83dd2b45692bf959bad06d724d73db4a2af1dcff4c6914468",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "machinery grille",
+        "louver/register face",
+        "technical panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0008.png",
+      "source_basename": "pattern_0008.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_008.png",
+      "pattern_id": "pattern_008",
+      "source_numeric_index": 8,
+      "width": 512,
+      "height": 512,
+      "sha256": "3f982221c912fe03b4615458cbdd86ebbd27345049206c511c03a2e7ad142e3b",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "woven service grate",
+        "industrial tread",
+        "dense maintenance fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0009.png",
+      "source_basename": "pattern_0009.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_009.png",
+      "pattern_id": "pattern_009",
+      "source_numeric_index": 9,
+      "width": 512,
+      "height": 512,
+      "sha256": "0e149645279f1676c4f1c1219381b85514927bb261289a1aa0e47089b8e8ab6d",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "registered square/diamond civic grid",
+        "separate from brass Authority Inlays"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0010.png",
+      "source_basename": "pattern_0010.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_010.png",
+      "pattern_id": "pattern_010",
+      "source_numeric_index": 10,
+      "width": 512,
+      "height": 512,
+      "sha256": "9d91131a8a56d933c7f1f7edc4a2c186423b096bac08b8558a68950b0817962e",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0011.png",
+      "source_basename": "pattern_0011.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_011.png",
+      "pattern_id": "pattern_011",
+      "source_numeric_index": 11,
+      "width": 512,
+      "height": 512,
+      "sha256": "e067d8b2af21ba9eb491afff826e4deaf1b22d902355c5df51414bccc1ca477f",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0012.png",
+      "source_basename": "pattern_0012.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_012.png",
+      "pattern_id": "pattern_012",
+      "source_numeric_index": 12,
+      "width": 512,
+      "height": 512,
+      "sha256": "917d94e6bf8da76ce2cdf4445f46fdb4c6608e3ec9974fefef437923c2441d6d",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0013.png",
+      "source_basename": "pattern_0013.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_013.png",
+      "pattern_id": "pattern_013",
+      "source_numeric_index": 13,
+      "width": 512,
+      "height": 512,
+      "sha256": "dcd1715dc42d3684b5a43bfc66d0d296a0f576a88d3cdbcd3bee19c9341a8796",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "truss mesh",
+        "gantry lattice",
+        "braced screen"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0014.png",
+      "source_basename": "pattern_0014.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_014.png",
+      "pattern_id": "pattern_014",
+      "source_numeric_index": 14,
+      "width": 512,
+      "height": 512,
+      "sha256": "7d8671cb7a707a3f102eb0f1fb373bb783438a1cee60d54955c655d3076154d4",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "maintenance plate seams",
+        "service-panel subdivision"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0015.png",
+      "source_basename": "pattern_0015.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_015.png",
+      "pattern_id": "pattern_015",
+      "source_numeric_index": 15,
+      "width": 512,
+      "height": 512,
+      "sha256": "e8d62cef647a23fa7bb3dc87fcbf0ed1a01cbdeb71759ae8e1c975a44053f6cb",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0016.png",
+      "source_basename": "pattern_0016.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_016.png",
+      "pattern_id": "pattern_016",
+      "source_numeric_index": 16,
+      "width": 512,
+      "height": 512,
+      "sha256": "03a1a8e958f025aa08ffbe2441b588125ce1ad17412facb5e339be34bf6402cb",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "large quadrant/grid seam"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0017.png",
+      "source_basename": "pattern_0017.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_017.png",
+      "pattern_id": "pattern_017",
+      "source_numeric_index": 17,
+      "width": 512,
+      "height": 512,
+      "sha256": "f8216cee45c8a980c5aa096faabbf8f8100192e077fff489df56fb2def23dc20",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "square service grid",
+        "hatch matrix",
+        "modular floor panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0018.png",
+      "source_basename": "pattern_0018.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_018.png",
+      "pattern_id": "pattern_018",
+      "source_numeric_index": 18,
+      "width": 512,
+      "height": 512,
+      "sha256": "f624b7350426a13bd36e816dd7cbc6c9b7cbc4acb7d8e4a1c5fbabc2096ec003",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0019.png",
+      "source_basename": "pattern_0019.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_019.png",
+      "pattern_id": "pattern_019",
+      "source_numeric_index": 19,
+      "width": 512,
+      "height": 512,
+      "sha256": "0b291a9fc465554a32cd9778fe9d5418799c8ef09501b237bfd50a6d69b4fc10",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0020.png",
+      "source_basename": "pattern_0020.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_020.png",
+      "pattern_id": "pattern_020",
+      "source_numeric_index": 20,
+      "width": 512,
+      "height": 512,
+      "sha256": "d6d05ac79aede346fc06330a2f89712dd0f99a8d7935a86a67ace22380fe0521",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0021.png",
+      "source_basename": "pattern_0021.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_021.png",
+      "pattern_id": "pattern_021",
+      "source_numeric_index": 21,
+      "width": 512,
+      "height": 512,
+      "sha256": "c8b2a437e1af3286d083ef285d08bc62cbf034dac7453d813ae5c64bf501873e",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0022.png",
+      "source_basename": "pattern_0022.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_022.png",
+      "pattern_id": "pattern_022",
+      "source_numeric_index": 22,
+      "width": 512,
+      "height": 512,
+      "sha256": "f1422913d7a54c90755f08b700e8f84a996a887d1d9303b93e5908796f4e583a",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "structural X-brace",
+        "large frame reinforcement"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0023.png",
+      "source_basename": "pattern_0023.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_023.png",
+      "pattern_id": "pattern_023",
+      "source_numeric_index": 23,
+      "width": 512,
+      "height": 512,
+      "sha256": "1338f46927dd0046aceab2b50f64c1bdebe2085bd22ca7a89bcd5b742b2fc494",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "diamond guard mesh",
+        "catwalk/vent lattice"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0024.png",
+      "source_basename": "pattern_0024.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_024.png",
+      "pattern_id": "pattern_024",
+      "source_numeric_index": 24,
+      "width": 512,
+      "height": 512,
+      "sha256": "af15fe9b4e03e399132241041911fd79bb8fc6774606f1c801859b27b1a974a4",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "octagonal structural frame"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0025.png",
+      "source_basename": "pattern_0025.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_025.png",
+      "pattern_id": "pattern_025",
+      "source_numeric_index": 25,
+      "width": 512,
+      "height": 512,
+      "sha256": "3dad9bddf831c930f5a799fef0c2751c95b9b31518644cb095d89b10d75ea643",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0026.png",
+      "source_basename": "pattern_0026.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_026.png",
+      "pattern_id": "pattern_026",
+      "source_numeric_index": 26,
+      "width": 512,
+      "height": 512,
+      "sha256": "79e466c84850aae5eaaa3ab4e8dc93589e692fa120f1c765296ddcb0e9bd158e",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "sparse diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0027.png",
+      "source_basename": "pattern_0027.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_027.png",
+      "pattern_id": "pattern_027",
+      "source_numeric_index": 27,
+      "width": 512,
+      "height": 512,
+      "sha256": "c4b204f74525a3e1d8b733888acacc76cc539004c8b8370801ffa893a88c9657",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "dense guard lattice",
+        "grille field",
+        "industrial mesh"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0028.png",
+      "source_basename": "pattern_0028.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_028.png",
+      "pattern_id": "pattern_028",
+      "source_numeric_index": 28,
+      "width": 512,
+      "height": 512,
+      "sha256": "b5b6701b94b0db800c1f125bdd26a5c6fc76870c682b6d289295f10b2b91142f",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "broad directional chevron",
+        "threshold/service direction band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "double_thick_512",
+      "source_relative_path": "PNG/Thick/Double (512px)/pattern_0029.png",
+      "source_basename": "pattern_0029.png",
+      "canonical_library_relative_path": "double_thick_512/pattern_029.png",
+      "pattern_id": "pattern_029",
+      "source_numeric_index": 29,
+      "width": 512,
+      "height": 512,
+      "sha256": "213bcbcbbc26154fa09574437b9ca1775667889a38df86aa68a6b2f364921f43",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "repeated directional chevrons",
+        "airflow/route band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0000.png",
+      "source_basename": "pattern_0000.png",
+      "canonical_library_relative_path": "thin_256/pattern_000.png",
+      "pattern_id": "pattern_000",
+      "source_numeric_index": 0,
+      "width": 256,
+      "height": 256,
+      "sha256": "748c21c38ca1063a90682f513ad1288f3cfd9c5cb6b774f99453c5686e96aef1",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "civic slab",
+        "four-quadrant registration geometry"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0001.png",
+      "source_basename": "pattern_0001.png",
+      "canonical_library_relative_path": "thin_256/pattern_001.png",
+      "pattern_id": "pattern_001",
+      "source_numeric_index": 1,
+      "width": 256,
+      "height": 256,
+      "sha256": "40794696e692f4920996ca55b8478d9df9cbf1aea32bcedb85121002a381b985",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0002.png",
+      "source_basename": "pattern_0002.png",
+      "canonical_library_relative_path": "thin_256/pattern_002.png",
+      "pattern_id": "pattern_002",
+      "source_numeric_index": 2,
+      "width": 256,
+      "height": 256,
+      "sha256": "bf4e5da78767a6c52cfd4dd98bf56a0a4a2d5d8612aa13937f60b3c764ed7865",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0003.png",
+      "source_basename": "pattern_0003.png",
+      "canonical_library_relative_path": "thin_256/pattern_003.png",
+      "pattern_id": "pattern_003",
+      "source_numeric_index": 3,
+      "width": 256,
+      "height": 256,
+      "sha256": "c4dcab5e4959213962fe35e094c60c2229354bbe42bef67590e24bc660ea9ebc",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0004.png",
+      "source_basename": "pattern_0004.png",
+      "canonical_library_relative_path": "thin_256/pattern_004.png",
+      "pattern_id": "pattern_004",
+      "source_numeric_index": 4,
+      "width": 256,
+      "height": 256,
+      "sha256": "717e98f67bbcc392c45200033e693fffe007f15ef7b372d82b6ed57a62437a9d",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "simple diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0005.png",
+      "source_basename": "pattern_0005.png",
+      "canonical_library_relative_path": "thin_256/pattern_005.png",
+      "pattern_id": "pattern_005",
+      "source_numeric_index": 5,
+      "width": 256,
+      "height": 256,
+      "sha256": "e97e691f68e7bc3a39ce88d3643160cdf033e9a2ebba5d98d95b593238b024fc",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0006.png",
+      "source_basename": "pattern_0006.png",
+      "canonical_library_relative_path": "thin_256/pattern_006.png",
+      "pattern_id": "pattern_006",
+      "source_numeric_index": 6,
+      "width": 256,
+      "height": 256,
+      "sha256": "4a1e2c17fbb7d7ced11d198ef0a5d88cfa6cab351d53460f5e99364f9fa1d9d3",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "anti-slip herringbone",
+        "service tread",
+        "broken catwalk fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0007.png",
+      "source_basename": "pattern_0007.png",
+      "canonical_library_relative_path": "thin_256/pattern_007.png",
+      "pattern_id": "pattern_007",
+      "source_numeric_index": 7,
+      "width": 256,
+      "height": 256,
+      "sha256": "487380b45e4680fcef50153959f67d3bc06340d8e4687335024f33fc82cb16c6",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "machinery grille",
+        "louver/register face",
+        "technical panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0008.png",
+      "source_basename": "pattern_0008.png",
+      "canonical_library_relative_path": "thin_256/pattern_008.png",
+      "pattern_id": "pattern_008",
+      "source_numeric_index": 8,
+      "width": 256,
+      "height": 256,
+      "sha256": "ad5dba0b380f2883a55f18a18351c533cf1deda085d59c13fea5b72843736354",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "woven service grate",
+        "industrial tread",
+        "dense maintenance fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0009.png",
+      "source_basename": "pattern_0009.png",
+      "canonical_library_relative_path": "thin_256/pattern_009.png",
+      "pattern_id": "pattern_009",
+      "source_numeric_index": 9,
+      "width": 256,
+      "height": 256,
+      "sha256": "e47c3ba2bf1da95cc5e417c0e57fdf1b69827f75f948563cc7a0b64ec05ccd1b",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "registered square/diamond civic grid",
+        "separate from brass Authority Inlays"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0010.png",
+      "source_basename": "pattern_0010.png",
+      "canonical_library_relative_path": "thin_256/pattern_010.png",
+      "pattern_id": "pattern_010",
+      "source_numeric_index": 10,
+      "width": 256,
+      "height": 256,
+      "sha256": "145f69206fd706403379eb3dddb12542c2f4a5fdd520fe17a0f7c3fc89a0c145",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0011.png",
+      "source_basename": "pattern_0011.png",
+      "canonical_library_relative_path": "thin_256/pattern_011.png",
+      "pattern_id": "pattern_011",
+      "source_numeric_index": 11,
+      "width": 256,
+      "height": 256,
+      "sha256": "ba4e560ef7f3a64c9f3836beeddd0ae74e5292926c78313c713449c92a33d0df",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0012.png",
+      "source_basename": "pattern_0012.png",
+      "canonical_library_relative_path": "thin_256/pattern_012.png",
+      "pattern_id": "pattern_012",
+      "source_numeric_index": 12,
+      "width": 256,
+      "height": 256,
+      "sha256": "6702eac5754a13683cbfc886297fa717956f3a5e1a7aa108b839de47a99d5466",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0013.png",
+      "source_basename": "pattern_0013.png",
+      "canonical_library_relative_path": "thin_256/pattern_013.png",
+      "pattern_id": "pattern_013",
+      "source_numeric_index": 13,
+      "width": 256,
+      "height": 256,
+      "sha256": "e072c786c2cf8f3a61534199ecb2927e3e7bb2b957124dc2ad22088fa08a9e59",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "truss mesh",
+        "gantry lattice",
+        "braced screen"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0014.png",
+      "source_basename": "pattern_0014.png",
+      "canonical_library_relative_path": "thin_256/pattern_014.png",
+      "pattern_id": "pattern_014",
+      "source_numeric_index": 14,
+      "width": 256,
+      "height": 256,
+      "sha256": "76efa6a02e3912a4d0a8dee6d3328e57c4bf1cb9f502984b2a93df82f758b275",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "maintenance plate seams",
+        "service-panel subdivision"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0015.png",
+      "source_basename": "pattern_0015.png",
+      "canonical_library_relative_path": "thin_256/pattern_015.png",
+      "pattern_id": "pattern_015",
+      "source_numeric_index": 15,
+      "width": 256,
+      "height": 256,
+      "sha256": "865121374681197841f213f44d08b67a5da34043eb7b93d65ae40b4e50325e2e",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0016.png",
+      "source_basename": "pattern_0016.png",
+      "canonical_library_relative_path": "thin_256/pattern_016.png",
+      "pattern_id": "pattern_016",
+      "source_numeric_index": 16,
+      "width": 256,
+      "height": 256,
+      "sha256": "cc3f133b7bb32acf8bec598e2ea2f7b0b14518a4bcfa7246bf7dc70a3a5650e7",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "large quadrant/grid seam"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0017.png",
+      "source_basename": "pattern_0017.png",
+      "canonical_library_relative_path": "thin_256/pattern_017.png",
+      "pattern_id": "pattern_017",
+      "source_numeric_index": 17,
+      "width": 256,
+      "height": 256,
+      "sha256": "b61595111dad25c5b0b5722dbd46d6447da574be4278990da82529e83308dd22",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "square service grid",
+        "hatch matrix",
+        "modular floor panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0018.png",
+      "source_basename": "pattern_0018.png",
+      "canonical_library_relative_path": "thin_256/pattern_018.png",
+      "pattern_id": "pattern_018",
+      "source_numeric_index": 18,
+      "width": 256,
+      "height": 256,
+      "sha256": "1aece696e1c23b6b9be2bc073e54b3856b7a43a15ded778e19f4dab27438c380",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0019.png",
+      "source_basename": "pattern_0019.png",
+      "canonical_library_relative_path": "thin_256/pattern_019.png",
+      "pattern_id": "pattern_019",
+      "source_numeric_index": 19,
+      "width": 256,
+      "height": 256,
+      "sha256": "ac3906ec22cb5518ece36902196656c0324479a14fecaf727a7bcca3b93320f0",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0020.png",
+      "source_basename": "pattern_0020.png",
+      "canonical_library_relative_path": "thin_256/pattern_020.png",
+      "pattern_id": "pattern_020",
+      "source_numeric_index": 20,
+      "width": 256,
+      "height": 256,
+      "sha256": "6f7bf7180b24057f94182c171ece7d88106eb99d8f1fb06b588e4a57335fffe6",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0021.png",
+      "source_basename": "pattern_0021.png",
+      "canonical_library_relative_path": "thin_256/pattern_021.png",
+      "pattern_id": "pattern_021",
+      "source_numeric_index": 21,
+      "width": 256,
+      "height": 256,
+      "sha256": "8358cf9502ffd7a55aa08cd1f7db3bfca492ab27124a9ad5855b6b4efaab7600",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0022.png",
+      "source_basename": "pattern_0022.png",
+      "canonical_library_relative_path": "thin_256/pattern_022.png",
+      "pattern_id": "pattern_022",
+      "source_numeric_index": 22,
+      "width": 256,
+      "height": 256,
+      "sha256": "a31ddafc9950a96b70b414d8c48b0d3db2b172d6cbb823e2097fd23d9c937358",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "structural X-brace",
+        "large frame reinforcement"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0023.png",
+      "source_basename": "pattern_0023.png",
+      "canonical_library_relative_path": "thin_256/pattern_023.png",
+      "pattern_id": "pattern_023",
+      "source_numeric_index": 23,
+      "width": 256,
+      "height": 256,
+      "sha256": "6599f049918420015d78c1cc8d42814c7eb6a771927e30b5dd8e7d15d78d57ec",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "diamond guard mesh",
+        "catwalk/vent lattice"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0024.png",
+      "source_basename": "pattern_0024.png",
+      "canonical_library_relative_path": "thin_256/pattern_024.png",
+      "pattern_id": "pattern_024",
+      "source_numeric_index": 24,
+      "width": 256,
+      "height": 256,
+      "sha256": "116cbd3746a0d9cf546d6eb22e427d1ccab288b1e74d21594e8ac51f11333344",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "octagonal structural frame"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0025.png",
+      "source_basename": "pattern_0025.png",
+      "canonical_library_relative_path": "thin_256/pattern_025.png",
+      "pattern_id": "pattern_025",
+      "source_numeric_index": 25,
+      "width": 256,
+      "height": 256,
+      "sha256": "ec5c42f411c722abdfb8188963d81c9edfd3c48eb9bebd38659726d7e1cfbe6f",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0026.png",
+      "source_basename": "pattern_0026.png",
+      "canonical_library_relative_path": "thin_256/pattern_026.png",
+      "pattern_id": "pattern_026",
+      "source_numeric_index": 26,
+      "width": 256,
+      "height": 256,
+      "sha256": "10b5a2fd884cae6850d2cc076e2cbbb04c98f7ad1ae51c9dfa72a0453e570884",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "sparse diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0027.png",
+      "source_basename": "pattern_0027.png",
+      "canonical_library_relative_path": "thin_256/pattern_027.png",
+      "pattern_id": "pattern_027",
+      "source_numeric_index": 27,
+      "width": 256,
+      "height": 256,
+      "sha256": "298aeea628f67c7548d0c69c03325bf9d849313e61e9c2fe3ba5b8d058b3e145",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "dense guard lattice",
+        "grille field",
+        "industrial mesh"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0028.png",
+      "source_basename": "pattern_0028.png",
+      "canonical_library_relative_path": "thin_256/pattern_028.png",
+      "pattern_id": "pattern_028",
+      "source_numeric_index": 28,
+      "width": 256,
+      "height": 256,
+      "sha256": "3354fa53bc10d565ed6d8936b55f83344e897e6235d0a1e94baf2f67f4d073e3",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "broad directional chevron",
+        "threshold/service direction band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_256",
+      "source_relative_path": "PNG/Thin/Default (256px)/pattern_0029.png",
+      "source_basename": "pattern_0029.png",
+      "canonical_library_relative_path": "thin_256/pattern_029.png",
+      "pattern_id": "pattern_029",
+      "source_numeric_index": 29,
+      "width": 256,
+      "height": 256,
+      "sha256": "bf08dadc689712ba747a30d583ef5099059f4af440bc04d6e5a5ffbc4a43b10f",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "repeated directional chevrons",
+        "airflow/route band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0000.png",
+      "source_basename": "pattern_0000.png",
+      "canonical_library_relative_path": "thin_512/pattern_000.png",
+      "pattern_id": "pattern_000",
+      "source_numeric_index": 0,
+      "width": 512,
+      "height": 512,
+      "sha256": "c63d48ba65af7ae48529f03dacf6518869e49da3524abb015a38f8095e8e35a8",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "civic slab",
+        "four-quadrant registration geometry"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0001.png",
+      "source_basename": "pattern_0001.png",
+      "canonical_library_relative_path": "thin_512/pattern_001.png",
+      "pattern_id": "pattern_001",
+      "source_numeric_index": 1,
+      "width": 512,
+      "height": 512,
+      "sha256": "0d0209ef4bfededbec2fca4c16c610f05746b979c5cf8aa1d87faace569eb03b",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0002.png",
+      "source_basename": "pattern_0002.png",
+      "canonical_library_relative_path": "thin_512/pattern_002.png",
+      "pattern_id": "pattern_002",
+      "source_numeric_index": 2,
+      "width": 512,
+      "height": 512,
+      "sha256": "4138a597a9f5ce0f1c54b1c6a357b577aa1d151ca2b439dc2ff9ac14863198f2",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0003.png",
+      "source_basename": "pattern_0003.png",
+      "canonical_library_relative_path": "thin_512/pattern_003.png",
+      "pattern_id": "pattern_003",
+      "source_numeric_index": 3,
+      "width": 512,
+      "height": 512,
+      "sha256": "bbdaa9b62b39eedf4dcc754743abe58e08397f6781008a4e136f523c6fa69e2e",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "elongated cell",
+        "structural framework",
+        "generic sci-fi caution"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0004.png",
+      "source_basename": "pattern_0004.png",
+      "canonical_library_relative_path": "thin_512/pattern_004.png",
+      "pattern_id": "pattern_004",
+      "source_numeric_index": 4,
+      "width": 512,
+      "height": 512,
+      "sha256": "89d8cc88fcf14fdb83b3bd7412923ce166e354a72292f762341a328ffd6439e8",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "simple diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0005.png",
+      "source_basename": "pattern_0005.png",
+      "canonical_library_relative_path": "thin_512/pattern_005.png",
+      "pattern_id": "pattern_005",
+      "source_numeric_index": 5,
+      "width": 512,
+      "height": 512,
+      "sha256": "981cd4ee980f79d2a77d7a5c51115754056cbbac16286aca9c9a3b7d10e98d42",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0006.png",
+      "source_basename": "pattern_0006.png",
+      "canonical_library_relative_path": "thin_512/pattern_006.png",
+      "pattern_id": "pattern_006",
+      "source_numeric_index": 6,
+      "width": 512,
+      "height": 512,
+      "sha256": "0382b004bf6c2ec75b748d3d22584c2694196d76c8714773692001925b132242",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "anti-slip herringbone",
+        "service tread",
+        "broken catwalk fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0007.png",
+      "source_basename": "pattern_0007.png",
+      "canonical_library_relative_path": "thin_512/pattern_007.png",
+      "pattern_id": "pattern_007",
+      "source_numeric_index": 7,
+      "width": 512,
+      "height": 512,
+      "sha256": "7d75938fa562bfdd9c6a4ec09f3012fb2ecce46aa1edc19369746694fbfac85c",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "machinery grille",
+        "louver/register face",
+        "technical panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0008.png",
+      "source_basename": "pattern_0008.png",
+      "canonical_library_relative_path": "thin_512/pattern_008.png",
+      "pattern_id": "pattern_008",
+      "source_numeric_index": 8,
+      "width": 512,
+      "height": 512,
+      "sha256": "b6498195961a67d1728b47b340830d998e4980db792072990c941348dafc7c0b",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "woven service grate",
+        "industrial tread",
+        "dense maintenance fill"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0009.png",
+      "source_basename": "pattern_0009.png",
+      "canonical_library_relative_path": "thin_512/pattern_009.png",
+      "pattern_id": "pattern_009",
+      "source_numeric_index": 9,
+      "width": 512,
+      "height": 512,
+      "sha256": "3255305b838e24198ef8447bc5bc70ccf19af837de4f911d9a087847b6b6c9d6",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "registered square/diamond civic grid",
+        "separate from brass Authority Inlays"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0010.png",
+      "source_basename": "pattern_0010.png",
+      "canonical_library_relative_path": "thin_512/pattern_010.png",
+      "pattern_id": "pattern_010",
+      "source_numeric_index": 10,
+      "width": 512,
+      "height": 512,
+      "sha256": "57a46f72523355d37ce41a5a4229e72cb9fe5b8eae9ad890ead2bcaddd52aa61",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0011.png",
+      "source_basename": "pattern_0011.png",
+      "canonical_library_relative_path": "thin_512/pattern_011.png",
+      "pattern_id": "pattern_011",
+      "source_numeric_index": 11,
+      "width": 512,
+      "height": 512,
+      "sha256": "a0270ba6da7c5c4ada674b61ece173883bea943e95150579bbccb3636c8e92fe",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0012.png",
+      "source_basename": "pattern_0012.png",
+      "canonical_library_relative_path": "thin_512/pattern_012.png",
+      "pattern_id": "pattern_012",
+      "source_numeric_index": 12,
+      "width": 512,
+      "height": 512,
+      "sha256": "6025614c7b78425a6bb4ccce1e1f8fe0abf218dab1cf675492522c90d7944bbd",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0013.png",
+      "source_basename": "pattern_0013.png",
+      "canonical_library_relative_path": "thin_512/pattern_013.png",
+      "pattern_id": "pattern_013",
+      "source_numeric_index": 13,
+      "width": 512,
+      "height": 512,
+      "sha256": "b80d571eb31ee83bbb54d59a2c0d63d145a90df6fd0cf8b1ba50a3fb7096956a",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "truss mesh",
+        "gantry lattice",
+        "braced screen"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0014.png",
+      "source_basename": "pattern_0014.png",
+      "canonical_library_relative_path": "thin_512/pattern_014.png",
+      "pattern_id": "pattern_014",
+      "source_numeric_index": 14,
+      "width": 512,
+      "height": 512,
+      "sha256": "12f9d5bafe6368388ede4e714aa23b30c4d2ba51f8e1d5bbf23d63e9d1bca76f",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "maintenance plate seams",
+        "service-panel subdivision"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0015.png",
+      "source_basename": "pattern_0015.png",
+      "canonical_library_relative_path": "thin_512/pattern_015.png",
+      "pattern_id": "pattern_015",
+      "source_numeric_index": 15,
+      "width": 512,
+      "height": 512,
+      "sha256": "db22f863a902c79ef55b57268e3b7f4166a3490b53091f92a7eafcdf209a14d5",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0016.png",
+      "source_basename": "pattern_0016.png",
+      "canonical_library_relative_path": "thin_512/pattern_016.png",
+      "pattern_id": "pattern_016",
+      "source_numeric_index": 16,
+      "width": 512,
+      "height": 512,
+      "sha256": "eca0f47c855a180bbdaa55f8ec9846c0b7566eda9cb0215f6f96200eada83495",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "large quadrant/grid seam"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0017.png",
+      "source_basename": "pattern_0017.png",
+      "canonical_library_relative_path": "thin_512/pattern_017.png",
+      "pattern_id": "pattern_017",
+      "source_numeric_index": 17,
+      "width": 512,
+      "height": 512,
+      "sha256": "e97b82919f908c7a22f70395c7536820412da5a831fd003b5394c887fb245814",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "square service grid",
+        "hatch matrix",
+        "modular floor panel"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0018.png",
+      "source_basename": "pattern_0018.png",
+      "canonical_library_relative_path": "thin_512/pattern_018.png",
+      "pattern_id": "pattern_018",
+      "source_numeric_index": 18,
+      "width": 512,
+      "height": 512,
+      "sha256": "dcc483db56de5898f8cdd70e7bb0ed052856f42d90960fd84c7be643c2664210",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0019.png",
+      "source_basename": "pattern_0019.png",
+      "canonical_library_relative_path": "thin_512/pattern_019.png",
+      "pattern_id": "pattern_019",
+      "source_numeric_index": 19,
+      "width": 512,
+      "height": 512,
+      "sha256": "f558da131f76d718dd9a087e89803201ccc274efaa97ca87d37d26c2242b8f17",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "diamond framing",
+        "repeated diamond cells"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0020.png",
+      "source_basename": "pattern_0020.png",
+      "canonical_library_relative_path": "thin_512/pattern_020.png",
+      "pattern_id": "pattern_020",
+      "source_numeric_index": 20,
+      "width": 512,
+      "height": 512,
+      "sha256": "7a755e9115655dc268dc2d6d5f679d7c727d0747f8e9117ff0e83dab74a04907",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0021.png",
+      "source_basename": "pattern_0021.png",
+      "canonical_library_relative_path": "thin_512/pattern_021.png",
+      "pattern_id": "pattern_021",
+      "source_numeric_index": 21,
+      "width": 512,
+      "height": 512,
+      "sha256": "21be249328d5c00269601ae0f993b167c5712cb1dd32629c4ade79b4890b7201",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0022.png",
+      "source_basename": "pattern_0022.png",
+      "canonical_library_relative_path": "thin_512/pattern_022.png",
+      "pattern_id": "pattern_022",
+      "source_numeric_index": 22,
+      "width": 512,
+      "height": 512,
+      "sha256": "09b5d5da3c85f0de707d3850dda1c2f0f6f9894049036f31700114fa309de81b",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "structural X-brace",
+        "large frame reinforcement"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0023.png",
+      "source_basename": "pattern_0023.png",
+      "canonical_library_relative_path": "thin_512/pattern_023.png",
+      "pattern_id": "pattern_023",
+      "source_numeric_index": 23,
+      "width": 512,
+      "height": 512,
+      "sha256": "a08da9ac98b2279adae7f92063ffe5ae62fa037955e96e9615da0f9f5f869ea9",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "diamond guard mesh",
+        "catwalk/vent lattice"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0024.png",
+      "source_basename": "pattern_0024.png",
+      "canonical_library_relative_path": "thin_512/pattern_024.png",
+      "pattern_id": "pattern_024",
+      "source_numeric_index": 24,
+      "width": 512,
+      "height": 512,
+      "sha256": "feafd9903307595f21f36629bc6713e5ce2d4378103788cdbcb845e77305d54d",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "octagonal structural frame"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0025.png",
+      "source_basename": "pattern_0025.png",
+      "canonical_library_relative_path": "thin_512/pattern_025.png",
+      "pattern_id": "pattern_025",
+      "source_numeric_index": 25,
+      "width": 512,
+      "height": 512,
+      "sha256": "b20bf398b6c20b4956cef356e37324ef59025017504453096000ccd8403cf9eb",
+      "exact_copy": true,
+      "usage_tier": "reference_only",
+      "semantic_tags": [],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0026.png",
+      "source_basename": "pattern_0026.png",
+      "canonical_library_relative_path": "thin_512/pattern_026.png",
+      "pattern_id": "pattern_026",
+      "source_numeric_index": 26,
+      "width": 512,
+      "height": 512,
+      "sha256": "ddabf6e197aa8af9efc3bbca5ab7476697a7434a232e92c1c01ba5672d4937f1",
+      "exact_copy": true,
+      "usage_tier": "future_candidate",
+      "semantic_tags": [
+        "sparse diagonal lattice"
+      ],
+      "preferred_production_source_variant": null
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0027.png",
+      "source_basename": "pattern_0027.png",
+      "canonical_library_relative_path": "thin_512/pattern_027.png",
+      "pattern_id": "pattern_027",
+      "source_numeric_index": 27,
+      "width": 512,
+      "height": 512,
+      "sha256": "6d544ad3ee91ab66d79a71665fa9d2c1314a58f6ae88cd97c98d9c284e27e8e2",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "dense guard lattice",
+        "grille field",
+        "industrial mesh"
+      ],
+      "preferred_production_source_variant": "thin_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0028.png",
+      "source_basename": "pattern_0028.png",
+      "canonical_library_relative_path": "thin_512/pattern_028.png",
+      "pattern_id": "pattern_028",
+      "source_numeric_index": 28,
+      "width": 512,
+      "height": 512,
+      "sha256": "3925b3ebf827dd25983a2bc6897eadedc17f047361982d4a3ebc0a2fa0cce1e0",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "broad directional chevron",
+        "threshold/service direction band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    },
+    {
+      "variant_id": "thin_512",
+      "source_relative_path": "PNG/Thin/Double (512px)/pattern_0029.png",
+      "source_basename": "pattern_0029.png",
+      "canonical_library_relative_path": "thin_512/pattern_029.png",
+      "pattern_id": "pattern_029",
+      "source_numeric_index": 29,
+      "width": 512,
+      "height": 512,
+      "sha256": "98fb1f22e8cb7e53eb147d2acf35295785178c73a681458ced0380274aa2cefa",
+      "exact_copy": true,
+      "usage_tier": "immediate_candidate",
+      "semantic_tags": [
+        "repeated directional chevrons",
+        "airflow/route band"
+      ],
+      "preferred_production_source_variant": "double_thick_512"
+    }
+  ]
+}

@@ -82,6 +82,9 @@ const AUTHORING_MARKERS := {
 @onready var camera_zone_director: AuthoredCameraZoneDirector2D = (
 	$CameraPresentation/AuthoredCameraZoneDirector2D
 )
+@onready var ritualant_music_director: ForlornRitualantMusicDirector = (
+	$RitualantMusicDirector
+)
 
 var _departure_running := false
 var _departure_actor: Node = null
@@ -182,6 +185,8 @@ func activate_route_node(actor: Node, spawn_id: StringName) -> bool:
 func _begin_arrival_sequence(actor: Node) -> void:
 	if _arrival_running or actor == null or not (actor is Node2D):
 		return
+	if ritualant_music_director != null:
+		ritualant_music_director.begin_arrival()
 	_arrival_running = true
 	_arrival_actor = actor
 	if not _capture_arrival_rider(actor):
@@ -309,6 +314,8 @@ func begin_lift_departure(actor: Node, exit: InteractableLevelExit2D) -> void:
 		_departure_running = false
 		_departure_actor = null
 		return
+	if ritualant_music_director != null:
+		ritualant_music_director.begin_departure()
 	_suspend_departure_actor(actor)
 	shaft_arrival_back.visible = false
 	shaft_arrival_fore.visible = false
@@ -407,6 +414,8 @@ func _restore_departure_actor_processing(actor: Node) -> void:
 
 
 func _rollback_failed_departure() -> void:
+	if ritualant_music_director != null:
+		ritualant_music_director.cancel_departure()
 	_restore_departure_actor_processing(_departure_actor)
 	if _departure_rig != null and is_instance_valid(_departure_rig):
 		_departure_rig.restore_source_visuals()
@@ -454,9 +463,14 @@ func capture_route_state() -> Dictionary:
 func restore_route_state(state: Dictionary) -> bool:
 	if ritualant_site == null:
 		return false
-	return ritualant_site.restore_encounter_state(
+	if ritualant_music_director != null:
+		ritualant_music_director.begin_route_restore()
+	var restored := ritualant_site.restore_encounter_state(
 		state.get("encounter", {}) as Dictionary
 	)
+	if ritualant_music_director != null:
+		ritualant_music_director.complete_route_restore(restored)
+	return restored
 
 
 func _exit_tree() -> void:
@@ -590,7 +604,7 @@ func _append_art_debug_geometry(out: Array[Dictionary]) -> void:
 		"BackgroundRoot/LandingConnectorBridge",
 		"BackgroundRoot/CavernRimSouth", "BackgroundRoot/CavernRimMiddle",
 		"BackgroundRoot/CavernRimNorth", "BackgroundRoot/ChapelConnectorApron",
-		"BackgroundRoot/ChapelOuterBlend", "OcclusionRoot/ChapelThreshold",
+		"OcclusionRoot/ChapelThreshold",
 		"OcclusionRoot/LowerQuarterSeal",
 		"PlayableRoot/ForlornRitualantSite/Floor",
 		"PlayableRoot/ForlornRitualantSite/PerimeterRubble",
