@@ -49,3 +49,24 @@ The pinned source-span and archive landing were inspected separately. The host r
 ## Authoring chat
 
 https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+
+## Process Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The runner's post-exit verifier rejected the completed reviewer evidence because this summary omitted the packet backlink and Next Handoff, and the archived review packet lacked its mirrored receipt block.
+- Root cause / contributing factors: The fresh reviewer recorded its verdict and receipt in the reviewed implementation packet but did not satisfy the coordinator's separate archived-review-packet and exact-summary closeout contract.
+- Prevention / pipeline improvement: Review prompts and post-exit verification should keep the reviewer packet receipt, target receipt, and required summary fields aligned.
+- Tooling / docs drift discovered: Post-exit PASS closeout currently falls into protected manual recovery when only durable receipt/summary formatting is incomplete.
+- Follow-up: manual-follow-up
+- What worked: Immutable validation evidence and the reviewer-authored verdict remained available to complete a bounded closeout without rerunning review.
+
+## Next Handoff
+- Next workstream: review-worktree-backlog-census-and-safety-ledger-v1-review-corrections-1
+- Next packet state: ready
+- Refresh owner: execution-agent
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc5e5e-018c-83ea-8617-ec4c15de7d62
+- Refresh reason: none
+- Next action: Continue the exact preserved W1 host_validation_recovery run under its existing claim using a fresh read-only recovery plan, then apply only the matching authorized plan after verification.
+- Blockers or open questions: W1 acceptance remains subject to the fresh reviewer’s actual outcome; W2 and W5 remain blocked until W1 is accepted.
