@@ -59,9 +59,9 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `The fresh worktree did not include the Godot imported-texture cache, and initial JSON round-trip testing exposed integer coordinates/resources becoming floats after parsing. The smoke also initially assumed storage array order before the canonical sorter ran.`
-- Root cause / contributing factors: `Godot worktrees keep ignored import caches locally; the original digest canonicalizer did not normalize JSON-parsed numeric types, and canonical storage arrays are intentionally sorted by resource ID.`
-- Prevention / pipeline improvement: `Canonical serialization now normalizes integer geometry and resource fields before hashing; the smoke pins byte-stable round-trip and locates storage by stable resource ID. The test run reused the existing imported cache read-only without copying it into the worktree.`
+- What went wrong: `The fresh worktree did not include the Godot imported-texture cache, and one post-sync broad import retry segfaulted at 99% before tests; a retry with the verified shared cache linked completed. Initial JSON round-trip testing exposed integer coordinates/resources becoming floats after parsing. The smoke also initially assumed storage array order before the canonical sorter ran.`
+- Root cause / contributing factors: `Godot worktrees keep ignored import caches locally; the incomplete cache triggered a broad reimport that crashed once; the original digest canonicalizer did not normalize JSON-parsed numeric types, and canonical storage arrays are intentionally sorted by resource ID.`
+- Prevention / pipeline improvement: `Canonical serialization now normalizes integer geometry and resource fields before hashing; the smoke pins byte-stable round-trip and locates storage by stable resource ID. The final post-sync changed-file suite passed all 38 checks after using the verified shared import cache.`
 - Tooling / docs drift discovered: `none`
 - Follow-up: `fixed-in-scope`
 - What worked: `The smoke now covers a full save/reopen preview cycle and protects an existing valid draft from invalid replacement.`

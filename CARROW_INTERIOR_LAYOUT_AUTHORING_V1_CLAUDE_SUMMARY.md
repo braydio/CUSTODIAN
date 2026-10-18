@@ -30,9 +30,9 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `success`
 - Friction severity: `low`
-- What went wrong: `The fresh worktree lacked the Godot imported-texture cache. Initial JSON round-trip testing exposed integer geometry/resource values becoming floats after parsing, and an early test assumed storage records retained source-array order.`
-- Root cause / contributing factors: `Ignored Godot import caches are local to each checkout; canonical hashing did not initially normalize JSON numeric types; storage records are deliberately sorted by stable resource ID.`
-- Prevention / pipeline improvement: `Normalize integer geometry/resource fields before digesting and assert byte-stable round-trip. Tests now find storage by ID and exercise save/reopen plus fail-closed overwrite behavior. The existing import cache was linked read-only for tests instead of copied.`
+- What went wrong: `The fresh worktree lacked the Godot imported-texture cache. One post-sync full-import retry segfaulted at 99% before tests; rerunning with the verified coordination cache linked completed successfully. Initial JSON round-trip testing exposed integer geometry/resource values becoming floats after parsing, and an early test assumed storage records retained source-array order.`
+- Root cause / contributing factors: `Ignored Godot import caches are local to each checkout; the incomplete local cache triggered a broad reimport that crashed once; canonical hashing did not initially normalize JSON numeric types; storage records are deliberately sorted by stable resource ID.`
+- Prevention / pipeline improvement: `Normalize integer geometry/resource fields before digesting and assert byte-stable round-trip. Tests now find storage by ID and exercise save/reopen plus fail-closed overwrite behavior. The existing verified import cache was linked for validation, and the final post-sync changed-file retry passed 38/38 checks.`
 - Tooling / docs drift discovered: `none`
 - Follow-up: `fixed-in-scope`
 - What worked: `Focused negative controls caught the digest mismatch and the full changed-file suite passed after repair.`
