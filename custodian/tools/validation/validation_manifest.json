@@ -37,6 +37,24 @@
   ],
   "tests": [
     {
+      "id": "operator_ne_knight_skin_poc",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_knight_skin_poc_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "art", "source", "negative_control"],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/__init__.py",
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/pose_map.py",
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/skin_renderer.py",
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/review.py",
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/run.py",
+        "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/README.md",
+        "custodian/tools/validation/operator_ne_knight_skin_poc_smoke.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "operator_ne_r3_topology",
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_r3_topology_smoke.py",
