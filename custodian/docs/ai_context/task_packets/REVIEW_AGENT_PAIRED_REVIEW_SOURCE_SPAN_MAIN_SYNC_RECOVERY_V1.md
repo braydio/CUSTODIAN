@@ -28,7 +28,7 @@
 - Review focus: `One exact matching trace; archive identity separation; ordered parent/SHA/evidence binding; archive-only closeout allowlist; no source/test modification hidden in merge; no fabricated duplicate provenance; stable immutable original run evidence.`
 - Acceptance: `Produce a findings-first fresh-context independent verdict with exact resolved source base/head, canonical implementation SHA and landing merge identity. Passing requires actual historical source-span resolution and all adversarial tests; no simulated passing receipt and no mutation of the two original runs.`
 - Non-goals: `Do not change implementation source in reviewer context; do not apply or relaunch W1 or correction-1 review; do not release W2/W5 or alter checkout .gitignore.`
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit and push only review receipt, required closing summary, review-packet lifecycle/archive metadata and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 
