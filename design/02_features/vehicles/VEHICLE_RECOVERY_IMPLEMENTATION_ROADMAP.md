@@ -2,7 +2,7 @@
 
 **Status:** active  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b  
-**Current reviewed main:** `f12717e61213d7d30ae6b3e670d45e71507cd784`
+**Current reviewed main:** `977f04644b85958a1a12f5f93a51763964917557`
 
 ## Program boundary
 
@@ -32,7 +32,8 @@ The first real advanced R2 vehicle is a later content slice that proves reuse; i
 | V6 | `vehicle-recovery-presentation-manifests-v1` | ready/auto, dependency-gated | shared recovery FX/component family contracts | V5R |
 | V6R | paired review of V6 | ready/auto | independent Asset V2 contract proof | V6 |
 | V7 | `vehicle-recovery-fx-production-v1` | authored draft/manual; authoring handoff auto, dependency-gated | six shared recovery FX source normalization + Asset V2 ingest + runtime wiring | V6R |
-| V8 | first real R2 TECHNICAL vehicle | future content slice | new vehicle class using reviewed reusable systems | V3R minimum; ideally V7 |
+| VI1-VI4 | Vehicle Integration System V1 | authored, dependency-gated | reusable presentation contract/runtime/art derivation/integrator | V7R then VI reviews |
+| V8 | first real R2 TECHNICAL vehicle | future content slice | new vehicle class using reviewed reusable systems | VI4 paired review |
 
 ## V0 — Lifecycle hardening
 
@@ -205,6 +206,15 @@ Six human-selected shared recovery FX source masters now have one immutable impl
 The V7 packet does **not** reopen art direction or mechanics. The six selected states are `scan_sweep_01`, `fault_ping_01`, `install_sparks_01`, `power_route_01`, `bootstrap_01`, and `restore_success_01`. Component icons/props, optional `restore_failure_01`, Field Scout body polish, and post-destroy smoke remain separate later art work.
 
 Do not hand-copy generated PNGs into runtime folders and do not let presentation become a second recovery state machine.
+
+## VI1-VI4 — Vehicle Integration System
+
+The reusable source-to-runtime architecture is locked in
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md`. VI1 defines the
+visual contract, VI2 extracts runtime presentation ownership, VI3 generalizes
+art derivation, and VI4 proves the system with the Scout plus a same-chassis
+reuse fixture. V8 must consume the reviewed VI4 result instead of creating
+another one-off vehicle pipeline.
 
 ## V8 — First advanced R2 vehicle proof
 

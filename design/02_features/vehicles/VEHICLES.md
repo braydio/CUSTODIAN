@@ -12,6 +12,7 @@
 - Implementation roadmap: `design/02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md`
 - Reverse-engineering authority: `design/02_features/vehicles/VEHICLE_RECOVERY_REVERSE_ENGINEERING.md`
 - Production-art contract: `design/02_features/vehicles/VEHICLE_RECOVERY_ART_MANIFEST.md`
+- Source-to-runtime vehicle integration authority: `design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md`
 
 ## 1. Purpose
 

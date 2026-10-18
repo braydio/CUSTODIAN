@@ -1,5 +1,25 @@
 # CURRENT STATE — CUSTODIAN
 
+## Vehicle Integration System architecture locked (2026-10-18)
+
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` is now active
+source-to-runtime vehicle presentation/integration authority. It defines
+visual-kit V2 inheritance, authored/derived/procedural/shared state policy,
+family-level registration, reusable presentation composition, shared-FX fitting,
+deterministic explicit-region derivation, build-time skins/runtime attachments,
+generated presentation/integration receipts, and a guarded
+`vehicle_integrator.py` orchestration path.
+
+This is an architecture and queue milestone, not a claim that the integrator is
+already implemented. Live runtime still uses visual-kit schema v1,
+PilotableVehicle still directly chooses body animation identities, the Scout
+still references hover compatibility frames, and the hover-specific resource
+builder still exists. VI1-VI4 and paired reviews own that migration after the
+reviewed recovery-FX production slice.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
 ## Compound archetypes: code landed, review-gated (2026-10-17)
 
 `compound-archetype-profile-contract` and its paired review are archived as passed. `compound-walled-yard-blockout` has shipped surface close-packed perimeter geometry with two declared crossings and yard-facing room doors; its independent review `review-compound-walled-yard-blockout` remains active. `compound-connected-bunker-blockout` has shipped disjoint surface/separator/subsurface geometry and vertical-entry metadata, but its independent parent review is **findings**, not passed: R0-01 lacks a runtime controller that actually uses paired anchors, and R0-02 lacks live collision/navigation/camera proof. The existing `compound-connected-bunker-blockout-review-corrections-1` and paired `review-compound-connected-bunker-blockout-review-corrections-1` are the **only** owners of this bounded repair; at audit time its remote `agent/` claim branch exists. Do not reclaim or duplicate it.

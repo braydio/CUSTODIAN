@@ -1446,6 +1446,11 @@ Last updated: 2026-10-02
 
 - `design/02_features/vehicles/VEHICLE_RECOVERY_IMPLEMENTATION_ROADMAP.md` — active vehicle recovery slice DAG from lifecycle/wreck foundation through diagnosis, component fabrication, Scout correction, Asset V2, shared presentation manifests, production art, and the first later R2 proof vehicle.
 - `design/02_features/vehicles/VEHICLE_RECOVERY_ART_MANIFEST.md` — exact Asset Pipeline V2 family IDs, source/inbox/runtime paths, pixel dimensions, frame counts, direction policy, and required/recommended states for Scout body, shared recovery FX, service-component icons, and optional component props.
+- `design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` — active reusable vehicle source-to-runtime architecture: visual-kit V2 inheritance, authored/derived/procedural/shared state policy, family registration, reusable rig, skins/attachments, shared-FX fitting, deterministic derivation, integrator CLI and receipts.
+- `custodian/docs/ai_context/task_packets/VEHICLE_PRESENTATION_CONTRACT_V1.md` + paired review — VI1 visual-kit V2/inheritance/resolved presentation contract.
+- `custodian/docs/ai_context/task_packets/VEHICLE_PRESENTATION_RUNTIME_V1.md` + paired review — VI2 reusable presentation rig and PilotableVehicle presentation extraction.
+- `custodian/docs/ai_context/task_packets/VEHICLE_ART_DERIVATION_V1.md` + paired review — VI3 explicit-region/common-registration/derived-state/skin pipeline.
+- `custodian/docs/ai_context/task_packets/VEHICLE_INTEGRATOR_V1.md` + paired review — VI4 orchestration CLI, generated resources/receipts, Scout migration and same-chassis reuse proof.
 - `custodian/docs/ai_context/task_packets/VEHICLE_DIAGNOSIS_KNOWLEDGE_V1.md` / `REVIEW_VEHICLE_DIAGNOSIS_KNOWLEDGE_V1.md` — ready/auto persistent vehicle scan knowledge + pattern-evidence slice and paired review.
 - `custodian/docs/ai_context/task_packets/VEHICLE_PART_FABRICATION_RECOVERY_V1.md` / `REVIEW_VEHICLE_PART_FABRICATION_RECOVERY_V1.md` — dependency-gated generic R0/R1/R2 recovery-grade, FabPipeline inventory-item, and atomic component-consumption slice plus paired review.
 - `custodian/docs/ai_context/task_packets/VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` / `REVIEW_VEHICLE_RECOVERY_PRESENTATION_MANIFESTS_V1.md` — dependency-gated shared recovery Asset V2 family registration and paired review; no production pixels.
