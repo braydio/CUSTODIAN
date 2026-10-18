@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `carrow-interior-layout-authoring-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-carrow-interior-scale-calibration-v1`
@@ -45,13 +45,34 @@
 - Task overrides: `none`
 - Deferred: A separate production-layout adoption implementation after human-authored layouts are approved, and a separate same-building off-map/in-world presentation A/B test. Six perimeter art states and updated Dropbox source package remain active in the art workstream, not this tool slice.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The Carrow adapter provides exact West 24×18, East 30×22, and Operations 36×26 authoring scenes using the real Operator and 0.84 CameraController projection. The draft model starts with a neutral registered floor, empty prop/floor overrides, five perimeter collision rectangles split around the three-cell portal, and the existing room-specific storage identities. Focused mapper smoke passes configuration, capsule clearance, authoring mutations, negative validation, canonical hash and JSON round-trip, save/reopen preview equivalence, and rejection of invalid replacement without overwriting the valid draft. The changed-file suite passes all 38 selected checks with complete coverage. Existing Carrow calibration, yard interior, Operations interior, backdrop isolation, and authored mapper framework smokes pass. Production Carrow map source and Asset V2 registrations are unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The fresh worktree did not include the Godot imported-texture cache, and initial JSON round-trip testing exposed integer coordinates/resources becoming floats after parsing. The smoke also initially assumed storage array order before the canonical sorter ran.`
+- Root cause / contributing factors: `Godot worktrees keep ignored import caches locally; the original digest canonicalizer did not normalize JSON-parsed numeric types, and canonical storage arrays are intentionally sorted by resource ID.`
+- Prevention / pipeline improvement: `Canonical serialization now normalizes integer geometry and resource fields before hashing; the smoke pins byte-stable round-trip and locates storage by stable resource ID. The test run reused the existing imported cache read-only without copying it into the worktree.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope`
+- What worked: `The smoke now covers a full save/reopen preview cycle and protects an existing valid draft from invalid replacement.`
+
 ## Next Handoff
 
 - Next workstream: `review-carrow-interior-layout-authoring-v1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0`
 - Refresh reason: `none`
 - Next action: Fresh independent technical review of editor controls, serialized layout records and production nonmutation. After PASS give user three editor entrypoints and await authored floor/prop/collision layouts, not a second vote on sizes.
-- Blockers or open questions: `Production conversion still requires human geometry signoff, but mapper tooling has enough exact values to implement now.`
+- Blockers or open questions: `Human approval of each authored room layout remains required before production conversion; it does not block the paired technical review.`

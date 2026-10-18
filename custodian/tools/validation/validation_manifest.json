@@ -1059,6 +1059,28 @@
       "needs_import": true
     },
     {
+      "id": "carrow_interior_layout_mapper",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_interior_layout_mapper_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "interior",
+        "layout_authoring",
+        "draft_serialization",
+        "negative_control",
+        "geometry"
+      ],
+      "owners": [
+        "custodian/tools/level_authoring/mapper/carrow_interior_layout_*.gd",
+        "custodian/scenes/debug/carrow_interior_layout_mapper*",
+        "custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "command_pressure_scenario_setup",
       "type": "godot_script",
       "script": "res://tools/validation/command_pressure_scenario_setup_smoke.gd",
