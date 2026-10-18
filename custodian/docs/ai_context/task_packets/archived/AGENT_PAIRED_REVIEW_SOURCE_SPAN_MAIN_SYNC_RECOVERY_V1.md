@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-source-span-main-sync-recovery-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -21,7 +21,7 @@
 - Visual review: `none`
 - Goal: `Allow exact, legitimate main-sync merge landing provenance to validate a pinned archive-only implementation without accepting unrelated source or forged lifecycle traces.`
 - Completion boundary: `Correct the two confirmed resolver gates (landing trace merge identity, legitimate archive closeout paths); add exact historical and adversarial regression tests. Land normally, then independently review before attempting the preserved review run.`
-- Current measured state: `The original correction implementation 48a0bfc4836fbc88cd4406cc814959dcfc6e453b and archive 1fa679c33f49bf3ee7d08072c82f747809b00b35 are linear descendants of claimed base 06cbe9521dfa8efe82fb5820709646ca6d1486e7. Its recorded landing f12717e61213d7d30ae6b3e670d45e71507cd784 is a two-parent merge [1fa679c3,623dd45d]; the exact diagnostics trace main_sync(changed=true) pins this merge and second parent, then landing_started/landing_completed pin f12717e6. The current resolver instead requires both landing events to equal archive 1fa679c3. A second currently latent gate permits only the archived packet and packet README in archive closeout, but 1fa679c3 legitimately modifies its closing summary, removes the active packet and adds the archived packet.`
+- Current measured state: `Implemented and validated the bounded archive/main-sync split. Exact historical resolution retains canonical archive 1fa679c33f49bf3ee7d08072c82f747809b00b35 while recovering source range 06cbe9521dfa8efe82fb5820709646ca6d1486e7..48a0bfc4836fbc88cd4406cc814959dcfc6e453b. Trace merge f12717e61213d7d30ae6b3e670d45e71507cd784 is independently tied to its exact main_sync(changed=true) second parent 623dd45ddf35f9c88460386ac047db3e9c1f8d52 and remains an ancestor of the pinned reviewed main.`
 - Evidence: `custodian/tools/agent/paired_review_host_validation.py::_split_landing_source_span and resolve_validation_source_span; custodian/tools/agent/test_paired_review_runner.py::PairedReviewHostValidationTests; exact remote diagnostic trace agent-diagnostics/agent-paired-review-host-validation-recovery-v1-review-corrections-1/20261018T005240Z-25f5254d4395:trace.jsonl; archived target AGENT_PAIRED_REVIEW_HOST_VALIDATION_RECOVERY_V1_REVIEW_CORRECTIONS_1.md; preserved review run 20261018T014101Z-f4fd619029aa under .git/custodian-review-runs/review-agent-paired-review-host-validation-recovery-v1-review-corrections-1/.`
 - Task-specific authority: `The existing fail-closed source-span resolver and lifecycle trace contract; current paired review validation and post-land archive/receipt semantics.`
 - Work surface: `custodian/tools/agent/paired_review_host_validation.py; custodian/tools/agent/test_paired_review_runner.py; narrowly update lifecycle docs only if their active contract is inconsistent.`
@@ -43,3 +43,23 @@
 - Refresh reason: `none`
 - Next action: `Independent fresh-context review of the bounded resolver and regression coverage; only after it passes attempt exact same-run recovery of review-agent-paired-review-host-validation-recovery-v1-review-corrections-1 run 20261018T014101Z-f4fd619029aa.`
 - Blockers or open questions: `Existing correction review has no verdict and its original run remains protected; W2/W5 remain blocked.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `The historical f12717e6/1fa679c3 case resolves source 06cbe952..48a0bfc4 and preserves the canonical archive identity. Temporary Git merge fixtures pass for direct and legitimate main-sync landings, and reject invalid/missing sync provenance, wrong parent order/count, source/target mutation, unrelated archive-closeout files, missing/ambiguous traces and undocumented source code. The W1 b5b85ca4 source-span regression remains unchanged. The paired-review runner, dispatcher, workstream, review-outcome, packet-contract and changed-file validation suites passed; py_compile and git diff --check passed. No original review run or W1 plan was modified or applied.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Initial adversarial tests showed that a code file added to an archive-closeout commit could be classified as a normal source-bearing implementation before archive checks ran. Archive-transition detection now takes precedence, so the closeout allowlist rejects that path. A historical W1 archive commit also proved that summary/index files may already be present or unchanged before archive closeout; the resolver requires the active deletion and canonical archive creation while only allowing the exact root summary and generated index.`
+- Root cause / contributing factors: `The canonical archived implementation commit, the trace's final main-sync merge, and the source-bearing range are separate Git identities. Rename detection also obscured the active packet deletion unless the archive diff is enumerated with --no-renames.`
+- Prevention / pipeline improvement: `Keep archive identity, trace landing identity and source range as separate provenance fields; derive source paths only from the archive commit's first-parent ancestry and compare protected source/target trees against any accepted trace merge.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `review-agent-paired-review-source-span-main-sync-recovery-v1`
+- What worked: `Historical Git refs plus real temporary two-parent merge fixtures exercised positive provenance and fail-closed negative controls.`

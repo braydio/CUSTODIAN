@@ -95,7 +95,7 @@ def _source_hashes(worktree: Path, paths: list[str]) -> dict[str, str]:
 
 
 def _changed_paths(repo: Path, revision: str) -> list[str]:
-    result = subprocess.run(["git", "diff", "--name-only", revision], cwd=repo,
+    result = subprocess.run(["git", "diff", "--name-only", "--no-renames", revision], cwd=repo,
                             text=True, capture_output=True)
     if result.returncode:
         raise HostValidationError(result.stderr.strip() or "could not enumerate source-span paths")
@@ -122,6 +122,10 @@ def _trace_events(repo: Path, ref: str) -> list[dict]:
         raise HostValidationError(f"source-span workstream trace is malformed: {ref}") from exc
     if not events:
         raise HostValidationError(f"source-span workstream trace is empty: {ref}")
+    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("schema_version") != 1
+           or not isinstance(event.get("data"), dict) for event in events):
+        raise HostValidationError(f"source-span workstream trace has invalid event provenance: {ref}")
     return events
 
 
@@ -130,10 +134,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                target_packet_text: str) -> dict:
     """Resolve an archive-only landing to its exact source-bearing workstream range.
 
-    A split landing is accepted only when one immutable lifecycle trace binds the
-    target workstream, its original branch/base and the canonical landing SHA.
-    The immediately preceding source span must be a linear first-parent range and
-    its implementation paths must be named by the archived packet.
+    The archive-introduction commit remains the canonical implementation identity.
+    One immutable lifecycle trace may pin that commit directly, or pin a verified
+    two-parent main-sync merge whose first parent is the archive commit. The
+    immediately preceding source span must be a linear first-parent range and its
+    implementation paths must be named by the archived packet.
     """
     active_packet = target_packet_path.replace("/archived/", "/", 1)
     prefix = f"refs/remotes/origin/agent-diagnostics/{target_workstream}/"
@@ -161,16 +166,17 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                 or len(landing_started) != 1 or len(landed) != 1):
             continue
         base = started[0].get("data", {}).get("main_sha")
+        trace_landing = landing_started[0].get("data", {}).get("start_sha")
         if (not isinstance(base, str) or published[0].get("data", {}).get("head") != base
                 or published[0].get("data", {}).get("branch") != f"agent/{target_workstream}"
                 or landing_started[0].get("data", {}).get("branch") != f"agent/{target_workstream}"
-                or landing_started[0].get("data", {}).get("start_sha") != landing_commit
-                or landed[0].get("data", {}).get("head") != landing_commit):
+                or not isinstance(trace_landing, str)
+                or landed[0].get("data", {}).get("head") != trace_landing):
             continue
-        candidates.append((ref, run_id, base, events))
+        candidates.append((ref, run_id, base, trace_landing, events))
     if len(candidates) != 1:
         raise HostValidationError("split landing has missing or ambiguous exact workstream trace provenance")
-    ref, run_id, source_base, events = candidates[0]
+    ref, run_id, source_base, trace_landing, events = candidates[0]
 
     recorded_main = re.findall(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$",
                                target_packet_text)
@@ -178,7 +184,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         raise HostValidationError("split target packet has missing or ambiguous Reviewed main provenance")
 
     for sha, label in ((source_base, "source base"), (recorded_main[0], "packet Reviewed main"),
-                       (landing_commit, "canonical landing")):
+                       (landing_commit, "canonical landing"), (trace_landing, "trace landing"),
+                       (reviewed_main, "pinned reviewed main")):
         resolved = subprocess.run(["git", "rev-parse", "--verify", f"{sha}^{{commit}}"], cwd=repo,
                                   text=True, capture_output=True)
         if resolved.returncode or resolved.stdout.strip() != sha:
@@ -190,18 +197,69 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                       cwd=repo, capture_output=True).returncode:
         raise HostValidationError("source-span base is not an ancestor of the canonical landing")
 
-    # The source span must be the unique linear prefix of the workstream branch
-    # immediately before its archive-only completion commit. This rejects merges,
-    # unrelated intervening source commits, and an empty/vacuous span.
-    landing_parent = _git(repo, "rev-parse", f"{landing_commit}^1")
-    landing_paths = _changed_paths(repo, f"{landing_parent}..{landing_commit}")
-    if _source_code_paths(landing_paths):
-        raise HostValidationError("claimed split landing is not archive-only")
-    allowed_landing_paths = {target_packet_path, f"{PACKET_ROOT}/README.md"}
-    if set(landing_paths) - allowed_landing_paths:
+    # A legitimate synchronization merge is narrowly bound by both its parent
+    # order and the immutable lifecycle main_sync event. Do not derive the source
+    # span from this merge: it may contain unrelated changes from prior main.
+    trace_landing_kind = "canonical-archive"
+    trace_main_sync_sha = None
+    if trace_landing != landing_commit:
+        parent_line = _git(repo, "rev-list", "--parents", "-n", "1", trace_landing).split()
+        if len(parent_line) != 3 or parent_line[1] != landing_commit:
+            raise HostValidationError("trace landing is not the exact two-parent archive-first main-sync merge")
+        second_parent = parent_line[2]
+        sync_events = [event for event in events
+                       if event.get("event") == "main_sync"
+                       and event.get("data", {}).get("changed") is True
+                       and event.get("data", {}).get("head") == trace_landing]
+        if (len(sync_events) != 1
+                or sync_events[0].get("data", {}).get("main_sha") != second_parent):
+            raise HostValidationError("trace landing lacks an exact main-sync merge provenance event")
+        trace_landing_kind = "main-sync-merge"
+        trace_main_sync_sha = second_parent
+    if subprocess.run(["git", "merge-base", "--is-ancestor", trace_landing, reviewed_main],
+                      cwd=repo, capture_output=True).returncode:
+        raise HostValidationError("trace landing is not an ancestor of pinned reviewed main")
+
+    # Validate the canonical archive commit independently of the later main-sync
+    # merge. Its allowed closeout consists only of this packet's active deletion,
+    # archived creation, exact root summary and generated packet index.
+    archive_parent_line = _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split()
+    if len(archive_parent_line) != 2:
+        raise HostValidationError("canonical archive landing must have exactly one parent")
+    archive_parent = archive_parent_line[1]
+    archive_paths = set(_changed_paths(repo, f"{archive_parent}..{landing_commit}"))
+    summary_path = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+    allowed_archive_paths = {active_packet, target_packet_path, summary_path,
+                             f"{PACKET_ROOT}/README.md"}
+    if archive_paths - allowed_archive_paths:
         raise HostValidationError("archive-only landing contains unrelated paths")
+    if not {active_packet, target_packet_path}.issubset(archive_paths):
+        raise HostValidationError("archive-only landing is missing its active or archived packet closeout")
+
+    def has_path(revision: str, path: str) -> bool:
+        result = subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"], cwd=repo,
+                                capture_output=True)
+        return result.returncode == 0
+
+    if (not has_path(archive_parent, active_packet) or has_path(landing_commit, active_packet)
+            or has_path(archive_parent, target_packet_path) or not has_path(landing_commit, target_packet_path)):
+        raise HostValidationError("archive-only landing does not delete the active packet and create its canonical archive")
+    # These closeout files are markdown authorities, never executable payloads.
+    for revision in (archive_parent, landing_commit):
+        for path in archive_paths:
+            result = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
+                                    cwd=repo, capture_output=True)
+            if result.returncode:
+                raise HostValidationError("could not inspect archive closeout file modes")
+            if result.stdout:
+                mode = result.stdout.split(b"\t", 1)[0].split()[0]
+                if mode != b"100644":
+                    raise HostValidationError("archive-only landing contains an executable or non-regular closeout path")
+
+    # The source span is the unique linear prefix immediately before the
+    # canonical archive commit, never the main-sync merge.
     chain = subprocess.run(["git", "rev-list", "--first-parent", "--reverse",
-                            f"{source_base}..{landing_parent}"], cwd=repo,
+                            f"{source_base}..{archive_parent}"], cwd=repo,
                            text=True, capture_output=True)
     if chain.returncode or not chain.stdout.splitlines():
         raise HostValidationError("split landing has no source-bearing commits after its recorded workstream base")
@@ -210,9 +268,9 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         parent_count = len(_git(repo, "rev-list", "--parents", "-n", "1", commit).split()) - 1
         if parent_count != 1:
             raise HostValidationError("split source span contains merge ancestry")
-    if landing_parent != commits[-1]:
+    if archive_parent != commits[-1]:
         raise HostValidationError("split source span is not adjacent to the archive landing")
-    source_paths = _changed_paths(repo, f"{source_base}..{landing_parent}")
+    source_paths = _changed_paths(repo, f"{source_base}..{archive_parent}")
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -239,14 +297,25 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     undocumented = {path for path in code_paths if not is_documented(path)}
     if undocumented:
         raise HostValidationError("split source span contains code/test paths not documented by its target packet")
+
+    if trace_landing_kind == "main-sync-merge":
+        changed_in_merge = set(_changed_paths(repo, f"{landing_commit}..{trace_landing}"))
+        if target_packet_path in changed_in_merge:
+            raise HostValidationError("main-sync merge changes archived target packet from archive-first-parent version")
+        if changed_in_merge.intersection(source_paths):
+            raise HostValidationError("main-sync merge changes reviewed source from archive-first-parent version")
+
     trace_sha = subprocess.run(["git", "rev-parse", "--verify", f"{ref}^{{commit}}"], cwd=repo,
                                text=True, capture_output=True, check=True).stdout.strip()
     trace_blob = subprocess.run(["git", "show", f"{ref}:trace.jsonl"], cwd=repo,
                                 capture_output=True, check=True).stdout
-    return {"base": source_base, "head": landing_parent, "commits": commits,
+    return {"base": source_base, "head": archive_parent, "commits": commits,
             "paths": source_paths, "provenance": {"kind": "workstream-lifecycle-trace",
             "ref": ref, "trace_commit": trace_sha, "trace_sha256": _sha256(trace_blob),
-            "run_id": run_id, "workstream": target_workstream}}
+            "run_id": run_id, "workstream": target_workstream,
+            "trace_landing_commit": trace_landing,
+            "trace_landing_kind": trace_landing_kind,
+            "trace_main_sync_sha": trace_main_sync_sha}}
 
 
 def resolve_validation_source_span(repo: Path, reviewed_main: str, implementation_commit: str,
@@ -257,7 +326,18 @@ def resolve_validation_source_span(repo: Path, reviewed_main: str, implementatio
     landing = _git(repo, "rev-parse", "--verify", f"{implementation_commit}^{{commit}}")
     parent = _git(repo, "rev-parse", f"{landing}^1")
     landing_paths = _changed_paths(repo, f"{parent}..{landing}")
-    if _source_code_paths(landing_paths):
+
+    def has_path(revision: str, path: str) -> bool:
+        return subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"], cwd=repo,
+                              capture_output=True).returncode == 0
+
+    archive_transition = False
+    if target_workstream and target_packet_path and "/archived/" in target_packet_path:
+        active_packet = target_packet_path.replace("/archived/", "/", 1)
+        archive_transition = (has_path(parent, active_packet) and not has_path(landing, active_packet)
+                             and not has_path(parent, target_packet_path)
+                             and has_path(landing, target_packet_path))
+    if _source_code_paths(landing_paths) and not archive_transition:
         return {"base": parent, "head": landing, "commits": [landing], "paths": landing_paths,
                 "provenance": {"kind": "canonical-implementation-commit"}}
     if not target_workstream or not target_packet_path:
