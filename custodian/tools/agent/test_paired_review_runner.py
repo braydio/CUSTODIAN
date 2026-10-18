@@ -397,6 +397,98 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 "prior_summary": prior_summary, "target_content": target_content,
                 "landed": {"complete": False, "revision": "f" * 40}}
 
+    def _prepare_host_recovery(self, fixture):
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata.update({"phase": "host_validation_recovery",
+                         "reviewed_main": fixture["reviewed_main"],
+                         "implementation_commit": "a" * 40,
+                         "recovery_worktree": str(fixture["worktree"])})
+        # The real failed prelaunch run predates durable branch/packet copies in
+        # metadata; those identities come from the original verified receipt.
+        for key in ("branch", "worktree", "packet"):
+            metadata.pop(key, None)
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        (fixture["run_dir"] / "RECOVERY.md").write_text("preserved host-validation failure\n")
+        (fixture["run_dir"] / "validation.json").write_text('{"passed":false}\n')
+        (fixture["run_dir"] / "coordinator-validation.json").write_text('{"failed":true}\n')
+        lock = runner.common_dir(fixture["repo"]) / "custodian-review-runs/locks/review-sample.lock"
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.touch(exist_ok=True)
+        return runner._file_manifest(fixture["run_dir"])
+
+    def _host_recovery_fakes(self, fixture, *, outcome="findings", fail_validation=False):
+        packet = runner.parse_packet(fixture["active"], fixture["review"])
+        source_span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                       "paths": ["custodian/tools/agent/sample.py"],
+                       "provenance": {"kind": "test-fixture"}}
+
+        def fake_validation(worktree, run_dir, reviewed_main, implementation_commit,
+                            *, target_workstream=None, target_packet_path=None):
+            self.assertEqual(Path(worktree), fixture["worktree"])
+            self.assertEqual(Path(run_dir), fixture["run_dir"] / "continuation-01/host-validation")
+            self.assertEqual(reviewed_main, fixture["reviewed_main"])
+            self.assertEqual(implementation_commit, "a" * 40)
+            self.assertEqual(target_workstream, "sample")
+            self.assertEqual(target_packet_path, fixture["target"])
+            run_dir.mkdir(parents=True, exist_ok=True)
+            (run_dir / "validation.json").write_text(json.dumps({
+                "schema": "custodian.validation.result.v1", "passed": True,
+                "coverage": {"complete": True}, "tests": [{"id": "test", "status": "passed"}],
+            }) + "\n")
+            (run_dir / "coordinator-validation.json").write_text('{"pinned":true}\n')
+            if fail_validation:
+                raise host_validation.HostValidationError("simulated corrected validation failure")
+            return {"implementation_commit": implementation_commit,
+                    "report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                    "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                    "source_span": source_span}
+
+        def fake_launch(_argv, worktree, prompt, continuation_dir, _timeout):
+            self.assertTrue((continuation_dir / "host-validation/validation.json").is_file())
+            self.assertIn("fresh independent reviewer", prompt.lower())
+            self.assertIn(fixture["run_id"], prompt)
+            self.assertIn("host-validation/validation.json", prompt)
+            archive = worktree / f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
+            archive.parent.mkdir(parents=True, exist_ok=True)
+            text = fixture["review"].replace("- Status: `ready`", "- Status: `complete`")
+            text += "\n## Independent Review\n\nFresh reviewer evidence.\n\n"
+            text += runner.review_outcome.render_review_outcome(
+                outcome=outcome, review_workstream="review-sample", target_workstream="sample",
+                reviewed_main=fixture["reviewed_main"], implementation_commit="a" * 40,
+                provenance="different-agent", run_id=fixture["run_id"], review_cycle=0,
+                ids=("R0-01",) if outcome != "passed" else (),
+            )
+            archive.write_text(text)
+            active = worktree / fixture["active"]
+            if active.exists():
+                active.unlink()
+            if outcome == "passed":
+                target_file = worktree / fixture["target"]
+                target_file.write_text(append_receipt(
+                    target_file.read_text(), review_workstream="review-sample", target_workstream="sample",
+                    reviewed_main=fixture["reviewed_main"], implementation_commit="a" * 40))
+            (worktree / runner.expected_summary_path("review-sample")).write_text(
+                f"Independent review.\nAuthoring chat: {fixture['chat']}\n")
+            (continuation_dir / "last-message.txt").write_text("independent findings\n")
+            return 0
+
+        patches = [
+            patch.object(runner, "_host_recovery_plan_unlocked", return_value={
+                "plan_sha256": "e" * 64, "source_span": source_span}),
+            patch.object(runner, "validate_eligible_review", return_value=(
+                fixture["active"], fixture["review"], packet)),
+            patch.object(runner, "codex_preflight", return_value="/fake/codex"),
+            patch.object(runner, "reviewer_cache_roots", return_value=[]),
+            patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)),
+            patch.object(runner, "run_coordinator_validation", side_effect=fake_validation),
+            patch.object(runner, "verify_coordinator_validation"),
+            patch.object(runner, "launch_codex", side_effect=fake_launch),
+            patch.object(runner, "coordinator_finish_review", return_value="f" * 40),
+            patch.object(runner, "_verify_continuation_completion", return_value={"revision": "f" * 40}),
+        ]
+        return patches
+
     def _continuation_patches(self, fixture, *, outcome="passed", finish_side_effect=None):
         packet = runner.parse_packet(fixture["active"], fixture["review"])
 
@@ -613,6 +705,153 @@ class PairedReviewRunnerTests(unittest.TestCase):
             self.assertEqual(runner.main(["review-sample", "--continue-run", "20261017T120000Z-012345abcdef"]), 2)
             self.assertEqual(runner.main(["review-sample", "--authorize-fresh-reviewer-context"]), 2)
         continuation.assert_not_called()
+
+    def test_host_recovery_cli_plan_is_read_only_and_apply_requires_fresh_context_and_digest(self):
+        run_id = "20261017T120000Z-012345abcdef"
+        plan = {"schema": "custodian.paired_review_host_recovery_plan.v1",
+                "run_id": run_id, "plan_sha256": "e" * 64}
+        output = io.StringIO()
+        with patch.object(runner, "plan_host_validation_recovery", return_value=plan) as make_plan, \
+             patch.object(runner, "continue_run", return_value=0) as apply, \
+             patch("sys.stdout", output):
+            self.assertEqual(runner.main(["review-sample", "--continue-run", run_id,
+                                          "--recover-host-validation", "--plan"]), 0)
+            self.assertEqual(json.loads(output.getvalue()), plan)
+            make_plan.assert_called_once()
+            self.assertEqual(runner.main(["review-sample", "--continue-run", run_id,
+                                          "--recover-host-validation", "--apply",
+                                          "--authorize-fresh-reviewer-context"]), 2)
+            apply.assert_not_called()
+            self.assertEqual(runner.main(["review-sample", "--continue-run", run_id,
+                                          "--recover-host-validation", "--apply",
+                                          "--authorize-fresh-reviewer-context",
+                                          "--plan-sha256", "e" * 64]), 0)
+        apply.assert_called_once_with(
+            Path.cwd(), "review-sample", run_id, authorize_fresh_reviewer_context=True,
+            recover_host_validation=True, plan_sha256="e" * 64, timeout=None,
+        )
+
+    def test_host_recovery_stale_plan_is_rejected_before_creating_child(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        with patch.object(runner, "_host_recovery_plan_unlocked", return_value={"plan_sha256": "e" * 64}), \
+             patch.object(runner, "codex_preflight") as launch:
+            with self.assertRaisesRegex(runner.RunnerError, "exact SHA-256"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                    plan_sha256="f" * 64,
+                )
+        launch.assert_not_called()
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
+
+    def test_host_recovery_plan_is_read_only_and_refuses_an_active_supervisor(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        expected = {"schema": "custodian.paired_review_host_recovery_plan.v1",
+                    "run_id": fixture["run_id"], "plan_sha256": "e" * 64}
+        lock = runner.common_dir(fixture["repo"]) / "custodian-review-runs/locks/review-sample.lock"
+        with patch.object(runner, "_host_recovery_plan_unlocked", return_value=expected) as build_plan:
+            self.assertEqual(runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"]), expected)
+        build_plan.assert_called_once_with(fixture["repo"], "review-sample", fixture["run_id"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
+        with lock.open("rb") as held:
+            fcntl.flock(held, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            with self.assertRaisesRegex(runner.RunnerError, "another local process"):
+                runner.plan_host_validation_recovery(
+                    fixture["repo"], "review-sample", fixture["run_id"])
+
+    def test_completed_host_continuation_is_reusable_only_with_exact_parent_manifest(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        child_dir = fixture["run_dir"] / "continuation-01"
+        child_dir.mkdir()
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "phase": "complete",
+            "run_id": fixture["run_id"], "workstream": "review-sample",
+            "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
+            "active_packet_path": fixture["active"], "target_workstream": "sample",
+            "target_packet_path": fixture["target"], "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": "a" * 40,
+            "host_evidence": {"continuation_dir": str(child_dir)},
+            "run_evidence_sha256": original_manifest,
+        }
+        child_path = child_dir / "metadata.json"
+        child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+        state = runner._completed_host_continuation(
+            fixture["repo"], fixture["run_dir"], "review-sample", fixture["run_id"])
+        self.assertEqual(state["phase"], "complete")
+        self.assertEqual(len(state["metadata_sha256"]), 64)
+        self.assertEqual(len(state["manifest_sha256"]), 64)
+        (fixture["run_dir"] / "RECOVERY.md").write_text("altered after completion\n")
+        with self.assertRaisesRegex(runner.RunnerError, "original evidence"):
+            runner._completed_host_continuation(
+                fixture["repo"], fixture["run_dir"], "review-sample", fixture["run_id"])
+
+    def test_host_recovery_revalidates_in_child_then_launches_fresh_reviewer_without_rewriting_parent(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        patches = self._host_recovery_fakes(fixture, outcome="findings")
+        active = [item.start() for item in patches]
+        self.addCleanup(lambda: [item.stop() for item in reversed(patches)])
+
+        self.assertEqual(runner.continue_run(
+            fixture["repo"], "review-sample", fixture["run_id"],
+            authorize_fresh_reviewer_context=True, recover_host_validation=True,
+            plan_sha256="e" * 64,
+        ), 2)
+        child = fixture["run_dir"] / "continuation-01"
+        state = json.loads((child / "metadata.json").read_text())
+        self.assertEqual(state["phase"], "reviewer_nonpassing")
+        self.assertEqual(state["host_evidence"]["evidence_run_dir"], str(child / "host-validation"))
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=child), original_manifest)
+        self.assertEqual(active[5].call_count, 1)
+        self.assertEqual(active[7].call_count, 1)
+
+    def test_host_recovery_validation_failure_records_child_and_preserves_original_evidence(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        patches = self._host_recovery_fakes(fixture, fail_validation=True)
+        active = [item.start() for item in patches]
+        self.addCleanup(lambda: [item.stop() for item in reversed(patches)])
+        with self.assertRaisesRegex(runner.RunnerError, "corrected host validation did not pass"):
+            runner.continue_run(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                plan_sha256="e" * 64,
+            )
+        child = fixture["run_dir"] / "continuation-01"
+        state = json.loads((child / "metadata.json").read_text())
+        self.assertEqual(state["phase"], "host_validation_failed")
+        self.assertIn("validation.json", state["validation_evidence_sha256"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=child), original_manifest)
+        active[7].assert_not_called()
+
+    def test_host_recovery_pass_is_coordinator_closed_only_after_fresh_reviewer_disposition(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        original_manifest = self._prepare_host_recovery(fixture)
+        patches = self._host_recovery_fakes(fixture, outcome="passed")
+        active = [item.start() for item in patches]
+        self.addCleanup(lambda: [item.stop() for item in reversed(patches)])
+        self.assertEqual(runner.continue_run(
+            fixture["repo"], "review-sample", fixture["run_id"],
+            authorize_fresh_reviewer_context=True, recover_host_validation=True,
+            plan_sha256="e" * 64,
+        ), 0)
+        state = json.loads((fixture["run_dir"] / "continuation-01/metadata.json").read_text())
+        self.assertEqual(state["phase"], "complete")
+        self.assertEqual(state["outcome"], "passed")
+        active[8].assert_called_once()
+        active[9].assert_called_once()
+        self.assertEqual(runner._file_manifest(
+            fixture["run_dir"], omit=fixture["run_dir"] / "continuation-01"), original_manifest)
 
     def test_same_run_continuation_rejects_malformed_run_id_before_git_access(self):
         with patch.object(runner, "git") as git:
@@ -1162,6 +1401,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             subprocess.run(["git", "-C", str(repo), "config", "user.name", "test"], check=True)
             subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
             packet_path = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+            target_packet_path_expected = "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md"
             (repo / packet_path).parent.mkdir(parents=True)
             (repo / packet_path).write_text(review_packet())
             (repo / "AGENTS.md").write_text("test guidance\n")
@@ -1260,7 +1500,10 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                     output_path.write_text("review complete\n")
                     return self.returncode
 
-            def fake_host_validation(_worktree, run_dir, _reviewed_main, implementation_commit):
+            def fake_host_validation(_worktree, run_dir, _reviewed_main, implementation_commit,
+                                     *, target_workstream=None, target_packet_path=None):
+                self.assertEqual(target_workstream, "sample-impl")
+                self.assertEqual(target_packet_path, target_packet_path_expected)
                 report = {"schema": "custodian.validation.result.v1", "passed": True,
                           "coverage": {"complete": True}, "tests": [{"id": "focused", "status": "passed"}]}
                 (run_dir / "validation.json").write_text(json.dumps(report))
@@ -1369,6 +1612,33 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
         )
 
+    def _install_trace(self, workstream, packet_path, run_id, base, landing, *, ref_suffix=None):
+        events = [
+            {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
+             "workstream": workstream, "packet": packet_path, "event": "remote_claim_acquired",
+             "data": {"main_sha": base}},
+            {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
+             "workstream": workstream, "packet": packet_path, "event": "worktree_published",
+             "data": {"head": base, "branch": f"agent/{workstream}"}},
+            {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
+             "workstream": workstream, "packet": packet_path, "event": "landing_started",
+             "data": {"start_sha": landing, "branch": f"agent/{workstream}"}},
+            {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
+             "workstream": workstream, "packet": packet_path, "event": "landing_completed",
+             "data": {"head": landing}},
+        ]
+        raw = ("\n".join(json.dumps(item, sort_keys=True) for item in events) + "\n").encode()
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=self.root,
+                              input=raw, check=True, capture_output=True).stdout.decode().strip()
+        tree = subprocess.run(["git", "mktree"], cwd=self.root, input=f"100644 blob {blob}\ttrace.jsonl\n",
+                              text=True, check=True, capture_output=True).stdout.strip()
+        commit = subprocess.run(["git", "commit-tree", tree, "-m", "diagnostic trace"], cwd=self.root,
+                                text=True, check=True, capture_output=True).stdout.strip()
+        ref = (f"refs/remotes/origin/agent-diagnostics/{workstream}/"
+               f"{ref_suffix or run_id}")
+        subprocess.run(["git", "update-ref", ref, commit], cwd=self.root, check=True)
+        return ref
+
     def test_host_runs_canonical_changed_gate_from_pinned_parent_and_verifies_evidence(self):
         evidence = self._run_validation()
 
@@ -1396,6 +1666,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(host_validation.HostValidationError, "implementation diff"):
             self._run_validation(report)
 
+    def test_host_rejects_code_path_without_a_selected_test_owner(self):
+        report = self._report()
+        report["coverage"]["covered_by"][self.changed_paths[0]] = []
+        with self.assertRaisesRegex(host_validation.HostValidationError, "selected test owner"):
+            host_validation._validate_report(report, self.changed_paths)
+
     def test_host_rejects_source_drift_during_validation(self):
         with self.assertRaisesRegex(host_validation.HostValidationError, "source changed"):
             self._run_validation(source_edit=True)
@@ -1421,6 +1697,145 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 expected_report_sha256=evidence["report_sha256"],
                 expected_metadata_sha256=evidence["metadata_sha256"],
             )
+
+    def test_archive_only_landing_uses_trace_pinned_source_commit_and_keeps_landing_identity(self):
+        workstream = "sample-impl"
+        active = f"{runner.PACKET_ROOT}/SAMPLE_IMPL.md"
+        archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
+        index = f"{runner.PACKET_ROOT}/README.md"
+        initial_main = self.base
+        packet = (f"# Sample\n- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
+                  f"- Status: `in_progress`\n- Reviewed main: `{initial_main}`\n"
+                  f"\n## Work surface\n- `custodian/tools/agent/worktree_backlog_census.py`\n"
+                  f"- `custodian/tools/agent/test_worktree_backlog_census.py`\n")
+        (self.root / active).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / active).write_text(packet)
+        (self.root / index).write_text("active index\n")
+        self._commit("publish active implementation packet")
+        source_base = self._git("rev-parse", "HEAD")
+        code_paths = ["custodian/tools/agent/worktree_backlog_census.py",
+                      "custodian/tools/agent/test_worktree_backlog_census.py"]
+        for path in code_paths:
+            target = self.root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("source\n")
+        self._commit("implement sample workstream")
+        source_head = self._git("rev-parse", "HEAD")
+        archived_packet = packet.replace("`in_progress`", "`complete`")
+        (self.root / archive).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / archive).write_text(archived_packet)
+        (self.root / active).unlink()
+        (self.root / index).write_text("archived index\n")
+        self._commit("archive sample workstream")
+        landing = self._git("rev-parse", "HEAD")
+        self._install_trace(workstream, active, "20261018T010000Z-012345abcdef",
+                            source_base, landing)
+
+        span = host_validation.resolve_validation_source_span(
+            self.root, landing, landing, workstream, archive,
+        )
+        self.assertEqual(span["base"], source_base)
+        self.assertEqual(span["head"], source_head)
+        self.assertEqual(span["commits"], [source_head])
+        self.assertEqual(set(span["paths"]), set(code_paths))
+        self.assertEqual(span["provenance"]["kind"], "workstream-lifecycle-trace")
+
+        selected_paths = subprocess.run(["git", "diff", "--name-only", f"{source_base}...{landing}"],
+                                        cwd=self.root, check=True, text=True,
+                                        capture_output=True).stdout.splitlines()
+        report = {"schema": "custodian.validation.result.v1", "passed": True,
+                  "changed_files": selected_paths, "selected": ["census_contract"],
+                  "tests": [{"id": "census_contract", "status": "passed"}],
+                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                              "skipped": 0, "infrastructure_errors": 0},
+                  "coverage": {"complete": True, "covered_files": code_paths,
+                               "uncovered_files": [],
+                               "excluded_files": sorted(set(selected_paths) - set(code_paths)),
+                               "covered_by": {path: ["census_contract"] for path in code_paths}}}
+
+        def validate(command, cwd):
+            self.assertEqual(Path(cwd), self.root)
+            self.assertEqual(command[-4:], ["--changed", "--base", source_base, "--json"])
+            return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+        run_dir = self.run_dir / "split-landing"
+        run_dir.mkdir()
+        evidence = host_validation.run_coordinator_validation(
+            self.root, run_dir, landing, landing, target_workstream=workstream,
+            target_packet_path=archive, run_validation=validate,
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+        self.assertEqual(evidence["implementation_commit"], landing)
+        self.assertEqual(evidence["source_span"]["head"], source_head)
+        self.assertEqual(evidence["source_span"]["base"], source_base)
+        verified = host_validation.verify_coordinator_validation(
+            self.root, run_dir, landing, landing, target_workstream=workstream,
+            target_packet_path=archive, expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+        (self.root / code_paths[0]).write_text("mutated after validation\n")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "source changed"):
+            host_validation.verify_coordinator_validation(
+                self.root, run_dir, landing, landing, target_workstream=workstream,
+                target_packet_path=archive, expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
+
+    def test_archived_w1_correction_resolves_exact_source_commit_and_scope(self):
+        reviewed_main = "b5b85ca47a1eacad9879c6abf55257d378ae0c91"
+        workstream = "worktree-backlog-census-and-safety-ledger-v1-review-corrections-1"
+        target = (f"{runner.PACKET_ROOT}/archived/"
+                  "WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md")
+        span = host_validation.resolve_validation_source_span(
+            ROOT, reviewed_main, reviewed_main, workstream, target,
+        )
+        self.assertEqual(span["base"], "6c818d16ed7c3dd19f156b80348fa4bc6929c748")
+        self.assertEqual(span["head"], "1b586174fa7fbd9c1c94e6adbc36ee85bf809f4f")
+        self.assertEqual(span["commits"], ["1b586174fa7fbd9c1c94e6adbc36ee85bf809f4f"])
+        self.assertEqual(span["provenance"]["kind"], "workstream-lifecycle-trace")
+        self.assertEqual(span["provenance"]["run_id"], "20261017T195329Z-de38cd920078")
+        self.assertIn("custodian/tools/agent/worktree_backlog_census.py", span["paths"])
+        self.assertIn("custodian/tools/agent/test_worktree_backlog_census.py", span["paths"])
+
+    def test_archive_only_landing_rejects_missing_or_ambiguous_trace_and_unrelated_code(self):
+        workstream = "sample-impl"
+        active = f"{runner.PACKET_ROOT}/SAMPLE_IMPL.md"
+        archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
+        initial_main = self.base
+        packet = (f"# Sample\n- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
+                  f"- Status: `in_progress`\n- Reviewed main: `{initial_main}`\n"
+                  f"\n## Work surface\n- `custodian/tools/agent/worktree_backlog_census.py`\n")
+        (self.root / active).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / active).write_text(packet)
+        (self.root / f"{runner.PACKET_ROOT}/README.md").write_text("active\n")
+        self._commit("publish packet")
+        source_base = self._git("rev-parse", "HEAD")
+        code = self.root / "custodian/tools/agent/worktree_backlog_census.py"
+        code.parent.mkdir(parents=True, exist_ok=True)
+        code.write_text("source\n")
+        self._commit("implementation source")
+        source_head = self._git("rev-parse", "HEAD")
+        extra = self.root / "custodian/game/unrelated.gd"
+        extra.parent.mkdir(parents=True, exist_ok=True)
+        extra.write_text("unrelated\n")
+        self._commit("unrelated implementation")
+        (self.root / archive).parent.mkdir(parents=True, exist_ok=True)
+        (self.root / archive).write_text(packet.replace("`in_progress`", "`complete`"))
+        (self.root / active).unlink()
+        (self.root / f"{runner.PACKET_ROOT}/README.md").write_text("archived\n")
+        self._commit("archive packet")
+        landing = self._git("rev-parse", "HEAD")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(self.root, landing, landing, workstream, archive)
+        self._install_trace(workstream, active, "20261018T010001Z-012345abcdef", source_base, landing)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(self.root, landing, landing, workstream, archive)
+        self._install_trace(workstream, active, "20261018T010002Z-012345abcdef", source_base, landing)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "ambiguous"):
+            host_validation.resolve_validation_source_span(self.root, landing, landing, workstream, archive)
 
 
 if __name__ == "__main__":
