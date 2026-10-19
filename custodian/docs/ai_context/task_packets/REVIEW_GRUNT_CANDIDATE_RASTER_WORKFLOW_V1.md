@@ -4,8 +4,8 @@
 - Workstream: `review-grunt-candidate-raster-workflow-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `grunt-candidate-raster-workflow-v1`
 - Locks: `humanoid-raster-tooling`
@@ -30,7 +30,7 @@
 - Review focus: Falsify baseline/foot plane anchoring against original Grunt scene; detect alpha black-foot block separately from background; ensure disconnected intended armor details and protected highlights survive; ensure all generated PNGs remain dev-only, 96x96, no runtime alias or source mutation; verify per-variant masks/digests and whether reproducible QA results are facts, not art-quality verdicts. Independently check source hash `cbb8f29c9ed2e86c3d3fed7a2664b1828cc6d69a536d199e7bd209a1ff3ec557` with checked-in ZIP fallback rather than accepting an unhydrated LFS pointer as image data.
 - Acceptance: Fresh-context findings-first R0-NN review with severity, evidence, affected A1-A8, disposition; no pass without actual replay and false-positive cleanup tests. True defects require bounded correction and fresh review. Human visual selection remains explicitly outside technical completion.
 - Non-goals: No implementation edits, source-art retouch, family ingestion, combat changes, or concurrent tooling migration.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not modify the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 
