@@ -2225,7 +2225,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                  nonregular_archive_path=None,
                                  archive_doc_path=None,
                                  declared_work_surface_path=None,
-                                 mentioned_elsewhere_path=None):
+                                 mentioned_elsewhere_path=None,
+                                 archive_uid_path=None,
+                                 archive_uid_text="uid://do0pqluwda6jl\n"):
         workstream = "sample-main-sync"
         active = f"{runner.PACKET_ROOT}/SAMPLE_MAIN_SYNC.md"
         archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_MAIN_SYNC.md"
@@ -2268,6 +2270,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             doc = self.root / archive_doc_path
             doc.parent.mkdir(parents=True, exist_ok=True)
             doc.write_text("declared documentation update\n")
+        if archive_uid_path:
+            sidecar = self.root / archive_uid_path
+            sidecar.parent.mkdir(parents=True, exist_ok=True)
+            sidecar.write_text(archive_uid_text)
         if executable_archive_path:
             (self.root / executable_archive_path).chmod(0o755)
         if nonregular_archive_path:
@@ -2786,6 +2792,47 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 self.root, fixture["reviewed_main"], fixture["archive_landing"],
                 fixture["workstream"], fixture["archive"],
             )
+
+    def test_source_bearing_archive_accepts_changed_documented_gd_uid(self):
+        uid_path = "custodian/game/world/transfer.gd.uid"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True, archive_uid_path=uid_path,
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertIn(uid_path, span["paths"])
+        self.assertNotIn(uid_path, host_validation._source_code_paths(span["paths"]))
+        self.assertIn("custodian/game/world/transfer.gd",
+                      host_validation._source_code_paths(span["paths"]))
+
+    def test_source_bearing_archive_rejects_invalid_uid_companions(self):
+        for index, (sidecar, contents, extra, error) in enumerate((
+            ("custodian/game/world/rogue.gd.uid", "uid://do0pqluwda6jl\n",
+             {}, "archive-only landing contains unrelated paths"),
+            ("custodian/game/world/transfer.gd.uid", "not-a-godot-uid\n",
+             {}, "malformed Godot script UID sidecar"),
+            ("custodian/game/world/transfer.py.uid", "uid://do0pqluwda6jl\n",
+             {}, "archive-only landing contains unrelated paths"),
+            ("custodian/game/world/rogue.gd.uid", "uid://do0pqluwda6jl\n",
+             {"unrelated_archive_path": "custodian/game/world/rogue.gd"},
+             "not documented"),
+        )):
+            if index:
+                self.tearDown()
+                self.setUp()
+            with self.subTest(sidecar=sidecar):
+                fixture = self._build_main_sync_landing(
+                    source_bearing_archive=True, archive_uid_path=sidecar,
+                    archive_uid_text=contents, **extra,
+                )
+                with self.assertRaisesRegex(host_validation.HostValidationError, error):
+                    host_validation.resolve_validation_source_span(
+                        self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
 
     def test_source_bearing_archive_rejects_undocumented_noncode_executable_and_symlink_paths(self):
         for index, (kwargs, message) in enumerate((
