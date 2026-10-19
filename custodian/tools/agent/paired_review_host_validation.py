@@ -487,13 +487,25 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
 
     extra_archive_paths = archive_paths - allowed_archive_paths
     source_bearing_archive = bool(extra_archive_paths)
+    # Godot .gd.uid is a data-only companion, not an implementation source.
+    # Permit it only when its .gd is modified in this source-bearing archive;
+    # the .gd must also pass the unchanged packet documentation/coverage gates.
+    uid_companion_paths = {
+        path for path in extra_archive_paths
+        if path.endswith(".gd.uid") and path[:-4] in extra_archive_paths
+    }
     if source_bearing_archive:
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
+               and path not in uid_companion_paths
                and not (Path(path).suffix.lower() == ".md" and path in declared_markdown_paths)
                for path in extra_archive_paths):
             raise HostValidationError("archive-only landing contains unrelated paths")
+        for path in sorted(uid_companion_paths):
+            uid_text = _git(repo, "show", f"{landing_commit}:{path}")
+            if not re.fullmatch(r"uid://[a-z0-9]{8,32}", uid_text):
+                raise HostValidationError("archive landing contains malformed Godot script UID sidecar")
     elif archive_paths - allowed_archive_paths:
         raise HostValidationError("archive-only landing contains unrelated paths")
 
@@ -548,6 +560,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
     def is_documented(path: str) -> bool:
+        if path in uid_companion_paths:
+            return is_documented(path[:-4])
         if path in archive_source_paths and path in documented:
             return True
         name = Path(path).name
