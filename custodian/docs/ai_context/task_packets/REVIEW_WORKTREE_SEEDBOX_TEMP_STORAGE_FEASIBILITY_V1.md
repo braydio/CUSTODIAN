@@ -4,7 +4,7 @@
 - Workstream: `review-worktree-seedbox-temp-storage-feasibility-v1`
 - Kind: `review`
 - Status: `ready`
-- Dispatch: `manual`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `worktree-seedbox-temp-storage-feasibility-v1`
 - Locks: `none`
@@ -33,10 +33,9 @@
 
 - Next workstream: `none`
 - Next packet state: `human decision on preferred option after independent review`
-- Refresh owner: `chatgpt-user`
-- ChatGPT/user planning refresh required: `yes`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
-- Refresh reason: `User must authorize specific data types and the destination after evidence-backed feasibility review, before any transfer or cleanup work is commissioned.`
-- Refresh applies to: `successor`
+- Refresh reason: `none; human approval for any future mutating transfer is still mandatory`
 - Next action: `Return reviewed storage options, capacity and exact permitted migration scope to current Authoring chat; seek explicit user approval for any mutating pilot.`
 - Blockers or open questions: `No seedbox operations authorized. Local disk remains under pressure until independently resolved.`
