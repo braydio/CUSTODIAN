@@ -1495,6 +1495,20 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
             or original.get("run_dir") != str(run_dir)
             or original.get("phase") != "host_validation_recovery"):
         raise RunnerError("original run is not the exact eligible host_validation_recovery")
+    report_paths = [run_dir / "validation.json", run_dir / "coordinator-validation.json"]
+    for path in report_paths:
+        if path.is_symlink() or (path.exists() and not path.is_file()):
+            raise RunnerError(f"original host-validation report is unsafe: {path.name}")
+    reports_present = [path.is_file() for path in report_paths]
+    if any(reports_present) and not all(reports_present):
+        raise RunnerError("original host-validation report pair is incomplete")
+    prevalidation_interruption = not any(reports_present)
+    if prevalidation_interruption:
+        pinned_result_keys = ("host_validation", "validation_evidence_sha256", "host_validation_dir")
+        if any(key in original for key in pinned_result_keys):
+            raise RunnerError("original metadata claims pinned host-validation evidence but its reports are missing")
+        if any(path.exists() or path.is_symlink() for path in run_dir.glob("continuation-*")):
+            raise RunnerError("pre-validation recovery already has continuation children; inspect them before planning")
     completed_child = _completed_host_continuation(repo, run_dir, workstream, run_id)
     if not re.fullmatch(r"[0-9a-f]{40,64}", str(original.get("reviewed_main", ""))):
         raise RunnerError("original run omits its exact pinned reviewed-main SHA")
@@ -1584,8 +1598,9 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
         repo, reviewed_main, implementation_commit, packet.review_target_workstream, target_path,
     )
 
-    required_evidence = [run_dir / name for name in
-                         ("validation.json", "coordinator-validation.json", "metadata.json", "claim.stdout")]
+    required_evidence = [run_dir / "metadata.json", run_dir / "claim.stdout"]
+    if not prevalidation_interruption:
+        required_evidence = [*report_paths, *required_evidence]
     evidence_hashes = {}
     for path in required_evidence:
         if not path.is_file() or path.is_symlink():
@@ -1603,6 +1618,8 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
         "branch": branch, "worktree": str(worktree), "packet": active_path,
         "target_workstream": packet.review_target_workstream, "target_packet": target_path,
         "evidence_sha256": evidence_hashes, "continuation_state": completed_child,
+        "host_validation_state": ("pre_validation_interrupted" if prevalidation_interruption else "validated"),
+        "requires_fresh_host_validation": prevalidation_interruption,
         "original_run_manifest_sha256":
             hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
         "reviewer_context": "fresh", "will_create_claim": False,

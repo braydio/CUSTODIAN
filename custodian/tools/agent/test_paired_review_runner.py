@@ -397,7 +397,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 "prior_summary": prior_summary, "target_content": target_content,
                 "landed": {"complete": False, "revision": "f" * 40}}
 
-    def _prepare_host_recovery(self, fixture):
+    def _prepare_host_recovery(self, fixture, *, reports=True):
         metadata_path = fixture["run_dir"] / "metadata.json"
         metadata = json.loads(metadata_path.read_text())
         metadata.update({"phase": "host_validation_recovery",
@@ -410,12 +410,122 @@ class PairedReviewRunnerTests(unittest.TestCase):
             metadata.pop(key, None)
         metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
         (fixture["run_dir"] / "RECOVERY.md").write_text("preserved host-validation failure\n")
-        (fixture["run_dir"] / "validation.json").write_text('{"passed":false}\n')
-        (fixture["run_dir"] / "coordinator-validation.json").write_text('{"failed":true}\n')
+        if reports:
+            (fixture["run_dir"] / "validation.json").write_text('{"passed":false}\n')
+            (fixture["run_dir"] / "coordinator-validation.json").write_text('{"failed":true}\n')
+        else:
+            metadata.pop("host_validation", None)
+            metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+            (fixture["run_dir"] / "validation.json").unlink(missing_ok=True)
+            (fixture["run_dir"] / "coordinator-validation.json").unlink(missing_ok=True)
         lock = runner.common_dir(fixture["repo"]) / "custodian-review-runs/locks/review-sample.lock"
         lock.parent.mkdir(parents=True, exist_ok=True)
         lock.touch(exist_ok=True)
         return runner._file_manifest(fixture["run_dir"])
+
+    def test_host_recovery_plan_accepts_verified_prevalidation_interruption_read_only(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture, reports=False)
+        self._make_host_recovery_worktree_clean(fixture)
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        original_manifest = runner._file_manifest(fixture["run_dir"])
+        span = {"base": "8" * 40, "head": "b" * 40, "commits": ["b" * 40],
+                "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "verified-test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"])
+        self.assertEqual(plan["host_validation_state"], "pre_validation_interrupted")
+        self.assertTrue(plan["requires_fresh_host_validation"])
+        self.assertEqual(plan["source_span"]["base"], "8" * 40)
+        self.assertEqual(plan["evidence_sha256"].keys(), {"metadata.json", "claim.stdout"})
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
+        self.assertFalse((fixture["run_dir"] / "validation.json").exists())
+        self.assertFalse((fixture["run_dir"] / "coordinator-validation.json").exists())
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+
+    def test_host_recovery_plan_rejects_partial_reports_or_prior_validation_pins(self):
+        for report_name, metadata_pin in (("validation.json", None), (None, "host_validation"),
+                                          (None, "validation_evidence_sha256")):
+            with self.subTest(report_name=report_name, metadata_pin=metadata_pin):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_host_recovery(fixture, reports=False)
+                self._make_host_recovery_worktree_clean(fixture)
+                if report_name:
+                    (fixture["run_dir"] / report_name).write_text('{"passed":true}\n')
+                else:
+                    metadata_path = fixture["run_dir"] / "metadata.json"
+                    metadata = json.loads(metadata_path.read_text())
+                    metadata[metadata_pin] = {"report_sha256": "a" * 64}
+                    metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+                span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                        "paths": ["custodian/tools/agent/sample.py"],
+                        "provenance": {"kind": "test-fixture"}}
+                with patch.object(runner, "resolve_target_implementation_commit",
+                                  return_value=(fixture["reviewed_main"], None)), \
+                     patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+                     self.assertRaisesRegex(runner.RunnerError, "report|validation evidence|pinned"):
+                    runner.plan_host_validation_recovery(
+                        fixture["repo"], "review-sample", fixture["run_id"])
+
+    def test_host_recovery_prevalidation_plan_rejects_mismatched_claim_and_existing_child(self):
+        for mismatch in ("claim", "child"):
+            with self.subTest(mismatch=mismatch):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_host_recovery(fixture, reports=False)
+                self._make_host_recovery_worktree_clean(fixture)
+                if mismatch == "claim":
+                    claim_path = fixture["run_dir"] / "claim-receipt.json"
+                    claim = json.loads(claim_path.read_text())
+                    claim["worktree"] = str(fixture["repo"] / "foreign-worktree")
+                    claim_path.write_text(json.dumps(claim))
+                else:
+                    child = fixture["run_dir"] / "continuation-01"
+                    child.mkdir()
+                    (child / "metadata.json").write_text(json.dumps({"phase": "interrupted"}))
+                span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                        "paths": ["custodian/tools/agent/sample.py"],
+                        "provenance": {"kind": "test-fixture"}}
+                with patch.object(runner, "resolve_target_implementation_commit",
+                                  return_value=(fixture["reviewed_main"], None)), \
+                     patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+                     self.assertRaisesRegex(runner.RunnerError, "claim|worktree|continuation"):
+                    runner.plan_host_validation_recovery(
+                        fixture["repo"], "review-sample", fixture["run_id"])
+
+    def test_host_recovery_apply_rejects_original_manifest_changed_after_plan(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture, reports=False)
+        self._make_host_recovery_worktree_clean(fixture)
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"])
+            (fixture["run_dir"] / "RECOVERY.md").write_text("changed after plan\n")
+            with self.assertRaisesRegex(runner.RunnerError, "exact SHA-256"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                    plan_sha256=plan["plan_sha256"],
+                )
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
 
     def _make_host_recovery_worktree_clean(self, fixture):
         subprocess.run(["git", "-C", str(fixture["worktree"]), "restore", "--source",
@@ -801,6 +911,11 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertEqual(plan["packet"], claim["packet"])
         self.assertEqual(plan["worktree"], str(fixture["worktree"].resolve()))
         self.assertEqual(plan["reviewed_main"], fixture["reviewed_main"])
+        self.assertEqual(plan["host_validation_state"], "validated")
+        self.assertFalse(plan["requires_fresh_host_validation"])
+        for name in ("validation.json", "coordinator-validation.json"):
+            self.assertEqual(plan["evidence_sha256"][name],
+                             hashlib.sha256((fixture["run_dir"] / name).read_bytes()).hexdigest())
         self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
         self.assertFalse((fixture["run_dir"] / "claim-receipt.json").exists())
 
