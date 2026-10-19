@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-invalid-disposition-recovery-v1`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-invalid-disposition-recovery-v1`
 - Locks: `review-runner, coordination-root-hygiene`
