@@ -48,6 +48,7 @@ INVALID_DISPOSITION_TARGET_PACKET = (
 INVALID_DISPOSITION_REVIEW_PACKET = (
     "custodian/docs/ai_context/task_packets/archived/REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
 )
+ADVANCED_HEAD_PASS_REVIEW = "review-agent-paired-review-exact-claim-parking-v1"
 
 
 
@@ -1278,25 +1279,26 @@ def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path
         print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
         return
 
-    # Root checkout sync is subordinate and never alters user state. Resolve
-    # the persistent main identity from live worktree metadata, then use the
-    # shared inspect/apply policy used by OPUI and the user-facing CLI.
+    _sync_persistent_main_checkout(admin_repo)
+    print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+
+
+def _sync_persistent_main_checkout(repo: Path) -> None:
+    """Run the safe root synchronization independently of claim teardown."""
     main_root = next(
-        (Path(item["worktree"]).resolve() for item in worktree_records(admin_repo)
+        (Path(item["worktree"]).resolve() for item in worktree_records(repo)
          if item.get("branch") == "refs/heads/main"),
         None,
     )
     if main_root is None:
         print("persistent root synchronization pending: no attached main checkout")
-    else:
-        try:
-            result = apply_profiles([ROOT_PROFILE], main_root)[0]
-            print("persistent main checkout: " + format_result(result))
-        except Exception as error:
-            # Task landing is complete; root sync is best-effort and remains
-            # pending with an actionable reason if the safe helper cannot run.
-            print(f"persistent root synchronization pending: {error}")
-    print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+        return
+    try:
+        result = apply_profiles([ROOT_PROFILE], main_root)[0]
+        print("persistent main checkout: " + format_result(result))
+    except Exception as error:
+        # Landing is complete; root sync remains pending with a safe, actionable reason.
+        print(f"persistent root synchronization pending: {error}")
 
 
 def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Path, trace: RunTrace | None = None) -> None:
@@ -1343,8 +1345,10 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
                          evidence=str(recovery_evidence) if recovery_evidence else None)
     elif recovery_evidence is not None:
         raise WorkstreamError("recovery evidence is only valid with --defer-root-sync")
-    if defer_teardown and (workstream_id != INVALID_DISPOSITION_REVIEW or not defer_root_sync):
-        raise WorkstreamError("deferred teardown is limited to the exact recovered review with root sync deferred")
+    if defer_teardown and workstream_id not in {INVALID_DISPOSITION_REVIEW, ADVANCED_HEAD_PASS_REVIEW}:
+        raise WorkstreamError("deferred teardown is limited to the two exact authorized review recoveries")
+    if defer_teardown and workstream_id == INVALID_DISPOSITION_REVIEW and not defer_root_sync:
+        raise WorkstreamError("invalid-disposition deferred teardown requires its verified root-sync deferral")
     branch = branch_for(workstream_id)
     fetch(repo)
     try:
@@ -1380,6 +1384,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # to verified teardown; do not rewrite or remerge task history.
         head = git("rev-parse", "HEAD", cwd=path)
         if defer_teardown:
+            _sync_persistent_main_checkout(repo)
             print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
             if trace: trace.record("teardown_deferred", branch=branch, head=head)
             return "teardown_pending"
@@ -1409,6 +1414,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # of this exact history) already made HEAD reachable from main.
         head = git("rev-parse", "HEAD", cwd=path)
         if defer_teardown:
+            _sync_persistent_main_checkout(repo)
             print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
             if trace: trace.record("teardown_deferred", branch=branch, head=head)
             return "teardown_pending"
@@ -1437,6 +1443,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
 
     # READY_TO_TEARDOWN -> FINISHED
     if defer_teardown:
+        _sync_persistent_main_checkout(repo)
         print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
         if trace: trace.record("teardown_deferred", branch=branch, head=head)
         return "teardown_pending"

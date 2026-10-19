@@ -45,6 +45,43 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
+        class ReachedFetch(Exception):
+            pass
+
+        with mock.patch.object(workstream, "fetch", side_effect=ReachedFetch):
+            with self.assertRaises(ReachedFetch):
+                workstream._finish_impl(
+                    workstream.ADVANCED_HEAD_PASS_REVIEW, self.repo / "validation.json",
+                    repo=self.repo, defer_teardown=True,
+                )
+
+    def test_deferred_teardown_remains_restricted_to_authorized_recoveries(self):
+        with self.assertRaisesRegex(workstream.WorkstreamError, "two exact authorized"):
+            workstream._finish_impl("unrelated-review", self.repo / "validation.json",
+                                    repo=self.repo, defer_teardown=True)
+        with self.assertRaisesRegex(workstream.WorkstreamError, "root-sync deferral"):
+            workstream._finish_impl(
+                workstream.INVALID_DISPOSITION_REVIEW, self.repo / "validation.json",
+                repo=self.repo, defer_teardown=True,
+            )
+
+    def test_advanced_head_finish_lands_syncs_root_and_preserves_claim_worktree(self):
+        workstream_id = workstream.ADVANCED_HEAD_PASS_REVIEW
+        path = workstream.start(workstream_id, self.repo)
+        self._archive_packet(path, workstream_id,
+                             self._v2_packet_text(workstream_id, kind="review"))
+        report = self._green_report()
+
+        workstream.finish(workstream_id, report, repo=path, defer_teardown=True)
+
+        self.assertTrue(path.is_dir())
+        self.assertEqual(git(path, "branch", "--show-current"), f"agent/{workstream_id}")
+        self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(git(self.repo, "rev-parse", f"origin/agent/{workstream_id}"),
+                         git(path, "rev-parse", "HEAD"))
+
     def test_stable_kebab_id_validation(self):
         self.assertEqual(workstream.validate_id("operator-fast-chain"), "operator-fast-chain")
         for value in ("Operator", "two--words", "a/b", "one_"):
