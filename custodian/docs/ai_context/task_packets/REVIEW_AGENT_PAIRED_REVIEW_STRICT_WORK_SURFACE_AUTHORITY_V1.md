@@ -1,0 +1,30 @@
+# REVIEW: Paired Review Strict Work-surface Authority V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-strict-work-surface-authority-v1`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P0`
+- Depends on: `agent-paired-review-strict-work-surface-authority-v1`
+- Locks: `paired-review-source-provenance`
+- Review: `none`
+- Review target workstream: `agent-paired-review-strict-work-surface-authority-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_STRICT_WORK_SURFACE_AUTHORITY_V1.md`
+- Reviewed main: `d7061ab8f3ae7b641a91544465431db81574f735`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
+- Authoring handoff: `auto`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that only the unique, unindented top-level Work surface declaration grants Markdown archive eligibility.
+- Reviewed implementation acceptance: Verify exact field-boundary parsing, rejection of indented and duplicate declarations, exact path matching, unchanged shared parser and normal source/test allowlist, preserved provenance gates, and exact workstream-scoped root-sync deferral.
+- Review evidence: Landed implementation diff; positive lifecycle-document fixture; negative indented-only, duplicate top-level, nested competing declaration, and elsewhere-mentioned path fixtures; focused validation and dispatcher lock audit.
+- Correction threshold: Any Markdown eligibility granted by nested, duplicated, missing, malformed, prefix, directory, or otherwise ambiguous Work surface content; any changed shared parser or ordinary source/test allowlist; any weakened trace/claim/archive/ancestry/source-span gate; or any persistent root mutation is a blocking finding.
+- Focused validation: `python3 custodian/tools/agent/test_paired_review_runner.py`; `python3 custodian/tools/agent/test_workstream.py`; `python3 custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`.
+- Review focus: Inspect the validator-local field parser against adversarial metadata layout, verify all path extraction is confined to one unique field, and confirm root-sync deferral is exact-workstream scoped.
+- Acceptance: Produce a findings-first independent review. Record `passed` only when every stated invariant is established; otherwise record cycle-scoped findings with exact evidence. Do not inspect or mutate the unresolved earlier review as part of this review.
+- Non-goals: Resolve or alter the contradictory earlier PASS; release the held source-provenance lock; resume the held support review or historical recovery plan; change the shared packet parser.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.` `Do not synchronize the root checkout; record synchronization pending.`
