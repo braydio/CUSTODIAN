@@ -28,9 +28,7 @@
 - Review focus: Exact-run evidence binding, crash/race behavior, receipt provenance, canonical parsers, landing/cleanup ordering, root-sync deferral, and preservation of unrelated claims.
 - Acceptance: Produce a fresh-context findings-first review. Record a canonical PASS only if every acceptance invariant is independently established; otherwise record stable cycle-scoped findings and preserve all claims and worktrees.
 - Non-goals: Execute the held review recovery; alter any original or continuation evidence; claim or release the original review; launch the historical reviewer; apply the historical plan; synchronize the persistent root.
-- Task overrides:
-  - `TASK OVERRIDE: The paired review may commit only its own canonical review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded corrections; do not edit implementation code or protected review evidence.`
-  - `TASK OVERRIDE: Use the packet-authorized deferred root-sync closeout option and leave the persistent root checkout untouched.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: The held correction-review recovery runs only after this independent review passes; the source-bearing historical plan remains read-only and unapplied.
 
 ## Next Handoff
