@@ -150,24 +150,8 @@ if gitc worktree list --porcelain | grep -Fxq "branch $LOCAL"; then
 fi
 [[ -z "$(gitc for-each-ref --format='%(worktreepath)' "$LOCAL")" ]] || fail 'agent branch has a worktree attachment'
 [[ -z "$(gitc ls-remote --heads origin "$REMOTE_BRANCH")" ]] || fail 'a remote canonical agent branch appeared'
-[[ "$(gitc ls-remote --heads origin "$REMOTE_CLAIM")" == "$CLAIM"
-# Keep the diagnostic ref and the original commit via origin/main ancestry.
-printf '\nReleasing exactly one verified orphan local branch...\n'
-gitc update-ref -d "$LOCAL" "$BASE"
-printf 'Local orphan removed with exact BASE lease. Remote claim remains until guarded push succeeds.\n'
-printf 'Releasing exactly one original remote claim...\n'
-gitc push "--force-with-lease=$REMOTE_CLAIM:$CLAIM" origin ":$REMOTE_CLAIM"
-printf 'REMOTE CLAIM RELEASED. No new claim/checkout was created.\n'
-printf 'Next: run dispatcher audit, then normal claim from clean coordination checkout.\n'\t'"$REMOTE_CLAIM" ]] || fail 'remote claim moved before release'
-[[ "$(gitc ls-remote --heads origin refs/heads/main)" == "$(gitc rev-parse --verify refs/remotes/origin/main)"
-# Keep the diagnostic ref and the original commit via origin/main ancestry.
-printf '\nReleasing exactly one verified orphan local branch...\n'
-gitc update-ref -d "$LOCAL" "$BASE"
-printf 'Local orphan removed with exact BASE lease. Remote claim remains until guarded push succeeds.\n'
-printf 'Releasing exactly one original remote claim...\n'
-gitc push "--force-with-lease=$REMOTE_CLAIM:$CLAIM" origin ":$REMOTE_CLAIM"
-printf 'REMOTE CLAIM RELEASED. No new claim/checkout was created.\n'
-printf 'Next: run dispatcher audit, then normal claim from clean coordination checkout.\n'\t'"refs/heads/main" ]] || fail 'origin/main moved or cached ref is stale; rerun audit'
+[[ "$(gitc ls-remote --heads origin "$REMOTE_CLAIM")" == "$CLAIM"$'\t'"$REMOTE_CLAIM" ]] || fail 'remote claim moved before release'
+[[ "$(gitc ls-remote --heads origin refs/heads/main)" == "$(gitc rev-parse --verify refs/remotes/origin/main)"$'\t'"refs/heads/main" ]] || fail 'origin/main moved or cached ref is stale; rerun audit'
 gitc merge-base --is-ancestor "$BASE" refs/remotes/origin/main || fail 'branch ancestry changed'
 free_kib=$(df -Pk "$POOL" | awk 'NR==2 {print $4}')
 [[ "$free_kib" =~ ^[0-9]+$ ]] || fail 'could not recheck free space'
