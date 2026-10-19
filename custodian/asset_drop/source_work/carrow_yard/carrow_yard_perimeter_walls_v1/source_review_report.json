@@ -1,0 +1,252 @@
+{
+  "schema": "custodian.carrow_wall_source_review.v1",
+  "family_id": "carrow_yard_perimeter_walls_v1",
+  "camera_reference": {
+    "projection": "orthographic",
+    "yaw_degrees": 18,
+    "elevation_degrees": 60,
+    "proof_pixels_per_tile": 45,
+    "game_grid_pixels": 32
+  },
+  "artifacts": {
+    "wall_walkway_ew": {
+      "source": "wall_walkway_ew_source.png",
+      "source_size_px": [
+        1480,
+        421
+      ],
+      "source_alpha_bbox_px": [
+        24,
+        24,
+        1456,
+        384
+      ],
+      "source_bbox_bottom_center_provisional_anchor_px": [
+        739,
+        383
+      ],
+      "geometry_proof_size_px": [
+        1024,
+        768
+      ],
+      "source_frames": 1,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "source_sha256": "1aae87fc40ce7ff933bc018196bd6bd45a6d0bdc620ee3dcb4c2f15ff7d30224",
+      "normalization_state": "unresolved; source candidates do not align with geometry-proof canvas at 32px grid scale"
+    },
+    "wall_walkway_ns": {
+      "source": "wall_walkway_ns_source.png",
+      "source_size_px": [
+        618,
+        679
+      ],
+      "source_alpha_bbox_px": [
+        24,
+        24,
+        592,
+        655
+      ],
+      "source_bbox_bottom_center_provisional_anchor_px": [
+        307,
+        654
+      ],
+      "geometry_proof_size_px": [
+        768,
+        1024
+      ],
+      "source_frames": 1,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "source_sha256": "40d10c704cbf9174b0b3d8d57413645d882f02ac24677dee59b8f8de893b680b",
+      "normalization_state": "unresolved; source candidates do not align with geometry-proof canvas at 32px grid scale"
+    },
+    "wall_walkway_corner": {
+      "source": "wall_walkway_corner_source.png",
+      "source_size_px": [
+        896,
+        576
+      ],
+      "source_alpha_bbox_px": [
+        24,
+        24,
+        872,
+        552
+      ],
+      "source_bbox_bottom_center_provisional_anchor_px": [
+        447,
+        551
+      ],
+      "geometry_proof_size_px": [
+        1024,
+        1024
+      ],
+      "source_frames": 1,
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "source_sha256": "c521bb3fa088a04cafad66885ca2d6dc03c68f04175d72c8348a82d6b5f3671d",
+      "normalization_state": "unresolved; source candidates do not align with geometry-proof canvas at 32px grid scale"
+    }
+  },
+  "acceptance": {
+    "source_rgba": true,
+    "shared_pixel_scale": false,
+    "shared_ground_anchor": false,
+    "flush_repeatable_seams": false,
+    "finished_art_projection": false,
+    "game_camera_qa": false,
+    "human_visual_approval": false,
+    "asset_v2_intake": false,
+    "actual_camera_capture": true,
+    "seam_pass": false
+  },
+  "source_archive": {
+    "path": "/home/braydenchaffee/Downloads/custodian_carrow_walkway_wall_camera_locked_handoff_v1.zip",
+    "preserved_original": true,
+    "sha256": "b8cf5f4c8741d7edee5e7a5d93b1626ccaf01939d60b0e56d9fc7d1b5fafdb85",
+    "legacy_seven_source_batch": {
+      "dropbox_path": "/CUSTODIAN/asset_batches/custodian_carrow_yard_exterior_source_set_asset_handoff_v1.zip",
+      "size_bytes": 27251336,
+      "last_modified": "2026-10-17T12:56:13Z",
+      "locally_inspected": false,
+      "reason": "separate Dropbox source batch; the current supplied archive does not contain its seven originals"
+    }
+  },
+  "geometry_proof_measurements": {
+    "camera_yaw_degrees": 18,
+    "camera_elevation_degrees": 60,
+    "proof_pixels_per_tile": 45,
+    "clear_walkway_tiles": 4,
+    "geometry_contract": {
+      "wall_height_tiles": 5.8,
+      "wall_top_height_tiles": 5.05,
+      "parapet_height_tiles": 1.05
+    },
+    "measured_glb_bounds_tiles": {
+      "wall_walkway_ew": {
+        "min": [
+          0,
+          -0.35,
+          0
+        ],
+        "max": [
+          16,
+          6.35,
+          6.125
+        ],
+        "extents": [
+          16,
+          6.7,
+          6.125
+        ]
+      },
+      "wall_walkway_ns": {
+        "min": [
+          -0.35,
+          0,
+          0
+        ],
+        "max": [
+          6.35,
+          16,
+          6.125
+        ],
+        "extents": [
+          6.7,
+          16,
+          6.125
+        ]
+      },
+      "wall_walkway_corner": {
+        "min": [
+          -0.35,
+          -0.35,
+          0
+        ],
+        "max": [
+          16,
+          16,
+          6.4
+        ],
+        "extents": [
+          16.35,
+          16.35,
+          6.4
+        ]
+      }
+    },
+    "geometry_notes": [
+      "Straight total extents exceed the stated 6-tile cross-section by 0.7 tile due to protrusions.",
+      "The generated straight top reaches 6.125 tiles although the contract lists wall height 5.8 and parapet top 6.10.",
+      "Corner contains a 6.4-tile pier and x/y extents 16.35 tiles; this exceeds the straight max height and 16-tile arm bounds.",
+      "Visible walkway quad measures 4.88 tiles for straights and 4.9 tiles for the corner core."
+    ],
+    "texture_quality": "rejected: supplied renderer output is a simple geometry proof with visibly stretched donor patches and untextured structural blocks; it is not used as finished art.",
+    "render_outputs": {
+      "source_canvas_px": {
+        "wall_walkway_ew": [
+          1024,
+          768
+        ],
+        "wall_walkway_ns": [
+          768,
+          1024
+        ],
+        "wall_walkway_corner": [
+          1024,
+          1024
+        ]
+      },
+      "source_render_images_verified_rgba": true,
+      "texture_quality": "low-detail geometry proof; not used as art"
+    }
+  },
+  "seam_review": {
+    "repeat_pair": {
+      "state": "wall_walkway_ew",
+      "native_source_scale": true,
+      "source_offset_px": 1432,
+      "source_alpha_bbox_px": [
+        24,
+        24,
+        1456,
+        384
+      ],
+      "result": "FAIL",
+      "defects": [
+        "Both source ends have complete terminal piers, producing adjacent doubled pier mass.",
+        "The candidate has not been normalized to the 16x6 geometry or 32px grid."
+      ]
+    },
+    "corner_to_ns": {
+      "result": "FAIL",
+      "defects": [
+        "Source endpoints do not establish a shared world anchor or matching connector section.",
+        "Corner includes a large central pier and NS source has terminal towers.",
+        "Current placement is a review hypothesis only."
+      ]
+    },
+    "source_alpha": {
+      "result": "PASS",
+      "details": "All source PNGs use RGBA with alpha extrema 0..255 and transparent corners."
+    },
+    "gameplay_preview": {
+      "result": "PASS_LIMITED",
+      "camera": "existing Camera2D script, zoom 0.84",
+      "operator": "actual Operator scene instance",
+      "grid_pixels": 32,
+      "renderer": "Godot 4.7.2, OpenGL compatibility through Xvfb",
+      "warning": "Camera bounds disabled because the isolated preview contains no Carrow map. Gameplay collision and navigation were not instantiated."
+    }
+  },
+  "review_captures": [
+    "reports/carrow_yard_perimeter/20261019T204748Z/assembly_overview.png",
+    "reports/carrow_yard_perimeter/20261019T204748Z/native_scale_seams.png"
+  ]
+}

@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="1_operator"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://scenes/debug/carrow_perimeter_wall_art_preview.gd" id="3_preview"]
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("3_preview")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Operator" parent="World" instance=ExtResource("1_operator")]
+position = Vector2(1200, 650)
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(800, -350)
+script = ExtResource("2_camera")
+base_zoom = Vector2(0.84, 0.84)
+follow_enabled = false
+lookahead_enabled = false
+bob_enabled = false
+auto_zoom_enabled = false
+threat_framing_enabled = false
+
+[node name="PreviewArt" type="Node2D" parent="World"]

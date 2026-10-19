@@ -1,0 +1,112 @@
+{
+  "schema": "custodian.asset_handoff.v1",
+  "asset_set": "carrow_walkway_wall_camera_lock_v1",
+  "planning_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f",
+  "families": [
+    {
+      "family_id": "carrow_yard_perimeter_walls_v1",
+      "area": "carrow_yard",
+      "kind": "world_prop (proposed; confirm live repo schema)",
+      "family_contract": "custodian/content/metadata/assets/families/carrow_yard_perimeter_walls_v1.asset.json",
+      "states": [
+        {
+          "state_id": "wall_walkway_ew",
+          "source_file": "source_work/carrow_yard/carrow_yard_perimeter_walls_v1/wall_walkway_ew_source.png",
+          "source_dimensions": [
+            1480,
+            421
+          ],
+          "semantic_role": "east-west straight; artistic source only",
+          "sha256": "1aae87fc40ce7ff933bc018196bd6bd45a6d0bdc620ee3dcb4c2f15ff7d30224",
+          "size_bytes": 872554,
+          "frames": 1,
+          "animation": false,
+          "fps": null,
+          "alpha": true,
+          "required": "proposed",
+          "inbox_file": "inbox/carrow_yard_perimeter_walls_v1/wall_walkway_ew.png",
+          "normalized_dimensions": "pending visual-fit/32px grid registration",
+          "status": "source_candidate"
+        },
+        {
+          "state_id": "wall_walkway_ns",
+          "source_file": "source_work/carrow_yard/carrow_yard_perimeter_walls_v1/wall_walkway_ns_source.png",
+          "source_dimensions": [
+            618,
+            679
+          ],
+          "semantic_role": "north-south receding straight; artistic source only",
+          "sha256": "40d10c704cbf9174b0b3d8d57413645d882f02ac24677dee59b8f8de893b680b",
+          "size_bytes": 441173,
+          "frames": 1,
+          "animation": false,
+          "fps": null,
+          "alpha": true,
+          "required": "proposed",
+          "inbox_file": "inbox/carrow_yard_perimeter_walls_v1/wall_walkway_ns.png",
+          "normalized_dimensions": "pending visual-fit/32px grid registration",
+          "status": "source_candidate"
+        },
+        {
+          "state_id": "wall_walkway_corner",
+          "source_file": "source_work/carrow_yard/carrow_yard_perimeter_walls_v1/wall_walkway_corner_source.png",
+          "source_dimensions": [
+            896,
+            576
+          ],
+          "semantic_role": "L connector; artistic source only",
+          "sha256": "c521bb3fa088a04cafad66885ca2d6dc03c68f04175d72c8348a82d6b5f3671d",
+          "size_bytes": 642618,
+          "frames": 1,
+          "animation": false,
+          "fps": null,
+          "alpha": true,
+          "required": "proposed",
+          "inbox_file": "inbox/carrow_yard_perimeter_walls_v1/wall_walkway_corner.png",
+          "normalized_dimensions": "pending visual-fit/32px grid registration",
+          "status": "source_candidate"
+        }
+      ]
+    }
+  ],
+  "geometry_proof": {
+    "camera_yaw_degrees": 18,
+    "camera_elevation_degrees": 60,
+    "clear_walkway_tiles": 4,
+    "cross_section_width_tiles": 6,
+    "tile_pixels": 32,
+    "blockout_preview_px_per_tile": 45,
+    "wall_height_tiles": 5.05,
+    "segment_length_tiles": 16,
+    "render_canvas_pixels": {
+      "wall_walkway_ew": [
+        1024,
+        768
+      ],
+      "wall_walkway_ns": [
+        768,
+        1024
+      ],
+      "wall_walkway_corner": [
+        1024,
+        1024
+      ]
+    },
+    "model_outputs": [
+      "reference/geometry_proof/wall_walkway_ew.png",
+      "reference/geometry_proof/wall_walkway_ew.glb",
+      "reference/geometry_proof/wall_walkway_ns.png",
+      "reference/geometry_proof/wall_walkway_ns.glb",
+      "reference/geometry_proof/wall_walkway_corner.png",
+      "reference/geometry_proof/wall_walkway_corner.glb"
+    ]
+  },
+  "validation": {
+    "geometry_source_consistent": true,
+    "alpha_background_removed": true,
+    "repeated_seam_pixel_pass": false,
+    "in_engine_visual_qa_pass": false,
+    "asset_v2_intake_pass": false,
+    "elevated_nav_semantics_pass": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "carrow_yard_perimeter_walls_v1",
+  "kind": "world_prop",
+  "runtime": {
+    "domain": "sprites/environment/structure/carrow_yard/perimeter_walls_v1",
+    "owner": "carrow_yard_perimeter_walls_v1",
+    "template": "{domain}/runtime/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{variant}.png"
+  },
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "wall_walkway_ew": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_walkway_ew",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 768,
+      "frames": 1
+    },
+    "wall_walkway_ns": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_walkway_ns",
+      "layout": "copy",
+      "frame_width": 768,
+      "frame_height": 1024,
+      "frames": 1
+    },
+    "wall_walkway_corner": {
+      "required": true,
+      "layer": "body",
+      "action_group": "structure",
+      "variant": "wall_walkway_corner",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 1024,
+      "frames": 1
+    }
+  },
+  "aliases": {},
+  "consumers": [],
+  "handoff_notes": {
+    "planning_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f",
+    "state": "candidate contract only; frames are the supplied geometry-proof canvases at 45px/tile and are not accepted normalized runtime outputs",
+    "intake_gate": "Do not populate inbox or mark verified/production-ready until game-camera registration, seam proof and human visual approval pass.",
+    "preserve_existing_family": "This is the first live contract with this family ID; reconcile the separate seven-source Carrow handoff before adding its states."
+  }
+}

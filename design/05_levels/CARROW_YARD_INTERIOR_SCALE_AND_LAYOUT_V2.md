@@ -2,7 +2,7 @@
 
 **Status:** Scale-class **human decision accepted** on 2026-10-17; layout, collisions, floors and presentation **not yet approved**
 **Baseline audited:** `braydio/CUSTODIAN main@0d51fdba1da51b7cd3af4960b93e2dc6b4066b66`
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f
 **History:** `design/05_levels/CARROW_YARD_POST_INTERIORS_PLANNING_V1.md` and independently PASSed `review-carrow-interior-scale-calibration-v1`.
 **Owners:** Carrow site canon/room semantics in `design/03_world/locations/CARROW_YARD.md`; live room registry in `custodian/game/world/gothic_compound/gothic_compound_map.gd`; edited collision/POIs through the existing Authored Level Mapper family; Asset Pipeline V2 for art; distinct `carrow-yard-route-authority-migration` owns world ingress.
 
@@ -80,6 +80,29 @@ Existing **7 individual RGBA perimeter wall sources** are already exported and i
 **Manifest when family accepted:** `custodian/content/metadata/assets/families/carrow_yard_perimeter_walls_v1.asset.json`
 
 The six source canvases may be generated large and then normalized without resizing until exact connectors/footprints are authored. The 96×128 / 256×128 / 64×160 dimensions are **provisional only** and must NOT be treated as a settled 32px collision/AABB authority. Perspective/real 3D visual depth, identical materials and lights to existing Carrow walls, matching caps and thickness are the human art targets. Codex can test named seam/anchor coordinates but cannot declare these visually good. Do not drop this art workstream after discussing scale.
+
+### Perimeter macro-facade direction (2026-10-19)
+
+The projection-locked Carrow handoff adds three large architectural presentation
+modules to the existing perimeter art program: `wall_walkway_ew`,
+`wall_walkway_ns`, and `wall_walkway_corner`. They are intended to share one
+orthographic offline bake (provisional 60-degree elevation / 18-degree yaw),
+16×6-cell straight footprints, a four-cell clear upper walkway, open straight
+ends, and a continuous 90-degree corner. This macro-facade layer supplements
+the earlier seven source states and six-piece wall-detail plan; it does not
+replace or reingest them. Keep the existing `carrow_yard_perimeter_walls_v1`
+family identity and reconcile all states before production intake.
+
+The current source candidates and geometry references are preserved under
+`custodian/asset_drop/source_work/carrow_yard/carrow_yard_perimeter_walls_v1/`.
+Their candidate art still has terminating end piers and has not passed repeated
+seam, native Camera2D registration, or human visual review. They are not runtime
+assets. Do not infer collision or elevated navigation from alpha or GLBs. Keep
+the Asset V2 inbox empty until geometry, projection, seams, and human approval
+pass; elevated walkway navigation remains a separate gameplay workstream.
+
+Authoring chat for this macro-facade refresh:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f
 
 ## 8. Workstream order and drift closure
 

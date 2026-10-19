@@ -1,0 +1,32 @@
+{
+  "schema": "custodian.carrow_wall_projection.v1",
+  "camera": {
+    "projection": "orthographic",
+    "yaw_deg": 18.0,
+    "elevation_deg": 60.0,
+    "pixels_per_tile": 45,
+    "world_up": "Z",
+    "xy_to_game_grid": "X/Y 32px cells"
+  },
+  "geometry": {
+    "tile_pixels": 32,
+    "wall_height_tiles": 5.8,
+    "wall_top_height_tiles": 5.05,
+    "clear_walkway_tiles": 4.0,
+    "total_width_tiles": 6.0,
+    "parapet_height_tiles": 1.05,
+    "segment_length_tiles": 16.0,
+    "endpoints": "straight open-section ends, flush; no terminating pillars; corner E-W and N-S arm interfaces are same cross-section"
+  },
+  "states": [
+    "wall_walkway_ew",
+    "wall_walkway_ns",
+    "wall_walkway_corner"
+  ],
+  "notes": [
+    "Geometric projection proof, not final CUSTODIAN runtime acceptance",
+    "Self-shading permitted; detached ground shadows/background excluded",
+    "Textures sampled from prior accepted Carrow source art",
+    "Elevation traversal requires independent 2D semantic routing/occlusion implementation"
+  ]
+}
