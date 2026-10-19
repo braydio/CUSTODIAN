@@ -1,35 +1,38 @@
-# Exact review claim parking — packet authoring
+# Exact paired-review claim parking — implementation handoff
 
-## Status
+Workstream: `agent-paired-review-exact-claim-parking-v1`
 
-The bounded implementation/review pair and this handoff are published. The packet-authoring workflow promoted the pair to `ready/auto` and updated the managed index in `origin/main@7ff9c1e88d035a29da3aa557f414f484f4287491`. The parking mechanism is not implemented or reviewed yet.
+The implementation adds a read-only, plan-pinned parking tool restricted in code to the exact unresolved declared-documentation review claim, run, claim receipt, target packet, lock, and branch SHAs in the packet. Parking appends a `PARKED` commit to a dedicated remote ref using create-only fast-forward semantics; one `ACTIVE` child can restore the lock. Neither transition moves the original `agent/<workstream>` branch or edits the protected worktree or run evidence.
 
-## Scope and evidence
+The parking record binds the run evidence manifest and full run inventory digests, local-only commit inventory, worktree file inventory (including ignored files, with bounded hashing), exact remote/local SHAs, authorization scope, attestation, and transition identity. The local process scan includes same-user ancestors and blocks on a matching process or incomplete scan. Because the historical run has no recorded process/host identity, cross-host absence remains an explicit operator attestation; the tool does not claim machine verification of other hosts.
 
-- The exact protected review remains `review-agent-paired-review-declared-doc-archive-gate-v1`, run `20261019T104055Z-522c04f5260b`.
-- Its remote branch is still `f3a225c426a51736551b88c91ea2b786a69e8f5a`; its attached local worktree is at `ad2009ca91a8afec457c8b21c202f1b10b7ca086`, one commit ahead. Original run evidence and review disposition remain untouched and unresolved.
-- Packet authoring preflight passed for the implementation/review pair. `task_packet_index.py --write` reported already up to date; review-pair validation passed; `git diff --check` passed. GitHub's automatic handoff run `39284373751` promoted the pair and the main-index entry was verified on fetched `origin/main`.
-- The first live dispatcher audit reported the implementation packet as `ready/auto`, `dependency_lock_blocked` because the maintenance pair had declared the broad `agent-workflow` lock held by `review-agent-paired-review-godot-cache-access-v1`. Inspection showed that review's implementation surface is the paired-review runner, while this maintenance changes dispatcher lock classification and adds a dedicated parking tool. The pair was narrowed to its own `paired-review-claim-parking` lock; no existing lock, claim, or review was changed. A fresh dispatcher audit must decide eligibility from that corrected declaration.
+Dispatch now separates identity from lock occupancy. A valid exact `PARKED` record leaves the review `claimed` and prevents a duplicate claim, while releasing only its declared lock. Missing, malformed, stale, changed, or unsupported state keeps the prior lock behavior. Queue audit reports `execution_lock_held`, `parking_state`, and the record SHA separately. The parked review remains unresolved and cannot satisfy a review dependency.
 
-## Next Handoff
+## Validation
 
-- Next workstream: `agent-paired-review-exact-claim-parking-v1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
-- Refresh reason: `none`
-- Next action: Publish the bounded ownership-lock correction and re-audit. Claim this exact ready/auto workstream only if the dispatcher confirms eligibility. After implementation and fresh independent review, re-audit the exact protected review before its single authorized park transition.
-- Blockers or open questions: The target run lacks a recorded OS process/host identity. Apply must fail closed if cross-host owner state cannot be resolved by a fresh explicit, auditable attestation. The existing `agent-workflow` claim also remains a dispatcher blocker until normally resolved.
+- `python3 -m unittest test_review_claim_parking test_dispatch` — 103 tests passed, including two-clone append race, stale-plan and changed-evidence rejection, ignored-file inventory change, active/incomplete process scan negatives, exact lock release and restore, duplicate-claim protection, invalid-record fallback, and unresolved dependency gating.
+- `python3 -m unittest test_paired_review_runner test_review_outcome test_review_contract test_paired_review_findings_closeout` — 167 tests passed.
+- Combined focused rerun after final record validation changes: all 268 tests passed.
+- Targeted packet authoring preflight, packet index write/check, review-pair validation, AI-context validation, Python compile checks, and `git diff --check` passed.
+- The source-bearing held review run, its branch/worktree/evidence, other held review claims, and persistent root checkout were not changed. No parking transition was applied.
 
 ## Process Feedback
-
-- Feedback schema: `custodian.task_feedback.v1`
+- Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: `the first fresh coordination worktree checkout took longer than the short command wait and briefly looked incomplete while git was still populating it; a separate unresolved agent-workflow lock blocks implementation dispatch`
-- Root cause / contributing factors: `large repository checkout is asynchronous under the tool wait limit; dispatcher conservatively treats the published review branch as lock ownership`
-- Prevention / pipeline improvement: `retain and poll long-running checkout sessions; declare the narrowest lock covering the actual maintenance surface and rely on dispatch for all remaining conflicts`
-- Tooling / docs drift discovered: `the existing OR2 proposal covers general orphan parking but is dependency-gated behind OR1; a bounded exact-claim parking pilot now has its own proposed workstream`
-- Follow-up: `agent-paired-review-exact-claim-parking-v1`
-- What worked: `targeted packet preflight, dispatcher audit, and fresh-main authoring checkout exposed the second lock before any implementation claim`
+- What went wrong: an initial ancestor-excluding process scan could have missed an active owning session; the first dispatch integration test loaded a second parking module instance and did not share the fixture's exact authorization scope
+- Root cause / contributing factors: owner scanning initially prioritized avoiding self-matches over detecting active parents; the test loader used a noncanonical module name
+- Prevention / pipeline improvement: include same-user ancestor processes in owner scans; load the parking module under its canonical import name and test dispatch against a real temporary parked record
+- Tooling / docs drift discovered: the general OR1/OR2 parking supervisor remains proposed, so the lifecycle guide now distinguishes this exact-claim pilot and its narrow limitations
+- Follow-up: review-agent-paired-review-exact-claim-parking-v1
+- What worked: temporary bare remotes exercised append-only fencing and competing clones without touching live claims
+
+## Next Handoff
+- Next workstream: review-agent-paired-review-exact-claim-parking-v1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: Run the fresh independent paired review. After a genuine PASS, re-audit the exact original review claim, process ownership, remote/local SHAs, and protected evidence before considering the one authorized parking transition.
+- Blockers or open questions: Cross-host owner absence cannot be inferred from the local process scan; an explicit auditable operator attestation is required. Do not apply parking during the paired review.

@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-exact-claim-parking-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -46,6 +46,27 @@
 - Task overrides: `none`
 - Deferred: General execution leases, process supervision, automated host-exit detection, and all other orphan recovery remain with the existing OR1/OR2 architecture and its dependency DAG.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `review_claim_parking.py`; `dispatch.py`; 103 parking/dispatch tests and 167 paired-review/receipt tests passed; temporary two-clone CAS race passed; packet authoring/index, pairing, AI-context, compile, and diff checks passed. Fresh independent review and live transition remain pending. Original held review and persistent root checkout are untouched.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `an initial ancestor-excluding process scan could have missed an active owning session; the first dispatch integration test loaded a second parking module instance and did not share the fixture authorization scope`
+- Root cause / contributing factors: `owner scanning initially prioritized avoiding self-matches over detecting active parents; the test loader used a noncanonical module name`
+- Prevention / pipeline improvement: `include same-user ancestor processes in owner scans; load the parking module under its canonical import name and test dispatch against a real temporary parked record`
+- Tooling / docs drift discovered: `the general OR1/OR2 parking supervisor remains proposed, so the lifecycle guide now distinguishes this exact-claim pilot and its narrow limitations`
+- Follow-up: `review-agent-paired-review-exact-claim-parking-v1`
+- What worked: `temporary bare remotes exercised append-only fencing and competing clones without touching live claims`
+
 ## Handoff
 
 - Next workstream: `review-agent-paired-review-exact-claim-parking-v1`
@@ -54,5 +75,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
-- Next action: Claim through dispatch only when both declared ownership locks are eligible; implement and validate the bounded exact-claim transition, then obtain a fresh independent review.
-- Blockers or open questions: The existing `agent-workflow` lock may remain occupied by another unresolved review; dispatcher eligibility must be rechecked after publication. The target run does not contain a process identity, so any cross-host liveness ambiguity must remain a fail-closed gate unless explicit auditable owner attestation resolves it.
+- Next action: Run the fresh independent paired review. After a genuine PASS, re-audit the exact original review claim, process ownership, remote/local SHAs, and protected evidence before considering the one authorized parking transition.
+- Blockers or open questions: Cross-host owner absence cannot be inferred from the local process scan; an explicit auditable operator attestation is required. Do not apply parking during the paired review.

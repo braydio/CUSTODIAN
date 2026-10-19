@@ -118,6 +118,38 @@ def _claimed(repo: Path) -> set[str]:
     return claimed
 
 
+def _execution_lock_holders(repo: Path, packets: list[Packet], claimed: set[str]) -> tuple[set[str], dict[str, dict]]:
+    """Return lock holders, preserving claim identity for every published branch.
+
+    Only the exact, checksum/ancestry-verified parking record implemented by
+    ``review_claim_parking`` may release a holder's locks. Any import, packet,
+    branch, or record uncertainty retains conservative lock occupancy.
+    """
+    holders = set(claimed)
+    states: dict[str, dict] = {}
+    try:
+        import review_claim_parking
+    except Exception as exc:  # a missing optional authority must never unlock
+        return holders, {work_id: {"state": "invalid", "reason": str(exc)} for work_id in claimed}
+    by_id = {packet.workstream: packet for packet in packets if packet.workstream}
+    for work_id in claimed:
+        packet = by_id.get(work_id)
+        if packet is None:
+            continue
+        branch_sha = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/agent/{work_id}", check=False)
+        if not branch_sha:
+            continue
+        try:
+            state = review_claim_parking.dispatcher_parking_state(repo, packet, branch_sha)
+        except Exception as exc:
+            state = {"state": "invalid", "record_sha": None, "lock_released": False,
+                     "reason": f"parking state could not be verified: {exc}"}
+        states[work_id] = state
+        if state.get("lock_released") is True:
+            holders.discard(work_id)
+    return holders, states
+
+
 def _remote_claim_state(repo: Path) -> tuple[set[str], set[str]]:
     refs = git(repo, "for-each-ref", "--format=%(refname)", "refs/remotes/origin/dispatch-claims").splitlines()
     claims = {ref.removeprefix("refs/remotes/origin/dispatch-claims/") for ref in refs}
@@ -134,6 +166,7 @@ def _decision(
     interrupted_claims: set[str] | None = None,
     review_rejections: dict[str, tuple[str | None, str]] | None = None,
     correction_ok: set[tuple[str, str]] | None = None,
+    lock_holders: set[str] | None = None,
 ) -> tuple[bool, str | None]:
     if packet.error:
         return False, f"invalid packet metadata: {packet.error}"
@@ -163,11 +196,13 @@ def _decision(
                 continue
             return False, f"dependency: review not accepted: {dependency} ({review_rejections[dependency][1]})"
     by_id = {p.workstream: p for p in packets if p.workstream and not p.error}
-    for holder in sorted(claimed):
+    for holder in sorted(claimed if lock_holders is None else lock_holders):
         claimed_packet = next((p for p in packets if p.workstream == holder), None)
         if claimed_packet and claimed_packet.dispatch == "auto" and claimed_packet.error and "Locks" in claimed_packet.error:
             return False, f"lock: unknown held by {holder} (malformed lock declaration)"
-    claimed_packet_locks = [(work_id, by_id[work_id].locks) for work_id in sorted(claimed) if work_id in by_id]
+    claimed_packet_locks = [(work_id, by_id[work_id].locks)
+                            for work_id in sorted(claimed if lock_holders is None else lock_holders)
+                            if work_id in by_id]
     for holder, locks in claimed_packet_locks:
         overlap = sorted(set(packet.locks) & set(locks))
         if overlap:
@@ -272,6 +307,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
         "PARKED DRAFT", "INVALID/RECOVERY",
     )}
     claims, branches = _remote_claim_state(repo)
+    lock_holders, parking_states = _execution_lock_holders(repo, packets, claimed)
     interrupted_claims = claims - branches
     pairing_errors = validate_review_pairing(packets)
     validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
@@ -316,6 +352,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
+                lock_holders=lock_holders,
             )
             if ok:
                 groups["MANUAL READY"].append(f"{name} [{packet.path}]")
@@ -330,6 +367,7 @@ def _render_status(repo: Path, packets: list[Packet], archived: list[Packet], cl
                 pairing_errors=pairing_errors, validation_errors=validation_errors,
                 queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
+                lock_holders=lock_holders,
             )
             if ok:
                 groups["READY"].append(f"{packet.priority} {name} [{packet.path}]")
@@ -370,6 +408,7 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
     packets = _packets(repo)
     archived = _archived_packets(repo)
     claimed = _claimed(repo)
+    lock_holders, parking_states = _execution_lock_holders(repo, packets, claimed)
     remote_claims, remote_branches = _remote_claim_state(repo)
     interrupted_claims = remote_claims - remote_branches
     texts = _packet_texts(repo, packets)
@@ -390,12 +429,14 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
+            lock_holders=lock_holders,
         )
         auto_ok, _ = _decision(
             packet, packets, archived, claimed, auto_only=True,
             pairing_errors=pairing_errors, validation_errors=validation_errors,
             queue_errors=queue_errors, interrupted_claims=interrupted_claims,
                 review_rejections=review_rejections, correction_ok=correction_ok,
+            lock_holders=lock_holders,
         )
         reasons = []
         for error_map, label in (
@@ -465,6 +506,10 @@ def audit(repo: Path, *, as_json: bool = False) -> dict:
             "paired_review_workstream": packet.paired_review_workstream,
             "review_target_workstream": packet.review_target_workstream,
             "claimed": packet.workstream in claimed,
+            "execution_lock_held": packet.workstream in lock_holders,
+            "parking_state": parking_states.get(packet.workstream, {}).get("state"),
+            "parking_record_sha": parking_states.get(packet.workstream, {}).get("record_sha"),
+            "parking_reason": parking_states.get(packet.workstream, {}).get("reason"),
             "recovery_disposition": None,
         })
     raw_active = len(packets)
@@ -572,6 +617,7 @@ def claim(
                 packets = _packets(repo)
                 archived = _archived_packets(repo)
                 claimed = _claimed(repo)
+                lock_holders, _parking_states = _execution_lock_holders(repo, packets, claimed)
                 remote_claims, remote_branches = _remote_claim_state(repo)
                 pairing_errors = validate_review_pairing(packets)
                 validation_errors = validate_packet_validation_references(repo, packets, exclude_workstreams=claimed)
@@ -587,6 +633,7 @@ def claim(
                         pairing_errors=pairing_errors, validation_errors=validation_errors,
                         queue_errors=queue_errors, interrupted_claims=remote_claims - remote_branches,
                         review_rejections=review_rejections, correction_ok=correction_ok,
+                        lock_holders=lock_holders,
                     )
                     if ok:
                         selected = packet
