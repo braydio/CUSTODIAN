@@ -62,7 +62,6 @@ packet and its paired review, not as chat-only downloads.
 
 <!-- task_packet_index:managed:start -->
 - `AGENT_NEXT_EXECUTION_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` — Make scoped general fallback fail closed unless the dispatcher supplies a candidate identity that can be checked against the requested scope.
-- `AGENT_PAIRED_REVIEW_STRICT_WORK_SURFACE_AUTHORITY_V1.md` — Ensure only Markdown paths explicitly authorized by one unambiguous top-level Work surface declaration can expand source-bearing archive eligibility.
 - `COORDINATION_ROOT_DIRTY_PREVENTION_RECOVERY_V1.md` — Stop task/agent tooling from leaving the persistent CUSTODIAN coordination checkout dirty, and give the user a safe, observable, low-effort way to recover un...
 - `LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Guarantee **at most one pending or consumed physical allocation per F14-managed logical actor identity**, including cancel, rollback, stale callback and camp...
 - `REVIEW_AGENT_NEXT_EXECUTION_BOUNDARY_V1_REVIEW_CORRECTIONS_1.md` — Independently establish that R0-01 is fixed: scoped general fallback fails closed without weakening dispatcher authority or the pair budget.
@@ -75,13 +74,15 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md` — Independently verify that the planner accepts only a fully verified pre-validation interruption and preserves all validated-run and fail-closed provenance re...
 - `REVIEW_AGENT_PAIRED_REVIEW_SOURCE_BEARING_ARCHIVE_GATE_V1.md` — Independently falsify source-bearing archive provenance, test coverage and two-commit closeout before allowing the original preserved reviewer to launch.
 - `REVIEW_AGENT_PAIRED_REVIEW_SOURCE_SPAN_MAIN_SYNC_RECOVERY_V1.md` — Independently falsify main-sync trace binding and source-span integrity without touching either preserved review run.
-- `REVIEW_AGENT_PAIRED_REVIEW_STRICT_WORK_SURFACE_AUTHORITY_V1.md` — Independently verify that only the unique, unindented top-level Work surface declaration grants Markdown archive eligibility.
 - `REVIEW_COORDINATION_ROOT_DIRTY_PREVENTION_RECOVERY_V1.md` — Independently falsify the prevention/snapshot/recovery claims, specifically that no user-owned coordination-root file or Git index can be modified without ve...
 - `REVIEW_LIVING_WORLD_POPULATION_SLOT_RESERVATIONS.md` — Independently verify managed spawn **at-most-once** reservation, cancellation/replay safety and camp/global quota convergence at the real F04 scheduler queue...
 - `REVIEW_QUEUE_EXECUTION_FRONTIER_RESTORATION_V1.md` — Independently falsify the live queue-frontier restoration, eligibility classifications, and preservation of existing claims and review gates.
 - `REVIEW_WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md` — Independently determine whether correction cycle 1 resolves original finding R0-01 for W1's read-only inventory acceptance, without changing or erasing the o...
 - `REVIEW_WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Independently verify the worktree backlog worktree backlog dirty and unique preservation v1 implementation against exact proof of no lost work, no stolen cla...
 - `WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Prove that all original dirty work and unique unlanded HEAD history have byte-safe recovery copies before any archive, adoption or retirement decision.
+- `AGENT_BLOCKER_CAPTURE_HOOKS_V1.md` — Capture actionable workflow interruptions automatically at existing owner-controlled lifecycle boundaries.
+- `AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
+- `AGENT_BLOCKER_RECOVERY_RECONCILIATION_V1.md` — Support ChatGPT on-demand blocker triage, root-cause grouping and evidence-verified incident closure without autonomous claim or reviewer authority.
 - `AGENT_BOUNDED_TASK_CONTEXT_V1.md` — Stop Codex from repeatedly flooding its context with full repository-wide queue search and massive authority-document dumps while preserving accurate task/AG...
 - `AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md` — Review and human gate truth through the existing CUSTODIAN workflow authorities.
 - `AGENT_LONGFORM_SESSION_CORE_V1.md` — Real CLI and durable accounting through the existing CUSTODIAN workflow authorities.
@@ -145,6 +146,9 @@ packet and its paired review, not as chat-only downloads.
 - `PROCGEN_SHOWCASE_GENERATED_ARENA.md` — Embed one authentic, bounded procgen world into the dev gallery as a safe playable arena using the existing generated-region preparation authority.
 - `PROCGEN_STREAMING_NEAR_PLAYER_PRIORITY_V1.md` — Make authoritative streaming commits behave like a coherent bubble around the Operator: nearby missing tiles and tiny 1-3-cell holes must outrank farther bac...
 - `PROCGEN_TILEMAP_FACADE_CONTRACTION.md` — Finish the V1 ProcGenTilemap decomplexification pass by deleting migration residue and locking the façade around coherent extracted authorities.
+- `REVIEW_AGENT_BLOCKER_CAPTURE_HOOKS_V1.md` — Independently verify the exact landed `agent-blocker-capture-hooks-v1` implementation against authoritative workstream behavior.
+- `REVIEW_AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Independently verify the exact landed `agent-blocker-inbox-publisher-v1` implementation against authoritative workstream behavior.
+- `REVIEW_AGENT_BLOCKER_RECOVERY_RECONCILIATION_V1.md` — Independently verify the exact landed `agent-blocker-recovery-reconciliation-v1` implementation against authoritative workstream behavior.
 - `REVIEW_AGENT_BOUNDED_TASK_CONTEXT_V1.md` — Independently falsify Agent Bounded Task Context V1 against the landed code and all numbered implementation acceptance items.
 - `REVIEW_AGENT_LONGFORM_REVIEW_AND_GATE_HARDENING_V1.md` — Independently falsify Review and human gate truth from landed code and immutable evidence, not an implementation summary.
 - `REVIEW_AGENT_LONGFORM_SESSION_CORE_V1.md` — Independently falsify Real CLI and durable accounting from landed code and immutable evidence, not an implementation summary.

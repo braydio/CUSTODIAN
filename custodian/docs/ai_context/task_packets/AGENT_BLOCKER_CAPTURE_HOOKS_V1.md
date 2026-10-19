@@ -1,8 +1,8 @@
 # AGENT BLOCKER CAPTURE HOOKS V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-blocker-capture-hooks-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-agent-blocker-inbox-publisher-v1`

@@ -1,8 +1,8 @@
 # AGENT BLOCKER RECOVERY RECONCILIATION V1
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-blocker-recovery-reconciliation-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-agent-blocker-capture-hooks-v1`
