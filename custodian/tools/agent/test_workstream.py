@@ -1,6 +1,7 @@
 """Focused temporary-repository coverage for workstream lifecycle primitives."""
 
 import importlib.util
+import hashlib
 import json
 import os
 import subprocess
@@ -373,6 +374,97 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "push", "origin", "--delete", "agent/manual-teardown")
         workstream._teardown_workstream("manual-teardown", "agent/manual-teardown", self.repo, path, head)
         self.assertFalse(path.exists())
+
+    def test_teardown_can_record_authorized_root_sync_deferral_without_touching_root(self):
+        path = workstream.start("agent-paired-review-invalid-disposition-recovery-v1", self.repo)
+        head = git(path, "rev-parse", "HEAD")
+        root_head = git(self.repo, "rev-parse", "HEAD")
+        with mock.patch.object(workstream, "apply_profiles") as sync:
+            workstream._teardown_workstream(
+                "agent-paired-review-invalid-disposition-recovery-v1",
+                "agent/agent-paired-review-invalid-disposition-recovery-v1",
+                self.repo, path, head, defer_root_sync=True,
+            )
+        sync.assert_not_called()
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), root_head)
+        self.assertFalse(path.exists())
+
+    def test_root_sync_deferral_rejects_unlisted_workstream(self):
+        with self.assertRaisesRegex(workstream.WorkstreamError, "not authorized"):
+            workstream._verify_root_sync_deferral("unrelated-workstream", self.repo, None)
+
+    def test_root_sync_deferral_requires_the_exact_recovery_packet_override(self):
+        packet = self.repo / "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_INVALID_DISPOSITION_RECOVERY_V1.md"
+        packet.parent.mkdir(parents=True)
+        packet.write_text(
+            "# Recovery\n- Packet schema: `custodian.task_packet.v2`\n"
+            "- Workstream: `agent-paired-review-invalid-disposition-recovery-v1`\n"
+            "- Kind: `implementation`\n- Task overrides: `Do not synchronize the root checkout; record synchronization pending.`\n"
+        )
+        self.assertEqual(
+            workstream._verify_root_sync_deferral("agent-paired-review-invalid-disposition-recovery-v1", self.repo, None),
+            "task_packet_authorized",
+        )
+        packet.write_text(packet.read_text().replace("Do not synchronize", "Maybe synchronize"))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "packet authorization"):
+            workstream._verify_root_sync_deferral("agent-paired-review-invalid-disposition-recovery-v1", self.repo, None)
+
+    def test_historical_root_sync_deferral_requires_exact_run_manifest_and_landed_receipt_bytes(self):
+        disposition = b"repaired canonical disposition\n"
+        target = b"pinned implementation plus one receipt\n"
+        for relative, raw in ((workstream.INVALID_DISPOSITION_REVIEW_PACKET, disposition),
+                              (workstream.INVALID_DISPOSITION_TARGET_PACKET, target)):
+            path = self.repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(raw)
+        git(self.repo, "add", str(Path(workstream.INVALID_DISPOSITION_REVIEW_PACKET)),
+            str(Path(workstream.INVALID_DISPOSITION_TARGET_PACKET)))
+        git(self.repo, "commit", "-m", "recovery evidence")
+        git(self.repo, "push", "origin", "main")
+        common = Path(git(self.repo, "rev-parse", "--path-format=absolute", "--git-common-dir"))
+        run = common / "custodian-review-runs" / workstream.INVALID_DISPOSITION_REVIEW / workstream.INVALID_DISPOSITION_RUN_ID
+        continuation = run / "continuation-01"
+        continuation.mkdir(parents=True)
+        original = {
+            "schema": "custodian.paired_review_run.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "run_dir": str(run), "phase": "post_exit_recovery",
+        }
+        original_bytes = json.dumps(original).encode("utf-8")
+        (run / "metadata.json").write_bytes(original_bytes)
+        recovery = {
+            "schema": "custodian.paired_review_invalid_disposition_recovery.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "continuation": "continuation-01",
+            "original_disposition_sha256": workstream.INVALID_DISPOSITION_SHA256,
+            "repaired_disposition_sha256": hashlib.sha256(disposition).hexdigest(),
+            "target_receipt_sha256": hashlib.sha256(target).hexdigest(),
+            "root_sync_pending": True,
+        }
+        child = {
+            "schema": "custodian.paired_review_continuation.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "phase": "coordinator_closeout", "worktree": str(self.base / "removed-worktree"),
+            "invalid_disposition_recovery": recovery,
+        }
+        child["run_evidence_sha256"] = workstream._review_run_manifest(run)
+        (continuation / "metadata.json").write_text(json.dumps(child))
+        evidence = continuation / "metadata.json"
+        self.assertEqual(
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence),
+            "verified_invalid_disposition_recovery",
+        )
+        wrong_run = {**original, "run_dir": str(run.parent / "another-run")}
+        (run / "metadata.json").write_text(json.dumps(wrong_run))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "identity, preservation digest, or evidence manifest"):
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence)
+        (run / "metadata.json").write_bytes(original_bytes)
+        (run / "claim.stdout").write_text("tampered original evidence\n")
+        with self.assertRaisesRegex(workstream.WorkstreamError, "evidence manifest"):
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence)
 
     def test_finish_reports_already_finished_when_nothing_is_attached(self):
         path = workstream.start("fully-done", self.repo)

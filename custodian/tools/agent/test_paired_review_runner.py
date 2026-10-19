@@ -103,6 +103,299 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
+        canonical = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream=runner.INVALID_DISPOSITION_WORKSTREAM,
+            target_workstream=runner.INVALID_DISPOSITION_TARGET,
+            reviewed_main=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            implementation_commit=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            provenance="same-agent-fresh-context", run_id=runner.INVALID_DISPOSITION_RUN_ID,
+            review_cycle=0, ids=(),
+        )
+        handoff = (
+            "- Refresh reason: `none`\n"
+            "- Next action: `Coordinator may now create and verify the exact read-only recovery plan.`\n"
+            "- Blockers or open questions: `The historical plan remains read-only.`\n\n"
+            "Authoring chat: https://chatgpt.com/c/exact-recovery\n"
+        )
+        original = ("# Preserved disposition\n\n" + canonical.rstrip("\n") + "\n" + handoff).encode()
+        with patch.object(runner, "INVALID_DISPOSITION_SHA256", hashlib.sha256(original).hexdigest()):
+            repaired, outcome = runner._repair_invalid_disposition(original)
+        repaired_text = repaired.decode()
+        parsed, error = runner.review_outcome.parse_review_outcome(repaired_text)
+        self.assertIsNone(error)
+        self.assertEqual(parsed, outcome)
+        self.assertEqual(parsed["Outcome"], "passed")
+        self.assertIn(canonical, repaired_text)
+        self.assertNotIn("Refresh reason", repaired_text[:repaired_text.index("## Next Handoff")])
+        self.assertIn("- Refresh reason: `none`", repaired_text)
+        self.assertIn("- Next action: `Coordinator may now create and verify the exact read-only recovery plan.`", repaired_text)
+        self.assertIn("- Blockers or open questions: `The historical plan remains read-only.`", repaired_text)
+        self.assertIn("- Authoring chat: `https://chatgpt.com/c/exact-recovery`", repaired_text)
+
+    def test_invalid_disposition_repair_rejects_digest_drift_and_unrecognized_content(self):
+        canonical = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream=runner.INVALID_DISPOSITION_WORKSTREAM,
+            target_workstream=runner.INVALID_DISPOSITION_TARGET,
+            reviewed_main=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            implementation_commit=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            provenance="same-agent-fresh-context", run_id=runner.INVALID_DISPOSITION_RUN_ID,
+            review_cycle=0, ids=(),
+        )
+        malformed = ("# Disposition\n\n" + canonical.rstrip("\n") + "\n"
+                     "- Refresh reason: `none`\n"
+                     "- Next action: `Plan only.`\n"
+                     "- Blockers or open questions: `None.`\n\n"
+                     "Authoring chat: https://chatgpt.com/c/exact-recovery\n")
+        with self.assertRaisesRegex(runner.RunnerError, "preserved disposition digest"):
+            runner._repair_invalid_disposition(malformed.encode())
+        extra = malformed.replace("Authoring chat:", "Unexpected: extra\n\nAuthoring chat:")
+        with patch.object(runner, "INVALID_DISPOSITION_SHA256", hashlib.sha256(extra.encode()).hexdigest()):
+            with self.assertRaisesRegex(runner.RunnerError, "exact four-line handoff"):
+                runner._repair_invalid_disposition(extra.encode())
+
+    def test_invalid_disposition_target_receipt_is_derived_and_verified_as_exact_append(self):
+        baseline = target_packet(runner.INVALID_DISPOSITION_IMPLEMENTATION)
+        reviewer = {
+            "Schema": "custodian.paired_review.v1",
+            "Review workstream": runner.INVALID_DISPOSITION_WORKSTREAM,
+            "Review target workstream": runner.INVALID_DISPOSITION_TARGET,
+            "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+            "Reviewer context": "fresh", "Reviewer provenance": "same-agent-fresh-context",
+            "Reviewed main": runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            "Reviewed implementation commit": runner.INVALID_DISPOSITION_IMPLEMENTATION,
+        }
+        candidate = runner._append_verified_invalid_disposition_receipt(baseline, reviewer)
+        receipt, error = verify_review_receipt_delta(
+            baseline, candidate.decode(), review_workstream=runner.INVALID_DISPOSITION_WORKSTREAM,
+            target_workstream=runner.INVALID_DISPOSITION_TARGET,
+            reviewed_main=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+            target_implementation_commit=runner.INVALID_DISPOSITION_IMPLEMENTATION,
+        )
+        self.assertIsNone(error)
+        self.assertEqual(receipt, reviewer)
+        self.assertTrue(candidate.startswith(baseline.encode()))
+        with self.assertRaisesRegex(runner.RunnerError, "reviewer-authored PASS receipt"):
+            runner._append_verified_invalid_disposition_receipt(baseline, {**reviewer, "Status": "findings"})
+
+    def _invalid_disposition_fixture(self):
+        fixture = self._continuation_fixture()
+        run_id = fixture["run_id"]
+        workstream = "review-sample"
+        target_workstream = "sample"
+        active = fixture["active"]
+        target_path = fixture["target"]
+        archived_path = f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
+        reviewed_main = fixture["reviewed_main"]
+        receipt = {
+            "Schema": "custodian.paired_review.v1", "Review workstream": workstream,
+            "Review target workstream": target_workstream, "Status": "passed",
+            "Blocking defects": "0", "Material gaps": "0", "Reviewer context": "fresh",
+            "Reviewer provenance": "same-agent-fresh-context", "Reviewed main": reviewed_main,
+            "Reviewed implementation commit": reviewed_main,
+        }
+        receipt_block = f"### Review Receipt: {workstream}\n" + "".join(
+            f"- {key}: `{value}`\n" for key, value in (
+                ("Schema", receipt["Schema"]), ("Review workstream", receipt["Review workstream"]),
+                ("Review target workstream", receipt["Review target workstream"]), ("Status", receipt["Status"]),
+                ("Blocking defects", receipt["Blocking defects"]), ("Material gaps", receipt["Material gaps"]),
+                ("Reviewer context", receipt["Reviewer context"]),
+                ("Reviewer provenance", receipt["Reviewer provenance"]),
+                ("Reviewed main", receipt["Reviewed main"]),
+                ("Reviewed implementation commit", receipt["Reviewed implementation commit"]),
+            )
+        )
+        archived = fixture["review"].replace("- Status: `ready`", "- Status: `complete`")
+        archived += "\n## Independent Review\n\nReviewer PASS evidence.\n\n" + receipt_block + "\n"
+        archived += runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream=workstream, target_workstream=target_workstream,
+            reviewed_main=reviewed_main, implementation_commit=reviewed_main,
+            provenance="same-agent-fresh-context", run_id=run_id, review_cycle=0, ids=(),
+        )
+        archived += ("- Refresh reason: `none`\n- Next action: `Plan only.`\n"
+                     "- Blockers or open questions: `No blocker.`\n\n"
+                     "Authoring chat: https://chatgpt.com/c/continuation-test\n")
+        archive_file = fixture["worktree"] / archived_path
+        archive_file.parent.mkdir(parents=True, exist_ok=True)
+        archive_file.write_text(archived)
+        fixture["prior_summary"].unlink(missing_ok=True)
+        summary = fixture["worktree"] / runner.expected_summary_path(workstream)
+        summary.write_text(f"Review outcome: passed\nRun ID: {run_id}\nAuthoring chat: {fixture['chat']}\n")
+        continuation = fixture["run_dir"] / "continuation-01"
+        evidence = continuation / "recovery-evidence"
+        evidence.mkdir(parents=True)
+        preserved = evidence / "original-malformed-review-disposition.md"
+        preserved.write_bytes(archived.encode())
+        digest = hashlib.sha256(archived.encode()).hexdigest()
+        (evidence / "original-malformed-review-disposition.json").write_text(json.dumps({
+            "schema": "custodian.paired_review_invalid_disposition_preservation.v1",
+            "workstream": workstream, "run_id": run_id, "repair_applied": False,
+            "preserved_path": str(preserved), "source_path": str(archive_file),
+            "sha256": digest, "size_bytes": len(archived.encode()),
+        }))
+        preserved_copy = continuation / "preserved-reviewer-files/02-REVIEW_SAMPLE.md"
+        preserved_copy.parent.mkdir(parents=True)
+        preserved_copy.write_bytes(archived.encode())
+        report = fixture["run_dir"] / "validation.json"
+        report.write_text(json.dumps({
+            "schema": "custodian.validation.result.v1", "passed": True,
+            "coverage": {"complete": True}, "tests": [{"id": "test", "status": "passed"}],
+        }))
+        coordinator = fixture["run_dir"] / "coordinator-validation.json"
+        coordinator.write_text(json.dumps({
+            "schema": "custodian.paired_review_host_validation.v1",
+            "worktree": str(fixture["worktree"]), "reviewed_main": reviewed_main,
+            "implementation_commit": reviewed_main,
+        }))
+        original = {
+            "schema": runner.SCHEMA, "run_id": run_id, "workstream": workstream,
+            "phase": "post_exit_recovery", "run_dir": str(fixture["run_dir"]),
+            "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
+            "packet": active, "reviewed_main": reviewed_main,
+            "host_validation": {
+                "report_path": str(report), "report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
+                "metadata_sha256": hashlib.sha256(coordinator.read_bytes()).hexdigest(),
+            },
+        }
+        (fixture["run_dir"] / "metadata.json").write_text(json.dumps(original))
+        (fixture["run_dir"] / "last-message.txt").write_text(
+            f"Review outcome: passed\nRun ID {run_id}\nsame-agent-fresh-context\n")
+        # The continuation's preserved-file manifest is an independent immutable copy.
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "workstream": workstream, "run_id": run_id,
+            "phase": "invalid_reviewer_disposition",
+            "disposition_error": "Review Outcome contains non-canonical content",
+            "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
+            "active_packet_path": active, "target_workstream": target_workstream,
+            "target_packet_path": target_path, "reviewed_main": reviewed_main,
+            "implementation_commit": reviewed_main, "review_cycle": 0,
+            "authoring_chat": fixture["chat"],
+            "preserved_files": [{"copy": str(preserved_copy), "sha256": digest}],
+        }
+        child["run_evidence_sha256"] = runner._file_manifest(fixture["run_dir"], omit=continuation)
+        (continuation / "metadata.json").write_text(json.dumps(child))
+        (continuation / "last-message.txt").write_text(
+            f"Review outcome: passed\nRun ID {run_id}\nsame-agent-fresh-context\n")
+        with patch.object(runner, "INVALID_DISPOSITION_WORKSTREAM", workstream), \
+             patch.object(runner, "INVALID_DISPOSITION_RUN_ID", run_id), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET", target_workstream), \
+             patch.object(runner, "INVALID_DISPOSITION_IMPLEMENTATION", reviewed_main), \
+             patch.object(runner, "INVALID_DISPOSITION_SHA256", digest), \
+             patch.object(runner, "INVALID_DISPOSITION_ACTIVE_PACKET", active), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET_PACKET", target_path), \
+             patch.object(runner, "INVALID_DISPOSITION_REVIEW_PACKET", archived_path):
+            fixture.update({"workstream": workstream, "target_workstream": target_workstream,
+                            "review_packet_path": archived_path, "continuation": continuation,
+                            "preserved": preserved, "original_manifest": child["run_evidence_sha256"],
+                            "reviewer_receipt": receipt, "archived_bytes": archived.encode()})
+        return fixture
+
+    def test_exact_invalid_disposition_recovery_repairs_only_review_artifacts(self):
+        fixture = self._invalid_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        workstream, run_id = fixture["workstream"], fixture["run_id"]
+        reviewed_main = fixture["reviewed_main"]
+        original_report = (fixture["run_dir"] / "validation.json").read_bytes()
+        original_coord = (fixture["run_dir"] / "coordinator-validation.json").read_bytes()
+        with patch.object(runner, "INVALID_DISPOSITION_WORKSTREAM", workstream), \
+             patch.object(runner, "INVALID_DISPOSITION_RUN_ID", run_id), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET", fixture["target_workstream"]), \
+             patch.object(runner, "INVALID_DISPOSITION_IMPLEMENTATION", reviewed_main), \
+             patch.object(runner, "INVALID_DISPOSITION_SHA256", hashlib.sha256(fixture["archived_bytes"]).hexdigest()), \
+             patch.object(runner, "INVALID_DISPOSITION_ACTIVE_PACKET", fixture["active"]), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET_PACKET", fixture["target"]), \
+             patch.object(runner, "INVALID_DISPOSITION_REVIEW_PACKET", fixture["review_packet_path"]), \
+             patch.object(runner, "verify_coordinator_validation") as verify:
+            child_path = fixture["continuation"] / "metadata.json"
+            original = json.loads((fixture["run_dir"] / "metadata.json").read_text())
+            child = json.loads(child_path.read_text())
+            with patch.object(runner, "resolve_target_implementation_commit", return_value=(reviewed_main, None)):
+                recovered = runner._recover_exact_invalid_disposition(
+                    fixture["repo"], fixture["run_dir"], fixture["continuation"], original, child,
+                )
+            verify.assert_called_once()
+        archive = (fixture["worktree"] / fixture["review_packet_path"]).read_text()
+        target = (fixture["worktree"] / fixture["target"]).read_text()
+        outcome, error = runner.review_outcome.parse_review_outcome(archive)
+        self.assertIsNone(error)
+        self.assertEqual(outcome["Outcome"], "passed")
+        self.assertEqual(recovered["phase"], "coordinator_closeout")
+        self.assertTrue(recovered["root_sync_deferral"]["root_sync_pending"])
+        receipt, receipt_error = verify_review_receipt_delta(
+            fixture["target_content"], target, review_workstream=workstream,
+            target_workstream=fixture["target_workstream"], reviewed_main=reviewed_main,
+            target_implementation_commit=reviewed_main,
+        )
+        self.assertIsNone(receipt_error)
+        self.assertEqual(receipt, fixture["reviewer_receipt"])
+        self.assertEqual(fixture["preserved"].read_bytes(), fixture["archived_bytes"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=fixture["continuation"]),
+                         fixture["original_manifest"])
+        self.assertEqual((fixture["run_dir"] / "validation.json").read_bytes(), original_report)
+        self.assertEqual((fixture["run_dir"] / "coordinator-validation.json").read_bytes(), original_coord)
+
+    def test_exact_invalid_disposition_recovery_rejects_changed_manifest_before_packet_writes(self):
+        fixture = self._invalid_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        (fixture["run_dir"] / "RECOVERY.md").write_text("changed evidence\n")
+        archive_path = fixture["worktree"] / fixture["review_packet_path"]
+        original_archive = archive_path.read_bytes()
+        target_path = fixture["worktree"] / fixture["target"]
+        original_target = target_path.read_bytes()
+        with patch.object(runner, "INVALID_DISPOSITION_WORKSTREAM", fixture["workstream"]), \
+             patch.object(runner, "INVALID_DISPOSITION_RUN_ID", fixture["run_id"]), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET", fixture["target_workstream"]), \
+             patch.object(runner, "INVALID_DISPOSITION_IMPLEMENTATION", fixture["reviewed_main"]), \
+             patch.object(runner, "INVALID_DISPOSITION_SHA256", hashlib.sha256(fixture["archived_bytes"]).hexdigest()), \
+             patch.object(runner, "INVALID_DISPOSITION_ACTIVE_PACKET", fixture["active"]), \
+             patch.object(runner, "INVALID_DISPOSITION_TARGET_PACKET", fixture["target"]), \
+             patch.object(runner, "INVALID_DISPOSITION_REVIEW_PACKET", fixture["review_packet_path"]):
+            with self.assertRaisesRegex(runner.RunnerError, "evidence manifest changed"):
+                runner._recover_exact_invalid_disposition(
+                    fixture["repo"], fixture["run_dir"], fixture["continuation"],
+                    json.loads((fixture["run_dir"] / "metadata.json").read_text()),
+                    json.loads((fixture["continuation"] / "metadata.json").read_text()),
+                )
+        self.assertEqual(archive_path.read_bytes(), original_archive)
+        self.assertEqual(target_path.read_bytes(), original_target)
+
+    def test_exact_invalid_disposition_recovery_rejects_mismatched_claim_and_target_identity(self):
+        for mismatch in ("claim", "target"):
+            with self.subTest(mismatch=mismatch):
+                fixture = self._invalid_disposition_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                child_path = fixture["continuation"] / "metadata.json"
+                child = json.loads(child_path.read_text())
+                original = json.loads((fixture["run_dir"] / "metadata.json").read_text())
+                if mismatch == "target":
+                    child["target_packet_path"] = "custodian/docs/ai_context/task_packets/archived/FOREIGN.md"
+                else:
+                    claim_path = fixture["run_dir"] / "claim-receipt.json"
+                    claim = json.loads(claim_path.read_text())
+                    claim["worktree"] = str(fixture["repo"] / "foreign-worktree")
+                    claim_path.write_text(json.dumps(claim))
+                    (fixture["run_dir"] / "claim.stdout").write_text(
+                        runner.CLAIM_SENTINEL + json.dumps(claim, sort_keys=True) + "\n")
+                    child["run_evidence_sha256"] = runner._file_manifest(
+                        fixture["run_dir"], omit=fixture["continuation"])
+                archive_path = fixture["worktree"] / fixture["review_packet_path"]
+                target_path = fixture["worktree"] / fixture["target"]
+                before_archive, before_target = archive_path.read_bytes(), target_path.read_bytes()
+                with patch.object(runner, "INVALID_DISPOSITION_WORKSTREAM", fixture["workstream"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_RUN_ID", fixture["run_id"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_TARGET", fixture["target_workstream"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_IMPLEMENTATION", fixture["reviewed_main"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_SHA256", hashlib.sha256(fixture["archived_bytes"]).hexdigest()), \
+                     patch.object(runner, "INVALID_DISPOSITION_ACTIVE_PACKET", fixture["active"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_TARGET_PACKET", fixture["target"]), \
+                     patch.object(runner, "INVALID_DISPOSITION_REVIEW_PACKET", fixture["review_packet_path"]):
+                    with self.assertRaises(runner.RunnerError):
+                        runner._recover_exact_invalid_disposition(
+                            fixture["repo"], fixture["run_dir"], fixture["continuation"], original, child,
+                        )
+                self.assertEqual(archive_path.read_bytes(), before_archive)
+                self.assertEqual(target_path.read_bytes(), before_target)
+
     def test_reviewer_writable_roots_are_the_exact_custodian_namespaces(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
@@ -823,6 +1116,21 @@ class PairedReviewRunnerTests(unittest.TestCase):
             self.assertEqual(runner.main(["review-sample", "--continue-run", "20261017T120000Z-012345abcdef"]), 2)
             self.assertEqual(runner.main(["review-sample", "--authorize-fresh-reviewer-context"]), 2)
         continuation.assert_not_called()
+
+    def test_invalid_disposition_cli_is_exact_run_recovery_without_reviewer_authorization(self):
+        with patch.object(runner, "continue_run", return_value=0) as recovery:
+            self.assertEqual(runner.main([
+                runner.INVALID_DISPOSITION_WORKSTREAM, "--continue-run", runner.INVALID_DISPOSITION_RUN_ID,
+                "--recover-invalid-disposition",
+            ]), 0)
+            self.assertEqual(runner.main([
+                "review-sample", "--continue-run", "20261017T120000Z-012345abcdef",
+                "--recover-invalid-disposition",
+            ]), 2)
+        recovery.assert_called_once_with(
+            Path.cwd(), runner.INVALID_DISPOSITION_WORKSTREAM, runner.INVALID_DISPOSITION_RUN_ID,
+            recover_invalid_disposition=True,
+        )
 
     def test_host_recovery_cli_plan_is_read_only_and_apply_requires_fresh_context_and_digest(self):
         run_id = "20261017T120000Z-012345abcdef"

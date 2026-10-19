@@ -42,6 +42,28 @@ SCHEMA = "custodian.paired_review_run.v1"
 CLAIM_SENTINEL = "CUSTODIAN_DISPATCH_RESULT_JSON:"
 CONTINUATION_SCHEMA = "custodian.paired_review_continuation.v1"
 
+# This recovery exists for one independently reviewed, already-held run. It is
+# intentionally not an alternate parser or a general invalid-disposition retry.
+INVALID_DISPOSITION_WORKSTREAM = "review-agent-paired-review-prevalidation-recovery-plan-v1"
+INVALID_DISPOSITION_RUN_ID = "20261019T055243Z-1d73c6a01b1e"
+INVALID_DISPOSITION_TARGET = "agent-paired-review-prevalidation-recovery-plan-v1"
+INVALID_DISPOSITION_IMPLEMENTATION = "7a9b5018543c483dd27082505f232e9618869e28"
+INVALID_DISPOSITION_SHA256 = "6e6cc2d61796684baf23d5b74c7f1fc08091c13f509a8c00ceeb85f0d2933779"
+INVALID_DISPOSITION_CONTINUATION = "continuation-01"
+INVALID_DISPOSITION_TARGET_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+INVALID_DISPOSITION_ACTIVE_PACKET = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+INVALID_DISPOSITION_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+ROOT_SYNC_DEFERRAL_WORKSTREAMS = frozenset({
+    "agent-paired-review-invalid-disposition-recovery-v1",
+    "review-agent-paired-review-invalid-disposition-recovery-v1",
+})
+
 
 class RunnerError(RuntimeError):
     pass
@@ -254,7 +276,7 @@ def _changed_paths(repo: Path, *args: str) -> list[str]:
 def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, active_packet_path: str,
                               target_workstream: str, target_packet_path: str, target_content: str,
                               authoring_chat: str | None, reviewed_main: str, run_dir: Path,
-                              host_evidence: dict) -> str:
+                              host_evidence: dict, *, defer_teardown: bool = False) -> str:
     """Commit only bounded reviewer evidence and delegate landing to workstream.py."""
     evidence_dir = Path(host_evidence.get("evidence_run_dir", run_dir)).resolve()
     report = evidence_dir / "validation.json"
@@ -297,7 +319,14 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         if git(worktree, "status", "--porcelain", "--untracked-files=all"):
             raise RunnerError("already-committed review worktree has additional changes; preserving it for inspection")
         recovery_dir = Path(host_evidence.get("continuation_dir", run_dir)).resolve()
-        return _finish_via_workstream(repo, workstream, worktree, report, recovery_dir)
+        is_support_review = workstream in ROOT_SYNC_DEFERRAL_WORKSTREAMS
+        recovery_evidence = (Path(host_evidence["recovery_evidence"])
+                             if host_evidence.get("recovery_evidence") else None)
+        return _finish_via_workstream(
+            repo, workstream, worktree, report, recovery_dir,
+            defer_root_sync=is_support_review or recovery_evidence is not None,
+            recovery_evidence=recovery_evidence, defer_teardown=defer_teardown,
+        )
     changed = set(_changed_paths(worktree, "diff", "--name-only", "origin/main...HEAD"))
     changed.update(_changed_paths(worktree, "diff", "--name-only", "HEAD"))
     changed.update(_changed_paths(worktree, "diff", "--cached", "--name-only"))
@@ -339,7 +368,14 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
     if not branch_state["complete"]:
         raise RunnerError("review evidence failed exact pre-land verification: " + "; ".join(branch_state["reasons"]))
     recovery_dir = Path(host_evidence.get("continuation_dir", run_dir)).resolve()
-    return _finish_via_workstream(repo, workstream, worktree, report, recovery_dir)
+    is_support_review = workstream in ROOT_SYNC_DEFERRAL_WORKSTREAMS
+    recovery_evidence = (Path(host_evidence["recovery_evidence"])
+                         if host_evidence.get("recovery_evidence") else None)
+    return _finish_via_workstream(
+        repo, workstream, worktree, report, recovery_dir,
+        defer_root_sync=is_support_review or recovery_evidence is not None,
+        recovery_evidence=recovery_evidence, defer_teardown=defer_teardown,
+    )
 
 
 def _stage_bounded(worktree: Path, allowed: set[str]) -> None:
@@ -357,10 +393,18 @@ def _stage_bounded(worktree: Path, allowed: set[str]) -> None:
         raise RunnerError(redact(staged.stderr or staged.stdout))
 
 
-def _finish_via_workstream(repo: Path, workstream: str, worktree: Path, report: Path, run_dir: Path) -> str:
+def _finish_via_workstream(repo: Path, workstream: str, worktree: Path, report: Path, run_dir: Path, *,
+                           defer_root_sync: bool = False, recovery_evidence: Path | None = None,
+                           defer_teardown: bool = False) -> str:
     """Delegate landing and teardown to workstream.py finish; return the verified landed commit."""
     finish_cmd = [sys.executable, str(repo / "custodian/tools/agent/workstream.py"), "finish", workstream,
                   "--validation-report", str(report)]
+    if defer_root_sync:
+        finish_cmd.append("--defer-root-sync")
+    if recovery_evidence is not None:
+        finish_cmd.extend(["--defer-root-sync-evidence", str(recovery_evidence)])
+    if defer_teardown:
+        finish_cmd.append("--defer-teardown")
     finished = subprocess.run(finish_cmd, cwd=repo, text=True, capture_output=True)
     finish_output = finished.stderr + finished.stdout
     if finished.returncode and "provide a green --validation-report-after-sync" in finish_output:
@@ -379,6 +423,8 @@ def _finish_via_workstream(repo: Path, workstream: str, worktree: Path, report: 
         raise RunnerError("coordinator workstream finish failed; branch and evidence preserved: "
                           + redact(finished.stderr or finished.stdout))
     landed = re.search(r"verified ([0-9a-f]{40,64}) reachable from origin/main", finished.stdout + finished.stderr)
+    if not landed and "already finished:" in (finished.stdout + finished.stderr):
+        return fetch_and_pin_main(repo)
     if not landed:
         raise RunnerError("workstream finish did not return its verified landed commit; inspect preserved run evidence")
     return landed.group(1)
@@ -777,6 +823,123 @@ def _independent_review_receipt(packet_text: str) -> dict[str, str] | None:
         if len(values) == 1:
             result[name] = values[0].strip()
     return result
+
+
+def _repair_invalid_disposition(original: bytes) -> tuple[bytes, dict[str, str]]:
+    """Relocate the four known handoff lines without changing a canonical outcome byte."""
+    if _sha256_bytes(original) != INVALID_DISPOSITION_SHA256:
+        raise RunnerError("preserved disposition digest does not match the authorized invalid-disposition recovery")
+    try:
+        text = original.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise RunnerError("preserved disposition is not UTF-8") from exc
+    sections = list(review_outcome._SECTION_RE.finditer(text))
+    if len(sections) != 1:
+        raise RunnerError("invalid-disposition recovery requires exactly one Review Outcome section")
+    start = sections[0].start()
+    canonical_field = re.search(r"(?m)^- Finding IDs: `[^`\r\n]+`\r?\n", text[sections[0].end():])
+    if canonical_field is None:
+        raise RunnerError("invalid-disposition recovery cannot identify the end of the canonical outcome fields")
+    canonical_end = sections[0].end() + canonical_field.end()
+    if text[canonical_end:].startswith("\r\n"):
+        canonical_end += 2
+    elif text[canonical_end:].startswith("\n"):
+        canonical_end += 1
+    suffix = text[canonical_end:]
+    if not suffix.endswith("\n"):
+        raise RunnerError("invalid-disposition recovery requires the exact captured trailing handoff")
+    suffix_lines = suffix.splitlines()
+    expected_labels = ("Refresh reason", "Next action", "Blockers or open questions")
+    values: dict[str, str] = {}
+    if len(suffix_lines) != 5 or suffix_lines[3] != "":
+        raise RunnerError("invalid-disposition recovery requires the exact four-line handoff")
+    for line, label in zip(suffix_lines[:3], expected_labels, strict=True):
+        match = re.fullmatch(rf"- {re.escape(label)}: `([^`\r\n]+)`", line)
+        if match is None:
+            raise RunnerError("invalid-disposition recovery requires the exact four-line handoff")
+        values[label] = match.group(1)
+    authoring = re.fullmatch(r"Authoring chat: (https://[^\s`]+)", suffix_lines[4])
+    if authoring is None:
+        raise RunnerError("invalid-disposition recovery requires the exact four-line handoff")
+    values["Authoring chat"] = authoring.group(1)
+    if (values["Refresh reason"] != "none"
+            or values["Authoring chat"] == ""):
+        raise RunnerError("invalid-disposition handoff values do not match the captured reviewer evidence")
+
+    handoff = (
+        "\n## Next Handoff\n\n"
+        f"- Refresh reason: `{values['Refresh reason']}`\n"
+        f"- Next action: `{values['Next action']}`\n"
+        f"- Blockers or open questions: `{values['Blockers or open questions']}`\n"
+        f"- Authoring chat: `{values['Authoring chat']}`\n"
+    )
+    repaired_text = text[:canonical_end] + handoff
+    outcome, error = review_outcome.parse_review_outcome(repaired_text)
+    if error or outcome is None:
+        raise RunnerError(f"relocated disposition does not pass the canonical outcome parser: {error or 'missing'}")
+    canonical_before = text[start:canonical_end]
+    canonical_after_start = repaired_text.index("## Review Outcome")
+    canonical_after_end = repaired_text.index("## Next Handoff", canonical_after_start)
+    canonical_after = repaired_text[canonical_after_start:canonical_after_end]
+    if canonical_after.removesuffix("\n") != canonical_before:
+        raise RunnerError("invalid-disposition repair changed canonical outcome bytes")
+    if (outcome.get("Outcome") != "passed"
+            or outcome.get("Review workstream") != INVALID_DISPOSITION_WORKSTREAM
+            or outcome.get("Review target workstream") != INVALID_DISPOSITION_TARGET
+            or outcome.get("Reviewed main") != INVALID_DISPOSITION_IMPLEMENTATION
+            or outcome.get("Reviewed implementation commit") != INVALID_DISPOSITION_IMPLEMENTATION
+            or outcome.get("Run ID") != INVALID_DISPOSITION_RUN_ID
+            or outcome.get("Review cycle") != "0"
+            or outcome.get("Finding IDs") != "none"
+            or outcome.get("Reviewer provenance") != "same-agent-fresh-context"):
+        raise RunnerError("canonical disposition identity or reviewer outcome differs from the authorized PASS")
+    return repaired_text.encode("utf-8"), outcome
+
+
+def _append_verified_invalid_disposition_receipt(baseline: str, reviewer_receipt: dict[str, str]) -> bytes:
+    """Append the one target receipt supported by the preserved reviewer-authored PASS."""
+    expected_fields = {
+        "Schema", "Review workstream", "Review target workstream", "Status", "Blocking defects",
+        "Material gaps", "Reviewer context", "Reviewer provenance", "Reviewed main",
+        "Reviewed implementation commit",
+    }
+    if set(reviewer_receipt) != expected_fields or any(not reviewer_receipt.get(key) for key in expected_fields):
+        raise RunnerError("reviewer-authored PASS receipt is incomplete or ambiguous")
+    expected = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": INVALID_DISPOSITION_WORKSTREAM,
+        "Review target workstream": INVALID_DISPOSITION_TARGET,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": INVALID_DISPOSITION_IMPLEMENTATION,
+        "Reviewed implementation commit": INVALID_DISPOSITION_IMPLEMENTATION,
+    }
+    if any(reviewer_receipt.get(key) != value for key, value in expected.items()):
+        raise RunnerError("reviewer-authored PASS receipt does not match the exact pinned review identity")
+    if reviewer_receipt.get("Reviewer provenance") not in review_outcome.PROVENANCE:
+        raise RunnerError("reviewer-authored PASS receipt has invalid reviewer provenance")
+    if re.search(r"(?m)^## Independent Review[ \t]*$", baseline):
+        raise RunnerError("pinned target baseline already contains an Independent Review section")
+    fields = (
+        "Schema", "Review workstream", "Review target workstream", "Status", "Blocking defects",
+        "Material gaps", "Reviewer context", "Reviewer provenance", "Reviewed main",
+        "Reviewed implementation commit",
+    )
+    receipt = f"### Review Receipt: {INVALID_DISPOSITION_WORKSTREAM}\n" + "".join(
+        f"- {name}: `{reviewer_receipt[name]}`\n" for name in fields
+    )
+    if not baseline.endswith("\n"):
+        raise RunnerError("pinned target baseline must end with a newline")
+    candidate = baseline + "\n## Independent Review\n\n" + receipt
+    verified, error = verify_review_receipt_delta(
+        baseline, candidate, review_workstream=INVALID_DISPOSITION_WORKSTREAM,
+        target_workstream=INVALID_DISPOSITION_TARGET,
+        reviewed_main=INVALID_DISPOSITION_IMPLEMENTATION,
+        target_implementation_commit=INVALID_DISPOSITION_IMPLEMENTATION,
+    )
+    if error or verified != reviewer_receipt:
+        raise RunnerError("reviewer-authored PASS receipt failed verify_review_receipt_delta: "
+                          + (error or "receipt values differ"))
+    return candidate.encode("utf-8")
 
 
 def launch_codex(argv: list[str], worktree: Path, prompt: str, run_dir: Path, timeout: float | None) -> int:
@@ -1945,14 +2108,264 @@ def _verify_continuation_completion(repo: Path, run_dir: Path, continuation_dir:
     return state
 
 
+def _recover_exact_invalid_disposition(repo: Path, run_dir: Path, continuation_dir: Path,
+                                       original: dict, child: dict) -> dict:
+    """Verify and repair only the one authorized reviewer disposition and missing receipt."""
+    if (child.get("workstream") != INVALID_DISPOSITION_WORKSTREAM
+            or child.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or child.get("phase") != "invalid_reviewer_disposition"
+            or child.get("disposition_error") != "Review Outcome contains non-canonical content"
+            or child.get("active_packet_path") != INVALID_DISPOSITION_ACTIVE_PACKET
+            or child.get("target_workstream") != INVALID_DISPOSITION_TARGET
+            or child.get("target_packet_path") != INVALID_DISPOSITION_TARGET_PACKET
+            or child.get("reviewed_main") != INVALID_DISPOSITION_IMPLEMENTATION
+            or child.get("implementation_commit") != INVALID_DISPOSITION_IMPLEMENTATION
+            or child.get("review_cycle") != 0
+            or continuation_dir.name != INVALID_DISPOSITION_CONTINUATION):
+        raise RunnerError("invalid-disposition recovery is limited to the exact held run and phase")
+    child_paths = [path for path in run_dir.glob("continuation-*") if path.exists() or path.is_symlink()]
+    if child_paths != [continuation_dir] or continuation_dir.is_symlink() or not continuation_dir.is_dir():
+        raise RunnerError("invalid-disposition recovery requires the sole preserved continuation-01 child")
+    if (original.get("schema") != SCHEMA or original.get("workstream") != INVALID_DISPOSITION_WORKSTREAM
+            or original.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or original.get("phase") != "post_exit_recovery"
+            or original.get("run_dir") != str(run_dir)
+            or original.get("reviewed_main") != INVALID_DISPOSITION_IMPLEMENTATION):
+        raise RunnerError("original run identity or phase differs from the authorized held review")
+    original_manifest = _file_manifest(run_dir, omit=continuation_dir)
+    if child.get("run_evidence_sha256") != original_manifest:
+        raise RunnerError("original run evidence manifest changed; invalid-disposition recovery refused")
+
+    recovery_dir = continuation_dir / "recovery-evidence"
+    preserved_path = recovery_dir / "original-malformed-review-disposition.md"
+    preservation_meta_path = recovery_dir / "original-malformed-review-disposition.json"
+    if recovery_dir.is_symlink() or preserved_path.is_symlink() or preservation_meta_path.is_symlink():
+        raise RunnerError("original disposition preservation paths contain a symlink")
+    try:
+        preserved = preserved_path.read_bytes()
+        preservation = json.loads(preservation_meta_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("original malformed disposition preservation evidence is missing or malformed") from exc
+    if (not isinstance(preservation, dict)
+            or preservation.get("schema") != "custodian.paired_review_invalid_disposition_preservation.v1"
+            or preservation.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or preservation.get("workstream") != INVALID_DISPOSITION_WORKSTREAM
+            or preservation.get("repair_applied") is not False
+            or preservation.get("preserved_path") != str(preserved_path)
+            or preservation.get("source_path") != str(Path(child.get("worktree", "")) / INVALID_DISPOSITION_REVIEW_PACKET)
+            or preservation.get("sha256") != INVALID_DISPOSITION_SHA256
+            or preservation.get("size_bytes") != len(preserved)
+            or _sha256_bytes(preserved) != INVALID_DISPOSITION_SHA256):
+        raise RunnerError("captured malformed disposition or its preservation checksum changed")
+    unexpected_recovery_files = {
+        path.name for path in recovery_dir.iterdir()
+    } - {preserved_path.name, preservation_meta_path.name, "recovery-applied.json"}
+    if unexpected_recovery_files:
+        raise RunnerError("unexpected recovery evidence already exists: "
+                          + ", ".join(sorted(unexpected_recovery_files)))
+    preserved_files = child.get("preserved_files")
+    if not isinstance(preserved_files, list):
+        raise RunnerError("continuation omits its preserved reviewer-evidence inventory")
+    for record in preserved_files:
+        if not isinstance(record, dict) or not isinstance(record.get("copy"), str):
+            raise RunnerError("continuation has a malformed preserved reviewer-evidence record")
+        copy_path = Path(record["copy"])
+        if (not copy_path.resolve().is_relative_to(continuation_dir.resolve())
+                or not copy_path.is_file() or copy_path.is_symlink()
+                or _sha256_bytes(copy_path.read_bytes()) != record.get("sha256")):
+            raise RunnerError("a preserved reviewer-authored evidence copy changed")
+
+    receipt_file = run_dir / "claim-receipt.json"
+    try:
+        claim_value = json.loads(receipt_file.read_text(encoding="utf-8"))
+        claim_stdout = (run_dir / "claim.stdout").read_text(encoding="utf-8")
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("original structured claim evidence is missing or malformed") from exc
+    claim = parse_claim_receipt(CLAIM_SENTINEL + json.dumps(claim_value, sort_keys=True),
+                                INVALID_DISPOSITION_WORKSTREAM, repo)
+    stdout_claim = parse_claim_receipt(claim_stdout, INVALID_DISPOSITION_WORKSTREAM, repo)
+    worktree = Path(claim["worktree"]).resolve()
+    expected_branch = f"agent/{INVALID_DISPOSITION_WORKSTREAM}"
+    expected_claim = {
+        "workstream": INVALID_DISPOSITION_WORKSTREAM, "branch": expected_branch,
+        "worktree": str(worktree), "packet": INVALID_DISPOSITION_ACTIVE_PACKET,
+    }
+    if (any(claim.get(key) != value or stdout_claim.get(key) != value for key, value in expected_claim.items())
+            or original.get("branch") != expected_branch or original.get("worktree") != str(worktree)
+            or original.get("packet") != expected_claim["packet"]
+            or child.get("branch") != expected_branch or child.get("worktree") != str(worktree)
+            or common_dir(worktree).resolve() != common_dir(repo).resolve()
+            or not worktree.is_dir() or git(worktree, "branch", "--show-current") != expected_branch
+            or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != INVALID_DISPOSITION_IMPLEMENTATION):
+        raise RunnerError("original claim, run, worktree, branch, or packet identity does not match")
+    if stdout_claim != claim:
+        raise RunnerError("claim stdout and structured claim receipt disagree")
+    git(repo, "fetch", "origin", expected_branch)
+    if git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{expected_branch}^{{commit}}") != INVALID_DISPOSITION_IMPLEMENTATION:
+        raise RunnerError("published held review branch moved from its original pinned base")
+
+    allowed_paths = {
+        INVALID_DISPOSITION_ACTIVE_PACKET,
+        INVALID_DISPOSITION_REVIEW_PACKET, INVALID_DISPOSITION_TARGET_PACKET,
+        f"{PACKET_ROOT}/README.md", expected_summary_path(INVALID_DISPOSITION_WORKSTREAM),
+    }
+    changed_paths = set(_changed_paths(worktree, "diff", "--name-only", "HEAD"))
+    changed_paths.update(_changed_paths(worktree, "ls-files", "--others", "--exclude-standard"))
+    unexpected = sorted(changed_paths - allowed_paths)
+    if unexpected:
+        raise RunnerError("held review worktree has changes outside its bounded review evidence: "
+                          + ", ".join(unexpected))
+
+    archived_path = worktree / INVALID_DISPOSITION_REVIEW_PACKET
+    target_path = worktree / INVALID_DISPOSITION_TARGET_PACKET
+    try:
+        current_disposition = archived_path.read_bytes()
+        current_target = target_path.read_bytes()
+        last_message = (continuation_dir / "last-message.txt").read_text(encoding="utf-8")
+        summary_path = worktree / expected_summary_path(INVALID_DISPOSITION_WORKSTREAM)
+        reviewer_summary = summary_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise RunnerError("reviewer-authored disposition, summary, or target evidence is missing") from exc
+    if ("review outcome: passed" not in last_message.casefold()
+            or INVALID_DISPOSITION_RUN_ID not in last_message
+            or "same-agent-fresh-context" not in last_message
+            or "Review outcome: passed" not in reviewer_summary
+            or INVALID_DISPOSITION_RUN_ID not in reviewer_summary
+            or f"Authoring chat: {child.get('authoring_chat')}" not in reviewer_summary):
+        raise RunnerError("reviewer's recorded summary does not independently support the pinned PASS")
+
+    repaired_disposition, outcome = _repair_invalid_disposition(preserved)
+    reviewer_receipt = _independent_review_receipt(current_disposition.decode("utf-8", errors="strict"))
+    if reviewer_receipt is None:
+        raise RunnerError("reviewer-authored independent PASS receipt is absent or ambiguous")
+    if (reviewer_receipt.get("Review workstream") != outcome["Review workstream"]
+            or reviewer_receipt.get("Review target workstream") != outcome["Review target workstream"]
+            or reviewer_receipt.get("Status") != "passed"
+            or reviewer_receipt.get("Blocking defects") != "0"
+            or reviewer_receipt.get("Material gaps") != "0"
+            or reviewer_receipt.get("Reviewer context") != "fresh"
+            or reviewer_receipt.get("Reviewer provenance") != outcome["Reviewer provenance"]
+            or reviewer_receipt.get("Reviewed main") != outcome["Reviewed main"]
+            or reviewer_receipt.get("Reviewed implementation commit") != outcome["Reviewed implementation commit"]):
+        raise RunnerError("reviewer-authored target receipt contradicts the canonical PASS disposition")
+    archived_packet = parse_packet(INVALID_DISPOSITION_REVIEW_PACKET, current_disposition.decode("utf-8"))
+    if (archived_packet.error or archived_packet.workstream != INVALID_DISPOSITION_WORKSTREAM
+            or archived_packet.kind != "review"
+            or archived_packet.review_target_workstream != INVALID_DISPOSITION_TARGET
+            or archived_packet.review_target_packet != INVALID_DISPOSITION_TARGET_PACKET
+            or archived_packet.authoring_chat != child.get("authoring_chat")
+            or str(archived_packet.review_cycle) != outcome["Review cycle"]):
+        raise RunnerError("reviewer-authored archived packet identity contradicts the exact run")
+    outcome_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=INVALID_DISPOSITION_WORKSTREAM,
+        target_workstream=INVALID_DISPOSITION_TARGET,
+        reviewed_main=INVALID_DISPOSITION_IMPLEMENTATION,
+        implementation_commit=INVALID_DISPOSITION_IMPLEMENTATION,
+        run_id=INVALID_DISPOSITION_RUN_ID, review_cycle=archived_packet.review_cycle,
+    )
+    if outcome_error:
+        raise RunnerError("canonical PASS identity failed verification: " + outcome_error)
+
+    baseline = read_git_text(repo, INVALID_DISPOSITION_IMPLEMENTATION, INVALID_DISPOSITION_TARGET_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, INVALID_DISPOSITION_IMPLEMENTATION, INVALID_DISPOSITION_TARGET_PACKET,
+        INVALID_DISPOSITION_TARGET, baseline,
+    )
+    if identity_error or implementation_commit != INVALID_DISPOSITION_IMPLEMENTATION:
+        raise RunnerError("pinned archived implementation identity failed verification")
+    receipt_candidate = _append_verified_invalid_disposition_receipt(baseline, reviewer_receipt)
+    if current_target not in {baseline.encode("utf-8"), receipt_candidate}:
+        raise RunnerError("reviewed target contains changes beyond the exact missing-receipt correction")
+    if current_disposition not in {preserved, repaired_disposition}:
+        raise RunnerError("review disposition differs from both preserved and exact repaired bytes")
+    if current_target != baseline.encode("utf-8") and current_target != receipt_candidate:
+        raise RunnerError("reviewed target receipt recovery is ambiguous")
+
+    original_metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
+    host_evidence = _host_evidence_for_continuation(
+        repo, worktree, run_dir, original_metadata, INVALID_DISPOSITION_IMPLEMENTATION,
+        INVALID_DISPOSITION_IMPLEMENTATION, INVALID_DISPOSITION_TARGET,
+        INVALID_DISPOSITION_TARGET_PACKET,
+    )
+    host_metadata = json.loads((run_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
+    if (original_metadata.get("host_validation", {}).get("report_sha256") != host_evidence["report_sha256"]
+            or original_metadata.get("host_validation", {}).get("metadata_sha256") != host_evidence["metadata_sha256"]
+            or host_metadata.get("implementation_commit") != INVALID_DISPOSITION_IMPLEMENTATION):
+        raise RunnerError("green host validation is not pinned to the exact reviewed implementation")
+
+    handoff = recovery_dir / "recovery-applied.json"
+    recovery = {
+        "schema": "custodian.paired_review_invalid_disposition_recovery.v1",
+        "workstream": INVALID_DISPOSITION_WORKSTREAM,
+        "run_id": INVALID_DISPOSITION_RUN_ID,
+        "continuation": INVALID_DISPOSITION_CONTINUATION,
+        "original_disposition_sha256": INVALID_DISPOSITION_SHA256,
+        "repaired_disposition_sha256": _sha256_bytes(repaired_disposition),
+        "target_baseline_sha256": _sha256_bytes(baseline.encode("utf-8")),
+        "target_receipt_sha256": _sha256_bytes(receipt_candidate),
+        "reviewer_receipt": reviewer_receipt,
+        "run_evidence_sha256": original_manifest,
+        "report_sha256": host_evidence["report_sha256"],
+        "coordinator_validation_sha256": host_evidence["metadata_sha256"],
+        "reviewed_main": INVALID_DISPOSITION_IMPLEMENTATION,
+        "implementation_commit": INVALID_DISPOSITION_IMPLEMENTATION,
+        "root_sync_pending": True,
+        "claim_cleanup_pending": True,
+        "reviewer_relaunched": False,
+    }
+    recovery_bytes = json.dumps(recovery, indent=2, sort_keys=True).encode("utf-8") + b"\n"
+    if handoff.exists() and handoff.read_bytes() != recovery_bytes:
+        raise RunnerError("existing invalid-disposition recovery journal contradicts the verified evidence")
+
+    # All evidence is checked before the first write. Each artifact is an exact,
+    # deterministic replacement, so a process interruption can safely retry.
+    if current_disposition == preserved:
+        _write_atomic(archived_path, repaired_disposition.decode("utf-8"))
+    if current_target == baseline.encode("utf-8"):
+        _write_atomic(target_path, receipt_candidate.decode("utf-8"))
+    if not handoff.exists():
+        _write_bytes_exclusive(handoff, recovery_bytes)
+    if (archived_path.read_bytes() != repaired_disposition or target_path.read_bytes() != receipt_candidate
+            or preserved_path.read_bytes() != preserved or _sha256_bytes(preserved_path.read_bytes()) != INVALID_DISPOSITION_SHA256
+            or _file_manifest(run_dir, omit=continuation_dir) != original_manifest):
+        raise RunnerError("post-repair verification failed; original claim and worktree remain protected")
+    parsed_outcome, parse_error = review_outcome.parse_review_outcome(archived_path.read_text(encoding="utf-8"))
+    if parse_error or parsed_outcome != outcome:
+        raise RunnerError("repaired review disposition failed canonical parser verification")
+    receipt, receipt_error = verify_review_receipt_delta(
+        baseline, target_path.read_text(encoding="utf-8"),
+        review_workstream=INVALID_DISPOSITION_WORKSTREAM, target_workstream=INVALID_DISPOSITION_TARGET,
+        reviewed_main=INVALID_DISPOSITION_IMPLEMENTATION,
+        target_implementation_commit=INVALID_DISPOSITION_IMPLEMENTATION,
+    )
+    if receipt_error or receipt != reviewer_receipt:
+        raise RunnerError("repaired target receipt failed canonical verification: " + (receipt_error or "mismatch"))
+
+    child["invalid_disposition_recovery"] = recovery
+    child["root_sync_deferral"] = {"authorized": True, "root_sync_pending": True,
+                                   "evidence": str(handoff), "run_evidence_sha256": original_manifest}
+    child["host_evidence"] = {**child.get("host_evidence", {}), "continuation_dir": str(continuation_dir)}
+    child["phase"] = "coordinator_closeout"
+    child["recovery_evidence"] = str(handoff)
+    _write_atomic(continuation_dir / "metadata.json", json.dumps(child, indent=2, sort_keys=True) + "\n")
+    return child
+
+
 def continue_run(repo: Path, workstream: str, run_id: str, *,
-                 authorize_fresh_reviewer_context: bool,
+                 authorize_fresh_reviewer_context: bool = False,
                  recover_host_validation: bool = False,
+                 recover_invalid_disposition: bool = False,
                  plan_sha256: str | None = None,
                  codex_path: str | None = None, timeout: float | None = None) -> int:
     """Continue one exact preserved review claim in a new independent Codex context."""
-    if not authorize_fresh_reviewer_context:
+    if recover_invalid_disposition:
+        if (authorize_fresh_reviewer_context or recover_host_validation or plan_sha256
+                or workstream != INVALID_DISPOSITION_WORKSTREAM or run_id != INVALID_DISPOSITION_RUN_ID):
+            raise RunnerError("invalid-disposition recovery accepts only the exact held run and does not launch a reviewer")
+    elif not authorize_fresh_reviewer_context:
         raise RunnerError("same-run continuation requires --authorize-fresh-reviewer-context")
+    if recover_invalid_disposition and codex_path is not None:
+        raise RunnerError("invalid-disposition recovery must not accept or launch a reviewer executable")
     if not ID_RE.fullmatch(workstream) or not _RUN_ID_RE.fullmatch(run_id):
         raise RunnerError("continuation requires an exact review workstream and shaped run ID")
     if timeout is not None and (timeout <= 0 or not float(timeout) < float("inf")):
@@ -1967,9 +2380,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
 
     mutex_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
     mutex_path.parent.mkdir(parents=True, exist_ok=True)
-    if recover_host_validation and not mutex_path.is_file():
+    if (recover_host_validation or recover_invalid_disposition) and not mutex_path.is_file():
         raise RunnerError("original paired-review supervisor lock is missing")
-    with mutex_path.open("rb" if recover_host_validation else "a") as lock:
+    locked_recovery = recover_host_validation or recover_invalid_disposition
+    with mutex_path.open("rb" if locked_recovery else "a") as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
@@ -1995,19 +2409,53 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
 
         continuation_dir = run_dir / "continuation-01"
         child_metadata_path = continuation_dir / "metadata.json"
+        if recover_invalid_disposition and not continuation_dir.is_dir():
+            raise RunnerError("exact invalid-disposition recovery requires the existing preserved continuation-01")
         if continuation_dir.exists():
             child = _continuation_metadata(child_metadata_path)
             if (child.get("run_id") != run_id or child.get("workstream") != workstream
                     or child.get("schema") != CONTINUATION_SCHEMA):
                 raise RunnerError("existing continuation directory is bound to a different run")
+            if recover_invalid_disposition and child.get("phase") == "invalid_reviewer_disposition":
+                child = _recover_exact_invalid_disposition(repo, run_dir, continuation_dir, original, child)
+            elif recover_invalid_disposition and child.get("phase") not in {
+                    "coordinator_closeout", "landed_verification_failed", "complete"}:
+                raise RunnerError("exact held run is not in its authorized invalid-disposition recovery state")
+            elif recover_invalid_disposition:
+                recovery = child.get("invalid_disposition_recovery")
+                if (not isinstance(recovery, dict)
+                        or recovery.get("schema") != "custodian.paired_review_invalid_disposition_recovery.v1"
+                        or recovery.get("workstream") != workstream or recovery.get("run_id") != run_id
+                        or recovery.get("original_disposition_sha256") != INVALID_DISPOSITION_SHA256
+                        or recovery.get("root_sync_pending") is not True):
+                    raise RunnerError("continuation closeout lacks the exact verified invalid-disposition recovery record")
             try:
                 state = _verify_continuation_completion(repo, run_dir, continuation_dir, child)
             except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError):
                 if child.get("phase") == "complete":
                     raise
             else:
+                recovery = child.get("invalid_disposition_recovery")
+                if isinstance(recovery, dict) and recovery.get("claim_cleanup_pending") is True:
+                    recovery_path = continuation_dir / "metadata.json"
+                    evidence_path = continuation_dir / "recovery-evidence/recovery-applied.json"
+                    _finish_via_workstream(
+                        repo, workstream, Path(child["worktree"]),
+                        Path(str((child.get("host_evidence") or {}).get("evidence_run_dir", run_dir))) / "validation.json",
+                        continuation_dir, defer_root_sync=True, recovery_evidence=recovery_path,
+                    )
+                    if Path(child["worktree"]).exists() or _remote_branch_exists(repo, child["branch"]):
+                        raise RunnerError("verified PASS landed but claim/worktree cleanup remains pending")
+                    recovery["claim_cleanup_pending"] = False
+                    recovery["cleanup_verified"] = True
+                    recovery["cleanup_receipt_sha256"] = _sha256_bytes(evidence_path.read_bytes())
                 child.update({"phase": "complete", "landed_commit": child.get("landed_commit", state["revision"]),
                               "verified_main": state["revision"], "post_exit_state": state, "outcome": "passed"})
+                if isinstance(recovery, dict):
+                    child["invalid_disposition_recovery"] = recovery
+                    child["root_sync_deferral"] = {**child.get("root_sync_deferral", {}),
+                                                   "root_sync_pending": True,
+                                                   "claim_cleanup_pending": False}
                 _write_atomic(child_metadata_path, json.dumps(child, indent=2, sort_keys=True) + "\n")
                 print(f"paired_review_runner: COMPLETE {workstream} (verified existing continuation)")
                 print(f"landed commit: {state['revision']}")
@@ -2073,10 +2521,15 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                                                         reviewed_main, implementation_commit,
                                                         target_workstream, target_path)
             host_evidence["continuation_dir"] = str(continuation_dir)
+            recovery = child.get("invalid_disposition_recovery")
+            recovery_evidence_path = continuation_dir / "recovery-evidence/recovery-applied.json"
+            if isinstance(recovery, dict):
+                host_evidence["recovery_evidence"] = str(child_metadata_path)
             resumed_land = coordinator_finish_review(
                 repo, workstream, recovery_worktree, active_path,
                 target_workstream, target_path, target_content, packet.authoring_chat,
                 reviewed_main, continuation_dir, host_evidence,
+                defer_teardown=isinstance(recovery, dict),
             )
             try:
                 state = _verify_continuation_completion(repo, run_dir, continuation_dir, child)
@@ -2085,12 +2538,32 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                     raise
                 state = None
             if state is not None:
+                if isinstance(recovery, dict):
+                    _finish_via_workstream(
+                        repo, workstream, recovery_worktree,
+                        Path(str(host_evidence.get("evidence_run_dir", run_dir))) / "validation.json",
+                        continuation_dir, defer_root_sync=True,
+                        recovery_evidence=child_metadata_path,
+                    )
+                    if recovery_worktree.exists() or _remote_branch_exists(repo, child["branch"]):
+                        raise RunnerError("PASS receipt is verified but safe claim cleanup is still pending")
+                    recovery["claim_cleanup_pending"] = False
+                    recovery["cleanup_verified"] = True
+                    recovery["cleanup_receipt_sha256"] = _sha256_bytes(recovery_evidence_path.read_bytes())
                 child.update({"phase": "complete", "landed_commit": child.get("landed_commit", state["revision"]),
                               "verified_main": state["revision"], "post_exit_state": state, "outcome": "passed"})
+                if isinstance(recovery, dict):
+                    child["invalid_disposition_recovery"] = recovery
+                    child["root_sync_deferral"] = {**child.get("root_sync_deferral", {}),
+                                                   "root_sync_pending": True,
+                                                   "claim_cleanup_pending": False}
                 _write_atomic(child_metadata_path, json.dumps(child, indent=2, sort_keys=True) + "\n")
                 print(f"paired_review_runner: COMPLETE {workstream} (resumed coordinator closeout)")
                 print(f"landed commit: {resumed_land}")
                 return 0
+
+            if recover_invalid_disposition:
+                raise RunnerError("recovered PASS failed post-land verification; reviewer launch is prohibited")
 
         if codex_path:
             executable = codex_path
@@ -2448,6 +2921,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="explicitly authorize a new independent reviewer session on the original claim/worktree")
     parser.add_argument("--recover-host-validation", action="store_true",
                         help="recover this exact run from pre-launch host_validation_recovery")
+    parser.add_argument("--recover-invalid-disposition", action="store_true",
+                        help="repair and close only the exact preserved invalid-disposition run; never launches a reviewer")
     recovery_mode = parser.add_mutually_exclusive_group()
     recovery_mode.add_argument("--plan", action="store_true",
                                help="print a read-only, SHA-pinned host-validation recovery plan")
@@ -2457,6 +2932,16 @@ def main(argv: list[str] | None = None) -> int:
                         help="exact plan_sha256 emitted by a fresh --plan (required with --apply)")
     args = parser.parse_args(argv)
     try:
+        if args.recover_invalid_disposition:
+            if (args.continue_run is None or args.review_workstream != INVALID_DISPOSITION_WORKSTREAM
+                    or args.continue_run != INVALID_DISPOSITION_RUN_ID
+                    or args.authorize_fresh_reviewer_context or args.recover_host_validation
+                    or args.plan or args.apply or args.plan_sha256 or args.timeout is not None):
+                raise RunnerError("invalid-disposition recovery requires only its exact workstream and --continue-run ID")
+            return continue_run(
+                Path.cwd(), args.review_workstream, args.continue_run,
+                recover_invalid_disposition=True,
+            )
         if args.recover_host_validation:
             if args.continue_run is None:
                 raise RunnerError("host-validation recovery requires the exact --continue-run ID")

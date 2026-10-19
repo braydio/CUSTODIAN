@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -34,6 +35,19 @@ class WorkstreamError(RuntimeError):
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 TASK_PACKET_ROOT = Path("custodian/docs/ai_context/task_packets")
 TASK_PACKET_ARCHIVE = TASK_PACKET_ROOT / "archived"
+ROOT_SYNC_DEFERRAL_SUPPORT = frozenset({
+    "agent-paired-review-invalid-disposition-recovery-v1",
+    "review-agent-paired-review-invalid-disposition-recovery-v1",
+})
+INVALID_DISPOSITION_REVIEW = "review-agent-paired-review-prevalidation-recovery-plan-v1"
+INVALID_DISPOSITION_RUN_ID = "20261019T055243Z-1d73c6a01b1e"
+INVALID_DISPOSITION_SHA256 = "6e6cc2d61796684baf23d5b74c7f1fc08091c13f509a8c00ceeb85f0d2933779"
+INVALID_DISPOSITION_TARGET_PACKET = (
+    "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+INVALID_DISPOSITION_REVIEW_PACKET = (
+    "custodian/docs/ai_context/task_packets/archived/REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
 
 
 
@@ -1154,7 +1168,98 @@ def task_head_reachable_from_main(path: Path, remote_ref: str = "origin/main") -
     return subprocess.run(["git", "merge-base", "--is-ancestor", "HEAD", remote_ref], cwd=path).returncode == 0
 
 
-def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path, head: str) -> None:
+def _review_run_manifest(run_dir: Path) -> dict[str, str]:
+    result: dict[str, str] = {}
+    continuation = run_dir / "continuation-01"
+    for path in sorted(run_dir.rglob("*")):
+        if path == continuation or continuation in path.parents:
+            continue
+        if path.is_symlink():
+            raise WorkstreamError(f"refusing symlink in protected review run: {path}")
+        if path.is_file():
+            result[str(path.relative_to(run_dir))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return result
+
+
+def _verify_root_sync_deferral(workstream_id: str, repo: Path,
+                               recovery_evidence: Path | None) -> str:
+    """Require packet authorization or the one verified recovered review run."""
+    if workstream_id in ROOT_SYNC_DEFERRAL_SUPPORT:
+        implementation_id = workstream_id.removeprefix("review-")
+        packets = _associated_task_packets(repo, implementation_id)
+        phrase = "Do not synchronize the root checkout; record synchronization pending."
+        authorized = False
+        for path in packets:
+            packet = parse_packet(str(path), path.read_text(encoding="utf-8"))
+            if packet.workstream == implementation_id and packet.task_overrides and phrase in packet.task_overrides:
+                authorized = True
+                break
+        if not authorized:
+            raise WorkstreamError("root synchronization deferral lacks the paired recovery packet authorization")
+        if recovery_evidence is not None:
+            raise WorkstreamError("support workstream root deferral does not accept historical recovery evidence")
+        return "task_packet_authorized"
+
+    if workstream_id != INVALID_DISPOSITION_REVIEW:
+        raise WorkstreamError(f"root synchronization deferral is not authorized for {workstream_id}")
+    if recovery_evidence is None:
+        raise WorkstreamError("the recovered review root-sync deferral requires exact continuation evidence")
+    if recovery_evidence.is_symlink():
+        raise WorkstreamError("root-sync recovery evidence cannot be a symlink")
+    common = Path(git("rev-parse", "--path-format=absolute", "--git-common-dir", cwd=repo)).resolve()
+    expected_root = (common / "custodian-review-runs" / INVALID_DISPOSITION_REVIEW / INVALID_DISPOSITION_RUN_ID).resolve()
+    expected_metadata = expected_root / "continuation-01" / "metadata.json"
+    evidence_path = recovery_evidence.resolve()
+    if evidence_path != expected_metadata or not evidence_path.is_file():
+        raise WorkstreamError("root-sync recovery evidence is not the exact authorized continuation metadata")
+    try:
+        child = json.loads(evidence_path.read_text(encoding="utf-8"))
+        original = json.loads((expected_root / "metadata.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise WorkstreamError("root-sync recovery evidence is missing or malformed") from exc
+    recovery = child.get("invalid_disposition_recovery") if isinstance(child, dict) else None
+    if (not isinstance(child, dict) or not isinstance(original, dict)
+            or child.get("schema") != "custodian.paired_review_continuation.v1"
+            or child.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or child.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or child.get("phase") != "coordinator_closeout"
+            or original.get("schema") != "custodian.paired_review_run.v1"
+            or original.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or original.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or original.get("run_dir") != str(expected_root)
+            or original.get("phase") != "post_exit_recovery"
+            or not isinstance(recovery, dict)
+            or recovery.get("schema") != "custodian.paired_review_invalid_disposition_recovery.v1"
+            or recovery.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or recovery.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or recovery.get("continuation") != "continuation-01"
+            or recovery.get("original_disposition_sha256") != INVALID_DISPOSITION_SHA256
+            or not re.fullmatch(r"[0-9a-f]{64}", str(recovery.get("repaired_disposition_sha256", "")))
+            or not re.fullmatch(r"[0-9a-f]{64}", str(recovery.get("target_receipt_sha256", "")))
+            or recovery.get("root_sync_pending") is not True
+            or child.get("run_evidence_sha256") != _review_run_manifest(expected_root)):
+        raise WorkstreamError("exact recovered review identity, preservation digest, or evidence manifest failed")
+    worktree = Path(str(child.get("worktree", ""))).resolve()
+    for relative, expected_sha in (
+        (INVALID_DISPOSITION_REVIEW_PACKET, recovery["repaired_disposition_sha256"]),
+        (INVALID_DISPOSITION_TARGET_PACKET, recovery["target_receipt_sha256"]),
+    ):
+        local_path = worktree / relative
+        if local_path.is_file() and not local_path.is_symlink():
+            raw = local_path.read_bytes()
+        else:
+            shown = subprocess.run(["git", "show", f"origin/main:{relative}"], cwd=repo,
+                                   capture_output=True, check=False)
+            if shown.returncode:
+                raise WorkstreamError(f"recovered review artifact is absent from worktree and origin/main: {relative}")
+            raw = shown.stdout
+        if hashlib.sha256(raw).hexdigest() != expected_sha:
+            raise WorkstreamError(f"recovered review artifact digest changed before closeout: {relative}")
+    return "verified_invalid_disposition_recovery"
+
+
+def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path, head: str,
+                         *, defer_root_sync: bool = False) -> None:
     admin_repo = administrative_worktree(repo, path)
     # Tolerate a remote branch already deleted by an earlier, interrupted finish
     # attempt; any other push failure is a real blocker, not idempotence.
@@ -1167,6 +1272,11 @@ def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path
     git("branch", "-D", branch, cwd=admin_repo)
     git("worktree", "prune", cwd=admin_repo)
     git("fetch", "--prune", "origin", cwd=admin_repo)
+
+    if defer_root_sync:
+        print("persistent root synchronization pending: explicitly deferred by verified task authorization")
+        print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+        return
 
     # Root checkout sync is subordinate and never alters user state. Resolve
     # the persistent main identity from live worktree metadata, then use the
@@ -1221,8 +1331,20 @@ def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Pat
     )
 
 
-def _finish_impl(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None, trace: RunTrace | None = None) -> None:
+def _finish_impl(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None,
+                 repo: Path | None = None, trace: RunTrace | None = None, *,
+                 defer_root_sync: bool = False, recovery_evidence: Path | None = None,
+                 defer_teardown: bool = False) -> str:
     repo = (repo or root_repo()).resolve()
+    if defer_root_sync:
+        deferral_kind = _verify_root_sync_deferral(workstream_id, repo, recovery_evidence)
+        if trace:
+            trace.record("root_sync_deferred", authorization=deferral_kind,
+                         evidence=str(recovery_evidence) if recovery_evidence else None)
+    elif recovery_evidence is not None:
+        raise WorkstreamError("recovery evidence is only valid with --defer-root-sync")
+    if defer_teardown and (workstream_id != INVALID_DISPOSITION_REVIEW or not defer_root_sync):
+        raise WorkstreamError("deferred teardown is limited to the exact recovered review with root sync deferred")
     branch = branch_for(workstream_id)
     fetch(repo)
     try:
@@ -1257,10 +1379,14 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # merged in some other way). Skip sync/land entirely and go straight
         # to verified teardown; do not rewrite or remerge task history.
         head = git("rev-parse", "HEAD", cwd=path)
+        if defer_teardown:
+            print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+            if trace: trace.record("teardown_deferred", branch=branch, head=head)
+            return "teardown_pending"
         if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-        _teardown_workstream(workstream_id, branch, repo, path, head)
+        _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
         if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
-        return
+        return "finished"
 
     # SYNC_REQUIRED -> READY_TO_LAND
     changed = sync_main(path)
@@ -1282,10 +1408,14 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # Synchronization itself (a fast-forward merge, or a concurrent landing
         # of this exact history) already made HEAD reachable from main.
         head = git("rev-parse", "HEAD", cwd=path)
+        if defer_teardown:
+            print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+            if trace: trace.record("teardown_deferred", branch=branch, head=head)
+            return "teardown_pending"
         if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-        _teardown_workstream(workstream_id, branch, repo, path, head)
+        _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
         if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
-        return
+        return "finished"
 
     # LANDED: hand off to the sole active landing authority. Never duplicate
     # its serialized rebase/push logic here.
@@ -1306,19 +1436,28 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
 
     # READY_TO_TEARDOWN -> FINISHED
+    if defer_teardown:
+        print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+        if trace: trace.record("teardown_deferred", branch=branch, head=head)
+        return "teardown_pending"
     if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-    _teardown_workstream(workstream_id, branch, repo, path, head)
+    _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
     if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
+    return "finished"
 
 
-def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
+def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None,
+           repo: Path | None = None, *, defer_root_sync: bool = False,
+           recovery_evidence: Path | None = None, defer_teardown: bool = False) -> None:
     repo = (repo or root_repo()).resolve()
     trace = RunTrace.resume(repo, workstream_id)
     trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
     try:
-        _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace)
-        trace.record("finish_completed", outcome="finished")
-        trace.complete("finished", clear_active=True)
+        outcome = _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace,
+                               defer_root_sync=defer_root_sync, recovery_evidence=recovery_evidence,
+                               defer_teardown=defer_teardown)
+        trace.record("finish_completed", outcome=outcome)
+        trace.complete(outcome, clear_active=True)
     except Exception as exc:
         trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
@@ -1386,6 +1525,12 @@ def main() -> int:
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
+    p.add_argument("--defer-root-sync", action="store_true",
+                    help="defer persistent root synchronization when the exact packet/recovery evidence authorizes it")
+    p.add_argument("--defer-root-sync-evidence", type=Path,
+                    help="exact continuation metadata required for the one recovered historical review")
+    p.add_argument("--defer-teardown", action="store_true",
+                    help="leave the exact recovered review claim/worktree intact for independent post-land verification")
     p = subs.add_parser("preflight"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--json", action="store_true")
     subs.add_parser("gc")
     args = parser.parse_args()
@@ -1394,7 +1539,11 @@ def main() -> int:
         elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id)}")
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)
-        elif args.command == "finish": finish(args.workstream_id, args.validation_report, args.validation_report_after_sync)
+        elif args.command == "finish":
+            finish(args.workstream_id, args.validation_report, args.validation_report_after_sync,
+                   defer_root_sync=args.defer_root_sync,
+                   recovery_evidence=args.defer_root_sync_evidence,
+                   defer_teardown=args.defer_teardown)
         elif args.command == "preflight":
             result = preflight(args.workstream_id, args.validation_report)
             if args.json:

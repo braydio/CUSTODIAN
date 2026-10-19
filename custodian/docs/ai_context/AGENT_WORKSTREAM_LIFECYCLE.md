@@ -582,6 +582,26 @@ authority serves `csync`, OPUI startup, and Operator-art coordination sync. Run
 `csync status` for read-only inspection, `csync root` or `csync art` for one
 checkout, or bare `csync` for both.
 
+### Explicit root-sync deferral for the invalid-disposition recovery
+
+The paired-review invalid-disposition recovery packet authorizes root
+synchronization to remain pending for exactly these support workstreams:
+`agent-paired-review-invalid-disposition-recovery-v1` and
+`review-agent-paired-review-invalid-disposition-recovery-v1`. Use
+`workstream.py finish <id> --defer-root-sync`; the lifecycle verifies the
+archived implementation packet carries the bounded deferral override before
+landing. The persistent root checkout is left byte-for-byte unchanged and the
+finish trace records `root_sync_deferred`.
+
+For the one recovered historical review
+`review-agent-paired-review-prevalidation-recovery-plan-v1`, the same option
+also requires `--defer-root-sync-evidence` pointing to its exact
+`20261019T055243Z-1d73c6a01b1e/continuation-01/metadata.json`. The runner first
+lands the review with `--defer-teardown`, verifies the independent PASS and
+target receipt on fresh `origin/main`, then invokes finish again to release the
+existing claim and remove that worktree. No other review run can use this
+exception. Root synchronization remains pending after teardown.
+
 ### Already-landed closeout
 
 The closing-summary and reachability checks are independent of any diff

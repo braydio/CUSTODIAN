@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-invalid-disposition-recovery-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-prevalidation-recovery-plan-v1`
@@ -47,6 +47,25 @@
   - `TASK OVERRIDE: Defer persistent root synchronization for this implementation, its paired review, and the exact recovered review run. Do not synchronize the root checkout; record synchronization pending.`
   - `TASK OVERRIDE: Do not create a replacement claim for the original review. Release its existing claim and remove its worktree only after the verified landed PASS; leave cleanup pending if any post-land check fails.`
 - Deferred: Applying the source-bearing recovery plan; launching its reviewer; all other held-run recovery; persistent root synchronization.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The exact-run recovery validates the preserved run manifest, reviewer PASS, claim/worktree identity, green host validation, and pinned target; it performs only the checksum-guarded four-line handoff relocation and single verified target receipt append. Focused paired-review runner tests passed (93), workstream tests passed (43), changed-file validation passed 7/7 with complete coverage, py_compile passed, and git diff --check passed. Root synchronization remains explicitly pending.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The runner had no same-run path for the exact invalid disposition, and the existing finish lifecycle coupled post-land claim teardown with root synchronization.`
+- Root cause / contributing factors: `The preserved review stopped before coordinator closeout; its disposition contained four noncanonical handoff lines and its implementation target lacked the durable receipt.`
+- Prevention / pipeline improvement: `Added exact identity and digest guards, negative regressions, a verified receipt append, and a narrow deferred-root-sync closeout with teardown after landed receipt verification.`
+- Tooling / docs drift discovered: `The paired-review lifecycle needed an explicit two-stage closeout for independently verifying the receipt before claim cleanup.`
+- Follow-up: `review-agent-paired-review-invalid-disposition-recovery-v1`
+- What worked: `The immutable evidence manifest and reviewer-authored receipt made a deterministic recovery possible without launching a reviewer.`
 
 ## Next Handoff
 
