@@ -2,7 +2,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-declared-doc-archive-gate-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -39,6 +39,25 @@
 - Validation: `python3 custodian/tools/agent/test_paired_review_runner.py`; `python3 -m py_compile custodian/tools/agent/paired_review_host_validation.py`; `python3 custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`.
 - Task overrides: `none`.
 - Deferred: Resuming the held support review host-validation run until this correction's independent PASS; the historical source-bearing recovery plan remains prohibited.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The source-bearing archive validator now permits .md files only when the exact repository-relative path appears in the archived implementation packet Work surface, using task_packet_contract.header_field. The normal implementation/test suffix set is unchanged. Focused positive and negative tests passed; the paired-review runner suite passed 95 tests; changed-file validation and py_compile passed with complete coverage; git diff --check passed.`
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The host validator rejected the recovery implementation's declared lifecycle documentation path before launching independent review.`
+- Root cause / contributing factors: `The source-bearing archive gate allowed the existing code/test suffixes but did not consult the archived task packet Work surface for documentation paths.`
+- Prevention / pipeline improvement: `Added exact Work surface matching for Markdown paths and retained the existing suffix list and all other archive/source-span gates.`
+- Tooling / docs drift discovered: `The source-span archive gate and task packet grammar disagreed about explicitly declared documentation scope.`
+- Follow-up: `review-agent-paired-review-declared-doc-archive-gate-v1`
+- What worked: `A positive fixture for the exact declared lifecycle document and a negative fixture mentioning it outside Work surface isolated the gate behavior.`
 
 ## Next Handoff
 - Next workstream: `review-agent-paired-review-declared-doc-archive-gate-v1`

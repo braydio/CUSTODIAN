@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Callable
 
 from godot_project_lock import godot_home
-from task_packet_contract import PACKET_ROOT
+from task_packet_contract import PACKET_ROOT, header_field
 
 
 class HostValidationError(RuntimeError):
@@ -21,6 +21,9 @@ class HostValidationError(RuntimeError):
 
 
 _IMPLEMENTATION_SUFFIXES = {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"}
+_REPOSITORY_MARKDOWN_PATH_RE = re.compile(
+    r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
+)
 
 
 def _git(worktree: Path, *args: str) -> str:
@@ -387,7 +390,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     extra_archive_paths = archive_paths - allowed_archive_paths
     source_bearing_archive = bool(extra_archive_paths)
     if source_bearing_archive:
+        work_surface = header_field(target_packet_text, "Work surface") or ""
+        declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
+               and not (Path(path).suffix.lower() == ".md" and path in declared_markdown_paths)
                for path in extra_archive_paths):
             raise HostValidationError("archive-only landing contains unrelated paths")
     elif archive_paths - allowed_archive_paths:
