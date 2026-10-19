@@ -20,6 +20,8 @@ var _instructions: Label
 var _details: Label
 var _camera: Camera2D
 var _playing := true
+var _candidate_load_status := "Not loaded"
+var _candidate_missing_label: Label
 
 
 func _ready() -> void:
@@ -42,6 +44,16 @@ func _ready() -> void:
     _candidate_sprite.centered = true
     _candidate_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     _candidate_actor.add_child(_candidate_sprite)
+    # Visible failure state; a missing texture must not silently look like
+    # invisible candidate artwork.
+    _candidate_missing_label = Label.new()
+    _candidate_missing_label.name = "DEVONLY_CandidateLoadError"
+    _candidate_missing_label.position = Vector2(-44, -30)
+    _candidate_missing_label.add_theme_color_override("font_color", Color("ff7381"))
+    _candidate_missing_label.add_theme_font_size_override("font_size", 10)
+    _candidate_missing_label.text = "PNG LOAD FAILED"
+    _candidate_missing_label.visible = false
+    _candidate_actor.add_child(_candidate_missing_label)
     _build_overlay()
     _refresh()
     queue_redraw()
@@ -128,11 +140,14 @@ func _refresh() -> void:
     var code := FACING_CODES[_facing_index]
     var height := BODY_HEIGHTS[_height_index]
     var path := "%scandidate_%s_%dpx.png" % [CANDIDATE_ROOT, code, height]
-    if ResourceLoader.exists(path):
-        _candidate_sprite.texture = load(path) as Texture2D
-    else:
-        push_error("Missing candidate PNG: %s. Re-run prepare_candidate.py." % path)
-        _candidate_sprite.texture = null
+    # The ZIP ships genuine PNGs but no Godot .import cache. Calling
+    # ResourceLoader.exists() here can report false when the project has not
+    # imported new assets yet, leaving the intentionally hidden original sprite
+    # with no replacement. Load the dev image directly instead.
+    _candidate_sprite.texture = _load_dev_candidate_png(path)
+    _candidate_sprite.visible = _candidate_sprite.texture != null
+    _candidate_sprite.modulate = Color.WHITE
+    _candidate_missing_label.visible = _candidate_sprite.texture == null
     var action_name := "missing"
     if _original_sprite != null:
         var action: StringName = &"locomotion.ready_idle"
@@ -146,9 +161,38 @@ func _refresh() -> void:
                 _original_sprite.stop()
     _details.text = (
         "Facing: %s   |   Candidate height: %d px   |   Real Grunt clip: %s\n"
+        + "Candidate PNG: %s\n"
         + "LEFT/RIGHT facing    1/2/3 body height    SPACE baseline pause    Z zoom    S screenshot    ESC quit\n"
-        + "N may use the Grunt's existing directional fallback; check actual selected clip. Candidate is static."
-    ) % [FACING_NAMES[_facing_index], height, action_name]
+        + "Candidate is STATIC. This checks scale and silhouette, not motion."
+    ) % [FACING_NAMES[_facing_index], height, action_name, _candidate_load_status]
+
+
+func _load_dev_candidate_png(path: String) -> Texture2D:
+    # Development-only loader, intentionally independent of Godot's importer.
+    # In the exported game use registered Asset Pipeline V2 resources instead.
+    var absolute_path := ProjectSettings.globalize_path(path)
+    if not FileAccess.file_exists(absolute_path):
+        _candidate_load_status = "MISSING FILE: %s" % path
+        push_error("[GruntAB] " + _candidate_load_status + ". Extract the full ZIP at the repository root.")
+        return null
+    var source_image := Image.new()
+    var error := source_image.load(absolute_path)
+    if error != OK:
+        _candidate_load_status = "PNG READ ERROR %d: %s" % [error, path]
+        push_error("[GruntAB] " + _candidate_load_status)
+        return null
+    if source_image.get_width() != 96 or source_image.get_height() != 96:
+        _candidate_load_status = "WRONG SIZE: %dx%d (expected 96x96)" % [source_image.get_width(), source_image.get_height()]
+        push_error("[GruntAB] " + _candidate_load_status)
+        return null
+    var used_rect := source_image.get_used_rect()
+    if used_rect.size.x <= 0 or used_rect.size.y <= 0:
+        _candidate_load_status = "IMAGE FULLY TRANSPARENT: %s" % path
+        push_error("[GruntAB] " + _candidate_load_status)
+        return null
+    _candidate_load_status = "OK: direct PNG, occupied %dx%d px" % [used_rect.size.x, used_rect.size.y]
+    print("[GruntAB] %s | %s" % [_candidate_load_status, path])
+    return ImageTexture.create_from_image(source_image)
 
 
 func _draw() -> void:
