@@ -129,6 +129,40 @@ def _trace_events(repo: Path, ref: str) -> list[dict]:
     return events
 
 
+def _verified_landing_claim(repo: Path, event: dict, workstream: str,
+                            landing_run_id: str, selected_base: str) -> bool:
+    """Verify a claim event preserved in a landing trace, including retries."""
+    data = event.get("data")
+    if (event.get("run_id") != landing_run_id or event.get("workstream") != workstream
+            or not isinstance(data, dict)):
+        return False
+    base = data.get("main_sha")
+    claim_oid = data.get("claim_oid")
+    if (not isinstance(base, str) or not re.fullmatch(r"[0-9a-f]{40,64}", base)
+            or not isinstance(claim_oid, str) or not re.fullmatch(r"[0-9a-f]{40,64}", claim_oid)
+            or data.get("local_ref") != f"refs/custodian/claims/{workstream}/{landing_run_id}"
+            or data.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream}"):
+        return False
+    resolved = subprocess.run(["git", "rev-parse", "--verify", f"{claim_oid}^{{commit}}"],
+                              cwd=repo, text=True, capture_output=True)
+    if resolved.returncode or resolved.stdout.strip() != claim_oid:
+        return False
+    parents = subprocess.run(["git", "rev-list", "--parents", "-n", "1", claim_oid],
+                             cwd=repo, text=True, capture_output=True)
+    fields = parents.stdout.split()
+    if parents.returncode or len(fields) != 2 or fields[1] != base:
+        return False
+    subject = subprocess.run(["git", "show", "-s", "--format=%s", claim_oid],
+                             cwd=repo, text=True, capture_output=True)
+    expected_subject = re.compile(
+        rf"^workstream claim {re.escape(workstream)} [^:\s]+:[0-9]+:{re.escape(landing_run_id)}$"
+    )
+    if subject.returncode or not expected_subject.fullmatch(subject.stdout.rstrip()):
+        return False
+    return subprocess.run(["git", "merge-base", "--is-ancestor", base, selected_base],
+                          cwd=repo, capture_output=True).returncode == 0
+
+
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
                                target_packet_text: str) -> dict:
@@ -284,9 +318,12 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                         claim["base"]], cwd=repo, capture_output=True).returncode == 0
                     and subprocess.run(["git", "merge-base", "--is-ancestor", exact_base,
                                         completed["landing"]], cwd=repo, capture_output=True).returncode == 0):
-                failed_claims = [event["data"] for event in completed["events"]
-                                 if event.get("event") == "remote_claim_acquired"]
-                if any(item.get("main_sha") != claim["base"] for item in failed_claims):
+                landing_claims = [event for event in completed["events"]
+                                  if event.get("event") == "remote_claim_acquired"]
+                if (len(landing_claims) > 1
+                        or any(not _verified_landing_claim(repo, event, target_workstream,
+                                                           completed["run_id"], claim["base"])
+                               for event in landing_claims)):
                     continue
                 matching_pairs.append((claim, completed))
     if len(matching_pairs) != 1:

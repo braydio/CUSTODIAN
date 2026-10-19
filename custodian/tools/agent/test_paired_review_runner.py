@@ -1733,15 +1733,21 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _install_trace(self, workstream, packet_path, run_id, base, landing, *,
                        ref_suffix=None, main_sync=None, malformed_data=False,
                        include_claim=True, include_landing=True, worktree=None,
-                       branch=None, claim_base=None):
+                       branch=None, claim_base=None, extra_events=()):
         branch = branch or f"agent/{workstream}"
         worktree = worktree or f"/tmp/{workstream}-{run_id}"
         events = []
         if include_claim:
+            claim_parent = claim_base or base
+            claim_oid = self._git(
+                "commit-tree", f"{claim_parent}^{{tree}}", "-p", claim_parent,
+                "-m", f"workstream claim {workstream} codex:1:{run_id}",
+            )
             events.extend([
                 {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
                  "workstream": workstream, "packet": packet_path, "event": "remote_claim_acquired",
-                 "data": {"claim_oid": "1" * 40, "main_sha": claim_base or base,
+                 "data": {"claim_oid": claim_oid, "main_sha": claim_parent,
+                          "local_ref": f"refs/custodian/claims/{workstream}/{run_id}",
                           "remote_ref": f"refs/heads/dispatch-claims/{workstream}"}},
                 {"schema": "custodian.workflow_trace_event.v1", "run_id": run_id,
                  "workstream": workstream, "packet": packet_path, "event": "worktree_published",
@@ -1771,6 +1777,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                  "data": {"head": landing, "branch": branch,
                           "worktree_removed": True, "worktree": worktree}},
             ])
+        events.extend(extra_events)
         for event in events:
             event["schema_version"] = 1
         if malformed_data:
@@ -1860,7 +1867,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "index": index, "summary": summary, "source_base": source_base,
                 "source_head": source_head, "archive_landing": archive_landing,
                 "prior_main": prior_main, "merge": merge, "code_paths": code_paths,
-                "reviewed_main": self.reviewed_main}
+                "initial_reviewed_main": reviewed_main, "reviewed_main": self.reviewed_main}
 
     def _commit_tree(self, tree, message, parents):
         command = ["git", "commit-tree", tree, "-m", message]
@@ -2118,6 +2125,120 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         )
         return worktree
 
+    def _earlier_claim_event(self, fixture, landing_run, earlier_base, *,
+                             claim_run=None, local_ref=None, subject_run=None):
+        claim_run = claim_run or landing_run
+        subject_run = subject_run or claim_run
+        claim_oid = self._git(
+            "commit-tree", f"{earlier_base}^{{tree}}", "-p", earlier_base,
+            "-m", f"workstream claim {fixture['workstream']} codex:1:{subject_run}",
+        )
+        return {
+            "schema": "custodian.workflow_trace_event.v1",
+            "run_id": claim_run,
+            "workstream": fixture["workstream"],
+            "packet": fixture["active"],
+            "event": "remote_claim_acquired",
+            "data": {
+                "claim_oid": claim_oid,
+                "main_sha": earlier_base,
+                "local_ref": local_ref or f"refs/custodian/claims/{fixture['workstream']}/{claim_run}",
+                "remote_ref": f"refs/heads/dispatch-claims/{fixture['workstream']}",
+            },
+        }
+
+    def _split_pair_with_earlier_claim(self, fixture=None, *, earlier_base=None, claim_run=None,
+                                       local_ref=None, subject_run=None, duplicates=0):
+        fixture = fixture or self._build_main_sync_landing(source_bearing_archive=True)
+        landing_run = "20261018T020011Z-012345abcdef"
+        self._install_split_trace_pair(fixture, landing_run=landing_run)
+        earlier_base = earlier_base or fixture["initial_reviewed_main"]
+        events = [self._earlier_claim_event(
+            fixture, landing_run, earlier_base, claim_run=claim_run,
+            local_ref=local_ref, subject_run=subject_run,
+        )]
+        for index in range(duplicates):
+            events.append(self._earlier_claim_event(
+                fixture, landing_run, earlier_base, subject_run=f"{landing_run}-{index}",
+            ))
+        self._install_trace(
+            fixture["workstream"], fixture["active"], landing_run,
+            fixture["source_base"], fixture["merge"], include_claim=False,
+            worktree=f"/tmp/{fixture['workstream']}-claimed", main_sync={
+                "changed": True, "head": fixture["merge"], "main_sha": fixture["prior_main"],
+            }, extra_events=events,
+        )
+        return fixture, landing_run
+
+    def test_split_landing_accepts_identity_verified_earlier_ancestor_claim(self):
+        fixture, landing_run = self._split_pair_with_earlier_claim()
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["base"], fixture["source_base"])
+        self.assertNotEqual(span["base"], fixture["reviewed_main"])
+        self.assertEqual(span["provenance"]["landing_trace"]["run_id"], landing_run)
+
+    def test_split_landing_rejects_mismatched_earlier_claim_identity(self):
+        fixture, _ = self._split_pair_with_earlier_claim(
+            local_ref="refs/custodian/claims/another-workstream/20261018T020011Z-012345abcdef",
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_earlier_claim_with_mismatched_run_identity(self):
+        fixture, _ = self._split_pair_with_earlier_claim(subject_run="another-run")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_earlier_claim_event_from_another_run(self):
+        fixture, _ = self._split_pair_with_earlier_claim(claim_run="another-run")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_ambiguous_earlier_claim_events(self):
+        fixture, _ = self._split_pair_with_earlier_claim(duplicates=1)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_unrelated_earlier_claim_base(self):
+        fixture = self._build_main_sync_landing(source_bearing_archive=True)
+        unrelated = self._git(
+            "commit-tree", f"{fixture['source_base']}^{{tree}}", "-m", "unrelated base",
+        )
+        fixture, _ = self._split_pair_with_earlier_claim(fixture, earlier_base=unrelated)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_reversed_earlier_claim_ancestry(self):
+        fixture = self._build_main_sync_landing(source_bearing_archive=True)
+        later_base = self._git(
+            "commit-tree", f"{fixture['source_base']}^{{tree}}", "-p",
+            fixture["source_base"], "-m", "later base",
+        )
+        fixture, _ = self._split_pair_with_earlier_claim(fixture, earlier_base=later_base)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace provenance"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
     def test_split_trace_continuation_requires_exact_worktree_link_and_unique_pair(self):
         fixture = self._build_main_sync_landing()
         self._install_split_trace_pair(fixture, teardown_path="/tmp/other-worktree")
@@ -2241,6 +2362,30 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
         self.assertEqual(span["provenance"]["claim_trace"]["base"], span["base"])
         self.assertEqual(span["provenance"]["landing_trace"]["landing"], landing)
+
+    def test_source_bearing_gate_resolves_earlier_failed_claim_without_widening_source_span(self):
+        reviewed_main = "9cbbfef899957f2e3fff3306b74accf28cd846dc"
+        source_base = "8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8"
+        failed_claim_base = "83bdbd1e53fdcb06b18a5a5645f70a050c3cba01"
+        canonical_landing = "a407674f3d76d9990b5c1056447a31a7e36a4d5d"
+        workstream = "agent-paired-review-source-bearing-archive-gate-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_PAIRED_REVIEW_SOURCE_BEARING_ARCHIVE_GATE_V1.md")
+        self.assertEqual(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", failed_claim_base, source_base],
+            cwd=ROOT, capture_output=True,
+        ).returncode, 0)
+        span = host_validation.resolve_validation_source_span(
+            ROOT, reviewed_main, canonical_landing, workstream, archive,
+        )
+        self.assertEqual(span["base"], source_base)
+        self.assertEqual(span["head"], "5b5de5717ae10aa5bbacbd53433571aae016c555")
+        self.assertEqual(span["commits"], [span["head"]])
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/tools/agent/paired_review_host_validation.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+        })
+        self.assertNotIn(failed_claim_base, span["commits"])
 
     def test_queue_frontier_split_trace_source_bearing_archive_resolves_historically(self):
         landing = "aa9ddfc611fede93eaa3fe8dd68b9063a87a7a94"
