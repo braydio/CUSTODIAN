@@ -3409,6 +3409,20 @@ Verify the exact post-hoc attestation.
         review_source = (ROOT / "custodian/docs/ai_context/task_packets/"
                          "REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md").read_text()
         review_source = review_source.replace("- Status: `ready`", "- Status: `complete`", 1)
+        review_source += f"""
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{review_workstream}`
+- Review target workstream: `agent-grunt-raster-review-scope-attestation-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
         review_source += "\n" + runner.review_outcome.render_review_outcome(
             outcome="passed", review_workstream=review_workstream,
             target_workstream="agent-grunt-raster-review-scope-attestation-v1",
@@ -3435,7 +3449,7 @@ Verify the exact post-hoc attestation.
         ).stdout.strip()
         return repository, implementation_commit, accepted_main, attestation_path, target_path, review_packet_path
 
-    def test_grunt_scope_attestation_requires_canonical_independent_review_acceptance(self):
+    def test_grunt_six_file_scope_attestation_requires_canonical_independent_review_acceptance(self):
         repository, correction_commit, approved_main, attestation_path, _, review_path = (
             self._build_grunt_attestation_approval_history()
         )
@@ -3449,28 +3463,97 @@ Verify the exact post-hoc attestation.
         self.assertEqual(provenance["approval_implementation_commit"], correction_commit)
         self.assertEqual(provenance["approval_outcome"], "passed")
         self.assertEqual(set(provenance["source_files"]), exact_paths)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "exact historical paths"):
-            host_validation._verified_grunt_scope_attestation(repository, approved_main,
-                                                               exact_paths | {"custodian/docs/OTHER.md"})
+        target_text = subprocess.run(
+            ["git", "show", "e29847bb2dc409ad994ac59ee3e8bb4db637142e:"
+             "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"],
+            cwd=repository, check=True, text=True, capture_output=True,
+        ).stdout
+        documented = set(re.findall(r"custodian/[A-Za-z0-9_./-]+", target_text))
+        documented.add("GRUNT_CANDIDATE_RASTER_WORKFLOW_V1_CLAUDE_SUMMARY.md")
+        packet_terms = set(re.findall(r"[a-z0-9]+", target_text.lower()))
+        for path in exact_paths:
+            self.assertTrue(host_validation._source_path_documented(
+                path, target_text, documented, packet_terms, set(), exact_paths,
+            ))
+        for seventh in (
+            "custodian/tools/iteration/raster_pipeline/extra.py",
+            "custodian/tools/iteration/raster_pipeline/extra.json",
+            "custodian/tools/iteration/raster_pipeline/extra.md",
+        ):
+            self.assertFalse(host_validation._source_path_documented(
+                seventh, target_text, documented, packet_terms, set(), exact_paths,
+            ), seventh)
         with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
             host_validation.resolve_validation_source_span(
                 repository, correction_commit, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
                 "grunt-candidate-raster-workflow-v1",
                 "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
             )
+        replay = host_validation.resolve_validation_source_span(
+            repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+            "grunt-candidate-raster-workflow-v1",
+            "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
+        )
+        self.assertEqual(set(replay["paths"]).intersection(exact_paths), exact_paths)
+        self.assertEqual(replay["provenance"]["scope_attestation"]["approval_outcome"], "passed")
+        source_paths = host_validation._source_code_paths(replay["paths"])
+        changed_paths = subprocess.run(
+            ["git", "diff", "--name-only", "--no-renames",
+             f"{replay['base']}..{approved_main}"], cwd=repository,
+            check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        report = {
+            "schema": "custodian.validation.result.v1", "passed": True,
+            "changed_files": changed_paths, "selected": ["historical_grunt_source"],
+            "tests": [{"id": "historical_grunt_source", "status": "passed"}],
+            "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                        "skipped": 0, "infrastructure_errors": 0},
+            "coverage": {"complete": True, "covered_files": sorted(source_paths),
+                         "uncovered_files": [], "excluded_files": [],
+                         "covered_by": {path: ["historical_grunt_source"] for path in source_paths}},
+        }
+        run_dir = self.run_dir / "grunt-six-file-coordinator"
+        run_dir.mkdir()
+
+        def validate(command, cwd):
+            self.assertEqual(Path(cwd), repository)
+            self.assertEqual(command[-4:], ["--changed", "--base", replay["base"], "--json"])
+            return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+        evidence = host_validation.run_coordinator_validation(
+            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+            target_workstream="grunt-candidate-raster-workflow-v1",
+            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+            run_validation=validate,
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+        metadata = json.loads((run_dir / "coordinator-validation.json").read_text())
+        self.assertEqual(metadata["source_span"]["provenance"]["scope_attestation"],
+                         replay["provenance"]["scope_attestation"])
+        verified = host_validation.verify_coordinator_validation(
+            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+            target_workstream="grunt-candidate-raster-workflow-v1",
+            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+            expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+        metadata_path = run_dir / "coordinator-validation.json"
+        preserved_metadata = metadata_path.read_bytes()
+        metadata_path.write_bytes(preserved_metadata.replace(b'"approval_outcome": "passed"',
+                                                             b'"approval_outcome": "findings"'))
         with self.assertRaisesRegex(host_validation.HostValidationError,
-                                    "code/test paths not documented by its target packet") as failure:
-            host_validation.resolve_validation_source_span(
-                repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-                "grunt-candidate-raster-workflow-v1",
-                "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
+                                    "provenance digest changed"):
+            host_validation.verify_coordinator_validation(
+                repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                target_workstream="grunt-candidate-raster-workflow-v1",
+                target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                    "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
             )
-        for path in (
-            "custodian/tools/iteration/raster_pipeline/__init__.py",
-            "custodian/tools/iteration/grunt_candidate_ab/grunt_raster_plan.json",
-            "custodian/tools/validation/validation_manifest.json",
-        ):
-            self.assertIn(path, str(failure.exception))
 
         # A forged PASS outcome without an accepted target receipt cannot activate it.
         outcome_forgery = Path(self.temp.name) / "forged-outcome"
@@ -3508,6 +3591,55 @@ Verify the exact post-hoc attestation.
             host_validation._verified_grunt_scope_attestation(repository, mutated_main, exact_paths)
         subprocess.run(["git", "-C", str(repository), "worktree", "remove", "--force",
                         str(mutated)], check=True)
+
+    def test_grunt_six_file_scope_attestation_rejects_changed_entries_and_modes(self):
+        repository, _, approved_main, attestation_path, _, _ = (
+            self._build_grunt_attestation_approval_history()
+        )
+        variants = []
+        for index in range(len(host_validation._GRUNT_SCOPE_FILES)):
+            variants.append((f"blob-{index}", lambda data, i=index: data["source_files"][i].update(
+                blob="0" * 40)))
+        variants.extend((
+            ("renamed-path", lambda data: data["source_files"][0].update(path="custodian/docs/renamed.md")),
+            ("wrong-mode", lambda data: data["source_files"][0].update(mode="100755")),
+            ("extra-seventh", lambda data: data["source_files"].append({
+                "path": "custodian/tools/iteration/raster_pipeline/extra.py",
+                "blob": "0" * 40, "mode": "100644",
+            })),
+        ))
+        for name, mutate in variants:
+            attestation = repository / attestation_path
+            original = subprocess.run(
+                ["git", "-C", str(repository), "show", f"{approved_main}:{attestation_path}"],
+                check=True, capture_output=True,
+            ).stdout
+            attestation.write_bytes(original)
+            if name == "wrong-mode":
+                subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path],
+                               check=True)
+                subprocess.run(["git", "-C", str(repository), "update-index", "--chmod=+x",
+                                "--", attestation_path], check=True)
+            else:
+                data = json.loads(original)
+                mutate(data)
+                attestation.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n",
+                                       encoding="utf-8")
+                subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path],
+                               check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", f"mutate {name}"],
+                           check=True)
+            head = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"],
+                                  check=True, text=True, capture_output=True).stdout.strip()
+            expected = "regular-file" if name == "wrong-mode" else "exact post-hoc authorization"
+            with self.subTest(variant=name), self.assertRaisesRegex(
+                host_validation.HostValidationError, expected,
+            ):
+                host_validation._verified_grunt_scope_attestation(
+                    repository, head, set(host_validation._GRUNT_SCOPE_FILES),
+                )
+            subprocess.run(["git", "-C", str(repository), "reset", "--hard", approved_main],
+                           check=True, stdout=subprocess.DEVNULL)
 
     def test_source_bearing_archive_accepts_changed_documented_gd_uid(self):
         uid_path = "custodian/game/world/transfer.gd.uid"

@@ -50,11 +50,17 @@ _GRUNT_SCOPE_REVIEW_WORKSTREAM = "review-agent-grunt-raster-review-scope-attesta
 _GRUNT_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/archived/REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md"
 )
-_GRUNT_SCOPE_FILES = {
+_GRUNT_SCOPE_MARKDOWN_FILES = {
     "custodian/docs/ai_context/CURRENT_STATE.md": "1a9368fa1d293570c968fd486972d69f73a1a687",
     "custodian/docs/ai_context/FILE_INDEX.md": "4a7f88cc00689dd55ab080230e2c43b58cf6e0c5",
     "custodian/tools/iteration/raster_pipeline/README.md": "364f0b366c6c7f25d893ca3957c05238278c0fb7",
 }
+_GRUNT_SCOPE_CODE_FILES = {
+    "custodian/tools/iteration/raster_pipeline/__init__.py": "bd5b6ae6d224c86909372b1710d51efe7c3a289a",
+    "custodian/tools/iteration/grunt_candidate_ab/grunt_raster_plan.json": "4e2ecb1b333c1d95d5b3b468dbcd9b7b7162a9ae",
+    "custodian/tools/validation/validation_manifest.json": "f99d1deec38aac1757838bd52bee102740597808",
+}
+_GRUNT_SCOPE_FILES = {**_GRUNT_SCOPE_MARKDOWN_FILES, **_GRUNT_SCOPE_CODE_FILES}
 
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
@@ -294,6 +300,47 @@ def _is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
                           cwd=repo, capture_output=True).returncode == 0
 
 
+def _source_path_documented(path: str, target_packet_text: str, documented: set[str],
+                            packet_terms: set[str], uid_companion_paths: set[str],
+                            attested_scope_paths: set[str]) -> bool:
+    """Check exact documented source identity, including only verified attestation paths."""
+    if path in uid_companion_paths:
+        return _source_path_documented(path[:-4], target_packet_text, documented,
+                                       packet_terms, uid_companion_paths, attested_scope_paths)
+    if path in attested_scope_paths:
+        return True
+    name = Path(path).name
+    if path in documented or name in target_packet_text:
+        return True
+    if name.startswith("test_") and re.search(r"\b(test|tests|fixture)\b", target_packet_text, re.I):
+        terms = set(re.findall(r"[a-z0-9]+", Path(name).stem.lower())) - {"test", "tests", "v1"}
+        return len(terms & packet_terms) >= 2
+    return False
+
+
+def _scope_review_receipt(review_text: str) -> dict[str, str] | None:
+    """Parse one flat reviewer-authored PASS receipt from the archived review packet."""
+    sections = list(re.finditer(r"(?m)^## Independent Review[ \t]*$", review_text))
+    if len(sections) != 1:
+        return None
+    section = review_text[sections[0].end():]
+    following = re.search(r"(?m)^## [^\r]*$", section)
+    if following:
+        section = section[:following.start()]
+    names = (
+        "Schema", "Review workstream", "Review target workstream", "Status",
+        "Blocking defects", "Material gaps", "Reviewer context", "Reviewer provenance",
+        "Reviewed main", "Reviewed implementation commit",
+    )
+    values = {}
+    for name in names:
+        matches = re.findall(rf"(?m)^- {re.escape(name)}: `([^`\r\n]+)`\s*$", section)
+        if len(matches) != 1:
+            return None
+        values[name] = matches[0].strip()
+    return values
+
+
 def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
                                      extra_archive_paths: set[str]) -> dict:
     """Verify the one exact Grunt post-hoc Markdown exception and its accepted review.
@@ -302,8 +349,9 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
     archived, canonical independent PASS, with the review's target receipt and
     implementation identity both verified from Git history.
     """
-    if extra_archive_paths != set(_GRUNT_SCOPE_FILES):
-        raise HostValidationError("post-hoc Grunt scope attestation does not cover the exact historical paths")
+    attested_archive_paths = extra_archive_paths.intersection(_GRUNT_SCOPE_FILES)
+    if attested_archive_paths != set(_GRUNT_SCOPE_FILES):
+        raise HostValidationError("post-hoc Grunt scope attestation does not cover all six historical paths")
 
     source_packet_entry = _git_tree_entry(repo, _GRUNT_SCOPE_SOURCE_ARCHIVE,
                                           _GRUNT_SCOPE_SOURCE_PACKET)
@@ -337,7 +385,7 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
             {"path": path, "blob": blob, "mode": "100644"}
             for path, blob in sorted(_GRUNT_SCOPE_FILES.items())
         ],
-        "reason": "The original archived Work surface omitted these exact Grunt raster documentation paths.",
+        "reason": "The original archived Work surface omitted these exact Grunt raster paths.",
         "post_hoc": True,
     }
     canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
@@ -412,6 +460,21 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
     )
     if identity_error:
         raise HostValidationError(f"accepted Grunt attestation review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted Grunt attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _GRUNT_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _GRUNT_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items()) or (
+        reviewer_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}
+    ):
+        raise HostValidationError("accepted Grunt attestation reviewer receipt does not match its PASS outcome")
 
     return {
         "kind": "accepted-post-hoc-exact-markdown-attestation",
@@ -684,20 +747,19 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if source_bearing_archive:
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
-        markdown_archive_paths = {
-            path for path in extra_archive_paths if Path(path).suffix.lower() == ".md"
-        }
-        if markdown_archive_paths.intersection(_GRUNT_SCOPE_FILES):
+        if (target_workstream == "grunt-candidate-raster-workflow-v1"
+                and extra_archive_paths.intersection(_GRUNT_SCOPE_FILES)):
             if landing_commit != _GRUNT_SCOPE_SOURCE_ARCHIVE:
                 raise HostValidationError("post-hoc Grunt scope attestation names a different source archive")
             scope_attestation = _verified_grunt_scope_attestation(
-                repo, reviewed_main, markdown_archive_paths,
+                repo, reviewed_main, extra_archive_paths,
             )
+        attested_paths = set(scope_attestation["source_files"]) if scope_attestation else set()
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
                and not (Path(path).suffix.lower() == ".md"
                         and (path in declared_markdown_paths
-                             or (scope_attestation is not None and path in _GRUNT_SCOPE_FILES)))
+                             or path in attested_paths))
                for path in extra_archive_paths):
             raise HostValidationError("archive-only landing contains unrelated paths")
         for path in sorted(uid_companion_paths):
@@ -757,22 +819,17 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
+    attested_source_paths = (
+        set(scope_attestation["source_files"]) if scope_attestation is not None else set()
+    )
+
     def is_documented(path: str) -> bool:
-        if path in uid_companion_paths:
-            return is_documented(path[:-4])
         if path in archive_source_paths and path in documented:
             return True
-        name = Path(path).name
-        if path in documented or name in target_packet_text:
-            return True
-        # Some packets authorize a specific test fixture by role in Work surface
-        # without spelling its full path. Require multiple distinctive filename
-        # terms from the packet; host report coverage still proves a selected test
-        # owns each such source/test file.
-        if name.startswith("test_") and re.search(r"\b(test|tests|fixture)\b", target_packet_text, re.I):
-            terms = set(re.findall(r"[a-z0-9]+", Path(name).stem.lower())) - {"test", "tests", "v1"}
-            return len(terms & packet_terms) >= 2
-        return False
+        return _source_path_documented(
+            path, target_packet_text, documented, packet_terms,
+            uid_companion_paths, attested_source_paths,
+        )
 
     undocumented = {path for path in code_paths if not is_documented(path)}
     undocumented.update(path for path in archive_source_paths if not is_documented(path))
