@@ -14,6 +14,7 @@ from typing import Callable
 
 from godot_project_lock import godot_home
 from task_packet_contract import PACKET_ROOT, header_field
+from task_packet_index import MANAGED_BLOCK_END, MANAGED_BLOCK_START
 
 
 class HostValidationError(RuntimeError):
@@ -24,6 +25,89 @@ _IMPLEMENTATION_SUFFIXES = {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"
 _REPOSITORY_MARKDOWN_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
 )
+_WORK_SURFACE_BRACE_PATH_RE = re.compile(
+    r"custodian/([A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*)/"
+    r"\{([A-Za-z_][A-Za-z0-9_]*(?:,[A-Za-z_][A-Za-z0-9_]*)+)\}"
+    r"(\.[A-Za-z0-9]+)"
+)
+
+
+def _managed_packet_index_additive_reconciliation(first_parent: bytes,
+                                                  second_parent: bytes,
+                                                  merged: bytes) -> bool:
+    """Accept only additive managed-index entries copied from prior main."""
+    start = MANAGED_BLOCK_START.encode("ascii")
+    end = MANAGED_BLOCK_END.encode("ascii")
+
+    def split(value: bytes) -> tuple[bytes, bytes, bytes] | None:
+        if value.count(start) != 1 or value.count(end) != 1:
+            return None
+        start_at = value.find(start)
+        end_at = value.find(end)
+        if end_at <= start_at or value.find(start, start_at + len(start)) >= 0:
+            return None
+        block_end = end_at + len(end)
+        prefix = value[:start_at]
+        block = value[start_at:block_end]
+        suffix = value[block_end:]
+        if not block.startswith(start + b"\n") or not block.endswith(b"\n" + end):
+            return None
+        return prefix, block, suffix
+
+    original = split(first_parent)
+    prior_main = split(second_parent)
+    reconciled = split(merged)
+    if original is None or prior_main is None or reconciled is None:
+        return False
+    if original[0] != reconciled[0] or original[2] != reconciled[2]:
+        return False
+
+    def entries(block: bytes) -> list[bytes]:
+        return block[len(start) + 1:-(len(end) + 1)].split(b"\n")
+
+    original_entries = entries(original[1])
+    prior_entries = entries(prior_main[1])
+    merged_entries = entries(reconciled[1])
+    if (len(set(original_entries)) != len(original_entries)
+            or len(set(prior_entries)) != len(prior_entries)
+            or len(set(merged_entries)) != len(merged_entries)
+            or not set(original_entries).issubset(merged_entries)
+            or not set(merged_entries).issubset(prior_entries)):
+        return False
+    # Keep the original order and require added entries to retain their order
+    # from the recorded prior-main managed block. The merge may omit other
+    # second-parent additions because this is an additive reconciliation, not
+    # an instruction to copy the entire current index.
+    original_iter = iter(merged_entries)
+    if not all(any(value == candidate for candidate in original_iter)
+               for value in original_entries):
+        return False
+    added = [entry for entry in merged_entries if entry not in set(original_entries)]
+    prior_added = [entry for entry in prior_entries if entry not in set(original_entries)]
+    prior_iter = iter(prior_added)
+    return all(any(value == candidate for candidate in prior_iter) for value in added)
+
+
+def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
+    """Expand bounded file alternatives in backtick paths, never as globs."""
+    expanded: set[str] = set()
+    for token in re.findall(r"`([^`]+)`", work_surface):
+        if "{" not in token and "}" not in token:
+            continue
+        if not token.startswith("custodian/"):
+            if "custodian/" in token:
+                raise HostValidationError("braced Work surface path must be repository-relative")
+            continue
+        match = _WORK_SURFACE_BRACE_PATH_RE.fullmatch(token)
+        if match is None:
+            raise HostValidationError("malformed braced Work surface path")
+        directory, raw_names, suffix = match.groups()
+        names = raw_names.split(",")
+        if (not 2 <= len(names) <= 32 or len(set(names)) != len(names)
+                or suffix.lower() not in _IMPLEMENTATION_SUFFIXES):
+            raise HostValidationError("braced Work surface path is unbounded or unsupported")
+        expanded.update(f"custodian/{directory}/{name}{suffix}" for name in names)
+    return expanded
 
 
 def _git(worktree: Path, *args: str) -> str:
@@ -360,12 +444,26 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         if len(parent_line) != 3 or parent_line[1] != landing_commit:
             raise HostValidationError("trace landing is not the exact two-parent archive-first main-sync merge")
         second_parent = parent_line[2]
-        sync_events = [event for event in events
-                       if event.get("event") == "main_sync"
-                       and event.get("data", {}).get("changed") is True
-                       and event.get("data", {}).get("head") == trace_landing]
-        if (len(sync_events) != 1
-                or sync_events[0].get("data", {}).get("main_sha") != second_parent):
+        sync_events = [event for event in events if event.get("event") == "main_sync"]
+        exact_true = [event for event in sync_events
+                      if isinstance(event.get("data"), dict)
+                      and event["data"].get("changed") is True
+                      and event["data"].get("head") == trace_landing]
+        if len(exact_true) == 1:
+            sync_data = exact_true[0]["data"]
+            valid_sync = sync_data.get("main_sha") == second_parent
+        elif exact_true:
+            valid_sync = False
+        else:
+            # The retry case is admitted only for a unique immutable no-op
+            # event; legacy true-sync traces retain their prior qualification.
+            sync_data = sync_events[0].get("data", {}) if len(sync_events) == 1 else {}
+            valid_sync = (len(sync_events) == 1
+                          and isinstance(sync_data, dict)
+                          and sync_data.get("changed") is False
+                          and sync_data.get("head") == trace_landing
+                          and sync_data.get("main_sha") == second_parent)
+        if not valid_sync:
             raise HostValidationError("trace landing lacks an exact main-sync merge provenance event")
         trace_landing_kind = "main-sync-merge"
         trace_main_sync_sha = second_parent
@@ -456,6 +554,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     # carrying unrelated code cannot be laundered through an archive-only commit.
     documented = set(re.findall(r"custodian/[A-Za-z0-9_./-]+", target_packet_text))
     documented.add(f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md")
+    work_surface = header_field(target_packet_text, "Work surface") or ""
+    documented.update(_expand_braced_work_surface_paths(work_surface))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
@@ -485,7 +585,29 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         changed_in_merge = set(_changed_paths(repo, f"{landing_commit}..{trace_landing}"))
         if target_packet_path in changed_in_merge:
             raise HostValidationError("main-sync merge changes archived target packet from archive-first-parent version")
-        if changed_in_merge.intersection(source_paths):
+        readme_path = f"{PACKET_ROOT}/README.md"
+        changed_source_paths = changed_in_merge.intersection(source_paths)
+        if readme_path in changed_source_paths:
+            first_parent_readme = subprocess.run(
+                ["git", "show", f"{landing_commit}:{readme_path}"], cwd=repo,
+                capture_output=True,
+            )
+            second_parent_readme = subprocess.run(
+                ["git", "show", f"{trace_main_sync_sha}:{readme_path}"], cwd=repo,
+                capture_output=True,
+            )
+            merged_readme = subprocess.run(
+                ["git", "show", f"{trace_landing}:{readme_path}"], cwd=repo,
+                capture_output=True,
+            )
+            if (first_parent_readme.returncode or second_parent_readme.returncode
+                    or merged_readme.returncode
+                    or not _managed_packet_index_additive_reconciliation(
+                        first_parent_readme.stdout, second_parent_readme.stdout,
+                        merged_readme.stdout)):
+                raise HostValidationError("main-sync README change is not an additive managed-index reconciliation")
+            changed_source_paths.remove(readme_path)
+        if changed_source_paths:
             raise HostValidationError("main-sync merge changes reviewed source from archive-first-parent version")
 
     trace_sha = subprocess.run(["git", "rev-parse", "--verify", f"{ref}^{{commit}}"], cwd=repo,

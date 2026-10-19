@@ -2293,6 +2293,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                  archive_doc_path=None,
                                  declared_work_surface_path=None,
                                  mentioned_elsewhere_path=None,
+                                 mentioned_elsewhere_text=None,
+                                 code_paths=None,
+                                 work_surface=None,
                                  archive_uid_path=None,
                                  archive_uid_text="uid://do0pqluwda6jl\n"):
         workstream = "sample-main-sync"
@@ -2301,8 +2304,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         index = f"{runner.PACKET_ROOT}/README.md"
         summary = "SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md"
         reviewed_main = self._git("rev-parse", "HEAD")
-        work_surface = ["- `custodian/game/world/transfer.gd`",
-                        "- `custodian/tools/validation/transfer_smoke.gd`"]
+        work_surface = list(work_surface) if work_surface is not None else [
+            "- `custodian/game/world/transfer.gd`",
+            "- `custodian/tools/validation/transfer_smoke.gd`",
+        ]
         if declared_work_surface_path:
             work_surface.append(f"- `{declared_work_surface_path}`")
         packet = (f"# Sample\n- Packet schema: `custodian.task_packet.v2`\n"
@@ -2311,13 +2316,17 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                   f"- Work surface:\n" + "\n".join(f"  {line}" for line in work_surface) + "\n")
         if mentioned_elsewhere_path:
             packet += f"\n## Evidence\nThe related file is `{mentioned_elsewhere_path}`.\n"
+        if mentioned_elsewhere_text:
+            packet += f"\n## Evidence\n{mentioned_elsewhere_text}\n"
         Path(self.root / active).parent.mkdir(parents=True, exist_ok=True)
         (self.root / active).write_text(packet)
         (self.root / index).write_text("active index\n")
         self._commit("publish active packet")
         source_base = self._git("rev-parse", "HEAD")
-        code_paths = ["custodian/game/world/transfer.gd",
-                      "custodian/tools/validation/transfer_smoke.gd"]
+        code_paths = list(code_paths) if code_paths is not None else [
+            "custodian/game/world/transfer.gd",
+            "custodian/tools/validation/transfer_smoke.gd",
+        ]
         for path in code_paths:
             target = self.root / path
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -2386,12 +2395,114 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                               capture_output=True).stdout.strip()
 
     def _replace_trace_landing(self, fixture, landing, *, main_sha=None, changed=True):
+        valid_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
+                     "20261018T020000Z-012345abcdef")
+        subprocess.run(["git", "update-ref", "-d", valid_ref], cwd=self.root,
+                       check=True, capture_output=True)
         self._install_trace(
             fixture["workstream"], fixture["active"], "20261018T020001Z-012345abcdef",
             fixture["source_base"], landing,
             main_sync={"changed": changed, "head": landing,
                        "main_sha": main_sha or fixture["prior_main"]},
         )
+
+    def _replace_trace_main_sync_events(self, fixture, landing, events):
+        valid_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
+                     "20261018T020000Z-012345abcdef")
+        subprocess.run(["git", "update-ref", "-d", valid_ref], cwd=self.root, check=True)
+        rendered = [
+            {"schema": "custodian.workflow_trace_event.v1",
+             "schema_version": 1,
+             "run_id": "20261018T020001Z-012345abcdef",
+             "workstream": fixture["workstream"], "packet": fixture["active"],
+             "event": "main_sync", "data": event}
+            for event in events[1:]
+        ]
+        first = events[0] if events else None
+        self._install_trace(
+            fixture["workstream"], fixture["active"], "20261018T020001Z-012345abcdef",
+            fixture["source_base"], landing,
+            main_sync=first,
+            extra_events=rendered,
+        )
+
+    def _managed_readme(self, prefix, entries, suffix):
+        return (prefix + host_validation.MANAGED_BLOCK_START.encode() + b"\n"
+                + b"\n".join(entries) + b"\n"
+                + host_validation.MANAGED_BLOCK_END.encode() + suffix)
+
+    def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
+        prefix, suffix = b"before\n", b"\nafter\n"
+        old = "- `OLD.md` — old".encode()
+        prior_addition = "- `NEW.md` — new".encode()
+        first = self._managed_readme(prefix, [old], suffix)
+        prior = self._managed_readme(prefix, [old, prior_addition], suffix)
+        merged = self._managed_readme(prefix, [old, prior_addition], suffix)
+        self.assertTrue(host_validation._managed_packet_index_additive_reconciliation(
+            first, prior, merged))
+
+    def test_managed_index_reconciliation_rejects_outside_block_changes(self):
+        first = self._managed_readme(b"before\n", ["- `OLD.md` — old".encode()], b"\nafter\n")
+        prior = self._managed_readme(b"before\n", ["- `OLD.md` — old".encode(), "- `NEW.md` — new".encode()], b"\nafter\n")
+        for merged in (
+            self._managed_readme(b"changed\n", ["- `OLD.md` — old".encode(), "- `NEW.md` — new".encode()], b"\nafter\n"),
+            self._managed_readme(b"before\n", ["- `OLD.md` — old".encode(), "- `NEW.md` — new".encode()], b"\nchanged\n"),
+        ):
+            with self.subTest(merged=merged):
+                self.assertFalse(host_validation._managed_packet_index_additive_reconciliation(
+                    first, prior, merged))
+
+    def test_managed_index_reconciliation_rejects_malformed_or_duplicate_markers(self):
+        first = self._managed_readme(b"before\n", ["- `OLD.md` — old".encode()], b"\nafter\n")
+        prior = self._managed_readme(b"before\n", ["- `OLD.md` — old".encode(), "- `NEW.md` — new".encode()], b"\nafter\n")
+        marker = host_validation.MANAGED_BLOCK_START.encode()
+        end = host_validation.MANAGED_BLOCK_END.encode()
+        bad_values = (
+            first.replace(end, b"missing-end"),
+            first + marker,
+            first.replace(marker, marker + b"\n" + marker),
+            first.replace(marker + b"\n", marker + b" extra\n"),
+        )
+        for merged in bad_values:
+            with self.subTest(merged=merged):
+                self.assertFalse(host_validation._managed_packet_index_additive_reconciliation(
+                    first, prior, merged))
+
+    def test_managed_index_reconciliation_rejects_fabricated_deleted_or_replaced_entries(self):
+        first_entries = ["- `OLD.md` — old".encode(), "- `KEEP.md` — keep".encode()]
+        prior_entries = first_entries + ["- `NEW.md` — new".encode()]
+        first = self._managed_readme(b"before\n", first_entries, b"\nafter\n")
+        prior = self._managed_readme(b"before\n", prior_entries, b"\nafter\n")
+        invalid = (
+            [first_entries[0], "- `FABRICATED.md` — fabricated".encode(), first_entries[1]],
+            [first_entries[0], "- `NEW.md` — new".encode()],
+            ["- `OLD.md` — replaced".encode(), first_entries[1]],
+        )
+        for entries in invalid:
+            with self.subTest(entries=entries):
+                merged = self._managed_readme(b"before\n", entries, b"\nafter\n")
+                self.assertFalse(host_validation._managed_packet_index_additive_reconciliation(
+                    first, prior, merged))
+
+    def test_historical_braced_work_surface_noop_merge_resolves_readme_reconciliation(self):
+        workstream = "agent-paired-review-braced-work-surface-v1"
+        refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname)",
+             f"refs/remotes/origin/agent-diagnostics/{workstream}/"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not refs:
+            self.skipTest("pinned braced-work-surface lifecycle trace is unavailable")
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_PAIRED_REVIEW_BRACED_WORK_SURFACE_V1.md")
+        span = host_validation.resolve_validation_source_span(
+            ROOT, "3b3d3893236f1ef61a00d03f0fb6dddaa3a48274",
+            "c5e5b7032a1c0853cffac39931e703d81942bc03", workstream, archive,
+        )
+        self.assertEqual(span["provenance"]["trace_landing_commit"],
+                         "3b3d3893236f1ef61a00d03f0fb6dddaa3a48274")
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"],
+                         "f6a9e745f6db34d0d8c79f2edc56eb5f8049e633")
 
     def _install_alternate_merge(self, fixture, *, parents=None, changed_path=None,
                                  main_sha=None):
@@ -2848,6 +2959,137 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
         self.assertIn(doc_path, span["paths"])
 
+    def test_braced_work_surface_expansion_is_bounded_and_exact(self):
+        declaration = "`custodian/tools/operator/motion_foundry/{__init__,schema,rig,motion,render,qa,cli}.py`"
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(declaration), {
+            f"custodian/tools/operator/motion_foundry/{name}.py"
+            for name in ("__init__", "schema", "rig", "motion", "render", "qa", "cli")
+        })
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(
+            "`custodian/tools/operator/literal.py`"), set())
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(
+            "custodian/tools/operator/{outside,header}.py"), set())
+
+        too_many = ",".join(f"file_{index}" for index in range(33))
+        malformed = (
+            "`custodian/tools/operator/{one}.py`",
+            "`custodian/tools/operator/{one,one}.py`",
+            "`custodian/tools/operator/{one,{two,three}}.py`",
+            "`custodian/tools/operator/../{one,two}.py`",
+            "`custodian//operator/{one,two}.py`",
+            "`/custodian/tools/operator/{one,two}.py`",
+            "`custodian/tools/operator/{one,two/three}.py`",
+            "`custodian/tools/operator/{one,two}.p*.py`",
+            "`custodian/tools/operator/{one,two}.md`",
+            f"`custodian/tools/operator/{{{too_many}}}.py`",
+            "`custodian/tools/operator/{one,two}.py/extra.py`",
+        )
+        for value in malformed:
+            with self.subTest(value=value), self.assertRaises(host_validation.HostValidationError):
+                host_validation._expand_braced_work_surface_paths(value)
+
+    def test_source_bearing_archive_accepts_exact_seven_module_brace_list(self):
+        names = ("__init__", "schema", "rig", "motion", "render", "qa", "cli")
+        modules = [f"custodian/tools/operator/motion_foundry/{name}.py" for name in names]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, smoke],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{__init__,schema,rig,motion,render,qa,cli}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), set([*modules, smoke]))
+
+    def test_source_bearing_archive_rejects_module_omitted_from_brace_list(self):
+        modules = [f"custodian/tools/operator/motion_foundry/{name}.py"
+                   for name in ("schema", "rig", "render", "cli")]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, smoke],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{schema,rig,render}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_plausible_extra_paths_and_basename_matches(self):
+        declared = [f"custodian/tools/operator/motion_foundry/{name}.py"
+                    for name in ("schema", "rig", "render", "cli")]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        extras = ["custodian/tools/operator/motion_foundry/rig_extra.py",
+                  "custodian/elsewhere/schema.py"]
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*declared, smoke, *extras],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{schema,rig,render,cli}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_brace_expression_outside_work_surface_does_not_authorize_source(self):
+        modules = ["custodian/tools/operator/motion_foundry/schema.py",
+                   "custodian/tools/operator/motion_foundry/rig.py"]
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, *self.changed_paths],
+            work_surface=[f"- `{self.changed_paths[0]}`", f"- `{self.changed_paths[1]}`"],
+            mentioned_elsewhere_text=("Other context: "
+                "`custodian/tools/operator/motion_foundry/{schema,rig}.py`"),
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_historical_mf1_landing_resolves_when_local_trace_is_available(self):
+        workstream = "operator-motion-foundry-core-v1"
+        refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname)",
+             f"refs/remotes/origin/agent-diagnostics/{workstream}/"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not refs:
+            self.skipTest("pinned MF1 lifecycle trace refs are unavailable in this checkout")
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "OPERATOR_MOTION_FOUNDRY_CORE_V1.md")
+        span = host_validation.resolve_validation_source_span(
+            ROOT, "a563a872dbe11a582c776bc329c334cdda73c543",
+            "645f1a701696045149fbf9dd3c988cbbadfcf06b", workstream, archive,
+        )
+        self.assertEqual(span["base"], "55918d257cb3c663fb066f56eb79b23d174b7ae2")
+        self.assertEqual(span["head"], "645f1a701696045149fbf9dd3c988cbbadfcf06b")
+        self.assertEqual(span["provenance"]["run_id"], "20261019T111751Z-bc1d9d1546fb")
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/tools/operator/motion_foundry/__init__.py",
+            "custodian/tools/operator/motion_foundry/schema.py",
+            "custodian/tools/operator/motion_foundry/rig.py",
+            "custodian/tools/operator/motion_foundry/motion.py",
+            "custodian/tools/operator/motion_foundry/render.py",
+            "custodian/tools/operator/motion_foundry/qa.py",
+            "custodian/tools/operator/motion_foundry/cli.py",
+            "custodian/tools/validation/operator_motion_foundry_core_smoke.py",
+            "custodian/tools/validation/validation_manifest.json",
+        })
+
     def test_source_bearing_archive_rejects_markdown_path_mentioned_outside_work_surface(self):
         doc_path = "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
         fixture = self._build_main_sync_landing(
@@ -3001,17 +3243,104 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 fixture["workstream"], fixture["archive"],
             )
 
-    def test_split_landing_rejects_main_sync_trace_without_changed_sync(self):
+    def test_split_landing_accepts_exact_noop_main_sync_merge(self):
         fixture = self._build_main_sync_landing()
-        valid_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
-                     "20261018T020000Z-012345abcdef")
-        subprocess.run(["git", "update-ref", "-d", valid_ref], cwd=self.root, check=True)
         self._replace_trace_landing(fixture, fixture["merge"], changed=False)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "main-sync merge"):
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["base"], fixture["source_base"])
+        self.assertEqual(span["head"], fixture["source_head"])
+        self.assertEqual(span["provenance"]["trace_landing_commit"], fixture["merge"])
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
+
+    def test_split_landing_rejects_noop_event_on_single_parent_landing(self):
+        fixture = self._build_main_sync_landing()
+        self._git("checkout", "-q", "--detach", fixture["archive_landing"])
+        tree = self._git("write-tree")
+        single_parent_landing = self._commit_tree(
+            tree, "single-parent source landing", [fixture["archive_landing"]],
+        )
+        fixture["reviewed_main"] = self._commit_tree(
+            tree, "pin single-parent landing", [single_parent_landing],
+        )
+        self._replace_trace_landing(fixture, single_parent_landing,
+                                    main_sha=fixture["archive_landing"], changed=False)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "two-parent"):
             host_validation.resolve_validation_source_span(
                 self.root, fixture["reviewed_main"], fixture["archive_landing"],
                 fixture["workstream"], fixture["archive"],
             )
+
+    def test_split_landing_rejects_missing_duplicate_and_conflicting_main_sync_events(self):
+        fixture = self._build_main_sync_landing()
+        valid = {"changed": False, "head": fixture["merge"],
+                 "main_sha": fixture["prior_main"]}
+        events = (
+            [],
+            [valid, valid],
+        )
+        for main_sync_events in events:
+            with self.subTest(main_sync_events=main_sync_events):
+                self._replace_trace_main_sync_events(fixture, fixture["merge"], main_sync_events)
+                with self.assertRaisesRegex(host_validation.HostValidationError, "main-sync merge"):
+                    host_validation.resolve_validation_source_span(
+                        self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_split_landing_preserves_legacy_true_sync_with_later_noop_attempt(self):
+        fixture = self._build_main_sync_landing()
+        self._replace_trace_main_sync_events(fixture, fixture["merge"], [
+            {"changed": True, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]},
+            {"changed": False, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]},
+        ])
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
+
+    def test_split_landing_rejects_missing_or_malformed_main_sync_fields(self):
+        fixture = self._build_main_sync_landing()
+        malformed = (
+            {"changed": False, "main_sha": fixture["prior_main"]},
+            {"changed": False, "head": fixture["merge"]},
+            {"changed": "false", "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]},
+            {"changed": 0, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]},
+            {"changed": None, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]},
+        )
+        for event in malformed:
+            with self.subTest(event=event):
+                self._replace_trace_main_sync_events(fixture, fixture["merge"], [event])
+                with self.assertRaisesRegex(host_validation.HostValidationError, "main-sync merge"):
+                    host_validation.resolve_validation_source_span(
+                        self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_split_landing_rejects_noop_event_with_wrong_merge_head_or_parent(self):
+        fixture = self._build_main_sync_landing()
+        for event in (
+            {"changed": False, "head": fixture["archive_landing"],
+             "main_sha": fixture["prior_main"]},
+            {"changed": False, "head": fixture["merge"],
+             "main_sha": fixture["source_base"]},
+        ):
+            with self.subTest(event=event):
+                self._replace_trace_main_sync_events(fixture, fixture["merge"], [event])
+                with self.assertRaisesRegex(host_validation.HostValidationError, "main-sync merge"):
+                    host_validation.resolve_validation_source_span(
+                        self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
 
     def test_split_landing_rejects_malformed_or_forged_trace_events(self):
         fixture = self._build_main_sync_landing()

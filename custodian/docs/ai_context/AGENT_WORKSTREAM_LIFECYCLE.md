@@ -55,6 +55,28 @@ python3 custodian/tools/agent/paired_review_runner.py <review-workstream> \
   --continue-run <exact-run-id> --recover-host-validation --plan
 ```
 
+**Unrelated remote packet publication is a synchronization chore, not a review dependency.**
+Automated task-packet authoring/promotion can advance `origin/main` while this
+review remains pinned to an earlier commit. Do not change the pinned review SHA,
+reclaim the workstream, launch a second review, or demand a packet rewrite just
+because other task packets landed. Before reporting a stale-main plan as a
+recovery blocker, use the existing guarded persistent-checkout synchronizer
+from the coordination repository root:
+
+```bash
+python3 custodian/tools/agent/persistent_checkout_sync.py status root
+python3 custodian/tools/agent/persistent_checkout_sync.py apply root
+```
+
+This may fast-forward **only a clean, attached, behind-only coordination
+`main`**. It preserves dirty, ahead, diverged, detached and foreign checkout
+states and must never be replaced with reset, stash, force-push or manual
+worktree cleanup. If status/apply reports a genuine blocker, preserve the
+original run and report its exact reason. After a successful fast-forward,
+rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
+any separately authorized apply. The pinned implementation SHA and protected
+claim/worktree must remain unchanged; source/provenance validation still runs.
+
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
 complete original evidence manifest. Apply only the exact freshly emitted
