@@ -8,7 +8,7 @@
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-grunt-raster-review-scope-attestation-v1`
-- Locks: `paired-review-source-scope`
+- Locks: `paired-review-grunt-attestation`
 - Review: `none`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`

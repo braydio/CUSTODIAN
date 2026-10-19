@@ -7,7 +7,7 @@
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
-- Locks: `paired-review-source-scope`
+- Locks: `paired-review-grunt-attestation`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
