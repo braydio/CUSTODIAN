@@ -3,7 +3,8 @@ extends Node2D
 ## Visual benchmark only, not an animation/physics validation or production art load.
 
 const GRUNT_SCENE: PackedScene = preload("res://game/actors/enemies/enemy_grunt.tscn")
-const CANDIDATE_ROOT := "res://tools/iteration/grunt_candidate_ab/generated/"
+const CANDIDATE_ROOT := "res://../.ai/grunt-candidate-raster-workflow-v1/out/"
+const REDUCTION_MODES: Array[String] = ["crisp", "balanced", "clustered"]
 const FACING_DIRECTIONS: Array[Vector2] = [Vector2.DOWN, Vector2.RIGHT, Vector2.UP, Vector2.LEFT]
 const FACING_NAMES: Array[String] = ["S / front", "E / right", "N / back", "W / left"]
 const FACING_CODES: Array[String] = ["s", "e", "n", "w"]
@@ -22,6 +23,7 @@ var _camera: Camera2D
 var _playing := true
 var _candidate_load_status := "Not loaded"
 var _candidate_missing_label: Label
+var _reduction_mode_index := 0
 
 
 func _ready() -> void:
@@ -120,6 +122,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
             _height_index = 1
         KEY_3:
             _height_index = 2
+        KEY_M:
+            _reduction_mode_index = (_reduction_mode_index + 1) % REDUCTION_MODES.size()
         KEY_SPACE:
             _playing = not _playing
         KEY_Z:
@@ -139,7 +143,8 @@ func _refresh() -> void:
     var facing := FACING_DIRECTIONS[_facing_index]
     var code := FACING_CODES[_facing_index]
     var height := BODY_HEIGHTS[_height_index]
-    var path := "%scandidate_%s_%dpx.png" % [CANDIDATE_ROOT, code, height]
+    var mode := REDUCTION_MODES[_reduction_mode_index]
+    var path := "%s%s/candidate_%s_%dpx.png" % [CANDIDATE_ROOT, mode, code, height]
     # The ZIP ships genuine PNGs but no Godot .import cache. Calling
     # ResourceLoader.exists() here can report false when the project has not
     # imported new assets yet, leaving the intentionally hidden original sprite
@@ -149,7 +154,7 @@ func _refresh() -> void:
     _candidate_sprite.modulate = Color.WHITE
     _candidate_missing_label.visible = _candidate_sprite.texture == null
     var action_name := "missing"
-    if _original_sprite != null:
+    if _original_sprite != null and _original_sprite.sprite_frames != null:
         var action: StringName = &"locomotion.ready_idle"
         if _original_actor.has_method("resolve_enemy_action_animation"):
             action_name = String(_original_actor.call("resolve_enemy_action_animation", action, facing))
@@ -159,12 +164,14 @@ func _refresh() -> void:
             _original_sprite.play(action_name)
             if not _playing:
                 _original_sprite.stop()
+    else:
+        action_name = "baseline unavailable (see import errors)"
     _details.text = (
         "Facing: %s   |   Candidate height: %d px   |   Real Grunt clip: %s\n"
         + "Candidate PNG: %s\n"
-        + "LEFT/RIGHT facing    1/2/3 body height    SPACE baseline pause    Z zoom    S screenshot    ESC quit\n"
+        + "Mode: %s   |   LEFT/RIGHT facing    1/2/3 body height    M reduction mode    SPACE pause    Z zoom    S screenshot    ESC quit\n"
         + "Candidate is STATIC. This checks scale and silhouette, not motion."
-    ) % [FACING_NAMES[_facing_index], height, action_name, _candidate_load_status]
+    ) % [FACING_NAMES[_facing_index], height, action_name, _candidate_load_status, mode]
 
 
 func _load_dev_candidate_png(path: String) -> Texture2D:

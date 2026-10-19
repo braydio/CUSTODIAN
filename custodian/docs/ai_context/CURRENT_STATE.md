@@ -1,5 +1,17 @@
 # CURRENT STATE — CUSTODIAN
 
+## Grunt candidate raster tooling (2026-10-19)
+
+`custodian/tools/iteration/raster_pipeline/` provides a plan-driven, non-Operator
+review workflow for directional humanoid crops. It verifies pinned source bytes,
+uses the existing crisp/balanced/clustered converter modes, reports registration,
+alpha/silhouette/palette/contact facts, and requires exact reviewed pixel edits
+before producing a cleaned copy. The Grunt plan exports four directions at
+64/72/80px to ignored `.ai/` workspace and the dev-only A/B scene can switch
+converter modes. This is tooling evidence only: it does not approve the raster,
+replace Grunt runtime art, or enter Asset V2. Focused validation is registered as
+`grunt_raster_pipeline`.
+
 ## Vehicle Integration System architecture locked (2026-10-18)
 
 `design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` is now active

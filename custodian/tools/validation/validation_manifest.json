@@ -2328,6 +2328,26 @@
       "needs_import": false
     },
     {
+      "id": "grunt_raster_pipeline",
+      "type": "python",
+      "script": "custodian/tools/validation/grunt_raster_pipeline_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "raster",
+        "registration",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/tools/iteration/raster_pipeline/**",
+        "custodian/tools/iteration/grunt_candidate_ab/grunt_raster_plan.json",
+        "custodian/tools/iteration/grunt_candidate_ab/grunt_candidate_compare.gd",
+        "custodian/tools/validation/grunt_raster_pipeline_smoke.py"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
       "id": "pixelart_colors",
       "type": "python",
       "script": "custodian/tools/validation/pixelart_colors_smoke.py",

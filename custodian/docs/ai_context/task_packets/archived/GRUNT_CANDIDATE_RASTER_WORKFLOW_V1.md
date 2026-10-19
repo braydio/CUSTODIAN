@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `grunt-candidate-raster-workflow-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -48,3 +48,37 @@
 
 - Next workstream: `review-grunt-candidate-raster-workflow-v1`
 - Follow-up outside this packet: animation-ready Grunt cutout rig only after raster choice and human review.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `custodian/tools/iteration/raster_pipeline/raster_pipeline.py` and its README provide reusable plan-driven extraction, hash-verified fallback, 3-mode 36-frame export, deterministic pixel QA, report-only cleanup with reviewed-coordinate gating, and ignored-output protections. `grunt_candidate_compare.gd` selects generated candidates in the dev harness while preserving baselines and runtime scene/collider. `grunt_raster_pipeline_smoke.py` covers synthetic and hydrated-source determinism, safety negatives, cleanup approval, and the measured 0.5px actor-ground residual within the declared 1px tolerance. `run_validation.py --changed --base HEAD --json` passed 43/43 selected validations. Existing source and 12 baseline previews remain unchanged. Subjective art selection is handed to the human visual review and was not performed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: initial Godot headless launch on an uninitialized import cache failed before editor import; editor import then completed and the A/B harness loaded cleanly. Godot also regenerated untracked `.import` sidecars for baseline previews; those generated sidecars were removed.
+- Root cause / contributing factors: fresh worktree lacked Godot's generated import/class cache; importing the dev scene creates disposable sidecars next to tracked LFS previews.
+- Prevention / pipeline improvement: initialize editor imports before running a fresh-worktree scene check, and keep generated sidecars out of the scoped change.
+- Tooling / docs drift discovered: none
+- Follow-up: `fixed-in-scope`
+- What worked: focused synthetic/source smoke plus deterministic report and changed-file sweep gave objective evidence before visual handoff.
+
+## Next Handoff
+
+- Next workstream: `review-grunt-candidate-raster-workflow-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f`
+- Summary backlink: `Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f`
+- Refresh reason: none
+- Next action: run the paired post-land independent review from a fresh reviewer context.
+- Blockers or open questions: human visual decision remains open: which raster mode preserves material clusters best, and whether candidate soles align with the original Grunt contact plane. Review handoff: `/CUSTODIAN/visual_review/grunt-candidate-raster-workflow-v1/20261019T101558Z/REVIEW_MANIFEST.json`.
