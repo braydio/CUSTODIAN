@@ -1,0 +1,44 @@
+# AGENT BLOCKER CAPTURE HOOKS V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-blocker-capture-hooks-v1`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `review-agent-blocker-inbox-publisher-v1`
+- Locks: `agent-workflow`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-blocker-capture-hooks-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `Critical workflow state, provenance and preservation require independent review`
+- Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Capture actionable workflow interruptions automatically at existing owner-controlled lifecycle boundaries.
+- Completion boundary: Add minimal post-transaction event hooks in existing custodian/tools/agent/{dispatch.py,workstream.py,paired_review_runner.py,workflow_control.py} where proven safe; use blocker_inbox.py publisher; add test_blocker_capture_hooks.py. Classify failed required validation, explicit blocked-for-repair, review findings, interrupted claim, host_validation_recovery, post_exit_recovery and unavailable indispensable inputs; exclude ordinary dependency and lock waits.
+- Current measured state: Dispatch audit and queue_frontier already distinguish root eligibility, and review runner exposes protected recovery phases.
+- Evidence: `custodian/docs/ai_context/AGENT_BLOCKER_INBOX_PROTOCOL_V1.md`, `custodian/tools/agent/{dispatch.py,queue_frontier.py,workflow_control.py,workstream.py,paired_review_runner.py}`.
+- Task-specific authority: Existing dispatcher, workstream, RunTrace, independent reviewer and recovery owners remain sole authorities; `ops/blocker-inbox` is a redacted diagnostic transport.
+- Work surface: Add minimal post-transaction event hooks in existing custodian/tools/agent/{dispatch.py,workstream.py,paired_review_runner.py,workflow_control.py} where proven safe; use blocker_inbox.py publisher; add test_blocker_capture_hooks.py. Classify failed required validation, explicit blocked-for-repair, review findings, interrupted claim, host_validation_recovery, post_exit_recovery and unavailable indispensable inputs; exclude ordinary dependency and lock waits.
+- Publication inputs: `custodian/docs/ai_context/AGENT_BLOCKER_INBOX_PROTOCOL_V1.md`
+- Change: Implement the exact completion boundary using the existing owner seams, narrow tests and validation ownership; capture proof of side-effect-free behavior and schema fidelity; update only documentation made stale by landed behavior.
+- Preserve: Protected `agent/*`, `dispatch-claims/*`, `agent-diagnostics/*`, reviewer receipts, origin/main, original worktrees and local user files. Never alter process ownership or force-push.
+- Non-goals: New dispatcher, automatic Codex execution/claim release, review PASS synthesis, an MC TUI, daemon or gameplay/Asset V2 changes.
+- Acceptance: True blocker emits one correctly attributed event; ordinary dependency wait produces none; no network operations under locks/claim CAS; failed publication remains pending and never changes workflow result; review findings are not turned into PASS; no protected-worktree side effects.
+- Validation: test_blocker_capture_hooks, test_blocker_inbox, test_dispatch, test_workstream, test_paired_review_runner plus pairing/index/changed-file validation. Also `python3 custodian/tools/agent/check_ai_context.py --json`, `python3 custodian/tools/agent/task_packet_index.py`, `python3 custodian/tools/agent/validate_review_pairing.py`, `python3 custodian/tools/validation/run_validation.py --changed --json`, `git diff --check`.
+- Task overrides: `none`
+- Deferred: Future Mission Control adapter and optional scheduled notifications.
+
+## Handoff
+- Next workstream: `review-agent-blocker-capture-hooks-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: Land validated scope, run fresh paired review; after acceptance continue `agent-blocker-recovery-reconciliation-v1`.
+- Blockers or open questions: `none`

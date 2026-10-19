@@ -1,0 +1,41 @@
+# REVIEW AGENT BLOCKER INBOX PUBLISHER V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-blocker-inbox-publisher-v1`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `agent-blocker-inbox-publisher-v1`
+- Locks: `agent-workflow`
+- Review: `none`
+- Review target workstream: `agent-blocker-inbox-publisher-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_BLOCKER_INBOX_PUBLISHER_V1.md`
+- Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, architecture, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify the exact landed `agent-blocker-inbox-publisher-v1` implementation against authoritative workstream behavior.
+- Reviewed implementation acceptance: Simultaneous writers preserve both records; identical event retry is idempotent, conflicting ID fails; offline pending replays; no secrets, raw logs, checkout/index/main/agent-ref mutations; event projection rebuild matches index.
+- Review evidence: Pinned origin/main SHA, archived implementation packet and closing summary, independent focused tests, source event and reference snapshots, evidence of negative-case preservation.
+- Correction threshold: False accepted/recovered claims, lost evidence, secrets, stale closure, Git race loss, broken replay or acceptance proof gap is blocking; route through canonical cycle-0 finding and scoped correction.
+- Focused validation: test_blocker_inbox, test_workflow_control, test_dispatch plus ai-context, pairing, index, changed-file validation. Rerun focused `python3 -m unittest` for affected agent tests plus authoring/pair/index/ai-context/changed-file checks.
+- Review focus: Truthful source provenance, concurrent/idempotent events, offline/stale response, preserved branch/worktree/review gates and scope containment.
+- Acceptance: Produce findings-first independent passed receipt only on genuine proof; on blocking findings author a bounded correction and paired cycle-1 re-review. Never patch reviewed implementation code.
+- Non-goals: No repair of reviewed implementation, no claim/lock release, no global workflow refactor, no implied authority from a notification.
+- Publication inputs: `custodian/docs/ai_context/AGENT_BLOCKER_INBOX_PROTOCOL_V1.md`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Next workstream: `agent-blocker-capture-hooks-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: If the verdict is accepted, allow the exact successor through dispatcher dependencies; otherwise preserve and correct findings.
+- Blockers or open questions: `none`
