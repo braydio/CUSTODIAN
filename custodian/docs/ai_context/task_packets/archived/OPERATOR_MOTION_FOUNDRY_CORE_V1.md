@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-motion-foundry-core-v1`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -33,7 +33,30 @@
 - Validation: New `operator_motion_foundry_core_smoke.py` (planned creation), relevant `operator_2_5d_canonical_visual_contract_smoke.py`, targeted `operator_art_agent_v2_pilot.py` if touched, `python3 custodian/tools/validation/run_validation.py --changed --json` and `git diff --check`.
 - Task overrides: `none`
 - Deferred: MF2 source-work bridge; MF3 real human-authored parts; AI, bone deformation, GPU and 3D.
- 
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `operator_motion_foundry_core_smoke.py` passed; separate temporary output roots produced identical candidate and receipt hashes; synthetic 15-frame strip is 1920x128 RGBA; source hash and symlink escapes and modified repeated output are refused; canonical Operator content and design reference hashes remained unchanged.
+- Validation: `python3 custodian/tools/validation/operator_motion_foundry_core_smoke.py`; `python3 custodian/tools/validation/operator_2_5d_canonical_visual_contract_smoke.py`; `python3 custodian/tools/validation/run_validation.py --changed --json` (39/39 passed); `python3 -m compileall -q custodian/tools/operator/motion_foundry custodian/tools/validation/operator_motion_foundry_core_smoke.py`; `git diff --check`.
+- Candidate status: reports and receipts say `candidate`; `publication_authorized` is false. No authored art, timing approval, runtime integration, or production publication is claimed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial changed-file validation lacked a manifest owner for the new smoke and correctly reported uncovered files; the focused test was added to the manifest and the full changed sweep then passed. One validation retry waited behind an active Godot project lock and continued after it cleared.
+- Root cause / contributing factors: New validation scripts require explicit manifest ownership; host Godot import/validation activity shares a serialized project lock.
+- Prevention / pipeline improvement: New implementation smokes are now registered in `validation_manifest.json` with the owned package glob. Keep the existing lock wait behavior and do not launch overlapping validation sweeps.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Candidate outputs are content-addressed, confined, and collision refusing; the synthetic proof protects canonical source/reference hashes.
+
 ## Next Handoff
 
 - Next workstream: `review-operator-motion-foundry-core-v1`

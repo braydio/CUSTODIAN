@@ -1607,6 +1607,19 @@
       "needs_import": false
     },
     {
+      "id": "operator_motion_foundry_core",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_motion_foundry_core_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "determinism", "candidate"],
+      "owners": [
+        "custodian/tools/operator/motion_foundry/**",
+        "custodian/tools/validation/operator_motion_foundry_core_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_2_5d_canonical_visual_contract",
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_canonical_visual_contract_smoke.py",
