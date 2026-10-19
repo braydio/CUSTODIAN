@@ -4,8 +4,8 @@
 - Workstream: `review-agent-grunt-raster-review-scope-attestation-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-grunt-raster-review-scope-attestation-v1`
 - Locks: `paired-review-source-scope`
