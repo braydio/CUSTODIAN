@@ -4,8 +4,8 @@
 - Workstream: `review-grunt-candidate-raster-workflow-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `grunt-candidate-raster-workflow-v1`
 - Locks: `humanoid-raster-tooling`
