@@ -2,8 +2,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-declared-doc-archive-gate-v1`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `paired-review-source-provenance`
