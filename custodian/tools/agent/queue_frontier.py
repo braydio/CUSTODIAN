@@ -41,10 +41,17 @@ def analyze(audit: dict) -> dict:
         if classification == "invalid_recovery":
             return {(workstream, "invalid record or interrupted claim; evidence triage")}
 
-        rejected = [s.split("dependency review not accepted: ", 1)[1].split(" (", 1)[0]
-                    for s in reasons if isinstance(s, str)
-                    and s.startswith("dependency review not accepted: ")]
-        roots_here = {(dep, "unaccepted review; genuine verdict required") for dep in rejected}
+        rejected = []
+        prefix = "dependency review not accepted: "
+        for reason in reasons:
+            if not isinstance(reason, str) or not reason.startswith(prefix):
+                continue
+            dependency, separator, detail = reason[len(prefix):].partition(" (")
+            if separator and detail.endswith(")"):
+                detail = detail[:-1]
+            cause = f"review not accepted: {detail}" if detail else "review acceptance evidence required"
+            rejected.append((dependency, cause))
+        roots_here = set(rejected)
         missing = [s.split("dependency not archived complete: ", 1)[1].strip()
                    for s in reasons if isinstance(s, str)
                    and s.startswith("dependency not archived complete: ")]

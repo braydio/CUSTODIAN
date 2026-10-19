@@ -54,7 +54,22 @@ class QueueFrontierTests(unittest.TestCase):
         entries = analyze(audit)["top_blocking_frontiers"]
         self.assertTrue(any("cycle" in e["cause"] for e in entries))
         self.assertTrue(any(e["root"] == "review-ancestor"
-                            and "genuine verdict" in e["cause"] for e in entries))
+                            and e["cause"] == "review not accepted: findings outcome"
+                            for e in entries))
+
+    def test_unaccepted_review_frontier_preserves_dispatch_reason(self):
+        audit = {"packets": [
+            row("dependent", "dependency_lock_blocked", [
+                "dependency review not accepted: review-legacy (no verified passing outcome or target receipt)"
+            ]),
+        ]}
+        result = analyze(audit)
+        self.assertEqual(result["top_blocking_frontiers"], [{
+            "root": "review-legacy",
+            "cause": "review not accepted: no verified passing outcome or target receipt",
+            "downstream_packet_count": 1,
+            "examples": ["dependent"],
+        }])
 
     def test_malformed_audit_fails_closed(self):
         with self.assertRaises(ValueError):

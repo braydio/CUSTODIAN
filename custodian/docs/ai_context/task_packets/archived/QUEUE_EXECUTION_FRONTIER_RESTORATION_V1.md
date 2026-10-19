@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `queue-execution-frontier-restoration-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -20,7 +20,7 @@
 - Visual review: `none`
 - Goal: `Restore a trustworthy, actionable P0 execution frontier despite the existing blocked queue, and enable the highest-impact safe original-owner recoveries rather than adding another dependency chain.`
 - Completion boundary: `Make the live dispatcher audit and a bounded read-only frontier report usable by the execution owner; identify the actual top roots on refreshed origin/main; resolve only independently proven safe metadata/index/tooling defects in this slice; publish an ordered existing-claim recovery handoff for protected cases without unapproved claim mutation.`
-- Current measured state: `2026-10-17 host audit: 342 active Markdown, 280 managed, 197 dependency/lock blocked, 65 invalid_recovery, 34 claimed, 45 drafts, 1 claimable. Latest main directory holds 353 active Markdown files; this is NOT a refreshed dispatcher census. Static Ready/Auto README is metadata, not actual eligibility. W1 census review and W2/W5 are still gated; original claims and dirty/unique worktrees remain protected.`
+- Current measured state: `2026-10-19 live audit at origin/main@1bb09be3cd76115413f9f433f7f8bf2048a7b81c: 354 active packet rows, 292 managed, 37 claimed, 203 dependency/lock blocked, 66 invalid/recovery, 47 parked drafts, 1 auto-claimable (procgen-macro-physical-contact-audit-v1), 3 interrupted dispatch claims, 0 claim-only orphan packets. No P0 packet is claimable after this P0 was claimed. The 2026-10-17 packet baseline was 342/280/34/197/65/45/1 respectively. See the root closing summary for exact root fronts and protected-owner handoffs.`
 - Evidence: `custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md; custodian/tools/agent/dispatch.py; custodian/tools/agent/task_packet_index.py; custodian/tools/agent/queue_frontier.py; custodian/tools/agent/test_queue_frontier.py; archived W1 review and current correction packets.`
 - Task-specific authority: `custodian/tools/agent/dispatch.py remains sole claim/lock/dependency authority; task_packet_contract.py owns packet grammar; existing workstream/review/host-recovery contracts own recovery and actual reviewer acceptance.`
 - Work surface: `custodian/tools/agent/queue_frontier.py; custodian/tools/agent/test_queue_frontier.py; custodian/tools/agent/dispatch.py; custodian/tools/agent/task_packet_index.py; custodian/docs/ai_context/task_packets/README.md; narrowly relevant agent guidance/tests if demonstrated necessary.`
@@ -37,6 +37,27 @@
 
 From a clean coordination checkout run `python3 custodian/tools/agent/dispatch.py audit --json > /tmp/custodian-queue-audit.json` then `python3 custodian/tools/agent/queue_frontier.py /tmp/custodian-queue-audit.json --json > /tmp/custodian-queue-frontier.json`. If the dispatcher marks this P0 packet eligible, claim it normally with `python3 custodian/tools/agent/dispatch.py claim queue-execution-frontier-restoration-v1 --agent codex`, and do all edits only in the returned isolated worktree. Never treat this procedure as permission to claim over an original owner.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `QUEUE_EXECUTION_FRONTIER_RESTORATION_V1_CLAUDE_SUMMARY.md`; the pinned live audit and frontier reconcile 354 packet rows, all class totals, the sole live claimable ID, and three interrupted claims. A same-snapshot preclaim reconstruction counts two claimable packets (the verified P0 claim plus the current P1); after claiming this workstream, one remains. The five largest fronts and exact existing-owner recovery routes are recorded in the summary. No P0 successor is safely claimable.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: Two full Git LFS checkouts failed during dispatcher claim setup; the second stopped at 97% with `No space left on device`, leaving an interrupted temporary claim each time. The initial claim command output was not collected through a session handle, and the first regression rerun preceded application of the matching analyzer patch.
+- Root cause / contributing factors: The cold, full-media worktree needed more host storage than was available, and long-running checkout output was initially not managed through the command session API.
+- Prevention / pipeline improvement: Use session-managed polling for long dispatcher setup. For this tooling-only packet, a verified no-media checkout with `GIT_LFS_SKIP_SMUDGE=1` succeeded. Each failed temporary claim was removed only after confirming no live named claimant, no attached partial worktree, exact remote claim OID, and a local branch equal to origin/main; deletion used exact-OID leases. Keep this environment-specific workaround out of tasks that require actual LFS assets.
+- Tooling / docs drift discovered: The published analyzer used one generic review label for distinct dispatcher rejection reasons. It now preserves the exact reason, with a regression. The Ready/Auto README already distinguishes authored metadata from live dispatcher eligibility; no index semantic repair was needed.
+- Follow-up: manual-follow-up
+- What worked: The verified live dispatcher and analyzer totals reconciled; focused tests and all queue, pairing, index, AI-context, and changed-file checks passed.
+
 ## Handoff
 
 - Next workstream: `review-queue-execution-frontier-restoration-v1`
@@ -45,5 +66,5 @@ From a clean coordination checkout run `python3 custodian/tools/agent/dispatch.p
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/share/6ad55849-ccfc-83e9-bc13-882d6d04b12c?ogimg=plain
 - Refresh reason: `none`
-- Next action: `Complete focused validation and normal finish/land, then run fresh independent paired review; resume each protected owner only under its existing contract.`
-- Blockers or open questions: `Host-local current claims, status and liveness require on-host audit; this packet does not assert authority to alter them.`
+- Next action: `After this implementation lands, run the paired review in a fresh context from the coordination checkout. Verify the exact root findings, accepted-review evidence, claim/ref preservation, and analyzer reason fidelity; then follow only the original owner packets for any recovery.`
+- Blockers or open questions: `No safe P0 successor is currently eligible; the only claimable packet is P1 procgen-macro-physical-contact-audit-v1. Host-local claim liveness remains owned by the original claimant and the W1/W2/W5 packets.`
