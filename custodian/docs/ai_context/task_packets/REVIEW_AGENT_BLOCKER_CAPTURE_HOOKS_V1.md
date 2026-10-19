@@ -12,7 +12,7 @@
 - Review target workstream: `agent-blocker-capture-hooks-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_BLOCKER_CAPTURE_HOOKS_V1.md`
 - Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `same-agent-fresh-context`
@@ -35,7 +35,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Refresh reason: `none`
 - Next action: If the verdict is accepted, allow the exact successor through dispatcher dependencies; otherwise preserve and correct findings.
 - Blockers or open questions: `none`

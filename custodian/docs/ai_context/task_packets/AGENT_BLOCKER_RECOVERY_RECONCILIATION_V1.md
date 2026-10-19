@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `Critical workflow state, provenance and preservation require independent review`
 - Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Visual review: `none`
 - Goal: Support ChatGPT on-demand blocker triage, root-cause grouping and evidence-verified incident closure without autonomous claim or reviewer authority.
 - Completion boundary: Add blocker_inbox.py check --json and guarded resolve or a bounded blocker_recovery.py; read ops/blocker-inbox index/events with revision, cross-check fetched origin/main dispatcher, archived packets and accepted review receipts, and group roots with queue_frontier.py; classify recoverable, owner-held, human, unknown/stale. Publish closure only after current SHA/authority proof; add test_blocker_recovery.py and a brief GitHub read runbook.
@@ -38,7 +38,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Refresh reason: `none`
 - Next action: Land validated scope, run fresh paired review; after acceptance continue `none`.
 - Blockers or open questions: `none`

@@ -3,7 +3,7 @@
 - Workstream family: `agent-blocker-notification-chain-v1`
 - Status: approved design, implementation not yet landed
 - Inspected main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
-- Authoring chat: `not-recorded` (replace when user supplies current chat URL)
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 
 ## Purpose
 Codex/dispatcher/reviewer events produce a persistent, redacted GitHub inbox. The user says "check CUSTODIAN blockers"; ChatGPT reads that exact branch via the connected GitHub connector, compares each notice with live main and its existing owners, fixes a safe issue where possible, or authors a bounded correction/recovery task. Never treat a notice as authorization to force-release an existing claim, rewrite protected evidence or manufacture an accepted paired review.

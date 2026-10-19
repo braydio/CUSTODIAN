@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `Critical workflow state, provenance and preservation require independent review`
 - Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Visual review: `none`
 - Goal: Capture actionable workflow interruptions automatically at existing owner-controlled lifecycle boundaries.
 - Completion boundary: Add minimal post-transaction event hooks in existing custodian/tools/agent/{dispatch.py,workstream.py,paired_review_runner.py,workflow_control.py} where proven safe; use blocker_inbox.py publisher; add test_blocker_capture_hooks.py. Classify failed required validation, explicit blocked-for-repair, review findings, interrupted claim, host_validation_recovery, post_exit_recovery and unavailable indispensable inputs; exclude ordinary dependency and lock waits.
@@ -38,7 +38,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Refresh reason: `none`
 - Next action: Land validated scope, run fresh paired review; after acceptance continue `agent-blocker-recovery-reconciliation-v1`.
 - Blockers or open questions: `none`

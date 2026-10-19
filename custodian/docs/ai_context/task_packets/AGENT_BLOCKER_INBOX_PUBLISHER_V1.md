@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `Critical workflow state, provenance and preservation require independent review`
 - Reviewed main: `07d1180f42540ba815dfc6605bb6a5c44a6d4ff7`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Visual review: `none`
 - Goal: Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
 - Completion boundary: Create custodian/tools/agent/blocker_inbox.py with emit, replay-pending and list --json; event schema and redaction, durable local pending outbox, index rebuild and non-force concurrent Git writer retry; tests and manifest registration.
@@ -38,7 +38,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: https://chatgpt.com/share/6ad6ab3d-1030-83ea-8b46-400ac48316b3?ogimg=plain
 - Refresh reason: `none`
 - Next action: Land validated scope, run fresh paired review; after acceptance continue `agent-blocker-capture-hooks-v1`.
 - Blockers or open questions: `none`
