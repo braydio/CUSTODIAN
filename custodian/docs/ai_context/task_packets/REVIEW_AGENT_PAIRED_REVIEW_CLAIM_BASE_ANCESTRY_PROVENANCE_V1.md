@@ -28,7 +28,7 @@
 - Review focus: `Claim event identity and run binding; full commit resolution and parent/subject binding; strict ancestor direction; source_base remains selected published claim base; no ambiguity accepted; existing queue/archive-only/main-sync/W1/6519 controls; implementation versus archive-closeout commit separation; held run preservation.`
 - Acceptance: `Issue findings-first independent receipt. PASS only if all listed positive and negative cases are demonstrated, source span remains exactly pinned, existing held claims/evidence remain unchanged, required tests pass, and no recovery reviewer was launched. Otherwise record precise findings and keep the original source-bearing review unlaunched.`
 - Non-goals: `Do not edit implementation code or tests; do not modify/release/replace/resume any of the three held review claims; do not apply a recovery plan, launch the source-bearing review, or continue W1.`
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; never edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 
