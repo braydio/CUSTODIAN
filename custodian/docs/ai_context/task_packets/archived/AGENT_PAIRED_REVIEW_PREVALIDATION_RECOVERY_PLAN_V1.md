@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-prevalidation-recovery-plan-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-claim-base-ancestry-provenance-v1`
@@ -36,7 +36,7 @@
   4. Fail closed for partial report pairs, metadata that says validation already occurred while reports are absent, mismatched run/claim/worktree identity, changed evidence manifest, and any preexisting continuation child.
   5. Focused paired-review runner tests and Python parse checks pass; source/test commit is separate from archival closeout.
   6. Independent paired review passes before the original historical plan is generated. After generating it, verify its pins and stop without applying it or launching a reviewer.
-- Validation: `python3 -m unittest custodian.tools.agent.test_paired_review_runner`; `python3 -m py_compile custodian/tools/agent/paired_review_runner.py custodian/tools/agent/test_paired_review_runner.py`; run the exact historical `--recover-host-validation --plan` command only after paired review PASS and compare its identities, source-span base, manifest hash, and evidence hashes to the preserved baseline.
+- Validation: `python3 -m unittest discover -s custodian/tools/agent -p test_paired_review_runner.py`; `python3 -m py_compile custodian/tools/agent/paired_review_runner.py custodian/tools/agent/test_paired_review_runner.py`; run the exact historical `--recover-host-validation --plan` command only after paired review PASS and compare its identities, source-span base, manifest hash, and evidence hashes to the preserved baseline.
 - Task overrides:
   - `TASK OVERRIDE: Do not apply the historical recovery plan or launch its reviewer in this workstream.`
   - `TASK OVERRIDE: Preserve all existing held review claims, original traces, worktrees, and evidence; do not create replacement claims or worktrees.`
@@ -49,3 +49,35 @@
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Refresh instruction: `none`
 - Next Handoff: After independent review passes, generate the exact original recovery plan read-only, verify every pin against preserved evidence, and stop. Do not apply it or launch the reviewer.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The pre-validation planner branch is covered by a read-only fixture whose report pair is absent, metadata has no validation pin, claim/worktree provenance is verified, and the emitted source-span base is exactly `8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8`. Negative regressions reject a partial report pair, prior validation pins without reports, mismatched claim worktree, a preexisting continuation child, and a changed original manifest when applying a stale plan digest. The validated-run regression confirms both report hashes remain in plan evidence. All 86 paired-review runner tests pass; py_compile and git diff --check pass. Source/test commits are `e28142c51` and `aaebb04f7`; archival closeout is a separate commit. The preserved historical run manifest remains `75eafa7d397a94f5d29fec225d0a90a53a6986f0781aaa4ace2b279d247fbe37`; the exact live read-only plan is intentionally sequenced after this implementation's independent review and remains the next handoff.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The first package-qualified unittest invocation did not fit this module's sibling-import layout; the packet recipe was corrected to unittest discovery from repository root. Dispatcher worktree creation also waited for Git LFS checkout to finish.
+- Root cause / contributing factors: The test imports `paired_review_runner` as a sibling module, and the claim worktree hydrates LFS-managed repository assets.
+- Prevention / pipeline improvement: Use the validated discovery command recorded in this packet; no tooling change was needed.
+- Tooling / docs drift discovered: The initial packet's package-qualified unittest command was not runnable in this checkout; the replacement discovery command passes all 86 tests.
+- Follow-up: `none`
+- What worked: Exact negative cases preserve fail-closed classification while the positive fixture pins the required source base and verifies a read-only manifest.
+
+## Next Handoff
+
+- Next workstream: `review-agent-paired-review-prevalidation-recovery-plan-v1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401
+- Refresh reason: `none`
+- Next action: Start the fresh independent paired review. Only after it passes, run the exact historical `--recover-host-validation --plan` command read-only; verify run/claim/worktree, source base, original manifest, and evidence hashes, then stop without applying the plan or launching the original reviewer.
+- Blockers or open questions: The original held review run and the other protected claims/worktrees remain unchanged; do not continue W1.
