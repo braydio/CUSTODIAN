@@ -64,6 +64,50 @@ ROOT_SYNC_DEFERRAL_WORKSTREAMS = frozenset({
     "review-agent-paired-review-invalid-disposition-recovery-v1",
 })
 
+# This recovery is deliberately bound to one already-authored reviewer PASS.
+# It does not change ordinary continuation or the nonpassing closeout API.
+ADVANCED_HEAD_PASS_WORKSTREAM = "review-agent-paired-review-exact-claim-parking-v1"
+ADVANCED_HEAD_PASS_RUN_ID = "20261019T164227Z-e6abe304ef6c"
+ADVANCED_HEAD_PASS_TARGET = "agent-paired-review-exact-claim-parking-v1"
+ADVANCED_HEAD_PASS_REVIEWED_MAIN = "2a0352441abfae7ec174c1d614f675949f68922f"
+ADVANCED_HEAD_PASS_REVIEWER_COMMIT = "94e2a8c76d37242803f9261673f3cb55356d2ee0"
+ADVANCED_HEAD_PASS_REMOTE_TIP = "2a0352441abfae7ec174c1d614f675949f68922f"
+ADVANCED_HEAD_PASS_WORKTREE = (
+    "/home/braydenchaffee/Projects/.custodian-worktrees/"
+    "review-agent-paired-review-exact-claim-parking-v1-20261019T164232Z-f6ba03fc69a3"
+)
+ADVANCED_HEAD_PASS_TARGET_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md"
+)
+ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md"
+)
+ADVANCED_HEAD_PASS_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md"
+)
+ADVANCED_HEAD_PASS_SUMMARY = "REVIEW_AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1_CLAUDE_SUMMARY.md"
+ADVANCED_HEAD_PASS_ALLOWED_BASE_PATHS = frozenset({
+    ADVANCED_HEAD_PASS_SUMMARY,
+    f"{PACKET_ROOT}/README.md",
+    ADVANCED_HEAD_PASS_TARGET_PACKET,
+    ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET,
+    ADVANCED_HEAD_PASS_REVIEW_PACKET,
+})
+ADVANCED_HEAD_PASS_ORIGINAL_EVIDENCE_SHA256 = {
+    "RECOVERY.md": "59ce514875b50e4a925b06303f42666e59a7c2190d3c7092af49ce7cde905a63",
+    "claim-receipt.json": "641b1b260aa1dc7476fd1cb1448465415c77e92eae54ad9bea35a35b1eaf6e91",
+    "claim.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "claim.stdout": "284a7db0b6440258154405ef6aa0c23b680b40681e270b17a74af0c4435e2738",
+    "codex.jsonl": "bbcc05811889bfd4796a9d29912fea3fde4bf488e5b00df34c50af299d64c1f2",
+    "codex.stderr": "93d91d37a070fe05f0e23be70fa3fa7b579ecc00e9fd02d420386a81b366546a",
+    "coordinator-validation.json": "dbbfa3ed3f2e69f636aabf66a63973a343db4571572bbefcd7421f9eeb725fdc",
+    "last-message.txt": "2aedc38d42e7ed681a14a6e29723008fc6c26345c0f40f9f33428cfd0c6870e0",
+    "metadata.json": "3ef49232df5362859fccc32acd5c66df21ca53e33cffb9f04bc91e4a8509af02",
+    "validation.json": "5976264c08738dc8d088bd447d90dcfbaabd2ed99fe9866d18dd5ba305c95ae1",
+}
+ADVANCED_HEAD_PASS_RECOVERY_SCHEMA = "custodian.paired_review_advanced_head_pass_recovery.v1"
+ADVANCED_HEAD_PASS_RECOVERY_ROOT = "custodian-review-recoveries/advanced-head-pass-closeout"
+
 
 class RunnerError(RuntimeError):
     pass
@@ -624,6 +668,573 @@ def _file_manifest(root: Path, *, omit: Path | None = None) -> dict[str, str]:
     return result
 
 
+def _advanced_head_original_manifest(run_dir: Path) -> dict[str, str]:
+    actual = _file_manifest(run_dir)
+    if actual != ADVANCED_HEAD_PASS_ORIGINAL_EVIDENCE_SHA256:
+        raise RunnerError("original exact-run evidence manifest changed; advanced-head PASS recovery refused")
+    return actual
+
+
+def _advanced_head_recovery_journal_path(common: Path) -> Path:
+    path = common / ADVANCED_HEAD_PASS_RECOVERY_ROOT / ADVANCED_HEAD_PASS_RUN_ID / "recovery.json"
+    current = common
+    for part in Path(ADVANCED_HEAD_PASS_RECOVERY_ROOT).parts + (ADVANCED_HEAD_PASS_RUN_ID,):
+        current = current / part
+        if current.is_symlink():
+            raise RunnerError("advanced-head recovery journal directory must not contain symlinks")
+        if current.exists() and not current.is_dir():
+            raise RunnerError("advanced-head recovery journal parent is not a directory")
+    if not path.resolve().is_relative_to(common.resolve()):
+        raise RunnerError("advanced-head recovery journal escapes shared Git metadata")
+    return path
+
+
+def _advanced_head_packet_header(text: str) -> dict[str, str]:
+    """Read unique, unindented metadata lines from this exact archived review packet."""
+    lines = text.splitlines()
+    header: dict[str, list[str]] = {}
+    title_seen = False
+    started = False
+    for line in lines:
+        if not title_seen:
+            if not line.strip():
+                continue
+            if not line.startswith("# "):
+                raise RunnerError("archived review packet has no canonical title before its metadata")
+            title_seen = True
+            continue
+        if not started and not line.strip():
+            continue
+        if not line.strip():
+            break
+        if line.startswith("#"):
+            break
+        started = True
+        if line.lstrip().startswith("-") and not line.startswith("- "):
+            raise RunnerError("archived review packet contains malformed or indented metadata")
+        match = re.fullmatch(r"- ([^:]+):[ \t]*(.*?)[ \t]*", line)
+        if match:
+            key, value = match.groups()
+            header.setdefault(key, []).append(value.strip().strip("`").strip())
+    for key in ("Workstream", "Kind", "Status", "Review", "Review target workstream",
+                "Review target packet", "Reviewed main", "Reviewer context",
+                "Reviewer provenance", "Review cycle"):
+        if len(header.get(key, [])) != 1:
+            raise RunnerError(f"archived review packet must contain exactly one {key} header")
+    return {key: values[0] for key, values in header.items() if len(values) == 1}
+
+
+def _advanced_head_legacy_pass_metadata_is_exact(text: str, workstream: str) -> bool:
+    """Recognize only this archived packet's legacy `Review: passed` closeout field."""
+    if workstream != ADVANCED_HEAD_PASS_WORKSTREAM:
+        return False
+    try:
+        header = _advanced_head_packet_header(text)
+    except RunnerError:
+        return False
+    outcome, outcome_error = review_outcome.parse_review_outcome(text)
+    if (outcome_error or outcome is None or outcome.get("Outcome") != "passed"
+            or review_outcome.outcome_identity_error(
+                outcome, review_workstream=ADVANCED_HEAD_PASS_WORKSTREAM,
+                target_workstream=ADVANCED_HEAD_PASS_TARGET,
+                reviewed_main=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+                implementation_commit=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+                run_id=ADVANCED_HEAD_PASS_RUN_ID, review_cycle=0,
+            )):
+        return False
+    return (header.get("Workstream") == ADVANCED_HEAD_PASS_WORKSTREAM
+            and header.get("Kind") == "review"
+            and header.get("Status") == "complete"
+            and header.get("Review") == "passed"
+            and header.get("Review target workstream") == ADVANCED_HEAD_PASS_TARGET
+            and header.get("Review target packet") == ADVANCED_HEAD_PASS_TARGET_PACKET
+            and header.get("Reviewed main") == ADVANCED_HEAD_PASS_REVIEWED_MAIN
+            and header.get("Reviewer context") == "fresh"
+            and header.get("Reviewer provenance") in review_outcome.PROVENANCE
+            and header.get("Review cycle") == "0")
+
+
+def _append_advanced_head_outcome(original: str, outcome_section: str) -> str:
+    separator = "" if original.endswith("\n\n") else "\n" if original.endswith("\n") else "\n\n"
+    return original + separator + outcome_section
+
+
+def _advanced_head_reviewer_pass(repo: Path, run_dir: Path, review_packet: str, summary: str,
+                                 metadata: dict) -> tuple[str, str]:
+    """Bind the canonical outcome to the reviewer-authored final message and raw session."""
+    if (metadata.get("schema") != SCHEMA
+            or metadata.get("workstream") != ADVANCED_HEAD_PASS_WORKSTREAM
+            or metadata.get("run_id") != ADVANCED_HEAD_PASS_RUN_ID
+            or metadata.get("phase") != "post_exit_recovery"
+            or metadata.get("fresh") is not True or metadata.get("exit_code") != 0
+            or metadata.get("reviewed_main") != ADVANCED_HEAD_PASS_REVIEWED_MAIN):
+        raise RunnerError("original run metadata does not prove the exact fresh reviewer session")
+    try:
+        final = (run_dir / "last-message.txt").read_text(encoding="utf-8")
+        lines = (run_dir / "codex.jsonl").read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise RunnerError("reviewer-authored final output or raw session is missing") from exc
+    agent_messages: list[str] = []
+    completed_turns = 0
+    for line in lines:
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise RunnerError("raw reviewer session contains malformed JSON") from exc
+        item = event.get("item") if isinstance(event, dict) else None
+        if isinstance(item, dict) and item.get("type") == "agent_message":
+            if not isinstance(item.get("text"), str):
+                raise RunnerError("raw reviewer session contains an invalid agent message")
+            agent_messages.append(item["text"])
+        if isinstance(event, dict) and event.get("type") == "turn.completed":
+            completed_turns += 1
+    if (completed_turns != 1 or len(agent_messages) != 1
+            or agent_messages[0].strip() != final.strip()):
+        raise RunnerError("raw reviewer session and captured final message do not uniquely agree")
+    pass_pattern = re.compile(
+        r"(?s)\bVerdict:\s*`passed`\s*[—–-]\s*0 blocking defects and 0 material gaps\."
+    )
+    if len(pass_pattern.findall(final)) != 1:
+        raise RunnerError("reviewer-authored final message does not contain one unambiguous PASS")
+    if (f"Workstream: {ADVANCED_HEAD_PASS_WORKSTREAM}" not in final
+            or ADVANCED_HEAD_PASS_REVIEWED_MAIN not in final
+            or "## Review findings" not in summary
+            or "## Independent verification" not in summary
+            or "Status: `passed`" not in summary
+            or "Blocking defects: `0`" not in summary
+            or "Material gaps: `0`" not in summary
+            or ADVANCED_HEAD_PASS_REVIEWED_MAIN not in summary):
+        raise RunnerError("reviewer summary/final output do not support the exact PASS identity")
+    packet = _advanced_head_packet_header(review_packet)
+    if (packet["Kind"] != "review" or packet["Workstream"] != ADVANCED_HEAD_PASS_WORKSTREAM
+            or packet["Review target workstream"] != ADVANCED_HEAD_PASS_TARGET
+            or packet["Review target packet"] != ADVANCED_HEAD_PASS_TARGET_PACKET
+            or packet["Status"] != "complete" or packet["Review"] != "passed"
+            or packet["Reviewer context"] != "fresh"
+            or packet["Reviewer provenance"] not in review_outcome.PROVENANCE
+            or packet["Review cycle"] != "0"):
+        raise RunnerError("archived review packet identity or reviewer provenance is contradictory")
+    if (not packet["Reviewed main"] or subprocess.run(
+            ["git", "merge-base", "--is-ancestor", packet["Reviewed main"],
+             ADVANCED_HEAD_PASS_REVIEWED_MAIN], cwd=repo, capture_output=True).returncode):
+        # The packet's Reviewed main records its authoring baseline; the run pins
+        # the later immutable review baseline. It must be an ancestor, never a fork.
+        raise RunnerError("review packet authoring baseline is not an ancestor of the verified run baseline")
+    return packet["Reviewer provenance"], final
+
+
+def _advanced_head_sha(repo: Path, ref: str) -> str:
+    result = subprocess.run(["git", "rev-parse", "--verify", f"{ref}^{{commit}}"], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise RunnerError(f"required advanced-head recovery ref is unavailable: {ref}")
+    sha = result.stdout.strip()
+    if not re.fullmatch(r"[0-9a-f]{40,64}", sha):
+        raise RunnerError(f"required advanced-head recovery ref is malformed: {ref}")
+    return sha
+
+
+def _advanced_head_commit_chain(repo: Path, worktree: Path, local_head: str,
+                                remote_tip: str, *, allow_recovery_child: bool = False,
+                                allow_published_recovery_tip: bool = False
+                                ) -> tuple[list[str], list[str], list[str]]:
+    if remote_tip not in {ADVANCED_HEAD_PASS_REMOTE_TIP, local_head}:
+        raise RunnerError("remote review claim tip is neither the preserved tip nor the journaled recovery commit")
+    if (remote_tip == local_head and remote_tip != ADVANCED_HEAD_PASS_REMOTE_TIP
+            and not allow_published_recovery_tip):
+        raise RunnerError("remote recovery commit has no matching exact-run recovery journal")
+    if subprocess.run(["git", "merge-base", "--is-ancestor", remote_tip, local_head],
+                      cwd=worktree, capture_output=True).returncode:
+        raise RunnerError("remote claim tip is not an ancestor of the preserved local review history")
+    if local_head != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+        if not allow_recovery_child:
+            raise RunnerError("local recovery child has no matching exact-run recovery journal")
+        parent = subprocess.run(["git", "rev-parse", "--verify", f"{local_head}^{{commit}}^"],
+                                cwd=worktree, text=True, capture_output=True)
+        if parent.returncode or parent.stdout.strip() != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+            raise RunnerError("local review HEAD is not the preserved reviewer commit or its exact recovery child")
+    commits = git(worktree, "rev-list", "--reverse",
+                  f"{ADVANCED_HEAD_PASS_REMOTE_TIP}..{local_head}").splitlines()
+    expected_commits = ([ADVANCED_HEAD_PASS_REVIEWER_COMMIT]
+                        if local_head == ADVANCED_HEAD_PASS_REVIEWER_COMMIT
+                        else [ADVANCED_HEAD_PASS_REVIEWER_COMMIT, local_head])
+    if commits != expected_commits:
+        raise RunnerError("local review ancestry contains missing, unrelated, or extra commits")
+    if git(worktree, "rev-parse", f"{ADVANCED_HEAD_PASS_REVIEWER_COMMIT}^") != ADVANCED_HEAD_PASS_REMOTE_TIP:
+        raise RunnerError("reviewer-authored commit no longer has the exact original remote tip as parent")
+    base_paths = sorted(set(git(worktree, "diff", "--no-renames", "--name-only",
+                                f"{ADVANCED_HEAD_PASS_REMOTE_TIP}..{ADVANCED_HEAD_PASS_REVIEWER_COMMIT}").splitlines()))
+    if set(base_paths) != set(ADVANCED_HEAD_PASS_ALLOWED_BASE_PATHS):
+        raise RunnerError("reviewer-authored commit changed paths outside the exact review artifact manifest")
+    recovery_paths: list[str] = []
+    if local_head != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+        recovery_paths = sorted(set(git(worktree, "diff", "--no-renames", "--name-only",
+                                        f"{ADVANCED_HEAD_PASS_REVIEWER_COMMIT}..{local_head}").splitlines()))
+        if recovery_paths != [ADVANCED_HEAD_PASS_REVIEW_PACKET]:
+            raise RunnerError("recovery child commit changes files outside the one Review Outcome path")
+    return commits, base_paths, recovery_paths
+
+
+def _advanced_head_recovery_journal(common: Path, evidence_manifest: dict[str, str]) -> dict | None:
+    path = _advanced_head_recovery_journal_path(common)
+    if not path.exists():
+        return None
+    if path.is_symlink():
+        raise RunnerError("advanced-head recovery journal must not be a symlink")
+    try:
+        journal = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("advanced-head recovery journal is missing or malformed") from exc
+    allowed_keys = {"schema", "workstream", "run_id", "reviewer_commit", "stage",
+                    "initial_plan_sha256", "original_evidence_sha256", "recovery_commit",
+                    "published_head", "reason", "result"}
+    if (not isinstance(journal, dict) or set(journal) - allowed_keys
+            or journal.get("schema") != ADVANCED_HEAD_PASS_RECOVERY_SCHEMA
+            or journal.get("workstream") != ADVANCED_HEAD_PASS_WORKSTREAM
+            or journal.get("run_id") != ADVANCED_HEAD_PASS_RUN_ID
+            or journal.get("reviewer_commit") != ADVANCED_HEAD_PASS_REVIEWER_COMMIT
+            or journal.get("original_evidence_sha256") != evidence_manifest
+            or not re.fullmatch(r"[0-9a-f]{64}", str(journal.get("initial_plan_sha256", "")))):
+        raise RunnerError("advanced-head recovery journal identity or evidence manifest is contradictory")
+    if journal.get("stage") not in {"prepared", "outcome_committed", "published",
+                                    "coordinator_closeout_blocked", "complete"}:
+        raise RunnerError("advanced-head recovery journal has an unknown transition stage")
+    recovery_commit = journal.get("recovery_commit")
+    if journal["stage"] == "prepared":
+        if recovery_commit is not None:
+            raise RunnerError("prepared recovery journal unexpectedly names a recovery commit")
+    elif not isinstance(recovery_commit, str) or not re.fullmatch(r"[0-9a-f]{40,64}", recovery_commit):
+        raise RunnerError("advanced-head recovery journal omits its committed outcome child")
+    if journal.get("published_head") not in (None, recovery_commit):
+        raise RunnerError("advanced-head recovery journal published SHA differs from its outcome child")
+    if journal["stage"] == "complete":
+        result = journal.get("result")
+        if (not isinstance(result, dict) or result.get("coordinator_verified") is not True
+                or result.get("outcome") != "passed"
+                or result.get("reviewer_commit") != ADVANCED_HEAD_PASS_REVIEWER_COMMIT):
+            raise RunnerError("completed recovery journal lacks the exact coordinator-verified PASS receipt")
+    return journal
+
+
+def _advanced_head_plan_unlocked(repo: Path) -> dict:
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    run_dir = common / "custodian-review-runs" / ADVANCED_HEAD_PASS_WORKSTREAM / ADVANCED_HEAD_PASS_RUN_ID
+    try:
+        metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("exact advanced-head review run metadata is missing or malformed") from exc
+    if (metadata.get("run_dir") != str(run_dir)
+            or metadata.get("branch") != f"agent/{ADVANCED_HEAD_PASS_WORKSTREAM}"
+            or Path(str(metadata.get("worktree", ""))).resolve() != Path(ADVANCED_HEAD_PASS_WORKTREE)
+            or metadata.get("packet") != ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET):
+        raise RunnerError("exact advanced-head run/claim identity differs from the authorized recovery")
+    evidence_manifest = _advanced_head_original_manifest(run_dir)
+    recovery_journal = _advanced_head_recovery_journal(common, evidence_manifest)
+    if list(run_dir.glob("continuation-*")):
+        raise RunnerError("exact run has continuation children; preserve them and use their existing recovery")
+    if metadata.get("reviewed_main") != ADVANCED_HEAD_PASS_REVIEWED_MAIN:
+        raise RunnerError("original review run pins a different reviewed-main SHA")
+
+    main_sha = fetch_and_pin_main(repo)
+    if subprocess.run(["git", "merge-base", "--is-ancestor", ADVANCED_HEAD_PASS_REVIEWED_MAIN, main_sha],
+                      cwd=repo, capture_output=True).returncode:
+        raise RunnerError("current origin/main does not descend from the exact reviewed baseline")
+    branch = f"agent/{ADVANCED_HEAD_PASS_WORKSTREAM}"
+    git(repo, "fetch", "origin", branch)
+    remote_tip = _advanced_head_sha(repo, f"refs/remotes/origin/{branch}")
+    claim = _claim_identity(run_dir, ADVANCED_HEAD_PASS_WORKSTREAM, repo, metadata)
+    worktree = Path(claim["worktree"]).resolve()
+    if (str(worktree) != ADVANCED_HEAD_PASS_WORKTREE
+            or claim.get("branch") != branch
+            or claim.get("packet") != ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET
+            or git(worktree, "branch", "--show-current") != branch
+            or common_dir(worktree).resolve() != common):
+        raise RunnerError("protected review claim is not attached to its exact original worktree")
+    if git(worktree, "status", "--porcelain", "--untracked-files=all"):
+        raise RunnerError("protected review worktree is not clean; advanced-head recovery refused")
+    reviewer_head = _advanced_head_sha(worktree, "HEAD")
+    recovery_child_allowed = bool(recovery_journal)
+    published_recovery_tip_allowed = bool(
+        recovery_journal and recovery_journal.get("stage") != "prepared"
+        and recovery_journal.get("recovery_commit") == reviewer_head
+    )
+    commits, paths, recovery_paths = _advanced_head_commit_chain(
+        repo, worktree, reviewer_head, remote_tip, allow_recovery_child=recovery_child_allowed,
+        allow_published_recovery_tip=published_recovery_tip_allowed,
+    )
+    if reviewer_head != ADVANCED_HEAD_PASS_REVIEWER_COMMIT and not recovery_child_allowed:
+        raise RunnerError("local advanced HEAD is not the exact recovery child recorded in its journal")
+
+    target_baseline = _show_at(repo, ADVANCED_HEAD_PASS_REVIEWED_MAIN, ADVANCED_HEAD_PASS_TARGET_PACKET)
+    target_text = _show_at(worktree, reviewer_head, ADVANCED_HEAD_PASS_TARGET_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, ADVANCED_HEAD_PASS_REVIEWED_MAIN, ADVANCED_HEAD_PASS_TARGET_PACKET,
+        ADVANCED_HEAD_PASS_TARGET, target_baseline,
+    )
+    if identity_error or implementation_commit != ADVANCED_HEAD_PASS_REVIEWED_MAIN:
+        raise RunnerError("reviewed implementation identity failed exact recovery verification: "
+                          + str(identity_error or implementation_commit))
+    receipt, receipt_error = verify_review_receipt_delta(
+        target_baseline, target_text, review_workstream=ADVANCED_HEAD_PASS_WORKSTREAM,
+        target_workstream=ADVANCED_HEAD_PASS_TARGET,
+        reviewed_main=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+        target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or receipt is None:
+        raise RunnerError("preserved target receipt failed exact baseline verification: "
+                          + str(receipt_error or "receipt absent"))
+    review_text = _show_at(worktree, reviewer_head, ADVANCED_HEAD_PASS_REVIEW_PACKET)
+    summary_text = _show_at(worktree, reviewer_head, ADVANCED_HEAD_PASS_SUMMARY)
+    reviewer_provenance, final_message = _advanced_head_reviewer_pass(
+        repo, run_dir, review_text, summary_text, metadata,
+    )
+    expected_outcome = review_outcome.render_review_outcome(
+        outcome="passed", review_workstream=ADVANCED_HEAD_PASS_WORKSTREAM,
+        target_workstream=ADVANCED_HEAD_PASS_TARGET,
+        reviewed_main=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+        implementation_commit=implementation_commit,
+        provenance=reviewer_provenance, run_id=ADVANCED_HEAD_PASS_RUN_ID,
+        review_cycle=0, ids=(),
+    )
+    existing_outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error:
+        raise RunnerError("archived reviewer disposition already contains malformed outcome data")
+    if reviewer_head == ADVANCED_HEAD_PASS_REVIEWER_COMMIT and existing_outcome is not None:
+        raise RunnerError("preserved reviewer commit unexpectedly contains a Review Outcome")
+    if reviewer_head != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+        if existing_outcome is None:
+            raise RunnerError("recovery child commit is missing its canonical Review Outcome")
+        if existing_outcome != review_outcome.parse_review_outcome(expected_outcome)[0]:
+            raise RunnerError("recovery child outcome does not exactly match the reviewer-authored PASS")
+        parent_text = _show_at(worktree, ADVANCED_HEAD_PASS_REVIEWER_COMMIT, ADVANCED_HEAD_PASS_REVIEW_PACKET)
+        expected_text = _append_advanced_head_outcome(parent_text, expected_outcome)
+        if review_text != expected_text:
+            raise RunnerError("recovery child changed archived review packet bytes beyond the canonical outcome append")
+
+    host_evidence = _host_evidence_for_continuation(
+        repo, worktree, run_dir, metadata, ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+        implementation_commit, ADVANCED_HEAD_PASS_TARGET, ADVANCED_HEAD_PASS_TARGET_PACKET,
+    )
+    host_evidence.update({"run_id": ADVANCED_HEAD_PASS_RUN_ID, "review_cycle": 0})
+    journal_path = _advanced_head_recovery_journal_path(common)
+    result = {
+        "schema": "custodian.paired_review_advanced_head_pass_plan.v1",
+        "workstream": ADVANCED_HEAD_PASS_WORKSTREAM,
+        "run_id": ADVANCED_HEAD_PASS_RUN_ID,
+        "reviewed_main": ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+        "implementation_commit": implementation_commit,
+        "coordinator_main": main_sha,
+        "branch": branch,
+        "remote_tip": remote_tip,
+        "reviewer_commit": ADVANCED_HEAD_PASS_REVIEWER_COMMIT,
+        "local_head": reviewer_head,
+        "commit_chain": commits,
+        "changed_paths": paths,
+        "recovery_changed_paths": recovery_paths,
+        "run_evidence_sha256": evidence_manifest,
+        "review_summary_sha256": _sha256_bytes(summary_text.encode("utf-8")),
+        "reviewer_final_sha256": _sha256_bytes(final_message.encode("utf-8")),
+        "target_receipt": receipt,
+        "outcome": review_outcome.parse_review_outcome(expected_outcome)[0],
+        "recovery_state": "outcome_already_appended" if existing_outcome is not None else "outcome_pending",
+        "recovery_journal_stage": recovery_journal.get("stage") if recovery_journal else None,
+        "recovery_journal": str(journal_path),
+        "host_validation": {key: host_evidence[key] for key in
+                            ("report_sha256", "metadata_sha256", "implementation_commit")},
+    }
+    result["plan_sha256"] = _sha256_bytes(json.dumps(result, sort_keys=True, separators=(",", ":")).encode())
+    return result
+
+
+def plan_advanced_head_pass_closeout(repo: Path, workstream: str, run_id: str) -> dict:
+    if (workstream != ADVANCED_HEAD_PASS_WORKSTREAM or run_id != ADVANCED_HEAD_PASS_RUN_ID):
+        raise RunnerError("advanced-head PASS recovery accepts only its exact authorized workstream and run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery holds the exact review run") from exc
+        return _advanced_head_plan_unlocked(repo)
+
+
+def apply_advanced_head_pass_closeout(repo: Path, workstream: str, run_id: str,
+                                      plan_sha256: str) -> dict:
+    if (workstream != ADVANCED_HEAD_PASS_WORKSTREAM or run_id != ADVANCED_HEAD_PASS_RUN_ID
+            or not re.fullmatch(r"[0-9a-f]{64}", plan_sha256)):
+        raise RunnerError("advanced-head PASS apply requires the exact authorized workstream, run and plan digest")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery holds the exact review run") from exc
+        fresh = _advanced_head_plan_unlocked(repo)
+        if fresh["plan_sha256"] != plan_sha256:
+            raise RunnerError("origin/main, claim, worktree, evidence or plan state changed; obtain a fresh read-only plan")
+        worktree = Path(ADVANCED_HEAD_PASS_WORKTREE)
+        run_dir = common / "custodian-review-runs" / workstream / run_id
+        journal_dir = Path(fresh["recovery_journal"]).parent
+        journal_dir.mkdir(parents=True, exist_ok=True)
+        journal_path = _advanced_head_recovery_journal_path(common)
+        journal = {"schema": ADVANCED_HEAD_PASS_RECOVERY_SCHEMA, "workstream": workstream,
+                   "run_id": run_id, "initial_plan_sha256": plan_sha256,
+                   "original_evidence_sha256": fresh["run_evidence_sha256"],
+                   "reviewer_commit": ADVANCED_HEAD_PASS_REVIEWER_COMMIT,
+                   "stage": "prepared"}
+        if journal_path.exists():
+            try:
+                existing = json.loads(journal_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                raise RunnerError("existing advanced-head recovery journal is malformed") from exc
+            if (not isinstance(existing, dict) or any(existing.get(key) != value for key, value in journal.items()
+                                                       if key != "stage")):
+                raise RunnerError("existing recovery journal conflicts with the pinned exact-run evidence")
+            journal = existing
+        else:
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+
+        review_path = worktree / ADVANCED_HEAD_PASS_REVIEW_PACKET
+        current_text = review_path.read_text(encoding="utf-8")
+        outcome, outcome_error = review_outcome.parse_review_outcome(current_text)
+        if outcome_error:
+            raise RunnerError("archived review packet has malformed outcome content")
+        if outcome is None:
+            if fresh["local_head"] != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+                raise RunnerError("only the exact reviewer commit may receive the missing outcome section")
+            expected_section = review_outcome.render_review_outcome(
+                outcome="passed", review_workstream=workstream,
+                target_workstream=ADVANCED_HEAD_PASS_TARGET,
+                reviewed_main=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+                implementation_commit=fresh["implementation_commit"],
+                provenance=fresh["outcome"]["Reviewer provenance"],
+                run_id=run_id, review_cycle=0, ids=(),
+            )
+            review_path.write_text(_append_advanced_head_outcome(current_text, expected_section), encoding="utf-8")
+            staged = subprocess.run(["git", "add", "--", ADVANCED_HEAD_PASS_REVIEW_PACKET], cwd=worktree,
+                                    text=True, capture_output=True)
+            if staged.returncode:
+                raise RunnerError(redact(staged.stderr or staged.stdout))
+            staged_paths = set(_changed_paths(worktree, "diff", "--cached", "--name-only"))
+            if staged_paths != {ADVANCED_HEAD_PASS_REVIEW_PACKET}:
+                raise RunnerError("advanced-head recovery staged an unauthorized path")
+            if _show_at(worktree, "HEAD", ADVANCED_HEAD_PASS_REVIEW_PACKET) != current_text:
+                raise RunnerError("recovery changed reviewer-authored packet bytes before the outcome append")
+            committed = subprocess.run(["git", "commit", "-m", "paired review outcome recovery"], cwd=worktree,
+                                       text=True, capture_output=True)
+            if committed.returncode:
+                raise RunnerError(redact(committed.stderr or committed.stdout))
+            if git(worktree, "rev-parse", "HEAD^") != ADVANCED_HEAD_PASS_REVIEWER_COMMIT:
+                raise RunnerError("recovery commit did not preserve the reviewer-authored commit as its parent")
+            journal.update({"stage": "outcome_committed", "recovery_commit": git(worktree, "rev-parse", "HEAD")})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+
+        if journal.get("stage") == "prepared":
+            journal.update({"stage": "outcome_committed", "recovery_commit": git(worktree, "rev-parse", "HEAD")})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+
+        # Publish by ordinary fast-forward only. The subsequent coordinator call
+        # delegates validation, landing, cleanup and root sync to workstream.py.
+        pushed = subprocess.run(["git", "push", "origin", f"HEAD:refs/heads/{fresh['branch']}"],
+                                cwd=worktree, text=True, capture_output=True)
+        if pushed.returncode:
+            raise RunnerError("fast-forward publication of preserved review history failed: "
+                              + redact(pushed.stderr or pushed.stdout))
+        journal.update({"stage": "published", "published_head": git(worktree, "rev-parse", "HEAD")})
+        _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+
+        metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
+        active_text = _show_at(worktree, "HEAD", ADVANCED_HEAD_PASS_REVIEW_PACKET)
+        packet = parse_packet(ADVANCED_HEAD_PASS_REVIEW_PACKET, active_text)
+        target_content = _show_at(repo, ADVANCED_HEAD_PASS_REVIEWED_MAIN, ADVANCED_HEAD_PASS_TARGET_PACKET)
+        host_evidence = _host_evidence_for_continuation(
+            repo, worktree, run_dir, metadata, ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+            fresh["implementation_commit"], ADVANCED_HEAD_PASS_TARGET, ADVANCED_HEAD_PASS_TARGET_PACKET,
+        )
+        host_evidence.update({"run_id": run_id, "review_cycle": 0})
+        try:
+            landed = coordinator_finish_review(
+                repo, workstream, worktree, ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET,
+                ADVANCED_HEAD_PASS_TARGET, ADVANCED_HEAD_PASS_TARGET_PACKET, target_content,
+                packet.authoring_chat, ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+                journal_dir, host_evidence, defer_teardown=True,
+            )
+        except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError) as exc:
+            journal.update({"stage": "coordinator_closeout_blocked", "reason": redact(str(exc))})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+            raise
+
+        verified_main = fetch_and_pin_main(repo)
+        if subprocess.run(["git", "merge-base", "--is-ancestor", ADVANCED_HEAD_PASS_REVIEWER_COMMIT,
+                           verified_main], cwd=repo, capture_output=True).returncode:
+            raise RunnerError("landed main does not preserve the original reviewer-authored commit ancestry")
+        landed_state = landed_review_state(
+            repo, verified_main, workstream, ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET,
+            ADVANCED_HEAD_PASS_TARGET, ADVANCED_HEAD_PASS_TARGET_PACKET, target_content,
+            packet.authoring_chat, ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+        )
+        if not landed_state["complete"]:
+            raise RunnerError("landed advanced-head PASS failed coordinator verification: "
+                              + "; ".join(landed_state["reasons"]))
+        archived = _show_at(repo, verified_main, ADVANCED_HEAD_PASS_REVIEW_PACKET)
+        parsed, parse_error = review_outcome.parse_review_outcome(archived)
+        if parse_error or parsed is None:
+            raise RunnerError("landed review lacks one canonical Review Outcome")
+        identity_error = review_outcome.outcome_identity_error(
+            parsed, review_workstream=workstream, target_workstream=ADVANCED_HEAD_PASS_TARGET,
+            reviewed_main=ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+            implementation_commit=fresh["implementation_commit"], run_id=run_id, review_cycle=0,
+        )
+        if identity_error or parsed.get("Outcome") != "passed":
+            raise RunnerError("landed Review Outcome identity failed: " + str(identity_error or parsed.get("Outcome")))
+        _advanced_head_original_manifest(run_dir)
+        result = {"schema": ADVANCED_HEAD_PASS_RECOVERY_SCHEMA, "workstream": workstream,
+                  "run_id": run_id, "reviewer_commit": ADVANCED_HEAD_PASS_REVIEWER_COMMIT,
+                  "landed_commit": landed, "verified_main": verified_main,
+                  "outcome": "passed", "reviewer_commit_preserved": True,
+                  "original_run_evidence_unchanged": True,
+                  "coordinator_verified": True}
+        journal.update({"stage": "complete", "result": result})
+        _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+        return result
+
+
+def _advanced_head_pass_recovery_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="paired_review_runner.py recover-advanced-head-pass")
+    parser.add_argument("review_workstream", choices=(ADVANCED_HEAD_PASS_WORKSTREAM,))
+    parser.add_argument("--run-id", required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--plan", action="store_true")
+    mode.add_argument("--apply", action="store_true")
+    parser.add_argument("--plan-sha256", help="exact digest from a fresh read-only --plan; required with --apply")
+    args = parser.parse_args(argv)
+    try:
+        if args.plan:
+            if args.plan_sha256:
+                raise RunnerError("read-only plan cannot include an apply digest")
+            result = plan_advanced_head_pass_closeout(Path.cwd(), args.review_workstream, args.run_id)
+        else:
+            if not args.plan_sha256:
+                raise RunnerError("advanced-head PASS apply requires the exact digest from --plan")
+            result = apply_advanced_head_pass_closeout(
+                Path.cwd(), args.review_workstream, args.run_id, args.plan_sha256,
+            )
+    except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError) as exc:
+        print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def _preserve_file(source: Path, destination: Path) -> dict[str, str]:
     raw = source.read_bytes()
     _write_bytes_exclusive(destination, raw)
@@ -740,7 +1351,11 @@ def landed_review_state(repo: Path, revision: str, workstream: str, review_packe
 
     archived = parse_packet(archive_path, archived_text)
     target = parse_packet(target_packet_path, target_text)
-    if archived.error or archived.kind != "review" or archived.status != "complete" or archived.workstream != workstream:
+    archived_error = archived.error
+    if (archived_error == "invalid Review metadata"
+            and _advanced_head_legacy_pass_metadata_is_exact(archived_text, workstream)):
+        archived_error = None
+    if archived_error or archived.kind != "review" or archived.status != "complete" or archived.workstream != workstream:
         result["reasons"].append("exact archived review packet is not complete")
     if archived.review_target_workstream != target_workstream or archived.review_target_packet != target_packet_path:
         result["reasons"].append("archived review packet names a different target")
@@ -2912,6 +3527,8 @@ def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv and argv[0] == "recover-closeout":
         return _recover_main(argv[1:])
+    if argv and argv[0] == "recover-advanced-head-pass":
+        return _advanced_head_pass_recovery_main(argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("review_workstream", help="exact paired review workstream; global-next is unsupported")
     parser.add_argument("--timeout", type=float, default=None)

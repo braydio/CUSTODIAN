@@ -2086,6 +2086,243 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             self.assertTrue((failed_run / "RECOVERY.md").is_file())
 
 
+class AdvancedHeadPassRecoveryTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.repo = Path(self.temp.name) / "repo"
+        self.repo.mkdir()
+        subprocess.run(["git", "init", "-q", str(self.repo)], check=True)
+        subprocess.run(["git", "-C", str(self.repo), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(self.repo), "config", "user.email", "test@example.invalid"], check=True)
+
+    def git(self, *args):
+        result = subprocess.run(["git", *args], cwd=self.repo, text=True, capture_output=True)
+        if result.returncode:
+            raise AssertionError(result.stderr or result.stdout)
+        return result.stdout.strip()
+
+    def _base_commit(self):
+        active = runner.ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET
+        target = runner.ADVANCED_HEAD_PASS_TARGET_PACKET
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        (self.repo / active).parent.mkdir(parents=True, exist_ok=True)
+        (self.repo / active).write_text("# Active review\n")
+        (self.repo / target).parent.mkdir(parents=True, exist_ok=True)
+        (self.repo / target).write_text("# Target packet\n")
+        (self.repo / readme).write_text("active review\n")
+        self.git("add", "--", active, target, readme)
+        self.git("commit", "-m", "base")
+        return self.git("rev-parse", "HEAD")
+
+    def _reviewer_commit(self, *, extra_path=None):
+        active = runner.ADVANCED_HEAD_PASS_ACTIVE_REVIEW_PACKET
+        archive = runner.ADVANCED_HEAD_PASS_REVIEW_PACKET
+        target = runner.ADVANCED_HEAD_PASS_TARGET_PACKET
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        (self.repo / archive).write_text("# Archived review\n")
+        (self.repo / active).unlink()
+        (self.repo / target).write_text("# Target packet\n\n## Independent Review\n")
+        (self.repo / readme).write_text("review archived\n")
+        (self.repo / runner.ADVANCED_HEAD_PASS_SUMMARY).write_text("review summary\n")
+        paths = [active, archive, target, readme, runner.ADVANCED_HEAD_PASS_SUMMARY]
+        if extra_path:
+            (self.repo / extra_path).parent.mkdir(parents=True, exist_ok=True)
+            (self.repo / extra_path).write_text("unrelated\n")
+            paths.append(extra_path)
+        self.git("add", "-A", "--", *paths)
+        self.git("commit", "-m", "reviewer closeout")
+        return self.git("rev-parse", "HEAD")
+
+    def _chain_patches(self, base, reviewer):
+        return (
+            patch.object(runner, "ADVANCED_HEAD_PASS_REMOTE_TIP", base),
+            patch.object(runner, "ADVANCED_HEAD_PASS_REVIEWER_COMMIT", reviewer),
+        )
+
+    def test_commit_chain_accepts_only_pinned_reviewer_commit_and_outcome_child(self):
+        base = self._base_commit()
+        reviewer = self._reviewer_commit()
+        with patch.object(runner, "ADVANCED_HEAD_PASS_REMOTE_TIP", base), \
+             patch.object(runner, "ADVANCED_HEAD_PASS_REVIEWER_COMMIT", reviewer):
+            commits, paths, recovery = runner._advanced_head_commit_chain(
+                self.repo, self.repo, reviewer, base,
+            )
+            self.assertEqual(commits, [reviewer])
+            self.assertEqual(set(paths), set(runner.ADVANCED_HEAD_PASS_ALLOWED_BASE_PATHS))
+            self.assertEqual(recovery, [])
+            review_path = self.repo / runner.ADVANCED_HEAD_PASS_REVIEW_PACKET
+            review_path.write_text(review_path.read_text() + "\n## Review Outcome\n\nrecovery\n")
+            self.git("add", "--", runner.ADVANCED_HEAD_PASS_REVIEW_PACKET)
+            self.git("commit", "-m", "append outcome")
+            child = self.git("rev-parse", "HEAD")
+            commits, _, recovery = runner._advanced_head_commit_chain(
+                self.repo, self.repo, child, base, allow_recovery_child=True,
+            )
+            self.assertEqual(commits, [reviewer, child])
+            self.assertEqual(recovery, [runner.ADVANCED_HEAD_PASS_REVIEW_PACKET])
+            commits, _, _ = runner._advanced_head_commit_chain(
+                self.repo, self.repo, child, child, allow_recovery_child=True,
+                allow_published_recovery_tip=True,
+            )
+            self.assertEqual(commits, [reviewer, child])
+            with self.assertRaisesRegex(runner.RunnerError, "no matching exact-run recovery journal"):
+                runner._advanced_head_commit_chain(self.repo, self.repo, child, child)
+
+    def test_commit_chain_rejects_unrelated_remote_reversed_or_extra_ancestry(self):
+        base = self._base_commit()
+        reviewer = self._reviewer_commit()
+        with patch.object(runner, "ADVANCED_HEAD_PASS_REMOTE_TIP", base), \
+             patch.object(runner, "ADVANCED_HEAD_PASS_REVIEWER_COMMIT", reviewer):
+            with self.assertRaisesRegex(runner.RunnerError, "neither the preserved tip"):
+                runner._advanced_head_commit_chain(self.repo, self.repo, reviewer, "f" * 40)
+            with self.assertRaisesRegex(runner.RunnerError, "no matching exact-run recovery journal"):
+                runner._advanced_head_commit_chain(self.repo, self.repo, base, base)
+            (self.repo / "unrelated.txt").write_text("unrelated\n")
+            self.git("add", "--", "unrelated.txt")
+            self.git("commit", "-m", "unrelated child")
+            extra = self.git("rev-parse", "HEAD")
+            with self.assertRaisesRegex(runner.RunnerError, "one Review Outcome path"):
+                runner._advanced_head_commit_chain(self.repo, self.repo, extra, base,
+                                                   allow_recovery_child=True)
+
+    def test_commit_chain_rejects_extra_paths_in_original_reviewer_commit(self):
+        base = self._base_commit()
+        reviewer = self._reviewer_commit(extra_path="unrelated.txt")
+        with patch.object(runner, "ADVANCED_HEAD_PASS_REMOTE_TIP", base), \
+             patch.object(runner, "ADVANCED_HEAD_PASS_REVIEWER_COMMIT", reviewer):
+            with self.assertRaisesRegex(runner.RunnerError, "exact review artifact manifest"):
+                runner._advanced_head_commit_chain(self.repo, self.repo, reviewer, base)
+
+    def test_reviewer_pass_requires_raw_final_summary_and_packet_agreement(self):
+        main_sha = self._base_commit()
+        run_dir = Path(self.temp.name) / "run"
+        run_dir.mkdir()
+        workstream = "review-agent-paired-review-exact-claim-parking-v1"
+        run_id = "20261019T164227Z-e6abe304ef6c"
+        final = (f"Workstream: {workstream}\n\nVerdict: `passed` — 0 blocking defects and 0 material gaps.\n"
+                 f"Pinned SHA: `{main_sha}`.\n")
+        (run_dir / "last-message.txt").write_text(final)
+        (run_dir / "codex.jsonl").write_text("\n".join((
+            json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": final}}),
+            json.dumps({"type": "turn.completed"}),
+        )) + "\n")
+        summary = (f"## Verdict\nStatus: `passed`\nBlocking defects: `0`\nMaterial gaps: `0`\n"
+                   f"Reviewed main: `{main_sha}`\n"
+                   "## Review findings\nNo blocking findings.\n## Independent verification\nDone.\n")
+        packet = ("# Review\n- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `review`\n- Status: `complete`\n"
+                  "- Dispatch: `auto`\n- Priority: `P0`\n- Depends on: `agent-paired-review-exact-claim-parking-v1`\n"
+                  "- Locks: `test`\n- Review: `passed`\n"
+                  "- Review target workstream: `agent-paired-review-exact-claim-parking-v1`\n"
+                  f"- Review target packet: `{runner.ADVANCED_HEAD_PASS_TARGET_PACKET}`\n"
+                  f"- Reviewed main: `{main_sha}`\n- Reviewer context: `fresh`\n"
+                  "- Reviewer provenance: `different-agent`\n- Review cycle: `0`\n")
+        metadata = {"schema": runner.SCHEMA, "workstream": workstream, "run_id": run_id,
+                    "phase": "post_exit_recovery", "fresh": True, "exit_code": 0,
+                    "reviewed_main": main_sha}
+        with patch.object(runner, "ADVANCED_HEAD_PASS_REVIEWED_MAIN", main_sha):
+            provenance, accepted = runner._advanced_head_reviewer_pass(
+                self.repo, run_dir, packet, summary, metadata,
+            )
+            self.assertEqual(provenance, "different-agent")
+            self.assertEqual(accepted, final)
+            bad_final = final.replace("passed", "findings")
+            (run_dir / "last-message.txt").write_text(bad_final)
+            (run_dir / "codex.jsonl").write_text("\n".join((
+                json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": bad_final}}),
+                json.dumps({"type": "turn.completed"}),
+            )) + "\n")
+            with self.assertRaisesRegex(runner.RunnerError, "unambiguous PASS"):
+                runner._advanced_head_reviewer_pass(self.repo, run_dir, packet, summary, metadata)
+
+    def test_exact_original_manifest_fails_closed_on_hash_or_file_set_change(self):
+        run_dir = Path(self.temp.name) / "run-manifest"
+        run_dir.mkdir()
+        (run_dir / "metadata.json").write_text("original\n")
+        manifest = {"metadata.json": hashlib.sha256(b"original\n").hexdigest()}
+        with patch.object(runner, "ADVANCED_HEAD_PASS_ORIGINAL_EVIDENCE_SHA256", manifest):
+            self.assertEqual(runner._advanced_head_original_manifest(run_dir), manifest)
+            (run_dir / "metadata.json").write_text("changed\n")
+            with self.assertRaisesRegex(runner.RunnerError, "manifest changed"):
+                runner._advanced_head_original_manifest(run_dir)
+
+    def test_outcome_append_preserves_every_existing_packet_byte(self):
+        original = "# Review\r\n\r\nReviewer evidence.\r\n"
+        outcome = "## Review Outcome\n- Outcome: `passed`\n"
+        appended = runner._append_advanced_head_outcome(original, outcome)
+        self.assertTrue(appended.startswith(original))
+        self.assertEqual(appended[len(original):], "\n" + outcome)
+
+    def test_recovery_journal_is_required_and_bound_before_accepting_advanced_head(self):
+        manifest = {"metadata.json": "a" * 64}
+        journal_path = (self.repo / ".git" / runner.ADVANCED_HEAD_PASS_RECOVERY_ROOT /
+                        runner.ADVANCED_HEAD_PASS_RUN_ID / "recovery.json")
+        journal_path.parent.mkdir(parents=True)
+        journal = {
+            "schema": runner.ADVANCED_HEAD_PASS_RECOVERY_SCHEMA,
+            "workstream": runner.ADVANCED_HEAD_PASS_WORKSTREAM,
+            "run_id": runner.ADVANCED_HEAD_PASS_RUN_ID,
+            "reviewer_commit": runner.ADVANCED_HEAD_PASS_REVIEWER_COMMIT,
+            "original_evidence_sha256": manifest,
+            "initial_plan_sha256": "b" * 64,
+            "stage": "prepared",
+        }
+        journal_path.write_text(json.dumps(journal))
+        self.assertEqual(runner._advanced_head_recovery_journal(self.repo / ".git", manifest), journal)
+        journal["original_evidence_sha256"] = {"metadata.json": "c" * 64}
+        journal_path.write_text(json.dumps(journal))
+        with self.assertRaisesRegex(runner.RunnerError, "identity or evidence manifest"):
+            runner._advanced_head_recovery_journal(self.repo / ".git", manifest)
+
+    def test_recovery_journal_rejects_symlinked_parent(self):
+        external = Path(self.temp.name) / "external"
+        external.mkdir()
+        (self.repo / ".git" / "custodian-review-recoveries").symlink_to(external, target_is_directory=True)
+        with self.assertRaisesRegex(runner.RunnerError, "must not contain symlinks"):
+            runner._advanced_head_recovery_journal_path(self.repo / ".git")
+
+    def test_legacy_pass_metadata_exception_is_exact_run_only_and_rejects_duplicates(self):
+        workstream = runner.ADVANCED_HEAD_PASS_WORKSTREAM
+        packet = ("# Archived review\n- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `review`\n- Status: `complete`\n"
+                  "- Dispatch: `auto`\n- Priority: `P0`\n- Depends on: `target`\n- Locks: `test`\n"
+                  f"- Review: `passed`\n- Review target workstream: `{runner.ADVANCED_HEAD_PASS_TARGET}`\n"
+                  f"- Review target packet: `{runner.ADVANCED_HEAD_PASS_TARGET_PACKET}`\n"
+                  f"- Reviewed main: `{runner.ADVANCED_HEAD_PASS_REVIEWED_MAIN}`\n"
+                  "- Reviewer context: `fresh`\n- Reviewer provenance: `different-agent`\n- Review cycle: `0`\n")
+        packet += runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream=workstream,
+            target_workstream=runner.ADVANCED_HEAD_PASS_TARGET,
+            reviewed_main=runner.ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+            implementation_commit=runner.ADVANCED_HEAD_PASS_REVIEWED_MAIN,
+            provenance="different-agent", run_id=runner.ADVANCED_HEAD_PASS_RUN_ID,
+            review_cycle=0, ids=(),
+        )
+        self.assertTrue(runner._advanced_head_legacy_pass_metadata_is_exact(packet, workstream))
+        self.assertFalse(runner._advanced_head_legacy_pass_metadata_is_exact(packet, "review-other"))
+        duplicate = packet.replace("- Review: `passed`", "- Review: `passed`\n- Review: `auto`")
+        self.assertFalse(runner._advanced_head_legacy_pass_metadata_is_exact(duplicate, workstream))
+        indented = packet.replace("- Review: `passed`", "  - Review: `passed`")
+        self.assertFalse(runner._advanced_head_legacy_pass_metadata_is_exact(indented, workstream))
+
+    def test_stale_apply_digest_stops_before_journaling(self):
+        run_id = "20261019T164227Z-e6abe304ef6c"
+        workstream = "review-agent-paired-review-exact-claim-parking-v1"
+        lock = self.repo / ".git/custodian-review-runs/locks" / f"{workstream}.lock"
+        lock.parent.mkdir(parents=True)
+        lock.write_bytes(b"")
+        plan = {"plan_sha256": "a" * 64}
+        with patch.object(runner, "ADVANCED_HEAD_PASS_WORKSTREAM", workstream), \
+             patch.object(runner, "ADVANCED_HEAD_PASS_RUN_ID", run_id), \
+             patch.object(runner, "_advanced_head_plan_unlocked", return_value=plan):
+            with self.assertRaisesRegex(runner.RunnerError, "state changed"):
+                runner.apply_advanced_head_pass_closeout(
+                    self.repo, workstream, run_id, "b" * 64,
+                )
+        self.assertFalse((self.repo / ".git" / runner.ADVANCED_HEAD_PASS_RECOVERY_ROOT).exists())
+
+
 class PairedReviewHostValidationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
