@@ -41,6 +41,42 @@ is permitted, and `paired_review_runner.py post_exit_recovery` remains a
 protected manual-resolution state. Do not infer a dead session merely from
 elapsed time, or mark a findings-only review passed to release its lock.
 
+### Exact paired-review claim parking pilot
+
+`review_claim_parking.py` and the dispatch integration provide one bounded
+parking path for the exact unresolved review named in
+`AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md`. This pilot is not OR1/OR2 and
+does not authorize parking another workstream, run, branch, or lock.
+
+Parking appends a `PARKED` record at
+`refs/custodian/review-claim-parking/<workstream>`, parented to the pinned
+remote `agent/<workstream>` commit. It does not move that agent branch or edit
+the protected worktree or run evidence. A later `ACTIVE` record may be appended
+once to restore lock occupancy; the transition is one-time and cannot be
+parked again. The exact run, claim receipt, continuation evidence manifest,
+complete run inventory, remote branch SHA, local-only commit list, attached
+worktree state, and authorization scope are verified and bound into the record.
+
+Use `review_claim_parking.py plan --action park` for read-only inspection. A
+fresh apply requires the emitted plan digest, a complete local process scan with
+no matching owner, and explicit operator attestation for cross-host owner
+absence because the historical run has no recorded host/PID identity. A plan
+or attestation is not proof of the review's outcome; the review remains
+unresolved and cannot satisfy a review dependency.
+
+The dispatcher continues to report the parked review workstream as `claimed`,
+so it cannot receive a duplicate claim. It excludes that holder only from lock
+conflict calculations, and only while the exact remote branch and append-only
+parking record verify. Missing, malformed, stale, changed, or unsupported
+parking state retains the original conservative lock. Queue audit exposes
+`execution_lock_held`, `parking_state`, and the record SHA separately from
+`claimed`. Packet `ready/auto` describes packet readiness; a live lock conflict
+is reported as `dependency_lock_blocked` eligibility.
+
+Do not use this pilot to park another claim or to infer cross-host process
+absence. Full supervised process identity, generalized leases, automatic
+cleanup, and orphan recovery remain outside its authority.
+
 ### Paired-review prelaunch host-validation recovery
 
 The paired-review runner supports a bounded continuation for a run stopped in

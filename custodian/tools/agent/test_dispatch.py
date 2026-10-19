@@ -633,6 +633,52 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("collision", rendered.split("DEPENDENCY/LOCK BLOCKED (", 1)[1])
         self.assertIn("independent", rendered.split("READY (", 1)[1])
 
+    def test_verified_park_releases_only_lock_while_claim_identity_stays_protected(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self.add_packet("after-held-review", dispatch_value="auto", depends=holder_id)
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "parked", "record_sha": "a" * 40, "lock_released": True, "reason": None}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=(set(), {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            downstream = next(row for row in audit["packets"] if row["workstream"] == "after-held-review")
+            self.assertEqual(holder["actual_class"], "claimed")
+            self.assertTrue(holder["claimed"])
+            self.assertFalse(holder["execution_lock_held"])
+            self.assertEqual(holder["parking_state"], "parked")
+            self.assertTrue(target["eligible_now"])
+            self.assertFalse(downstream["eligible_now"])
+            self.assertIn("dependency not archived complete: " + holder_id, downstream["reasons"])
+            with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+                dispatch.claim(self.repo, holder_id, "codex", False)
+
+    def test_invalid_parking_record_keeps_original_lock_occupancy(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "invalid", "record_sha": "b" * 40, "lock_released": False,
+                 "reason": "identity mismatch"}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=({holder_id}, {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            self.assertTrue(holder["claimed"])
+            self.assertTrue(holder["execution_lock_held"])
+            self.assertFalse(target["eligible_now"])
+            self.assertIn("lock: paired-review-source-provenance held by " + holder_id, target["reasons"])
+
     def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
         self.add_packet("busy-task", dispatch_value="auto")
         main_before = git(self.repo, "rev-parse", "origin/main")
