@@ -121,6 +121,28 @@ Diagnostic `ls-remote`, fetch, and push operations have a bounded timeout;
 failure is recorded locally and cannot invalidate an otherwise successful task
 claim.
 
+### Run-pinned checkout interruption recovery (operator-only)
+
+The one-run helper `custodian/tools/agent/custodian_claim_checkout_recovery_v1.sh` addresses an interrupted checkout for
+`agent-paired-review-source-bearing-archive-gate-v1` under
+`20261018T073442Z-9f32a80a4938`. It is not generic claim recovery or
+a substitute for `workstream.py resume`. The default `--audit` examines
+original refs, worktree registration, capacity and potential protected storage
+without deleting anything. The explicit `--release` requires an operator
+no-live-claimant attestation, 9 GiB free by default, clean coordination
+checkout, original local branch SHA `83bdbd1e`, original remote claim
+SHA `34a947cf`, and no attached/partial/remote canonical worktree or branch.
+Release acquires dispatch and per-workstream locks before repeat verification
+and exact-SHA local branch and remote claim deletion. It preserves diagnostics
+and all protected reviewer runs. It never starts a new claim or worktree.
+
+Capacity must first be reclaimed from independently inspected, unprotected
+storage, never active worktrees or preserved evidence. For a different run,
+SHA, or already-published agent branch, use normal recovery procedures, not
+this run-bound helper.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401
+
 ### Local dispatcher contention
 
 The shared `dispatch.lock` is scoped to assignment-critical work and ordinary
