@@ -42,5 +42,5 @@
   7. `workstream.py finish` permits `--defer-root-sync` only for this exact paired workstream under the packet's explicit override; the persistent root remains at its pre-finish commit and synchronization is reported pending.
   8. Dispatcher must continue to block claims while `paired-review-source-provenance` is held; do not bypass or rewrite that lock.
 - Validation: Focused Work surface cases in `python3 custodian/tools/agent/test_paired_review_runner.py`; root-sync authorization cases in `python3 custodian/tools/agent/test_workstream.py`; `python3 -m py_compile custodian/tools/agent/paired_review_host_validation.py custodian/tools/agent/workstream.py`; `python3 custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`; targeted `dispatch.py audit --json` after publication.
-- Task overrides: `Do not synchronize the root checkout; record synchronization pending.`
+- Task overrides: `TASK OVERRIDE: Defer persistent root synchronization for this implementation and its paired review. Do not synchronize the root checkout; record synchronization pending.`
 - Deferred: Claiming or implementing until dispatcher confirms the source-provenance lock is available. The disputed review remains unresolved and must not be treated as PASS or retroactively assigned findings by this implementation workstream.
