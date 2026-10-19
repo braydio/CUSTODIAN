@@ -1,0 +1,46 @@
+{
+  "schema": "custodian.operator_ne_skin_v2_authored_bundle.v1",
+  "workstream": "operator-2-5d-ne-walk-retargeting",
+  "iteration": 10,
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad06f67-3cb8-83ea-b34c-3ebf78a9e6fe",
+  "source_authority": "prior Knight POC and approved source rig, both immutable",
+  "relative_repo_members": [
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/CODEX_IMPLEMENTATION.md",
+      "sha256": "92a0a67c97fe1eeb0ab120f374df0348cb4594edf4c5ed2e4190ecff09b04f77",
+      "bytes": 4702
+    },
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/README.md",
+      "sha256": "49cd3855e44ec4063a13c3ddb7c089b62aef6fb7fb5d2997ed8872f6e7c4d573",
+      "bytes": 5305
+    },
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/apron_authority.py",
+      "sha256": "c146932c925e8869132611e5593ab96c4bc5749852c12650211e3c491b0188da",
+      "bytes": 11001
+    },
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/register_validation.py",
+      "sha256": "e3cb80c74aa45eb8ab0130cde4a3469327e55abdf3e5ba5577b9884598939cda",
+      "bytes": 1575
+    },
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/run.py",
+      "sha256": "58b38727a85f8012063c639f987b4346297a57613501e091d5dbc18374139fda",
+      "bytes": 11641
+    },
+    {
+      "path": "custodian/tools/operator/ne_walk_retarget/skin_v2/run_skin_v2.sh",
+      "sha256": "9e02dbd1bb937d2dde2e7085c890cd6c9aeae5a27f649c230949f774125b4933",
+      "bytes": 1135
+    },
+    {
+      "path": "custodian/tools/validation/operator_ne_skin_v2_smoke.py",
+      "sha256": "cac0472618eea445fd5af67f6c84304ea9b418e660d1c6fec06588b2bd910178",
+      "bytes": 3840
+    }
+  ],
+  "runtime_authorized": false,
+  "asset_v2_ingestion_authorized": false
+}

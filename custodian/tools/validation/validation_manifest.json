@@ -41,7 +41,13 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_knight_skin_poc_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "art", "source", "negative_control"],
+      "tags": [
+        "operator",
+        "animation",
+        "art",
+        "source",
+        "negative_control"
+      ],
       "owners": [
         "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/__init__.py",
         "custodian/tools/operator/ne_walk_retarget/knight_skin_poc/pose_map.py",
@@ -109,8 +115,16 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_rigid_raster_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "aseprite", "tooling"],
-      "owners": ["custodian/tools/operator/ne_walk_retarget/rigid_raster.lua", "custodian/tools/validation/operator_ne_rigid_raster_smoke.py"],
+      "tags": [
+        "operator",
+        "animation",
+        "aseprite",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/rigid_raster.lua",
+        "custodian/tools/validation/operator_ne_rigid_raster_smoke.py"
+      ],
       "timeout_sec": 30,
       "needs_import": false
     },
@@ -119,8 +133,18 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_motion_plan_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "animation", "negative_control", "tooling"],
-      "owners": ["custodian/tools/operator/ne_walk_retarget/motion_plan.py", "custodian/tools/operator/ne_walk_retarget/batch.lua", "custodian/tools/operator/ne_walk_retarget/run.py", "custodian/tools/validation/operator_ne_motion_plan_smoke.py"],
+      "tags": [
+        "operator",
+        "animation",
+        "negative_control",
+        "tooling"
+      ],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/motion_plan.py",
+        "custodian/tools/operator/ne_walk_retarget/batch.lua",
+        "custodian/tools/operator/ne_walk_retarget/run.py",
+        "custodian/tools/validation/operator_ne_motion_plan_smoke.py"
+      ],
       "timeout_sec": 30,
       "needs_import": false
     },
@@ -129,7 +153,12 @@
       "type": "python",
       "script": "custodian/tools/validation/operator_ne_rig_master_audit_smoke.py",
       "tier": "unit",
-      "tags": ["operator", "rig", "negative_control", "tooling"],
+      "tags": [
+        "operator",
+        "rig",
+        "negative_control",
+        "tooling"
+      ],
       "owners": [
         "custodian/tools/operator/ne_walk_retarget/**",
         "custodian/tools/validation/operator_ne_rig_master_audit_smoke.py"
@@ -1114,7 +1143,7 @@
       "timeout_sec": 45,
       "needs_import": false
     },
-	{
+    {
       "id": "carrow_yard_interior",
       "type": "godot_script",
       "script": "res://tools/validation/carrow_yard_interior_smoke.gd",
@@ -4290,7 +4319,11 @@
       "type": "godot_script",
       "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
       "tier": "integration",
-      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "tags": [
+        "procgen_showcase",
+        "catalog",
+        "authored_level"
+      ],
       "owners": [
         "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
         "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
@@ -6961,12 +6994,40 @@
       "type": "python",
       "script": "custodian/tools/validation/sprite_import_shared_transform_smoke.py",
       "tier": "unit",
-      "tags": ["assets", "sprites", "normalization", "determinism", "negative_control"],
+      "tags": [
+        "assets",
+        "sprites",
+        "normalization",
+        "determinism",
+        "negative_control"
+      ],
       "owners": [
         "custodian/tools/assets/sprite_import/**",
         "custodian/tools/art/custodian_pixelart_converter.py",
         "custodian/tools/operator/art_agent/source_normalization.py",
         "custodian/tools/validation/sprite_import_shared_transform_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_ne_skin_v2_apron",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_ne_skin_v2_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "operator",
+        "art_authoring",
+        "skin_v2",
+        "source_palette"
+      ],
+      "owners": [
+        "custodian/tools/operator/ne_walk_retarget/skin_v2/apron_authority.py",
+        "custodian/tools/operator/ne_walk_retarget/skin_v2/run.py",
+        "custodian/tools/operator/ne_walk_retarget/skin_v2/run_skin_v2.sh",
+        "custodian/tools/operator/ne_walk_retarget/skin_v2/register_validation.py",
+        "custodian/tools/operator/ne_walk_retarget/skin_v2/SKIN_V2_PACKAGE_MANIFEST.json",
+        "custodian/tools/validation/operator_ne_skin_v2_smoke.py"
       ],
       "timeout_sec": 30,
       "needs_import": false
