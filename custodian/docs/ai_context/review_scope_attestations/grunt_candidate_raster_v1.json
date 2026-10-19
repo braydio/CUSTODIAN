@@ -1,0 +1,26 @@
+{
+  "post_hoc": true,
+  "reason": "The original archived Work surface omitted these exact Grunt raster documentation paths.",
+  "schema": "custodian.review_source_scope_attestation.v1",
+  "source_archive_commit": "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+  "source_files": [
+    {
+      "blob": "1a9368fa1d293570c968fd486972d69f73a1a687",
+      "mode": "100644",
+      "path": "custodian/docs/ai_context/CURRENT_STATE.md"
+    },
+    {
+      "blob": "4a7f88cc00689dd55ab080230e2c43b58cf6e0c5",
+      "mode": "100644",
+      "path": "custodian/docs/ai_context/FILE_INDEX.md"
+    },
+    {
+      "blob": "364f0b366c6c7f25d893ca3957c05238278c0fb7",
+      "mode": "100644",
+      "path": "custodian/tools/iteration/raster_pipeline/README.md"
+    }
+  ],
+  "source_packet_blob": "73dc311261f396b1636d117730fdffb18be9965e",
+  "source_packet_path": "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
+  "source_workstream": "grunt-candidate-raster-workflow-v1"
+}

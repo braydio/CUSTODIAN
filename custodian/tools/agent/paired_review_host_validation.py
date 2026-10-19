@@ -13,7 +13,9 @@ from pathlib import Path
 from typing import Callable
 
 from godot_project_lock import godot_home
-from task_packet_contract import PACKET_ROOT, header_field
+import review_outcome
+from review_receipt_delta import read_git_text, resolve_target_implementation_commit, verify_review_receipt_delta
+from task_packet_contract import PACKET_ROOT, header_field, parse_packet
 from task_packet_index import MANAGED_BLOCK_END, MANAGED_BLOCK_START
 
 
@@ -30,6 +32,29 @@ _WORK_SURFACE_BRACE_PATH_RE = re.compile(
     r"\{([A-Za-z_][A-Za-z0-9_]*(?:,[A-Za-z_][A-Za-z0-9_]*)+)\}"
     r"(\.[A-Za-z0-9]+)"
 )
+
+_GRUNT_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/grunt_candidate_raster_v1.json"
+)
+_GRUNT_SCOPE_SOURCE_WORKSTREAM = "grunt-candidate-raster-workflow-v1"
+_GRUNT_SCOPE_SOURCE_ARCHIVE = "e29847bb2dc409ad994ac59ee3e8bb4db637142e"
+_GRUNT_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"
+)
+_GRUNT_SCOPE_SOURCE_PACKET_BLOB = "73dc311261f396b1636d117730fdffb18be9965e"
+_GRUNT_SCOPE_CORRECTION_WORKSTREAM = "agent-grunt-raster-review-scope-attestation-v1"
+_GRUNT_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md"
+)
+_GRUNT_SCOPE_REVIEW_WORKSTREAM = "review-agent-grunt-raster-review-scope-attestation-v1"
+_GRUNT_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md"
+)
+_GRUNT_SCOPE_FILES = {
+    "custodian/docs/ai_context/CURRENT_STATE.md": "1a9368fa1d293570c968fd486972d69f73a1a687",
+    "custodian/docs/ai_context/FILE_INDEX.md": "4a7f88cc00689dd55ab080230e2c43b58cf6e0c5",
+    "custodian/tools/iteration/raster_pipeline/README.md": "364f0b366c6c7f25d893ca3957c05238278c0fb7",
+}
 
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
@@ -250,6 +275,167 @@ def _verified_landing_claim(repo: Path, event: dict, workstream: str,
                           cwd=repo, capture_output=True).returncode == 0
 
 
+def _git_tree_entry(repo: Path, revision: str, path: str) -> tuple[str, str] | None:
+    result = subprocess.run(["git", "ls-tree", revision, "--", path], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise HostValidationError(f"cannot inspect pinned Git tree entry: {path}")
+    fields = result.stdout.rstrip("\n").split("\t", 1)
+    if len(fields) != 2 or fields[1] != path:
+        return None
+    mode_type_sha = fields[0].split()
+    if len(mode_type_sha) != 3:
+        raise HostValidationError(f"malformed pinned Git tree entry: {path}")
+    return mode_type_sha[0], mode_type_sha[2]
+
+
+def _is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
+    return subprocess.run(["git", "merge-base", "--is-ancestor", ancestor, descendant],
+                          cwd=repo, capture_output=True).returncode == 0
+
+
+def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
+                                     extra_archive_paths: set[str]) -> dict:
+    """Verify the one exact Grunt post-hoc Markdown exception and its accepted review.
+
+    The JSON is intentionally not self-authorizing. Its correction must have an
+    archived, canonical independent PASS, with the review's target receipt and
+    implementation identity both verified from Git history.
+    """
+    if extra_archive_paths != set(_GRUNT_SCOPE_FILES):
+        raise HostValidationError("post-hoc Grunt scope attestation does not cover the exact historical paths")
+
+    source_packet_entry = _git_tree_entry(repo, _GRUNT_SCOPE_SOURCE_ARCHIVE,
+                                          _GRUNT_SCOPE_SOURCE_PACKET)
+    if source_packet_entry != ("100644", _GRUNT_SCOPE_SOURCE_PACKET_BLOB):
+        raise HostValidationError("pinned original Grunt packet blob or mode does not match")
+    source_entries = {}
+    for path, expected_blob in _GRUNT_SCOPE_FILES.items():
+        entry = _git_tree_entry(repo, _GRUNT_SCOPE_SOURCE_ARCHIVE, path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned historical Grunt Markdown blob or mode does not match: {path}")
+        source_entries[path] = {"mode": entry[0], "blob": entry[1]}
+
+    attestation_entry = _git_tree_entry(repo, reviewed_main, _GRUNT_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("reviewed main lacks the regular-file Grunt scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{reviewed_main}:{_GRUNT_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Grunt scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _GRUNT_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _GRUNT_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_path": _GRUNT_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _GRUNT_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_GRUNT_SCOPE_FILES.items())
+        ],
+        "reason": "The original archived Work surface omitted these exact Grunt raster documentation paths.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Grunt scope attestation bytes do not match the exact post-hoc authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--diff-filter=A", "--format=%H", reviewed_main, "--",
+         _GRUNT_SCOPE_ATTESTATION_PATH], cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve Grunt scope attestation origin commit")
+    origins = origin_result.stdout.splitlines()
+    if len(origins) != 1:
+        raise HostValidationError("Grunt scope attestation has missing or ambiguous origin history")
+    origin_commit = origins[0]
+    if _git_tree_entry(repo, origin_commit, _GRUNT_SCOPE_ATTESTATION_PATH) != attestation_entry:
+        raise HostValidationError("Grunt scope attestation origin does not contain the current exact blob")
+
+    # The correction review is the sole activating authority. Validate both
+    # reviewer outcome and the separately appended target receipt using the
+    # repository's canonical parsers and receipt-delta verifier.
+    try:
+        correction_text = read_git_text(repo, reviewed_main, _GRUNT_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, reviewed_main, _GRUNT_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Grunt scope attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_GRUNT_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_GRUNT_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _GRUNT_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _GRUNT_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _GRUNT_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _GRUNT_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Grunt scope attestation correction/review packet identity is incomplete")
+
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Grunt scope attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _GRUNT_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Grunt scope attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _GRUNT_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _GRUNT_SCOPE_CORRECTION_PACKET,
+        _GRUNT_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Grunt scope attestation target identity is invalid: {identity_error}")
+    if not _is_ancestor(repo, origin_commit, implementation_commit):
+        raise HostValidationError("Grunt scope attestation was not present by its correction archive")
+    if not _is_ancestor(repo, outcome["Reviewed main"], reviewed_main):
+        raise HostValidationError("accepted Grunt attestation review is not an ancestor of reviewed main")
+    if not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"]):
+        raise HostValidationError("accepted attestation review predates the correction implementation")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_GRUNT_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_GRUNT_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Grunt attestation review target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_GRUNT_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_GRUNT_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"accepted Grunt attestation review identity is invalid: {identity_error}")
+
+    return {
+        "kind": "accepted-post-hoc-exact-markdown-attestation",
+        "attestation_path": _GRUNT_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_archive_commit": _GRUNT_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_blob": _GRUNT_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": source_entries,
+        "approval_review_workstream": _GRUNT_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _GRUNT_SCOPE_REVIEW_PACKET,
+        "approval_review_packet_blob": _git_tree_entry(
+            repo, reviewed_main, _GRUNT_SCOPE_REVIEW_PACKET,
+        )[1],
+        "approval_target_packet": _GRUNT_SCOPE_CORRECTION_PACKET,
+        "approval_target_packet_blob": _git_tree_entry(
+            repo, reviewed_main, _GRUNT_SCOPE_CORRECTION_PACKET,
+        )[1],
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+    }
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
                                target_packet_text: str) -> dict:
@@ -494,12 +680,24 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         path for path in extra_archive_paths
         if path.endswith(".gd.uid") and path[:-4] in extra_archive_paths
     }
+    scope_attestation = None
     if source_bearing_archive:
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
+        markdown_archive_paths = {
+            path for path in extra_archive_paths if Path(path).suffix.lower() == ".md"
+        }
+        if markdown_archive_paths.intersection(_GRUNT_SCOPE_FILES):
+            if landing_commit != _GRUNT_SCOPE_SOURCE_ARCHIVE:
+                raise HostValidationError("post-hoc Grunt scope attestation names a different source archive")
+            scope_attestation = _verified_grunt_scope_attestation(
+                repo, reviewed_main, markdown_archive_paths,
+            )
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
-               and not (Path(path).suffix.lower() == ".md" and path in declared_markdown_paths)
+               and not (Path(path).suffix.lower() == ".md"
+                        and (path in declared_markdown_paths
+                             or (scope_attestation is not None and path in _GRUNT_SCOPE_FILES)))
                for path in extra_archive_paths):
             raise HostValidationError("archive-only landing contains unrelated paths")
         for path in sorted(uid_companion_paths):
@@ -579,7 +777,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     undocumented = {path for path in code_paths if not is_documented(path)}
     undocumented.update(path for path in archive_source_paths if not is_documented(path))
     if undocumented:
-        raise HostValidationError("split source span contains code/test paths not documented by its target packet")
+        raise HostValidationError(
+            "split source span contains code/test paths not documented by its target packet: "
+            + ", ".join(sorted(undocumented))
+        )
 
     if trace_landing_kind == "main-sync-merge":
         changed_in_merge = set(_changed_paths(repo, f"{landing_commit}..{trace_landing}"))
@@ -614,8 +815,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                text=True, capture_output=True, check=True).stdout.strip()
     trace_blob = subprocess.run(["git", "show", f"{ref}:trace.jsonl"], cwd=repo,
                                 capture_output=True, check=True).stdout
-    return {"base": source_base, "head": source_head, "commits": commits,
-            "paths": source_paths, "provenance": {"kind": "workstream-lifecycle-trace",
+    provenance = {"kind": "workstream-lifecycle-trace",
             "ref": ref, "trace_commit": trace_sha, "trace_sha256": _sha256(trace_blob),
             "run_id": run_id, "workstream": target_workstream,
             "trace_landing_commit": trace_landing,
@@ -627,7 +827,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             "landing_trace": {"ref": landing_record["ref"], "run_id": landing_record["run_id"],
                               "worktree": landing_record["path"], "branch": landing_record["branch"],
                               "landing": landing_record["landing"]},
-            "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}}
+            "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}
+    if scope_attestation is not None:
+        provenance["scope_attestation"] = scope_attestation
+    return {"base": source_base, "head": source_head, "commits": commits,
+            "paths": source_paths, "provenance": provenance}
 
 
 def resolve_validation_source_span(repo: Path, reviewed_main: str, implementation_commit: str,
