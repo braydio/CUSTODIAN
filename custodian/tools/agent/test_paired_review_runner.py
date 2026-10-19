@@ -2162,6 +2162,14 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "bf2cfb7acab460be5c5fbda2acda8e0203f45842",
                 "6c818d16ed7c3dd19f156b80348fa4bc6929c748", 1792266810,
                 "workstream claim worktree-backlog-census-and-safety-ledger-v1-review-corrections-1 codex:3998399:20261017T195329Z-de38cd920078"),
+            "dcccefcd08be0651006f8c69c2c5adf6ad983106": (
+                "8bbecae38ce1853b761f61a5e97086ac73ed0b0d",
+                "d7061ab8f3ae7b641a91544465431db81574f735", 1792411738,
+                "workstream claim agent-paired-review-braced-work-surface-v1 codex:903295:20261019T120857Z-96de098ad393"),
+            "b59691d03f91bdd4e24eca195e186cfaedc73751": (
+                "fde4d27b0bf4d693d1ffc530aed3f8a7c5e4037a",
+                "55918d257cb3c663fb066f56eb79b23d174b7ae2", 1792408672,
+                "workstream claim operator-motion-foundry-core-v1 codex:503300:20261019T111751Z-bc1d9d1546fb"),
         }
         with tempfile.TemporaryDirectory() as temporary:
             object_repo = Path(temporary) / "claim-objects.git"
@@ -2495,10 +2503,11 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             self.skipTest("pinned braced-work-surface lifecycle trace is unavailable")
         archive = (f"{runner.PACKET_ROOT}/archived/"
                    "AGENT_PAIRED_REVIEW_BRACED_WORK_SURFACE_V1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, "3b3d3893236f1ef61a00d03f0fb6dddaa3a48274",
-            "c5e5b7032a1c0853cffac39931e703d81942bc03", workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "3b3d3893236f1ef61a00d03f0fb6dddaa3a48274",
+                "c5e5b7032a1c0853cffac39931e703d81942bc03", workstream, archive,
+            )
         self.assertEqual(span["provenance"]["trace_landing_commit"],
                          "3b3d3893236f1ef61a00d03f0fb6dddaa3a48274")
         self.assertEqual(span["provenance"]["trace_main_sync_sha"],
@@ -3071,10 +3080,11 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             self.skipTest("pinned MF1 lifecycle trace refs are unavailable in this checkout")
         archive = (f"{runner.PACKET_ROOT}/archived/"
                    "OPERATOR_MOTION_FOUNDRY_CORE_V1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, "a563a872dbe11a582c776bc329c334cdda73c543",
-            "645f1a701696045149fbf9dd3c988cbbadfcf06b", workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "a563a872dbe11a582c776bc329c334cdda73c543",
+                "645f1a701696045149fbf9dd3c988cbbadfcf06b", workstream, archive,
+            )
         self.assertEqual(span["base"], "55918d257cb3c663fb066f56eb79b23d174b7ae2")
         self.assertEqual(span["head"], "645f1a701696045149fbf9dd3c988cbbadfcf06b")
         self.assertEqual(span["provenance"]["run_id"], "20261019T111751Z-bc1d9d1546fb")
