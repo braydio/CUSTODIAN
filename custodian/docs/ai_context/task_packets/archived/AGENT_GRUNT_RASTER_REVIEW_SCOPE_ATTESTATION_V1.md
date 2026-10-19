@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-grunt-raster-review-scope-attestation-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -66,3 +66,23 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 ## Handoff
 - Next workstream: `review-agent-grunt-raster-review-scope-attestation-v1`
 - Next action after passed review: read-only exact-run Grunt host-recovery plan.
+
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The exact six-file attestation at `custodian/docs/ai_context/review_scope_attestations/grunt_candidate_raster_v1.json` is verified against original archive `e29847bb2dc409ad994ac59ee3e8bb4db637142e`; accepted independent review receipts are required before activation. Six-file historical replay, pre-approval rejection, altered blob/path/mode and seventh-file negatives, forged PASS and attestation-mutation negatives, coordinator provenance digest/reverification, UID and historical source-bearing regressions passed. `run_validation.py --changed --base origin/main --json` passed both selected groups; paired-review unit suite: 125 tests.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The first changed-file validation timed out because the new negative fixture created a separate temporary Git worktree for each mutation.
+- Root cause / contributing factors: Repeated worktree setup was unnecessary for sequential mutation cases.
+- Prevention / pipeline improvement: Reuse one fixture checkout and reset between mutation variants; the negative test fell from about 20.5 seconds to 4.2 seconds and required validation passed.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Synthetic canonical PASS history exercised the real provenance gates without touching the held Grunt review.
