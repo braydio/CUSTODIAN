@@ -2222,19 +2222,26 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_main_sync_landing(self, *, unrelated_archive_path=None,
                                  source_bearing_archive=False,
                                  executable_archive_path=None,
-                                 nonregular_archive_path=None):
+                                 nonregular_archive_path=None,
+                                 archive_doc_path=None,
+                                 declared_work_surface_path=None,
+                                 mentioned_elsewhere_path=None):
         workstream = "sample-main-sync"
         active = f"{runner.PACKET_ROOT}/SAMPLE_MAIN_SYNC.md"
         archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_MAIN_SYNC.md"
         index = f"{runner.PACKET_ROOT}/README.md"
         summary = "SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md"
         reviewed_main = self._git("rev-parse", "HEAD")
+        work_surface = ["- `custodian/game/world/transfer.gd`",
+                        "- `custodian/tools/validation/transfer_smoke.gd`"]
+        if declared_work_surface_path:
+            work_surface.append(f"- `{declared_work_surface_path}`")
         packet = (f"# Sample\n- Packet schema: `custodian.task_packet.v2`\n"
                   f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
                   f"- Status: `in_progress`\n- Reviewed main: `{reviewed_main}`\n"
-                  f"\n## Work surface\n"
-                  f"- `custodian/game/world/transfer.gd`\n"
-                  f"- `custodian/tools/validation/transfer_smoke.gd`\n")
+                  f"- Work surface:\n" + "\n".join(f"  {line}" for line in work_surface) + "\n")
+        if mentioned_elsewhere_path:
+            packet += f"\n## Evidence\nThe related file is `{mentioned_elsewhere_path}`.\n"
         Path(self.root / active).parent.mkdir(parents=True, exist_ok=True)
         (self.root / active).write_text(packet)
         (self.root / index).write_text("active index\n")
@@ -2257,6 +2264,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         if source_bearing_archive:
             for path in code_paths:
                 (self.root / path).write_text("source-bearing archive update\n")
+        if archive_doc_path:
+            doc = self.root / archive_doc_path
+            doc.parent.mkdir(parents=True, exist_ok=True)
+            doc.write_text("declared documentation update\n")
         if executable_archive_path:
             (self.root / executable_archive_path).chmod(0o755)
         if nonregular_archive_path:
@@ -2746,6 +2757,34 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 target_workstream=fixture["workstream"], target_packet_path=fixture["archive"],
                 expected_report_sha256=evidence["report_sha256"],
                 expected_metadata_sha256=evidence["metadata_sha256"],
+            )
+
+    def test_source_bearing_archive_accepts_markdown_path_declared_in_work_surface(self):
+        doc_path = "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            archive_doc_path=doc_path,
+            declared_work_surface_path=doc_path,
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertIn(doc_path, span["paths"])
+
+    def test_source_bearing_archive_rejects_markdown_path_mentioned_outside_work_surface(self):
+        doc_path = "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            archive_doc_path=doc_path,
+            mentioned_elsewhere_path=doc_path,
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError,
+                                    "archive-only landing contains unrelated paths"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
             )
 
     def test_source_bearing_archive_rejects_undocumented_noncode_executable_and_symlink_paths(self):
