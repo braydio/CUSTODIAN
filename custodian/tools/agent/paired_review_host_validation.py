@@ -132,7 +132,7 @@ def _trace_events(repo: Path, ref: str) -> list[dict]:
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
                                target_packet_text: str) -> dict:
-    """Resolve an archive-only landing to its exact source-bearing workstream range.
+    """Resolve an archive landing to its exact source-bearing workstream range.
 
     The archive-introduction commit remains the canonical implementation identity.
     One immutable lifecycle trace may pin that commit directly, or pin a verified
@@ -146,7 +146,9 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                           cwd=repo, text=True, capture_output=True)
     if refs.returncode:
         raise HostValidationError("could not enumerate committed source-span workstream traces")
-    candidates = []
+    claim_records = []
+    landing_records = []
+    legacy_records = []
     for ref in refs.stdout.splitlines():
         events = _trace_events(repo, ref)
         run_ids = {event.get("run_id") for event in events}
@@ -162,26 +164,137 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         published = [event for event in events if event.get("event") == "worktree_published"]
         landing_started = [event for event in events if event.get("event") == "landing_started"]
         landed = [event for event in events if event.get("event") == "landing_completed"]
-        if (len(started) != 1 or len(published) != 1
-                or len(landing_started) != 1 or len(landed) != 1):
+        teardown_started = [event for event in events if event.get("event") == "teardown_started"]
+        teardown_completed = [event for event in events if event.get("event") == "teardown_completed"]
+        branch = f"agent/{target_workstream}"
+        if len(started) == len(published) == 1 and not landing_started and not landed:
+            claim, publication = started[0]["data"], published[0]["data"]
+            base, path = claim.get("main_sha"), publication.get("worktree")
+            if (isinstance(base, str) and re.fullmatch(r"[0-9a-f]{40,64}", base)
+                    and publication.get("head") == base and publication.get("upstream") == base
+                    and publication.get("branch") == branch and publication.get("clean") is True
+                    and isinstance(path, str) and Path(path).is_absolute()
+                    and claim.get("remote_ref") == f"refs/heads/dispatch-claims/{target_workstream}"
+                    and isinstance(claim.get("claim_oid"), str)
+                    and re.fullmatch(r"[0-9a-f]{40,64}", claim["claim_oid"])):
+                claim_records.append({"ref": ref, "run_id": run_id, "base": base,
+                                      "branch": branch, "worktree": path, "events": events})
             continue
-        base = started[0].get("data", {}).get("main_sha")
-        trace_landing = landing_started[0].get("data", {}).get("start_sha")
-        if (not isinstance(base, str) or published[0].get("data", {}).get("head") != base
-                or published[0].get("data", {}).get("branch") != f"agent/{target_workstream}"
-                or landing_started[0].get("data", {}).get("branch") != f"agent/{target_workstream}"
-                or not isinstance(trace_landing, str)
-                or landed[0].get("data", {}).get("head") != trace_landing):
+        if (not published and len(landing_started) == len(landed) == len(teardown_started) == len(teardown_completed) == 1
+                and len(started) <= 1):
+            start_data, landed_data = landing_started[0]["data"], landed[0]["data"]
+            trace_landing = start_data.get("start_sha")
+            teardown_data, removed_data = teardown_started[0]["data"], teardown_completed[0]["data"]
+            path = teardown_data.get("worktree")
+            if (isinstance(trace_landing, str) and re.fullmatch(r"[0-9a-f]{40,64}", trace_landing)
+                    and start_data.get("branch") == branch and start_data.get("target") == "main"
+                    and landed_data.get("head") == trace_landing and landed_data.get("outcome") == "landed"
+                    and teardown_data.get("head") == trace_landing and teardown_data.get("branch") == branch
+                    and removed_data.get("head") == trace_landing and removed_data.get("branch") == branch
+                    and removed_data.get("worktree_removed") is True and isinstance(path, str)
+                    and Path(path).is_absolute()):
+                landing_records.append({"ref": ref, "run_id": run_id, "landing": trace_landing,
+                                        "path": path, "branch": branch, "events": events})
             continue
-        candidates.append((ref, run_id, base, trace_landing, events))
-    if len(candidates) != 1:
-        raise HostValidationError("split landing has missing or ambiguous exact workstream trace provenance")
-    ref, run_id, source_base, trace_landing, events = candidates[0]
+        if (len(started) == len(published) == len(landing_started) == len(landed) == 1
+                and not teardown_started and not teardown_completed):
+            claim, publication = started[0]["data"], published[0]["data"]
+            start_data, landed_data = landing_started[0]["data"], landed[0]["data"]
+            base, trace_landing = claim.get("main_sha"), start_data.get("start_sha")
+            path = publication.get("worktree")
+            if (isinstance(base, str) and publication.get("head") == base
+                    and publication.get("branch") == branch and start_data.get("branch") == branch
+                    and isinstance(trace_landing, str) and landed_data.get("head") == trace_landing):
+                legacy_records.append((ref, run_id, base, trace_landing, path, events))
+            continue
+        if len(landing_started) != 1 or len(landed) != 1:
+            continue
+        start_data, landed_data = landing_started[0]["data"], landed[0]["data"]
+        trace_landing = start_data.get("start_sha")
+        if (not isinstance(trace_landing, str) or not re.fullmatch(r"[0-9a-f]{40,64}", trace_landing)
+                or start_data.get("branch") != branch or start_data.get("target") != "main"
+                or landed_data.get("head") != trace_landing):
+            continue
+        if teardown_started or teardown_completed:
+            if len(teardown_started) != 1 or len(teardown_completed) != 1:
+                continue
+            teardown_data, removed_data = teardown_started[0]["data"], teardown_completed[0]["data"]
+            path = teardown_data.get("worktree")
+            if (landed_data.get("outcome") != "landed"
+                    or teardown_data.get("head") != trace_landing or teardown_data.get("branch") != branch
+                    or removed_data.get("head") != trace_landing or removed_data.get("branch") != branch
+                    or (removed_data.get("worktree") is not None
+                        and removed_data.get("worktree") != path)
+                    or removed_data.get("worktree_removed") is not True
+                    or not isinstance(path, str) or not Path(path).is_absolute()):
+                continue
+        else:
+            path = None
+        if len(started) > 1 or len(published) > 1:
+            continue
+        if started:
+            # A landing trace may preserve an earlier failed claim attempt. It
+            # is not sufficient provenance alone; cross-check its base against
+            # the independently validated claim record below.
+            if started[0]["data"].get("main_sha") is None:
+                continue
+        landing_records.append({"ref": ref, "run_id": run_id, "landing": trace_landing,
+                                "path": path, "branch": branch, "events": events})
 
+        # Support older single-trace lifecycles that contain claim, publication,
+        # landing, and teardown together. The same strict field checks apply to
+        # each role, and pair uniqueness below prevents ambiguous reuse.
+        if len(started) == len(published) == 1:
+            claim, publication = started[0]["data"], published[0]["data"]
+            base, published_path = claim.get("main_sha"), publication.get("worktree")
+            if (isinstance(base, str) and re.fullmatch(r"[0-9a-f]{40,64}", base)
+                    and publication.get("head") == base and publication.get("upstream") == base
+                    and publication.get("branch") == branch and publication.get("clean") is True
+                    and isinstance(published_path, str) and Path(published_path).is_absolute()
+                    and published_path == path
+                    and claim.get("remote_ref") == f"refs/heads/dispatch-claims/{target_workstream}"
+                    and isinstance(claim.get("claim_oid"), str)
+                    and re.fullmatch(r"[0-9a-f]{40,64}", claim["claim_oid"])):
+                claim_records.append({"ref": ref, "run_id": run_id, "base": base,
+                                      "branch": branch, "worktree": published_path,
+                                      "events": events})
+
+    # Bind the two trace roles independently. A landing trace can preserve an
+    # earlier failed remote-claim attempt; its teardown path identifies the
+    # published checkout, while the exact claim base is checked against it.
+    if not claim_records and len(legacy_records) == 1:
+        ref, run_id, base, trace_landing, path, events = legacy_records[0]
+        claim_records.append({"ref": ref, "run_id": run_id, "base": base,
+                              "branch": f"agent/{target_workstream}", "worktree": path,
+                              "events": events})
+        landing_records.append({"ref": ref, "run_id": run_id, "landing": trace_landing,
+                                "path": path, "branch": f"agent/{target_workstream}",
+                                "events": events})
     recorded_main = re.findall(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$",
                                target_packet_text)
     if len(recorded_main) != 1:
         raise HostValidationError("split target packet has missing or ambiguous Reviewed main provenance")
+    exact_base = recorded_main[0]
+    matching_pairs = []
+    for claim in claim_records:
+        for completed in landing_records:
+            if (claim["worktree"] == completed["path"]
+                    and claim["branch"] == completed["branch"]
+                    and subprocess.run(["git", "merge-base", "--is-ancestor", exact_base,
+                                        claim["base"]], cwd=repo, capture_output=True).returncode == 0
+                    and subprocess.run(["git", "merge-base", "--is-ancestor", exact_base,
+                                        completed["landing"]], cwd=repo, capture_output=True).returncode == 0):
+                failed_claims = [event["data"] for event in completed["events"]
+                                 if event.get("event") == "remote_claim_acquired"]
+                if any(item.get("main_sha") != claim["base"] for item in failed_claims):
+                    continue
+                matching_pairs.append((claim, completed))
+    if len(matching_pairs) != 1:
+        raise HostValidationError("split landing has missing or ambiguous exact workstream trace provenance")
+    claim_record, landing_record = matching_pairs[0]
+    source_base = claim_record["base"]
+    trace_landing = landing_record["landing"]
+    ref, run_id, events = landing_record["ref"], landing_record["run_id"], landing_record["events"]
 
     for sha, label in ((source_base, "source base"), (recorded_main[0], "packet Reviewed main"),
                        (landing_commit, "canonical landing"), (trace_landing, "trace landing"),
@@ -231,10 +344,17 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     summary_path = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
     allowed_archive_paths = {active_packet, target_packet_path, summary_path,
                              f"{PACKET_ROOT}/README.md"}
-    if archive_paths - allowed_archive_paths:
-        raise HostValidationError("archive-only landing contains unrelated paths")
     if not {active_packet, target_packet_path}.issubset(archive_paths):
-        raise HostValidationError("archive-only landing is missing its active or archived packet closeout")
+        raise HostValidationError("archive landing is missing its active or archived packet closeout")
+
+    extra_archive_paths = archive_paths - allowed_archive_paths
+    source_bearing_archive = bool(extra_archive_paths)
+    if source_bearing_archive:
+        if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
+               for path in extra_archive_paths):
+            raise HostValidationError("archive-only landing contains unrelated paths")
+    elif archive_paths - allowed_archive_paths:
+        raise HostValidationError("archive-only landing contains unrelated paths")
 
     def has_path(revision: str, path: str) -> bool:
         result = subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"], cwd=repo,
@@ -244,7 +364,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if (not has_path(archive_parent, active_packet) or has_path(landing_commit, active_packet)
             or has_path(archive_parent, target_packet_path) or not has_path(landing_commit, target_packet_path)):
         raise HostValidationError("archive-only landing does not delete the active packet and create its canonical archive")
-    # These closeout files are markdown authorities, never executable payloads.
+    # Archive closeout and source-bearing paths must all be regular, non-executable files.
     for revision in (archive_parent, landing_commit):
         for path in archive_paths:
             result = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
@@ -254,12 +374,13 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             if result.stdout:
                 mode = result.stdout.split(b"\t", 1)[0].split()[0]
                 if mode != b"100644":
-                    raise HostValidationError("archive-only landing contains an executable or non-regular closeout path")
+                    raise HostValidationError("archive landing contains an executable or non-regular path")
 
-    # The source span is the unique linear prefix immediately before the
-    # canonical archive commit, never the main-sync merge.
+    # A source-bearing archive includes its final source/test edits. An archive-
+    # only closeout ends at its parent. Neither span includes a later main-sync.
+    source_head = landing_commit if source_bearing_archive else archive_parent
     chain = subprocess.run(["git", "rev-list", "--first-parent", "--reverse",
-                            f"{source_base}..{archive_parent}"], cwd=repo,
+                            f"{source_base}..{source_head}"], cwd=repo,
                            text=True, capture_output=True)
     if chain.returncode or not chain.stdout.splitlines():
         raise HostValidationError("split landing has no source-bearing commits after its recorded workstream base")
@@ -268,9 +389,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         parent_count = len(_git(repo, "rev-list", "--parents", "-n", "1", commit).split()) - 1
         if parent_count != 1:
             raise HostValidationError("split source span contains merge ancestry")
-    if archive_parent != commits[-1]:
-        raise HostValidationError("split source span is not adjacent to the archive landing")
-    source_paths = _changed_paths(repo, f"{source_base}..{archive_parent}")
+    if (source_bearing_archive and commits[-1] != landing_commit
+            or not source_bearing_archive and archive_parent != commits[-1]):
+        raise HostValidationError("split source span does not end at its canonical archive boundary")
+    source_paths = _changed_paths(repo, f"{source_base}..{source_head}")
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -280,8 +402,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     documented = set(re.findall(r"custodian/[A-Za-z0-9_./-]+", target_packet_text))
     documented.add(f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md")
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
+    archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
     def is_documented(path: str) -> bool:
+        if path in archive_source_paths and path in documented:
+            return True
         name = Path(path).name
         if path in documented or name in target_packet_text:
             return True
@@ -295,6 +420,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         return False
 
     undocumented = {path for path in code_paths if not is_documented(path)}
+    undocumented.update(path for path in archive_source_paths if not is_documented(path))
     if undocumented:
         raise HostValidationError("split source span contains code/test paths not documented by its target packet")
 
@@ -309,13 +435,20 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                text=True, capture_output=True, check=True).stdout.strip()
     trace_blob = subprocess.run(["git", "show", f"{ref}:trace.jsonl"], cwd=repo,
                                 capture_output=True, check=True).stdout
-    return {"base": source_base, "head": archive_parent, "commits": commits,
+    return {"base": source_base, "head": source_head, "commits": commits,
             "paths": source_paths, "provenance": {"kind": "workstream-lifecycle-trace",
             "ref": ref, "trace_commit": trace_sha, "trace_sha256": _sha256(trace_blob),
             "run_id": run_id, "workstream": target_workstream,
             "trace_landing_commit": trace_landing,
             "trace_landing_kind": trace_landing_kind,
-            "trace_main_sync_sha": trace_main_sync_sha}}
+            "trace_main_sync_sha": trace_main_sync_sha,
+            "claim_trace": {"ref": claim_record["ref"], "run_id": claim_record["run_id"],
+                            "worktree": claim_record["worktree"], "branch": claim_record["branch"],
+                            "base": claim_record["base"]},
+            "landing_trace": {"ref": landing_record["ref"], "run_id": landing_record["run_id"],
+                              "worktree": landing_record["path"], "branch": landing_record["branch"],
+                              "landing": landing_record["landing"]},
+            "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}}
 
 
 def resolve_validation_source_span(repo: Path, reviewed_main: str, implementation_commit: str,
@@ -369,15 +502,15 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
             or summary.get("passed") != len(tests)
             or any(summary.get(key) != 0 for key in ("failed", "timed_out", "skipped", "infrastructure_errors"))):
         raise HostValidationError("host validation summary does not verify all selected checks passed")
+    code_paths = _source_code_paths(implementation_paths)
     reported_paths = set(report.get("changed_files") or [])
-    if not set(implementation_paths).issubset(reported_paths):
+    if not code_paths.issubset(reported_paths):
         raise HostValidationError("host validation changed-file selection omits part of the implementation diff")
     covered = set(coverage.get("covered_files") or [])
     excluded = set(coverage.get("excluded_files") or [])
-    if not set(implementation_paths).issubset(covered | excluded):
+    if not code_paths.issubset(covered | excluded):
         raise HostValidationError("host validation coverage omits files from the implementation diff")
-    code_paths = {path for path in implementation_paths
-                  if Path(path).suffix.lower() in {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"}}
+    code_paths = _source_code_paths(implementation_paths)
     if not code_paths or not code_paths.issubset(covered):
         raise HostValidationError("host validation does not cover changed implementation source/test files")
     covered_by = coverage.get("covered_by")
@@ -427,8 +560,9 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     implementation_paths = list(source_span["paths"])
     # The validation base is the source-span base, so every source/test file
     # under review must also be selected by the canonical changed-file runner.
-    selected_source_paths = _git_paths(worktree, f"{source_base}...{reviewed_main}")
-    if not implementation_paths or not set(implementation_paths).issubset(selected_source_paths):
+    selected_source_paths = _git_paths(worktree, f"{source_base}..{reviewed_main}")
+    required_changed_paths = set(_source_code_paths(implementation_paths))
+    if not required_changed_paths or not required_changed_paths.issubset(selected_source_paths):
         raise HostValidationError("canonical changed-file selection does not include the implementation diff")
     code_paths = [path for path in implementation_paths
                   if Path(path).suffix.lower() in {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"}]
