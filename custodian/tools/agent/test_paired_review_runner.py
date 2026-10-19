@@ -433,7 +433,9 @@ class PairedReviewRunnerTests(unittest.TestCase):
         metadata["implementation_commit"] = fixture["reviewed_main"]
         metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
         original_manifest = runner._file_manifest(fixture["run_dir"])
-        span = {"base": "8" * 40, "head": "b" * 40, "commits": ["b" * 40],
+        span = {"base": "8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8",
+                "head": "5b5de5717ae10aa5bbacbd53433571aae016c555",
+                "commits": ["5b5de5717ae10aa5bbacbd53433571aae016c555"],
                 "paths": ["custodian/tools/agent/sample.py"],
                 "provenance": {"kind": "verified-test-fixture"}}
         with patch.object(runner, "resolve_target_implementation_commit",
@@ -443,7 +445,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 fixture["repo"], "review-sample", fixture["run_id"])
         self.assertEqual(plan["host_validation_state"], "pre_validation_interrupted")
         self.assertTrue(plan["requires_fresh_host_validation"])
-        self.assertEqual(plan["source_span"]["base"], "8" * 40)
+        self.assertEqual(plan["source_span"]["base"], "8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8")
         self.assertEqual(plan["evidence_sha256"].keys(), {"metadata.json", "claim.stdout"})
         self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
         self.assertFalse((fixture["run_dir"] / "validation.json").exists())
