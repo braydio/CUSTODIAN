@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
@@ -2118,6 +2119,72 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         return subprocess.run(["git", *args], cwd=self.root, check=True, text=True,
                               capture_output=True).stdout.strip()
 
+    @contextmanager
+    def _historical_claim_objects(self):
+        """Supply exact trace-referenced claim commits absent from fresh clones.
+
+        Diagnostic refs preserve trace.jsonl, but temporary dispatch-claim refs
+        are deleted after publication. Their commit OIDs remain in the traces
+        and are verified by host validation, so keep these exact object payloads
+        in a temporary alternate object database instead of relying on dangling
+        objects left in a developer's local repository.
+        """
+        claims = {
+            "34a947cf00cb0050fbb435bb1840eed57adf63b0": (
+                "ed748c33cd10c7d55c84752cfc79eea15fcea72d",
+                "83bdbd1e53fdcb06b18a5a5645f70a050c3cba01", 1792308887,
+                "workstream claim agent-paired-review-source-bearing-archive-gate-v1 codex:1245682:20261018T073442Z-9f32a80a4938"),
+            "4f9f0e47f4d2c67ad8d6da3952e9889fe4597282": (
+                "cbd4903f8533c5426c1f41bff86248fa7114d924",
+                "1bb09be3cd76115413f9f433f7f8bf2048a7b81c", 1792370157,
+                "workstream claim queue-execution-frontier-restoration-v1 codex:3683168:20261019T003556Z-5bd6e454aaf3"),
+            "562bb25ee319985637ab365ecdb575371e0415f1": (
+                "c8b7c19806d38fa8a88e5b36499467985a472bd4",
+                "7119b4c385266e8928070b8e534ea3a5844a5f9f", 1792305694,
+                "workstream claim agent-paired-review-source-span-main-sync-recovery-v1 codex:736221:20261018T064130Z-f6559c757a1f"),
+            "a604d137ae0523410d3aa3e67b2c978e83a5691f": (
+                "d69f4d3fc067f1a6ac7aa6c2489c553cc7311db4",
+                "8fa7c190936ce98ca5a9bb93f28fcb4862c9acb8", 1792376569,
+                "workstream claim agent-paired-review-source-bearing-archive-gate-v1 codex:271048:20261019T022243Z-fbd7e4e2f3d7"),
+            "b8db1853f396042e517ffe6ca13f8fd93b8837b6": (
+                "cbd4903f8533c5426c1f41bff86248fa7114d924",
+                "1bb09be3cd76115413f9f433f7f8bf2048a7b81c", 1792370028,
+                "workstream claim queue-execution-frontier-restoration-v1 codex:3657389:20261019T003347Z-547f6421486d"),
+            "ca0664cd9bbe8252846de67070b72fe5f1033e58": (
+                "cbd4903f8533c5426c1f41bff86248fa7114d924",
+                "1bb09be3cd76115413f9f433f7f8bf2048a7b81c", 1792370248,
+                "workstream claim queue-execution-frontier-restoration-v1 codex:3694848:20261019T003727Z-bb7d35e7b6b9"),
+            "cf0d93037d8f15bbf42585c717a17963547e2c12": (
+                "b626e00b2f058b79d6978cd071fbdbd9cfc85f82",
+                "06cbe9521dfa8efe82fb5820709646ca6d1486e7", 1792284761,
+                "workstream claim agent-paired-review-host-validation-recovery-v1-review-corrections-1 codex:2356473:20261018T005240Z-25f5254d4395"),
+            "f8f0bcfadb5ee08f393dd9427ae255e590e914ed": (
+                "bf2cfb7acab460be5c5fbda2acda8e0203f45842",
+                "6c818d16ed7c3dd19f156b80348fa4bc6929c748", 1792266810,
+                "workstream claim worktree-backlog-census-and-safety-ledger-v1-review-corrections-1 codex:3998399:20261017T195329Z-de38cd920078"),
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            object_repo = Path(temporary) / "claim-objects.git"
+            subprocess.run(["git", "init", "--bare", "-q", str(object_repo)], check=True)
+            for oid, (tree, parent, timestamp, subject) in claims.items():
+                payload = (
+                    f"tree {tree}\nparent {parent}\n"
+                    f"author codex <codex@workflow.invalid> {timestamp} -0400\n"
+                    f"committer codex <codex@workflow.invalid> {timestamp} -0400\n\n"
+                    f"{subject}\n"
+                )
+                actual = subprocess.run(
+                    ["git", "hash-object", "-w", "-t", "commit", "--stdin"],
+                    cwd=object_repo, input=payload, check=True, text=True, capture_output=True,
+                ).stdout.strip()
+                self.assertEqual(actual, oid, "historical claim fixture must retain its exact OID")
+            old_alternates = os.environ.get("GIT_ALTERNATE_OBJECT_DIRECTORIES", "")
+            alternates = str(object_repo / "objects")
+            if old_alternates:
+                alternates += os.pathsep + old_alternates
+            with patch.dict(os.environ, {"GIT_ALTERNATE_OBJECT_DIRECTORIES": alternates}):
+                yield
+
     def _commit(self, message):
         subprocess.run(["git", "add", "-f", "-A"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)
@@ -2499,9 +2566,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         workstream = "worktree-backlog-census-and-safety-ledger-v1-review-corrections-1"
         target = (f"{runner.PACKET_ROOT}/archived/"
                   "WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, reviewed_main, reviewed_main, workstream, target,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, reviewed_main, workstream, target,
+            )
         self.assertEqual(span["base"], "6c818d16ed7c3dd19f156b80348fa4bc6929c748")
         self.assertEqual(span["head"], "1b586174fa7fbd9c1c94e6adbc36ee85bf809f4f")
         self.assertEqual(span["commits"], ["1b586174fa7fbd9c1c94e6adbc36ee85bf809f4f"])
@@ -2516,9 +2584,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         workstream = "agent-paired-review-host-validation-recovery-v1-review-corrections-1"
         target = (f"{runner.PACKET_ROOT}/archived/"
                   "AGENT_PAIRED_REVIEW_HOST_VALIDATION_RECOVERY_V1_REVIEW_CORRECTIONS_1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, reviewed_main, archive_landing, workstream, target,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, archive_landing, workstream, target,
+            )
         self.assertEqual(span["base"], "06cbe9521dfa8efe82fb5820709646ca6d1486e7")
         self.assertEqual(span["head"], "48a0bfc4836fbc88cd4406cc814959dcfc6e453b")
         self.assertEqual(span["commits"], [span["head"]])
@@ -2861,9 +2930,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         workstream = "agent-paired-review-source-span-main-sync-recovery-v1"
         archive = (f"{runner.PACKET_ROOT}/archived/"
                    "AGENT_PAIRED_REVIEW_SOURCE_SPAN_MAIN_SYNC_RECOVERY_V1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, landing, landing, workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, landing, landing, workstream, archive,
+            )
         self.assertEqual(span["base"], "7119b4c385266e8928070b8e534ea3a5844a5f9f")
         self.assertEqual(span["head"], landing)
         self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
@@ -2886,9 +2956,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ["git", "merge-base", "--is-ancestor", failed_claim_base, source_base],
             cwd=ROOT, capture_output=True,
         ).returncode, 0)
-        span = host_validation.resolve_validation_source_span(
-            ROOT, reviewed_main, canonical_landing, workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, canonical_landing, workstream, archive,
+            )
         self.assertEqual(span["base"], source_base)
         self.assertEqual(span["head"], "5b5de5717ae10aa5bbacbd53433571aae016c555")
         self.assertEqual(span["commits"], [span["head"]])
@@ -2902,9 +2973,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         landing = "aa9ddfc611fede93eaa3fe8dd68b9063a87a7a94"
         workstream = "queue-execution-frontier-restoration-v1"
         archive = f"{runner.PACKET_ROOT}/archived/QUEUE_EXECUTION_FRONTIER_RESTORATION_V1.md"
-        span = host_validation.resolve_validation_source_span(
-            ROOT, landing, landing, workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, landing, landing, workstream, archive,
+            )
         self.assertEqual(span["base"], "1bb09be3cd76115413f9f433f7f8bf2048a7b81c")
         self.assertEqual(span["head"], landing)
         self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
