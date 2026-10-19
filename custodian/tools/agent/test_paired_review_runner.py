@@ -2225,15 +2225,20 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                  nonregular_archive_path=None,
                                  archive_doc_path=None,
                                  declared_work_surface_path=None,
-                                 mentioned_elsewhere_path=None):
+                                 mentioned_elsewhere_path=None,
+                                 mentioned_elsewhere_text=None,
+                                 code_paths=None,
+                                 work_surface=None):
         workstream = "sample-main-sync"
         active = f"{runner.PACKET_ROOT}/SAMPLE_MAIN_SYNC.md"
         archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_MAIN_SYNC.md"
         index = f"{runner.PACKET_ROOT}/README.md"
         summary = "SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md"
         reviewed_main = self._git("rev-parse", "HEAD")
-        work_surface = ["- `custodian/game/world/transfer.gd`",
-                        "- `custodian/tools/validation/transfer_smoke.gd`"]
+        work_surface = list(work_surface) if work_surface is not None else [
+            "- `custodian/game/world/transfer.gd`",
+            "- `custodian/tools/validation/transfer_smoke.gd`",
+        ]
         if declared_work_surface_path:
             work_surface.append(f"- `{declared_work_surface_path}`")
         packet = (f"# Sample\n- Packet schema: `custodian.task_packet.v2`\n"
@@ -2242,13 +2247,17 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                   f"- Work surface:\n" + "\n".join(f"  {line}" for line in work_surface) + "\n")
         if mentioned_elsewhere_path:
             packet += f"\n## Evidence\nThe related file is `{mentioned_elsewhere_path}`.\n"
+        if mentioned_elsewhere_text:
+            packet += f"\n## Evidence\n{mentioned_elsewhere_text}\n"
         Path(self.root / active).parent.mkdir(parents=True, exist_ok=True)
         (self.root / active).write_text(packet)
         (self.root / index).write_text("active index\n")
         self._commit("publish active packet")
         source_base = self._git("rev-parse", "HEAD")
-        code_paths = ["custodian/game/world/transfer.gd",
-                      "custodian/tools/validation/transfer_smoke.gd"]
+        code_paths = list(code_paths) if code_paths is not None else [
+            "custodian/game/world/transfer.gd",
+            "custodian/tools/validation/transfer_smoke.gd",
+        ]
         for path in code_paths:
             target = self.root / path
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -2772,6 +2781,137 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         )
         self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
         self.assertIn(doc_path, span["paths"])
+
+    def test_braced_work_surface_expansion_is_bounded_and_exact(self):
+        declaration = "`custodian/tools/operator/motion_foundry/{__init__,schema,rig,motion,render,qa,cli}.py`"
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(declaration), {
+            f"custodian/tools/operator/motion_foundry/{name}.py"
+            for name in ("__init__", "schema", "rig", "motion", "render", "qa", "cli")
+        })
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(
+            "`custodian/tools/operator/literal.py`"), set())
+        self.assertEqual(host_validation._expand_braced_work_surface_paths(
+            "custodian/tools/operator/{outside,header}.py"), set())
+
+        too_many = ",".join(f"file_{index}" for index in range(33))
+        malformed = (
+            "`custodian/tools/operator/{one}.py`",
+            "`custodian/tools/operator/{one,one}.py`",
+            "`custodian/tools/operator/{one,{two,three}}.py`",
+            "`custodian/tools/operator/../{one,two}.py`",
+            "`custodian//operator/{one,two}.py`",
+            "`/custodian/tools/operator/{one,two}.py`",
+            "`custodian/tools/operator/{one,two/three}.py`",
+            "`custodian/tools/operator/{one,two}.p*.py`",
+            "`custodian/tools/operator/{one,two}.md`",
+            f"`custodian/tools/operator/{{{too_many}}}.py`",
+            "`custodian/tools/operator/{one,two}.py/extra.py`",
+        )
+        for value in malformed:
+            with self.subTest(value=value), self.assertRaises(host_validation.HostValidationError):
+                host_validation._expand_braced_work_surface_paths(value)
+
+    def test_source_bearing_archive_accepts_exact_seven_module_brace_list(self):
+        names = ("__init__", "schema", "rig", "motion", "render", "qa", "cli")
+        modules = [f"custodian/tools/operator/motion_foundry/{name}.py" for name in names]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, smoke],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{__init__,schema,rig,motion,render,qa,cli}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), set([*modules, smoke]))
+
+    def test_source_bearing_archive_rejects_module_omitted_from_brace_list(self):
+        modules = [f"custodian/tools/operator/motion_foundry/{name}.py"
+                   for name in ("schema", "rig", "render", "cli")]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, smoke],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{schema,rig,render}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_source_bearing_archive_rejects_plausible_extra_paths_and_basename_matches(self):
+        declared = [f"custodian/tools/operator/motion_foundry/{name}.py"
+                    for name in ("schema", "rig", "render", "cli")]
+        smoke = "custodian/tools/validation/transfer_smoke.gd"
+        extras = ["custodian/tools/operator/motion_foundry/rig_extra.py",
+                  "custodian/elsewhere/schema.py"]
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*declared, smoke, *extras],
+            work_surface=[
+                "- `custodian/tools/operator/motion_foundry/{schema,rig,render,cli}.py`",
+                f"- `{smoke}`",
+            ],
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_brace_expression_outside_work_surface_does_not_authorize_source(self):
+        modules = ["custodian/tools/operator/motion_foundry/schema.py",
+                   "custodian/tools/operator/motion_foundry/rig.py"]
+        fixture = self._build_main_sync_landing(
+            source_bearing_archive=True,
+            code_paths=[*modules, *self.changed_paths],
+            work_surface=[f"- `{self.changed_paths[0]}`", f"- `{self.changed_paths[1]}`"],
+            mentioned_elsewhere_text=("Other context: "
+                "`custodian/tools/operator/motion_foundry/{schema,rig}.py`"),
+        )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not documented"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_historical_mf1_landing_resolves_when_local_trace_is_available(self):
+        workstream = "operator-motion-foundry-core-v1"
+        refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname)",
+             f"refs/remotes/origin/agent-diagnostics/{workstream}/"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not refs:
+            self.skipTest("pinned MF1 lifecycle trace refs are unavailable in this checkout")
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "OPERATOR_MOTION_FOUNDRY_CORE_V1.md")
+        span = host_validation.resolve_validation_source_span(
+            ROOT, "a563a872dbe11a582c776bc329c334cdda73c543",
+            "645f1a701696045149fbf9dd3c988cbbadfcf06b", workstream, archive,
+        )
+        self.assertEqual(span["base"], "55918d257cb3c663fb066f56eb79b23d174b7ae2")
+        self.assertEqual(span["head"], "645f1a701696045149fbf9dd3c988cbbadfcf06b")
+        self.assertEqual(span["provenance"]["run_id"], "20261019T111751Z-bc1d9d1546fb")
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/tools/operator/motion_foundry/__init__.py",
+            "custodian/tools/operator/motion_foundry/schema.py",
+            "custodian/tools/operator/motion_foundry/rig.py",
+            "custodian/tools/operator/motion_foundry/motion.py",
+            "custodian/tools/operator/motion_foundry/render.py",
+            "custodian/tools/operator/motion_foundry/qa.py",
+            "custodian/tools/operator/motion_foundry/cli.py",
+            "custodian/tools/validation/operator_motion_foundry_core_smoke.py",
+            "custodian/tools/validation/validation_manifest.json",
+        })
 
     def test_source_bearing_archive_rejects_markdown_path_mentioned_outside_work_surface(self):
         doc_path = "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"

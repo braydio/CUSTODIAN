@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-braced-work-surface-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -37,6 +37,28 @@
 - Validation: `python3 -m unittest custodian.tools.agent.test_paired_review_runner.PairedReviewHostValidationTests` if module import from repository root works; otherwise the supported local `python3 custodian/tools/agent/test_paired_review_runner.py` test entrypoint. `python3 custodian/tools/validation/run_validation.py --changed --json`, `git diff --check`. Use the current validation manifest's `paired_review_runner_unit` owner and preserve real failure codes. If a live MF1 historical source-span positive requires protected local state, do not mutate it; rely on fresh isolated real-Git fixtures plus read-only positive tracing and report any remaining gap.
 - Task overrides: `none`
 - Deferred: Do not recover the original review in this tooling claim; after independently accepted tooling review, the original review's coordinator owner performs same-run host-validation continuation.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Bounded, exact brace expansion accepts only backtick-delimited repository-relative file lists in `Work surface`; malformed, traversal, absolute, wildcard, nested, duplicate, oversized and unsupported forms reject. Synthetic source-bearing archive tests prove the exact seven-module form, reject an omitted/extra module and lookalike declarations outside the header, and preserve standalone-path/markdown behavior. The pinned MF1 resolver now resolves base `55918d257cb3c663fb066f56eb79b23d174b7ae2` to implementation landing `645f1a701696045149fbf9dd3c988cbbadfcf06b` using local lifecycle trace `20261019T111751Z-bc1d9d1546fb`, including its explicitly mentioned validation manifest. No MF1 packet, implementation, review claim, worktree, or evidence was modified.
+- Validation: `PYTHONPATH=custodian/tools/agent python3 -m unittest test_paired_review_runner.PairedReviewHostValidationTests` (41 tests passed); `python3 custodian/tools/validation/run_validation.py --changed --json` (2 selected, 2 passed); `python3 -m compileall -q custodian/tools/agent/paired_review_host_validation.py custodian/tools/agent/test_paired_review_runner.py`; `git diff --check`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The packet's suggested unittest module command needed the agent tools directory on `PYTHONPATH`; an initial report redirection also needed creation of the ignored `.ai/` directory. Both were corrected and final validations passed.
+- Root cause / contributing factors: The test module imports sibling coordinator modules directly, and fresh worktrees do not pre-create `.ai/`.
+- Prevention / pipeline improvement: Use `PYTHONPATH=custodian/tools/agent` for focused test-class invocation and create `.ai/` before persisting validation JSON in fresh worktrees.
+- Tooling / docs drift discovered: none beyond the bounded brace parser gap addressed here.
+- Follow-up: none
+- What worked: Source-span validation retained trace, exact-path, file-mode, coverage and post-validation hash checks; the MF1 positive was proved read-only from its pinned source-and-archive landing.
 
 ## Dependency and Protected Recovery Note
 

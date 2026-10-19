@@ -24,6 +24,33 @@ _IMPLEMENTATION_SUFFIXES = {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"
 _REPOSITORY_MARKDOWN_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
 )
+_WORK_SURFACE_BRACE_PATH_RE = re.compile(
+    r"custodian/([A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*)/"
+    r"\{([A-Za-z_][A-Za-z0-9_]*(?:,[A-Za-z_][A-Za-z0-9_]*)+)\}"
+    r"(\.[A-Za-z0-9]+)"
+)
+
+
+def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
+    """Expand bounded file alternatives in backtick paths, never as globs."""
+    expanded: set[str] = set()
+    for token in re.findall(r"`([^`]+)`", work_surface):
+        if "{" not in token and "}" not in token:
+            continue
+        if not token.startswith("custodian/"):
+            if "custodian/" in token:
+                raise HostValidationError("braced Work surface path must be repository-relative")
+            continue
+        match = _WORK_SURFACE_BRACE_PATH_RE.fullmatch(token)
+        if match is None:
+            raise HostValidationError("malformed braced Work surface path")
+        directory, raw_names, suffix = match.groups()
+        names = raw_names.split(",")
+        if (not 2 <= len(names) <= 32 or len(set(names)) != len(names)
+                or suffix.lower() not in _IMPLEMENTATION_SUFFIXES):
+            raise HostValidationError("braced Work surface path is unbounded or unsupported")
+        expanded.update(f"custodian/{directory}/{name}{suffix}" for name in names)
+    return expanded
 
 
 def _git(worktree: Path, *args: str) -> str:
@@ -444,6 +471,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     # carrying unrelated code cannot be laundered through an archive-only commit.
     documented = set(re.findall(r"custodian/[A-Za-z0-9_./-]+", target_packet_text))
     documented.add(f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md")
+    work_surface = header_field(target_packet_text, "Work surface") or ""
+    documented.update(_expand_braced_work_surface_paths(work_surface))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
