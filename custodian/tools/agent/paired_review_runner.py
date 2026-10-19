@@ -1585,7 +1585,7 @@ def _coordinator_checkout_sha(repo: Path) -> str:
     origin_main = git(repo, "rev-parse", "--verify", "origin/main^{commit}")
     branch = git(repo, "branch", "--show-current")
     if branch not in {"main", ""} or head != origin_main:
-        raise RunnerError("continuation requires clean main or detached checkout exactly at origin/main")
+        raise RunnerError("continuation requires clean main or detached checkout exactly at origin/main; for a clean behind-only main use: python3 custodian/tools/agent/persistent_checkout_sync.py apply root")
     return origin_main
 
 
@@ -1640,7 +1640,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str) -> di
     remote_main_sha = next((line.split()[0] for line in remote_main.stdout.splitlines()
                             if len(line.split()) == 2 and line.split()[1] == "refs/heads/main"), None)
     if remote_main_sha != origin_main:
-        raise RunnerError("cached origin/main is stale; refresh a clean coordination checkout and re-plan")
+        raise RunnerError("cached origin/main is stale; on a clean behind-only coordinator run: python3 custodian/tools/agent/persistent_checkout_sync.py apply root, then re-plan (do not alter the protected review)")
 
     common = common_dir(repo).resolve()
     expected_root = (common / "custodian-review-runs" / workstream).resolve()
