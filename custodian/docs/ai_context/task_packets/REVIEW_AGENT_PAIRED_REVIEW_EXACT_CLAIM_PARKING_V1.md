@@ -7,11 +7,11 @@
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-exact-claim-parking-v1`
-- Locks: `agent-workflow, paired-review-claim-parking`
+- Locks: `paired-review-claim-parking`
 - Review: `none`
 - Review target workstream: `agent-paired-review-exact-claim-parking-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_EXACT_CLAIM_PARKING_V1.md`
-- Reviewed main: `628d403d2629a3f568b003096e4d94585721399f`
+- Reviewed main: `94948f36c2c86137930ab4b225380510861302e3`
 - Authoring chat: `not-recorded`
 - Authoring handoff: `auto`
 - Visual review: `none`

@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
-- Locks: `agent-workflow, paired-review-claim-parking`
+- Locks: `paired-review-claim-parking`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
@@ -15,7 +15,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `claim ownership and lock release must remain separate without falsifying reviewer disposition or risking recoverable work`
-- Reviewed main: `628d403d2629a3f568b003096e4d94585721399f`
+- Reviewed main: `94948f36c2c86137930ab4b225380510861302e3`
 - Authoring chat: `not-recorded`
 - Authoring handoff: `auto`
 - Visual review: `none`
