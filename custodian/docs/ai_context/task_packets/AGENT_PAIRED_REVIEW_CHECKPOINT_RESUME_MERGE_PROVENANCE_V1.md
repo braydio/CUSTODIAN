@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `paired-review-resume-merge-provenance`
