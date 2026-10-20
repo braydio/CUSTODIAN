@@ -535,13 +535,14 @@ class WorkstreamTests(unittest.TestCase):
         with self.assertRaisesRegex(workstream.WorkstreamError, "no attached worktree"):
             workstream.finish("never-existed", self.base / "x.json", repo=self.repo)
 
-    def test_finish_leaves_dirty_persistent_root_untouched(self):
+    def test_finish_syncs_root_with_unrelated_untracked_file_preserved(self):
         path = workstream.start("dirty-root-finish", self.repo)
         self._commit_task_work(path, "dirty-root-finish")
-        (self.repo / "uncommitted-root-file").write_text("dirty\n")
+        preserved_file = self.repo / "uncommitted-root-file"
+        preserved_file.write_text("dirty\n")
         workstream.finish("dirty-root-finish", self._green_report(), repo=path)
-        self.assertTrue((self.repo / "uncommitted-root-file").exists())
-        self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(preserved_file.read_text(), "dirty\n")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
 
     def test_finish_leaves_diverged_persistent_root_history_untouched(self):
         path = workstream.start("diverged-root-finish", self.repo)
