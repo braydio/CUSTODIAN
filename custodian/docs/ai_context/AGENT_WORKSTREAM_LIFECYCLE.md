@@ -179,6 +179,17 @@ Diagnostic `ls-remote`, fetch, and push operations have a bounded timeout;
 failure is recorded locally and cannot invalidate an otherwise successful task
 claim.
 
+A checkpointed branch may already contain a main synchronization merge when
+`resume` emits `worktree_resumed`: resume synchronizes the clean checkout before
+recording its resulting HEAD. That event proves the resumed checkout's state;
+it does not retroactively create a `main_sync(changed=true)` event. Any source
+review that accepts such an intermediate merge must prove the exact checkpoint
+parent, the uniquely matching later resume event on the same run, branch, and
+absolute worktree, and a deterministic two-parent merge tree. It must also keep
+the first-parent workstream commits as the owned source inventory, so upstream
+files imported by synchronization do not become authored task changes. An
+untraced merge or an ambiguous checkpoint/resume sequence remains invalid.
+
 ### Run-pinned checkout interruption recovery (operator-only)
 
 The one-run helper `custodian/tools/agent/custodian_claim_checkout_recovery_v1.sh` addresses an interrupted checkout for

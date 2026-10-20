@@ -393,17 +393,16 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
         raise HostValidationError("Grunt scope attestation bytes do not match the exact post-hoc authorization")
 
     origin_result = subprocess.run(
-        ["git", "log", "--diff-filter=A", "--format=%H", reviewed_main, "--",
+        ["git", "log", "--format=%H", reviewed_main, "--",
          _GRUNT_SCOPE_ATTESTATION_PATH], cwd=repo, text=True, capture_output=True,
     )
     if origin_result.returncode:
         raise HostValidationError("cannot resolve Grunt scope attestation origin commit")
-    origins = origin_result.stdout.splitlines()
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _GRUNT_SCOPE_ATTESTATION_PATH) == attestation_entry]
     if len(origins) != 1:
-        raise HostValidationError("Grunt scope attestation has missing or ambiguous origin history")
+        raise HostValidationError("Grunt scope attestation has missing or ambiguous exact-blob origin history")
     origin_commit = origins[0]
-    if _git_tree_entry(repo, origin_commit, _GRUNT_SCOPE_ATTESTATION_PATH) != attestation_entry:
-        raise HostValidationError("Grunt scope attestation origin does not contain the current exact blob")
 
     # The correction review is the sole activating authority. Validate both
     # reviewer outcome and the separately appended target receipt using the
@@ -798,14 +797,97 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if chain.returncode or not chain.stdout.splitlines():
         raise HostValidationError("split landing has no source-bearing commits after its recorded workstream base")
     commits = chain.stdout.splitlines()
-    for commit in commits:
-        parent_count = len(_git(repo, "rev-list", "--parents", "-n", "1", commit).split()) - 1
-        if parent_count != 1:
-            raise HostValidationError("split source span contains merge ancestry")
+    merge_commits = []
+    owned_paths = set()
+    for index, commit in enumerate(commits):
+        parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
+        if len(parents) == 1:
+            owned_paths.update(_changed_paths(repo, f"{parents[0]}..{commit}"))
+        else:
+            merge_commits.append((index, commit, parents))
+    if len(merge_commits) > 1:
+        raise HostValidationError("split source span contains multiple synchronization merges")
+    checkpoint_resume_merge = None
+    if merge_commits:
+        if ref != claim_record["ref"] or run_id != claim_record["run_id"]:
+            raise HostValidationError("checkpoint-resume merge claim and lifecycle events are not from one trace")
+        merge_index, merge_sha, parents = merge_commits[0]
+        if len(parents) != 2 or merge_index == 0 or parents[0] != commits[merge_index - 1]:
+            raise HostValidationError("checkpoint-resume merge has invalid ordered parents")
+        first_parent, second_parent = parents
+        if not _is_ancestor(repo, source_base, second_parent):
+            raise HostValidationError("checkpoint-resume merge second parent is outside published history")
+        if not _is_ancestor(repo, second_parent, reviewed_main):
+            raise HostValidationError("checkpoint-resume merge second parent is outside reviewed main")
+        checkpoint_events = [
+            (i, event) for i, event in enumerate(events)
+            if event.get("event") == "checkpoint_completed"
+            and isinstance(event.get("data"), dict)
+            and event["data"].get("remote_head") == first_parent
+            and event["data"].get("branch") == claim_record["branch"]
+            and event["data"].get("removed") is False
+        ]
+        resume_events = [
+            (i, event) for i, event in enumerate(events)
+            if event.get("event") == "worktree_resumed"
+            and isinstance(event.get("data"), dict)
+            and event["data"].get("head") == merge_sha
+            and event["data"].get("branch") == claim_record["branch"]
+            and event["data"].get("worktree") == claim_record["worktree"]
+        ]
+        if len(checkpoint_events) != 1 or len(resume_events) != 1:
+            raise HostValidationError("checkpoint-resume merge lacks a unique matching lifecycle pair")
+        checkpoint_pos, checkpoint_event = checkpoint_events[0]
+        resume_pos, resume_event = resume_events[0]
+        if checkpoint_pos >= resume_pos or resume_pos >= len(events) - 1:
+            raise HostValidationError("checkpoint-resume lifecycle events are out of order")
+        preceding_checkpoints = [event for i, event in enumerate(events)
+                                 if i < resume_pos and event.get("event") == "checkpoint_completed"]
+        all_resumes = [event for event in events if event.get("event") == "worktree_resumed"]
+        if preceding_checkpoints != [checkpoint_event] or all_resumes != [resume_event]:
+            raise HostValidationError("checkpoint-resume trace contains conflicting lifecycle events")
+        sync_events = [(i, event) for i, event in enumerate(events)
+                       if event.get("event") == "main_sync"]
+        later_noop = [(i, event) for i, event in sync_events
+                      if i > resume_pos and isinstance(event.get("data"), dict)
+                      and event["data"].get("changed") is False
+                      and event["data"].get("head") == landing_commit
+                      and event["data"].get("main_sha") == second_parent]
+        if len(later_noop) != 1:
+            raise HostValidationError("checkpoint-resume merge lacks its later exact no-op main-sync witness")
+        merge_tree = subprocess.run(["git", "merge-tree", "--write-tree", first_parent, second_parent],
+                                    cwd=repo, text=True, capture_output=True)
+        stored_tree = _git(repo, "rev-parse", f"{merge_sha}^{{tree}}")
+        if merge_tree.returncode or not merge_tree.stdout.splitlines() \
+                or merge_tree.stdout.splitlines()[0].strip() != stored_tree:
+            raise HostValidationError("checkpoint-resume merge tree differs from deterministic Git merge")
+        inherited_paths = set(_changed_paths(repo, f"{source_base}..{second_parent}"))
+        # Local authorship is the union of first-parent non-merge commit diffs.
+        # Paths touched on both sides remain owned and keep their test coverage.
+        for path in owned_paths:
+            if any(subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"],
+                                  cwd=repo, capture_output=True).returncode
+                   for revision in (merge_sha, source_head)):
+                raise HostValidationError("checkpoint-resume merge loses workstream-owned source")
+        checkpoint_resume_merge = {
+            "commit": merge_sha, "first_parent": first_parent, "second_parent": second_parent,
+            "checkpoint_event_index": checkpoint_pos, "resume_event_index": resume_pos,
+            "main_sync_event_index": later_noop[0][0], "tree": stored_tree,
+            "checkpoint_event_id": {"run_id": run_id, "position": checkpoint_pos,
+                                    "timestamp_utc": checkpoint_event.get("timestamp_utc")},
+            "resume_event_id": {"run_id": run_id, "position": resume_pos,
+                                "timestamp_utc": resume_event.get("timestamp_utc")},
+            "main_sync_event_id": {"run_id": run_id, "position": later_noop[0][0],
+                                   "timestamp_utc": later_noop[0][1].get("timestamp_utc")},
+            "merge_tree_proof": "git-merge-tree-write-tree-exact",
+            "owned_paths": sorted(owned_paths), "inherited_paths": sorted(inherited_paths),
+            "overlapping_paths": sorted(owned_paths.intersection(inherited_paths)),
+        }
     if (source_bearing_archive and commits[-1] != landing_commit
             or not source_bearing_archive and archive_parent != commits[-1]):
         raise HostValidationError("split source span does not end at its canonical archive boundary")
-    source_paths = _changed_paths(repo, f"{source_base}..{source_head}")
+    source_paths = sorted(owned_paths) if checkpoint_resume_merge else _changed_paths(
+        repo, f"{source_base}..{source_head}")
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -885,6 +967,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                               "worktree": landing_record["path"], "branch": landing_record["branch"],
                               "landing": landing_record["landing"]},
             "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}
+    if checkpoint_resume_merge is not None:
+        provenance["checkpoint_resume_merge"] = checkpoint_resume_merge
     if scope_attestation is not None:
         provenance["scope_attestation"] = scope_attestation
     return {"base": source_base, "head": source_head, "commits": commits,

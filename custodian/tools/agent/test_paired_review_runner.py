@@ -3373,9 +3373,22 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ref, commit = record.split()
             subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
         attestation_path = "custodian/docs/ai_context/review_scope_attestations/grunt_candidate_raster_v1.json"
-        attestation_source = ROOT / attestation_path
+        attestation_source = subprocess.run(
+            ["git", "show", f"{base_main}:{attestation_path}"], cwd=ROOT,
+            check=True, capture_output=True,
+        ).stdout
         target_path = ("custodian/docs/ai_context/task_packets/archived/"
                        "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
+        original_target = subprocess.run(
+            ["git", "show", f"{base_main}:{target_path}"], cwd=ROOT,
+            check=True, text=True, capture_output=True,
+        ).stdout
+        reviewed_base = re.search(r"(?im)^- Reviewed main:\s*`?([0-9a-f]{40,64})`?\s*$",
+                                  original_target).group(1)
+        correction_archive_commit = subprocess.run(
+            ["git", "log", "--diff-filter=AR", "--format=%H", base_main, "--", target_path],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()[0]
         target = f"""# Correction packet
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-grunt-raster-review-scope-attestation-v1`
@@ -3385,13 +3398,13 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `paired-review-grunt-attestation`
-- Reviewed main: `{base_main}`
+- Reviewed main: `{reviewed_base}`
 
 ## Goal
 Verify the exact post-hoc attestation.
 """
         (repository / attestation_path).parent.mkdir(parents=True, exist_ok=True)
-        (repository / attestation_path).write_bytes(attestation_source.read_bytes())
+        (repository / attestation_path).write_bytes(attestation_source)
         (repository / target_path).parent.mkdir(parents=True, exist_ok=True)
         (repository / target_path).write_text(target, encoding="utf-8")
         subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path, target_path],
@@ -3406,8 +3419,12 @@ Verify the exact post-hoc attestation.
         review_workstream = "review-agent-grunt-raster-review-scope-attestation-v1"
         review_packet_path = ("custodian/docs/ai_context/task_packets/archived/"
                               "REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
-        review_source = (ROOT / "custodian/docs/ai_context/task_packets/"
-                         "REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md").read_text()
+        review_path = ("custodian/docs/ai_context/task_packets/"
+                       "REVIEW_AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
+        review_source = subprocess.run(
+            ["git", "show", f"{base_main}:{review_path}"], cwd=ROOT,
+            check=True, text=True, capture_output=True,
+        ).stdout
         review_source = review_source.replace("- Status: `ready`", "- Status: `complete`", 1)
         review_source += f"""
 ## Independent Review
@@ -3421,12 +3438,12 @@ Verify the exact post-hoc attestation.
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Reviewed main: `{implementation_commit}`
-- Reviewed implementation commit: `{implementation_commit}`
+- Reviewed implementation commit: `{correction_archive_commit}`
 """
         review_source += "\n" + runner.review_outcome.render_review_outcome(
             outcome="passed", review_workstream=review_workstream,
             target_workstream="agent-grunt-raster-review-scope-attestation-v1",
-            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            reviewed_main=implementation_commit, implementation_commit=correction_archive_commit,
             provenance="different-agent", run_id="20261020T100000Z-abcdef123456",
             review_cycle=0, ids=(),
         )
@@ -3434,7 +3451,7 @@ Verify the exact post-hoc attestation.
         final_target = append_receipt(
             baseline_target, review_workstream=review_workstream,
             target_workstream="agent-grunt-raster-review-scope-attestation-v1",
-            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            reviewed_main=implementation_commit, implementation_commit=correction_archive_commit,
         )
         (repository / target_path).write_text(final_target, encoding="utf-8")
         (repository / review_packet_path).parent.mkdir(parents=True, exist_ok=True)
@@ -3447,7 +3464,7 @@ Verify the exact post-hoc attestation.
             ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
             text=True, capture_output=True,
         ).stdout.strip()
-        return repository, implementation_commit, accepted_main, attestation_path, target_path, review_packet_path
+        return repository, correction_archive_commit, accepted_main, attestation_path, target_path, review_packet_path
 
     def test_grunt_six_file_scope_attestation_requires_canonical_independent_review_acceptance(self):
         repository, correction_commit, approved_main, attestation_path, _, review_path = (
@@ -3459,7 +3476,14 @@ Verify the exact post-hoc attestation.
 
         provenance = host_validation._verified_grunt_scope_attestation(repository, approved_main, exact_paths)
         self.assertEqual(provenance["kind"], "accepted-post-hoc-exact-markdown-attestation")
-        self.assertEqual(provenance["attestation_commit"], correction_commit)
+        self.assertEqual(
+            host_validation._git_tree_entry(repository, provenance["attestation_commit"], attestation_path),
+            ("100644", provenance["attestation_blob"]),
+        )
+        self.assertEqual(subprocess.run(
+            ["git", "merge-base", "--is-ancestor", provenance["attestation_commit"],
+             correction_commit], cwd=repository, capture_output=True,
+        ).returncode, 0)
         self.assertEqual(provenance["approval_implementation_commit"], correction_commit)
         self.assertEqual(provenance["approval_outcome"], "passed")
         self.assertEqual(set(provenance["source_files"]), exact_paths)
@@ -3722,6 +3746,133 @@ Verify the exact post-hoc attestation.
         self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
         self.assertEqual(span["provenance"]["claim_trace"]["base"], span["base"])
         self.assertEqual(span["provenance"]["landing_trace"]["landing"], landing)
+
+    def test_historical_checkpoint_resume_merge_replays_owned_paths_and_coverage(self):
+        reviewed_main = "447c358c312da83c726ac96c5c0fb899b4b8548c"
+        workstream = "agent-grunt-raster-review-scope-attestation-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
+        exact_attested_paths = set(host_validation._GRUNT_SCOPE_FILES)
+        repository = Path(self.temp.name) / "historical-grunt"
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                        str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
+                        reviewed_main], check=True)
+        prefix = f"refs/remotes/origin/agent-diagnostics/{workstream}/"
+        for record in subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)", prefix],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines():
+            ref, commit = record.split()
+            subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
+        with self._historical_claim_objects(), patch.object(
+            host_validation, "_verified_grunt_scope_attestation",
+            return_value={"source_files": sorted(exact_attested_paths)},
+        ):
+            span = host_validation.resolve_validation_source_span(
+                repository, reviewed_main, reviewed_main, workstream, archive,
+            )
+            merge = span["provenance"]["checkpoint_resume_merge"]
+            self.assertEqual(merge["commit"], "08236e69087852cc8a2dfd96edd64a742685e662")
+            self.assertEqual(merge["first_parent"], "d0e44dd859d8fb497c9139dd418a9d3c019d377b")
+            self.assertEqual(merge["second_parent"], "1f04495f729e830c625b88bdf3f0ceb34264d7be")
+            self.assertEqual(merge["merge_tree_proof"], "git-merge-tree-write-tree-exact")
+            self.assertIn("custodian/tools/agent/paired_review_host_validation.py", span["paths"])
+            self.assertIn("custodian/tools/agent/test_paired_review_runner.py", span["paths"])
+            self.assertNotIn("custodian/tools/agent/paired_review_runner.py", span["paths"])
+            self.assertNotIn("custodian/tools/agent/workstream.py", span["paths"])
+
+            code_paths = host_validation._source_code_paths(span["paths"])
+            changed_paths = subprocess.run(
+                ["git", "diff", "--name-only", "--no-renames", f"{span['base']}..{reviewed_main}"],
+                cwd=repository, check=True, text=True, capture_output=True,
+            ).stdout.splitlines()
+            report = {
+                "schema": "custodian.validation.result.v1", "passed": True,
+                "changed_files": changed_paths, "selected": ["historical_checkpoint_resume"],
+                "tests": [{"id": "historical_checkpoint_resume", "status": "passed"}],
+                "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                            "skipped": 0, "infrastructure_errors": 0},
+                "coverage": {"complete": True, "covered_files": sorted(code_paths),
+                             "uncovered_files": [], "excluded_files": [],
+                             "covered_by": {path: ["historical_checkpoint_resume"]
+                                            for path in code_paths}},
+            }
+            run_dir = self.run_dir / "checkpoint-resume-replay"
+            run_dir.mkdir()
+
+            def validate(command, cwd):
+                self.assertEqual(Path(cwd), repository)
+                self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+                return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+            evidence = host_validation.run_coordinator_validation(
+                repository, run_dir, reviewed_main, reviewed_main,
+                target_workstream=workstream, target_packet_path=archive,
+                run_validation=validate,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
+            verified = host_validation.verify_coordinator_validation(
+                repository, run_dir, reviewed_main, reviewed_main,
+                target_workstream=workstream, target_packet_path=archive,
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
+            self.assertTrue(verified["passed"])
+
+            trace_ref = ("refs/remotes/origin/agent-diagnostics/" + workstream +
+                         "/20261019T195635Z-441f0bc5ee6f")
+            original_trace_commit = subprocess.run(
+                ["git", "rev-parse", trace_ref], cwd=repository, check=True,
+                text=True, capture_output=True,
+            ).stdout.strip()
+            trace_bytes = subprocess.run(
+                ["git", "show", f"{trace_ref}:trace.jsonl"], cwd=repository,
+                check=True, capture_output=True,
+            ).stdout
+            canonical_events = [json.loads(line) for line in trace_bytes.splitlines()]
+
+            def replace_trace(events):
+                raw = b"".join(json.dumps(event, sort_keys=True).encode() + b"\n"
+                                for event in events)
+                blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repository,
+                                      input=raw, check=True, capture_output=True).stdout.decode().strip()
+                tree = subprocess.run(["git", "mktree"], cwd=repository,
+                                      input=f"100644 blob {blob}\ttrace.jsonl\n",
+                                      text=True, check=True, capture_output=True).stdout.strip()
+                commit = subprocess.run(["git", "-c", "user.name=test",
+                                         "-c", "user.email=test@example.invalid",
+                                         "commit-tree", tree, "-m", "forged trace"],
+                                        cwd=repository, text=True, check=True,
+                                        capture_output=True).stdout.strip()
+                subprocess.run(["git", "update-ref", trace_ref, commit], cwd=repository, check=True)
+
+            mutations = []
+            for mutate in (
+                lambda events: next(event for event in events
+                    if event["event"] == "checkpoint_completed")["data"].update(
+                        remote_head="0" * 40),
+                lambda events: next(event for event in events
+                    if event["event"] == "worktree_resumed")["data"].update(
+                        worktree="/tmp/unrelated-checkout"),
+                lambda events: events.append(next(event for event in events
+                    if event["event"] == "worktree_resumed").copy()),
+                lambda events: events.remove(next(event for event in events
+                    if event["event"] == "checkpoint_completed")),
+                lambda events: next(event for event in events
+                    if event["event"] == "main_sync")["data"].update(main_sha="0" * 40),
+            ):
+                events = json.loads(json.dumps(canonical_events))
+                mutate(events)
+                mutations.append(events)
+            for events in mutations:
+                replace_trace(events)
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        repository, reviewed_main, reviewed_main, workstream, archive,
+                    )
+            subprocess.run(["git", "update-ref", trace_ref, original_trace_commit],
+                           cwd=repository, check=True)
 
     def test_source_bearing_gate_resolves_earlier_failed_claim_without_widening_source_span(self):
         reviewed_main = "9cbbfef899957f2e3fff3306b74accf28cd846dc"
