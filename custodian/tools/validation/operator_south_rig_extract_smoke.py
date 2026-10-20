@@ -28,10 +28,23 @@ def main() -> int:
     inventory_path = BUNDLE / "bundle_inventory.json"
     inventory = json.loads(inventory_path.read_text())
     expected = inventory["files"]
+    blender_outputs = BUNDLE / "blender"
+    allowed_blender_outputs = {
+        "operator_south_cutout_rig_v1.blend",
+        "rig_build_receipt.json",
+    }
+    unexpected_blender_outputs = {
+        path.name for path in blender_outputs.iterdir() if path.is_file()
+    } - allowed_blender_outputs if blender_outputs.exists() else set()
+    if unexpected_blender_outputs:
+        raise SystemExit(f"unexpected Blender source-work outputs: {sorted(unexpected_blender_outputs)}")
     actual = {
         path.relative_to(BUNDLE).as_posix(): file_sha(path)
         for path in BUNDLE.rglob("*")
-        if path.is_file() and path != inventory_path and "__pycache__" not in path.parts
+        if path.is_file()
+        and path != inventory_path
+        and "__pycache__" not in path.parts
+        and "blender" not in path.relative_to(BUNDLE).parts
     }
     if actual != expected:
         raise SystemExit("source-work bundle does not match bundle_inventory.json")
