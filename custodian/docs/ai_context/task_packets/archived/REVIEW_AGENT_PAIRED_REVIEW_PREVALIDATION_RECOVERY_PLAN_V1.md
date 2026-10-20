@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-prevalidation-recovery-plan-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-prevalidation-recovery-plan-v1`
@@ -42,3 +42,11 @@
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad41ae1-c654-83ea-ba9f-2b4dc4dde401`
 - Refresh instruction: `none`
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.

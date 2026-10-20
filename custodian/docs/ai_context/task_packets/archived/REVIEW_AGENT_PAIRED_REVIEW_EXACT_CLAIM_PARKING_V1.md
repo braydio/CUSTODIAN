@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-exact-claim-parking-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-exact-claim-parking-v1`
@@ -44,3 +44,11 @@ Use `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`. Start a fresh r
 - Refresh reason: `none`
 - Next action: After a genuine independent PASS, re-audit and park only the exact authorized review claim; then rerun dispatch eligibility and claim the named strict-authority implementation if eligible.
 - Blockers or open questions: A missing process identity or unverifiable cross-host owner remains a live apply blocker; no transition is authorized on an assumption.
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.

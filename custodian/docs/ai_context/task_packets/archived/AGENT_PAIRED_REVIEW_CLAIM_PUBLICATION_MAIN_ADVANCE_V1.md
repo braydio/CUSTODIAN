@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-claim-publication-main-advance-v1`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -43,3 +43,11 @@
 - Refresh reason: `none`
 - Next action: Publish both packets atomically, then claim this exact implementation through normal dispatcher eligibility.
 - Blockers or open questions: The shared `paired-review-source-provenance` lock may remain occupied by a preserved review claim; do not bypass dispatcher eligibility.
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.

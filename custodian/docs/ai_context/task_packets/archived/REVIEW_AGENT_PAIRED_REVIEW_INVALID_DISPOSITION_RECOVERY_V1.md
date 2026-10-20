@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-invalid-disposition-recovery-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-invalid-disposition-recovery-v1`
@@ -41,3 +41,11 @@
 - Refresh reason: `none`
 - Next action: `Resume the existing held run 20261019T055243Z-1d73c6a01b1e through its exact same-run recovery path; do not create a replacement claim.`
 - Blockers or open questions: `The original run's exact disposition digest and evidence manifest must still match at recovery time.`
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.

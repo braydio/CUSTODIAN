@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-claim-publication-main-advance-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-claim-publication-main-advance-v1`
@@ -44,3 +44,11 @@
 - Refresh reason: `none`
 - Next action: After a coordinator-verified PASS, make a fresh read-only host-validation recovery plan for the exact preserved run; apply only if separately authorized and the plan's live identity checks pass.
 - Blockers or open questions: Preserve original review evidence and claim; do not retry this or any other review while a conflicting provenance lock is held.
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.

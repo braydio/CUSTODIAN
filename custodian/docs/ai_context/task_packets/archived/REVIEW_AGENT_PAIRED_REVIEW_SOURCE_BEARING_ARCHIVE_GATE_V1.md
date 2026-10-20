@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-source-bearing-archive-gate-v1`
 - Kind: `review`
-- Status: `ready`
+- Status: `blocked`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -40,3 +40,11 @@
 - Refresh reason: `none`
 - Next action: `After independent PASS, re-plan exact existing source-span reviewer run from clean coordinator using pinned claim and immutable evidence; authorize same-run recovery only if plan and evidence manifest match. If that review passes, similarly recover existing host-validation correction review 20261018T014101Z-f4fd619029aa; only then regenerate/apply authorized W1 plan.`
 - Blockers or open questions: `Original review claims and evidence preserved; W2/W5 remain blocked. Never create replacement review runs to work around a failed same-run continuation.`
+
+## Administrative reset disposition
+
+- Disposition: `legacy_quarantined` (administrative only)
+- Superseded by: `agent-execution-reset-v1`
+- Historical outcome: unchanged; this administrative metadata does not create or alter completion, PASS, canonical findings, or release.
+- Preservation: the original claim identity, available refs and worktree, reviewer-authored output, and run evidence remain preserved in the reset backup and Git history.
+- Queue state: retired from the active packet queue; historical review state remains inspectable and unresolved.
