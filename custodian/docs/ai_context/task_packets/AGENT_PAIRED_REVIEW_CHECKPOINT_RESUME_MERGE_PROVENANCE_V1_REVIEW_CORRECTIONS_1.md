@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
 - Authoring handoff: `auto`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `draft`
+- Dispatch: `manual`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
 - Locks: `paired-review-resume-merge-provenance`
@@ -22,6 +22,7 @@
 - Goal: Prove that the checkpoint-resume merge exception rejects malformed Git ancestry, altered merge results, source loss or mutation, and source/test ownership laundering.
 - Completion boundary: Add focused real-Git negative fixtures for review finding `R0-01`, fix any demonstrated resolver defects within the existing host-validation boundary, validate the full paired-review suite, and obtain the fresh-context paired review. Do not resume either protected Grunt review in this cycle.
 - Current measured state: The landed implementation `00cdfd382a3007c30cd42609b4a63146daf0ad32` passes 126 paired-review tests and the historical `f76854cf → d0e44dd8 → 08236e69 → ff48e1d0 → 447c358c` replay. The independent review found that five trace mutations do not cover the packet's required A3 merge/source adversarial cases.
+- Findings addressed: `R0-01`
 - Evidence: Archived implementation packet `AGENT_PAIRED_REVIEW_CHECKPOINT_RESUME_MERGE_PROVENANCE_V1.md`; archived findings review with `R0-01`; summary `REVIEW_AGENT_PAIRED_REVIEW_CHECKPOINT_RESUME_MERGE_PROVENANCE_V1_CLAUDE_SUMMARY.md`; pinned source and lifecycle traces named by those artifacts.
 - Required correction: Add real-Git negative fixtures for altered merge trees/parents, unrelated or extra parents/merges, source loss or synchronized-main mutation, undocumented local sources, and unowned tests. Keep overlap ownership and the exact historical replay covered; fix a resolver gate only if a failing fixture demonstrates an actual escape.
 - Task-specific authority: The archived implementation's A3 acceptance and validation contract; the exact landed source span and immutable checkpoint/resume trace; `paired_review_host_validation.py` source-span and ownership gates; `test_paired_review_runner.py` real-Git fixtures.
