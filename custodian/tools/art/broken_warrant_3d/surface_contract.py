@@ -39,6 +39,10 @@ def material_for_part(part: str) -> str | None:
     """Fail-closed part-name-to-material policy; ordered from specific to broad."""
     n = part.lower()
 
+    # Canister cores need a separate energy budget from the visor/chest.
+    if n.startswith("tank_") and "amber_glass" in n:
+        return "emission_canister"
+
     # Independently glowing geometry, never alpha-cutout glass or face crops.
     if (
         "amber_glass" in n or "amber_emitter" in n or "round_emissive" in n

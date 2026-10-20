@@ -193,9 +193,9 @@ def main():
     for obj in meshes:
         semantic = obj.get("bw_semantic_material", "")
         if obj.data.materials:
-            obj.data.materials[0] = white if semantic == "emission_amber" else black
+            obj.data.materials[0] = white if semantic in {"emission_amber", "emission_canister"} else black
         else:
-            obj.data.materials.append(white if semantic == "emission_amber" else black)
+            obj.data.materials.append(white if semantic in {"emission_amber", "emission_canister"} else black)
     for angle, camera in cameras.items():
         render(scene, camera, mask_dir / f"{angle}_emission_mask_512.png", FRAME_SIZE * SUPERSAMPLE)
     for obj in meshes:
