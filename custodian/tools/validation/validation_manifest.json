@@ -1557,6 +1557,20 @@
       "needs_import": false
     },
     {
+      "id": "operator_unarmed_fast_chain_north_vfx_contract_regression",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
+      "tier": "unit",
+      "tags": ["operator", "asset_contract", "provenance"],
+      "owners": [
+        "custodian/tools/validation/operator_unarmed_fast_chain_north_vfx_contract.py",
+        "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_art_source_pilot",
       "type": "python",
       "script": "custodian/tools/validation/operator_art_source_real_pilot.py",
@@ -1631,6 +1645,20 @@
         "custodian/tools/validation/operator_south_rig_extract_smoke.py"
       ],
       "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "operator_motion_foundry_blender_2d",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "blender", "asset-provenance", "candidate"],
+      "owners": [
+        "custodian/tools/operator/motion_foundry/blender/**",
+        "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
+        "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/blender/**"
+      ],
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
