@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-missing-archived-disposition-continuation-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-missing-archived-disposition-continuation-v1`
 - Locks: `paired-review-missing-archived-disposition-continuation`
