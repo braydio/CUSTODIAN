@@ -178,11 +178,12 @@ def root_untracked_sibling_smoke(base: Path) -> None:
 
     before = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
     assert before.state == "SYNCED", before
-    assert before.clean is False and "unrelated-local-package.zip" in before.changed_paths
+    assert before.clean is False and "README.md" in before.changed_paths
     assert git(coordination, "rev-parse", "HEAD") == remote_head
     assert preserved.read_bytes() == original
     current = sync.inspect_profile(sync.ROOT_PROFILE, coordination)
     assert current.state == "CURRENT" and current.clean is False
+    assert "unrelated-local-package.zip" in current.changed_paths
 
     # An incoming tracked file with the exact same name must still fail closed.
     incoming = coordination / "future-asset.zip"
