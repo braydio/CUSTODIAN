@@ -104,11 +104,16 @@ python3 custodian/tools/agent/persistent_checkout_sync.py status root
 python3 custodian/tools/agent/persistent_checkout_sync.py apply root
 ```
 
-This may fast-forward **only a clean, attached, behind-only coordination
-`main`**. It preserves dirty, ahead, diverged, detached and foreign checkout
-states and must never be replaced with reset, stash, force-push or manual
-worktree cleanup. If status/apply reports a genuine blocker, preserve the
-original run and report its exact reason. After a successful fast-forward,
+This may fast-forward only an attached, behind-only coordination
+`main` with no tracked edits. **Unrelated untracked files, including a stray
+local ZIP, are preserved in place and do not block a fast-forward**; an
+incoming tracked path that collides with any such local file still blocks
+synchronization. The status report continues to show untracked paths and
+`clean=false` without equating them to tracked changes. Ahead, diverged,
+detached, tracked-dirty, colliding, and foreign checkouts remain protected.
+Never substitute reset, stash, force-push or manual worktree cleanup. If
+status/apply reports a genuine blocker, preserve the original run and report
+its exact reason. After a successful fast-forward,
 rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
 any separately authorized apply. The pinned implementation SHA and protected
 claim/worktree must remain unchanged; source/provenance validation still runs.
