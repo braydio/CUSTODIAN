@@ -1620,6 +1620,20 @@
       "needs_import": false
     },
     {
+      "id": "operator_south_rig_extract",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_south_rig_extract_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "source-work", "asset-provenance"],
+      "owners": [
+        "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/**",
+        "custodian/tools/assets/operator_south_rig_extract.py",
+        "custodian/tools/validation/operator_south_rig_extract_smoke.py"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
       "id": "operator_2_5d_canonical_visual_contract",
       "type": "python",
       "script": "custodian/tools/validation/operator_2_5d_canonical_visual_contract_smoke.py",
