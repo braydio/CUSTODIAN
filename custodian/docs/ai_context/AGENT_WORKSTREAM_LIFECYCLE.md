@@ -600,6 +600,37 @@ success; an incomplete continuation is never replayed automatically. New
 ordinary review claims persist the full structured receipt in
 `claim-receipt.json` because the human-readable `claim.stdout` is length-limited.
 
+### Exact continuation after missing archived disposition
+
+One additional recovery is authorized only for
+`review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`,
+run `20261020T114129Z-536181b31d70`. It requires the original run to remain in
+`post_exit_recovery` and `continuation-01` to record exactly
+`missing_archived_disposition` with reviewer `exit_code: 0`. The original run
+manifest, structured claim, exact worktree/branch/head, pinned target and green
+host-validation evidence must still verify. Use all three exact arguments:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1 \
+  --continue-run 20261020T114129Z-536181b31d70 \
+  --recover-missing-archived-disposition --authorize-fresh-reviewer-context
+```
+
+This holds the original nonblocking review lock, creates only
+`continuation-02`, and records complete SHA-256 manifests for the original run
+and all of `continuation-01`. Both evidence sets are rechecked after the fresh
+reviewer exits; neither is rewritten. The reviewer stays on the original claim
+and worktree. Its prompt names the exact active review packet, canonical
+archived review packet, pinned implementation target and receipt location, and
+root summary. A PASS in a prior message is not evidence. Only a new canonical
+archived packet and run-bound Review Outcome, exactly one valid target receipt,
+the exact root summary and coordinator verification can enter the ordinary
+race-safe closeout. Findings, human-required outcomes, missing artifacts and
+interruption remain preserved. An incomplete continuation-02 cannot launch
+again; a completed PASS may retry coordinator verification/closeout without a
+second reviewer. No other run or phase is covered by this exception.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure

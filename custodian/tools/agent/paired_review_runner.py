@@ -64,6 +64,15 @@ ROOT_SYNC_DEFERRAL_WORKSTREAMS = frozenset({
     "review-agent-paired-review-invalid-disposition-recovery-v1",
 })
 
+# This second continuation is authorized only for the exact run whose first
+# fresh continuation exited 0 but omitted its canonical archived disposition.
+MISSING_ARCHIVED_DISPOSITION_WORKSTREAM = (
+    "review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1"
+)
+MISSING_ARCHIVED_DISPOSITION_RUN_ID = "20261020T114129Z-536181b31d70"
+MISSING_ARCHIVED_DISPOSITION_PARENT = "continuation-01"
+MISSING_ARCHIVED_DISPOSITION_CHILD = "continuation-02"
+
 # This recovery is deliberately bound to one already-authored reviewer PASS.
 # It does not change ordinary continuation or the nonpassing closeout API.
 ADVANCED_HEAD_PASS_WORKSTREAM = "review-agent-paired-review-exact-claim-parking-v1"
@@ -1244,19 +1253,53 @@ def _preserve_file(source: Path, destination: Path) -> dict[str, str]:
 
 
 def _continuation_prompt(workstream: str, packet_path: str, target_path: str, *, run_id: str,
+                         target_workstream: str | None = None,
                          reviewed_main: str, implementation_commit: str, authoring_chat: str | None,
                          continuation_dir: Path, preserved: list[dict[str, str]],
                          report_sha256: str, source_span: dict | None = None,
-                         validation_report_path: Path | None = None) -> str:
+                         validation_report_path: Path | None = None,
+                         continuation_number: int = 1) -> str:
     preserved_lines = "\n".join(
         f"- Original `{item['source']}` is preserved byte-for-byte at `{item['copy']}` "
-        f"(SHA-256 `{item['sha256']}`). Read it as prior reviewer evidence."
+        f"(SHA-256 `{item['sha256']}`). Treat it only as historical worktree context, not as a verdict."
         for item in preserved
     ) or "- No prior worktree review artifacts were present."
     backlink = authoring_chat or "not-recorded"
     source_range = (f"The immutable coordinator validation covered source span `{source_span.get('base')}`..`{source_span.get('head')}`. Inspect that complete source/test diff; the canonical archived implementation identity remains `{implementation_commit}`."
                     if source_span else f"Inspect the source span recorded in `{continuation_dir}/host-validation/coordinator-validation.json`; the canonical archived implementation identity remains `{implementation_commit}`.")
     report_path = validation_report_path or continuation_dir / "prior-run-evidence/validation.json"
+    archive_path = f"{PACKET_ROOT}/archived/{Path(packet_path).name}"
+    summary_path = expected_summary_path(workstream)
+    receipt_target_workstream = target_workstream or (
+        "agent-" + Path(target_path).name.removeprefix("AGENT_").removesuffix(".md").lower().replace("_", "-")
+    )
+    receipt_shape = f"""
+If and only if your independent outcome is `passed`, append this canonical structure to `{target_path}` after the exact pinned baseline bytes (fill the provenance truthfully; do not add prose inside the receipt):
+
+## Independent Review
+
+### Review Receipt: {workstream}
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{workstream}`
+- Review target workstream: `{receipt_target_workstream}`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Reviewed main: `{reviewed_main}`
+- Reviewed implementation commit: `{implementation_commit}`
+
+Add exactly one such receipt and no duplicate `## Independent Review` section.""" if continuation_number == 2 else ""
+    receipt_instruction = f"""
+For this explicitly authorized second continuation, use these exact artifact paths:
+- Active review packet to complete: `{packet_path}`.
+- Complete canonical archived review packet, including the Review Outcome: `{archive_path}`.
+- Pinned archived implementation target (do not rewrite its implementation or acceptance): `{target_path}`.
+- Append one canonical `## Independent Review` section with exactly one `### Review Receipt: {workstream}` to that target only if your own verdict is `passed`; the receipt path is `{target_path}`. Use the exact canonical receipt fields from `custodian/tools/agent/review_receipt_delta.py`; do not append a PASS receipt for findings or human-required.
+- Exact root review summary: `{summary_path}`.
+
+The coordinator will reject a missing archived packet, a receipt placed only in the review packet, an extra or malformed Independent Review section, a mismatched Review Outcome, or a missing summary. Earlier PASS text is not a verdict and is not supplied as review evidence. Prior worktree notes are historical context only; independently re-evaluate the implementation and produce only the verdict you reach. Preserve findings or human-required outcomes without claiming PASS.{receipt_shape}""" if continuation_number == 2 else ""
     return f"""You are a new fresh independent reviewer continuing the exact preserved paired-review claim `{workstream}`.
 
 This is a new ephemeral reviewer context, not a restoration of the original Codex session. The original claim, branch, worktree, and run ID remain unchanged. Review run ID: `{run_id}`. Review the immutable baseline `{reviewed_main}` and implementation commit `{implementation_commit}`. {source_range} Read `{packet_path}`, the archived target `{target_path}`, the original reviewer disposition snapshots below, the implementation's exact root summary, the original authoring-chat URL `{backlink}`, and the immutable coordinator validation report at `{report_path}` (SHA-256 `{report_sha256}`). Independently inspect the exact archived implementation diff and all applicable acceptance claims. A green coordinator report proves execution coverage only; it is not a review verdict.
@@ -1264,7 +1307,7 @@ This is a new ephemeral reviewer context, not a restoration of the original Code
 Original reviewer evidence snapshots:
 {preserved_lines}
 
-Write your own findings-first disposition. Retain the old notes as historical evidence and clearly distinguish your independent conclusions. Do not infer or request the original implementation-session transcript. Do not edit implementation/runtime code or the target implementation summary. Author the canonical review receipt, complete archived review packet, and exact root `{expected_summary_path(workstream)}`. Record `Reviewer context: fresh`, truthful provenance, exact pinned SHAs, and exact authoring-chat backlink. Include one canonical `## Review Outcome` with schema `custodian.review_outcome.v1`, this exact run ID `{run_id}`, the target workstream, review cycle, and `Finding IDs: none` only for `passed`; findings and human-required outcomes need unique stable cycle-scoped finding IDs. If evidence supports findings, `human_required`, or a blocker, record that outcome and leave the claim recoverable; do not manufacture PASS.
+Write your own findings-first disposition. Retain the old notes as historical evidence and clearly distinguish your independent conclusions. Do not infer or request the original implementation-session transcript. Do not edit implementation/runtime code or the target implementation summary. Author the canonical review receipt, complete archived review packet, and exact root `{summary_path}`. Record `Reviewer context: fresh`, truthful provenance, exact pinned SHAs, and exact authoring-chat backlink. Include one canonical `## Review Outcome` with schema `custodian.review_outcome.v1`, this exact run ID `{run_id}`, the target workstream, review cycle, and `Finding IDs: none` only for `passed`; findings and human-required outcomes need unique stable cycle-scoped finding IDs. If evidence supports findings, `human_required`, or a blocker, record that outcome and leave the claim recoverable; do not manufacture PASS.{receipt_instruction}
 
 The coordinator grants writable access to this continuation evidence directory, the original claimed worktree, and the established CUSTODIAN validation cache roots. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; the coordinator owns all Git mutation and closeout. Do not claim or resume any workstream. Preserve all original run evidence outside `{continuation_dir}` byte-for-byte."""
 
@@ -2192,6 +2235,83 @@ def _continuation_metadata(path: Path) -> dict:
     return value
 
 
+def _manifest_digest(manifest: dict[str, str]) -> str:
+    return _sha256_bytes(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode())
+
+
+def _verify_missing_archived_disposition_parent(run_dir: Path, workstream: str, run_id: str,
+                                                original: dict) -> tuple[dict, dict[str, str]]:
+    """Verify the sole exact continuation-01 eligible for one continuation-02."""
+    if (workstream != MISSING_ARCHIVED_DISPOSITION_WORKSTREAM
+            or run_id != MISSING_ARCHIVED_DISPOSITION_RUN_ID):
+        raise RunnerError("missing-archived-disposition continuation accepts only its exact protected run")
+    parent_dir = run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT
+    child_dir = run_dir / MISSING_ARCHIVED_DISPOSITION_CHILD
+    if parent_dir.is_symlink() or not parent_dir.is_dir():
+        raise RunnerError("exact missing_archived_disposition recovery requires a real preserved continuation-01")
+    if child_dir.is_symlink() or (os.path.lexists(child_dir) and not child_dir.is_dir()):
+        raise RunnerError("continuation-02 path is unsafe")
+    expected_children = [MISSING_ARCHIVED_DISPOSITION_PARENT]
+    if child_dir.is_dir():
+        expected_children.append(MISSING_ARCHIVED_DISPOSITION_CHILD)
+    children = sorted(path.name for path in run_dir.glob("continuation-*")
+                      if path.is_dir() or path.is_symlink())
+    if children != expected_children:
+        raise RunnerError("exact missing_archived_disposition recovery permits only continuation-01 and its one continuation-02")
+    parent = _continuation_metadata(parent_dir / "metadata.json")
+    if (parent.get("workstream") != workstream or parent.get("run_id") != run_id
+            or parent.get("phase") != "missing_archived_disposition"
+            or parent.get("exit_code") != 0):
+        raise RunnerError("continuation-01 must record exact missing_archived_disposition and reviewer exit_code 0")
+    for key in ("branch", "worktree", "active_packet_path", "target_workstream",
+                "target_packet_path", "reviewed_main", "implementation_commit"):
+        value = parent.get(key)
+        if not isinstance(value, str) or not value:
+            raise RunnerError(f"continuation-01 omits exact identity field {key}")
+    for key in ("branch", "worktree", "packet", "reviewed_main"):
+        if original.get(key) != parent.get({"packet": "active_packet_path"}.get(key, key)):
+            raise RunnerError(f"continuation-01 {key} differs from the original run identity")
+    parent_host = parent.get("host_evidence")
+    original_host = original.get("host_validation")
+    if (not isinstance(parent_host, dict) or not isinstance(original_host, dict)
+            or parent_host.get("report_sha256") != original_host.get("report_sha256")
+            or parent_host.get("metadata_sha256") != original_host.get("metadata_sha256")):
+        raise RunnerError("continuation-01 host-validation identity differs from the original run")
+    recorded_original = parent.get("run_evidence_sha256")
+    if not isinstance(recorded_original, dict) or not recorded_original:
+        raise RunnerError("continuation-01 lacks the original-run evidence manifest")
+    all_run_evidence = _file_manifest(run_dir)
+    actual_original = {
+        name: digest for name, digest in all_run_evidence.items()
+        if not name.startswith(f"{MISSING_ARCHIVED_DISPOSITION_PARENT}/")
+        and not name.startswith(f"{MISSING_ARCHIVED_DISPOSITION_CHILD}/")
+    }
+    if actual_original != recorded_original:
+        raise RunnerError("original run evidence does not match the manifest recorded before continuation-01")
+
+    preserved_files = parent.get("preserved_files")
+    preserved_manifest = parent_dir / "preserved-files.json"
+    if preserved_manifest.is_symlink() or not preserved_manifest.is_file():
+        raise RunnerError("continuation-01 preserved-files manifest is missing or unsafe")
+    try:
+        indexed = json.loads(preserved_manifest.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("continuation-01 preserved-files manifest is malformed") from exc
+    if not isinstance(preserved_files, list) or indexed != preserved_files:
+        raise RunnerError("continuation-01 preserved-files index differs from its metadata")
+    for item in preserved_files:
+        if (not isinstance(item, dict) or set(item) != {"source", "copy", "sha256"}
+                or not isinstance(item.get("copy"), str)
+                or not re.fullmatch(r"[0-9a-f]{64}", str(item.get("sha256", "")))):
+            raise RunnerError("continuation-01 contains a malformed preserved reviewer artifact")
+        copy_path = Path(item["copy"])
+        if (copy_path.is_symlink() or not copy_path.is_file()
+                or not copy_path.resolve().is_relative_to(parent_dir.resolve())
+                or _sha256_bytes(copy_path.read_bytes()) != item["sha256"]):
+            raise RunnerError("continuation-01 preserved reviewer artifact failed its recorded hash")
+    return parent, _file_manifest(parent_dir)
+
+
 def _coordinator_checkout_sha(repo: Path) -> str:
     """Require a clean main checkout or detached clean checkout at cached origin/main."""
     if git(repo, "status", "--porcelain", "--untracked-files=all"):
@@ -2970,17 +3090,23 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                  authorize_fresh_reviewer_context: bool = False,
                  recover_host_validation: bool = False,
                  recover_invalid_disposition: bool = False,
+                 recover_missing_archived_disposition: bool = False,
                  plan_sha256: str | None = None,
                  codex_path: str | None = None, timeout: float | None = None) -> int:
     """Continue one exact preserved review claim in a new independent Codex context."""
+    if recover_missing_archived_disposition:
+        if (not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
+                or plan_sha256 or workstream != MISSING_ARCHIVED_DISPOSITION_WORKSTREAM
+                or run_id != MISSING_ARCHIVED_DISPOSITION_RUN_ID):
+            raise RunnerError("missing-archived-disposition recovery accepts only its exact run with explicit fresh-reviewer authorization")
     if recover_invalid_disposition:
-        if (authorize_fresh_reviewer_context or recover_host_validation or plan_sha256
+        if (authorize_fresh_reviewer_context or recover_host_validation or recover_missing_archived_disposition or plan_sha256
                 or workstream != INVALID_DISPOSITION_WORKSTREAM or run_id != INVALID_DISPOSITION_RUN_ID):
             raise RunnerError("invalid-disposition recovery accepts only the exact held run and does not launch a reviewer")
     elif not authorize_fresh_reviewer_context:
         raise RunnerError("same-run continuation requires --authorize-fresh-reviewer-context")
-    if recover_invalid_disposition and codex_path is not None:
-        raise RunnerError("invalid-disposition recovery must not accept or launch a reviewer executable")
+    if (recover_invalid_disposition or recover_missing_archived_disposition) and codex_path is not None:
+        raise RunnerError("special exact-run recovery must not accept an injected reviewer executable")
     if not ID_RE.fullmatch(workstream) or not _RUN_ID_RE.fullmatch(run_id):
         raise RunnerError("continuation requires an exact review workstream and shaped run ID")
     if timeout is not None and (timeout <= 0 or not float(timeout) < float("inf")):
@@ -2995,9 +3121,9 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
 
     mutex_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
     mutex_path.parent.mkdir(parents=True, exist_ok=True)
-    if (recover_host_validation or recover_invalid_disposition) and not mutex_path.is_file():
+    if (recover_host_validation or recover_invalid_disposition or recover_missing_archived_disposition) and not mutex_path.is_file():
         raise RunnerError("original paired-review supervisor lock is missing")
-    locked_recovery = recover_host_validation or recover_invalid_disposition
+    locked_recovery = recover_host_validation or recover_invalid_disposition or recover_missing_archived_disposition
     with mutex_path.open("rb" if locked_recovery else "a") as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -3022,7 +3148,15 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             if not plan_sha256 or plan.get("plan_sha256") != plan_sha256:
                 raise RunnerError("apply requires the exact SHA-256 from a fresh read-only recovery plan")
 
-        continuation_dir = run_dir / "continuation-01"
+        continuation_dir = run_dir / (
+            MISSING_ARCHIVED_DISPOSITION_CHILD if recover_missing_archived_disposition else "continuation-01"
+        )
+        parent_continuation = None
+        parent_continuation_manifest: dict[str, str] | None = None
+        if recover_missing_archived_disposition:
+            parent_continuation, parent_continuation_manifest = _verify_missing_archived_disposition_parent(
+                run_dir, workstream, run_id, original,
+            )
         child_metadata_path = continuation_dir / "metadata.json"
         if recover_invalid_disposition and not continuation_dir.is_dir():
             raise RunnerError("exact invalid-disposition recovery requires the existing preserved continuation-01")
@@ -3031,6 +3165,15 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             if (child.get("run_id") != run_id or child.get("workstream") != workstream
                     or child.get("schema") != CONTINUATION_SCHEMA):
                 raise RunnerError("existing continuation directory is bound to a different run")
+            if recover_missing_archived_disposition:
+                if (child.get("continuation_number") != 2
+                        or child.get("parent_continuation") != MISSING_ARCHIVED_DISPOSITION_PARENT
+                        or child.get("parent_continuation_sha256") != _manifest_digest(parent_continuation_manifest or {})
+                        or child.get("parent_continuation_manifest") != parent_continuation_manifest
+                        or child.get("run_evidence_sha256") != _file_manifest(run_dir, omit=continuation_dir)):
+                    raise RunnerError("existing continuation-02 no longer matches its exact preserved parent manifests")
+                if child.get("phase") not in {"coordinator_closeout", "landed_verification_failed", "complete"}:
+                    raise RunnerError("continuation-02 already consumed its one reviewer launch; preserve and inspect its phase")
             if recover_invalid_disposition and child.get("phase") == "invalid_reviewer_disposition":
                 child = _recover_exact_invalid_disposition(repo, run_dir, continuation_dir, original, child)
             elif recover_invalid_disposition and child.get("phase") not in {
@@ -3292,6 +3435,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("pinned target already contains a receipt for this review; refusing a duplicate")
         if (worktree / target_path).read_bytes() != target_content.encode("utf-8"):
             raise RunnerError("original review worktree target differs from the pinned archived baseline")
+        archive_path = f"{PACKET_ROOT}/archived/{Path(active_path).name}"
+        if (recover_missing_archived_disposition
+                and (worktree / archive_path).exists()):
+            raise RunnerError("continuation-01 state already contains an archived review disposition")
 
         cache_roots = reviewer_cache_roots(repo)
         summary_paths = {expected_summary_path(workstream)}
@@ -3317,6 +3464,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             worktree, active_path, summary_paths,
         )
         original_run_manifest = _file_manifest(run_dir)
+        if recover_missing_archived_disposition:
+            if (parent_continuation_manifest is None
+                    or _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT) != parent_continuation_manifest):
+                raise RunnerError("protected run or continuation-01 changed during continuation-02 preflight")
         if not recover_host_validation:
             host_evidence = _host_evidence_for_continuation(
                 repo, worktree, run_dir, original, reviewed_main, implementation_commit,
@@ -3340,6 +3491,28 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             "initial_tracked_changes": tracked_changes,
             "initial_untracked_files": untracked,
         }
+        if recover_missing_archived_disposition:
+            initial.update({
+                "continuation_number": 2,
+                "parent_continuation": MISSING_ARCHIVED_DISPOSITION_PARENT,
+                "parent_continuation_manifest": parent_continuation_manifest,
+                "parent_continuation_sha256": _manifest_digest(parent_continuation_manifest or {}),
+                "original_run_manifest": parent_continuation.get("run_evidence_sha256"),
+                "original_run_manifest_sha256": _manifest_digest(
+                    parent_continuation.get("run_evidence_sha256", {})),
+            })
+            _write_bytes_exclusive(
+                continuation_dir / "prior-continuation-01-manifest.json",
+                (json.dumps({
+                    "schema": "custodian.paired_review_prior_continuation_manifest.v1",
+                    "workstream": workstream,
+                    "run_id": run_id,
+                    "parent_continuation": MISSING_ARCHIVED_DISPOSITION_PARENT,
+                    "original_run_manifest": parent_continuation.get("run_evidence_sha256"),
+                    "continuation_01_manifest": parent_continuation_manifest,
+                    "continuation_01_manifest_sha256": _manifest_digest(parent_continuation_manifest or {}),
+                }, indent=2, sort_keys=True) + "\n").encode(),
+            )
         if recover_host_validation:
             validation_dir = continuation_dir / "host-validation"
             validation_dir.mkdir(parents=False, exist_ok=False)
@@ -3403,7 +3576,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 if item is None:
                     raise RunnerError(f"generated sidecar lacks a verified preservation copy: {relative}")
                 source.unlink()
-        if _file_manifest(run_dir, omit=continuation_dir) != original_run_manifest:
+        if (_file_manifest(run_dir, omit=continuation_dir) != original_run_manifest
+                or (recover_missing_archived_disposition
+                    and _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT)
+                    != parent_continuation_manifest)):
             raise RunnerError("original paired-review evidence changed during continuation preparation")
 
         last_message = continuation_dir / "last-message.txt"
@@ -3424,6 +3600,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 argv, worktree,
                 _continuation_prompt(
                     workstream, active_path, target_path, run_id=run_id,
+                    target_workstream=packet.review_target_workstream,
                     reviewed_main=reviewed_main, implementation_commit=implementation_commit,
                     authoring_chat=packet.authoring_chat, continuation_dir=continuation_dir,
                     preserved=preserved, report_sha256=host_evidence["report_sha256"],
@@ -3432,16 +3609,25 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                         Path(host_evidence["evidence_run_dir"]) / "validation.json"
                         if recover_host_validation else continuation_dir / "prior-run-evidence/validation.json"
                     ),
+                            continuation_number=2 if recover_missing_archived_disposition else 1,
                 ), continuation_dir, timeout,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
             initial.update({"phase": "reviewer_interrupted", "error": redact(str(exc)),
                             "elapsed_seconds": round(time.monotonic() - started, 3)})
+            if (recover_missing_archived_disposition
+                    and (_file_manifest(run_dir, omit=continuation_dir) != original_run_manifest
+                         or _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT)
+                         != parent_continuation_manifest)):
+                initial["phase"] = "original_evidence_changed"
             _write_atomic(child_metadata_path, json.dumps(initial, indent=2, sort_keys=True) + "\n")
-            raise RunnerError("fresh reviewer did not finish; exact claim and evidence remain protected") from exc
+            raise RunnerError("fresh reviewer did not finish or protected evidence changed; exact claim and evidence remain protected") from exc
         if last_message.is_file():
             _write_atomic(last_message, safe_output(last_message.read_text(encoding="utf-8", errors="replace")))
-        if _file_manifest(run_dir, omit=continuation_dir) != original_run_manifest:
+        if (_file_manifest(run_dir, omit=continuation_dir) != original_run_manifest
+                or (recover_missing_archived_disposition
+                    and _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT)
+                    != parent_continuation_manifest)):
             initial.update({"phase": "original_evidence_changed", "exit_code": exit_code})
             _write_atomic(child_metadata_path, json.dumps(initial, indent=2, sort_keys=True) + "\n")
             raise RunnerError("original run evidence changed while the reviewer was active")
@@ -3469,7 +3655,6 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             print(f"paired_review_runner: BLOCKED_RECOVERABLE {workstream}; original claim preserved")
             return 2
 
-        archive_path = f"{PACKET_ROOT}/archived/{Path(active_path).name}"
         archived_file = worktree / archive_path
         if not archived_file.is_file():
             initial["phase"] = "missing_archived_disposition"
@@ -3540,6 +3725,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="recover this exact run from pre-launch host_validation_recovery")
     parser.add_argument("--recover-invalid-disposition", action="store_true",
                         help="repair and close only the exact preserved invalid-disposition run; never launches a reviewer")
+    parser.add_argument("--recover-missing-archived-disposition", action="store_true",
+                        help="launch the one explicitly authorized continuation-02 for the exact held missing-archive run")
     recovery_mode = parser.add_mutually_exclusive_group()
     recovery_mode.add_argument("--plan", action="store_true",
                                help="print a read-only, SHA-pinned host-validation recovery plan")
@@ -3553,11 +3740,23 @@ def main(argv: list[str] | None = None) -> int:
             if (args.continue_run is None or args.review_workstream != INVALID_DISPOSITION_WORKSTREAM
                     or args.continue_run != INVALID_DISPOSITION_RUN_ID
                     or args.authorize_fresh_reviewer_context or args.recover_host_validation
+                    or args.recover_missing_archived_disposition
                     or args.plan or args.apply or args.plan_sha256 or args.timeout is not None):
                 raise RunnerError("invalid-disposition recovery requires only its exact workstream and --continue-run ID")
             return continue_run(
                 Path.cwd(), args.review_workstream, args.continue_run,
                 recover_invalid_disposition=True,
+            )
+        if args.recover_missing_archived_disposition:
+            if (args.continue_run is None or not args.authorize_fresh_reviewer_context
+                    or args.recover_host_validation or args.plan or args.apply or args.plan_sha256
+                    or args.review_workstream != MISSING_ARCHIVED_DISPOSITION_WORKSTREAM
+                    or args.continue_run != MISSING_ARCHIVED_DISPOSITION_RUN_ID):
+                raise RunnerError("missing-archive recovery requires its exact run, --recover-missing-archived-disposition, and --authorize-fresh-reviewer-context")
+            return continue_run(
+                Path.cwd(), args.review_workstream, args.continue_run,
+                authorize_fresh_reviewer_context=True,
+                recover_missing_archived_disposition=True, timeout=args.timeout,
             )
         if args.recover_host_validation:
             if args.continue_run is None:
