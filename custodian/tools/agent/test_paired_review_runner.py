@@ -2434,6 +2434,195 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         subprocess.run(["git", "add", "-f", "-A"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)
 
+    def _build_checkpoint_resume_fixture(self, *, variant="valid"):
+        """Build a minimal real-Git checkpoint/resume history for adversarial controls."""
+        repository = Path(self.temp.name) / f"checkpoint-{variant}"
+        repository.mkdir()
+        subprocess.run(["git", "init", "-q", str(repository)], check=True)
+        for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
+            subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
+
+        def git(*args, input_text=None):
+            result = subprocess.run(["git", *args], cwd=repository, text=True,
+                                    input=input_text, capture_output=True)
+            if result.returncode:
+                raise AssertionError(result.stderr or result.stdout)
+            return result.stdout.strip()
+
+        workstream = "agent-synthetic-checkpoint-resume"
+        active = f"{runner.PACKET_ROOT}/SYNTHETIC_CHECKPOINT_RESUME.md"
+        archive = f"{runner.PACKET_ROOT}/archived/SYNTHETIC_CHECKPOINT_RESUME.md"
+        source_path = "custodian/tools/agent/provenance_fixture.py"
+        test_path = "custodian/tools/agent/test_qzx.py"
+        branch = f"agent/{workstream}"
+        worktree = f"/tmp/{workstream}-20261020T120000Z-abcdef123456"
+        run_id = "20261020T120000Z-abcdef123456"
+
+        (repository / "README.md").write_text("base\n")
+        for path in (source_path, test_path):
+            target = repository / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("a\nb\nc\nd\ne\n" if path == source_path else "base\n")
+        git("add", "-A")
+        git("commit", "-qm", "initial reviewed history")
+        reviewed_base = git("rev-parse", "HEAD")
+        packet = (f"# Synthetic checkpoint resume\n"
+                  f"- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
+                  f"- Status: `in_progress`\n- Reviewed main: `{reviewed_base}`\n"
+                  f"- Work surface: `{source_path}`; `{test_path if variant != 'unowned-test' else source_path}`\n")
+        (repository / active).parent.mkdir(parents=True, exist_ok=True)
+        (repository / active).write_text(packet)
+        git("add", active)
+        git("commit", "-qm", "publish source packet")
+        source_base = git("rev-parse", "HEAD")
+
+        git("checkout", "-qb", "workstream")
+        (repository / source_path).write_text(
+            "local implementation\nb\nc\nd\ne\n" if variant == "overlap"
+            else "local implementation\nb\nc\nd\ne\n"
+        )
+        if variant != "unowned-test":
+            (repository / test_path).write_text("base\nlocal test\n")
+        else:
+            (repository / test_path).write_text("base\nlocal unowned test\n")
+        git("add", source_path, test_path)
+        if variant == "undocumented-source":
+            extra_source = "custodian/tools/agent/extra_qzx.py"
+            (repository / extra_source).write_text("unowned local source\n")
+            git("add", extra_source)
+        git("commit", "-qm", "author implementation source")
+        first_parent = git("rev-parse", "HEAD")
+        if variant == "source-loss":
+            (repository / source_path).unlink()
+            git("add", source_path)
+            git("commit", "-qm", "delete owned implementation source")
+            first_parent = git("rev-parse", "HEAD")
+
+        git("checkout", "-qb", "published-main", source_base)
+        if variant == "unrelated-second-parent":
+            # An independently rooted commit is not part of the claimed published history.
+            git("checkout", "--orphan", "unrelated-main")
+            (repository / "unrelated.md").write_text("foreign history\n")
+            git("add", "-A")
+            git("commit", "-qm", "unrelated history")
+            second_parent = git("rev-parse", "HEAD")
+        else:
+            if variant == "overlap":
+                (repository / source_path).write_text("a\nb\nc\nd\nmain addition\n")
+                git("add", source_path)
+            else:
+                (repository / "published-main.md").write_text("published main\n")
+                git("add", "published-main.md")
+            git("commit", "-qm", "advance published main")
+            second_parent = git("rev-parse", "HEAD")
+
+        git("checkout", "workstream")
+        if variant == "reordered-parents":
+            ordered_tree = subprocess.run(
+                ["git", "merge-tree", "--write-tree", second_parent, first_parent],
+                cwd=repository, text=True, capture_output=True,
+            )
+            self.assertEqual(ordered_tree.returncode, 0, ordered_tree.stderr)
+            tree = ordered_tree.stdout.splitlines()[0].strip()
+            merge = git("commit-tree", tree, "-m", "reordered checkpoint merge",
+                        "-p", second_parent, "-p", first_parent)
+        elif variant in {"octopus-parents", "unrelated-second-parent"}:
+            tree = git("rev-parse", f"{first_parent}^{{tree}}")
+            if variant == "unrelated-second-parent":
+                merge = git("commit-tree", tree, "-m", "unrelated checkpoint merge",
+                            "-p", first_parent, "-p", second_parent)
+            else:
+                blob = git("hash-object", "-w", "--stdin", input_text="third parent\n")
+                third_tree = git("mktree", input_text=f"100644 blob {blob}\tthird.txt\n")
+                third_parent = git("commit-tree", third_tree, "-m", "third published parent",
+                                   "-p", source_base)
+                merge = git("commit-tree", tree, "-m", "octopus checkpoint merge",
+                            "-p", first_parent, "-p", second_parent, "-p", third_parent)
+        else:
+            merge_result = subprocess.run(["git", "merge-tree", "--write-tree", first_parent,
+                                           second_parent], cwd=repository, text=True,
+                                          capture_output=True)
+            if variant == "altered-tree":
+                tree = git("rev-parse", f"{first_parent}^{{tree}}")
+            else:
+                self.assertEqual(merge_result.returncode, 0, merge_result.stderr)
+                tree = merge_result.stdout.splitlines()[0].strip()
+            merge = git("commit-tree", tree, "-m", "checkpoint resume merge",
+                        "-p", first_parent, "-p", second_parent)
+        git("reset", "--hard", merge)
+
+        if variant == "repeated-merge":
+            git("checkout", "-qb", "published-main-extra", source_base)
+            (repository / "extra-main.md").write_text("extra main\n")
+            git("add", "extra-main.md")
+            git("commit", "-qm", "advance extra main")
+            extra_parent = git("rev-parse", "HEAD")
+            git("checkout", "workstream")
+            git("merge", "--no-ff", "published-main-extra", "-m", "extra synchronization merge")
+
+        # Archive-only closeout must follow the source span and preserve its exact target identity.
+        (repository / archive).parent.mkdir(parents=True, exist_ok=True)
+        (repository / archive).write_text(packet.replace("`in_progress`", "`complete`"))
+        (repository / active).unlink()
+        summary = f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+        (repository / summary).write_text("synthetic closeout\n")
+        (repository / f"{runner.PACKET_ROOT}/README.md").write_text("archived packet index\n")
+        git("add", "-A")
+        git("commit", "-qm", "archive workstream")
+        landing = git("rev-parse", "HEAD")
+        trace_landing = landing
+        sync_side = None
+        if variant == "sync-source-mutation":
+            git("checkout", "-qb", "mutated-main", landing)
+            (repository / source_path).write_text("local implementation\nb\nc\nd\nmain mutation\n")
+            git("add", source_path)
+            git("commit", "-qm", "mutate source on later main")
+            sync_side = git("rev-parse", "HEAD")
+            git("checkout", "-qb", "main-sync", landing)
+            git("merge", "--no-ff", "mutated-main", "-m", "later main synchronization")
+            trace_landing = git("rev-parse", "HEAD")
+
+        claim_oid = git("commit-tree", f"{source_base}^{{tree}}", "-p", source_base,
+                        "-m", f"workstream claim {workstream} codex:42:{run_id}")
+        events = []
+        def emit(name, data):
+            events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "run_id": run_id, "workstream": workstream, "packet": active,
+                           "event": name, "data": data})
+        emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": source_base,
+             "local_ref": f"refs/custodian/claims/{workstream}/{run_id}",
+             "remote_ref": f"refs/heads/dispatch-claims/{workstream}"})
+        emit("worktree_published", {"head": source_base, "upstream": source_base,
+             "branch": branch, "clean": True, "worktree": worktree})
+        emit("start_completed", {"branch": branch, "worktree": worktree})
+        trace_first_parent, trace_second_parent = (
+            (second_parent, first_parent) if variant == "reordered-parents"
+            else (first_parent, second_parent)
+        )
+        emit("checkpoint_completed", {"remote_head": trace_first_parent, "branch": branch,
+             "removed": False})
+        emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
+        emit("main_sync", {"changed": False, "head": landing, "main_sha": trace_second_parent})
+        if sync_side:
+            emit("main_sync", {"changed": True, "head": trace_landing, "main_sha": sync_side})
+        emit("landing_started", {"start_sha": trace_landing, "branch": branch, "target": "main"})
+        emit("landing_completed", {"head": trace_landing, "outcome": "landed"})
+        emit("teardown_started", {"head": trace_landing, "branch": branch, "worktree": worktree})
+        emit("teardown_completed", {"head": trace_landing, "branch": branch,
+             "worktree_removed": True, "worktree": worktree})
+        raw = ("\n".join(json.dumps(event, sort_keys=True) for event in events) + "\n").encode()
+        blob = git("hash-object", "-w", "--stdin", input_text=raw.decode())
+        trace_tree = git("mktree", input_text=f"100644 blob {blob}\ttrace.jsonl\n")
+        trace_commit = git("commit-tree", trace_tree, "-m", "checkpoint resume trace")
+        trace_ref = f"refs/remotes/origin/agent-diagnostics/{workstream}/{run_id}"
+        git("update-ref", trace_ref, trace_commit)
+        return {"repo": repository, "base": reviewed_base, "source_base": source_base,
+                "first_parent": first_parent, "second_parent": second_parent,
+                "merge": merge, "landing": landing, "trace_landing": trace_landing,
+                "reviewed_main": trace_landing, "workstream": workstream,
+                "archive": archive, "source_path": source_path, "test_path": test_path}
+
     def _report(self, *, passed=True, changed_paths=None, selected=True):
         files = list(self.changed_paths if changed_paths is None else changed_paths)
         ids = ["transfer_smoke"] if selected else []
@@ -3873,6 +4062,48 @@ Verify the exact post-hoc attestation.
                     )
             subprocess.run(["git", "update-ref", trace_ref, original_trace_commit],
                            cwd=repository, check=True)
+
+    def test_checkpoint_resume_merge_adversarial_real_git_histories(self):
+        valid = self._build_checkpoint_resume_fixture()
+        span = host_validation.resolve_validation_source_span(
+            valid["repo"], valid["reviewed_main"], valid["landing"],
+            valid["workstream"], valid["archive"],
+        )
+        provenance = span["provenance"]["checkpoint_resume_merge"]
+        self.assertEqual(provenance["commit"], valid["merge"])
+        self.assertEqual(set(provenance["owned_paths"]), {
+            valid["source_path"], valid["test_path"],
+        })
+
+        cases = (
+            ("altered-tree", "merge tree differs from deterministic Git merge"),
+            ("reordered-parents", "invalid ordered parents|no implementation source"),
+            ("octopus-parents", "invalid ordered parents"),
+            ("unrelated-second-parent", "second parent is outside published history"),
+            ("repeated-merge", "multiple synchronization merges"),
+            ("source-loss", "loses workstream-owned source"),
+            ("sync-source-mutation", "main-sync merge changes reviewed source"),
+            ("undocumented-source", "paths not documented by its target packet"),
+            ("unowned-test", "paths not documented by its target packet"),
+        )
+        for variant, expected in cases:
+            with self.subTest(variant=variant):
+                fixture = self._build_checkpoint_resume_fixture(variant=variant)
+                with self.assertRaisesRegex(host_validation.HostValidationError, expected):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+        overlap = self._build_checkpoint_resume_fixture(variant="overlap")
+        overlap_span = host_validation.resolve_validation_source_span(
+            overlap["repo"], overlap["reviewed_main"], overlap["landing"],
+            overlap["workstream"], overlap["archive"],
+        )
+        overlap_provenance = overlap_span["provenance"]["checkpoint_resume_merge"]
+        self.assertIn(overlap["source_path"], overlap_provenance["overlapping_paths"])
+        self.assertIn(overlap["source_path"], overlap_provenance["owned_paths"])
+        self.assertIn(overlap["source_path"], overlap_span["paths"])
 
     def test_source_bearing_gate_resolves_earlier_failed_claim_without_widening_source_span(self):
         reviewed_main = "9cbbfef899957f2e3fff3306b74accf28cd846dc"
