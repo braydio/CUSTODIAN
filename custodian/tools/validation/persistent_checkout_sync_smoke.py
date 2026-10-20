@@ -129,13 +129,15 @@ def root_sync_smoke(base: Path) -> None:
 def root_preservation_smoke(base: Path) -> None:
     bare, coordination, _source = fixture(base)
     advance_remote(base, bare)
-    local = coordination / "untracked-user.txt"
-    local.write_text("preserve this\n")
+    local = coordination / "README.md"
+    baseline_bytes = local.read_bytes()
+    local.write_text("local tracked edit, must preserve\n")
     dirty_before = checkout_fingerprint(coordination)
     dirty = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
-    assert dirty.state == "DIRTY" and "untracked-user.txt" in dirty.changed_paths
-    assert checkout_fingerprint(coordination) == dirty_before and local.read_text() == "preserve this\n"
-    local.unlink()
+    assert dirty.state == "DIRTY" and "README.md" in dirty.changed_paths
+    assert checkout_fingerprint(coordination) == dirty_before
+    assert local.read_text() == "local tracked edit, must preserve\n"
+    local.write_bytes(baseline_bytes)
     caught_up = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
     assert caught_up.state == "SYNCED", caught_up
     head = git(coordination, "rev-parse", "HEAD")
@@ -165,6 +167,38 @@ def root_preservation_smoke(base: Path) -> None:
     diverged = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
     assert diverged.state == "DIVERGED" and diverged.ahead == 1 and diverged.behind == 1
     assert git(coordination, "rev-parse", "HEAD") == ahead_head and checkout_fingerprint(coordination) == diverged_before
+
+
+def root_untracked_sibling_smoke(base: Path) -> None:
+    bare, coordination, _source = fixture(base)
+    preserved = coordination / "unrelated-local-package.zip"
+    preserved.write_bytes(b"PK\\x03\\x04local-source-work\\x00preserve")
+    original = preserved.read_bytes()
+    remote_head = advance_remote(base, bare, "README.md", b"remote root change\\n")
+
+    before = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
+    assert before.state == "SYNCED", before
+    assert before.clean is False and "unrelated-local-package.zip" in before.changed_paths
+    assert git(coordination, "rev-parse", "HEAD") == remote_head
+    assert preserved.read_bytes() == original
+    current = sync.inspect_profile(sync.ROOT_PROFILE, coordination)
+    assert current.state == "CURRENT" and current.clean is False
+
+    # An incoming tracked file with the exact same name must still fail closed.
+    incoming = coordination / "future-asset.zip"
+    incoming.write_bytes(b"PK\\x03\\x04different local bytes")
+    local_bytes = incoming.read_bytes()
+    new_remote = advance_remote(base, bare, "future-asset.zip", b"remote tracked bytes\\n")
+    head_before = git(coordination, "rev-parse", "HEAD")
+    collision = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
+    assert collision.state == "PATH COLLISION", collision
+    assert git(coordination, "rev-parse", "HEAD") == head_before
+    assert incoming.read_bytes() == local_bytes
+    assert preserved.read_bytes() == original
+    incoming.unlink()
+    resumed = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
+    assert resumed.state == "SYNCED" and git(coordination, "rev-parse", "HEAD") == new_remote
+    assert preserved.read_bytes() == original
 
 
 def art_sync_smoke(base: Path) -> None:
@@ -457,7 +491,7 @@ def shell_routing_smoke(base: Path) -> None:
 
 def main() -> None:
     cases = [
-        root_sync_smoke, root_preservation_smoke, art_sync_smoke,
+        root_sync_smoke, root_preservation_smoke, root_untracked_sibling_smoke, art_sync_smoke,
         art_blocker_smoke, lock_and_race_smoke, ignored_collision_smoke,
         ignored_tree_performance_smoke,
         shell_routing_smoke,
