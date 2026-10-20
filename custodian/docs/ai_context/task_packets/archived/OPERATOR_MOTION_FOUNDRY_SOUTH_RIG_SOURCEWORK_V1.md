@@ -41,9 +41,11 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
 - Evidence: `The exact 197858-byte Dropbox object was fetched by read-only rclone from file ID id:8NXqdXuW6GUAAAAAAAAEfA and verified at SHA-256 ea039bbbf945da4172c61d43a61beea793bf92a0f807c73d363cd7877673bf94. All 41 bundle members match bundle_inventory.json; source SHA is 61c7518b31a28d7b98af5efdb035316550b769abea7eb33ff0466544040172a3. The registered source-work smoke and bundled seven-test suite pass, with exact 2440-pixel RGBA and native Aseprite reconstruction. No runtime or Asset V2 inbox files changed.`
 
 ## Execution Feedback
