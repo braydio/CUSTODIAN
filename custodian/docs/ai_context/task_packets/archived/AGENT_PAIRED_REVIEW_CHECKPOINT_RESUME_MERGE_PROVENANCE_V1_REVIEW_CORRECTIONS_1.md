@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
@@ -35,6 +35,38 @@
 - Validation: `PYTHONPATH=custodian/tools/agent:custodian/tools python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; `python3 -m py_compile custodian/tools/agent/paired_review_host_validation.py custodian/tools/agent/test_paired_review_runner.py`; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `git diff --check`. The adversarial controls must use real Git commits/trees and assert the specific expected rejection path, not a hand-constructed pass report alone.
 - Task overrides: `none`
 - Deferred: Only after this correction review passes, resume the same preserved Grunt attestation review run `20261019T205853Z-8671cc448942` with a read-only host-validation recovery plan. Do not apply it without validating the exact plan digest. Then proceed to original Grunt review only after the attestation review passes.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Eight new temporary-repository Git histories exercise altered merge trees, validly reordered parents, octopus parents, an unrelated root parent, repeated merges, source deletion, later synchronized-main source mutation, undocumented local source, and an undeclared test path. The valid overlap control retains the shared source in the owned inventory. Existing exact Grunt historical replay and coordinator coverage verification remain green. Full paired-review suite: 127 tests passed; changed-file validation selected and passed `agent_workflow_contract`, `paired_review_runner_unit`, and `review_pairing_contract`; Python compilation and `git diff --check` passed.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The first correction packet omitted Findings addressed: R0-01, so the dispatcher correctly rejected its findings-review dependency. The first metadata repair also lacked a concrete draft/manual refresh reason and was not promoted.`
+- Root cause / contributing factors: `The task-packet authoring preflight accepted a correction packet without enforcing the dispatcher's stable finding-lineage field or queue refresh rationale.`
+- Prevention / pipeline improvement: `Added the exact R0-01 lineage and explicit refresh rationale, republished the pair as draft/manual, and let automatic handoff promote it. Keep correction lineage and refresh reason in packet-authoring acceptance checks.`
+- Tooling / docs drift discovered: `validate_task_packet_authoring.py passed while dispatch.py audit rejected the correction packet for missing Findings addressed and refresh rationale.`
+- Follow-up: `manual-follow-up`
+- What worked: `The dispatcher remained fail-closed; no claim was created until both packet metadata issues were repaired and live eligibility passed.`
+
+## Next Handoff
+
+- Next workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f`
+- Refresh reason: `none`
+- Next action: `Land this validated test-only correction and launch its fresh-context independent review. On PASS, produce a read-only plan for the preserved Grunt attestation review run.`
+- Blockers or open questions: `Independent correction review is pending; protected Grunt review runs and human visual approval remain untouched.`
 
 ## Execution
 
