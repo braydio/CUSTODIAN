@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -45,3 +45,24 @@
 ## Handoff
 - Next workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
 - Next action after independently accepted review: original attestation review same-run host-validation recovery plan.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `_split_landing_source_span` now accepts only the exact, trace-authenticated checkpoint → clean resume → two-parent merge shape, verifies the deterministic merge tree and later no-op main-sync witness, and derives the source inventory from first-parent non-merge commits. Historical replay of `f76854cf → d0e44dd8 → 08236e69 → ff48e1d0 → 447c358c` passes source selection, coverage for every owned code/test path, and immutable coordinator evidence revalidation. Five forged/missing/duplicate trace variants fail closed. The existing exact six-file scope-attestation test and all prior paired-review cases pass.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The first synthetic replay used stale project-root attestation bytes and failed before reaching the merge. Pinning fixture inputs to `origin/main` exposed a second fixture defect: its fake review claimed a post-archive Reviewed main. The attestation verifier also searched only the file's original add commit, which rejected a later exact reviewed attestation revision.
+- Root cause / contributing factors: The fixture mixed the persistent checkout's older tree with fetched main, and the attestation's exact bytes were intentionally expanded in a later reviewed commit.
+- Prevention / pipeline improvement: Historical attestation origin lookup now identifies the unique commit carrying the exact pinned blob. Synthetic approval fixtures source inputs from the pinned Git revision and bind their review to the actual archive identity.
+- Tooling / docs drift discovered: Lifecycle docs did not explain that `worktree_resumed` records the already-synchronized HEAD and is not a retroactive `main_sync(changed=true)` event; clarified in `AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Follow-up: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
+- What worked: The exact historical replay exercised downstream path selection and evidence revalidation, so inherited main changes were caught before review recovery.
