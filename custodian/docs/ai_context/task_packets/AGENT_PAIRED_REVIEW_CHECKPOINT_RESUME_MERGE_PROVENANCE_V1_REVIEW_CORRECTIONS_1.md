@@ -45,5 +45,6 @@
 
 ## Handoff
 
+- Refresh reason: The prior automatic handoff rejected this correction because it omitted the dispatcher-required `Findings addressed: R0-01` lineage field; that exact archived finding is now pinned above.
 - Next workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
 - Next action after implementation landing: run the fresh-context independent review.

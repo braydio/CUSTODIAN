@@ -39,5 +39,6 @@
 
 ## Handoff
 
+- Refresh reason: The paired implementation packet is being republished to add the dispatcher-required `Findings addressed: R0-01` lineage field after the prior automatic handoff rejected its omission.
 - Next workstream: `none`
 - Only an independent PASS authorizes read-only planning for the held Grunt attestation review.
