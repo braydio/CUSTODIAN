@@ -129,12 +129,12 @@ def root_sync_smoke(base: Path) -> None:
 def root_preservation_smoke(base: Path) -> None:
     bare, coordination, _source = fixture(base)
     advance_remote(base, bare)
-    local = coordination / "README.md"
+    local = coordination / ".gitignore"
     baseline_bytes = local.read_bytes()
     local.write_text("local tracked edit, must preserve\n")
     dirty_before = checkout_fingerprint(coordination)
     dirty = sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0]
-    assert dirty.state == "DIRTY" and "README.md" in dirty.changed_paths
+    assert dirty.state == "DIRTY" and ".gitignore" in dirty.changed_paths
     assert checkout_fingerprint(coordination) == dirty_before
     assert local.read_text() == "local tracked edit, must preserve\n"
     local.write_bytes(baseline_bytes)
