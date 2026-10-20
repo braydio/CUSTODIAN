@@ -88,6 +88,20 @@ class WorkstreamTests(unittest.TestCase):
             with self.assertRaises(workstream.WorkstreamError):
                 workstream.validate_id(value)
 
+    def test_legacy_quarantined_claim_cannot_be_started_or_resumed(self):
+        import legacy_claim_quarantine
+        state = {"state": "legacy_quarantined", "record_sha": "a" * 40, "lock_released": True}
+        with mock.patch.object(legacy_claim_quarantine, "local_quarantine_state", return_value=state):
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.start("stranded-review", self.repo)
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.resume("stranded-review", self.repo)
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.finish("stranded-review", self.repo / "validation.json", repo=self.repo)
+        ref = subprocess.run(["git", "show-ref", "--verify", "refs/heads/agent/stranded-review"],
+                             cwd=self.repo, capture_output=True)
+        self.assertNotEqual(ref.returncode, 0)
+
     def test_new_start_uses_origin_main_in_external_worktree(self):
         path = workstream.start("sample-work", self.repo)
         self.assertEqual(git(path, "branch", "--show-current"), "agent/sample-work")
@@ -95,6 +109,9 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(path.is_relative_to(self.repo))
         self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertEqual(git(path, "rev-parse", "@{upstream}"), git(self.repo, "rev-parse", "origin/agent/sample-work"))
+        trace = next((Path(self.repo / ".git/custodian-workflow/traces/sample-work").glob("*.jsonl")))
+        first_event = json.loads(trace.read_text().splitlines()[0])
+        self.assertEqual(first_event["execution_generation"], "execution-reset-v1-20261020")
 
     def test_dispatch_owned_start_defers_trace_publication(self):
         trace = workstream.RunTrace.start(self.repo, "deferred-start", agent="codex")

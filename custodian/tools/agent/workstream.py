@@ -65,6 +65,25 @@ def validate_id(value: str) -> str:
     return value
 
 
+def assert_not_legacy_quarantined(repo: Path, workstream_id: str, action: str) -> None:
+    """Fence normal lifecycle actions for an administratively quarantined claim."""
+    try:
+        import legacy_claim_quarantine
+        state = legacy_claim_quarantine.local_quarantine_state(repo, workstream_id)
+    except Exception as exc:
+        raise WorkstreamError(f"quarantine authority could not be verified; {action} is fenced: {exc}") from exc
+    if state.get("state") == "legacy_quarantined" or state.get("record_sha"):
+        raise WorkstreamError(
+            f"{workstream_id} is legacy_quarantined; original claim and worktree are preserved, "
+            f"automatic {action} is prohibited (record {state.get('record_sha') or 'invalid'})"
+        )
+
+
+def _is_quarantine_fence_error(error: BaseException) -> bool:
+    message = str(error)
+    return "is legacy_quarantined" in message or "quarantine authority could not be verified" in message
+
+
 def root_repo(cwd: Path | None = None) -> Path:
     return Path(git("rev-parse", "--show-toplevel", cwd=cwd)).resolve()
 
@@ -948,6 +967,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
           agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
           _lock_held: bool = False, _publish_trace: bool = True) -> Path:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "start")
     branch = branch_for(workstream_id)
     trace = _trace
     lock_started = time.monotonic()
@@ -955,6 +975,9 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
     claim = _claim
     try:
         with lock_context:
+            # Recheck after acquiring the per-workstream mutex so a start that
+            # raced a quarantine publication cannot resume from a stale prelock check.
+            assert_not_legacy_quarantined(repo, workstream_id, "start")
             if trace is None:
                 trace = RunTrace.start(repo, workstream_id)
             trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
@@ -1007,6 +1030,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                 print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
             return path
     except (WorkstreamError, WorkflowControlError) as exc:
+        if _is_quarantine_fence_error(exc):
+            raise
         if trace is None:
             trace = RunTrace.start(repo, workstream_id)
         trace.finish_blocked(str(exc), publish=_publish_trace)
@@ -1016,6 +1041,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
 def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, trace: RunTrace) -> Path:
     """Explicitly resume an existing clean canonical workstream checkout."""
     with workstream_mutex(repo, workstream_id, trace=trace):
+        # Quarantine may have landed after the public resume preflight.
+        assert_not_legacy_quarantined(repo, workstream_id, "resume")
         fetch(repo)
         branch = branch_for(workstream_id)
         attached = [r for r in worktree_records(repo) if r.get("branch") == f"refs/heads/{branch}"]
@@ -1048,11 +1075,13 @@ def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, 
 
 def resume(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "resume")
     trace = RunTrace.resume(repo, workstream_id)
     try:
         return _resume_impl(workstream_id, repo, report, trace)
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
@@ -1119,11 +1148,15 @@ def _checkpoint_impl(workstream_id: str, remove_worktree: bool, repo: Path, trac
 
 def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | None = None) -> None:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "checkpoint")
     trace = RunTrace.resume(repo, workstream_id)
     try:
-        _checkpoint_impl(workstream_id, remove_worktree, repo, trace)
+        with workstream_mutex(repo, workstream_id, trace=trace):
+            assert_not_legacy_quarantined(repo, workstream_id, "checkpoint")
+            _checkpoint_impl(workstream_id, remove_worktree, repo, trace)
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
@@ -1457,16 +1490,20 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
            repo: Path | None = None, *, defer_root_sync: bool = False,
            recovery_evidence: Path | None = None, defer_teardown: bool = False) -> None:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "finish")
     trace = RunTrace.resume(repo, workstream_id)
-    trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
     try:
-        outcome = _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace,
-                               defer_root_sync=defer_root_sync, recovery_evidence=recovery_evidence,
-                               defer_teardown=defer_teardown)
-        trace.record("finish_completed", outcome=outcome)
-        trace.complete(outcome, clear_active=True)
+        with workstream_mutex(repo, workstream_id, trace=trace):
+            assert_not_legacy_quarantined(repo, workstream_id, "finish")
+            trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
+            outcome = _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace,
+                                   defer_root_sync=defer_root_sync, recovery_evidence=recovery_evidence,
+                                   defer_teardown=defer_teardown)
+            trace.record("finish_completed", outcome=outcome)
+            trace.complete(outcome, clear_active=True)
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 

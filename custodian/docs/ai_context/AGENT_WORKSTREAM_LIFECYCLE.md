@@ -77,6 +77,53 @@ Do not use this pilot to park another claim or to infer cross-host process
 absence. Full supervised process identity, generalized leases, automatic
 cleanup, and orphan recovery remain outside its authority.
 
+### Bounded legacy execution reset quarantine
+
+`legacy_claim_quarantine.py` records the separate administrative disposition
+`legacy_quarantined` for exact stranded claims. This is not `complete`,
+`passed`, `released`, `PARKED`, canonical findings, or review acceptance. The
+original `dispatch-claims/<id>` and `agent/<id>` refs remain unchanged, the
+identity stays claimed to prevent duplicates, and quarantined reviews never
+satisfy dependencies.
+
+Before apply, make and verify an external snapshot of all Git refs, selected
+worktree contents (including ignored/untracked files and symlinks), workflow
+traces, and paired-review evidence. For a coordinated reset, use one batch plan
+so every permitted record lands in one atomic remote ref update:
+
+```bash
+python3 custodian/tools/agent/legacy_claim_quarantine.py snapshot \
+  --workstream <exact-id> --destination <empty-external-directory>
+python3 custodian/tools/agent/legacy_claim_quarantine.py verify-snapshot \
+  <external-directory>/manifest.json
+python3 custodian/tools/agent/legacy_claim_quarantine.py plan-batch \
+  --target <exact-id>=<claim-run-id> \
+  --target <another-exact-id>=<another-run-id> \
+  --snapshot-manifest <external-directory>/manifest.json \
+  --output <external-directory>/quarantine-plan.json
+python3 custodian/tools/agent/legacy_claim_quarantine.py apply-batch \
+  <external-directory>/quarantine-plan.json --plan-sha256 <printed-plan-digest>
+```
+
+The read-only plan binds remote and local refs, the recorded run/process and
+claim-commit identity, exact published worktree when present, full worktree and
+evidence inventories, reset generation, and backup checksum. Apply requires the
+exact emitted plan digest, rechecks the full plan under the local dispatcher
+mutex, and uses one atomic, non-forcing push that reasserts every existing
+original ref at its pinned SHA while publishing the quarantine records. Any
+changed ref, worktree, backup, generation, or run identity invalidates the
+whole batch.
+
+The dispatcher releases execution-lock occupancy only when the same-host
+process identity recorded in the claim trace is verifiably absent and every
+pinned ref and backup digest still matches. An active or ambiguous process
+cannot be quarantined. Missing process identity or cross-host ambiguity records
+an unresolved quarantine while retaining the lock. Dispatch audit reports
+`legacy_quarantined`, claim identity, and execution-lock occupancy separately.
+Ordinary `workstream.py start`, `resume`, and `finish` refuse a quarantined
+identity; reactivation is outside this one-way reset. A changed branch or stale
+generation invalidates lock release and restores conservative occupancy.
+
 ### Paired-review prelaunch host-validation recovery
 
 The paired-review runner supports a bounded continuation for a run stopped in

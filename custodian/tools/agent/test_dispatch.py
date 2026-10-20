@@ -679,6 +679,122 @@ class DispatchTests(unittest.TestCase):
             self.assertFalse(target["eligible_now"])
             self.assertIn("lock: paired-review-source-provenance held by " + holder_id, target["reasons"])
 
+    def test_archived_claim_retains_its_lock_until_quarantine_is_verified(self):
+        holder_id = "archived-stranded-owner"
+        target_id = "archived-owner-lock-candidate"
+        self.add_packet(holder_id, archived=True, status="blocked", dispatch_value="auto", locks="shared-reset-lock")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-reset-lock")
+        git(self.repo, "branch", f"agent/{holder_id}", "origin/main")
+        git(self.repo, "push", "origin", f"agent/{holder_id}")
+        git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertFalse(target["eligible_now"])
+        self.assertIn(f"lock: shared-reset-lock held by {holder_id}", target["reasons"])
+
+    def test_legacy_quarantine_releases_only_verified_lock_and_keeps_identity(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "legacy-held-review"
+        target_id = "next-independent-work"
+        self.add_packet(holder_id, dispatch_value="auto", locks="shared-authoring", kind="review",
+                        review_target_workstream="reviewed-implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-authoring")
+        self.add_packet("dependent-review", dispatch_value="auto", depends=holder_id)
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-inactive"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": git(path, "rev-parse", "HEAD"),
+                 "upstream": git(path, "rev-parse", "@{upstream}"), "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "reset-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        self.assertTrue(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        dependent = next(row for row in audit["packets"] if row["workstream"] == "dependent-review")
+        self.assertEqual(holder["actual_class"], "legacy_quarantined")
+        self.assertTrue(holder["claimed"])
+        self.assertFalse(holder["execution_lock_held"])
+        self.assertTrue(holder["quarantine_execution_lock_released"])
+        self.assertTrue(target["eligible_now"])
+        self.assertFalse(dependent["eligible_now"])
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch.claim(self.repo, holder_id, "codex", False)
+
+    def test_quarantined_interrupted_claim_is_preserved_without_becoming_claimable(self):
+        import legacy_claim_quarantine as quarantine
+        workstream_id = "interrupted-legacy"
+        self.add_packet(workstream_id, dispatch_value="auto", locks="old-lane")
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{workstream_id}")
+        git(self.repo, "fetch", "origin")
+        snapshot = quarantine.snapshot(self.repo, [workstream_id], self.base / "interrupted-backup")
+        plan = quarantine.build_plan(self.repo, workstream_id, None, Path(snapshot["path"]))
+        self.assertFalse(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        row = next(row for row in audit["packets"] if row["workstream"] == workstream_id)
+        claim = next(row for row in audit["remote_dispatch_claims"] if row["workstream"] == workstream_id)
+        self.assertEqual(row["actual_class"], "legacy_quarantined")
+        self.assertTrue(row["claimed"])
+        self.assertEqual(claim["recovery_disposition"], "legacy_quarantined")
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", f"refs/heads/dispatch-claims/{workstream_id}"))
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch.claim(self.repo, workstream_id, "codex", False)
+
+    def test_quarantine_ref_with_stale_branch_restores_lock(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "stale-quarantined-review"
+        target_id = "stale-lock-candidate"
+        self.add_packet(holder_id, dispatch_value="auto", locks="same-lock", kind="review",
+                        review_target_workstream="implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="same-lock")
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-stale"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        branch_head = git(path, "rev-parse", "HEAD")
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": branch_head, "upstream": branch_head,
+                 "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "stale-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        (path / "change.txt").write_text("advance ref\n")
+        git(path, "add", "change.txt"); git(path, "commit", "-m", "advance claim branch")
+        git(path, "push", "origin", f"agent/{holder_id}"); git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertEqual(holder["quarantine_state"], "invalid")
+        self.assertTrue(holder["execution_lock_held"])
+        self.assertFalse(target["eligible_now"])
+
     def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
         self.add_packet("busy-task", dispatch_value="auto")
         main_before = git(self.repo, "rev-parse", "origin/main")
