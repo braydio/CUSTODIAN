@@ -18,7 +18,7 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - Bundled test script: 7/7 passed.
 - Registered `run_validation.py --test operator_south_rig_extract --json`: passed.
 - `git -c core.whitespace=cr-at-eol diff --cached --check`: passed; the source ledger's original CRLF bytes are intentionally preserved.
-- `run_validation.py --changed --base origin/main --json`: failed one unrelated existing test, `operator_unarmed_fast_chain_north_vfx_contract`, because its source pixels differ from inbox. That global manifest edit selected 38 tests: 13 passed, one failed, and 24 were skipped after the failure. The source-work test passed independently. The unrelated mismatch is outside this packet's Work surface and remains a follow-up for its owning workstream.
+- After main sync, `run_validation.py --changed --base origin/main --json`: failed one unrelated `operator_unarmed_fast_chain_north_vfx_contract` test because fast-attack source pixels differ from inbox. The suite selected 41 tests: 16 passed, one failed, and 24 were skipped after that failure. The source-work test passed independently. The mismatch is outside this packet's Work surface and remains a follow-up for its owning workstream.
 - Godot's first-import preflight generated 12 untracked `.import` sidecars in `custodian/tools/iteration/grunt_candidate_ab/generated/`; those exact validation-generated sidecars were removed from this isolated worktree. The generated `.godot` cache remains worktree-local.
 
 ## Process Feedback

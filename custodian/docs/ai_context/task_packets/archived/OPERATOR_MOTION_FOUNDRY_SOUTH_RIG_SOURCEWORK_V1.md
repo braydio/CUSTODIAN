@@ -53,7 +53,7 @@
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: `partial`
 - Friction severity: `medium`
-- What went wrong: `The required changed-file sweep reported an unrelated operator_unarmed_fast_chain_north_vfx_contract failure (source pixels differ from inbox); 24 downstream tests were consequently skipped. The focused source-work test and registered smoke both passed.`
+- What went wrong: `After main sync, the changed-file suite selected 41 tests and reported an unrelated operator_unarmed_fast_chain_north_vfx_contract failure (fast-attack source pixels differ from inbox); 16 tests passed and 24 downstream tests were skipped. The focused source-work test and registered smoke both passed.`
 - Root cause / contributing factors: `Editing the global validation manifest selects all tests that declare it as an owner, and the sweep includes an existing Operator source/inbox mismatch outside this packet's work surface.`
 - Prevention / pipeline improvement: `Keep the new source-work test narrowly registered and report global-manifest-triggered failures separately from the focused owner test; repair the unrelated Operator source/inbox mismatch in its owning workstream.`
 - Tooling / docs drift discovered: `The candidate bundle was published as a flat Dropbox ZIP, so the packet correctly uses its pinned read-only rclone path rather than implementation_handoff.py.`
@@ -69,4 +69,4 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad08a2d-2ae4-83ea-be79-dd8534ffa488`
 - Refresh reason: `none`
 - Next action: `Perform fresh independent source/ledger/binary audit. Keep artistic approval deferred.`
-- Blockers or open questions: `The global changed-file sweep found an unrelated Operator source/inbox mismatch in operator_unarmed_fast_chain_north_vfx_contract; the focused source-work validation is green. MF1 acceptance and artistic approval remain separate deferred gates.`
+- Blockers or open questions: `The after-sync changed-file sweep found an unrelated Operator source/inbox mismatch in operator_unarmed_fast_chain_north_vfx_contract; the focused source-work validation is green. MF1 acceptance and artistic approval remain separate deferred gates.`
