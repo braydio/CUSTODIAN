@@ -6652,6 +6652,20 @@
       "needs_import": false
     },
     {
+      "id": "legacy_claim_quarantine_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_legacy_claim_quarantine.py",
+      "tier": "unit",
+      "tags": ["agent_workflow", "dispatch", "legacy_quarantine", "provenance"],
+      "owners": [
+        "custodian/tools/agent/legacy_claim_quarantine.py",
+        "custodian/tools/agent/test_legacy_claim_quarantine.py",
+        "custodian/tools/agent/dispatch.py"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "paired_review_runner_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_paired_review_runner.py",
