@@ -110,9 +110,12 @@ claim-commit identity, exact published worktree when present, full worktree and
 evidence inventories, reset generation, and backup checksum. Apply requires the
 exact emitted plan digest, rechecks the full plan under the local dispatcher
 mutex, and uses one atomic, non-forcing push that reasserts every existing
-original ref at its pinned SHA while publishing the quarantine records. Any
-changed ref, worktree, backup, generation, or run identity invalidates the
-whole batch.
+original ref at its pinned SHA while publishing the quarantine records. If a
+matching local draft record already exists, apply reuses its exact commit; a
+mismatched local record or a record already present on the remote fails closed.
+Local ref changes use compare-and-swap, and an interrupted push can remove only
+refs created by that exact attempt. Any changed ref, worktree, backup,
+generation, or run identity invalidates the whole batch.
 
 The dispatcher releases execution-lock occupancy only when the same-host
 process identity recorded in the claim trace is verifiably absent and every

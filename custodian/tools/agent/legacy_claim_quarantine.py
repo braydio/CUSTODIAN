@@ -280,7 +280,9 @@ def _build_plan(repo: Path, workstream: str, run_id: str | None, snapshot_manife
         raise QuarantineError("review evidence changed since the verified backup")
     if saved.get("workflow_trace_inventory_sha256") != sha256_bytes(canonical(trace_inventory)):
         raise QuarantineError("workflow trace evidence changed since the verified backup")
-    previous = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{quarantine_ref(workstream)}", check=False) or None
+    remote_record_ref = f"refs/remotes/origin/{quarantine_ref(workstream).removeprefix('refs/')}"
+    previous = git(repo, "rev-parse", "--verify", remote_record_ref, check=False) or None
+    local_previous = git(repo, "rev-parse", "--verify", quarantine_ref(workstream), check=False) or None
     payload = {
         "schema": PLAN_SCHEMA, "generation": GENERATION, "workstream": workstream,
         "run_id": run_id, "claim_ref": claim_ref, "claim_sha": claim_sha,
@@ -292,7 +294,7 @@ def _build_plan(repo: Path, workstream: str, run_id: str | None, snapshot_manife
         "workflow_trace_inventory_sha256": sha256_bytes(canonical(trace_inventory)),
         "backup_manifest": str(snapshot_manifest.resolve()),
         "backup_manifest_sha256": sha256_file(snapshot_manifest),
-        "owner": owner, "previous_record_sha": previous,
+        "owner": owner, "previous_record_sha": previous, "local_record_sha": local_previous,
         "lock_released": owner.get("state") == "exited_verified",
     }
     payload["plan_sha256"] = sha256_bytes(canonical(payload))
@@ -434,6 +436,32 @@ def _record_commit(repo: Path, plan: dict[str, Any]) -> str:
     return git(repo, *argv, "-m", f"legacy quarantine {plan['workstream']}")
 
 
+def _record_matches_plan(repo: Path, record_sha: str, plan: dict[str, Any]) -> bool:
+    try:
+        record = json.loads(git(repo, "show", f"{record_sha}:quarantine.json"))
+    except (QuarantineError, json.JSONDecodeError):
+        return False
+    expected = {
+        "schema": SCHEMA, "version": 1, "generation": plan["generation"],
+        "state": "legacy_quarantined", "workstream": plan["workstream"],
+        "run_id": plan.get("run_id"), "claim_ref": plan["claim_ref"],
+        "claim_sha": plan.get("claim_sha"), "claim_acquired_sha": plan.get("claim_acquired_sha"),
+        "branch_ref": plan["branch_ref"], "branch_sha": plan.get("branch_sha"),
+        "local_branch_sha": plan.get("local_branch_sha"), "worktree_path": plan.get("worktree_path"),
+        "worktree_inventory_sha256": plan["worktree_inventory_sha256"],
+        "review_evidence_inventory_sha256": plan["review_evidence_inventory_sha256"],
+        "workflow_trace_inventory_sha256": plan["workflow_trace_inventory_sha256"],
+        "backup_manifest_sha256": plan["backup_manifest_sha256"],
+        "owner": plan["owner"], "lock_released": plan["lock_released"],
+    }
+    return (
+        isinstance(record, dict)
+        and set(record) == set(expected) | {"created_utc"}
+        and all(record.get(key) == value for key, value in expected.items())
+        and isinstance(record.get("created_utc"), str)
+    )
+
+
 def apply_batch_plan(repo: Path, plan: dict[str, Any], expected_digest: str) -> dict[str, str]:
     repo = coordination_root(repo)
     try:
@@ -466,13 +494,21 @@ def _apply_batch_plan_unlocked(repo: Path, plan: dict[str, Any], expected_digest
         if item.get("previous_record_sha"):
             raise QuarantineError(f"workstream already has a quarantine record: {item['workstream']}")
     commits: dict[str, str] = {}
-    local_refs: list[str] = []
+    created_refs: list[tuple[str, str]] = []
     for item in fresh["items"]:
         workstream = item["workstream"]
-        commit = _record_commit(repo, item)
         ref = quarantine_ref(workstream)
-        git(repo, "update-ref", ref, commit)
-        local_refs.append(ref)
+        local_sha = git(repo, "rev-parse", "--verify", ref, check=False) or None
+        if local_sha != item.get("local_record_sha"):
+            raise QuarantineError(f"local quarantine ref changed since planning: {workstream}")
+        if local_sha:
+            if not _record_matches_plan(repo, local_sha, item):
+                raise QuarantineError(f"existing local quarantine record differs from the verified plan: {workstream}")
+            commits[workstream] = local_sha
+            continue
+        commit = _record_commit(repo, item)
+        git(repo, "update-ref", ref, commit, "0" * 40)
+        created_refs.append((ref, commit))
         commits[workstream] = commit
     push_args = ["push", "--atomic", "origin"]
     for item in fresh["items"]:
@@ -483,8 +519,8 @@ def _apply_batch_plan_unlocked(repo: Path, plan: dict[str, Any], expected_digest
         push_args.append(f"{commits[item['workstream']]}:{quarantine_ref(item['workstream'])}")
     result = subprocess.run(["git", *push_args], cwd=repo, text=True, capture_output=True, timeout=60)
     if result.returncode:
-        for ref in local_refs:
-            git(repo, "update-ref", "-d", ref, check=False)
+        for ref, commit in created_refs:
+            git(repo, "update-ref", "-d", ref, commit, check=False)
         raise QuarantineError(f"atomic quarantine publication failed; original refs remain untouched: {(result.stderr or result.stdout).strip()}")
     _fetch_quarantine_refs(repo)
     for item in fresh["items"]:

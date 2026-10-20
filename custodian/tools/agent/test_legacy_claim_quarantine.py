@@ -96,6 +96,40 @@ class LegacyClaimQuarantineTests(unittest.TestCase):
         with self.assertRaisesRegex(quarantine.QuarantineError, "changed|already has|atomic quarantine publication failed"):
             quarantine.apply_plan(clone, second_plan, second_plan["plan_sha256"])
         self.assertEqual(quarantine.git(self.repo, "rev-parse", f"refs/remotes/origin/{quarantine.quarantine_ref(self.workstream).removeprefix('refs/')}"), first_record)
+        refreshed = quarantine.build_plan(self.repo, self.workstream, None, manifest)
+        self.assertEqual(refreshed["previous_record_sha"], first_record)
+        with self.assertRaisesRegex(quarantine.QuarantineError, "already has a quarantine record"):
+            quarantine.apply_plan(self.repo, refreshed, refreshed["plan_sha256"])
+
+    def test_exact_existing_local_quarantine_record_is_reused_without_rewrite(self):
+        manifest = self._snapshot()
+        initial = quarantine.build_plan(self.repo, self.workstream, None, manifest)
+        ref = quarantine.quarantine_ref(self.workstream)
+        original_record = quarantine._record_commit(self.repo, initial)
+        git(self.repo, "update-ref", ref, original_record)
+
+        fresh = quarantine.build_plan(self.repo, self.workstream, None, manifest)
+        self.assertEqual(fresh["local_record_sha"], original_record)
+        applied = quarantine.apply_plan(self.repo, fresh, fresh["plan_sha256"])
+
+        self.assertEqual(applied, original_record)
+        self.assertEqual(git(self.repo, "rev-parse", ref), original_record)
+        remote_ref = f"refs/remotes/origin/{ref.removeprefix('refs/')}"
+        self.assertEqual(git(self.repo, "rev-parse", remote_ref), original_record)
+
+    def test_mismatched_existing_local_quarantine_record_is_preserved_and_rejected(self):
+        manifest = self._snapshot()
+        plan = quarantine.build_plan(self.repo, self.workstream, None, manifest)
+        ref = quarantine.quarantine_ref(self.workstream)
+        blob = git(self.repo, "hash-object", "-w", "--stdin", input_text='{"state":"draft"}')
+        tree = git(self.repo, "mktree", input_text=f"100644 blob {blob}\tquarantine.json\n")
+        rogue = git(self.repo, "commit-tree", tree, "-p", self.claim_sha, "-m", "local draft")
+        git(self.repo, "update-ref", ref, rogue)
+
+        fresh = quarantine.build_plan(self.repo, self.workstream, None, manifest)
+        with self.assertRaisesRegex(quarantine.QuarantineError, "existing local quarantine record differs"):
+            quarantine.apply_plan(self.repo, fresh, fresh["plan_sha256"])
+        self.assertEqual(git(self.repo, "rev-parse", ref), rogue)
 
     def test_batch_plan_publishes_all_dispositions_in_one_remote_update(self):
         second = "stranded-review-two"
