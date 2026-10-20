@@ -905,10 +905,15 @@ class PairedReviewRunnerTests(unittest.TestCase):
         packet = runner.parse_packet(fixture["active"], fixture["review"])
 
         def fake_launch(_argv, worktree, _prompt, continuation_dir, _timeout):
-            self.assertIn("continuation-01", str(continuation_dir))
+            continuation_name = fixture.get("continuation_name", "continuation-01")
+            self.assertIn(continuation_name, str(continuation_dir))
             self.assertIn("fresh independent reviewer", _prompt.lower())
             self.assertIn(fixture["run_id"], _prompt)
             self.assertIn("preserved-reviewer-files", _prompt)
+            if continuation_name == "continuation-02":
+                self.assertIn(f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md", _prompt)
+                self.assertIn(fixture["target"], _prompt)
+                self.assertIn(runner.expected_summary_path("review-sample"), _prompt)
             self.assertEqual((fixture["run_dir"] / "codex.jsonl").read_text(), "original reviewer log\n")
             archive = worktree / f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
             archive.parent.mkdir(parents=True, exist_ok=True)
@@ -920,7 +925,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 reviewed_main=fixture["reviewed_main"], implementation_commit=implementation,
                 provenance="different-agent", run_id=fixture["run_id"], review_cycle=0,
                 ids=() if outcome == "passed" else ("R0-01",))
-            archive.write_text(text)
+            if not fixture.get("omit_archived_packet"):
+                archive.write_text(text)
             fixture["archived_text"] = text
             active_file = worktree / fixture["active"]
             if active_file.exists():
@@ -935,6 +941,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
             summary.write_text(f"Fresh review complete.\nAuthoring chat: {fixture['chat']}\n\n"
                                "## Next Handoff\n- Next workstream: none\n- Next action: done\n")
             (continuation_dir / "last-message.txt").write_text("reviewer complete\n")
+            if fixture.get("mutate_parent_during_launch"):
+                (fixture["run_dir"] / "continuation-01" / "unexpected.txt").write_text("mutation\n")
             return 0
 
         def finish(*args, **kwargs):
@@ -963,6 +971,271 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 "reasons": [] if fixture["landed"]["complete"] else ["review receipt not landed"],
                 "summary_path": runner.expected_summary_path("review-sample")}),
         )
+
+    def _missing_archived_disposition_fixture(self):
+        fixture = self._continuation_fixture()
+        run_dir = fixture["run_dir"]
+        continuation_01 = run_dir / "continuation-01"
+        continuation_01.mkdir()
+        preserved_dir = continuation_01 / "preserved-reviewer-files"
+        preserved_dir.mkdir()
+        preserved_source = fixture["prior_summary"]
+        preserved_copy = preserved_dir / preserved_source.name
+        preserved_copy.write_bytes(preserved_source.read_bytes())
+        preserved = [{"source": str(preserved_source), "copy": str(preserved_copy),
+                      "sha256": hashlib.sha256(preserved_copy.read_bytes()).hexdigest()}]
+        (continuation_01 / "preserved-files.json").write_text(json.dumps(preserved, indent=2, sort_keys=True) + "\n")
+        parent_manifest = runner._file_manifest(run_dir, omit=continuation_01)
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA,
+            "workstream": "review-sample",
+            "run_id": fixture["run_id"],
+            "phase": "missing_archived_disposition",
+            "exit_code": 0,
+            "branch": "agent/review-sample",
+            "worktree": str(fixture["worktree"]),
+            "active_packet_path": fixture["active"],
+            "target_workstream": "sample",
+            "target_packet_path": fixture["target"],
+            "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": "a" * 40,
+            "run_evidence_sha256": parent_manifest,
+            "host_evidence": {"report_sha256": "c" * 64, "metadata_sha256": "d" * 64},
+            "preserved_files": preserved,
+        }
+        (continuation_01 / "metadata.json").write_text(json.dumps(child, indent=2, sort_keys=True) + "\n")
+        (continuation_01 / "last-message.txt").write_text("prior PASS prose is not a canonical outcome\n")
+        lock = runner.common_dir(fixture["repo"]) / "custodian-review-runs/locks/review-sample.lock"
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.touch(exist_ok=True)
+        fixture["continuation_name"] = "continuation-02"
+        fixture["prior_run_manifest"] = runner._file_manifest(run_dir)
+        fixture["prior_continuation_manifest"] = runner._file_manifest(continuation_01)
+        return fixture
+
+    def test_missing_archived_disposition_continuation_uses_exact_second_child_and_preserves_parents(self):
+        fixture = self._missing_archived_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        patches = self._continuation_patches(fixture)
+        active_patches = [patcher.start() for patcher in patches]
+        self.addCleanup(lambda: [patcher.stop() for patcher in reversed(patches)])
+        commands = []
+        original_subprocess_run = runner.subprocess.run
+
+        def record_commands(argv, *args, **kwargs):
+            commands.append(argv)
+            return original_subprocess_run(argv, *args, **kwargs)
+
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]), \
+             patch.object(runner.subprocess, "run", side_effect=record_commands):
+            result = runner.continue_run(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                authorize_fresh_reviewer_context=True,
+                recover_missing_archived_disposition=True,
+            )
+            self.assertEqual(result, 0)
+            self.assertEqual(runner.continue_run(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                authorize_fresh_reviewer_context=True,
+                recover_missing_archived_disposition=True,
+            ), 0)
+        continuation_02 = fixture["run_dir"] / "continuation-02"
+        state = json.loads((continuation_02 / "metadata.json").read_text())
+        self.assertEqual(state["phase"], "complete")
+        self.assertEqual(state["continuation_number"], 2)
+        self.assertEqual(state["parent_continuation_sha256"],
+                         hashlib.sha256(json.dumps(fixture["prior_continuation_manifest"],
+                                                   sort_keys=True, separators=(",", ":")).encode()).hexdigest())
+        prior_manifest = json.loads((continuation_02 / "prior-continuation-01-manifest.json").read_text())
+        self.assertEqual(prior_manifest["continuation_01_manifest"], fixture["prior_continuation_manifest"])
+        self.assertEqual(prior_manifest["original_run_manifest"],
+                         json.loads((fixture["run_dir"] / "continuation-01/metadata.json").read_text())[
+                             "run_evidence_sha256"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=continuation_02),
+                         fixture["prior_run_manifest"])
+        self.assertEqual(runner._file_manifest(fixture["run_dir"] / "continuation-01"),
+                         fixture["prior_continuation_manifest"])
+        self.assertEqual(active_patches[6].call_count, 1)
+        self.assertFalse(any("dispatch.py" in " ".join(map(str, argv)) for argv in commands))
+
+    def test_missing_archived_disposition_continuation_rejects_wrong_parent_phase_before_launch(self):
+        fixture = self._missing_archived_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        child_path = fixture["run_dir"] / "continuation-01/metadata.json"
+        child = json.loads(child_path.read_text())
+        child["phase"] = "reviewer_nonpassing"
+        child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+        before = runner._file_manifest(fixture["run_dir"])
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]), \
+             patch.object(runner, "launch_codex") as launch:
+            with self.assertRaisesRegex(runner.RunnerError, "missing_archived_disposition"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        launch.assert_not_called()
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), before)
+
+    def test_missing_archived_disposition_continuation_rejects_changed_original_manifest(self):
+        fixture = self._missing_archived_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        (fixture["run_dir"] / "codex.jsonl").write_text("changed original evidence\n")
+        before = runner._file_manifest(fixture["run_dir"])
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]), \
+             patch.object(runner, "launch_codex") as launch:
+            with self.assertRaisesRegex(runner.RunnerError, "original run evidence"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        launch.assert_not_called()
+        self.assertFalse((fixture["run_dir"] / "continuation-02").exists())
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), before)
+
+    def test_missing_archived_disposition_continuation_rejects_forged_identity_or_parent_evidence(self):
+        cases = ("worktree", "branch", "claim", "report", "missing-report", "symlink")
+        for case in cases:
+            with self.subTest(case=case):
+                fixture = self._missing_archived_disposition_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                child_path = fixture["run_dir"] / "continuation-01/metadata.json"
+                child = json.loads(child_path.read_text())
+                if case == "worktree":
+                    child["worktree"] = str(fixture["temp"].name) + "/wrong-worktree"
+                    child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+                elif case == "branch":
+                    child["branch"] = "agent/wrong-review"
+                    child_path.write_text(json.dumps(child, sort_keys=True) + "\n")
+                elif case == "claim":
+                    receipt_path = fixture["run_dir"] / "claim-receipt.json"
+                    receipt = json.loads(receipt_path.read_text())
+                    receipt["workstream"] = "review-spoof"
+                    receipt_path.write_text(json.dumps(receipt) + "\n")
+                elif case == "report":
+                    (fixture["run_dir"] / "validation.json").write_text("{\"passed\":false}\n")
+                elif case == "missing-report":
+                    (fixture["run_dir"] / "validation.json").unlink()
+                else:
+                    (fixture["run_dir"] / "continuation-01/unsafe-link").symlink_to(
+                        fixture["run_dir"] / "codex.jsonl")
+                with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+                     patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]), \
+                     patch.object(runner, "launch_codex") as launch:
+                    with self.assertRaises(runner.RunnerError):
+                        runner.continue_run(
+                            fixture["repo"], "review-sample", fixture["run_id"],
+                            authorize_fresh_reviewer_context=True,
+                            recover_missing_archived_disposition=True,
+                        )
+                launch.assert_not_called()
+                self.assertFalse((fixture["run_dir"] / "continuation-02").exists())
+
+    def test_missing_archived_disposition_continuation_rejects_preexisting_child_without_replay(self):
+        fixture = self._missing_archived_disposition_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        continuation_02 = fixture["run_dir"] / "continuation-02"
+        continuation_02.mkdir()
+        (continuation_02 / "preserved-marker.txt").write_text("keep\n")
+        before = runner._file_manifest(fixture["run_dir"])
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]), \
+             patch.object(runner, "launch_codex") as launch:
+            with self.assertRaisesRegex(runner.RunnerError, "continuation state is missing or malformed"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        launch.assert_not_called()
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), before)
+
+    def test_missing_archived_disposition_continuation_detects_parent_mutation_after_reviewer(self):
+        fixture = self._missing_archived_disposition_fixture()
+        fixture["mutate_parent_during_launch"] = True
+        self.addCleanup(fixture["temp"].cleanup)
+        patches = self._continuation_patches(fixture)
+        active_patches = [patcher.start() for patcher in patches]
+        self.addCleanup(lambda: [patcher.stop() for patcher in reversed(patches)])
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]):
+            with self.assertRaisesRegex(runner.RunnerError, "original run evidence changed"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        child = json.loads((fixture["run_dir"] / "continuation-02/metadata.json").read_text())
+        self.assertEqual(child["phase"], "original_evidence_changed")
+        self.assertEqual(active_patches[6].call_count, 1)
+
+    def test_missing_archived_disposition_child_with_missing_archive_cannot_launch_again(self):
+        fixture = self._missing_archived_disposition_fixture()
+        fixture["omit_archived_packet"] = True
+        self.addCleanup(fixture["temp"].cleanup)
+        patches = self._continuation_patches(fixture)
+        active_patches = [patcher.start() for patcher in patches]
+        self.addCleanup(lambda: [patcher.stop() for patcher in reversed(patches)])
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", fixture["run_id"]):
+            with self.assertRaisesRegex(runner.RunnerError, "did not author the exact archived review packet"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+            child_path = fixture["run_dir"] / "continuation-02/metadata.json"
+            child_before = child_path.read_bytes()
+            with self.assertRaisesRegex(runner.RunnerError, "consumed its one reviewer launch"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        self.assertEqual(active_patches[6].call_count, 1)
+        self.assertEqual(child_path.read_bytes(), child_before)
+
+    def test_missing_archived_disposition_continuation_rejects_wrong_run_before_git_access(self):
+        with patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "MISSING_ARCHIVED_DISPOSITION_RUN_ID", "20261017T120000Z-012345abcdef"), \
+             patch.object(runner, "git") as git:
+            with self.assertRaisesRegex(runner.RunnerError, "exact run with explicit fresh-reviewer authorization"):
+                runner.continue_run(
+                    Path("."), "review-sample", "20261017T120001Z-012345abcdef",
+                    authorize_fresh_reviewer_context=True,
+                    recover_missing_archived_disposition=True,
+                )
+        git.assert_not_called()
+
+    def test_missing_archived_disposition_cli_requires_both_explicit_recovery_authorizations(self):
+        with patch.object(runner, "continue_run") as continuation:
+            result = runner.main([
+                runner.MISSING_ARCHIVED_DISPOSITION_WORKSTREAM,
+                "--continue-run", runner.MISSING_ARCHIVED_DISPOSITION_RUN_ID,
+                "--recover-missing-archived-disposition",
+            ])
+        self.assertEqual(result, 2)
+        continuation.assert_not_called()
+
+    def test_missing_archived_disposition_prompt_names_all_canonical_artifact_paths(self):
+        prompt = runner._continuation_prompt(
+            "review-sample", "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md",
+            "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md",
+            run_id="20261017T120000Z-012345abcdef", target_workstream="sample-impl", reviewed_main="b" * 40,
+            implementation_commit="a" * 40, authoring_chat="https://chatgpt.com/c/test",
+            continuation_dir=Path("/tmp/continuation-02"), preserved=[],
+            report_sha256="c" * 64, continuation_number=2,
+        )
+        self.assertIn("custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md", prompt)
+        self.assertIn("custodian/docs/ai_context/task_packets/archived/REVIEW_SAMPLE.md", prompt)
+        self.assertIn("custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md", prompt)
+        self.assertIn("### Review Receipt: review-sample", prompt)
+        self.assertIn("Review target workstream: `sample-impl`", prompt)
+        self.assertIn("REVIEW_SAMPLE_CLAUDE_SUMMARY.md", prompt)
 
     def test_same_run_continuation_preserves_originals_and_completed_retry_verifies_without_claim(self):
         fixture = self._continuation_fixture()

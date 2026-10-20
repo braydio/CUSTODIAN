@@ -154,11 +154,16 @@ python3 custodian/tools/agent/persistent_checkout_sync.py status root
 python3 custodian/tools/agent/persistent_checkout_sync.py apply root
 ```
 
-This may fast-forward **only a clean, attached, behind-only coordination
-`main`**. It preserves dirty, ahead, diverged, detached and foreign checkout
-states and must never be replaced with reset, stash, force-push or manual
-worktree cleanup. If status/apply reports a genuine blocker, preserve the
-original run and report its exact reason. After a successful fast-forward,
+This may fast-forward only an attached, behind-only coordination
+`main` with no tracked edits. **Unrelated untracked files, including a stray
+local ZIP, are preserved in place and do not block a fast-forward**; an
+incoming tracked path that collides with any such local file still blocks
+synchronization. The status report continues to show untracked paths and
+`clean=false` without equating them to tracked changes. Ahead, diverged,
+detached, tracked-dirty, colliding, and foreign checkouts remain protected.
+Never substitute reset, stash, force-push or manual worktree cleanup. If
+status/apply reports a genuine blocker, preserve the original run and report
+its exact reason. After a successful fast-forward,
 rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
 any separately authorized apply. The pinned implementation SHA and protected
 claim/worktree must remain unchanged; source/provenance validation still runs.
@@ -644,6 +649,37 @@ Repeating a completed run independently verifies the landed receipt and returns
 success; an incomplete continuation is never replayed automatically. New
 ordinary review claims persist the full structured receipt in
 `claim-receipt.json` because the human-readable `claim.stdout` is length-limited.
+
+### Exact continuation after missing archived disposition
+
+One additional recovery is authorized only for
+`review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`,
+run `20261020T114129Z-536181b31d70`. It requires the original run to remain in
+`post_exit_recovery` and `continuation-01` to record exactly
+`missing_archived_disposition` with reviewer `exit_code: 0`. The original run
+manifest, structured claim, exact worktree/branch/head, pinned target and green
+host-validation evidence must still verify. Use all three exact arguments:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1 \
+  --continue-run 20261020T114129Z-536181b31d70 \
+  --recover-missing-archived-disposition --authorize-fresh-reviewer-context
+```
+
+This holds the original nonblocking review lock, creates only
+`continuation-02`, and records complete SHA-256 manifests for the original run
+and all of `continuation-01`. Both evidence sets are rechecked after the fresh
+reviewer exits; neither is rewritten. The reviewer stays on the original claim
+and worktree. Its prompt names the exact active review packet, canonical
+archived review packet, pinned implementation target and receipt location, and
+root summary. A PASS in a prior message is not evidence. Only a new canonical
+archived packet and run-bound Review Outcome, exactly one valid target receipt,
+the exact root summary and coordinator verification can enter the ordinary
+race-safe closeout. Findings, human-required outcomes, missing artifacts and
+interruption remain preserved. An incomplete continuation-02 cannot launch
+again; a completed PASS may retry coordinator verification/closeout without a
+second reviewer. No other run or phase is covered by this exception.
 
 ## Exit paths
 
