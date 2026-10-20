@@ -49,7 +49,7 @@ class SurfaceContractTests(unittest.TestCase):
         self.assertEqual(materials, {
             "armor_graphite", "mask_nearblack", "metal_bronze", "fabric_offwhite",
             "fabric_burgundy", "fabric_charcoal", "soft_underarmor", "leather_dark",
-            "cable_ochre", "emblem_ivory", "emission_amber",
+            "cable_ochre", "emblem_ivory", "emission_amber", "emission_canister",
         })
 
     def test_identity_and_energy_materials_remain_distinct(self):
@@ -58,7 +58,9 @@ class SurfaceContractTests(unittest.TestCase):
         self.assertEqual(material_for_part("Apron_central_dark"), "fabric_charcoal")
         self.assertEqual(material_for_part("Mask_faceplate"), "mask_nearblack")
         self.assertEqual(material_for_part("Mask_vertical_amber_eye"), "emission_amber")
-        self.assertEqual(material_for_part("Tank_2_amber_glass"), "emission_amber")
+        self.assertEqual(material_for_part("Tank_0_amber_glass"), "emission_canister")
+        self.assertEqual(material_for_part("Tank_1_amber_glass"), "emission_canister")
+        self.assertEqual(material_for_part("Tank_2_amber_glass"), "emission_canister")
         self.assertEqual(material_for_part("R_Cannon_brass_cage_0_seg00"), "metal_bronze")
 
     def test_hand_and_foot_meshes_fold_into_15_bone_hierarchy(self):

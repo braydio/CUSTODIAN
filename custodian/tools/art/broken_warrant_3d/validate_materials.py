@@ -97,6 +97,27 @@ def main():
                     bone_errors.append({"mesh": obj.name, "reason": f"vertex {vertex.index} missing full rigid weight"})
                     break
 
+    # Separate the lower-powered backpack emission from visor, chest, cannon.
+    canister_names = {f"Tank_{i}_amber_glass" for i in range(3)}
+    canister_meshes = [obj for obj in meshes if obj.get("bw_source_part") in canister_names]
+    canister_mat = bpy.data.materials.get("emission_canister")
+    canister_shader = (
+        next((node for node in canister_mat.node_tree.nodes if node.type == "BSDF_PRINCIPLED"), None)
+        if canister_mat and canister_mat.use_nodes and canister_mat.node_tree else None
+    )
+    canister_assignment_ok = (
+        len(canister_meshes) == 3
+        and {obj.get("bw_source_part") for obj in canister_meshes} == canister_names
+        and all(obj.get("bw_semantic_material") == "emission_canister" for obj in canister_meshes)
+        and all(len(obj.data.materials) == 1 and obj.data.materials[0] == canister_mat for obj in canister_meshes)
+        and all(obj.get("bw_source_part") in canister_names for obj in meshes if obj.get("bw_semantic_material") == "emission_canister")
+    )
+    canister_strength_ok = (
+        canister_shader is not None
+        and abs(float(canister_shader.inputs["Emission Strength"].default_value) - 0.65) <= 1e-6
+        and abs(float(canister_shader.inputs["Alpha"].default_value) - 1.0) <= 1e-7
+        and not canister_shader.inputs["Alpha"].is_linked
+    )
     bone_names = sorted(armatures[0].data.bones.keys()) if len(armatures) == 1 else []
     images = []
     for image in bpy.data.images:
@@ -121,6 +142,8 @@ def main():
         "palette_hash_matches": scene.get("bw_material_palette_sha256") == sha256(cfg.palette),
         "mesh_count_503": len(meshes) == EXPECTED_MESHES,
         "triangles_45998": triangles == EXPECTED_TRIANGLES,
+        "exactly_three_separate_canister_materials": canister_assignment_ok,
+        "bounded_canister_emission_strength": canister_strength_ok,
         "one_15_bone_rig": len(armatures) == 1 and len(bone_names) == EXPECTED_BONES and bone_names == sorted(EXPECTED_BONE_NAMES),
         "all_parts_have_one_semantic_material": not unknown and not material_errors and sum(assignments.values()) == EXPECTED_MESHES,
         "all_parts_have_rigid_bone_assignment": not bone_errors,

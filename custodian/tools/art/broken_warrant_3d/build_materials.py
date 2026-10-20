@@ -74,7 +74,7 @@ def build_material(name: str, spec: dict):
     mat["bw_semantic_material"] = name
     mat["bw_opaque"] = True
     mat["bw_treatment"] = spec["treatment"]
-    mat.pass_index = 1 if name == "emission_amber" else 0
+    mat.pass_index = 1 if name in {"emission_amber", "emission_canister"} else 0
 
     tree = mat.node_tree
     nodes = tree.nodes
@@ -87,7 +87,7 @@ def build_material(name: str, spec: dict):
     shader.inputs["Metallic"].default_value = float(spec["metallic"])
     shader.inputs["Roughness"].default_value = float(spec["roughness"])
     shader.inputs["Alpha"].default_value = 1.0
-    if name == "emission_amber":
+    if name in {"emission_amber", "emission_canister"}:
         emission_socket = "Emission Color" if "Emission Color" in shader.inputs else "Emission"
         shader.inputs[emission_socket].default_value = hex_rgb(spec["hex"])
         shader.inputs["Emission Strength"].default_value = float(spec["emission_strength"])

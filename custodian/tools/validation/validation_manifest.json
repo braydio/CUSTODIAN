@@ -7001,6 +7001,25 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
+    },
+    {
+      "id": "broken_warrant_material_contract",
+      "type": "python",
+      "script": "custodian/tools/art/broken_warrant_3d/test_material_patch_contract.py",
+      "tier": "unit",
+      "tags": ["art", "materials", "blender", "source_only"],
+      "owners": [
+        "custodian/tools/art/broken_warrant_3d/build_materials.py",
+        "custodian/tools/art/broken_warrant_3d/material_palette.json",
+        "custodian/tools/art/broken_warrant_3d/render_pixel_proof.py",
+        "custodian/tools/art/broken_warrant_3d/surface_contract.py",
+        "custodian/tools/art/broken_warrant_3d/test_surface_contract.py",
+        "custodian/tools/art/broken_warrant_3d/validate_materials.py",
+        "custodian/tools/art/broken_warrant_3d/test_material_patch_contract.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
     }
   ]
 }
