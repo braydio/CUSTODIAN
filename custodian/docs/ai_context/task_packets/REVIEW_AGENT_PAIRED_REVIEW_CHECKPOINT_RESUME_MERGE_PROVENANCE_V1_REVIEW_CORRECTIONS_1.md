@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-checkpoint-resume-merge-provenance-v1-review-corrections-1`
 - Locks: `paired-review-resume-merge-provenance`
