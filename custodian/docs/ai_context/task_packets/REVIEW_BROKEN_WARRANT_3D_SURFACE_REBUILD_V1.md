@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-broken-warrant-3d-surface-rebuild`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `broken-warrant-3d-surface-rebuild`
 - Locks: `broken-warrant-3d-source`
