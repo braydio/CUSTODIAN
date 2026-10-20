@@ -4,7 +4,7 @@
 - Workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-checkpoint-resume-merge-provenance-v1`
@@ -40,3 +40,36 @@
 ## Handoff
 - Next workstream: `none`
 - A genuinely accepted PASS authorizes only read-only recovery planning for the existing attestation reviewer run.
+
+## Independent Review
+
+Review outcome: findings
+
+The historical replay confirms the exact checkpoint/resume ancestry and inherited-path exclusion, but the new negative controls mutate lifecycle trace fields only. They do not exercise the packet's required A3 cases for altered merge trees or parents, unrelated second parents, source loss or mutation, extra merges, undocumented local source, or unowned test coverage. The synthetic report's coverage map is manually constructed and does not prove those cases fail closed.
+
+Finding `R0-01` (reviewer label `RV0-A3-001`): add and execute the missing adversarial merge and source-ownership controls, retaining the exact historical downstream coverage replay.
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
+- Review target workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1`
+- Status: `findings`
+- Blocking defects: `0`
+- Material gaps: `1`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `00cdfd382a3007c30cd42609b4a63146daf0ad32`
+- Reviewed implementation commit: `00cdfd382a3007c30cd42609b4a63146daf0ad32`
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-agent-paired-review-checkpoint-resume-merge-provenance-v1`
+- Review target workstream: `agent-paired-review-checkpoint-resume-merge-provenance-v1`
+- Reviewed main: `00cdfd382a3007c30cd42609b4a63146daf0ad32`
+- Reviewed implementation commit: `00cdfd382a3007c30cd42609b4a63146daf0ad32`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261020T111510Z-1726387bdbb9`
+- Review cycle: `0`
+- Finding IDs: `R0-01`
