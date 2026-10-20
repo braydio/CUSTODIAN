@@ -1,5 +1,10 @@
 # CURRENT STATE — CUSTODIAN
 
+## Broken Warrant 3D material tooling (2026-10-20)
+
+`custodian/tools/art/broken_warrant_3d/` now builds and validates a packed, editable Blender material master and deterministic front/three-quarter/rear 128px proofs from the staged immutable GLB. Objective source, mesh, rig, material, alpha, framing, registration, and packed-reference checks pass. The review sheet is published to `/CUSTODIAN/visual_review/broken-warrant-3d-surface-rebuild/20261020T023328Z/REVIEW_MANIFEST.json`; human identity/material acceptance remains pending. This is source-only tooling, not runtime art or Asset V2 approval.
+
+
 ## Grunt candidate raster tooling (2026-10-19)
 
 `custodian/tools/iteration/raster_pipeline/` provides a plan-driven, non-Operator
