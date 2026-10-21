@@ -13,7 +13,6 @@
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_EXECUTION_RESET_V1.md`
 - Reviewed main: `94b17d41e34fdf4157f26a254e2943a12eb4aa45`
 - Authoring chat: `not-recorded`
-- Authoring handoff: `auto`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
