@@ -43,6 +43,11 @@
 
 ## Completion Truth
 
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: 14/14 focused quarantine tests passed, including scoped LFS coverage/deduplication, missing LFS and storage refusal, tamper detection, V1 compatibility, and quarantine identity; scoped restore is proven in disposable Git fixtures. Live protected-worktree snapshot/quarantine remains deferred to the campaign because persistent storage is below the conservative required estimate plus reserve.
 - Claim/run identity verified: dispatcher claim 20261021T021417Z-594e81ef79d2 verified; exact branch/worktree resumed.
 - Required source/tests/docs implemented: scoped snapshot schema, target refs bundle, target worktree/evidence archives, per-OID LFS payloads, preflight reserve, safe restore verification, CLI scope, lifecycle guidance.
 - Scoped snapshot restore proof: temporary Git/LFS fixtures restore scoped archives and verify materialized LFS bytes; the exact live snapshot is deferred because persistent storage preflight exceeds available capacity.

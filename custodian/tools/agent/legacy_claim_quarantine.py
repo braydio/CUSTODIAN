@@ -872,7 +872,7 @@ def verify_snapshot(path: Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    snap = sub.add_parser("snapshot", help="copy all refs, target worktrees, and run evidence")
+    snap = sub.add_parser("snapshot", help="preserve refs and evidence using the selected snapshot scope")
     snap.add_argument("--repo", type=Path, default=Path.cwd())
     snap.add_argument("--workstream", action="append", required=True)
     snap.add_argument("--destination", type=Path, required=True)
