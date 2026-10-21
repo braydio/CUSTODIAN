@@ -191,10 +191,16 @@ file suffix alone never grants admission.
 To prevent an unbound source follow-up from being created, both
 `workstream.py preflight` and `finish` check any active-to-archived packet
 transition. The archive transition must be the current branch tip before
-finish pushes or synchronizes main. Put source changes before that archive
-commit, or use an explicitly supported and provenance-pinned source-span
-record. Finish reports the exact blocking commit and path without pushing or
-landing the branch.
+finish first pushes or synchronizes main. If a prior finish attempt stopped
+after synchronization, the guard accepts only the exact archive-first merge
+bound by that run's claim, published worktree, `main_sync`, and terminal
+`run_blocked` events. It also accepts at most one direct child commit when
+every changed regular file is named in the archived packet's work surface.
+If main advances again before landing, host source validation accepts further
+archive-descending sync merges only when each merge has its own exact ordered
+trace witness and deterministic merge tree. Untraced merges, extra source
+descendants, and out-of-surface paths remain blocked. Finish reports the exact
+blocking commit and path without pushing or landing the branch.
 
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and

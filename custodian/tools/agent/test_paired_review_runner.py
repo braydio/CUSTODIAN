@@ -3537,6 +3537,91 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
 
+    def test_split_landing_accepts_declared_archive_sync_followup(self):
+        fixture = self._build_main_sync_landing()
+        work_branch = self._git("branch", "--show-current")
+        followup_path = fixture["code_paths"][1]
+        followup_file = self.root / followup_path
+        followup_file.write_text(followup_file.read_text() + "post-merge regression\n")
+        self._git("add", followup_path)
+        self._git("commit", "-qm", "bounded post-merge follow-up")
+        followup = self._git("rev-parse", "HEAD")
+        self._git("checkout", "-qb", "later-main", fixture["prior_main"])
+        (self.root / "later-main-only.md").write_text("later main publication\n")
+        self._git("add", "later-main-only.md")
+        self._git("commit", "-qm", "advance main again")
+        later_main = self._git("rev-parse", "HEAD")
+        self._git("checkout", "-q", work_branch)
+        subprocess.run(["git", "merge", "--no-ff", "later-main", "-m", "second main sync"],
+                       cwd=self.root, check=True, capture_output=True)
+        final_sync = self._git("rev-parse", "HEAD")
+        self.reviewed_main = final_sync
+        fixture["reviewed_main"] = final_sync
+
+        run_id = "20261018T020000Z-012345abcdef"
+        valid_ref = f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/{run_id}"
+        subprocess.run(["git", "update-ref", "-d", valid_ref], cwd=self.root, check=True)
+        events = []
+        def emit(name, data):
+            events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "run_id": run_id, "workstream": fixture["workstream"],
+                           "packet": fixture["active"], "event": name, "data": data})
+        claim_oid = self._git("commit-tree", f"{fixture['source_base']}^{{tree}}", "-p",
+                              fixture["source_base"], "-m",
+                              f"workstream claim {fixture['workstream']} codex:1:{run_id}")
+        worktree = f"/tmp/{fixture['workstream']}-{run_id}"
+        emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": fixture["source_base"],
+             "local_ref": f"refs/custodian/claims/{fixture['workstream']}/{run_id}",
+             "remote_ref": f"refs/heads/dispatch-claims/{fixture['workstream']}"})
+        emit("worktree_published", {"head": fixture["source_base"], "upstream": fixture["source_base"],
+             "branch": f"agent/{fixture['workstream']}", "clean": True, "worktree": worktree})
+        emit("main_sync", {"changed": True, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]})
+        emit("main_sync", {"changed": False, "head": followup,
+             "main_sha": fixture["prior_main"]})
+        emit("main_sync", {"changed": True, "head": final_sync,
+             "main_sha": later_main})
+        emit("landing_started", {"start_sha": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "target": "main"})
+        emit("landing_completed", {"head": final_sync, "outcome": "landed"})
+        emit("teardown_started", {"head": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "worktree": worktree})
+        emit("teardown_completed", {"head": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "worktree": worktree, "worktree_removed": True})
+        raw = ("\n".join(json.dumps(event, sort_keys=True) for event in events) + "\n").encode()
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=self.root,
+                              input=raw, check=True, capture_output=True).stdout.decode().strip()
+        tree = subprocess.run(["git", "mktree"], cwd=self.root,
+                              input=f"100644 blob {blob}\ttrace.jsonl\n", text=True,
+                              check=True, capture_output=True).stdout.strip()
+        trace_commit = self._git("commit-tree", tree, "-m", "post-merge follow-up trace")
+        self._git("update-ref", valid_ref, trace_commit)
+
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["head"], final_sync)
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge-followup")
+        self.assertEqual(span["provenance"]["post_merge_followup"]["sync_merge_commit"], fixture["merge"])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["followup_paths"], [followup_path])
+
+        invalid = events[:4] + events[5:]
+        invalid_raw = ("\n".join(json.dumps(event, sort_keys=True) for event in invalid) + "\n").encode()
+        invalid_blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=self.root,
+                                      input=invalid_raw, check=True,
+                                      capture_output=True).stdout.decode().strip()
+        invalid_tree = subprocess.run(["git", "mktree"], cwd=self.root,
+                                      input=f"100644 blob {invalid_blob}\ttrace.jsonl\n", text=True,
+                                      check=True, capture_output=True).stdout.strip()
+        invalid_commit = self._git("commit-tree", invalid_tree, "-m", "trace missing retry proof")
+        self._git("update-ref", valid_ref, invalid_commit)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "unique exact main-sync witness"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
     def _install_split_trace_pair(self, fixture, *, claim_path=None, teardown_path=None,
                                   claim_base=None, claim_branch=None,
                                   claim_run="20261018T020010Z-012345abcdef",

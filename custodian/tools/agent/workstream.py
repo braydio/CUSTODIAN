@@ -506,7 +506,7 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
 
 
 def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
-    """Require the canonical active-to-archived packet transition at pre-sync tip."""
+    """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
     repo = root_repo(path)
     head = git("rev-parse", "HEAD", cwd=path)
     packets = _associated_task_packets(repo, workstream_id)
@@ -554,14 +554,104 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                 transitions.append((commit, archived_rel))
     if not transitions:
         return None
-    if len(transitions) != 1 or transitions[0][0] != head:
+    if len(transitions) != 1:
         transition_commit, packet = transitions[-1]
-        return (
-            f"canonical archive transition for {packet} is {transition_commit}, not the current "
-            f"branch tip {head}; include source changes before archival or use a supported "
-            "source-span record"
-        )
-    return None
+        return f"multiple canonical archive transitions found; latest is {transition_commit} ({packet})"
+    transition_commit, packet = transitions[0]
+    if transition_commit == head:
+        return None
+
+    # workstream.py finish may already have synchronized main before validation
+    # or landing stopped. Admit that state only when the immutable lifecycle trace
+    # pins the exact archive-first merge and records the corresponding main SHA.
+    first_parent = git("rev-parse", f"{head}^1", cwd=path, check=False)
+    merge_candidate = head if first_parent == transition_commit else first_parent
+    merge_parents = git("rev-list", "--parents", "-n", "1", merge_candidate, cwd=path,
+                        check=False).split() if merge_candidate else []
+    if len(merge_parents) == 3 and merge_parents[1] == transition_commit:
+        second_parent = merge_parents[2]
+        trace_prefix = f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+        refs = git("for-each-ref", "--format=%(refname)", trace_prefix, cwd=path,
+                   check=False).splitlines()
+        active_packet = packet.removeprefix(f"{TASK_PACKET_ARCHIVE}/")
+        active_packet = f"{TASK_PACKET_ROOT}/{active_packet}"
+        trace_matches = []
+        for ref in refs:
+            run_id = ref.rsplit("/", 1)[-1]
+            blob = git("show", f"{ref}:trace.jsonl", cwd=path, check=False)
+            if not blob:
+                continue
+            try:
+                events = [json.loads(line) for line in blob.splitlines() if line.strip()]
+            except (ValueError, TypeError):
+                continue
+            if (not events or any(event.get("schema") != "custodian.workflow_trace_event.v1"
+                                  or event.get("workstream") != workstream_id
+                                  or event.get("run_id") != run_id
+                                  or event.get("packet") != active_packet for event in events)):
+                continue
+            claims = [event.get("data", {}) for event in events
+                      if event.get("event") == "remote_claim_acquired"]
+            publications = [event.get("data", {}) for event in events
+                            if event.get("event") == "worktree_published"]
+            syncs = [event.get("data", {}) for event in events
+                     if event.get("event") == "main_sync"]
+            blocked = [event for event in events if event.get("event") == "run_blocked"]
+            landed = [event for event in events
+                      if event.get("event") in {"landing_started", "landing_completed"}]
+            if (len(claims) != 1 or len(publications) != 1 or len(syncs) != 1
+                    or len(blocked) != 1 or events[-1].get("event") != "run_blocked" or landed):
+                continue
+            claim, publication, sync = claims[0], publications[0], syncs[0]
+            event_order = [event.get("event") for event in events]
+            if not (event_order.index("remote_claim_acquired")
+                    < event_order.index("worktree_published")
+                    < event_order.index("main_sync") < event_order.index("run_blocked")):
+                continue
+            if (claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+                    or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
+                    or publication.get("branch") != branch_for(workstream_id)
+                    or publication.get("clean") is not True
+                    or publication.get("head") != claim.get("main_sha")
+                    or publication.get("upstream") != claim.get("main_sha")
+                    or not isinstance(claim.get("main_sha"), str)
+                    or subprocess.run(["git", "merge-base", "--is-ancestor",
+                                       claim["main_sha"], transition_commit], cwd=path,
+                                      capture_output=True).returncode != 0
+                    or sync.get("changed") is not True or sync.get("head") != merge_candidate
+                    or sync.get("main_sha") != second_parent):
+                continue
+            trace_matches.append((ref, publication))
+        if len(trace_matches) == 1:
+            _, publication = trace_matches[0]
+            # A stopped finish attempt leaves HEAD at the traced merge. One
+            # direct child is permitted for the bounded producer correction,
+            # and every changed path must be named by the archived task packet.
+            if head == merge_candidate:
+                return None
+            if first_parent == merge_candidate:
+                packet_text = (repo / packet).read_text()
+                work_surface = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
+                declared = set(re.findall(r"`([^`]+)`", work_surface.group(1))) if work_surface else set()
+                child_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", head,
+                                      cwd=path).splitlines())
+                child_parents = git("rev-list", "--parents", "-n", "1", head, cwd=path).split()
+                mode_rows = git("ls-tree", "-r", "-z", head, cwd=path).split("\0")
+                child_tree_modes = {}
+                for row in mode_rows:
+                    left, separator, name = row.partition("\t")
+                    if separator and left.split():
+                        child_tree_modes[name] = left.split()[0]
+                if (len(child_parents) == 2 and child_paths and child_paths.issubset(declared)
+                        and all(child_tree_modes.get(name) == "100644" for name in child_paths)):
+                    return None
+
+    transition_commit, packet = transitions[0]
+    return (
+        f"canonical archive transition for {packet} is {transition_commit}, not the current "
+        f"branch tip {head}; include source changes before archival or use a supported "
+        "source-span record"
+    )
 
 
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
