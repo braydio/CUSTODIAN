@@ -16,7 +16,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `new immutable source imagery plus exact crop, provenance and scene preview checks`
-- Reviewed main: `9c607b6d5df1`
+- Reviewed main: `29b0dc57bf54`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f`
 - Visual review: `required`
 - Goal: Stage and verify the user's selected ruined-marble Carrow perimeter source slices and reproducible corner/straight assembly using the newly published immutable Dropbox source batch, without claiming runtime approval.
