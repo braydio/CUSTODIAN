@@ -1,0 +1,54 @@
+# SUNDERED KEEP MAPPER INPUT RELIABILITY V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `sundered-keep-mapper-input-reliability-v1`
+- Authoring handoff: `auto`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `review-mapper-canvas-navigation-v1`
+- Locks: `sundered-keep, authored-level`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-sundered-keep-mapper-input-reliability-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial authoring-tool/data integrity change`
+- Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Stop shortcut conflicts and cross-mode destructive edits in Sundered Keep authoring variants.
+- Completion boundary: Implement just this authoring/editor contract, prove each A-series acceptance item through focused tests and publish truthful closeout evidence.
+- Current measured state: SunderedKeepApproachMapper treats any Z keydown as zone toggle, including Ctrl+Z. Standalone SunderedKeepMapper owns independent _input and tile/feature undo state; it is not a shared AuthoredLevelMapper subclass.
+- Evidence: Static inspection of Work surface at pinned `main@0bcd4c2455ff`; prior smoke coverage is NOT hands-on interaction proof.
+- Task-specific authority: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`, `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, relevant mapper source/draft authority.
+- Work surface: sundered_keep_approach_mapper.gd; sundered_keep_mapper.gd; mapper overlays
+- Publication inputs: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`; `custodian/tools/validation/sundered_keep_mapper_smoke.gd`; `custodian/tools/validation/sundered_keep_approach_outskirts_mapper_smoke.gd`; `custodian/tools/validation/level_collision_poi_mapper_smoke.gd`
+- Change: Require unmodified Z with proper focus for Approach zone toggle, leaving Ctrl+Z unambiguous. Add mode/input ownership checks and truthful mode help. In standalone Keep, verify edit/erase/stroke/feature undo belongs to active mode and cannot mutate another authoring document; fix only proven gaps with narrow changes. Display explicit target path and action when writing Keep JSON. Preserve independent Keep tool contract, don't migrate it wholesale into generic class.
+- Preserve: Existing authored runtime/world geometry, visual art and Asset Pipeline V2 contracts; mapping schema and source hashes; all unrelated mapper modes.
+- Non-goals: Gameplay scene/geometry edits, new art, production draft promotion, and universal mapper rewrite.
+- Acceptance:
+  - A1: Ctrl+Z does not toggle Zone mode, while plain Z does; text focus is safe.
+  - A2: Mode switching/cancel/undo/redo cannot edit other modes' data or mutate target files before explicit established save.
+  - A3: Existing Keep palette 01-99, underlay/collision, feature-zone offset and current focus smokes pass.
+- Validation: Focused scripts below, then changed-file validation and packet/context checks. Test API and representative actual input events, not import-only.
+- Task overrides: `none`
+- Deferred: Subjective user ergonomics confirmation after technical correctness; human source/art approval remains separate.
+
+## Validation
+- `godot --headless --path custodian --script res://tools/validation/sundered_keep_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/sundered_keep_approach_outskirts_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/level_collision_poi_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` after focused pass.
+- `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `git diff --check`.
+- Moment Forge not required unless gameplay or authored presentation unexpectedly changes; no full-frame screenshots as default.
+
+## Next Handoff
+- Next workstream: `review-sundered-keep-mapper-input-reliability-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Next action: Land verified implementation through workstream lifecycle; launch fresh-context independent paired review.
+- Blockers or open questions: Existing dependency reviewers and dispatch claim guards remain authoritative.

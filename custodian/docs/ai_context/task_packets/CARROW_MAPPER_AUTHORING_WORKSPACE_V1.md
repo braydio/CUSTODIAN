@@ -1,0 +1,53 @@
+# CARROW MAPPER AUTHORING WORKSPACE V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `carrow-mapper-authoring-workspace-v1`
+- Authoring handoff: `auto`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `review-mapper-canvas-navigation-v1`
+- Locks: `carrow-yard-route, authored-level`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-carrow-mapper-authoring-workspace-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial authoring-tool/data integrity change`
+- Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Make Carrow's six-mode three-room authoring workspace discoverable, efficient and usable at narrower viewport sizes.
+- Completion boundary: Implement just this authoring/editor contract, prove each A-series acceptance item through focused tests and publish truthful closeout evidence.
+- Current measured state: Carrow currently builds one 310x590 vertical panel with six modes in a dropdown; asset picker text-only; _on_asset_selected and _on_floor_selected do nothing; single status label carries validation output.
+- Evidence: Static inspection of Work surface at pinned `main@0bcd4c2455ff`; prior smoke coverage is NOT hands-on interaction proof.
+- Task-specific authority: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`, `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, relevant mapper source/draft authority.
+- Work surface: carrow_interior_layout_mapper.gd; carrow_interior_layout_mapper_overlay.gd; carrow_interior_layout_draft.gd
+- Publication inputs: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`; `custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd`; `custodian/tools/validation/authored_level_mapper_framework_smoke.gd`
+- Change: Provide concise mode toolbar and context-sensitive inspector, selected geometry outlines, hover/placement preview and registered-asset lookup with searchable name/category and actual sprite footprint. Expose room tabs and per-room saved/dirty/validation status. Show only mode-relevant controls; clear next-click instructions for floor, props, collision, portal, storage and waypoints. Allow collapse/scroll and maintain visible Save/Load/Validate at 1280x720 and narrower. Picker selection alone must not mutate draft. Use only existing registered Asset V2 assets.
+- Preserve: Existing authored runtime/world geometry, visual art and Asset Pipeline V2 contracts; mapping schema and source hashes; all unrelated mapper modes.
+- Non-goals: Gameplay scene/geometry edits, new art, production draft promotion, and universal mapper rewrite.
+- Acceptance:
+  - A1: At every mode, visible selection/tool/art and next-click behavior match actual edit operation.
+  - A2: No panel event accidentally paints; prop transform/inspector tracks selected anchor and registered art dimensions.
+  - A3: UI test validates control bounds and reachable Save/Load/Validate at default and narrower viewport, while draft serialization/validation remains identical.
+- Validation: Focused scripts below, then changed-file validation and packet/context checks. Test API and representative actual input events, not import-only.
+- Task overrides: `none`
+- Deferred: Subjective user ergonomics confirmation after technical correctness; human source/art approval remains separate.
+
+## Validation
+- `godot --headless --path custodian --script res://tools/validation/carrow_interior_layout_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/authored_level_mapper_framework_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` after focused pass.
+- `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `git diff --check`.
+- Moment Forge not required unless gameplay or authored presentation unexpectedly changes; no full-frame screenshots as default.
+
+## Next Handoff
+- Next workstream: `review-carrow-mapper-authoring-workspace-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Next action: Land verified implementation through workstream lifecycle; launch fresh-context independent paired review.
+- Blockers or open questions: Existing dependency reviewers and dispatch claim guards remain authoritative.

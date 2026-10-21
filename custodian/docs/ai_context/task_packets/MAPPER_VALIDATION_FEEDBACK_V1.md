@@ -1,0 +1,55 @@
+# MAPPER VALIDATION FEEDBACK V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `mapper-validation-feedback-v1`
+- Authoring handoff: `auto`
+- Kind: `implementation`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `review-awakening-mapper-proposal-workflow-v1, review-carrow-mapper-authoring-workspace-v1, review-sundered-keep-mapper-input-reliability-v1`
+- Locks: `authored-level, carrow-yard-route, awakening-runtime, sundered-keep`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-mapper-validation-feedback-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial authoring-tool/data integrity change`
+- Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Close validation/save feedback loop with actionable issues and honest statuses across the mapper family.
+- Completion boundary: Implement just this authoring/editor contract, prove each A-series acceptance item through focused tests and publish truthful closeout evidence.
+- Current measured state: Carrow prints validation rows in scrolling status text, Awakening shows candidate_findings in HUD and generic dirty uses active polyline only. Actual validation models and output contracts differ by mapper.
+- Evidence: Static inspection of Work surface at pinned `main@0bcd4c2455ff`; prior smoke coverage is NOT hands-on interaction proof.
+- Task-specific authority: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`, `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, relevant mapper source/draft authority.
+- Work surface: existing mapper scripts/overlays and their draft validators; CURRENT_STATE.md and FILE_INDEX.md where runtime changes warrant
+- Publication inputs: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`; `custodian/tools/validation/awakening_collision_mapper_bridge_smoke.gd`; `custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd`; `custodian/tools/validation/authored_level_mapper_framework_smoke.gd`; `custodian/tools/validation/sundered_keep_mapper_smoke.gd`
+- Change: Adapt each existing validator's findings to a lightweight presentation record with severity, issue message, grounded object ID/world position where available and a focus action. Global issues remain global. Expose distinct Validate/Save Draft/Export Report/Apply Source availability based on actual mapper contract. Saved, dirty, blocked, stale and production-write states must derive from real draft digest and capability, never inferred from an active tool only. Reconcile current state/docs with landed behavior, not proposed design; do not create a second geometry validator.
+- Preserve: Existing authored runtime/world geometry, visual art and Asset Pipeline V2 contracts; mapping schema and source hashes; all unrelated mapper modes.
+- Non-goals: Gameplay scene/geometry edits, new art, production draft promotion, and universal mapper rewrite.
+- Acceptance:
+  - A1: Choosing localized issue focuses relevant geometry, and unknown locations are honestly global.
+  - A2: After edit/undo/save/load/failed save, status accurately reflects disk and memory state, with specific actionable failure.
+  - A3: No invalid/stale draft is reported publishable; all source-write constraints and existing focused smokes remain green.
+- Validation: Focused scripts below, then changed-file validation and packet/context checks. Test API and representative actual input events, not import-only.
+- Task overrides: `none`
+- Deferred: Subjective user ergonomics confirmation after technical correctness; human source/art approval remains separate.
+
+## Validation
+- `godot --headless --path custodian --script res://tools/validation/awakening_collision_mapper_bridge_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/carrow_interior_layout_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/authored_level_mapper_framework_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/sundered_keep_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` after focused pass.
+- `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `git diff --check`.
+- Moment Forge not required unless gameplay or authored presentation unexpectedly changes; no full-frame screenshots as default.
+
+## Next Handoff
+- Next workstream: `review-mapper-validation-feedback-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Next action: Land verified implementation through workstream lifecycle; launch fresh-context independent paired review.
+- Blockers or open questions: Existing dependency reviewers and dispatch claim guards remain authoritative.
