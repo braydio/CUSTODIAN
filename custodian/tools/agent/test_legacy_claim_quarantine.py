@@ -247,6 +247,70 @@ class LegacyClaimQuarantineTests(unittest.TestCase):
             self.assertEqual(tar.getmember("source-link").linkname, "untracked.txt")
         self.assertEqual(quarantine.verify_snapshot(manifest_path)["workstreams"][self.workstream]["branch_sha"], branch_sha)
 
+    def test_scoped_snapshot_captures_only_required_lfs_and_refuses_multiple_targets(self):
+        payload = b"target-specific LFS bytes"
+        oid = quarantine.sha256_bytes(payload)
+        pointer = f"version https://git-lfs.github.com/spec/v1\noid sha256:{oid}\nsize {len(payload)}\n"
+        (self.repo / "asset.bin").write_text(pointer)
+        git(self.repo, "add", "asset.bin")
+        git(self.repo, "commit", "-m", "LFS pointer")
+        git(self.repo, "push", "origin", "main")
+        self.claim_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", f"{self.claim_sha}:refs/heads/dispatch-claims/{self.workstream}")
+        git(self.repo, "fetch", "origin")
+        lfs = quarantine.common_dir(self.repo) / "lfs" / "objects" / oid[:2] / oid[2:4] / oid
+        lfs.parent.mkdir(parents=True)
+        lfs.write_bytes(payload)
+        agent_path = self.root / "agent-wt"
+        git(self.repo, "worktree", "add", "-b", f"agent/{self.workstream}", str(agent_path), self.claim_sha)
+        (agent_path / "asset.bin").write_bytes(payload)
+        git(agent_path, "push", "-u", "origin", f"agent/{self.workstream}")
+        git(self.repo, "fetch", "origin")
+        unrelated = quarantine.common_dir(self.repo) / "lfs" / "objects" / "ff" / "ff" / ("f" * 64)
+        unrelated.parent.mkdir(parents=True)
+        unrelated.write_bytes(b"unrelated cache payload")
+
+        manifest_path = quarantine.snapshot(self.repo, [self.workstream], self.root / "scoped", scope="workstream")["path"]
+        manifest = quarantine.verify_snapshot(Path(manifest_path))
+        self.assertEqual(manifest["schema"], "custodian.execution_reset_scoped_backup.v1")
+        self.assertEqual(set(manifest["lfs_objects"]), {oid})
+        self.assertEqual(manifest["lfs_objects"][oid]["source"], "materialized-worktree")
+        self.assertNotIn("git-lfs-objects.tar", manifest["files"])
+        self.assertEqual(manifest["lfs_objects"][oid]["payload"], "worktree.tar")
+        self.assertFalse((Path(manifest_path).parent / f"lfs-{oid}.blob").exists())
+        self.assertFalse((Path(manifest_path).parent / f"lfs-{"f" * 64}.blob").exists())
+        plan = quarantine.build_plan(self.repo, self.workstream, None, Path(manifest_path))
+        self.assertEqual(plan["claim_sha"], self.claim_sha)
+        worktree_archive = Path(manifest_path).parent / "worktree.tar"
+        worktree_archive.write_bytes(b"tampered")
+        with self.assertRaisesRegex(quarantine.QuarantineError, "artifact missing or changed"):
+            quarantine.verify_snapshot(Path(manifest_path))
+        with self.assertRaisesRegex(quarantine.QuarantineError, "exactly one workstream"):
+            quarantine.snapshot(self.repo, [self.workstream, "other"], self.root / "multi", scope="workstream")
+
+    def test_scoped_snapshot_storage_preflight_writes_no_payload(self):
+        destination = self.root / "no-space"
+        with mock.patch.object(quarantine.shutil, "disk_usage", return_value=type("Usage", (), {"free": 0})()):
+            with self.assertRaisesRegex(quarantine.QuarantineError, "insufficient free space"):
+                quarantine.snapshot(self.repo, [self.workstream], destination, scope="workstream")
+        self.assertFalse(destination.exists())
+
+    def test_scoped_snapshot_missing_lfs_bytes_fails_without_verified_manifest(self):
+        payload = b"required but unavailable"
+        oid = quarantine.sha256_bytes(payload)
+        pointer = f"version https://git-lfs.github.com/spec/v1\noid sha256:{oid}\nsize {len(payload)}\n"
+        (self.repo / "missing.bin").write_text(pointer)
+        git(self.repo, "add", "missing.bin")
+        git(self.repo, "commit", "-m", "missing LFS payload")
+        git(self.repo, "push", "origin", "main")
+        claim = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", f"{claim}:refs/heads/dispatch-claims/{self.workstream}")
+        git(self.repo, "fetch", "origin")
+        destination = self.root / "missing-lfs"
+        with self.assertRaisesRegex(quarantine.QuarantineError, "required LFS bytes are missing"):
+            quarantine.snapshot(self.repo, [self.workstream], destination, scope="workstream")
+        self.assertFalse((destination / "manifest.json").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

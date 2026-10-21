@@ -20,6 +20,7 @@ import socket
 import subprocess
 import sys
 import tarfile
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -249,7 +250,23 @@ def _build_plan(repo: Path, workstream: str, run_id: str | None, snapshot_manife
         raise QuarantineError("present remote refs do not match their fetched tracking refs; fetch and re-plan")
     worktree = _worktrees(repo).get(workstream)
     paths = _worktree_inventory(worktree)
-    saved = manifest.get("workstreams", {}).get(workstream)
+    scoped = manifest.get("schema") == "custodian.execution_reset_scoped_backup.v1"
+    if scoped and manifest.get("workstream") == workstream:
+        saved = {
+            "claim_sha": _manifest_ref_sha(manifest, f"refs/remotes/origin/dispatch-claims/{workstream}"),
+            "branch_sha": _manifest_ref_sha(manifest, f"refs/remotes/origin/agent/{workstream}"),
+            "claim_tracking_sha": _manifest_ref_sha(manifest, f"refs/remotes/origin/dispatch-claims/{workstream}"),
+            "branch_tracking_sha": _manifest_ref_sha(manifest, f"refs/remotes/origin/agent/{workstream}"),
+            "local_branch_sha": _manifest_ref_sha(manifest, branch_ref),
+            "worktree_path": manifest.get("worktree_path"),
+            "worktree_inventory_sha256": sha256_bytes(canonical(manifest.get("worktree_inventory", []))),
+            "review_evidence_inventory_sha256": sha256_bytes(canonical(manifest.get("review_evidence_inventory", []))),
+            "workflow_trace_inventory_sha256": sha256_bytes(canonical(manifest.get("workflow_trace_inventory", []))),
+        }
+        if manifest.get("main_sha") != git(repo, "rev-parse", "refs/remotes/origin/main"):
+            raise QuarantineError("pinned origin/main changed since the scoped backup")
+    else:
+        saved = manifest.get("workstreams", {}).get(workstream)
     if not isinstance(saved, dict):
         raise QuarantineError("verified backup manifest does not cover this workstream")
     saved_claim_tracking = saved.get(
@@ -544,11 +561,150 @@ def apply_plan(repo: Path, plan: dict[str, Any], expected_digest: str) -> str:
     return apply_batch_plan(repo, batch, batch["plan_sha256"])[plan["workstream"]]
 
 
-def snapshot(repo: Path, workstreams: list[str], destination: Path) -> dict[str, Any]:
+def _lfs_pointer(data: bytes) -> tuple[str, int] | None:
+    match = re.fullmatch(rb"version https://git-lfs\.github\.com/spec/v1\noid sha256:([0-9a-f]{64})\nsize ([0-9]+)\n?", data)
+    return (match.group(1).decode(), int(match.group(2))) if match else None
+
+
+def _scoped_snapshot(repo: Path, workstream: str, destination: Path) -> dict[str, Any]:
+    paths = _worktrees(repo)
+    refs = git(repo, "for-each-ref", "--format=%(refname) %(objectname)").splitlines()
+    refs_before = [line.split(" ", 1) for line in refs]
+    wanted = {"refs/remotes/origin/main", f"refs/heads/dispatch-claims/{workstream}",
+              f"refs/remotes/origin/dispatch-claims/{workstream}", f"refs/heads/agent/{workstream}",
+              f"refs/remotes/origin/agent/{workstream}"}
+    wanted.update(name for name, _ in refs_before if name.startswith(
+        (f"refs/heads/agent-diagnostics/{workstream}/", f"refs/remotes/origin/agent-diagnostics/{workstream}/")
+    ))
+    selected = [(name, sha) for name, sha in refs_before if name in wanted]
+    if not any(name == "refs/remotes/origin/main" for name, _ in selected):
+        raise QuarantineError("scoped snapshot requires pinned origin/main")
+    if not any(name.endswith(f"/dispatch-claims/{workstream}") for name, _ in selected):
+        raise QuarantineError(f"scoped snapshot requires the exact dispatch claim ref for {workstream}")
+    worktree = paths.get(workstream)
+    inventory = _worktree_inventory(worktree)
+    evidence = common_dir(repo) / "custodian-review-runs" / workstream
+    traces = common_dir(repo) / "custodian-workflow" / "traces" / workstream
+    evidence_inventory = _tree_inventory(evidence)
+    trace_inventory = _tree_inventory(traces)
+    # Bound storage before creating the destination or any payload. The bundle
+    # estimate intentionally overcounts reachable Git objects and reserves 1 GiB.
+    target_names = [name for name, _ in selected]
+    rev_objects = git(repo, "rev-list", "--objects", *target_names).splitlines()
+    object_ids = list(dict.fromkeys(line.split(" ", 1)[0] for line in rev_objects))
+    batch = subprocess.run(["git", "cat-file", "--batch-check=%(objectsize)"], cwd=repo,
+                           input="\n".join(object_ids) + "\n", text=True, capture_output=True, timeout=120)
+    if batch.returncode:
+        raise QuarantineError("cannot estimate scoped Git bundle size")
+    estimated_bundle = sum(int(row.split()[1]) for row in batch.stdout.splitlines() if len(row.split()) > 1) * 2 + 1024 * 1024
+    pointers: dict[str, tuple[int, str | None]] = {}
+    for object_row in rev_objects:
+        object_id, _, object_path = object_row.partition(" ")
+        size_text = git(repo, "cat-file", "-s", object_id)
+        if not size_text.isdigit() or int(size_text) > 200:
+            continue
+        blob = subprocess.run(["git", "cat-file", "blob", object_id], cwd=repo, capture_output=True, timeout=30).stdout
+        pointer = _lfs_pointer(blob)
+        if pointer and pointer[0] not in pointers:
+            materialized = worktree / object_path if worktree and object_path else None
+            use_worktree = (materialized is not None and materialized.is_file() and not materialized.is_symlink()
+                            and materialized.stat().st_size == pointer[1] and sha256_file(materialized) == pointer[0])
+            pointers[pointer[0]] = (pointer[1], object_path if use_worktree else None)
+    for row in inventory:
+        if row.get("kind") != "file":
+            continue
+        candidate = worktree / row["path"] if worktree else None
+        if candidate and candidate.is_file() and not candidate.is_symlink():
+            with candidate.open("rb") as stream:
+                pointer = _lfs_pointer(stream.read(200))
+            if pointer:
+                pointers.setdefault(pointer[0], (pointer[1], None))
+    lfs_root = common_dir(repo) / "lfs" / "objects"
+    cache_sources: dict[str, Path] = {}
+    for oid, (size, materialized_path) in pointers.items():
+        if materialized_path:
+            continue
+        source = lfs_root / oid[:2] / oid[2:4] / oid
+        if not source.is_file() or source.is_symlink() or source.stat().st_size != size or sha256_file(source) != oid:
+            raise QuarantineError(f"required LFS bytes are missing or do not match pointer {oid}")
+        cache_sources[oid] = source
+    tree_bytes = sum(row.get("size", 0) for row in inventory + evidence_inventory + trace_inventory)
+    tree_bytes += sum(source.stat().st_size for source in cache_sources.values())
+    reserve = 1024 * 1024 * 1024
+    required = estimated_bundle + tree_bytes + reserve
+    parent = destination.parent
+    if not parent.is_dir():
+        raise QuarantineError("snapshot destination parent must already exist")
+    if shutil.disk_usage(parent).free < required:
+        raise QuarantineError(f"insufficient free space for scoped snapshot (estimated {required} bytes including reserve)")
+    if destination.exists() and (not destination.is_dir() or any(destination.iterdir())):
+        raise QuarantineError(f"snapshot destination is not an empty directory: {destination}")
+    destination.mkdir(parents=True, exist_ok=True)
+    manifest: dict[str, Any] = {
+        "schema": "custodian.execution_reset_scoped_backup.v1",
+        "created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "repository": str(repo), "generation": GENERATION,
+        "main_sha": git(repo, "rev-parse", "refs/remotes/origin/main"),
+        "ref_inventory": refs_before, "refs": selected, "workstream": workstream,
+        "worktree_path": str(worktree) if worktree else None,
+        "worktree_inventory": inventory, "review_evidence_inventory": evidence_inventory,
+        "workflow_trace_inventory": trace_inventory, "lfs_objects": {}, "files": {},
+        "preflight": {"estimated_bytes": required, "reserve_bytes": reserve},
+    }
+    bundle = destination / "target-refs.bundle"
+    result = subprocess.run(["git", "bundle", "create", str(bundle), *target_names], cwd=repo,
+                            text=True, capture_output=True, timeout=300)
+    if result.returncode:
+        raise QuarantineError(f"target-ref Git bundle failed: {(result.stderr or result.stdout).strip()}")
+    verify = subprocess.run(["git", "bundle", "verify", str(bundle)], cwd=repo, text=True, capture_output=True, timeout=120)
+    if verify.returncode:
+        raise QuarantineError(f"target-ref bundle verification failed: {(verify.stderr or verify.stdout).strip()}")
+    manifest["files"][bundle.name] = {"sha256": sha256_file(bundle), "size": bundle.stat().st_size}
+    for label, root, expected in (("worktree", worktree, inventory), ("review-evidence", evidence, evidence_inventory),
+                                  ("workflow-traces", traces, trace_inventory)):
+        if root and root.is_dir():
+            archive = destination / f"{label}.tar"
+            with tarfile.open(archive, "w", format=tarfile.PAX_FORMAT) as tar:
+                for child in sorted(root.iterdir()):
+                    tar.add(child, arcname=child.name if label == "worktree" else f"{workstream}/{child.name}", recursive=True)
+            actual = _worktree_inventory(root) if label == "worktree" else _tree_inventory(root)
+            if sha256_bytes(canonical(expected)) != sha256_bytes(canonical(actual)):
+                raise QuarantineError(f"{label} changed while snapshot was created")
+            manifest["files"][archive.name] = {"sha256": sha256_file(archive), "size": archive.stat().st_size}
+    for oid, (size, materialized_path) in sorted(pointers.items()):
+        if materialized_path:
+            manifest["lfs_objects"][oid] = {"size": size, "sha256": oid, "payload": "worktree.tar",
+                                             "path": materialized_path, "source": "materialized-worktree"}
+        else:
+            payload = destination / f"lfs-{oid}.blob"
+            shutil.copyfile(cache_sources[oid], payload)
+            manifest["lfs_objects"][oid] = {"size": size, "sha256": oid, "payload": payload.name,
+                                             "source": "lfs-object"}
+            manifest["files"][payload.name] = {"sha256": oid, "size": size}
+    git(repo, "fetch", "origin")
+    refs_after = [line.split(" ", 1) for line in git(repo, "for-each-ref", "--format=%(refname) %(objectname)").splitlines()]
+    if refs_after != refs_before or git(repo, "rev-parse", "refs/remotes/origin/main") != manifest["main_sha"]:
+        raise QuarantineError("repository refs changed during scoped snapshot; preserve artifacts and take a fresh snapshot")
+    manifest_path = destination / "manifest.json"
+    manifest["manifest_sha256"] = sha256_bytes(canonical(manifest))
+    manifest_path.write_bytes(canonical(manifest) + b"\n")
+    return {"path": str(manifest_path), "manifest_sha256": sha256_file(manifest_path), "workstreams": 1,
+            "files": len(manifest["files"])}
+
+
+def snapshot(repo: Path, workstreams: list[str], destination: Path, scope: str = "all") -> dict[str, Any]:
     repo = coordination_root(repo)
     destination = destination.expanduser().resolve()
     git(repo, "fetch", "origin")
     _fetch_quarantine_refs(repo)
+    if scope == "workstream":
+        if len(set(workstreams)) != 1:
+            raise QuarantineError("scoped snapshot requires exactly one workstream")
+        if not ID_RE.fullmatch(workstreams[0]):
+            raise QuarantineError(f"invalid workstream ID: {workstreams[0]}")
+        return _scoped_snapshot(repo, workstreams[0], destination)
+    if scope != "all":
+        raise QuarantineError("snapshot scope must be all or workstream")
     if destination.exists() and (not destination.is_dir() or any(destination.iterdir())):
         raise QuarantineError(f"snapshot destination is not an empty directory: {destination}")
     destination.mkdir(parents=True, exist_ok=True)
@@ -646,7 +802,7 @@ def verify_snapshot(path: Path) -> dict[str, Any]:
         manifest = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise QuarantineError(f"backup manifest missing or malformed: {exc}") from exc
-    if not isinstance(manifest, dict) or manifest.get("schema") != "custodian.execution_reset_backup.v1":
+    if not isinstance(manifest, dict) or manifest.get("schema") not in {"custodian.execution_reset_backup.v1", "custodian.execution_reset_scoped_backup.v1"}:
         raise QuarantineError("unsupported backup manifest")
     expected_self_hash = manifest.get("manifest_sha256")
     unhashed = dict(manifest)
@@ -654,10 +810,59 @@ def verify_snapshot(path: Path) -> dict[str, Any]:
     if expected_self_hash != sha256_bytes(canonical(unhashed)):
         raise QuarantineError("backup manifest self-checksum is invalid")
     for name, entry in manifest.get("files", {}).items():
+        if not isinstance(name, str) or Path(name).name != name or name in {"", ".", ".."}:
+            raise QuarantineError("backup artifact path is unsafe")
         file = path.parent / name
         if not file.is_file() or file.is_symlink() or sha256_file(file) != entry.get("sha256") or file.stat().st_size != entry.get("size"):
             raise QuarantineError(f"backup artifact missing or changed: {name}")
-    bundle = path.parent / "all-refs.bundle"
+    if manifest["schema"] == "custodian.execution_reset_scoped_backup.v1":
+        bundle = path.parent / "target-refs.bundle"
+        heads = subprocess.run(["git", "bundle", "list-heads", str(bundle)], text=True, capture_output=True, timeout=30)
+        bundled_refs = [[ref, sha] for line in heads.stdout.splitlines() if line.strip()
+                        for sha, ref in [line.split(" ", 1)]]
+        if heads.returncode or sorted(bundled_refs) != sorted(manifest.get("refs", [])):
+            raise QuarantineError(f"scoped Git bundle heads differ from pinned target refs: {bundled_refs!r} != {manifest.get('refs')!r}")
+        for archive_name, inventory_name, prefix in (
+            ("worktree.tar", "worktree_inventory", ""),
+            ("review-evidence.tar", "review_evidence_inventory", manifest["workstream"] + "/"),
+            ("workflow-traces.tar", "workflow_trace_inventory", manifest["workstream"] + "/"),
+        ):
+            archive_path = path.parent / archive_name
+            expected = manifest.get(inventory_name, [])
+            if not expected and not archive_path.exists():
+                continue
+            if not archive_path.is_file() or archive_path.is_symlink():
+                raise QuarantineError(f"scoped restore archive is missing: {archive_name}")
+            with tempfile.TemporaryDirectory(prefix="custodian-snapshot-verify-") as temporary:
+                root = Path(temporary)
+                try:
+                    with tarfile.open(archive_path, "r:") as tar:
+                        members = tar.getmembers()
+                        names = [member.name for member in members]
+                        if len(names) != len(set(names)) or any(Path(name).is_absolute() or ".." in Path(name).parts for name in names):
+                            raise QuarantineError(f"unsafe or duplicate paths in {archive_name}")
+                        tar.extractall(root, members=members, filter="data")
+                except (tarfile.TarError, OSError) as exc:
+                    raise QuarantineError(f"scoped restore extraction failed for {archive_name}: {exc}") from exc
+                restored_root = root / manifest["workstream"] if prefix else root
+                actual = _worktree_inventory(restored_root) if not prefix else _tree_inventory(restored_root)
+                if canonical(actual) != canonical(expected):
+                    raise QuarantineError(f"scoped restoration inventory mismatch: {archive_name}; expected={expected!r}; actual={actual!r}")
+                if archive_name == "worktree.tar":
+                    for oid, entry in manifest.get("lfs_objects", {}).items():
+                        if entry.get("source") != "materialized-worktree":
+                            continue
+                        restored = restored_root / entry.get("path", "")
+                        if not restored.is_file() or restored.is_symlink() or restored.stat().st_size != entry.get("size") or sha256_file(restored) != oid:
+                            raise QuarantineError(f"materialized worktree LFS bytes failed restoration verification: {oid}")
+        for oid, entry in manifest.get("lfs_objects", {}).items():
+            payload = path.parent / entry.get("payload", "")
+            if (not SHA256_RE.fullmatch(oid) or entry.get("sha256") != oid
+                    or (entry.get("source") != "materialized-worktree"
+                        and (not payload.is_file() or payload.is_symlink() or payload.stat().st_size != entry.get("size") or sha256_file(payload) != oid))):
+                raise QuarantineError(f"required LFS payload missing or corrupt: {oid}")
+    else:
+        bundle = path.parent / "all-refs.bundle"
     result = subprocess.run(["git", "bundle", "verify", str(bundle)], text=True, capture_output=True, timeout=120)
     if result.returncode:
         raise QuarantineError(f"backup Git bundle cannot be verified: {(result.stderr or result.stdout).strip()}")
@@ -671,6 +876,7 @@ def main() -> int:
     snap.add_argument("--repo", type=Path, default=Path.cwd())
     snap.add_argument("--workstream", action="append", required=True)
     snap.add_argument("--destination", type=Path, required=True)
+    snap.add_argument("--scope", choices=("all", "workstream"), default="all")
     verify = sub.add_parser("verify-snapshot", help="verify backup manifest, payload hashes, and Git bundle")
     verify.add_argument("manifest", type=Path)
     batch_plan = sub.add_parser("plan-batch", help="plan one atomic quarantine for exact workstream=run-id targets")
@@ -693,7 +899,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.command == "snapshot":
-            output = snapshot(args.repo, args.workstream, args.destination)
+            output = snapshot(args.repo, args.workstream, args.destination, scope=args.scope)
         elif args.command == "verify-snapshot":
             value = verify_snapshot(args.manifest)
             output = {"verified": True, "manifest_sha256": sha256_file(args.manifest), "workstreams": len(value.get("workstreams", {}))}

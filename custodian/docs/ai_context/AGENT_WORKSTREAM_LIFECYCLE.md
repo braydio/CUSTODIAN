@@ -86,14 +86,25 @@ original `dispatch-claims/<id>` and `agent/<id>` refs remain unchanged, the
 identity stays claimed to prevent duplicates, and quarantined reviews never
 satisfy dependencies.
 
-Before apply, make and verify an external snapshot of all Git refs, selected
+Before apply, make and verify an external snapshot of the exact refs, selected
 worktree contents (including ignored/untracked files and symlinks), workflow
-traces, and paired-review evidence. For a coordinated reset, use one batch plan
+traces, and paired-review evidence. A single-target recovery should use the
+versioned workstream scope. It bundles the pinned main and exact target refs,
+archives only that worktree and its evidence, and includes only required LFS
+objects after verifying their OID and byte size. It estimates storage and
+reserves 1 GiB before writing. The verifier safely restores archives into a
+temporary directory and checks path, mode, symlink, content, bundle-ref, and
+LFS coverage. The historical unscoped V1 mode remains available for existing
+manifests; it includes the shared LFS object directory and should not be used
+when that broad copy is unnecessary.
+
+For a coordinated reset, use one batch plan
 so every permitted record lands in one atomic remote ref update:
 
 ```bash
 python3 custodian/tools/agent/legacy_claim_quarantine.py snapshot \
-  --workstream <exact-id> --destination <empty-external-directory>
+  --scope workstream --workstream <exact-id> \
+  --destination <empty-external-directory>
 python3 custodian/tools/agent/legacy_claim_quarantine.py verify-snapshot \
   <external-directory>/manifest.json
 python3 custodian/tools/agent/legacy_claim_quarantine.py plan-batch \

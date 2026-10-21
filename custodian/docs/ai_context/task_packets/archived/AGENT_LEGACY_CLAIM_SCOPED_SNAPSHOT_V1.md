@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-legacy-claim-scoped-snapshot-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -43,26 +43,26 @@
 
 ## Completion Truth
 
-- Claim/run identity verified: pending
-- Required source/tests/docs implemented: pending
-- Scoped snapshot restore proof: pending
-- V1 compatibility and quarantine identity preserved: pending
-- Required validation: pending
-- Completion status: pending
+- Claim/run identity verified: dispatcher claim 20261021T021417Z-594e81ef79d2 verified; exact branch/worktree resumed.
+- Required source/tests/docs implemented: scoped snapshot schema, target refs bundle, target worktree/evidence archives, per-OID LFS payloads, preflight reserve, safe restore verification, CLI scope, lifecycle guidance.
+- Scoped snapshot restore proof: temporary Git/LFS fixtures restore scoped archives and verify materialized LFS bytes; the exact live snapshot is deferred because persistent storage preflight exceeds available capacity.
+- V1 compatibility and quarantine identity preserved: existing V1 fixture and quarantine planner tests pass; V1 verification branch and generation/owner/CAS code are unchanged.
+- Required validation: 14/14 focused tests; py_compile; git diff --check; targeted packet authoring preflight; task_packet_index verification.
+- Completion status: complete for scoped snapshot implementation; live claim snapshot/quarantine remains a separate gated campaign transition.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: pending
-- Friction severity: pending
-- What went wrong: pending
-- Root cause / contributing factors: pending
-- Prevention / pipeline improvement: pending
-- Tooling / docs drift discovered: pending
-- Follow-up: pending
-- What worked: pending
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: the verified no-op worktree payload is 5,739,169,332 bytes and the persistent destination filesystem has 5,071,508,000 bytes free; a compressed probe remained 5.13 GiB, below the required 1 GiB reserve.
+- Root cause / contributing factors: the legacy snapshot copied unrelated shared LFS storage; the exact worktree itself also exceeds currently available persistent space.
+- Prevention / pipeline improvement: scoped OID capture, materialized-byte deduplication, conservative preflight, 1 GiB reserve, and isolated restore verification are now implemented.
+- Tooling / docs drift discovered: legacy lifecycle guidance described only an all-refs snapshot; documented the new one-workstream mode.
+- Follow-up: fixed-in-scope
+- What worked: narrow temporary Git/LFS fixtures exercise restoration, missing-object refusal, preflight refusal, and tamper detection.
 
-## Handoff
+## Next Handoff
 
 - Next workstream: `review-agent-legacy-claim-scoped-snapshot-v1`
 - Next packet state: dependency-gated
@@ -71,4 +71,4 @@
 - Authoring chat: `not-recorded`
 - Refresh reason: `none`
 - Next action: `After implementation lands and archives, run the paired independent review; then resume the campaign's exact no-op coordinator-closeout/quarantine gate.`
-- Blockers or open questions: `none`
+- Blockers or open questions: `persistent snapshot storage capacity is insufficient for the live no-op worktree plus reserve; implementation is complete, but the recovery transition remains gated`
