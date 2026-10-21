@@ -45,6 +45,199 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
+        workstream_id = "agent-test-archive-tip"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "pass")
+
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+        error = workstream._archive_transition_tip_error(workstream_id, self.repo)
+        self.assertIn("archive transition", error)
+        self.assertIn("current branch tip", error)
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "blocked")
+        self.assertTrue(any(blocker["gate"] == "archive_transition_tip"
+                            for blocker in preflight["blockers"]))
+
+    def test_finish_rejects_unbound_archive_followup_before_push(self):
+        workstream_id = "agent-test-archive-tip"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Workstream: `agent-test-archive-tip`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+
+        with mock.patch.object(workstream, "fetch"), \
+             mock.patch.object(workstream, "artifact_preflight", return_value=[]), \
+             mock.patch.object(workstream, "_completion_truth_preflight"), \
+             mock.patch.object(workstream, "status_clean", return_value=True), \
+             mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
+             mock.patch.object(workstream, "validation_green", return_value=True), \
+             mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "current branch tip"):
+                workstream._finish_impl(workstream_id, self.repo / "validation.json", repo=self.repo)
+        self.assertFalse(any(call.args and call.args[0] == "push" for call in git_call.call_args_list))
+
+    def test_archive_guard_accepts_exact_traced_sync_and_one_scoped_followup(self):
+        workstream_id = "agent-test-archive-trace"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TRACE.md"
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_source.py`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        archive = git(self.repo, "rev-parse", "HEAD")
+
+        # Make an independently published main commit, then sync it into the task branch.
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-only").write_text("main\n")
+        git(self.repo, "add", "main-only")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        main_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "sync main")
+        merge = git(self.repo, "rev-parse", "HEAD")
+
+        # The immutable diagnostic trace is committed on its own ref, as in production.
+        run_id = "20261021T000000Z-abcdef123456"
+        trace_ref = f"refs/remotes/origin/agent-diagnostics/{workstream_id}/{run_id}"
+        trace_events = [
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "remote_claim_acquired",
+             "data": {"remote_ref": f"refs/heads/dispatch-claims/{workstream_id}",
+                      "claim_oid": archive, "main_sha": archive}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "worktree_published",
+             "data": {"branch": branch, "clean": True, "head": archive,
+                      "upstream": archive, "worktree": str(self.repo)}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "main_sync",
+             "data": {"changed": True, "head": merge, "main_sha": main_sha}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "run_blocked", "data": {"reason": "validation required"}},
+        ]
+        trace_repo = self.base / "trace-repo"
+        git(self.base, "clone", str(self.remote), str(trace_repo))
+        git(trace_repo, "checkout", "main")
+        (trace_repo / "trace.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in trace_events)
+        )
+        git(trace_repo, "add", "trace.jsonl")
+        git(trace_repo, "commit", "-m", "publish immutable trace")
+        git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
+        git(self.repo, "fetch", "origin")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "test_source.py").write_text("regression\n")
+        git(self.repo, "add", "test_source.py")
+        git(self.repo, "commit", "-m", "bounded producer fix")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "outside.py").write_text("unrelated\n")
+        git(self.repo, "add", "outside.py")
+        git(self.repo, "commit", "-m", "unrelated followup")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_recovers_resolved_current_main_sync_without_erasing_conflict_evidence(self):
+        workstream_id = "agent-test-resolved-main-sync"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_source.py`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        git(self.repo, "push", "origin", "main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-only").write_text("new main\n")
+        git(self.repo, "add", "main-only")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        main_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "resolved sync merge")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), main_sha)
+
+        (self.repo / "source.py").write_text("source with in-surface follow-up\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "bounded follow-up")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "outside.py").write_text("out of scope\n")
+        git(self.repo, "add", "outside.py")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
     def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
         class ReachedFetch(Exception):
             pass

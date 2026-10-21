@@ -106,19 +106,43 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 class PairedReviewRunnerTests(unittest.TestCase):
     def test_validation_timeout_manifest_change_is_exactly_one_field(self):
         repository = Path(__file__).resolve().parents[3]
-        baseline = subprocess.run(
-            ["git", "show", "030dbe986c0ced4e8b1dc2c816f466c81146b5f2:"
-             "custodian/tools/validation/validation_manifest.json"],
+        manifest_path = "custodian/tools/validation/validation_manifest.json"
+        original = subprocess.run(
+            ["git", "show", "030dbe986c0ced4e8b1dc2c816f466c81146b5f2:" + manifest_path],
             cwd=repository, check=True, capture_output=True,
         ).stdout
-        marker = b'"id": "paired_review_runner_unit"'
-        self.assertEqual(baseline.count(marker), 1)
-        start = baseline.index(marker)
-        timeout = baseline.index(b'"timeout_sec": 30', start)
-        self.assertLess(timeout, baseline.index(b'"needs_import": false', start))
-        expected = baseline[:timeout] + b'"timeout_sec": 90' + baseline[timeout + len(b'"timeout_sec": 30'):]
-        current = (repository / "custodian/tools/validation/validation_manifest.json").read_bytes()
-        self.assertEqual(current, expected)
+        current_main = subprocess.run(
+            ["git", "show", "origin/main:" + manifest_path],
+            cwd=repository, check=True, capture_output=True,
+        ).stdout
+
+        def pair_record(raw):
+            document = json.loads(raw)
+            matches = [item for item in document["tests"]
+                       if item.get("id") == "paired_review_runner_unit"]
+            self.assertEqual(len(matches), 1)
+            return matches[0]
+
+        original_pair = pair_record(original)
+        current_pair = pair_record(current_main)
+        self.assertEqual(original_pair["timeout_sec"], 30)
+        self.assertIn(current_pair["timeout_sec"], (30, 60, 90))
+        self.assertEqual({k: v for k, v in original_pair.items() if k != "timeout_sec"},
+                         {k: v for k, v in current_pair.items() if k != "timeout_sec"})
+        if current_pair["timeout_sec"] != 90:
+            marker = b'"id": "paired_review_runner_unit"'
+            start = current_main.index(marker)
+            end = current_main.index(b'      "needs_import": false', start)
+            chunk = current_main[start:end]
+            match = re.search(rb'"timeout_sec": (?:30|60)', chunk)
+            self.assertIsNotNone(match)
+            patched_chunk = (chunk[:match.start()] + b'"timeout_sec": 90'
+                             + chunk[match.end():])
+            expected = current_main[:start] + patched_chunk + current_main[end:]
+        else:
+            expected = current_main
+        actual = (repository / manifest_path).read_bytes()
+        self.assertEqual(actual, expected)
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
         canonical = runner.review_outcome.render_review_outcome(
@@ -2802,6 +2826,110 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             with patch.dict(os.environ, {"GIT_ALTERNATE_OBJECT_DIRECTORIES": alternates}):
                 yield
 
+    def test_historical_execution_reset_archive_merge_followup_is_exactly_pinned(self):
+        workstream = "agent-execution-reset-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/AGENT_EXECUTION_RESET_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0", workstream, archive,
+            )
+        self.assertEqual(span["base"], "b5a46e82913455cb341c84811fd9be66b78ed138")
+        self.assertEqual(span["head"], "f635c33d8bb209d9cbc4fafb4aff88af27084867")
+        self.assertEqual(span["provenance"]["post_merge_followup"]["canonical_archive_commit"],
+                         "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0")
+        self.assertEqual(span["provenance"]["trace_landing_commit"], span["head"])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["post_merge_followup_commit"], span["head"])
+        self.assertIn("custodian/tools/agent/test_workstream.py", span["paths"])
+        self.assertEqual(set(span["provenance"]["post_merge_followup"]["followup_paths"]), {
+            "AGENT_EXECUTION_RESET_V1_CLAUDE_SUMMARY.md",
+            "custodian/docs/ai_context/task_packets/archived/AGENT_EXECUTION_RESET_V1.md",
+            "custodian/tools/agent/test_workstream.py",
+        })
+
+    def test_historical_blender_source_archive_admits_only_receipted_declared_blend(self):
+        workstream = "operator-motion-foundry-blender-2d-rig-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/OPERATOR_MOTION_FOUNDRY_BLENDER_2D_RIG_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "a6604a80be32c9078336ae48de6c4e43ec6815c7", workstream, archive,
+            )
+        blend = "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/blender/operator_south_cutout_rig_v1.blend"
+        self.assertEqual(span["head"], "a6604a80be32c9078336ae48de6c4e43ec6815c7")
+        self.assertIn(blend, span["paths"])
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertEqual(span["provenance"]["source_artifact"]["path"], blend)
+
+    def test_pinned_reset_followup_rejects_wrong_run_duplicate_sync_and_wrong_final_head(self):
+        workstream = "agent-execution-reset-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/AGENT_EXECUTION_RESET_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0", workstream, archive,
+            )
+            provenance = span["provenance"]
+            trace = host_validation._trace_events(ROOT, provenance["ref"])
+            claim_record = provenance["claim_trace"]
+            claim_record = {**claim_record, "ref": provenance["ref"]}
+            landing_record = provenance["landing_trace"]
+            landing_record = {**landing_record, "ref": provenance["ref"],
+                              "path": landing_record["worktree"]}
+            verifier_args = (
+                ROOT, workstream, archive, span["base"],
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0",
+            )
+            mutations = []
+            duplicate_sync = json.loads(json.dumps(trace))
+            duplicate_sync.append(json.loads(json.dumps(next(
+                event for event in trace if event["event"] == "main_sync"
+            ))))
+            mutations.append((duplicate_sync, "unique immutable claim and no-op sync"))
+            bad_parent = json.loads(json.dumps(trace))
+            next(event for event in bad_parent if event["event"] == "main_sync")["data"]["main_sha"] = "0" * 40
+            mutations.append((bad_parent, "unique immutable claim and no-op sync"))
+            for events, expected in mutations:
+                with self.subTest(expected=expected), self.assertRaisesRegex(
+                    host_validation.HostValidationError, expected,
+                ):
+                    host_validation._verify_reset_archive_merge_followup(
+                        *verifier_args, "f635c33d8bb209d9cbc4fafb4aff88af27084867",
+                        "134e4c2913fbb88ea25fd5395ff6dc059e26f05f", provenance["ref"],
+                        provenance["run_id"], events, claim_record, landing_record,
+                    )
+            with self.assertRaisesRegex(host_validation.HostValidationError, "pinned run"):
+                host_validation._verify_reset_archive_merge_followup(
+                    *verifier_args, "0" * 40, "134e4c2913fbb88ea25fd5395ff6dc059e26f05f",
+                    provenance["ref"], provenance["run_id"], trace, claim_record, landing_record,
+                )
+            with self.assertRaisesRegex(host_validation.HostValidationError, "pinned run"):
+                host_validation._verify_reset_archive_merge_followup(
+                    *verifier_args, "f635c33d8bb209d9cbc4fafb4aff88af27084867",
+                    "134e4c2913fbb88ea25fd5395ff6dc059e26f05f", provenance["ref"],
+                    "20261020T135840Z-db96534ed3a7", trace, claim_record, landing_record,
+                )
+
+    def test_blender_source_artifact_gate_rejects_wrong_archive_or_missing_receipt(self):
+        workstream = "operator-motion-foundry-blender-2d-rig-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/OPERATOR_MOTION_FOUNDRY_BLENDER_2D_RIG_V1.md"
+        packet = subprocess.run(
+            ["git", "show", f"9c607b6d5df1149b31590eeae9eaf57b73b482f3:{archive}"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout
+        paths = {host_validation._BLENDER_SOURCE_PATH, host_validation._BLENDER_RECEIPT_PATH}
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact pinned archive"):
+            host_validation._verified_blender_source_artifact(ROOT, "0" * 40, packet, paths)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "packet-declared"):
+            host_validation._verified_blender_source_artifact(
+                ROOT, host_validation._BLENDER_SOURCE_ARCHIVE, packet,
+                {host_validation._BLENDER_SOURCE_PATH},
+            )
+        unlisted = "custodian/asset_drop/source_work/operator/elsewhere/unauthorized.blend"
+        self.assertIsNone(host_validation._verified_blender_source_artifact(
+            ROOT, host_validation._BLENDER_SOURCE_ARCHIVE, packet, {unlisted},
+        ))
+
     def _commit(self, message):
         subprocess.run(["git", "add", "-f", "-A"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)
@@ -3754,6 +3882,101 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["provenance"]["trace_landing_commit"], fixture["merge"])
         self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
+
+    def test_split_landing_accepts_declared_archive_sync_followup(self):
+        fixture = self._build_main_sync_landing()
+        work_branch = self._git("branch", "--show-current")
+        followup_path = fixture["code_paths"][1]
+        followup_file = self.root / followup_path
+        followup_file.write_text(followup_file.read_text() + "post-merge regression\n")
+        self._git("add", followup_path)
+        self._git("commit", "-qm", "bounded post-merge follow-up")
+        followup = self._git("rev-parse", "HEAD")
+        self._git("checkout", "-qb", "later-main", fixture["prior_main"])
+        (self.root / "later-main-only.md").write_text("later main publication\n")
+        self._git("add", "later-main-only.md")
+        self._git("commit", "-qm", "advance main again")
+        later_main = self._git("rev-parse", "HEAD")
+        self._git("checkout", "-q", work_branch)
+        subprocess.run(["git", "merge", "--no-ff", "later-main", "-m", "second main sync"],
+                       cwd=self.root, check=True, capture_output=True)
+        second_sync = self._git("rev-parse", "HEAD")
+        post_sync_path = fixture["code_paths"][0]
+        post_sync_file = self.root / post_sync_path
+        post_sync_file.write_text(post_sync_file.read_text() + "post-second-sync regression\n")
+        self._git("add", post_sync_path)
+        self._git("commit", "-qm", "second bounded post-merge follow-up")
+        final_sync = self._git("rev-parse", "HEAD")
+        self.reviewed_main = final_sync
+        fixture["reviewed_main"] = final_sync
+
+        run_id = "20261018T020000Z-012345abcdef"
+        valid_ref = f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/{run_id}"
+        subprocess.run(["git", "update-ref", "-d", valid_ref], cwd=self.root, check=True)
+        events = []
+        def emit(name, data):
+            events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "run_id": run_id, "workstream": fixture["workstream"],
+                           "packet": fixture["active"], "event": name, "data": data})
+        claim_oid = self._git("commit-tree", f"{fixture['source_base']}^{{tree}}", "-p",
+                              fixture["source_base"], "-m",
+                              f"workstream claim {fixture['workstream']} codex:1:{run_id}")
+        worktree = f"/tmp/{fixture['workstream']}-{run_id}"
+        emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": fixture["source_base"],
+             "local_ref": f"refs/custodian/claims/{fixture['workstream']}/{run_id}",
+             "remote_ref": f"refs/heads/dispatch-claims/{fixture['workstream']}"})
+        emit("worktree_published", {"head": fixture["source_base"], "upstream": fixture["source_base"],
+             "branch": f"agent/{fixture['workstream']}", "clean": True, "worktree": worktree})
+        emit("main_sync", {"changed": True, "head": fixture["merge"],
+             "main_sha": fixture["prior_main"]})
+        emit("main_sync", {"changed": False, "head": followup,
+             "main_sha": fixture["prior_main"]})
+        emit("main_sync", {"changed": True, "head": second_sync,
+             "main_sha": later_main})
+        emit("main_sync", {"changed": False, "head": final_sync,
+             "main_sha": later_main})
+        emit("landing_started", {"start_sha": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "target": "main"})
+        emit("landing_completed", {"head": final_sync, "outcome": "landed"})
+        emit("teardown_started", {"head": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "worktree": worktree})
+        emit("teardown_completed", {"head": final_sync, "branch": f"agent/{fixture['workstream']}",
+             "worktree": worktree, "worktree_removed": True})
+        raw = ("\n".join(json.dumps(event, sort_keys=True) for event in events) + "\n").encode()
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=self.root,
+                              input=raw, check=True, capture_output=True).stdout.decode().strip()
+        tree = subprocess.run(["git", "mktree"], cwd=self.root,
+                              input=f"100644 blob {blob}\ttrace.jsonl\n", text=True,
+                              check=True, capture_output=True).stdout.strip()
+        trace_commit = self._git("commit-tree", tree, "-m", "post-merge follow-up trace")
+        self._git("update-ref", valid_ref, trace_commit)
+
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["head"], final_sync)
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge-followup")
+        self.assertEqual(span["provenance"]["post_merge_followup"]["sync_merge_commit"], fixture["merge"])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["followup_paths"],
+                         sorted([followup_path, post_sync_path]))
+        self.assertEqual(len(span["provenance"]["post_merge_followup"]["post_merge_followup_commits"]), 2)
+
+        invalid = events[:4] + events[5:]
+        invalid_raw = ("\n".join(json.dumps(event, sort_keys=True) for event in invalid) + "\n").encode()
+        invalid_blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=self.root,
+                                      input=invalid_raw, check=True,
+                                      capture_output=True).stdout.decode().strip()
+        invalid_tree = subprocess.run(["git", "mktree"], cwd=self.root,
+                                      input=f"100644 blob {invalid_blob}\ttrace.jsonl\n", text=True,
+                                      check=True, capture_output=True).stdout.strip()
+        invalid_commit = self._git("commit-tree", invalid_tree, "-m", "trace missing retry proof")
+        self._git("update-ref", valid_ref, invalid_commit)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "unique exact main-sync witness"):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
 
     def _install_split_trace_pair(self, fixture, *, claim_path=None, teardown_path=None,
                                   claim_base=None, claim_branch=None,

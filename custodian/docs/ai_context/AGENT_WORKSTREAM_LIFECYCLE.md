@@ -86,14 +86,25 @@ original `dispatch-claims/<id>` and `agent/<id>` refs remain unchanged, the
 identity stays claimed to prevent duplicates, and quarantined reviews never
 satisfy dependencies.
 
-Before apply, make and verify an external snapshot of all Git refs, selected
+Before apply, make and verify an external snapshot of the exact refs, selected
 worktree contents (including ignored/untracked files and symlinks), workflow
-traces, and paired-review evidence. For a coordinated reset, use one batch plan
+traces, and paired-review evidence. A single-target recovery should use the
+versioned workstream scope. It bundles the pinned main and exact target refs,
+archives only that worktree and its evidence, and includes only required LFS
+objects after verifying their OID and byte size. It estimates storage and
+reserves 1 GiB before writing. The verifier safely restores archives into a
+temporary directory and checks path, mode, symlink, content, bundle-ref, and
+LFS coverage. The historical unscoped V1 mode remains available for existing
+manifests; it includes the shared LFS object directory and should not be used
+when that broad copy is unnecessary.
+
+For a coordinated reset, use one batch plan
 so every permitted record lands in one atomic remote ref update:
 
 ```bash
 python3 custodian/tools/agent/legacy_claim_quarantine.py snapshot \
-  --workstream <exact-id> --destination <empty-external-directory>
+  --scope workstream --workstream <exact-id> \
+  --destination <empty-external-directory>
 python3 custodian/tools/agent/legacy_claim_quarantine.py verify-snapshot \
   <external-directory>/manifest.json
 python3 custodian/tools/agent/legacy_claim_quarantine.py plan-batch \
@@ -167,6 +178,30 @@ its exact reason. After a successful fast-forward,
 rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
 any separately authorized apply. The pinned implementation SHA and protected
 claim/worktree must remain unchanged; source/provenance validation still runs.
+
+Source provenance keeps four identities separate: the implementation/archive
+receipt, any archive-first main-sync merge, a bounded source-bearing follow-up,
+and the final landing recorded by the lifecycle trace. A follow-up is accepted
+only when its exact commit, parent topology, run/claim identity, sync event and
+complete path/mode set are pinned; arbitrary descendants do not extend the
+reviewed source range. Source-work binaries remain governed by the archived
+packet's declared source-work path and matching tracked receipt/hash evidence;
+file suffix alone never grants admission.
+
+To prevent an unbound source follow-up from being created, both
+`workstream.py preflight` and `finish` check any active-to-archived packet
+transition. The archive transition must be the current branch tip before
+finish first pushes or synchronizes main. If a prior finish attempt stopped
+after synchronization, the guard accepts only the exact archive-first merge
+bound by that run's claim, published worktree, `main_sync`, and terminal
+`run_blocked` events. After a resolved sync merge, a bounded source-follow-up chain may contain
+multiple linear commits, each limited to modifications of declared regular
+files. If main advances again before landing, host source validation accepts
+archive-descending sync merges only when each merge has its own exact ordered
+trace witness and deterministic tree, or a narrowly verified additive managed
+index conflict resolution. Untraced merges, extra source changes, and
+out-of-surface paths remain blocked. Finish reports the exact blocking commit
+and path without pushing or landing the branch.
 
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
