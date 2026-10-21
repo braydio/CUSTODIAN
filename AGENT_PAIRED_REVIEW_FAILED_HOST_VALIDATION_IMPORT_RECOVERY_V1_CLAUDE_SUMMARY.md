@@ -16,23 +16,24 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 
 ## Process Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: success
-- Friction severity: medium
-- What went wrong: The original 30-second test timeout was too close to the suite runtime. Real Godot sidecar output also exposed a repo-path versus `res://` mismatch in verifier fixtures. An initial broad cleanup probe was interrupted before deletion when it would have considered preexisting tracked import companions.
-- Root cause / contributing factors: The suite had grown beyond its validation budget. The verifier used repository-relative source paths where Godot records project-root paths, and used a filtered Git read for LFS-backed images.
-- Prevention / pipeline improvement: Raised only the paired-review suite timeout to 90 seconds with a byte-exact manifest regression assertion. Aligned source-path validation with Godot's project root and used raw Git blob reads for LFS pointers. Fixtures cover the real resource-path form.
-- Tooling / docs drift discovered: Ordinary validation may leave exact Grunt candidate import sidecars untracked; coordinator host validation now records and cleans admissible new sidecars on both success and failure.
-- Follow-up: fixed-in-scope
-- What worked: End-to-end positive, failure, tamper, and bounded-retry tests remain in the paired-review suite; all 43 changed-file checks passed.
+- Outcome: partial
+- Friction severity: high
+- What went wrong: The first finish attempt found a real `origin/main` merge conflict in the managed packet index, manifest and archive move. The conflict was resolved preserving all newer main content and the 90-second timeout, then the post-sync 43/43 validation passed. Final finish remains blocked by the archive-transition gate: the packet was archived before a summary backlink correction commit, and the later sync conflict prevented the coordinator from recording its expected archive-first sync witness.
+- Root cause / contributing factors: Archive-only closeout was committed before all closeout edits and main synchronization were complete. The lifecycle gate recognizes only a tip archive transition or tightly authenticated follow-up/sync ancestry, and the existing finish path could not record the sync witness after its merge conflict.
+- Prevention / pipeline improvement: Complete all source, summary, and main-sync work before the archive-only transition commit. If a sync conflict occurs after archive, preserve the branch and add a narrowly scoped lifecycle correction with tests; do not weaken or bypass archive provenance checks.
+- Tooling / docs drift discovered: `workstream.py finish` has no authorized path for this already-archived, post-sync-conflict history without an authenticated witness; the current packet refresh explicitly excludes `workstream.py` changes.
+- Follow-up: manual-follow-up
+- What worked: The protected review stayed untouched, generated sidecars were handled by exact path and hash, and all 145 runner tests plus 43/43 changed-file checks passed.
+
 
 The protected review run `20261020T165418Z-53992bd05f83`, its claim, original failed reports, and worktree were not modified or applied. The human visual-review decision remains separate.
 
 ## Next Handoff
-- Next workstream: `review-agent-paired-review-failed-host-validation-import-recovery-v1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next workstream: `agent-paired-review-failed-host-validation-import-recovery-v1`
+- Next packet state: `refresh-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f
-- Refresh reason: `none`
-- Next action: After independent PASS, run the held review's exact read-only recovery plan and inspect its digest and sidecar inventory; apply only with the separately authorized exact plan digest.
-- Blockers or open questions: The protected review run remains held pending fresh independent review and same-run recovery.
+- Refresh reason: `Authorize a bounded workstream finish/archive-transition recovery for the already-validated branch after the main-sync conflict, including tests for the recorded trace and commit ancestry. No change to protected review artifacts or provenance safeguards.`
+- Next action: `Refresh the existing packet in the authoring chat to authorize the lifecycle correction; then resume this branch, finish/land it, claim its paired independent review, and only after PASS retry the held run's read-only plan.`
+- Blockers or open questions: `Implementation branch a55c14e02 is pushed but not landed; the paired review remains dependency-gated. The protected run 20261020T165418Z-53992bd05f83 remains untouched.`
