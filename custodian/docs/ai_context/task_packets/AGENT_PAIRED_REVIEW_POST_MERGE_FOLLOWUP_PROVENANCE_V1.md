@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-post-merge-followup-provenance-v1`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-source-span-main-sync-recovery-v1, agent-legacy-claim-scoped-snapshot-v1, agent-execution-reset-v1, operator-motion-foundry-blender-2d-rig-v1`
 - Locks: `paired-review-noop-sync-provenance, paired-review-source-span-provenance`
