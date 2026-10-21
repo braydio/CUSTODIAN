@@ -4,8 +4,8 @@
 - Workstream: `review-agent-legacy-claim-scoped-snapshot-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-legacy-claim-scoped-snapshot-v1`
 - Locks: `legacy-claim-scoped-snapshot`
