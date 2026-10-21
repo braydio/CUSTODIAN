@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-post-merge-source-span-witness-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -33,6 +33,38 @@
 - Validation: Add focused failing tests first. Run `python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; `python3 -m unittest custodian.tools.agent.test_workstream -v`; dedicated `test_legacy_claim_quarantine.py`; `python3 custodian/tools/validation/run_validation.py --changed --json` with complete coverage; Python compilation; targeted implementation/review packet authoring; `task_packet_index.py --write` and verify; and `git diff --check`. Independently inspect exact historical source diffs, traces, parent order, event cardinality, modes, and preserved identities. Do not apply the scoped-snapshot, reset, or Blender same-run plans before this pair has a genuine independent PASS.
 - Task overrides: `none`
 - Deferred: Resume the existing scoped-snapshot review in its same run after its fresh host-recovery plan passes. Only after this correction pair receives an independent accepted PASS, create fresh plans for the original reset and Blender runs in that order. Keep the quarantined source review unresolved unless its original run can be independently and authentically closed without rewriting its target identity.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `paired_review_host_validation.py` now verifies direct archive-to-source tails against a unique exact final no-op witness and latest merge-to-descendant tails against the latest merge's exact second parent; adversarial real-Git tests reject forged, stale, duplicate, out-of-surface, and non-regular source evidence. Exact reset and Blender historical fixtures pass. Focused tests: paired-review runner 145/145, workstream 51/51, and legacy quarantine 14/14. Changed-file validation passed 5/5 with complete coverage and no skipped/error tests.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The source-span verifier required a merge-head sync event although the producer records its successful no-op synchronization at the exact bounded descendant tip after conflict resolution.
+- Root cause / contributing factors: Verifier and lifecycle trace semantics disagreed about which authenticated head a final no-op sync can bind.
+- Prevention / pipeline improvement: Verifier now accepts only the exact unique final-tip no-op witness with matching reviewed-main or latest-merge second-parent identity; lifecycle docs state both accepted shapes and their limits.
+- Tooling / docs drift discovered: `AGENT_WORKSTREAM_LIFECYCLE.md` omitted the final-tip no-op witness form used by the lifecycle producer.
+- Follow-up: `fixed-in-scope`
+- What worked: Real-Git positive and hostile fixtures exercised both source-tail shapes.
+
+## Handoff
+
+- Next workstream: `review-agent-paired-review-post-merge-source-span-witness-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: Run the fresh-context paired review after this implementation archives on origin/main; then resume the preserved scoped-snapshot host-recovery run and, only after this correction receives an accepted PASS, the original reset and Blender same-run recovery plans.
+- Blockers or open questions: `none`
 
 ## Context Pack
 

@@ -3626,9 +3626,127 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                       check=True, capture_output=True).stdout.strip()
         invalid_commit = self._git("commit-tree", invalid_tree, "-m", "trace missing retry proof")
         self._git("update-ref", valid_ref, invalid_commit)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "unique exact main-sync witness"):
+        span_without_intermediate_retry = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span_without_intermediate_retry["head"], final_sync)
+
+    def test_split_landing_binds_latest_sync_merge_to_exact_final_noop_witness(self):
+        fixture = self._build_main_sync_landing()
+        followup_path = fixture["code_paths"][1]
+        followup_file = self.root / followup_path
+        followup_file.write_text(followup_file.read_text() + "post-merge regression\n")
+        self._git("add", followup_path)
+        self._git("commit", "-qm", "bounded post-merge follow-up")
+        final_head = self._git("rev-parse", "HEAD")
+        fixture["reviewed_main"] = final_head
+        self.reviewed_main = final_head
+
+        # The final no-op sync is emitted after a merge conflict was resolved in
+        # the descendant commit. It authenticates the latest merge's second
+        # parent and the exact descendant tip; no merge-head event exists.
+        self._replace_trace_main_sync_events(fixture, final_head, [{
+            "changed": False, "head": final_head, "main_sha": fixture["prior_main"],
+        }])
+        span = host_validation.resolve_validation_source_span(
+            self.root, final_head, fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["head"], final_head)
+        self.assertEqual(span["provenance"]["trace_landing_commit"], final_head)
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["sync_merge_commit"],
+                         fixture["merge"])
+
+        for bad_main_sha, sync_events in (
+            ("0" * 40, [{"changed": False, "head": final_head, "main_sha": "0" * 40}]),
+            (fixture["prior_main"], [
+                {"changed": False, "head": final_head, "main_sha": fixture["prior_main"]},
+                {"changed": False, "head": final_head, "main_sha": fixture["prior_main"]},
+            ]),
+        ):
+            with self.subTest(main_sha=bad_main_sha, count=len(sync_events)):
+                self._replace_trace_main_sync_events(fixture, final_head, sync_events)
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        self.root, final_head, fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_split_landing_accepts_direct_declared_tail_only_with_exact_tip_witness(self):
+        fixture = self._build_main_sync_landing()
+        self._git("checkout", "-qb", "direct-tail", fixture["archive_landing"])
+        followup_path = fixture["code_paths"][0]
+        followup_file = self.root / followup_path
+        followup_file.write_text(followup_file.read_text() + "direct archive tail\n")
+        self._git("add", followup_path)
+        self._git("commit", "-qm", "direct bounded archive follow-up")
+        final_head = self._git("rev-parse", "HEAD")
+        fixture["reviewed_main"] = final_head
+        self.reviewed_main = final_head
+        self._replace_trace_main_sync_events(fixture, final_head, [{
+            "changed": False, "head": final_head, "main_sha": final_head,
+        }])
+
+        span = host_validation.resolve_validation_source_span(
+            self.root, final_head, fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["head"], final_head)
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "archive-source-followup")
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"], final_head)
+        self.assertEqual(span["provenance"]["post_merge_followup"]["sync_merges"], [])
+
+        for bad_event in (
+            {"changed": True, "head": final_head, "main_sha": final_head},
+            {"changed": False, "head": fixture["archive_landing"], "main_sha": final_head},
+            {"changed": False, "head": final_head, "main_sha": fixture["prior_main"]},
+        ):
+            with self.subTest(event=bad_event):
+                self._replace_trace_main_sync_events(fixture, final_head, [bad_event])
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        self.root, final_head, fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_split_landing_rejects_direct_tail_outside_surface_and_nonregular_path(self):
+        fixture = self._build_main_sync_landing()
+        self._git("checkout", "-qb", "direct-tail-out-of-scope", fixture["archive_landing"])
+        rogue_path = "custodian/tools/agent/rogue_helper.py"
+        rogue = self.root / rogue_path
+        rogue.parent.mkdir(parents=True, exist_ok=True)
+        rogue.write_text("unreviewed helper\n")
+        self._git("add", rogue_path)
+        self._git("commit", "-qm", "out of surface tail")
+        out_of_scope_head = self._git("rev-parse", "HEAD")
+        fixture["reviewed_main"] = out_of_scope_head
+        self.reviewed_main = out_of_scope_head
+        self._replace_trace_main_sync_events(fixture, out_of_scope_head, [{
+            "changed": False, "head": out_of_scope_head, "main_sha": out_of_scope_head,
+        }])
+        with self.assertRaises(host_validation.HostValidationError):
             host_validation.resolve_validation_source_span(
-                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                self.root, out_of_scope_head, fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+        self._git("checkout", "-qb", "direct-tail-nonregular", fixture["archive_landing"])
+        source = self.root / fixture["code_paths"][0]
+        source.unlink()
+        source.symlink_to("transfer.gd")
+        self._git("add", fixture["code_paths"][0])
+        self._git("commit", "-qm", "nonregular source tail")
+        nonregular_head = self._git("rev-parse", "HEAD")
+        fixture["reviewed_main"] = nonregular_head
+        self.reviewed_main = nonregular_head
+        self._replace_trace_main_sync_events(fixture, nonregular_head, [{
+            "changed": False, "head": nonregular_head, "main_sha": nonregular_head,
+        }])
+        with self.assertRaisesRegex(host_validation.HostValidationError, "non-modification|non-regular"):
+            host_validation.resolve_validation_source_span(
+                self.root, nonregular_head, fixture["archive_landing"],
                 fixture["workstream"], fixture["archive"],
             )
 
@@ -4659,7 +4777,7 @@ Verify the exact post-hoc attestation.
         )
         self._replace_trace_landing(fixture, single_parent_landing,
                                     main_sha=fixture["archive_landing"], changed=False)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "two-parent"):
+        with self.assertRaisesRegex(host_validation.HostValidationError, "source tail"):
             host_validation.resolve_validation_source_span(
                 self.root, fixture["reviewed_main"], fixture["archive_landing"],
                 fixture["workstream"], fixture["archive"],

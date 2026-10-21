@@ -335,7 +335,7 @@ def _verify_reset_archive_merge_followup(
 
 def _verify_archive_sync_followup(
     repo: Path, target_workstream: str, target_packet_text: str,
-    landing_commit: str, trace_landing: str, events: list[dict],
+    landing_commit: str, trace_landing: str, reviewed_main: str, events: list[dict],
 ) -> dict:
     """Prove archive-first sync merges and one declared follow-up across retry races."""
     chain = subprocess.run(
@@ -352,13 +352,13 @@ def _verify_archive_sync_followup(
         parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()
         if len(parents) == 3 and parents[1] == previous:
             merges.append({"commit": commit, "first_parent": parents[1], "main_sha": parents[2]})
-        elif len(parents) == 2 and parents[1] == previous and merges:
+        elif len(parents) == 2 and parents[1] == previous:
             followup_commits.append(commit)
         else:
             raise HostValidationError("post-merge source span has an unbound commit or merge topology")
         previous = commit
-    if not merges or not followup_commits:
-        raise HostValidationError("post-merge source span needs a sync merge and a declared follow-up")
+    if not followup_commits:
+        raise HostValidationError("post-merge source span needs a declared source follow-up")
 
     sync_events = [(index, event.get("data", {})) for index, event in enumerate(events)
                    if event.get("event") == "main_sync"]
@@ -366,16 +366,45 @@ def _verify_archive_sync_followup(
                        if event.get("event") == "landing_started"]
     if len(landing_started) != 1:
         raise HostValidationError("post-merge source trace lacks a unique landing start")
+    if not merges:
+        direct_tail_witnesses = [(index, data) for index, data in sync_events
+                                 if isinstance(data, dict) and data == {
+                                     "changed": False, "head": trace_landing,
+                                     "main_sha": reviewed_main,
+                                 }]
+        if (len(sync_events) != 1 or len(direct_tail_witnesses) != 1
+                or direct_tail_witnesses[0][0] >= landing_started[0]):
+            raise HostValidationError("post-archive source tail lacks its unique exact no-op sync witness")
+        witness = direct_tail_witnesses[0][0]
+        if any(index >= landing_started[0] for index, _ in sync_events):
+            raise HostValidationError("post-archive source trace records sync after landing started")
+        return _verify_declared_source_tail(
+            repo, target_workstream, target_packet_text, landing_commit, trace_landing,
+            followup_commits, reviewed_main, witness,
+        )
     expected_sync = []
-    for merge in merges:
+    for merge_index, merge in enumerate(merges):
         matches = [(index, data) for index, data in sync_events
                    if isinstance(data, dict)
                    and data.get("head") == merge["commit"]
                    and data.get("main_sha") == merge["main_sha"]
                    and (data.get("changed") is True or data.get("changed") is False)]
-        if len(matches) != 1:
+        if len(matches) > 1:
             raise HostValidationError("post-merge source merge lacks a unique exact main-sync witness")
-        expected_sync.append(matches[0][0])
+        if matches:
+            expected_sync.append(matches[0][0])
+            continue
+        # The latest main sync may be recorded after its bounded conflict
+        # resolution tail. Bind that tail only through one exact immutable
+        # no-op event at the authenticated trace tip and latest merge parent.
+        final_tip = [(index, data) for index, data in sync_events
+                     if isinstance(data, dict) and data == {
+                         "changed": False, "head": trace_landing,
+                         "main_sha": merge["main_sha"],
+                     }]
+        if (merge_index != len(merges) - 1 or len(final_tip) != 1):
+            raise HostValidationError("post-merge source merge lacks a unique exact main-sync witness")
+        expected_sync.append(final_tip[0][0])
     if expected_sync != sorted(expected_sync) or expected_sync[-1] >= landing_started[0]:
         raise HostValidationError("post-merge source sync events are out of lifecycle order")
     if any(index >= landing_started[0] for index, _ in sync_events):
@@ -383,8 +412,19 @@ def _verify_archive_sync_followup(
 
     # No-op retries may occur at an authenticated current tip in this same
     # lineage, but may not name a stale merge, arbitrary head, or main SHA.
+    final_tip_index = None
+    if expected_sync and not any(
+        isinstance(data, dict)
+        and data.get("head") == merges[-1]["commit"]
+        and data.get("main_sha") == merges[-1]["main_sha"]
+        and (data.get("changed") is True or data.get("changed") is False)
+        for _, data in sync_events
+    ):
+        final_tip_index = expected_sync[-1]
     for index, data in sync_events:
         if index in expected_sync:
+            continue
+        if index == final_tip_index:
             continue
         prior_merges = [merge_index for merge_index, sync_index in enumerate(expected_sync)
                         if sync_index < index]
@@ -404,7 +444,8 @@ def _verify_archive_sync_followup(
                        if isinstance(data, dict) and data == {
                            "changed": False, "head": trace_landing,
                            "main_sha": merges[-1]["main_sha"]}]
-        if len(final_retry) != 1 or final_retry[0][0] >= landing_started[0]:
+        if (len(final_retry) != 1 or final_retry[0][0] >= landing_started[0]
+                or (final_tip_index is not None and final_retry[0][0] != final_tip_index)):
             raise HostValidationError("post-merge source span lacks its final no-op retry witness")
     previous_sync_index = -1
     for merge, index in zip(merges, expected_sync):
@@ -477,13 +518,69 @@ def _verify_archive_sync_followup(
     return {
         "canonical_archive_commit": landing_commit,
         "sync_merges": merges,
-        "sync_merge_commit": merges[0]["commit"],
-        "sync_merge_main_parent": merges[0]["main_sha"],
+        "sync_merge_commit": merges[0]["commit"] if merges else None,
+        "sync_merge_main_parent": merges[0]["main_sha"] if merges else None,
         "post_merge_followup_commit": followup_commits[0],
         "post_merge_followup_commits": followup_commits,
         "source_head": trace_landing,
         "followup_paths": sorted(followup_paths),
         "merge_tree_proof": "exact-trace-parent-and-bounded-declared-follow-up",
+    }
+
+
+def _verify_declared_source_tail(
+    repo: Path, target_workstream: str, target_packet_text: str,
+    landing_commit: str, trace_landing: str, followup_commits: list[str],
+    reviewed_main: str, witness_index: int,
+) -> dict:
+    """Prove a linear declared source tail directly after an archive commit."""
+    packet_header = target_packet_text.split("\n## ", 1)[0].splitlines()
+    work_surface_lines = []
+    for index, line in enumerate(packet_header):
+        if not re.match(r"^-\s*Work surface:\s*", line):
+            continue
+        work_surface_lines.append(re.sub(r"^-\s*Work surface:\s*", "", line))
+        for continuation in packet_header[index + 1:]:
+            if re.match(r"^-\s*[A-Z][^:]*:\s*", continuation):
+                break
+            if continuation.startswith((" ", "\t")):
+                work_surface_lines.append(continuation.strip())
+        break
+    declared = {token for token in re.findall(r"`([^`]+)`", " ".join(work_surface_lines))
+                if token.startswith("custodian/") and "{" not in token and "}" not in token}
+    declared.update(_expand_braced_work_surface_paths(" ".join(work_surface_lines)))
+    followup_paths: set[str] = set()
+    for commit in followup_commits:
+        parent = _git(repo, "rev-parse", f"{commit}^1")
+        status = subprocess.run(["git", "diff", "--name-status", "--no-renames", parent, commit],
+                                cwd=repo, text=True, capture_output=True)
+        if status.returncode:
+            raise HostValidationError("cannot inspect post-archive source follow-up file operations")
+        rows = [line.split("\t") for line in status.stdout.splitlines()]
+        if not rows or any(len(row) != 2 or row[0] != "M" or row[1] not in declared for row in rows):
+            raise HostValidationError("post-archive source tail has undeclared paths or non-modification operations")
+        for _, path in rows:
+            for revision in (parent, commit):
+                entry = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
+                                       cwd=repo, capture_output=True)
+                if entry.returncode or not entry.stdout \
+                        or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644":
+                    raise HostValidationError("post-archive source tail contains missing or non-regular paths")
+            followup_paths.add(path)
+    if not _source_code_paths(sorted(followup_paths)):
+        raise HostValidationError("post-archive source tail has no declared implementation or test source")
+    return {
+        "canonical_archive_commit": landing_commit,
+        "sync_merges": [],
+        "sync_merge_commit": None,
+        "sync_merge_main_parent": None,
+        "post_merge_followup_commit": followup_commits[0],
+        "post_merge_followup_commits": followup_commits,
+        "source_head": trace_landing,
+        "followup_paths": sorted(followup_paths),
+        "main_sync_event_index": witness_index,
+        "main_sync_sha": reviewed_main,
+        "merge_tree_proof": "linear-archive-follow-up-exact-noop-tip-witness",
     }
 
 
@@ -1024,13 +1121,16 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             first_parents = [_git(repo, "rev-list", "--parents", "-n", "1", commit).split()
                              for commit in commits]
             saw_followup = False
-            valid_tail = len(first_parents) >= 2 and len(first_parents[0]) == 3 \
+            valid_tail = bool(first_parents) and len(first_parents[0]) in {2, 3} \
                 and first_parents[0][1] == landing_commit
-            for index, parents in enumerate(first_parents[1:], start=1):
-                if len(parents) == 3 and parents[1] == commits[index - 1]:
+            previous_commit = landing_commit
+            for index, parents in enumerate(first_parents):
+                if len(parents) == 3 and parents[1] == previous_commit:
+                    previous_commit = commits[index]
                     continue
-                if len(parents) == 2 and parents[1] == commits[index - 1]:
+                if len(parents) == 2 and parents[1] == previous_commit:
                     saw_followup = True
+                    previous_commit = commits[index]
                     continue
                 valid_tail = False
                 break
@@ -1039,10 +1139,15 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             )
             if has_followup_chain:
                 archive_sync_followup = _verify_archive_sync_followup(
-                    repo, target_workstream, target_packet_text, landing_commit, trace_landing, events,
+                    repo, target_workstream, target_packet_text, landing_commit, trace_landing,
+                    reviewed_main, events,
                 )
-                trace_main_sync_sha = archive_sync_followup["sync_merges"][-1]["main_sha"]
-                trace_landing_kind = "main-sync-merge-followup"
+                if archive_sync_followup["sync_merges"]:
+                    trace_main_sync_sha = archive_sync_followup["sync_merges"][-1]["main_sha"]
+                    trace_landing_kind = "main-sync-merge-followup"
+                else:
+                    trace_main_sync_sha = reviewed_main
+                    trace_landing_kind = "archive-source-followup"
             else:
                 parent_line = _git(repo, "rev-list", "--parents", "-n", "1", trace_landing).split()
                 if len(parent_line) != 3 or parent_line[1] != landing_commit:
