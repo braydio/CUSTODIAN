@@ -3,8 +3,8 @@
 - Workstream: `mapper-validation-feedback-v1`
 - Authoring handoff: `auto`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-awakening-mapper-proposal-workflow-v1, review-carrow-mapper-authoring-workspace-v1, review-sundered-keep-mapper-input-reliability-v1`
 - Locks: `authored-level, carrow-yard-route, awakening-runtime, sundered-keep`

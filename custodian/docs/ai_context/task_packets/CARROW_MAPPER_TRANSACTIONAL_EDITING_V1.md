@@ -3,8 +3,8 @@
 - Workstream: `carrow-mapper-transactional-editing-v1`
 - Authoring handoff: `auto`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-carrow-interior-layout-authoring-v1`
 - Locks: `carrow-yard-route, authored-level`

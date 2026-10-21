@@ -3,8 +3,8 @@
 - Workstream: `review-mapper-validation-feedback-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `mapper-validation-feedback-v1`
 - Locks: `authored-level, carrow-yard-route, awakening-runtime, sundered-keep`

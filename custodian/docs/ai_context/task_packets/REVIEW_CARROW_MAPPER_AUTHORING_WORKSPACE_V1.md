@@ -3,8 +3,8 @@
 - Workstream: `review-carrow-mapper-authoring-workspace-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `carrow-mapper-authoring-workspace-v1`
 - Locks: `carrow-yard-route, authored-level`

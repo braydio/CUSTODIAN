@@ -3,8 +3,8 @@
 - Workstream: `review-mapper-canvas-navigation-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `mapper-canvas-navigation-v1`
 - Locks: `authored-level, carrow-yard-route`

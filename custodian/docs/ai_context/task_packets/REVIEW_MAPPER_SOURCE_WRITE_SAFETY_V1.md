@@ -3,8 +3,8 @@
 - Workstream: `review-mapper-source-write-safety-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `mapper-source-write-safety-v1`
 - Locks: `authored-level`

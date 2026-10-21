@@ -3,8 +3,8 @@
 - Workstream: `mapper-source-write-safety-v1`
 - Authoring handoff: `auto`
 - Kind: `implementation`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-awakening-collision-mapper-authoring-bridge-v1, review-carrow-interior-layout-authoring-v1`
 - Locks: `authored-level`

@@ -3,8 +3,8 @@
 - Workstream: `review-sundered-keep-mapper-input-reliability-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sundered-keep-mapper-input-reliability-v1`
 - Locks: `sundered-keep, authored-level`
