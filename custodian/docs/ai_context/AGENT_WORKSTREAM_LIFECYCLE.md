@@ -188,6 +188,19 @@ separately provenance-pinned source-bearing span immediately preceding it.
 Neither a green validation report nor an incomplete continuation is a review
 PASS. Inspect the child metadata and artifacts before any further recovery.
 
+For the exact failed Godot import recovery, a complete original failed report
+pair is eligible only when its immutable coordinator evidence classifies the
+failure as `infrastructure_failure: import`, names the exact protected run,
+and shows no accepted host-validation pin. The runner authenticates the bounded
+set of twelve Grunt candidate `.png.import` sidecars against their tracked PNG
+sources, preserves byte-exact copies before removing only those generated
+files, and records append-only fresh host-validation attempts beneath
+`continuation-01/host-validation/`. A failed attempt remains failed; recovery
+allows at most two fresh attempts total after the original failure. No reviewer
+is launched until one full canonical validation passes. Never broaden the sidecar
+allowlist, disable TLS checks, overwrite the original report pair, or treat a
+retry as a historical pass. Changed or unrecognized artifacts stop recovery.
+
 ## Start or resume
 
 Derive one stable lowercase kebab-case ID for a coherent task. Run from the

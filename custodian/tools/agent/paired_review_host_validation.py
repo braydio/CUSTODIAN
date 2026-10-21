@@ -24,6 +24,14 @@ class HostValidationError(RuntimeError):
 
 
 _IMPLEMENTATION_SUFFIXES = {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"}
+FAILED_IMPORT_RECOVERY_WORKSTREAM = (
+    "review-agent-paired-review-missing-archived-disposition-continuation-v1"
+)
+FAILED_IMPORT_RECOVERY_RUN_ID = "20261020T165418Z-53992bd05f83"
+FAILED_IMPORT_RECOVERY_SIDECARS = frozenset(
+    f"custodian/tools/iteration/grunt_candidate_ab/generated/candidate_{direction}_{size}px.png.import"
+    for direction in ("s", "n", "e", "w") for size in (64, 72, 80)
+)
 _REPOSITORY_MARKDOWN_PATH_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
 )
@@ -180,6 +188,196 @@ def _write_exclusive(path: Path, contents: bytes) -> None:
                 os.unlink(temporary)
             except FileNotFoundError:
                 pass
+
+
+def _validated_generated_png_import(worktree: Path, sidecar: Path) -> tuple[str, bytes] | None:
+    """Return the exact tracked PNG source and bytes for a real Godot texture sidecar."""
+    if sidecar.is_symlink() or not sidecar.is_file() or not str(sidecar).endswith(".png.import"):
+        return None
+    source = sidecar.relative_to(worktree).as_posix()[:-len(".import")]
+    if not source.endswith(".png") or not (worktree / source).is_file():
+        return None
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", "--", source], cwd=worktree,
+                             capture_output=True, check=False)
+    committed = subprocess.run(["git", "cat-file", "-e", f"HEAD:{source}"], cwd=worktree,
+                               capture_output=True, check=False)
+    if tracked.returncode or committed.returncode or not _tracked_png_matches_head(worktree, source):
+        return None
+    try:
+        raw = sidecar.read_bytes()
+        text = raw.decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    if not _valid_png_import_bytes(raw, source):
+        return None
+    return source, raw
+
+
+def _tracked_png_matches_head(worktree: Path, source: str) -> bool:
+    # Read the Git blob directly so LFS-backed sources remain pointers here;
+    # `git show` invokes the smudge filter and may perform unrelated downloads.
+    committed = subprocess.run(["git", "cat-file", "blob", f"HEAD:{source}"], cwd=worktree,
+                               capture_output=True, check=False).stdout
+    current = (worktree / source).read_bytes()
+    pointer = re.fullmatch(
+        rb"version https://git-lfs\.github\.com/spec/v1\n"
+        rb"oid sha256:([0-9a-f]{64})\nsize ([0-9]+)\n?", committed,
+    )
+    if pointer:
+        return (hashlib.sha256(current).hexdigest().encode() == pointer.group(1)
+                and len(current) == int(pointer.group(2)))
+    return current == committed
+
+
+def _valid_png_import_bytes(raw: bytes, source: str) -> bool:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    resource_path = source.removeprefix("custodian/")
+    expected_source = f'source_file="res://{resource_path}"'
+    return (text.startswith("[remap]\n") and '\nimporter="texture"\n' in text
+            and '\ntype="CompressedTexture2D"\n' in text
+            and re.search(r'(?m)^uid="uid://[A-Za-z0-9]+"$', text)
+            and "\n[deps]\n" in text and f"\n{expected_source}\n" in text
+            and "\n[params]\n" in text
+            and re.search(r'(?m)^path="res://\.godot/imported/[^"\n]+"$', text))
+
+
+def verified_failed_import_sidecars(worktree: Path, expected_paths: set[str] | None = None) -> list[dict]:
+    """Authenticate only the exact known Grunt sidecars for the protected failed run."""
+    worktree = Path(worktree).resolve()
+    current = subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=worktree,
+                             text=True, capture_output=True, check=True).stdout.splitlines()
+    untracked = set(current)
+    expected = set(FAILED_IMPORT_RECOVERY_SIDECARS if expected_paths is None else expected_paths)
+    if untracked != expected:
+        raise HostValidationError("protected failed-import worktree has missing or unrelated untracked files")
+    records = []
+    for relative in sorted(expected):
+        validated = _validated_generated_png_import(worktree, worktree / relative)
+        if validated is None:
+            raise HostValidationError(f"protected generated import sidecar is missing or malformed: {relative}")
+        source, raw = validated
+        if source != relative[:-len(".import")]:
+            raise HostValidationError(f"protected import sidecar names a different PNG source: {relative}")
+        records.append({"source_path": source, "sidecar_path": relative,
+                        "sha256": _sha256(raw), "size_bytes": len(raw)})
+    return records
+
+
+def _snapshot_png_import_sidecars(worktree: Path) -> dict[str, str]:
+    tracked = subprocess.run(["git", "ls-files", "--", "*.png"], cwd=worktree,
+                             text=True, capture_output=True, check=True).stdout.splitlines()
+    snapshot = {}
+    for source in tracked:
+        sidecar = worktree / f"{source}.import"
+        if sidecar.exists() or sidecar.is_symlink():
+            if sidecar.is_symlink() or not sidecar.is_file():
+                snapshot[f"{source}.import"] = "unsafe"
+            else:
+                snapshot[f"{source}.import"] = _sha256(sidecar.read_bytes())
+    return snapshot
+
+
+def _capture_generated_png_imports(worktree: Path, run_dir: Path,
+                                   initial_sidecars: dict[str, str]) -> tuple[list[dict], str | None]:
+    """Copy/hash new admissible import companions, then unlink only verified copies."""
+    current_sidecars = _snapshot_png_import_sidecars(worktree)
+    baseline_errors = []
+    for path, expected in initial_sidecars.items():
+        if current_sidecars.get(path) != expected:
+            baseline_errors.append(path)
+    sidecar_paths = sorted(set(current_sidecars) - set(initial_sidecars))
+    records: list[dict] = []
+    invalid: list[str] = []
+    evidence_dir = run_dir / "generated-import-artifacts"
+    files_dir = evidence_dir / "files"
+    if sidecar_paths:
+        files_dir.mkdir(parents=True, exist_ok=False)
+    for relative in sidecar_paths:
+        source = worktree / relative
+        validated = _validated_generated_png_import(worktree, source)
+        if validated is None:
+            invalid.append(relative)
+            continue
+        png_path, raw = validated
+        digest = _sha256(raw)
+        evidence_name = f"{digest}.png.import"
+        evidence_path = files_dir / evidence_name
+        _write_exclusive(evidence_path, raw)
+        if evidence_path.read_bytes() != raw or _sha256(evidence_path.read_bytes()) != digest:
+            raise HostValidationError(f"generated import sidecar preservation failed: {relative}")
+        records.append({"source_path": png_path, "sidecar_path": relative,
+                        "evidence_path": f"generated-import-artifacts/files/{evidence_name}",
+                        "sha256": digest, "size_bytes": len(raw)})
+    manifest_path = evidence_dir / "manifest.json"
+    if records or sidecar_paths:
+        records.sort(key=lambda item: item["sidecar_path"])
+        _write_exclusive(manifest_path, (json.dumps(records, indent=2, sort_keys=True) + "\n").encode())
+        manifest_sha = _sha256(manifest_path.read_bytes())
+        for item in records:
+            evidence_path = run_dir / item["evidence_path"]
+            sidecar = worktree / item["sidecar_path"]
+            if (evidence_path.is_symlink() or not evidence_path.is_file()
+                    or _sha256(evidence_path.read_bytes()) != item["sha256"]
+                    or sidecar.is_symlink() or not sidecar.is_file()
+                    or _sha256(sidecar.read_bytes()) != item["sha256"]):
+                raise HostValidationError("generated import sidecar changed after evidence capture")
+        if not invalid:
+            for item in records:
+                (worktree / item["sidecar_path"]).unlink()
+    else:
+        manifest_sha = None
+    errors = []
+    if invalid:
+        errors.append("new PNG import sidecars are not admissible generated metadata: " + ", ".join(invalid))
+    if baseline_errors:
+        errors.append("preexisting PNG import sidecars changed during validation: " + ", ".join(baseline_errors))
+    error = "; ".join(errors) if errors else None
+    return records, error
+
+
+def _verify_generated_import_manifest(worktree: Path, evidence_dir: Path, metadata: dict) -> None:
+    manifest_sha = metadata.get("generated_import_manifest_sha256")
+    manifest_path = evidence_dir / "generated-import-artifacts/manifest.json"
+    if manifest_sha is None:
+        if manifest_path.exists():
+            raise HostValidationError("unexpected generated import manifest")
+        return
+    if manifest_path.is_symlink() or not manifest_path.is_file() or _sha256(manifest_path.read_bytes()) != manifest_sha:
+        raise HostValidationError("generated import manifest digest changed")
+    try:
+        records = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HostValidationError("generated import manifest is malformed") from exc
+    if not isinstance(records, list):
+        raise HostValidationError("generated import manifest must be a list")
+    for item in records:
+        if not isinstance(item, dict):
+            raise HostValidationError("generated import manifest entry is malformed")
+        source = item.get("sidecar_path")
+        evidence = item.get("evidence_path")
+        source_image = item.get("source_path")
+        if (not isinstance(source, str) or not source.endswith(".png.import")
+                or not isinstance(source_image, str) or source != source_image + ".import"
+                or not source_image.startswith("custodian/") or source_image.startswith("/")
+                or ".." in Path(source_image).parts or not isinstance(evidence, str)
+                or not evidence.startswith("generated-import-artifacts/files/")
+                or ".." in Path(evidence).parts):
+            raise HostValidationError("generated import manifest path is outside its bounded namespace")
+        evidence_path = evidence_dir / evidence
+        if not evidence_path.resolve().is_relative_to(evidence_dir.resolve()):
+            raise HostValidationError("generated import evidence path escapes its append-only attempt")
+        if (evidence_path.is_symlink() or not evidence_path.is_file()
+                or _sha256(evidence_path.read_bytes()) != item.get("sha256")
+                or evidence_path.stat().st_size != item.get("size_bytes")):
+            raise HostValidationError("generated import artifact failed its recorded hash")
+        tracked = subprocess.run(["git", "cat-file", "-e", f"HEAD:{source_image}"], cwd=worktree,
+                                 capture_output=True, check=False)
+        if (tracked.returncode or not _tracked_png_matches_head(worktree, source_image)
+                or not _valid_png_import_bytes(evidence_path.read_bytes(), source_image)):
+            raise HostValidationError("generated import artifact no longer matches a tracked PNG source")
 
 
 def probe_host_capabilities() -> dict[str, bool]:
@@ -1065,8 +1263,12 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     head = _git(worktree, "rev-parse", "--verify", "HEAD^{commit}")
     if head != reviewed_main:
         raise HostValidationError("claimed review worktree HEAD differs from pinned reviewed main")
-    if _git(worktree, "status", "--porcelain", "--untracked-files=all"):
+    initial_status = _git(worktree, "status", "--porcelain", "--untracked-files=all")
+    if initial_status:
         raise HostValidationError("claimed review worktree is dirty before host validation")
+    initial_sidecars = _snapshot_png_import_sidecars(worktree)
+    if "unsafe" in initial_sidecars.values():
+        raise HostValidationError("review worktree has an unsafe preexisting PNG import sidecar")
     implementation_commit = _git(worktree, "rev-parse", "--verify", f"{implementation_commit}^{{commit}}")
     parent = _git(worktree, "rev-parse", "--verify", f"{implementation_commit}^1")
     if subprocess.run(["git", "merge-base", "--is-ancestor", parent, implementation_commit],
@@ -1109,6 +1311,12 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     if process.stderr:
         _write_exclusive(run_dir / "coordinator-validation.stderr", process.stderr.encode("utf-8"))
     try:
+        generated_imports, import_cleanup_error = _capture_generated_png_imports(
+            worktree, run_dir, initial_sidecars,
+        )
+    except (HostValidationError, OSError) as exc:
+        generated_imports, import_cleanup_error = [], str(exc)
+    try:
         report = json.loads(raw_report)
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         report = None
@@ -1119,7 +1327,8 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     current_head = _git(worktree, "rev-parse", "--verify", "HEAD^{commit}")
     current_status = _git(worktree, "status", "--porcelain", "--untracked-files=all")
     current_source_hashes = _source_hashes(worktree, code_paths)
-    source_changed = current_head != head or bool(current_status) or current_source_hashes != source_hashes
+    source_changed = (current_head != head or bool(current_status)
+                      or current_source_hashes != source_hashes or bool(import_cleanup_error))
     metadata = {
         "schema": "custodian.paired_review_host_validation.v1",
         "worktree": str(worktree),
@@ -1134,6 +1343,12 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         "selected_source_paths": selected_source_paths,
         "source_sha256": source_hashes,
         "source_changed_during_validation": source_changed,
+        "generated_import_manifest_sha256": (
+            _sha256((run_dir / "generated-import-artifacts/manifest.json").read_bytes())
+            if (run_dir / "generated-import-artifacts/manifest.json").is_file() else None
+        ),
+        "generated_import_count": len(generated_imports),
+        "generated_import_cleanup_error": import_cleanup_error,
         "capabilities": capabilities,
         "command": command,
         "exit_code": process.returncode,
@@ -1149,6 +1364,8 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
 
     if source_changed:
         raise HostValidationError("reviewed worktree source changed during host validation")
+    if import_cleanup_error:
+        raise HostValidationError(import_cleanup_error)
     if process.returncode:
         raise HostValidationError(f"canonical host validation failed with exit code {process.returncode}")
     if not isinstance(report, dict):
@@ -1193,6 +1410,7 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
         raise HostValidationError("reviewed worktree HEAD changed after host validation")
     if _source_hashes(Path(repo), metadata.get("code_paths") or []) != metadata.get("source_sha256"):
         raise HostValidationError("reviewed implementation source changed after host validation")
+    _verify_generated_import_manifest(Path(repo), run_dir, metadata)
     if metadata.get("implementation_paths") != expected_span.get("paths"):
         raise HostValidationError("coordinator source path inventory differs from the verified source span")
     _validate_report(report, expected_span.get("paths") or [])

@@ -104,6 +104,22 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_validation_timeout_manifest_change_is_exactly_one_field(self):
+        repository = Path(__file__).resolve().parents[3]
+        baseline = subprocess.run(
+            ["git", "show", "030dbe986c0ced4e8b1dc2c816f466c81146b5f2:"
+             "custodian/tools/validation/validation_manifest.json"],
+            cwd=repository, check=True, capture_output=True,
+        ).stdout
+        marker = b'"id": "paired_review_runner_unit"'
+        self.assertEqual(baseline.count(marker), 1)
+        start = baseline.index(marker)
+        timeout = baseline.index(b'"timeout_sec": 30', start)
+        self.assertLess(timeout, baseline.index(b'"needs_import": false', start))
+        expected = baseline[:timeout] + b'"timeout_sec": 90' + baseline[timeout + len(b'"timeout_sec": 30'):]
+        current = (repository / "custodian/tools/validation/validation_manifest.json").read_bytes()
+        self.assertEqual(current, expected)
+
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
         canonical = runner.review_outcome.render_review_outcome(
             outcome="passed", review_workstream=runner.INVALID_DISPOSITION_WORKSTREAM,
@@ -746,6 +762,88 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertFalse((fixture["run_dir"] / "coordinator-validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
 
+    def test_failed_import_recovery_plan_is_read_only_and_pins_exact_sidecars_and_failed_pair(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture)
+        repo, worktree, run_dir = fixture["repo"], fixture["worktree"], fixture["run_dir"]
+        code_paths = ["custodian/tools/agent/paired_review_runner.py",
+                      "custodian/tools/agent/test_paired_review_runner.py"]
+        for path in code_paths:
+            target = repo / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("pinned validation source\n")
+        sidecar_paths = set(host_validation.FAILED_IMPORT_RECOVERY_SIDECARS)
+        sources = sorted(path[:-len(".import")] for path in sidecar_paths)
+        for source in sources:
+            (repo / source).parent.mkdir(parents=True, exist_ok=True)
+            (repo / source).write_bytes(b"tracked image fixture")
+        subprocess.run(["git", "-C", str(repo), "add", *code_paths, *sources], check=True)
+        subprocess.run(["git", "-C", str(repo), "commit", "-qm", "pin recovery sources"], check=True)
+        reviewed_main = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], check=True,
+                                       text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repo), "push", "-q", "origin", "main"], check=True)
+        subprocess.run(["git", "-C", str(worktree), "merge", "--ff-only", "main"], check=True,
+                       capture_output=True)
+        subprocess.run(["git", "-C", str(worktree), "push", "-q", "origin", "agent/review-sample"], check=True)
+        self._make_host_recovery_worktree_clean(fixture)
+        fixture["reviewed_main"] = reviewed_main
+        metadata_path = run_dir / "metadata.json"
+        original = json.loads(metadata_path.read_text())
+        original.update({"reviewed_main": reviewed_main, "implementation_commit": "a" * 40,
+                         "recovery_worktree": str(worktree)})
+        original.pop("host_validation", None)
+        metadata_path.write_text(json.dumps(original, sort_keys=True) + "\n")
+        for name in ("validation.json", "coordinator-validation.json"):
+            (run_dir / name).unlink(missing_ok=True)
+        report = {"schema": "custodian.validation.result.v1", "passed": False,
+                  "infrastructure_failure": "import"}
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (run_dir / "validation.json").write_bytes(report_bytes)
+        (run_dir / "coordinator-validation.json").write_text(json.dumps({
+            "schema": "custodian.paired_review_host_validation.v1",
+            "worktree": str(worktree), "reviewed_main": reviewed_main,
+            "implementation_commit": "a" * 40, "implementation_parent": reviewed_main,
+            "code_paths": code_paths,
+            "source_sha256": {path: hashlib.sha256((repo / path).read_bytes()).hexdigest()
+                              for path in code_paths},
+            "exit_code": 3, "source_changed_during_validation": True,
+            "report_path": str((run_dir / "validation.json").resolve()),
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+            "report_parse_error": None,
+        }))
+        for sidecar_path in sorted(sidecar_paths):
+            source = sidecar_path[:-len(".import")]
+            (worktree / sidecar_path).write_text(
+                "[remap]\n\nimporter=\"texture\"\ntype=\"CompressedTexture2D\"\n"
+                "uid=\"uid://fixture123\"\npath=\"res://.godot/imported/candidate.ctex\"\n\n"
+                "[deps]\n\nsource_file=\"res://" + source.removeprefix("custodian/") + "\"\n"
+                "dest_files=[\"res://.godot/imported/candidate.ctex\"]\n\n[params]\ncompress/mode=0\n")
+        source_span = {"base": reviewed_main, "head": reviewed_main,
+                       "paths": code_paths, "provenance": {"kind": "synthetic-test"}}
+        before = runner._file_manifest(run_dir)
+        with patch.object(runner, "FAILED_IMPORT_RECOVERY_WORKSTREAM", "review-sample"), \
+             patch.object(runner, "FAILED_IMPORT_RECOVERY_RUN_ID", fixture["run_id"]), \
+             patch.object(host_validation, "FAILED_IMPORT_RECOVERY_WORKSTREAM", "review-sample"), \
+             patch.object(host_validation, "FAILED_IMPORT_RECOVERY_RUN_ID", fixture["run_id"]), \
+             patch.object(host_validation, "FAILED_IMPORT_RECOVERY_SIDECARS", sidecar_paths), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=source_span):
+            plan = runner.plan_host_validation_recovery(repo, "review-sample", fixture["run_id"])
+            self.assertEqual(plan["host_validation_state"], "failed_import")
+            self.assertTrue(plan["requires_fresh_host_validation"])
+            self.assertEqual(plan["host_validation_attempt"], 1)
+            self.assertEqual(len(plan["generated_import_sidecars"]), 12)
+            self.assertEqual({item["sidecar_path"] for item in plan["generated_import_sidecars"]}, sidecar_paths)
+            self.assertEqual(plan["failed_validation_evidence"]["report_sha256"],
+                             hashlib.sha256(report_bytes).hexdigest())
+            self.assertEqual(runner._file_manifest(run_dir), before)
+            first_sidecar = sorted(sidecar_paths)[0]
+            self.assertTrue((worktree / first_sidecar).is_file())
+            (worktree / first_sidecar).write_text("[remap]\nimporter=\"texture\"\n")
+            with self.assertRaisesRegex(runner.RunnerError, "malformed"):
+                runner.plan_host_validation_recovery(repo, "review-sample", fixture["run_id"])
+
     def test_host_recovery_plan_rejects_partial_reports_or_prior_validation_pins(self):
         for report_name, metadata_pin in (("validation.json", None), (None, "host_validation"),
                                           (None, "validation_evidence_sha256")):
@@ -838,7 +936,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
         def fake_validation(worktree, run_dir, reviewed_main, implementation_commit,
                             *, target_workstream=None, target_packet_path=None):
             self.assertEqual(Path(worktree), fixture["worktree"])
-            self.assertEqual(Path(run_dir), fixture["run_dir"] / "continuation-01/host-validation")
+            self.assertEqual(Path(run_dir), fixture["run_dir"] / "continuation-01/host-validation/attempt-01")
             self.assertEqual(reviewed_main, fixture["reviewed_main"])
             self.assertEqual(implementation_commit, "a" * 40)
             self.assertEqual(target_workstream, "sample")
@@ -857,10 +955,10 @@ class PairedReviewRunnerTests(unittest.TestCase):
                     "source_span": source_span}
 
         def fake_launch(_argv, worktree, prompt, continuation_dir, _timeout):
-            self.assertTrue((continuation_dir / "host-validation/validation.json").is_file())
+            self.assertTrue((continuation_dir / "host-validation/attempt-01/validation.json").is_file())
             self.assertIn("fresh independent reviewer", prompt.lower())
             self.assertIn(fixture["run_id"], prompt)
-            self.assertIn("host-validation/validation.json", prompt)
+            self.assertIn("host-validation/attempt-01/validation.json", prompt)
             archive = worktree / f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
             archive.parent.mkdir(parents=True, exist_ok=True)
             text = fixture["review"].replace("- Status: `ready`", "- Status: `complete`")
@@ -887,7 +985,9 @@ class PairedReviewRunnerTests(unittest.TestCase):
 
         patches = [
             patch.object(runner, "_host_recovery_plan_unlocked", return_value={
-                "plan_sha256": "e" * 64, "source_span": source_span}),
+                "plan_sha256": "e" * 64, "source_span": source_span,
+                "host_validation_attempt": 1, "failed_validation_evidence": None,
+                "generated_import_sidecars": []}),
             patch.object(runner, "validate_eligible_review", return_value=(
                 fixture["active"], fixture["review"], packet)),
             patch.object(runner, "codex_preflight", return_value="/fake/codex"),
@@ -1467,7 +1567,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
     def test_host_recovery_plan_verifies_legacy_header_when_stdout_truncated_before_receipt(self):
         fixture = self._continuation_fixture()
         self.addCleanup(fixture["temp"].cleanup)
-        self._prepare_host_recovery(fixture)
+        self._prepare_host_recovery(fixture, reports=False)
         self._make_host_recovery_worktree_clean(fixture)
         metadata_path = fixture["run_dir"] / "metadata.json"
         metadata = json.loads(metadata_path.read_text())
@@ -1495,11 +1595,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertEqual(plan["packet"], claim["packet"])
         self.assertEqual(plan["worktree"], str(fixture["worktree"].resolve()))
         self.assertEqual(plan["reviewed_main"], fixture["reviewed_main"])
-        self.assertEqual(plan["host_validation_state"], "validated")
-        self.assertFalse(plan["requires_fresh_host_validation"])
-        for name in ("validation.json", "coordinator-validation.json"):
-            self.assertEqual(plan["evidence_sha256"][name],
-                             hashlib.sha256((fixture["run_dir"] / name).read_bytes()).hexdigest())
+        self.assertEqual(plan["host_validation_state"], "pre_validation_interrupted")
+        self.assertTrue(plan["requires_fresh_host_validation"])
         self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
         self.assertFalse((fixture["run_dir"] / "claim-receipt.json").exists())
 
@@ -1508,7 +1605,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             with self.subTest(structured=structured):
                 fixture = self._continuation_fixture()
                 self.addCleanup(fixture["temp"].cleanup)
-                self._prepare_host_recovery(fixture)
+                self._prepare_host_recovery(fixture, reports=False)
                 self._make_host_recovery_worktree_clean(fixture)
                 metadata_path = fixture["run_dir"] / "metadata.json"
                 metadata = json.loads(metadata_path.read_text())
@@ -1541,7 +1638,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
     def test_host_recovery_apply_reuses_legacy_verifier_before_any_child_write(self):
         fixture = self._continuation_fixture()
         self.addCleanup(fixture["temp"].cleanup)
-        self._prepare_host_recovery(fixture)
+        self._prepare_host_recovery(fixture, reports=False)
         self._make_host_recovery_worktree_clean(fixture)
         metadata_path = fixture["run_dir"] / "metadata.json"
         metadata = json.loads(metadata_path.read_text())
@@ -1624,7 +1721,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
         child = fixture["run_dir"] / "continuation-01"
         state = json.loads((child / "metadata.json").read_text())
         self.assertEqual(state["phase"], "reviewer_nonpassing")
-        self.assertEqual(state["host_evidence"]["evidence_run_dir"], str(child / "host-validation"))
+        self.assertEqual(state["host_evidence"]["evidence_run_dir"],
+                         str(child / "host-validation/attempt-01"))
         self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=child), original_manifest)
         self.assertEqual(active[5].call_count, 1)
         self.assertEqual(active[7].call_count, 1)
@@ -1645,7 +1743,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
         child = fixture["run_dir"] / "continuation-01"
         state = json.loads((child / "metadata.json").read_text())
         self.assertEqual(state["phase"], "host_validation_failed")
-        self.assertIn("validation.json", state["validation_evidence_sha256"])
+        self.assertEqual(state["host_validation_attempts"][0]["status"], "failed")
+        self.assertIn("validation.json", state["host_validation_attempts"][0]["manifest"])
         self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=child), original_manifest)
         active[7].assert_not_called()
 
@@ -2921,6 +3020,229 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         return execute
+
+    def _tracked_png(self):
+        source = "custodian/tools/iteration/grunt_candidate_ab/generated/candidate_e_64px.png"
+        path = self.root / source
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"tracked-png-fixture")
+        subprocess.run(["git", "-C", str(self.root), "add", source], check=True)
+        subprocess.run(["git", "-C", str(self.root), "commit", "-qm", "tracked png"], check=True)
+        self.reviewed_main = self._git("rev-parse", "HEAD")
+        return source
+
+    def _godot_png_import(self, source):
+        return ("[remap]\n\nimporter=\"texture\"\ntype=\"CompressedTexture2D\"\n"
+                "uid=\"uid://fixture123\"\npath=\"res://.godot/imported/candidate.ctex\"\n"
+                "metadata={\n\"vram_texture\": false\n}\n\n[deps]\n\n"
+                f"source_file=\"res://{source.removeprefix('custodian/')}\"\ndest_files=[\"res://.godot/imported/candidate.ctex\"]\n\n"
+                "[params]\ncompress/mode=0\n")
+
+    def test_host_validation_preserves_and_removes_only_new_valid_png_import_sidecars(self):
+        source = self._tracked_png()
+        sidecar = self.root / f"{source}.import"
+        content = self._godot_png_import(source)
+
+        def execute(command, cwd):
+            sidecar.write_text(content)
+            return subprocess.CompletedProcess(command, 0, json.dumps(self._report()) + "\n", "")
+
+        evidence = host_validation.run_coordinator_validation(
+            self.root, self.run_dir, self.reviewed_main, self.implementation,
+            run_validation=execute,
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+        self.assertFalse(sidecar.exists())
+        manifest_path = self.run_dir / "generated-import-artifacts/manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        self.assertEqual(manifest[0]["source_path"], source)
+        self.assertEqual(manifest[0]["sha256"], hashlib.sha256(content.encode()).hexdigest())
+        saved = self.run_dir / manifest[0]["evidence_path"]
+        self.assertEqual(saved.read_text(), content)
+        self.assertFalse(host_validation._git(self.root, "status", "--porcelain", "--untracked-files=all"))
+        self.assertEqual(evidence["generated_import_manifest_sha256"],
+                         hashlib.sha256(manifest_path.read_bytes()).hexdigest())
+        verified = host_validation.verify_coordinator_validation(
+            self.root, self.run_dir, self.reviewed_main, self.implementation,
+            expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+        saved.write_text(saved.read_text() + "# tampered\n")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "generated import artifact"):
+            host_validation.verify_coordinator_validation(
+                self.root, self.run_dir, self.reviewed_main, self.implementation,
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
+
+    def test_host_validation_preserves_new_png_import_sidecars_even_when_import_fails(self):
+        source = self._tracked_png()
+        sidecar = self.root / f"{source}.import"
+        content = self._godot_png_import(source)
+
+        def execute(command, cwd):
+            sidecar.write_text(content)
+            return subprocess.CompletedProcess(command, 3, json.dumps({
+                "schema": "custodian.validation.result.v1", "passed": False,
+                "infrastructure_failure": "import",
+            }) + "\n", "ERROR: TLS handshake error")
+
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exit code 3"):
+            host_validation.run_coordinator_validation(
+                self.root, self.run_dir, self.reviewed_main, self.implementation,
+                run_validation=execute,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
+        self.assertFalse(sidecar.exists())
+        manifest_path = self.run_dir / "generated-import-artifacts/manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        self.assertEqual(manifest[0]["source_path"], source)
+        report = json.loads((self.run_dir / "validation.json").read_text())
+        self.assertFalse(report["passed"])
+        self.assertTrue((self.run_dir / "coordinator-validation.stderr").is_file())
+
+    def test_host_validation_does_not_remove_invalid_or_unrelated_import_sidecars(self):
+        source = "custodian/tools/iteration/grunt_candidate_ab/generated/candidate_e_64px.png"
+        self._tracked_png()
+        sidecar = self.root / f"{source}.import"
+
+        def execute(command, cwd):
+            sidecar.write_text("[remap]\nimporter=\"texture\"\n")
+            return subprocess.CompletedProcess(command, 0, json.dumps(self._report()) + "\n", "")
+
+        with self.assertRaisesRegex(host_validation.HostValidationError, "unclassified|source changed"):
+            host_validation.run_coordinator_validation(
+                self.root, self.run_dir, self.reviewed_main, self.implementation,
+                run_validation=execute,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
+        self.assertTrue(sidecar.is_file())
+
+    def test_exact_failed_import_sidecar_inventory_authenticates_all_twelve_and_rejects_extras(self):
+        expected = sorted(host_validation.FAILED_IMPORT_RECOVERY_SIDECARS)
+        for sidecar in expected:
+            source = sidecar[:-len(".import")]
+            path = self.root / source
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"tracked png fixture")
+        subprocess.run(["git", "-C", str(self.root), "add", *[item[:-len(".import")] for item in expected]], check=True)
+        subprocess.run(["git", "-C", str(self.root), "commit", "-qm", "tracked grunt preview PNGs"], check=True)
+        for sidecar in expected:
+            source = sidecar[:-len(".import")]
+            (self.root / sidecar).write_text(self._godot_png_import(source))
+        records = host_validation.verified_failed_import_sidecars(self.root)
+        self.assertEqual([item["sidecar_path"] for item in records], expected)
+        extra = self.root / "custodian/tools/iteration/grunt_candidate_ab/generated/candidate_e_96px.png.import"
+        extra.write_text(self._godot_png_import("custodian/tools/iteration/grunt_candidate_ab/generated/candidate_e_96px.png"))
+        with self.assertRaisesRegex(host_validation.HostValidationError, "unrelated untracked"):
+            host_validation.verified_failed_import_sidecars(self.root)
+        extra.unlink()
+        (self.root / expected[0]).write_text("[remap]\nimporter=\"texture\"\n")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "malformed"):
+            host_validation.verified_failed_import_sidecars(self.root)
+
+    def test_failed_import_pair_classifier_requires_exact_infrastructure_failure_and_hashes(self):
+        original = {"workstream": runner.FAILED_IMPORT_RECOVERY_WORKSTREAM,
+                    "run_id": runner.FAILED_IMPORT_RECOVERY_RUN_ID,
+                    "reviewed_main": "a" * 40, "implementation_commit": "b" * 40}
+        report = {"schema": "custodian.validation.result.v1", "passed": False,
+                  "infrastructure_failure": "import"}
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        coordinator = {"schema": "custodian.paired_review_host_validation.v1",
+                       "reviewed_main": original["reviewed_main"],
+                       "implementation_commit": original["implementation_commit"],
+                       "exit_code": 3, "source_changed_during_validation": True,
+                       "report_path": str((self.run_dir / "validation.json").resolve()),
+                       "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+                       "report_parse_error": None,
+                       "code_paths": ["custodian/tools/agent/paired_review_runner.py",
+                                      "custodian/tools/agent/test_paired_review_runner.py"]}
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(coordinator))
+        evidence = runner._failed_import_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"],
+        )
+        self.assertEqual(evidence["infrastructure_failure"], "import")
+        self.assertEqual(evidence["report_sha256"], hashlib.sha256(report_bytes).hexdigest())
+        report["infrastructure_failure"] = "test"
+        (self.run_dir / "validation.json").write_text(json.dumps(report) + "\n")
+        self.assertIsNone(runner._failed_import_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"],
+        ))
+        report["infrastructure_failure"] = "import"
+        (self.run_dir / "validation.json").write_text(json.dumps(report) + "\n")
+        self.assertIsNone(runner._failed_import_report_pair(
+            self.run_dir, original, "review-other", original["run_id"],
+        ))
+
+    def test_failed_import_retry_state_is_append_only_and_bounded_to_two_attempts(self):
+        workstream = runner.FAILED_IMPORT_RECOVERY_WORKSTREAM
+        run_id = runner.FAILED_IMPORT_RECOVERY_RUN_ID
+        child_dir = self.run_dir / "continuation-01"
+        attempt_dir = child_dir / "host-validation/attempt-01"
+        attempt_dir.mkdir(parents=True)
+        (attempt_dir / "validation.json").write_text(json.dumps({
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "infrastructure_failure": "import",
+        }) + "\n")
+        report_sha = hashlib.sha256((attempt_dir / "validation.json").read_bytes()).hexdigest()
+        (attempt_dir / "coordinator-validation.json").write_text(json.dumps({
+            "schema": "custodian.paired_review_host_validation.v1",
+            "source_changed_during_validation": False, "report_sha256": report_sha,
+            "generated_import_manifest_sha256": None,
+        }) + "\n")
+        manifest = runner._file_manifest(attempt_dir)
+        attempt = {"attempt": 1, "status": "failed", "manifest": manifest,
+                   "manifest_sha256": runner._manifest_digest(manifest),
+                   "report_sha256": manifest["validation.json"],
+                   "metadata_sha256": manifest["coordinator-validation.json"]}
+        child = {"schema": runner.CONTINUATION_SCHEMA, "workstream": workstream,
+                 "run_id": run_id, "phase": "host_validation_failed",
+                 "reviewer_launch_count": 0, "generated_import_recovery": {"count": 12},
+                 "host_validation_attempts": [attempt]}
+        original_manifest = runner._file_manifest(self.run_dir, omit=child_dir)
+        child["original_run_manifest"] = original_manifest
+        child_dir.mkdir(exist_ok=True)
+        (child_dir / "metadata.json").write_text(json.dumps(child))
+        self.assertEqual(runner._failed_import_retry_state(
+            self.run_dir, self.root, workstream, run_id, original_manifest,
+        )[1], 2)
+        report_path = attempt_dir / "validation.json"
+        report_path.write_text('{"passed":true}\n')
+        with self.assertRaisesRegex(runner.RunnerError, "evidence changed"):
+            runner._failed_import_retry_state(
+                self.run_dir, self.root, workstream, run_id, original_manifest,
+            )
+        (attempt_dir / "validation.json").write_text(json.dumps({
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "infrastructure_failure": "import",
+        }) + "\n")
+        report_sha = hashlib.sha256((attempt_dir / "validation.json").read_bytes()).hexdigest()
+        (attempt_dir / "coordinator-validation.json").write_text(json.dumps({
+            "schema": "custodian.paired_review_host_validation.v1",
+            "source_changed_during_validation": False, "report_sha256": report_sha,
+            "generated_import_manifest_sha256": None,
+        }) + "\n")
+        attempts = []
+        for number in (1, 2):
+            current_dir = child_dir / "host-validation" / f"attempt-{number:02d}"
+            if number == 2:
+                current_dir.mkdir(parents=True)
+                (current_dir / "validation.json").write_bytes((attempt_dir / "validation.json").read_bytes())
+                (current_dir / "coordinator-validation.json").write_bytes(
+                    (attempt_dir / "coordinator-validation.json").read_bytes())
+            current_manifest = runner._file_manifest(current_dir)
+            attempts.append({"attempt": number, "status": "failed", "manifest": current_manifest,
+                             "manifest_sha256": runner._manifest_digest(current_manifest),
+                             "report_sha256": current_manifest["validation.json"],
+                             "metadata_sha256": current_manifest["coordinator-validation.json"]})
+        child["host_validation_attempts"] = attempts
+        (child_dir / "metadata.json").write_text(json.dumps(child))
+        with self.assertRaisesRegex(runner.RunnerError, "retry budget is exhausted"):
+            runner._failed_import_retry_state(
+                self.run_dir, self.root, workstream, run_id, original_manifest,
+            )
 
     def _run_validation(self, report=None, **kwargs):
         return host_validation.run_coordinator_validation(
