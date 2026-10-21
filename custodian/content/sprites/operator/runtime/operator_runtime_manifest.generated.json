@@ -2851,6 +2851,43 @@
         ]
       }
     },
+    "ranged_2h/posture/relaxed_01/n": {
+      "profile": "ranged_2h",
+      "group": "posture",
+      "action": "relaxed_01",
+      "direction": "n",
+      "layers": {
+        "full_body": {
+          "path": "res://content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__full_body__ranged_2h__posture__relaxed_01__n__5f__128.png",
+          "frames": 5,
+          "frame_size": [
+            128,
+            128
+          ],
+          "fps": 8.0,
+          "loop": true,
+          "durations": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "timing": {
+        "clock_layer": "full_body",
+        "fps": 8.0,
+        "loop": true,
+        "durations": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
     "ranged_2h/posture/relaxed_01/w": {
       "profile": "ranged_2h",
       "group": "posture",
