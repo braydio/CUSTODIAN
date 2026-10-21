@@ -1,2 +1,0 @@
-underlay: ok [704, 768]
-foreground: ok [704, 768]
