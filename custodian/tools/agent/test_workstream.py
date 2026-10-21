@@ -45,6 +45,75 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
+        workstream_id = "agent-test-archive-tip"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "pass")
+
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+        error = workstream._archive_transition_tip_error(workstream_id, self.repo)
+        self.assertIn("archive transition", error)
+        self.assertIn("current branch tip", error)
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "blocked")
+        self.assertTrue(any(blocker["gate"] == "archive_transition_tip"
+                            for blocker in preflight["blockers"]))
+
+    def test_finish_rejects_unbound_archive_followup_before_push(self):
+        workstream_id = "agent-test-archive-tip"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Workstream: `agent-test-archive-tip`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+
+        with mock.patch.object(workstream, "fetch"), \
+             mock.patch.object(workstream, "artifact_preflight", return_value=[]), \
+             mock.patch.object(workstream, "_completion_truth_preflight"), \
+             mock.patch.object(workstream, "status_clean", return_value=True), \
+             mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
+             mock.patch.object(workstream, "validation_green", return_value=True), \
+             mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "current branch tip"):
+                workstream._finish_impl(workstream_id, self.repo / "validation.json", repo=self.repo)
+        self.assertFalse(any(call.args and call.args[0] == "push" for call in git_call.call_args_list))
+
     def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
         class ReachedFetch(Exception):
             pass

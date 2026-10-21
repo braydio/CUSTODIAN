@@ -2703,6 +2703,110 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             with patch.dict(os.environ, {"GIT_ALTERNATE_OBJECT_DIRECTORIES": alternates}):
                 yield
 
+    def test_historical_execution_reset_archive_merge_followup_is_exactly_pinned(self):
+        workstream = "agent-execution-reset-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/AGENT_EXECUTION_RESET_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0", workstream, archive,
+            )
+        self.assertEqual(span["base"], "b5a46e82913455cb341c84811fd9be66b78ed138")
+        self.assertEqual(span["head"], "f635c33d8bb209d9cbc4fafb4aff88af27084867")
+        self.assertEqual(span["provenance"]["post_merge_followup"]["canonical_archive_commit"],
+                         "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0")
+        self.assertEqual(span["provenance"]["trace_landing_commit"], span["head"])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["post_merge_followup_commit"], span["head"])
+        self.assertIn("custodian/tools/agent/test_workstream.py", span["paths"])
+        self.assertEqual(set(span["provenance"]["post_merge_followup"]["followup_paths"]), {
+            "AGENT_EXECUTION_RESET_V1_CLAUDE_SUMMARY.md",
+            "custodian/docs/ai_context/task_packets/archived/AGENT_EXECUTION_RESET_V1.md",
+            "custodian/tools/agent/test_workstream.py",
+        })
+
+    def test_historical_blender_source_archive_admits_only_receipted_declared_blend(self):
+        workstream = "operator-motion-foundry-blender-2d-rig-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/OPERATOR_MOTION_FOUNDRY_BLENDER_2D_RIG_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "a6604a80be32c9078336ae48de6c4e43ec6815c7", workstream, archive,
+            )
+        blend = "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/blender/operator_south_cutout_rig_v1.blend"
+        self.assertEqual(span["head"], "a6604a80be32c9078336ae48de6c4e43ec6815c7")
+        self.assertIn(blend, span["paths"])
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertEqual(span["provenance"]["source_artifact"]["path"], blend)
+
+    def test_pinned_reset_followup_rejects_wrong_run_duplicate_sync_and_wrong_final_head(self):
+        workstream = "agent-execution-reset-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/AGENT_EXECUTION_RESET_V1.md"
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "9c607b6d5df1149b31590eeae9eaf57b73b482f3",
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0", workstream, archive,
+            )
+            provenance = span["provenance"]
+            trace = host_validation._trace_events(ROOT, provenance["ref"])
+            claim_record = provenance["claim_trace"]
+            claim_record = {**claim_record, "ref": provenance["ref"]}
+            landing_record = provenance["landing_trace"]
+            landing_record = {**landing_record, "ref": provenance["ref"],
+                              "path": landing_record["worktree"]}
+            verifier_args = (
+                ROOT, workstream, archive, span["base"],
+                "bf0f59f478c361b6b34b6e0c6c354c8f3649eac0",
+            )
+            mutations = []
+            duplicate_sync = json.loads(json.dumps(trace))
+            duplicate_sync.append(json.loads(json.dumps(next(
+                event for event in trace if event["event"] == "main_sync"
+            ))))
+            mutations.append((duplicate_sync, "unique immutable claim and no-op sync"))
+            bad_parent = json.loads(json.dumps(trace))
+            next(event for event in bad_parent if event["event"] == "main_sync")["data"]["main_sha"] = "0" * 40
+            mutations.append((bad_parent, "unique immutable claim and no-op sync"))
+            for events, expected in mutations:
+                with self.subTest(expected=expected), self.assertRaisesRegex(
+                    host_validation.HostValidationError, expected,
+                ):
+                    host_validation._verify_reset_archive_merge_followup(
+                        *verifier_args, "f635c33d8bb209d9cbc4fafb4aff88af27084867",
+                        "134e4c2913fbb88ea25fd5395ff6dc059e26f05f", provenance["ref"],
+                        provenance["run_id"], events, claim_record, landing_record,
+                    )
+            with self.assertRaisesRegex(host_validation.HostValidationError, "pinned run"):
+                host_validation._verify_reset_archive_merge_followup(
+                    *verifier_args, "0" * 40, "134e4c2913fbb88ea25fd5395ff6dc059e26f05f",
+                    provenance["ref"], provenance["run_id"], trace, claim_record, landing_record,
+                )
+            with self.assertRaisesRegex(host_validation.HostValidationError, "pinned run"):
+                host_validation._verify_reset_archive_merge_followup(
+                    *verifier_args, "f635c33d8bb209d9cbc4fafb4aff88af27084867",
+                    "134e4c2913fbb88ea25fd5395ff6dc059e26f05f", provenance["ref"],
+                    "20261020T135840Z-db96534ed3a7", trace, claim_record, landing_record,
+                )
+
+    def test_blender_source_artifact_gate_rejects_wrong_archive_or_missing_receipt(self):
+        workstream = "operator-motion-foundry-blender-2d-rig-v1"
+        archive = f"{runner.PACKET_ROOT}/archived/OPERATOR_MOTION_FOUNDRY_BLENDER_2D_RIG_V1.md"
+        packet = subprocess.run(
+            ["git", "show", f"9c607b6d5df1149b31590eeae9eaf57b73b482f3:{archive}"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout
+        paths = {host_validation._BLENDER_SOURCE_PATH, host_validation._BLENDER_RECEIPT_PATH}
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact pinned archive"):
+            host_validation._verified_blender_source_artifact(ROOT, "0" * 40, packet, paths)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "packet-declared"):
+            host_validation._verified_blender_source_artifact(
+                ROOT, host_validation._BLENDER_SOURCE_ARCHIVE, packet,
+                {host_validation._BLENDER_SOURCE_PATH},
+            )
+        unlisted = "custodian/asset_drop/source_work/operator/elsewhere/unauthorized.blend"
+        self.assertIsNone(host_validation._verified_blender_source_artifact(
+            ROOT, host_validation._BLENDER_SOURCE_ARCHIVE, packet, {unlisted},
+        ))
+
     def _commit(self, message):
         subprocess.run(["git", "add", "-f", "-A"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)

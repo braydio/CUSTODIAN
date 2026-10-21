@@ -505,6 +505,65 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
     return packets
 
 
+def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
+    """Require the canonical active-to-archived packet transition at pre-sync tip."""
+    repo = root_repo(path)
+    head = git("rev-parse", "HEAD", cwd=path)
+    packets = _associated_task_packets(repo, workstream_id)
+    archive_root = (repo / TASK_PACKET_ARCHIVE).resolve()
+    if not any(packet.parent.resolve() == archive_root for packet in packets):
+        return None
+    if subprocess.run(["git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/main"],
+                      cwd=path).returncode == 0:
+        main = git("rev-parse", "refs/remotes/origin/main", cwd=path)
+    elif subprocess.run(["git", "show-ref", "--verify", "--quiet", "refs/heads/main"],
+                        cwd=path).returncode == 0:
+        # Small isolated Git fixtures may not create remote-tracking refs.
+        main = git("rev-parse", "refs/heads/main", cwd=path)
+    else:
+        return "cannot verify archived packet transition without a main baseline"
+    transitions: list[tuple[str, str]] = []
+    commits = git("rev-list", "--first-parent", "--reverse", f"{main}..{head}", cwd=path).splitlines()
+    for archived in packets:
+        if archived.parent.resolve() != archive_root:
+            continue
+        archived_rel = archived.relative_to(repo).as_posix()
+        active_rel = archived.relative_to(archive_root).as_posix()
+        active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{active_rel}"
+        for commit in commits:
+            parent = git("rev-parse", f"{commit}^1", cwd=path, check=False)
+            if not parent:
+                continue
+            active_before = subprocess.run(
+                ["git", "cat-file", "-e", f"{parent}:{active_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            archive_before = subprocess.run(
+                ["git", "cat-file", "-e", f"{parent}:{archived_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            active_after = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}:{active_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            archive_after = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}:{archived_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            if active_before and not archive_before and not active_after and archive_after:
+                transitions.append((commit, archived_rel))
+    if not transitions:
+        return None
+    if len(transitions) != 1 or transitions[0][0] != head:
+        transition_commit, packet = transitions[-1]
+        return (
+            f"canonical archive transition for {packet} is {transition_commit}, not the current "
+            f"branch tip {head}; include source changes before archival or use a supported "
+            "source-span record"
+        )
+    return None
+
+
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
     """Require the durable closing summary to preserve packet authoring-chat provenance."""
     summary = path / _expected_summary_filename(workstream_id)
@@ -738,6 +797,7 @@ def closeout_preflight(
     main_is_ancestor = bool(main_exists) and subprocess.run(
         ["git", "merge-base", "--is-ancestor", "origin/main", "HEAD"], cwd=path,
     ).returncode == 0
+    archive_transition_error = _archive_transition_tip_error(workstream_id, path)
 
     validation = _validation_report_status(validation_report)
     review_blockers = [
@@ -768,6 +828,8 @@ def closeout_preflight(
         blockers.append({"gate": "remote_branch", "detail": f"origin/{expected_branch} is not present in cached refs"})
     if behind:
         blockers.append({"gate": "branch_drift", "detail": f"local branch is {behind} commit(s) behind its published branch"})
+    if archive_transition_error:
+        blockers.append({"gate": "archive_transition_tip", "detail": archive_transition_error})
     blockers.extend({"gate": "task_packet", "detail": str(item)} for item in packet_blockers)
     blockers.extend({"gate": "completion_truth", "detail": str(item)} for item in truth_blockers)
     blockers.extend({"gate": "managed_index", "detail": str(item)} for item in stale_index)
@@ -781,7 +843,7 @@ def closeout_preflight(
     if not validation["green"]:
         blockers.append({"gate": "validation", "detail": "report missing, invalid, or non-green"})
     ready = (
-        branch_ready and not packet_blockers and not truth_blockers and not stale_index
+        branch_ready and not archive_transition_error and not packet_blockers and not truth_blockers and not stale_index
         and not artifact_report and summary_ok and not review_blockers and not review_artifact_blockers
         and bool(validation["green"])
     )
@@ -804,6 +866,10 @@ def closeout_preflight(
             "drift": (actual_branch != expected_branch or not clean or not remote_exists or behind != 0),
             "unpublished_commits": ahead,
             "sync_required_against_cached_main": not main_is_ancestor,
+        },
+        "archive_transition": {
+            "status": "blocked" if archive_transition_error else "pass",
+            "error": archive_transition_error,
         },
         "packets": packet_reports,
         "packet_blockers": packet_blockers,
@@ -1406,6 +1472,10 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     if trace:
         import hashlib
         trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
+
+    archive_tip_error = _archive_transition_tip_error(workstream_id, path)
+    if archive_tip_error:
+        raise WorkstreamError(archive_tip_error)
 
     git("push", "-u", "origin", branch, cwd=path)
     fetch(path)

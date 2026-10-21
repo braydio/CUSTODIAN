@@ -179,6 +179,23 @@ rerun the **read-only** recovery plan and obtain a fresh `plan_sha256` before
 any separately authorized apply. The pinned implementation SHA and protected
 claim/worktree must remain unchanged; source/provenance validation still runs.
 
+Source provenance keeps four identities separate: the implementation/archive
+receipt, any archive-first main-sync merge, a bounded source-bearing follow-up,
+and the final landing recorded by the lifecycle trace. A follow-up is accepted
+only when its exact commit, parent topology, run/claim identity, sync event and
+complete path/mode set are pinned; arbitrary descendants do not extend the
+reviewed source range. Source-work binaries remain governed by the archived
+packet's declared source-work path and matching tracked receipt/hash evidence;
+file suffix alone never grants admission.
+
+To prevent an unbound source follow-up from being created, both
+`workstream.py preflight` and `finish` check any active-to-archived packet
+transition. The archive transition must be the current branch tip before
+finish pushes or synchronizes main. Put source changes before that archive
+commit, or use an explicitly supported and provenance-pinned source-span
+record. Finish reports the exact blocking commit and path without pushing or
+landing the branch.
+
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
 complete original evidence manifest. Apply only the exact freshly emitted
