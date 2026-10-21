@@ -194,13 +194,14 @@ transition. The archive transition must be the current branch tip before
 finish first pushes or synchronizes main. If a prior finish attempt stopped
 after synchronization, the guard accepts only the exact archive-first merge
 bound by that run's claim, published worktree, `main_sync`, and terminal
-`run_blocked` events. It also accepts at most one direct child commit when
-every changed regular file is named in the archived packet's work surface.
-If main advances again before landing, host source validation accepts further
+`run_blocked` events. After a resolved sync merge, a bounded source-follow-up chain may contain
+multiple linear commits, each limited to modifications of declared regular
+files. If main advances again before landing, host source validation accepts
 archive-descending sync merges only when each merge has its own exact ordered
-trace witness and deterministic merge tree. Untraced merges, extra source
-descendants, and out-of-surface paths remain blocked. Finish reports the exact
-blocking commit and path without pushing or landing the branch.
+trace witness and deterministic tree, or a narrowly verified additive managed
+index conflict resolution. Untraced merges, extra source changes, and
+out-of-surface paths remain blocked. Finish reports the exact blocking commit
+and path without pushing or landing the branch.
 
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and

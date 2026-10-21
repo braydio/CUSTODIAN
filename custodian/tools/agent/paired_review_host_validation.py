@@ -346,19 +346,19 @@ def _verify_archive_sync_followup(
         raise HostValidationError("post-merge source span has no first-parent history after its archive")
     commits = chain.stdout.splitlines()
     merges: list[dict[str, str]] = []
-    followup_commit = None
+    followup_commits: list[str] = []
     previous = landing_commit
     for commit in commits:
         parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()
         if len(parents) == 3 and parents[1] == previous:
             merges.append({"commit": commit, "first_parent": parents[1], "main_sha": parents[2]})
-        elif len(parents) == 2 and parents[1] == previous and len(merges) == 1 and followup_commit is None:
-            followup_commit = commit
+        elif len(parents) == 2 and parents[1] == previous and merges:
+            followup_commits.append(commit)
         else:
             raise HostValidationError("post-merge source span has an unbound commit or merge topology")
         previous = commit
-    if not merges or followup_commit is None:
-        raise HostValidationError("post-merge source span needs a sync merge and one direct follow-up")
+    if not merges or not followup_commits:
+        raise HostValidationError("post-merge source span needs a sync merge and a declared follow-up")
 
     sync_events = [(index, event.get("data", {})) for index, event in enumerate(events)
                    if event.get("event") == "main_sync"]
@@ -366,15 +366,17 @@ def _verify_archive_sync_followup(
                        if event.get("event") == "landing_started"]
     if len(landing_started) != 1:
         raise HostValidationError("post-merge source trace lacks a unique landing start")
-    expected_true = []
+    expected_sync = []
     for merge in merges:
         matches = [(index, data) for index, data in sync_events
-                   if isinstance(data, dict) and data == {
-                       "changed": True, "head": merge["commit"], "main_sha": merge["main_sha"]}]
+                   if isinstance(data, dict)
+                   and data.get("head") == merge["commit"]
+                   and data.get("main_sha") == merge["main_sha"]
+                   and (data.get("changed") is True or data.get("changed") is False)]
         if len(matches) != 1:
             raise HostValidationError("post-merge source merge lacks a unique exact main-sync witness")
-        expected_true.append(matches[0][0])
-    if expected_true != sorted(expected_true) or expected_true[-1] >= landing_started[0]:
+        expected_sync.append(matches[0][0])
+    if expected_sync != sorted(expected_sync) or expected_sync[-1] >= landing_started[0]:
         raise HostValidationError("post-merge source sync events are out of lifecycle order")
     if any(index >= landing_started[0] for index, _ in sync_events):
         raise HostValidationError("post-merge source trace records sync after landing started")
@@ -382,17 +384,17 @@ def _verify_archive_sync_followup(
     # No-op retries may occur at an authenticated current tip in this same
     # lineage, but may not name a stale merge, arbitrary head, or main SHA.
     for index, data in sync_events:
-        if index in expected_true:
+        if index in expected_sync:
             continue
-        prior_merges = [merge_index for merge_index, true_index in enumerate(expected_true)
-                        if true_index < index]
+        prior_merges = [merge_index for merge_index, sync_index in enumerate(expected_sync)
+                        if sync_index < index]
         if not isinstance(data, dict) or not prior_merges or index >= landing_started[0]:
             raise HostValidationError("post-merge source span has an unbound no-op main-sync event")
         latest = prior_merges[-1]
-        allowed_heads = {merges[latest]["commit"]}
-        if (latest == 0 and followup_commit is not None
-                and (latest + 1 == len(expected_true) or index < expected_true[latest + 1])):
-            allowed_heads.add(followup_commit)
+        latest_commit_index = commits.index(merges[latest]["commit"])
+        next_merge_index = (commits.index(merges[latest + 1]["commit"])
+                            if latest + 1 < len(merges) else len(commits))
+        allowed_heads = set(commits[latest_commit_index:next_merge_index])
         if (data.get("changed") is not False or data.get("head") not in allowed_heads
                 or data.get("main_sha") != merges[latest]["main_sha"]):
             raise HostValidationError("post-merge source no-op event does not bind the current sync tip")
@@ -405,7 +407,7 @@ def _verify_archive_sync_followup(
         if len(final_retry) != 1 or final_retry[0][0] >= landing_started[0]:
             raise HostValidationError("post-merge source span lacks its final no-op retry witness")
     previous_sync_index = -1
-    for merge, index in zip(merges, expected_true):
+    for merge, index in zip(merges, expected_sync):
         if index <= previous_sync_index:
             raise HostValidationError("post-merge source sync merges are out of trace order")
         previous_sync_index = index
@@ -414,17 +416,26 @@ def _verify_archive_sync_followup(
             cwd=repo, text=True, capture_output=True,
         )
         actual_tree = _git(repo, "rev-parse", f"{merge['commit']}^{{tree}}")
-        if (expected_tree.returncode or not expected_tree.stdout.splitlines()
-                or expected_tree.stdout.splitlines()[0].strip() != actual_tree):
-            raise HostValidationError("post-merge sync tree differs from deterministic Git merge")
+        expected_tree_sha = expected_tree.stdout.splitlines()[0].strip() if expected_tree.stdout.splitlines() else None
+        if not expected_tree_sha:
+            raise HostValidationError("post-merge sync tree has no deterministic merge-tree result")
+        if expected_tree.returncode or expected_tree_sha != actual_tree:
+            resolution_paths = set(_changed_paths(repo, f"{expected_tree_sha}..{actual_tree}"))
+            readme_path = f"{PACKET_ROOT}/README.md"
+            first_readme = subprocess.run(["git", "show", f"{merge['first_parent']}:{readme_path}"],
+                                          cwd=repo, capture_output=True)
+            main_readme = subprocess.run(["git", "show", f"{merge['main_sha']}:{readme_path}"],
+                                         cwd=repo, capture_output=True)
+            merged_readme = subprocess.run(["git", "show", f"{merge['commit']}:{readme_path}"],
+                                           cwd=repo, capture_output=True)
+            if (resolution_paths != {readme_path} or first_readme.returncode
+                    or main_readme.returncode or merged_readme.returncode
+                    or not _managed_packet_index_additive_reconciliation(
+                        first_readme.stdout, main_readme.stdout, merged_readme.stdout)):
+                raise HostValidationError(
+                    "post-merge sync differs from deterministic merge beyond additive managed-index reconciliation"
+                )
 
-    status = subprocess.run(
-        ["git", "diff", "--name-status", "--no-renames", merges[0]["commit"], followup_commit],
-        cwd=repo, text=True, capture_output=True,
-    )
-    if status.returncode:
-        raise HostValidationError("cannot inspect post-merge follow-up file operations")
-    rows = [line.split("\t") for line in status.stdout.splitlines()]
     packet_header = target_packet_text.split("\n## ", 1)[0].splitlines()
     work_surface_lines = []
     for index, line in enumerate(packet_header):
@@ -441,29 +452,35 @@ def _verify_archive_sync_followup(
     declared = {token for token in re.findall(r"`([^`]+)`", work_surface)
                 if token.startswith("custodian/") and "{" not in token and "}" not in token}
     declared.update(_expand_braced_work_surface_paths(work_surface))
-    if (not rows or any(len(row) != 2 or row[0] != "M" or row[1] not in declared for row in rows)):
-        raise HostValidationError(
-            "post-merge follow-up has undeclared paths or non-modification operations: "
-            f"rows={rows!r}, declared={sorted(declared)!r}"
-        )
-    followup_paths = {row[1] for row in rows}
+    followup_paths: set[str] = set()
+    for commit in followup_commits:
+        parent = _git(repo, "rev-parse", f"{commit}^1")
+        status = subprocess.run(["git", "diff", "--name-status", "--no-renames", parent, commit],
+                                cwd=repo, text=True, capture_output=True)
+        if status.returncode:
+            raise HostValidationError("cannot inspect post-merge follow-up file operations")
+        rows = [line.split("\t") for line in status.stdout.splitlines()]
+        if (not rows or any(len(row) != 2 or row[0] != "M" or row[1] not in declared for row in rows)):
+            raise HostValidationError("post-merge follow-up has undeclared paths or non-modification operations")
+        for _, path in rows:
+            for revision in (parent, commit):
+                entry = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
+                                       cwd=repo, capture_output=True)
+                if entry.returncode or not entry.stdout:
+                    raise HostValidationError("post-merge follow-up path is missing from a pinned tree")
+                mode = entry.stdout.split(b"\t", 1)[0].split()[0]
+                if mode != b"100644":
+                    raise HostValidationError("post-merge follow-up contains a non-regular or executable path")
+            followup_paths.add(path)
     if not _source_code_paths(sorted(followup_paths)):
         raise HostValidationError("post-merge follow-up has no declared implementation or test source")
-    for path in sorted(followup_paths):
-        for revision in (merges[0]["commit"], followup_commit):
-            entry = subprocess.run(["git", "ls-tree", "-z", revision, "--", path],
-                                   cwd=repo, capture_output=True)
-            if entry.returncode or not entry.stdout:
-                raise HostValidationError("post-merge follow-up path is missing from a pinned tree")
-            mode = entry.stdout.split(b"\t", 1)[0].split()[0]
-            if mode != b"100644":
-                raise HostValidationError("post-merge follow-up contains a non-regular or executable path")
     return {
         "canonical_archive_commit": landing_commit,
         "sync_merges": merges,
         "sync_merge_commit": merges[0]["commit"],
         "sync_merge_main_parent": merges[0]["main_sha"],
-        "post_merge_followup_commit": followup_commit,
+        "post_merge_followup_commit": followup_commits[0],
+        "post_merge_followup_commits": followup_commits,
         "source_head": trace_landing,
         "followup_paths": sorted(followup_paths),
         "merge_tree_proof": "exact-trace-parent-and-bounded-declared-follow-up",
@@ -1006,12 +1023,19 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             commits = history.stdout.splitlines() if history.returncode == 0 else []
             first_parents = [_git(repo, "rev-list", "--parents", "-n", "1", commit).split()
                              for commit in commits]
-            has_followup_chain = (
-                len(first_parents) >= 2 and len(first_parents[0]) == 3
+            saw_followup = False
+            valid_tail = len(first_parents) >= 2 and len(first_parents[0]) == 3 \
                 and first_parents[0][1] == landing_commit
-                and len(first_parents[1]) == 2 and first_parents[1][1] == commits[0]
-                and all(len(parents) == 3 and parents[1] == commits[index - 1]
-                        for index, parents in enumerate(first_parents[2:], start=2))
+            for index, parents in enumerate(first_parents[1:], start=1):
+                if len(parents) == 3 and parents[1] == commits[index - 1]:
+                    continue
+                if len(parents) == 2 and parents[1] == commits[index - 1]:
+                    saw_followup = True
+                    continue
+                valid_tail = False
+                break
+            has_followup_chain = (
+                valid_tail and saw_followup
             )
             if has_followup_chain:
                 archive_sync_followup = _verify_archive_sync_followup(
@@ -1147,7 +1171,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         raise HostValidationError("split landing has no source-bearing commits after its recorded workstream base")
     commits = chain.stdout.splitlines()
     if followup is not None:
-        commits.append(followup["post_merge_followup_commit"])
+        commits.extend(followup.get("post_merge_followup_commits",
+                                    [followup["post_merge_followup_commit"]]))
     merge_commits = []
     owned_paths = set()
     for index, commit in enumerate(commits):
@@ -1287,8 +1312,6 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                             "main_sha": trace_main_sync_sha}]
         readme_path = f"{PACKET_ROOT}/README.md"
         sync_source_paths = set(source_paths)
-        if followup is not None:
-            sync_source_paths.difference_update(followup["followup_paths"])
         for sync_merge in sync_merges:
             merge = sync_merge["commit"]
             first_parent = sync_merge["first_parent"]

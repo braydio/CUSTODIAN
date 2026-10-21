@@ -3554,6 +3554,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self._git("checkout", "-q", work_branch)
         subprocess.run(["git", "merge", "--no-ff", "later-main", "-m", "second main sync"],
                        cwd=self.root, check=True, capture_output=True)
+        second_sync = self._git("rev-parse", "HEAD")
+        post_sync_path = fixture["code_paths"][0]
+        post_sync_file = self.root / post_sync_path
+        post_sync_file.write_text(post_sync_file.read_text() + "post-second-sync regression\n")
+        self._git("add", post_sync_path)
+        self._git("commit", "-qm", "second bounded post-merge follow-up")
         final_sync = self._git("rev-parse", "HEAD")
         self.reviewed_main = final_sync
         fixture["reviewed_main"] = final_sync
@@ -3579,7 +3585,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
              "main_sha": fixture["prior_main"]})
         emit("main_sync", {"changed": False, "head": followup,
              "main_sha": fixture["prior_main"]})
-        emit("main_sync", {"changed": True, "head": final_sync,
+        emit("main_sync", {"changed": True, "head": second_sync,
+             "main_sha": later_main})
+        emit("main_sync", {"changed": False, "head": final_sync,
              "main_sha": later_main})
         emit("landing_started", {"start_sha": final_sync, "branch": f"agent/{fixture['workstream']}",
              "target": "main"})
@@ -3604,7 +3612,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["head"], final_sync)
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge-followup")
         self.assertEqual(span["provenance"]["post_merge_followup"]["sync_merge_commit"], fixture["merge"])
-        self.assertEqual(span["provenance"]["post_merge_followup"]["followup_paths"], [followup_path])
+        self.assertEqual(span["provenance"]["post_merge_followup"]["followup_paths"],
+                         sorted([followup_path, post_sync_path]))
+        self.assertEqual(len(span["provenance"]["post_merge_followup"]["post_merge_followup_commits"]), 2)
 
         invalid = events[:4] + events[5:]
         invalid_raw = ("\n".join(json.dumps(event, sort_keys=True) for event in invalid) + "\n").encode()

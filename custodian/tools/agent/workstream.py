@@ -646,6 +646,94 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                         and all(child_tree_modes.get(name) == "100644" for name in child_paths)):
                     return None
 
+    # A prior merge may have stopped on an index conflict before finish could
+    # append its main_sync event. After the operator resolves only the generated
+    # managed index, the next finish verifies the complete archive-to-current-main
+    # chain here; its normal sync_main call then records the factual no-op witness.
+    history = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{transition_commit}..{head}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    commits = history.stdout.splitlines() if history.returncode == 0 else []
+    if commits:
+        packet_text = (repo / packet).read_text()
+        work_surface = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
+        declared = set(re.findall(r"`([^`]+)`", work_surface.group(1))) if work_surface else set()
+        previous = transition_commit
+        sync_merges = []
+        valid = True
+        host_validation = None
+        for commit in commits:
+            parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
+            if len(parents) == 3 and parents[1] == previous:
+                main_parent = parents[2]
+                if subprocess.run(["git", "merge-base", "--is-ancestor", main_parent, main],
+                                  cwd=path, capture_output=True).returncode:
+                    valid = False
+                    break
+                if (git("rev-parse", f"{previous}:{packet}", cwd=path, check=False)
+                        != git("rev-parse", f"{commit}:{packet}", cwd=path, check=False)):
+                    valid = False
+                    break
+                expected = subprocess.run(["git", "merge-tree", "--write-tree", previous, main_parent],
+                                          cwd=path, text=True, capture_output=True)
+                actual_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
+                expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else None
+                if not expected_tree:
+                    valid = False
+                    break
+                if expected.returncode or expected_tree != actual_tree:
+                    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                                      expected_tree, actual_tree, cwd=path).splitlines())
+                    readme = "custodian/docs/ai_context/task_packets/README.md"
+                    if host_validation is None:
+                        for tools_path in (repo / "custodian/tools",
+                                           repo / "custodian/tools/validation"):
+                            if str(tools_path) not in sys.path:
+                                sys.path.insert(0, str(tools_path))
+                        import paired_review_host_validation as host_validation
+                    first = subprocess.run(["git", "show", f"{previous}:{readme}"], cwd=path,
+                                           capture_output=True)
+                    second = subprocess.run(["git", "show", f"{main_parent}:{readme}"], cwd=path,
+                                            capture_output=True)
+                    merged = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
+                                            capture_output=True)
+                    if (changed != {readme} or first.returncode or second.returncode or merged.returncode
+                            or not host_validation._managed_packet_index_additive_reconciliation(
+                                first.stdout, second.stdout, merged.stdout)):
+                        valid = False
+                        break
+                sync_merges.append((commit, main_parent))
+            elif len(parents) == 2 and parents[1] == previous and sync_merges:
+                status = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+                             "-r", commit, cwd=path).splitlines()
+                operations = [line.split("\t") for line in status]
+                if (not operations or any(len(row) != 2 or row[0] != "M"
+                                           or row[1] not in declared for row in operations)):
+                    valid = False
+                    break
+                parent = parents[1]
+                for _, source_path in operations:
+                    for revision in (parent, commit):
+                        entry = subprocess.run(["git", "ls-tree", "-z", revision,
+                                                "--", source_path], cwd=path, capture_output=True)
+                        if (entry.returncode or not entry.stdout
+                                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+                            valid = False
+                            break
+                    if not valid:
+                        break
+                if not valid:
+                    break
+            else:
+                valid = False
+                break
+            previous = commit
+        if (valid and sync_merges and sync_merges[-1][1] == main
+                and subprocess.run(["git", "merge-base", "--is-ancestor",
+                                    sync_merges[-1][0], head], cwd=path,
+                                   capture_output=True).returncode == 0):
+            return None
     transition_commit, packet = transitions[0]
     return (
         f"canonical archive transition for {packet} is {transition_commit}, not the current "

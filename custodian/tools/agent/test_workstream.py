@@ -144,6 +144,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", "main-only")
         git(self.repo, "commit", "-m", "advance main")
         git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
         main_sha = git(self.repo, "rev-parse", "HEAD")
         git(self.repo, "checkout", branch)
         git(self.repo, "merge", "--no-ff", "main", "-m", "sync main")
@@ -191,6 +192,50 @@ class WorkstreamTests(unittest.TestCase):
         (self.repo / "outside.py").write_text("unrelated\n")
         git(self.repo, "add", "outside.py")
         git(self.repo, "commit", "-m", "unrelated followup")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_recovers_resolved_current_main_sync_without_erasing_conflict_evidence(self):
+        workstream_id = "agent-test-resolved-main-sync"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_source.py`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        git(self.repo, "push", "origin", "main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-only").write_text("new main\n")
+        git(self.repo, "add", "main-only")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        main_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "resolved sync merge")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), main_sha)
+
+        (self.repo / "source.py").write_text("source with in-surface follow-up\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "bounded follow-up")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "outside.py").write_text("out of scope\n")
+        git(self.repo, "add", "outside.py")
+        git(self.repo, "commit", "-m", "unbound follow-up")
         self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
     def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
