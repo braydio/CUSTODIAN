@@ -2,7 +2,7 @@
 
 **Status:** Scale-class **human decision accepted** on 2026-10-17; layout, collisions, floors and presentation **not yet approved**
 **Baseline audited:** `braydio/CUSTODIAN main@0d51fdba1da51b7cd3af4960b93e2dc6b4066b66`
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acc3bfd-cf88-83ea-9156-be4e5c2851c0
+**Authoring chat (current continuation):** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad5eb5a-598c-83ea-b982-531d4ff5418f
 **History:** `design/05_levels/CARROW_YARD_POST_INTERIORS_PLANNING_V1.md` and independently PASSed `review-carrow-interior-scale-calibration-v1`.
 **Owners:** Carrow site canon/room semantics in `design/03_world/locations/CARROW_YARD.md`; live room registry in `custodian/game/world/gothic_compound/gothic_compound_map.gd`; edited collision/POIs through the existing Authored Level Mapper family; Asset Pipeline V2 for art; distinct `carrow-yard-route-authority-migration` owns world ingress.
 
@@ -62,7 +62,13 @@ Build a Carrow adapter to the already shipped `AuthoredLevelMapper` / `LevelColl
 
 **Code-level gates:** output schema version and hash, integer 32px tile coordinate bounds, unique names and IDs, exact source ref/hash, no undesired clipping in room rect, collision overlap and doorway guard, Operator-shape clearance for every author-declared route/portal, every storage anchor matching a named prop, room/camera AABBs nonoverlapping, replay equal JSON bytes, existing Carrow tests unchanged. Detect unsupported art/collision disagreements as facts, not aesthetic auto-corrections.
 
-## 7. Artwork workstream remains ACTIVE until six missing wall states are complete
+## 7. Perimeter artwork: prior six-state plan and newly approved marble source revision
+
+**Current revision (2026-10-21):** The user selected three ruined-marble macro-perimeter source slices: E-W `wall_marble_ew_straight_01` (805×684), N-S `wall_marble_ns_straight_01` (492×505), and `wall_marble_corner_ne_01` (507×684). The extracted RGBA crops reproduce a cleaned 1312×1199 source L exactly, but independent repeat pitch, underlap z-order/offset, pixel-world anchors, gameplay-scale rendering and final human approval are NOT complete. No normalized intake yet. The original seven-piece source set remains preserved, and the six legacy target states below remain historical pending planning, not proof of current runtime readiness.
+
+**Durable approved source transport:** Dropbox `/CUSTODIAN/asset_batches/custodian_carrow_yard_marble_corner_slices_handoff_v1.zip` (SHA-256 `9079d308412f3c1cef3840d730bb9234da074ad8f09232e8db6be20509b92392`); machine-readable manifest, all PNGs, exact source rects, slicer and QA included. Tracked proof instructions: `custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/source_batch.md`; main packet `custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md`; paired review with same basename prefixed `REVIEW_`. Old blocked `agent/carrow-yard-volumetric-perimeter@d033eef4f` remains preserved donor; do not claim or retire it through the source-intake packet.
+
+**Legacy six-state V2 proposal (unapproved, do not silently ingest):**
 
 Existing **7 individual RGBA perimeter wall sources** are already exported and included in the Dropbox batch; do not re-generate or re-ingest them. The floor source package includes specialized ground variants and `hardstand_plain_01` as candidate. The **six pending pieces** in the same `carrow_yard_perimeter_walls_v1` family, all 1 frame, true-alpha source and **provisional** normalized dimensions:
 
@@ -83,6 +89,6 @@ The six source canvases may be generated large and then normalized without resiz
 
 ## 8. Workstream order and drift closure
 
-**Completed:** calibration implementation and independent review. **Now decided:** sizes, class allocation and under-24×18 on-site default. **Next claimable engineering work:** Carrow interior layout-authoring mapper implementation + independent review. **Human slice:** draw/approve floor zones, prop anchors and collision within each of the three approved grids. **Then:** one production conversion packet per building or bounded combined slice with exact approved JSON, preserving accepted review/route semantics. **Separately:** finish four concave corners, N–S straight, unlit pillar, repackage source bundle revision and upload to Dropbox before Asset V2 normalization.
+**Completed:** calibration implementation and independent review. **Now decided:** sizes, class allocation and under-24×18 on-site default. **Interior authoring sequence:** Mapper implementation/review has already advanced beyond the original proposal; consult live dispatcher and archived receipts before assuming a mapper packet is next. **Current independent source-art slice:** marble perimeter source intake, with separate review and human visual gates. **Human slice:** draw/approve floor zones, prop anchors and collision within each of the three approved grids. **Then:** one production conversion packet per building or bounded combined slice with exact approved JSON, preserving accepted review/route semantics. **Separately:** finish four concave corners, N–S straight, unlit pillar, repackage source bundle revision and upload to Dropbox before Asset V2 normalization.
 
 **Drift corrected by this V2:** Previous post-interiors planning still called the size choice human-required and invited a single chosen size even though three calibrations passed and the user now approved all three. The older 'working room' checks treated green collision as if it supported art/readability; these are independent acceptance dimensions. The old 'Gatehouse 10×8' planning remains historical, not a new contradiction with current minimum. Production code remains unchanged and must not be described as resized yet.
