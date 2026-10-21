@@ -2,6 +2,8 @@
 
 Implemented the bounded recovery path for a coordinator validation that fails during Godot import before reviewer launch. The implementation preserves immutable original reports, authenticates the exact failed import failure, preserves and verifies new PNG import sidecars, runs fresh full validation into append-only attempt directories, and launches a reviewer only after a verified green result. Failed attempts remain failed and the fresh-validation budget is capped at two.
 
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f
+
 ## Evidence
 
 - `PYTHONPATH=custodian/tools/agent:custodian/tools python3 -m unittest custodian.tools.agent.test_paired_review_runner -q` — 145 passed.
@@ -30,7 +32,7 @@ The protected review run `20261020T165418Z-53992bd05f83`, its claim, original fa
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f
 - Refresh reason: `none`
 - Next action: After independent PASS, run the held review's exact read-only recovery plan and inspect its digest and sidecar inventory; apply only with the separately authorized exact plan digest.
 - Blockers or open questions: The protected review run remains held pending fresh independent review and same-run recovery.
