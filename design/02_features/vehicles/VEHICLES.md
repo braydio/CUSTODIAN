@@ -13,6 +13,7 @@
 - Reverse-engineering authority: `design/02_features/vehicles/VEHICLE_RECOVERY_REVERSE_ENGINEERING.md`
 - Production-art contract: `design/02_features/vehicles/VEHICLE_RECOVERY_ART_MANIFEST.md`
 - Source-to-runtime vehicle integration authority: `design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md`
+- Initial five-vehicle production asset program: `design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
 
 ## 1. Purpose
 

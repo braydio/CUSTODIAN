@@ -1,5 +1,30 @@
 # CURRENT STATE — CUSTODIAN
 
+## Initial vehicle fleet asset program locked (2026-10-21)
+
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
+is now the active generation-order and Asset Pipeline V2 planning authority for
+the first five production vehicle classes: Field Scout Buggy, Utility Hauler,
+Industrial Crawler, Recovery Rig, and Restricted APC, followed by the reusable
+recovery-expedition prop/salvage kit.
+
+The program explicitly separates authored body states from derived parked/wreck,
+procedural engine/brake/impact presentation, shared recovery/motion/destruction
+FX, component socket overlays, attachment families, 32 unique component icons,
+26 required physical component props, and the Phase-6 camp/salvage families.
+Only the Scout has existing production-source body coverage. Hauler/Crawler/Rig/APC
+IDs, canvas sizes and asset families are newly locked planning authority, not
+claims that runtime classes or source art already exist.
+
+The live component-recovery implementation still treats R1+ requirements as an
+atomic required-component set at restoration completion. Socket art is now
+planned so later staged per-component installation can reuse the same visual
+contract, but staged socket mechanics are not being misreported as live.
+
+Authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
 ## Broken Warrant 3D material tooling (2026-10-20)
 
 `custodian/tools/art/broken_warrant_3d/` now builds and validates a packed, editable Blender material master and deterministic front/three-quarter/rear 128px proofs from the staged immutable GLB. Objective source, mesh, rig, material, alpha, framing, registration, and packed-reference checks pass. The review sheet is published to `/CUSTODIAN/visual_review/broken-warrant-3d-surface-rebuild/20261020T023328Z/REVIEW_MANIFEST.json`; human identity/material acceptance remains pending. This is source-only tooling, not runtime art or Asset V2 approval.
