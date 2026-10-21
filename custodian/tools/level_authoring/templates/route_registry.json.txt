@@ -1,4 +1,0 @@
-{
-  "schema": "custodian.route_registry.v1",
-  "definitions": []
-}
