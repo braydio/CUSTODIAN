@@ -11,7 +11,7 @@ recovery-expedition prop/salvage kit.
 The program explicitly separates authored body states from derived parked/wreck,
 procedural engine/brake/impact presentation, shared recovery/motion/destruction
 FX, component socket overlays, attachment families, 32 unique component icons,
-26 required physical component props, and the Phase-6 camp/salvage families.
+25 required physical component props, and the Phase-6 camp/salvage families.
 Only the Scout has existing production-source body coverage. Hauler/Crawler/Rig/APC
 IDs, canvas sizes and asset families are newly locked planning authority, not
 claims that runtime classes or source art already exist.

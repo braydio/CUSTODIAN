@@ -651,7 +651,7 @@ Totals for the initial program:
 
 - 32 unique component item icons.
 - 7 shared status icons.
-- 26 required physical component world props.
+- 25 required physical component world props.
 
 # Generation order within each new vehicle phase
 
