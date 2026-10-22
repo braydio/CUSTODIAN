@@ -45,6 +45,63 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_failed_import_recovery_accepts_only_pinned_carow_main_advance(self):
+        repo = Path(__file__).resolve().parents[3]
+        pinned = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY
+        current = "b5b1e5f2450f3f577a5df5c173c338e6da5187d1"
+        expected = [
+            "0da9923e818645178a079eece3482216cd295ccc",
+            "0ed185fd23946eeb8a6d5835c171000a65f75a68",
+            "e1cfee4692a754a98a27d7fb3cf382dc55328bb8",
+            "ae5e0d8719d028f8feba6f4250633c30dfe0f470",
+            "bc79a4938577a9822f2d1c3c95ac701f5e8cb0d9",
+            current,
+        ]
+        actual = workstream.git(
+            "rev-list", "--first-parent", "--reverse",
+            f"{pinned['final_main']}..{current}", cwd=repo,
+        ).splitlines()
+        self.assertEqual(actual, expected)
+        expected_paths = [
+            {"custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md"},
+            {"custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {"custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {"design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md"},
+            {"custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+            },
+        ]
+        for commit, expected_commit_paths in zip(expected, expected_paths):
+            actual_paths = set(workstream.git(
+                "diff-tree", "--no-commit-id", "--name-only", "-r", commit, cwd=repo,
+            ).splitlines())
+            self.assertEqual(actual_paths, expected_commit_paths)
+
+        self.assertTrue(workstream._failed_import_main_advance_is_authorized(
+            repo, pinned, current,
+        ))
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, pinned, current + "1",
+        ))
+        forged = dict(pinned)
+        forged["authorized_main_advance"] = dict(pinned["authorized_main_advance"])
+        forged["authorized_main_advance"]["commits"] = expected[:-1] + ["1" * 40]
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, forged, current,
+        ))
+        forged_paths = dict(pinned)
+        forged_paths["authorized_main_advance"] = dict(pinned["authorized_main_advance"])
+        forged_paths["authorized_main_advance"]["commit_paths"] = [
+            ["unrelated/unauthorized.md"],
+            *pinned["authorized_main_advance"]["commit_paths"][1:],
+        ]
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, forged_paths, current,
+        ))
+
     def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
         workstream_id = "agent-test-archive-tip"
         active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
@@ -374,10 +431,14 @@ class WorkstreamTests(unittest.TestCase):
              "packet": active_rel, "run_id": run_id, "event": "validation_report",
              "data": {"passed": True}},
         ]
+        for event in events:
+            event["schema_version"] = 1
+            event["timestamp_utc"] = "2026-10-21T00:00:00+00:00"
         (trace_repo / "trace.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
         git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "publish trace")
         git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
         trace_anchor = git(trace_repo, "rev-parse", "HEAD")
+        initial_trace = (trace_repo / "trace.jsonl").read_text()
         git(worktree, "fetch", "origin")
         self.assertEqual(git(worktree, "rev-parse", "HEAD^1"), final_merge)
         self.assertEqual(git(self.repo, "rev-parse", f"{final_merge}^2"), final_main)
@@ -399,7 +460,7 @@ class WorkstreamTests(unittest.TestCase):
         with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
             self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
             preflight = workstream.closeout_preflight(workstream_id, worktree)
-            self.assertEqual(preflight["archive_transition"]["status"], "pass")
+            self.assertEqual(preflight["archive_transition"]["status"], "pass", preflight)
 
             # The original trace stopped before finish could emit main_sync.
             # A later truthful no-op witness is also accepted when present.
@@ -489,10 +550,108 @@ class WorkstreamTests(unittest.TestCase):
             self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
             git(worktree, "checkout", branch)
 
-            # The recovered branch still passes its canonical gate and normal
-            # finish preflight once only the authentic evidence is restored.
+            # The recovered branch remains verifiable after an unrelated
+            # latest-main advance. Restore the original trace with no inferred
+            # sync event, then require the normal finish path to validate its
+            # genuine post-advance merge.
+            trace_file.write_text(initial_trace)
+            git(trace_repo, "add", "trace.jsonl")
+            git(trace_repo, "commit", "-m", "restore original pre-finish trace")
+            git(trace_repo, "push", "origin", f"HEAD:{diag_ref}")
+            git(worktree, "fetch", "origin")
+            git(self.repo, "checkout", "main")
+            advance_paths = [
+                "custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md",
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md",
+            ]
+            advance_commits = []
+            for index, relative in enumerate(advance_paths):
+                path = self.repo / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"bounded documentation advance {index}\n")
+                git(self.repo, "add", relative)
+                git(self.repo, "commit", "-m", f"bounded unrelated main documentation {index}")
+                advance_commits.append(git(self.repo, "rev-parse", "HEAD"))
+            git(self.repo, "push", "origin", "main")
+            latest_main = git(self.repo, "rev-parse", "HEAD")
+            workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["authorized_main_advance"] = {
+                "base": final_main,
+                "head": latest_main,
+                "commits": advance_commits,
+                "commit_paths": [[relative] for relative in advance_paths],
+            }
+            run_id = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["run_id"]
+            active_trace = workstream.RunTrace(
+                self.repo, workstream_id, run_id, packet=active_rel,
+            )
+            active_trace.path.parent.mkdir(parents=True, exist_ok=True)
+            active_trace.path.write_text(initial_trace)
+            active_trace.active_path.parent.mkdir(parents=True, exist_ok=True)
+            active_trace.active_path.write_text(json.dumps({
+                "run_id": run_id,
+                "workstream": workstream_id,
+                "trace_path": str(active_trace.path),
+                "diagnostic_ref": active_trace.diagnostic_ref,
+            }) + "\n")
+            git(worktree, "fetch", "origin")
+            self.assertEqual(git(worktree, "rev-parse", "origin/main"), latest_main)
             self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
-            workstream.finish(workstream_id, self._green_report(), repo=self.repo)
+            preflight = workstream.closeout_preflight(workstream_id, worktree)
+            self.assertEqual(preflight["archive_transition"]["status"], "pass")
+            with self.assertRaisesRegex(workstream.WorkstreamError, "provide a green --validation-report-after-sync"):
+                workstream.finish(
+                    workstream_id, self._green_report("validation-before-sync.json"), repo=self.repo,
+                )
+            self.assertEqual(git(worktree, "rev-parse", "HEAD^2"), latest_main)
+            git(self.repo, "fetch", "origin")
+            trace_ref = (
+                f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+                f"{workstream.FAILED_IMPORT_ARCHIVE_RECOVERY['run_id']}"
+            )
+            trace_remote_ref = trace_ref.replace("refs/remotes/origin/", "refs/heads/")
+            git(self.repo, "fetch", "origin", f"{trace_remote_ref}:{trace_ref}")
+            synced_events = [json.loads(line) for line in git(
+                self.repo, "show", f"{trace_ref}:trace.jsonl",
+            ).splitlines() if line.strip()]
+            sync_witnesses = [event["data"] for event in synced_events
+                              if event.get("event") == "main_sync"]
+            self.assertEqual(sync_witnesses, [{
+                "changed": True, "head": git(worktree, "rev-parse", "HEAD"),
+                "main_sha": latest_main,
+            }])
+            self.assertTrue(workstream._failed_import_recovery_trace_is_authentic(
+                synced_events, workstream_id,
+                workstream.FAILED_IMPORT_ARCHIVE_RECOVERY,
+                active_rel, branch, str(worktree), git(worktree, "rev-parse", "HEAD"),
+                git(worktree, "rev-parse", "origin/main"), trace_ref,
+                git(worktree, "rev-parse", trace_ref),
+            ), active_trace.path.read_text())
+            preflight = workstream.closeout_preflight(workstream_id, worktree)
+            self.assertEqual(preflight["archive_transition"]["status"], "pass", preflight)
+            workstream.finish(
+                workstream_id,
+                self._green_report("validation-after-sync.json"),
+                repo=self.repo,
+            )
+            git(self.repo, "fetch", "origin")
+            git(self.repo, "fetch", "origin", f"{trace_remote_ref}:{trace_ref}")
+            final_events = [json.loads(line) for line in git(
+                self.repo, "show", f"{trace_ref}:trace.jsonl",
+            ).splitlines() if line.strip()]
+            sync_witnesses = [event["data"] for event in final_events
+                              if event.get("event") == "main_sync"]
+            self.assertEqual([event["changed"] for event in sync_witnesses], [True, False])
+            self.assertEqual(sync_witnesses[1]["head"], sync_witnesses[0]["head"])
+            self.assertEqual(sync_witnesses[1]["main_sha"], latest_main)
+            self.assertTrue(any(event.get("event") == "finish_completed"
+                                and event.get("data", {}).get("outcome") == "finished"
+                                for event in final_events))
+            self.assertTrue(any(event.get("event") == "validation_report"
+                                and event.get("data", {}).get("path") == "validation-after-sync.json"
+                                and event.get("data", {}).get("passed") is True
+                                for event in final_events))
             self.assertFalse(worktree.exists())
 
     def test_historical_failed_import_first_sync_conflict_reconciliation_is_exact(self):

@@ -778,6 +778,30 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
         "596dc6c1e9c949eb18940769e4232351ad9f1e60",
         "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
     ],
+    "authorized_main_advance": {
+        "base": "8e4bca145658b825bb6dedeed595a3c53497a138",
+        "head": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        "commits": [
+            "0da9923e818645178a079eece3482216cd295ccc",
+            "0ed185fd23946eeb8a6d5835c171000a65f75a68",
+            "e1cfee4692a754a98a27d7fb3cf382dc55328bb8",
+            "ae5e0d8719d028f8feba6f4250633c30dfe0f470",
+            "bc79a4938577a9822f2d1c3c95ac701f5e8cb0d9",
+            "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        ],
+        "commit_paths": [
+            ["custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md"],
+            ["custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            [
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+            ],
+        ],
+    },
 }
 
 
@@ -797,8 +821,43 @@ def _authorized_failed_import_archive_recovery_error(
     pinned = FAILED_IMPORT_ARCHIVE_RECOVERY
     if transition_commit != pinned["archive"]:
         return "failed-import archive recovery does not match the authorized archive commit"
-    if main != pinned["final_main"]:
-        return "failed-import archive recovery requires its pinned latest-main baseline"
+    baseline_main = pinned["final_main"]
+    if (main != baseline_main
+            and not _failed_import_main_advance_is_authorized(path, pinned, main)):
+        return "failed-import archive recovery main is not a descendant of its pinned baseline"
+    active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    protected_main_paths = {
+        archived_rel,
+        active_rel,
+        pinned["summary"],
+        "AGENTS.md",
+        "custodian/AGENTS.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/agent/paired_review_host_validation.py",
+        "custodian/tools/agent/paired_review_runner.py",
+        "custodian/tools/agent/test_paired_review_runner.py",
+        "custodian/tools/agent/task_packet_index.py",
+        "custodian/tools/validation/validation_manifest.json",
+    }
+    advanced_main_paths = set(git(
+        "diff-tree", "-r", "--no-commit-id", "--name-only",
+        baseline_main, main, cwd=path,
+    ).splitlines())
+    if advanced_main_paths.intersection(protected_main_paths):
+        return "failed-import archive recovery main changed protected packet or validator paths"
+    baseline_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{baseline_main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    current_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    if (baseline_active.returncode or current_active.returncode
+            or baseline_active.stdout != current_active.stdout):
+        return "failed-import archive recovery active packet differs from its pinned authorization"
 
     commits = git("rev-list", "--first-parent", "--reverse",
                   f"{transition_commit}..{head}", cwd=path).splitlines()
@@ -807,9 +866,12 @@ def _authorized_failed_import_archive_recovery_error(
     )]
     correction_history = pinned.get("correction_commits", [])
     expected_history = historical + correction_history
-    if len(commits) != len(expected_history) + 1 or commits[:len(expected_history)] != expected_history:
+    if len(commits) not in {len(expected_history) + 1, len(expected_history) + 2}:
         return "failed-import archive recovery history differs from its pinned lifecycle commits"
-    correction_commits = commits[len(historical):]
+    if commits[:len(expected_history)] != expected_history:
+        return "failed-import archive recovery history differs from its pinned lifecycle commits"
+    correction_commits = commits[len(historical):len(expected_history) + 1]
+    sync_tail = commits[len(expected_history) + 1:]
     for index, correction in enumerate(correction_history):
         expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
         if git("rev-parse", f"{correction}^1", cwd=path, check=False) != expected_parent:
@@ -819,6 +881,15 @@ def _authorized_failed_import_archive_recovery_error(
                            else correction_commits[-2])
         if git("rev-parse", f"{correction_commits[-1]}^1", cwd=path, check=False) != expected_parent:
             return "failed-import correction is not a direct child of its pinned lifecycle predecessor"
+    if sync_tail:
+        sync_commit = sync_tail[0]
+        parents = git("rev-list", "--parents", "-n", "1", sync_commit, cwd=path).split()[1:]
+        if parents != [correction_commits[-1], main]:
+            return "failed-import post-recovery sync does not bind the exact correction and current main"
+        automatic_tree = _automatic_merge_tree(path, sync_commit)
+        actual_tree = git("rev-parse", f"{sync_commit}^{{tree}}", cwd=path)
+        if automatic_tree is None or automatic_tree != actual_tree:
+            return "failed-import post-recovery sync contains an unverified conflict resolution"
 
     expected_parents = {
         pinned["summary_repair"]: [pinned["archive"]],
@@ -862,7 +933,6 @@ def _authorized_failed_import_archive_recovery_error(
     final_actual_tree = git("rev-parse", f"{pinned['final_sync']}^{{tree}}", cwd=path)
     differing = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
                         final_tree, final_actual_tree, cwd=path).splitlines())
-    active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
     active_still_present = subprocess.run(
         ["git", "cat-file", "-e", f"{pinned['final_sync']}:{active_rel}"], cwd=path,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
@@ -898,12 +968,16 @@ def _authorized_failed_import_archive_recovery_error(
         return "pinned final sync conflict is not the exact authorized packet refresh reconciliation"
 
     allowed = {"custodian/tools/agent/workstream.py", "custodian/tools/agent/test_workstream.py"}
+    correction_coverage: set[str] = set()
     for correction in correction_commits:
         correction_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
                                    correction, cwd=path).splitlines())
-        if (correction_paths != allowed
-                or not _commit_paths_are_regular_files(path, correction, allowed)):
+        if (not correction_paths or not correction_paths.issubset(allowed)
+                or not _commit_paths_are_regular_files(path, correction, correction_paths)):
             return "post-sync lifecycle correction is outside its two authorized regular source/test paths"
+        correction_coverage.update(correction_paths)
+    if correction_coverage != allowed:
+        return "post-sync lifecycle correction does not cover both authorized source and test paths"
     active_blob = git("show", f"{main}:{active_rel}", cwd=path, check=False)
     if not active_blob:
         return "cannot verify correction authority from the active origin/main packet"
@@ -926,6 +1000,48 @@ def _authorized_failed_import_archive_recovery_error(
     ):
         return "original failed-import lifecycle trace does not authenticate this exact claim and landing history"
     return None
+
+
+def _failed_import_main_advance_is_authorized(
+    repo: Path, pinned: dict[str, object], current_main: str,
+) -> bool:
+    authorization = pinned.get("authorized_main_advance")
+    if (not isinstance(authorization, dict)
+            or authorization.get("base") != pinned.get("final_main")
+            or current_main != authorization.get("head")):
+        return False
+    commits = authorization.get("commits")
+    commit_paths = authorization.get("commit_paths")
+    if (authorization.get("base") != pinned.get("final_main")
+            or not isinstance(commits, list) or not commits
+            or not isinstance(commit_paths, list) or len(commit_paths) != len(commits)):
+        return False
+    actual = git("rev-list", "--first-parent", "--reverse",
+                 f"{pinned['final_main']}..{current_main}", cwd=repo).splitlines()
+    if actual != commits:
+        return False
+    previous = str(pinned["final_main"])
+    for commit, expected_paths in zip(commits, commit_paths):
+        if (not isinstance(commit, str) or not isinstance(expected_paths, list)
+                or not expected_paths or any(not isinstance(path, str) for path in expected_paths)
+                or len(set(expected_paths)) != len(expected_paths)):
+            return False
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=repo).split()[1:]
+        actual_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                               commit, cwd=repo).splitlines())
+        mode = subprocess.run(
+            ["git", "ls-tree", "-z", commit, "--", *expected_paths],
+            cwd=repo, capture_output=True,
+        )
+        rows = [row for row in mode.stdout.split(b"\0") if row]
+        regular_files = len(rows) == len(expected_paths) and all(
+            row.split(b"\t", 1)[0].split()[0] == b"100644" for row in rows
+        )
+        if (parents != [previous] or actual_paths != set(expected_paths)
+                or mode.returncode or not regular_files):
+            return False
+        previous = commit
+    return True
 
 
 def _automatic_merge_tree(path: Path, commit: str) -> str | None:
@@ -1182,9 +1298,34 @@ def _failed_import_recovery_trace_is_authentic(
             or publication.get("worktree") != worktree):
         return False
     syncs = [e.get("data", {}) for e in events if e.get("event") == "main_sync"]
-    return (not syncs or (len(syncs) == 1 and syncs[0].get("changed") is False
-                          and syncs[0].get("head") == head
-                          and syncs[0].get("main_sha") == main))
+    if not syncs:
+        parents = git("rev-list", "--parents", "-n", "1", head,
+                      cwd=Path(worktree), check=False).split()[1:]
+        return not (len(parents) == 2 and parents[1] == main)
+    if len(syncs) == 1 and syncs[0].get("changed") is False:
+        parents = git("rev-list", "--parents", "-n", "1", head,
+                      cwd=Path(worktree), check=False).split()[1:]
+        return (syncs[0].get("head") == head
+                and syncs[0].get("main_sha") in {main, pinned["final_main"]}
+                and not (len(parents) == 2 and parents[1] == main))
+    if len(syncs) not in {1, 2} or syncs[0].get("changed") is not True:
+        return False
+    changed_sync = syncs[0]
+    if (changed_sync.get("head") != head or changed_sync.get("main_sha") != main
+            or git("rev-parse", f"{head}^2", cwd=Path(worktree), check=False) != main):
+        return False
+    if len(syncs) == 2 and (
+        syncs[1].get("changed") is not False
+        or syncs[1].get("head") != head
+        or syncs[1].get("main_sha") != main
+    ):
+        return False
+    after_sync = [e for e in events if e.get("event") == "validation_after_sync"]
+    return (not after_sync or (len(after_sync) == 1
+            and after_sync[0].get("data", {}).get("passed") is True
+            and events.index(after_sync[0]) > max(
+                index for index, event in enumerate(events) if event.get("event") == "main_sync"
+            )))
 
 
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
