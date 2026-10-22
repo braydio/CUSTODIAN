@@ -1,0 +1,36 @@
+# REVIEW: CONVOY SCAN-TRIGGERED SECURITY
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-campaign-empty-convoy-security-v1`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P2`
+- Depends on: `campaign-empty-convoy-security-v1`
+- Locks: `procgen-authored-convoy, campaign-encounter`
+- Review: `none`
+- Review target workstream: `campaign-empty-convoy-security-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_SECURITY_V1.md`
+- Reviewed main: `6e75b57ea828`
+- Authoring chat: `not-recorded`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Visual review: `none`
+- Goal: Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- Reviewed implementation acceptance: One scan activates at most one wave; no duplicate spawned identities; security clears when registered units defeated; unspawnable case is safe; fresh run seed resets independently.
+- Review evidence: Archived implementation packet/summary; scoped runtime diff; focused smoke; directly affected regressions.
+- Correction threshold: Acceptance failure or missing material proof is blocking; optional polish goes to deferred work. Create bounded correction + paired review if blocking.
+- Focused validation: New convoy-security smoke incl reentry/unload/reload + relevant spawn/AI and C1 multi-seed placement regressions. Prefer objective state/position/scripted metrics; at most two ROI stills when readability cannot be settled structurally.
+- Review focus: Existing enemy health/AI, world encounter Director authority, no new nav footprint, optional event can be skipped. Also check no custom enemy class, turret combat rebalance, inventory, cargo provenance conclusion or vehicle operation.
+- Acceptance: Publish independent findings-first receipt with stable R0-NN findings and proof; no implementation edits in review. On success archive complete so the declared successor can claim.
+- Non-goals: Do not implement new event functionality, art, generalized event infrastructure or opportunistic refactors.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit and push only the review receipt, review packet lifecycle/archive metadata, required closing summary and bounded correction/re-review packets; do not edit reviewed production implementation or unrelated work.`
+
+## Dependency assumption
+The implementation `campaign-empty-convoy-security-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.
+
+## Handoff
+- Next action: On passing review, unlock the next slice in this event chain if any.
+- Blockers or open questions: Implementation must archive complete.
