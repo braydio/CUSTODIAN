@@ -770,6 +770,7 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
     "final_main": "8e4bca145658b825bb6dedeed595a3c53497a138",
     "run_id": "20261020T200652Z-2fd156ce23d0",
     "summary": "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md",
+    "correction_commits": ["d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993"],
 }
 
 
@@ -797,11 +798,20 @@ def _authorized_failed_import_archive_recovery_error(
     historical = [pinned[name] for name in (
         "summary_repair", "first_sync", "post_sync_evidence", "blocker_note", "final_sync",
     )]
-    if len(commits) != len(historical) + 1 or commits[:len(historical)] != historical:
+    correction_history = pinned.get("correction_commits", [])
+    expected_history = historical + correction_history
+    if len(commits) != len(expected_history) + 1 or commits[:len(expected_history)] != expected_history:
         return "failed-import archive recovery history differs from its pinned lifecycle commits"
-    correction = commits[-1]
-    if git("rev-parse", f"{correction}^1", cwd=path, check=False) != pinned["final_sync"]:
-        return "failed-import correction is not a direct child of the pinned final sync"
+    correction_commits = commits[len(historical):]
+    for index, correction in enumerate(correction_history):
+        expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
+        if git("rev-parse", f"{correction}^1", cwd=path, check=False) != expected_parent:
+            return "pinned failed-import correction has unexpected parent order"
+    if correction_commits:
+        expected_parent = (pinned["final_sync"] if len(correction_commits) == 1
+                           else correction_commits[-2])
+        if git("rev-parse", f"{correction_commits[-1]}^1", cwd=path, check=False) != expected_parent:
+            return "failed-import correction is not a direct child of its pinned lifecycle predecessor"
 
     expected_parents = {
         pinned["summary_repair"]: [pinned["archive"]],
@@ -857,11 +867,13 @@ def _authorized_failed_import_archive_recovery_error(
                                                       archived_rel, active_rel)):
         return "pinned final sync conflict is not the exact authorized packet refresh reconciliation"
 
-    correction_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
-                               correction, cwd=path).splitlines())
     allowed = {"custodian/tools/agent/workstream.py", "custodian/tools/agent/test_workstream.py"}
-    if correction_paths != allowed or not _commit_paths_are_regular_files(path, correction, allowed):
-        return "post-sync lifecycle correction is outside its two authorized regular source/test paths"
+    for correction in correction_commits:
+        correction_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                                   correction, cwd=path).splitlines())
+        if (correction_paths != allowed
+                or not _commit_paths_are_regular_files(path, correction, allowed)):
+            return "post-sync lifecycle correction is outside its two authorized regular source/test paths"
     active_blob = git("show", f"{main}:{active_rel}", cwd=path, check=False)
     if not active_blob:
         return "cannot verify correction authority from the active origin/main packet"
@@ -947,9 +959,24 @@ def _post_sync_completion_evidence_is_bounded(path: Path, commit: str,
                  if line.startswith("+") and not line.startswith("+++")]
     removals = [line[1:] for line in diff.stdout.splitlines()
                 if line.startswith("-") and not line.startswith("---")]
-    return (diff.returncode == 0 and not removals and len(additions) == 1
-            and additions[0].startswith("- Post-sync validation: `")
-            and additions[0].endswith("`")
+    removed_evidence = [line for line in removals if line.startswith("- Evidence: `")]
+    added_evidence = [line for line in additions if line.startswith("- Evidence: `")]
+    added_validation = [line for line in additions if line.startswith("- Post-sync validation: ")]
+    if (diff.returncode != 0 or len(removals) != 1 or len(additions) != 2
+            or len(removed_evidence) != 1 or len(added_evidence) != 1
+            or len(added_validation) != 1):
+        return False
+    old_evidence, new_evidence = removed_evidence[0], added_evidence[0]
+    validation = added_validation[0]
+    merge_sha = git("rev-parse", f"{parent}", cwd=path)
+    expected_validation = (
+        f"- Post-sync validation: `After merge `{merge_sha}`, changed-file validation "
+        "passed 43/43 with complete coverage and no timeouts; the manifest retained "
+        "the authorized 90-second bound.`"
+    )
+    return (old_evidence.endswith("`.") and new_evidence.endswith(".`")
+            and old_evidence[:-2] == new_evidence[:-2]
+            and validation == expected_validation
             and _commit_paths_are_regular_files(path, commit, {archived_rel}))
 
 

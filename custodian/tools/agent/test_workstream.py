@@ -242,7 +242,7 @@ class WorkstreamTests(unittest.TestCase):
             "- Goal satisfied: `yes`\n"
             "- Completion boundary satisfied: `yes`\n"
             "- Acceptance satisfied: `yes`\n"
-            "- Evidence: `fixture evidence`\n"
+            "- Evidence: `fixture evidence`.\n"
             "\n## Next Handoff\n"
             f"- Authoring chat: `{authoring_chat}`\n"
         )
@@ -282,11 +282,29 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), first_main)
 
         archived.write_text(archived.read_text().replace(
-            "- Evidence: `fixture evidence`",
-            "- Evidence: `fixture evidence`\n- Post-sync validation: `passed`",
+            "- Evidence: `fixture evidence`.",
+            "- Evidence: `fixture evidence.`\n"
+            f"- Post-sync validation: `After merge `{first_merge}`, changed-file validation "
+            "passed 43/43 with complete coverage and no timeouts; the manifest retained "
+            "the authorized 90-second bound.`",
         ))
         git(self.repo, "add", archived_rel); git(self.repo, "commit", "-m", "record post-sync evidence")
         post_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertTrue(workstream._post_sync_completion_evidence_is_bounded(
+            self.repo, post_sync, archived_rel,
+        ))
+        git(self.repo, "checkout", "-b", "adversarial-post-sync-evidence", post_sync)
+        archived.write_text(archived.read_text().replace(
+            "- Evidence: `fixture evidence.`",
+            "- Evidence: `forged completion evidence.`",
+        ))
+        git(self.repo, "add", archived_rel)
+        git(self.repo, "commit", "-m", "forge post-sync completion evidence")
+        forged_post_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertFalse(workstream._post_sync_completion_evidence_is_bounded(
+            self.repo, forged_post_sync, archived_rel,
+        ))
+        git(self.repo, "checkout", branch)
         summary.write_text(summary.read_text() + "\nBlocker: finish retry after sync conflict\n")
         git(self.repo, "add", summary_rel); git(self.repo, "commit", "-m", "record finish blocker")
         blocker_commit = git(self.repo, "rev-parse", "HEAD")
@@ -369,6 +387,7 @@ class WorkstreamTests(unittest.TestCase):
             "trace_anchor": trace_anchor,
             "first_main": first_main,
             "final_main": final_main,
+            "correction_commits": [],
         })
         with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
             self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
