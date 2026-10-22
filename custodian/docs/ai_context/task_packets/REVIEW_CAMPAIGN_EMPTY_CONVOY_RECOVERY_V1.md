@@ -12,7 +12,7 @@
 - Review: `none`
 - Review target workstream: `campaign-empty-convoy-recovery-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_EMPTY_CONVOY_RECOVERY_V1.md`
-- Reviewed main: `6e75b57ea828`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
 - Authoring chat: `not-recorded`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`

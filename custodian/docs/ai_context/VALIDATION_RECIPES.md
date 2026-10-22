@@ -223,6 +223,24 @@ For production requirement registry, CLI, or generated-view changes, run
 `python3 custodian/tools/assets/asset.py needs --check`, and
 `python3 custodian/tools/assets/asset.py doctor`.
 
+## Hub Road Empty Procession
+
+Run the real-Hub-host sequence smoke, then preserve the Hub route, handoff,
+Forum Dais, and campaign-state regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_road_empty_procession --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+python3 custodian/tools/validation/run_validation.py --test world_transition_handoff --json
+python3 custodian/tools/validation/run_validation.py --test hub_forum_adjudication --json
+godot --headless --path custodian --script res://tools/validation/campaign_outcome_exactly_once_smoke.gd
+```
+
+The focused smoke drives a real Operator across the production H1 route, checks
+ordered lamp/bell beats, resumes from a partial HubState snapshot, and rejects
+replay after restoring a completed snapshot. It also asserts that the Forum
+Dais, Crown Transfer ingress, and Contract prewarm remain untouched.
+
 ## Preferred Agent Entry Point
 
 For App/Boot startup routing, run the focused spine smoke and its existing

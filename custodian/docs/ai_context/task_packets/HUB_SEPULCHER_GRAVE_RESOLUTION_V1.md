@@ -16,7 +16,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default`
-- Reviewed main: `6e75b57ea828`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
 - Goal: Sepulcher grave attestation + pale growth; deliver one playable, bounded event slice.

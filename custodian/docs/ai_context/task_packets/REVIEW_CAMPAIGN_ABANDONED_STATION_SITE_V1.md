@@ -12,7 +12,7 @@
 - Review: `none`
 - Review target workstream: `campaign-abandoned-station-site-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/CAMPAIGN_ABANDONED_STATION_SITE_V1.md`
-- Reviewed main: `6e75b57ea828`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
 - Authoring chat: `not-recorded`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`

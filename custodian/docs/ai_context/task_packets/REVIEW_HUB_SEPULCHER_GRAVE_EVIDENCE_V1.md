@@ -12,7 +12,7 @@
 - Review: `none`
 - Review target workstream: `hub-sepulcher-grave-evidence-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md`
-- Reviewed main: `6e75b57ea828`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
 - Authoring chat: `not-recorded`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`

@@ -315,7 +315,6 @@ packet and its paired review, not as chat-only downloads.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
 - `HUB_FORUM_HEARING_EVIDENCE_V1.md` — Forum hearing evidence plinths; deliver one playable, bounded event slice.
 - `HUB_FORUM_HEARING_FINDING_V1.md` — Forum hearing determination; deliver one playable, bounded event slice.
-- `HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md` — Stage one playable three-beat empty procession in the POST-AWAKENING Hub North Processional. Existing Road plates are presentation only.
 - `HUB_ROAD_PROCESSION_TESTIMONY_V1.md` — Road witness testimony + revisit; deliver one playable, bounded event slice.
 - `OPERATOR_GUARD_BREAK_PRESENTATION.md` — Give guard break its own committed, readable whole-body failure presentation, distinct from ordinary non-breaking recoil, without weakening the existing move...
 - `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — Turn the newly generated unarmed-defense source-work set into reviewed, registration-correct 96×96 Operator production assets through Source Session + Asset...

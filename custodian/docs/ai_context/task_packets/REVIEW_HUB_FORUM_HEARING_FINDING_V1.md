@@ -12,7 +12,7 @@
 - Review: `none`
 - Review target workstream: `hub-forum-hearing-finding-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/HUB_FORUM_HEARING_FINDING_V1.md`
-- Reviewed main: `6e75b57ea828`
+- Reviewed main: `6e75b57ea828f5d90679ae737052a4acdefce361`
 - Authoring chat: `not-recorded`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
