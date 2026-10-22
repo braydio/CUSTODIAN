@@ -760,6 +760,7 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
     "archive": "25229d8d3874608f7b8492df98bc3df4385a9d28",
     "summary_repair": "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
     "first_sync": "dbcf8aec4eb09264b60bea9d26c99f235022efb5",
+    "first_sync_test_runner_blob": "7e9051cac61dc56ddc63c013e546a439681fcabd",
     "post_sync_evidence": "a55c14e020d4986fb35baa75bde691c0c2e67e93",
     "blocker_note": "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
     "final_sync": "d83319a3a9c211fe3947e4951bfaa06f1684bf05",
@@ -846,13 +847,12 @@ def _authorized_failed_import_archive_recovery_error(
     if blocker_paths != {summary_rel}:
         return "pinned blocker note changed files outside the canonical closing summary"
 
-    # The first merge is a clean automatic merge. The later merge contains one
-    # conflict-resolution delta: the exact planning refresh from current main
-    # inserted into the archived packet while preserving branch completion data.
-    for merge_commit in (pinned["first_sync"],):
-        tree = _automatic_merge_tree(path, merge_commit)
-        if tree is None or tree != git("rev-parse", f"{merge_commit}^{{tree}}", cwd=path):
-            return "pinned first sync merge differs from its Git-authenticated automatic merge"
+    # The first sync carries four bounded conflict resolutions: additive managed
+    # index entries, preservation of the already-archived packet, the authorized
+    # timeout field, and its exact regression test output. The later merge
+    # inserts the exact planning refresh from current main into that archive.
+    if not _failed_import_first_sync_is_bounded(path, pinned, archived_rel):
+        return "pinned first sync contains conflict resolution outside its exact authorized outputs"
     final_tree = _automatic_merge_tree(path, pinned["final_sync"])
     if final_tree is None:
         return "cannot reconstruct the pinned final sync merge tree"
@@ -909,6 +909,119 @@ def _automatic_merge_tree(path: Path, commit: str) -> str | None:
                             text=True, capture_output=True)
     first = result.stdout.splitlines()[0].strip() if result.stdout.splitlines() else ""
     return first if first and re.fullmatch(r"[0-9a-f]{40,64}", first) else None
+
+
+def _failed_import_first_sync_is_bounded(path: Path, pinned: dict[str, str],
+                                         archived_rel: str) -> bool:
+    commit = pinned["first_sync"]
+    automatic_tree = _automatic_merge_tree(path, commit)
+    merged_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
+    if automatic_tree == merged_tree:
+        return True
+    parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+    if len(parents) != 2:
+        return False
+    first_parent, second_parent = parents
+    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                      automatic_tree, merged_tree, cwd=path).splitlines())
+    readme = "custodian/docs/ai_context/task_packets/README.md"
+    manifest = "custodian/tools/validation/validation_manifest.json"
+    regression = "custodian/tools/agent/test_paired_review_runner.py"
+    active_packet = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    allowed = {readme, archived_rel, manifest, regression}
+    if changed != allowed:
+        return False
+
+    for relative in allowed:
+        entry = subprocess.run(["git", "ls-tree", "-z", commit, "--", relative],
+                               cwd=path, capture_output=True)
+        if (entry.returncode or not entry.stdout
+                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+            return False
+    if subprocess.run(["git", "cat-file", "-e", f"{commit}:{active_packet}"], cwd=path,
+                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        return False
+
+    base_readme = subprocess.run(["git", "show", f"{first_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    main_readme = subprocess.run(["git", "show", f"{second_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    merged_readme = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
+                                   capture_output=True).stdout
+    if not all((base_readme, main_readme, merged_readme)):
+        return False
+    for tools_path in (Path(path) / "custodian/tools", Path(path) / "custodian/tools/agent"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import paired_review_host_validation as host_validation
+    except ImportError:
+        return False
+    if not host_validation._managed_packet_index_additive_reconciliation(
+        base_readme, main_readme, merged_readme,
+    ):
+        return False
+
+    base_archive = subprocess.run(["git", "show", f"{first_parent}:{archived_rel}"], cwd=path,
+                                  capture_output=True).stdout
+    merged_archive = subprocess.run(["git", "show", f"{commit}:{archived_rel}"], cwd=path,
+                                    capture_output=True).stdout
+    if not base_archive or merged_archive != base_archive:
+        return False
+    if not _manifest_timeout_conflict_is_bounded(path, first_parent, second_parent,
+                                                 commit, manifest):
+        return False
+    merged_regression = git("rev-parse", f"{commit}:{regression}", cwd=path, check=False)
+    return merged_regression == pinned["first_sync_test_runner_blob"]
+
+
+def _manifest_timeout_conflict_is_bounded(path: Path, first_parent: str,
+                                          second_parent: str, merge_commit: str,
+                                          manifest_path: str) -> bool:
+    blobs = [subprocess.run(["git", "show", f"{revision}:{manifest_path}"], cwd=path,
+                            capture_output=True) for revision in (first_parent, second_parent,
+                                                                  merge_commit)]
+    if any(result.returncode for result in blobs):
+        return False
+    branch_bytes, main_bytes, merged_bytes = (result.stdout for result in blobs)
+    try:
+        branch_doc, main_doc, merged_doc = (json.loads(raw) for raw in
+                                            (branch_bytes, main_bytes, merged_bytes))
+    except (ValueError, TypeError):
+        return False
+
+    def pair(document: dict) -> dict | None:
+        matches = [item for item in document.get("tests", [])
+                   if item.get("id") == "paired_review_runner_unit"]
+        return matches[0] if len(matches) == 1 else None
+
+    branch_pair, main_pair, merged_pair = map(pair, (branch_doc, main_doc, merged_doc))
+    if not branch_pair or not main_pair or not merged_pair:
+        return False
+    if (branch_pair.get("timeout_sec") != 90
+            or main_pair.get("timeout_sec") not in {30, 60}
+            or merged_pair != branch_pair):
+        return False
+    branch_without_timeout = json.loads(branch_bytes)
+    main_without_timeout = json.loads(main_bytes)
+    pair(branch_without_timeout).pop("timeout_sec", None)
+    pair(main_without_timeout).pop("timeout_sec", None)
+    if branch_without_timeout != main_without_timeout:
+        return False
+
+    marker = b'"id": "paired_review_runner_unit"'
+    start = main_bytes.find(marker)
+    if start < 0 or main_bytes.find(marker, start + len(marker)) >= 0:
+        return False
+    end = main_bytes.find(b'"needs_import": false', start)
+    if end < 0:
+        return False
+    match = re.search(rb'"timeout_sec": (?:30|60)', main_bytes[start:end])
+    if match is None:
+        return False
+    expected = (main_bytes[:start + match.start()] + b'"timeout_sec": 90'
+                + main_bytes[start + match.end():])
+    return branch_bytes == expected and merged_bytes == branch_bytes
 
 
 def _commit_paths_are_regular_files(path: Path, commit: str, expected: set[str]) -> bool:
