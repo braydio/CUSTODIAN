@@ -111,8 +111,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
             ["git", "show", "030dbe986c0ced4e8b1dc2c816f466c81146b5f2:" + manifest_path],
             cwd=repository, check=True, capture_output=True,
         ).stdout
-        current_main = subprocess.run(
-            ["git", "show", "origin/main:" + manifest_path],
+        published_target = subprocess.run(
+            ["git", "show", "6e75b57ea828f5d90679ae737052a4acdefce361:" + manifest_path],
             cwd=repository, check=True, capture_output=True,
         ).stdout
 
@@ -124,25 +124,28 @@ class PairedReviewRunnerTests(unittest.TestCase):
             return matches[0]
 
         original_pair = pair_record(original)
-        current_pair = pair_record(current_main)
+        current_pair = pair_record(published_target)
         self.assertEqual(original_pair["timeout_sec"], 30)
         self.assertIn(current_pair["timeout_sec"], (30, 60, 90))
         self.assertEqual({k: v for k, v in original_pair.items() if k != "timeout_sec"},
                          {k: v for k, v in current_pair.items() if k != "timeout_sec"})
         if current_pair["timeout_sec"] != 90:
             marker = b'"id": "paired_review_runner_unit"'
-            start = current_main.index(marker)
-            end = current_main.index(b'      "needs_import": false', start)
-            chunk = current_main[start:end]
+            start = published_target.index(marker)
+            end = published_target.index(b'      "needs_import": false', start)
+            chunk = published_target[start:end]
             match = re.search(rb'"timeout_sec": (?:30|60)', chunk)
             self.assertIsNotNone(match)
             patched_chunk = (chunk[:match.start()] + b'"timeout_sec": 90'
                              + chunk[match.end():])
-            expected = current_main[:start] + patched_chunk + current_main[end:]
+            expected = published_target[:start] + patched_chunk + published_target[end:]
         else:
-            expected = current_main
+            expected = published_target
+        self.assertEqual(published_target, expected)
         actual = (repository / manifest_path).read_bytes()
-        self.assertEqual(actual, expected)
+        # Main may later add unrelated manifest owners. Preserve the exact
+        # historical timeout contract while checking its current record.
+        self.assertEqual(pair_record(actual), pair_record(published_target))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
         canonical = runner.review_outcome.render_review_outcome(
@@ -3082,6 +3085,18 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             with patch.dict(os.environ, {"GIT_ALTERNATE_OBJECT_DIRECTORIES": alternates}):
                 yield
 
+    def _host_import_trace_fixture(self):
+        published = subprocess.check_output(
+            ["git", "show", f"{host_validation._HOST_IMPORT_CONFLICT_TRACE_REF}:trace.jsonl"],
+            cwd=ROOT,
+        )
+        final_event = (json.dumps(host_validation._HOST_IMPORT_LOCAL_TRACE_FINAL_EVENT,
+                                  sort_keys=True, separators=(",", ":")) + "\n").encode()
+        local = published + final_event
+        self.assertEqual(hashlib.sha256(local).hexdigest(),
+                         host_validation._HOST_IMPORT_CONFLICT_TRACE_SHA256)
+        return local
+
     def test_historical_execution_reset_archive_merge_followup_is_exactly_pinned(self):
         workstream = "agent-execution-reset-v1"
         archive = f"{runner.PACKET_ROOT}/archived/AGENT_EXECUTION_RESET_V1.md"
@@ -3102,6 +3117,163 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             "custodian/docs/ai_context/task_packets/archived/AGENT_EXECUTION_RESET_V1.md",
             "custodian/tools/agent/test_workstream.py",
         })
+
+    def test_historical_host_import_recovery_authenticates_conflict_resolution_merges(self):
+        workstream = "agent-paired-review-failed-host-validation-import-recovery-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md")
+        with patch.object(host_validation, "_read_host_import_local_trace",
+                          return_value=self._host_import_trace_fixture()):
+            with self._historical_claim_objects():
+                span = host_validation.resolve_validation_source_span(
+                    ROOT, "6e75b57ea828f5d90679ae737052a4acdefce361",
+                    "25229d8d3874608f7b8492df98bc3df4385a9d28", workstream, archive,
+                )
+        self.assertEqual(span["head"], "6e75b57ea828f5d90679ae737052a4acdefce361")
+        self.assertEqual(span["base"], "030dbe986c0ced4e8b1dc2c816f466c81146b5f2")
+        self.assertEqual(span["provenance"]["trace_sha256"],
+                         host_validation._HOST_IMPORT_PUBLISHED_TRACE_SHA256)
+        self.assertEqual(span["provenance"]["trace_main_sync_sha"],
+                         "b5b1e5f2450f3f577a5df5c173c338e6da5187d1")
+        self.assertEqual(span["provenance"]["trace_landing_kind"],
+                         "main-sync-merge-followup")
+        self.assertTrue({
+            "custodian/tools/agent/paired_review_host_validation.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+            "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py",
+        }.issubset(set(span["paths"])))
+        followup = span["provenance"]["post_merge_followup"]
+        self.assertEqual(followup["post_merge_followup_commits"],
+                         list(host_validation._HOST_IMPORT_FOLLOWUP_COMMITS))
+        self.assertEqual(set(followup["authenticated_followup_paths"]),
+                         host_validation._HOST_IMPORT_FOLLOWUP_PATHS)
+        self.assertIn("custodian/tools/agent/test_paired_review_runner.py",
+                      followup["authenticated_merge_paths"][
+                          "dbcf8aec4eb09264b60bea9d26c99f235022efb5"])
+
+    def test_historical_host_import_conflict_trace_rejects_mutation_and_reordering(self):
+        workstream = host_validation._HOST_IMPORT_CONFLICT_WORKSTREAM
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md")
+        ref = host_validation._HOST_IMPORT_CONFLICT_TRACE_REF
+        original_reader = host_validation._trace_events
+        base_events = original_reader(ROOT, ref)
+
+        def resolve_with(mutator):
+            changed = json.loads(json.dumps(base_events))
+            mutator(changed)
+
+            def read_events(repo, candidate_ref):
+                return changed if candidate_ref == ref else original_reader(repo, candidate_ref)
+
+            with patch.object(host_validation, "_trace_events", side_effect=read_events):
+                with patch.object(host_validation, "_read_host_import_local_trace",
+                                  return_value=self._host_import_trace_fixture()):
+                    with self._historical_claim_objects():
+                        return host_validation.resolve_validation_source_span(
+                            ROOT, "6e75b57ea828f5d90679ae737052a4acdefce361",
+                            "25229d8d3874608f7b8492df98bc3df4385a9d28", workstream, archive,
+                        )
+
+        mutations = {
+            "missing interruption": lambda rows: rows.pop(26),
+            "duplicate interruption": lambda rows: rows.insert(27, dict(rows[26])),
+            "reordered interruptions": lambda rows: rows.__setitem__(
+                slice(26, 30), [rows[29], rows[27], rows[28], rows[26]]),
+            "forged interruption": lambda rows: rows[26]["data"].update({"reason": "different"}),
+            "substituted resume": lambda rows: rows[35]["data"].update({"head": "0" * 40}),
+            "forged later sync": lambda rows: rows[42]["data"].update({"main_sha": "0" * 40}),
+            "missing final sync": lambda rows: rows.pop(54),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name), self.assertRaises(host_validation.HostValidationError):
+                resolve_with(mutate)
+        with patch.object(host_validation, "_read_host_import_local_trace",
+                          return_value=b"mutated immutable trace"):
+            with self._historical_claim_objects():
+                with self.assertRaisesRegex(host_validation.HostValidationError, "trace is malformed"):
+                    host_validation.resolve_validation_source_span(
+                        ROOT, "6e75b57ea828f5d90679ae737052a4acdefce361",
+                        "25229d8d3874608f7b8492df98bc3df4385a9d28", workstream, archive,
+                    )
+
+    def test_historical_host_import_conflict_merge_rejects_substitutions_and_mode_drift(self):
+        repo = ROOT
+        workstream = host_validation._HOST_IMPORT_CONFLICT_WORKSTREAM
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md")
+        target_text = subprocess.check_output(
+            ["git", "show", f"{host_validation._HOST_IMPORT_CONFLICT_LANDING}:{archive}"],
+            cwd=repo, text=True,
+        )
+        merges = [
+            {key: item[key] for key in ("commit", "first_parent", "main_sha")}
+            for item in host_validation._HOST_IMPORT_CONFLICT_MERGES
+        ] + [dict(host_validation._HOST_IMPORT_LATER_SYNC_MERGE)]
+        events = host_validation._trace_events(
+            repo, host_validation._HOST_IMPORT_CONFLICT_TRACE_REF,
+        )
+        args = (repo, workstream, target_text, host_validation._HOST_IMPORT_CONFLICT_ARCHIVE,
+                host_validation._HOST_IMPORT_CONFLICT_LANDING, merges,
+                list(host_validation._HOST_IMPORT_FOLLOWUP_COMMITS), events,
+                host_validation._HOST_IMPORT_CONFLICT_TRACE_REF)
+
+        def verify(*helper_args):
+            with patch.object(host_validation, "_read_host_import_local_trace",
+                              return_value=self._host_import_trace_fixture()):
+                return host_validation._verify_host_import_conflict_merges(*helper_args)
+
+        substituted = [dict(merge) for merge in merges]
+        substituted[0]["commit"] = "0" * 40
+        self.assertIsNone(verify(*args[:5], substituted, *args[6:]))
+        wrong_parent = [dict(merge) for merge in merges]
+        wrong_parent[0]["first_parent"] = "0" * 40
+        self.assertIsNone(verify(
+            *args[:5], wrong_parent, *args[6:]))
+        self.assertIsNone(verify(
+            *args[:5], merges + [dict(host_validation._HOST_IMPORT_LATER_SYNC_MERGE)], *args[6:]))
+        self.assertIsNone(verify(
+            *args[:6], list(host_validation._HOST_IMPORT_FOLLOWUP_COMMITS) + ["0" * 40], *args[7:]))
+
+        original_run = subprocess.run
+        conflict_tree = host_validation._HOST_IMPORT_CONFLICT_MERGES[0]["conflict_tree"]
+        conflict_commit = host_validation._HOST_IMPORT_CONFLICT_MERGES[0]["commit"]
+
+        for name, replacement, expected_error in (
+            ("mode", ("100644 100644", "100644 100755"), "file mode"),
+            ("path", ("custodian/tools/agent/test_paired_review_runner.py",
+                      "custodian/tools/agent/rogue.py"), "resolution paths"),
+            ("content", ("7e9051cac61dc56ddc63c013e546a439681fcabd", "0" * 40),
+             "resolution paths"),
+        ):
+            def altered_resolution(*command, **kwargs):
+                result = original_run(*command, **kwargs)
+                argv = command[0]
+                if (argv[:4] == ["git", "diff", "--raw", "--no-abbrev"]
+                        and argv[4:] == [conflict_tree, conflict_commit]
+                        and result.returncode == 0):
+                    result = subprocess.CompletedProcess(
+                        result.args, result.returncode,
+                        stdout=result.stdout.replace(*replacement, 1), stderr=result.stderr,
+                    )
+                return result
+
+            with self.subTest(mutation=name):
+                with patch.object(host_validation.subprocess, "run", side_effect=altered_resolution):
+                    with self.assertRaisesRegex(host_validation.HostValidationError, expected_error):
+                        verify(*args)
+
+        original_git = host_validation._git
+
+        def altered_tree(repo_path, *git_args):
+            if git_args == ("rev-parse", f"{conflict_commit}^{{tree}}"):
+                return "0" * 40
+            return original_git(repo_path, *git_args)
+
+        with patch.object(host_validation, "_git", side_effect=altered_tree):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "tree identity changed"):
+                verify(*args)
 
     def test_historical_blender_source_archive_admits_only_receipted_declared_blend(self):
         workstream = "operator-motion-foundry-blender-2d-rig-v1"

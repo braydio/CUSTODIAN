@@ -9,6 +9,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
@@ -83,6 +84,395 @@ _RESET_FOLLOWUP_PATHS = {
     "custodian/docs/ai_context/task_packets/archived/AGENT_EXECUTION_RESET_V1.md",
     "AGENT_EXECUTION_RESET_V1_CLAUDE_SUMMARY.md",
 }
+
+_HOST_IMPORT_CONFLICT_WORKSTREAM = (
+    "agent-paired-review-failed-host-validation-import-recovery-v1"
+)
+_HOST_IMPORT_CONFLICT_RUN_ID = "20261020T200652Z-2fd156ce23d0"
+_HOST_IMPORT_CONFLICT_ARCHIVE = "25229d8d3874608f7b8492df98bc3df4385a9d28"
+_HOST_IMPORT_ARCHIVE_PARENT = "66266c1d8faa1fc6ffee84681a7b0907e59603ad"
+_HOST_IMPORT_ARCHIVE_TREE = "ec70cea3f49f8c6d7a8cc3ecb58e548b2c3078ec"
+_HOST_IMPORT_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+)
+_HOST_IMPORT_ARCHIVE_PATHS = {
+    f"{PACKET_ROOT}/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md",
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md",
+    f"{PACKET_ROOT}/README.md",
+    _HOST_IMPORT_REVIEW_PACKET,
+}
+_HOST_IMPORT_ARCHIVE_BLOBS = {
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md":
+        "a8650380c90545457e8503041409f5fb8f4861d6",
+    f"{PACKET_ROOT}/README.md": "1daf7eae0a3cb126d2fa6f284e9d1609de8f3248",
+    _HOST_IMPORT_REVIEW_PACKET: "17ecaac9ca17818d769a9f953003cf1ac7610665",
+}
+_HOST_IMPORT_CONFLICT_LANDING = "6e75b57ea828f5d90679ae737052a4acdefce361"
+_HOST_IMPORT_CONFLICT_TRACE_REF = (
+    "refs/remotes/origin/agent-diagnostics/"
+    f"{_HOST_IMPORT_CONFLICT_WORKSTREAM}/{_HOST_IMPORT_CONFLICT_RUN_ID}"
+)
+_HOST_IMPORT_CONFLICT_TRACE_BLOB = "cdde47b5855c709e639fabc0455abe567b326310"
+_HOST_IMPORT_CONFLICT_TRACE_SHA256 = (
+    "8d51464d6fe4852cc6154e71889bff250b32994a61f0551cb66b98da8b84a915"
+)
+_HOST_IMPORT_PUBLISHED_TRACE_SHA256 = (
+    "3c3327ae13b533e5e7e5bf483bbd92fe726f888a2c1d8f83a4c30482a003f502"
+)
+_HOST_IMPORT_LOCAL_TRACE_FINAL_EVENT = {
+    "agent": None,
+    "data": {
+        "argv": [
+            "git", "push", "origin",
+            "fc31dfe831d562f5e5c68fba7483e124942b2f44:refs/heads/"
+            "agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
+            "20261020T200652Z-2fd156ce23d0",
+        ],
+        "duration_ms": 2442,
+        "return_code": 0,
+        "stderr": "To github.com:braydio/CUSTODIAN.git\n"
+        "   47ad2c46e..fc31dfe83  fc31dfe831d562f5e5c68fba7483e124942b2f44 -> "
+        "agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
+        "20261020T200652Z-2fd156ce23d0\n",
+        "stdout": "",
+    },
+    "elapsed_ms": 119776061,
+    "event": "subprocess",
+    "execution_generation": "execution-reset-v1-20261020",
+    "host": "archdesk",
+    "packet": f"{PACKET_ROOT}/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md",
+    "pid": 1633009,
+    "run_id": "20261020T200652Z-2fd156ce23d0",
+    "schema": "custodian.workflow_trace_event.v1",
+    "schema_version": 1,
+    "timestamp_utc": "2026-10-22T05:23:08.540+00:00",
+    "workstream": "agent-paired-review-failed-host-validation-import-recovery-v1",
+}
+_HOST_IMPORT_CONFLICT_MERGES = (
+    {
+        "commit": "dbcf8aec4eb09264b60bea9d26c99f235022efb5",
+        "first_parent": "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
+        "main_sha": "e9e69fc2178b1a96e02240f4b0a86cdaf30581e7",
+        "tree": "1937ca5af43c755a509c35ebb207e691bbd14fa3",
+        "conflict_tree": "630cd341a3157a6712f4c06b11743ead3fdd38d5",
+        "resolution": {
+            "custodian/docs/ai_context/task_packets/README.md": (
+                "100644", "b0afb24682bd1071bcf5a64bd5250b5210d310f0"),
+            "custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md": (
+                "100644", "a8650380c90545457e8503041409f5fb8f4861d6"),
+            "custodian/tools/agent/test_paired_review_runner.py": (
+                "100644", "7e9051cac61dc56ddc63c013e546a439681fcabd"),
+            "custodian/tools/validation/validation_manifest.json": (
+                "100644", "07f867213d3f6e778628f04ab38369dd782a0fca"),
+        },
+        "blocked_event_index": 26,
+    },
+    {
+        "commit": "d83319a3a9c211fe3947e4951bfaa06f1684bf05",
+        "first_parent": "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
+        "main_sha": "8e4bca145658b825bb6dedeed595a3c53497a138",
+        "tree": "92cbaa6f98f93f0e354e04c37a3913637162d5fb",
+        "conflict_tree": "0ae7a22eb2c76be9f9035e96b8417e944738389e",
+        "resolution": {
+            "custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md": (
+                "100644", "5825264aa7296014bf2b3ccf498a8b30152fa654"),
+        },
+        "blocked_event_index": 29,
+    },
+)
+_HOST_IMPORT_LATER_SYNC_MERGE = {
+    "commit": "4b1af571345583e1f7d5a9b672647b28c75bd55f",
+    "first_parent": "d66664cfc037c8eb8ba9b8e316badcc06955aa9d",
+    "main_sha": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+}
+_HOST_IMPORT_FOLLOWUP_PATHS = {
+    "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md",
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md",
+    "custodian/tools/agent/test_workstream.py",
+    "custodian/tools/agent/workstream.py",
+}
+_HOST_IMPORT_FOLLOWUP_COMMITS = (
+    "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
+    "a55c14e020d4986fb35baa75bde691c0c2e67e93",
+    "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
+    "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+    "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+    "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+    "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+    "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
+    "1f6cfba992dfe73691ae71eaefe9c75f729a18fe",
+    "2aac89ebfe200d5fb26b4bf06d975db06f7f985a",
+    "d66664cfc037c8eb8ba9b8e316badcc06955aa9d",
+    "6e75b57ea828f5d90679ae737052a4acdefce361",
+)
+_HOST_IMPORT_FINAL_FOLLOWUP_BLOBS = {
+    "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md":
+        "416bb0aa16339c1ef92d0ccb023e54ae11190968",
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md":
+        "5825264aa7296014bf2b3ccf498a8b30152fa654",
+    "custodian/tools/agent/test_workstream.py": "be61e5dbf28793f7ddf6695a9d9d1ada0380705d",
+    "custodian/tools/agent/workstream.py": "bf4cda7b8f00a6540f0849e68b21a2d1c3b6698c",
+}
+_HOST_IMPORT_CONFLICT_RESUME_EVENT_INDEX = 35
+_HOST_IMPORT_CONFLICT_LATER_SYNC = {
+    "changed": True,
+    "head": "4b1af571345583e1f7d5a9b672647b28c75bd55f",
+    "main_sha": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+}
+_HOST_IMPORT_CONFLICT_FINAL_SYNC = {
+    "changed": False,
+    "head": _HOST_IMPORT_CONFLICT_LANDING,
+    "main_sha": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+}
+
+
+def _read_host_import_local_trace(repo: Path) -> bytes:
+    common = Path(_git(repo, "rev-parse", "--git-common-dir"))
+    if not common.is_absolute():
+        common = (repo / common).resolve()
+    path = (common / "custodian-workflow" / "traces" / _HOST_IMPORT_CONFLICT_WORKSTREAM
+            / f"{_HOST_IMPORT_CONFLICT_RUN_ID}.jsonl")
+    if path.is_symlink() or not path.is_file():
+        raise HostValidationError("host-import immutable local lifecycle trace is missing or unsafe")
+    try:
+        return path.read_bytes()
+    except OSError as exc:
+        raise HostValidationError("host-import immutable local lifecycle trace is unreadable") from exc
+
+
+def _verify_host_import_conflict_merges(
+    repo: Path, target_workstream: str, target_packet_text: str,
+    landing_commit: str, trace_landing: str, merges: list[dict[str, str]],
+    followup_commits: list[str],
+    events: list[dict], trace_ref: str,
+) -> dict | None:
+    """Authenticate only the two conflict-resolved merges in the pinned host-import run."""
+    if (target_workstream != _HOST_IMPORT_CONFLICT_WORKSTREAM
+            or landing_commit != _HOST_IMPORT_CONFLICT_ARCHIVE
+            or trace_landing != _HOST_IMPORT_CONFLICT_LANDING
+            or trace_ref != _HOST_IMPORT_CONFLICT_TRACE_REF
+            or header_field(target_packet_text, "Workstream") != _HOST_IMPORT_CONFLICT_WORKSTREAM
+            or tuple((merge.get("commit"), merge.get("first_parent"), merge.get("main_sha"))
+                     for merge in merges)
+            != tuple((item["commit"], item["first_parent"], item["main_sha"])
+                     for item in (*_HOST_IMPORT_CONFLICT_MERGES, _HOST_IMPORT_LATER_SYNC_MERGE))
+            or tuple(followup_commits) != _HOST_IMPORT_FOLLOWUP_COMMITS):
+        return None
+
+    trace_blob = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{trace_ref}:trace.jsonl"],
+        cwd=repo, text=True, capture_output=True,
+    )
+    trace_bytes = subprocess.run(
+        ["git", "show", f"{trace_ref}:trace.jsonl"], cwd=repo, capture_output=True,
+    )
+    if (trace_blob.returncode or trace_blob.stdout.strip() != _HOST_IMPORT_CONFLICT_TRACE_BLOB
+            or trace_bytes.returncode
+            or _sha256(trace_bytes.stdout) != _HOST_IMPORT_PUBLISHED_TRACE_SHA256
+            or len(events) != 62):
+        raise HostValidationError("host-import conflict trace identity or content changed")
+    try:
+        published_events = [json.loads(line) for line in trace_bytes.stdout.splitlines()]
+        local_trace_bytes = _read_host_import_local_trace(repo)
+        local_events = [json.loads(line) for line in local_trace_bytes.splitlines()]
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise HostValidationError("host-import immutable lifecycle trace is malformed") from exc
+    if (_sha256(local_trace_bytes) != _HOST_IMPORT_CONFLICT_TRACE_SHA256
+            or published_events != events or len(local_events) != 63
+            or local_events[:-1] != published_events
+            or local_events[-1] != _HOST_IMPORT_LOCAL_TRACE_FINAL_EVENT):
+        raise HostValidationError(
+            "host-import local trace does not preserve the pinned publication and final push event"
+        )
+    if any(event.get("run_id") != _HOST_IMPORT_CONFLICT_RUN_ID
+           or event.get("workstream") != _HOST_IMPORT_CONFLICT_WORKSTREAM
+           or event.get("packet") != (
+               f"{PACKET_ROOT}/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md")
+           or event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("schema_version") != 1 for event in events):
+        raise HostValidationError("host-import conflict trace contains a mismatched run identity")
+
+    conflict_reason = "origin/main merge conflicted; resolve in the preserved worktree"
+    conflict_events = [
+        index for index, event in enumerate(events)
+        if event.get("event") == "run_blocked"
+        and event.get("data") == {"reason": conflict_reason}
+    ]
+    expected_indexes = [item["blocked_event_index"] for item in _HOST_IMPORT_CONFLICT_MERGES]
+    if conflict_events != expected_indexes:
+        raise HostValidationError("host-import trace conflict interruptions are missing, duplicate, or reordered")
+    resumed = events[_HOST_IMPORT_CONFLICT_RESUME_EVENT_INDEX]
+    expected_resume = {
+        "branch": f"agent/{_HOST_IMPORT_CONFLICT_WORKSTREAM}",
+        "head": _HOST_IMPORT_CONFLICT_MERGES[1]["commit"],
+        "worktree": "/home/braydenchaffee/Projects/.custodian-worktrees/"
+        "agent-paired-review-failed-host-validation-import-recovery-v1-"
+        "20261020T200652Z-2fd156ce23d0",
+    }
+    if (resumed.get("event") != "worktree_resumed" or resumed.get("data") != expected_resume
+            or resumed.get("timestamp_utc") != "2026-10-22T04:11:09.185+00:00"):
+        raise HostValidationError("host-import trace does not bind the exact post-conflict worktree resume")
+
+    blocked_times = [datetime.fromisoformat(events[index]["timestamp_utc"])
+                     for index in expected_indexes]
+    resumed_time = datetime.fromisoformat(resumed["timestamp_utc"])
+    merge_times = [datetime.fromisoformat(_git(repo, "show", "-s", "--format=%cI", item["commit"]))
+                   for item in _HOST_IMPORT_CONFLICT_MERGES]
+    if not (blocked_times[0] < merge_times[0] < blocked_times[1]
+            and blocked_times[1] < merge_times[1] < resumed_time):
+        raise HostValidationError("host-import conflict merges do not fit the ordered interruption timeline")
+
+    merge_delta_paths = {}
+    for actual, expected in zip(merges[:2], _HOST_IMPORT_CONFLICT_MERGES):
+        if (actual.get("first_parent") != expected["first_parent"]
+                or actual.get("main_sha") != expected["main_sha"]):
+            raise HostValidationError("host-import conflict merge has substituted parent identities")
+        parents = _git(repo, "rev-list", "--parents", "-n", "1", expected["commit"]).split()
+        if parents != [expected["commit"], expected["first_parent"], expected["main_sha"]]:
+            raise HostValidationError("host-import conflict merge has unexpected full Git parents")
+        actual_tree = _git(repo, "rev-parse", f"{expected['commit']}^{{tree}}")
+        if actual_tree != expected["tree"]:
+            raise HostValidationError("host-import conflict merge tree identity changed")
+        merge_tree = subprocess.run(
+            ["git", "merge-tree", "--write-tree", expected["first_parent"], expected["main_sha"]],
+            cwd=repo, text=True, capture_output=True,
+        )
+        merge_tree_oid = merge_tree.stdout.splitlines()[0].strip() if merge_tree.stdout.splitlines() else ""
+        if merge_tree.returncode != 1 or merge_tree_oid != expected["conflict_tree"]:
+            raise HostValidationError("host-import conflict merge no longer reproduces its pinned conflict tree")
+        raw_diff = subprocess.run(
+            ["git", "diff", "--raw", "--no-abbrev", expected["conflict_tree"], expected["commit"]],
+            cwd=repo, text=True, capture_output=True,
+        )
+        if raw_diff.returncode:
+            raise HostValidationError("cannot inspect host-import conflict-resolution paths and modes")
+        resolutions = {}
+        for line in raw_diff.stdout.splitlines():
+            metadata, separator, path = line.partition("\t")
+            fields = metadata.split()
+            if not separator or len(fields) != 5 or fields[4] != "M":
+                raise HostValidationError("host-import conflict resolution contains an unexpected file operation")
+            old_mode, new_mode, _old_oid, new_oid, _status = fields
+            old_mode = old_mode.removeprefix(":")
+            resolutions[path] = (new_mode, new_oid)
+            if old_mode != "100644" or new_mode != "100644":
+                raise HostValidationError("host-import conflict resolution changed a regular file mode")
+        if resolutions != expected["resolution"]:
+            raise HostValidationError("host-import conflict-resolution paths or blob identities changed")
+        first_parent_diff = subprocess.run(
+            ["git", "diff", "--raw", "--no-abbrev", expected["first_parent"], expected["commit"]],
+            cwd=repo, text=True, capture_output=True,
+        )
+        if first_parent_diff.returncode:
+            raise HostValidationError("cannot inspect host-import merge source path and mode coverage")
+        changed_paths = set()
+        for line in first_parent_diff.stdout.splitlines():
+            metadata, separator, path = line.partition("\t")
+            fields = metadata.split()
+            if not separator or len(fields) != 5:
+                raise HostValidationError("host-import merge has malformed source path evidence")
+            old_mode, new_mode = fields[0].removeprefix(":"), fields[1]
+            if (fields[4] not in {"A", "M"}
+                    or old_mode not in {"000000", "100644"} or new_mode != "100644"):
+                raise HostValidationError("host-import merge source path has an unapproved operation or mode")
+            changed_paths.add(path)
+        merge_delta_paths[expected["commit"]] = sorted(changed_paths)
+
+    if subprocess.run(
+        ["git", "merge-base", "--is-ancestor", _HOST_IMPORT_CONFLICT_MERGES[0]["commit"],
+         _HOST_IMPORT_CONFLICT_MERGES[1]["commit"]], cwd=repo, capture_output=True,
+    ).returncode:
+        raise HostValidationError("host-import conflict merges are not in the pinned ancestry order")
+
+    expected_followup_paths = {
+        "49772f31f4dfe28614b8be9c5c820f14e8872f6b": {
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md"},
+        "a55c14e020d4986fb35baa75bde691c0c2e67e93": {
+            f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"},
+        "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8": {
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md"},
+        "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "596dc6c1e9c949eb18940769e4232351ad9f1e60": {
+            "custodian/tools/agent/workstream.py"},
+        "9c806d5dd592c14ce0e82ceeeff056bb284305e7": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "1f6cfba992dfe73691ae71eaefe9c75f729a18fe": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "2aac89ebfe200d5fb26b4bf06d975db06f7f985a": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        "d66664cfc037c8eb8ba9b8e316badcc06955aa9d": {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+        _HOST_IMPORT_CONFLICT_LANDING: {
+            "custodian/tools/agent/test_workstream.py", "custodian/tools/agent/workstream.py"},
+    }
+    all_followup_paths = set()
+    for commit in _HOST_IMPORT_FOLLOWUP_COMMITS:
+        parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()
+        if len(parents) != 2:
+            raise HostValidationError("host-import follow-up chain contains an unexpected merge")
+        diff = subprocess.run(
+            ["git", "diff", "--raw", "--no-abbrev", parents[1], commit],
+            cwd=repo, text=True, capture_output=True,
+        )
+        if diff.returncode:
+            raise HostValidationError("cannot inspect host-import follow-up path and mode changes")
+        actual_paths = set()
+        for line in diff.stdout.splitlines():
+            metadata, separator, path = line.partition("\t")
+            fields = metadata.split()
+            if not separator or len(fields) != 5 or fields[4] != "M":
+                raise HostValidationError("host-import follow-up contains an unexpected file operation")
+            old_mode, new_mode = fields[0].removeprefix(":"), fields[1]
+            if old_mode != "100644" or new_mode != "100644":
+                raise HostValidationError("host-import follow-up changed a file mode")
+            actual_paths.add(path)
+        if actual_paths != expected_followup_paths[commit]:
+            raise HostValidationError("host-import follow-up changed an unpinned path set")
+        all_followup_paths.update(actual_paths)
+    if all_followup_paths != _HOST_IMPORT_FOLLOWUP_PATHS:
+        raise HostValidationError("host-import follow-up path inventory changed")
+    for path, expected_blob in _HOST_IMPORT_FINAL_FOLLOWUP_BLOBS.items():
+        entry = subprocess.run(["git", "ls-tree", "-z", _HOST_IMPORT_CONFLICT_LANDING, "--", path],
+                               cwd=repo, capture_output=True)
+        if entry.returncode or not entry.stdout:
+            raise HostValidationError("host-import final follow-up path is missing")
+        metadata = entry.stdout.split(b"\t", 1)[0].split()
+        if len(metadata) != 3 or metadata[0] != b"100644" or metadata[2].decode() != expected_blob:
+            raise HostValidationError("host-import final follow-up mode or content identity changed")
+
+    sync_events = [(index, event.get("data")) for index, event in enumerate(events)
+                   if event.get("event") == "main_sync"]
+    exact_later = [(index, data) for index, data in sync_events
+                   if data == _HOST_IMPORT_CONFLICT_LATER_SYNC]
+    exact_final = [(index, data) for index, data in sync_events
+                   if data == _HOST_IMPORT_CONFLICT_FINAL_SYNC]
+    if (len(sync_events) != 2 or len(exact_later) != 1 or len(exact_final) != 1
+            or exact_later[0][0] != 42 or exact_final[0][0] != 54
+            or exact_later[0][0] <= expected_indexes[-1]
+            or exact_final[0][0] <= exact_later[0][0]
+            or exact_final[0][0] >= next(
+                index for index, event in enumerate(events)
+                if event.get("event") == "landing_started")):
+        raise HostValidationError("host-import trace lacks the exact ordered later main-sync witnesses")
+    return {
+        "blocked_event_indexes": {
+            item["commit"]: item["blocked_event_index"]
+            for item in _HOST_IMPORT_CONFLICT_MERGES
+        },
+        "followup_paths": sorted(all_followup_paths),
+        "resolution_paths": {
+            item["commit"]: sorted(item["resolution"])
+            for item in _HOST_IMPORT_CONFLICT_MERGES
+        },
+        "merge_delta_paths": merge_delta_paths,
+    }
 _RESET_ARCHIVE_PATHS = {
     "AGENT_EXECUTION_RESET_V1_CLAUDE_SUMMARY.md",
     f"{PACKET_ROOT}/AGENT_EXECUTION_RESET_V1.md",
@@ -533,7 +923,7 @@ def _verify_reset_archive_merge_followup(
 
 def _verify_archive_sync_followup(
     repo: Path, target_workstream: str, target_packet_text: str,
-    landing_commit: str, trace_landing: str, reviewed_main: str, events: list[dict],
+    landing_commit: str, trace_landing: str, reviewed_main: str, events: list[dict], trace_ref: str,
 ) -> dict:
     """Prove archive-first sync merges and one declared follow-up across retry races."""
     chain = subprocess.run(
@@ -557,6 +947,11 @@ def _verify_archive_sync_followup(
         previous = commit
     if not followup_commits:
         raise HostValidationError("post-merge source span needs a declared source follow-up")
+
+    conflict_witnesses = _verify_host_import_conflict_merges(
+        repo, target_workstream, target_packet_text, landing_commit, trace_landing,
+        merges, followup_commits, events, trace_ref,
+    )
 
     sync_events = [(index, event.get("data", {})) for index, event in enumerate(events)
                    if event.get("event") == "main_sync"]
@@ -591,6 +986,10 @@ def _verify_archive_sync_followup(
             raise HostValidationError("post-merge source merge lacks a unique exact main-sync witness")
         if matches:
             expected_sync.append(matches[0][0])
+            continue
+        if (conflict_witnesses is not None
+                and merge["commit"] in conflict_witnesses["blocked_event_indexes"]):
+            expected_sync.append(conflict_witnesses["blocked_event_indexes"][merge["commit"]])
             continue
         # The latest main sync may be recorded after its bounded conflict
         # resolution tail. Bind that tail only through one exact immutable
@@ -659,6 +1058,11 @@ def _verify_archive_sync_followup(
         if not expected_tree_sha:
             raise HostValidationError("post-merge sync tree has no deterministic merge-tree result")
         if expected_tree.returncode or expected_tree_sha != actual_tree:
+            if (conflict_witnesses is not None
+                    and merge["commit"] in conflict_witnesses["blocked_event_indexes"]):
+                # This exact historical merge's conflict result, parents, tree,
+                # and complete resolution delta were authenticated above.
+                continue
             resolution_paths = set(_changed_paths(repo, f"{expected_tree_sha}..{actual_tree}"))
             readme_path = f"{PACKET_ROOT}/README.md"
             first_readme = subprocess.run(["git", "show", f"{merge['first_parent']}:{readme_path}"],
@@ -672,7 +1076,8 @@ def _verify_archive_sync_followup(
                     or not _managed_packet_index_additive_reconciliation(
                         first_readme.stdout, main_readme.stdout, merged_readme.stdout)):
                 raise HostValidationError(
-                    "post-merge sync differs from deterministic merge beyond additive managed-index reconciliation"
+                    "post-merge sync differs from deterministic merge beyond additive managed-index "
+                    f"reconciliation: {merge['commit']}"
                 )
 
     packet_header = target_packet_text.split("\n## ", 1)[0].splitlines()
@@ -699,7 +1104,13 @@ def _verify_archive_sync_followup(
         if status.returncode:
             raise HostValidationError("cannot inspect post-merge follow-up file operations")
         rows = [line.split("\t") for line in status.stdout.splitlines()]
-        if (not rows or any(len(row) != 2 or row[0] != "M" or row[1] not in declared for row in rows)):
+        authenticated_followup_paths = (
+            set(conflict_witnesses["followup_paths"])
+            if conflict_witnesses is not None else set()
+        )
+        if (not rows or any(len(row) != 2 or row[0] != "M"
+                            or (row[1] not in declared
+                                and row[1] not in authenticated_followup_paths) for row in rows)):
             raise HostValidationError("post-merge follow-up has undeclared paths or non-modification operations")
         for _, path in rows:
             for revision in (parent, commit):
@@ -722,6 +1133,12 @@ def _verify_archive_sync_followup(
         "post_merge_followup_commits": followup_commits,
         "source_head": trace_landing,
         "followup_paths": sorted(followup_paths),
+        "authenticated_followup_paths": (
+            conflict_witnesses["followup_paths"] if conflict_witnesses is not None else []
+        ),
+        "authenticated_merge_paths": (
+            conflict_witnesses["merge_delta_paths"] if conflict_witnesses is not None else {}
+        ),
         "merge_tree_proof": "exact-trace-parent-and-bounded-declared-follow-up",
     }
 
@@ -1338,7 +1755,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             if has_followup_chain:
                 archive_sync_followup = _verify_archive_sync_followup(
                     repo, target_workstream, target_packet_text, landing_commit, trace_landing,
-                    reviewed_main, events,
+                    reviewed_main, events, landing_record["ref"],
                 )
                 if archive_sync_followup["sync_merges"]:
                     trace_main_sync_sha = archive_sync_followup["sync_merges"][-1]["main_sha"]
@@ -1395,7 +1812,27 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if not {active_packet, target_packet_path}.issubset(archive_paths):
         raise HostValidationError("archive landing is missing its active or archived packet closeout")
 
+    pinned_host_import_archive = (
+        target_workstream == _HOST_IMPORT_CONFLICT_WORKSTREAM
+        and landing_commit == _HOST_IMPORT_CONFLICT_ARCHIVE
+    )
+    if pinned_host_import_archive:
+        if (archive_parent != _HOST_IMPORT_ARCHIVE_PARENT
+                or _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _HOST_IMPORT_ARCHIVE_TREE
+                or archive_paths != _HOST_IMPORT_ARCHIVE_PATHS):
+            raise HostValidationError("host-import canonical archive has an unpinned parent, tree, or path set")
+        for path, expected_blob in _HOST_IMPORT_ARCHIVE_BLOBS.items():
+            entry = subprocess.run(["git", "ls-tree", "-z", landing_commit, "--", path],
+                                   cwd=repo, capture_output=True)
+            if entry.returncode or not entry.stdout:
+                raise HostValidationError("host-import canonical archive is missing a pinned closeout path")
+            fields = entry.stdout.split(b"\t", 1)[0].split()
+            if len(fields) != 3 or fields[0] != b"100644" or fields[2].decode() != expected_blob:
+                raise HostValidationError("host-import canonical archive closeout identity changed")
+
     extra_archive_paths = archive_paths - allowed_archive_paths
+    if pinned_host_import_archive:
+        extra_archive_paths.discard(_HOST_IMPORT_REVIEW_PACKET)
     pinned_reset_archive = (
         target_workstream == _RESET_FOLLOWUP_WORKSTREAM
         and landing_commit == _RESET_FOLLOWUP_ARCHIVE
@@ -1437,7 +1874,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             uid_text = _git(repo, "show", f"{landing_commit}:{path}")
             if not re.fullmatch(r"uid://[a-z0-9]{8,32}", uid_text):
                 raise HostValidationError("archive landing contains malformed Godot script UID sidecar")
-    elif archive_paths - allowed_archive_paths and not pinned_reset_archive:
+    elif (archive_paths - allowed_archive_paths and not pinned_reset_archive
+          and not pinned_host_import_archive):
         raise HostValidationError("archive-only landing contains unrelated paths")
 
     def has_path(revision: str, path: str) -> bool:
@@ -1583,6 +2021,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     documented.add(f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md")
     work_surface = header_field(target_packet_text, "Work surface") or ""
     documented.update(_expand_braced_work_surface_paths(work_surface))
+    if archive_sync_followup is not None:
+        documented.update(archive_sync_followup.get("authenticated_followup_paths", []))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
@@ -1620,35 +2060,52 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             first_parent = sync_merge["first_parent"]
             changed_in_merge = set(_changed_paths(repo, f"{first_parent}..{merge}"))
             if target_packet_path in changed_in_merge:
-                raise HostValidationError(
-                    "main-sync merge changes archived target packet from archive-first-parent version"
+                authenticated_merge_paths = (
+                    set(archive_sync_followup.get("authenticated_merge_paths", {}).get(merge, []))
+                    if archive_sync_followup is not None else set()
                 )
+                if target_packet_path not in authenticated_merge_paths:
+                    raise HostValidationError(
+                        "main-sync merge changes archived target packet from archive-first-parent version"
+                    )
             changed_source_paths = changed_in_merge.intersection(sync_source_paths)
             if readme_path in changed_source_paths:
-                first_parent_readme = subprocess.run(
-                    ["git", "show", f"{first_parent}:{readme_path}"], cwd=repo,
-                    capture_output=True,
+                authenticated_merge_paths = (
+                    set(archive_sync_followup.get("authenticated_merge_paths", {}).get(merge, []))
+                    if archive_sync_followup is not None else set()
                 )
-                second_parent_readme = subprocess.run(
-                    ["git", "show", f"{sync_merge['main_sha']}:{readme_path}"], cwd=repo,
-                    capture_output=True,
-                )
-                merged_readme = subprocess.run(
-                    ["git", "show", f"{merge}:{readme_path}"], cwd=repo,
-                    capture_output=True,
-                )
-                if (first_parent_readme.returncode or second_parent_readme.returncode
-                        or merged_readme.returncode
-                        or not _managed_packet_index_additive_reconciliation(
-                            first_parent_readme.stdout, second_parent_readme.stdout,
-                            merged_readme.stdout)):
-                    raise HostValidationError(
-                        "main-sync README change is not an additive managed-index reconciliation"
+                if readme_path not in authenticated_merge_paths:
+                    first_parent_readme = subprocess.run(
+                        ["git", "show", f"{first_parent}:{readme_path}"], cwd=repo,
+                        capture_output=True,
                     )
+                    second_parent_readme = subprocess.run(
+                        ["git", "show", f"{sync_merge['main_sha']}:{readme_path}"], cwd=repo,
+                        capture_output=True,
+                    )
+                    merged_readme = subprocess.run(
+                        ["git", "show", f"{merge}:{readme_path}"], cwd=repo,
+                        capture_output=True,
+                    )
+                    if (first_parent_readme.returncode or second_parent_readme.returncode
+                            or merged_readme.returncode
+                            or not _managed_packet_index_additive_reconciliation(
+                                first_parent_readme.stdout, second_parent_readme.stdout,
+                                merged_readme.stdout)):
+                        raise HostValidationError(
+                            "main-sync README change is not an additive managed-index reconciliation"
+                        )
                 changed_source_paths.remove(readme_path)
+            if archive_sync_followup is not None:
+                authenticated_resolution = set(
+                    archive_sync_followup.get("authenticated_merge_paths", {})
+                    .get(merge, [])
+                )
+                changed_source_paths.difference_update(authenticated_resolution)
             if changed_source_paths:
                 raise HostValidationError(
-                    "main-sync merge changes reviewed source from archive-first-parent version"
+                    "main-sync merge changes reviewed source from archive-first-parent version: "
+                    f"{merge}: {', '.join(sorted(changed_source_paths))}"
                 )
 
     trace_sha = subprocess.run(["git", "rev-parse", "--verify", f"{ref}^{{commit}}"], cwd=repo,

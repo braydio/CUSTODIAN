@@ -37,3 +37,9 @@ The protected review run `20261020T165418Z-53992bd05f83`, its claim, original fa
 - Refresh reason: `Authorize a bounded workstream finish/archive-transition recovery for the already-validated branch after the main-sync conflict, including tests for the recorded trace and commit ancestry. No change to protected review artifacts or provenance safeguards.`
 - Next action: `Refresh the existing packet in the authoring chat to authorize the lifecycle correction; then resume this branch, finish/land it, claim its paired independent review, and only after PASS retry the held run's read-only plan.`
 - Blockers or open questions: `Implementation branch a55c14e02 is pushed but not landed; the paired review remains dependency-gated. The protected run 20261020T165418Z-53992bd05f83 remains untouched.`
+
+## Dated Clarification (2026-10-22)
+
+The historical finish-blocked account above is retained as written. The host-import recovery implementation subsequently landed on `origin/main@6e75b57ea828f5d90679ae737052a4acdefce361`; its reported 55 workstream tests and 45 changed-file checks passed. Its independent review, `review-agent-paired-review-failed-host-validation-import-recovery-v1`, remains unlaunched and unresolved because host validation cannot authenticate the two conflict-resolution merges. The review claim, worktree, run `20261022T052405Z-1ce687862e23`, and original implementation trace remain protected. The narrow follow-up compatibility correction is `agent-paired-review-conflict-resolution-merge-provenance-v1`; no reviewer result or recovery-plan execution is implied by this clarification.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad40d97-158c-83ea-ad70-d593bc628e6f

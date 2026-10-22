@@ -212,6 +212,19 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One exact historical compatibility case binds the host-import recovery run
+`20261020T200652Z-2fd156ce23d0` to its two conflict interruptions and resume:
+`dbcf8aec4eb09264b60bea9d26c99f235022efb5` and
+`d83319a3a9c211fe3947e4951bfaa06f1684bf05`. The validator requires the exact
+run/workstream diagnostic trace, both full parent pairs, conflict-result trees,
+complete resolution path/blob/mode deltas, and the recorded resume at the
+second merge. It also pins the later `4b1af571...` synchronization witness and
+final `6e75b57...` no-op witness. The archive and paired-review packet closeout,
+all follow-up commits, and source/test file modes are separately content
+checked. No missing `main_sync` event is synthesized. This exception accepts
+only that complete historical identity; it does not change the requirement for
+an exact witness on other merges.
+
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
 complete original evidence manifest. Apply only the exact freshly emitted

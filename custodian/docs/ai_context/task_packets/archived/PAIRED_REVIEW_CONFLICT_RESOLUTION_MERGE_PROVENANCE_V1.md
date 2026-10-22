@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-conflict-resolution-merge-provenance-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-failed-host-validation-import-recovery-v1`
@@ -48,6 +48,26 @@
 ## Context Pack
 
 - Repomix: `none`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The exact historical conflict-resolution path is bound to the immutable trace, exact merge parents/trees/path and mode changes, and later genuine synchronization events. The original held review and its read-only recovery plan remain untouched pending this correction's independent acceptance.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `the host-local lifecycle trace contains a final append-only push event beyond the published diagnostic trace; fixtures had to preserve its exact compact JSONL encoding`
+- Root cause / contributing factors: `the immutable diagnostic ref was published before the final local push event`
+- Prevention / pipeline improvement: `verify the published trace artifact and host-local continuation as separately pinned evidence`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `exact commit/tree/path/mode pins and trace ordering constrained compatibility to this one historical run`
 
 ## Next Handoff
 
