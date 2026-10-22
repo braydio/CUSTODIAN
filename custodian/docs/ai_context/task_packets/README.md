@@ -136,6 +136,8 @@ packet and its paired review, not as chat-only downloads.
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
+- `HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md` — Sepulcher grave evidence + Hub persistence; deliver one playable, bounded event slice.
+- `HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md` — Sepulcher grave attestation + pale growth; deliver one playable, bounded event slice.
 - `MAPPER_VALIDATION_FEEDBACK_V1.md` — Close validation/save feedback loop with actionable issues and honest statuses across the mapper family.
 - `NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Create one distinctive Broken Warrant hostile archetype with real melee/reactions/death/corpse/loot and no duplicate Enemy mechanics.
 - `NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Create one real M-7 escort unit as a distinct actor skin/profile over reviewed CombatDrone/AlliedInfantryDroid, with manager-owned command identity.
@@ -220,6 +222,8 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
+- `REVIEW_HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_MAPPER_VALIDATION_FEEDBACK_V1.md` — Independently verify the landed result of close validation/save feedback loop with actionable issues and honest statuses across the mapper family.
 - `REVIEW_NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Independently verify landed npa-showcase-broken-warrant-actor using the actual archived implementation acceptance and real runtime evidence.
 - `REVIEW_NPA_SHOWCASE_DEV_OVERLAYS.md` — Independently verify landed npa-showcase-dev-overlays using the actual archived implementation acceptance and real runtime evidence.
@@ -295,6 +299,12 @@ packet and its paired review, not as chat-only downloads.
 - `WORKTREE_BACKLOG_ARCHIVED_AND_DETACHED_RECONCILIATION_V1.md` — Safely reconcile archived-complete checkout leftovers and detached capture/support worktrees, without destroying unique history, media or user changes.
 - `WORKTREE_BACKLOG_OWNED_WORK_RECOVERY_V1.md` — For all unfinished attached packet worktrees, determine and execute only the original-owner-supported continuation, finishing or bounded correction path, wit...
 - `WORKTREE_BACKLOG_QUEUE_INVALID_CLAIM_TRIAGE_V1.md` — Separate genuine queue/schema/review-provenance defects from 65 reported invalid-recovery classifications and two claim-only interrupted dispatch refs, witho...
+- `CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Station containment choice + completion; deliver one playable, bounded event slice.
+- `CAMPAIGN_ABANDONED_STATION_SITE_V1.md` — Alpine station generated site + relays; deliver one playable, bounded event slice.
+- `CAMPAIGN_ABANDONED_STATION_STABILITY_V1.md` — Station services + local 90s stability; deliver one playable, bounded event slice.
+- `CAMPAIGN_EMPTY_CONVOY_PLACEMENT_V1.md` — Generated convoy pocket placement; deliver one playable, bounded event slice.
+- `CAMPAIGN_EMPTY_CONVOY_RECOVERY_V1.md` — Convoy trace + bounded salvage; deliver one playable, bounded event slice.
+- `CAMPAIGN_EMPTY_CONVOY_SECURITY_V1.md` — Convoy scan-triggered security; deliver one playable, bounded event slice.
 - `CARROW_YARD_ROUTE_AUTHORITY_MIGRATION.md` — Preserve the approved Carrow District Transfer Frame experience while migrating Carrow Yard from its bespoke connected-map mini-router onto the canonical reg...
 - `CONTRACT_WORLD_ENCOUNTER_PLACEMENT_EXTRACTION.md` — Move ambient enemy/encounter marker placement policy from ContractWorldLoader into one focused placement service without moving enemy spawning or AI authority.
 - `CONTRACT_WORLD_INGRESS_PLACEMENT_EXTRACTION.md` — Move authored world-ingress/destination placement from ContractWorldLoader into the canonical world-placement layer while preserving transition ownership els...
@@ -302,12 +312,22 @@ packet and its paired review, not as chat-only downloads.
 - `CONTRACT_WORLD_RELAY_PLACEMENT_EXTRACTION.md` — Move ARRN relay tile selection and placement from ContractWorldLoader into the world-placement layer.
 - `CONTRACT_WORLD_RESOURCE_PLACEMENT_EXTRACTION.md` — Move tutorial and expedition resource-node placement policy out of ContractWorldLoader into one deterministic placement service.
 - `CONTRACT_WORLD_VEHICLE_PLACEMENT_EXTRACTION.md` — Move generated-world vehicle placement policy from ContractWorldLoader into a focused deterministic placement service.
+- `HUB_FORUM_HEARING_EVIDENCE_V1.md` — Forum hearing evidence plinths; deliver one playable, bounded event slice.
+- `HUB_FORUM_HEARING_FINDING_V1.md` — Forum hearing determination; deliver one playable, bounded event slice.
 - `HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md` — Stage one playable three-beat empty procession in the POST-AWAKENING Hub North Processional. Existing Road plates are presentation only.
 - `HUB_ROAD_PROCESSION_TESTIMONY_V1.md` — Road witness testimony + revisit; deliver one playable, bounded event slice.
 - `OPERATOR_GUARD_BREAK_PRESENTATION.md` — Give guard break its own committed, readable whole-body failure presentation, distinct from ordinary non-breaking recoil, without weakening the existing move...
 - `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — Turn the newly generated unarmed-defense source-work set into reviewed, registration-correct 96×96 Operator production assets through Source Session + Asset...
 - `REVIEW_BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Independently verify Asset V2 correctness, geometry registration and generated-seed bridge readability against the user-approved art lock.
 - `REVIEW_BRIDGED_FALLS_VISTA_AND_WATERFALL_PRESENTATION.md` — Independently verify the technical presentation and preserve the recorded human visual decision for the Bridged Falls atmosphere.
+- `REVIEW_CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_CAMPAIGN_ABANDONED_STATION_SITE_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_CAMPAIGN_ABANDONED_STATION_STABILITY_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_CAMPAIGN_EMPTY_CONVOY_PLACEMENT_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_CAMPAIGN_EMPTY_CONVOY_RECOVERY_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_CAMPAIGN_EMPTY_CONVOY_SECURITY_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_HUB_FORUM_HEARING_EVIDENCE_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
+- `REVIEW_HUB_FORUM_HEARING_FINDING_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md` — Independently falsify the landed playable **post-Awakening Hub** Procession against the original acceptance and real-Operator traversal, not merely scripts.
 - `REVIEW_HUB_ROAD_PROCESSION_TESTIMONY_V1.md` — Independently falsify the landed playable **post-Awakening Hub** Procession against the original acceptance and real-Operator traversal, not merely scripts.
 - `REVIEW_ISOMETRIC_2_5D_PRESENTATION_FOUNDATION.md` — Independently verify that the reusable 2.5D foundation makes visual elevation, ground-root sorting, semantic presentation bands, roof occlusion reuse, and co...
