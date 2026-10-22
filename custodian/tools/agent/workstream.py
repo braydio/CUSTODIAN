@@ -775,6 +775,8 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
         "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
         "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
         "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+        "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+        "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
     ],
 }
 
@@ -865,7 +867,31 @@ def _authorized_failed_import_archive_recovery_error(
         ["git", "cat-file", "-e", f"{pinned['final_sync']}:{active_rel}"], cwd=path,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
     ).returncode == 0
-    if (differing != {archived_rel, active_rel}
+    automatic_active_delta_is_exact = False
+    if differing == {archived_rel, active_rel}:
+        first_parent = git("rev-parse", f"{pinned['final_sync']}^1", cwd=path)
+        second_parent = git("rev-parse", f"{pinned['final_sync']}^2", cwd=path)
+        first_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{first_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        second_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{second_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        automatic_active = subprocess.run(
+            ["git", "ls-tree", "-z", final_tree, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        second_active = subprocess.run(
+            ["git", "ls-tree", "-z", second_parent, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        automatic_active_delta_is_exact = (
+            not first_has_active and second_has_active
+            and automatic_active == second_active and bool(automatic_active)
+        )
+    if ((differing != {archived_rel} and not automatic_active_delta_is_exact)
             or active_still_present
             or not _reconciled_archive_packet_matches(path, pinned["final_sync"],
                                                       archived_rel, active_rel)):

@@ -210,6 +210,8 @@ class WorkstreamTests(unittest.TestCase):
             "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
             "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
             "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+            "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+            "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
         ])
         branch = workstream.branch_for(workstream_id)
         active_rel = "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
@@ -502,6 +504,13 @@ class WorkstreamTests(unittest.TestCase):
         )
         self.assertTrue(workstream._failed_import_first_sync_is_bounded(
             repository, pinned, archived_rel,
+        ))
+        active_rel = (
+            "custodian/docs/ai_context/task_packets/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        )
+        self.assertTrue(workstream._reconciled_archive_packet_matches(
+            repository, pinned["final_sync"], archived_rel, active_rel,
         ))
 
         # The reconciliation is bound to the exact recorded regression-test
