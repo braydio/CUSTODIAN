@@ -206,6 +206,10 @@ class WorkstreamTests(unittest.TestCase):
                          "5249f25988aa13cdf99372754509fb7b91eeef94")
         self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["trace_anchor"],
                          "173104f75f4380aa2c5eadf0e0c8ca2f2bd04855")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["correction_commits"], [
+            "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+            "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+        ])
         branch = workstream.branch_for(workstream_id)
         active_rel = "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
         archived_rel = "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"

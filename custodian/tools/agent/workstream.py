@@ -770,7 +770,10 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
     "final_main": "8e4bca145658b825bb6dedeed595a3c53497a138",
     "run_id": "20261020T200652Z-2fd156ce23d0",
     "summary": "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md",
-    "correction_commits": ["d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993"],
+    "correction_commits": [
+        "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+        "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+    ],
 }
 
 
@@ -974,8 +977,10 @@ def _post_sync_completion_evidence_is_bounded(path: Path, commit: str,
         "passed 43/43 with complete coverage and no timeouts; the manifest retained "
         "the authorized 90-second bound.`"
     )
-    return (old_evidence.endswith("`.") and new_evidence.endswith(".`")
-            and old_evidence[:-2] == new_evidence[:-2]
+    evidence_closeout = (
+        (old_evidence.endswith("`.") and new_evidence == old_evidence[:-2] + ".`")
+        or (old_evidence.endswith(".") and new_evidence == old_evidence + "`"))
+    return (evidence_closeout
             and validation == expected_validation
             and _commit_paths_are_regular_files(path, commit, {archived_rel}))
 
