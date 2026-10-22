@@ -1712,6 +1712,24 @@ def resolve_validation_source_span(repo: Path, reviewed_main: str, implementatio
                                       target_packet_path, packet_text)
 
 
+def verify_pinned_canonical_commit_source_span(repo: Path, implementation_commit: str,
+                                               source_span: dict) -> dict:
+    """Verify an immutable, previously recorded direct-commit source span."""
+    repo = Path(repo).resolve()
+    landing = _git(repo, "rev-parse", "--verify", f"{implementation_commit}^{{commit}}")
+    parent = _git(repo, "rev-parse", f"{landing}^1")
+    diff = subprocess.run(["git", "diff-tree", "-r", "--name-only", "--find-renames", parent, landing],
+                          cwd=repo, text=True, capture_output=True, check=True)
+    expected_paths = sorted(path for path in diff.stdout.splitlines() if path)
+    if (not isinstance(source_span, dict)
+            or source_span != {"base": parent, "head": landing, "commits": [landing],
+                               "paths": expected_paths,
+                               "provenance": {"kind": "canonical-implementation-commit"}}
+            or not _source_code_paths(expected_paths)):
+        raise HostValidationError("pinned source span is not the exact canonical implementation commit diff")
+    return source_span
+
+
 def _validate_report(report: dict, implementation_paths: list[str]) -> None:
     if report.get("schema") != "custodian.validation.result.v1":
         raise HostValidationError("host validation report has the wrong schema")
@@ -1752,6 +1770,7 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
 def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, implementation_commit: str,
                                *, target_workstream: str | None = None,
                                target_packet_path: str | None = None,
+                               source_span_override: dict | None = None,
                                run_validation: Callable | None = None,
                                capability_probe: Callable[[], dict[str, bool]] = probe_host_capabilities) -> dict:
     """Run and pin the canonical changed-file suite before launching the reviewer.
@@ -1785,9 +1804,14 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
                       cwd=worktree, capture_output=True).returncode:
         raise HostValidationError("pinned implementation is not an ancestor of reviewed main")
 
-    source_span = resolve_validation_source_span(
-        worktree, reviewed_main, implementation_commit, target_workstream, target_packet_path,
-    )
+    if source_span_override is not None:
+        source_span = verify_pinned_canonical_commit_source_span(
+            worktree, implementation_commit, source_span_override,
+        )
+    else:
+        source_span = resolve_validation_source_span(
+            worktree, reviewed_main, implementation_commit, target_workstream, target_packet_path,
+        )
     source_base = source_span["base"]
     source_head = source_span["head"]
     implementation_paths = list(source_span["paths"])
@@ -1884,6 +1908,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
 def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
                                   implementation_commit: str, *, target_workstream: str | None = None,
                                   target_packet_path: str | None = None,
+                                  source_span_override: dict | None = None,
                                   expected_report_sha256: str,
                                   expected_metadata_sha256: str) -> dict:
     """Recheck pinned host evidence after the restricted reviewer exits."""
@@ -1901,9 +1926,14 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
         raise HostValidationError("coordinator validation report digest changed during reviewer execution")
     if _sha256(metadata_bytes) != expected_metadata_sha256:
         raise HostValidationError("coordinator validation provenance digest changed during reviewer execution")
-    expected_span = resolve_validation_source_span(
-        repo, reviewed_main, implementation_commit, target_workstream, target_packet_path,
-    )
+    if source_span_override is not None:
+        expected_span = verify_pinned_canonical_commit_source_span(
+            repo, implementation_commit, source_span_override,
+        )
+    else:
+        expected_span = resolve_validation_source_span(
+            repo, reviewed_main, implementation_commit, target_workstream, target_packet_path,
+        )
     if (metadata.get("schema") != "custodian.paired_review_host_validation.v1"
             or metadata.get("reviewed_main") != reviewed_main
             or metadata.get("implementation_commit") != implementation_commit

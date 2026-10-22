@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `paired-review-carrow-claimed-worktree-recovery-v1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -34,6 +34,26 @@
 - Task overrides: `TASK OVERRIDE: implementation may change only the three listed paired-review runner/host-validation source and test files; the future paired post-land review may stage, commit, and push only its durable review receipt, review-packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; it must not edit reviewed implementation or unrelated work.`
 - Deferred: Applying the reviewed recovery path to the protected Carrow run until independent review acceptance and the required operator attestations are present.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `161 paired-review runner tests pass; changed-file suites agent_workflow_contract, paired_review_runner_unit, review_pairing_contract, and visual_review_handoff pass with complete coverage; related workstream/review_outcome/dispatch tests, check_ai_context.py, task_packet_index.py, validate_review_pairing.py, and git diff --check pass; live read-only plan SHA 51341b4fc532ee6596b39ce080aac9ed1471b5eccec3f7dab12bf198b27896ad was verified against coordinator main 195ae53e9d21e6affac5da4fcbd563f6c17f882d.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The host-recovery planner rejected this exact non-import failure and required the missing original checkout. The current source-span resolver also disagreed with the immutable report because it did not reproduce the original rename-aware path set.`
+- Root cause / contributing factors: `The recovery planner only supported pre-validation interruption and a narrow import failure; the historical validation used Git rename detection for the implementation packet move.`
+- Prevention / pipeline improvement: `Added a one-run, report-hash-pinned recovery path and exact verifier for its historical direct-commit source span; no other claims use this exception.`
+- Tooling / docs drift discovered: `A reconstructed checkout must validate using the authenticated source-span evidence from the original run when current archive-follow-up resolution differs.`
+- Follow-up: `review-paired-review-carrow-claimed-worktree-recovery-v1`
+
 ## Next Handoff
 
 - Next workstream: `review-paired-review-carrow-claimed-worktree-recovery-v1`
@@ -42,5 +62,5 @@
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: Independently review the landed, validated exact-scope recovery implementation before applying it to the preserved Carrow claim.
+- Next action: Independently review the landed recovery implementation. After review acceptance and explicit operator attestations, apply the exact recovery to the preserved Carrow claim and complete its original review.
 - Blockers or open questions: The original checkout's untracked/ignored inventory is not recoverable from Git; apply must require and record an explicit operator attestation if durable evidence cannot establish absence of unique work or a live owner.

@@ -893,6 +893,39 @@ class PairedReviewRunnerTests(unittest.TestCase):
                     runner.plan_host_validation_recovery(
                         fixture["repo"], "review-sample", fixture["run_id"])
 
+    def test_host_recovery_operator_attestations_must_be_paired(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture)
+        with self.assertRaisesRegex(runner.RunnerError, "supplied together"):
+            runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True,
+            )
+
+    def test_pinned_canonical_source_span_verifier_requires_exact_rename_aware_diff(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        changed = fixture["repo"] / "custodian/tools/agent/source.py"
+        changed.parent.mkdir(parents=True, exist_ok=True)
+        changed.write_text("validated source\n")
+        subprocess.run(["git", "-C", str(fixture["repo"]), "add", str(changed.relative_to(fixture["repo"]))],
+                       check=True)
+        subprocess.run(["git", "-C", str(fixture["repo"]), "commit", "-qm", "implementation"], check=True)
+        implementation = subprocess.run(["git", "-C", str(fixture["repo"]), "rev-parse", "HEAD"],
+                                        check=True, text=True, capture_output=True).stdout.strip()
+        parent = subprocess.run(["git", "-C", str(fixture["repo"]), "rev-parse", "HEAD^"],
+                                check=True, text=True, capture_output=True).stdout.strip()
+        source_span = {"base": parent, "head": implementation, "commits": [implementation],
+                       "paths": ["custodian/tools/agent/source.py"],
+                       "provenance": {"kind": "canonical-implementation-commit"}}
+        self.assertEqual(host_validation.verify_pinned_canonical_commit_source_span(
+            fixture["repo"], implementation, source_span), source_span)
+        altered = {**source_span, "paths": ["custodian/tools/agent/other.py"]}
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact canonical implementation"):
+            host_validation.verify_pinned_canonical_commit_source_span(
+                fixture["repo"], implementation, altered)
+
     def test_host_recovery_prevalidation_plan_rejects_mismatched_claim_and_existing_child(self):
         for mismatch in ("claim", "child"):
             with self.subTest(mismatch=mismatch):
@@ -950,6 +983,229 @@ class PairedReviewRunnerTests(unittest.TestCase):
                         fixture["reviewed_main"], "--staged", "--worktree", "--", fixture["active"]],
                        check=True)
         fixture["prior_summary"].unlink(missing_ok=True)
+
+    def _prepare_carrow_missing_worktree_fixture(self, fixture):
+        self._prepare_host_recovery(fixture)
+        self._make_host_recovery_worktree_clean(fixture)
+        run_dir = fixture["run_dir"]
+        metadata_path = run_dir / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        report_bytes = b'{"passed":false}\n'
+        (run_dir / "validation.json").write_bytes(report_bytes)
+        coordinator = {"schema": "custodian.paired_review_host_validation.v1",
+                      "reviewed_main": fixture["reviewed_main"],
+                      "implementation_commit": fixture["reviewed_main"],
+                      "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+                      "source_changed_during_validation": False}
+        (run_dir / "coordinator-validation.json").write_text(json.dumps(coordinator, sort_keys=True) + "\n")
+        subprocess.run(["git", "-C", str(fixture["repo"]), "worktree", "remove", str(fixture["worktree"])],
+                       check=True, capture_output=True)
+        fixture["carrow_report_sha"] = hashlib.sha256(report_bytes).hexdigest()
+        fixture["carrow_coordinator_sha"] = hashlib.sha256(
+            (run_dir / "coordinator-validation.json").read_bytes()).hexdigest()
+        fixture["carrow_run_manifest"] = runner._file_manifest(run_dir)
+
+    def _carrow_plan_patches(self, fixture):
+        from contextlib import ExitStack
+        stack = ExitStack()
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_WORKSTREAM", "review-sample"))
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_RUN_ID", fixture["run_id"]))
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_REVIEWED_MAIN", fixture["reviewed_main"]))
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_IMPLEMENTATION", fixture["reviewed_main"]))
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_REPORTS", {
+            "validation.json": fixture["carrow_report_sha"],
+            "coordinator-validation.json": fixture["carrow_coordinator_sha"],
+        }))
+        stack.enter_context(patch.object(runner, "CARROW_MISSING_WORKTREE_RUN_MANIFEST",
+                                         fixture["carrow_run_manifest"]))
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "commits": [fixture["reviewed_main"]], "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "canonical-implementation-commit"}}
+        stack.enter_context(patch.object(host_validation, "verify_pinned_canonical_commit_source_span",
+                                         return_value=span))
+        stack.enter_context(patch.object(runner, "resolve_target_implementation_commit",
+                                         return_value=(fixture["reviewed_main"], None)))
+        stack.enter_context(patch.object(host_validation, "resolve_validation_source_span", return_value=span))
+        return stack, span
+
+    def _relocate_carrow_fixture_checkout(self, fixture):
+        destination = fixture["repo"].parent / ".custodian-worktrees" / fixture["worktree"].name
+        destination.parent.mkdir(parents=True)
+        self.assertFalse(destination.exists())
+        fixture["worktree"] = destination
+        receipt = dict(fixture["receipt"], worktree=str(destination))
+        fixture["receipt"] = receipt
+        (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(receipt))
+        (fixture["run_dir"] / "claim.stdout").write_text(
+            runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n")
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["recovery_worktree"] = str(destination)
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+        fixture["carrow_run_manifest"] = runner._file_manifest(fixture["run_dir"])
+
+    def test_carrow_missing_worktree_plan_is_exact_and_read_only(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_carrow_missing_worktree_fixture(fixture)
+        stack, _ = self._carrow_plan_patches(fixture)
+        with stack:
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+        self.assertEqual(plan["host_validation_state"], "carrow_failed_nonimport_missing_worktree")
+        self.assertTrue(plan["requires_fresh_host_validation"])
+        self.assertEqual(plan["retry_budget"], 1)
+        self.assertEqual(plan["operator_attestations"], {
+            "no_active_review_owner": True,
+            "no_unique_untracked_or_ignored_evidence": True,
+        })
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), fixture["carrow_run_manifest"])
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+
+    def test_carrow_missing_worktree_plan_rejects_altered_historical_report(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_carrow_missing_worktree_fixture(fixture)
+        (fixture["run_dir"] / "validation.json").write_bytes(b'{"passed":true}\n')
+        stack, _ = self._carrow_plan_patches(fixture)
+        with stack, self.assertRaisesRegex(runner.RunnerError, "seven-file manifest"):
+            runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+
+    def test_carrow_missing_worktree_plan_rejects_forged_claim_occupied_destination_and_foreign_checkout(self):
+        for case in ("forged_claim", "occupied", "foreign_checkout"):
+            with self.subTest(case=case):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_carrow_missing_worktree_fixture(fixture)
+                if case == "forged_claim":
+                    claim_path = fixture["run_dir"] / "claim-receipt.json"
+                    claim = json.loads(claim_path.read_text())
+                    claim["verified"] = False
+                    claim_path.write_text(json.dumps(claim))
+                elif case == "occupied":
+                    fixture["worktree"].mkdir()
+                    (fixture["worktree"] / "preserve.txt").write_text("foreign bytes")
+                else:
+                    alternate = fixture["repo"].parent / "foreign-review-checkout"
+                    subprocess.run(["git", "-C", str(fixture["repo"]), "worktree", "add",
+                                    str(alternate), "agent/review-sample"], check=True, capture_output=True)
+                stack, _ = self._carrow_plan_patches(fixture)
+                pattern = {"forged_claim": "does not verify", "occupied": "destination is occupied",
+                           "foreign_checkout": "already attached to another worktree"}[case]
+                with stack, self.assertRaisesRegex(runner.RunnerError, pattern):
+                    runner.plan_host_validation_recovery(
+                        fixture["repo"], "review-sample", fixture["run_id"],
+                        attest_no_active_owner=True, attest_no_unique_evidence=True,
+                    )
+
+    def test_carrow_missing_worktree_plan_rejects_local_and_remote_branch_movement(self):
+        for case in ("local", "remote"):
+            with self.subTest(case=case):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_carrow_missing_worktree_fixture(fixture)
+                repo = fixture["repo"]
+                new_commit = subprocess.run(
+                    ["git", "-C", str(repo), "commit-tree", f"{fixture['reviewed_main']}^{{tree}}",
+                     "-p", fixture["reviewed_main"], "-m", "moved review branch"],
+                    check=True, text=True, capture_output=True,
+                ).stdout.strip()
+                if case == "local":
+                    subprocess.run(["git", "-C", str(repo), "update-ref",
+                                    "refs/heads/agent/review-sample", new_commit], check=True)
+                else:
+                    subprocess.run(["git", "-C", str(repo), "push", "-q", "origin",
+                                    f"{new_commit}:refs/heads/agent/review-sample"], check=True)
+                stack, _ = self._carrow_plan_patches(fixture)
+                pattern = "local review branch moved" if case == "local" else "remote review branch moved"
+                with stack, self.assertRaisesRegex(runner.RunnerError, pattern):
+                    runner.plan_host_validation_recovery(
+                        repo, "review-sample", fixture["run_id"],
+                        attest_no_active_owner=True, attest_no_unique_evidence=True,
+                    )
+
+    def test_carrow_missing_worktree_apply_requires_both_attestations_and_refuses_replay(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_carrow_missing_worktree_fixture(fixture)
+        stack, _ = self._carrow_plan_patches(fixture)
+        with stack:
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+            )
+            with self.assertRaisesRegex(runner.RunnerError, "both explicit operator attestations"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                    plan_sha256=plan["plan_sha256"],
+                )
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+
+        (fixture["run_dir"] / "continuation-01").mkdir()
+        (fixture["run_dir"] / "continuation-01/metadata.json").write_text('{"phase":"partial"}\n')
+        stack, _ = self._carrow_plan_patches(fixture)
+        with stack, self.assertRaisesRegex(runner.RunnerError, "continuation state has an unknown schema"):
+            runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+
+    def test_carrow_missing_worktree_apply_reconstructs_then_gates_reviewer_on_green_validation(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_carrow_missing_worktree_fixture(fixture)
+        self._relocate_carrow_fixture_checkout(fixture)
+        stack, source_span = self._carrow_plan_patches(fixture)
+        with stack:
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+            validation_report = {"schema": "custodian.validation.result.v1", "passed": True,
+                                 "coverage": {"complete": True}, "selected": [], "tests": []}
+
+            def green_validation(worktree, run_dir, reviewed_main, implementation_commit, **kwargs):
+                report_bytes = (json.dumps(validation_report, sort_keys=True) + "\n").encode()
+                metadata_bytes = b'{"schema":"synthetic-green-validation"}\n'
+                (run_dir / "validation.json").write_bytes(report_bytes)
+                (run_dir / "coordinator-validation.json").write_bytes(metadata_bytes)
+                return {
+                    "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+                    "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest(),
+                    "evidence_run_dir": str(run_dir), "source_span": source_span,
+                }
+
+            with patch.object(runner, "run_coordinator_validation", side_effect=green_validation), \
+                 patch.object(runner, "verify_coordinator_validation"), \
+                 patch.object(runner, "codex_preflight", return_value="codex-fixture") as preflight, \
+                 patch.object(runner, "launch_codex", side_effect=subprocess.TimeoutExpired("codex-fixture", 1)) as launch:
+                with self.assertRaisesRegex(runner.RunnerError, "fresh reviewer did not finish"):
+                    runner.continue_run(
+                        fixture["repo"], "review-sample", fixture["run_id"],
+                        authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                        attest_no_active_owner=True, attest_no_unique_evidence=True,
+                        plan_sha256=plan["plan_sha256"],
+                    )
+            preflight.assert_called_once()
+            launch.assert_called_once()
+        continuation = fixture["run_dir"] / "continuation-01"
+        child = json.loads((continuation / "metadata.json").read_text())
+        self.assertEqual(child["phase"], "reviewer_interrupted")
+        self.assertEqual(child["reviewer_launch_count"], 1)
+        self.assertEqual(child["host_validation_attempts"][0]["status"], "passed")
+        self.assertEqual(child["operator_attestations"], {
+            "no_active_review_owner": True,
+            "no_unique_untracked_or_ignored_evidence": True,
+        })
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=continuation),
+                         fixture["carrow_run_manifest"])
 
     def _host_recovery_fakes(self, fixture, *, outcome="findings", fail_validation=False):
         packet = runner.parse_packet(fixture["active"], fixture["review"])
