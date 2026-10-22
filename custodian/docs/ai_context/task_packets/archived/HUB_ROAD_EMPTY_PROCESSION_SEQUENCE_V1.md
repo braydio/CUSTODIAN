@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-road-empty-procession-sequence-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -49,3 +49,22 @@ Root slice of an independent event chain; implement against live main without wa
 ## Handoff
 - Next action: Complete the focused implementation, land, then run `review-hub-road-empty-procession-sequence-v1`.
 - Blockers or open questions: No authoring-side design blockers; ordinary dispatcher dependencies and live claim locks apply.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The post-Awakening Hub Road sequence is playable through three ordered beats. The real Operator traverses the H1/H2 Hub route from Spawn_SouthReach through North Processional toward ForumSouth; Awakening remains untouched. Focused smoke proves traversal, order, local effects, HubState persistence/restore, no replay after completion, unchanged H1/Dais routing, and no Contract prewarm. `run_validation.py --changed --test hub_road_empty_procession --json` passed.
+- Evidence: `python3 custodian/tools/validation/run_validation.py --changed --test hub_road_empty_procession --json` passed; `hub_first_set_blockout`, `world_transition_handoff`, `hub_forum_adjudication`, and `campaign_outcome_exactly_once_smoke.gd` also passed.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: The fresh worktree lacked Godot's import/class cache on the first direct launch; an initial backward-compatibility fixture omitted the existing campaign_history field. Both were resolved before final validation.
+- Root cause / contributing factors: First-run Godot import state was absent; the test fixture did not use the actual legacy HubState snapshot shape.
+- Prevention / pipeline improvement: Run import preflight and project import before focused Godot smokes in fresh worktrees; derive legacy fixtures from HubState.snapshot() and remove only newly introduced fields.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: Physical Operator traversal and restored event snapshots gave deterministic route, order, and idempotency evidence.
