@@ -2,7 +2,7 @@
 
 **Status:** active architecture authority  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b  
-**Reviewed main:** `3067be7817c1713f989a92753a7d199e913b82bc`
+**Reviewed main:** `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
 
 ## Goal
 
@@ -93,6 +93,47 @@ Recommended semantic shape:
 }
 ```
 
+## Initial fleet asset authority
+
+The exact generation order, family IDs, component inventory, source/inbox/runtime
+roots and per-phase art requirements for the first five production vehicle classes
+are owned by:
+
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
+
+This architecture defines how those assets are derived and consumed; the fleet
+manifest defines which concrete assets must exist.
+
+## Component socket presentation
+
+A vehicle visual kit may declare semantic component sockets aligned to the
+existing mechanical domains: `CHASSIS`, `MOBILITY`, `POWERTRAIN`,
+`CONTROL`, and `SPECIALTY`.
+
+Each socket definition may identify:
+
+- a stable socket ID;
+- domain;
+- normalized anchor or explicit directional override;
+- compatible component IDs;
+- one or more presentation-state IDs for missing/failed/installed display;
+- optional shared FX fit anchor.
+
+Socket presentation is compositional. A failed/missing overlay shares the same
+vehicle-family registration as the body and is shown or hidden by semantic
+component state. Do not render every possible whole-vehicle damage combination
+as separate full-body sheets.
+
+The presentation contract does not itself invent mechanical installation state.
+On current reviewed recovery mechanics, R1+ restoration may still consume the
+required component set atomically. Future staged per-socket installation can
+publish component-state transitions through the same socket IDs without
+reauthoring body art.
+
+Recommended runtime composition adds a `ComponentSocketRoot` under the reusable
+presentation rig. Socket presenters may change pixels only; they do not own
+inventory, fabrication, recovery eligibility, health, or lifecycle mutation.
+
 ## Family registration
 
 All body states in one family share one registration contract. Do not independently fit each state. Record reference state/direction, frame size, vehicle root, ground-contact line, stable body envelope, global scale and optional semantic source markers.
@@ -120,6 +161,7 @@ Canonical fitting policies: `CENTER`, `BOUNDS`, `ANCHOR`, `PATH`.
 VehiclePresentationRig
   Body
   PersistentOverlays
+  ComponentSocketRoot
   AttachmentRoot
   LightRoot
   TransientFxRoot

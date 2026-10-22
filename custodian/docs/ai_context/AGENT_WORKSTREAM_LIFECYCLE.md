@@ -181,9 +181,15 @@ claim/worktree must remain unchanged; source/provenance validation still runs.
 
 Source provenance keeps four identities separate: the implementation/archive
 receipt, any archive-first main-sync merge, a bounded source-bearing follow-up,
-and the final landing recorded by the lifecycle trace. A follow-up is accepted
-only when its exact commit, parent topology, run/claim identity, sync event and
-complete path/mode set are pinned; arbitrary descendants do not extend the
+and the final landing recorded by the lifecycle trace. A direct linear source
+tail after an archive requires one exact `main_sync(changed=false)` event whose
+head is the final trace tip and whose `main_sha` is the pinned reviewed main.
+After a sync merge, every earlier merge requires its unique ordered exact sync
+event. The latest merge may instead be bound by one exact no-op event at the
+final tip, but only when that event's `main_sha` is the latest merge's second
+parent and the intervening commits are a bounded linear source tail. In both
+shapes, the exact commits, parent topology, run/claim identity, and complete
+declared path/mode set are pinned; arbitrary descendants do not extend the
 reviewed source range. Source-work binaries remain governed by the archived
 packet's declared source-work path and matching tracked receipt/hash evidence;
 file suffix alone never grants admission.
@@ -194,9 +200,12 @@ transition. The archive transition must be the current branch tip before
 finish first pushes or synchronizes main. If a prior finish attempt stopped
 after synchronization, the guard accepts only the exact archive-first merge
 bound by that run's claim, published worktree, `main_sync`, and terminal
-`run_blocked` events. After a resolved sync merge, a bounded source-follow-up chain may contain
-multiple linear commits, each limited to modifications of declared regular
-files. If main advances again before landing, host source validation accepts
+`run_blocked` events. After a resolved sync merge, a bounded source-follow-up
+chain may contain multiple linear commits, each limited to modifications of
+declared regular files. Its final no-op sync witness may bind the exact
+descendant tip to the latest merge's second parent, recording post-conflict
+synchronization without claiming the merge itself was the final checkout head.
+If main advances again before landing, host source validation accepts
 archive-descending sync merges only when each merge has its own exact ordered
 trace witness and deterministic tree, or a narrowly verified additive managed
 index conflict resolution. Untraced merges, extra source changes, and

@@ -12,7 +12,7 @@
 - Review: `none`
 - Review target workstream: `vehicle-presentation-contract-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/VEHICLE_PRESENTATION_CONTRACT_V1.md`
-- Reviewed main: `3067be7817c1713f989a92753a7d199e913b82bc`
+- Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
 - Visual review: `none`
 - Reviewer context: `fresh`
@@ -25,7 +25,7 @@
 - Review evidence: Durable implementation evidence plus focused fresh schema/registry tests.
 - Correction threshold: Create correction work only for a confirmed acceptance defect or material evidence gap.
 - Focused validation: Re-run focused visual-kit/registry validation before broad checks.
-- Review focus: Reject permissive inheritance/anchors, duplicate parsing/authority or v1 compatibility drift.
+- Review focus: Reject permissive inheritance/anchors, duplicate parsing/authority, v1 compatibility drift, or component-socket metadata that becomes a second inventory/restoration authority. Reconcile exact first-fleet socket IDs against `VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`.
 - Acceptance: Produce a findings-first independent review with stable IDs/dispositions. Do not patch implementation.
 - Non-goals: Do not redesign or fix implementation directly.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
