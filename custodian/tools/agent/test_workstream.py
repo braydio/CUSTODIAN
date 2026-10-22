@@ -238,6 +238,314 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "commit", "-m", "unbound follow-up")
         self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
+    def _build_pinned_archive_recovery_history(self, *, summary_extra=False,
+                                               merge_extra=False, trace_tamper=False,
+                                               swap_merge_parents=False,
+                                               summary_wrong_path=False,
+                                               evidence_extra=False,
+                                               trace_claim_tamper=False):
+        workstream_id = "agent-test-pinned-archive-recovery"
+        branch = workstream.branch_for(workstream_id)
+        url = "https://chatgpt.com/c/test-authoring-chat"
+        active_rel = "custodian/docs/ai_context/task_packets/AGENT_TEST_PINNED_ARCHIVE_RECOVERY.md"
+        archived_rel = "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_PINNED_ARCHIVE_RECOVERY.md"
+        summary_rel = workstream._expected_summary_filename(workstream_id)
+        readme_rel = "custodian/docs/ai_context/task_packets/README.md"
+        manifest_rel = "custodian/tools/validation/validation_manifest.json"
+        test_rel = "custodian/tools/agent/test_paired_review_runner.py"
+        managed_start = "<!-- task_packet_index:managed:start -->"
+        managed_end = "<!-- task_packet_index:managed:end -->"
+        packet_text = (
+            "# Test packet\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_paired_review_runner.py`\n"
+            f"- Authoring chat: `{url}`\n"
+            "- Evidence: base packet.\n"
+            "- Evidence: `The failed-import path now authenticates its approved baseline`.\n"
+        )
+        active = self.repo / active_rel
+        archived = self.repo / archived_rel
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(packet_text)
+        (self.repo / summary_rel).write_text(
+            "# Closeout\n\nSummary body.\n\n## Evidence\n- Evidence: prior pass.\n\n"
+            "## Process Feedback\n- Outcome: success\n- Friction severity: medium\n"
+            "- Follow-up: fixed-in-scope\n\n## Next Handoff\n"
+            "- Next workstream: `review-agent-test-pinned-archive-recovery`\n"
+            "- Next packet state: `dependency-gated`\n- Refresh owner: `none`\n"
+            "- ChatGPT/user planning refresh required: `no`\n"
+            "- Authoring chat: `" + url + "`\n- Refresh reason: `none`\n"
+            "- Next action: `Continue after review.`\n- Blockers or open questions: `none`\n"
+        )
+        (self.repo / readme_rel).parent.mkdir(parents=True, exist_ok=True)
+        (self.repo / readme_rel).write_text(
+            "# Packets\n" + managed_start + "\n- target\n- common\n" + managed_end + "\n"
+        )
+        (self.repo / manifest_rel).parent.mkdir(parents=True, exist_ok=True)
+        manifest = {"tests": [
+            {"id": "paired_review_runner_unit", "timeout_sec": 30},
+            {"id": "unrelated_test", "timeout_sec": 10},
+        ]}
+        (self.repo / manifest_rel).write_text(json.dumps(manifest, indent=2) + "\n")
+        (self.repo / test_rel).parent.mkdir(parents=True, exist_ok=True)
+        (self.repo / test_rel).write_text(
+            "def test_validation_timeout_manifest_change_is_exactly_one_field():\n"
+            "    source = 'base'\n"
+        )
+        git(self.repo, "add", active_rel, summary_rel, readme_rel, manifest_rel, test_rel)
+        git(self.repo, "commit", "-m", "publish archive recovery fixture")
+        initial_main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "checkout", "-b", branch)
+
+        branch_manifest = json.loads((self.repo / manifest_rel).read_text())
+        branch_manifest["tests"][0]["timeout_sec"] = 90
+        (self.repo / manifest_rel).write_text(json.dumps(branch_manifest, indent=2) + "\n")
+        (self.repo / test_rel).write_text(
+            "def test_validation_timeout_manifest_change_is_exactly_one_field():\n"
+            "    source = 'branch'\n"
+        )
+        complete_packet = packet_text.replace("in_progress", "complete")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(complete_packet)
+        active.unlink()
+        (self.repo / readme_rel).write_text(
+            "# Packets\n" + managed_start + "\n- common\n" + managed_end + "\n"
+        )
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        archive = git(self.repo, "rev-parse", "HEAD")
+
+        before_summary = (self.repo / summary_rel).read_text()
+        legacy = f"- Authoring chat: `{url}`"
+        corrected = f"- Authoring chat: {url}"
+        after_summary = before_summary.replace(legacy, corrected, 1).replace(
+            "\n## Evidence", f"\nAuthoring chat: {url}\n\n## Evidence", 1,
+        )
+        if summary_extra:
+            after_summary += "\nUnrelated summary change.\n"
+        summary_commit_path = "wrong-summary.md" if summary_wrong_path else summary_rel
+        (self.repo / summary_commit_path).write_text(after_summary)
+        git(self.repo, "add", summary_commit_path)
+        git(self.repo, "commit", "-m", "correct summary backlink")
+        summary_commit = git(self.repo, "rev-parse", "HEAD")
+
+        git(self.repo, "checkout", "main")
+        active.unlink()
+        main_archive = packet_text.replace("in_progress", "complete")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(main_archive + "\nMain archive copy.\n")
+        (self.repo / readme_rel).write_text(
+            "# Packets\n" + managed_start + "\n- target\n- common\n- main-addition\n"
+            + managed_end + "\n"
+        )
+        main_manifest = json.loads((self.repo / manifest_rel).read_text())
+        main_manifest["tests"][0]["timeout_sec"] = 60
+        (self.repo / manifest_rel).write_text(json.dumps(main_manifest, indent=2) + "\n")
+        (self.repo / test_rel).write_text(
+            "def test_validation_timeout_manifest_change_is_exactly_one_field():\n"
+            "    source = 'main'\n"
+        )
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "advance main with managed index and validation updates")
+        sync_parent = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "main")
+
+        git(self.repo, "checkout", branch)
+        merge = subprocess.run(["git", "merge", "--no-commit", "main"], cwd=self.repo,
+                                text=True, capture_output=True)
+        self.assertNotEqual(merge.returncode, 0, "fixture must exercise real merge conflicts")
+        (self.repo / readme_rel).write_text(
+            "# Packets\n" + managed_start + "\n- common\n- main-addition\n" + managed_end + "\n"
+        )
+        (self.repo / archived_rel).write_text(complete_packet)
+        resolved_manifest = json.loads(git(self.repo, "show", f"main:{manifest_rel}"))
+        resolved_manifest["tests"][0]["timeout_sec"] = 90
+        (self.repo / manifest_rel).write_text(json.dumps(resolved_manifest, indent=2) + "\n")
+        (self.repo / test_rel).write_text(
+            "def test_validation_timeout_manifest_change_is_exactly_one_field():\n"
+            "    source = 'main'\n"
+        )
+        if merge_extra:
+            (self.repo / "unrelated.txt").write_text("not authorized\n")
+            git(self.repo, "add", "unrelated.txt")
+        git(self.repo, "add", readme_rel, archived_rel, manifest_rel, test_rel)
+        if swap_merge_parents:
+            tree = git(self.repo, "write-tree")
+            merge_commit = git(
+                self.repo, "commit-tree", tree, "-p", sync_parent, "-p", summary_commit,
+                "-m", "invalid sync with reversed parents",
+            )
+            git(self.repo, "reset", "--hard", merge_commit)
+        else:
+            git(self.repo, "commit", "-m", "resolve authorized main sync conflicts")
+            merge_commit = git(self.repo, "rev-parse", "HEAD")
+
+        old_recovery_evidence = (
+            "- Evidence: `The failed-import path now authenticates its approved baseline`."
+        )
+        new_recovery_evidence = old_recovery_evidence + "`"
+        post_sync_evidence = (
+            f"- Post-sync validation: `After merge `{merge_commit}`, changed-file validation "
+            "passed 43/43 with complete coverage and no timeouts; the manifest retained the "
+            "authorized 90-second bound.`"
+        )
+        updated_packet = complete_packet.replace(
+            old_recovery_evidence, new_recovery_evidence + "\n" + post_sync_evidence, 1,
+        )
+        if evidence_extra:
+            updated_packet += "\n- Extra evidence: unauthorized content.\n"
+        (self.repo / archived_rel).write_text(updated_packet)
+        git(self.repo, "add", archived_rel)
+        git(self.repo, "commit", "-m", "record post-sync validation")
+        evidence_commit = git(self.repo, "rev-parse", "HEAD")
+        blocked_summary = (self.repo / summary_rel).read_text()
+        blocked_summary = blocked_summary.replace("- Outcome: success", "- Outcome: partial")
+        blocked_summary = blocked_summary.replace("- Friction severity: medium", "- Friction severity: high")
+        blocked_summary = blocked_summary.replace("- Follow-up: fixed-in-scope", "- Follow-up: manual-follow-up")
+        blocked_summary = blocked_summary.replace(
+            "- Next workstream: `review-agent-test-pinned-archive-recovery`",
+            f"- Next workstream: `{workstream_id}`",
+        ).replace("- Next packet state: `dependency-gated`", "- Next packet state: `refresh-required`")
+        blocked_summary = blocked_summary.replace("- Refresh owner: `none`", "- Refresh owner: `chatgpt-user`")
+        blocked_summary = blocked_summary.replace(
+            "- ChatGPT/user planning refresh required: `no`",
+            "- ChatGPT/user planning refresh required: `yes`",
+        ).replace("- Refresh reason: `none`", "- Refresh reason: `archive-transition history recovery`")
+        blocked_summary = blocked_summary.replace(
+            "- Next action: `Continue after review.`",
+            "- Next action: `Finish after the archive-transition repair.`",
+        ).replace("- Blockers or open questions: `none`",
+                  "- Blockers or open questions: `Original run 20261021T000000Z-abcdef123456 is held.`")
+        (self.repo / summary_rel).write_text(blocked_summary)
+        git(self.repo, "add", summary_rel)
+        git(self.repo, "commit", "-m", "record closeout blocker")
+        blocker_commit = git(self.repo, "rev-parse", "HEAD")
+
+        run_id = "20261021T000000Z-abcdef123456"
+        trace_ref = f"refs/heads/agent-diagnostics/{workstream_id}/{run_id}"
+        active_packet_rel = active_rel
+        events = [
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_packet_rel, "run_id": run_id, "event": "remote_claim_acquired",
+             "data": {"remote_ref": f"refs/heads/dispatch-claims/{workstream_id}",
+             "claim_oid": ("d" * 40 if trace_claim_tamper else "c" * 40),
+             "main_sha": initial_main}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_packet_rel, "run_id": run_id, "event": "worktree_published",
+             "data": {"branch": branch, "clean": True, "head": initial_main,
+                      "upstream": initial_main, "worktree": str(self.repo)}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_packet_rel, "run_id": run_id, "event": "finish_started",
+             "data": {}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_packet_rel, "run_id": run_id, "event": "run_blocked",
+             "data": {"reason": "origin/main merge conflicted; resolve in the preserved worktree"}},
+        ]
+        trace_repo = self.base / "trace-repo"
+        git(self.base, "clone", str(self.remote), str(trace_repo))
+        git(trace_repo, "checkout", "main")
+        (trace_repo / "trace.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in events)
+        )
+        git(trace_repo, "add", "trace.jsonl")
+        git(trace_repo, "commit", "-m", "publish immutable fixture trace")
+        git(trace_repo, "push", "origin", f"HEAD:{trace_ref}")
+        git(self.repo, "fetch", "origin")
+        if trace_tamper:
+            (trace_repo / "trace.jsonl").write_text("{}\n")
+            git(trace_repo, "add", "trace.jsonl")
+            git(trace_repo, "commit", "-m", "tamper trace")
+            git(trace_repo, "push", "origin", f"HEAD:{trace_ref}")
+            git(self.repo, "fetch", "origin")
+        trace_remote = f"refs/remotes/origin/agent-diagnostics/{workstream_id}/{run_id}"
+        policy = {
+            "archive": archive,
+            "archive_parent": git(self.repo, "rev-parse", f"{archive}^1"),
+            "history": (summary_commit, merge_commit, evidence_commit, blocker_commit),
+            "sync_parent": sync_parent,
+            "claim_oid": "c" * 40,
+            "initial_main": initial_main,
+            "trace_ref": trace_remote,
+            "trace_oid": git(self.repo, "rev-parse", trace_remote),
+            "run_id": run_id,
+            "protected_run_id": run_id,
+            "worktree": str(self.repo),
+        }
+        return workstream_id, archived_rel, policy
+
+    def test_pinned_archive_recovery_accepts_exact_git_history_and_rejects_arbitrary_followup(self):
+        workstream_id, packet, policy = self._build_pinned_archive_recovery_history()
+        with mock.patch.dict(workstream._PINNED_ARCHIVE_TRANSITION_RECOVERIES,
+                             {workstream_id: policy}, clear=True):
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+            (self.repo / "outside.py").write_text("unbound change\n")
+            git(self.repo, "add", "outside.py")
+            git(self.repo, "commit", "-m", "unbound post-closeout change")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_pinned_archive_recovery_accepts_later_clean_main_sync(self):
+        workstream_id, packet, policy = self._build_pinned_archive_recovery_history()
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "main")
+        (self.repo / "later-main.txt").write_text("later main change\n")
+        git(self.repo, "add", "later-main.txt")
+        git(self.repo, "commit", "-m", "advance main after recovery")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "sync later main")
+        with mock.patch.dict(workstream._PINNED_ARCHIVE_TRANSITION_RECOVERIES,
+                             {workstream_id: policy}, clear=True):
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_pinned_archive_recovery_runs_finish_through_landing(self):
+        workstream_id, packet, policy = self._build_pinned_archive_recovery_history()
+        report = self.base / "validation.json"
+        report.write_text(json.dumps({
+            "schema": "custodian.validation.result.v1",
+            "passed": True, "coverage": {"complete": True},
+            "tests": [{"status": "passed"}],
+        }))
+        with mock.patch.dict(workstream._PINNED_ARCHIVE_TRANSITION_RECOVERIES,
+                             {workstream_id: policy}, clear=True), \
+             mock.patch.object(workstream, "artifact_preflight",
+                               return_value=[self.repo / packet]), \
+             mock.patch.object(workstream, "_completion_truth_preflight"), \
+             mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
+             mock.patch.object(workstream, "_teardown_workstream"):
+            result = workstream._finish_impl(workstream_id, report, repo=self.repo)
+        self.assertEqual(result, "finished")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"),
+                         git(self.repo, "rev-parse", "origin/main"))
+
+    def _assert_pinned_archive_recovery_rejected(self, **options):
+        workstream_id, packet, policy = self._build_pinned_archive_recovery_history(**options)
+        with mock.patch.dict(workstream._PINNED_ARCHIVE_TRANSITION_RECOVERIES,
+                             {workstream_id: policy}, clear=True):
+            error = workstream._archive_transition_tip_error(workstream_id, self.repo)
+        self.assertIsNotNone(error)
+
+    def test_pinned_archive_recovery_rejects_substantive_summary_edit(self):
+        self._assert_pinned_archive_recovery_rejected(summary_extra=True)
+
+    def test_pinned_archive_recovery_rejects_wrong_summary_path(self):
+        self._assert_pinned_archive_recovery_rejected(summary_wrong_path=True)
+
+    def test_pinned_archive_recovery_rejects_out_of_scope_merge_resolution(self):
+        self._assert_pinned_archive_recovery_rejected(merge_extra=True)
+
+    def test_pinned_archive_recovery_rejects_modified_validation_evidence(self):
+        self._assert_pinned_archive_recovery_rejected(evidence_extra=True)
+
+    def test_pinned_archive_recovery_rejects_forged_trace(self):
+        self._assert_pinned_archive_recovery_rejected(trace_tamper=True)
+
+    def test_pinned_archive_recovery_rejects_changed_claim_identity(self):
+        self._assert_pinned_archive_recovery_rejected(trace_claim_tamper=True)
+
+    def test_pinned_archive_recovery_rejects_reversed_sync_parent_order(self):
+        self._assert_pinned_archive_recovery_rejected(swap_merge_parents=True)
+
     def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
         class ReachedFetch(Exception):
             pass

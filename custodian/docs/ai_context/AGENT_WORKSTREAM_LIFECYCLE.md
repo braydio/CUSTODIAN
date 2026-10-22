@@ -212,6 +212,15 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One failed-import recovery is pinned in `workstream.py` to its exact immutable
+archive, summary, sync, post-sync evidence, and blocker commits plus the original
+claim trace. It verifies the summary-only backlink correction, merge parent
+order, and bounded deterministic conflict resolutions. This exception applies
+only to that exact history; changing a pinned commit, trace, path, or parent
+order blocks again. It does not authorize general post-archive source or
+documentation edits and does not infer a successful `main_sync` event where
+the trace recorded none.
+
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
 complete original evidence manifest. Apply only the exact freshly emitted

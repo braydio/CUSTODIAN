@@ -35,6 +35,39 @@ class WorkstreamError(RuntimeError):
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 TASK_PACKET_ROOT = Path("custodian/docs/ai_context/task_packets")
 TASK_PACKET_ARCHIVE = TASK_PACKET_ROOT / "archived"
+
+# One already-published implementation has a bounded, immutable archive/sync
+# history that predates the current archive-transition verifier. Keep its
+# recovery authority pinned to the exact Git objects and diagnostic trace; do
+# not generalize this into a post-archive source-edit exemption.
+_PINNED_ARCHIVE_TRANSITION_RECOVERIES = {
+    "agent-paired-review-failed-host-validation-import-recovery-v1": {
+        "archive": "25229d8d3874608f7b8492df98bc3df4385a9d28",
+        "archive_parent": "66266c1d8faa1fc6ffee84681a7b0907e59603ad",
+        "history": (
+            "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
+            "dbcf8aec4eb09264b60bea9d26c99f235022efb5",
+            "a55c14e020d4986fb35baa75bde691c0c2e67e93",
+            "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
+        ),
+        "sync_parent": "e9e69fc2178b1a96e02240f4b0a86cdaf30581e7",
+        "claim_oid": "5249f25988aa13cdf99372754509fb7b91eeef94",
+        "initial_main": "030dbe986c0ced4e8b1dc2c816f466c81146b5f2",
+        "trace_ref": (
+            "refs/remotes/origin/agent-diagnostics/"
+            "agent-paired-review-failed-host-validation-import-recovery-v1/"
+            "20261020T200652Z-2fd156ce23d0"
+        ),
+        "trace_oid": "02729f20cd57d467a4d956e4f8bc1964261a3ac8",
+        "run_id": "20261020T200652Z-2fd156ce23d0",
+        "protected_run_id": "20261020T165418Z-53992bd05f83",
+        "worktree": (
+            "/home/braydenchaffee/Projects/.custodian-worktrees/"
+            "agent-paired-review-failed-host-validation-import-recovery-v1-"
+            "20261020T200652Z-2fd156ce23d0"
+        ),
+    },
+}
 ROOT_SYNC_DEFERRAL_SUPPORT = frozenset({
     "agent-paired-review-invalid-disposition-recovery-v1",
     "review-agent-paired-review-invalid-disposition-recovery-v1",
@@ -552,6 +585,21 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
             ).returncode == 0
             if active_before and not archive_before and not active_after and archive_after:
                 transitions.append((commit, archived_rel))
+    pinned_policy = _PINNED_ARCHIVE_TRANSITION_RECOVERIES.get(workstream_id)
+    if pinned_policy and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", head, main], cwd=path,
+            capture_output=True,
+    ).returncode != 0 and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", pinned_policy["archive"], head], cwd=path,
+            capture_output=True,
+    ).returncode == 0:
+        if len(transitions) != 1 or transitions[0][0] != pinned_policy["archive"]:
+            return "pinned archive transition is not the unique first-parent archive boundary"
+        if transitions[0][0] == head:
+            return None
+        return _pinned_archive_transition_recovery_error(
+            workstream_id, path, head, main, transitions[0][1], pinned_policy,
+        )
     if not transitions:
         return None
     if len(transitions) != 1:
@@ -739,6 +787,346 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
         f"canonical archive transition for {packet} is {transition_commit}, not the current "
         f"branch tip {head}; include source changes before archival or use a supported "
         "source-span record"
+    )
+
+
+def _pinned_archive_transition_recovery_error(
+    workstream_id: str, path: Path, head: str, main: str, packet: str,
+    policy: dict[str, object],
+) -> str | None:
+    """Verify one exact, previously blocked archive/sync history without broadening source scope."""
+    def blocked(reason: str) -> str:
+        return f"pinned archive-transition recovery is not authenticated: {reason}"
+
+    expected = list(policy["history"])
+    history = git("rev-list", "--first-parent", "--reverse",
+                  f"{policy['archive']}..{head}", cwd=path, check=False).splitlines()
+    if history[:len(expected)] != expected:
+        return blocked("the exact summary, sync, validation, and blocker commits are not the first-parent prefix")
+    if git("branch", "--show-current", cwd=path) != branch_for(workstream_id):
+        return blocked("the preserved claim is not checked out on its canonical branch")
+
+    archive_parent = git("rev-parse", f"{policy['archive']}^1", cwd=path, check=False)
+    if archive_parent != policy["archive_parent"]:
+        return blocked("the immutable archive transition parent changed")
+    summary_commit, merge_commit, evidence_commit, blocker_commit = expected
+    parents = {
+        summary_commit: [policy["archive"]],
+        merge_commit: [summary_commit, policy["sync_parent"]],
+        evidence_commit: [merge_commit],
+        blocker_commit: [evidence_commit],
+    }
+    for commit, wanted in parents.items():
+        actual = git("rev-list", "--parents", "-n", "1", commit, cwd=path,
+                     check=False).split()[1:]
+        if actual != wanted:
+            return blocked(f"parent order changed for {commit[:12]}")
+
+    if subprocess.run(["git", "merge-base", "--is-ancestor", policy["sync_parent"], main],
+                      cwd=path, capture_output=True).returncode:
+        return blocked("the recorded sync parent is not in the current main history")
+
+    summary_path = _expected_summary_filename(workstream_id)
+    archive_text = git("show", f"{policy['archive']}:{packet}", cwd=path, check=False)
+    chat_match = re.search(r"(?im)^- Authoring chat:\s*`?(https?://[^`\s]+)`?\s*$",
+                           archive_text)
+    if not chat_match:
+        return blocked("the archived packet has no exact authoring-chat authority")
+    chat_url = chat_match.group(1)
+    if _commit_paths(summary_commit, path) != {summary_path}:
+        return blocked("the pre-sync provenance correction changed a noncanonical summary path")
+    before = _git_text_at(f"{summary_commit}^1", summary_path, path)
+    after = _git_text_at(summary_commit, summary_path, path)
+    legacy = f"- Authoring chat: `{chat_url}`"
+    corrected = f"- Authoring chat: {chat_url}"
+    if (before is None or after is None or before.count(legacy) != 1
+            or f"Authoring chat: {chat_url}\n" in before):
+        return blocked("the summary does not contain the one expected legacy backlink")
+    wanted_summary = before.replace(legacy, corrected, 1)
+    if wanted_summary.count("\n## Evidence") != 1:
+        return blocked("the canonical summary has no unique Evidence heading")
+    wanted_summary = wanted_summary.replace(
+        "\n## Evidence", f"\nAuthoring chat: {chat_url}\n\n## Evidence", 1,
+    )
+    if after != wanted_summary or not _regular_blob_at(summary_commit, summary_path, path):
+        return blocked("the pre-sync summary change exceeds the exact backlink correction")
+
+    if not _pinned_sync_merge_tree_valid(merge_commit, packet, path):
+        return blocked("the sync merge tree or its bounded conflict resolutions changed")
+    if _commit_paths(evidence_commit, path) != {packet}:
+        return blocked("the post-sync validation record changed an unexpected path")
+    if _commit_paths(blocker_commit, path) != {summary_path}:
+        return blocked("the closeout blocker note changed an unexpected summary path")
+    if (not _regular_blob_at(evidence_commit, packet, path)
+            or not _regular_blob_at(blocker_commit, summary_path, path)):
+        return blocked("a pinned recovery artifact is not a regular file")
+    if not _pinned_post_sync_evidence_valid(merge_commit, evidence_commit, packet, path):
+        return blocked("the post-sync validation note changed outside its exact evidence receipt")
+    before_blocker = _git_text_at(f"{blocker_commit}^1", summary_path, path)
+    after_blocker = _git_text_at(blocker_commit, summary_path, path)
+    if (before_blocker is None or after_blocker is None
+            or not _pinned_blocker_summary_valid(
+                before_blocker, after_blocker, workstream_id, chat_url,
+                str(policy["protected_run_id"]),
+            )):
+        return blocked("the closeout summary does not record only the bounded blocker disposition")
+    if not _pinned_recovery_trace_valid(workstream_id, packet, path, policy):
+        return blocked("the original claim, clean worktree publication, or blocked finish trace changed")
+
+    previous = blocker_commit
+    for commit in history[len(expected):]:
+        commit_parents = git("rev-list", "--parents", "-n", "1", commit,
+                             cwd=path, check=False).split()[1:]
+        if len(commit_parents) != 2 or commit_parents[0] != previous:
+            return blocked("only verified main-sync merges may follow the pinned closeout note")
+        main_parent = commit_parents[1]
+        if subprocess.run(["git", "merge-base", "--is-ancestor", main_parent, main],
+                          cwd=path, capture_output=True).returncode:
+            return blocked("a follow-up merge parent is not in current main history")
+        if not _pinned_followup_sync_tree_valid(commit, packet, path):
+            return blocked("a follow-up sync merge has an unverified tree resolution")
+        previous = commit
+    return None
+
+
+def _commit_paths(commit: str, path: Path) -> set[str]:
+    return set(git("diff-tree", "--no-commit-id", "--name-only", "--no-renames", "-r",
+                   commit, cwd=path, check=False).splitlines())
+
+
+def _git_text_at(revision: str, relative: str, path: Path) -> str | None:
+    result = subprocess.run(["git", "show", f"{revision}:{relative}"], cwd=path,
+                            capture_output=True)
+    if result.returncode:
+        return None
+    return result.stdout.decode("utf-8", errors="strict")
+
+
+def _regular_blob_at(revision: str, relative: str, path: Path) -> bool:
+    result = subprocess.run(["git", "ls-tree", "-z", revision, "--", relative], cwd=path,
+                            capture_output=True)
+    if result.returncode or not result.stdout:
+        return False
+    metadata = result.stdout.split(b"\t", 1)[0].split()
+    return len(metadata) == 3 and metadata[0] == b"100644" and metadata[1] == b"blob"
+
+
+def _pinned_post_sync_evidence_valid(merge_commit: str, evidence_commit: str,
+                                    packet: str, path: Path) -> bool:
+    before = _git_text_at(merge_commit, packet, path)
+    after = _git_text_at(evidence_commit, packet, path)
+    if before is None or after is None:
+        return False
+    evidence_lines = [line for line in before.splitlines() if line.startswith("- Evidence:")]
+    updated_lines = [line for line in after.splitlines() if line.startswith("- Evidence:")]
+    post_sync = [line for line in after.splitlines() if line.startswith("- Post-sync validation:")]
+    if len(evidence_lines) != 2 or len(updated_lines) != 2 or len(post_sync) != 1:
+        return False
+    recovery_evidence = next((line for line in evidence_lines
+                              if "The failed-import path now authenticates" in line), None)
+    updated_recovery = next((line for line in updated_lines
+                             if "The failed-import path now authenticates" in line), None)
+    expected_note = (
+        f"- Post-sync validation: `After merge `{merge_commit}`, changed-file validation "
+        "passed 43/43 with complete coverage and no timeouts; the manifest retained the "
+        "authorized 90-second bound.`"
+    )
+    if (recovery_evidence is None
+            or updated_recovery != recovery_evidence + "`"
+            or post_sync != [expected_note]):
+        return False
+    expected = before.replace(recovery_evidence, updated_recovery + "\n" + expected_note, 1)
+    return expected == after
+
+
+def _pinned_blocker_summary_valid(before: str, after: str, workstream_id: str,
+                                  chat_url: str, run_id: str) -> bool:
+    allowed_sections = {"## Process Feedback", "## Next Handoff"}
+
+    def split_sections(text: str) -> tuple[str, dict[str, str]]:
+        lines = text.splitlines(keepends=True)
+        positions = [(index, line.strip()) for index, line in enumerate(lines)
+                     if line.startswith("## ")]
+        prefix_end = positions[0][0] if positions else len(lines)
+        sections: dict[str, str] = {}
+        for offset, (start, heading) in enumerate(positions):
+            stop = positions[offset + 1][0] if offset + 1 < len(positions) else len(lines)
+            sections[heading] = "".join(lines[start:stop])
+        return "".join(lines[:prefix_end]), sections
+
+    before_prefix, before_sections = split_sections(before)
+    after_prefix, after_sections = split_sections(after)
+    if before_prefix != after_prefix:
+        return False
+    for heading in set(before_sections) | set(after_sections):
+        if heading not in allowed_sections and before_sections.get(heading) != after_sections.get(heading):
+            return False
+    if not allowed_sections.issubset(after_sections):
+        return False
+    feedback, handoff = after_sections["## Process Feedback"], after_sections["## Next Handoff"]
+    required = (
+        "- Outcome: partial", "- Friction severity: high", "- Follow-up: manual-follow-up",
+        f"- Next workstream: `{workstream_id}`", "- Next packet state: `refresh-required`",
+        "- Refresh owner: `chatgpt-user`", "- ChatGPT/user planning refresh required: `yes`",
+        f"- Authoring chat: {chat_url}",
+    )
+    return (all(item in feedback + handoff for item in required)
+            and run_id in handoff and "archive-transition" in handoff.lower())
+
+
+def _pinned_sync_merge_tree_valid(commit: str, packet: str, path: Path) -> bool:
+    first = git("rev-parse", f"{commit}^1", cwd=path, check=False)
+    second = git("rev-parse", f"{commit}^2", cwd=path, check=False)
+    expected = subprocess.run(["git", "merge-tree", "--write-tree", first, second], cwd=path,
+                              text=True, capture_output=True)
+    expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+    actual_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path, check=False)
+    if not expected_tree:
+        return False
+    if expected.returncode == 0:
+        return expected_tree == actual_tree
+    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                      expected_tree, actual_tree, cwd=path, check=False).splitlines())
+    readme = "custodian/docs/ai_context/task_packets/README.md"
+    manifest = "custodian/tools/validation/validation_manifest.json"
+    timeout_test = "custodian/tools/agent/test_paired_review_runner.py"
+    allowed = {readme, packet, manifest, timeout_test}
+    if not {packet, manifest, timeout_test}.issubset(changed) or not changed.issubset(allowed):
+        return False
+    first_readme = _git_text_at(first, readme, path)
+    second_readme = _git_text_at(second, readme, path)
+    merged_readme = _git_text_at(commit, readme, path)
+    if first_readme is None or second_readme is None or merged_readme is None:
+        return False
+    if not _managed_packet_readme_merge_valid(first_readme, second_readme, merged_readme, path):
+        return False
+    if (not _regular_blob_at(first, packet, path)
+            or not _regular_blob_at(commit, packet, path)
+            or _git_text_at(first, packet, path) != _git_text_at(commit, packet, path)):
+        return False
+    merged_test = _git_text_at(commit, timeout_test, path)
+    if (not _regular_blob_at(commit, timeout_test, path) or merged_test is None
+            or "<<<<<<<" in merged_test or "=======" in merged_test or ">>>>>>>" in merged_test
+            or "test_validation_timeout_manifest_change_is_exactly_one_field" not in merged_test):
+        return False
+    return _authorized_timeout_merge_valid(first, second, commit, path)
+
+
+def _managed_packet_readme_merge_valid(first: str, second: str, merged: str, path: Path) -> bool:
+    for tools_path in (Path(__file__).resolve().parent, path / "custodian/tools/agent",
+                       path / "custodian/tools/validation"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import paired_review_host_validation as host_validation
+    except ImportError:
+        return False
+    return host_validation._managed_packet_index_additive_reconciliation(
+        first.encode(), second.encode(), merged.encode(),
+    )
+
+
+def _authorized_timeout_merge_valid(first: str, second: str, merged: str, path: Path) -> bool:
+    relative = "custodian/tools/validation/validation_manifest.json"
+    try:
+        branch_data = json.loads(_git_text_at(first, relative, path) or "")
+        main_data = json.loads(_git_text_at(second, relative, path) or "")
+        merged_data = json.loads(_git_text_at(merged, relative, path) or "")
+    except (json.JSONDecodeError, TypeError):
+        return False
+
+    def set_timeout(data: dict[str, object]) -> bool:
+        tests = data.get("tests")
+        if not isinstance(tests, list):
+            return False
+        matches = [item for item in tests if isinstance(item, dict)
+                   and item.get("id") == "paired_review_runner_unit"]
+        if len(matches) != 1:
+            return False
+        matches[0]["timeout_sec"] = 90
+        return True
+
+    branch_tests = branch_data.get("tests")
+    matches = [item for item in branch_tests if isinstance(item, dict)
+               and item.get("id") == "paired_review_runner_unit"] if isinstance(branch_tests, list) else []
+    if len(matches) != 1 or matches[0].get("timeout_sec") != 90 or not set_timeout(main_data):
+        return False
+    return merged_data == main_data
+
+
+def _pinned_followup_sync_tree_valid(commit: str, packet: str, path: Path) -> bool:
+    first = git("rev-parse", f"{commit}^1", cwd=path, check=False)
+    second = git("rev-parse", f"{commit}^2", cwd=path, check=False)
+    expected = subprocess.run(["git", "merge-tree", "--write-tree", first, second], cwd=path,
+                              text=True, capture_output=True)
+    expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+    actual_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path, check=False)
+    if not expected_tree:
+        return False
+    if (_git_text_at(first, packet, path) != _git_text_at(commit, packet, path)
+            or not _regular_blob_at(first, packet, path)
+            or not _regular_blob_at(commit, packet, path)):
+        return False
+    if expected.returncode == 0:
+        return expected_tree == actual_tree
+    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                      expected_tree, actual_tree, cwd=path, check=False).splitlines())
+    readme = "custodian/docs/ai_context/task_packets/README.md"
+    if changed != {readme} or _git_text_at(first, packet, path) != _git_text_at(commit, packet, path):
+        return False
+    first_readme = _git_text_at(first, readme, path)
+    second_readme = _git_text_at(second, readme, path)
+    merged_readme = _git_text_at(commit, readme, path)
+    return bool(first_readme is not None and second_readme is not None and merged_readme is not None
+                and _managed_packet_readme_merge_valid(first_readme, second_readme,
+                                                       merged_readme, path))
+
+
+def _pinned_recovery_trace_valid(workstream_id: str, packet: str, path: Path,
+                                 policy: dict[str, object]) -> bool:
+    trace_ref = str(policy["trace_ref"])
+    if git("rev-parse", trace_ref, cwd=path, check=False) != policy["trace_oid"]:
+        return False
+    raw = git("show", f"{trace_ref}:trace.jsonl", cwd=path, check=False)
+    if not raw:
+        return False
+    try:
+        events = [json.loads(line) for line in raw.splitlines() if line.strip()]
+    except (ValueError, TypeError):
+        return False
+    run_id = policy["run_id"]
+    active_packet = packet.removeprefix(f"{TASK_PACKET_ARCHIVE.as_posix()}/")
+    active_packet = f"{TASK_PACKET_ROOT.as_posix()}/{active_packet}"
+    if not events or any(event.get("schema") != "custodian.workflow_trace_event.v1"
+                         or event.get("workstream") != workstream_id
+                         or event.get("run_id") != run_id
+                         or event.get("packet") != active_packet for event in events):
+        return False
+    claims = [event.get("data", {}) for event in events
+              if event.get("event") == "remote_claim_acquired"]
+    publications = [event.get("data", {}) for event in events
+                    if event.get("event") == "worktree_published"]
+    finishes = [event.get("data", {}) for event in events
+                if event.get("event") == "finish_started"]
+    blocked = [event for event in events if event.get("event") == "run_blocked"]
+    if (len(claims) != 1 or len(publications) != 1 or len(finishes) != 1 or not blocked
+            or events[-1].get("event") != "run_blocked"
+            or any(event.get("event") in {"landing_started", "landing_completed"}
+                   for event in events)
+            or any(event.get("event") == "main_sync" for event in events)):
+        return False
+    claim, publication = claims[0], publications[0]
+    last_reason = blocked[-1].get("data", {}).get("reason")
+    return bool(
+        claim.get("remote_ref") == f"refs/heads/dispatch-claims/{workstream_id}"
+        and claim.get("claim_oid") == policy["claim_oid"]
+        and claim.get("main_sha") == policy["initial_main"]
+        and publication.get("branch") == branch_for(workstream_id)
+        and publication.get("clean") is True
+        and publication.get("head") == policy["initial_main"]
+        and publication.get("upstream") == policy["initial_main"]
+        and publication.get("worktree") == policy["worktree"]
+        and last_reason == "origin/main merge conflicted; resolve in the preserved worktree"
     )
 
 
