@@ -102,6 +102,72 @@ class WorkstreamTests(unittest.TestCase):
             repo, forged_paths, current,
         ))
 
+    def test_failed_import_suffix_allows_three_bounded_corrections_then_exact_sync(self):
+        git(self.repo, "checkout", "main")
+        for relative in ("custodian/tools/agent/workstream.py",
+                         "custodian/tools/agent/test_workstream.py"):
+            path = self.repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("base\n")
+        git(self.repo, "add", "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py")
+        git(self.repo, "commit", "-m", "seed bounded recovery correction paths")
+        correction_base = git(self.repo, "rev-parse", "HEAD")
+        branch = "agent-test-bounded-recovery-suffix"
+        git(self.repo, "checkout", "-b", branch)
+        corrections = []
+        correction_paths = (
+            "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py",
+        )
+        for index in range(3):
+            relative = correction_paths[index % 2]
+            (self.repo / relative).write_text(f"correction {index}\n")
+            git(self.repo, "add", relative)
+            git(self.repo, "commit", "-m", f"bounded correction {index}")
+            corrections.append(git(self.repo, "rev-parse", "HEAD"))
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "unrelated-main.md").write_text("main advance\n")
+        git(self.repo, "add", "unrelated-main.md")
+        git(self.repo, "commit", "-m", "advance main")
+        main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, corrections, correction_base, main,
+            ),
+            (corrections, None),
+        )
+
+        git(self.repo, "merge", "--no-ff", "main", "-m", "exact recovery sync")
+        sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, [*corrections, sync], correction_base, main,
+            ),
+            (corrections, sync),
+        )
+
+        git(self.repo, "checkout", "-b", "agent-test-fourth-recovery-correction", corrections[-1])
+        (self.repo / correction_paths[0]).write_text("fourth correction\n")
+        git(self.repo, "add", correction_paths[0])
+        git(self.repo, "commit", "-m", "fourth bounded-path correction")
+        fourth = git(self.repo, "rev-parse", "HEAD")
+        self.assertIsNone(workstream._failed_import_recovery_suffix(
+            self.repo, [*corrections, fourth], correction_base, main,
+        ))
+
+        git(self.repo, "checkout", "-b", "agent-test-sync-before-correction-tail", sync)
+        (self.repo / correction_paths[0]).write_text("post-sync correction\n")
+        git(self.repo, "add", correction_paths[0])
+        git(self.repo, "commit", "-m", "correction after sync")
+        after_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertIsNone(workstream._failed_import_recovery_suffix(
+            self.repo, [*corrections, sync, after_sync], correction_base, main,
+        ))
+
     def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
         workstream_id = "agent-test-archive-tip"
         active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
@@ -401,13 +467,18 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", "-A")
         git(self.repo, "commit", "-m", "sync latest main")
         final_merge = git(self.repo, "rev-parse", "HEAD")
-        for rel in ("custodian/tools/agent/workstream.py", "custodian/tools/agent/test_workstream.py"):
-            path = self.repo / rel
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text("authorized correction\n")
-        git(self.repo, "add", "custodian/tools/agent/workstream.py",
-            "custodian/tools/agent/test_workstream.py")
-        git(self.repo, "commit", "-m", "correct archive transition gate")
+        correction_paths = (
+            "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py",
+        )
+        for index in range(3):
+            paths = correction_paths if index == 2 else (correction_paths[index],)
+            for rel in paths:
+                path = self.repo / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"authorized correction {index}\n")
+            git(self.repo, "add", *paths)
+            git(self.repo, "commit", "-m", f"correct archive transition gate {index}")
         final_head = git(self.repo, "rev-parse", "HEAD")
         git(self.repo, "fetch", "origin")
         git(self.repo, "checkout", "main")
@@ -440,7 +511,7 @@ class WorkstreamTests(unittest.TestCase):
         trace_anchor = git(trace_repo, "rev-parse", "HEAD")
         initial_trace = (trace_repo / "trace.jsonl").read_text()
         git(worktree, "fetch", "origin")
-        self.assertEqual(git(worktree, "rev-parse", "HEAD^1"), final_merge)
+        self.assertEqual(git(worktree, "rev-parse", "HEAD"), final_head)
         self.assertEqual(git(self.repo, "rev-parse", f"{final_merge}^2"), final_main)
         config = dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY)
         config.update({
@@ -457,6 +528,17 @@ class WorkstreamTests(unittest.TestCase):
             "final_main": final_main,
             "correction_commits": [],
         })
+        # A fourth source/test follow-up is outside this recovery's bounded
+        # correction chain even though it touches only authorized paths.
+        git(worktree, "checkout", "-b", "adversarial-fourth-correction")
+        for rel in correction_paths:
+            path = worktree / rel
+            path.write_text("excess correction\n")
+        git(worktree, "add", *correction_paths)
+        git(worktree, "commit", "-m", "add fourth correction")
+        with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+        git(worktree, "checkout", branch)
         with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
             self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
             preflight = workstream.closeout_preflight(workstream_id, worktree)

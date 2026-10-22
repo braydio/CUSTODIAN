@@ -866,12 +866,20 @@ def _authorized_failed_import_archive_recovery_error(
     )]
     correction_history = pinned.get("correction_commits", [])
     expected_history = historical + correction_history
-    if len(commits) not in {len(expected_history) + 1, len(expected_history) + 2}:
+    if len(commits) <= len(expected_history):
         return "failed-import archive recovery history differs from its pinned lifecycle commits"
     if commits[:len(expected_history)] != expected_history:
         return "failed-import archive recovery history differs from its pinned lifecycle commits"
-    correction_commits = commits[len(historical):len(expected_history) + 1]
-    sync_tail = commits[len(expected_history) + 1:]
+    post_history = commits[len(expected_history):]
+    sync_commit = None
+    if post_history:
+        last_parents = git("rev-list", "--parents", "-n", "1", post_history[-1], cwd=path).split()[1:]
+        if len(last_parents) == 2 and last_parents == [commits[-2], main]:
+            sync_commit = post_history.pop()
+    if not 1 <= len(post_history) <= 3 and not (sync_commit and not post_history):
+        return "failed-import archive recovery has an unbounded correction or sync tail"
+    correction_commits = commits[len(historical):len(expected_history)] + post_history
+    sync_tail = [sync_commit] if sync_commit else []
     for index, correction in enumerate(correction_history):
         expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
         if git("rev-parse", f"{correction}^1", cwd=path, check=False) != expected_parent:
