@@ -33,6 +33,19 @@
 - Validation: `PYTHONPATH=custodian/tools/agent:custodian/tools python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; focused related test suites; canonical `run_validation.py --test paired_review_runner_unit --json` and applicable changed-file validation; `check_ai_context.py --json`; `task_packet_index.py`; `validate_review_pairing.py`; and `git diff --check`. Reuse durable structured evidence; do not run or mutate the protected Carrow claim.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `review-paired-review-carrow-claimed-worktree-recovery-v1`
+- Review target workstream: `paired-review-carrow-claimed-worktree-recovery-v1`
+- Status: `passed`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `e994066e2bce4d71e79b9bb795a6ea6782ca4543`
+- Reviewed implementation commit: `f0dbcf8b76dc579182ab6626ad96ceda7961aa14`
+
 ## Next Handoff
 
 - Next workstream: `review-carrow-interior-layout-authoring-v1`
