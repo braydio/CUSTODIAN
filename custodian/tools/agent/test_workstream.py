@@ -209,6 +209,7 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["correction_commits"], [
             "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
             "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+            "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
         ])
         branch = workstream.branch_for(workstream_id)
         active_rel = "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
@@ -491,6 +492,25 @@ class WorkstreamTests(unittest.TestCase):
             self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
             workstream.finish(workstream_id, self._green_report(), repo=self.repo)
             self.assertFalse(worktree.exists())
+
+    def test_historical_failed_import_first_sync_conflict_reconciliation_is_exact(self):
+        repository = Path(__file__).resolve().parents[3]
+        pinned = dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY)
+        archived_rel = (
+            "custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        )
+        self.assertTrue(workstream._failed_import_first_sync_is_bounded(
+            repository, pinned, archived_rel,
+        ))
+
+        # The reconciliation is bound to the exact recorded regression-test
+        # output. A different source blob cannot inherit this merge authority.
+        forged = dict(pinned)
+        forged["first_sync_test_runner_blob"] = "0" * 40
+        self.assertFalse(workstream._failed_import_first_sync_is_bounded(
+            repository, forged, archived_rel,
+        ))
 
     def test_archive_guard_recovers_resolved_current_main_sync_without_erasing_conflict_evidence(self):
         workstream_id = "agent-test-resolved-main-sync"

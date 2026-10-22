@@ -774,6 +774,7 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
     "correction_commits": [
         "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
         "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+        "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
     ],
 }
 
