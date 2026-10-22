@@ -164,8 +164,18 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", correction_paths[0])
         git(self.repo, "commit", "-m", "correction after sync")
         after_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, [*corrections, sync, after_sync], correction_base, main,
+            ),
+            ([*corrections, after_sync], sync),
+        )
+        (self.repo / correction_paths[1]).write_text("second post-sync correction\n")
+        git(self.repo, "add", correction_paths[1])
+        git(self.repo, "commit", "-m", "second post-sync correction")
+        second_after_sync = git(self.repo, "rev-parse", "HEAD")
         self.assertIsNone(workstream._failed_import_recovery_suffix(
-            self.repo, [*corrections, sync, after_sync], correction_base, main,
+            self.repo, [*corrections, sync, after_sync, second_after_sync], correction_base, main,
         ))
 
     def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
@@ -710,6 +720,15 @@ class WorkstreamTests(unittest.TestCase):
                 git(worktree, "rev-parse", "origin/main"), trace_ref,
                 git(worktree, "rev-parse", trace_ref),
             ), active_trace.path.read_text())
+            for rel in ("custodian/tools/agent/workstream.py",
+                        "custodian/tools/agent/test_workstream.py"):
+                with (worktree / rel).open("a", encoding="utf-8") as stream:
+                    stream.write("\n# bounded post-sync correction\n")
+            git(worktree, "add", "custodian/tools/agent/workstream.py",
+                "custodian/tools/agent/test_workstream.py")
+            git(worktree, "commit", "-m", "record bounded post-sync correction")
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            retry_head = git(worktree, "rev-parse", "HEAD")
             preflight = workstream.closeout_preflight(workstream_id, worktree)
             self.assertEqual(preflight["archive_transition"]["status"], "pass", preflight)
             workstream.finish(
@@ -725,7 +744,12 @@ class WorkstreamTests(unittest.TestCase):
             sync_witnesses = [event["data"] for event in final_events
                               if event.get("event") == "main_sync"]
             self.assertEqual([event["changed"] for event in sync_witnesses], [True, False])
-            self.assertEqual(sync_witnesses[1]["head"], sync_witnesses[0]["head"])
+            self.assertEqual(sync_witnesses[1]["head"], retry_head)
+            self.assertEqual(
+                git(self.repo, "merge-base", "--is-ancestor",
+                    sync_witnesses[0]["head"], sync_witnesses[1]["head"]),
+                "",
+            )
             self.assertEqual(sync_witnesses[1]["main_sha"], latest_main)
             self.assertTrue(any(event.get("event") == "finish_completed"
                                 and event.get("data", {}).get("outcome") == "finished"

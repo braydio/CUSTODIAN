@@ -804,6 +804,9 @@ FAILED_IMPORT_ARCHIVE_RECOVERY = {
     },
 }
 
+FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS = 3
+FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS = 1
+
 
 def _authorized_failed_import_archive_recovery_error(
     workstream_id: str, path: Path, repo: Path, head: str, main: str,
@@ -811,10 +814,11 @@ def _authorized_failed_import_archive_recovery_error(
 ) -> str | None:
     """Authenticate the exact preserved failed-import finish history.
 
-    The only post-sync source-bearing commit allowed here is a direct child of
-    the pinned final sync and must change the two paths authorized by the
-    active packet on origin/main. All earlier history is pinned to immutable
-    commits named by the already-published planning refresh.
+    The authenticated recovery chain permits up to three source/test
+    corrections before one exact automatic merge of current origin/main, then
+    at most one source/test correction. Path and file-mode checks below bind
+    those commits to the active packet. All earlier history is pinned to
+    immutable commits named by the published planning refresh.
     """
     if workstream_id != FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]:
         return None
@@ -871,14 +875,14 @@ def _authorized_failed_import_archive_recovery_error(
     if commits[:len(expected_history)] != expected_history:
         return "failed-import archive recovery history differs from its pinned lifecycle commits"
     post_history = commits[len(expected_history):]
-    sync_commit = None
-    if post_history:
-        last_parents = git("rev-list", "--parents", "-n", "1", post_history[-1], cwd=path).split()[1:]
-        if len(last_parents) == 2 and last_parents == [commits[-2], main]:
-            sync_commit = post_history.pop()
-    if not 1 <= len(post_history) <= 3 and not (sync_commit and not post_history):
-        return "failed-import archive recovery has an unbounded correction or sync tail"
-    correction_commits = commits[len(historical):len(expected_history)] + post_history
+    correction_base = correction_history[-1] if correction_history else pinned["final_sync"]
+    suffix = _failed_import_recovery_suffix(path, post_history, correction_base, main)
+    if suffix is None:
+        return "failed-import recovery correction/sync suffix is outside its exact bounded history"
+    post_corrections, sync_commit = suffix
+    if not post_corrections and not sync_commit:
+        return "failed-import archive recovery has no authorized source/test correction or sync"
+    correction_commits = commits[len(historical):len(expected_history)] + post_corrections
     sync_tail = [sync_commit] if sync_commit else []
     for index, correction in enumerate(correction_history):
         expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
@@ -887,12 +891,19 @@ def _authorized_failed_import_archive_recovery_error(
     if correction_commits:
         expected_parent = (pinned["final_sync"] if len(correction_commits) == 1
                            else correction_commits[-2])
+        if sync_tail and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", sync_tail[0], correction_commits[-1]],
+            cwd=path, capture_output=True,
+        ).returncode == 0:
+            expected_parent = sync_tail[0]
         if git("rev-parse", f"{correction_commits[-1]}^1", cwd=path, check=False) != expected_parent:
             return "failed-import correction is not a direct child of its pinned lifecycle predecessor"
     if sync_tail:
         sync_commit = sync_tail[0]
         parents = git("rev-list", "--parents", "-n", "1", sync_commit, cwd=path).split()[1:]
-        if parents != [correction_commits[-1], main]:
+        if len(parents) != 2 or parents[1] != main or parents[0] not in {
+            pinned["final_sync"], *correction_commits,
+        }:
             return "failed-import post-recovery sync does not bind the exact correction and current main"
         automatic_tree = _automatic_merge_tree(path, sync_commit)
         actual_tree = git("rev-parse", f"{sync_commit}^{{tree}}", cwd=path)
@@ -1008,6 +1019,43 @@ def _authorized_failed_import_archive_recovery_error(
     ):
         return "original failed-import lifecycle trace does not authenticate this exact claim and landing history"
     return None
+
+
+def _failed_import_recovery_suffix(
+    path: Path, suffix: list[str], correction_base: str, main: str,
+) -> tuple[list[str], str | None] | None:
+    """Validate a bounded source/test correction chain and optional exact sync merge."""
+    post_corrections = []
+    sync_commit = None
+    previous = correction_base
+    before_sync_count = 0
+    after_sync_count = 0
+    for commit in suffix:
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if len(parents) == 2:
+            if sync_commit or parents != [previous, main]:
+                return None
+            sync_commit = commit
+            automatic_tree = _automatic_merge_tree(path, commit)
+            if automatic_tree is None or automatic_tree != git(
+                "rev-parse", f"{commit}^{{tree}}", cwd=path,
+            ):
+                return None
+        elif parents == [previous]:
+            post_corrections.append(commit)
+            if sync_commit:
+                after_sync_count += 1
+                if after_sync_count > FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS:
+                    return None
+            else:
+                before_sync_count += 1
+                if before_sync_count > FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS:
+                    return None
+        else:
+            return None
+        previous = commit
+
+    return post_corrections, sync_commit
 
 
 def _failed_import_main_advance_is_authorized(
@@ -1307,9 +1355,15 @@ def _failed_import_recovery_trace_is_authentic(
         return False
     syncs = [e.get("data", {}) for e in events if e.get("event") == "main_sync"]
     if not syncs:
-        parents = git("rev-list", "--parents", "-n", "1", head,
-                      cwd=Path(worktree), check=False).split()[1:]
-        return not (len(parents) == 2 and parents[1] == main)
+        merges = git("rev-list", "--first-parent", "--merges",
+                     f"{pinned['final_sync']}..{head}", cwd=Path(worktree)).splitlines()
+        return not any(
+            len(git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()) == 3
+            and git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()[2] == main
+            for commit in merges
+        )
     if len(syncs) == 1 and syncs[0].get("changed") is False:
         parents = git("rev-list", "--parents", "-n", "1", head,
                       cwd=Path(worktree), check=False).split()[1:]
@@ -1319,8 +1373,11 @@ def _failed_import_recovery_trace_is_authentic(
     if len(syncs) not in {1, 2} or syncs[0].get("changed") is not True:
         return False
     changed_sync = syncs[0]
-    if (changed_sync.get("head") != head or changed_sync.get("main_sha") != main
-            or git("rev-parse", f"{head}^2", cwd=Path(worktree), check=False) != main):
+    sync_head = changed_sync.get("head")
+    if (changed_sync.get("main_sha") != main or not sync_head
+            or subprocess.run(["git", "merge-base", "--is-ancestor", sync_head, head],
+                              cwd=Path(worktree), capture_output=True).returncode != 0
+            or git("rev-parse", f"{sync_head}^2", cwd=Path(worktree), check=False) != main):
         return False
     if len(syncs) == 2 and (
         syncs[1].get("changed") is not False
