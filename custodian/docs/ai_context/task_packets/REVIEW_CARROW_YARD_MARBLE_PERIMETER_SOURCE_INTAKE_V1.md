@@ -28,7 +28,7 @@
 - Review focus: Documented source transport available to claimed worker, correct SHA-256, transport not confused with family contract, three-state distinction, correct no-inbox boundary, explicit reusable N-S underlap evaluation with z/crop/offset, exact six-gallery evidence from original sprite hashes, marked four-corner art gaps, no collision-alpha inference, old branch preserved, remaining docs accurate.
 - Acceptance: Findings-first fresh review with stable finding IDs and independent evidence; do not patch the reviewed source-intake implementation.
 - Non-goals: Do not normalize, ingest, approve, regenerate, implement traversal, redesign camera, change route ownership, land blocked historical donor or use unapproved imagery.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt, review packet lifecycle/archive metadata, closing summary, and bounded correction/re-review packets; do not edit reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
