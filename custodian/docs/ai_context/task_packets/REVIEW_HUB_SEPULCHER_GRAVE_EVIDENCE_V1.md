@@ -17,6 +17,8 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Visual review: `none`
 - Goal: Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - Reviewed implementation acceptance: All three readings reachable in order using real Operator; fixed date and three identities accurate; repeated spam cannot skip; reload/snapshot restores exact stage; legacy snapshot defaults empty; other HubState fields bit-for-bit preserved.
@@ -26,7 +28,7 @@
 - Review focus: Hub nav, both connectors, Dais prewarm, Crown/Muster routes and existing HubState keys. Also check no adjudication/flower yet; no generic quest framework, camera takeover, new art, or alternate hub state singleton.
 - Acceptance: Publish independent findings-first receipt with stable R0-NN findings and proof; no implementation edits in review. On success archive complete so the declared successor can claim.
 - Non-goals: Do not implement new event functionality, art, generalized event infrastructure or opportunistic refactors.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit and push only the review receipt, review packet lifecycle/archive metadata, required closing summary and bounded correction/re-review packets; do not edit reviewed production implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Dependency assumption
 The implementation `hub-sepulcher-grave-evidence-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.

@@ -29,6 +29,7 @@ After inspecting three sources offer `ATTEST: PROVENANCE CONFLICT` or `MAINTAIN 
 
 ## Event 3 — The Procession of No One
 **ID** `hub_road_procession_v1` **Place** Road of Witnesses / North Processional, South Reach toward `ForumSouth=(0,-2464)`.
+**Runtime boundary (2026-10-22):** The north processional is deferred only in *Awakening section 10*. It is an H1 first-set Hub walkable blockout (`HubFirstSetLayout.ENVELOPES.north_processional=Rect2i(72,97,32,36)`) with H2 Hub handoff. The five Road plate pairs cover existing Road presentation, not a guaranteed finished northern Hub art route. P1 must run within the real Hub host and prove actual Operator traversal from South Reach to ForumSouth; do not port the scene into Awakening or add duplicate navigation/plate authority.
 A voluntary one-shot traversal trigger starts exactly one 3-beat light/bell sequence: south lamp, middle lamp, north lamp; final sound and empty-road silence. Ordinary traversal/camera/UI continue. Reuse Road plate positions and existing lighting/audio pathways without altering Road presentation ownership or geometry. Reentry or reload resumes safely (not a repeated spectacle loop). Existing witness station offers 3 conflicting testimonies (`victory procession`, `evacuation`, `road was empty`). After reading all, mark observed; subsequent visit offers a **single brief bell** and no full replay. No visible ghosts or canonical origin reveal.
 
 ## Event 4 — The Convoy That Arrived Empty

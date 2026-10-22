@@ -17,6 +17,8 @@
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
 - Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
 - Visual review: `none`
 - Goal: Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - Reviewed implementation acceptance: Both choices independently tested; no duplicate completion across repeat interactions and run revisit; no choice following expiry; all exits/normal objectives remain available.
@@ -26,7 +28,7 @@
 - Review focus: S1/S2 weather/timer and local failure; global CampaignOutcome, HubState and extraction ownership. Also check no new continuity physics engine, proven origin of anomalies, new campaignoutcome schema, compulsory story lock.
 - Acceptance: Publish independent findings-first receipt with stable R0-NN findings and proof; no implementation edits in review. On success archive complete so the declared successor can claim.
 - Non-goals: Do not implement new event functionality, art, generalized event infrastructure or opportunistic refactors.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit and push only the review receipt, review packet lifecycle/archive metadata, required closing summary and bounded correction/re-review packets; do not edit reviewed production implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Dependency assumption
 The implementation `campaign-abandoned-station-containment-v1` has landed and its archive is accessible at the named path. Inspect the real implementation's chosen private seams; judge the contract, not proposed function names.

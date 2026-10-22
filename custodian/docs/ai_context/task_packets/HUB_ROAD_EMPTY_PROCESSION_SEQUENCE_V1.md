@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-road-empty-procession-sequence-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -19,20 +19,23 @@
 - Reviewed main: `6e75b57ea828`
 - Authoring chat: `not-recorded`
 - Visual review: `conditional`
-- Goal: Road procession spatial beat; deliver one playable, bounded event slice.
-- Completion boundary: Create voluntary south-to-north spatial trigger across Road/North Processional; show exactly three ordered distant-light beats + bell/silence without ghosts, teleport, camera takeover or new lighting authority. Close only with real runtime integration and focused proof, not a disconnected demo.
-- Current measured state: Road first-set reuses five production plate pairs; Road has no 3-beat empty-procession event or persisted first-seen flag.
+- Goal: Stage one playable three-beat empty procession in the POST-AWAKENING Hub North Processional. Existing Road plates are presentation only.
+- Completion boundary: In HubRuntimeHost/HubFirstSetMap, a real Operator walks from Spawn_SouthReach through the authored North Processional toward ForumSouth and voluntarily triggers one south→mid→north bell/lamp sequence. No use of the Awakening-only Road prototype as a second route authority.
+- Current measured state: Awakening section 10 explicitly defers its north approach. The separate production HubFirstSetLayout defines walkable North Processional Rect2i(72,97,32,36) with Road-local 32px cells, H1 verified Operator-clearance routes and H2 Hub host handoff. Five Road plate pairs are presentation only; not a continuous north-approach art guarantee. HubState has no generic authored-event-record field on inspected base.
 - Evidence: custodian/game/world/hub/first_set/{hub_first_set_layout,hub_first_set_map}.gd; design/04_architecture/HUB_SPATIAL_LAYOUT.md
 - Task-specific authority: Road module placement ownership, HubState, event spec §3.; `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`.
-- Work surface: Bounded procession controller in custodian/game/world/hub/events/road_procession/ and minimal map trigger integration.
+- Work surface: Focused event controller under custodian/game/world/hub/events/road_procession/ with narrow HubFirstSetMap integration; HubState as persistent authority only if a suitable record seam is already live or added minimally with exact safe snapshot/restore. Do not duplicate G1's record authority if concurrently landed.
 - Publication inputs: `design/02_features/events/AUTHORED_HUB_CAMPAIGN_MICROEVENTS_V1.md`
-- Change: Create voluntary south-to-north spatial trigger across Road/North Processional; show exactly three ordered distant-light beats + bell/silence without ghosts, teleport, camera takeover or new lighting authority. Use existing light/audio owners or local presentation only; progress should be deterministic/idempotent from persistent Hub event record. Preserve five Road module coordinates/pixels.
+- Change: Use H1/H2 first-set runtime, not Awakening section 10, for the route. Place three distinct spatial beats in the existing clearance-validated navigable Road/North Processional corridor; candidate anchors are (0,-1152), (0,-1632), (0,-2208), but resolve exact reachable real-Operator trigger bounds from live map before placement. Each beat is activated at most once in logical order; stage visible local lamps/sound using current presentation owners without changing lighting/world state. Existing five plate pairs keep exact registration: do not assume they cover the new North Processional. Persist the event's first-seen/beat completion through the single existing HubState owner (using any G1 record API if already present), deep-copy/backward-compatible snapshot, no second global event manager. No cinematic camera or blocked controls.
 - Preserve: Normal player control, Dais route, Road collisions and Crown ingress.
 - Non-goals: No testimony station yet, new lighting scheduler, cutscene system, new artwork.
-- Acceptance: Single activation, correct south/mid/north order, safe pause/Hub leave/return, replay does not relaunch full spectacle, no plate changes, clear traversal.
-- Validation: New procession-timeline smoke, Road/Hub geometry and HubState snapshot regressions; changed-file validation. Run changed-file validation and git diff --check only after focused smokes pass.
+- Acceptance: In a real Hub host a live Operator walks from Spawn_SouthReach through all 3 triggers into ForumSouth, with 3 ordered effects and no teleport; same stage restored from HubState snapshot, no duplicate replay on return; both H1 passage and Forum Dais remain passable/untouched; before/after Road plate positions, textures and collisions unchanged. No north-segment raster art requirement.
+- Validation: Add focused Hub-host/real-Operator path+timeline/persistence smoke; reuse existing hub_first_set_blockout_smoke.gd, hub-awakening handoff and HubState snapshot regressions. First assert actual walkability and actor clearance, then event idempotency, then changed-file validation and git diff --check.
 - Task overrides: `none`
 - Deferred: Production raster Asset V2 art and unlisted expansion mechanics; no mandatory external asset package.
+
+## Playable world boundary
+Awakening First Return north processional remains deferred **inside Awakening**. This task uses the separate post-Awakening Hub first-set map and the H1/H2 reviewed handoff. If the live Hub real-Operator traversal is broken, diagnose that bounded H1/H2 regression and do not manufacture a substitute route or relocate the event into Awakening.
 
 ## Dependency assumption
 Root slice of an independent event chain; implement against live main without waiting for other authored events.
