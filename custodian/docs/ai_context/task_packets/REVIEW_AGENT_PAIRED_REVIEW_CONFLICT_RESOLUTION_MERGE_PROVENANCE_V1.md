@@ -37,7 +37,7 @@
   5. Verify that the historical root summary is preserved and the dated clarification is factual. Reject any claim that the original review passed or that its claim was released.
 - Acceptance: Findings-first independent review of every implementation acceptance criterion. PASS only when no blocking finding or material evidence gap remains, exact immutable provenance is reproduced, all negative controls fail closed, and the original claim/worktree/evidence/outcome remain unchanged. Otherwise record stable evidenced findings; never infer acceptance from green implementation validation.
 - Validation: `python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; inspect exact trace and Git tree evidence from the local checkout; verify changed-file report has complete coverage and no skips; `git diff --check`; canonical review outcome parser, receipt-delta verifier, and coordinator closeout. Do not run the historical host-import plan apply or launch its reviewer.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only this review's canonical receipt, archived review packet lifecycle metadata, managed packet index, and required review closing summary; do not edit the reviewed implementation, implementation packet, original host-import review packet, or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 
