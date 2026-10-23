@@ -2184,10 +2184,30 @@ def real_repo_read_only() -> None:
                     or "workbench/operator-art" in pending_view.publish_block_reason)
 
 
+def new_workbench_projection_smoke() -> None:
+    with tempfile.TemporaryDirectory(prefix="operator_ui_new_workbench_") as raw:
+        service, _backend = fixture_service(Path(raw))
+        assert not [row for row in service.discover_browser_records() if row.completeness == "NEW"]
+        selection = AnimationSelection("ranged_2h", "posture", "relaxed_01", "se")
+        workspace = service.workspace(selection)
+        workspace.mkdir(parents=True)
+        layer = lambda name: {"role": "editable", "layer": name, "source_contract": {"operation": "CREATE"}}
+        (workspace / "workbench.json").write_text(json.dumps({
+            "identity": {"profile": "ranged_2h", "group": "posture", "action": "relaxed_01", "direction": "se"},
+            "creation": {"art_generation": "legacy_96"}, "timeline": {"frames": 5},
+            "layers": [layer("lower_body"), layer("upper_body")]}))
+        (workspace / "workbench.aseprite").write_bytes(b"")
+        rows = [row for row in service.discover_browser_records() if row.completeness == "NEW"]
+        assert [(row.selection, row.frames, row.layers) for row in rows] == [(selection, 5, ("lower_body", "upper_body"))]
+        assert "NEW" in rows[0].summary and "5f" in rows[0].summary
+    print("PASS NEW WORKBENCH: created-but-unpublished workbench sessions are listed")
+
+
 def main() -> None:
     pure_service_smoke()
     browser_projection_contract_smoke()
     reachability_projection_smoke()
+    new_workbench_projection_smoke()
     try:
         import textual  # noqa: F401
         import textual_image  # noqa: F401
