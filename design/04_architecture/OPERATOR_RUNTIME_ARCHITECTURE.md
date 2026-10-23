@@ -614,6 +614,12 @@ plan: the playback funnel and the selector cutover have different blast radii an
 different failure modes, and bundling them would have made one monster slice whose
 regression surface could not be reasoned about.
 
+### Anti-rebloat seal (2026-10-23 authorization; not yet implemented)
+
+At `main@65ee6fef70a6ad326a16ffbd46ebf18d7f3326db`, `operator.gd` measures 14,676 lines / 738 top-level methods / 478 top-level fields despite a zero-entry pattern architecture-debt ledger. `OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md` and its fresh-context review own a **separate structural gate**: classify actual domain mutation/state/delegation, prevent new authority in the actor, ratchet budgets after each F2/F3/F5/F6 extraction, and make an Operator-touching `workstream.py finish` fail before landing on guard violations. The old `enemy.move_and_slide()` melee fallback is an explicitly temporary F2 exception, never evidence that moving another actor is permitted chassis behavior. Ordinary GitHub push CI is not pre-push protection; do not claim server branch rulesets exist without verification.
+
+After F2/F3/F5/F6, Slice G must pass both the original three `--final` audits **and** the new final structural authority gate. No budget may be raised or historical exception restored merely to make a test pass. The initial publication of the task pair is planning/authoring only, not proof the guard is operational.
+
 ### Current queued Operator program
 
 Slice E is complete on live main. The remaining architecture work is intentionally
@@ -685,6 +691,7 @@ Slice detail lives in the task packet.
 - `operator_runtime_animation_authority --final` passes;
 - `operator_runtime_path_audit --final` passes;
 - `operator_architecture_debt_audit --final` passes.
+- the independently reviewed Operator chassis authority seal passes its final narrow facade/ownership budget, with no expired F2/F3/F5/F6 exceptions.
 
 The architecture migration itself does not require new art. Optional presentation
 follow-ups may add reviewed Asset V2 art where existing authored coverage is

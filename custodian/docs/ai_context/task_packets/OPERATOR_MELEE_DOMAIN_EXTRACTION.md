@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine, operator-mobile-guard-composition`
+- Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine, operator-mobile-guard-composition, review-operator-chassis-authority-seal-v1`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
@@ -32,6 +32,10 @@
 - Validation: Controller-focused unit/smoke coverage for chain lifecycle/drive/contact state plus existing unarmed fast chain, attack phase cadence, modular fast attack, point-blank, low-FPS contact, soft targeting, melee posture/locomotion socket, dagger, Cleaver and body-ownership tests. Use deterministic frame/progress/registration checks before any renderer review. One short Moment Forge moving-melee scenario in evidence mode is justified for final footwork/readability because cadence + world translation must be judged together. Finish with one changed-file closeout.
 - Task overrides: `none`
 - Deferred: Missing directional/body art discovered by runtime review goes to `operator-modular-directional-coverage-closeout`; no pixel fabrication in this workstream.
+
+## Anti-rebloat migration acceptance (2026-10-23)
+
+The seal's independent review is a hard dependency. Record each retired melee field/method and ratchet its ownership budget in the seal. Specifically remove the actor-owned `enemy.move_and_slide()` fallback from melee contact without losing valid legacy knockback behavior: request impact through the receiving actor's existing authority (or an explicit supported target-owned contract), and prove positive and fallback negative fixtures. No foreign `move_and_slide()` may remain in `operator.gd` after F2. Do not shift attack contact/drive/target state to an unrelated new godfile. Use normal F2 gameplay smokes; the seal guards architecture, not damage parity.
 
 ## Handoff
 
