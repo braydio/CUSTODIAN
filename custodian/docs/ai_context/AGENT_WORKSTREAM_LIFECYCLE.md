@@ -315,6 +315,20 @@ the first-parent workstream commits as the owned source inventory, so upstream
 files imported by synchronization do not become authored task changes. An
 untraced merge or an ambiguous checkpoint/resume sequence remains invalid.
 
+A failed initial `worktree add` may leave the exact claim and `worktree_create_begin`
+in the run trace without a `worktree_published` event. A recovered checkout is
+authenticated only by one matching claim, one create attempt, a recorded failed
+create for its canonical branch/path, and one later `worktree_resumed` on that
+same run. The claim and create SHAs remain the original acquisition base. Since
+`resume` fetches and synchronizes before recording the event, `worktree_resumed.head`
+is the actual post-sync HEAD and may be newer. Verifiers retain both identities,
+require the resumed HEAD to be a recorded full commit on the claim's first-parent
+fast-forward chain, and use the resumed HEAD as the source-span boundary so
+branch changes authored after recovery are isolated from intervening main
+changes. The original claim base remains independently authenticated. This
+evidence does not synthesize `worktree_published` or make an arbitrary resume
+event sufficient.
+
 ### Run-pinned checkout interruption recovery (operator-only)
 
 The one-run helper `custodian/tools/agent/custodian_claim_checkout_recovery_v1.sh` addresses an interrupted checkout for

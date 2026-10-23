@@ -28,6 +28,10 @@ The validator's trace provenance retains the published diagnostic trace SHA (`3c
 - Follow-up: none
 - What worked: Exact historical commit/tree/path/mode pins and immutable trace evidence allowed a narrow compatibility path without changing ordinary merge rules.
 
+## Dated Acceptance Clarification (2026-10-23)
+
+The implementation and its focused validation landed, but the prior archived packet overstated acceptance. The historical read-only recovery plan was not rerun successfully, and the fresh independent reviewer did not launch because source-span provenance rejected the failed-create → resumed-worktree trace. This is not an accepted review and does not establish a PASS. The original review claim, worktree, trace, verdict, and protected host-import run remain unchanged.
+
 ## Next Handoff
 - Next workstream: `review-agent-paired-review-conflict-resolution-merge-provenance-v1`
 - Next packet state: ready
