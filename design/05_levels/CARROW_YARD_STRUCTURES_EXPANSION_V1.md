@@ -7,6 +7,8 @@
 **Separate travel authority:** `custodian/docs/ai_context/task_packets/CARROW_YARD_ROUTE_AUTHORITY_MIGRATION.md`
 **Scope:** More architectural, navigable, functionally distinct structures; preserve canon, controlled transitions and current gameplay
 
+> **2026-10-15 status correction:** West Draft House 12×10 and Operations House 20×14 have now landed and independently passed review, alongside the existing East Machine House 14×10. The implementation columns, 'no interior' statements, and W1/O1 future-tense prose below are **historical pre-implementation design**, not current runtime truth. None of the three small footprints has received human game-feel/scale approval. For current status, exact scale-calibration entrypoints and gated Gatehouse/Alarm decisions, see [Carrow Yard Post-Interiors Planning V1](CARROW_YARD_POST_INTERIORS_PLANNING_V1.md). The separately queued route migration still owns world-level transfer authority.
+
 ## Design thesis
 
 Carrow is a fortified **municipal utility yard**, not an army compound or shrine. Every visible structure should answer a practical question: which system did the facility maintain, where did technicians work, what needed protecting, where did materials pass, and how did an emergency signal travel? The yard must stay legible from its South Gate to its north Operations House. Retain empty Service Court circulation; do not pack it into a maze of crates and monuments.

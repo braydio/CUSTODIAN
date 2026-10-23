@@ -1,0 +1,55 @@
+{
+  "schema": "custodian.asset_family.v2",
+  "id": "awakening_late_service_perimeter_support",
+  "kind": "backdrop",
+  "priority": "P1",
+  "runtime": {
+    "domain": "levels/awakening/perimeter_support/09_late_service",
+    "owner": "awakening_late_service",
+    "template": "{domain}/{filename}",
+    "filename_policy": "template",
+    "filename_template": "{owner}_{variant}_{frame_size}.png"
+  },
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "direction_policy": "omni",
+  "auto_mirror": false,
+  "states": {
+    "structural_support": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "structural_support",
+      "layout": "copy",
+      "frame_width": 512,
+      "frame_height": 512
+    },
+    "distant_structures": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "distant_structures",
+      "layout": "copy",
+      "frame_width": 1024,
+      "frame_height": 512
+    },
+    "edge_transition": {
+      "required": true,
+      "layer": "background",
+      "action_group": "display",
+      "variant": "edge_transition",
+      "layout": "copy",
+      "frame_width": 256,
+      "frame_height": 256
+    }
+  },
+  "aliases": {},
+  "consumers": [
+    {
+      "type": "script",
+      "path": "res://game/world/awakening/awakening_perimeter_support.gd"
+    }
+  ]
+}

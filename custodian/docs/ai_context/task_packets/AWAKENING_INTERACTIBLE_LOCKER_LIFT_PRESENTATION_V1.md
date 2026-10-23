@@ -4,7 +4,7 @@
 - Status: `blocked`
 - Dispatch: `manual`
 - Priority: `P1`
-- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1`
+- Depends on: `review-awakening-interactible-affordance-foundation-v1, review-awakening-interactible-affordance-asset-v2-contracts-v1, review-transit-lift-runtime-foundation-v1`
 - Locks: `awakening-interaction-presentation, awakening-interactible-asset-contracts`
 - Kind: `implementation`
 - Review: `auto`
@@ -94,3 +94,15 @@
 - Refresh reason: `Record exact art/hash/Asset V2 verified proof and promote implementation/review pair after predecessor gate.`
 - Next action: `After implementation lands, claim fresh-context paired review.`
 - Blockers or open questions: `Required art and predecessor reviews are not yet verified; do not claim.`
+
+
+## Vertical Traversal program refresh gate (2026-10-15)
+
+**Refresh planning chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391  
+**Audited main:** `350ee94e4b3b80010c0970903f3418966df3b851`
+
+- Lift mechanics must be hardened/modularized before this presentation slice executes. `review-transit-lift-runtime-foundation-v1` is now a hard predecessor.
+- Preserve this workstream identity. Do not create a duplicate lift-polish packet. After B1 review lands, materially refresh this packet against the reusable local-transit API, current Asset V2 source availability and Dust Lung V2 state, then re-run targeted authoring validation before promotion.
+- Existing "no teleport/input-lock redesign" language means this presentation packet must not redesign the already-landed B1 mechanics. It does not reinstate today's scene-specific `AwakeningTransitLift` lifecycle as the final reusable authority.
+- At refresh, prefer generic lift lifecycle phase/progress signals; preserve exactly one gameplay owner with two physical station affordances. Evaluate existing Operator `lift_braced` presentation, camera motion/shake and audio as consumers without moving lifecycle authority into them.
+- `awakening_dust_lung_lift` and `awakening_interact_lift` are Awakening-specific. If reviewed sources are insufficient for machine/platform motion, record an explicit Asset V2 source-creation gate instead of manufacturing runtime placeholders.

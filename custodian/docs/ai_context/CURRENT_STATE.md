@@ -1,5 +1,114 @@
 # CURRENT STATE — CUSTODIAN
 
+## Initial vehicle fleet asset program locked (2026-10-21)
+
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
+is now the active generation-order and Asset Pipeline V2 planning authority for
+the first five production vehicle classes: Field Scout Buggy, Utility Hauler,
+Industrial Crawler, Recovery Rig, and Restricted APC, followed by the reusable
+recovery-expedition prop/salvage kit.
+
+The program explicitly separates authored body states from derived parked/wreck,
+procedural engine/brake/impact presentation, shared recovery/motion/destruction
+FX, component socket overlays, attachment families, 32 unique component icons,
+25 required physical component props, and the Phase-6 camp/salvage families.
+Only the Scout has existing production-source body coverage. Hauler/Crawler/Rig/APC
+IDs, canvas sizes and asset families are newly locked planning authority, not
+claims that runtime classes or source art already exist.
+
+The live component-recovery implementation still treats R1+ requirements as an
+atomic required-component set at restoration completion. Socket art is now
+planned so later staged per-component installation can reuse the same visual
+contract, but staged socket mechanics are not being misreported as live.
+
+Authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Broken Warrant 3D material tooling (2026-10-20)
+
+`custodian/tools/art/broken_warrant_3d/` now builds and validates a packed, editable Blender material master and deterministic front/three-quarter/rear 128px proofs from the staged immutable GLB. Objective source, mesh, rig, material, alpha, framing, registration, and packed-reference checks pass. The review sheet is published to `/CUSTODIAN/visual_review/broken-warrant-3d-surface-rebuild/20261020T023328Z/REVIEW_MANIFEST.json`; human identity/material acceptance remains pending. This is source-only tooling, not runtime art or Asset V2 approval.
+
+
+## Grunt candidate raster tooling (2026-10-19)
+
+`custodian/tools/iteration/raster_pipeline/` provides a plan-driven, non-Operator
+review workflow for directional humanoid crops. It verifies pinned source bytes,
+uses the existing crisp/balanced/clustered converter modes, reports registration,
+alpha/silhouette/palette/contact facts, and requires exact reviewed pixel edits
+before producing a cleaned copy. The Grunt plan exports four directions at
+64/72/80px to ignored `.ai/` workspace and the dev-only A/B scene can switch
+converter modes. This is tooling evidence only: it does not approve the raster,
+replace Grunt runtime art, or enter Asset V2. Focused validation is registered as
+`grunt_raster_pipeline`.
+
+## Vehicle Integration System architecture locked (2026-10-18)
+
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` is now active
+source-to-runtime vehicle presentation/integration authority. It defines
+visual-kit V2 inheritance, authored/derived/procedural/shared state policy,
+family-level registration, reusable presentation composition, shared-FX fitting,
+deterministic explicit-region derivation, build-time skins/runtime attachments,
+generated presentation/integration receipts, and a guarded
+`vehicle_integrator.py` orchestration path.
+
+This is an architecture and queue milestone, not a claim that the integrator is
+already implemented. Live runtime still uses visual-kit schema v1,
+PilotableVehicle still directly chooses body animation identities, the Scout
+still references hover compatibility frames, and the hover-specific resource
+builder still exists. VI1-VI4 and paired reviews own that migration after the
+reviewed recovery-FX production slice.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Compound archetypes: code landed, review-gated (2026-10-17)
+
+`compound-archetype-profile-contract` and its paired review are archived as passed. `compound-walled-yard-blockout` has shipped surface close-packed perimeter geometry with two declared crossings and yard-facing room doors; its independent review `review-compound-walled-yard-blockout` remains active. `compound-connected-bunker-blockout` has shipped disjoint surface/separator/subsurface geometry and vertical-entry metadata, but its independent parent review is **findings**, not passed: R0-01 lacks a runtime controller that actually uses paired anchors, and R0-02 lacks live collision/navigation/camera proof. The existing `compound-connected-bunker-blockout-review-corrections-1` and paired `review-compound-connected-bunker-blockout-review-corrections-1` are the **only** owners of this bounded repair; at audit time its remote `agent/` claim branch exists. Do not reclaim or duplicate it.
+
+The successor `compound-interior-traversal-integration` stays `ready/auto` but dependency-gated on `review-compound-walled-yard-blockout` and `review-compound-connected-bunker-blockout-review-corrections-1`. It now owns Type A named-room entry/return and cross-world integration using the accepted B transfer controller, not a second Type B teleport/state system. Secure-access fixtures, playable proof, structural damage, assault targeting, Operator field repair, construction and end-to-end proof remain queued behind successive accepted reviews. Source authority: `design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md`; contract/runtime owner: `PersistentCompoundLayoutPlanner` and `ProcGenTilemap`.
+
+## Ritualant score direction and scoped playback (2026-10-17)
+
+The Underground claims scoped music on arrival, fades the previous zone into
+silence, and waits for the chapel reveal before starting exploration. `MusicManager`
+uses two overlapping music decks for cue changes and a duck controller separate
+from transition state. Dialogue and Ninth Answer ducks therefore cannot cancel a
+pending cue. Combat begins on committed hostility; Stilling Pin and the third
+valid ordered anchor trigger the peaceful one-shot; fresh violent resolution
+triggers its one-shot; survival and completed one-shots leave scene music quiet.
+The level fades music on departure and releases that fade during failed-exit
+rollback. Focused state checks do not certify mix balance, intelligibility, or
+loop-boundary listening; those remain human audition items.
+
+## Compound Archetype Profile Contract (2026-10-16)
+
+`PersistentCompoundLayoutPlanner` now validates optional `legacy`,
+`walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
+At the **2026-10-16 profile-contract milestone**, selection still retained
+legacy surface geometry and added versioned archetype/layer metadata. Omitted
+selection preserved the original planner output dictionary. Physical Type A
+and Type B generation landed after that milestone; see the current 2026-10-17
+compound status above for the accurate runtime/review split. Focused checks are in
+`compound_archetype_profile_smoke.gd`.
+
+## Procgen Showcase Gallery Shell (2026-10-15)
+
+The registered dev-only `procgen_showcase_gallery` destination provides five
+connected authored exhibit wings and an intentionally sealed central arena
+threshold. The production scene contains no Operator/controller/camera or map
+generator; its standalone playtest wrapper owns the real Operator and standard
+runtime systems. Reset-on-entry ingress/return preserves the same Operator.
+The gallery's PGA-1 shell and independent fresh-context review are archived
+**passed**. PGA-2 implementation now supplies a validated manifest and gallery-local,
+inspect-only selector for real biome profiles, region-kind semantics, site API
+references, and registered terrain-stamp previews; population is explicitly
+N/A because this slice has no safe read-only query. It does not generate a map
+or alter world authority. PGA-2 passed its focused catalog and shell smokes plus
+42/42 changed-file checks; its paired review follows implementation landing.
+PGA-3 arena status remains governed by its packet and dispatcher lifecycle. See
+`design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 
 Three repository-owned tools now exist: `custodian/tools/assets/dropbox_asset_audit.py` (read-only three-lane scan, legacy registry + Asset V2 status projection), `dropbox_asset_stage.py` (explicit approval/SHA-pinned ZIP fetch, source_work staging and optional per-frame pixel-art normalization), and `dropbox_asset_publish.py` (explicit immutable Dropbox audit receipt + derived current index). `custodian/content/metadata/assets/source_review_receipts.v1.json` starts empty: **no new batch is automatically approved**, even if source is uploaded or older registry says `active`. Read-only and write-side focused suites are wired into GitHub Validate Repository CI.
@@ -2031,7 +2140,7 @@ Documentation updates this session:
 - Fabrication/resource balance now has an offline deterministic report pipeline at `custodian/tools/balance/fabrication_balance_pipeline.py`. It reads live recipe/resource JSON plus `custodian/content/balance/scenarios/default_fabrication_run.json`, simulates 30-minute runs across build priorities and drop-rate profiles, checks lore-aware drop-table rules, and writes proposal-only outputs under `reports/fabrication_balance/` instead of mutating runtime data.
 - `enemy_marine` has a first runtime scene at `res://game/actors/enemies/enemy_marine.tscn` and consumes the full 8-direction idle suite from `res://content/sprites/enemies/enemy_marine/runtime/body/` through `GruntAnimationLibrary`. Its dash attack is now a tuned tactical heavy commitment move owned by `res://game/actors/enemies/abilities/marine_dash.gd`, with typed values in `marine_dash_config.gd` / `configs/marine_dash_default.tres`; `enemy.gd` supplies the shared actor/combat services and public request seam: the marine seeks a launch band, chooses quick or charged commits deterministically from range/target motion/previous result, spends a bounded charge budget between extra distance and extra damage, performs one predictive target lock during the final windup third, then commits without steering. The latest tuning pass raised the base impact to 32 damage / 105 knockback, widened the active hit window and contact reach, and nudged prediction/reset timing so the dash connects more often without becoming homing. Hit contact remains limited to the middle travel frames and a body-contact lane; impact/recovery are followed by an alternating lateral reset, preventing immediate dash trampling. The Great Hall ambush now wakes and hands control to this shared tactical runtime instead of maintaining a separate dash-spam controller. The move applies chunky damage plus poise/knockback feel through victim hitstop, forced slide/stagger hooks on the Operator, attacker hitstop, and camera feedback instead of relying only on HP loss. An east-facing 8-frame dash attack body strip and matching FX strip now live under `res://content/sprites/enemies/enemy_marine/runtime/{body,fx}/` and are used by the Sundered Keep Great Hall ambush plus generic marine combat playback. Directional body/FX variants and the servo/armor/impact/recovery audio stack remain required production assets tracked in `REQUIRED_ASSETS.md`. `WaveManager`, `EnemyDirector`, `EnemyFactory`, and `scenes/game.tscn` expose `marine_scene` / `"marine"` as a late-unlock enemy type. Until full directional movement/combat/death sheets are supplied, marine movement still uses directional idle as a visual fallback outside scripted dash moments.
 - The first game-over UX slice is implemented from `design/02_features/game_over/GAME_OVER_FLOW.md`. `GameState` remains the fail-state authority, pauses the tree, emits `game_over_triggered`, and mounts `res://game/ui/game_over/game_over_modal.tscn` when `trigger_game_over(...)` is called. `GameStats` tracks waves survived, enemies destroyed, power failures, and turrets lost; `WaveManager` records completed waves, and enemy death records destroyed enemies. The modal is now a full-screen loss overlay with stats, a clear Restart button that resets run state and reloads the current scene, and a Return-to-Menu fallback that uses the configured main scene until a production menu exists. Custodian death is immediate game over (`total_lives = 1`) with Custodian-facing defeat copy, and Sundered Keep siege objective collapse routes through the same global game-over modal. Direct smoke coverage lives at `res://tools/validation/game_over_flow_smoke.gd`, with Sundered Keep collapse coverage in `res://tools/validation/sundered_keep_large_layout_smoke.gd`.
-- Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output now anchors the accessible East Machine House. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the off-map Machine House interior. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
+- Carrow Yard's connected-map runtime uses the retained gothic-compound blueprint generator under `res://game/world/procgen/gothic_compound/`: it reserves the yard, builds its perimeter and South Gate, carves service roads, places the Operations House/Yard Control Terminal/utility structures, and validates required walkable routes. Named structure-site output anchors three separate accessible interiors: the 14×10 East Machine House, 12×10 West Draft House, and 20×14 Operations House. Each room has its own camera/environment region and three-cell south return; the Operations House adds civic dispatch/records/stock dressing and one persistent emergency-spares cache using existing Carrow art. The former `AuthoredVaultRoom` and `VaultEnemyExit` prototype are retired; its resources survive as three service-storage caches in the East Machine House. Existing render/depth metadata, topology validation, service-path complexity, and Operator-relative occlusion remain unchanged.
 - The Sundered Keep phase-1 slice is live as a directed authored route. The
   front-gate layout is mapper-owned through
   `sundered_keep_front_gate_large.json`; intentional `mapper_placements`,
@@ -2566,6 +2675,19 @@ collision radius, and proves a continuous route from `(0, 160)` to `(0, -6464)`
 across every mandatory section — it caught a real 16px pinch in the Locker
 Reliquary during implementation.
 
+## Awakening perimeter support foundation (2026-10-15)
+
+AP0 Awakening perimeter support foundation is implemented as a no-art technical
+layer. The deterministic 34-sample camera ledger measures all ten zones and the
+three authored reveals against live room plate bounds; the only measured plate
+gaps are a 32px strip at wake/Zone01 entry and a 96px strip at the 05→06 join.
+Nine non-Dust Asset V2 backdrop families (27 required states) are registered as
+unfulfilled demand. `AwakeningPerimeterSupport` checks for exact runtime files
+before loading, remains below canonical floor art, has no collision, and leaves
+the neutral void backdrop intact. Zone 05 generic support remains excluded for
+Dust Lung V2. See `design/04_architecture/AWAKENING_PERIMETER_SUPPORT_V1.md`
+and `docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+
 # Baby Opossum Ambient Creature Runtime (2026-09-06)
 
 Baby Opossum now has a first-class `ambient_creature` V2 family and runtime
@@ -2904,3 +3026,7 @@ Direct current-canon source `design/03_world/THE_ASH-BELL_CONTINUITY.md` §6 con
 ## Awakening Gate western precinct spatial proposal (2026-10-11)
 
 A draft west exterior Gate side-stair retaining terrace and rock-cut sealed recovery descent now has a conceptual geography, five paired generated reference evaluations, and early Crèche matching vistas in `design/04_architecture/AWAKENING_GATE_WESTERN_PRECINCT_TEASER_LAYOUT_V1.md`. No actual world/zone geometry was changed; current Gate X-west edge `-704` is only 384px from `WORLD_BOUNDS` west edge `-1088`. Proposed later region scale must have independent spatial scope, with current art and north route preserved. This is still not an approved unlock mechanic or a confirmed Null Warrant entity.
+
+## Compound archetypes and assault/recovery planning (2026-10-15)
+
+Two user-authorized initial compound archetypes, walled_yard and connected_bunker, and a dependent assault, integrity damage, repair and new infrastructure loop are queued by design only. No runtime completion is claimed. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md, COMPOUND_ARCHETYPES_REQUIRED_ASSETS_V1.md and their review-gated task packet series. Carrow has three working named interiors and remains a donor only; its route migration and size calibration are separate.

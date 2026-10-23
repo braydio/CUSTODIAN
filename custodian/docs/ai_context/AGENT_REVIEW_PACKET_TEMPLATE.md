@@ -1,5 +1,7 @@
 # AGENT REVIEW PACKET TEMPLATE
 
+Use full 40-character Reviewed main SHAs: the paired-review archived implementation resolver rejects abbreviated hashes.
+
 Repository defaults are inherited from `custodian/AGENTS.md` and the root
 `AGENTS.md`. This template is the paired post-land review counterpart to
 `AGENT_TASK_PACKET_TEMPLATE.md`; see `task_packets/README.md` for the full
@@ -42,7 +44,7 @@ required fresh-review metadata without being blocked by unrelated packet drift.
 - Review: `none`
 - Review target workstream: `<implementation-id>`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/<IMPLEMENTATION_NAME>.md`
-- Reviewed main: `<full or short main SHA being reviewed>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Authoring chat: `<copy exact implementation Authoring chat URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
 - Reviewer context: `fresh`

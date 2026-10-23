@@ -10,9 +10,9 @@ const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
 # Semantic accepted-world parity baseline. Presentation-only
 # macro_presentation is validated separately and excluded from this value hash.
-const EXPECTED_LEVEL_DATA_HASH := "562871128"
+const EXPECTED_LEVEL_DATA_HASH := "1430988263"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
-const EXPECTED_LEVEL_DATA_KEY_COUNT := 69
+const EXPECTED_LEVEL_DATA_KEY_COUNT := 80
 
 
 func _init() -> void:

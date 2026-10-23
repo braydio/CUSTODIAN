@@ -1,0 +1,53 @@
+# CARROW MAPPER TRANSACTIONAL EDITING V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `carrow-mapper-transactional-editing-v1`
+- Authoring handoff: `auto`
+- Kind: `implementation`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-carrow-interior-layout-authoring-v1`
+- Locks: `carrow-yard-route, authored-level`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-carrow-mapper-transactional-editing-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial authoring-tool/data integrity change`
+- Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Give Carrow reversible, transactional editing and reliable per-room draft/save bookkeeping.
+- Completion boundary: Implement just this authoring/editor contract, prove each A-series acceptance item through focused tests and publish truthful closeout evidence.
+- Current measured state: Carrow supports FLOOR/PROPS/COLLISION/PORTAL/STORAGE/WAYPOINTS but has no undo/redo. _commit_mutation and drag preview take different paths. _on_room_selected DOES copy the current draft to cache, so data loss from room switch alone is not established.
+- Evidence: Static inspection of Work surface at pinned `main@0bcd4c2455ff`; prior smoke coverage is NOT hands-on interaction proof.
+- Task-specific authority: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`, `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, relevant mapper source/draft authority.
+- Work surface: carrow_interior_layout_mapper.gd; carrow_interior_layout_draft.gd; mapper_history.gd
+- Publication inputs: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`; `custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd`; `custodian/tools/validation/authored_level_mapper_framework_smoke.gd`
+- Change: Add bounded per-room full-draft edit transactions for all six modes. One mouse stroke/drag = one undo step, not per motion; Ctrl+Z, Ctrl+Y and Ctrl+Shift+Z only when canvas is focused. No-op/cancelled drag creates no entry; rejected move reverts atomically. Keep current draft, SHA digest, preview and room cache coherent on commit, undo, redo and switch. Maintain saved SHA separate from working SHA; explicit load is a history boundary. Prevent text-entry collisions.
+- Preserve: Existing authored runtime/world geometry, visual art and Asset Pipeline V2 contracts; mapping schema and source hashes; all unrelated mapper modes.
+- Non-goals: Gameplay scene/geometry edits, new art, production draft promotion, and universal mapper rewrite.
+- Acceptance:
+  - A1: Each editing mode can undo/redo to byte-identical canonical serialization and equivalent preview.
+  - A2: Moving a prop/shape through many motion events produces exactly one history state; invalid, cancelled and no-op edits produce none.
+  - A3: A->B->A room switch, undo/redo and save/reopen preserve independent per-room state; failed save leaves last good disk draft unchanged.
+- Validation: Focused scripts below, then changed-file validation and packet/context checks. Test API and representative actual input events, not import-only.
+- Task overrides: `none`
+- Deferred: Subjective user ergonomics confirmation after technical correctness; human source/art approval remains separate.
+
+## Validation
+- `godot --headless --path custodian --script res://tools/validation/carrow_interior_layout_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/authored_level_mapper_framework_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` after focused pass.
+- `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `git diff --check`.
+- Moment Forge not required unless gameplay or authored presentation unexpectedly changes; no full-frame screenshots as default.
+
+## Next Handoff
+- Next workstream: `review-carrow-mapper-transactional-editing-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Next action: Land verified implementation through workstream lifecycle; launch fresh-context independent paired review.
+- Blockers or open questions: Existing dependency reviewers and dispatch claim guards remain authoritative.

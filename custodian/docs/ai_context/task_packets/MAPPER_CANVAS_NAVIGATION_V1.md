@@ -1,0 +1,55 @@
+# MAPPER CANVAS NAVIGATION V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `mapper-canvas-navigation-v1`
+- Authoring handoff: `auto`
+- Kind: `implementation`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `review-mapper-source-write-safety-v1, review-carrow-mapper-transactional-editing-v1`
+- Locks: `authored-level, carrow-yard-route`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `review-mapper-canvas-navigation-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `substantial authoring-tool/data integrity change`
+- Reviewed main: `0bcd4c2455ff1ba7993b6891b98e0101ea23aab8`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Give reusable mapper scenes reliable editor-camera pan, zoom, fit and focus without modifying canonical game projection.
+- Completion boundary: Implement just this authoring/editor contract, prove each A-series acceptance item through focused tests and publish truthful closeout evidence.
+- Current measured state: Generic mapper handles WASD/arrows and pointer zoom via _camera. Carrow disables that camera, uses _game_camera at 0.84 and overrides _process/_unhandled_input, bypassing inherited pan/wheel handling. Awakening has huge vertical space and starts at 0.18.
+- Evidence: Static inspection of Work surface at pinned `main@0bcd4c2455ff`; prior smoke coverage is NOT hands-on interaction proof.
+- Task-specific authority: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`, `design/04_architecture/AUTHORED_LEVEL_AUTHORING_PIPELINE.md`, relevant mapper source/draft authority.
+- Work surface: level_collision_poi_mapper.gd; authored_level_mapper.gd; carrow_interior_layout_mapper.gd; overlays
+- Publication inputs: `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`; `custodian/tools/validation/level_collision_poi_mapper_smoke.gd`; `custodian/tools/validation/authored_level_mapper_framework_smoke.gd`; `custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd`; `custodian/tools/validation/awakening_collision_mapper_bridge_smoke.gd`
+- Change: Route view gestures through ONE active mapper camera, not the disabled base camera. Implement middle drag to pan, pointer-anchored wheel zoom, Fit Level/Home, Focus Selected/F, clamped sensible zoom, and explicit view reset. Carrow must retain 0.84 as the canonical default and never save editor viewport zoom as gameplay camera tuning. GUI/text focus and painting/pan gesture arbitration must be predictable. Awake zone focus, 1px/4px geometry snapping and cursor world positions remain exact. Preserve generic Home/Ritualant/Approach compatibility.
+- Preserve: Existing authored runtime/world geometry, visual art and Asset Pipeline V2 contracts; mapping schema and source hashes; all unrelated mapper modes.
+- Non-goals: Gameplay scene/geometry edits, new art, production draft promotion, and universal mapper rewrite.
+- Acceptance:
+  - A1: Active camera changes on pan/zoom in Carrow and generic/Awakening; pointer world position stays within one pixel under mouse-centered zoom.
+  - A2: Fit/focus/reset alters only viewport and never draft geometry, Operator, runtime camera tuning, or source hashes.
+  - A3: UI click, text entry, held pan gesture and zoom never paint/delete geometry. All relevant existing mapper smokes retain parity.
+- Validation: Focused scripts below, then changed-file validation and packet/context checks. Test API and representative actual input events, not import-only.
+- Task overrides: `none`
+- Deferred: Subjective user ergonomics confirmation after technical correctness; human source/art approval remains separate.
+
+## Validation
+- `godot --headless --path custodian --script res://tools/validation/level_collision_poi_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/authored_level_mapper_framework_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/carrow_interior_layout_mapper_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `godot --headless --path custodian --script res://tools/validation/awakening_collision_mapper_bridge_smoke.gd`; extend existing smoke or add focused fixture for each A-series assertion.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` after focused pass.
+- `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `git diff --check`.
+- Moment Forge not required unless gameplay or authored presentation unexpectedly changes; no full-frame screenshots as default.
+
+## Next Handoff
+- Next workstream: `review-mapper-canvas-navigation-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Next action: Land verified implementation through workstream lifecycle; launch fresh-context independent paired review.
+- Blockers or open questions: Existing dependency reviewers and dispatch claim guards remain authoritative.

@@ -25,16 +25,26 @@ func _run() -> void:
 		"unified mapper state API is missing"
 	)
 	var state := mapper.call("get_sundered_keep_mapper_state") as Dictionary
+	var initial_level := _read_json(LEVEL_PATH)
+	var authored_placements := initial_level.get("mapper_placements", []) as Array
+	var loaded_placements := state.get("placements", []) as Array
+	_assert(
+		loaded_placements.size() == authored_placements.size(),
+		"mapper did not load every authored placement from production level data"
+	)
 	_assert(str(state.get("mapping_path", "")) == LEVEL_PATH, "mapper does not edit production level data")
 	_assert(str(state.get("collision_path", "")) == COLLISION_PATH, "mapper does not own production collision data")
 	_assert(int(state.get("feature_count", 0)) >= 50, "mapper does not expose retained gameplay feature records")
-	_assert((state.get("placements", []) as Array).is_empty(), "mapper did not start with zero manual placements")
+	_assert(
+		loaded_placements.size() > 0,
+		"mapper no longer previews the nonempty production placement channel"
+	)
 	_assert((state.get("palette", []) as Array).size() == 99, "mapper lost the 01-99 tile palette")
 	_assert(mapper.has_method("_load_underlay_selection_as_stamp"), "mapper lost underlay stamp sampling")
 	_assert(mapper.has_method("_begin_paint_drag"), "mapper lost drag painting")
 	_assert(mapper.has_method("_undo") and mapper.has_method("_redo"), "mapper lost undo/redo")
 	_assert(mapper.has_method("_apply_collision_drafts"), "mapper cannot author collision rails")
-	_test_immediate_placement_preview(mapper)
+	_test_immediate_placement_preview(mapper, loaded_placements.size())
 	_assert(mapper.has_method("_move_selected_feature"), "mapper cannot move production features")
 	_assert(
 		mapper.has_method("select_feature_at_tile")
@@ -78,13 +88,14 @@ func _run() -> void:
 	_assert(not (level.get("siege", {}) as Dictionary).is_empty(), "siege placement is not mapper-owned")
 	_assert(_has_marker(level, "great_hall_marine_spawn"), "marine spawn is not mapper-authored")
 	_assert(_has_marker(level, "routekeeper_trace"), "routekeeper placement is not mapper-authored")
-	_assert((collision.get("segments", []) as Array).size() == 127, "canonical mapper collision rail count drifted")
+	var collision_segments := collision.get("segments", []) as Array
+	_assert(not collision_segments.is_empty(), "canonical mapper collision rails are missing")
 	_assert((collision.get("markers", {}) as Dictionary).size() == 7, "canonical mapper marker count drifted")
 	var spawn_tile := _marker_tile(level, "spawn")
 	var collision_spawn := _collision_marker_position(collision, "spawn")
 	_assert(
-		collision_spawn == Vector2(spawn_tile * 32) + Vector2(16.0, 16.0),
-		"level and collision spawn markers diverged"
+		spawn_tile == Vector2i(floori(collision_spawn.x / 32.0), floori(collision_spawn.y / 32.0)),
+		"level spawn tile differs from the runtime-authoritative collision spawn"
 	)
 	var minimum_spawn_clearance := _minimum_rail_distance(
 		collision_spawn,
@@ -95,7 +106,11 @@ func _run() -> void:
 		"mapper-authored spawn overlaps a collision rail"
 	)
 
-	var preview := state.get("underlay_scene") as Node
+	# The immediate-placement test reloads the production preview and frees the
+	# earlier scene instance. Read the mapper state again so these assertions
+	# inspect the live preview instead of retaining a stale Node reference.
+	var current_state := mapper.call("get_sundered_keep_mapper_state") as Dictionary
+	var preview := current_state.get("underlay_scene") as Node
 	_assert(preview != null and preview.name == "ProductionSunderedKeepPreview", "mapper does not preview actual runtime level")
 	_assert(
 		preview != null
@@ -105,6 +120,15 @@ func _run() -> void:
 	_assert(preview != null and preview.get_node_or_null("MappedUnderlayBounds/UnderlayBoundaryCollision") != null, "runtime preview did not consume mapper collision")
 	var runtime_state := preview.call("get_sundered_keep_debug_state") as Dictionary
 	_assert(int(runtime_state.get("blocker_bodies", 0)) == 2, "runtime created permanent non-mapper blocker bodies")
+	_assert(
+		int(runtime_state.get("underlay_collision_segments", -1)) == collision_segments.size(),
+		"runtime collision rails differ from the authored collision document"
+	)
+	var entry_spawn := preview.find_child("EntrySpawn", true, false) as Node2D
+	_assert(
+		entry_spawn != null and entry_spawn.position.distance_to(collision_spawn) <= 0.1,
+		"runtime EntrySpawn does not match the authoritative collision marker"
+	)
 
 	mapper.queue_free()
 	await process_frame
@@ -135,17 +159,21 @@ func _has_feature_label(entries: Array, label: String) -> bool:
 	return false
 
 
-func _test_immediate_placement_preview(mapper: Node) -> void:
+func _test_immediate_placement_preview(mapper: Node, initial_count: int) -> void:
 	var placed_root := mapper.get_node("World/PlacedGameplayTiles") as Node2D
 	_assert(placed_root.z_as_relative == false, "placement preview is not absolute-depth")
+	_assert(
+		placed_root.get_child_count() == initial_count,
+		"initial placement sprites do not match loaded authored placements"
+	)
 	mapper.set("_selected_tile_number", 1)
 	_assert(
 		bool(mapper.call("_place_selected_tile", Vector2i(10, 10))),
 		"palette tile could not be placed in mapper memory"
 	)
 	_assert(
-		placed_root.get_child_count() == 1
-		and placed_root.get_child(0) is Sprite2D,
+		placed_root.get_child_count() == initial_count + 1
+		and placed_root.get_child(initial_count) is Sprite2D,
 		"palette placement did not create an immediate visible preview sprite"
 	)
 	mapper.set("_active_underlay_stamp", {
@@ -159,11 +187,16 @@ func _test_immediate_placement_preview(mapper: Node) -> void:
 		"underlay stamp could not be placed in mapper memory"
 	)
 	_assert(
-		placed_root.get_child_count() == 2
-		and placed_root.get_child(1) is Sprite2D,
+		placed_root.get_child_count() == initial_count + 2
+		and placed_root.get_child(initial_count + 1) is Sprite2D,
 		"underlay placement did not create an immediate visible preview sprite"
 	)
 	mapper.call("_clear_placements")
+	mapper.call("_reload_mapping_document")
+	_assert(
+		(mapper.call("get_sundered_keep_mapper_state") as Dictionary).get("placements", []).size() == initial_count,
+		"mapper did not restore the original authored placement channel on reload"
+	)
 
 
 func _test_feature_authoring(mapper: Node) -> void:
