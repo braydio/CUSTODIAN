@@ -488,6 +488,30 @@
       "needs_import": true
     },
     {
+      "id": "hub_road_empty_procession",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_road_empty_procession_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "traversal",
+        "persistence",
+        "audio"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_road_empty_procession_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "biome_field",
       "type": "godot_script",
       "script": "res://tools/validation/biome_field_smoke.gd",
@@ -6711,7 +6735,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         "custodian/tools/agent/workflow_control.py"
       ],
-      "timeout_sec": 60,
+      "timeout_sec": 90,
       "needs_import": false
     },
     {

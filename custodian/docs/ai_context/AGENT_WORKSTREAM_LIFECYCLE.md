@@ -212,6 +212,19 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One exact historical compatibility case binds the host-import recovery run
+`20261020T200652Z-2fd156ce23d0` to its two conflict interruptions and resume:
+`dbcf8aec4eb09264b60bea9d26c99f235022efb5` and
+`d83319a3a9c211fe3947e4951bfaa06f1684bf05`. The validator requires the exact
+run/workstream diagnostic trace, both full parent pairs, conflict-result trees,
+complete resolution path/blob/mode deltas, and the recorded resume at the
+second merge. It also pins the later `4b1af571...` synchronization witness and
+final `6e75b57...` no-op witness. The archive and paired-review packet closeout,
+all follow-up commits, and source/test file modes are separately content
+checked. No missing `main_sync` event is synthesized. This exception accepts
+only that complete historical identity; it does not change the requirement for
+an exact witness on other merges.
+
 The plan pins the run, claim receipt, original worktree/branch, reviewed main,
 canonical archived implementation identity, lifecycle-proven source span and
 complete original evidence manifest. Apply only the exact freshly emitted
@@ -231,6 +244,19 @@ commit contains only packet archival/index changes, the host validates the
 separately provenance-pinned source-bearing span immediately preceding it.
 Neither a green validation report nor an incomplete continuation is a review
 PASS. Inspect the child metadata and artifacts before any further recovery.
+
+For the exact failed Godot import recovery, a complete original failed report
+pair is eligible only when its immutable coordinator evidence classifies the
+failure as `infrastructure_failure: import`, names the exact protected run,
+and shows no accepted host-validation pin. The runner authenticates the bounded
+set of twelve Grunt candidate `.png.import` sidecars against their tracked PNG
+sources, preserves byte-exact copies before removing only those generated
+files, and records append-only fresh host-validation attempts beneath
+`continuation-01/host-validation/`. A failed attempt remains failed; recovery
+allows at most two fresh attempts total after the original failure. No reviewer
+is launched until one full canonical validation passes. Never broaden the sidecar
+allowlist, disable TLS checks, overwrite the original report pair, or treat a
+retry as a historical pass. Changed or unrecognized artifacts stop recovery.
 
 ## Start or resume
 
@@ -288,6 +314,20 @@ absolute worktree, and a deterministic two-parent merge tree. It must also keep
 the first-parent workstream commits as the owned source inventory, so upstream
 files imported by synchronization do not become authored task changes. An
 untraced merge or an ambiguous checkpoint/resume sequence remains invalid.
+
+A failed initial `worktree add` may leave the exact claim and `worktree_create_begin`
+in the run trace without a `worktree_published` event. A recovered checkout is
+authenticated only by one matching claim, one create attempt, a recorded failed
+create for its canonical branch/path, and one later `worktree_resumed` on that
+same run. The claim and create SHAs remain the original acquisition base. Since
+`resume` fetches and synchronizes before recording the event, `worktree_resumed.head`
+is the actual post-sync HEAD and may be newer. Verifiers retain both identities,
+require the resumed HEAD to be a recorded full commit on the claim's first-parent
+fast-forward chain, and use the resumed HEAD as the source-span boundary so
+branch changes authored after recovery are isolated from intervening main
+changes. The original claim base remains independently authenticated. This
+evidence does not synthesize `worktree_published` or make an arbitrary resume
+event sufficient.
 
 ### Run-pinned checkout interruption recovery (operator-only)
 

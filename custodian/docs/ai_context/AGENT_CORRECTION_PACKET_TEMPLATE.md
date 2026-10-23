@@ -21,7 +21,7 @@ parent implementation slice and cite the exact stable review finding IDs.
 - Paired review workstream: `review-<parent-id>-review-corrections-<cycle>`
 - Review cycle: `<positive cycle number>`
 - Max automatic review cycles: `<inherited cap>`
-- Reviewed main: `<SHA where this correction contract was verified>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Parent implementation: `<implementation workstream and canonical archived packet path>`
 - Parent review: `<review workstream and canonical archived packet path>`
 - Findings addressed: `<full IDs, for example R0-02, R0-04>`

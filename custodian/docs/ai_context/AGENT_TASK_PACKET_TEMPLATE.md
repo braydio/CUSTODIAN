@@ -43,7 +43,7 @@ Ready/Auto view, never selection authority.
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
-- Reviewed main: `<short SHA>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
 - Goal:
@@ -145,7 +145,7 @@ repository state without reconstructing intent from chat history.
 
 Required quality:
 
-- **Reviewed main** identifies the repository state actually investigated.
+- **Reviewed main** identifies the repository state actually investigated, as the complete 40-character commit SHA; an abbreviated SHA fails the paired-review archived-target identity gate.
 - **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one. Every durable implementation/review/correction/recovery/closeout summary and final user-facing handoff must repeat the exact URL as `Authoring chat: <url>`; `workstream.py finish` enforces this on the committed closing summary.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.

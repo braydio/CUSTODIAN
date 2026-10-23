@@ -33,7 +33,8 @@ The first real advanced R2 vehicle is a later content slice that proves reuse; i
 | V6R | paired review of V6 | ready/auto | independent Asset V2 contract proof | V6 |
 | V7 | `vehicle-recovery-fx-production-v1` | authored draft/manual; authoring handoff auto, dependency-gated | six shared recovery FX source normalization + Asset V2 ingest + runtime wiring | V6R |
 | VI1-VI4 | Vehicle Integration System V1 | authored, dependency-gated | reusable presentation contract/runtime/art derivation/integrator | V7R then VI reviews |
-| V8 | first real R2 TECHNICAL vehicle | future content slice | new vehicle class using reviewed reusable systems | VI4 paired review |
+| VF2 | Custodian Utility Hauler Mk I | future initial-fleet Phase 2 | first new medium wheeled class using reviewed integrator + socket/attachment contract | VI4 paired review |
+| V8 | Custodian Industrial Crawler Mk I | future initial-fleet Phase 3 / first R2 TECHNICAL vehicle | tracked expedition-recovery proof using reviewed reusable systems | VF2 review or explicit parallel-content approval |
 
 ## V0 — Lifecycle hardening
 
@@ -213,12 +214,22 @@ The reusable source-to-runtime architecture is locked in
 `design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md`. VI1 defines the
 visual contract, VI2 extracts runtime presentation ownership, VI3 generalizes
 art derivation, and VI4 proves the system with the Scout plus a same-chassis
-reuse fixture. V8 must consume the reviewed VI4 result instead of creating
-another one-off vehicle pipeline.
+reuse fixture. Initial-fleet content after VI4 is governed by
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`.
+The Utility Hauler is the first new-class reuse proof; V8 is now specifically the
+Industrial Crawler R2 expedition-recovery proof. Neither may create another
+one-off vehicle pipeline.
 
-## V8 — First advanced R2 vehicle proof
+## VF2 — Utility Hauler reuse proof
 
-The first real R2 vehicle should prove the system is more than Scout-specific:
+The first completely new class after the Scout is the Phase-2 Custodian Utility
+Hauler Mk I. Its purpose is to prove medium wheeled cargo, more component sockets,
+and an independently presented cargo module can consume the reviewed integrator
+without new vehicle-controller or recovery authority.
+
+## V8 — Industrial Crawler / first advanced R2 proof
+
+The Phase-3 Industrial Crawler is the first real R2 vehicle and should prove the system is more than Scout-specific:
 - wreck is discoverable before recoverable;
 - diagnosis names at least one missing advanced assembly;
 - recipe reports a knowledge deficit and/or pattern deficit;

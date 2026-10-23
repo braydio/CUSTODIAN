@@ -505,6 +505,19 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
     return packets
 
 
+def _authenticated_managed_index_reconciliation(
+    host_validation, repo: Path, first_parent: str, second_parent: str,
+    merge_commit: str, first: bytes, second: bytes, merged: bytes,
+) -> bool:
+    """Accept exact additive entries or completed-main archival removals only."""
+    return (
+        host_validation._managed_packet_index_additive_reconciliation(first, second, merged)
+        or host_validation._managed_packet_index_archival_reconciliation(
+            repo, first_parent, second_parent, merge_commit,
+        )
+    )
+
+
 def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
     repo = root_repo(path)
@@ -559,6 +572,19 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
         return f"multiple canonical archive transitions found; latest is {transition_commit} ({packet})"
     transition_commit, packet = transitions[0]
     if transition_commit == head:
+        return None
+
+    # This one previously validated recovery has an exact, independently
+    # authorized archive -> summary repair -> sync -> completion evidence ->
+    # blocker note -> later-main sync history. Do not infer a changed main_sync
+    # event from any merge: validate the Git objects and, when present, accept
+    # only the truthful final no-op witness emitted by normal finish.
+    recovery_error = _authorized_failed_import_archive_recovery_error(
+        workstream_id, path, repo, head, main, transition_commit, packet,
+    )
+    if recovery_error is not None:
+        return recovery_error
+    if workstream_id == FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]:
         return None
 
     # workstream.py finish may already have synchronized main before validation
@@ -699,7 +725,8 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                     merged = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
                                             capture_output=True)
                     if (changed != {readme} or first.returncode or second.returncode or merged.returncode
-                            or not host_validation._managed_packet_index_additive_reconciliation(
+                            or not _authenticated_managed_index_reconciliation(
+                                host_validation, path, previous, main_parent, commit,
                                 first.stdout, second.stdout, merged.stdout)):
                         valid = False
                         break
@@ -740,6 +767,644 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
         f"branch tip {head}; include source changes before archival or use a supported "
         "source-span record"
     )
+
+
+FAILED_IMPORT_ARCHIVE_RECOVERY = {
+    "workstream": "agent-paired-review-failed-host-validation-import-recovery-v1",
+    "archive": "25229d8d3874608f7b8492df98bc3df4385a9d28",
+    "summary_repair": "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
+    "first_sync": "dbcf8aec4eb09264b60bea9d26c99f235022efb5",
+    "first_sync_test_runner_blob": "7e9051cac61dc56ddc63c013e546a439681fcabd",
+    "post_sync_evidence": "a55c14e020d4986fb35baa75bde691c0c2e67e93",
+    "blocker_note": "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
+    "final_sync": "d83319a3a9c211fe3947e4951bfaa06f1684bf05",
+    "claim_base": "030dbe986c0ced4e8b1dc2c816f466c81146b5f2",
+    "claim_oid": "5249f25988aa13cdf99372754509fb7b91eeef94",
+    "trace_anchor": "173104f75f4380aa2c5eadf0e0c8ca2f2bd04855",
+    "first_main": "e9e69fc2178b1a96e02240f4b0a86cdaf30581e7",
+    "final_main": "8e4bca145658b825bb6dedeed595a3c53497a138",
+    "run_id": "20261020T200652Z-2fd156ce23d0",
+    "summary": "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md",
+    "correction_commits": [
+        "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+        "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+        "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+        "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+        "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
+    ],
+    "authorized_main_advance": {
+        "base": "8e4bca145658b825bb6dedeed595a3c53497a138",
+        "head": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        "commits": [
+            "0da9923e818645178a079eece3482216cd295ccc",
+            "0ed185fd23946eeb8a6d5835c171000a65f75a68",
+            "e1cfee4692a754a98a27d7fb3cf382dc55328bb8",
+            "ae5e0d8719d028f8feba6f4250633c30dfe0f470",
+            "bc79a4938577a9822f2d1c3c95ac701f5e8cb0d9",
+            "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        ],
+        "commit_paths": [
+            ["custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md"],
+            ["custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            [
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+            ],
+        ],
+    },
+}
+
+FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS = 3
+FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS = 1
+
+
+def _authorized_failed_import_archive_recovery_error(
+    workstream_id: str, path: Path, repo: Path, head: str, main: str,
+    transition_commit: str, archived_rel: str,
+) -> str | None:
+    """Authenticate the exact preserved failed-import finish history.
+
+    The authenticated recovery chain permits up to three source/test
+    corrections before one exact automatic merge of current origin/main, then
+    at most one source/test correction. Path and file-mode checks below bind
+    those commits to the active packet. All earlier history is pinned to
+    immutable commits named by the published planning refresh.
+    """
+    if workstream_id != FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]:
+        return None
+    pinned = FAILED_IMPORT_ARCHIVE_RECOVERY
+    if transition_commit != pinned["archive"]:
+        return "failed-import archive recovery does not match the authorized archive commit"
+    baseline_main = pinned["final_main"]
+    if (main != baseline_main
+            and not _failed_import_main_advance_is_authorized(path, pinned, main)):
+        return "failed-import archive recovery main is not a descendant of its pinned baseline"
+    active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    protected_main_paths = {
+        archived_rel,
+        active_rel,
+        pinned["summary"],
+        "AGENTS.md",
+        "custodian/AGENTS.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/agent/paired_review_host_validation.py",
+        "custodian/tools/agent/paired_review_runner.py",
+        "custodian/tools/agent/test_paired_review_runner.py",
+        "custodian/tools/agent/task_packet_index.py",
+        "custodian/tools/validation/validation_manifest.json",
+    }
+    advanced_main_paths = set(git(
+        "diff-tree", "-r", "--no-commit-id", "--name-only",
+        baseline_main, main, cwd=path,
+    ).splitlines())
+    if advanced_main_paths.intersection(protected_main_paths):
+        return "failed-import archive recovery main changed protected packet or validator paths"
+    baseline_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{baseline_main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    current_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    if (baseline_active.returncode or current_active.returncode
+            or baseline_active.stdout != current_active.stdout):
+        return "failed-import archive recovery active packet differs from its pinned authorization"
+
+    commits = git("rev-list", "--first-parent", "--reverse",
+                  f"{transition_commit}..{head}", cwd=path).splitlines()
+    historical = [pinned[name] for name in (
+        "summary_repair", "first_sync", "post_sync_evidence", "blocker_note", "final_sync",
+    )]
+    correction_history = pinned.get("correction_commits", [])
+    expected_history = historical + correction_history
+    if len(commits) <= len(expected_history):
+        return "failed-import archive recovery history differs from its pinned lifecycle commits"
+    if commits[:len(expected_history)] != expected_history:
+        return "failed-import archive recovery history differs from its pinned lifecycle commits"
+    post_history = commits[len(expected_history):]
+    correction_base = correction_history[-1] if correction_history else pinned["final_sync"]
+    suffix = _failed_import_recovery_suffix(path, post_history, correction_base, main)
+    if suffix is None:
+        return "failed-import recovery correction/sync suffix is outside its exact bounded history"
+    post_corrections, sync_commit = suffix
+    if not post_corrections and not sync_commit:
+        return "failed-import archive recovery has no authorized source/test correction or sync"
+    correction_commits = commits[len(historical):len(expected_history)] + post_corrections
+    sync_tail = [sync_commit] if sync_commit else []
+    for index, correction in enumerate(correction_history):
+        expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
+        if git("rev-parse", f"{correction}^1", cwd=path, check=False) != expected_parent:
+            return "pinned failed-import correction has unexpected parent order"
+    if correction_commits:
+        expected_parent = (pinned["final_sync"] if len(correction_commits) == 1
+                           else correction_commits[-2])
+        if sync_tail and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", sync_tail[0], correction_commits[-1]],
+            cwd=path, capture_output=True,
+        ).returncode == 0:
+            expected_parent = sync_tail[0]
+        if git("rev-parse", f"{correction_commits[-1]}^1", cwd=path, check=False) != expected_parent:
+            return "failed-import correction is not a direct child of its pinned lifecycle predecessor"
+    if sync_tail:
+        sync_commit = sync_tail[0]
+        parents = git("rev-list", "--parents", "-n", "1", sync_commit, cwd=path).split()[1:]
+        if len(parents) != 2 or parents[1] != main or parents[0] not in {
+            pinned["final_sync"], *correction_commits,
+        }:
+            return "failed-import post-recovery sync does not bind the exact correction and current main"
+        automatic_tree = _automatic_merge_tree(path, sync_commit)
+        actual_tree = git("rev-parse", f"{sync_commit}^{{tree}}", cwd=path)
+        if automatic_tree is None or automatic_tree != actual_tree:
+            return "failed-import post-recovery sync contains an unverified conflict resolution"
+
+    expected_parents = {
+        pinned["summary_repair"]: [pinned["archive"]],
+        pinned["first_sync"]: [pinned["summary_repair"], pinned["first_main"]],
+        pinned["post_sync_evidence"]: [pinned["first_sync"]],
+        pinned["blocker_note"]: [pinned["post_sync_evidence"]],
+        pinned["final_sync"]: [pinned["blocker_note"], pinned["final_main"]],
+    }
+    for commit, expected in expected_parents.items():
+        actual = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if actual != expected:
+            return f"pinned archive recovery commit has unexpected parent order: {commit}"
+
+    summary_rel = pinned["summary"]
+    summary_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                            pinned["summary_repair"], cwd=path).splitlines())
+    if summary_paths != {summary_rel} or not _summary_repair_is_authoring_chat_only(
+        path, pinned["summary_repair"], summary_rel, archived_rel,
+    ):
+        return "pinned pre-sync summary repair is not limited to the exact authoring-chat backlink"
+
+    evidence_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                             pinned["post_sync_evidence"], cwd=path).splitlines())
+    if (evidence_paths != {archived_rel}
+            or not _post_sync_completion_evidence_is_bounded(path, pinned["post_sync_evidence"], archived_rel)):
+        return "pinned post-sync completion evidence changed outside its bounded receipt field"
+    blocker_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                            pinned["blocker_note"], cwd=path).splitlines())
+    if blocker_paths != {summary_rel}:
+        return "pinned blocker note changed files outside the canonical closing summary"
+
+    # The first sync carries four bounded conflict resolutions: additive managed
+    # index entries, preservation of the already-archived packet, the authorized
+    # timeout field, and its exact regression test output. The later merge
+    # inserts the exact planning refresh from current main into that archive.
+    if not _failed_import_first_sync_is_bounded(path, pinned, archived_rel):
+        return "pinned first sync contains conflict resolution outside its exact authorized outputs"
+    final_tree = _automatic_merge_tree(path, pinned["final_sync"])
+    if final_tree is None:
+        return "cannot reconstruct the pinned final sync merge tree"
+    final_actual_tree = git("rev-parse", f"{pinned['final_sync']}^{{tree}}", cwd=path)
+    differing = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                        final_tree, final_actual_tree, cwd=path).splitlines())
+    active_still_present = subprocess.run(
+        ["git", "cat-file", "-e", f"{pinned['final_sync']}:{active_rel}"], cwd=path,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    automatic_active_delta_is_exact = False
+    if differing == {archived_rel, active_rel}:
+        first_parent = git("rev-parse", f"{pinned['final_sync']}^1", cwd=path)
+        second_parent = git("rev-parse", f"{pinned['final_sync']}^2", cwd=path)
+        first_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{first_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        second_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{second_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        automatic_active = subprocess.run(
+            ["git", "ls-tree", "-z", final_tree, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        second_active = subprocess.run(
+            ["git", "ls-tree", "-z", second_parent, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        automatic_active_delta_is_exact = (
+            not first_has_active and second_has_active
+            and automatic_active == second_active and bool(automatic_active)
+        )
+    if ((differing != {archived_rel} and not automatic_active_delta_is_exact)
+            or active_still_present
+            or not _reconciled_archive_packet_matches(path, pinned["final_sync"],
+                                                      archived_rel, active_rel)):
+        return "pinned final sync conflict is not the exact authorized packet refresh reconciliation"
+
+    allowed = {"custodian/tools/agent/workstream.py", "custodian/tools/agent/test_workstream.py"}
+    correction_coverage: set[str] = set()
+    for correction in correction_commits:
+        correction_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                                   correction, cwd=path).splitlines())
+        if (not correction_paths or not correction_paths.issubset(allowed)
+                or not _commit_paths_are_regular_files(path, correction, correction_paths)):
+            return "post-sync lifecycle correction is outside its two authorized regular source/test paths"
+        correction_coverage.update(correction_paths)
+    if correction_coverage != allowed:
+        return "post-sync lifecycle correction does not cover both authorized source and test paths"
+    active_blob = git("show", f"{main}:{active_rel}", cwd=path, check=False)
+    if not active_blob:
+        return "cannot verify correction authority from the active origin/main packet"
+    work_surface = re.findall(r"(?m)^- Work surface:\s*(.*)$", active_blob)
+    declared = set(re.findall(r"`([^`]+)`", work_surface[0])) if len(work_surface) == 1 else set()
+    if not allowed.issubset(declared):
+        return "active origin/main packet does not authorize the exact lifecycle correction paths"
+
+    trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+                 f"{pinned['run_id']}")
+    raw_trace = git("show", f"{trace_ref}:trace.jsonl", cwd=path, check=False)
+    try:
+        events = [json.loads(line) for line in raw_trace.splitlines() if line.strip()]
+    except (ValueError, TypeError):
+        events = []
+    trace_commit = git("rev-parse", trace_ref, cwd=path, check=False)
+    if not events or not _failed_import_recovery_trace_is_authentic(
+        events, workstream_id, pinned, active_rel, branch_for(workstream_id),
+        str(path), head, main, trace_ref, trace_commit,
+    ):
+        return "original failed-import lifecycle trace does not authenticate this exact claim and landing history"
+    return None
+
+
+def _failed_import_recovery_suffix(
+    path: Path, suffix: list[str], correction_base: str, main: str,
+) -> tuple[list[str], str | None] | None:
+    """Validate a bounded source/test correction chain and optional exact sync merge."""
+    post_corrections = []
+    sync_commit = None
+    previous = correction_base
+    before_sync_count = 0
+    after_sync_count = 0
+    for commit in suffix:
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if len(parents) == 2:
+            if sync_commit or parents != [previous, main]:
+                return None
+            sync_commit = commit
+            automatic_tree = _automatic_merge_tree(path, commit)
+            if automatic_tree is None or automatic_tree != git(
+                "rev-parse", f"{commit}^{{tree}}", cwd=path,
+            ):
+                return None
+        elif parents == [previous]:
+            post_corrections.append(commit)
+            if sync_commit:
+                after_sync_count += 1
+                if after_sync_count > FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS:
+                    return None
+            else:
+                before_sync_count += 1
+                if before_sync_count > FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS:
+                    return None
+        else:
+            return None
+        previous = commit
+
+    return post_corrections, sync_commit
+
+
+def _failed_import_main_advance_is_authorized(
+    repo: Path, pinned: dict[str, object], current_main: str,
+) -> bool:
+    authorization = pinned.get("authorized_main_advance")
+    if (not isinstance(authorization, dict)
+            or authorization.get("base") != pinned.get("final_main")
+            or current_main != authorization.get("head")):
+        return False
+    commits = authorization.get("commits")
+    commit_paths = authorization.get("commit_paths")
+    if (authorization.get("base") != pinned.get("final_main")
+            or not isinstance(commits, list) or not commits
+            or not isinstance(commit_paths, list) or len(commit_paths) != len(commits)):
+        return False
+    actual = git("rev-list", "--first-parent", "--reverse",
+                 f"{pinned['final_main']}..{current_main}", cwd=repo).splitlines()
+    if actual != commits:
+        return False
+    previous = str(pinned["final_main"])
+    for commit, expected_paths in zip(commits, commit_paths):
+        if (not isinstance(commit, str) or not isinstance(expected_paths, list)
+                or not expected_paths or any(not isinstance(path, str) for path in expected_paths)
+                or len(set(expected_paths)) != len(expected_paths)):
+            return False
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=repo).split()[1:]
+        actual_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                               commit, cwd=repo).splitlines())
+        mode = subprocess.run(
+            ["git", "ls-tree", "-z", commit, "--", *expected_paths],
+            cwd=repo, capture_output=True,
+        )
+        rows = [row for row in mode.stdout.split(b"\0") if row]
+        regular_files = len(rows) == len(expected_paths) and all(
+            row.split(b"\t", 1)[0].split()[0] == b"100644" for row in rows
+        )
+        if (parents != [previous] or actual_paths != set(expected_paths)
+                or mode.returncode or not regular_files):
+            return False
+        previous = commit
+    return True
+
+
+def _automatic_merge_tree(path: Path, commit: str) -> str | None:
+    parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+    if len(parents) != 2:
+        return None
+    result = subprocess.run(["git", "merge-tree", "--write-tree", *parents], cwd=path,
+                            text=True, capture_output=True)
+    first = result.stdout.splitlines()[0].strip() if result.stdout.splitlines() else ""
+    return first if first and re.fullmatch(r"[0-9a-f]{40,64}", first) else None
+
+
+def _failed_import_first_sync_is_bounded(path: Path, pinned: dict[str, str],
+                                         archived_rel: str) -> bool:
+    commit = pinned["first_sync"]
+    automatic_tree = _automatic_merge_tree(path, commit)
+    merged_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
+    if automatic_tree == merged_tree:
+        return True
+    parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+    if len(parents) != 2:
+        return False
+    first_parent, second_parent = parents
+    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                      automatic_tree, merged_tree, cwd=path).splitlines())
+    readme = "custodian/docs/ai_context/task_packets/README.md"
+    manifest = "custodian/tools/validation/validation_manifest.json"
+    regression = "custodian/tools/agent/test_paired_review_runner.py"
+    active_packet = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    allowed = {readme, archived_rel, manifest, regression}
+    if changed != allowed:
+        return False
+
+    for relative in allowed:
+        entry = subprocess.run(["git", "ls-tree", "-z", commit, "--", relative],
+                               cwd=path, capture_output=True)
+        if (entry.returncode or not entry.stdout
+                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+            return False
+    if subprocess.run(["git", "cat-file", "-e", f"{commit}:{active_packet}"], cwd=path,
+                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        return False
+
+    base_readme = subprocess.run(["git", "show", f"{first_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    main_readme = subprocess.run(["git", "show", f"{second_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    merged_readme = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
+                                   capture_output=True).stdout
+    if not all((base_readme, main_readme, merged_readme)):
+        return False
+    for tools_path in (Path(path) / "custodian/tools", Path(path) / "custodian/tools/agent"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import paired_review_host_validation as host_validation
+    except ImportError:
+        return False
+    if not host_validation._managed_packet_index_additive_reconciliation(
+        base_readme, main_readme, merged_readme,
+    ):
+        return False
+
+    base_archive = subprocess.run(["git", "show", f"{first_parent}:{archived_rel}"], cwd=path,
+                                  capture_output=True).stdout
+    merged_archive = subprocess.run(["git", "show", f"{commit}:{archived_rel}"], cwd=path,
+                                    capture_output=True).stdout
+    if not base_archive or merged_archive != base_archive:
+        return False
+    if not _manifest_timeout_conflict_is_bounded(path, first_parent, second_parent,
+                                                 commit, manifest):
+        return False
+    merged_regression = git("rev-parse", f"{commit}:{regression}", cwd=path, check=False)
+    return merged_regression == pinned["first_sync_test_runner_blob"]
+
+
+def _manifest_timeout_conflict_is_bounded(path: Path, first_parent: str,
+                                          second_parent: str, merge_commit: str,
+                                          manifest_path: str) -> bool:
+    blobs = [subprocess.run(["git", "show", f"{revision}:{manifest_path}"], cwd=path,
+                            capture_output=True) for revision in (first_parent, second_parent,
+                                                                  merge_commit)]
+    if any(result.returncode for result in blobs):
+        return False
+    branch_bytes, main_bytes, merged_bytes = (result.stdout for result in blobs)
+    try:
+        branch_doc, main_doc, merged_doc = (json.loads(raw) for raw in
+                                            (branch_bytes, main_bytes, merged_bytes))
+    except (ValueError, TypeError):
+        return False
+
+    def pair(document: dict) -> dict | None:
+        matches = [item for item in document.get("tests", [])
+                   if item.get("id") == "paired_review_runner_unit"]
+        return matches[0] if len(matches) == 1 else None
+
+    branch_pair, main_pair, merged_pair = map(pair, (branch_doc, main_doc, merged_doc))
+    if not branch_pair or not main_pair or not merged_pair:
+        return False
+    if (branch_pair.get("timeout_sec") != 90
+            or main_pair.get("timeout_sec") not in {30, 60}
+            or merged_pair != branch_pair):
+        return False
+    branch_without_timeout = json.loads(branch_bytes)
+    main_without_timeout = json.loads(main_bytes)
+    pair(branch_without_timeout).pop("timeout_sec", None)
+    pair(main_without_timeout).pop("timeout_sec", None)
+    if branch_without_timeout != main_without_timeout:
+        return False
+
+    marker = b'"id": "paired_review_runner_unit"'
+    start = main_bytes.find(marker)
+    if start < 0 or main_bytes.find(marker, start + len(marker)) >= 0:
+        return False
+    end = main_bytes.find(b'"needs_import": false', start)
+    if end < 0:
+        return False
+    match = re.search(rb'"timeout_sec": (?:30|60)', main_bytes[start:end])
+    if match is None:
+        return False
+    expected = (main_bytes[:start + match.start()] + b'"timeout_sec": 90'
+                + main_bytes[start + match.end():])
+    return branch_bytes == expected and merged_bytes == branch_bytes
+
+
+def _commit_paths_are_regular_files(path: Path, commit: str, expected: set[str]) -> bool:
+    rows = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames", "-r",
+               commit, cwd=path).splitlines()
+    if {row.split("\t")[-1] for row in rows} != expected or any(
+        row.split("\t", 1)[0] not in {"M", "A"} for row in rows
+    ):
+        return False
+    for rel in expected:
+        for revision in (f"{commit}^1", commit):
+            entry = subprocess.run(["git", "ls-tree", "-z", revision, "--", rel],
+                                   cwd=path, capture_output=True)
+            if (entry.returncode or not entry.stdout
+                    or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+                return False
+    return True
+
+
+def _summary_repair_is_authoring_chat_only(path: Path, commit: str,
+                                           summary_rel: str, archived_rel: str) -> bool:
+    parent = git("rev-parse", f"{commit}^1", cwd=path)
+    archived = git("show", f"{parent}:{archived_rel}", cwd=path, check=False)
+    try:
+        header = parse_packet(str(path / archived_rel), archived)
+    except Exception:
+        return False
+    url = header.authoring_chat
+    if not url or url in {"not-recorded", "n/a"}:
+        return False
+    diff = subprocess.run(["git", "diff", "--no-ext-diff", "--unified=0", parent, commit,
+                           "--", summary_rel], cwd=path, text=True, capture_output=True)
+    additions = [line[1:] for line in diff.stdout.splitlines()
+                 if line.startswith("+") and not line.startswith("+++")]
+    removals = [line[1:] for line in diff.stdout.splitlines()
+                if line.startswith("-") and not line.startswith("---")]
+    return (diff.returncode == 0
+            and additions.count(f"Authoring chat: {url}") == 1
+            and additions.count(f"- Authoring chat: {url}") == 1
+            and additions.count("") == 1 and len(additions) == 3
+            and removals == [f"- Authoring chat: `{url}`"]
+            and _commit_paths_are_regular_files(path, commit, {summary_rel}))
+
+
+def _post_sync_completion_evidence_is_bounded(path: Path, commit: str,
+                                               archived_rel: str) -> bool:
+    parent = git("rev-parse", f"{commit}^1", cwd=path)
+    diff = subprocess.run(["git", "diff", "--no-ext-diff", "--unified=0", parent, commit,
+                           "--", archived_rel], cwd=path, text=True, capture_output=True)
+    additions = [line[1:] for line in diff.stdout.splitlines()
+                 if line.startswith("+") and not line.startswith("+++")]
+    removals = [line[1:] for line in diff.stdout.splitlines()
+                if line.startswith("-") and not line.startswith("---")]
+    removed_evidence = [line for line in removals if line.startswith("- Evidence: `")]
+    added_evidence = [line for line in additions if line.startswith("- Evidence: `")]
+    added_validation = [line for line in additions if line.startswith("- Post-sync validation: ")]
+    if (diff.returncode != 0 or len(removals) != 1 or len(additions) != 2
+            or len(removed_evidence) != 1 or len(added_evidence) != 1
+            or len(added_validation) != 1):
+        return False
+    old_evidence, new_evidence = removed_evidence[0], added_evidence[0]
+    validation = added_validation[0]
+    merge_sha = git("rev-parse", f"{parent}", cwd=path)
+    expected_validation = (
+        f"- Post-sync validation: `After merge `{merge_sha}`, changed-file validation "
+        "passed 43/43 with complete coverage and no timeouts; the manifest retained "
+        "the authorized 90-second bound.`"
+    )
+    evidence_closeout = (
+        (old_evidence.endswith("`.") and new_evidence == old_evidence[:-2] + ".`")
+        or (old_evidence.endswith(".") and new_evidence == old_evidence + "`"))
+    return (evidence_closeout
+            and validation == expected_validation
+            and _commit_paths_are_regular_files(path, commit, {archived_rel}))
+
+
+def _reconciled_archive_packet_matches(path: Path, merge_commit: str,
+                                       archived_rel: str, active_rel: str) -> bool:
+    first_parent = git("rev-parse", f"{merge_commit}^1", cwd=path)
+    second_parent = git("rev-parse", f"{merge_commit}^2", cwd=path)
+    previous = git("show", f"{first_parent}:{archived_rel}", cwd=path, check=False)
+    active = git("show", f"{second_parent}:{active_rel}", cwd=path, check=False)
+    refresh = re.findall(
+        r"(?ms)^## Planning Refresh: Exact archive-transition recovery \(2026-10-21\)\n.*?(?=^## Handoff\s*$)",
+        active,
+    )
+    if len(refresh) != 1 or previous.count("## Next Handoff") != 1:
+        return False
+    handoff = "## Next Handoff"
+    prefix, suffix = previous.split(handoff, 1)
+    expected = prefix.rstrip() + "\n\n" + refresh[0].rstrip() + "\n\n" + handoff + suffix
+    actual = git("show", f"{merge_commit}:{archived_rel}", cwd=path, check=False)
+    entry = subprocess.run(["git", "ls-tree", "-z", merge_commit, "--", archived_rel],
+                           cwd=path, capture_output=True)
+    return (bool(actual) and actual == expected and entry.returncode == 0 and bool(entry.stdout)
+            and entry.stdout.split(b"\t", 1)[0].split()[0] == b"100644")
+
+
+def _failed_import_recovery_trace_is_authentic(
+    events: list[dict], workstream_id: str, pinned: dict[str, str], active_packet: str,
+    branch: str, worktree: str, head: str, main: str, trace_ref: str, trace_commit: str,
+) -> bool:
+    run_id = pinned["run_id"]
+    if (not trace_commit or trace_commit != git("rev-parse", trace_ref, cwd=Path(worktree), check=False)
+            or subprocess.run(["git", "merge-base", "--is-ancestor", pinned["trace_anchor"],
+                               trace_commit], cwd=Path(worktree), capture_output=True).returncode != 0):
+        return False
+    anchor_blob = git("show", f"{pinned['trace_anchor']}:trace.jsonl",
+                      cwd=Path(worktree), check=False)
+    current_blob = git("show", f"{trace_ref}:trace.jsonl", cwd=Path(worktree), check=False)
+    if not anchor_blob or not current_blob.startswith(anchor_blob):
+        return False
+    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("workstream") != workstream_id or event.get("run_id") != run_id
+           or event.get("packet") != active_packet for event in events):
+        return False
+    claims = [e.get("data", {}) for e in events if e.get("event") == "remote_claim_acquired"]
+    published = [e.get("data", {}) for e in events if e.get("event") == "worktree_published"]
+    validations = [e.get("data", {}) for e in events if e.get("event") == "validation_report"]
+    if (len(claims) != 1 or len(published) != 1 or not validations
+            or not any(e.get("passed") is True for e in validations)
+            or any(e.get("event") in {"landing_started", "landing_completed"} for e in events)):
+        return False
+    claim, publication = claims[0], published[0]
+    if (claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+            or claim.get("claim_oid") != pinned["claim_oid"]
+            or claim.get("main_sha") != pinned["claim_base"]
+            or publication.get("branch") != branch or publication.get("clean") is not True
+            or publication.get("head") != pinned["claim_base"]
+            or publication.get("upstream") != pinned["claim_base"]
+            or publication.get("worktree") != worktree):
+        return False
+    syncs = [e.get("data", {}) for e in events if e.get("event") == "main_sync"]
+    if not syncs:
+        merges = git("rev-list", "--first-parent", "--merges",
+                     f"{pinned['final_sync']}..{head}", cwd=Path(worktree)).splitlines()
+        return not any(
+            len(git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()) == 3
+            and git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()[2] == main
+            for commit in merges
+        )
+    if len(syncs) == 1 and syncs[0].get("changed") is False:
+        parents = git("rev-list", "--parents", "-n", "1", head,
+                      cwd=Path(worktree), check=False).split()[1:]
+        return (syncs[0].get("head") == head
+                and syncs[0].get("main_sha") in {main, pinned["final_main"]}
+                and not (len(parents) == 2 and parents[1] == main))
+    if len(syncs) not in {1, 2} or syncs[0].get("changed") is not True:
+        return False
+    changed_sync = syncs[0]
+    sync_head = changed_sync.get("head")
+    if (changed_sync.get("main_sha") != main or not sync_head
+            or subprocess.run(["git", "merge-base", "--is-ancestor", sync_head, head],
+                              cwd=Path(worktree), capture_output=True).returncode != 0
+            or git("rev-parse", f"{sync_head}^2", cwd=Path(worktree), check=False) != main):
+        return False
+    if len(syncs) == 2 and (
+        syncs[1].get("changed") is not False
+        or syncs[1].get("head") != head
+        or syncs[1].get("main_sha") != main
+    ):
+        return False
+    after_sync = [e for e in events if e.get("event") == "validation_after_sync"]
+    return (not after_sync or (len(after_sync) == 1
+            and after_sync[0].get("data", {}).get("passed") is True
+            and events.index(after_sync[0]) > max(
+                index for index, event in enumerate(events) if event.get("event") == "main_sync"
+            )))
 
 
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
