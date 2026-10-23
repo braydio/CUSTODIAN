@@ -1,0 +1,52 @@
+# PAIRED REVIEW: AWAKENING COLLISION MAPPER AUTHORING BRIDGE V1 REVIEW CORRECTIONS 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-awakening-collision-mapper-authoring-bridge-v1-review-corrections-1`
+- Authoring handoff: `auto`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `awakening-collision-mapper-authoring-bridge-v1-review-corrections-1`
+- Locks: `none`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, architecture, runtime, workflow`
+- Paired review workstream: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Review target workstream: `awakening-collision-mapper-authoring-bridge-v1-review-corrections-1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AWAKENING_COLLISION_MAPPER_AUTHORING_BRIDGE_V1_REVIEW_CORRECTIONS_1.md`
+- Reviewed main: `3d835aea2f2a7ffc7d85931ad96a59639e9eac1f`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Goal: Independently verify that the correction closes R0-01 and R0-02 with lossless real save/reopen and trustworthy exact draft handoff while preserving draft-only source authority.
+- Completion boundary: Review only the landed correction, its paired implementation contract, required source-span evidence, and focused validation. Do not edit implementation code or invent/approve collision geometry.
+- Current measured state: The parent review recorded R0-01 and R0-02 and has an archived nonpassing findings disposition. The correction targets only those IDs.
+- Evidence: The archived parent implementation/review packets; preserved original reviewer summary; correction packet and source/test files named there; coordinator validation report.
+- Task-specific authority: Parent packet's A1–A9; correction packet's A1–A6; immutable original findings and validation report. Runtime geometry, artwork, route and source authority stay read-only.
+- Work surface: Read-only correction source and validation evidence; write only this review packet's lifecycle/archive metadata, canonical receipt, and required root review summary.
+- Publication inputs: `custodian/docs/ai_context/task_packets/AWAKENING_COLLISION_MAPPER_AUTHORING_BRIDGE_V1_REVIEW_CORRECTIONS_1.md`; `custodian/docs/ai_context/task_packets/archived/AWAKENING_COLLISION_MAPPER_AUTHORING_BRIDGE_V1.md`; `custodian/docs/ai_context/task_packets/archived/REVIEW_AWAKENING_COLLISION_MAPPER_AUTHORING_BRIDGE_V1.md`; `custodian/tools/level_authoring/mapper/awakening_first_return_collision_mapper.gd`; `custodian/tools/level_authoring/mapper/awakening_collision_mapper_bridge.gd`; `custodian/tools/validation/awakening_collision_mapper_bridge_smoke.gd`; `design/04_architecture/AUTHORED_MAPPER_EDITOR_RELIABILITY_V1.md`.
+- Review focus: Verify exact draft metadata round-trip, stable source-art provenance, export snapshot consistency, honest PNG registration/layer identity, stale SHA behavior, negative controls, and unchanged runtime/layout/art bytes. Independently test representative save/reopen and capture input paths where headless validation permits.
+- Acceptance:
+  - A1: R0-01 is closed only if real mapper save/reopen restores exact snap, vertices, source-art provenance, IDs and metadata for required fixtures.
+  - A2: R0-02 is closed only if explicit copy/export/capture operations produce exact machine-checkable geometry/provenance and faithful registered annotated output from one snapshot.
+  - A3: No source mutation, runtime collision promotion, scene/layout/art change, silent SHA rebase, missing selection no-op, or partial output/write is introduced.
+  - A4: Original R0-01/R0-02 IDs and the original failed report remain immutable and traceable; new validation is separately recorded and does not rewrite history.
+  - A5: PASS requires every correction assertion and required focused validation to be independently supported; otherwise record concrete findings or a human-required disposition.
+- Validation: Run the packet-declared canonical focused smoke suites, changed-file validation, `task_packet_index.py`, `check_ai_context.py --json`, review-pairing validation, and `git diff --check`. Reuse original failed validation only as historical evidence.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Deferred: Subjective visual ergonomics and any collision authoring or production cutover remain user-owned.
+
+## Next Handoff
+
+- Next workstream: `none`
+- Next packet state: `none`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: `Report the original review lineage and dispatcher implications after the correction review lands; do not change mapper dependencies unless repository authority permits it.`
+- Blockers or open questions: `The root findings review remains a nonpassing disposition until the lifecycle explicitly accepts a superseding review.`

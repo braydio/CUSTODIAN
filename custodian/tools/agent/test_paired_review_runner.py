@@ -145,7 +145,11 @@ class PairedReviewRunnerTests(unittest.TestCase):
         actual = (repository / manifest_path).read_bytes()
         # Main may later add unrelated manifest owners. Preserve the exact
         # historical timeout contract while checking its current record.
-        self.assertEqual(pair_record(actual), pair_record(published_target))
+        actual_pair = pair_record(actual)
+        published_pair = pair_record(published_target)
+        self.assertEqual({key: value for key, value in actual_pair.items() if key != "owners"},
+                         {key: value for key, value in published_pair.items() if key != "owners"})
+        self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
         canonical = runner.review_outcome.render_review_outcome(
@@ -4904,6 +4908,247 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             host_validation.resolve_validation_source_span(
                 self.root, fixture["reviewed_main"], fixture["archive_landing"],
                 fixture["workstream"], fixture["archive"],
+            )
+
+    def _build_procession_scope_approval_history(self, *, include_review=True,
+                                                 attestation=None, review_outcome="passed"):
+        """Create disposable Git history for exact Procession scope approval checks."""
+        repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                        str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
+        trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
+                        "hub-road-empty-procession-sequence-v1/")
+        trace_refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)", trace_prefix],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not trace_refs:
+            self.fail("the preserved P1 lifecycle trace is unavailable")
+        for record in trace_refs:
+            ref, commit = record.split()
+            subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
+
+        correction_workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        correction_active = f"{runner.PACKET_ROOT}/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+        correction_archive = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
+        review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+        review_archive = host_validation._PROCESSION_SCOPE_REVIEW_PACKET
+        attestation_path = host_validation._PROCESSION_SCOPE_ATTESTATION_PATH
+        source_attestation = (ROOT / attestation_path).read_text(encoding="utf-8")
+        if attestation is not None:
+            source_attestation = json.dumps(attestation, indent=2, sort_keys=True) + "\n"
+
+        correction_file = repository / correction_active
+        correction_text = correction_file.read_text(encoding="utf-8")
+        correction_text = correction_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        correction_text += """
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: disposable Git approval fixture
+"""
+        correction_file.write_text(correction_text, encoding="utf-8")
+        archived_correction = repository / correction_archive
+        archived_correction.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "-C", str(repository), "mv", correction_active, correction_archive], check=True)
+        attestation_file = repository / attestation_path
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_text(source_attestation, encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, attestation_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "archive scope recovery"], check=True)
+        implementation_commit = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+
+        if include_review:
+            review_file = repository / review_active
+            review_text = review_file.read_text(encoding="utf-8")
+            review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+            status = "passed" if review_outcome == "passed" else "findings"
+            review_text += f"""
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{host_validation._PROCESSION_SCOPE_REVIEW_WORKSTREAM}`
+- Review target workstream: `{correction_workstream}`
+- Status: `{status}`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+            review_text += "\n" + runner.review_outcome.render_review_outcome(
+                outcome=review_outcome,
+                review_workstream=host_validation._PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+                target_workstream=correction_workstream,
+                reviewed_main=implementation_commit,
+                implementation_commit=implementation_commit,
+                provenance="different-agent", run_id="20261023T000000Z-abcdef123456",
+                review_cycle=0, ids=("R0-01",) if review_outcome != "passed" else (),
+            )
+            review_file.write_text(review_text, encoding="utf-8")
+            target_before_review = archived_correction.read_text(encoding="utf-8")
+            archived_correction.write_text(append_receipt(
+                target_before_review,
+                review_workstream=host_validation._PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+                target_workstream=correction_workstream,
+                reviewed_main=implementation_commit,
+                implementation_commit=implementation_commit,
+            ), encoding="utf-8")
+            archived_review = repository / review_archive
+            archived_review.parent.mkdir(parents=True, exist_ok=True)
+            subprocess.run(["git", "-C", str(repository), "mv", review_active, review_archive], check=True)
+            subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, review_archive], check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", "record scope review"], check=True)
+
+        approval_main = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        approval_main], check=True)
+        return repository, base_main, implementation_commit, approval_main, correction_archive
+
+    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review(self):
+        repository, base_main, implementation_commit, approval_main, _ = (
+            self._build_procession_scope_approval_history()
+        )
+        pinned_p1_main = "7a8be70c366fd00b00d488b5385eccb6dff47e6e"
+        archive_parent = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse",
+             f"{host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE}^1"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        archive_paths = set(host_validation._changed_paths(
+            repository, f"{archive_parent}..{host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE}",
+        ))
+        allowed_closeout = {
+            f"{runner.PACKET_ROOT}/HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md",
+            host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
+            "HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1_CLAUDE_SUMMARY.md",
+            f"{runner.PACKET_ROOT}/README.md",
+        }
+        extra_paths = archive_paths - allowed_closeout
+        self.assertEqual(extra_paths, set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        implementation_commit], check=True)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+            host_validation.resolve_validation_source_span(
+                repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
+            )
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                        approval_main], check=True)
+        provenance = host_validation._verified_procession_scope_attestation(
+            repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra_paths,
+        )
+        self.assertEqual(provenance["approval_outcome"], "passed")
+        self.assertEqual(provenance["approval_implementation_commit"], implementation_commit)
+        self.assertEqual(provenance["preserved_reviewed_main"], pinned_p1_main)
+        self.assertEqual(set(provenance["source_files"]), set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
+        self.assertTrue(host_validation._is_ancestor(repository, pinned_p1_main, approval_main))
+        self.assertTrue(host_validation._is_ancestor(repository, base_main, approval_main))
+        span = host_validation.resolve_validation_source_span(
+            repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+            host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
+        )
+        self.assertEqual(set(span["paths"]), archive_paths)
+        self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
+
+        # Every omitted source path is required; extras and omissions remain rejected.
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly the eight pinned P1 source files"):
+            host_validation._verified_procession_scope_attestation(
+                repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                extra_paths - {next(iter(extra_paths))},
+            )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly the eight pinned P1 source files"):
+            host_validation._verified_procession_scope_attestation(
+                repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                extra_paths | {"custodian/docs/unrelated.md"},
+            )
+
+    def test_procession_scope_attestation_rejects_forged_pass_and_exact_identity_mutations(self):
+        repository, _, implementation_commit, _, _ = self._build_procession_scope_approval_history(
+            review_outcome="findings",
+        )
+        extra = set(host_validation._PROCESSION_SCOPE_SOURCE_FILES)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "no canonical independent PASS"):
+            host_validation._verified_procession_scope_attestation(
+                repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra,
+            )
+
+        repository, _, _, approval_main, _ = self._build_procession_scope_approval_history()
+        attestation_path = host_validation._PROCESSION_SCOPE_ATTESTATION_PATH
+        attestation_file = repository / attestation_path
+        original = json.loads(attestation_file.read_text(encoding="utf-8"))
+        mutations = (
+            ("source_archive_commit", "0" * 40),
+            ("source_packet_path", "custodian/docs/other.md"),
+            ("source_packet_blob", "0" * 40),
+            ("source_files", [item for item in original["source_files"]
+                              if item["path"] != sorted(host_validation._PROCESSION_SCOPE_SOURCE_FILES)[0]]),
+            ("source_files", [{**item, **({"blob": "0" * 40} if index == 0 else {})}
+                               for index, item in enumerate(original["source_files"])]),
+            ("source_files", original["source_files"] + [{"path": "custodian/docs/other.md",
+                               "blob": "0" * 40, "mode": "100644"}]),
+            ("source_files", [{**item, **({"mode": "100755"} if index == 0 else {})}
+                               for index, item in enumerate(original["source_files"])]),
+        )
+        for index, (field, value) in enumerate(mutations):
+            changed = dict(original)
+            changed[field] = value
+            attestation_file.write_text(json.dumps(changed, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path], check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", f"mutate attestation {index}"], check=True)
+            tip = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                                 text=True, capture_output=True).stdout.strip()
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", tip], check=True)
+            with self.subTest(field=field, value=value), self.assertRaisesRegex(
+                host_validation.HostValidationError, "exact post-hoc authorization",
+            ):
+                host_validation._verified_procession_scope_attestation(
+                    repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra,
+                )
+        attestation_file.write_text(json.dumps(original, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        attestation_file.chmod(0o755)
+        subprocess.run(["git", "add", "--", attestation_path], cwd=repository, check=True)
+        subprocess.run(["git", "commit", "-qm", "change attestation mode"], cwd=repository, check=True)
+        tip = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repository, check=True,
+                             text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "update-ref", "refs/remotes/origin/main", tip], cwd=repository, check=True)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "regular-file"):
+            host_validation._verified_procession_scope_attestation(
+                repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra,
+            )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exactly the eight pinned P1 source files"):
+            host_validation._verified_procession_scope_attestation(
+                repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                extra | {"custodian/docs/unrelated.md"},
+            )
+        with self.assertRaisesRegex(host_validation.HostValidationError, "different source archive"):
+            host_validation._verified_procession_scope_attestation(
+                repository, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                implementation_commit, extra,
             )
 
     def _build_grunt_attestation_approval_history(self):

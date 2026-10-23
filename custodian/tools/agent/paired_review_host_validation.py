@@ -71,6 +71,34 @@ _GRUNT_SCOPE_CODE_FILES = {
 }
 _GRUNT_SCOPE_FILES = {**_GRUNT_SCOPE_MARKDOWN_FILES, **_GRUNT_SCOPE_CODE_FILES}
 
+_PROCESSION_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json"
+)
+_PROCESSION_SCOPE_SOURCE_WORKSTREAM = "hub-road-empty-procession-sequence-v1"
+_PROCESSION_SCOPE_SOURCE_ARCHIVE = "68cef17f59c6d5e04026b56025451b901bd08185"
+_PROCESSION_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md"
+)
+_PROCESSION_SCOPE_SOURCE_PACKET_BLOB = "9ad75ac27b88508647b6257245242272f49b21aa"
+_PROCESSION_SCOPE_SOURCE_FILES = {
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md": "bf1595c7a554bd307e9c77f241fe94817affe58a",
+    "custodian/game/state/persistent/hub_state.gd": "08216a9df060f0dd8ae703f597c66cc4df9ba4e0",
+    "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd": "5de12336e853024f1e252e7d0dc552e17f36cda7",
+    "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd.uid": "67b4d9d44729a7d828a8061798c7f0f99e9d7a7b",
+    "custodian/game/world/hub/first_set/hub_first_set_map.gd": "338c21b43c2768aca5e3b248393aac90b8f6e1c9",
+    "custodian/tools/validation/hub_road_empty_procession_smoke.gd": "8a1a77c1c29431672990781b926d28e6f3e67c09",
+    "custodian/tools/validation/hub_road_empty_procession_smoke.gd.uid": "e72ccbfef55f557c7b0e050efda20f27e5ea92fb",
+    "custodian/tools/validation/validation_manifest.json": "016101bf9e76309b1991e3e45fb6f15104c1c94a",
+}
+_PROCESSION_SCOPE_CORRECTION_WORKSTREAM = "agent-paired-review-procession-doc-scope-recovery-v1"
+_PROCESSION_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+)
+_PROCESSION_SCOPE_REVIEW_WORKSTREAM = "review-agent-paired-review-procession-doc-scope-recovery-v1"
+_PROCESSION_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+)
+
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
 _RESET_FOLLOWUP_RUN_ID = "20261020T135839Z-db96534ed3a7"
 _RESET_FOLLOWUP_BASE = "b5a46e82913455cb341c84811fd9be66b78ed138"
@@ -1606,6 +1634,169 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
         "approval_implementation_commit": implementation_commit,
         "approval_outcome": outcome["Outcome"],
     }
+
+
+def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
+                                          landing_commit: str,
+                                          extra_archive_paths: set[str]) -> dict:
+    """Authenticate only the omitted P1 validation recipe after its paired PASS.
+
+    This is deliberately tied to the single preserved Procession archive. The
+    approval may postdate that run's pinned reviewed-main, but current
+    origin/main is usable only after proving the pin is its ancestor and the
+    exact recovery implementation has an accepted canonical independent PASS.
+    """
+    if landing_commit != _PROCESSION_SCOPE_SOURCE_ARCHIVE:
+        raise HostValidationError("Procession scope attestation names a different source archive")
+    if extra_archive_paths != set(_PROCESSION_SCOPE_SOURCE_FILES):
+        raise HostValidationError("Procession scope attestation must cover exactly the eight pinned P1 source files")
+
+    source_packet_entry = _git_tree_entry(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                                          _PROCESSION_SCOPE_SOURCE_PACKET)
+    if source_packet_entry != ("100644", _PROCESSION_SCOPE_SOURCE_PACKET_BLOB):
+        raise HostValidationError("pinned Procession packet blob or mode does not match")
+    source_entries = {}
+    for source_path, expected_blob in _PROCESSION_SCOPE_SOURCE_FILES.items():
+        entry = _git_tree_entry(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE, source_path)
+        if not expected_blob or entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned Procession source blob or mode does not match: {source_path}")
+        source_entries[source_path] = entry
+
+    approval_main = _git(repo, "rev-parse", "origin/main^{commit}")
+    if not _is_ancestor(repo, reviewed_main, approval_main):
+        raise HostValidationError("post-hoc Procession approval does not descend from the preserved reviewed main")
+    if not _is_ancestor(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE, approval_main):
+        raise HostValidationError("post-hoc Procession approval main does not contain the exact source archive")
+
+    attestation_entry = _git_tree_entry(repo, approval_main, _PROCESSION_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file Procession scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_PROCESSION_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Procession scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_path": _PROCESSION_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _PROCESSION_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_PROCESSION_SCOPE_SOURCE_FILES.items())
+        ],
+        "reason": "The original archived P1 Work surface omitted these exact eight source paths.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Procession attestation bytes do not match the exact post-hoc authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _PROCESSION_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve Procession scope attestation origin commit")
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _PROCESSION_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("Procession attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+
+    try:
+        correction_text = read_git_text(repo, approval_main, _PROCESSION_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _PROCESSION_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Procession attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_PROCESSION_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_PROCESSION_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _PROCESSION_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _PROCESSION_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Procession attestation correction/review packet identity is incomplete")
+
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Procession attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Procession attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _PROCESSION_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _PROCESSION_SCOPE_CORRECTION_PACKET,
+        _PROCESSION_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Procession attestation target identity is invalid: {identity_error}")
+    if not _is_ancestor(repo, origin_commit, implementation_commit):
+        raise HostValidationError("Procession attestation was not present by its recovery implementation archive")
+    if not _is_ancestor(repo, outcome["Reviewed main"], approval_main):
+        raise HostValidationError("accepted Procession attestation review is not an ancestor of approved main")
+    if not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"]):
+        raise HostValidationError("accepted Procession attestation review predates its implementation")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Procession attestation review target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"accepted Procession attestation review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted Procession attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items()) or (
+        reviewer_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}
+    ):
+        raise HostValidationError("accepted Procession attestation reviewer receipt does not match its PASS outcome")
+
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _PROCESSION_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_archive_commit": _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_blob": _PROCESSION_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": {
+            path: {"mode": mode, "blob": blob}
+            for path, (mode, blob) in source_entries.items()
+        },
+        "approval_review_workstream": _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _PROCESSION_SCOPE_REVIEW_PACKET,
+        "approval_target_packet": _PROCESSION_SCOPE_CORRECTION_PACKET,
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
+    }
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
                                target_packet_text: str) -> dict:
@@ -2061,7 +2252,12 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if source_bearing_archive:
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
-        if (target_workstream == "grunt-candidate-raster-workflow-v1"
+        if (target_workstream == _PROCESSION_SCOPE_SOURCE_WORKSTREAM
+                and landing_commit == _PROCESSION_SCOPE_SOURCE_ARCHIVE):
+            scope_attestation = _verified_procession_scope_attestation(
+                repo, reviewed_main, landing_commit, extra_archive_paths,
+            )
+        elif (target_workstream == "grunt-candidate-raster-workflow-v1"
                 and extra_archive_paths.intersection(_GRUNT_SCOPE_FILES)):
             if landing_commit != _GRUNT_SCOPE_SOURCE_ARCHIVE:
                 raise HostValidationError("post-hoc Grunt scope attestation names a different source archive")
