@@ -1,0 +1,453 @@
+{
+  "schema": "custodian.motion_foundry.motion.v1",
+  "motion_id": "visible_surface_rest_pose_v1",
+  "rig_id": "operator_south_visible_surface_v1",
+  "profile": "unarmed",
+  "group": "posture",
+  "action": "idle_relaxed_01",
+  "direction": "s",
+  "frame_count": 15,
+  "fps": null,
+  "loop": true,
+  "interpolation": "linear_integer_half_away_from_zero",
+  "tracks": [
+    {
+      "part": "cape_back_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "cape_back_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "thigh_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "shin_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "boot_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "thigh_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "shin_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "boot_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "torso",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "pelvis",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "tabard_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "tabard_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "tabard_center_fold",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "arm_upper_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "arm_forearm_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "hand_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "arm_upper_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "arm_forearm_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "hand_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "belt_clasp",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "hood",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "pauldron_screen_left",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "part": "pauldron_screen_right",
+      "keys": [
+        {
+          "frame": 0,
+          "offset": [
+            0,
+            0
+          ]
+        },
+        {
+          "frame": 14,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "contacts": []
+}

@@ -29,7 +29,7 @@ except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
     DEFAULT_PROFILE_ID = "legacy_96"
     DEFAULT_FRAME_SIZE = (96, 96)
 SCHEMA_NAME = "custodian.operator_animation_workbench.v2"
-PRESENTATION_ORDER = ("cape", "lower_body", "upper_body", "head", "weapon", "fx")
+PRESENTATION_ORDER = ("cape", "lower_body", "upper_body", "full_body", "head", "weapon", "fx")
 
 def _load(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, path); module = importlib.util.module_from_spec(spec)

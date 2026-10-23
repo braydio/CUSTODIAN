@@ -2,7 +2,7 @@
 
 **Status:** active  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b  
-**Current reviewed main:** `ce07a578c39bad0b4eacf8bb02ee09eb59241801`
+**Current reviewed main:** `977f04644b85958a1a12f5f93a51763964917557`
 
 ## Program boundary
 
@@ -31,8 +31,10 @@ The first real advanced R2 vehicle is a later content slice that proves reuse; i
 | V5R | paired review of V5 | ready/auto | independent asset/runtime proof | V5 |
 | V6 | `vehicle-recovery-presentation-manifests-v1` | ready/auto, dependency-gated | shared recovery FX/component family contracts | V5R |
 | V6R | paired review of V6 | ready/auto | independent Asset V2 contract proof | V6 |
-| V7 | production recovery art creation/ingest | not authored yet; human-art boundary | image generation/source masters + Asset V2 ingest | V6R |
-| V8 | first real R2 TECHNICAL vehicle | future content slice | new vehicle class using reviewed reusable systems | V3R minimum; ideally V7 |
+| V7 | `vehicle-recovery-fx-production-v1` | authored draft/manual; authoring handoff auto, dependency-gated | six shared recovery FX source normalization + Asset V2 ingest + runtime wiring | V6R |
+| VI1-VI4 | Vehicle Integration System V1 | authored, dependency-gated | reusable presentation contract/runtime/art derivation/integrator | V7R then VI reviews |
+| VF2 | Custodian Utility Hauler Mk I | future initial-fleet Phase 2 | first new medium wheeled class using reviewed integrator + socket/attachment contract | VI4 paired review |
+| V8 | Custodian Industrial Crawler Mk I | future initial-fleet Phase 3 / first R2 TECHNICAL vehicle | tracked expedition-recovery proof using reviewed reusable systems | VF2 review or explicit parallel-content approval |
 
 ## V0 — Lifecycle hardening
 
@@ -196,17 +198,38 @@ See `VEHICLE_RECOVERY_ART_MANIFEST.md`.
 
 The goal is reuse: every advanced vehicle should not require a bespoke scan beam, missing-part icon vocabulary, and tool-spark system unless its design genuinely needs one.
 
-## V7 — Production art
+## V7 — Shared recovery FX production
 
-V7 begins only after family contracts and consumers are stable.
+The first authored V7 production slice is `vehicle-recovery-fx-production-v1`, paired with `review-vehicle-recovery-fx-production-v1`.
 
-Human/art-generation work creates source masters under the exact `asset_drop/source_work/.../` paths, normalizes them to the family inboxes, ingests through Asset V2, then performs gameplay-scale visual review.
+Six human-selected shared recovery FX source masters now have one immutable implementation-input handoff. V7 preserves those source bytes, performs deterministic technical normalization to the reviewed 256px family contract, ingests them through Asset Pipeline V2, builds one shared SpriteFrames presentation resource, and wires the real scanner/install/recovery event seams to a reusable presenter.
 
-Do not hand-copy generated PNGs into runtime folders.
+The V7 packet does **not** reopen art direction or mechanics. The six selected states are `scan_sweep_01`, `fault_ping_01`, `install_sparks_01`, `power_route_01`, `bootstrap_01`, and `restore_success_01`. Component icons/props, optional `restore_failure_01`, Field Scout body polish, and post-destroy smoke remain separate later art work.
 
-## V8 — First advanced R2 vehicle proof
+Do not hand-copy generated PNGs into runtime folders and do not let presentation become a second recovery state machine.
 
-The first real R2 vehicle should prove the system is more than Scout-specific:
+## VI1-VI4 — Vehicle Integration System
+
+The reusable source-to-runtime architecture is locked in
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md`. VI1 defines the
+visual contract, VI2 extracts runtime presentation ownership, VI3 generalizes
+art derivation, and VI4 proves the system with the Scout plus a same-chassis
+reuse fixture. Initial-fleet content after VI4 is governed by
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`.
+The Utility Hauler is the first new-class reuse proof; V8 is now specifically the
+Industrial Crawler R2 expedition-recovery proof. Neither may create another
+one-off vehicle pipeline.
+
+## VF2 — Utility Hauler reuse proof
+
+The first completely new class after the Scout is the Phase-2 Custodian Utility
+Hauler Mk I. Its purpose is to prove medium wheeled cargo, more component sockets,
+and an independently presented cargo module can consume the reviewed integrator
+without new vehicle-controller or recovery authority.
+
+## V8 — Industrial Crawler / first advanced R2 proof
+
+The Phase-3 Industrial Crawler is the first real R2 vehicle and should prove the system is more than Scout-specific:
 - wreck is discoverable before recoverable;
 - diagnosis names at least one missing advanced assembly;
 - recipe reports a knowledge deficit and/or pattern deficit;

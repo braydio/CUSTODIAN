@@ -488,6 +488,30 @@
       "needs_import": true
     },
     {
+      "id": "hub_road_empty_procession",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_road_empty_procession_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "traversal",
+        "persistence",
+        "audio"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_road_empty_procession_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "biome_field",
       "type": "godot_script",
       "script": "res://tools/validation/biome_field_smoke.gd",
@@ -1059,6 +1083,28 @@
       "needs_import": true
     },
     {
+      "id": "carrow_interior_layout_mapper",
+      "type": "godot_script",
+      "script": "res://tools/validation/carrow_interior_layout_mapper_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "carrow_yard",
+        "interior",
+        "layout_authoring",
+        "draft_serialization",
+        "negative_control",
+        "geometry"
+      ],
+      "owners": [
+        "custodian/tools/level_authoring/mapper/carrow_interior_layout_*.gd",
+        "custodian/scenes/debug/carrow_interior_layout_mapper*",
+        "custodian/tools/validation/carrow_interior_layout_mapper_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "command_pressure_scenario_setup",
       "type": "godot_script",
       "script": "res://tools/validation/command_pressure_scenario_setup_smoke.gd",
@@ -1230,6 +1276,24 @@
         "custodian/game/world/levels/authored/ash_bell/lower_quarter/lower_quarter.tscn",
         "custodian/game/world/levels/presentation/semantic_native_prop_2d.gd",
         "custodian/tools/validation/ash_bell_lower_quarter_art_integration_smoke.gd"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
+      "id": "ash_bell_scene_interactions",
+      "type": "godot_script",
+      "script": "res://tools/validation/ash_bell_scene_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "ash_bell",
+        "ritualant",
+        "interactions",
+        "scene_lifecycle"
+      ],
+      "owners": [
+        "custodian/game/world/events/ash_bell/forlorn_ritualant_site.gd",
+        "custodian/tools/validation/ash_bell_scene_smoke.gd"
       ],
       "timeout_sec": 45,
       "needs_import": true
@@ -1517,6 +1581,20 @@
       "needs_import": false
     },
     {
+      "id": "operator_unarmed_fast_chain_north_vfx_contract_regression",
+      "type": "python",
+      "script": "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
+      "tier": "unit",
+      "tags": ["operator", "asset_contract", "provenance"],
+      "owners": [
+        "custodian/tools/validation/operator_unarmed_fast_chain_north_vfx_contract.py",
+        "custodian/tools/validation/test_operator_unarmed_fast_chain_north_vfx_contract.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "operator_art_source_pilot",
       "type": "python",
       "script": "custodian/tools/validation/operator_art_source_real_pilot.py",
@@ -1564,6 +1642,47 @@
         "custodian/tools/validation/operator_art_registration_profile_smoke.py"
       ],
       "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_motion_foundry_core",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_motion_foundry_core_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "determinism", "candidate"],
+      "owners": [
+        "custodian/tools/operator/motion_foundry/**",
+        "custodian/tools/validation/operator_motion_foundry_core_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "operator_south_rig_extract",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_south_rig_extract_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "source-work", "asset-provenance"],
+      "owners": [
+        "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/**",
+        "custodian/tools/assets/operator_south_rig_extract.py",
+        "custodian/tools/validation/operator_south_rig_extract_smoke.py"
+      ],
+      "timeout_sec": 120,
+      "needs_import": false
+    },
+    {
+      "id": "operator_motion_foundry_blender_2d",
+      "type": "python",
+      "script": "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
+      "tier": "unit",
+      "tags": ["operator", "animation", "blender", "asset-provenance", "candidate"],
+      "owners": [
+        "custodian/tools/operator/motion_foundry/blender/**",
+        "custodian/tools/validation/operator_motion_foundry_blender_2d_smoke.py",
+        "custodian/asset_drop/source_work/operator/motion_foundry/operator_south_visible_surface_v1/blender/**"
+      ],
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
@@ -2285,6 +2404,26 @@
         "design/02_features/enemies/PURSUIT_FRAME.md"
       ],
       "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
+      "id": "grunt_raster_pipeline",
+      "type": "python",
+      "script": "custodian/tools/validation/grunt_raster_pipeline_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "raster",
+        "registration",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/tools/iteration/raster_pipeline/**",
+        "custodian/tools/iteration/grunt_candidate_ab/grunt_raster_plan.json",
+        "custodian/tools/iteration/grunt_candidate_ab/grunt_candidate_compare.gd",
+        "custodian/tools/validation/grunt_raster_pipeline_smoke.py"
+      ],
+      "timeout_sec": 120,
       "needs_import": false
     },
     {
@@ -3730,6 +3869,70 @@
       "needs_import": false
     },
     {
+      "id": "compound_archetype_profile",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_archetype_profile_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "profile"
+      ],
+      "owners": [
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "compound_walled_yard",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_walled_yard_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "navigation"
+      ],
+      "owners": [
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/compound_walled_yard_smoke.gd"
+      ],
+      "timeout_sec": 600,
+      "needs_import": false
+    },
+    {
+      "id": "compound_connected_bunker",
+      "type": "godot_script",
+      "script": "res://tools/validation/compound_connected_bunker_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "compound",
+        "determinism",
+        "navigation"
+      ],
+      "owners": [
+        "custodian/game/ui/minimap/minimap_view.gd",
+        "custodian/game/world/compound/compound_vertical_entry_controller.gd",
+        "custodian/game/world/compound/rooms/persistent_compound_layout_planner.gd",
+        "custodian/game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/tools/validation/compound_connected_bunker_smoke.gd"
+      ],
+      "timeout_sec": 600,
+      "needs_import": false
+    },
+    {
       "id": "persistent_compound_runtime",
       "type": "godot_script",
       "script": "res://tools/validation/persistent_compound_runtime_smoke.gd",
@@ -4160,6 +4363,21 @@
         "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
         "custodian/tools/validation/levels/procgen_showcase_gallery_shell_smoke.gd",
         "design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_showcase_exhibit_catalog",
+      "type": "godot_script",
+      "script": "res://tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+      "tier": "integration",
+      "tags": ["procgen_showcase", "catalog", "authored_level"],
+      "owners": [
+        "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+        "custodian/game/world/levels/authored/dev/procgen_showcase_gallery/**",
+        "custodian/tools/validation/levels/procgen_showcase_exhibit_catalog_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
       "needs_import": true
@@ -6486,6 +6704,20 @@
       "needs_import": false
     },
     {
+      "id": "legacy_claim_quarantine_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_legacy_claim_quarantine.py",
+      "tier": "unit",
+      "tags": ["agent_workflow", "dispatch", "legacy_quarantine", "provenance"],
+      "owners": [
+        "custodian/tools/agent/legacy_claim_quarantine.py",
+        "custodian/tools/agent/test_legacy_claim_quarantine.py",
+        "custodian/tools/agent/dispatch.py"
+      ],
+      "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
       "id": "paired_review_runner_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_paired_review_runner.py",
@@ -6496,12 +6728,14 @@
         "fresh_context"
       ],
       "owners": [
+        "custodian/tools/godot_project_lock.py",
         "custodian/tools/agent/paired_review_runner.py",
+        "custodian/tools/agent/paired_review_host_validation.py",
         "custodian/tools/agent/test_paired_review_runner.py",
         "custodian/tools/agent/task_packet_contract.py",
         "custodian/tools/agent/workflow_control.py"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 90,
       "needs_import": false
     },
     {
@@ -6814,6 +7048,40 @@
         "custodian/game/ui/debug/dev_console_panel.tscn",
         "custodian/game/ui/debug/dev_console_style.gd",
         "custodian/tools/validation/dev_console_ui_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "sprite_import_shared_transform",
+      "type": "python",
+      "script": "custodian/tools/validation/sprite_import_shared_transform_smoke.py",
+      "tier": "unit",
+      "tags": ["assets", "sprites", "normalization", "determinism", "negative_control"],
+      "owners": [
+        "custodian/tools/assets/sprite_import/**",
+        "custodian/tools/art/custodian_pixelart_converter.py",
+        "custodian/tools/operator/art_agent/source_normalization.py",
+        "custodian/tools/validation/sprite_import_shared_transform_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
+      "id": "broken_warrant_material_contract",
+      "type": "python",
+      "script": "custodian/tools/art/broken_warrant_3d/test_material_patch_contract.py",
+      "tier": "unit",
+      "tags": ["art", "materials", "blender", "source_only"],
+      "owners": [
+        "custodian/tools/art/broken_warrant_3d/build_materials.py",
+        "custodian/tools/art/broken_warrant_3d/material_palette.json",
+        "custodian/tools/art/broken_warrant_3d/render_pixel_proof.py",
+        "custodian/tools/art/broken_warrant_3d/surface_contract.py",
+        "custodian/tools/art/broken_warrant_3d/test_surface_contract.py",
+        "custodian/tools/art/broken_warrant_3d/validate_materials.py",
+        "custodian/tools/art/broken_warrant_3d/test_material_patch_contract.py",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 30,

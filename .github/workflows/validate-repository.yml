@@ -64,6 +64,7 @@ jobs:
             custodian.tools.agent.test_task_packet_index \
             custodian.tools.agent.test_dispatch \
             custodian.tools.agent.test_task_packet_repair \
+            custodian.tools.agent.test_queue_frontier \
             custodian.tools.agent.test_run_trace
 
       - name: Validate Dropbox lifecycle Codex packet pair

@@ -121,4 +121,18 @@ reservation, topology, level-data, Sector, and minimap contract.
 
 ## Compound archetypes (planning, 2026-10-15)
 
-Legacy deterministic 10-13 room layout remains implemented. Approved planning adds explicit walled_yard (closed secure perimeter, independent buildings, yard) and connected_bunker (separate surface housings, one continuous subsurface room/tunnel graph). Profile+seed must be deterministic, and selection must preserve existing RoomGraph IDs, Sector mapping, minimap and ProcGenTilemap authority. Neither profile is shipped by this documentation update. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.
+Legacy deterministic 10-13 room layout remains implemented. Approved planning adds explicit walled_yard (closed secure perimeter, independent buildings, yard) and connected_bunker (separate surface housings, one continuous subsurface room/tunnel graph). Profile+seed must be deterministic, and selection must preserve existing RoomGraph IDs, Sector mapping, minimap and ProcGenTilemap authority. At the original planning note date neither profile was shipped. Both physical geometry paths have since landed in `PersistentCompoundLayoutPlanner`/`ProcGenTilemap`; Type A review remains pending, while B's transfer/isolation correction is under active review gating. See COMPOUND_ARCHETYPES_AND_SECURITY_V1.md for current acceptance state.
+
+### Profile contract
+
+`PersistentCompoundLayoutPlanner.generate_layout()` accepts an optional
+archetype ID validated against
+`game/world/compound/rooms/profiles/compound_archetype_profiles_v1.json`.
+Omitting it preserves the legacy planner dictionary and geometry. The runtime
+selector defaults to `legacy`; explicit `walled_yard` and `connected_bunker` selections now generate distinct
+close-packed perimeter and split surface/subsurface geometry, respectively.
+The earlier profile-contract-only baseline shared surface geometry; that is
+historical, not current runtime truth. Versioned room/connector/level-data
+metadata stays backwards-compatible. B's actual paired-anchor transfer and
+isolation proof remain blocked by R0-01/R0-02 correction/re-review; powered
+gates/doors and Type A independent interiors remain downstream.

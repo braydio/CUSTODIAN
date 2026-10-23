@@ -2,15 +2,15 @@ extends SceneTree
 
 # Parity smoke for the accepted-world capture/export owner. The expected hashes
 # were captured from ProcGenTilemap before the extraction (see
-# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md); they must not change
-# unless a versioned level-data migration is intended and explicitly tested.
+# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md); update them only for
+# an intentional, explicitly tested level-data contract migration.
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
-const EXPECTED_LEVEL_DATA_HASH := "2068075335"
+const EXPECTED_LEVEL_DATA_HASH := "1404166550"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
-const EXPECTED_LEVEL_DATA_KEY_COUNT := 69
+const EXPECTED_LEVEL_DATA_KEY_COUNT := 80
 
 
 func _init() -> void:

@@ -2,8 +2,9 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-agent-longform-validation-economy-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: auto
 - Priority: P1
 - Depends on: agent-longform-validation-economy-v1
 - Locks: agent-validation, agent-workflow
@@ -28,12 +29,12 @@
 - Evidence: source spec, landed implementation, focused regressions, synthetic race and failure evidence, canonical changed-file report.
 - Task-specific authority: current longform spec, dispatcher/RunTrace/review-runner/validation owner source.
 - Work surface: review receipt and scoped correction packet authoring only; do not edit implementation code.
-- Change: Independently attack every named test: synthetic shared manifest 38 passes/3 timeout/1 skip; changed owner mutation, bogus test exclusion, missing coverage, stale hashes, same-test baseline red, zero selected, Godot concurrency, one-per-test source ownership; final canonical --changed. Re-run exact acceptance and verify preserved ownership. Reject missing/zero selected and stale/forged reports.
+- Change: Independently attack every named test: synthetic shared manifest 38 passes/3 timeout/1 skip; changed owner mutation, bogus test exclusion, missing coverage, stale hashes, same-test baseline red, zero selected, Godot concurrency, one-per-test source ownership; final canonical --changed. Re-run exact acceptance and verify preserved ownership. Independently reject an eight-report reuse with one stale source SHA, validate identical selection/coverage/freshness, and reject false cost savings or final suite omissions. Reject missing/zero selected and stale/forged reports.
 - Preserve: fresh reviewer context and complete implementation behavioral contract.
 - Non-goals: code feature changes or acceptance waivers.
 - Acceptance: exact reviewed commit main reachability, focused and changed green, all negative controls, no material evidence gaps; findings remain unresolved.
 - Validation: synthetic shared manifest 38 passes/3 timeout/1 skip; changed owner mutation, bogus test exclusion, missing coverage, stale hashes, same-test baseline red, zero selected, Godot concurrency, one-per-test source ownership; final canonical --changed. and checked review receipt scope.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Review Receipt
 

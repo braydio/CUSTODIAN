@@ -1,6 +1,6 @@
 # Procgen Showcase Gallery Arena · Implementation Roadmap
 
-**Status:** executing. PGA-1 landed and independently reviewed/passed; PGA-2 and PGA-3 implementation/review pairs are published `ready/auto`; PGA-4–8 remain manual planning drafts.
+**Status:** executing. PGA-1 landed and independently reviewed/passed; PGA-2 exhibit catalog implementation is validated and closing through the workstream lifecycle, with its paired review next; PGA-3 remains ready/auto; PGA-4–8 remain manual planning drafts.
 **Original architecture baseline:** `main@1326220d8172cee9322363b7a5c020acaf41f64c` (2026-10-14).
 **PGA-1 verified:** implementation `b7ba5f154cbdee49ad9f56506868b95a0c02d301`; passed fresh-context review archived on main with 6 focused and 46/46 changed-file checks, zero blocking defects/gaps (2026-10-15).
 **Post-review refresh:** verified against `main@8edc7252b1f1f71d057d7d9b92977b58922bfbdc` (2026-10-15); targeted authoring workflow passed and published PGA-3 pair/index at `95c89d47ac893f1c78d6cc91910a97960cac8802`. Claim eligibility still depends on fresh dispatcher claims/locks.
@@ -28,7 +28,7 @@ One dev-only registered authored destination, with five accessible curated wings
 | Slice | Implementation (paired review is `review-<id>`) | Depends on completed *reviews* | Publication now | Scope |
 | --- | --- | --- | --- | --- |
 | PGA-1 | `procgen-showcase-gallery-shell` | `none` | **complete/archived; independent review passed** | initial gallery-shell |
-| PGA-2 | `procgen-showcase-exhibit-catalog` | `review-procgen-showcase-gallery-shell` | **ready/auto; review prerequisite archived/passed; dispatcher claim still controls** | catalog after gallery-shell review |
+| PGA-2 | `procgen-showcase-exhibit-catalog` | `review-procgen-showcase-gallery-shell` | **implementation validated; paired review follows landing** | five-wing catalog after gallery-shell review |
 | PGA-3 | `procgen-showcase-generated-arena` | `review-procgen-showcase-gallery-shell` | **ready/auto; post-PGA-1 architecture refreshed, automatic paired preflight/queue index PASS** | generated-world host |
 | PGA-4 | `procgen-showcase-generation-controls` | `review-procgen-showcase-generated-arena` | draft/manual; explicit ChatGPT/user refresh after dependencies land | seed/session lifecycle |
 | PGA-5 | `procgen-showcase-runtime-inspector` | `review-procgen-showcase-generation-controls, review-procgen-showcase-exhibit-catalog` | draft/manual; explicit ChatGPT/user refresh after dependencies land | read-only runtime diagnostics |
@@ -88,9 +88,23 @@ playtest wrapper owns one real Operator/controller/camera, and the registered
 ingress/return path reuses the same Operator across reset-on-entry visits.
 PGA-1 implementation and its fresh-context independent review are **complete**.
 The archived review reports zero blocking defects/material gaps and a green
-46/46 changed-file sweep. PGA-2's catalog and PGA-3's generated arena are both ready/auto,
-**subject to the dispatcher's current locks/claims**. The generated arena remains outside the
+46/46 changed-file sweep. PGA-2's exhibit catalog implementation is complete
+and its paired review follows landing. The generated arena remains outside the
 PGA-1 shell's scope.
+
+## PGA-2 Exhibit Catalog (2026-10-17)
+
+The dev-only manifest at `custodian/content/data/dev/procgen_showcase/exhibits.v1.json`
+exposes two existing biome profiles, two canonical `TerrainRegion` kinds, two
+read-only site placer APIs, two registered terrain-stamp profiles, and an
+explicit Population N/A because no safe read-only population query is available
+to the gallery. `ProcgenExhibitCatalog` validates source identity and runtime
+preview references; the gallery-local `ProcgenExhibitPresenter` provides bounded
+wing/item/detail selection and only displays validated stamp textures. Selection
+does not generate a map or change authored world geometry. Focused catalog and
+existing shell smokes pass; the changed-file sweep passes 42/42 with complete
+coverage. The paired fresh-context review remains the next gate after implementation
+landing.
 
 ## PGA-3 post-PGA-1 architecture refresh (2026-10-15)
 

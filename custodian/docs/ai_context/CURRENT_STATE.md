@@ -1,5 +1,97 @@
 # CURRENT STATE — CUSTODIAN
 
+## Initial vehicle fleet asset program locked (2026-10-21)
+
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
+is now the active generation-order and Asset Pipeline V2 planning authority for
+the first five production vehicle classes: Field Scout Buggy, Utility Hauler,
+Industrial Crawler, Recovery Rig, and Restricted APC, followed by the reusable
+recovery-expedition prop/salvage kit.
+
+The program explicitly separates authored body states from derived parked/wreck,
+procedural engine/brake/impact presentation, shared recovery/motion/destruction
+FX, component socket overlays, attachment families, 32 unique component icons,
+25 required physical component props, and the Phase-6 camp/salvage families.
+Only the Scout has existing production-source body coverage. Hauler/Crawler/Rig/APC
+IDs, canvas sizes and asset families are newly locked planning authority, not
+claims that runtime classes or source art already exist.
+
+The live component-recovery implementation still treats R1+ requirements as an
+atomic required-component set at restoration completion. Socket art is now
+planned so later staged per-component installation can reuse the same visual
+contract, but staged socket mechanics are not being misreported as live.
+
+Authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Broken Warrant 3D material tooling (2026-10-20)
+
+`custodian/tools/art/broken_warrant_3d/` now builds and validates a packed, editable Blender material master and deterministic front/three-quarter/rear 128px proofs from the staged immutable GLB. Objective source, mesh, rig, material, alpha, framing, registration, and packed-reference checks pass. The review sheet is published to `/CUSTODIAN/visual_review/broken-warrant-3d-surface-rebuild/20261020T023328Z/REVIEW_MANIFEST.json`; human identity/material acceptance remains pending. This is source-only tooling, not runtime art or Asset V2 approval.
+
+
+## Grunt candidate raster tooling (2026-10-19)
+
+`custodian/tools/iteration/raster_pipeline/` provides a plan-driven, non-Operator
+review workflow for directional humanoid crops. It verifies pinned source bytes,
+uses the existing crisp/balanced/clustered converter modes, reports registration,
+alpha/silhouette/palette/contact facts, and requires exact reviewed pixel edits
+before producing a cleaned copy. The Grunt plan exports four directions at
+64/72/80px to ignored `.ai/` workspace and the dev-only A/B scene can switch
+converter modes. This is tooling evidence only: it does not approve the raster,
+replace Grunt runtime art, or enter Asset V2. Focused validation is registered as
+`grunt_raster_pipeline`.
+
+## Vehicle Integration System architecture locked (2026-10-18)
+
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` is now active
+source-to-runtime vehicle presentation/integration authority. It defines
+visual-kit V2 inheritance, authored/derived/procedural/shared state policy,
+family-level registration, reusable presentation composition, shared-FX fitting,
+deterministic explicit-region derivation, build-time skins/runtime attachments,
+generated presentation/integration receipts, and a guarded
+`vehicle_integrator.py` orchestration path.
+
+This is an architecture and queue milestone, not a claim that the integrator is
+already implemented. Live runtime still uses visual-kit schema v1,
+PilotableVehicle still directly chooses body animation identities, the Scout
+still references hover compatibility frames, and the hover-specific resource
+builder still exists. VI1-VI4 and paired reviews own that migration after the
+reviewed recovery-FX production slice.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Compound archetypes: code landed, review-gated (2026-10-17)
+
+`compound-archetype-profile-contract` and its paired review are archived as passed. `compound-walled-yard-blockout` has shipped surface close-packed perimeter geometry with two declared crossings and yard-facing room doors; its independent review `review-compound-walled-yard-blockout` remains active. `compound-connected-bunker-blockout` has shipped disjoint surface/separator/subsurface geometry and vertical-entry metadata, but its independent parent review is **findings**, not passed: R0-01 lacks a runtime controller that actually uses paired anchors, and R0-02 lacks live collision/navigation/camera proof. The existing `compound-connected-bunker-blockout-review-corrections-1` and paired `review-compound-connected-bunker-blockout-review-corrections-1` are the **only** owners of this bounded repair; at audit time its remote `agent/` claim branch exists. Do not reclaim or duplicate it.
+
+The successor `compound-interior-traversal-integration` stays `ready/auto` but dependency-gated on `review-compound-walled-yard-blockout` and `review-compound-connected-bunker-blockout-review-corrections-1`. It now owns Type A named-room entry/return and cross-world integration using the accepted B transfer controller, not a second Type B teleport/state system. Secure-access fixtures, playable proof, structural damage, assault targeting, Operator field repair, construction and end-to-end proof remain queued behind successive accepted reviews. Source authority: `design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md`; contract/runtime owner: `PersistentCompoundLayoutPlanner` and `ProcGenTilemap`.
+
+## Ritualant score direction and scoped playback (2026-10-17)
+
+The Underground claims scoped music on arrival, fades the previous zone into
+silence, and waits for the chapel reveal before starting exploration. `MusicManager`
+uses two overlapping music decks for cue changes and a duck controller separate
+from transition state. Dialogue and Ninth Answer ducks therefore cannot cancel a
+pending cue. Combat begins on committed hostility; Stilling Pin and the third
+valid ordered anchor trigger the peaceful one-shot; fresh violent resolution
+triggers its one-shot; survival and completed one-shots leave scene music quiet.
+The level fades music on departure and releases that fade during failed-exit
+rollback. Focused state checks do not certify mix balance, intelligibility, or
+loop-boundary listening; those remain human audition items.
+
+## Compound Archetype Profile Contract (2026-10-16)
+
+`PersistentCompoundLayoutPlanner` now validates optional `legacy`,
+`walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
+At the **2026-10-16 profile-contract milestone**, selection still retained
+legacy surface geometry and added versioned archetype/layer metadata. Omitted
+selection preserved the original planner output dictionary. Physical Type A
+and Type B generation landed after that milestone; see the current 2026-10-17
+compound status above for the accurate runtime/review split. Focused checks are in
+`compound_archetype_profile_smoke.gd`.
+
 ## Procgen Showcase Gallery Shell (2026-10-15)
 
 The registered dev-only `procgen_showcase_gallery` destination provides five
@@ -7,12 +99,15 @@ connected authored exhibit wings and an intentionally sealed central arena
 threshold. The production scene contains no Operator/controller/camera or map
 generator; its standalone playtest wrapper owns the real Operator and standard
 runtime systems. Reset-on-entry ingress/return preserves the same Operator.
-The gallery is a shell only: generated map realization, exhibit catalog,
-controls, and runtime inspection remain later PGA slices. Its implementation
-and independent fresh-context review are archived **passed** (6 focused checks,
-46/46 changed-file checks, zero blocking defects or material gaps). PGA-2 exhibit catalog and PGA-3 generated arena are both ready/auto with
-PGA-1's review dependency satisfied; PGA-3's refreshed paired authoring gate
-and managed index passed at `95c89d47`. Neither implementation has landed. See `design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
+The gallery's PGA-1 shell and independent fresh-context review are archived
+**passed**. PGA-2 implementation now supplies a validated manifest and gallery-local,
+inspect-only selector for real biome profiles, region-kind semantics, site API
+references, and registered terrain-stamp previews; population is explicitly
+N/A because this slice has no safe read-only query. It does not generate a map
+or alter world authority. PGA-2 passed its focused catalog and shell smokes plus
+42/42 changed-file checks; its paired review follows implementation landing.
+PGA-3 arena status remains governed by its packet and dispatcher lifecycle. See
+`design/02_features/procgen/PROCGEN_SHOWCASE_GALLERY_ARENA_ROADMAP.md`.
 
 ## Dropbox asset lifecycle reconciliation tooling (2026-10-13)
 

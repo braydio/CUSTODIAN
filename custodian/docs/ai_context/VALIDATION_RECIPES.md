@@ -5,10 +5,10 @@ Canonical validation guide for CUSTODIAN agent work.
 ## Forlorn Ritualant Four-Cue Score
 
 Run the focused integration smoke and retain the existing encounter route and
-completion regressions. The smoke verifies the four imported resources, reveal
-and committed combat loops, fresh explicit-pin and final-anchor one-shots,
-violent resolution routing, scoped Ninth Answer duck, single music player,
-restore behavior, and successor-zone ownership:
+completion regressions. The smoke verifies the four imported resources, arrival
+fade and reveal, real overlapping cue decks, dialogue duck during a switch,
+fresh explicit-pin and final-anchor one-shots, terminal quiet, survival, scene
+restore, and successor-zone ownership:
 
 ```bash
 python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
@@ -161,12 +161,13 @@ developer's dirty art worktree.
 ## Persistent Compound Layout
 
 ```bash
+env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/compound_archetype_profile_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_layout_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_runtime_smoke.gd
 env HOME="${CUSTODIAN_SCRATCH_DIR:-$HOME/.cache/custodian}/godot-home" godot --headless --path custodian --script res://tools/validation/persistent_compound_minimap_smoke.gd
 ```
 
-These cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
+The profile smoke covers repeatability for the seven fixed seeds, legacy geometry preservation, rejection of unknown IDs, room/connector identity, and level-data metadata export. The existing smokes cover seeded topology, live floor/wall/door integration, semantic Sector lookup, and shared minimap compatibility. Pair them with changed-file validation and relevant ingress/terrain tests when ProcGenTilemap changes.
 
 ## Terminal Sensors Intelligence
 
@@ -221,6 +222,24 @@ For production requirement registry, CLI, or generated-view changes, run
 `python3 custodian/tools/validation/asset_requirements_smoke.py`,
 `python3 custodian/tools/assets/asset.py needs --check`, and
 `python3 custodian/tools/assets/asset.py doctor`.
+
+## Hub Road Empty Procession
+
+Run the real-Hub-host sequence smoke, then preserve the Hub route, handoff,
+Forum Dais, and campaign-state regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_road_empty_procession --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+python3 custodian/tools/validation/run_validation.py --test world_transition_handoff --json
+python3 custodian/tools/validation/run_validation.py --test hub_forum_adjudication --json
+godot --headless --path custodian --script res://tools/validation/campaign_outcome_exactly_once_smoke.gd
+```
+
+The focused smoke drives a real Operator across the production H1 route, checks
+ordered lamp/bell beats, resumes from a partial HubState snapshot, and rejects
+replay after restoring a completed snapshot. It also asserts that the Forum
+Dais, Crown Transfer ingress, and Contract prewarm remain untouched.
 
 ## Preferred Agent Entry Point
 
@@ -1723,6 +1742,16 @@ records. M1 preserves existing commit timing; do not interpret these counters
 as evidence that rebuild work has been batched yet.
 
 ## Review Validation
+
+The paired review runner executes `run_validation.py --changed --base
+<implementation-parent-sha> --json` from the exact claimed review worktree on
+the trusted coordinator before launching the restricted reviewer. This keeps
+Godot import sockets and the existing project lock/job budget on the host side.
+The reviewer receives the pinned report and independently decides the outcome;
+it must not replace the report or treat green tests as its verdict. The
+coordinator rechecks the report hash, implementation identity, and source
+fingerprint before landing. See `paired_review_runner.py` and
+`paired_review_host_validation.py` for the fail-closed evidence contract.
 
 ## Enemy Hit Spatial Diagnostics
 

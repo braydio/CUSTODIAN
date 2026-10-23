@@ -2,8 +2,9 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-agent-longform-telemetry-and-standard-adoption-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: auto
 - Priority: P1
 - Depends on: agent-longform-telemetry-and-standard-adoption-v1
 - Locks: agent-workflow
@@ -28,12 +29,12 @@
 - Evidence: source spec, landed implementation, focused regressions, synthetic race and failure evidence, canonical changed-file report.
 - Task-specific authority: current longform spec, dispatcher/RunTrace/review-runner/validation owner source.
 - Work surface: review receipt and scoped correction packet authoring only; do not edit implementation code.
-- Change: Independently attack every named test: cumulative-event duplicate, missing cache/token=unknown, interrupted JSONL, 9 landed of 12 attempted, scrub secret content, context compaction, review replay, standard task single-pair regression, manifest/index/changed validation. Re-run exact acceptance and verify preserved ownership. Reject missing/zero selected and stale/forged reports.
+- Change: Independently attack every named test: cumulative-event duplicate, missing cache/token=unknown, interrupted JSONL, 9 landed of 12 attempted, scrub secret content, context compaction, review replay, standard task single-pair regression, manifest/index/changed validation. Re-run exact acceptance and verify preserved ownership. Confirm separate maintenance authorization vs actual tool permission, redacted and truthful exception audit, reviewer context provenance, and single-pair workflow staying free of bypass authority. Reject missing/zero selected and stale/forged reports.
 - Preserve: fresh reviewer context and complete implementation behavioral contract.
 - Non-goals: code feature changes or acceptance waivers.
 - Acceptance: exact reviewed commit main reachability, focused and changed green, all negative controls, no material evidence gaps; findings remain unresolved.
 - Validation: cumulative-event duplicate, missing cache/token=unknown, interrupted JSONL, 9 landed of 12 attempted, scrub secret content, context compaction, review replay, standard task single-pair regression, manifest/index/changed validation. and checked review receipt scope.
-- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Review Receipt
 

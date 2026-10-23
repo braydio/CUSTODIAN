@@ -287,9 +287,14 @@ class RunTrace:
 
     def record(self, event: str, **data) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            from legacy_claim_quarantine import GENERATION as execution_generation
+        except Exception:
+            execution_generation = "legacy-unavailable"
         base = {
             "schema": TRACE_SCHEMA,
             "schema_version": TRACE_VERSION,
+            "execution_generation": execution_generation,
             "event": event,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
             "elapsed_ms": round((time.monotonic() - self.started) * 1000),

@@ -86,6 +86,18 @@ def _lock_root() -> Path:
     return cache_home / "custodian" / "locks"
 
 
+def job_budget_root(*, create: bool = True) -> Path:
+    """Resolve the CUSTODIAN-specific root containing machine-wide lock slots."""
+    root = _lock_root().parent.resolve()
+    if create:
+        root.mkdir(mode=0o700, parents=True, exist_ok=True)
+        try:
+            root.chmod(0o700)
+        except OSError:
+            pass
+    return root
+
+
 def _ensure_lock_root() -> Path:
     root = _lock_root()
     root.mkdir(mode=0o700, parents=True, exist_ok=True)

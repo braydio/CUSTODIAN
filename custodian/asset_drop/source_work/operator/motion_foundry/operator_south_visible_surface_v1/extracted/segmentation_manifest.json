@@ -1,0 +1,330 @@
+{
+  "schema": "custodian.operator_motion_foundry.visible_surface_partition.v1",
+  "status": "candidate_not_approved",
+  "source_path": "CUSTODIAN_OPERATOR_RUNTIME_REFERENCE_128.aseprite",
+  "source_sha256": "61c7518b31a28d7b98af5efdb035316550b769abea7eb33ff0466544040172a3",
+  "source_animation_frame_index_zero_based": 4,
+  "source_frame_duration_ms": 100,
+  "source_direction_order": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "direction": "s",
+  "frame_size": [
+    128,
+    128
+  ],
+  "visible_alpha_bbox_exclusive": [
+    40,
+    20,
+    89,
+    105
+  ],
+  "root": [
+    64,
+    106
+  ],
+  "ground": [
+    64,
+    107
+  ],
+  "visible_pixel_count": 2440,
+  "fallback_nearest_assigned_pixels": 23,
+  "cross_part_seam_review_pixels": 494,
+  "blank_occluded_rig_parts": [
+    "cape_back_left",
+    "cape_back_right",
+    "pelvis",
+    "thigh_screen_left",
+    "thigh_screen_right"
+  ],
+  "part_visible_pixel_counts": {
+    "cape_back_left": 0,
+    "cape_back_right": 0,
+    "thigh_screen_left": 0,
+    "shin_screen_left": 39,
+    "boot_screen_left": 74,
+    "thigh_screen_right": 0,
+    "shin_screen_right": 58,
+    "boot_screen_right": 101,
+    "torso": 140,
+    "pelvis": 0,
+    "tabard_screen_left": 234,
+    "tabard_screen_right": 165,
+    "tabard_center_fold": 259,
+    "arm_upper_screen_left": 58,
+    "arm_forearm_screen_left": 78,
+    "hand_screen_left": 66,
+    "arm_upper_screen_right": 61,
+    "arm_forearm_screen_right": 66,
+    "hand_screen_right": 71,
+    "belt_clasp": 213,
+    "hood": 423,
+    "pauldron_screen_left": 184,
+    "pauldron_screen_right": 150
+  },
+  "seam_adjacencies": [
+    {
+      "parts": [
+        "tabard_center_fold",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 26
+    },
+    {
+      "parts": [
+        "hood",
+        "pauldron_screen_left"
+      ],
+      "boundary_pixel_edges": 25
+    },
+    {
+      "parts": [
+        "tabard_center_fold",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 25
+    },
+    {
+      "parts": [
+        "hood",
+        "pauldron_screen_right"
+      ],
+      "boundary_pixel_edges": 21
+    },
+    {
+      "parts": [
+        "arm_upper_screen_left",
+        "pauldron_screen_left"
+      ],
+      "boundary_pixel_edges": 19
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "torso"
+      ],
+      "boundary_pixel_edges": 18
+    },
+    {
+      "parts": [
+        "hood",
+        "torso"
+      ],
+      "boundary_pixel_edges": 18
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_right",
+        "arm_upper_screen_right"
+      ],
+      "boundary_pixel_edges": 16
+    },
+    {
+      "parts": [
+        "arm_upper_screen_right",
+        "pauldron_screen_right"
+      ],
+      "boundary_pixel_edges": 16
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_center_fold"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "boot_screen_left",
+        "shin_screen_left"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "shin_screen_right",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_right",
+        "hand_screen_right"
+      ],
+      "boundary_pixel_edges": 12
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "arm_upper_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "shin_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "hand_screen_left"
+      ],
+      "boundary_pixel_edges": 10
+    },
+    {
+      "parts": [
+        "arm_upper_screen_left",
+        "torso"
+      ],
+      "boundary_pixel_edges": 9
+    },
+    {
+      "parts": [
+        "boot_screen_right",
+        "shin_screen_right"
+      ],
+      "boundary_pixel_edges": 9
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 8
+    },
+    {
+      "parts": [
+        "arm_upper_screen_right",
+        "torso"
+      ],
+      "boundary_pixel_edges": 7
+    },
+    {
+      "parts": [
+        "hand_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 7
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 3
+    },
+    {
+      "parts": [
+        "pauldron_screen_left",
+        "torso"
+      ],
+      "boundary_pixel_edges": 1
+    }
+  ],
+  "overlap_hypotheses": [
+    {
+      "front": "tabard_screen_left",
+      "behind": "thigh_screen_left",
+      "type": "waist-drape",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_screen_right",
+      "behind": "thigh_screen_right",
+      "type": "waist-drape",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_center_fold",
+      "behind": "tabard_screen_left",
+      "type": "overlapping-front-fold",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_center_fold",
+      "behind": "tabard_screen_right",
+      "type": "overlapping-front-fold",
+      "uncertainty": "high"
+    },
+    {
+      "front": "hood",
+      "behind": "torso",
+      "type": "cowl-at-collar",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "pauldron_screen_left",
+      "behind": "arm_upper_screen_left",
+      "type": "shoulder-armor",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "pauldron_screen_right",
+      "behind": "arm_upper_screen_right",
+      "type": "shoulder-armor",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "belt_clasp",
+      "behind": "pelvis",
+      "type": "belt-layer",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "hand_screen_left",
+      "behind": "arm_forearm_screen_left",
+      "type": "glove-cuff",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "hand_screen_right",
+      "behind": "arm_forearm_screen_right",
+      "type": "glove-cuff",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "torso",
+      "behind": "cape_back_left",
+      "type": "back-cloak-root",
+      "uncertainty": "high"
+    },
+    {
+      "front": "torso",
+      "behind": "cape_back_right",
+      "type": "back-cloak-root",
+      "uncertainty": "high"
+    }
+  ],
+  "partition_rule": "exactly one semantic owner per nontransparent original pixel",
+  "source_pixel_modified": false,
+  "original_pixel_reassembly_exact": true,
+  "aseprite_layered_file_roundtrip_exact": true,
+  "occluded_pixels_known": false,
+  "hidden_geometry_reconstructed": false,
+  "warnings": [
+    "Flat art cannot reveal pixels hidden under cape, belts, overlapping tabs, shoulders or hands",
+    "Five intentionally blank joint/behind-cloth placeholders are NOT extracted art",
+    "Visible folds are classified by annotated boundaries; confidence must be artist-reviewed",
+    "Pivots/parents are estimates only; MF1 does not rotate or deform joints",
+    "Original root at 64,106 is below visible silhouette bottom; do not align to alpha bbox",
+    "Static proof motion is not a true animated idle or approved animation."
+  ]
+}

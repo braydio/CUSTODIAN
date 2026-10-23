@@ -1,0 +1,689 @@
+{
+  "schema": "custodian.operator_motion_foundry.visible_layer_topology.v1",
+  "hierarchy": [
+    {
+      "part": "cape_back_left",
+      "parent": null,
+      "pivot_estimate": [
+        53,
+        57
+      ],
+      "draw_order": 10,
+      "movable": false,
+      "visible_pixel_count": 0,
+      "visible_bbox_exclusive": [],
+      "is_intentionally_blank_placeholder": true,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "cape_back_right",
+      "parent": null,
+      "pivot_estimate": [
+        76,
+        57
+      ],
+      "draw_order": 20,
+      "movable": false,
+      "visible_pixel_count": 0,
+      "visible_bbox_exclusive": [],
+      "is_intentionally_blank_placeholder": true,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "thigh_screen_left",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        57,
+        75
+      ],
+      "draw_order": 30,
+      "movable": true,
+      "visible_pixel_count": 0,
+      "visible_bbox_exclusive": [],
+      "is_intentionally_blank_placeholder": true,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "shin_screen_left",
+      "parent": "thigh_screen_left",
+      "pivot_estimate": [
+        52,
+        84
+      ],
+      "draw_order": 40,
+      "movable": true,
+      "visible_pixel_count": 39,
+      "visible_bbox_exclusive": [
+        46,
+        83,
+        57,
+        89
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "boot_screen_left",
+      "parent": "shin_screen_left",
+      "pivot_estimate": [
+        52,
+        92
+      ],
+      "draw_order": 50,
+      "movable": true,
+      "visible_pixel_count": 74,
+      "visible_bbox_exclusive": [
+        44,
+        88,
+        57,
+        97
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "thigh_screen_right",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        75,
+        76
+      ],
+      "draw_order": 60,
+      "movable": true,
+      "visible_pixel_count": 0,
+      "visible_bbox_exclusive": [],
+      "is_intentionally_blank_placeholder": true,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "shin_screen_right",
+      "parent": "thigh_screen_right",
+      "pivot_estimate": [
+        79,
+        86
+      ],
+      "draw_order": 70,
+      "movable": true,
+      "visible_pixel_count": 58,
+      "visible_bbox_exclusive": [
+        72,
+        83,
+        81,
+        93
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "boot_screen_right",
+      "parent": "shin_screen_right",
+      "pivot_estimate": [
+        79,
+        97
+      ],
+      "draw_order": 80,
+      "movable": true,
+      "visible_pixel_count": 101,
+      "visible_bbox_exclusive": [
+        73,
+        92,
+        83,
+        105
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "torso",
+      "parent": null,
+      "pivot_estimate": [
+        64,
+        52
+      ],
+      "draw_order": 90,
+      "movable": false,
+      "visible_pixel_count": 140,
+      "visible_bbox_exclusive": [
+        55,
+        46,
+        74,
+        55
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "pelvis",
+      "parent": "torso",
+      "pivot_estimate": [
+        64,
+        61
+      ],
+      "draw_order": 100,
+      "movable": false,
+      "visible_pixel_count": 0,
+      "visible_bbox_exclusive": [],
+      "is_intentionally_blank_placeholder": true,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "tabard_screen_left",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        57,
+        63
+      ],
+      "draw_order": 110,
+      "movable": true,
+      "visible_pixel_count": 234,
+      "visible_bbox_exclusive": [
+        46,
+        62,
+        63,
+        87
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "tabard_screen_right",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        73,
+        63
+      ],
+      "draw_order": 120,
+      "movable": true,
+      "visible_pixel_count": 165,
+      "visible_bbox_exclusive": [
+        70,
+        63,
+        82,
+        88
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "tabard_center_fold",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        64,
+        63
+      ],
+      "draw_order": 130,
+      "movable": true,
+      "visible_pixel_count": 259,
+      "visible_bbox_exclusive": [
+        59,
+        65,
+        75,
+        86
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "arm_upper_screen_left",
+      "parent": "torso",
+      "pivot_estimate": [
+        50,
+        45
+      ],
+      "draw_order": 140,
+      "movable": true,
+      "visible_pixel_count": 58,
+      "visible_bbox_exclusive": [
+        42,
+        45,
+        57,
+        54
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "arm_forearm_screen_left",
+      "parent": "arm_upper_screen_left",
+      "pivot_estimate": [
+        45,
+        54
+      ],
+      "draw_order": 150,
+      "movable": true,
+      "visible_pixel_count": 78,
+      "visible_bbox_exclusive": [
+        40,
+        50,
+        51,
+        66
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "hand_screen_left",
+      "parent": "arm_forearm_screen_left",
+      "pivot_estimate": [
+        45,
+        63
+      ],
+      "draw_order": 160,
+      "movable": true,
+      "visible_pixel_count": 66,
+      "visible_bbox_exclusive": [
+        40,
+        59,
+        50,
+        71
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "arm_upper_screen_right",
+      "parent": "torso",
+      "pivot_estimate": [
+        80,
+        45
+      ],
+      "draw_order": 170,
+      "movable": true,
+      "visible_pixel_count": 61,
+      "visible_bbox_exclusive": [
+        73,
+        46,
+        87,
+        57
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "arm_forearm_screen_right",
+      "parent": "arm_upper_screen_right",
+      "pivot_estimate": [
+        84,
+        54
+      ],
+      "draw_order": 180,
+      "movable": true,
+      "visible_pixel_count": 66,
+      "visible_bbox_exclusive": [
+        79,
+        50,
+        87,
+        64
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "hand_screen_right",
+      "parent": "arm_forearm_screen_right",
+      "pivot_estimate": [
+        85,
+        64
+      ],
+      "draw_order": 190,
+      "movable": true,
+      "visible_pixel_count": 71,
+      "visible_bbox_exclusive": [
+        80,
+        59,
+        89,
+        69
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "belt_clasp",
+      "parent": "pelvis",
+      "pivot_estimate": [
+        64,
+        59
+      ],
+      "draw_order": 200,
+      "movable": false,
+      "visible_pixel_count": 213,
+      "visible_bbox_exclusive": [
+        52,
+        55,
+        77,
+        66
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "hood",
+      "parent": "torso",
+      "pivot_estimate": [
+        64,
+        40
+      ],
+      "draw_order": 210,
+      "movable": true,
+      "visible_pixel_count": 423,
+      "visible_bbox_exclusive": [
+        51,
+        20,
+        76,
+        47
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "pauldron_screen_left",
+      "parent": "torso",
+      "pivot_estimate": [
+        51,
+        39
+      ],
+      "draw_order": 220,
+      "movable": true,
+      "visible_pixel_count": 184,
+      "visible_bbox_exclusive": [
+        43,
+        33,
+        60,
+        49
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    },
+    {
+      "part": "pauldron_screen_right",
+      "parent": "torso",
+      "pivot_estimate": [
+        80,
+        39
+      ],
+      "draw_order": 230,
+      "movable": true,
+      "visible_pixel_count": 150,
+      "visible_bbox_exclusive": [
+        71,
+        32,
+        85,
+        49
+      ],
+      "is_intentionally_blank_placeholder": false,
+      "is_complete_anatomical_geometry": false,
+      "readiness": "visible_surface_only_hidden_underpaint_missing"
+    }
+  ],
+  "hypothetical_front_behind": [
+    {
+      "front": "tabard_screen_left",
+      "behind": "thigh_screen_left",
+      "type": "waist-drape",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_screen_right",
+      "behind": "thigh_screen_right",
+      "type": "waist-drape",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_center_fold",
+      "behind": "tabard_screen_left",
+      "type": "overlapping-front-fold",
+      "uncertainty": "high"
+    },
+    {
+      "front": "tabard_center_fold",
+      "behind": "tabard_screen_right",
+      "type": "overlapping-front-fold",
+      "uncertainty": "high"
+    },
+    {
+      "front": "hood",
+      "behind": "torso",
+      "type": "cowl-at-collar",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "pauldron_screen_left",
+      "behind": "arm_upper_screen_left",
+      "type": "shoulder-armor",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "pauldron_screen_right",
+      "behind": "arm_upper_screen_right",
+      "type": "shoulder-armor",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "belt_clasp",
+      "behind": "pelvis",
+      "type": "belt-layer",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "hand_screen_left",
+      "behind": "arm_forearm_screen_left",
+      "type": "glove-cuff",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "hand_screen_right",
+      "behind": "arm_forearm_screen_right",
+      "type": "glove-cuff",
+      "uncertainty": "medium"
+    },
+    {
+      "front": "torso",
+      "behind": "cape_back_left",
+      "type": "back-cloak-root",
+      "uncertainty": "high"
+    },
+    {
+      "front": "torso",
+      "behind": "cape_back_right",
+      "type": "back-cloak-root",
+      "uncertainty": "high"
+    }
+  ],
+  "measured_touching_seams": [
+    {
+      "parts": [
+        "tabard_center_fold",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 26
+    },
+    {
+      "parts": [
+        "hood",
+        "pauldron_screen_left"
+      ],
+      "boundary_pixel_edges": 25
+    },
+    {
+      "parts": [
+        "tabard_center_fold",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 25
+    },
+    {
+      "parts": [
+        "hood",
+        "pauldron_screen_right"
+      ],
+      "boundary_pixel_edges": 21
+    },
+    {
+      "parts": [
+        "arm_upper_screen_left",
+        "pauldron_screen_left"
+      ],
+      "boundary_pixel_edges": 19
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "torso"
+      ],
+      "boundary_pixel_edges": 18
+    },
+    {
+      "parts": [
+        "hood",
+        "torso"
+      ],
+      "boundary_pixel_edges": 18
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_right",
+        "arm_upper_screen_right"
+      ],
+      "boundary_pixel_edges": 16
+    },
+    {
+      "parts": [
+        "arm_upper_screen_right",
+        "pauldron_screen_right"
+      ],
+      "boundary_pixel_edges": 16
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_center_fold"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "boot_screen_left",
+        "shin_screen_left"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "shin_screen_right",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 13
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_right",
+        "hand_screen_right"
+      ],
+      "boundary_pixel_edges": 12
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "arm_upper_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "shin_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 11
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "hand_screen_left"
+      ],
+      "boundary_pixel_edges": 10
+    },
+    {
+      "parts": [
+        "arm_upper_screen_left",
+        "torso"
+      ],
+      "boundary_pixel_edges": 9
+    },
+    {
+      "parts": [
+        "boot_screen_right",
+        "shin_screen_right"
+      ],
+      "boundary_pixel_edges": 9
+    },
+    {
+      "parts": [
+        "belt_clasp",
+        "tabard_screen_right"
+      ],
+      "boundary_pixel_edges": 8
+    },
+    {
+      "parts": [
+        "arm_upper_screen_right",
+        "torso"
+      ],
+      "boundary_pixel_edges": 7
+    },
+    {
+      "parts": [
+        "hand_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 7
+    },
+    {
+      "parts": [
+        "arm_forearm_screen_left",
+        "tabard_screen_left"
+      ],
+      "boundary_pixel_edges": 3
+    },
+    {
+      "parts": [
+        "pauldron_screen_left",
+        "torso"
+      ],
+      "boundary_pixel_edges": 1
+    }
+  ],
+  "notes": [
+    "Every visible original pixel has exactly one owner.",
+    "Folds under frontal cloth are impossible to recover from one flattened view.",
+    "Do not rotate parts without manually authoring underlap/connection pixels."
+  ]
+}
