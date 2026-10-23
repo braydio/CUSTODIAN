@@ -154,7 +154,7 @@ class WorkbenchService:
             if status == "SUPERSEDED":
                 detail = f"SUPERSEDED · {detail}"
             records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
-        legacy_records = tuple(records)
+        legacy_records = (*records, *self._new_workbench_records({r.selection for r in records}))
         if not self.plan_path.is_file():
             return legacy_records
         payload = operator_animation_targets.load_plan(self.plan_path)
@@ -163,6 +163,29 @@ class WorkbenchService:
             legacy_records=legacy_records,
         )
         return (*legacy_records, *targets)
+
+    def _new_workbench_records(self, published: set[AnimationSelection]) -> list[AnimationRecord]:
+        """List created-but-unpublished animations from their saved workbench sessions."""
+        records = []
+        for manifest_path in sorted(self.workspace_root.glob("*/*/*/*/workbench.json")):
+            try:
+                data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                ident = data["identity"]
+                selection = AnimationSelection(ident["profile"], ident["group"], ident["action"], ident["direction"])
+                editable = [row for row in data["layers"] if row.get("role") == "editable"]
+                creation = data.get("creation", {})
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+            if (creation.get("art_generation", "legacy_96") != "legacy_96" or selection in published or not editable
+                    or manifest_path.parent != self.workspace(selection)
+                    or any(row.get("source_contract", {}).get("operation") != "CREATE" for row in editable)):
+                continue
+            layers = tuple(sorted(row["layer"] for row in editable))
+            frames = int(data.get("timeline", {}).get("frames") or 0)
+            document = manifest_path.with_name("workbench.aseprite")
+            detail = "NEW · unpublished workbench" if document.is_file() else "NEW · workbench not assembled"
+            records.append(AnimationRecord(selection, frames, layers, "NEW", detail))
+        return records
 
     def browser_records(self, *, show_superseded: bool = False) -> tuple[AnimationRecord, ...]:
         records = self.discover_browser_records()
