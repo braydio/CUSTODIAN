@@ -4,7 +4,7 @@
 - Workstream: `review-awakening-collision-mapper-authoring-bridge-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `awakening-collision-mapper-authoring-bridge-v1`
@@ -56,3 +56,17 @@ The following findings are transcribed from the original reviewer-authored summa
 - Refresh reason: `User draws and approves pixel-accurate collision draft before a separately gated spatial cutover.`
 - Next action: Open the verified mapper, draw proposed blockers/void edges against live art, export the exact draft, then authorize production integration with geometry/route validation.
 - Blockers or open questions: `Await user's authored draft before runtime collision changes; do not invent absent art-pixel extents.`
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-awakening-collision-mapper-authoring-bridge-v1`
+- Review target workstream: `awakening-collision-mapper-authoring-bridge-v1`
+- Reviewed main: `bb5dedd62fd0edaf09cab811ec0d585b4f76afdf`
+- Reviewed implementation commit: `4bdb31b81e2580e48e05eb84909ec7d90eeb44f5`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261016T095141Z-bf971dc50521`
+- Review cycle: `0`
+- Finding IDs: `R0-01, R0-02`
