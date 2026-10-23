@@ -39,6 +39,13 @@
 3. Confirm neither the production scene nor `awakening_layout.gd` was changed by draft save and that a stale/ambiguous promotion fails.
 4. Verify Sundered Keep/other mapper paths and independently report PASS or concrete findings.
 
+## Preserved Reviewer Findings
+
+The following findings are transcribed from the original reviewer-authored summary, preserved byte-for-byte at `REVIEW_AWAKENING_COLLISION_MAPPER_AUTHORING_BRIDGE_V1_CLAUDE_SUMMARY.md` (SHA-256 `e981033fa07b7ae7b1fe5fdfa50389e90a7c6a87311aeba77ed12e8557e45db5`). This section records the original findings for the supported nonpassing closeout; it does not claim acceptance or alter validation.
+
+- **R0-01 — Blocking: draft reopen does not restore authoring metadata.** `awakening_first_return_collision_mapper.gd::_load_saved_draft` reconstructs vertices and several proposal fields, but ignores the saved `snap_px` and `source_art` resource/transform/pixel coordinates. Reopening a draft made at 1px snap therefore returns to the scene default, and saved source-art provenance is discarded and recalculated on the next save. This violates the required lossless round trip and A3's stable source-art transform evidence. The current bridge smoke checks serialized JSON readback, not an actual mapper save/reopen for the canonical Z01 and Z07 samples.
+- **R0-02 — Blocking: required artist export/capture controls are absent.** The Awakening mapper and inherited mapper contain no clipboard exact-vertex export or annotated PNG/JSON capture operation. Those are explicit parts of the archived implementation contract's draft workflow, so the author cannot hand off the requested annotated geometry evidence through the mapper.
+
 ## Next Handoff
 
 - Next workstream: `none`
