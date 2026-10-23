@@ -1,5 +1,7 @@
 # Operator art branch recovery
 
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb4ea5-a14c-83e9-bdb7-f0b29574fef9
+
 Scope: preserve local operator-art work, avoid obsolete remote history.
 
 ## State
