@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, review-operator-chassis-authority-seal-v1`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
