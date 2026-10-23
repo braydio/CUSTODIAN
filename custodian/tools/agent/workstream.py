@@ -505,6 +505,19 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
     return packets
 
 
+def _authenticated_managed_index_reconciliation(
+    host_validation, repo: Path, first_parent: str, second_parent: str,
+    merge_commit: str, first: bytes, second: bytes, merged: bytes,
+) -> bool:
+    """Accept exact additive entries or completed-main archival removals only."""
+    return (
+        host_validation._managed_packet_index_additive_reconciliation(first, second, merged)
+        or host_validation._managed_packet_index_archival_reconciliation(
+            repo, first_parent, second_parent, merge_commit,
+        )
+    )
+
+
 def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
     repo = root_repo(path)
@@ -712,7 +725,8 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                     merged = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
                                             capture_output=True)
                     if (changed != {readme} or first.returncode or second.returncode or merged.returncode
-                            or not host_validation._managed_packet_index_additive_reconciliation(
+                            or not _authenticated_managed_index_reconciliation(
+                                host_validation, path, previous, main_parent, commit,
                                 first.stdout, second.stdout, merged.stdout)):
                         valid = False
                         break
