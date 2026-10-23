@@ -1,0 +1,61 @@
+# REVIEW PROCGEN ARCHIVE RESOLVE SPLIT RECONCILIATION V1
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-procgen-archive-resolve-split-reconciliation-v1`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `procgen-archive-resolve-split-reconciliation-v1`
+- Locks: `procgen-archive-resolve-reconciliation`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `workflow, code, architecture`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: `fresh-context safety review of stranded claim/worktree proof and successor packet continuity`
+- Review target workstream: `procgen-archive-resolve-split-reconciliation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_SPLIT_RECONCILIATION_V1.md`
+- Reviewed main: `<fill at claim>`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ada4996-db70-83ea-8543-c09811c2c216`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Goal: Independently falsify the Archive Resolve split recovery, especially private-byte preservation, original claim safety, acceptance ownership, and automatic handoff without fabricated completion.
+- Reviewed implementation acceptance: Original reconciliation packet's A–G gates, including zero lost worktree bytes; exact per-identity claim/process status; eight successor implementation/review packets and preserved four-pair DAG; numeric timing/graphite/brass contract; true archive/supersession disposition; valid index/dispatch and exact next handoff.
+- Review evidence: Landed archived implementation and closing summary on origin/main; external preservation manifest/digest and verified trial restore (do not publish private file bytes); dispatcher audit before/after; local worktree porcelain/remote claim refs and run provenance; targeted authoring/index CI reports and actual eight packet contents; design/roadmap drift diff.
+- Correction threshold: Confirmed unsafe lost-byte or false-release risks, altered third-party claim/review receipt, invalid DAG, missing omitted acceptance, or unverified documented completion must produce bounded correction + fresh re-review; do not wave away host-private evidence gaps. Genuinely missing human visual approval belongs to successor visual workstreams and is not a failing claim in this recovery review.
+- Validation: `python3 custodian/tools/agent/dispatch.py audit --json`; targeted authored pair/index check; external recovery manifest verification; `git diff --check`.
+- Focused validation: Read-only claim/worktree audit; compare exact preserved-ref SHA/manifest trial-restore; inspect only affected packet pairs; targeted authoring validator, task-packet index check, dispatch audit --json and git diff --check. No Godot or screenshot collection for this docs/recovery implementation.
+- Review focus: Guard against unsafe deletion of the original 14+37 and near-player 3+3 historical dirty bytes; old local-only HEADs vs remote zeros; unverified process liveness; invalid original broad review PASS; fake `ready` after skipped preflight; mistakenly setting four descendants Depends on none; lost human visual gates; untracked AP2 cross-owner seam; treating a queued handoff as already executed.
+- Acceptance: Produce an independent findings-first review with R0-NN defect IDs, exact paths/claims/digests and `passed|findings|human_required` disposition. Record exact reviewed SHA and fresh context. Passed only if all recovery acceptance claims are evidenced; no material gap; successor remains Near-player Priority; independent review itself does not implement the four feature pairs.
+- Non-goals: No cleanup or gameplay rewrite by reviewer; no reviewer-generated false approvals, no feature-acceptance redefinition and no new dispatcher.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Review Receipt
+- Status: `pending`
+- Review target workstream: `procgen-archive-resolve-split-reconciliation-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_ARCHIVE_RESOLVE_SPLIT_RECONCILIATION_V1.md`
+- Reviewed main: `<fill at review>`
+- Reviewer context: `fresh`
+- Reviewer provenance: `<fill>`
+- Blocking defects: `<fill>`
+- Material evidence gaps: `<fill>`
+- Non-blocking issues: `<fill>`
+- Optional improvements: `<fill>`
+- Correction finding IDs: `<fill>`
+- Next-slice finding IDs: `<fill>`
+- Human-decision finding IDs: `<fill>`
+- Detailed review summary: `REVIEW_PROCGEN_ARCHIVE_RESOLVE_SPLIT_RECONCILIATION_V1_CLAUDE_SUMMARY.md`
+- Follow-up workstream: `procgen-streaming-near-player-priority-v1`
+
+## Handoff
+- Next workstream: `procgen-streaming-near-player-priority-v1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ada4996-db70-83ea-8543-c09811c2c216`
+- Refresh reason: `none; continue only if this review passes and dispatcher verifies the next owner`
+- Next action: `With this review accepted, follow the user's authorized continuous-chain max_pairs=4 through Near-player Priority, Connected Cascade, World Cover, Smooth Front, including each independent review; stop at genuine safety/human visual gate only.`
+- Blockers or open questions: `No review preclaim exception to the implementation dependency or preserved host-lock state.`
