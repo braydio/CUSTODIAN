@@ -178,6 +178,36 @@ class WorkstreamTests(unittest.TestCase):
             self.repo, [*corrections, sync, after_sync, second_after_sync], correction_base, main,
         ))
 
+    def test_index_merge_accepts_only_authenticated_completed_archive_removal(self):
+        # This historical main-sync required a removal because main had already
+        # archived another task. The additive-only check must remain strict.
+        from paired_review_host_validation import (
+            _managed_packet_index_additive_reconciliation as additive,
+            _managed_packet_index_archival_reconciliation as archival,
+        )
+        import paired_review_host_validation as host_validation
+
+        repo = Path(__file__).resolve().parents[3]
+        first = "44b1ce5b44ff9e40cb017cfef1cea9abba8826ab"
+        main = "c39d5b771c730b8bd25efb0f005adfca3abe6b43"
+        merge = "7a8be70c366fd00b00d488b5385eccb6dff47e6e"
+        readme = "custodian/docs/ai_context/task_packets/README.md"
+        versions = [
+            subprocess.run(["git", "show", f"{ref}:{readme}"], cwd=repo,
+                           capture_output=True, check=True).stdout
+            for ref in (first, main, merge)
+        ]
+        self.assertFalse(additive(*versions))
+        self.assertTrue(archival(repo, first, main, merge))
+        self.assertTrue(workstream._authenticated_managed_index_reconciliation(
+            host_validation, repo, first, main, merge, *versions,
+        ))
+
+        # A foreign or fabricated merge cannot be excused by the archival path.
+        self.assertFalse(workstream._authenticated_managed_index_reconciliation(
+            host_validation, repo, first, main, first, *versions,
+        ))
+
     def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
         workstream_id = "agent-test-archive-tip"
         active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"

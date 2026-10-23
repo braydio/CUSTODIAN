@@ -52,10 +52,14 @@
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes`
-- Completion boundary satisfied: `yes`
-- Acceptance satisfied: `yes`
-- Evidence: The exact historical conflict-resolution path is bound to the immutable trace, exact merge parents/trees/path and mode changes, and later genuine synchronization events. The original held review and its read-only recovery plan remain untouched pending this correction's independent acceptance.
+- Goal satisfied: `no`
+- Completion boundary satisfied: `no`
+- Acceptance satisfied: `no`
+- Evidence: The implementation tests and changed-file checks passed, but its historical review recovery plan was not rerun and the fresh independent reviewer was not launched. The held review remains unresolved; implementation validation is not review acceptance.
+
+## Dated Acceptance Clarification (2026-10-23)
+
+The original packet incorrectly marked acceptance satisfied before its independent review became launchable. The preserved implementation trace shows a failed worktree creation followed by a successful `worktree_resumed`, but the validator did not recognize that lifecycle. The original recovery plan therefore remained blocked before reviewer launch. No independent PASS was recorded, and no protected claim, worktree, trace, run evidence, or verdict has been changed by this clarification.
 
 ## Execution Feedback
 

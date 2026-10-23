@@ -18,7 +18,7 @@
 - Review target workstream: `agent-paired-review-resumed-worktree-provenance-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md`
 - Reviewed main: `7a8be70c366fd00b00d488b5385eccb6dff47e6e`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad556b3-998c-83ea-8620-22173524205f`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
@@ -52,7 +52,7 @@
 - Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad556b3-998c-83ea-8620-22173524205f`
 - Refresh reason: `none`
 - Next action: After this review genuinely passes, re-run the blocked correction review's read-only host-validation recovery plan and report its hash and result; stop for separate apply authorization.
 - Blockers or open questions: The earlier host-import recovery run remains held and unchanged.

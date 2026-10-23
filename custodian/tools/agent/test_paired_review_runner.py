@@ -3520,6 +3520,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         events = []
         def emit(name, data):
             events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "agent": "codex", "execution_generation": "execution-reset-v1-test",
+                           "host": "test-host",
                            "run_id": run_id, "workstream": workstream, "packet": active,
                            "event": name, "data": data})
         emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": source_base,
@@ -5978,6 +5980,341 @@ Verify the exact post-hoc attestation.
         self._install_trace(workstream, active, "20261018T010002Z-012345abcdef", source_base, landing)
         with self.assertRaisesRegex(host_validation.HostValidationError, "ambiguous"):
             host_validation.resolve_validation_source_span(self.root, landing, landing, workstream, archive)
+
+
+    def _build_failed_create_resume_fixture(self, *, mutation=None):
+        """Build a real-Git failed-create/resume archive with a main fast-forward."""
+        repository = Path(self.temp.name) / f"resumed-{mutation or 'valid'}"
+        repository.mkdir()
+        subprocess.run(["git", "init", "-q", str(repository)], check=True)
+        for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
+            subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
+
+        def git(*args, input_text=None):
+            result = subprocess.run(["git", *args], cwd=repository, text=True,
+                                    input=input_text, capture_output=True)
+            if result.returncode:
+                raise AssertionError(result.stderr or result.stdout)
+            return result.stdout.strip()
+
+        workstream = "agent-synthetic-failed-create-resume"
+        active = f"{runner.PACKET_ROOT}/SYNTHETIC_FAILED_CREATE_RESUME.md"
+        archive = f"{runner.PACKET_ROOT}/archived/SYNTHETIC_FAILED_CREATE_RESUME.md"
+        source_path = "custodian/tools/agent/resume_fixture.py"
+        test_path = "custodian/tools/agent/test_resume_fixture.py"
+        branch = f"agent/{workstream}"
+        run_id = "20261023T120000Z-abcdef123456"
+        worktree = f"/tmp/{workstream}-{run_id}"
+
+        (repository / "README.md").write_text("base\n")
+        git("add", "README.md")
+        git("commit", "-qm", "initial history")
+        reviewed_main = git("rev-parse", "HEAD")
+        packet = (f"# Synthetic resumed worktree\n"
+                  f"- Packet schema: `custodian.task_packet.v2`\n"
+                  f"- Workstream: `{workstream}`\n- Kind: `implementation`\n"
+                  f"- Status: `in_progress`\n- Reviewed main: `{reviewed_main}`\n"
+                  f"- Work surface: `{source_path}`; `{test_path}`\n")
+        (repository / active).parent.mkdir(parents=True, exist_ok=True)
+        (repository / active).write_text(packet)
+        git("add", active)
+        git("commit", "-qm", "publish source packet")
+        claim_base = git("rev-parse", "HEAD")
+
+        # resume() fast-forwards a clean branch to fetched main before it
+        # records worktree_resumed. Keep the actual resulting HEAD distinct
+        # from the immutable claim/create base in this fixture.
+        (repository / "resume-publication.md").write_text("published during recovery\n")
+        git("add", "resume-publication.md")
+        git("commit", "-qm", "advance main before resume")
+        resumed_head = git("rev-parse", "HEAD")
+        git("checkout", "-qb", "workstream", resumed_head)
+
+        for path, contents in ((source_path, "implementation\n"),
+                               (test_path, "regression\n")):
+            target = repository / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(contents)
+        git("add", source_path, test_path)
+        git("commit", "-qm", "implement resumed source span")
+
+        complete_packet = packet.replace("`in_progress`", "`complete`")
+        (repository / archive).parent.mkdir(parents=True, exist_ok=True)
+        (repository / archive).write_text(complete_packet)
+        (repository / active).unlink()
+        (repository / f"{runner.PACKET_ROOT}/README.md").write_text("archived synthetic packet\n")
+        (repository / f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md").write_text(
+            "synthetic implementation summary\n")
+        git("add", "-A")
+        git("commit", "-qm", "archive resumed workstream")
+        landing = git("rev-parse", "HEAD")
+
+        claim_oid = git("commit-tree", f"{claim_base}^{{tree}}", "-p", claim_base,
+                        "-m", f"workstream claim {workstream} codex:42:{run_id}")
+        events = []
+
+        def emit(name, data):
+            events.append({"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+                           "agent": "codex", "execution_generation": "execution-reset-v1-test",
+                           "host": "test-host", "run_id": run_id,
+                           "workstream": workstream, "packet": active,
+                           "event": name, "data": data})
+
+        emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": claim_base,
+             "local_ref": f"refs/custodian/claims/{workstream}/{run_id}",
+             "remote_ref": f"refs/heads/dispatch-claims/{workstream}"})
+        emit("worktree_create_begin", {"worktree": worktree, "branch": branch,
+             "main_sha": claim_base})
+        emit("run_blocked", {"reason": f"git worktree add -b {branch} {worktree} origin/main failed: simulated ENOSPC"})
+        emit("worktree_resumed", {"worktree": worktree, "branch": branch, "head": resumed_head})
+        emit("landing_started", {"start_sha": landing, "branch": branch, "target": "main"})
+        emit("landing_completed", {"head": landing, "outcome": "landed"})
+        emit("teardown_started", {"head": landing, "branch": branch, "worktree": worktree})
+        emit("teardown_completed", {"head": landing, "branch": branch,
+             "worktree_removed": True, "worktree": worktree})
+
+        if mutation == "base":
+            events[1]["data"]["main_sha"] = resumed_head
+        elif mutation == "branch":
+            events[3]["data"]["branch"] = "agent/foreign"
+        elif mutation == "path":
+            events[3]["data"]["worktree"] = "/tmp/foreign-checkout"
+        elif mutation == "claim-oid":
+            events[0]["data"]["claim_oid"] = "0" * 40
+        elif mutation == "foreign-claim":
+            events[0]["packet"] = f"{runner.PACKET_ROOT}/FOREIGN_PACKET.md"
+        elif mutation == "duplicate-claim":
+            events.insert(1, json.loads(json.dumps(events[0])))
+        elif mutation == "resume-head-oid":
+            events[3]["data"]["head"] = "0" * 40
+        elif mutation == "resume-agent":
+            events[3]["agent"] = "claude"
+        elif mutation == "resume-generation":
+            events[3]["execution_generation"] = "foreign-generation"
+        elif mutation == "missing-failure":
+            events.remove(next(event for event in events if event["event"] == "run_blocked"))
+        elif mutation == "duplicate-resume":
+            events.insert(4, json.loads(json.dumps(events[3])))
+        elif mutation == "wrong-order":
+            events[2], events[3] = events[3], events[2]
+        elif mutation == "fabricated-publication":
+            events.insert(4, {**json.loads(json.dumps(events[3])), "event": "worktree_published",
+                              "data": {"head": "0" * 40, "upstream": "0" * 40,
+                                       "branch": branch, "clean": True, "worktree": worktree}})
+        elif mutation == "unrelated-landing":
+            events[4]["data"]["start_sha"] = claim_base
+            events[5]["data"]["head"] = claim_base
+            events[6]["data"]["head"] = claim_base
+            events[7]["data"]["head"] = claim_base
+
+        raw = ("\n".join(json.dumps(event, sort_keys=True, separators=(",", ":"))
+                           for event in events) + "\n").encode()
+        blob = git("hash-object", "-w", "--stdin", input_text=raw.decode())
+        tree = git("mktree", input_text=f"100644 blob {blob}\ttrace.jsonl\n")
+        trace_commit = git("commit-tree", tree, "-m", "failed create resume trace")
+        trace_ref = f"refs/remotes/origin/agent-diagnostics/{workstream}/{run_id}"
+        git("update-ref", trace_ref, trace_commit)
+        return {"repo": repository, "workstream": workstream, "active": active,
+                "archive": archive, "run_id": run_id, "branch": branch, "worktree": worktree,
+                "claim_base": claim_base, "resumed_head": resumed_head,
+                "reviewed_main": landing, "landing": landing, "source_path": source_path,
+                "test_path": test_path, "trace_ref": trace_ref, "claim_oid": claim_oid}
+
+    def test_historical_failed_create_resume_trace_resolves_exact_source_span(self):
+        workstream = "agent-paired-review-conflict-resolution-merge-provenance-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "PAIRED_REVIEW_CONFLICT_RESOLUTION_MERGE_PROVENANCE_V1.md")
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "7a8be70c366fd00b00d488b5385eccb6dff47e6e",
+                "44b1ce5b44ff9e40cb017cfef1cea9abba8826ab", workstream, archive,
+            )
+        self.assertEqual(span["base"], "9254dc8465820279723e35a3ec232557a9cf4cae")
+        self.assertEqual(span["provenance"]["trace_landing_commit"],
+                         "7a8be70c366fd00b00d488b5385eccb6dff47e6e")
+        self.assertEqual(span["provenance"]["claim_trace"]["run_id"],
+                         "20261022T172255Z-7f774d406013")
+        self.assertEqual(span["provenance"]["claim_trace"]["base"], span["base"])
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/tools/agent/paired_review_host_validation.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+        })
+
+    def test_historical_failed_create_resume_runs_coordinator_prelaunch_checks(self):
+        workstream = "agent-paired-review-conflict-resolution-merge-provenance-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "PAIRED_REVIEW_CONFLICT_RESOLUTION_MERGE_PROVENANCE_V1.md")
+        reviewed_main = "7a8be70c366fd00b00d488b5385eccb6dff47e6e"
+        implementation = "44b1ce5b44ff9e40cb017cfef1cea9abba8826ab"
+        trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream}/"
+                     "20261022T172255Z-7f774d406013")
+        repository = Path(self.temp.name) / "historical-resume-coordinator"
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                        str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
+                        reviewed_main], check=True)
+        trace_commit = subprocess.run(["git", "rev-parse", trace_ref], cwd=ROOT,
+                                      check=True, text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, trace_commit], check=True)
+
+        span = host_validation.resolve_validation_source_span(
+            repository, reviewed_main, implementation, workstream, archive,
+        )
+        selected_paths = subprocess.run(
+            ["git", "diff", "--name-only", f"{span['base']}..{reviewed_main}"],
+            cwd=repository, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        code_paths = sorted(host_validation._source_code_paths(span["paths"]))
+        report = {"schema": "custodian.validation.result.v1", "passed": True,
+                  "changed_files": selected_paths, "selected": ["historical_resume_source"],
+                  "tests": [{"id": "historical_resume_source", "status": "passed"}],
+                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                              "skipped": 0, "infrastructure_errors": 0},
+                  "coverage": {"complete": True, "covered_files": code_paths,
+                               "uncovered_files": [], "excluded_files": [],
+                               "covered_by": {path: ["historical_resume_source"]
+                                              for path in code_paths}}}
+        run_dir = Path(self.temp.name) / "historical-resume-coordinator-run"
+        run_dir.mkdir()
+
+        def validate(command, cwd):
+            self.assertEqual(Path(cwd), repository)
+            self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+            return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+        evidence = host_validation.run_coordinator_validation(
+            repository, run_dir, reviewed_main, implementation,
+            target_workstream=workstream, target_packet_path=archive,
+            run_validation=validate,
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+        verified = host_validation.verify_coordinator_validation(
+            repository, run_dir, reviewed_main, implementation,
+            target_workstream=workstream, target_packet_path=archive,
+            expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+        self.assertEqual(evidence["source_span"]["base"],
+                         "9254dc8465820279723e35a3ec232557a9cf4cae")
+
+    def test_managed_index_reconciliation_allows_only_verified_archive_removals(self):
+        first_parent = "44b1ce5b44ff9e40cb017cfef1cea9abba8826ab"
+        second_parent = "c39d5b771c730b8bd25efb0f005adfca3abe6b43"
+        merge = "7a8be70c366fd00b00d488b5385eccb6dff47e6e"
+        self.assertTrue(host_validation._managed_packet_index_archival_reconciliation(
+            ROOT, first_parent, second_parent, merge,
+        ))
+
+        repository = Path(self.temp.name) / "forged-index-merge"
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                        str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", merge], check=True)
+        for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
+            subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
+        readme_path = f"{runner.PACKET_ROOT}/README.md"
+        original = subprocess.run(["git", "show", f"{merge}:{readme_path}"], cwd=repository,
+                                  check=True, capture_output=True).stdout
+        start = host_validation.MANAGED_BLOCK_START.encode("ascii")
+        end = host_validation.MANAGED_BLOCK_END.encode("ascii")
+        block = original[original.index(start):original.index(end) + len(end)]
+        entries = block[len(start) + 1:-(len(end) + 1)].split(b"\n")
+        active_entry = None
+        for entry in entries:
+            match = re.fullmatch(r"- `([A-Za-z0-9_.-]+\.md)` — .+", entry.decode("utf-8"))
+            if match is None:
+                continue
+            active_path = f"{runner.PACKET_ROOT}/{match.group(1)}"
+            if (host_validation._git_tree_entry(ROOT, second_parent, active_path) is not None
+                    and host_validation._git_tree_entry(
+                        ROOT, second_parent, f"{runner.PACKET_ROOT}/archived/{match.group(1)}"
+                    ) is None):
+                active_entry = entry
+                break
+        self.assertIsNotNone(active_entry)
+        changed = original.replace(active_entry + b"\n", b"", 1)
+        (repository / readme_path).write_bytes(changed)
+        subprocess.run(["git", "-C", str(repository), "add", readme_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "remove active packet entry"],
+                       check=True)
+        forged_merge = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"],
+                                      check=True, text=True, capture_output=True).stdout.strip()
+        self.assertFalse(host_validation._managed_packet_index_archival_reconciliation(
+            repository, first_parent, second_parent, forged_merge,
+        ))
+
+    def test_failed_create_resume_with_main_fast_forward_is_a_coordinator_prelaunch(self):
+        fixture = self._build_failed_create_resume_fixture()
+        span = host_validation.resolve_validation_source_span(
+            fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        self.assertEqual(span["base"], fixture["resumed_head"])
+        self.assertEqual(span["provenance"]["claim_trace"]["resumed_head"],
+                         fixture["resumed_head"])
+        self.assertEqual(span["provenance"]["claim_trace"]["claim_base"],
+                         fixture["claim_base"])
+        self.assertNotEqual(span["base"], span["provenance"]["claim_trace"]["claim_base"])
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            fixture["source_path"], fixture["test_path"],
+        })
+
+        selected = subprocess.run(
+            ["git", "diff", "--name-only", f"{span['base']}..{fixture['reviewed_main']}"],
+            cwd=fixture["repo"], check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        code_paths = sorted(host_validation._source_code_paths(span["paths"]))
+        report = {"schema": "custodian.validation.result.v1", "passed": True,
+                  "changed_files": selected, "selected": ["resume_source_contract"],
+                  "tests": [{"id": "resume_source_contract", "status": "passed"}],
+                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                              "skipped": 0, "infrastructure_errors": 0},
+                  "coverage": {"complete": True, "covered_files": code_paths,
+                               "uncovered_files": [], "excluded_files": [],
+                               "covered_by": {path: ["resume_source_contract"] for path in code_paths}}}
+        run_dir = Path(self.temp.name) / "resume-coordinator"
+        run_dir.mkdir()
+
+        def validate(command, cwd):
+            self.assertEqual(Path(cwd), fixture["repo"])
+            self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+            return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
+
+        evidence = host_validation.run_coordinator_validation(
+            fixture["repo"], run_dir, fixture["reviewed_main"], fixture["landing"],
+            target_workstream=fixture["workstream"], target_packet_path=fixture["archive"],
+            run_validation=validate,
+            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+        )
+        verified = host_validation.verify_coordinator_validation(
+            fixture["repo"], run_dir, fixture["reviewed_main"], fixture["landing"],
+            target_workstream=fixture["workstream"], target_packet_path=fixture["archive"],
+            expected_report_sha256=evidence["report_sha256"],
+            expected_metadata_sha256=evidence["metadata_sha256"],
+        )
+        self.assertTrue(verified["passed"])
+
+    def test_failed_create_resume_provenance_rejects_adversarial_events(self):
+        for mutation in ("base", "branch", "path", "claim-oid", "foreign-claim",
+                         "duplicate-claim", "resume-head-oid", "resume-agent", "resume-generation",
+                         "missing-failure",
+                         "duplicate-resume", "wrong-order", "fabricated-publication",
+                         "unrelated-landing"):
+            with self.subTest(mutation=mutation):
+                fixture = self._build_failed_create_resume_fixture(mutation=mutation)
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_declared_markdown_allowlist_matches_root_and_nested_paths_exactly(self):
+        work_surface = "AGENT_SUMMARY.md; custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+        declared = set(host_validation._REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
+        self.assertEqual(declared, {
+            "AGENT_SUMMARY.md", "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        })
+        self.assertNotIn("OTHER_SUMMARY.md", declared)
 
 
 if __name__ == "__main__":

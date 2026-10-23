@@ -34,7 +34,7 @@ FAILED_IMPORT_RECOVERY_SIDECARS = frozenset(
     for direction in ("s", "n", "e", "w") for size in (64, 72, 80)
 )
 _REPOSITORY_MARKDOWN_PATH_RE = re.compile(
-    r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)+[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
+    r"(?<![A-Za-z0-9_./-])((?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.md)(?![A-Za-z0-9_./-])"
 )
 _WORK_SURFACE_BRACE_PATH_RE = re.compile(
     r"custodian/([A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*)/"
@@ -586,6 +586,86 @@ def _managed_packet_index_additive_reconciliation(first_parent: bytes,
     prior_added = [entry for entry in prior_entries if entry not in set(original_entries)]
     prior_iter = iter(prior_added)
     return all(any(value == candidate for candidate in prior_iter) for value in added)
+
+
+def _managed_packet_index_archival_reconciliation(repo: Path, first_parent: str,
+                                                  second_parent: str, merge: str) -> bool:
+    """Allow only index removals proven by complete packets archived on main."""
+    path = f"{PACKET_ROOT}/README.md"
+    try:
+        versions = [
+            subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                           capture_output=True, check=True).stdout
+            for revision in (first_parent, second_parent, merge)
+        ]
+    except subprocess.CalledProcessError:
+        return False
+    start = MANAGED_BLOCK_START.encode("ascii")
+    end = MANAGED_BLOCK_END.encode("ascii")
+
+    def split(raw: bytes) -> tuple[bytes, bytes, bytes] | None:
+        if raw.count(start) != 1 or raw.count(end) != 1:
+            return None
+        begin = raw.find(start)
+        finish = raw.find(end)
+        if finish <= begin:
+            return None
+        end_at = finish + len(end)
+        if not raw[begin:end_at].startswith(start + b"\n") or not raw[begin:end_at].endswith(b"\n" + end):
+            return None
+        return raw[:begin], raw[begin:end_at], raw[end_at:]
+
+    original, prior, reconciled = map(split, versions)
+    if (original is None or prior is None or reconciled is None
+            or original[0] != reconciled[0] or original[2] != reconciled[2]):
+        return False
+
+    def entries(block: bytes) -> list[bytes]:
+        return block[1][len(start) + 1:-(len(end) + 1)].split(b"\n")
+
+    first_entries, main_entries, merged_entries = map(entries, (original, prior, reconciled))
+    if any(len(set(values)) != len(values) for values in (first_entries, main_entries, merged_entries)):
+        return False
+    missing = [entry for entry in first_entries if entry not in merged_entries]
+    if not missing:
+        return False
+    for entry in missing:
+        try:
+            line = entry.decode("utf-8")
+        except UnicodeDecodeError:
+            return False
+        match = re.fullmatch(r"- `([A-Za-z0-9_.-]+\.md)` — .+", line)
+        if match is None:
+            return False
+        filename = match.group(1)
+        active_path = f"{PACKET_ROOT}/{filename}"
+        archived_path = f"{PACKET_ROOT}/archived/{filename}"
+        if _git_tree_entry(repo, second_parent, active_path) is not None:
+            return False
+        archived_entry = _git_tree_entry(repo, second_parent, archived_path)
+        if archived_entry is None or archived_entry[0] != "100644":
+            return False
+        try:
+            archived_text = subprocess.run(
+                ["git", "show", f"{second_parent}:{archived_path}"], cwd=repo,
+                text=True, capture_output=True, check=True,
+            ).stdout
+        except subprocess.CalledProcessError:
+            return False
+        packet = parse_packet(archived_path, archived_text)
+        if packet.error or packet.status != "complete" or not packet.workstream:
+            return False
+
+    survivors = [entry for entry in first_entries if entry not in set(missing)]
+    survivor_iter = iter(merged_entries)
+    if not all(any(entry == candidate for candidate in survivor_iter) for entry in survivors):
+        return False
+    added = [entry for entry in merged_entries if entry not in set(first_entries)]
+    prior_additions = [entry for entry in main_entries if entry not in set(first_entries)]
+    prior_iter = iter(prior_additions)
+    return all(entry in main_entries for entry in merged_entries) and all(
+        any(entry == candidate for candidate in prior_iter) for entry in added
+    )
 
 
 def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
@@ -1750,6 +1830,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             continue
         started = [event for event in events if event.get("event") == "remote_claim_acquired"]
         published = [event for event in events if event.get("event") == "worktree_published"]
+        create_begins = [event for event in events if event.get("event") == "worktree_create_begin"]
+        resumed = [event for event in events if event.get("event") == "worktree_resumed"]
         landing_started = [event for event in events if event.get("event") == "landing_started"]
         landed = [event for event in events if event.get("event") == "landing_completed"]
         teardown_started = [event for event in events if event.get("event") == "teardown_started"]
@@ -1774,16 +1856,19 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             trace_landing = start_data.get("start_sha")
             teardown_data, removed_data = teardown_started[0]["data"], teardown_completed[0]["data"]
             path = teardown_data.get("worktree")
-            if (isinstance(trace_landing, str) and re.fullmatch(r"[0-9a-f]{40,64}", trace_landing)
+            valid_landing = (isinstance(trace_landing, str) and re.fullmatch(r"[0-9a-f]{40,64}", trace_landing)
                     and start_data.get("branch") == branch and start_data.get("target") == "main"
                     and landed_data.get("head") == trace_landing and landed_data.get("outcome") == "landed"
                     and teardown_data.get("head") == trace_landing and teardown_data.get("branch") == branch
                     and removed_data.get("head") == trace_landing and removed_data.get("branch") == branch
                     and removed_data.get("worktree_removed") is True and isinstance(path, str)
-                    and Path(path).is_absolute()):
+                    and Path(path).is_absolute())
+            resumed_claim_candidate = bool(started and (create_begins or resumed))
+            if valid_landing and not resumed_claim_candidate:
                 landing_records.append({"ref": ref, "run_id": run_id, "landing": trace_landing,
                                         "path": path, "branch": branch, "events": events})
-            continue
+            if not resumed_claim_candidate:
+                continue
         if (len(started) == len(published) == len(landing_started) == len(landed) == 1
                 and not teardown_started and not teardown_completed):
             claim, publication = started[0]["data"], published[0]["data"]
@@ -1829,6 +1914,124 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         landing_records.append({"ref": ref, "run_id": run_id, "landing": trace_landing,
                                 "path": path, "branch": branch, "events": events})
 
+        # A failed initial creation has no worktree_published event. Accept its
+        # later resume only when the immutable trace records the exact original
+        # claim, one failed create for the canonical checkout, and one ordered
+        # successful resume. workstream.py resume records the resulting HEAD
+        # after synchronizing main; retain that SHA separately from the claim
+        # base instead of fabricating a publication event or equating the two.
+        if started and not published and (create_begins or resumed):
+            if (len(started) != 1 or len(create_begins) != 1 or len(resumed) != 1
+                    or len(landing_started) != 1):
+                continue
+            claim_event = started[0]
+            claim_data = claim_event.get("data", {})
+            create_event = create_begins[0]
+            create_data = create_event.get("data", {})
+            resume_event = resumed[0]
+            resume_data = resume_event.get("data", {})
+            claim_base = claim_data.get("main_sha")
+            resumed_head = resume_data.get("head")
+            worktree = create_data.get("worktree")
+            failure_command = f"git worktree add -b {branch} {worktree} origin/main failed:"
+            failed_creates = [
+                (index, event) for index, event in enumerate(events)
+                if event.get("event") == "run_blocked"
+                and isinstance(event.get("data"), dict)
+                and isinstance(event["data"].get("reason"), str)
+                and failure_command in event["data"]["reason"]
+            ]
+            claim_index = events.index(claim_event)
+            create_index = events.index(create_event)
+            resume_index = events.index(resume_event)
+            landing_index = events.index(landing_started[0])
+            claim_subject = subprocess.run(
+                ["git", "show", "-s", "--format=%s", str(claim_data.get("claim_oid", ""))],
+                cwd=repo, text=True, capture_output=True,
+            )
+            claim_subject_match = re.fullmatch(
+                rf"workstream claim {re.escape(target_workstream)} ([^:\s]+):[0-9]+:{re.escape(run_id)}",
+                claim_subject.stdout.rstrip(),
+            ) if claim_subject.returncode == 0 else None
+            generation = claim_event.get("execution_generation")
+            host = claim_event.get("host")
+            claim_agent = claim_event.get("agent")
+            failure_event = failed_creates[0][1] if failed_creates else {}
+            required_lifecycle_events = [
+                claim_event, create_event, failure_event, resume_event, landing_started[0], landed[0],
+                teardown_started[0], teardown_completed[0],
+            ]
+            lifecycle_identity_matches = (
+                isinstance(generation, str) and bool(generation)
+                and isinstance(host, str) and bool(host)
+                and all(event.get("execution_generation") == generation
+                        and event.get("host") == host for event in required_lifecycle_events)
+                and isinstance(claim_agent, str) and bool(claim_agent)
+                and failure_event.get("agent") == claim_agent
+                and resume_event.get("agent") in {None, claim_agent}
+            )
+            valid_resumed = (
+                isinstance(claim_base, str) and re.fullmatch(r"[0-9a-f]{40,64}", claim_base)
+                and isinstance(resumed_head, str) and re.fullmatch(r"[0-9a-f]{40,64}", resumed_head)
+                and len(teardown_started) == len(teardown_completed) == 1
+                and create_data.get("main_sha") == claim_base
+                and create_data.get("branch") == branch
+                and resume_data.get("branch") == branch
+                and resume_data.get("worktree") == worktree
+                and isinstance(worktree, str) and Path(worktree).is_absolute()
+                and os.path.normpath(worktree) == worktree
+                and claim_data.get("remote_ref") == f"refs/heads/dispatch-claims/{target_workstream}"
+                and claim_data.get("local_ref") == f"refs/custodian/claims/{target_workstream}/{run_id}"
+                and claim_subject_match is not None
+                and claim_agent == claim_subject_match.group(1)
+                and lifecycle_identity_matches
+                and len(failed_creates) >= 1
+                and claim_index < create_index < failed_creates[0][0] < resume_index < landing_index
+                and _verified_landing_claim(repo, claim_event, target_workstream, run_id, resumed_head)
+            )
+            if valid_resumed:
+                # The producer's resume path fast-forwards the clean original
+                # branch before recording worktree_resumed. Require a first-
+                # parent fast-forward from the claim base and reject merge or
+                # side-branch substitutions as an unproven recovery base.
+                resume_history = subprocess.run(
+                    ["git", "rev-list", "--first-parent", "--reverse",
+                     f"{claim_base}..{resumed_head}"], cwd=repo, text=True, capture_output=True,
+                )
+                if resume_history.returncode:
+                    valid_resumed = False
+                else:
+                    previous = claim_base
+                    for commit in resume_history.stdout.splitlines():
+                        parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
+                        if len(parents) != 1 or parents[0] != previous:
+                            valid_resumed = False
+                            break
+                        previous = commit
+                    if previous != resumed_head:
+                        valid_resumed = False
+                if valid_resumed and subprocess.run(
+                    ["git", "merge-base", "--is-ancestor", resumed_head, trace_landing],
+                    cwd=repo, capture_output=True,
+                ).returncode:
+                    valid_resumed = False
+                if valid_resumed:
+                    first_parent_history = subprocess.run(
+                        ["git", "rev-list", "--first-parent", trace_landing],
+                        cwd=repo, text=True, capture_output=True,
+                    )
+                    if (first_parent_history.returncode
+                            or resumed_head not in first_parent_history.stdout.splitlines()):
+                        valid_resumed = False
+            if valid_resumed:
+                claim_records.append({
+                    "ref": ref, "run_id": run_id, "base": resumed_head,
+                    "branch": branch, "worktree": worktree, "events": events,
+                    "claim_oid": claim_data["claim_oid"], "claim_base": claim_base,
+                    "resumed_head": resumed_head,
+                    "create_event_index": create_index, "resume_event_index": resume_index,
+                })
+
         # Support older single-trace lifecycles that contain claim, publication,
         # landing, and teardown together. The same strict field checks apply to
         # each role, and pair uniqueness below prevents ambiguous reuse.
@@ -1866,6 +2069,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     matching_pairs = []
     for claim in claim_records:
         for completed in landing_records:
+            if (claim.get("resumed_head") is not None
+                    and (claim["run_id"] != completed["run_id"]
+                         or claim["ref"] != completed["ref"])):
+                continue
             if (claim["worktree"] == completed["path"]
                     and claim["branch"] == completed["branch"]
                     and subprocess.run(["git", "merge-base", "--is-ancestor", exact_base,
@@ -2285,11 +2492,14 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                     )
                     if (first_parent_readme.returncode or second_parent_readme.returncode
                             or merged_readme.returncode
-                            or not _managed_packet_index_additive_reconciliation(
+                            or not (_managed_packet_index_additive_reconciliation(
                                 first_parent_readme.stdout, second_parent_readme.stdout,
-                                merged_readme.stdout)):
+                                merged_readme.stdout)
+                                or _managed_packet_index_archival_reconciliation(
+                                    repo, first_parent, sync_merge["main_sha"], merge,
+                                ))):
                         raise HostValidationError(
-                            "main-sync README change is not an additive managed-index reconciliation"
+                            "main-sync README change is not an authenticated managed-index reconciliation"
                         )
                 changed_source_paths.remove(readme_path)
             if archive_sync_followup is not None:
@@ -2321,6 +2531,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                               "worktree": landing_record["path"], "branch": landing_record["branch"],
                               "landing": landing_record["landing"]},
             "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}
+    if claim_record.get("resumed_head") is not None:
+        provenance["claim_trace"]["claim_base"] = claim_record["claim_base"]
+        provenance["claim_trace"]["resumed_head"] = claim_record["resumed_head"]
+        provenance["claim_trace"]["create_event_index"] = claim_record["create_event_index"]
+        provenance["claim_trace"]["resume_event_index"] = claim_record["resume_event_index"]
     if checkpoint_resume_merge is not None:
         provenance["checkpoint_resume_merge"] = checkpoint_resume_merge
     if scope_attestation is not None:
