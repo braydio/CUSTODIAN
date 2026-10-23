@@ -1,0 +1,51 @@
+{
+  "post_hoc": true,
+  "reason": "The original archived P1 Work surface omitted these exact eight source paths.",
+  "schema": "custodian.review_source_scope_attestation.v1",
+  "source_archive_commit": "68cef17f59c6d5e04026b56025451b901bd08185",
+  "source_files": [
+    {
+      "blob": "bf1595c7a554bd307e9c77f241fe94817affe58a",
+      "mode": "100644",
+      "path": "custodian/docs/ai_context/VALIDATION_RECIPES.md"
+    },
+    {
+      "blob": "08216a9df060f0dd8ae703f597c66cc4df9ba4e0",
+      "mode": "100644",
+      "path": "custodian/game/state/persistent/hub_state.gd"
+    },
+    {
+      "blob": "5de12336e853024f1e252e7d0dc552e17f36cda7",
+      "mode": "100644",
+      "path": "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd"
+    },
+    {
+      "blob": "67b4d9d44729a7d828a8061798c7f0f99e9d7a7b",
+      "mode": "100644",
+      "path": "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd.uid"
+    },
+    {
+      "blob": "338c21b43c2768aca5e3b248393aac90b8f6e1c9",
+      "mode": "100644",
+      "path": "custodian/game/world/hub/first_set/hub_first_set_map.gd"
+    },
+    {
+      "blob": "8a1a77c1c29431672990781b926d28e6f3e67c09",
+      "mode": "100644",
+      "path": "custodian/tools/validation/hub_road_empty_procession_smoke.gd"
+    },
+    {
+      "blob": "e72ccbfef55f557c7b0e050efda20f27e5ea92fb",
+      "mode": "100644",
+      "path": "custodian/tools/validation/hub_road_empty_procession_smoke.gd.uid"
+    },
+    {
+      "blob": "016101bf9e76309b1991e3e45fb6f15104c1c94a",
+      "mode": "100644",
+      "path": "custodian/tools/validation/validation_manifest.json"
+    }
+  ],
+  "source_packet_blob": "9ad75ac27b88508647b6257245242272f49b21aa",
+  "source_packet_path": "custodian/docs/ai_context/task_packets/archived/HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md",
+  "source_workstream": "hub-road-empty-procession-sequence-v1"
+}
