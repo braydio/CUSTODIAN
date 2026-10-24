@@ -2311,6 +2311,20 @@
       "needs_import": false
     },
     {
+      "id": "validation_manifest_diff_selection",
+      "type": "python",
+      "script": "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
+      "tier": "unit",
+      "tags": ["validation", "tooling"],
+      "owners": [
+        "custodian/tools/validation/run_validation.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py"
+      ],
+      "timeout_sec": 10,
+      "needs_import": false
+    },
+    {
       "id": "asset_requirements",
       "type": "python",
       "script": "custodian/tools/validation/asset_requirements_smoke.py",
