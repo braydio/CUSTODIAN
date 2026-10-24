@@ -4068,15 +4068,19 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             self.skipTest("canonical Procession recovery landing traces are not present")
         reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
         archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
-        span = host_validation.resolve_validation_source_span(
-            ROOT, reviewed_main, archive, workstream,
-            host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
-        )
-        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
-        self.assertEqual(
-            set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES).difference(span["paths"]),
-            set(),
-        )
+        with self.assertRaisesRegex(
+                host_validation.HostValidationError,
+                "main-sync merge changes reviewed source from archive-first-parent version") as caught:
+            host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, archive, workstream,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+            )
+        self.assertIn("f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3", str(caught.exception))
+        for source_path in (
+                "custodian/tools/agent/paired_review_host_validation.py",
+                "custodian/tools/agent/test_paired_review_runner.py",
+                "custodian/tools/validation/validation_manifest.json"):
+            self.assertIn(source_path, str(caught.exception))
 
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
@@ -4970,10 +4974,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                                  attestation=None, review_outcome="passed"):
         """Create disposable Git history for exact Procession scope approval checks."""
         repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
-        base_main = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-            check=True, text=True, capture_output=True,
-        ).stdout.strip()
+        base_main = "49a93aa726e26bd40220d3bdb658079ea9da3440"
         subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
                         str(repository)], check=True)
         subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
@@ -4997,11 +4998,20 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
         review_archive = host_validation._PROCESSION_SCOPE_REVIEW_PACKET
         attestation_path = host_validation._PROCESSION_SCOPE_ATTESTATION_PATH
+        correction_file = repository / correction_active
+        review_file = repository / review_active
+        if (not correction_file.is_file() or not review_file.is_file()
+                or (repository / correction_archive).exists()
+                or (repository / review_archive).exists()
+                or (repository / attestation_path).exists()):
+            self.fail("historical Procession fixture base must contain active packets and no attestation")
+        if ("- Status: `ready`" not in correction_file.read_text(encoding="utf-8")
+                or "- Status: `ready`" not in review_file.read_text(encoding="utf-8")):
+            self.fail("historical Procession fixture packets must both be ready before synthetic archival")
         source_attestation = (ROOT / attestation_path).read_text(encoding="utf-8")
         if attestation is not None:
             source_attestation = json.dumps(attestation, indent=2, sort_keys=True) + "\n"
 
-        correction_file = repository / correction_active
         correction_text = correction_file.read_text(encoding="utf-8")
         correction_text = correction_text.replace("- Status: `ready`", "- Status: `complete`", 1)
         correction_text += """
