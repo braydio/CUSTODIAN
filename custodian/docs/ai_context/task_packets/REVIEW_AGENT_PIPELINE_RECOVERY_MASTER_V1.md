@@ -14,7 +14,7 @@
 - Review target workstream: `agent-pipeline-recovery-master-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PIPELINE_RECOVERY_MASTER_V1.md`
 - Reviewed main: `7b82b9630e9a63c52e86f8b4805c577a85496aa5`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925`
 - Visual review: `none`
 - Reviewer context: `fresh`
 - Reviewer provenance: `different-agent`
