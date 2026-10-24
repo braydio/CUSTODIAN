@@ -3,7 +3,7 @@
 - Status: proposed master architecture and queue-consolidation authority; no implementation/recovery authorization until the paired bootstrap packet lands and passes independent review
 - Program/workstream family: `agent-pipeline-recovery-master-v1`
 - Investigated `main`: `7b82b9630e9a63c52e86f8b4805c577a85496aa5` (2026-10-24 07:44 UTC)
-- Authoring chat: not-recorded; replace with the exact conversation URL if provided, never with an unrelated chat
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Bootstrap implementation: `custodian/docs/ai_context/task_packets/AGENT_PIPELINE_RECOVERY_MASTER_V1.md`
 - Bootstrap independent review: `custodian/docs/ai_context/task_packets/REVIEW_AGENT_PIPELINE_RECOVERY_MASTER_V1.md`
 
