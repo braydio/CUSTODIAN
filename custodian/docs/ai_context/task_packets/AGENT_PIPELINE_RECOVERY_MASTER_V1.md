@@ -17,7 +17,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `recovery/claim/review truth is security critical, so bootstrap must pass fresh independent review before controlling any mutation`
 - Reviewed main: `7b82b9630e9a63c52e86f8b4805c577a85496aa5`
-- Authoring chat: `not-recorded`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925`
 - Visual review: `none`
 - Goal: Establish a fail-closed, recoverable, deterministic P0 pipeline-health and root-unblocking **planner** from the existing dispatcher, queue frontier, worktree census and genuine review receipts, and become the single authoritative pipeline-program entrypoint without creating a competing claim or mutation authority.
 - Completion boundary: Produce one read-only offline-capable `custodian/tools/agent/pipeline_recovery.py` diagnostic/plan CLI, focused tests, a durable `custodian.pipeline_recovery_plan.v1` JSON schema, a safe independent emergency run path, and bounded documentation-drift receipt. No worktree/claim/ref mutation or automatic release in this bootstrap. Land with canonical validation and obtain a fresh independent paired PASS before any mutating recovery slice executes.
