@@ -9,7 +9,7 @@
 - Priority: `P1`
 - Depends on: `agent-paired-review-procession-test-fixture-repair-v1`
 - Locks: `paired-review-runner-tests`
-- Review: `complete`
+- Review: `none`
 - Review target workstream: `agent-paired-review-procession-test-fixture-repair-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCESSION_TEST_FIXTURE_REPAIR_V1.md`
 - Reviewed main: `7b82b9630e9a63c52e86f8b4805c577a85496aa5`
