@@ -1,49 +1,54 @@
-# PROCGEN Alpine Cliff Presentation V1 — SOUTH seam correction
+# PROCGEN Alpine Cliff Presentation V1 — closeout blocked
 
-**Workstream:** `procgen-alpine-cliff-presentation-v1`
+Workstream: procgen-alpine-cliff-presentation-v1
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 
-**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+## Verified
 
-## Change
+- Current-main synchronized worktree started at 912975d4895f4bef072a8ffb133f32a1ba5c27ef; closeout evidence is committed on the same active branch.
+- Approved source-master ZIP SHA-256: e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3.
+- Asset V2 verification passed for 26/26 AP2 states.
+- Canonical immutable Gate B: /CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1/
+- Manifest SHA-256: e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6; exactly 26 PNGs / 10,125,139 bytes, with 12 fascia, 10 contact and 4 depth states.
+- Fresh fetch independently verified exact file set, hashes, sizes, runtime byte equality, PNG dimensions and RGBA mode.
+- Recovered October 15 ChatGPT disposition: PASS / PASS / PASS for the SOUTH join, attached geology and N/E/W/playable-edge truthfulness. Capture commit e2c7b7de038e799c5af16b11c63f66a8f86d75a0, dirty=false; SOUTH tick_000075.png SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The user recovered and reported the earlier review, originally around 08:57 UTC and reaffirmed around 16:19 UTC. The exact separate visual-review conversation URL was unavailable; the user was not represented as the author of a separate verdict. October 14 FAIL / FAIL / PASS remains historical and superseded.
+- Reviewed-evidence cleanup receipt: CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON {"latest_pointer_removed":true,"manifest_path":"/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json","retention_policy":"delete-after-review","reviewed_by":"chatgpt-user","run_id":"20261015T060324Z","schema":"custodian.visual_review_cleanup.v1","status":"deleted","workstream":"procgen-alpine-cliff-presentation-v1"}.
+- Focused validation passed 7/7: procgen_alpine_cliff_presentation, procgen_void_cliff_face, elevated_world_asset_contract, procgen_region_frame, procgen_accepted_world_export_parity, procgen_macro_presentation, procgen_void_cliff_wall_integration.
+- Changed-file ownership coverage is complete after adding the Alpine preparation script and asset verifier to the procgen_alpine_cliff_presentation owner.
 
-The rejected SOUTH viewport was unchanged because the authored SOUTH socket sat near the geology silhouette and its contract accepted only an 8 px connected-alpha crossing. The actual contact had just 24 opaque source pixels inward from the socket, so the mechanical test did not guarantee a visible terrace embed.
+## Blocking validation evidence
 
-Moved sockets for `south_broad_01`, `south_broken_01`, and `south_rooted_01` to y=180. Added a 96 px per-state minimum opaque source support and a 64 px minimum connected-alpha overlap on both sides of the final-world SOUTH frontier. The Alpine profile now owns these thresholds; source derivation, Asset V2 verification, composer placement, and focused smoke enforce the same contract. All 26 normalized states were regenerated; runtime PNG hashes and dimensions remained unchanged.
+Canonical command: TMPDIR=/dev/shm python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json
 
-## Evidence
+Report: custodian.validation.result.v1; 223 changed paths; ownership coverage complete; 86 selected; 43 passed, 1 failed, 42 skipped. The single failure was actor-tier npa_showcase_existing_enemy. It reports:
+- Missing semantic animation unarmed/transition/dodge_chain_release_01/omni/fx.
+- Invalid operator_down access in OperatorDeathCampaignBinding.
+- The real Operator could not collect the corpse payload.
 
-- `godot --headless --path custodian --script res://tools/validation/procgen_alpine_cliff_presentation_smoke.gd` — PASS.
-- `python3 custodian/tools/validation/verify_alpine_cliff_presentation_assets.py` — PASS, 26 states.
-- `TMPDIR=/dev/shm python3 custodian/tools/validation/run_validation.py --changed --json` — all five selected owners passed. Aggregate `complete=false` because existing untracked Moment Forge report files and unrelated `.uid` files have no changed-file owners; those artifacts were preserved.
-- Clean committed-SHA capture passed from detached checkout `e2c7b7de038e799c5af16b11c63f66a8f86d75a0`: manifest records `dirty=false`, Moment Forge assertions passed, and scenario SHA is `0b1b14582ccf83d4c1833fc14c6c26fa0f2bfbe62edf81626d4c509682a91255`.
-- Dedicated SOUTH frame `tick_000075.png` SHA is `c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b`, changed from rejected `4061704a578aa5b92b0948f2ce2af71f1966f8c57af72b76c05952b033998eaa`. The mechanical pre-review hash gate therefore passed.
-- Published the compact human-review handoff at `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json` (delete-after-review). Questions: SOUTH terrace/fascia join; attached geology/no crop wall; N/E/W and playable-edge truthfulness.
-- User had already executed the prior delete-after-review cleanup. The manifest was absent when this turn retried it.
+The failure's causal relationship to Alpine is not established. No unrelated runtime code was changed and no validation exemption was used. The failed report is preserved outside Git at /home/braydenchaffee/Projects/.custodian-staging/alpine-validation/changed-origin-main.json.
+
+## Lifecycle state
+
+No completion archive transition or workstream finish was attempted because the canonical report is red and higher tiers were skipped. The Alpine packet remains ready and active; asset-pipeline remains held by this workstream. Gate B and the reviewed-evidence cleanup are complete, but the lock has not been released. Carrow remains blocked by Alpine's lock and has not been claimed. AP3 was not started.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
-- Friction severity: medium
-- What went wrong: A permissive seam threshold passed while the SOUTH viewport stayed byte-identical to rejected evidence.
-- Root cause / contributing factors: SOUTH source socket was only 24 opaque pixels into the geology; final-world overlap only required 8 px.
-- Prevention / pipeline improvement: Use profile-owned per-state alpha depth and final-world overlap thresholds, checked at derivation, runtime placement, and smoke levels.
-- Tooling / docs drift discovered: Changed-file routing reports incomplete coverage for existing untracked reports and UID artifacts; all selected owners passed.
-- Follow-up: fixed-in-scope
-- What worked: Measured source alpha and final-world overlap directly, then used one profile contract across producer and consumer checks.
+- Outcome: blocked
+- Friction severity: high
+- What went wrong: The full branch-diff validation found one selected actor-tier failure after complete ownership coverage and skipped all higher tiers.
+- Root cause / contributing factors: NPA smoke setup lacks a requested Operator semantic animation and then encounters an invalid binding plus a corpse-loot assertion failure; no Alpine cause was proven.
+- Prevention / pipeline improvement: Resolve the owning NPA contract or runtime issue before a new canonical validation and supported finish. Do not waive selected tests.
+- Tooling / docs drift discovered: Alpine source-preparation and asset-verification scripts had no changed-file owner; those paths now route to the Alpine presentation smoke.
+- Follow-up: manual-follow-up
+- What worked: Focused Alpine/semantic checks, immutable handoff fetch, authentic approval record and exact delete-after-review cleanup all passed.
 
 ## Next Handoff
-
 - Next workstream: procgen-alpine-cliff-presentation-v1
-- Next packet state: human-required
+- Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 - Refresh reason: none
-- Next action: Record the human visual disposition for `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json`; run its delete-after-review cleanup after disposition. Close AP2 only if the human gate passes.
-- Blockers or open questions: Human visual disposition pending; AP2 remains open and AP3 remains gated.
-
-
-## Recovered visual disposition — 2026-10-24
-
-The user recovered the actual October 15, 2026 ChatGPT review outcome and confirmed it was reaffirmed later that day. Final disposition: PASS / PASS / PASS for the SOUTH terrace/fascia join, attached-geology silhouette, and N/E/W composition with truthful playable edges. Evidence: /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json; clean capture e2c7b7de038e799c5af16b11c63f66a8f86d75a0; SOUTH tick_000075.png, SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The separate visual-review conversation URL could not be recovered. This disposition is based on the user's report of that earlier ChatGPT review; no new review was performed. The October 14 failures remain in the chronology as superseded historical results.
+- Next action: Stop at the bounded validation blocker. Reconcile the NPA failure through its owning authority before another finish attempt.
+- Blockers or open questions: npa_showcase_existing_enemy fails; 42 selected higher-tier tests were skipped.

@@ -19,7 +19,7 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Goal: Make the permanent Alpine exterior frontier read as a large geological escarpment physically attached to the playable plateau rather than a repeated generic 32 px fascia strip, while retaining exterior CHASM, Region Frame selection and `ProcgenVoidCliffFace` as presentation/semantic authorities.
 - Completion boundary: Done when the approved `alpine-cliff-source-family-v1` source-master batch is fetched and verified; Codex derives and normalizes the exact 12-state `procgen_alpine_cliff_fascia` family, 10-state `procgen_alpine_cliff_contact` family and four new `procgen_depth_chunks` states through Asset Pipeline V2; the resulting exact 26-state Gate B handoff is published/verified as the AP2 closeout receipt; Alpine Region Frame data selects the frame-specific fascia vocabulary while the generic six-state `void_cliff_face` remains fallback; large contact compositions derive from the same exterior frontier/outward-direction evidence; directional visual depth is coherent; cliff bottoms disappear into the permanent fog stack; collision/navigation/topology remain unchanged; and compact fixed-seed multi-direction edge evidence receives human approval.
-- Current measured state: Generic `void_cliff_face` is a six-state 32×32 Asset V2 family consumed by `procgen_world_tileset.tres` and `ProcgenVoidCliffFace`. The presenter currently hard-codes source IDs 149–154 for `top`, three body roles and two bottom roles, already derives outward direction, supports wall-backed frontiers, deterministic clustered role/depth variation, and paints only presentation TileMap cells. This is the correct owner to extend rather than replace. The visual audit found that six repeated generic roles cannot carry the Alpine geographic scale by themselves. Existing Macro Presentation and `procgen_depth_chunks` already provide the correct BACK-band system for larger CHASM compositions. AP1 is now complete/landed. The approved AP2 source-master batch is present in Dropbox at `CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/`; its primary ZIP SHA-256 is `e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3`. The final Gate B runtime handoff is intentionally not present yet because AP2 produces it after source derivation and validation.
+- Current measured state: Generic `void_cliff_face` is a six-state 32×32 Asset V2 family consumed by `procgen_world_tileset.tres` and `ProcgenVoidCliffFace`. The presenter currently hard-codes source IDs 149–154 for `top`, three body roles and two bottom roles, already derives outward direction, supports wall-backed frontiers, deterministic clustered role/depth variation, and paints only presentation TileMap cells. This is the correct owner to extend rather than replace. The visual audit found that six repeated generic roles cannot carry the Alpine geographic scale by themselves. Existing Macro Presentation and `procgen_depth_chunks` already provide the correct BACK-band system for larger CHASM compositions. AP1 is now complete/landed. The approved AP2 source-master batch is present in Dropbox at `CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/`; its primary ZIP SHA-256 is `e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3`. AP2 closeout evidence: the immutable Gate B was published and independently fetched at /CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1/. Its manifest SHA-256 is e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6; the 26 exact runtime PNG payloads total 10,125,139 bytes.
 - Evidence: `design/02_features/procgen/ALPINE_PLATEAU_PRESENTATION_ASSET_MANIFEST.md`; `PROCGEN_REGION_FRAME_PROFILES.md`; `ELEVATED_WORLD_PRESENTATION.md`; `PROCGEN_DEPTH_CHUNKS.md`; `custodian/content/metadata/assets/families/void_cliff_face.asset.json`; `custodian/game/world/procgen/presentation/procgen_void_cliff_face.gd`; `procgen_region_frame_profile.gd`; `terrain_stamp_profile.gd`; `procgen_macro_presentation_composer.gd`; `terrain_stamp_catalog_v1.tres`; existing void-cliff and macro smokes.
 - Task-specific authority: Alpine presentation manifest; `DROPBOX_ASSET_BATCH_REGISTRY.md`; Region Frame profile; generic `ProcgenVoidCliffFace`; Asset Pipeline V2; Macro Presentation; `IMPLEMENTATION_HANDOFF.md`; `VISUAL_REVIEW_HANDOFF.md`.
 - Work surface: `custodian/game/world/procgen/presentation/{procgen_void_cliff_face.gd,procgen_region_frame_profile.gd}`; `presentation/region_frames/alpine_plateau.tres`; `custodian/content/tiles/tilesets/procgen_world_tileset.tres`; new family metadata for Alpine fascia/contact; existing `procgen_depth_chunks.asset.json`; new/updated `TerrainStampProfile` resources; `terrain_stamp_catalog_v1.tres`; focused validation.
@@ -135,13 +135,12 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 
 ## Completion Truth
 
-- Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: `<fill at closeout>`
-
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: no
+- Superseded/legacy production path disposition: intentionally-preserved
+- Evidence: The registered alpine-cliff-source-family-v1 source ZIP SHA-256 e804c5d9d55f0610cafde5f4169a6b36438b0e08469b212ac3fff84618b127f3 was verified. Asset verification passed for 26/26 states. Immutable Gate B at /CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1/ contains exactly 26 payload PNGs (12 fascia, 10 contact, 4 depth chunks), 10,125,139 bytes, with manifest SHA-256 e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6; fresh fetch independently confirmed runtime byte equality, hashes, sizes, RGBA mode and dimensions. The user recovered and reported the October 15 PASS/PASS/PASS human disposition for clean capture e2c7b7de038e799c5af16b11c63f66a8f86d75a0 / SOUTH SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. Exact separate visual-review URL unavailable; October 14 failures remain historical. Seven focused checks passed for Alpine presentation, accepted-world parity, macro presentation, void-cliff face/wall integration, Region Frame and elevated-world asset contract. The canonical changed-file run against origin/main had complete ownership coverage across 223 changed paths, but failed at actor tier: 43 passed, 1 failed, 42 skipped. The failed selected test was npa_showcase_existing_enemy; its diagnostics include missing semantic animation unarmed/transition/dodge_chain_release_01/omni/fx, invalid operator_down access in OperatorDeathCampaignBinding, and failure to collect corpse payload. This is not established as an Alpine defect, so no unrelated runtime change or waiver was made. Reviewed evidence was deleted through the supported delete-after-review lifecycle. AP2 remains active and unarchived pending an authorized resolution of this validation blocker.
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
@@ -268,7 +267,7 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Tooling / docs drift discovered: `Moment Forge output is constrained to reports/moment_forge.`
 - Follow-up: `fixed-in-scope`
 
-## Handoff
+## Handoff — human disposition pending at that earlier point (historical)
 
 - Next workstream: `procgen-alpine-cliff-presentation-v1`
 - Next packet state: `human-required`
@@ -290,3 +289,42 @@ The October 15, 2026 ChatGPT visual-review decision was recovered from the user'
 Evidence identity: /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json; clean capture commit e2c7b7de038e799c5af16b11c63f66a8f86d75a0; dirty=false; SOUTH frame tick_000075.png; SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The exact separate visual-review conversation URL was not recovered. This records the user-reported ChatGPT disposition and does not claim the user personally authored a separate review verdict.
 
 The October 14 FAIL / FAIL / PASS findings above remain historical findings. They were superseded by the October 15 review of the changed clean capture and are not rewritten.
+
+## AP2 Closeout Evidence and Blocker — 2026-10-24
+
+### Recovered human disposition
+
+The October 15, 2026 ChatGPT visual decision was recovered from the user's report of the earlier review conversation; it was reviewed around 08:57 UTC and reaffirmed around 16:19 UTC. Verdict: **APPROVED — PASS / PASS / PASS**.
+
+- SOUTH joins the playable terrace/fascia without a visible gap.
+- SOUTH reads as attached geology, without a detached mass or crop wall.
+- North/east/west remain acceptable, with truthful playable-edge presentation.
+
+Evidence: /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json; clean capture commit e2c7b7de038e799c5af16b11c63f66a8f86d75a0; dirty=false; SOUTH frame tick_000075.png; SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The separate visual-review conversation URL was not recovered. This entry records the user's report of the earlier ChatGPT disposition; it does not claim that the user personally authored a separate verdict. October 14 FAIL / FAIL / PASS reviews remain in the chronology as superseded evidence.
+
+### Gate B and cleanup receipts
+
+Canonical Gate B: /CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1/. Manifest SHA-256 e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6; 26 PNGs, 10,125,139 bytes; family counts 12 fascia, 10 contact, 4 depth chunks. Independent fetch verified exact payload set, hashes, sizes, runtime byte equality, PNG/RGBA identity and manifest dimensions. No payload was re-uploaded during closeout.
+
+Reviewed-evidence cleanup receipt: CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON {"latest_pointer_removed":true,"manifest_path":"/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json","retention_policy":"delete-after-review","reviewed_by":"chatgpt-user","run_id":"20261015T060324Z","schema":"custodian.visual_review_cleanup.v1","status":"deleted","workstream":"procgen-alpine-cliff-presentation-v1"}.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: blocked
+- Friction severity: high
+- What went wrong: Canonical changed-file validation against origin/main had complete ownership coverage but failed one selected actor-tier test; 42 higher-tier tests were skipped.
+- Root cause / contributing factors: npa_showcase_existing_enemy reports missing Operator semantic animation unarmed/transition/dodge_chain_release_01/omni/fx, invalid operator_down access in OperatorDeathCampaignBinding, and a corpse-loot collection assertion. Its causal relationship to Alpine is not established; it was selected via the branch-diff validation manifest. No unrelated runtime change was made.
+- Prevention / pipeline improvement: Preserve the failed report and resolve the NPA owning contract before a new canonical validation and finish. Do not waive the selected test or land with skipped tests.
+- Tooling / docs drift discovered: Alpine preparation and asset-verification paths lacked changed-file ownership; both are now assigned to procgen_alpine_cliff_presentation.
+- Follow-up: manual-follow-up
+- What worked: Gate B fetch, recovered human approval record, supported review cleanup and all seven focused Alpine/semantic checks passed.
+## Next Handoff
+- Next workstream: procgen-alpine-cliff-presentation-v1
+- Next packet state: ready
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+- Refresh reason: none
+- Next action: Stop within the two-turn closeout budget. Resolve the selected npa_showcase_existing_enemy failure through its owning authority before preflight or finish. Preserve the active Alpine claim until a green canonical changed-file report exists.
+- Blockers or open questions: npa_showcase_existing_enemy fails with missing Operator semantic animation unarmed/transition/dodge_chain_release_01/omni/fx, invalid operator_down access, and corpse-loot collection failure; canonical report has 42 higher-tier skips.

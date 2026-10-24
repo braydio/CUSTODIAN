@@ -904,7 +904,9 @@
         "custodian/tools/iteration/godot/moment_probe_collector.gd",
         "custodian/tools/iteration/scenarios/procgen/alpine_plateau_edge_review.json",
         "custodian/game/world/procgen/presentation/fascia/alpine_plateau.tres",
-        "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/**"
+        "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/**",
+        "custodian/tools/art/prepare_alpine_cliff_presentation_v1.py",
+        "custodian/tools/validation/verify_alpine_cliff_presentation_assets.py"
       ],
       "timeout_sec": 45,
       "needs_import": true
