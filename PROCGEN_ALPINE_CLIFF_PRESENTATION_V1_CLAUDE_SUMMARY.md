@@ -42,3 +42,8 @@ Moved sockets for `south_broad_01`, `south_broken_01`, and `south_rooted_01` to 
 - Refresh reason: none
 - Next action: Record the human visual disposition for `/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json`; run its delete-after-review cleanup after disposition. Close AP2 only if the human gate passes.
 - Blockers or open questions: Human visual disposition pending; AP2 remains open and AP3 remains gated.
+
+
+## Recovered visual disposition — 2026-10-24
+
+The user recovered the actual October 15, 2026 ChatGPT review outcome and confirmed it was reaffirmed later that day. Final disposition: PASS / PASS / PASS for the SOUTH terrace/fascia join, attached-geology silhouette, and N/E/W composition with truthful playable edges. Evidence: /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json; clean capture e2c7b7de038e799c5af16b11c63f66a8f86d75a0; SOUTH tick_000075.png, SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The separate visual-review conversation URL could not be recovered. This disposition is based on the user's report of that earlier ChatGPT review; no new review was performed. The October 14 failures remain in the chronology as superseded historical results.

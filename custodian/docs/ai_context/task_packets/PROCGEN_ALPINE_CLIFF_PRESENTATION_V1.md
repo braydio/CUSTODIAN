@@ -278,3 +278,15 @@ Exactly 26 final PNGs. This is a closeout/downstream receipt, not the prerequisi
 - Refresh reason: `none`
 - Next action: `Record the human disposition for /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json and run delete-after-review cleanup. Close AP2 only if accepted.`
 - Blockers or open questions: `Human disposition pending; AP2 open; AP3 gated.`
+
+## 2026-10-24 Recovered October 15 Human Visual Disposition
+
+The October 15, 2026 ChatGPT visual-review decision was recovered from the user's report of the earlier review conversation. The clean capture was reviewed on October 15 around 08:57 UTC and the decision was reaffirmed around 16:19 UTC. The final disposition is **APPROVED — PASS / PASS / PASS**:
+
+- **PASS:** SOUTH joins the playable terrace/fascia without a visible gap.
+- **PASS:** SOUTH reads as attached geology, without a detached mass or crop wall.
+- **PASS:** North/east/west remain acceptable and the presentation truthfully shows playable edges.
+
+Evidence identity: /CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json; clean capture commit e2c7b7de038e799c5af16b11c63f66a8f86d75a0; dirty=false; SOUTH frame tick_000075.png; SHA-256 c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b. The exact separate visual-review conversation URL was not recovered. This records the user-reported ChatGPT disposition and does not claim the user personally authored a separate review verdict.
+
+The October 14 FAIL / FAIL / PASS findings above remain historical findings. They were superseded by the October 15 review of the changed clean capture and are not rewritten.
