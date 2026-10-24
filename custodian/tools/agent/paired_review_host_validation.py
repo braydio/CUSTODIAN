@@ -99,6 +99,25 @@ _PROCESSION_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
 )
 
+# Historical review-of-recovery source scope: permit exactly the two omitted
+# files in this one immutable recovery archive. This does NOT approve the P1
+# source-scope attestation, which still requires its independent review PASS.
+_PROCESSION_RECOVERY_ARCHIVE = "c0f9d325e75cdb121489898f9f34a5f5c47f3196"
+_PROCESSION_RECOVERY_PACKET_BLOB = "73e6e864d5212289d46e1eb88a48fd040435ee95"
+_PROCESSION_RECOVERY_UNDECLARED_FILES = {
+    f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md":
+        "8e37fe7ce02fa4948e05034dbcb49e02401007a0",
+    "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json":
+        "fa581b9ce63a29100219bf57044e9cd0856d426b",
+}
+_PROCESSION_RECOVERY_EXTRA_FILES = frozenset({
+    *_PROCESSION_RECOVERY_UNDECLARED_FILES,
+    "custodian/tools/agent/paired_review_host_validation.py",
+    "custodian/tools/agent/test_paired_review_runner.py",
+    "custodian/tools/validation/validation_manifest.json",
+})
+
+
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
 _RESET_FOLLOWUP_RUN_ID = "20261020T135839Z-db96534ed3a7"
 _RESET_FOLLOWUP_BASE = "b5a46e82913455cb341c84811fd9be66b78ed138"
@@ -1636,6 +1655,34 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
     }
 
 
+def _verified_procession_recovery_historical_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Admit only two exact P1-recovery source files omitted by its packet.
+
+    The correction's archived packet and omitted files must match the Git
+    objects committed in its original source-bearing archive. This grants no
+    approval to the separate P1 attestation, and applies to no other review.
+    """
+    if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
+        return set()
+    if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
+            or target_packet_path != _PROCESSION_SCOPE_CORRECTION_PACKET
+            or extra_archive_paths != _PROCESSION_RECOVERY_EXTRA_FILES):
+        raise HostValidationError("Procession recovery historical source scope does not match its exact archive")
+    if _git_tree_entry(repo, landing_commit, target_packet_path) != (
+        "100644", _PROCESSION_RECOVERY_PACKET_BLOB,
+    ):
+        raise HostValidationError("pinned Procession recovery archived packet blob or mode changed")
+    for path, blob in _PROCESSION_RECOVERY_UNDECLARED_FILES.items():
+        if _git_tree_entry(repo, landing_commit, path) != ("100644", blob):
+            raise HostValidationError(
+                f"pinned Procession recovery source blob or mode changed: {path}"
+            )
+    return set(_PROCESSION_RECOVERY_UNDECLARED_FILES)
+
+
 def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
                                           landing_commit: str,
                                           extra_archive_paths: set[str]) -> dict:
@@ -2249,6 +2296,9 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         if path.endswith(".gd.uid") and path[:-4] in extra_archive_paths
     }
     scope_attestation = None
+    historical_recovery_paths = _verified_procession_recovery_historical_scope(
+        repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+    ) if target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM else set()
     if source_bearing_archive:
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
@@ -2264,7 +2314,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             scope_attestation = _verified_grunt_scope_attestation(
                 repo, reviewed_main, extra_archive_paths,
             )
-        attested_paths = set(scope_attestation["source_files"]) if scope_attestation else set()
+        attested_paths = (
+            (set(scope_attestation["source_files"]) if scope_attestation else set())
+            | historical_recovery_paths
+        )
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
                and not (source_artifact is not None and path == source_artifact["path"])
@@ -2430,7 +2483,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
 
     attested_source_paths = (
-        set(scope_attestation["source_files"]) if scope_attestation is not None else set()
+        (set(scope_attestation["source_files"]) if scope_attestation is not None else set())
+        | historical_recovery_paths
     )
 
     def is_documented(path: str) -> bool:
