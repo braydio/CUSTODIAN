@@ -4022,6 +4022,62 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 + b"\n".join(entries) + b"\n"
                 + host_validation.MANAGED_BLOCK_END.encode() + suffix)
 
+    def test_procession_recovery_archive_two_omitted_paths_are_exactly_pinned(self):
+        # The original recovery packet named an obsolete attestation JSON and
+        # omitted the changed paired-review Markdown from Work surface.
+        scope = host_validation._verified_procession_recovery_historical_scope
+        archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
+        target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        files = set(host_validation._PROCESSION_RECOVERY_EXTRA_FILES)
+        missing = set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES)
+
+        self.assertEqual(scope(ROOT, workstream, target, archive, files), missing)
+        self.assertEqual(scope(ROOT, "unrelated-workstream", target, archive, files), set())
+        for wrong_archive, wrong_packet, changed_paths in (
+            ("f" * 40, target, files),
+            (archive, "custodian/docs/ai_context/task_packets/archived/OTHER.md", files),
+            (archive, target, files - missing),
+            (archive, target, files | {"custodian/game/world/fake.gd"}),
+        ):
+            with self.subTest(archive=wrong_archive, packet=wrong_packet, paths=changed_paths):
+                with self.assertRaises(host_validation.HostValidationError):
+                    scope(ROOT, workstream, wrong_packet, wrong_archive, changed_paths)
+
+        real_tree_entry = host_validation._git_tree_entry
+        for corrupted in (target, *sorted(missing)):
+            with self.subTest(corrupted=corrupted):
+                def altered(repo, revision, path):
+                    if revision == archive and path == corrupted:
+                        return ("100755", "0" * 40)
+                    return real_tree_entry(repo, revision, path)
+                with patch.object(host_validation, "_git_tree_entry", side_effect=altered):
+                    with self.assertRaises(host_validation.HostValidationError):
+                        scope(ROOT, workstream, target, archive, files)
+
+    def test_procession_recovery_actual_source_span_is_bounded(self):
+        # Catch the *next* host-validation path gate before claiming another
+        # reviewer. This is the real landed recovery, not a synthetic packet.
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname)",
+             f"refs/remotes/origin/agent-diagnostics/{workstream}/"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.splitlines()
+        if not refs:
+            self.skipTest("canonical Procession recovery landing traces are not present")
+        reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
+        archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
+        span = host_validation.resolve_validation_source_span(
+            ROOT, reviewed_main, archive, workstream,
+            host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+        )
+        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
+        self.assertEqual(
+            set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES).difference(span["paths"]),
+            set(),
+        )
+
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
         old = "- `OLD.md` — old".encode()
