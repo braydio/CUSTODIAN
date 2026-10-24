@@ -33,4 +33,6 @@
 
 ## Procedure
 
+Do not claim while this is draft/manual: the matching implementation and independent review first require the existing automated authoring preflight and explicit main publication. This is a temporary authoring gate, not permission to weaken reviewer independence or claim evidence.
+
 Start only after normal dispatcher eligibility proves the implementation archived complete on current main. Use a fresh review worktree/context and original evidence; run focused and adversarial fixtures, record all findings with stable cycle IDs and the genuine durable `custodian.review_outcome.v1`. No self-review or source mutation. Mark acceptance only on a verified independent PASS and zero material gaps; otherwise keep original owners and cases protected.
