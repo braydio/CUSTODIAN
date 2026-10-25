@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-source-strip-evidence-availability-correction-v1`
 - Authoring handoff: auto
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: operator-2-5d-cohort-dependency-closure-review-corrections-1
 - Locks: none

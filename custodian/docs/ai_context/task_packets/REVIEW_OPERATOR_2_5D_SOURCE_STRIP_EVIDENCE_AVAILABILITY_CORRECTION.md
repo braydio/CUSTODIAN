@@ -4,8 +4,8 @@
 - Workstream: `review-operator-2-5d-source-strip-evidence-availability-correction-v1`
 - Authoring handoff: auto
 - Kind: review
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: operator-2-5d-source-strip-evidence-availability-correction-v1
 - Locks: none
