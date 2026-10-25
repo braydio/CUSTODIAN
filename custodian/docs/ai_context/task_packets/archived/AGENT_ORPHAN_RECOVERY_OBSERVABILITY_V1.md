@@ -2,7 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: agent-orphan-recovery-observability-v1
-- Status: ready
+- Status: complete
 - Dispatch: auto
 - Priority: P1
 - Depends on: review-agent-paired-review-coordinator-boundary-v1-review-corrections-2
@@ -65,3 +65,23 @@ Implement `session_supervisor.py` as an explicit optional wrapper for **future a
 **Claim gate:** After this change lands, ask the live dispatcher whether the OR1 packet is eligible. An archived `Status: complete` dependency alone is insufficient without the canonical accepted review and queue validation. If it is not eligible, preserve the reason and correct the actual predicate instead of bypassing dispatch. OR2 still retains the broad `agent-workflow` lock and is not made claimable by this change.
 
 **Separate incident:** The host-reported `operator-ranged-domain-extraction` is an uninstrumented `operator-runtime` holder; its remote branch diverges from `main` and has 3 unique commits. This packet does not park, edit, restore, or delete that owner's work, and may not rewrite the pinned failed renderer review.
+
+## Completion Truth
+- Completion schema: custodian.task_completion.v1
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: n/a
+- Evidence: `session_supervisor.py` and `workstream_recovery.py` add explicit supervised liveness and a read-only recovery audit; 18 focused tests plus 351 existing dispatch/workstream/paired-review regressions passed; changed-file validation passed 15/15; read-only live audit preserved coordination and Operator art worktree status/refs and the root PNG SHA-256.
+- Landed implementation: pending `workstream.py finish`.
+
+## Execution Feedback
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: success
+- Friction severity: low
+- What went wrong: none; historical paired-review recovery metadata produces many conservative unresolved rows, as required when no canonical passing receipt is established.
+- Root cause / contributing factors: historical claim and review metadata records do not prove current process ownership or successful review completion.
+- Prevention / pipeline improvement: the observer binds local liveness to PID start ticks, boot and host identity, and leaves unverifiable review outcomes nonpassing.
+- Tooling / docs drift discovered: none
+- Follow-up: none
+- What worked: focused synthetic process tests and before/after root/art-worktree status, ref and hash comparisons.
