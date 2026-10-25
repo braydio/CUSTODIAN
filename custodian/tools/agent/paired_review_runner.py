@@ -2486,10 +2486,8 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
                                  attest_no_active_owner: bool = False,
                                  attest_no_unique_evidence: bool = False) -> dict:
     """Read-only exact-run preflight; caller holds the per-workstream review lock."""
-    if ((attest_no_active_owner or attest_no_unique_evidence)
-            and (workstream != CARROW_MISSING_WORKTREE_WORKSTREAM
-                 or run_id != CARROW_MISSING_WORKTREE_RUN_ID)):
-        raise RunnerError("Carrow operator attestations are valid only for the exact Carrow recovery run")
+    if attest_no_active_owner != attest_no_unique_evidence:
+        raise RunnerError("missing-checkout operator attestations must be supplied together")
     origin_main = _coordinator_checkout_sha(repo)
     remote_main = subprocess.run(["git", "ls-remote", "--heads", "origin", "main"],
                                  cwd=repo, text=True, capture_output=True)
@@ -2630,8 +2628,16 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     branch = f"agent/{workstream}"
     if original.get("branch") not in (None, branch):
         raise RunnerError("original run branch identity is not the canonical review branch")
+    recorded_worktree = original.get("recovery_worktree")
+    missing_prevalidation_checkout_candidate = (
+        ((prevalidation_interruption and isinstance(recorded_worktree, str) and bool(recorded_worktree))
+         and not Path(recorded_worktree).exists() and not Path(recorded_worktree).is_symlink())
+        or (workstream == CARROW_MISSING_WORKTREE_WORKSTREAM
+            and run_id == CARROW_MISSING_WORKTREE_RUN_ID)
+    )
     receipt, receipt_source = _host_validation_claim_receipt(
         run_dir, workstream, repo, original, active_path,
+        allow_missing_worktree=missing_prevalidation_checkout_candidate,
     )
     if completed_child:
         receipt_text = CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True)
@@ -2682,6 +2688,114 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("Carrow remote review branch moved from the pinned reviewed main")
         if git(repo, "rev-list", "--count", f"{CARROW_MISSING_WORKTREE_REVIEWED_MAIN}..refs/heads/{receipt['branch']}") != "0":
             raise RunnerError("Carrow review branch contains unique commits that recovery cannot preserve")
+    prevalidation_missing_worktree = (
+        prevalidation_interruption and not carrow_missing_worktree
+        and not worktree.exists() and not worktree.is_symlink()
+    )
+    missing_worktree_trace = None
+    remote_branch_sha = None
+    if prevalidation_missing_worktree:
+        if not (attest_no_active_owner and attest_no_unique_evidence):
+            raise RunnerError("missing pre-validation checkout requires both explicit operator attestations")
+        recorded = Path(str(receipt.get("worktree", ""))).expanduser()
+        expected_parent = (repo.parent / ".custodian-worktrees").resolve()
+        if (not recorded.is_absolute() or str(recorded) != str(worktree)
+                or recorded.resolve(strict=False) != recorded
+                or recorded.parent.resolve(strict=False) != expected_parent
+                or not expected_parent.is_dir()):
+            raise RunnerError("missing pre-validation checkout path is not its canonical managed location")
+        if (original.get("recovery_worktree") != str(recorded)
+                or original.get("branch") not in (None, receipt["branch"])
+                or original.get("worktree") not in (None, str(recorded))
+                or original.get("packet") not in (None, active_path)):
+            raise RunnerError("missing pre-validation checkout metadata differs from the original claim")
+        worktree_entries = [block for block in git(repo, "worktree", "list", "--porcelain").split("\n\n")
+                            if block.strip()]
+        if any(f"worktree {recorded}" in entry.splitlines() for entry in worktree_entries):
+            raise RunnerError("missing pre-validation checkout still has Git worktree metadata")
+        branch_ref = f"branch refs/heads/{receipt['branch']}"
+        if any(branch_ref in entry.splitlines() for entry in worktree_entries):
+            raise RunnerError("missing pre-validation branch is attached to another checkout")
+        if git(repo, "rev-parse", "--verify", f"refs/heads/{receipt['branch']}^{{commit}}") != reviewed_main:
+            raise RunnerError("missing pre-validation local review branch moved from its pinned baseline")
+        remote_branch = subprocess.run(["git", "ls-remote", "--heads", "origin", receipt["branch"]],
+                                       cwd=repo, text=True, capture_output=True)
+        if remote_branch.returncode:
+            raise RunnerError("cannot verify missing pre-validation remote review branch")
+        remote_rows = [line.split() for line in remote_branch.stdout.splitlines() if line.split()]
+        if remote_rows != [[reviewed_main, f"refs/heads/{receipt['branch']}"]]:
+            raise RunnerError("missing pre-validation remote review branch moved from its pinned baseline")
+        remote_branch_sha = remote_rows[0][0]
+        trace_ref = receipt.get("trace_ref")
+        claim_run_id = receipt.get("run_id")
+        expected_trace_ref = (f"refs/heads/agent-diagnostics/{workstream}/{claim_run_id}"
+                              if isinstance(claim_run_id, str) else "")
+        if (not isinstance(trace_ref, str) or trace_ref != expected_trace_ref
+                or not re.fullmatch(r"[A-Za-z0-9Tz-]+", str(claim_run_id or ""))):
+            raise RunnerError("missing pre-validation claim omits its exact diagnostic trace identity")
+        trace_branch = trace_ref.removeprefix("refs/heads/")
+        trace_remote = subprocess.run(["git", "ls-remote", "--heads", "origin", trace_branch],
+                                      cwd=repo, text=True, capture_output=True)
+        if trace_remote.returncode:
+            raise RunnerError("cannot verify missing pre-validation diagnostic trace ref")
+        trace_rows = [line.split() for line in trace_remote.stdout.splitlines() if line.split()]
+        if len(trace_rows) != 1 or trace_rows[0][1] != trace_ref:
+            raise RunnerError("missing pre-validation diagnostic trace ref is absent or ambiguous")
+        cached_trace = subprocess.run(["git", "rev-parse", "--verify",
+                                       f"refs/remotes/origin/{trace_branch}^{{commit}}"],
+                                      cwd=repo, text=True, capture_output=True)
+        if cached_trace.returncode or cached_trace.stdout.strip() != trace_rows[0][0]:
+            raise RunnerError("cached diagnostic trace ref is stale; fetch origin and re-plan")
+        trace_result = subprocess.run(["git", "show", f"origin/{trace_branch}:trace.jsonl"],
+                                      cwd=repo, capture_output=True)
+        if trace_result.returncode:
+            raise RunnerError("published missing pre-validation diagnostic trace is unavailable")
+        try:
+            trace_events = [json.loads(line) for line in trace_result.stdout.decode("utf-8").splitlines()
+                            if line.strip()]
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise RunnerError("published missing pre-validation trace is malformed") from exc
+        matching_events = [event for event in trace_events
+                           if event.get("workstream") == workstream
+                           and event.get("run_id") == claim_run_id]
+        run_started = [event for event in matching_events if event.get("event") == "run_started"]
+        published = [event for event in matching_events if event.get("event") == "worktree_published"]
+        started = [event for event in matching_events if event.get("event") == "start_completed"]
+        completed = [event for event in matching_events if event.get("event") == "run_completed"]
+        if (len(run_started) != 1 or len(published) != 1 or len(started) != 1 or len(completed) != 1
+                or any(event.get("schema") != "custodian.workflow_trace_event.v1"
+                       or event.get("schema_version") != 1 for event in matching_events)
+                or matching_events.index(run_started[0]) > matching_events.index(published[0])
+                or matching_events.index(published[0]) > matching_events.index(started[0])
+                or matching_events.index(started[0]) > matching_events.index(completed[0])
+                or matching_events[-1] is not completed[0]
+                or run_started[0].get("data", {}).get("packet") != active_path
+                or not isinstance(published[0].get("data"), dict)
+                or published[0]["data"].get("worktree") != str(recorded)
+                or published[0]["data"].get("branch") != receipt["branch"]
+                or published[0]["data"].get("head") != reviewed_main
+                or published[0]["data"].get("clean") is not True
+                or started[0].get("data", {}).get("worktree") != str(recorded)
+                or started[0].get("data", {}).get("branch") != receipt["branch"]
+                or completed[0].get("data", {}).get("outcome") != "claimed"):
+            raise RunnerError("published trace does not prove one clean original checkout publication")
+        if any("reviewer" in str(event.get("event", "")).lower()
+               or "continuation" in str(event.get("event", "")).lower()
+               for event in matching_events):
+            raise RunnerError("missing pre-validation trace records later reviewer or continuation activity")
+        process_owners = _processes_owning_review_checkout(recorded, workstream, run_id)
+        if process_owners:
+            raise RunnerError("an active process still owns the missing review checkout: "
+                              + ", ".join(str(item["pid"]) for item in process_owners))
+        missing_worktree_trace = {
+            "claim_run_id": claim_run_id,
+            "trace_ref": trace_ref,
+            "trace_commit": trace_rows[0][0],
+            "trace_sha256": _sha256_bytes(trace_result.stdout),
+            "active_process_owners": [],
+            "worktree_admin_entry_absent": True,
+            "branch_attachment_absent": True,
+        }
     recorded_worktree = original.get("recovery_worktree") if original.get("phase") == "host_validation_recovery" else original.get("worktree")
     if (receipt.get("branch") != branch or receipt.get("packet") != active_path
             or (recorded_worktree is not None and recorded_worktree != str(worktree))
@@ -2691,7 +2805,8 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
                 or child.get("reviewed_main") != reviewed_main
                 or child.get("implementation_commit") != original.get("implementation_commit")
                 or child.get("active_packet_path") != active_path))
-            or (completed_child is None and not failed_import and not carrow_missing_worktree and (
+            or (completed_child is None and not failed_import and not carrow_missing_worktree
+                and not prevalidation_missing_worktree and (
                 common_dir(worktree).resolve() != common
                 or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_main
                 or git(worktree, "status", "--porcelain", "--untracked-files=all")))):
@@ -2739,6 +2854,8 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         )
 
     required_evidence = [run_dir / "metadata.json", run_dir / "claim.stdout"]
+    if prevalidation_missing_worktree:
+        required_evidence.append(run_dir / "claim-receipt.json")
     if not prevalidation_interruption:
         required_evidence = [*report_paths, *required_evidence]
     evidence_hashes = {}
@@ -2759,6 +2876,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         "target_workstream": packet.review_target_workstream, "target_packet": target_path,
         "evidence_sha256": evidence_hashes, "continuation_state": completed_child,
         "host_validation_state": ("carrow_failed_nonimport_missing_worktree" if carrow_missing_worktree else
+                                  "pre_validation_missing_worktree" if prevalidation_missing_worktree else
                                   "failed_import" if failed_import else
                                   "pre_validation_interrupted" if prevalidation_interruption else "validated"),
         "operator_attestations": {
@@ -2781,6 +2899,20 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         "reviewer_context": "fresh", "will_create_claim": False,
         "will_modify_original_run_files": False,
     }
+    if prevalidation_missing_worktree:
+        evidence_hashes["claim-receipt.json"] = _sha256_bytes((run_dir / "claim-receipt.json").read_bytes())
+        plan.update({
+            "trace_ref": missing_worktree_trace["trace_ref"],
+            "trace_commit": missing_worktree_trace["trace_commit"],
+            "trace_sha256": missing_worktree_trace["trace_sha256"],
+            "remote_branch_sha": remote_branch_sha,
+            "missing_checkout_proof": missing_worktree_trace,
+            "worktree_reconstruction": {
+                "mode": "exact_claimed_checkout", "destination": str(worktree),
+                "branch": receipt["branch"], "head": reviewed_main,
+                "journal": "continuation-01/worktree-recovery.jsonl",
+            },
+        })
     encoded = json.dumps(plan, sort_keys=True, separators=(",", ":")).encode()
     plan["plan_sha256"] = hashlib.sha256(encoded).hexdigest()
     return plan
@@ -2807,7 +2939,7 @@ def plan_host_validation_recovery(repo: Path, workstream: str, run_id: str, *,
                 attest_no_active_owner=True, attest_no_unique_evidence=True,
             )
         if attest_no_active_owner != attest_no_unique_evidence:
-            raise RunnerError("Carrow operator attestations must be supplied together")
+            raise RunnerError("missing-checkout recovery attestations must be supplied together")
         return _host_recovery_plan_unlocked(repo, workstream, run_id)
 
 
@@ -2865,14 +2997,15 @@ def _legacy_claim_receipt(stdout: str, workstream: str, repo: Path, metadata: di
 
 
 def _host_validation_claim_receipt(run_dir: Path, workstream: str, repo: Path, metadata: dict,
-                                   packet: str) -> tuple[dict, str]:
+                                   packet: str, *,
+                                   allow_missing_worktree: bool = False) -> tuple[dict, str]:
     """Resolve structured or specifically truncated legacy claim evidence without writing it."""
     branch = f"agent/{workstream}"
     recorded_worktree = metadata.get("recovery_worktree")
     if not isinstance(recorded_worktree, str) or not recorded_worktree:
         raise RunnerError("legacy host-validation claim omits its recorded recovery worktree")
-    allow_missing_worktree = (workstream == CARROW_MISSING_WORKTREE_WORKSTREAM
-                              and metadata.get("run_id") == CARROW_MISSING_WORKTREE_RUN_ID)
+    if allow_missing_worktree and not (claim_file := run_dir / "claim-receipt.json").is_file():
+        raise RunnerError("missing-checkout recovery requires the original structured claim receipt")
     expected = {"workstream": workstream, "branch": branch,
                 "worktree": str(Path(recorded_worktree).resolve()), "packet": packet}
     for name, value in (("branch", branch), ("worktree", expected["worktree"]), ("packet", packet)):
@@ -2926,6 +3059,48 @@ def _host_validation_claim_receipt(run_dir: Path, workstream: str, repo: Path, m
     if any(receipt.get(field) != value for field, value in expected.items()):
         raise RunnerError("original dispatcher receipt differs from canonical claim identity")
     return receipt, source
+
+
+def _processes_owning_review_checkout(worktree: Path, workstream: str, run_id: str) -> list[dict[str, object]]:
+    """Find same-user processes that still reference an exact lost reviewer checkout."""
+    proc_root = Path("/proc")
+    if not proc_root.is_dir():
+        raise RunnerError("host process ownership cannot be verified on this platform")
+    excluded = {os.getpid()}
+    parent = os.getppid()
+    while parent > 1 and parent not in excluded:
+        excluded.add(parent)
+        try:
+            fields = (proc_root / str(parent) / "stat").read_text().rsplit(")", 1)[1].split()
+            parent = int(fields[1])
+        except (OSError, ValueError, IndexError):
+            break
+    expected = str(worktree)
+    owners = []
+    for entry in proc_root.iterdir():
+        if not entry.name.isdigit() or int(entry.name) in excluded:
+            continue
+        try:
+            if entry.stat().st_uid != os.getuid():
+                continue
+            process_name = (entry / "comm").read_text().strip()
+            if process_name in {"systemd", "(sd-pam)", "ssh-agent"}:
+                continue
+            command = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode("utf-8", "replace")
+            cwd = os.readlink(entry / "cwd").removesuffix(" (deleted)")
+        except FileNotFoundError:
+            continue
+        except PermissionError as exc:
+            raise RunnerError(f"cannot inspect same-user process {entry.name} for review ownership") from exc
+        if cwd == expected or expected in command:
+            owners.append({"pid": int(entry.name), "cwd_match": cwd == expected,
+                           "command_path_match": expected in command})
+            continue
+        command_lower = command.lower()
+        if ((workstream in command or run_id in command)
+                and any(token in command_lower for token in ("codex", "paired_review_runner", "workstream.py"))):
+            owners.append({"pid": int(entry.name), "identity_command_match": True})
+    return owners
 
 
 def _claim_json_was_truncated(payload: str, error: json.JSONDecodeError) -> bool:
@@ -3426,31 +3601,39 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             )
             if not plan_sha256 or plan.get("plan_sha256") != plan_sha256:
                 raise RunnerError("apply requires the exact SHA-256 from a fresh read-only recovery plan")
-            carrow_reconstruction = plan.get("host_validation_state") == "carrow_failed_nonimport_missing_worktree"
-            if carrow_reconstruction:
+            reconstruction_state = plan.get("host_validation_state")
+            missing_checkout_reconstruction = reconstruction_state in {
+                "carrow_failed_nonimport_missing_worktree", "pre_validation_missing_worktree"
+            }
+            carrow_reconstruction = reconstruction_state == "carrow_failed_nonimport_missing_worktree"
+            if missing_checkout_reconstruction:
                 if not (attest_no_active_owner and attest_no_unique_evidence):
-                    raise RunnerError("Carrow missing-worktree recovery requires both explicit operator attestations")
+                    raise RunnerError("missing-worktree recovery requires both explicit operator attestations")
                 if plan.get("operator_attestations") != {
                         "no_active_review_owner": True,
                         "no_unique_untracked_or_ignored_evidence": True}:
-                    raise RunnerError("Carrow recovery plan does not bind both required operator attestations")
+                    raise RunnerError("missing-worktree recovery plan does not bind both required operator attestations")
                 continuation_dir = run_dir / "continuation-01"
                 worktree = Path(plan["worktree"]).resolve()
                 receipt, _ = _host_validation_claim_receipt(
                     run_dir, workstream, repo, original, str(plan["packet"]),
+                    allow_missing_worktree=True,
                 )
                 if worktree != Path(receipt["worktree"]).resolve() or worktree.exists() or worktree.is_symlink():
-                    raise RunnerError("Carrow recovery destination changed after the fresh plan")
+                    raise RunnerError("missing-worktree recovery destination changed after the fresh plan")
                 if worktree.parent.name != ".custodian-worktrees" or not worktree.parent.is_dir():
-                    raise RunnerError("Carrow recorded checkout parent is absent or outside the managed worktree root")
+                    raise RunnerError("recorded checkout parent is absent or outside the managed worktree root")
+                reviewed_head = plan["reviewed_main"]
+                implementation_head = plan["implementation_commit"]
+                original_manifest = _file_manifest(run_dir)
                 reconstruction_record = {
                     "schema": CONTINUATION_SCHEMA, "workstream": workstream, "run_id": run_id,
                     "phase": "worktree_reconstruction_started", "created_utc": datetime.now(timezone.utc).isoformat(),
                     "original_run_dir": str(run_dir), "branch": receipt["branch"],
-                    "worktree": str(worktree), "reviewed_main": CARROW_MISSING_WORKTREE_REVIEWED_MAIN,
-                    "implementation_commit": CARROW_MISSING_WORKTREE_IMPLEMENTATION,
-                    "original_run_manifest": CARROW_MISSING_WORKTREE_RUN_MANIFEST,
-                    "original_run_manifest_sha256": _manifest_digest(CARROW_MISSING_WORKTREE_RUN_MANIFEST),
+                    "worktree": str(worktree), "reviewed_main": reviewed_head,
+                    "implementation_commit": implementation_head,
+                    "original_run_manifest": original_manifest,
+                    "original_run_manifest_sha256": _manifest_digest(original_manifest),
                     "recovery_plan_sha256": plan_sha256,
                     "operator_attestations": plan["operator_attestations"],
                     "reviewer_launch_count": 0, "host_validation_attempts": [],
@@ -3458,25 +3641,44 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 continuation_dir.mkdir(parents=False, exist_ok=False)
                 _write_bytes_exclusive(continuation_dir / "metadata.json",
                                        (json.dumps(reconstruction_record, indent=2, sort_keys=True) + "\n").encode())
+                journal_path = continuation_dir / "worktree-recovery.jsonl"
+                journal_event = {"schema": "custodian.paired_review_worktree_recovery_event.v1",
+                                 "event": "reconstruction_started", "run_id": run_id,
+                                 "workstream": workstream, "plan_sha256": plan_sha256,
+                                 "worktree": str(worktree), "branch": receipt["branch"],
+                                 "head": reviewed_head, "original_run_manifest_sha256": _manifest_digest(original_manifest)}
+                _write_bytes_exclusive(journal_path,
+                                       (json.dumps(journal_event, sort_keys=True) + "\n").encode())
                 try:
                     subprocess.run(["git", "worktree", "add", str(worktree), receipt["branch"]],
                                    cwd=repo, text=True, capture_output=True, check=True)
                     if (common_dir(worktree).resolve() != common
                             or git(worktree, "branch", "--show-current") != receipt["branch"]
-                            or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != CARROW_MISSING_WORKTREE_REVIEWED_MAIN
+                            or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_head
                             or git(worktree, "status", "--porcelain=v1", "--untracked-files=all")):
-                        raise RunnerError("reconstructed Carrow checkout failed exact clean identity verification")
+                        raise RunnerError("reconstructed checkout failed exact clean identity verification")
                 except (OSError, subprocess.SubprocessError, RunnerError) as exc:
                     reconstruction_record["phase"] = "worktree_reconstruction_partial"
                     reconstruction_record["error"] = redact(str(exc))
                     _write_atomic(continuation_dir / "metadata.json",
                                   json.dumps(reconstruction_record, indent=2, sort_keys=True) + "\n")
-                    raise RunnerError("Carrow checkout reconstruction is partial; preserve it and do not replay") from exc
+                    journal_event = {**journal_event, "event": "reconstruction_partial", "error": redact(str(exc))}
+                    with journal_path.open("ab") as journal:
+                        journal.write((json.dumps(journal_event, sort_keys=True) + "\n").encode())
+                        journal.flush()
+                        os.fsync(journal.fileno())
+                    raise RunnerError("checkout reconstruction is partial; preserve it and do not replay") from exc
                 reconstruction_record["phase"] = "worktree_reconstructed"
                 _write_atomic(continuation_dir / "metadata.json",
                               json.dumps(reconstruction_record, indent=2, sort_keys=True) + "\n")
+                journal_event = {**journal_event, "event": "reconstruction_complete"}
+                with journal_path.open("ab") as journal:
+                    journal.write((json.dumps(journal_event, sort_keys=True) + "\n").encode())
+                    journal.flush()
+                    os.fsync(journal.fileno())
         else:
             carrow_reconstruction = False
+            missing_checkout_reconstruction = False
 
         continuation_dir = run_dir / (
             MISSING_ARCHIVED_DISPOSITION_CHILD if recover_missing_archived_disposition else "continuation-01"
@@ -3492,7 +3694,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("exact invalid-disposition recovery requires the existing preserved continuation-01")
         retry_host_validation = False
         retry_child = None
-        if recover_host_validation and continuation_dir.is_dir() and not carrow_reconstruction:
+        if recover_host_validation and continuation_dir.is_dir() and not missing_checkout_reconstruction:
             retry_child = _continuation_metadata(child_metadata_path)
             retry_host_validation = retry_child.get("phase") == "host_validation_failed"
             if not retry_host_validation:
@@ -3500,7 +3702,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             if (retry_child.get("reviewer_launch_count") != 0
                     or retry_child.get("original_run_manifest") != _file_manifest(run_dir, omit=continuation_dir)):
                 raise RunnerError("failed host retry state changed or already launched a reviewer")
-        if continuation_dir.exists() and not retry_host_validation and not carrow_reconstruction:
+        if continuation_dir.exists() and not retry_host_validation and not missing_checkout_reconstruction:
             child = _continuation_metadata(child_metadata_path)
             if (child.get("run_id") != run_id or child.get("workstream") != workstream
                     or child.get("schema") != CONTINUATION_SCHEMA):
@@ -3806,7 +4008,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             worktree, active_path, summary_paths, allowed_untracked=allowed_import_sidecars,
         )
         original_run_manifest = (_file_manifest(run_dir, omit=continuation_dir)
-                                 if retry_host_validation or carrow_reconstruction else _file_manifest(run_dir))
+                                 if retry_host_validation or missing_checkout_reconstruction else _file_manifest(run_dir))
         if recover_missing_archived_disposition:
             if (parent_continuation_manifest is None
                     or _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT) != parent_continuation_manifest):
@@ -3819,10 +4021,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             host_evidence["continuation_dir"] = str(continuation_dir)
 
         # A single fixed child makes uncertain interruptions non-replayable.
-        if not retry_host_validation and not carrow_reconstruction:
+        if not retry_host_validation and not missing_checkout_reconstruction:
             continuation_dir.mkdir(parents=False, exist_ok=False)
         initial = retry_child if retry_host_validation else (
-            _continuation_metadata(child_metadata_path) if carrow_reconstruction else {
+            _continuation_metadata(child_metadata_path) if missing_checkout_reconstruction else {
             "schema": CONTINUATION_SCHEMA, "workstream": workstream, "run_id": run_id,
             "phase": "prepared", "created_utc": datetime.now(timezone.utc).isoformat(),
             "original_run_dir": str(run_dir), "branch": branch, "worktree": str(worktree),
@@ -3843,7 +4045,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 "host_validation_attempts": [],
                 "reviewer_launch_count": 0,
             })
-            if carrow_reconstruction:
+            if missing_checkout_reconstruction:
                 initial["original_run_manifest"] = original_run_manifest
                 initial["original_run_manifest_sha256"] = _manifest_digest(original_run_manifest)
                 initial["operator_attestations"] = plan["operator_attestations"]
@@ -3931,7 +4133,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                     target_workstream=packet.review_target_workstream,
                     target_packet_path=target_path,
                     **({"source_span_override": plan["source_span"]}
-                       if carrow_reconstruction else {}),
+                       if missing_checkout_reconstruction else {}),
                 )
             except (HostValidationError, OSError, subprocess.SubprocessError, ValueError) as exc:
                 attempt_manifest = _file_manifest(validation_dir)
@@ -4061,7 +4263,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 target_workstream=packet.review_target_workstream,
                 target_packet_path=target_path,
                 **({"source_span_override": plan["source_span"]}
-                   if carrow_reconstruction else {}),
+                   if missing_checkout_reconstruction else {}),
                 expected_report_sha256=host_evidence["report_sha256"],
                 expected_metadata_sha256=host_evidence["metadata_sha256"],
             )

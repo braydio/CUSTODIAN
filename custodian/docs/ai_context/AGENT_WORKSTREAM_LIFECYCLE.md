@@ -245,6 +245,25 @@ separately provenance-pinned source-bearing span immediately preceding it.
 Neither a green validation report nor an incomplete continuation is a review
 PASS. Inspect the child metadata and artifacts before any further recovery.
 
+For the separately guarded **missing-checkout pre-validation interruption**
+class, the same planner may admit a missing recorded worktree only after it
+authenticates the structured original claim, a unique published clean-checkout
+trace, exact local and remote branch heads at the pinned reviewed main, absent
+Git worktree/branch attachment, no report pair or continuation, and no active
+process or supervisor. This does not change ordinary claim-receipt parsing.
+The read-only plan binds the claim-receipt digest, trace commit/content digest,
+source span, evidence manifest, owner checks, and exact original path. Apply
+requires both explicit operator attestations (no active review owner and no
+unique untracked/ignored evidence at risk), revalidates the fresh plan under the
+review lock, journals the attempt before checkout creation, and reconstructs
+only the recorded path/branch at the pinned SHA. It must not use
+`workstream.py resume`, which may advance the branch. A partial reconstruction
+or existing journal/continuation is preserved and cannot be replayed. Canonical
+host validation still runs before a fresh independent reviewer may launch; a
+green report is not itself a review PASS. If either attestation or any
+provenance predicate is uncertain, leave the original claim and evidence
+untouched.
+
 For the exact failed Godot import recovery, a complete original failed report
 pair is eligible only when its immutable coordinator evidence classifies the
 failure as `infrastructure_failure: import`, names the exact protected run,

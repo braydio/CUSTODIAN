@@ -781,7 +781,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
                 "provenance": {"kind": "verified-test-fixture"}}
         with patch.object(runner, "resolve_target_implementation_commit",
                           return_value=(fixture["reviewed_main"], None)), \
-             patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             patch.object(runner, "_processes_owning_review_checkout", return_value=[]):
             plan = runner.plan_host_validation_recovery(
                 fixture["repo"], "review-sample", fixture["run_id"])
         self.assertEqual(plan["host_validation_state"], "pre_validation_interrupted")
@@ -792,6 +793,234 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertFalse((fixture["run_dir"] / "validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "coordinator-validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+
+    def _prepare_missing_prevalidation_checkout(self, fixture):
+        self._prepare_host_recovery(fixture, reports=False)
+        self._make_host_recovery_worktree_clean(fixture)
+        destination = fixture["repo"].parent / ".custodian-worktrees" / fixture["worktree"].name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "-C", str(fixture["repo"]), "worktree", "move",
+                        str(fixture["worktree"]), str(destination)], check=True)
+        fixture["worktree"] = destination
+        receipt = dict(fixture["receipt"], worktree=str(destination),
+                       run_id="20261017T120001Z-abcdef123456")
+        trace_ref = ("refs/heads/agent-diagnostics/review-sample/"
+                     "20261017T120001Z-abcdef123456")
+        receipt["trace_ref"] = trace_ref
+        fixture["receipt"] = receipt
+        (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(receipt, sort_keys=True) + "\n")
+        (fixture["run_dir"] / "claim.stdout").write_text(
+            runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n")
+        metadata_path = fixture["run_dir"] / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["recovery_worktree"] = str(destination)
+        metadata["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(metadata, sort_keys=True) + "\n")
+
+        events = [
+            {"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+             "workstream": "review-sample", "run_id": receipt["run_id"],
+             "event": "run_started", "data": {"packet": fixture["active"]}},
+            {"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+             "workstream": "review-sample", "run_id": receipt["run_id"],
+             "event": "worktree_published", "data": {
+                 "worktree": str(destination), "branch": "agent/review-sample",
+                 "head": fixture["reviewed_main"], "clean": True}},
+            {"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+             "workstream": "review-sample", "run_id": receipt["run_id"],
+             "event": "start_completed", "data": {
+                 "worktree": str(destination), "branch": "agent/review-sample"}},
+            {"schema": "custodian.workflow_trace_event.v1", "schema_version": 1,
+             "workstream": "review-sample", "run_id": receipt["run_id"],
+             "event": "run_completed", "data": {"outcome": "claimed"}},
+        ]
+        raw_trace = "".join(json.dumps(event, sort_keys=True) + "\n" for event in events).encode()
+        blob = subprocess.run(["git", "-C", str(fixture["repo"]), "hash-object", "-w", "--stdin"],
+                              input=raw_trace, check=True, capture_output=True, text=False).stdout.decode().strip()
+        tree = subprocess.run(["git", "-C", str(fixture["repo"]), "mktree"],
+                              input=f"100644 blob {blob}\ttrace.jsonl\n", check=True,
+                              capture_output=True, text=True).stdout.strip()
+        commit = subprocess.run(["git", "-C", str(fixture["repo"]), "commit-tree", tree,
+                                 "-m", "immutable workflow trace"], check=True,
+                                capture_output=True, text=True).stdout.strip()
+        subprocess.run(["git", "-C", str(fixture["repo"]), "update-ref", trace_ref, commit], check=True)
+        subprocess.run(["git", "-C", str(fixture["repo"]), "push", "-q", "origin",
+                        f"{trace_ref}:{trace_ref}"], check=True)
+        subprocess.run(["git", "-C", str(fixture["repo"]), "fetch", "-q", "origin"], check=True)
+        subprocess.run(["git", "-C", str(fixture["repo"]), "worktree", "remove",
+                        str(destination)], check=True)
+        fixture["trace_ref"] = trace_ref
+        fixture["trace_sha256"] = hashlib.sha256(raw_trace).hexdigest()
+
+    def test_missing_prevalidation_checkout_plan_is_exact_and_read_only(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_missing_prevalidation_checkout(fixture)
+        original_manifest = runner._file_manifest(fixture["run_dir"])
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "commits": [fixture["reviewed_main"]], "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             patch.object(runner, "_processes_owning_review_checkout", return_value=[]):
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+        self.assertEqual(plan["host_validation_state"], "pre_validation_missing_worktree")
+        self.assertEqual(plan["worktree"], str(fixture["worktree"]))
+        self.assertEqual(plan["branch"], "agent/review-sample")
+        self.assertEqual(plan["reviewed_main"], fixture["reviewed_main"])
+        self.assertEqual(plan["trace_ref"], fixture["trace_ref"])
+        self.assertEqual(plan["trace_sha256"], fixture["trace_sha256"])
+        self.assertEqual(plan["operator_attestations"], {
+            "no_active_review_owner": True,
+            "no_unique_untracked_or_ignored_evidence": True,
+        })
+        self.assertEqual(runner._file_manifest(fixture["run_dir"]), original_manifest)
+        self.assertFalse(fixture["worktree"].exists())
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+        self.assertEqual(subprocess.run(["git", "-C", str(fixture["repo"]), "rev-parse",
+                                         "refs/heads/agent/review-sample"], check=True,
+                                        text=True, capture_output=True).stdout.strip(),
+                         fixture["reviewed_main"])
+
+    def test_missing_prevalidation_checkout_apply_journals_before_reconstruction_and_launch(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_missing_prevalidation_checkout(fixture)
+        original_manifest = runner._file_manifest(fixture["run_dir"])
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "commits": [fixture["reviewed_main"]], "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             patch.object(runner, "_processes_owning_review_checkout", return_value=[]):
+            plan = runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True, attest_no_unique_evidence=True,
+            )
+            report = {"schema": "custodian.validation.result.v1", "passed": True,
+                      "coverage": {"complete": True}, "selected": [], "tests": []}
+
+            def green_validation(worktree, validation_dir, reviewed_main, implementation_commit, **kwargs):
+                report_bytes = (json.dumps(report, sort_keys=True) + "\n").encode()
+                metadata_bytes = b'{"schema":"synthetic-green-validation"}\n'
+                (validation_dir / "validation.json").write_bytes(report_bytes)
+                (validation_dir / "coordinator-validation.json").write_bytes(metadata_bytes)
+                return {"report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+                        "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest(),
+                        "evidence_run_dir": str(validation_dir), "source_span": span}
+
+            with patch.object(runner, "run_coordinator_validation", side_effect=green_validation), \
+                 patch.object(runner, "verify_coordinator_validation"), \
+                 patch.object(runner, "codex_preflight", return_value="codex-fixture") as preflight, \
+                 patch.object(runner, "launch_codex", side_effect=subprocess.TimeoutExpired("codex-fixture", 1)) as launch:
+                with self.assertRaisesRegex(runner.RunnerError, "fresh reviewer did not finish"):
+                    runner.continue_run(
+                        fixture["repo"], "review-sample", fixture["run_id"],
+                        authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                        attest_no_active_owner=True, attest_no_unique_evidence=True,
+                        plan_sha256=plan["plan_sha256"],
+                    )
+            preflight.assert_called_once()
+            launch.assert_called_once()
+        continuation = fixture["run_dir"] / "continuation-01"
+        events = [json.loads(line) for line in (continuation / "worktree-recovery.jsonl").read_text().splitlines()]
+        self.assertEqual([event["event"] for event in events], ["reconstruction_started", "reconstruction_complete"])
+        self.assertEqual(events[0]["plan_sha256"], plan["plan_sha256"])
+        self.assertTrue(fixture["worktree"].is_dir())
+        self.assertEqual(subprocess.run(["git", "-C", str(fixture["worktree"]), "rev-parse", "HEAD"],
+                                        check=True, text=True, capture_output=True).stdout.strip(),
+                         fixture["reviewed_main"])
+        child = json.loads((continuation / "metadata.json").read_text())
+        self.assertEqual(child["phase"], "reviewer_interrupted")
+        self.assertEqual(child["host_validation_attempts"][0]["status"], "passed")
+        self.assertEqual(runner._file_manifest(fixture["run_dir"], omit=continuation), original_manifest)
+
+    def test_missing_prevalidation_checkout_requires_paired_operator_attestations(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_missing_prevalidation_checkout(fixture)
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "paths": ["custodian/tools/agent/sample.py"], "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             self.assertRaisesRegex(runner.RunnerError, "attestations must be supplied together"):
+            runner.plan_host_validation_recovery(
+                fixture["repo"], "review-sample", fixture["run_id"],
+                attest_no_active_owner=True,
+            )
+
+    def test_missing_prevalidation_checkout_hostile_state_matrix_fails_closed(self):
+        cases = ("partial_report", "occupied_path", "active_process", "moved_local_branch",
+                 "missing_trace", "existing_continuation")
+        for case in cases:
+            with self.subTest(case=case):
+                fixture = self._continuation_fixture()
+                self.addCleanup(fixture["temp"].cleanup)
+                self._prepare_missing_prevalidation_checkout(fixture)
+                repo, worktree, run_dir = fixture["repo"], fixture["worktree"], fixture["run_dir"]
+                if case == "partial_report":
+                    (run_dir / "validation.json").write_text('{"passed":false}\n')
+                elif case == "occupied_path":
+                    worktree.mkdir()
+                    (worktree / "unique.txt").write_text("preserve")
+                elif case == "moved_local_branch":
+                    moved = subprocess.run(
+                        ["git", "-C", str(repo), "commit-tree", f"{fixture['reviewed_main']}^{{tree}}",
+                         "-p", fixture["reviewed_main"], "-m", "moved claimed branch"],
+                        check=True, text=True, capture_output=True,
+                    ).stdout.strip()
+                    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/heads/agent/review-sample", moved],
+                                   check=True)
+                elif case == "missing_trace":
+                    subprocess.run(["git", "-C", str(repo), "push", "-q", "origin", "--delete",
+                                    fixture["trace_ref"].removeprefix("refs/heads/")], check=True)
+                elif case == "existing_continuation":
+                    (run_dir / "continuation-01").mkdir()
+                    (run_dir / "continuation-01/metadata.json").write_text('{"phase":"partial"}\n')
+
+                span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                        "paths": ["custodian/tools/agent/sample.py"], "provenance": {"kind": "test-fixture"}}
+                patch_owner = (patch.object(runner, "_processes_owning_review_checkout",
+                                            return_value=[{"pid": 123, "command": "reviewer"}])
+                               if case == "active_process" else patch.object(
+                                   runner, "_processes_owning_review_checkout", wraps=runner._processes_owning_review_checkout))
+                patterns = {"partial_report": "report pair is incomplete", "occupied_path": "not a git repository|destination",
+                            "active_process": "active process", "moved_local_branch": "local review branch moved",
+                            "missing_trace": "trace ref is absent", "existing_continuation": "continuation children"}
+                with patch.object(runner, "resolve_target_implementation_commit",
+                                  return_value=(fixture["reviewed_main"], None)), \
+                     patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+                     patch_owner, self.assertRaisesRegex(runner.RunnerError, patterns[case]):
+                    runner.plan_host_validation_recovery(
+                        repo, "review-sample", fixture["run_id"],
+                        attest_no_active_owner=True, attest_no_unique_evidence=True,
+                    )
+
+    def test_missing_prevalidation_checkout_stale_plan_sha_creates_no_continuation(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_missing_prevalidation_checkout(fixture)
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "paths": ["custodian/tools/agent/sample.py"], "provenance": {"kind": "test-fixture"}}
+        with patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(fixture["reviewed_main"], None)), \
+             patch.object(host_validation, "resolve_validation_source_span", return_value=span), \
+             patch.object(runner, "_processes_owning_review_checkout", return_value=[]):
+            with self.assertRaisesRegex(runner.RunnerError, "exact SHA-256"):
+                runner.continue_run(
+                    fixture["repo"], "review-sample", fixture["run_id"],
+                    authorize_fresh_reviewer_context=True, recover_host_validation=True,
+                    attest_no_active_owner=True, attest_no_unique_evidence=True,
+                    plan_sha256="0" * 64,
+                )
+        self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+        self.assertFalse(fixture["worktree"].exists())
 
     def test_failed_import_recovery_plan_is_read_only_and_pins_exact_sidecars_and_failed_pair(self):
         fixture = self._continuation_fixture()
@@ -4068,15 +4297,19 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             self.skipTest("canonical Procession recovery landing traces are not present")
         reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
         archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
-        span = host_validation.resolve_validation_source_span(
-            ROOT, reviewed_main, archive, workstream,
-            host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
-        )
-        self.assertEqual(span["provenance"]["archive_kind"], "source-bearing")
-        self.assertEqual(
-            set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES).difference(span["paths"]),
-            set(),
-        )
+        with self.assertRaisesRegex(
+                host_validation.HostValidationError,
+                "main-sync merge changes reviewed source from archive-first-parent version") as caught:
+            host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, archive, workstream,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+            )
+        self.assertIn("f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3", str(caught.exception))
+        for source_path in (
+                "custodian/tools/agent/paired_review_host_validation.py",
+                "custodian/tools/agent/test_paired_review_runner.py",
+                "custodian/tools/validation/validation_manifest.json"):
+            self.assertIn(source_path, str(caught.exception))
 
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
@@ -4970,10 +5203,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                                  attestation=None, review_outcome="passed"):
         """Create disposable Git history for exact Procession scope approval checks."""
         repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
-        base_main = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-            check=True, text=True, capture_output=True,
-        ).stdout.strip()
+        base_main = "49a93aa726e26bd40220d3bdb658079ea9da3440"
         subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
                         str(repository)], check=True)
         subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
@@ -4997,11 +5227,20 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
         review_archive = host_validation._PROCESSION_SCOPE_REVIEW_PACKET
         attestation_path = host_validation._PROCESSION_SCOPE_ATTESTATION_PATH
+        correction_file = repository / correction_active
+        review_file = repository / review_active
+        if (not correction_file.is_file() or not review_file.is_file()
+                or (repository / correction_archive).exists()
+                or (repository / review_archive).exists()
+                or (repository / attestation_path).exists()):
+            self.fail("historical Procession fixture base must contain active packets and no attestation")
+        if ("- Status: `ready`" not in correction_file.read_text(encoding="utf-8")
+                or "- Status: `ready`" not in review_file.read_text(encoding="utf-8")):
+            self.fail("historical Procession fixture packets must both be ready before synthetic archival")
         source_attestation = (ROOT / attestation_path).read_text(encoding="utf-8")
         if attestation is not None:
             source_attestation = json.dumps(attestation, indent=2, sort_keys=True) + "\n"
 
-        correction_file = repository / correction_active
         correction_text = correction_file.read_text(encoding="utf-8")
         correction_text = correction_text.replace("- Status: `ready`", "- Status: `complete`", 1)
         correction_text += """
