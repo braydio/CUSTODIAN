@@ -34,12 +34,41 @@
 - Task overrides: none
 - Deferred: Physical recovery of historical source strips and any 2.5D cohort planning remain outside this correction.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: The producer now reports source-strip evidence as `VERIFIED`, `HASH_MISMATCH`, `UNAVAILABLE`, or `UNRECORDED`, with hash-match status remaining false unless the file bytes match the recorded correction hash. The live configured authoring workspace is readable and reports eight unavailable historical strips, zero verified strips, zero effective review receipts, seven candidate families / 56 directions, no timing authority, and `NOT_RELEASE_ELIGIBLE`. The focused smoke passes and exercises matching, tampered, missing, and unrecorded inputs.
+- Validation: Direct `operator_2_5d_cohort_dependency_closure_smoke.py` passed; `run_validation.py --test operator_2_5d_cohort_dependency_closure --json` passed 1/1; canonical `run_validation.py --changed --base origin/main --json` passed 1/1 with complete ownership coverage (2/2 changed files, zero uncovered, skipped, or failed tests); Python compilation and `git diff --check` passed.
+- Protected surfaces: No source strips were restored or generated. Runtime assets, timing authority, review receipts, candidate scope, release policy, and F3/Alpine worktrees were unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The prior smoke treated missing physical source files as hash failures despite the producer explicitly reporting them unavailable.
+- Root cause / contributing factors: Smoke asserted every historical source-strip hash matched without branching on the producer's availability state.
+- Prevention / pipeline improvement: The report now exposes a four-state source evidence classification; regression controls distinguish matching bytes, tampering, unavailable files, and unrecorded paths.
+- Tooling / docs drift discovered: none
+- Follow-up: review-operator-2-5d-source-strip-evidence-availability-correction-v1
+- What worked: Canonical changed-file validation selected only the registered closure smoke and covered both changed paths completely.
+
+## Independent Review
+
+- Status: pending
+- Review workstream: `review-operator-2-5d-source-strip-evidence-availability-correction-v1`
+- Review packet: `custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_SOURCE_STRIP_EVIDENCE_AVAILABILITY_CORRECTION.md`
+
 ## Next Handoff
-- Next workstream: none
-- Next packet state: none
+
+- Next workstream: review-operator-2-5d-source-strip-evidence-availability-correction-v1
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: Return to the already-claimed F3 and Alpine workstreams after this correction and its paired review complete.
+- Next action: Run the fresh-context paired review after this implementation is archived complete.
 - Blockers or open questions: none
