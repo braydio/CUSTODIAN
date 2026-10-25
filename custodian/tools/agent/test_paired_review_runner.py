@@ -3816,7 +3816,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         subprocess.run(["git", "commit", "-qm", message], cwd=self.root, check=True)
 
     def _build_checkpoint_resume_fixture(self, *, variant="valid"):
-        """Build a minimal real-Git checkpoint/resume history for adversarial controls."""
+        """Build real-Git lifecycle merge histories for adversarial controls."""
         repository = Path(self.temp.name) / f"checkpoint-{variant}"
         repository.mkdir()
         subprocess.run(["git", "init", "-q", str(repository)], check=True)
@@ -3983,10 +3983,27 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             (second_parent, first_parent) if variant == "reordered-parents"
             else (first_parent, second_parent)
         )
-        emit("checkpoint_completed", {"remote_head": trace_first_parent, "branch": branch,
-             "removed": False})
-        emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
-        emit("main_sync", {"changed": False, "head": landing, "main_sha": trace_second_parent})
+        checkpoint = {"remote_head": trace_first_parent, "branch": branch, "removed": False}
+        if variant == "interior-main-sync-forged-checkpoint":
+            checkpoint["branch"] = "agent/foreign-workstream"
+        emit("checkpoint_completed", checkpoint)
+        if variant == "interior-main-sync-duplicate-checkpoint":
+            emit("checkpoint_completed", checkpoint)
+        interior_sync = variant.startswith("interior-main-sync")
+        if not interior_sync:
+            emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
+        if interior_sync:
+            if variant != "interior-main-sync-missing-changed":
+                changed = {"changed": True, "head": merge, "main_sha": trace_second_parent}
+                if variant == "interior-main-sync-mismatched-head":
+                    changed["head"] = first_parent
+                emit("main_sync", changed)
+            if variant == "interior-main-sync-duplicate-changed":
+                emit("main_sync", {"changed": True, "head": merge, "main_sha": trace_second_parent})
+        if variant == "interior-main-sync-conflicting-resume":
+            emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
+        if variant != "interior-main-sync-missing-noop":
+            emit("main_sync", {"changed": False, "head": landing, "main_sha": trace_second_parent})
         if sync_side:
             emit("main_sync", {"changed": True, "head": trace_landing, "main_sha": sync_side})
         emit("landing_started", {"start_sha": trace_landing, "branch": branch, "target": "main"})
@@ -4005,6 +4022,37 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "merge": merge, "landing": landing, "trace_landing": trace_landing,
                 "reviewed_main": trace_landing, "workstream": workstream,
                 "archive": archive, "source_path": source_path, "test_path": test_path}
+
+    def test_interior_main_sync_merge_requires_exact_trace_and_excludes_inherited_paths(self):
+        valid = self._build_checkpoint_resume_fixture(variant="interior-main-sync")
+        span = host_validation.resolve_validation_source_span(
+            valid["repo"], valid["reviewed_main"], valid["landing"],
+            valid["workstream"], valid["archive"],
+        )
+        provenance = span["provenance"]["source_main_sync_merge"]
+        self.assertEqual(provenance["commit"], valid["merge"])
+        self.assertEqual(set(provenance["owned_paths"]), {
+            valid["source_path"], valid["test_path"],
+        })
+        self.assertEqual(span["paths"], sorted(provenance["owned_paths"]))
+        self.assertNotIn("published-main.md", span["paths"])
+
+        for variant, expected in (
+            ("interior-main-sync-forged-checkpoint", "unique matching checkpoint"),
+            ("interior-main-sync-duplicate-checkpoint", "unique matching checkpoint"),
+            ("interior-main-sync-missing-changed", "unique exact lifecycle witness"),
+            ("interior-main-sync-duplicate-changed", "unique exact lifecycle witness"),
+            ("interior-main-sync-mismatched-head", "unique exact lifecycle witness"),
+            ("interior-main-sync-missing-noop", "exact no-op main-sync witness"),
+            ("interior-main-sync-conflicting-resume", "conflicting in-place sync events"),
+        ):
+            with self.subTest(variant=variant):
+                fixture = self._build_checkpoint_resume_fixture(variant=variant)
+                with self.assertRaisesRegex(host_validation.HostValidationError, expected):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
 
     def _report(self, *, passed=True, changed_paths=None, selected=True):
         files = list(self.changed_paths if changed_paths is None else changed_paths)

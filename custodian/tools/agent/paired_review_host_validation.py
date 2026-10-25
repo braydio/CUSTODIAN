@@ -2381,6 +2381,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if len(merge_commits) > 1:
         raise HostValidationError("split source span contains multiple synchronization merges")
     checkpoint_resume_merge = None
+    source_main_sync_merge = None
     if merge_commits:
         if ref != claim_record["ref"] or run_id != claim_record["run_id"]:
             raise HostValidationError("checkpoint-resume merge claim and lifecycle events are not from one trace")
@@ -2408,32 +2409,52 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             and event["data"].get("branch") == claim_record["branch"]
             and event["data"].get("worktree") == claim_record["worktree"]
         ]
-        if len(checkpoint_events) != 1 or len(resume_events) != 1:
-            raise HostValidationError("checkpoint-resume merge lacks a unique matching lifecycle pair")
+        if len(checkpoint_events) != 1:
+            raise HostValidationError("synchronization merge lacks a unique matching checkpoint")
         checkpoint_pos, checkpoint_event = checkpoint_events[0]
-        resume_pos, resume_event = resume_events[0]
-        if checkpoint_pos >= resume_pos or resume_pos >= len(events) - 1:
-            raise HostValidationError("checkpoint-resume lifecycle events are out of order")
-        preceding_checkpoints = [event for i, event in enumerate(events)
-                                 if i < resume_pos and event.get("event") == "checkpoint_completed"]
         all_resumes = [event for event in events if event.get("event") == "worktree_resumed"]
-        if preceding_checkpoints != [checkpoint_event] or all_resumes != [resume_event]:
-            raise HostValidationError("checkpoint-resume trace contains conflicting lifecycle events")
         sync_events = [(i, event) for i, event in enumerate(events)
                        if event.get("event") == "main_sync"]
         later_noop = [(i, event) for i, event in sync_events
-                      if i > resume_pos and isinstance(event.get("data"), dict)
+                      if isinstance(event.get("data"), dict)
                       and event["data"].get("changed") is False
                       and event["data"].get("head") == landing_commit
                       and event["data"].get("main_sha") == second_parent]
         if len(later_noop) != 1:
-            raise HostValidationError("checkpoint-resume merge lacks its later exact no-op main-sync witness")
+            raise HostValidationError("synchronization merge lacks its exact no-op main-sync witness")
+        if len(resume_events) == 1:
+            resume_pos, resume_event = resume_events[0]
+            if checkpoint_pos >= resume_pos or resume_pos >= later_noop[0][0]:
+                raise HostValidationError("checkpoint-resume lifecycle events are out of order")
+            if all_resumes != [resume_event]:
+                raise HostValidationError("checkpoint-resume trace contains conflicting lifecycle events")
+            if any(isinstance(event.get("data"), dict)
+                   and event["data"].get("changed") is True
+                   and event["data"].get("head") == merge_sha
+                   and event["data"].get("main_sha") == second_parent
+                   for _, event in sync_events):
+                raise HostValidationError("checkpoint-resume trace contains conflicting in-place sync events")
+            merge_kind = "checkpoint-resume"
+        elif not resume_events and not all_resumes:
+            changed_sync = [(i, event) for i, event in sync_events
+                            if isinstance(event.get("data"), dict)
+                            and event["data"].get("changed") is True
+                            and event["data"].get("head") == merge_sha
+                            and event["data"].get("main_sha") == second_parent]
+            if len(changed_sync) != 1 or len(sync_events) != 2:
+                raise HostValidationError("in-place main-sync merge lacks its unique exact lifecycle witness")
+            changed_pos, changed_event = changed_sync[0]
+            if not checkpoint_pos < changed_pos < later_noop[0][0]:
+                raise HostValidationError("in-place main-sync lifecycle events are out of order")
+            merge_kind = "in-place-main-sync"
+        else:
+            raise HostValidationError("synchronization merge trace has conflicting resume events")
         merge_tree = subprocess.run(["git", "merge-tree", "--write-tree", first_parent, second_parent],
                                     cwd=repo, text=True, capture_output=True)
         stored_tree = _git(repo, "rev-parse", f"{merge_sha}^{{tree}}")
         if merge_tree.returncode or not merge_tree.stdout.splitlines() \
                 or merge_tree.stdout.splitlines()[0].strip() != stored_tree:
-            raise HostValidationError("checkpoint-resume merge tree differs from deterministic Git merge")
+            raise HostValidationError("synchronization merge tree differs from deterministic Git merge")
         inherited_paths = set(_changed_paths(repo, f"{source_base}..{second_parent}"))
         # Local authorship is the union of first-parent non-merge commit diffs.
         # Paths touched on both sides remain owned and keep their test coverage.
@@ -2441,21 +2462,33 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             if any(subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"],
                                   cwd=repo, capture_output=True).returncode
                    for revision in (merge_sha, source_head)):
-                raise HostValidationError("checkpoint-resume merge loses workstream-owned source")
-        checkpoint_resume_merge = {
+                raise HostValidationError("synchronization merge loses workstream-owned source")
+        merge_provenance = {
             "commit": merge_sha, "first_parent": first_parent, "second_parent": second_parent,
-            "checkpoint_event_index": checkpoint_pos, "resume_event_index": resume_pos,
+            "checkpoint_event_index": checkpoint_pos,
             "main_sync_event_index": later_noop[0][0], "tree": stored_tree,
             "checkpoint_event_id": {"run_id": run_id, "position": checkpoint_pos,
                                     "timestamp_utc": checkpoint_event.get("timestamp_utc")},
-            "resume_event_id": {"run_id": run_id, "position": resume_pos,
-                                "timestamp_utc": resume_event.get("timestamp_utc")},
             "main_sync_event_id": {"run_id": run_id, "position": later_noop[0][0],
                                    "timestamp_utc": later_noop[0][1].get("timestamp_utc")},
             "merge_tree_proof": "git-merge-tree-write-tree-exact",
             "owned_paths": sorted(owned_paths), "inherited_paths": sorted(inherited_paths),
             "overlapping_paths": sorted(owned_paths.intersection(inherited_paths)),
         }
+        if merge_kind == "checkpoint-resume":
+            merge_provenance["resume_event_index"] = resume_pos
+            merge_provenance["resume_event_id"] = {
+                "run_id": run_id, "position": resume_pos,
+                "timestamp_utc": resume_event.get("timestamp_utc"),
+            }
+            checkpoint_resume_merge = merge_provenance
+        else:
+            merge_provenance["changed_sync_event_index"] = changed_pos
+            merge_provenance["changed_sync_event_id"] = {
+                "run_id": run_id, "position": changed_pos,
+                "timestamp_utc": changed_event.get("timestamp_utc"),
+            }
+            source_main_sync_merge = merge_provenance
     if followup is None and (
         (source_bearing_archive and commits[-1] != landing_commit)
         or (not source_bearing_archive and archive_parent != commits[-1])
@@ -2465,7 +2498,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         source_paths = sorted(set(_changed_paths(repo, f"{source_base}..{landing_commit}")
                                   + followup["followup_paths"]))
     else:
-        source_paths = sorted(owned_paths) if checkpoint_resume_merge else _changed_paths(
+        source_paths = sorted(owned_paths) if (checkpoint_resume_merge or source_main_sync_merge) else _changed_paths(
             repo, f"{source_base}..{source_head}")
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
@@ -2592,6 +2625,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         provenance["claim_trace"]["resume_event_index"] = claim_record["resume_event_index"]
     if checkpoint_resume_merge is not None:
         provenance["checkpoint_resume_merge"] = checkpoint_resume_merge
+    if source_main_sync_merge is not None:
+        provenance["source_main_sync_merge"] = source_main_sync_merge
     if scope_attestation is not None:
         provenance["scope_attestation"] = scope_attestation
     if followup is not None:

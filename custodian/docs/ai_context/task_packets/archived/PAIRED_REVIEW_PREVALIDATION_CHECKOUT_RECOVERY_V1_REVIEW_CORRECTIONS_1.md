@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-prevalidation-checkout-recovery-v1`
@@ -42,6 +42,26 @@
 - Task overrides: `none`
 - Deferred: `After this correction and its independent review are accepted, resume original review run 20261025T032358Z-3b242f79acdc through the supported --recover-host-validation plan/apply path. Do not create another primary implementation or review claim.`
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `The exact primary source span resolves with merge 2981a122c2983fb946494e2ad821b5059c20fe98 recorded as source_main_sync_merge. Authored paths are derived from first-parent commits. The new positive and hostile real-Git tests pass; the full paired-review runner suite passes 186/186; canonical paired_review_runner_unit passes; changed-file validation passes 2/2 with complete coverage; AI-context, packet index, review-pairing, packet authoring, compile, and diff checks pass.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The first hostile fixture unexpectedly represented a matching resume and in-place sync together; tightening the fixture exposed and closed the conflicting-witness acceptance gap.`
+- Root cause / contributing factors: `Source-span validation recognized checkpoint/resume merges and landing-time main-sync merges, but not an interior merge authenticated by the exact lifecycle main_sync event.`
+- Prevention / pipeline improvement: `The resolver now distinguishes the exact in-place sync transition from checkpoint/resume and rejects conflicting, missing, duplicate, or mismatched witnesses.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `review-agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
+- What worked: `Real temporary-Git histories verify both authored-path ownership and hostile event/parent/tree mutations.`
+
 ## Next Handoff
 - Next workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
 - Next packet state: dependency-gated
@@ -49,5 +69,5 @@
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: publish this correction pair, claim the implementation when dispatcher-eligible, and land its independently reviewed source-span fix.
+- Next action: Run the fresh-context paired review against the landed source-span correction. After accepted review, resume the held primary review's preserved host-validation run.
 - Blockers or open questions: `none`
