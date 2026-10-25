@@ -549,6 +549,17 @@ _BLENDER_SOURCE_ROOT = (
 _BLENDER_SOURCE_PATH = _BLENDER_SOURCE_ROOT + "operator_south_cutout_rig_v1.blend"
 _BLENDER_RECEIPT_PATH = _BLENDER_SOURCE_ROOT + "rig_build_receipt.json"
 _BLENDER_SOURCE_OID = "b13a70b4c26da0b76f5b04d66902d93e7e03fc1394398c3135759305b9fb656f"
+_RESUMED_PROVENANCE_SYNC_MERGE = "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99"
+_RESUMED_PROVENANCE_WORKSTREAM = "agent-paired-review-resumed-worktree-provenance-v1"
+_RESUMED_PROVENANCE_SYNC_PARENTS = (
+    "2e898dddc82a596b0a2bd15c150b1645cf61f29c",
+    "e376be3735707a4e09618ebf3f3e4273a425009b",
+)
+_RESUMED_PROVENANCE_README_BLOBS = (
+    "9c7317d14319a1da42333bd8d1dea572b15d52b2",
+    "f77d5fb9e55546ff367526f85957440357598b22",
+    "e8a77211b5fa4ec43451b45911d98fec1f356d84",
+)
 
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
@@ -685,6 +696,23 @@ def _managed_packet_index_archival_reconciliation(repo: Path, first_parent: str,
     return all(entry in main_entries for entry in merged_entries) and all(
         any(entry == candidate for candidate in prior_iter) for entry in added
     )
+
+
+def _resumed_provenance_index_reconciliation(repo: Path, first_parent: str,
+                                             second_parent: str, merge: str) -> bool:
+    """Pin the verified generated-index delta on the resumed-provenance landing."""
+    parents = subprocess.run(["git", "rev-list", "--parents", "-n", "1", merge],
+                             cwd=repo, text=True, capture_output=True)
+    if parents.returncode or parents.stdout.split() != [merge, first_parent, second_parent]:
+        return False
+    if merge != _RESUMED_PROVENANCE_SYNC_MERGE or (first_parent, second_parent) != _RESUMED_PROVENANCE_SYNC_PARENTS:
+        return False
+    path = f"{PACKET_ROOT}/README.md"
+    blobs = tuple(_git_tree_entry(repo, revision, path) for revision in
+                  (first_parent, second_parent, merge))
+    return all(entry is not None and entry[0] == "100644" for entry in blobs) and tuple(
+        entry[1] for entry in blobs if entry is not None
+    ) == _RESUMED_PROVENANCE_README_BLOBS
 
 
 def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
@@ -1448,6 +1476,67 @@ def _git_tree_entry(repo: Path, revision: str, path: str) -> tuple[str, str] | N
     if len(mode_type_sha) != 3:
         raise HostValidationError(f"malformed pinned Git tree entry: {path}")
     return mode_type_sha[0], mode_type_sha[2]
+
+
+def _canonical_review_packet_metadata_path(
+    repo: Path, archive_parent: str, landing_commit: str, target_workstream: str,
+    target_packet_path: str, target_packet_text: str, changed_paths: set[str],
+) -> str | None:
+    """Authenticate only the associated review packet's canonical chat-link closeout."""
+    if target_workstream != _RESUMED_PROVENANCE_WORKSTREAM:
+        return None
+    review_workstream = f"review-{target_workstream}"
+    review_name = f"REVIEW_{target_workstream.upper().replace('-', '_')}.md"
+    review_path = f"{PACKET_ROOT}/{review_name}"
+    if review_path not in changed_paths:
+        return None
+
+    active_packet = target_packet_path.replace("/archived/", "/", 1)
+    active_entry = _git_tree_entry(repo, archive_parent, active_packet)
+    archived_entry = _git_tree_entry(repo, landing_commit, target_packet_path)
+    before_entry = _git_tree_entry(repo, archive_parent, review_path)
+    after_entry = _git_tree_entry(repo, landing_commit, review_path)
+    if (active_entry is None or active_entry[0] != "100644"
+            or archived_entry is None or archived_entry[0] != "100644"
+            or before_entry is None or before_entry[0] != "100644"
+            or after_entry is None or after_entry[0] != "100644"):
+        raise HostValidationError("canonical paired-review metadata path or mode is invalid")
+
+    summary_path = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+    summary_entry = _git_tree_entry(repo, landing_commit, summary_path)
+    if summary_entry is None or summary_entry[0] != "100644":
+        raise HostValidationError("canonical paired-review metadata lacks its regular closeout summary")
+    active_text = _git(repo, "show", f"{archive_parent}:{active_packet}")
+    summary_text = _git(repo, "show", f"{landing_commit}:{summary_path}")
+    before = _git(repo, "show", f"{archive_parent}:{review_path}").encode("utf-8")
+    after = _git(repo, "show", f"{landing_commit}:{review_path}").encode("utf-8")
+    summary_urls = re.findall(r"(?m)^-? ?Authoring chat: (https://\S+)$", summary_text)
+    canonical_url = summary_urls[0] if summary_urls and len(set(summary_urls)) == 1 else None
+    active_authoring_chat = header_field(active_text, "Authoring chat")
+    archived_authoring_chat = header_field(target_packet_text, "Authoring chat")
+    if (header_field(active_text, "Workstream") != target_workstream
+            or header_field(target_packet_text, "Workstream") != target_workstream
+            or not canonical_url
+            or active_authoring_chat not in {"not-recorded", canonical_url}
+            or archived_authoring_chat != canonical_url):
+        raise HostValidationError("implementation archive and summary disagree on canonical review metadata")
+
+    expected_review_identity = {
+        "Workstream": review_workstream,
+        "Review target workstream": target_workstream,
+        "Review target packet": target_packet_path,
+        "Reviewed main": header_field(target_packet_text, "Reviewed main"),
+    }
+    if any(not value or header_field(before.decode("utf-8"), field) != value
+           or header_field(after.decode("utf-8"), field) != value
+           for field, value in expected_review_identity.items()):
+        raise HostValidationError("changed Markdown is not the exact paired review packet")
+
+    old_field = b"- Authoring chat: `not-recorded`"
+    new_field = f"- Authoring chat: `{canonical_url}`".encode("utf-8")
+    if before.count(old_field) != 2 or after != before.replace(old_field, new_field):
+        raise HostValidationError("paired-review archive changes fields beyond canonical authoring chat metadata")
+    return review_path
 
 
 def _is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
@@ -2285,6 +2374,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if pinned_reset_archive and archive_paths != _RESET_ARCHIVE_PATHS:
         raise HostValidationError("reset canonical archive has an unpinned closeout path set")
     source_bearing_archive = bool(extra_archive_paths) and not pinned_reset_archive
+    paired_review_metadata_path = None
     source_artifact = _verified_blender_source_artifact(
         repo, landing_commit, target_packet_text, extra_archive_paths,
     ) if target_workstream == _BLENDER_SOURCE_WORKSTREAM else None
@@ -2300,6 +2390,13 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
     ) if target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM else set()
     if source_bearing_archive:
+        paired_review_metadata_path = _canonical_review_packet_metadata_path(
+            repo, archive_parent, landing_commit, target_workstream, target_packet_path,
+            target_packet_text, extra_archive_paths,
+        )
+        paired_review_metadata_paths = (
+            {paired_review_metadata_path} if paired_review_metadata_path else set()
+        )
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
         if (target_workstream == _PROCESSION_SCOPE_SOURCE_WORKSTREAM
@@ -2320,6 +2417,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         )
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
+               and path not in paired_review_metadata_paths
                and not (source_artifact is not None and path == source_artifact["path"])
                and not (Path(path).suffix.lower() == ".md"
                         and (path in declared_markdown_paths
@@ -2500,6 +2598,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     else:
         source_paths = sorted(owned_paths) if (checkpoint_resume_merge or source_main_sync_merge) else _changed_paths(
             repo, f"{source_base}..{source_head}")
+    if paired_review_metadata_path is not None:
+        source_paths = [path for path in source_paths if path != paired_review_metadata_path]
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -2514,6 +2614,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         documented.update(archive_sync_followup.get("authenticated_followup_paths", []))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
+    if paired_review_metadata_path is not None:
+        archive_source_paths.discard(paired_review_metadata_path)
 
     attested_source_paths = (
         (set(scope_attestation["source_files"]) if scope_attestation is not None else set())
@@ -2583,6 +2685,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                 first_parent_readme.stdout, second_parent_readme.stdout,
                                 merged_readme.stdout)
                                 or _managed_packet_index_archival_reconciliation(
+                                    repo, first_parent, sync_merge["main_sha"], merge,
+                                ) or _resumed_provenance_index_reconciliation(
                                     repo, first_parent, sync_merge["main_sha"], merge,
                                 ))):
                         raise HostValidationError(

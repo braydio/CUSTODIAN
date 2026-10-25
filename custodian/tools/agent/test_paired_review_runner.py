@@ -6776,6 +6776,90 @@ Verify the exact post-hoc attestation.
             "custodian/tools/agent/test_paired_review_runner.py",
         })
 
+    def test_historical_resumed_worktree_archive_accepts_canonical_review_metadata(self):
+        workstream = "agent-paired-review-resumed-worktree-provenance-v1"
+        archive = (f"{runner.PACKET_ROOT}/archived/"
+                   "PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
+        span = host_validation.resolve_validation_source_span(
+            ROOT, "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99",
+            "2e898dddc82a596b0a2bd15c150b1645cf61f29c", workstream, archive,
+        )
+        self.assertEqual(span["provenance"]["trace_landing_commit"],
+                         "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99")
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
+        self.assertTrue(host_validation._resumed_provenance_index_reconciliation(
+            ROOT, *host_validation._RESUMED_PROVENANCE_SYNC_PARENTS,
+            host_validation._RESUMED_PROVENANCE_SYNC_MERGE,
+        ))
+        self.assertEqual(span["provenance"]["claim_trace"]["run_id"],
+                         "20261022T183152Z-d2bd0dbe47d1")
+        review_path = (f"{runner.PACKET_ROOT}/REVIEW_"
+                       "AGENT_PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
+        self.assertNotIn(review_path, span["paths"])
+        target_text = subprocess.run(
+            ["git", "show", f"2e898dddc82a596b0a2bd15c150b1645cf61f29c:{archive}"],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout
+        self.assertIsNone(host_validation._canonical_review_packet_metadata_path(
+            ROOT, "e05c5376b570277d19dffdbca3968e194b473016",
+            "2e898dddc82a596b0a2bd15c150b1645cf61f29c",
+            "agent-paired-review-substitute-v1", archive, target_text, {review_path},
+        ))
+        self.assertEqual(set(host_validation._source_code_paths(span["paths"])), {
+            "custodian/tools/agent/paired_review_host_validation.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+        })
+
+    def test_resumed_provenance_index_exception_rejects_wrong_history_and_tree(self):
+        first_parent, second_parent = host_validation._RESUMED_PROVENANCE_SYNC_PARENTS
+        merge = host_validation._RESUMED_PROVENANCE_SYNC_MERGE
+        self.assertFalse(host_validation._resumed_provenance_index_reconciliation(
+            ROOT, second_parent, first_parent, merge,
+        ))
+        self.assertFalse(host_validation._resumed_provenance_index_reconciliation(
+            ROOT, first_parent, second_parent, first_parent,
+        ))
+        with patch.object(host_validation, "_git_tree_entry", return_value=("100644", "0" * 40)):
+            self.assertFalse(host_validation._resumed_provenance_index_reconciliation(
+                ROOT, first_parent, second_parent, merge,
+            ))
+
+    def test_canonical_review_metadata_rejects_unexpected_real_git_edit(self):
+        workstream = "agent-paired-review-resumed-worktree-provenance-v1"
+        target = (f"{runner.PACKET_ROOT}/archived/"
+                  "PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
+        review_path = (f"{runner.PACKET_ROOT}/REVIEW_"
+                       "AGENT_PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
+        parent = "e05c5376b570277d19dffdbca3968e194b473016"
+        repository = Path(self.temp.name) / "forged-review-metadata"
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                        str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", parent], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.name", "Fixture"], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.email",
+                        "fixture@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(repository), "read-tree", "2e898dddc82a596b0a2bd15c150b1645cf61f29c"], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"], check=True)
+        changed_file = repository / review_path
+        changed_file.write_bytes(changed_file.read_bytes() + b"\nUnexpected Field: forged\n")
+        subprocess.run(["git", "-C", str(repository), "add", review_path], check=True)
+        tree = subprocess.run(["git", "-C", str(repository), "write-tree"], check=True,
+                              text=True, capture_output=True).stdout.strip()
+        landing = subprocess.run(["git", "-C", str(repository), "commit-tree", tree,
+                                  "-p", parent], input="forged review metadata\n", check=True,
+                                 text=True, capture_output=True).stdout.strip()
+        target_text = subprocess.run(["git", "-C", str(repository), "show",
+                                      f"{landing}:{target}"], check=True, text=True,
+                                     capture_output=True).stdout
+        changed_paths = set(subprocess.run(["git", "-C", str(repository), "diff", "--name-only",
+                                            parent, landing], check=True, text=True,
+                                           capture_output=True).stdout.splitlines())
+        with self.assertRaisesRegex(host_validation.HostValidationError,
+                                    "paired-review archive changes fields"):
+            host_validation._canonical_review_packet_metadata_path(
+                repository, parent, landing, workstream, target, target_text, changed_paths,
+            )
+
     def test_historical_failed_create_resume_runs_coordinator_prelaunch_checks(self):
         workstream = "agent-paired-review-conflict-resolution-merge-provenance-v1"
         archive = (f"{runner.PACKET_ROOT}/archived/"
