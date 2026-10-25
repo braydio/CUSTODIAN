@@ -1,5 +1,10 @@
 name: Godot Level Pipeline
 
+# Scope: only authored-level runtime, level assets/tooling, and explicitly
+# scoped level docs should trigger this full lifecycle suite.
+# General custodian/docs/ai_context/** edits use Validate Repository's
+# manifest-driven changed-file checks instead.
+
 on:
   pull_request:
     paths:
@@ -19,7 +24,6 @@ on:
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
-      - "custodian/docs/ai_context/**"
       - ".github/workflows/godot-level-pipeline.yml"
   push:
     branches: [main]
@@ -40,7 +44,6 @@ on:
       - "design/05_levels/SUNDERED_KEEP_VISTA_APPROACH.md"
       - "design/05_levels/SUNDERED_KEEP_ROUTE_STAGES.md"
       - "custodian/docs/SCENE_HIERARCHY.md"
-      - "custodian/docs/ai_context/**"
       - ".github/workflows/godot-level-pipeline.yml"
   workflow_dispatch:
 

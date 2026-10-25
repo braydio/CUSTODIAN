@@ -24,6 +24,7 @@ from godot_project_lock import (
 )
 from review_receipt_delta import (
     read_git_text,
+    render_review_receipt,
     resolve_target_implementation_commit,
     verify_review_receipt_delta,
 )
@@ -104,6 +105,102 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_canonical_receipt_renderer_requires_exact_pass_outcome(self):
+        section = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main="a" * 40, implementation_commit="b" * 40,
+            provenance="different-agent", run_id="20261024T074548Z-1c9611762049",
+            review_cycle=0, ids=(),
+        )
+        outcome, error = runner.review_outcome.parse_review_outcome(section)
+        self.assertIsNone(error)
+        receipt = render_review_receipt(outcome)
+        self.assertEqual(receipt, append_receipt("", review_workstream="review-sample",
+                                                  target_workstream="sample-impl", reviewed_main="a" * 40,
+                                                  implementation_commit="b" * 40).split(
+                                                      "## Independent Review\n\n", 1)[1])
+        self.assertIn("- Status: `passed`", receipt)
+        self.assertIn("- Blocking defects: `0`", receipt)
+        for changed in ({**outcome, "Outcome": "findings", "Finding IDs": "R0-01"},
+                        {key: value for key, value in outcome.items() if key != "Run ID"}):
+            with self.assertRaises(ValueError):
+                render_review_receipt(changed)
+
+    def test_verified_reviewer_pass_binds_raw_session_and_archived_outcome(self):
+        run_id = "20261024T074548Z-1c9611762049"
+        workstream = "review-sample"
+        target = "sample-impl"
+        reviewed_main = "a" * 40
+        implementation = "b" * 40
+        with tempfile.TemporaryDirectory() as temp:
+            worktree = Path(temp)
+            session = worktree / "session"
+            session.mkdir()
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream=workstream, target_workstream=target,
+                reviewed_main=reviewed_main, implementation_commit=implementation,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=(),
+            )
+            parsed_outcome, parse_error = runner.review_outcome.parse_review_outcome(outcome_text)
+            self.assertIsNone(parse_error)
+            archived = ("# Review\n\n## Independent Review\n\n"
+                        + render_review_receipt(parsed_outcome) + outcome_text)
+            final = f"Workstream: {workstream}\nReview outcome: passed\n"
+            (session / "last-message.txt").write_text(final)
+            (session / "codex.jsonl").write_text(
+                json.dumps({"item": {"type": "agent_message", "text": final}}) + "\n"
+                + json.dumps({"type": "turn.completed"}) + "\n")
+            (worktree / runner.expected_summary_path(workstream)).write_text(
+                f"Run ID: {run_id}\nReviewed main: {reviewed_main}\n## Review Outcome\npassed\n")
+            metadata = {"schema": runner.SCHEMA, "run_id": run_id, "workstream": workstream,
+                        "run_dir": str(session), "fresh": True, "exit_code": 0,
+                        "reviewed_main": reviewed_main, "implementation_commit": implementation,
+                        "review_cycle": 0}
+            parsed = runner._verified_reviewer_pass(
+                worktree, archived, metadata, worktree, workstream, target,
+                reviewed_main, implementation,
+            )
+            self.assertEqual(parsed["Outcome"], "passed")
+            altered = archived.replace(f"Reviewed main: `{reviewed_main}`", f"Reviewed main: `{'c' * 40}`")
+            with self.assertRaisesRegex(runner.RunnerError, "identity failed"):
+                runner._verified_reviewer_pass(
+                    worktree, altered, metadata, worktree, workstream, target,
+                    reviewed_main, implementation,
+                )
+            (session / "last-message.txt").write_text("Workstream: review-sample\\nnot a verdict\\n")
+            with self.assertRaisesRegex(runner.RunnerError, "reviewer final output"):
+                runner._verified_reviewer_pass(
+                    worktree, archived, metadata, worktree, workstream, target,
+                    reviewed_main, implementation,
+                )
+
+    def test_procession_recovery_journal_is_append_only_and_hash_chained(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "recovery.jsonl"
+            first = runner._append_procession_journal(
+                path, {"schema": runner.PROCESSION_PASS_RECOVERY_SCHEMA,
+                       "workstream": runner.PROCESSION_PASS_WORKSTREAM,
+                       "run_id": runner.PROCESSION_PASS_RUN_ID,
+                       "stage": "prepared", "plan_sha256": "a" * 64}, create=True,
+            )
+            runner._append_procession_journal(
+                path, {"schema": runner.PROCESSION_PASS_RECOVERY_SCHEMA,
+                       "workstream": runner.PROCESSION_PASS_WORKSTREAM,
+                       "run_id": runner.PROCESSION_PASS_RUN_ID,
+                       "stage": "closeout_blocked", "plan_sha256": "a" * 64},
+            )
+            events = runner._read_procession_journal(path)
+            self.assertEqual([event["stage"] for event in events], ["prepared", "closeout_blocked"])
+            self.assertEqual(events[1]["previous_sha256"], first["event_sha256"])
+            with self.assertRaises(FileExistsError):
+                runner._append_procession_journal(
+                    path, {"stage": "prepared"}, create=True,
+                )
+            raw = path.read_bytes()
+            path.write_bytes(raw.replace(b"closeout_blocked", b"complete________", 1))
+            with self.assertRaisesRegex(runner.RunnerError, "hash chain"):
+                runner._read_procession_journal(path)
+
     def test_validation_timeout_manifest_change_is_exactly_one_field(self):
         repository = Path(__file__).resolve().parents[3]
         manifest_path = "custodian/tools/validation/validation_manifest.json"
@@ -2379,9 +2476,15 @@ class PairedReviewRunnerTests(unittest.TestCase):
                             str(worktree)], check=True)
             (worktree / active).unlink()
             (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
-            (worktree / target_path).write_text(append_receipt(
-                baseline_target, review_workstream="review-sample", target_workstream="sample-impl",
-                reviewed_main=target_sha, implementation_commit=implementation_sha))
+            run_id = "20261024T074548Z-1c9611762049"
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main=target_sha, implementation_commit=implementation_sha,
+                provenance="different-agent", run_id=run_id, review_cycle=0, ids=(),
+            )
+            outcome, outcome_error = runner.review_outcome.parse_review_outcome(outcome_text)
+            self.assertIsNone(outcome_error)
+            receipt_text = render_review_receipt(outcome)
             (worktree / archive).write_text(f"""# Review
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-sample`
@@ -2396,25 +2499,30 @@ class PairedReviewRunnerTests(unittest.TestCase):
 - Authoring chat: `https://chatgpt.com/c/example`
 
 ## Independent Review
-- Schema: `custodian.paired_review.v1`
-- Review workstream: `review-sample`
-- Review target workstream: `sample-impl`
-- Status: `passed`
-- Blocking defects: `0`
-- Material gaps: `0`
-- Reviewer context: `fresh`
-- Reviewer provenance: `different-agent`
-- Reviewed main: `{target_sha}`
-- Reviewed implementation commit: `{implementation_sha}`
-""")
+\n{receipt_text}
+{outcome_text}""")
             (worktree / readme).write_text("archived review packet index\n")
             summary = worktree / runner.expected_summary_path("review-sample")
-            summary.write_text("Authoring chat: https://chatgpt.com/c/example\n\n## Next Handoff\n- Next workstream: none\n")
+            summary.write_text(f"Authoring chat: https://chatgpt.com/c/example\nRun ID: {run_id}\n"
+                               f"Reviewed main: {target_sha}\nStatus: passed\n## Review Outcome\n"
+                               "passed\n\n## Next Handoff\n- Next workstream: none\n")
             run_dir = base / "run"
             run_dir.mkdir()
             (run_dir / "validation.json").write_text(json.dumps({
                 "schema": "custodian.validation.result.v1", "passed": True,
                 "coverage": {"complete": True}, "tests": [{"status": "passed"}]}))
+            final_message = (f"Workstream: review-sample\nReview outcome: passed\n"
+                             f"Reviewed main: {target_sha}\n")
+            (run_dir / "last-message.txt").write_text(final_message)
+            (run_dir / "codex.jsonl").write_text(
+                json.dumps({"item": {"type": "agent_message", "text": final_message}}) + "\n"
+                + json.dumps({"type": "turn.completed"}) + "\n")
+            (run_dir / "metadata.json").write_text(json.dumps({
+                "schema": runner.SCHEMA, "workstream": "review-sample", "run_id": run_id,
+                "run_dir": str(run_dir), "fresh": True, "exit_code": 0,
+                "reviewed_main": target_sha, "implementation_commit": implementation_sha,
+                "review_cycle": 0,
+            }))
             host_evidence = {"implementation_commit": implementation_sha,
                              "report_sha256": "report-digest", "metadata_sha256": "metadata-digest"}
 
@@ -2427,6 +2535,14 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                                  "https://chatgpt.com/c/example", target_sha, run_dir,
                                                  host_evidence)
             implementation_summary.unlink()
+            (worktree / target_path).write_text(baseline_target + "\nUnverified reviewer delta.\n")
+            with patch.object(runner, "verify_coordinator_validation"), \
+                 self.assertRaisesRegex(runner.RunnerError, "unverified delta"):
+                runner.coordinator_finish_review(repo, "review-sample", worktree, active, "sample-impl",
+                                                 target_path, baseline_target,
+                                                 "https://chatgpt.com/c/example", target_sha, run_dir,
+                                                 host_evidence)
+            (worktree / target_path).write_text(baseline_target)
 
             original_run = subprocess.run
             finish_calls = []
@@ -2444,6 +2560,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
                                                              "https://chatgpt.com/c/example", target_sha, run_dir,
                                                              host_evidence)
             self.assertEqual(landed_sha, target_sha)
+            rendered_target = (worktree / target_path).read_text()
+            self.assertEqual(rendered_target, baseline_target + "\n## Independent Review\n\n" + receipt_text)
             self.assertEqual(len(finish_calls), 1)
             self.assertEqual(Path(finish_calls[0][1]), repo)
             committed = subprocess.run(["git", "-C", str(worktree), "diff-tree", "--no-commit-id",
