@@ -36,17 +36,17 @@ Use `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; run fresh-conte
 ## Handoff
 
 - Next workstream: none
-- Next packet state: refresh-required
-- Refresh owner: chatgpt-user
-- ChatGPT/user planning refresh required: yes
+- Next packet state: none
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
-- Refresh reason: Host opt-in for timer and user-facing default/ownership policy after accepted recovery proof; unknown foreign-host takeover is never automatic.
-- Next action: Return the verified command/telemetry and enable optional host-local supervisor only with user consent.
-- Blockers or open questions: None for executing fixture-safe implementation; reviewer must not enable background timer autonomously.
+- Refresh reason: Default cooperative supervised pause approved for implementation; installing an optional timer remains a separate explicit user opt-in after accepted review, not a blocker for ordinary pause/resume.
+- Next action: Return the verified pause/resume commands and telemetry; default supervised cooperative pause requires no timer; offer any optional host-local periodic recovery service separately.
+- Blockers or open questions: None for fixture-safe implementation; foreign-host/unmanaged sessions remain protected, reviewer must not enable a timer autonomously.
 
 ## Cooperative pause/resume independent review (2026-10-25)
 
-In addition to A–I, independently reproduce real process and temporary bare-remote scenarios for `ACTIVE -> PAUSE_REQUESTED -> PARK_PREPARED -> PARKED -> RESUME_PREPARED -> ACTIVE`. Verify supervised graceful exit triggers parking without an installed timer; no lease unlock while any owned reviewer/process descendant remains live; a parked branch remains claimed and its local worktree, staged/unstaged, untracked art and commits remain unchanged. On resume, two simultaneous callers across separate clones must never both acquire execution ownership; conflicting locks must prevent resumption rather than launch duplicate work.
+In addition to A–I, independently reproduce real process and temporary bare-remote scenarios for `ACTIVE -> PAUSE_REQUESTED -> RECOVERY_PREPARED -> PARKED -> RESUME_PREPARED -> ACTIVE`. Verify supervised graceful exit triggers parking without an installed timer; no lease unlock while any owned reviewer/process descendant remains live; a parked branch remains claimed and its local worktree, staged/unstaged, untracked art and commits remain unchanged. On resume, two simultaneous callers across separate clones must never both acquire execution ownership; conflicting locks must prevent resumption rather than launch duplicate work.
 
 Fault-inject every journal, snapshot, CAS and readback boundary, including disk exhaustion, Git remote outage, PID reuse and foreign host. Verify that `findings` and `human_required` are not promoted to PASS; old uninstrumented historical reviews, especially `review-agent-paired-review-godot-cache-access-v1`, are **not** automatically parked. The one-off exact parking pilot may not be repurposed or weakened. No periodic host service or timer may be installed by implementation or review. Report exact original workstream claim and proof of non-loss after every fault injection.
 
