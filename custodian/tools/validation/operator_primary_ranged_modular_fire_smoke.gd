@@ -1,6 +1,7 @@
 extends SceneTree
 
 const OPERATOR_SCENE := preload("res://game/actors/operator/operator.tscn")
+const RANGED_CONTROLLER_SCRIPT := preload("res://game/actors/operator/combat/operator_ranged_controller.gd")
 
 
 func _init() -> void:
@@ -34,8 +35,10 @@ func _init() -> void:
 	var fx := operator.get_node_or_null("ModularUpperFxSprite") as AnimatedSprite2D
 
 	var failures: Array[String] = []
+	_validate_ranged_controller_state(failures)
 
 	_install_test_frames(lower, [
+		&"unarmed/locomotion/walk_01/s/lower_body",
 		&"unarmed/locomotion/idle_01/e/lower_body",
 		&"unarmed/locomotion/idle_01/w/lower_body",
 		&"ranged_2h/cosmetic/aim_01/e/lower_body",
@@ -72,6 +75,11 @@ func _init() -> void:
 	operator.call("_enter_ranged_ready")
 	if not bool(operator.call("_is_primary_ranged_aim_presentation_active")):
 		failures.append("RMB ranged-ready entry did not start aim raise")
+	operator.set("movement_direction", Vector2.DOWN)
+	operator.set("velocity", Vector2.DOWN * 100.0)
+	operator.call("_update_animation")
+	if lower == null or not String(lower.animation).contains("walk_01"):
+		failures.append("primary aim raise replaced live lower-body walk cadence")
 	var initial_aim_timer := float(operator.get("_primary_ranged_action_timer"))
 	operator.call("_enter_ranged_ready")
 	if not is_equal_approx(float(operator.get("_primary_ranged_action_timer")), initial_aim_timer):
@@ -93,6 +101,8 @@ func _init() -> void:
 		if absf(progress_before_retarget - progress_after_retarget) >= 0.02:
 			failures.append("aim direction retarget restarted transition progress")
 	operator.call("_tick_primary_ranged_action_presentation", 10.0)
+	operator.set("velocity", Vector2.ZERO)
+	operator.set("movement_direction", Vector2.ZERO)
 	if bool(operator.call("_is_primary_ranged_aim_presentation_active")):
 		failures.append("aim raise did not finish into stance")
 	if not bool(operator.call("_sync_modular_ranged_2h_stance_presentation", Vector2.LEFT)):
@@ -204,6 +214,26 @@ func _init() -> void:
 
 	print("operator_primary_ranged_modular_fire_smoke ok")
 	quit()
+
+
+func _validate_ranged_controller_state(failures: Array[String]) -> void:
+	var controller = RANGED_CONTROLLER_SCRIPT.new()
+	controller.fire_cooldown_remaining = 0.5
+	controller.advance_fire_cooldown(0.2)
+	if not is_equal_approx(controller.fire_cooldown_remaining, 0.3):
+		failures.append("ranged controller did not advance fire cooldown state")
+	controller.begin_pending_shot(0.1, {"ammo_per_shot": 1}, Vector2.RIGHT, Vector2(20.0, 0.0))
+	if not controller.pending_shot.has("accepted_aim_world_position"):
+		failures.append("ranged controller did not own the pending accepted aim")
+	if controller.advance_pending_shot(0.05):
+		failures.append("pending shot resolved before its controller timer elapsed")
+	if not controller.advance_pending_shot(0.05):
+		failures.append("pending shot did not resolve at its controller timer boundary")
+	controller.begin_sidearm_recovery(0.08)
+	if controller.advance_sidearm_recovery(0.04) or controller.sidearm_phase != &"recovering":
+		failures.append("sidearm recovery skipped its committed recovery window")
+	if not controller.advance_sidearm_recovery(0.04) or controller.sidearm_phase != &"held":
+		failures.append("sidearm recovery did not return to held at its timer boundary")
 
 
 func _install_test_frames(sprite: AnimatedSprite2D, animation_names: Array[StringName]) -> void:

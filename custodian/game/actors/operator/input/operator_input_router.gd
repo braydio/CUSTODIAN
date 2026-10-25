@@ -76,9 +76,9 @@ func sample(
 		var is_down := Input.is_action_pressed(action)
 		var was_down := bool(_previous_pressed.get(action, false))
 		pressed[action] = is_down
-		if Input.is_action_just_pressed(action) or (is_down and not was_down):
+		if not was_down and (Input.is_action_just_pressed(action) or is_down):
 			just_pressed[action] = true
-		if Input.is_action_just_released(action) or (was_down and not is_down):
+		if was_down and (Input.is_action_just_released(action) or not is_down):
 			just_released[action] = true
 	_previous_pressed = pressed.duplicate()
 

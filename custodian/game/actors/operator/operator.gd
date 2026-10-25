@@ -21,6 +21,7 @@ const OperatorActionControllerScript = preload("res://game/actors/operator/comba
 const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const OperatorLoadoutControllerScript = preload("res://game/actors/operator/loadout/operator_loadout_controller.gd")
 const OperatorWeaponRuntimeStateScript = preload("res://game/actors/operator/loadout/operator_weapon_runtime_state.gd")
+const OperatorRangedControllerScript = preload("res://game/actors/operator/combat/operator_ranged_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
 const OperatorAnimationSelectorScript = preload(
 	"res://game/actors/operator/animations/operator_animation_selector.gd"
@@ -188,7 +189,10 @@ const ATTACK_MOVE_PROFILES := {
 }
 
 var health: float = 100.0
-var fire_cooldown_remaining := 0.0
+var _ranged_controller: OperatorRangedController
+var fire_cooldown_remaining: float:
+	get: return _ensure_ranged_controller().fire_cooldown_remaining
+	set(value): _ensure_ranged_controller().fire_cooldown_remaining = value
 var melee_cooldown_remaining := 0.0
 var current_recoil := 0.0
 var recoil_decay := 18.0
@@ -196,7 +200,9 @@ var weapon_profile := 0
 var primary_weapon_equipped := false
 var equipped_primary_weapon_id := ""
 var combat_loadout_mode: StringName = &"melee"
-var last_fire_cooldown := 0.0
+var last_fire_cooldown: float:
+	get: return _ensure_ranged_controller().last_fire_cooldown
+	set(value): _ensure_ranged_controller().last_fire_cooldown = value
 
 @export var muzzle_offset: float = 24.0
 @export var aim_crosshair_color: Color = Color(0.9, 0.9, 0.9, 1.0)
@@ -646,22 +652,39 @@ var _reload_timer: float:
 var _reload_total: float:
 	get: return _get_active_weapon_runtime_state().reload_total
 	set(value): _get_active_weapon_runtime_state().reload_total = value
-var _ammo_standard_loaded: int = 0
-var _ammo_heavy_loaded: int = 0
-var ammo_reserve_by_type: Dictionary = {}
-var ammo_capacity_by_type: Dictionary = {}
+var _ammo_standard_loaded: int:
+	get: return _get_weapon_loaded_ammo(primary_weapon_definition)
+var _ammo_heavy_loaded: int:
+	get:
+		var ranged_definition := _get_active_ranged_weapon_definition()
+		return _get_weapon_loaded_ammo(ranged_definition) if _get_weapon_ammo_type(ranged_definition) == "kinetic_heavy" else 0
+var ammo_reserve_by_type: Dictionary:
+	get: return _ensure_ranged_controller().reserve_by_type
+	set(value): _ensure_ranged_controller().reserve_by_type = value
+var ammo_capacity_by_type: Dictionary:
+	get: return _ensure_ranged_controller().capacity_by_type
+	set(value): _ensure_ranged_controller().capacity_by_type = value
 var loaded_ammo_by_weapon_id: Dictionary:
 	get: return _ensure_loadout_controller().runtime_magazines_snapshot()
 	set(value): _ensure_loadout_controller().replace_runtime_magazines(value)
-var weapon_heat_by_id: Dictionary = {}
-var weapon_heat_delay_by_id: Dictionary = {}
-var weapon_overheat_by_id: Dictionary = {}
-var last_ranged_fire_failure: StringName = &""
-var _weapon_failure_feedback_cooldown: float = 0.0
-var _last_weapon_failure_feedback: StringName = &""
-var _pending_ranged_shot: Dictionary = {}
-var _ranged_ready_active: bool = false
-var _ranged_ready_weapon_definition: OperatorWeaponDefinition = null
+var last_ranged_fire_failure: StringName:
+	get: return _ensure_ranged_controller().last_fire_failure
+	set(value): _ensure_ranged_controller().last_fire_failure = value
+var _weapon_failure_feedback_cooldown: float:
+	get: return _ensure_ranged_controller().failure_feedback_cooldown
+	set(value): _ensure_ranged_controller().failure_feedback_cooldown = value
+var _last_weapon_failure_feedback: StringName:
+	get: return _ensure_ranged_controller().last_failure_feedback
+	set(value): _ensure_ranged_controller().last_failure_feedback = value
+var _pending_ranged_shot: Dictionary:
+	get: return _ensure_ranged_controller().pending_shot
+	set(value): _ensure_ranged_controller().pending_shot = value
+var _ranged_ready_active: bool:
+	get: return _ensure_ranged_controller().ready_active
+	set(value): _ensure_ranged_controller().ready_active = value
+var _ranged_ready_weapon_definition: OperatorWeaponDefinition:
+	get: return _ensure_ranged_controller().ready_weapon_definition
+	set(value): _ensure_ranged_controller().ready_weapon_definition = value
 # Dodge simulation state belongs exclusively to OperatorDodgeController.
 # These fields below are presentation-only state for the existing whole-body
 # presentation path and do not drive traversal or combat outcomes.
@@ -741,16 +764,36 @@ var _modular_upper_fx_action_animation: StringName = &""
 var _modular_sidearm_action_animation: StringName = &""
 var _modular_sidearm_fx_animation: StringName = &""
 var _warned_missing_modular_fast_attack_fx: bool = false
-var _sidearm_draw_active: bool = false
-var _sidearm_action_phase: StringName = &"holstered"
-var _sidearm_action_phase_started: bool = false
-var _sidearm_fire_buffered := false
-var _sidearm_action_direction: Vector2 = Vector2.DOWN
-var _primary_ranged_action_phase: StringName = &""
-var _primary_ranged_action_timer: float = 0.0
-var _primary_ranged_action_total: float = 0.0
-var _primary_ranged_action_direction: Vector2 = Vector2.RIGHT
-var _primary_ranged_action_suffix: StringName = &"right"
+var _sidearm_draw_active: bool:
+	get: return _ensure_ranged_controller().sidearm_draw_active
+	set(value): _ensure_ranged_controller().sidearm_draw_active = value
+var _sidearm_action_phase: StringName:
+	get: return _ensure_ranged_controller().sidearm_phase
+	set(value): _ensure_ranged_controller().sidearm_phase = value
+var _sidearm_action_phase_started: bool:
+	get: return _ensure_ranged_controller().sidearm_phase_started
+	set(value): _ensure_ranged_controller().sidearm_phase_started = value
+var _sidearm_fire_buffered: bool:
+	get: return _ensure_ranged_controller().sidearm_fire_buffered
+	set(value): _ensure_ranged_controller().sidearm_fire_buffered = value
+var _sidearm_action_direction: Vector2:
+	get: return _ensure_ranged_controller().sidearm_action_direction
+	set(value): _ensure_ranged_controller().sidearm_action_direction = value
+var _primary_ranged_action_phase: StringName:
+	get: return _ensure_ranged_controller().primary_action_phase
+	set(value): _ensure_ranged_controller().primary_action_phase = value
+var _primary_ranged_action_timer: float:
+	get: return _ensure_ranged_controller().primary_action_timer
+	set(value): _ensure_ranged_controller().primary_action_timer = value
+var _primary_ranged_action_total: float:
+	get: return _ensure_ranged_controller().primary_action_total
+	set(value): _ensure_ranged_controller().primary_action_total = value
+var _primary_ranged_action_direction: Vector2:
+	get: return _ensure_ranged_controller().primary_action_direction
+	set(value): _ensure_ranged_controller().primary_action_direction = value
+var _primary_ranged_action_suffix: StringName:
+	get: return _ensure_ranged_controller().primary_action_suffix
+	set(value): _ensure_ranged_controller().primary_action_suffix = value
 var _weapon_socket_library := WeaponSocketTracks.new()
 var _active_weapon_socket: Dictionary = {}
 var _weapon_socket_error_key: String = ""
@@ -975,13 +1018,25 @@ func _ensure_loadout_controller() -> OperatorLoadoutController:
 	return _loadout_controller
 
 
+func _ensure_ranged_controller() -> OperatorRangedController:
+	if _ranged_controller == null:
+		_ranged_controller = OperatorRangedControllerScript.new()
+		_ranged_controller.bind_loadout(_ensure_loadout_controller())
+	return _ranged_controller
+
+
 func _get_active_weapon_runtime_state() -> OperatorWeaponRuntimeState:
 	var key := _get_active_weapon_state_key()
 	return _ensure_loadout_controller().runtime_state(key)
 
 
+func _weapon_runtime_state(weapon_key: String = "") -> OperatorWeaponRuntimeState:
+	var key := weapon_key if not weapon_key.is_empty() else _get_active_weapon_state_key()
+	return _ensure_ranged_controller().weapon_runtime_state(key)
+
+
 func _set_loaded_ammo(weapon_key: String, amount: int) -> void:
-	_ensure_loadout_controller().runtime_state(weapon_key).loaded_magazine = maxi(0, amount)
+	_ensure_ranged_controller().set_loaded_ammo(weapon_key, amount)
 
 
 func _dodge_tuning() -> Dictionary:
@@ -1263,7 +1318,7 @@ func _process(delta):
 func _advance_simulation(delta: float) -> void:
 	if _paired_execution_active:
 		return
-	fire_cooldown_remaining = max(0.0, fire_cooldown_remaining - delta)
+	_ensure_ranged_controller().advance_fire_cooldown(delta)
 	_weapon_failure_feedback_cooldown = maxf(0.0, _weapon_failure_feedback_cooldown - delta)
 	melee_cooldown_remaining = max(0.0, melee_cooldown_remaining - delta)
 	_fast_chain_terminal_restart_grace_remaining = maxf(0.0, _fast_chain_terminal_restart_grace_remaining - delta)
@@ -1292,6 +1347,7 @@ func _advance_simulation(delta: float) -> void:
 	# render-tick audit on the strength of their names, which was wrong.
 	_update_melee_presentation_posture(delta)
 	_tick_primary_ranged_action_presentation(delta)
+	_ensure_ranged_controller().advance_sidearm_recovery(delta)
 	_update_operator_actions(delta)
 	_update_combat_target()
 	_update_interaction_target()
@@ -1675,17 +1731,16 @@ func _update_animation():
 	if _modular_damage_reaction_active:
 		return
 	if _is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active():
-		if _is_primary_ranged_fire_presentation_active():
-			var lower_base := _get_modular_lower_body_motion_base()
-			var committed_direction := _primary_ranged_action_direction
-			var lower_direction := _get_ranged_lower_visual_direction(
-				movement_direction,
-				committed_direction
-			)
-			if _can_reuse_modular_lower_body_for_current_loadout():
-				_sync_modular_lower_body_locomotion(lower_base, lower_direction)
-			else:
-				_hide_modular_locomotion_layers()
+		var lower_base := _get_modular_lower_body_motion_base()
+		var committed_direction := _primary_ranged_action_direction
+		var lower_direction := _get_ranged_lower_visual_direction(
+			movement_direction,
+			committed_direction
+		)
+		if _can_reuse_modular_lower_body_for_current_loadout():
+			_sync_modular_lower_body_locomotion(lower_base, lower_direction)
+		else:
+			_hide_modular_locomotion_layers()
 		return
 	if _portal_arrival_animation_active:
 		if animated_sprite.animation != PORTAL_ARRIVAL_ANIMATION and animated_sprite.animation != PORTAL_ARRIVAL_DOWN_ANIMATION:
@@ -2919,51 +2974,99 @@ func _sync_modular_sidearm_presentation(_is_firing: bool) -> bool:
 		return false
 	if modular_lower_body_sprite == null or modular_upper_body_sprite == null or modular_sidearm_sprite == null or modular_upper_fx_sprite == null:
 		return false
-	if _sidearm_action_phase in [&"drawing", &"firing"] and _is_sidearm_action_finished():
+	if _sidearm_action_phase == &"drawing" and _is_sidearm_action_finished():
 		_sidearm_action_phase = &"held"
 		_sidearm_action_phase_started = false
 		_sidearm_draw_active = false
+	elif _sidearm_action_phase == &"firing" and _is_sidearm_action_finished():
+		_ensure_ranged_controller().begin_sidearm_recovery(0.08)
 	var firing := _sidearm_action_phase == &"firing"
-	var holding := _sidearm_action_phase == &"held"
+	var recovering := _sidearm_action_phase == &"recovering"
+	var holding := _sidearm_action_phase == &"held" or recovering
 	var action_direction := aim_direction if holding else _sidearm_action_direction
-	var action := "fire" if firing else "draw"
 	var start_action := not holding and not _sidearm_action_phase_started
 	# One authored sector for the whole stack.
 	var sector := _sidearm_authored_sector(action_direction)
-	var legacy_suffix := _sidearm_legacy_sector_suffix(sector)
 	# modular_sidearm_sprite is canonical as of C2a-R1; the other three layers are
 	# still compatibility renderers and keep legacy names built from the SAME
 	# sector, so they cannot drift from the pistol.
-	var canonical_group: StringName = &"cosmetic" if firing else &"posture"
-	var canonical_action: StringName = &"fire_sidearm_01" if firing else &"draw_sidearm_01"
+	var canonical_group: StringName = &"cosmetic" if firing or recovering else &"posture"
+	var canonical_action: StringName = &"fire_sidearm_01" if firing or recovering else &"draw_sidearm_01"
 	var pistol_animation := _resolve_sidearm_weapon_animation(
 		canonical_group, canonical_action, sector
 	)
-	if not _sync_sidearm_action_sprite(
+	var lower_action_animation: StringName = _get_operator_animation_selector().resolve_sector(
+		&"sidearm", canonical_group, canonical_action, sector, &"lower_body"
+	)
+	var upper_action_animation: StringName = _get_operator_animation_selector().resolve_sector(
+		&"sidearm", canonical_group, canonical_action, sector, &"upper_body"
+	)
+	var movement_direction_for_lower := movement_direction if movement_direction.length_squared() > 0.0001 else velocity
+	var movement_permitted := holding or firing
+	var movement_lower_base := _get_modular_lower_body_motion_base()
+	var movement_lower_direction := movement_direction_for_lower.normalized() if movement_direction_for_lower.length_squared() > 0.0001 else action_direction
+	var movement_lower_animation := _resolve_modular_body_animation(movement_lower_base, &"lower_body", movement_lower_direction)
+	var movement_lower_available := movement_permitted \
+		and not _is_movement_locked() \
+		and velocity.length_squared() > 0.0001 \
+		and _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, movement_lower_animation)
+	var lower_action_available := _has_playable_sprite_animation(modular_lower_body_sprite.sprite_frames, lower_action_animation)
+	var fx_action: StringName = &"fire_sidearm_01" if firing or recovering else &"draw_sidearm_01"
+	var fx_group: StringName = &"cosmetic" if firing or recovering else &"posture"
+	var fx_available := _has_fx_animation(&"sidearm", fx_group, fx_action, sector)
+	var fx_animation := _resolve_fx_animation(&"sidearm", fx_group, fx_action, sector) if fx_available else &""
+	if not lower_action_available \
+		or not _has_playable_sprite_animation(modular_upper_body_sprite.sprite_frames, upper_action_animation) \
+		or not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, pistol_animation) \
+		or not fx_available \
+		or not _has_playable_sprite_animation(modular_upper_fx_sprite.sprite_frames, fx_animation):
+		_report_missing_modular_ranged_presentation(&"sidearm_action")
+		return false
+	var body_plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.MODULAR_BODY,
+		[modular_lower_body_sprite, modular_upper_body_sprite]
+	)
+	var movement_lower_identity: StringName = movement_lower_animation if movement_lower_available else &""
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		body_plan,
+		movement_lower_available,
 		modular_lower_body_sprite,
-		StringName("sidearm_%s_lower_%s" % [action, legacy_suffix]), holding, start_action
-	):
-		return false
-	if not _sync_sidearm_action_sprite(
+		movement_lower_identity,
+		lower_action_animation,
 		modular_upper_body_sprite,
-		StringName("sidearm_%s_upper_%s" % [action, legacy_suffix]), holding, start_action
-	):
+		upper_action_animation,
+		modular_upper_body_sprite,
+		1.0,
+		1.0,
+		1.0,
+		false,
+		start_action,
+		null,
+		&"",
+		false,
+		false,
+		Callable(self, "_claim_modular_body_owner")
+	)
+	if not presented:
 		return false
+	if recovering or holding:
+		if not _sync_sidearm_action_sprite(modular_upper_body_sprite, upper_action_animation, true, false):
+			return false
+	if not movement_lower_available and holding:
+		if not _sync_sidearm_action_sprite(modular_lower_body_sprite, lower_action_animation, true, false):
+			return false
 	if not _sync_sidearm_action_sprite(
-		modular_sidearm_sprite, pistol_animation, holding, start_action
+		modular_sidearm_sprite, pistol_animation, holding or recovering, start_action
 	):
 		return false
 	# The FX renderer is canonical as of C2a-R2 and reuses the SAME authored sector
 	# already chosen for the pistol, lower and upper — it does not resolve its own.
-	var fx_action: StringName = &"fire_sidearm_01" if firing else &"draw_sidearm_01"
-	var fx_group: StringName = &"cosmetic" if firing else &"posture"
-	if _has_fx_animation(&"sidearm", fx_group, fx_action, sector):
-		var fx_animation := _resolve_fx_animation(&"sidearm", fx_group, fx_action, sector)
+	if recovering or holding:
+		_hide_presentation_layer(modular_upper_fx_sprite, true)
+	else:
 		_sync_sidearm_action_sprite(
 			modular_upper_fx_sprite, fx_animation, holding, start_action
 		)
-	elif modular_upper_fx_sprite != null:
-		_hide_presentation_layer(modular_upper_fx_sprite, true)
 	if start_action:
 		_sidearm_action_phase_started = true
 	_claim_modular_body_owner()
@@ -3408,19 +3511,17 @@ func _tick_primary_ranged_action_presentation(delta: float) -> void:
 	if not (_is_primary_ranged_transition_presentation_active() or _is_primary_ranged_fire_presentation_active() or _is_primary_ranged_fire_recover_presentation_active()):
 		return
 
-	_primary_ranged_action_timer -= delta
-	if _primary_ranged_action_timer > 0.0:
+	var ranged_controller := _ensure_ranged_controller()
+	if not ranged_controller.advance_primary_action(delta):
 		return
 
 	if _is_primary_ranged_fire_presentation_active():
-		_primary_ranged_action_phase = &"recover"
-		_primary_ranged_action_direction = _get_current_primary_ranged_visual_direction()
-		_primary_ranged_action_timer = maxf(0.04, modular_primary_ranged_fire_recover_hold_sec)
-		_primary_ranged_action_total = _primary_ranged_action_timer
+		ranged_controller.set_primary_action(
+			&"recover", maxf(0.04, modular_primary_ranged_fire_recover_hold_sec),
+			_get_current_primary_ranged_visual_direction(), _primary_ranged_action_suffix
+		)
 	else:
-		_primary_ranged_action_phase = &""
-		_primary_ranged_action_timer = 0.0
-		_primary_ranged_action_total = 0.0
+		ranged_controller.clear_primary_action()
 	_update_animation()
 
 
@@ -3538,9 +3639,9 @@ func _begin_modular_primary_ranged_fire_presentation(
 	if not any_layer_played:
 		return false
 
-	_primary_ranged_action_phase = &"firing"
-	_primary_ranged_action_timer = max(0.04, longest_duration)
-	_primary_ranged_action_total = _primary_ranged_action_timer
+	_ensure_ranged_controller().set_primary_action(
+		&"firing", maxf(0.04, longest_duration), fire_dir, suffix
+	)
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	return true
 
@@ -3580,25 +3681,56 @@ func _begin_modular_primary_ranged_aim_presentation() -> bool:
 	if not _has_playable_sprite_animation(modular_sidearm_sprite.sprite_frames, weapon_animation):
 		return false
 
-	# All three clips resolved, so the composition is real: declare it, then play.
-	_declare_modular_body_composition()
-
-	var longest_duration := 0.0
+	# The body pair is validated and handed off atomically. A legal moving lower
+	# keeps its locomotion clock; a stationary actor uses the paired idle identity.
 	var raise_fps := float(modular_upper_body_sprite.sprite_frames.get_frame_count(upper_animation)) / maxf(0.04, ranged_raise_duration)
-	var lower_result := _play_modular_action_animation(modular_lower_body_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
-	longest_duration = max(longest_duration, float(lower_result.get("duration", 0.0)))
-
-	var upper_result := _play_modular_action_animation(modular_upper_body_sprite, "ranged_2h_aim_modular", action_direction, raise_fps)
-	longest_duration = max(longest_duration, float(upper_result.get("duration", 0.0)))
+	var movement_lower_base := _get_modular_lower_body_motion_base()
+	var movement_lower_direction := _get_ranged_lower_visual_direction(movement_direction, action_direction)
+	var movement_lower_identity := _resolve_modular_body_animation(
+		movement_lower_base, &"lower_body", movement_lower_direction
+	)
+	var movement_permitted := not _is_movement_locked() and velocity.length_squared() > 0.0001
+	var body_plan := OperatorBodyPresentationPlan.create(
+		OperatorBodyPresenter.Owner.MODULAR_BODY,
+		[modular_lower_body_sprite, modular_upper_body_sprite]
+	)
+	var presented := _get_operator_presentation_controller().present_defensive_composition(
+		body_plan,
+		movement_permitted,
+		modular_lower_body_sprite,
+		movement_lower_identity,
+		lower_animation,
+		modular_upper_body_sprite,
+		upper_animation,
+		modular_lower_body_sprite,
+		1.0,
+		raise_fps,
+		raise_fps,
+		false,
+		false,
+		null,
+		&"",
+		false,
+		false,
+		Callable(self, "_claim_modular_body_owner")
+	)
+	if not presented:
+		return false
 
 	var weapon_result := _play_modular_action_animation(
 		modular_sidearm_sprite, "", action_direction, raise_fps, weapon_animation
 	)
-	longest_duration = max(longest_duration, float(weapon_result.get("duration", 0.0)))
+	if not bool(weapon_result.get("played", false)):
+		return false
+	var longest_duration := maxf(
+		float(weapon_result.get("duration", 0.0)),
+		float(modular_upper_body_sprite.sprite_frames.get_frame_count(upper_animation)) / maxf(1.0, raise_fps)
+	)
 
-	_primary_ranged_action_phase = &"aiming"
-	_primary_ranged_action_timer = max(0.04, longest_duration)
-	_primary_ranged_action_total = _primary_ranged_action_timer
+	_ensure_ranged_controller().set_primary_action(
+		&"aiming", maxf(0.04, longest_duration), action_direction,
+		_primary_ranged_fire_suffix_for_direction(action_direction)
+	)
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
@@ -3631,17 +3763,14 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 	var canonical_weapon_aim := _resolve_ranged_2h_weapon_animation(
 		&"cosmetic", &"aim_01", _ranged_2h_authored_sector(&"aim_01", action_direction)
 	)
-	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
+	for sprite in [modular_upper_body_sprite, modular_sidearm_sprite]:
 		var prior_ratio := 1.0
 		if lowering_from_partial_raise and sprite.sprite_frames != null:
 			var prior_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
 			if prior_count > 0:
 				prior_ratio = clampf((float(sprite.frame) + sprite.frame_progress) / float(prior_count), 0.0, 1.0)
 		var result := _play_modular_action_animation_backwards(
-			sprite,
-			"ranged_2h_aim_modular",
-			action_direction,
-			lower_fps,
+			sprite, "ranged_2h_aim_modular", action_direction, lower_fps,
 			canonical_weapon_aim if sprite == modular_sidearm_sprite else &""
 		)
 		if not bool(result.get("played", false)):
@@ -3654,9 +3783,10 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 			result_duration *= prior_ratio
 		longest_duration = max(longest_duration, result_duration)
 
-	_primary_ranged_action_phase = &"lowering"
-	_primary_ranged_action_timer = max(0.04, longest_duration)
-	_primary_ranged_action_total = _primary_ranged_action_timer
+	_ensure_ranged_controller().set_primary_action(
+		&"lowering", maxf(0.04, longest_duration), action_direction,
+		_primary_ranged_fire_suffix_for_direction(action_direction)
+	)
 	_hide_legacy_primary_ranged_presentation_for_modular_fire()
 	if modular_upper_fx_sprite:
 		modular_upper_fx_sprite.visible = false
@@ -3664,9 +3794,7 @@ func _begin_modular_primary_ranged_lower_presentation() -> bool:
 
 
 func _end_modular_primary_ranged_fire_presentation() -> void:
-	_primary_ranged_action_phase = &""
-	_primary_ranged_action_timer = 0.0
-	_primary_ranged_action_total = 0.0
+	_ensure_ranged_controller().clear_primary_action()
 
 
 func _primary_ranged_fire_candidates(layer_key: StringName, suffix: StringName) -> Array[StringName]:
@@ -3873,9 +4001,27 @@ func _sync_sidearm_action_sprite(sprite: AnimatedSprite2D, animation: StringName
 
 
 func _is_sidearm_action_finished() -> bool:
-	var expected_prefix := "sidearm_fire" if _sidearm_action_phase == &"firing" else "sidearm_draw"
-	for sprite in [modular_lower_body_sprite, modular_upper_body_sprite, modular_sidearm_sprite]:
-		if sprite == null or not String(sprite.animation).begins_with(expected_prefix):
+	var firing := _sidearm_action_phase == &"firing"
+	var group: StringName = &"cosmetic" if firing else &"posture"
+	var action: StringName = &"fire_sidearm_01" if firing else &"draw_sidearm_01"
+	var sector := _sidearm_authored_sector(_sidearm_action_direction)
+	var sprites: Array = [
+		[modular_upper_body_sprite, _get_operator_animation_selector().resolve_sector(
+			&"sidearm", group, action, sector, &"upper_body"
+		)],
+		[modular_sidearm_sprite, _resolve_sidearm_weapon_animation(group, action, sector)],
+	]
+	if not firing:
+		sprites.push_front([
+			modular_lower_body_sprite,
+			_get_operator_animation_selector().resolve_sector(
+				&"sidearm", group, action, sector, &"lower_body"
+			),
+		])
+	for item in sprites:
+		var sprite := item[0] as AnimatedSprite2D
+		var expected_animation: StringName = item[1]
+		if sprite == null or sprite.animation != expected_animation:
 			return false
 		if sprite.is_playing():
 			return false
@@ -4945,7 +5091,7 @@ func _log_ranged_fire_failure(reason: StringName) -> void:
 		"position": global_position,
 		"loaded_ammo": _get_current_loaded_ammo(),
 		"reserve_ammo": _get_current_reserve_ammo(),
-		"heat": weapon_heat_by_id.get(_get_active_weapon_state_key(), 0.0),
+		"heat": _weapon_runtime_state().heat,
 		"overheat_threshold": float(
 			weapon_status.get("overheat_threshold", 0.0)
 		),
@@ -5120,12 +5266,9 @@ func _request_ranged_shot() -> void:
 		last_fire_cooldown *= multiplier
 	var fire_animation := _get_current_ranged_body_fire_animation(velocity.length() > 0.01 and not is_sprinting)
 	var delay := _get_ranged_fire_release_delay(fire_animation)
-	_pending_ranged_shot = {
-		"timer": delay,
-		"profile": profile.duplicate(true),
-		"accepted_aim_direction": accepted_aim_direction,
-		"accepted_aim_world_position": accepted_aim_world_position,
-	}
+	_ensure_ranged_controller().begin_pending_shot(
+		delay, profile, accepted_aim_direction, accepted_aim_world_position
+	)
 	_obs_gauge(&"player_ranged_requests_pending", 1)
 	# C2a-R4: no legacy full-body fire strip is played here. `fire_animation` now
 	# only supplies the gameplay release timing below; the visible presentation is
@@ -5149,7 +5292,7 @@ func _emit_pending_ranged_shot() -> void:
 		"accepted_aim_world_position",
 		global_position + accepted_direction * ranged_controller_aim_distance
 	)
-	_pending_ranged_shot.clear()
+	_ensure_ranged_controller().clear_pending_shot()
 	_obs_gauge(&"player_ranged_requests_pending", 0)
 	if accepted_direction.length_squared() <= 0.0001:
 		_log_ranged_request_cancelled(&"zero_direction")
@@ -5312,32 +5455,11 @@ func _handle_attack_input() -> void:
 
 
 func _handle_sidearm_fire_input() -> void:
-	if not _is_attack_primary_just_pressed():
-		return
-	if _sidearm_action_phase == &"held" and fire_cooldown_remaining <= 0.0 and _pending_ranged_shot.is_empty():
-		_request_ranged_shot()
-		return
-	if _sidearm_action_phase in [&"drawing", &"firing"] and not _sidearm_fire_buffered:
-		_sidearm_fire_buffered = true
-		_obs_increment(&"player_ranged_fire_deferred_sidearm_not_ready")
-		_obs_log(&"player_ranged_fire_deferred", {
-			"reason": "sidearm_not_ready",
-			"phase": String(_sidearm_action_phase),
-		})
+	_ensure_ranged_controller().handle_sidearm_fire_input(self)
 
 
 func _try_consume_sidearm_fire_buffer() -> void:
-	if not _sidearm_fire_buffered:
-		return
-	if not _is_using_sidearm_ranged() or not _is_ranged_ready_active():
-		_sidearm_fire_buffered = false
-		_obs_increment(&"player_ranged_fire_deferred_cancelled_weapon_switch")
-		return
-	if _sidearm_action_phase != &"held" or fire_cooldown_remaining > 0.0 or not _pending_ranged_shot.is_empty():
-		return
-	_sidearm_fire_buffered = false
-	_obs_increment(&"player_ranged_fire_deferred_consumed")
-	_request_ranged_shot()
+	_ensure_ranged_controller().try_consume_sidearm_fire_buffer(self)
 
 
 func _request_current_profile_intent(primary: bool) -> void:
@@ -5947,7 +6069,7 @@ func _exit_ranged_ready() -> void:
 
 
 func _is_ranged_ready_active() -> bool:
-	return _ranged_ready_active and _ranged_ready_weapon_definition != null
+	return _ensure_ranged_controller().is_ready()
 
 
 func _get_requested_attack_kind(intent: String = "") -> String:
@@ -10955,7 +11077,7 @@ func grant_sidearm(definition: OperatorWeaponDefinition = null) -> Dictionary:
 	var sidearm_type := _get_weapon_ammo_type(sidearm_weapon_definition)
 	var sidearm_reserve: int = _get_sidearm_initial_reserve(sidearm_weapon_definition)
 	if int(ammo_reserve_by_type.get(sidearm_type, 0)) <= 0 and sidearm_reserve > 0:
-		ammo_reserve_by_type[sidearm_type] = min(int(ammo_capacity_by_type.get(sidearm_type, sidearm_reserve)), sidearm_reserve)
+		_ensure_ranged_controller().set_reserve(sidearm_type, sidearm_reserve)
 	_sync_legacy_ammo_fields()
 	_refresh_primary_weapon_state()
 	_update_primary_weapon_visual(false)
@@ -10980,7 +11102,7 @@ func remove_sidearm() -> Dictionary:
 		var sidearm_key := _get_weapon_state_key(sidearm_weapon_definition)
 		var sidearm_type := _get_weapon_ammo_type(sidearm_weapon_definition)
 		var loaded := int(loaded_ammo_by_weapon_id.get(sidearm_key, 0))
-		ammo_reserve_by_type[sidearm_type] = min(int(ammo_capacity_by_type.get(sidearm_type, 0)), int(ammo_reserve_by_type.get(sidearm_type, 0)) + loaded)
+		_ensure_ranged_controller().add_reserve(sidearm_type, loaded)
 		_set_loaded_ammo(sidearm_key, 0)
 		_sync_legacy_ammo_fields()
 	
@@ -12112,10 +12234,7 @@ func _get_ranged_fire_release_delay(animation_name: StringName) -> float:
 func _update_pending_ranged_shot(delta: float) -> void:
 	if _pending_ranged_shot.is_empty():
 		return
-	var timer: float = float(_pending_ranged_shot.get("timer", 0.0))
-	timer = max(0.0, timer - delta)
-	_pending_ranged_shot["timer"] = timer
-	if timer <= 0.0:
+	if _ensure_ranged_controller().advance_pending_shot(delta):
 		_emit_pending_ranged_shot()
 func _update_body_recoil(delta: float) -> void:
 	if _body_recoil_offset == Vector2.ZERO:
@@ -12853,7 +12972,7 @@ func _is_authored_melee_body_stance_active() -> bool:
 func _consume_ammo() -> void:
 	var key := _get_active_weapon_state_key()
 	var cost := _get_current_ammo_per_shot()
-	_set_loaded_ammo(key, max(0, int(loaded_ammo_by_weapon_id.get(key, 0)) - cost))
+	_ensure_ranged_controller().consume_loaded_ammo(key, cost)
 	_sync_legacy_ammo_fields()
 
 
@@ -12904,12 +13023,10 @@ func _register_weapon_ammo_state(weapon_definition: OperatorWeaponDefinition, fi
 		return
 	var ammo_type := _get_weapon_ammo_type(weapon_definition)
 	var max_reserve := int(weapon_definition.get_ammo_value("max_reserve", weapon_definition.max_reserve_ammo))
-	ammo_capacity_by_type[ammo_type] = max(int(ammo_capacity_by_type.get(ammo_type, 0)), max_reserve)
-	if not ammo_reserve_by_type.has(ammo_type):
-		var starting_reserve := int(weapon_definition.get_ammo_value("starting_reserve", weapon_definition.get_ammo_value("reserve", weapon_definition.reserve_ammo)))
-		ammo_reserve_by_type[ammo_type] = clampi(starting_reserve, 0, int(ammo_capacity_by_type[ammo_type]))
+	var starting_reserve := int(weapon_definition.get_ammo_value("starting_reserve", weapon_definition.get_ammo_value("reserve", weapon_definition.reserve_ammo)))
+	_ensure_ranged_controller().register_ammo_type(ammo_type, max_reserve, starting_reserve)
 	var key := _get_weapon_state_key(weapon_definition)
-	if not loaded_ammo_by_weapon_id.has(key):
+	if not loaded_ammo_by_weapon_id.has(key) or (fill_magazine and int(loaded_ammo_by_weapon_id.get(key, 0)) <= 0):
 		_set_loaded_ammo(key, _get_weapon_magazine_size(weapon_definition) if fill_magazine else 0)
 
 
@@ -12934,10 +13051,17 @@ func _get_current_magazine_size() -> int:
 	return _get_standard_magazine_size()
 
 
+func _get_weapon_loaded_ammo(weapon_definition: OperatorWeaponDefinition) -> int:
+	if weapon_definition == null:
+		return 0
+	_register_weapon_ammo_state(weapon_definition)
+	return _ensure_ranged_controller().weapon_runtime_state(_get_weapon_state_key(weapon_definition)).loaded_magazine
+
+
 func _get_current_loaded_ammo() -> int:
 	var weapon_definition := _get_active_ranged_weapon_definition()
 	_register_weapon_ammo_state(weapon_definition)
-	return int(loaded_ammo_by_weapon_id.get(_get_weapon_state_key(weapon_definition), 0))
+	return _get_weapon_loaded_ammo(weapon_definition)
 
 
 func _get_current_reserve_ammo() -> int:
@@ -12972,7 +13096,7 @@ func _clamp_loaded_ammo_to_current_weapon() -> void:
 	var ammo_type := _get_weapon_ammo_type(_get_active_ranged_weapon_definition())
 	var overflow := loaded - capacity
 	_set_loaded_ammo(key, capacity)
-	ammo_reserve_by_type[ammo_type] = min(int(ammo_capacity_by_type.get(ammo_type, 0)), int(ammo_reserve_by_type.get(ammo_type, 0)) + overflow)
+	_ensure_ranged_controller().add_reserve(ammo_type, overflow)
 	_sync_legacy_ammo_fields()
 
 
@@ -13004,9 +13128,7 @@ func _can_reload() -> bool:
 func _try_start_reload() -> void:
 	if not _can_reload():
 		return
-	_reload_active = true
-	_reload_total = _get_current_reload_duration()
-	_reload_timer = _reload_total
+	_ensure_ranged_controller().begin_reload(_get_active_weapon_state_key(), _get_current_reload_duration())
 	last_fire_cooldown = max(last_fire_cooldown, _reload_timer)
 	fire_cooldown_remaining = max(fire_cooldown_remaining, _reload_timer)
 	_update_primary_weapon_visual(false)
@@ -13016,8 +13138,7 @@ func _try_start_reload() -> void:
 func _update_reload(delta: float) -> void:
 	if not _reload_active:
 		return
-	_reload_timer = max(0.0, _reload_timer - delta)
-	if _reload_timer > 0.0:
+	if not _ensure_ranged_controller().advance_reload(_get_active_weapon_state_key(), delta):
 		return
 	_finish_reload()
 
@@ -13040,8 +13161,7 @@ func _finish_reload() -> void:
 
 
 func _cancel_reload() -> void:
-	_reload_active = false
-	_reload_timer = 0.0
+	_ensure_ranged_controller().cancel_reload(_get_active_weapon_state_key())
 
 
 func add_ammo(standard: int, heavy: int) -> Dictionary:
@@ -13055,14 +13175,7 @@ func add_ammo(standard: int, heavy: int) -> Dictionary:
 
 
 func add_ammo_type(ammo_type: String, amount: int) -> int:
-	var normalized := _normalize_ammo_type(ammo_type)
-	var capacity := int(ammo_capacity_by_type.get(normalized, 0))
-	if capacity <= 0:
-		return 0
-	var old_amount := int(ammo_reserve_by_type.get(normalized, 0))
-	ammo_reserve_by_type[normalized] = clampi(old_amount + max(0, amount), 0, capacity)
-	_sync_legacy_ammo_fields()
-	return int(ammo_reserve_by_type[normalized]) - old_amount
+	return _ensure_ranged_controller().add_ammo_type(self, ammo_type, amount)
 
 
 func _sync_legacy_ammo_fields() -> void:
@@ -13070,7 +13183,6 @@ func _sync_legacy_ammo_fields() -> void:
 	ammo_heavy = int(ammo_reserve_by_type.get("kinetic_heavy", ammo_heavy))
 	ammo_standard_max = int(ammo_capacity_by_type.get("kinetic_light", ammo_standard_max))
 	ammo_heavy_max = int(ammo_capacity_by_type.get("kinetic_heavy", ammo_heavy_max))
-	_ammo_standard_loaded = int(loaded_ammo_by_weapon_id.get(_get_active_weapon_state_key(), _ammo_standard_loaded))
 
 
 func _get_active_heat_key() -> String:
@@ -13078,11 +13190,11 @@ func _get_active_heat_key() -> String:
 
 
 func _get_active_weapon_heat() -> float:
-	return float(weapon_heat_by_id.get(_get_active_heat_key(), 0.0))
+	return _weapon_runtime_state(_get_active_heat_key()).heat
 
 
 func _is_active_weapon_overheated() -> bool:
-	return float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)) > 0.0
+	return _weapon_runtime_state(_get_active_heat_key()).overheat_lockout > 0.0
 
 
 func _apply_heat_for_shot() -> void:
@@ -13090,21 +13202,22 @@ func _apply_heat_for_shot() -> void:
 	if weapon_definition == null or not weapon_definition.get_heat_bool("enabled", weapon_definition.heat_enabled):
 		return
 	var key := _get_weapon_state_key(weapon_definition)
+	var runtime_state := _weapon_runtime_state(key)
 	var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
 	var heat_per_shot := weapon_definition.get_heat_float("per_shot", weapon_definition.heat_per_shot) * weapon_definition.heat_per_shot_mult
-	var previous_heat := float(weapon_heat_by_id.get(key, 0.0))
+	var previous_heat := runtime_state.heat
 	var previous_band := _get_weapon_heat_band(weapon_definition, previous_heat)
 	var new_heat := minf(heat_max, previous_heat + heat_per_shot)
-	weapon_heat_by_id[key] = new_heat
-	weapon_heat_delay_by_id[key] = weapon_definition.get_heat_float("decay_delay_sec", weapon_definition.heat_decay_delay_sec)
+	runtime_state.heat = new_heat
+	runtime_state.heat_decay_delay = weapon_definition.get_heat_float("decay_delay_sec", weapon_definition.heat_decay_delay_sec)
 	var threshold := weapon_definition.get_heat_float("overheat_threshold", weapon_definition.overheat_threshold)
 	var new_band := _get_weapon_heat_band(weapon_definition, new_heat)
 	if new_band == &"critical" and previous_band != &"critical":
 		_emit_weapon_feedback(&"heat_critical", weapon_definition)
 	elif new_band == &"hot" and previous_band == &"normal":
 		_emit_weapon_feedback(&"heat_hot", weapon_definition)
-	if new_heat >= threshold and float(weapon_overheat_by_id.get(key, 0.0)) <= 0.0:
-		weapon_overheat_by_id[key] = weapon_definition.get_heat_float("overheat_lockout_sec", weapon_definition.overheat_lockout_sec) * weapon_definition.overheat_lockout_mult
+	if new_heat >= threshold and runtime_state.overheat_lockout <= 0.0:
+		runtime_state.overheat_lockout = weapon_definition.get_heat_float("overheat_lockout_sec", weapon_definition.overheat_lockout_sec) * weapon_definition.overheat_lockout_mult
 		_emit_weapon_feedback(&"overheated", weapon_definition)
 
 
@@ -13116,20 +13229,21 @@ func _update_weapon_heat(delta: float) -> void:
 		if not weapon_definition.get_heat_bool("enabled", weapon_definition.heat_enabled):
 			continue
 		var key := _get_weapon_state_key(weapon_definition)
-		var delay := maxf(0.0, float(weapon_heat_delay_by_id.get(key, 0.0)) - delta)
-		weapon_heat_delay_by_id[key] = delay
-		var previous_lockout := float(weapon_overheat_by_id.get(key, 0.0))
+		var runtime_state := _weapon_runtime_state(key)
+		var delay := maxf(0.0, runtime_state.heat_decay_delay - delta)
+		runtime_state.heat_decay_delay = delay
+		var previous_lockout := runtime_state.overheat_lockout
 		var lockout := maxf(0.0, previous_lockout - delta)
-		weapon_overheat_by_id[key] = lockout
+		runtime_state.overheat_lockout = lockout
 		if delay > 0.0:
 			continue
 		var decay := weapon_definition.get_heat_float("decay_per_sec", weapon_definition.heat_decay_per_sec) * weapon_definition.heat_decay_mult
 		if lockout > 0.0:
 			decay *= 1.5
-		weapon_heat_by_id[key] = maxf(0.0, float(weapon_heat_by_id.get(key, 0.0)) - decay * delta)
+		runtime_state.heat = maxf(0.0, runtime_state.heat - decay * delta)
 		if previous_lockout > 0.0 and lockout <= 0.0:
 			var heat_max := maxf(1.0, weapon_definition.get_heat_float("max", weapon_definition.heat_max))
-			weapon_heat_by_id[key] = minf(float(weapon_heat_by_id[key]), heat_max * 0.7)
+			runtime_state.heat = minf(runtime_state.heat, heat_max * 0.7)
 			_emit_weapon_feedback(&"overheat_recovered", weapon_definition)
 
 
@@ -13221,11 +13335,7 @@ func get_ranged_posture() -> StringName:
 func get_ranged_transition_ratio() -> float:
 	if _primary_ranged_action_total <= 0.001:
 		return 0.0
-	return clampf(
-		1.0 - _primary_ranged_action_timer / _primary_ranged_action_total,
-		0.0,
-		1.0
-	)
+	return _ensure_ranged_controller().transition_ratio()
 
 
 func _is_ranged_aim_ready() -> bool:
@@ -13243,13 +13353,7 @@ func _sync_ranged_aim_camera_state() -> void:
 
 
 func can_fire_ranged_now() -> bool:
-	return _is_ranged_ready_active() \
-		and _is_ranged_aim_ready() \
-		and not _reload_active \
-		and not _is_active_weapon_overheated() \
-		and _get_current_loaded_ammo() > 0 \
-		and fire_cooldown_remaining <= 0.0 \
-		and _pending_ranged_shot.is_empty()
+	return _ensure_ranged_controller().can_fire(self)
 
 
 func get_weapon_status() -> Dictionary:
@@ -13263,7 +13367,7 @@ func get_weapon_status() -> Dictionary:
 	var overheat_threshold := maxf(0.001, ranged_weapon_definition.get_heat_float("overheat_threshold", ranged_weapon_definition.overheat_threshold)) if ranged_weapon_definition != null else 100.0
 	var heat_warn_threshold := ranged_weapon_definition.get_heat_float("ui_warn_threshold", ranged_weapon_definition.heat_ui_warn_threshold) if ranged_weapon_definition != null else 70.0
 	var overheat_total := ranged_weapon_definition.get_heat_float("overheat_lockout_sec", ranged_weapon_definition.overheat_lockout_sec) * ranged_weapon_definition.overheat_lockout_mult if ranged_weapon_definition != null else 0.0
-	var overheat_remaining := float(weapon_overheat_by_id.get(_get_active_heat_key(), 0.0)) if ranged_weapon_definition != null else 0.0
+	var overheat_remaining := _weapon_runtime_state(_get_active_heat_key()).overheat_lockout if ranged_weapon_definition != null else 0.0
 	var reload_ratio := clampf(1.0 - _reload_timer / maxf(0.001, _reload_total), 0.0, 1.0) if _reload_active else 0.0
 	var noise_radius := ranged_weapon_definition.get_noise_float("shot_radius_px", ranged_weapon_definition.shot_noise_radius_px) if ranged_weapon_definition != null else 0.0
 	var is_suppressed := ranged_weapon_definition.get_noise_bool("suppressed", ranged_weapon_definition.suppressed) if ranged_weapon_definition != null else false
@@ -13321,7 +13425,7 @@ func get_weapon_status() -> Dictionary:
 		"heat_warn_threshold": heat_warn_threshold,
 		"overheat_threshold": overheat_threshold,
 		"overheat_ratio": clampf(heat / overheat_threshold, 0.0, 1.0),
-		"heat_decay_delay_remaining": float(weapon_heat_delay_by_id.get(_get_active_heat_key(), 0.0)) if ranged_weapon_definition != null else 0.0,
+		"heat_decay_delay_remaining": _weapon_runtime_state(_get_active_heat_key()).heat_decay_delay if ranged_weapon_definition != null else 0.0,
 		"heat_per_shot": heat_per_shot,
 		"shots_to_overheat": ceili(maxf(0.0, overheat_threshold - heat) / maxf(0.001, heat_per_shot)) if heat_per_shot > 0.0 else 0,
 		"overheated": _is_active_weapon_overheated(),

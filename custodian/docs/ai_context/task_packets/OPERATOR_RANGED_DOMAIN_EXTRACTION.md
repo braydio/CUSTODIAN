@@ -39,3 +39,27 @@
 - Next action: Extract ranged state against F1 runtime-state APIs, then replace the remaining movement-permissive lower-body action ownership with the shared presentation seam.
 - Best starting files: ranged/sidearm sections of `operator.gd`; weapon runtime state; presentation controller; ranged/sidearm focused smokes.
 - Blockers or open questions: None.
+
+
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: high
+- What went wrong: the canonical changed-file report is red on `operator_2_5d_cohort_dependency_closure`; its owning `operator.gd` path was selected and 45 higher-tier checks were skipped. The failure reproduces on clean `origin/main` and is not evidence of an F3-only regression.
+- Root cause / contributing factors: the current-main closure test sees an available authoring workspace, but all eight `idle_relaxed_01` source-strip paths are unavailable; the associated source-session hashes still match their correction receipt. Separately, the sidearm capture exposed repeated local input edges while a button remained held across physics samples; the router fix is local and the existing input-frame smoke plus sidearm capture now pass.
+- Prevention / pipeline improvement: restore or correctly resolve the eight source-strip evidence paths, then rerun the owning closure test and F3 changed-file validation after supported synchronization. Keep the sidearm scenario on the canonical `grant_sidearm` setup path and retain its one-shot recovery assertions.
+- Tooling / docs drift discovered: the first Moment Forge sidearm setup bypassed the public grant API and left the magazine empty; setup now invokes `grant_sidearm`. The validation manifest still has no registered ammo-reconciliation test.
+- Follow-up: manual-follow-up
+- What worked: all seven focused F3 smokes passed; primary and sidearm Moment Forge evidence captures passed; the existing implementation and pre-recovery snapshot remain preserved. Current changed-file result is retained red and was independently reproduced at current main.
+
+## Next Handoff
+- Next workstream: operator-ranged-domain-extraction
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: preserve the current F3 worktree, resolve the current-main source-strip provenance failure through its owning evidence authority, synchronize the same branch through the supported lifecycle, then rerun canonical validation.
+- Blockers or open questions: current main fails `operator_2_5d_cohort_dependency_closure` because eight external source-strip paths are unavailable; F3 remains dirty and 614 commits behind `origin/main`, so no checkpoint or finish was attempted.
