@@ -17,7 +17,7 @@
 - Max automatic review cycles: `0`
 - Review target workstream: `agent-paired-review-canonical-metadata-source-span-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_CANONICAL_METADATA_SOURCE_SPAN_V1.md`
-- Reviewed main: `bda39de1d68fa8f61f77e70ef7e696c6395d4f5d`
+- Reviewed main: `597c2bd43061bafd567f63e555b89d87e1baaf7d`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad556b3-998c-83ea-8620-22173524205f`
 - Visual review: `none`
 - Reviewer context: `fresh`
