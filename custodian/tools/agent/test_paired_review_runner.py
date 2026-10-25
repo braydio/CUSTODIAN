@@ -1227,13 +1227,18 @@ class PairedReviewRunnerTests(unittest.TestCase):
         for name in ("validation.json", "coordinator-validation.json"):
             (run_dir / name).unlink(missing_ok=True)
         report = {"schema": "custodian.validation.result.v1", "passed": False,
-                  "infrastructure_failure": "import"}
+                  "infrastructure_failure": "import",
+                  "import": {"status": "failed", "exit_code": 0,
+                             "warnings": [{"classification": "fatal", "line": "ERROR: TLS handshake error"}]}}
         report_bytes = (json.dumps(report) + "\n").encode()
         (run_dir / "validation.json").write_bytes(report_bytes)
         (run_dir / "coordinator-validation.json").write_text(json.dumps({
             "schema": "custodian.paired_review_host_validation.v1",
             "worktree": str(worktree), "reviewed_main": reviewed_main,
             "implementation_commit": "a" * 40, "implementation_parent": reviewed_main,
+            "command": ["/usr/bin/python3", str(worktree / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", reviewed_main, "--json"],
+            "summary": None, "selected": None,
             "code_paths": code_paths,
             "source_sha256": {path: hashlib.sha256((repo / path).read_bytes()).hexdigest()
                               for path in code_paths},
@@ -1252,9 +1257,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
         source_span = {"base": reviewed_main, "head": reviewed_main,
                        "paths": code_paths, "provenance": {"kind": "synthetic-test"}}
         before = runner._file_manifest(run_dir)
-        with patch.object(runner, "FAILED_IMPORT_RECOVERY_WORKSTREAM", "review-sample"), \
-             patch.object(runner, "FAILED_IMPORT_RECOVERY_RUN_ID", fixture["run_id"]), \
-             patch.object(host_validation, "FAILED_IMPORT_RECOVERY_WORKSTREAM", "review-sample"), \
+        with patch.object(host_validation, "FAILED_IMPORT_RECOVERY_WORKSTREAM", "review-sample"), \
              patch.object(host_validation, "FAILED_IMPORT_RECOVERY_RUN_ID", fixture["run_id"]), \
              patch.object(host_validation, "FAILED_IMPORT_RECOVERY_SIDECARS", sidecar_paths), \
              patch.object(runner, "resolve_target_implementation_commit", return_value=("a" * 40, None)), \
@@ -4201,56 +4204,121 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(host_validation.HostValidationError, "malformed"):
             host_validation.verified_failed_import_sidecars(self.root)
 
-    def test_failed_import_pair_classifier_requires_exact_infrastructure_failure_and_hashes(self):
-        original = {"workstream": runner.FAILED_IMPORT_RECOVERY_WORKSTREAM,
-                    "run_id": runner.FAILED_IMPORT_RECOVERY_RUN_ID,
-                    "reviewed_main": "a" * 40, "implementation_commit": "b" * 40}
-        report = {"schema": "custodian.validation.result.v1", "passed": False,
-                  "infrastructure_failure": "import"}
+    def test_failed_host_validation_pair_accepts_generic_complete_failure_and_authenticates_hashes(self):
+        workstream = "review-generic-host-validation-failure"
+        run_id = "20261025T061500Z-123456789abc"
+        original = {"workstream": workstream, "run_id": run_id,
+                    "phase": "host_validation_recovery",
+                    "reviewed_main": self.reviewed_main,
+                    "implementation_commit": self.implementation,
+                    "recovery_worktree": str(self.root)}
+        report = {
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "changed_files": self.changed_paths,
+            "selected": ["transfer_smoke"],
+            "tests": [{"id": "transfer_smoke", "status": "failed"}],
+            "summary": {"selected": 1, "passed": 0, "failed": 1,
+                        "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
+            "coverage": {"complete": True, "covered_files": self.changed_paths,
+                         "uncovered_files": [], "excluded_files": [],
+                         "covered_by": {path: ["transfer_smoke"] for path in self.changed_paths}},
+        }
         report_bytes = (json.dumps(report) + "\n").encode()
         (self.run_dir / "validation.json").write_bytes(report_bytes)
         coordinator = {"schema": "custodian.paired_review_host_validation.v1",
                        "reviewed_main": original["reviewed_main"],
                        "implementation_commit": original["implementation_commit"],
-                       "exit_code": 3, "source_changed_during_validation": True,
+                       "worktree": str(self.root),
+                       "implementation_parent": self.base,
+                       "exit_code": 4, "source_changed_during_validation": False,
                        "report_path": str((self.run_dir / "validation.json").resolve()),
                        "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
                        "report_parse_error": None,
-                       "code_paths": ["custodian/tools/agent/paired_review_runner.py",
-                                      "custodian/tools/agent/test_paired_review_runner.py"]}
+                       "summary": report["summary"], "selected": report["selected"],
+                       "command": ["/usr/bin/python3", str(self.root / "custodian/tools/validation/run_validation.py"),
+                                   "--changed", "--base", self.base, "--json"],
+                       "code_paths": self.changed_paths,
+                       "source_sha256": {
+                           path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                           for path in self.changed_paths
+                       }}
         (self.run_dir / "coordinator-validation.json").write_text(json.dumps(coordinator))
-        evidence = runner._failed_import_report_pair(
-            self.run_dir, original, original["workstream"], original["run_id"],
+        evidence = runner._failed_host_validation_report_pair(
+            self.run_dir, original, workstream, run_id,
         )
-        self.assertEqual(evidence["infrastructure_failure"], "import")
+        self.assertEqual(evidence["kind"], "failed_validation")
         self.assertEqual(evidence["report_sha256"], hashlib.sha256(report_bytes).hexdigest())
-        report["infrastructure_failure"] = "test"
+        self.assertEqual(evidence["metadata_sha256"], runner._sha256_bytes(
+            (self.run_dir / "coordinator-validation.json").read_bytes()))
+        runner._verify_failed_host_validation_source_identity(
+            self.root, self.root, self.reviewed_main, evidence,
+        )
+        source = self.root / self.changed_paths[0]
+        original_source = source.read_bytes()
+        source.write_bytes(original_source + b"drift\n")
+        with self.assertRaisesRegex(runner.RunnerError, "source bytes differ"):
+            runner._verify_failed_host_validation_source_identity(
+                self.root, self.root, self.reviewed_main, evidence,
+            )
+        source.write_bytes(original_source)
+
+        report["coverage"]["complete"] = False
         (self.run_dir / "validation.json").write_text(json.dumps(report) + "\n")
-        self.assertIsNone(runner._failed_import_report_pair(
-            self.run_dir, original, original["workstream"], original["run_id"],
+        self.assertIsNone(runner._failed_host_validation_report_pair(
+            self.run_dir, original, workstream, run_id,
         ))
-        report["infrastructure_failure"] = "import"
+        report["coverage"]["complete"] = True
         (self.run_dir / "validation.json").write_text(json.dumps(report) + "\n")
-        self.assertIsNone(runner._failed_import_report_pair(
-            self.run_dir, original, "review-other", original["run_id"],
+        coordinator["report_sha256"] = "0" * 64
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(coordinator))
+        self.assertIsNone(runner._failed_host_validation_report_pair(
+            self.run_dir, original, workstream, run_id,
         ))
 
-    def test_failed_import_retry_state_is_append_only_and_bounded_to_two_attempts(self):
-        workstream = runner.FAILED_IMPORT_RECOVERY_WORKSTREAM
-        run_id = runner.FAILED_IMPORT_RECOVERY_RUN_ID
+    def test_failed_host_validation_retry_state_is_append_only_and_bounded_to_two_attempts(self):
+        workstream = "review-generic-host-validation-failure"
+        run_id = "20261025T061500Z-123456789abc"
         child_dir = self.run_dir / "continuation-01"
         attempt_dir = child_dir / "host-validation/attempt-01"
         attempt_dir.mkdir(parents=True)
-        (attempt_dir / "validation.json").write_text(json.dumps({
-            "schema": "custodian.validation.result.v1", "passed": False,
-            "infrastructure_failure": "import",
-        }) + "\n")
-        report_sha = hashlib.sha256((attempt_dir / "validation.json").read_bytes()).hexdigest()
-        (attempt_dir / "coordinator-validation.json").write_text(json.dumps({
-            "schema": "custodian.paired_review_host_validation.v1",
-            "source_changed_during_validation": False, "report_sha256": report_sha,
-            "generated_import_manifest_sha256": None,
-        }) + "\n")
+        def write_failure(target):
+            report = {
+                "schema": "custodian.validation.result.v1", "passed": False,
+                "changed_files": self.changed_paths,
+                "selected": ["transfer_smoke"],
+                "tests": [{"id": "transfer_smoke", "status": "failed"}],
+                "summary": {"selected": 1, "passed": 0, "failed": 1,
+                            "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
+                "coverage": {"complete": True, "covered_files": self.changed_paths,
+                             "uncovered_files": [], "excluded_files": [],
+                             "covered_by": {path: ["transfer_smoke"] for path in self.changed_paths}},
+            }
+            report_path = target / "validation.json"
+            report_path.write_text(json.dumps(report) + "\n")
+            report_sha = hashlib.sha256(report_path.read_bytes()).hexdigest()
+            (target / "coordinator-validation.json").write_text(json.dumps({
+                "schema": "custodian.paired_review_host_validation.v1",
+                "reviewed_main": self.reviewed_main,
+                "implementation_commit": self.implementation,
+                "worktree": str(self.root),
+                "implementation_parent": self.base,
+                "exit_code": 4,
+                "report_path": str(report_path.resolve()),
+                "source_changed_during_validation": False,
+                "report_sha256": report_sha,
+                "report_parse_error": None,
+                "summary": report["summary"], "selected": report["selected"],
+                "command": ["/usr/bin/python3", str(self.root / "custodian/tools/validation/run_validation.py"),
+                            "--changed", "--base", self.base, "--json"],
+                "code_paths": self.changed_paths,
+                "source_sha256": {
+                    path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                    for path in self.changed_paths
+                },
+                "generated_import_manifest_sha256": None,
+            }) + "\n")
+
+        write_failure(attempt_dir)
         manifest = runner._file_manifest(attempt_dir)
         attempt = {"attempt": 1, "status": "failed", "manifest": manifest,
                    "manifest_sha256": runner._manifest_digest(manifest),
@@ -4258,39 +4326,39 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                    "metadata_sha256": manifest["coordinator-validation.json"]}
         child = {"schema": runner.CONTINUATION_SCHEMA, "workstream": workstream,
                  "run_id": run_id, "phase": "host_validation_failed",
-                 "reviewer_launch_count": 0, "generated_import_recovery": {"count": 12},
+                 "reviewed_main": self.reviewed_main,
+                 "implementation_commit": self.implementation,
+                 "worktree": str(self.root),
+                 "reviewer_launch_count": 0,
                  "host_validation_attempts": [attempt]}
         original_manifest = runner._file_manifest(self.run_dir, omit=child_dir)
         child["original_run_manifest"] = original_manifest
         child_dir.mkdir(exist_ok=True)
         (child_dir / "metadata.json").write_text(json.dumps(child))
-        self.assertEqual(runner._failed_import_retry_state(
+        self.assertEqual(runner._failed_host_validation_retry_state(
             self.run_dir, self.root, workstream, run_id, original_manifest,
         )[1], 2)
+        child["reviewer_launch_count"] = 1
+        (child_dir / "metadata.json").write_text(json.dumps(child))
+        with self.assertRaisesRegex(runner.RunnerError, "not an authenticated"):
+            runner._failed_host_validation_retry_state(
+                self.run_dir, self.root, workstream, run_id, original_manifest,
+            )
+        child["reviewer_launch_count"] = 0
+        (child_dir / "metadata.json").write_text(json.dumps(child))
         report_path = attempt_dir / "validation.json"
         report_path.write_text('{"passed":true}\n')
         with self.assertRaisesRegex(runner.RunnerError, "evidence changed"):
-            runner._failed_import_retry_state(
+            runner._failed_host_validation_retry_state(
                 self.run_dir, self.root, workstream, run_id, original_manifest,
             )
-        (attempt_dir / "validation.json").write_text(json.dumps({
-            "schema": "custodian.validation.result.v1", "passed": False,
-            "infrastructure_failure": "import",
-        }) + "\n")
-        report_sha = hashlib.sha256((attempt_dir / "validation.json").read_bytes()).hexdigest()
-        (attempt_dir / "coordinator-validation.json").write_text(json.dumps({
-            "schema": "custodian.paired_review_host_validation.v1",
-            "source_changed_during_validation": False, "report_sha256": report_sha,
-            "generated_import_manifest_sha256": None,
-        }) + "\n")
+        write_failure(attempt_dir)
         attempts = []
         for number in (1, 2):
             current_dir = child_dir / "host-validation" / f"attempt-{number:02d}"
             if number == 2:
                 current_dir.mkdir(parents=True)
-                (current_dir / "validation.json").write_bytes((attempt_dir / "validation.json").read_bytes())
-                (current_dir / "coordinator-validation.json").write_bytes(
-                    (attempt_dir / "coordinator-validation.json").read_bytes())
+                write_failure(current_dir)
             current_manifest = runner._file_manifest(current_dir)
             attempts.append({"attempt": number, "status": "failed", "manifest": current_manifest,
                              "manifest_sha256": runner._manifest_digest(current_manifest),
@@ -4299,7 +4367,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         child["host_validation_attempts"] = attempts
         (child_dir / "metadata.json").write_text(json.dumps(child))
         with self.assertRaisesRegex(runner.RunnerError, "retry budget is exhausted"):
-            runner._failed_import_retry_state(
+            runner._failed_host_validation_retry_state(
+                self.run_dir, self.root, workstream, run_id, original_manifest,
+            )
+        (self.run_dir / "unexpected-original-evidence.txt").write_text("changed\n")
+        with self.assertRaisesRegex(runner.RunnerError, "original failed validation evidence changed"):
+            runner._failed_host_validation_retry_state(
                 self.run_dir, self.root, workstream, run_id, original_manifest,
             )
 

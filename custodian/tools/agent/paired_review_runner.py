@@ -90,11 +90,7 @@ CODEX_EXITED_FINDINGS_SESSION_SHA256 = "4f6211860b25c0d06f49893f853b531c005fe95e
 CODEX_EXITED_FINDINGS_MESSAGE_SHA256 = "0c237faebe94db386c5e616ae36c925b5bb84bb6a99cd56254b27c421e3b763b"
 CODEX_EXITED_FINDINGS_SUMMARY_SHA256 = "2a92a5561f52f0105890a5408890cea6fa9332f02e0234def66dca588e5bdd57"
 
-FAILED_IMPORT_RECOVERY_WORKSTREAM = (
-    "review-agent-paired-review-missing-archived-disposition-continuation-v1"
-)
-FAILED_IMPORT_RECOVERY_RUN_ID = "20261020T165418Z-53992bd05f83"
-FAILED_IMPORT_RECOVERY_MAX_RETRIES = 2
+FAILED_HOST_VALIDATION_MAX_RETRIES = 2
 CARROW_MISSING_WORKTREE_WORKSTREAM = "review-carrow-interior-layout-authoring-v1"
 CARROW_MISSING_WORKTREE_RUN_ID = "20261018T072047Z-83514d0c54fd"
 CARROW_MISSING_WORKTREE_REVIEWED_MAIN = "099c44353dfd258c233016b88cc50ba2dd502ef1"
@@ -2939,9 +2935,11 @@ def _completed_host_continuation(repo: Path, run_dir: Path, workstream: str, run
                 _file_manifest(child_dir), sort_keys=True, separators=(",", ":")).encode()).hexdigest()}
 
 
-def _failed_import_report_pair(run_dir: Path, original: dict, workstream: str, run_id: str) -> dict | None:
-    """Authenticate the one known failed TLS/import validation pair without rewriting it."""
-    if (workstream != FAILED_IMPORT_RECOVERY_WORKSTREAM or run_id != FAILED_IMPORT_RECOVERY_RUN_ID
+def _failed_host_validation_report_pair(run_dir: Path, original: dict,
+                                        workstream: str, run_id: str) -> dict | None:
+    """Authenticate a complete pre-review failed report pair without rewriting it."""
+    if (original.get("workstream") != workstream or original.get("run_id") != run_id
+            or original.get("phase") not in {"host_validation_recovery", "host_validation_failed"}
             or isinstance(original.get("host_validation"), dict)):
         return None
     try:
@@ -2951,36 +2949,119 @@ def _failed_import_report_pair(run_dir: Path, original: dict, workstream: str, r
         metadata = json.loads(metadata_bytes)
     except (OSError, json.JSONDecodeError):
         return None
+    tests = report.get("tests") if isinstance(report, dict) else None
+    selected = report.get("selected") if isinstance(report, dict) else None
+    summary = report.get("summary") if isinstance(report, dict) else None
+    coverage = report.get("coverage") if isinstance(report, dict) else None
+    statuses = [item.get("status") for item in tests if isinstance(item, dict)] if isinstance(tests, list) else []
+    test_ids = [item.get("id") for item in tests if isinstance(item, dict)] if isinstance(tests, list) else []
+    expected_counts = {
+        "selected": len(selected) if isinstance(selected, list) else -1,
+        "passed": statuses.count("passed"),
+        "failed": statuses.count("failed"),
+        "timed_out": statuses.count("timeout"),
+        "skipped": statuses.count("skipped"),
+        "infrastructure_errors": statuses.count("infrastructure_error"),
+    }
+    complete_suite_failure = (
+        isinstance(tests, list) and bool(tests)
+        and isinstance(selected, list) and bool(selected)
+        and len(tests) == len(selected)
+        and all(isinstance(item, str) and item for item in selected)
+        and test_ids == selected and len(set(selected)) == len(selected)
+        and isinstance(summary, dict)
+        and all(summary.get(key) == value for key, value in expected_counts.items())
+        and any(expected_counts[key] for key in ("failed", "timed_out", "infrastructure_errors"))
+        and isinstance(coverage, dict) and coverage.get("complete") is True
+        and coverage.get("uncovered_files") == []
+    )
+    import_report = report.get("import") if isinstance(report, dict) else None
+    complete_import_failure = (
+        isinstance(import_report, dict) and import_report.get("status") == "failed"
+        and isinstance(import_report.get("warnings"), list)
+        and report.get("infrastructure_failure") == "import"
+    )
     if (not isinstance(report, dict) or not isinstance(metadata, dict)
             or report.get("schema") != "custodian.validation.result.v1"
             or report.get("passed") is not False
-            or report.get("infrastructure_failure") != "import"
+            or not (complete_suite_failure or complete_import_failure)
             or metadata.get("schema") != "custodian.paired_review_host_validation.v1"
             or metadata.get("reviewed_main") != original.get("reviewed_main")
             or metadata.get("implementation_commit") != original.get("implementation_commit")
-            or metadata.get("exit_code") != 3
-            or metadata.get("source_changed_during_validation") is not True
+            or metadata.get("worktree") != (original.get("recovery_worktree") or original.get("worktree"))
+            or not isinstance(metadata.get("exit_code"), int) or metadata["exit_code"] <= 0
             or metadata.get("report_path") != str((run_dir / "validation.json").resolve())
             or metadata.get("report_sha256") != _sha256_bytes(report_bytes)
             or metadata.get("report_parse_error") is not None):
         return None
-    if metadata.get("code_paths") != [
-        "custodian/tools/agent/paired_review_runner.py",
-        "custodian/tools/agent/test_paired_review_runner.py",
-    ]:
+    code_paths = metadata.get("code_paths")
+    source_hashes = metadata.get("source_sha256")
+    source_changed = metadata.get("source_changed_during_validation")
+    command = metadata.get("command")
+    parent = metadata.get("implementation_parent")
+    command_path = None
+    if isinstance(command, list):
+        if command and isinstance(command[0], str) and command[0].replace("\\", "/").endswith(
+                "/custodian/tools/validation/run_validation.py"):
+            command_path = command[0]
+        elif (len(command) >= 2 and isinstance(command[0], str)
+                and Path(command[0]).name.startswith("python")
+                and isinstance(command[1], str)
+                and command[1].replace("\\", "/").endswith("/custodian/tools/validation/run_validation.py")):
+            command_path = command[1]
+    if (not isinstance(code_paths, list) or not code_paths
+            or not all(isinstance(path, str) and path and not Path(path).is_absolute()
+                       and ".." not in Path(path).parts for path in code_paths)
+            or len(code_paths) != len(set(code_paths))
+            or not isinstance(source_hashes, dict) or set(source_hashes) != set(code_paths)
+            or (complete_suite_failure
+                and not set(code_paths).issubset(set(coverage.get("covered_files", []))))
+            or metadata.get("summary") != report.get("summary")
+            or metadata.get("selected") != report.get("selected")
+            or not isinstance(parent, str) or not re.fullmatch(r"[0-9a-f]{40,64}", parent)
+            or command_path is None
+            or len(command) < 5
+            or command[-4:] != ["--changed", "--base", parent, "--json"]
+            or any(not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value)
+                   for value in source_hashes.values())
+            or source_changed not in (False, True)
+            or (source_changed and report.get("infrastructure_failure") != "import")):
         return None
     return {
         "report_sha256": _sha256_bytes(report_bytes),
         "metadata_sha256": _sha256_bytes(metadata_bytes),
         "report_bytes": len(report_bytes), "metadata_bytes": len(metadata_bytes),
         "exit_code": metadata["exit_code"],
-        "infrastructure_failure": report["infrastructure_failure"],
+        "kind": "failed_import" if report.get("infrastructure_failure") == "import"
+                else "failed_validation",
+        "source_sha256": source_hashes,
+        "source_changed_during_validation": source_changed,
     }
 
 
-def _failed_import_retry_state(run_dir: Path, worktree: Path, workstream: str,
-                               run_id: str, original_manifest: dict[str, str]) -> tuple[dict | None, int]:
-    """Verify a previously failed host-only attempt and return the next bounded attempt number."""
+def _verify_failed_host_validation_source_identity(repo: Path, worktree: Path,
+                                                   reviewed_main: str, evidence: dict) -> None:
+    """Bind failed-report source hashes to both the pinned main and clean checkout bytes."""
+    source_hashes = evidence.get("source_sha256")
+    if not isinstance(source_hashes, dict) or not source_hashes:
+        raise RunnerError("failed host-validation report omits source identity hashes")
+    for relative, expected_sha in source_hashes.items():
+        path = Path(relative)
+        checkout_path = worktree / path
+        if (path.is_absolute() or ".." in path.parts or checkout_path.is_symlink()
+                or not checkout_path.is_file()):
+            raise RunnerError("failed host-validation source path is missing or unsafe")
+        checkout_sha = _sha256_bytes(checkout_path.read_bytes())
+        pinned = subprocess.run(["git", "show", f"{reviewed_main}:{relative}"],
+                                cwd=repo, capture_output=True)
+        if (pinned.returncode or checkout_sha != expected_sha
+                or _sha256_bytes(pinned.stdout) != expected_sha):
+            raise RunnerError("failed host-validation source bytes differ from the pinned reviewed main")
+
+
+def _failed_host_validation_retry_state(run_dir: Path, worktree: Path, workstream: str,
+                                        run_id: str, original_manifest: dict[str, str]) -> tuple[dict | None, int]:
+    """Verify prior failed host-only attempts and return the next bounded attempt number."""
     child_dir = run_dir / "continuation-01"
     if not child_dir.exists():
         return None, 1
@@ -2990,12 +3071,11 @@ def _failed_import_retry_state(run_dir: Path, worktree: Path, workstream: str,
     if (child.get("workstream") != workstream or child.get("run_id") != run_id
             or child.get("phase") != "host_validation_failed"
             or child.get("reviewer_launch_count") != 0
-            or child.get("original_run_manifest") != original_manifest
-            or child.get("generated_import_recovery") is None):
-        raise RunnerError("existing continuation is not an authenticated failed host-only import attempt")
+            or child.get("original_run_manifest") != original_manifest):
+        raise RunnerError("existing continuation is not an authenticated failed host-validation attempt")
     attempts = child.get("host_validation_attempts")
-    if not isinstance(attempts, list) or not 1 <= len(attempts) <= FAILED_IMPORT_RECOVERY_MAX_RETRIES:
-        raise RunnerError("failed-import retry attempt journal is malformed or outside its bound")
+    if not isinstance(attempts, list) or not 1 <= len(attempts) <= FAILED_HOST_VALIDATION_MAX_RETRIES:
+        raise RunnerError("failed host-validation retry journal is malformed or outside its bound")
     for number, attempt in enumerate(attempts, 1):
         if (not isinstance(attempt, dict) or attempt.get("attempt") != number
                 or attempt.get("status") != "failed"):
@@ -3009,23 +3089,23 @@ def _failed_import_retry_state(run_dir: Path, worktree: Path, workstream: str,
             validation_metadata = json.loads((attempt_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
             raise RunnerError("failed host-validation attempt report or provenance is missing or malformed") from exc
-        if (not isinstance(report, dict) or report.get("passed") is not False
-                or report.get("infrastructure_failure") != "import"
-                or not isinstance(validation_metadata, dict)
-                or validation_metadata.get("source_changed_during_validation") is not False
-                or validation_metadata.get("report_sha256") != _sha256_bytes(
-                    (attempt_dir / "validation.json").read_bytes())
+        report_evidence = _failed_host_validation_report_pair(attempt_dir, child, workstream, run_id)
+        if (report_evidence is None
+                or report_evidence.get("source_changed_during_validation") is not False
                 or attempt.get("report_sha256") != validation_metadata.get("report_sha256")
                 or attempt.get("metadata_sha256") != _sha256_bytes(
                     (attempt_dir / "coordinator-validation.json").read_bytes())):
-            raise RunnerError("bounded retry is allowed only after a recorded import infrastructure failure")
+            raise RunnerError("bounded retry contains an incomplete or unauthenticated host-validation report pair")
+        _verify_failed_host_validation_source_identity(
+            worktree, worktree, child["reviewed_main"], report_evidence,
+        )
         try:
             host_validation._verify_generated_import_manifest(worktree, attempt_dir, validation_metadata)
         except HostValidationError as exc:
             raise RunnerError("generated import artifact evidence failed retry verification") from exc
     if _file_manifest(run_dir, omit=child_dir) != original_manifest:
         raise RunnerError("original failed validation evidence changed during retry recovery")
-    if len(attempts) >= FAILED_IMPORT_RECOVERY_MAX_RETRIES:
+    if len(attempts) >= FAILED_HOST_VALIDATION_MAX_RETRIES:
         raise RunnerError("bounded host-validation retry budget is exhausted; preserve the exact failure state")
     return child, len(attempts) + 1
 
@@ -3082,77 +3162,85 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, origin_main],
                       cwd=repo, capture_output=True).returncode:
         raise RunnerError("pinned reviewed main is not an ancestor of current origin/main")
-    failed_import = _failed_import_report_pair(run_dir, original, workstream, run_id)
+    failed_host_validation = _failed_host_validation_report_pair(run_dir, original, workstream, run_id)
     retry_child = None
     retry_number = 1
     failed_import_sidecars = []
-    if failed_import:
+    if failed_host_validation:
         if not all(reports_present):
-            raise RunnerError("failed-import recovery requires the complete original failed report pair")
+            raise RunnerError("failed host-validation recovery requires the complete original failed report pair")
         failed_metadata = json.loads((run_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
         worktree_from_metadata = Path(str(original.get("recovery_worktree", ""))).resolve()
+        if worktree_from_metadata.is_dir() and _process_owns_worktree(worktree_from_metadata):
+            raise RunnerError("a competing process still owns the failed host-validation checkout")
+        _verify_failed_host_validation_source_identity(
+            repo, worktree_from_metadata, reviewed_main, failed_host_validation,
+        )
         if (worktree_from_metadata.is_dir()
                 and (run_dir / "continuation-01").is_dir()):
             existing_manifest = _file_manifest(run_dir, omit=run_dir / "continuation-01")
-            retry_child, retry_number = _failed_import_retry_state(
+            retry_child, retry_number = _failed_host_validation_retry_state(
                 run_dir, worktree_from_metadata, workstream, run_id, existing_manifest,
             )
-            recovery = retry_child["generated_import_recovery"]
-            if recovery.get("manifest_path") != "original-generated-imports/manifest.json":
-                raise RunnerError("preserved original import-sidecar manifest path is noncanonical")
-            manifest_path = run_dir / "continuation-01" / recovery["manifest_path"]
-            if (manifest_path.is_symlink() or not manifest_path.is_file()
-                    or _sha256_bytes(manifest_path.read_bytes()) != recovery.get("manifest_sha256")):
-                raise RunnerError("preserved original import-sidecar manifest changed")
-            try:
-                preserved_sidecars = json.loads(manifest_path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as exc:
-                raise RunnerError("preserved original import-sidecar manifest is malformed") from exc
-            if not isinstance(preserved_sidecars, list) or {item.get("sidecar_path") for item in preserved_sidecars} != set(host_validation.FAILED_IMPORT_RECOVERY_SIDECARS):
-                raise RunnerError("preserved original import-sidecar inventory is incomplete")
-            for item in preserved_sidecars:
-                evidence_relative = item.get("evidence_path")
-                if (not isinstance(evidence_relative, str)
-                        or not evidence_relative.startswith("original-generated-imports/files/")
-                        or ".." in Path(evidence_relative).parts):
-                    raise RunnerError("preserved original import-sidecar evidence path is noncanonical")
-                evidence_path = run_dir / "continuation-01" / evidence_relative
-                if not evidence_path.resolve().is_relative_to((run_dir / "continuation-01").resolve()):
-                    raise RunnerError("preserved original import-sidecar evidence escapes continuation-01")
-                if (evidence_path.is_symlink() or not evidence_path.is_file()
-                        or _sha256_bytes(evidence_path.read_bytes()) != item.get("sha256")):
-                    raise RunnerError("preserved original import-sidecar bytes changed")
+            recovery = retry_child.get("generated_import_recovery")
+            if recovery is not None:
+                if recovery.get("manifest_path") != "original-generated-imports/manifest.json":
+                    raise RunnerError("preserved original import-sidecar manifest path is noncanonical")
+                manifest_path = run_dir / "continuation-01" / recovery["manifest_path"]
+                if (manifest_path.is_symlink() or not manifest_path.is_file()
+                        or _sha256_bytes(manifest_path.read_bytes()) != recovery.get("manifest_sha256")):
+                    raise RunnerError("preserved original import-sidecar manifest changed")
+                try:
+                    preserved_sidecars = json.loads(manifest_path.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError) as exc:
+                    raise RunnerError("preserved original import-sidecar manifest is malformed") from exc
+                if (not isinstance(preserved_sidecars, list)
+                        or {item.get("sidecar_path") for item in preserved_sidecars}
+                        != set(host_validation.FAILED_IMPORT_RECOVERY_SIDECARS)):
+                    raise RunnerError("preserved original import-sidecar inventory is incomplete")
+                for item in preserved_sidecars:
+                    evidence_relative = item.get("evidence_path")
+                    if (not isinstance(evidence_relative, str)
+                            or not evidence_relative.startswith("original-generated-imports/files/")
+                            or ".." in Path(evidence_relative).parts):
+                        raise RunnerError("preserved original import-sidecar evidence path is noncanonical")
+                    evidence_path = run_dir / "continuation-01" / evidence_relative
+                    if not evidence_path.resolve().is_relative_to((run_dir / "continuation-01").resolve()):
+                        raise RunnerError("preserved original import-sidecar evidence escapes continuation-01")
+                    if (evidence_path.is_symlink() or not evidence_path.is_file()
+                            or _sha256_bytes(evidence_path.read_bytes()) != item.get("sha256")):
+                        raise RunnerError("preserved original import-sidecar bytes changed")
         else:
             tracked_changes = subprocess.run(
                 ["git", "status", "--porcelain=v1", "--untracked-files=all"], cwd=worktree_from_metadata,
                 text=True, capture_output=True, check=True,
             ).stdout.splitlines() if worktree_from_metadata.is_dir() else []
-            allowed = {"?? " + path for path in host_validation.FAILED_IMPORT_RECOVERY_SIDECARS}
+            allowed = ({"?? " + path for path in host_validation.FAILED_IMPORT_RECOVERY_SIDECARS}
+                       if failed_host_validation.get("source_changed_during_validation") else set())
             if set(tracked_changes) != allowed:
-                raise RunnerError("failed-import recovery worktree has tracked edits or unrelated untracked files")
+                raise RunnerError("failed host-validation worktree has source drift or unrelated untracked files")
             code_paths = failed_metadata.get("code_paths")
             source_hashes = failed_metadata.get("source_sha256")
             if (not isinstance(code_paths, list) or not isinstance(source_hashes, dict)
                     or set(code_paths) != set(source_hashes)
-                    or code_paths != ["custodian/tools/agent/paired_review_runner.py",
-                                      "custodian/tools/agent/test_paired_review_runner.py"]
                     or any(_sha256_bytes(subprocess.run(
                         ["git", "show", f"{reviewed_main}:{path}"], cwd=repo,
                         capture_output=True, check=True,
                     ).stdout) != source_hashes[path] for path in code_paths)):
-                raise RunnerError("failed-import code source hashes differ from the pinned reviewed main")
-            try:
-                failed_import_sidecars = host_validation.verified_failed_import_sidecars(worktree_from_metadata)
-            except HostValidationError as exc:
-                raise RunnerError(str(exc)) from exc
-    completed_child = None if failed_import else _completed_host_continuation(repo, run_dir, workstream, run_id)
+                raise RunnerError("failed host-validation code source hashes differ from the pinned reviewed main")
+            if failed_host_validation.get("source_changed_during_validation"):
+                try:
+                    failed_import_sidecars = host_validation.verified_failed_import_sidecars(worktree_from_metadata)
+                except HostValidationError as exc:
+                    raise RunnerError(str(exc)) from exc
+    completed_child = None if failed_host_validation else _completed_host_continuation(repo, run_dir, workstream, run_id)
     carrow_missing_worktree = (
         workstream == CARROW_MISSING_WORKTREE_WORKSTREAM
         and run_id == CARROW_MISSING_WORKTREE_RUN_ID
-        and all(reports_present) and not failed_import and completed_child is None
+        and all(reports_present) and not failed_host_validation and completed_child is None
     )
-    if all(reports_present) and not failed_import and completed_child is None and not carrow_missing_worktree:
-        raise RunnerError("existing host-validation reports are neither a verified green pin nor the exact failed import pair")
+    if all(reports_present) and not failed_host_validation and completed_child is None and not carrow_missing_worktree:
+        raise RunnerError("existing host-validation reports are neither a verified green pin nor a complete failed report pair")
     if completed_child:
         child = _continuation_metadata(run_dir / "continuation-01/metadata.json")
         active_path = str(child["active_packet_path"])
@@ -3353,18 +3441,18 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
                 or child.get("reviewed_main") != reviewed_main
                 or child.get("implementation_commit") != original.get("implementation_commit")
                 or child.get("active_packet_path") != active_path))
-            or (completed_child is None and not failed_import and not carrow_missing_worktree
+            or (completed_child is None and not failed_host_validation and not carrow_missing_worktree
                 and not prevalidation_missing_worktree and (
                 common_dir(worktree).resolve() != common
                 or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_main
                 or git(worktree, "status", "--porcelain", "--untracked-files=all")))):
         raise RunnerError("original claim/worktree is foreign, dirty, moved, or differs from its pinned baseline")
-    if failed_import:
+    if failed_host_validation:
         if (common_dir(worktree).resolve() != common
                 or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_main
                 or git(worktree, "diff", "--cached", "--name-only")
                 or git(worktree, "diff", "--name-only")):
-            raise RunnerError("failed-import recovery worktree has tracked changes or moved from its pinned baseline")
+            raise RunnerError("failed host-validation recovery worktree has tracked changes or moved from its pinned baseline")
     if completed_child is None:
         remote_branch = subprocess.run(["git", "ls-remote", "--heads", "origin", branch],
                                        cwd=repo, text=True, capture_output=True)
@@ -3388,6 +3476,14 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     )
     if identity_error or original.get("implementation_commit") != implementation_commit:
         raise RunnerError("original canonical implementation identity failed verification")
+    if retry_child and any(retry_child.get(key) != value for key, value in {
+            "branch": branch, "worktree": str(worktree), "active_packet_path": active_path,
+            "target_workstream": packet.review_target_workstream,
+            "target_packet_path": target_path, "reviewed_main": reviewed_main,
+            "implementation_commit": implementation_commit,
+            "reviewer_launch_count": 0,
+    }.items()):
+        raise RunnerError("failed host-validation continuation identity differs from the exact original claim")
     if carrow_missing_worktree:
         source_span = coordinator.get("source_span")
         try:
@@ -3412,7 +3508,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError(f"original pre-launch evidence is missing or unsafe: {path.name}")
         evidence_hashes[path.name] = _sha256_bytes(path.read_bytes())
     continuation_dirs = sorted(path.name for path in run_dir.glob("continuation-*") if path.is_dir())
-    if continuation_dirs and not (failed_import and continuation_dirs == ["continuation-01"] and retry_child):
+    if continuation_dirs and not (failed_host_validation and continuation_dirs == ["continuation-01"] and retry_child):
         raise RunnerError("original run already has continuation children; inspect them before any new attempt")
     manifest = _file_manifest(run_dir)
     plan = {
@@ -3425,22 +3521,22 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         "evidence_sha256": evidence_hashes, "continuation_state": completed_child,
         "host_validation_state": ("carrow_failed_nonimport_missing_worktree" if carrow_missing_worktree else
                                   "pre_validation_missing_worktree" if prevalidation_missing_worktree else
-                                  "failed_import" if failed_import else
+                                  failed_host_validation["kind"] if failed_host_validation else
                                   "pre_validation_interrupted" if prevalidation_interruption else "validated"),
         "operator_attestations": {
             "no_active_review_owner": attest_no_active_owner,
             "no_unique_untracked_or_ignored_evidence": attest_no_unique_evidence,
         },
-        "requires_fresh_host_validation": prevalidation_interruption or bool(failed_import) or carrow_missing_worktree,
+        "requires_fresh_host_validation": prevalidation_interruption or bool(failed_host_validation) or carrow_missing_worktree,
         "failed_validation_evidence": ({
             "kind": "historical_non_import_validation_failure",
             "validation_report_sha256": CARROW_MISSING_WORKTREE_REPORTS["validation.json"],
             "coordinator_report_sha256": CARROW_MISSING_WORKTREE_REPORTS["coordinator-validation.json"],
             "original_outcome_preserved": True,
-        } if carrow_missing_worktree else failed_import),
+        } if carrow_missing_worktree else failed_host_validation),
         "generated_import_sidecars": failed_import_sidecars,
         "host_validation_attempt": retry_number,
-        "retry_budget": 1 if carrow_missing_worktree else FAILED_IMPORT_RECOVERY_MAX_RETRIES,
+        "retry_budget": 1 if carrow_missing_worktree else FAILED_HOST_VALIDATION_MAX_RETRIES,
         "existing_continuation_manifest": _file_manifest(run_dir / "continuation-01") if retry_child else None,
         "original_run_manifest_sha256":
             hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
