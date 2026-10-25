@@ -11,8 +11,8 @@
 - Review: none
 - Review target workstream: agent-orphan-recovery-fenced-parking-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/AGENT_ORPHAN_RECOVERY_FENCED_PARKING_V1.md
-- Reviewed main: 316c984cbb62cc067ab7fc8483994f02573d6f8b
-- Authoring chat: not-recorded
+- Reviewed main: 58934945d0e97020f8caffe078e865eb94409ced
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Visual review: none
 - Reviewer context: fresh
 - Reviewer provenance: different-agent
@@ -39,7 +39,15 @@ Use `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; run fresh-conte
 - Next packet state: refresh-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Refresh reason: Host opt-in for timer and user-facing default/ownership policy after accepted recovery proof; unknown foreign-host takeover is never automatic.
 - Next action: Return the verified command/telemetry and enable optional host-local supervisor only with user consent.
 - Blockers or open questions: None for executing fixture-safe implementation; reviewer must not enable background timer autonomously.
+
+## Cooperative pause/resume independent review (2026-10-25)
+
+In addition to A–I, independently reproduce real process and temporary bare-remote scenarios for `ACTIVE -> PAUSE_REQUESTED -> PARK_PREPARED -> PARKED -> RESUME_PREPARED -> ACTIVE`. Verify supervised graceful exit triggers parking without an installed timer; no lease unlock while any owned reviewer/process descendant remains live; a parked branch remains claimed and its local worktree, staged/unstaged, untracked art and commits remain unchanged. On resume, two simultaneous callers across separate clones must never both acquire execution ownership; conflicting locks must prevent resumption rather than launch duplicate work.
+
+Fault-inject every journal, snapshot, CAS and readback boundary, including disk exhaustion, Git remote outage, PID reuse and foreign host. Verify that `findings` and `human_required` are not promoted to PASS; old uninstrumented historical reviews, especially `review-agent-paired-review-godot-cache-access-v1`, are **not** automatically parked. The one-off exact parking pilot may not be repurposed or weakened. No periodic host service or timer may be installed by implementation or review. Report exact original workstream claim and proof of non-loss after every fault injection.
+
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
