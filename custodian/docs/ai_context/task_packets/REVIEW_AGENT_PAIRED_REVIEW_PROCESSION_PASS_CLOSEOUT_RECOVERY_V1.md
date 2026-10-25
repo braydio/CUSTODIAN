@@ -1,0 +1,51 @@
+# Review Paired Review Procession PASS Closeout Recovery
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-procession-pass-closeout-recovery-v1`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `agent-paired-review-procession-pass-closeout-recovery-v1`
+- Locks: `paired-review-pass-closeout-recovery`
+- Kind: `review`
+- Review target workstream: `agent-paired-review-procession-pass-closeout-recovery-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_PROCESSION_PASS_CLOSEOUT_RECOVERY_V1.md`
+- Review rationale: `substantial engineering default`
+- Reviewed main: `0c162bdde9de7baa177cc592f0df9c0e426c787e`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify that the exact-run PASS closeout recovery cannot forge reviewer judgment, mutate immutable evidence or escape its plan, journal, identity and landing fences.
+- Completion boundary: Fresh-context review of the landed implementation and its durable evidence, followed by the ordinary canonical PASS/findings lifecycle. This reviewer must not apply the recovery to the protected Procession run.
+- Current measured state: At `origin/main@0c162bdde9de7baa177cc592f0df9c0e426c787e`, implementation and review packets are published as one authoring pair; implementation is not yet landed.
+- Evidence: Implementation packet and full diff; `paired_review_runner.py`; `review_receipt_delta.py`; `review_outcome.py`; focused real-Git hostile fixtures; immutable protected run evidence inspected read-only; canonical validation report and changed-file coverage.
+- Task-specific authority: Implementation packet; paired-review runner lifecycle; `review_receipt_delta.py`; `review_outcome.py`; `AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Work surface: Read-only inspection of the landed implementation, tests, closeout artifacts, validation reports and protected run evidence. Review artifacts and summary only through the paired-review runner's normal authority.
+- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/review_receipt_delta.py`; `custodian/tools/agent/review_outcome.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/workstream.py`; `custodian/tools/agent/land_main.py`; `custodian/tools/validation/run_validation.py`; `custodian/tools/validation/validation_manifest.json`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
+- Change: Review whether the recovery authenticates every protected identity and immutable artifact, whether planning is read-only and complete, whether apply is exact-digest-bound and supervisor-locked, whether the write-ahead journal and replay logic fail closed, whether only canonical receipt bytes and permitted closeout artifacts can change, whether true PASS provenance is required, and whether ordinary review lifecycle/landing remains authoritative. Independently run the focused hostile real-Git fixtures, complete runner suite, canonical selected validation, changed-file coverage, pairing/index/context/compile/diff checks. Check that future direct-tail reuse is feasible and no parallel receipt authority is introduced.
+- Preserve: The protected Procession review/run/worktree remain untouched; no recovery application; no fabricated or reinterpreted PASS; no edits to reviewed implementation; findings are recorded before any proposed correction cycle.
+- Non-goals: Applying the protected Procession recovery; implementation changes; unrelated workflow redesign; mapper implementation.
+- Acceptance:
+  - Fresh reviewer context and pinned implementation identity are recorded by normal paired-review runner.
+  - Review verifies source code and negative controls for forged/missing PASS, invalid reports, target/evidence/ref drift, extra paths, duplicate receipt, live owner, changed plan and ambiguous partial/replay state.
+  - Independent validation passes with full changed-file coverage; no material security, provenance, lifecycle or correctness gap remains.
+  - Protected run and reviewer checkout hashes remain unchanged by this review.
+  - PASS or stable findings close through normal canonical review lifecycle; a local PASS alone does not release the implementation dependency.
+- Validation: `python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; canonical `run_validation.py --test paired_review_runner_unit --json`; changed-file validation; pairing/index/context checks; Python compile and `git diff --check`. Reuse preserved evidence where fresh validation is not needed; do not run protected apply.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Deferred: Applying the exact-run plan after this review is accepted; following direct-tail closeout dependency; resuming the existing pre-validation recovery workstream.
+
+## Next Handoff
+- Next workstream: `agent-paired-review-prevalidation-checkout-recovery-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: After this implementation and review are accepted, execute the exact protected Procession PASS recovery, reconcile its claim, then safely resume the preserved primary recovery worktree.
+- Blockers or open questions: `Protected exact-run plan must authenticate all evidence and remain unused until this review is accepted.`
