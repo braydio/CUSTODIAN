@@ -19,11 +19,13 @@ const DIRECTIONS: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP,
 ## attempt seed, ...); it is carried through unchanged for fingerprinting and
 ## later comparison, never interpreted here.
 func build_snapshot(map_instance: Node, level_data: Dictionary, seed_identity: Dictionary = {}) -> Dictionary:
+	var snapshot_start_usec := Time.get_ticks_usec()
 	var map_size := _resolve_map_size(map_instance, level_data)
 	var walkable_cells := {}
 	var elevation_blocked_edges := {}
 	var has_map_instance := map_instance != null and _get_procgen_node(map_instance) != null
 
+	var walkability_start_usec := Time.get_ticks_usec()
 	if has_map_instance and map_size != Vector2i.ZERO:
 		for x in range(map_size.x):
 			for y in range(map_size.y):
@@ -42,6 +44,8 @@ func build_snapshot(map_instance: Node, level_data: Dictionary, seed_identity: D
 					blocked.append(next)
 					elevation_blocked_edges[tile] = blocked
 
+	var walkability_usec := Time.get_ticks_usec() - walkability_start_usec
+	var ingress_start_usec := Time.get_ticks_usec()
 	var required_ingresses_valid := false
 	var required_ingress_failures: Array = []
 	if has_map_instance:
@@ -54,6 +58,7 @@ func build_snapshot(map_instance: Node, level_data: Dictionary, seed_identity: D
 		ingress_validator.free()
 		required_ingresses_valid = bool(ingress_result.get("ok", false))
 		required_ingress_failures = (ingress_result.get("failures", []) as Array).duplicate(true)
+	var ingress_usec := Time.get_ticks_usec() - ingress_start_usec
 
 	var snapshot := {
 		"schema": SCHEMA,
@@ -68,6 +73,11 @@ func build_snapshot(map_instance: Node, level_data: Dictionary, seed_identity: D
 		"runtime_fingerprint": fingerprint_runtime_state(map_instance) if has_map_instance else "",
 		"runtime_floor_cell_count": (map_instance.call("debug_get_generated_floor_cells") as Dictionary).size() if has_map_instance else 0,
 		"runtime_wall_cell_count": (map_instance.call("debug_get_generated_wall_cells") as Dictionary).size() if has_map_instance else 0,
+		"stage_timing_ms": {
+			"walkability_and_elevation_ms": float(walkability_usec) / 1000.0,
+			"required_ingress_ms": float(ingress_usec) / 1000.0,
+			"snapshot_total_ms": float(Time.get_ticks_usec() - snapshot_start_usec) / 1000.0,
+		},
 	}
 	snapshot["fingerprint"] = fingerprint_snapshot(snapshot)
 	return snapshot

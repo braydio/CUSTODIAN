@@ -8,6 +8,9 @@ const CROWN_TRANSFER_INGRESS_SCRIPT := preload(
 const ADJUDICATION_DAIS_SCRIPT := preload(
 	"res://game/world/hub/hub_adjudication_dais.gd"
 )
+const ROAD_PROCESSION_SCRIPT := preload(
+	"res://game/world/hub/events/road_procession/road_procession_sequence.gd"
+)
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
 
@@ -30,6 +33,7 @@ func _ready() -> void:
 	add_to_group("world_origin_branch")
 	_build_crown_transfer_ingress()
 	_build_adjudication_dais()
+	call_deferred("_build_road_procession_sequence")
 
 
 func get_authoring_markers() -> Dictionary:
@@ -181,3 +185,14 @@ func _attach_adjudication_dais(dais: Node2D, world_position: Vector2) -> void:
 		return
 	add_child(dais)
 	dais.global_position = world_position
+
+
+func _build_road_procession_sequence() -> void:
+	var host := get_node_or_null("/root/GameRoot")
+	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
+	if authority == null or authority.get("hub_state") == null:
+		return
+	var sequence := ROAD_PROCESSION_SCRIPT.new() as Node2D
+	sequence.name = "RoadProcessionSequence"
+	sequence.call("configure", authority.get("hub_state") as HubState)
+	add_child(sequence)

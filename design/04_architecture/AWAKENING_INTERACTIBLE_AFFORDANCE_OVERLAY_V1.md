@@ -66,7 +66,7 @@ Implementation packets are in `custodian/docs/ai_context/task_packets/` and each
 - `awakening-perimeter-support-foundation-v1` and `AWAKENING_PERIMETER_{INTERIOR,DEPTH,EXTERIOR}_V1` own **off-route** scenery/support backdrops, not interactible identity; do not insert new art dependencies into those packets or make their execution depend on this overlay.
 - `AWAKENING_ROOM_CONNECTORS_POLISH`, `AWAKENING_04_05_REGISTERED_COMPOSITION_* `, and `AWAKENING_LOWER_UPPER_SPINE_CONNECTION` are already authoritative for seam/draw order/traversal. The affordance owner may only register additively; no wall/grate reauthoring is smuggled in as a terminal enhancement.
 - `AWAKENING_INTERACTION_FEEDBACK_CONSOLE_ACTIVATION` already addressed prompt lifetime/console one-shot action, so these packets must not spawn another HUD prompt owner.
-- Hub Muster/Continuity Port, Forum Adjudication and First Set packets own future content. The separate deferred handoff crosswalk must avoid duplicating active Hub art families and nodes.
+- Hub Muster/Continuity Port, Forum Adjudication and First Set packets own future content. See the [Deferred-Family Ownership Crosswalk](AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md) for current-main owner, packet, anchor, and Asset V2 reuse evidence; it does not post new gameplay owners or art.
 
 ## Visual lock
 

@@ -1,0 +1,41 @@
+# Review Procgen Macro Physical Contact Audit V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-procgen-macro-physical-contact-audit-v1`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `procgen-macro-physical-contact-audit-v1`
+- Locks: `procgen-macro-physical-contact-audit`
+- Review: `none`
+- Review target workstream: `procgen-macro-physical-contact-audit-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PROCGEN_MACRO_PHYSICAL_CONTACT_AUDIT_V1.md`
+- Reviewed main: `3067be7817c1713f989a92753a7d199e913b82bc`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, runtime, architecture`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently determine whether the macro physical-contact audit measures actual gameplay physics and reports honest defects/gaps rather than cosmetic-only or stubbed tests.
+- Reviewed implementation acceptance: Reconstruct all twelve acceptance conditions from the archived implementation packet and evaluate the produced diagnostic, JSON, captures, manifest registration and checked-in findings ledger.
+- Review evidence: Implementation commit diff; real map scene and canonical wall/boundary collision path; profile masks and placed sprite transforms; real seed 824790 and two additional documented deterministic cases; controlled fixtures, JSON/captures/report provenance and comparison against prior visual review that disabled runtime collision.
+- Correction threshold: Wrong/no collision-enabled execution; treating a CHASM underlay or flat hardstand as needing a collider; inferring physics from image alpha; conflating `solid_mask_cells` with a newly spawned collision body; fake Operator movement, unreachable probe, missing class coverage, invented fixed seed, nondeterministic signatures, map semantic mutation, false-green incomplete audit, or report omitting known gaps is blocking.
+- Focused validation: Freshly run the authored audit with host-side Godot import/locks and inspect structured evidence. Re-run canonical procgen macro/surface/route/physics-focused smokes and `python3 custodian/tools/validation/run_validation.py --changed --json`, verify coverage/traceable output files and `git diff --check`. The new audit's script is under `custodian/tools/validation/` and registered in the manifest after implementation lands.
+- Review focus: Independently falsify visual/physical contact assertions using one controlled solid mismatch and one walkable hardstand; verify the existing renderer is Sprite2D-only, wall physics is separate, CHASM is background-only, real-world vs fixture evidence is labelled, and the report never calls an identified defect a successful gameplay fix. Compare the semantic fingerprint before/after diagnostic.
+- Acceptance: A passing independent review certifies ONLY the diagnostic's completeness, integrity and correctly scoped severity/owner ledger, not that procgen collision/art is defect-free. Require no blocking test-coverage gaps, valid reviewer-authored disposition and canonical paired receipt. If audit evidence is missing, report findings/human_required and retain claimed worktree.
+- Non-goals: No edits to macro renderer, game collision/movement, procedural generation, asset catalog, existing AP2/AP3 work, or historical review branches.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Next Handoff
+- Next workstream: `none`
+- Next packet state: `planning-follow-up`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad01323-a574-83ea-9cdc-68d43870d06e`
+- Refresh reason: `Review the severity-ranked visual/physical ledger and choose focused correction ownership; do not automatically alter gameplay or AP2/AP3.`
+- Next action: `Return to the authoring chat with exact audit findings and a bounded collision/visual-contact correction proposal, preserving existing Alpine sequencing.`
+- Blockers or open questions: `Any missing physical probe, unverifiable screenshot or source-evidence gap is review-blocking, not a reason to invent green results.`

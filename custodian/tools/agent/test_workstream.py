@@ -1,6 +1,7 @@
 """Focused temporary-repository coverage for workstream lifecycle primitives."""
 
 import importlib.util
+import hashlib
 import json
 import os
 import subprocess
@@ -44,11 +45,877 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_failed_import_recovery_accepts_only_pinned_carow_main_advance(self):
+        repo = Path(__file__).resolve().parents[3]
+        pinned = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY
+        current = "b5b1e5f2450f3f577a5df5c173c338e6da5187d1"
+        expected = [
+            "0da9923e818645178a079eece3482216cd295ccc",
+            "0ed185fd23946eeb8a6d5835c171000a65f75a68",
+            "e1cfee4692a754a98a27d7fb3cf382dc55328bb8",
+            "ae5e0d8719d028f8feba6f4250633c30dfe0f470",
+            "bc79a4938577a9822f2d1c3c95ac701f5e8cb0d9",
+            current,
+        ]
+        actual = workstream.git(
+            "rev-list", "--first-parent", "--reverse",
+            f"{pinned['final_main']}..{current}", cwd=repo,
+        ).splitlines()
+        self.assertEqual(actual, expected)
+        expected_paths = [
+            {"custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md"},
+            {"custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {"custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {"design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md"},
+            {"custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"},
+            {
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+            },
+        ]
+        for commit, expected_commit_paths in zip(expected, expected_paths):
+            actual_paths = set(workstream.git(
+                "diff-tree", "--no-commit-id", "--name-only", "-r", commit, cwd=repo,
+            ).splitlines())
+            self.assertEqual(actual_paths, expected_commit_paths)
+
+        self.assertTrue(workstream._failed_import_main_advance_is_authorized(
+            repo, pinned, current,
+        ))
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, pinned, current + "1",
+        ))
+        forged = dict(pinned)
+        forged["authorized_main_advance"] = dict(pinned["authorized_main_advance"])
+        forged["authorized_main_advance"]["commits"] = expected[:-1] + ["1" * 40]
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, forged, current,
+        ))
+        forged_paths = dict(pinned)
+        forged_paths["authorized_main_advance"] = dict(pinned["authorized_main_advance"])
+        forged_paths["authorized_main_advance"]["commit_paths"] = [
+            ["unrelated/unauthorized.md"],
+            *pinned["authorized_main_advance"]["commit_paths"][1:],
+        ]
+        self.assertFalse(workstream._failed_import_main_advance_is_authorized(
+            repo, forged_paths, current,
+        ))
+
+    def test_failed_import_suffix_allows_three_bounded_corrections_then_exact_sync(self):
+        git(self.repo, "checkout", "main")
+        for relative in ("custodian/tools/agent/workstream.py",
+                         "custodian/tools/agent/test_workstream.py"):
+            path = self.repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("base\n")
+        git(self.repo, "add", "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py")
+        git(self.repo, "commit", "-m", "seed bounded recovery correction paths")
+        correction_base = git(self.repo, "rev-parse", "HEAD")
+        branch = "agent-test-bounded-recovery-suffix"
+        git(self.repo, "checkout", "-b", branch)
+        corrections = []
+        correction_paths = (
+            "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py",
+        )
+        for index in range(3):
+            relative = correction_paths[index % 2]
+            (self.repo / relative).write_text(f"correction {index}\n")
+            git(self.repo, "add", relative)
+            git(self.repo, "commit", "-m", f"bounded correction {index}")
+            corrections.append(git(self.repo, "rev-parse", "HEAD"))
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "unrelated-main.md").write_text("main advance\n")
+        git(self.repo, "add", "unrelated-main.md")
+        git(self.repo, "commit", "-m", "advance main")
+        main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, corrections, correction_base, main,
+            ),
+            (corrections, None),
+        )
+
+        git(self.repo, "merge", "--no-ff", "main", "-m", "exact recovery sync")
+        sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, [*corrections, sync], correction_base, main,
+            ),
+            (corrections, sync),
+        )
+
+        git(self.repo, "checkout", "-b", "agent-test-fourth-recovery-correction", corrections[-1])
+        (self.repo / correction_paths[0]).write_text("fourth correction\n")
+        git(self.repo, "add", correction_paths[0])
+        git(self.repo, "commit", "-m", "fourth bounded-path correction")
+        fourth = git(self.repo, "rev-parse", "HEAD")
+        self.assertIsNone(workstream._failed_import_recovery_suffix(
+            self.repo, [*corrections, fourth], correction_base, main,
+        ))
+
+        git(self.repo, "checkout", "-b", "agent-test-sync-before-correction-tail", sync)
+        (self.repo / correction_paths[0]).write_text("post-sync correction\n")
+        git(self.repo, "add", correction_paths[0])
+        git(self.repo, "commit", "-m", "correction after sync")
+        after_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(
+            workstream._failed_import_recovery_suffix(
+                self.repo, [*corrections, sync, after_sync], correction_base, main,
+            ),
+            ([*corrections, after_sync], sync),
+        )
+        (self.repo / correction_paths[1]).write_text("second post-sync correction\n")
+        git(self.repo, "add", correction_paths[1])
+        git(self.repo, "commit", "-m", "second post-sync correction")
+        second_after_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertIsNone(workstream._failed_import_recovery_suffix(
+            self.repo, [*corrections, sync, after_sync, second_after_sync], correction_base, main,
+        ))
+
+    def test_index_merge_accepts_only_authenticated_completed_archive_removal(self):
+        # This historical main-sync required a removal because main had already
+        # archived another task. The additive-only check must remain strict.
+        from paired_review_host_validation import (
+            _managed_packet_index_additive_reconciliation as additive,
+            _managed_packet_index_archival_reconciliation as archival,
+        )
+        import paired_review_host_validation as host_validation
+
+        repo = Path(__file__).resolve().parents[3]
+        first = "44b1ce5b44ff9e40cb017cfef1cea9abba8826ab"
+        main = "c39d5b771c730b8bd25efb0f005adfca3abe6b43"
+        merge = "7a8be70c366fd00b00d488b5385eccb6dff47e6e"
+        readme = "custodian/docs/ai_context/task_packets/README.md"
+        versions = [
+            subprocess.run(["git", "show", f"{ref}:{readme}"], cwd=repo,
+                           capture_output=True, check=True).stdout
+            for ref in (first, main, merge)
+        ]
+        self.assertFalse(additive(*versions))
+        self.assertTrue(archival(repo, first, main, merge))
+        self.assertTrue(workstream._authenticated_managed_index_reconciliation(
+            host_validation, repo, first, main, merge, *versions,
+        ))
+
+        # A foreign or fabricated merge cannot be excused by the archival path.
+        self.assertFalse(workstream._authenticated_managed_index_reconciliation(
+            host_validation, repo, first, main, first, *versions,
+        ))
+
+    def test_archive_transition_guard_accepts_archive_at_tip_and_rejects_followup(self):
+        workstream_id = "agent-test-archive-tip"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "pass")
+
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+        error = workstream._archive_transition_tip_error(workstream_id, self.repo)
+        self.assertIn("archive transition", error)
+        self.assertIn("current branch tip", error)
+        preflight = workstream.closeout_preflight(workstream_id, self.repo)
+        self.assertEqual(preflight["archive_transition"]["status"], "blocked")
+        self.assertTrue(any(blocker["gate"] == "archive_transition_tip"
+                            for blocker in preflight["blockers"]))
+
+    def test_finish_rejects_unbound_archive_followup_before_push(self):
+        workstream_id = "agent-test-archive-tip"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TIP.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TIP.md"
+        active.parent.mkdir(parents=True)
+        active.write_text(
+            "# Test\n- Workstream: `agent-test-archive-tip`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        (self.repo / "summary.md").write_text("follow-up after archive\n")
+        git(self.repo, "add", "summary.md")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+
+        with mock.patch.object(workstream, "fetch"), \
+             mock.patch.object(workstream, "artifact_preflight", return_value=[]), \
+             mock.patch.object(workstream, "_completion_truth_preflight"), \
+             mock.patch.object(workstream, "status_clean", return_value=True), \
+             mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
+             mock.patch.object(workstream, "validation_green", return_value=True), \
+             mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "current branch tip"):
+                workstream._finish_impl(workstream_id, self.repo / "validation.json", repo=self.repo)
+        self.assertFalse(any(call.args and call.args[0] == "push" for call in git_call.call_args_list))
+
+    def test_archive_guard_accepts_exact_traced_sync_and_one_scoped_followup(self):
+        workstream_id = "agent-test-archive-trace"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_ARCHIVE_TRACE.md"
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_source.py`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+        archive = git(self.repo, "rev-parse", "HEAD")
+
+        # Make an independently published main commit, then sync it into the task branch.
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-only").write_text("main\n")
+        git(self.repo, "add", "main-only")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        main_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "sync main")
+        merge = git(self.repo, "rev-parse", "HEAD")
+
+        # The immutable diagnostic trace is committed on its own ref, as in production.
+        run_id = "20261021T000000Z-abcdef123456"
+        trace_ref = f"refs/remotes/origin/agent-diagnostics/{workstream_id}/{run_id}"
+        trace_events = [
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "remote_claim_acquired",
+             "data": {"remote_ref": f"refs/heads/dispatch-claims/{workstream_id}",
+                      "claim_oid": archive, "main_sha": archive}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "worktree_published",
+             "data": {"branch": branch, "clean": True, "head": archive,
+                      "upstream": archive, "worktree": str(self.repo)}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "main_sync",
+             "data": {"changed": True, "head": merge, "main_sha": main_sha}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": "custodian/docs/ai_context/task_packets/AGENT_TEST_ARCHIVE_TRACE.md",
+             "run_id": run_id, "event": "run_blocked", "data": {"reason": "validation required"}},
+        ]
+        trace_repo = self.base / "trace-repo"
+        git(self.base, "clone", str(self.remote), str(trace_repo))
+        git(trace_repo, "checkout", "main")
+        (trace_repo / "trace.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in trace_events)
+        )
+        git(trace_repo, "add", "trace.jsonl")
+        git(trace_repo, "commit", "-m", "publish immutable trace")
+        git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
+        git(self.repo, "fetch", "origin")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "test_source.py").write_text("regression\n")
+        git(self.repo, "add", "test_source.py")
+        git(self.repo, "commit", "-m", "bounded producer fix")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "outside.py").write_text("unrelated\n")
+        git(self.repo, "add", "outside.py")
+        git(self.repo, "commit", "-m", "unrelated followup")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_accepts_authenticated_post_archive_recovery_chain(self):
+        workstream_id = "agent-paired-review-failed-host-validation-import-recovery-v1"
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["archive"],
+                         "25229d8d3874608f7b8492df98bc3df4385a9d28")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["final_sync"],
+                         "d83319a3a9c211fe3947e4951bfaa06f1684bf05")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["final_main"],
+                         "8e4bca145658b825bb6dedeed595a3c53497a138")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["claim_oid"],
+                         "5249f25988aa13cdf99372754509fb7b91eeef94")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["trace_anchor"],
+                         "173104f75f4380aa2c5eadf0e0c8ca2f2bd04855")
+        self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["correction_commits"], [
+            "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+            "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+            "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+            "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+            "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
+        ])
+        branch = workstream.branch_for(workstream_id)
+        active_rel = "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        archived_rel = "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        authoring_chat = "https://chatgpt.com/c/test-recovery"
+        packets = self.repo / active_rel
+        packets.parent.mkdir(parents=True, exist_ok=True)
+        packets.write_text(
+            "# Recovery fixture\n\n"
+            "- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Status: `ready`\n"
+            f"- Authoring chat: `{authoring_chat}`\n"
+            "- Work surface: `custodian/tools/agent/workstream.py`; "
+            "`custodian/tools/agent/test_workstream.py`\n"
+        )
+        source_path = self.repo / "custodian/tools/agent/workstream.py"
+        test_path = self.repo / "custodian/tools/agent/test_workstream.py"
+        source_path.parent.mkdir(parents=True, exist_ok=True)
+        source_path.write_text("baseline lifecycle gate\n")
+        test_path.write_text("baseline lifecycle tests\n")
+        git(self.repo, "add", active_rel, "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py")
+        git(self.repo, "commit", "-m", "publish recovery fixture")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "checkout", "-b", branch)
+        claim_base = git(self.repo, "rev-parse", "HEAD")
+
+        (self.repo / "source.py").write_text("implementation\n")
+        git(self.repo, "add", "source.py"); git(self.repo, "commit", "-m", "implement recovery")
+        packet_text = packets.read_text().replace("- Status: `ready`", "- Status: `complete`")
+        packet_text += (
+            "\n## Completion Truth\n"
+            "- Completion schema: `custodian.task_completion.v1`\n"
+            "- Goal satisfied: `yes`\n"
+            "- Completion boundary satisfied: `yes`\n"
+            "- Acceptance satisfied: `yes`\n"
+            "- Evidence: `fixture evidence`.\n"
+            "\n## Next Handoff\n"
+            f"- Authoring chat: `{authoring_chat}`\n"
+        )
+        archived = self.repo / archived_rel
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(packet_text); packets.unlink()
+        summary_rel = workstream._expected_summary_filename(workstream_id)
+        summary = self.repo / summary_rel
+        summary.write_text(
+            "recovery complete\n\n## Next Handoff\n"
+            f"- Authoring chat: `{authoring_chat}`\n"
+        )
+        git(self.repo, "add", "-A"); git(self.repo, "commit", "-m", "archive recovery packet")
+        archive_commit = git(self.repo, "rev-parse", "HEAD")
+
+        summary.write_text(
+            "recovery complete\n\n"
+            f"Authoring chat: {authoring_chat}\n\n## Next Handoff\n"
+            f"- Authoring chat: {authoring_chat}\n"
+        )
+        git(self.repo, "add", summary_rel); git(self.repo, "commit", "-m", "repair summary provenance")
+        provenance_commit = git(self.repo, "rev-parse", "HEAD")
+        premerge_archived_text = archived.read_text()
+
+        # The first sync is a clean merge. A later main refresh to the active
+        # packet is reconciled into the archived packet during the second sync.
+        git(self.repo, "checkout", "main")
+        (self.repo / "first-main-advance").write_text("first\n")
+        git(self.repo, "add", "first-main-advance")
+        git(self.repo, "commit", "-m", "advance main before first sync")
+        first_main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "first sync")
+        first_merge = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^1"), provenance_commit)
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), first_main)
+
+        archived.write_text(archived.read_text().replace(
+            "- Evidence: `fixture evidence`.",
+            "- Evidence: `fixture evidence.`\n"
+            f"- Post-sync validation: `After merge `{first_merge}`, changed-file validation "
+            "passed 43/43 with complete coverage and no timeouts; the manifest retained "
+            "the authorized 90-second bound.`",
+        ))
+        git(self.repo, "add", archived_rel); git(self.repo, "commit", "-m", "record post-sync evidence")
+        post_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertTrue(workstream._post_sync_completion_evidence_is_bounded(
+            self.repo, post_sync, archived_rel,
+        ))
+        git(self.repo, "checkout", "-b", "adversarial-post-sync-evidence", post_sync)
+        archived.write_text(archived.read_text().replace(
+            "- Evidence: `fixture evidence.`",
+            "- Evidence: `forged completion evidence.`",
+        ))
+        git(self.repo, "add", archived_rel)
+        git(self.repo, "commit", "-m", "forge post-sync completion evidence")
+        forged_post_sync = git(self.repo, "rev-parse", "HEAD")
+        self.assertFalse(workstream._post_sync_completion_evidence_is_bounded(
+            self.repo, forged_post_sync, archived_rel,
+        ))
+        git(self.repo, "checkout", branch)
+        summary.write_text(summary.read_text() + "\nBlocker: finish retry after sync conflict\n")
+        git(self.repo, "add", summary_rel); git(self.repo, "commit", "-m", "record finish blocker")
+        blocker_commit = git(self.repo, "rev-parse", "HEAD")
+        final_premerge_archived_text = archived.read_text()
+
+        # The exact published refresh is merged with one bounded archive-path
+        # resolution, followed by the authorized source/test correction.
+        git(self.repo, "checkout", "main")
+        active_text = packets.read_text() + (
+            "\n## Planning Refresh: Exact archive-transition recovery (2026-10-21)\n"
+            "- Authorized scope: `same claimed workstream`\n\n"
+            "## Handoff\n- Next: `finish safely`\n"
+        )
+        packets.write_text(active_text)
+        git(self.repo, "add", active_rel); git(self.repo, "commit", "-m", "authorize recovery refresh")
+        final_main = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "checkout", branch)
+        merge = subprocess.run(["git", "merge", "--no-commit", "--no-ff", "main"],
+                               cwd=self.repo, text=True, capture_output=True)
+        self.assertNotEqual(merge.returncode, 0)
+        packets.unlink(missing_ok=True)
+        refresh_block = (
+            "## Planning Refresh: Exact archive-transition recovery (2026-10-21)\n"
+            "- Authorized scope: `same claimed workstream`"
+        )
+        prefix, suffix = final_premerge_archived_text.split("## Next Handoff", 1)
+        archived.write_text(prefix.rstrip() + "\n\n" + refresh_block +
+                            "\n\n## Next Handoff" + suffix)
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "sync latest main")
+        final_merge = git(self.repo, "rev-parse", "HEAD")
+        correction_paths = (
+            "custodian/tools/agent/workstream.py",
+            "custodian/tools/agent/test_workstream.py",
+        )
+        for index in range(3):
+            paths = correction_paths if index == 2 else (correction_paths[index],)
+            for rel in paths:
+                path = self.repo / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"authorized correction {index}\n")
+            git(self.repo, "add", *paths)
+            git(self.repo, "commit", "-m", f"correct archive transition gate {index}")
+        final_head = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "fetch", "origin")
+        git(self.repo, "checkout", "main")
+        worktree = self.base / "recovery-worktree"
+        git(self.repo, "worktree", "add", str(worktree), branch)
+
+        run_id = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["run_id"]
+        trace_repo = self.base / "trace-repo"
+        git(self.base, "clone", str(self.remote), str(trace_repo))
+        git(trace_repo, "checkout", "main")
+        events = [
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_rel, "run_id": run_id, "event": "remote_claim_acquired",
+             "data": {"remote_ref": f"refs/heads/dispatch-claims/{workstream_id}",
+                      "claim_oid": claim_base, "main_sha": claim_base}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_rel, "run_id": run_id, "event": "worktree_published",
+             "data": {"branch": branch, "clean": True, "head": claim_base,
+                      "upstream": claim_base, "worktree": str(worktree)}},
+            {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+             "packet": active_rel, "run_id": run_id, "event": "validation_report",
+             "data": {"passed": True}},
+        ]
+        for event in events:
+            event["schema_version"] = 1
+            event["timestamp_utc"] = "2026-10-21T00:00:00+00:00"
+        (trace_repo / "trace.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+        git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "publish trace")
+        git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
+        trace_anchor = git(trace_repo, "rev-parse", "HEAD")
+        initial_trace = (trace_repo / "trace.jsonl").read_text()
+        git(worktree, "fetch", "origin")
+        self.assertEqual(git(worktree, "rev-parse", "HEAD"), final_head)
+        self.assertEqual(git(self.repo, "rev-parse", f"{final_merge}^2"), final_main)
+        config = dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY)
+        config.update({
+            "archive": archive_commit,
+            "summary_repair": provenance_commit,
+            "first_sync": first_merge,
+            "post_sync_evidence": post_sync,
+            "blocker_note": blocker_commit,
+            "final_sync": final_merge,
+            "claim_base": claim_base,
+            "claim_oid": claim_base,
+            "trace_anchor": trace_anchor,
+            "first_main": first_main,
+            "final_main": final_main,
+            "correction_commits": [],
+        })
+        # A fourth source/test follow-up is outside this recovery's bounded
+        # correction chain even though it touches only authorized paths.
+        git(worktree, "checkout", "-b", "adversarial-fourth-correction")
+        for rel in correction_paths:
+            path = worktree / rel
+            path.write_text("excess correction\n")
+        git(worktree, "add", *correction_paths)
+        git(worktree, "commit", "-m", "add fourth correction")
+        with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+        git(worktree, "checkout", branch)
+        with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, config):
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            preflight = workstream.closeout_preflight(workstream_id, worktree)
+            self.assertEqual(preflight["archive_transition"]["status"], "pass", preflight)
+
+            # The original trace stopped before finish could emit main_sync.
+            # A later truthful no-op witness is also accepted when present.
+            no_op = {"schema": "custodian.workflow_trace_event.v1", "workstream": workstream_id,
+                     "packet": active_rel, "run_id": run_id, "event": "main_sync",
+                     "data": {"changed": False, "head": final_head, "main_sha": final_main}}
+            (trace_repo / "trace.jsonl").write_text(
+                (trace_repo / "trace.jsonl").read_text() + json.dumps(no_op) + "\n"
+            )
+            git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "record truthful no-op sync")
+            git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
+            git(worktree, "fetch", "origin")
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # A second claim record in the immutable trace is ambiguous and
+            # cannot authenticate the pinned recovery.
+            diag_ref = f"refs/heads/agent-diagnostics/{workstream_id}/{run_id}"
+            git(trace_repo, "fetch", "origin", f"{diag_ref}:refs/heads/diag")
+            git(trace_repo, "checkout", "diag")
+            trace_file = trace_repo / "trace.jsonl"
+            original_trace = trace_file.read_text()
+            duplicate_claim = json.loads(original_trace.splitlines()[0])
+            trace_file.write_text(original_trace + json.dumps(duplicate_claim) + "\n")
+            git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "tamper duplicate claim")
+            git(trace_repo, "push", "origin", f"HEAD:{diag_ref}")
+            git(worktree, "fetch", "origin")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # A false changed=true witness cannot be inferred from the merge
+            # history; the immutable run must report the actual no-op.
+            trace_file.write_text(original_trace)
+            trace_events = [json.loads(line) for line in original_trace.splitlines()]
+            trace_events[-1]["data"]["changed"] = True
+            trace_file.write_text("".join(json.dumps(event) + "\n" for event in trace_events))
+            git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "forge changed sync")
+            git(trace_repo, "push", "origin", f"HEAD:{diag_ref}")
+            git(worktree, "fetch", "origin")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # Restore an authentic descendant trace. A changed pinned main SHA
+            # or a reversed merge-parent expectation must also fail closed.
+            trace_file.write_text(original_trace)
+            git(trace_repo, "add", "trace.jsonl"); git(trace_repo, "commit", "-m", "restore pinned trace")
+            git(trace_repo, "push", "origin", f"HEAD:{diag_ref}")
+            git(worktree, "fetch", "origin")
+            wrong_pin = dict(config)
+            wrong_pin["final_main"] = first_main
+            with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, wrong_pin):
+                self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            wrong_claim = dict(config)
+            wrong_claim["claim_oid"] = "1" * 40
+            with mock.patch.dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY, wrong_claim):
+                self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # A direct post-sync correction with an undeclared path cannot use
+            # the two allowed source/test files to authorize unrelated edits.
+            git(worktree, "checkout", "-b", "adversarial-extra-path", final_merge)
+            for rel in ("custodian/tools/agent/workstream.py",
+                        "custodian/tools/agent/test_workstream.py", "outside.py"):
+                path = worktree / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("unauthorized correction\n")
+            git(worktree, "add", "custodian/tools/agent/workstream.py",
+                "custodian/tools/agent/test_workstream.py", "outside.py")
+            git(worktree, "commit", "-m", "add undeclared correction path")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # An executable mode is also outside the exact regular-file contract.
+            git(worktree, "checkout", "-b", "adversarial-file-mode", final_merge)
+            for rel in ("custodian/tools/agent/workstream.py",
+                        "custodian/tools/agent/test_workstream.py"):
+                path = worktree / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("authorized paths, wrong mode\n")
+            git(worktree, "add", "custodian/tools/agent/workstream.py",
+                "custodian/tools/agent/test_workstream.py")
+            git(worktree, "update-index", "--chmod=+x", "custodian/tools/agent/workstream.py")
+            git(worktree, "commit", "-m", "change correction file mode")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+
+            # Finally reject an unrelated descendant even with the authentic
+            # correction already present on its first parent.
+            git(worktree, "checkout", "--force", branch)
+            git(worktree, "checkout", "-b", "adversarial-followup")
+            (worktree / "outside.py").write_text("unrelated\n")
+            git(worktree, "add", "outside.py"); git(worktree, "commit", "-m", "unrelated followup")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            git(worktree, "checkout", branch)
+
+            # The recovered branch remains verifiable after an unrelated
+            # latest-main advance. Restore the original trace with no inferred
+            # sync event, then require the normal finish path to validate its
+            # genuine post-advance merge.
+            trace_file.write_text(initial_trace)
+            git(trace_repo, "add", "trace.jsonl")
+            git(trace_repo, "commit", "-m", "restore original pre-finish trace")
+            git(trace_repo, "push", "origin", f"HEAD:{diag_ref}")
+            git(worktree, "fetch", "origin")
+            git(self.repo, "checkout", "main")
+            advance_paths = [
+                "custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md",
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md",
+            ]
+            advance_commits = []
+            for index, relative in enumerate(advance_paths):
+                path = self.repo / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"bounded documentation advance {index}\n")
+                git(self.repo, "add", relative)
+                git(self.repo, "commit", "-m", f"bounded unrelated main documentation {index}")
+                advance_commits.append(git(self.repo, "rev-parse", "HEAD"))
+            git(self.repo, "push", "origin", "main")
+            latest_main = git(self.repo, "rev-parse", "HEAD")
+            workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["authorized_main_advance"] = {
+                "base": final_main,
+                "head": latest_main,
+                "commits": advance_commits,
+                "commit_paths": [[relative] for relative in advance_paths],
+            }
+            run_id = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["run_id"]
+            active_trace = workstream.RunTrace(
+                self.repo, workstream_id, run_id, packet=active_rel,
+            )
+            active_trace.path.parent.mkdir(parents=True, exist_ok=True)
+            active_trace.path.write_text(initial_trace)
+            active_trace.active_path.parent.mkdir(parents=True, exist_ok=True)
+            active_trace.active_path.write_text(json.dumps({
+                "run_id": run_id,
+                "workstream": workstream_id,
+                "trace_path": str(active_trace.path),
+                "diagnostic_ref": active_trace.diagnostic_ref,
+            }) + "\n")
+            git(worktree, "fetch", "origin")
+            self.assertEqual(git(worktree, "rev-parse", "origin/main"), latest_main)
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            preflight = workstream.closeout_preflight(workstream_id, worktree)
+            self.assertEqual(preflight["archive_transition"]["status"], "pass")
+            with self.assertRaisesRegex(workstream.WorkstreamError, "provide a green --validation-report-after-sync"):
+                workstream.finish(
+                    workstream_id, self._green_report("validation-before-sync.json"), repo=self.repo,
+                )
+            self.assertEqual(git(worktree, "rev-parse", "HEAD^2"), latest_main)
+            git(self.repo, "fetch", "origin")
+            trace_ref = (
+                f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+                f"{workstream.FAILED_IMPORT_ARCHIVE_RECOVERY['run_id']}"
+            )
+            trace_remote_ref = trace_ref.replace("refs/remotes/origin/", "refs/heads/")
+            git(self.repo, "fetch", "origin", f"{trace_remote_ref}:{trace_ref}")
+            synced_events = [json.loads(line) for line in git(
+                self.repo, "show", f"{trace_ref}:trace.jsonl",
+            ).splitlines() if line.strip()]
+            sync_witnesses = [event["data"] for event in synced_events
+                              if event.get("event") == "main_sync"]
+            self.assertEqual(sync_witnesses, [{
+                "changed": True, "head": git(worktree, "rev-parse", "HEAD"),
+                "main_sha": latest_main,
+            }])
+            self.assertTrue(workstream._failed_import_recovery_trace_is_authentic(
+                synced_events, workstream_id,
+                workstream.FAILED_IMPORT_ARCHIVE_RECOVERY,
+                active_rel, branch, str(worktree), git(worktree, "rev-parse", "HEAD"),
+                git(worktree, "rev-parse", "origin/main"), trace_ref,
+                git(worktree, "rev-parse", trace_ref),
+            ), active_trace.path.read_text())
+            for rel in ("custodian/tools/agent/workstream.py",
+                        "custodian/tools/agent/test_workstream.py"):
+                with (worktree / rel).open("a", encoding="utf-8") as stream:
+                    stream.write("\n# bounded post-sync correction\n")
+            git(worktree, "add", "custodian/tools/agent/workstream.py",
+                "custodian/tools/agent/test_workstream.py")
+            git(worktree, "commit", "-m", "record bounded post-sync correction")
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, worktree))
+            retry_head = git(worktree, "rev-parse", "HEAD")
+            preflight = workstream.closeout_preflight(workstream_id, worktree)
+            self.assertEqual(preflight["archive_transition"]["status"], "pass", preflight)
+            workstream.finish(
+                workstream_id,
+                self._green_report("validation-after-sync.json"),
+                repo=self.repo,
+            )
+            git(self.repo, "fetch", "origin")
+            git(self.repo, "fetch", "origin", f"{trace_remote_ref}:{trace_ref}")
+            final_events = [json.loads(line) for line in git(
+                self.repo, "show", f"{trace_ref}:trace.jsonl",
+            ).splitlines() if line.strip()]
+            sync_witnesses = [event["data"] for event in final_events
+                              if event.get("event") == "main_sync"]
+            self.assertEqual([event["changed"] for event in sync_witnesses], [True, False])
+            self.assertEqual(sync_witnesses[1]["head"], retry_head)
+            self.assertEqual(
+                git(self.repo, "merge-base", "--is-ancestor",
+                    sync_witnesses[0]["head"], sync_witnesses[1]["head"]),
+                "",
+            )
+            self.assertEqual(sync_witnesses[1]["main_sha"], latest_main)
+            self.assertTrue(any(event.get("event") == "finish_completed"
+                                and event.get("data", {}).get("outcome") == "finished"
+                                for event in final_events))
+            self.assertTrue(any(event.get("event") == "validation_report"
+                                and event.get("data", {}).get("path") == "validation-after-sync.json"
+                                and event.get("data", {}).get("passed") is True
+                                for event in final_events))
+            self.assertFalse(worktree.exists())
+
+    def test_historical_failed_import_first_sync_conflict_reconciliation_is_exact(self):
+        repository = Path(__file__).resolve().parents[3]
+        pinned = dict(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY)
+        archived_rel = (
+            "custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        )
+        self.assertTrue(workstream._failed_import_first_sync_is_bounded(
+            repository, pinned, archived_rel,
+        ))
+        active_rel = (
+            "custodian/docs/ai_context/task_packets/"
+            "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md"
+        )
+        self.assertTrue(workstream._reconciled_archive_packet_matches(
+            repository, pinned["final_sync"], archived_rel, active_rel,
+        ))
+
+        # The reconciliation is bound to the exact recorded regression-test
+        # output. A different source blob cannot inherit this merge authority.
+        forged = dict(pinned)
+        forged["first_sync_test_runner_blob"] = "0" * 40
+        self.assertFalse(workstream._failed_import_first_sync_is_bounded(
+            repository, forged, archived_rel,
+        ))
+
+    def test_archive_guard_recovers_resolved_current_main_sync_without_erasing_conflict_evidence(self):
+        workstream_id = "agent-test-resolved-main-sync"
+        active = self.repo / "custodian/docs/ai_context/task_packets/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test\n- Packet schema: `custodian.task_packet.v2`\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+            "- Work surface: `source.py`; `test_source.py`\n"
+        )
+        git(self.repo, "add", str(active.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish active packet")
+        git(self.repo, "push", "origin", "main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        (self.repo / "source.py").write_text("source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "implement source")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("in_progress", "complete"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive packet")
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-only").write_text("new main\n")
+        git(self.repo, "add", "main-only")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        main_sha = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "main", "-m", "resolved sync merge")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), main_sha)
+
+        (self.repo / "source.py").write_text("source with in-surface follow-up\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "bounded follow-up")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        (self.repo / "outside.py").write_text("out of scope\n")
+        git(self.repo, "add", "outside.py")
+        git(self.repo, "commit", "-m", "unbound follow-up")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):
+        class ReachedFetch(Exception):
+            pass
+
+        with mock.patch.object(workstream, "fetch", side_effect=ReachedFetch):
+            with self.assertRaises(ReachedFetch):
+                workstream._finish_impl(
+                    workstream.ADVANCED_HEAD_PASS_REVIEW, self.repo / "validation.json",
+                    repo=self.repo, defer_teardown=True,
+                )
+
+    def test_deferred_teardown_remains_restricted_to_authorized_recoveries(self):
+        with self.assertRaisesRegex(workstream.WorkstreamError, "two exact authorized"):
+            workstream._finish_impl("unrelated-review", self.repo / "validation.json",
+                                    repo=self.repo, defer_teardown=True)
+        with self.assertRaisesRegex(workstream.WorkstreamError, "root-sync deferral"):
+            workstream._finish_impl(
+                workstream.INVALID_DISPOSITION_REVIEW, self.repo / "validation.json",
+                repo=self.repo, defer_teardown=True,
+            )
+
+    def test_advanced_head_finish_lands_syncs_root_and_preserves_claim_worktree(self):
+        workstream_id = workstream.ADVANCED_HEAD_PASS_REVIEW
+        path = workstream.start(workstream_id, self.repo)
+        self._archive_packet(path, workstream_id,
+                             self._v2_packet_text(workstream_id, kind="review"))
+        report = self._green_report()
+
+        workstream.finish(workstream_id, report, repo=path, defer_teardown=True)
+
+        self.assertTrue(path.is_dir())
+        self.assertEqual(git(path, "branch", "--show-current"), f"agent/{workstream_id}")
+        self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(git(self.repo, "rev-parse", f"origin/agent/{workstream_id}"),
+                         git(path, "rev-parse", "HEAD"))
+
     def test_stable_kebab_id_validation(self):
         self.assertEqual(workstream.validate_id("operator-fast-chain"), "operator-fast-chain")
         for value in ("Operator", "two--words", "a/b", "one_"):
             with self.assertRaises(workstream.WorkstreamError):
                 workstream.validate_id(value)
+
+    def test_legacy_quarantined_claim_cannot_be_started_or_resumed(self):
+        import legacy_claim_quarantine
+        state = {"state": "legacy_quarantined", "record_sha": "a" * 40, "lock_released": True}
+        with mock.patch.object(legacy_claim_quarantine, "local_quarantine_state", return_value=state):
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.start("stranded-review", self.repo)
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.resume("stranded-review", self.repo)
+            with self.assertRaisesRegex(workstream.WorkstreamError, "legacy_quarantined"):
+                workstream.finish("stranded-review", self.repo / "validation.json", repo=self.repo)
+        ref = subprocess.run(["git", "show-ref", "--verify", "refs/heads/agent/stranded-review"],
+                             cwd=self.repo, capture_output=True)
+        self.assertNotEqual(ref.returncode, 0)
 
     def test_new_start_uses_origin_main_in_external_worktree(self):
         path = workstream.start("sample-work", self.repo)
@@ -57,6 +924,9 @@ class WorkstreamTests(unittest.TestCase):
         self.assertFalse(path.is_relative_to(self.repo))
         self.assertEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
         self.assertEqual(git(path, "rev-parse", "@{upstream}"), git(self.repo, "rev-parse", "origin/agent/sample-work"))
+        trace = next((Path(self.repo / ".git/custodian-workflow/traces/sample-work").glob("*.jsonl")))
+        first_event = json.loads(trace.read_text().splitlines()[0])
+        self.assertEqual(first_event["execution_generation"], "execution-reset-v1-20261020")
 
     def test_dispatch_owned_start_defers_trace_publication(self):
         trace = workstream.RunTrace.start(self.repo, "deferred-start", agent="codex")
@@ -374,6 +1244,97 @@ class WorkstreamTests(unittest.TestCase):
         workstream._teardown_workstream("manual-teardown", "agent/manual-teardown", self.repo, path, head)
         self.assertFalse(path.exists())
 
+    def test_teardown_can_record_authorized_root_sync_deferral_without_touching_root(self):
+        path = workstream.start("agent-paired-review-invalid-disposition-recovery-v1", self.repo)
+        head = git(path, "rev-parse", "HEAD")
+        root_head = git(self.repo, "rev-parse", "HEAD")
+        with mock.patch.object(workstream, "apply_profiles") as sync:
+            workstream._teardown_workstream(
+                "agent-paired-review-invalid-disposition-recovery-v1",
+                "agent/agent-paired-review-invalid-disposition-recovery-v1",
+                self.repo, path, head, defer_root_sync=True,
+            )
+        sync.assert_not_called()
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), root_head)
+        self.assertFalse(path.exists())
+
+    def test_root_sync_deferral_rejects_unlisted_workstream(self):
+        with self.assertRaisesRegex(workstream.WorkstreamError, "not authorized"):
+            workstream._verify_root_sync_deferral("unrelated-workstream", self.repo, None)
+
+    def test_root_sync_deferral_requires_the_exact_recovery_packet_override(self):
+        packet = self.repo / "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_INVALID_DISPOSITION_RECOVERY_V1.md"
+        packet.parent.mkdir(parents=True)
+        packet.write_text(
+            "# Recovery\n- Packet schema: `custodian.task_packet.v2`\n"
+            "- Workstream: `agent-paired-review-invalid-disposition-recovery-v1`\n"
+            "- Kind: `implementation`\n- Task overrides: `Do not synchronize the root checkout; record synchronization pending.`\n"
+        )
+        self.assertEqual(
+            workstream._verify_root_sync_deferral("agent-paired-review-invalid-disposition-recovery-v1", self.repo, None),
+            "task_packet_authorized",
+        )
+        packet.write_text(packet.read_text().replace("Do not synchronize", "Maybe synchronize"))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "packet authorization"):
+            workstream._verify_root_sync_deferral("agent-paired-review-invalid-disposition-recovery-v1", self.repo, None)
+
+    def test_historical_root_sync_deferral_requires_exact_run_manifest_and_landed_receipt_bytes(self):
+        disposition = b"repaired canonical disposition\n"
+        target = b"pinned implementation plus one receipt\n"
+        for relative, raw in ((workstream.INVALID_DISPOSITION_REVIEW_PACKET, disposition),
+                              (workstream.INVALID_DISPOSITION_TARGET_PACKET, target)):
+            path = self.repo / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(raw)
+        git(self.repo, "add", str(Path(workstream.INVALID_DISPOSITION_REVIEW_PACKET)),
+            str(Path(workstream.INVALID_DISPOSITION_TARGET_PACKET)))
+        git(self.repo, "commit", "-m", "recovery evidence")
+        git(self.repo, "push", "origin", "main")
+        common = Path(git(self.repo, "rev-parse", "--path-format=absolute", "--git-common-dir"))
+        run = common / "custodian-review-runs" / workstream.INVALID_DISPOSITION_REVIEW / workstream.INVALID_DISPOSITION_RUN_ID
+        continuation = run / "continuation-01"
+        continuation.mkdir(parents=True)
+        original = {
+            "schema": "custodian.paired_review_run.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "run_dir": str(run), "phase": "post_exit_recovery",
+        }
+        original_bytes = json.dumps(original).encode("utf-8")
+        (run / "metadata.json").write_bytes(original_bytes)
+        recovery = {
+            "schema": "custodian.paired_review_invalid_disposition_recovery.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "continuation": "continuation-01",
+            "original_disposition_sha256": workstream.INVALID_DISPOSITION_SHA256,
+            "repaired_disposition_sha256": hashlib.sha256(disposition).hexdigest(),
+            "target_receipt_sha256": hashlib.sha256(target).hexdigest(),
+            "root_sync_pending": True,
+        }
+        child = {
+            "schema": "custodian.paired_review_continuation.v1",
+            "workstream": workstream.INVALID_DISPOSITION_REVIEW,
+            "run_id": workstream.INVALID_DISPOSITION_RUN_ID,
+            "phase": "coordinator_closeout", "worktree": str(self.base / "removed-worktree"),
+            "invalid_disposition_recovery": recovery,
+        }
+        child["run_evidence_sha256"] = workstream._review_run_manifest(run)
+        (continuation / "metadata.json").write_text(json.dumps(child))
+        evidence = continuation / "metadata.json"
+        self.assertEqual(
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence),
+            "verified_invalid_disposition_recovery",
+        )
+        wrong_run = {**original, "run_dir": str(run.parent / "another-run")}
+        (run / "metadata.json").write_text(json.dumps(wrong_run))
+        with self.assertRaisesRegex(workstream.WorkstreamError, "identity, preservation digest, or evidence manifest"):
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence)
+        (run / "metadata.json").write_bytes(original_bytes)
+        (run / "claim.stdout").write_text("tampered original evidence\n")
+        with self.assertRaisesRegex(workstream.WorkstreamError, "evidence manifest"):
+            workstream._verify_root_sync_deferral(workstream.INVALID_DISPOSITION_REVIEW, self.repo, evidence)
+
     def test_finish_reports_already_finished_when_nothing_is_attached(self):
         path = workstream.start("fully-done", self.repo)
         self._commit_task_work(path, "fully-done")
@@ -389,13 +1350,14 @@ class WorkstreamTests(unittest.TestCase):
         with self.assertRaisesRegex(workstream.WorkstreamError, "no attached worktree"):
             workstream.finish("never-existed", self.base / "x.json", repo=self.repo)
 
-    def test_finish_leaves_dirty_persistent_root_untouched(self):
+    def test_finish_syncs_root_with_unrelated_untracked_file_preserved(self):
         path = workstream.start("dirty-root-finish", self.repo)
         self._commit_task_work(path, "dirty-root-finish")
-        (self.repo / "uncommitted-root-file").write_text("dirty\n")
+        preserved_file = self.repo / "uncommitted-root-file"
+        preserved_file.write_text("dirty\n")
         workstream.finish("dirty-root-finish", self._green_report(), repo=path)
-        self.assertTrue((self.repo / "uncommitted-root-file").exists())
-        self.assertNotEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+        self.assertEqual(preserved_file.read_text(), "dirty\n")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
 
     def test_finish_leaves_diverged_persistent_root_history_untouched(self):
         path = workstream.start("diverged-root-finish", self.repo)

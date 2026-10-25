@@ -20,6 +20,11 @@ const ANIMATION_SET := preload("res://game/actors/ambient/baby_opossum/baby_opos
 const PROP_LAYER := &"barrel_prop"
 const DEFAULT_ACTION_SECONDS := 0.45
 const ARRIVAL_DISTANCE_SQUARED := 16.0
+const APPROACH_TIMEOUT_GRACE_SECONDS := 0.75
+const APPROACH_TIMEOUT_MIN_SECONDS := 1.0
+const APPROACH_TIMEOUT_MAX_SECONDS := 30.0
+
+enum TransitionKind { SOFT_ACTION, SENSED_THREAT, HARD_RESPONSE }
 
 enum TrustStage { WILD, WARY, FED, FAMILIAR, FRIEND }
 enum Movement { LOCKED, WANDER, FLEE, APPROACH }
@@ -65,7 +70,7 @@ const STATE_TABLE := {
 	State.HIDE_PEEK: {"action": &"hide_peek", "movement": Movement.LOCKED, "next": State.HIDE_HOLD},
 	State.HIDE_EXIT: {"action": &"hide_exit", "movement": Movement.LOCKED, "next": State.IDLE},
 	State.TREAT_NOTICE: {"action": &"notice_treat", "movement": Movement.LOCKED, "next": State.TREAT_APPROACH},
-	State.TREAT_APPROACH: {"action": &"approach_wary", "movement": Movement.APPROACH, "duration": 1.2, "next": State.TREAT_SNIFF},
+	State.TREAT_APPROACH: {"action": &"approach_wary", "movement": Movement.APPROACH, "next": State.TREAT_SNIFF},
 	State.TREAT_SNIFF: {"action": &"sniff_treat", "movement": Movement.LOCKED, "next": State.TREAT_TAKE},
 	State.TREAT_TAKE: {"action": &"take_treat", "movement": Movement.LOCKED, "next": State.TREAT_EAT},
 	State.TREAT_EAT: {"action": &"eat", "movement": Movement.LOCKED, "duration": 1.0, "next": State.FRIEND_HAPPY},
@@ -75,7 +80,7 @@ const STATE_TABLE := {
 	State.FIND_TARGET: {"action": &"find_target", "movement": Movement.LOCKED, "next": State.LOOK_BACK},
 	State.LOOK_BACK: {"action": &"look_back", "movement": Movement.LOCKED, "next": State.EXCITED_IDLE},
 	State.EXCITED_IDLE: {"action": &"excited_idle", "movement": Movement.LOCKED, "duration": 1.1, "next": State.IDLE},
-	State.RETRIEVE: {"action": &"retrieve", "movement": Movement.APPROACH, "duration": 1.6, "next": State.IDLE},
+	State.RETRIEVE: {"action": &"retrieve", "movement": Movement.APPROACH, "next": State.IDLE},
 	State.GIFT_DROP: {"action": &"gift_drop", "movement": Movement.LOCKED, "next": State.IDLE}
 }
 
@@ -88,6 +93,7 @@ const MAX_DERIVED_DURATION := 1.5
 const PLAY_DEAD_STATES := {State.PLAY_DEAD_ENTER: true, State.PLAY_DEAD_HOLD: true, State.PLAY_DEAD_PEEK: true}
 const HIDE_STATES := {State.HIDE_ENTER: true, State.HIDE_HOLD: true, State.HIDE_PEEK: true}
 const FLEE_STATES := {State.FLEE_START: true, State.FLEE: true}
+const REJECTION_STATES := {State.REJECT_HIT: true, State.DISAPPROVE: true}
 
 signal treat_accepted(treat: Node)
 signal trust_stage_changed(stage: int)
@@ -127,6 +133,9 @@ var _wander_target := Vector2.ZERO
 var _wander_timer := 0.0
 var _flavour_timer := 0.0
 var _approach_target := Vector2.ZERO
+var _approach_target_node: Node2D = null
+var _pending_retrieve_target: Node2D = null
+var _pending_found_target: Node2D = null
 var _flee_origin := Vector2.ZERO
 var _home_initialized := false
 var _seeded := false
@@ -216,7 +225,7 @@ func reject_melee(attacker: Node = null) -> bool:
 ## A blow that landed near the opossum without touching it: no time to size the
 ## threat up, just bolt.
 func on_nearby_attack(origin: Vector2) -> void:
-	if not _is_interruptible(): return
+	if not _can_transition(TransitionKind.SENSED_THREAT): return
 	_flee_origin = origin
 	_face_toward(origin)
 	_enter_state(State.STARTLE)
@@ -224,7 +233,7 @@ func on_nearby_attack(origin: Vector2) -> void:
 ## An ordinary approaching threat. The opossum notices it, warns it off, and
 ## only then runs: danger_sense -> hiss -> flee_start -> flee -> alert -> idle.
 func sense_threat(origin: Vector2) -> void:
-	if not _is_interruptible(): return
+	if not _can_transition(TransitionKind.SENSED_THREAT): return
 	_flee_origin = origin
 	_face_toward(origin)
 	_enter_state(State.DANGER_SENSE)
@@ -232,6 +241,7 @@ func sense_threat(origin: Vector2) -> void:
 # --- Behavior API -----------------------------------------------------------
 
 func flee_from(origin: Vector2) -> void:
+	if not _can_transition(TransitionKind.HARD_RESPONSE): return
 	_flee_origin = origin
 	_face_away_from(origin)
 	_enter_state(State.FLEE_START)
@@ -240,9 +250,11 @@ func stop_fleeing() -> void:
 	if FLEE_STATES.has(_state): _enter_state(State.IDLE)
 
 func receive_treat(treat: Node = null) -> bool:
-	if PLAY_DEAD_STATES.has(_state) or HIDE_STATES.has(_state): return false
+	if not _can_transition(TransitionKind.SOFT_ACTION): return false
+	_approach_target_node = null
 	if treat is Node2D and is_instance_valid(treat):
-		_approach_target = (treat as Node2D).global_position
+		_approach_target_node = treat as Node2D
+		_approach_target = _approach_target_node.global_position
 		_face_toward(_approach_target)
 	else:
 		_approach_target = global_position
@@ -255,7 +267,7 @@ func receive_treat(treat: Node = null) -> bool:
 	return true
 
 func begin_play_dead() -> void:
-	if PLAY_DEAD_STATES.has(_state): return
+	if not _can_transition(TransitionKind.SOFT_ACTION): return
 	_enter_state(State.PLAY_DEAD_ENTER)
 
 func peek_from_play_dead() -> void:
@@ -265,7 +277,7 @@ func end_play_dead() -> void:
 	if PLAY_DEAD_STATES.has(_state): _enter_state(State.PLAY_DEAD_EXIT)
 
 func enter_hide() -> void:
-	if HIDE_STATES.has(_state): return
+	if not _can_transition(TransitionKind.SOFT_ACTION): return
 	_enter_state(State.HIDE_ENTER)
 
 func peek_from_hide() -> void:
@@ -278,34 +290,47 @@ func exit_hide() -> void:
 ## inside `search_radius`, and runs the dig/point/look-back sequence when one
 ## is found.
 func search_for_target() -> Node:
+	if not _can_transition(TransitionKind.SOFT_ACTION): return null
 	var nearest: Node2D = null
 	var best := search_radius * search_radius
 	for candidate in get_tree().get_nodes_in_group("opossum_discoverable"):
 		if not candidate is Node2D or not is_instance_valid(candidate): continue
-		var candidate_distance := global_position.distance_squared_to((candidate as Node2D).global_position)
-		if candidate_distance <= best:
+		var candidate_node := candidate as Node2D
+		var candidate_distance := global_position.distance_squared_to(candidate_node.global_position)
+		if _is_better_search_candidate(candidate_node, candidate_distance, nearest, best):
 			nearest = candidate as Node2D
 			best = candidate_distance
 	if nearest == null:
 		_enter_state(State.SEARCH)
 		return null
 	_approach_target = nearest.global_position
+	_approach_target_node = nearest
+	_pending_found_target = nearest
 	_face_toward(_approach_target)
 	_enter_state(State.SEARCH, State.DIG)
-	target_found.emit(nearest)
 	return nearest
 
 func retrieve(target: Node = null) -> bool:
-	carrying_target = target
-	if target is Node2D and is_instance_valid(target):
-		_approach_target = (target as Node2D).global_position
-		_face_toward(_approach_target)
-	else:
-		_approach_target = global_position
+	if not _can_transition(TransitionKind.SOFT_ACTION): return false
+	if not target is Node2D or not is_instance_valid(target): return false
+	if carrying_target != null and is_instance_valid(carrying_target): return false
+	_pending_retrieve_target = target as Node2D
+	_approach_target_node = _pending_retrieve_target
+	_approach_target = _pending_retrieve_target.global_position
+	_face_toward(_approach_target)
 	_enter_state(State.RETRIEVE)
 	return true
 
+func cancel_retrieval() -> void:
+	_pending_retrieve_target = null
+	if _state == State.RETRIEVE:
+		_approach_target_node = null
+		_enter_state(State.IDLE)
+
 func gift_drop() -> void:
+	if carrying_target == null or not is_instance_valid(carrying_target):
+		carrying_target = null
+		return
 	var dropped := carrying_target
 	carrying_target = null
 	_enter_state(State.GIFT_DROP)
@@ -327,17 +352,46 @@ func _enter_state(state: int, chain_to := -1) -> void:
 	is_hidden = HIDE_STATES.has(state)
 	if int(entry.get("movement", Movement.LOCKED)) == Movement.LOCKED: velocity = Vector2.ZERO
 	play_action(action, true)
+	if state == State.FIND_TARGET:
+		if _pending_found_target != null and is_instance_valid(_pending_found_target):
+			target_found.emit(_pending_found_target)
+		_pending_found_target = null
 
 func _tick_state(delta: float) -> void:
 	var entry: Dictionary = STATE_TABLE[_state]
 	if bool(entry.get("hold", false)):
 		if AMBIENT_STATES.has(_state): _tick_ambient(delta)
 		return
+	if int(entry.get("movement", Movement.LOCKED)) == Movement.APPROACH:
+		if _state == State.RETRIEVE:
+			if _pending_retrieve_target == null or not is_instance_valid(_pending_retrieve_target):
+				cancel_retrieval()
+				return
+			_approach_target = _pending_retrieve_target.global_position
+		elif _approach_target_node != null and is_instance_valid(_approach_target_node):
+			_approach_target = _approach_target_node.global_position
+		if _state == State.TREAT_APPROACH and global_position.distance_squared_to(_approach_target) <= ARRIVAL_DISTANCE_SQUARED:
+			_approach_target_node = null
+			_advance_state()
+			return
 	if _state == State.FLEE and global_position.distance_to(_flee_origin) >= flee_safe_distance:
 		_enter_state(State.ALERT)
 		return
 	_state_timer = maxf(0.0, _state_timer - delta)
 	if _state_timer > 0.0: return
+	if _state == State.TREAT_APPROACH:
+		# A distant or unreachable treat never earns the sniff/take/eat success beats.
+		_approach_target_node = null
+		_enter_state(State.IDLE)
+		return
+	if _state == State.RETRIEVE:
+		# Arrival alone is not pickup; only matching contact can set carrying_target.
+		cancel_retrieval()
+		return
+	_advance_state()
+
+func _advance_state() -> void:
+	var entry: Dictionary = STATE_TABLE[_state]
 	var next := _chained_next if _chained_next >= 0 else int(entry.get("next", State.IDLE))
 	_chained_next = -1
 	_enter_state(_resolve_next_state(_state, next))
@@ -348,6 +402,10 @@ func _resolve_next_state(finished: int, proposed: int) -> int:
 	return proposed
 
 func _resolve_duration(entry: Dictionary, action: StringName) -> float:
+	if int(entry.get("movement", Movement.LOCKED)) == Movement.APPROACH:
+		var travel_distance := global_position.distance_to(_approach_target)
+		var travel_seconds := travel_distance / maxf(move_speed, 1.0)
+		return clampf(travel_seconds + APPROACH_TIMEOUT_GRACE_SECONDS, APPROACH_TIMEOUT_MIN_SECONDS, APPROACH_TIMEOUT_MAX_SECONDS)
 	if entry.has("duration"): return maxf(0.0, float(entry["duration"]))
 	var authored := get_action_duration(action)
 	return minf(authored, MAX_DERIVED_DURATION) if authored > 0.0 else DEFAULT_ACTION_SECONDS
@@ -399,12 +457,32 @@ func _choose_wander_target() -> void:
 	_wander_target = home_position + Vector2.RIGHT.rotated(angle) * radius
 
 func _begin_rejection(origin: Vector2) -> void:
+	if not _can_transition(TransitionKind.HARD_RESPONSE): return
 	_flee_origin = origin
 	_face_away_from(origin)
 	_enter_state(State.REJECT_HIT)
 
 func _is_interruptible() -> bool:
 	return AMBIENT_STATES.has(_state)
+
+## One policy gate owns which reactions may replace the active sequence.
+func _can_transition(kind: TransitionKind) -> bool:
+	match kind:
+		TransitionKind.SOFT_ACTION, TransitionKind.SENSED_THREAT:
+			return _is_interruptible()
+		TransitionKind.HARD_RESPONSE:
+			# Repeated hits/flee orders cannot restart a response already in flight.
+			return not REJECTION_STATES.has(_state) and not FLEE_STATES.has(_state)
+	return false
+
+func _is_better_search_candidate(candidate: Node2D, distance_squared: float, current: Node2D, best_distance_squared: float) -> bool:
+	if current == null: return distance_squared <= best_distance_squared
+	if distance_squared != best_distance_squared: return distance_squared < best_distance_squared
+	var candidate_position := candidate.global_position
+	var current_position := current.global_position
+	if candidate_position.y != current_position.y: return candidate_position.y < current_position.y
+	if candidate_position.x != current_position.x: return candidate_position.x < current_position.x
+	return String(candidate.get_path()) < String(current.get_path())
 
 func _face_toward(target: Vector2) -> void:
 	var offset := target - global_position
@@ -441,8 +519,12 @@ func _on_treat_detected(node: Node) -> void:
 
 func _on_contact_detected(node: Node) -> void:
 	var source := _detector_source(node, &"opossum_discoverable")
-	if source == null or _state != State.RETRIEVE: return
+	if source == null or _state != State.RETRIEVE or _pending_retrieve_target == null: return
+	if source != _pending_retrieve_target: return
 	carrying_target = source
+	_pending_retrieve_target = null
+	_approach_target_node = null
+	_enter_state(State.IDLE)
 
 ## Detector bodies are often collision children of the meaningful actor, so a
 ## single parent hop is allowed when matching the gameplay group.

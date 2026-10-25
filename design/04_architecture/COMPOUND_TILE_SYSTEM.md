@@ -1275,3 +1275,7 @@ That is the minimum viable Compound Tile System.
 
 - [6] Campaign Flow & Game Loop
 - [7] Integration Contract (Glue Layer)
+
+## Structural archetypes (planning, 2026-10-15)
+
+Type A perimeter/gates and Type B separated surface access points with fortified underground compartments must derive collision and route permissions from canonical TileMap cells. Visual door assets cannot independently own pathability; power, damage and repair stay in existing runtime owners. See design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md.

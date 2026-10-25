@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import subprocess
 import tempfile
@@ -32,8 +33,27 @@ def _sidecar(source: str | None, uid: str | None, *, invalid: bool = False, dest
     )
 
 
+def _standalone_temp_parent() -> str:
+    """Do not mistake an ambient /tmp/.git checkout for fixture ownership.
+
+    The first fixture represents a *standalone* project, while the second
+    creates its own nested Git repository and tests real Git/LFS behavior.
+    Keep the standalone fixture outside any Git ancestry rather than
+    weakening the production preflight's fail-closed Git detection.
+    """
+    for candidate in (Path(tempfile.gettempdir()), Path("/dev/shm"), Path("/var/tmp")):
+        if not candidate.is_dir() or not os.access(candidate, os.W_OK):
+            continue
+        if any((ancestor / ".git").exists() for ancestor in (candidate, *candidate.parents)):
+            continue
+        return str(candidate)
+    raise RuntimeError("no writable standalone temporary root outside a Git checkout")
+
+
 def main() -> int:
-    with tempfile.TemporaryDirectory(prefix="godot-import-preflight-") as temp:
+    with tempfile.TemporaryDirectory(
+        prefix="godot-import-preflight-", dir=_standalone_temp_parent()
+    ) as temp:
         root = Path(temp)
         project = root / "project"
         project.mkdir()
@@ -158,6 +178,32 @@ def main() -> int:
         detail = preflight_detail(project)
         if not detail or "missing remap path" not in detail:
             print(f"FAIL: missing remap path was not rejected: {detail}")
+            return 1
+
+    # Sparse checkouts leave tracked sidecars off disk on purpose; a referenced
+    # sidecar that is skip-worktree must not read as "unreadable".
+    with tempfile.TemporaryDirectory(prefix="godot-import-sparse-") as temp:
+        root = Path(temp)
+        project = root / "custodian"
+        assets = project / "content" / "sparse"
+        assets.mkdir(parents=True)
+        (project / "scenes").mkdir()
+        _git(root, "init", "-q")
+        relative = "content/sparse/omitted.png"
+        (assets / "omitted.png").write_bytes(b"fixture source")
+        (assets / "omitted.png.import").write_text(_sidecar(relative, "uid://omitted"), encoding="utf-8")
+        (project / "scenes" / "sparse.tscn").write_text(
+            f'[gd_scene]\n[ext_resource type="Texture2D" path="res://{relative}" id="1"]\n', encoding="utf-8"
+        )
+        _git(root, "add", "custodian")
+        (assets / "omitted.png.import").unlink()
+        detail = preflight_detail(project)
+        if not detail or "unreadable sidecar" not in detail:
+            print(f"FAIL: a referenced sidecar missing without sparse omission must still block: {detail}")
+            return 1
+        _git(root, "update-index", "--skip-worktree", f"custodian/{relative}.import")
+        if preflight_detail(project) is not None:
+            print("FAIL: sparse-omitted sidecar blocked import")
             return 1
 
     print("godot_import_preflight_smoke: PASS")

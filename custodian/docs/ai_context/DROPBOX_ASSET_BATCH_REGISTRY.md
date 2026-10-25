@@ -5,6 +5,15 @@
 **Registry:** `CUSTODIAN/asset_batches/_registry/`  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 
+
+> **Lifecycle audit added 2026-10-13:** Use `python3 custodian/tools/assets/dropbox_asset_audit.py scan --json` or `report --format markdown` to reconcile these legacy registry entries with all three Dropbox source lanes and local Asset V2 evidence. Legacy `active` is not review approval; an explicit SHA256-pinned source-review receipt is required for new approval. The index below reflects its original October 7 scope and is not a complete October 13 inventory; see `custodian/docs/ai_context/asset_audits/DROPBOX_ASSET_FAMILY_BASELINE_20261013.json` and `design/04_architecture/DROPBOX_ASSET_LIFECYCLE_RECONCILIATION_V1.md`.
+
+### Live tooling
+
+**First live lifecycle publication (2026-10-13):** authenticated `git-dropbox-sync` inventory completed all three lanes (26 ZIPs) and reported 24 findings (23 unregistered packages, one registered package missing remotely) across 88 families. Current derived index: `/CUSTODIAN/asset_batches/_registry/lifecycle/INDEX.json`; immutable run: `/CUSTODIAN/asset_batches/_registry/lifecycle/audit-runs/20261013T103045Z.json` and `.md`. No source package was staged or approved and no Asset V2 ingest occurred.
+
+The read-only audit CLI exists at `custodian/tools/assets/dropbox_asset_audit.py`; the approval-pinned source ZIP tool is `custodian/tools/assets/dropbox_asset_stage.py` and the **opt-in** status-index publisher is `custodian/tools/assets/dropbox_asset_publish.py --apply`. Their test suites are wired into GitHub CI. A source must have an explicit Git review receipt before it is eligible for local staging. The legacy index below remains unchanged by reconciliation; the derived status view is published under `/CUSTODIAN/asset_batches/_registry/lifecycle/`.
+
 ## Purpose
 
 Use this document to find durable authored asset handoffs in Dropbox without searching arbitrary nested folders or confusing visual-review evidence with implementation input.

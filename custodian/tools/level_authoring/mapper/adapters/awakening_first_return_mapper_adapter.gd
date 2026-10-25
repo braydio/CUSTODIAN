@@ -11,7 +11,9 @@ func level_id() -> String:
 func supports_underlay_sampling() -> bool:
 	return true
 func authoring_modes() -> Array[String]:
-	return ["COLLISION", "MARKER", "REGION"]
+	# Marker and region editing currently have no Awakening-safe persistence
+	# contract. Keep them out of the advertised mode cycle.
+	return ["COLLISION"]
 
 func semantic_groups() -> Array[String]:
 	return ["zone_envelope", "critical_route", "optional_branch", "camera_reveal", "encounter", "interaction", "art_anchor"]

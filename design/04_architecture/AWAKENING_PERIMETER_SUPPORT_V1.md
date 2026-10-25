@@ -1,6 +1,6 @@
 # Awakening / The First Return: Perimeter Underlay Support V1
 
-**Status:** Approved planning direction; **not implemented art, registered assets, or runtime behavior**.
+**Status:** Approved direction. AP0 technical coverage, presentation host, and pending Asset V2 contracts are implemented; **no perimeter art has been produced or bound**. AP1–AP4 remain art-gated.
 **Scope:** Nonplayable environmental support immediately outside the authored playable footprints for zones 01–10. 
 **Parent authority:** [AWAKENING_FIRST_RETURN.md](AWAKENING_FIRST_RETURN.md); exact gameplay envelopes/route are exclusively owned by `custodian/game/world/awakening/awakening_layout.gd`.
 **Asset rules:** [AWAKENING_ASSET_MANIFEST.md](AWAKENING_ASSET_MANIFEST.md), [ASSET_PIPELINE_V2.md](ASSET_PIPELINE_V2.md).
@@ -58,6 +58,27 @@ These are visual roles, not three extra playable regions. No physics, triggers, 
 **10 Fallen Civic Expanse.** Frame the Road of Witnesses: South Reach with collapsed colonnades, broken civic plazas, inaccessible avenues, distant administrative towers and city foundations. Material language: worn dark civic basalt, sun-bleached limestone, dulled brass wayfinding, low dusty rust and grey haze. Its storytelling purpose is the Road belongs to a much larger dead city; north barricade still closes the prologue. Do not depict accessible new exits.
 
 ## Runtime ownership and seams
+
+### AP0 foundation measurement (2026-10-15)
+
+`custodian/tools/validation/awakening_perimeter_support_smoke.gd` writes the
+machine-readable camera/plate ledger to
+`custodian/docs/ai_context/reports/awakening_perimeter_support/camera_coverage_v1.json`.
+It samples wake, every zone center/entry/exit, and all three authored camera
+reveals at the project’s 1280×720 viewport, using the live registered room
+sprites, the shared 04→05 composition, the Road bounds, the 2.25 Awakening zoom
+scale and reveal zooms. On the measured baseline, 30 of 34 camera samples fall
+fully inside registered plate rectangles; the four uncovered windows are the
+lower 32px strip at wake/Zone01 entry and the 96px strip along the 05→06 join
+(reported at both Zone05 exit and Zone06 entry). These are presentation coverage
+measurements only and do not authorize gameplay geometry changes.
+
+The nine generic Asset V2 contracts and `AwakeningPerimeterSupport` scene host
+are live. The host keeps a deterministic 27-state placement description beneath
+the gameplay floor, checks `ResourceLoader.exists()` before loading any future
+state, and leaves `AwakeningVoidBackdrop` in place. No Zone 05 family is
+registered. Current state assets are absent; do not infer that pending demand is
+fulfilled.
 
 - Current runtime already creates `AwakeningVoidBackdrop` beneath all underlays using `Layout.WORLD_BOUNDS.grow(1024)`; this remains the **last-resort neutral fallback**, not the full design. Do not globally delete/replace it until every camera-visible support region is complete and coverage-tested.
 - The **actual** underlays and foregrounds for Zones 01–09 remain untouched in their established canvases at the exact Layout-derived centers. Existing Road-of-Witnesses modular plates remain separate Road-owned art.

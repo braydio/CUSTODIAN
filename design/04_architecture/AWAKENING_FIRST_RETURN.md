@@ -10,9 +10,12 @@
 > **Supersedes** the earlier "Home Beginning: Custodian Field Terminal" design, in
 > which the player woke directly on the Road of Witnesses and walked a short
 > distance to a Field Terminal that immediately handed off to procgen. The lore
-> below still stands; the opening is now a ten-section authored dungeon, and the
-> Field Terminal, the Ashen Forum, the Continuity Port, and the first Contract
-> belong to later sections that are not implemented yet.
+> below still stands; the opening is a ten-section authored dungeon. The Field
+> Terminal is not its destination. Forum adjudication, the optional Crown route,
+> and ordinary Continuity Port deployment belong to the separate Hub first-set
+> program; H3/H4 and their reviews are complete, while H5 Port deployment is
+> separately claimed and not yet landed. See
+> [the deferred-family ownership crosswalk](AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md).
 
 > **Lore cross-reference:** The terminal-recognition phase described in this doc is where the crèche recognizes or issues the player's Custodian designation. The fiction of crèches and designation-keyed crèche lockers (including what the locker does — and does not — prove about the person carrying the designation) is canon in `design/03_world/lore/CRECHE_AND_LOCKER_LORE.md`.
 
@@ -72,8 +75,10 @@ central civic axis. Even in greybox that reads as place.
 `game/world/awakening/awakening_layout.gd` owns every coordinate: world bounds,
 section envelopes, walkable polygons, void polygons, connectors, thresholds, set
 pieces, markers, camera reveals, the Road offset, and the temporary South Reach
-seal. The runtime scene, the mapper, the debug tour, and the geometry validator
-all query it. Coordinates are not duplicated into the `.tscn`, the controller, or
+seal. The runtime scene, the mapper's protected-route and candidate checks, the
+debug tour, and the geometry validator all query it. The mapper separately reads
+the instantiated runtime collision nodes for preview; proposals remain a draft
+and do not change Layout. Coordinates are not duplicated into the `.tscn`, the controller, or
 the tests — except where `awakening_first_return_smoke.gd` deliberately asserts a
 locked value so drift is caught.
 
@@ -289,7 +294,18 @@ completion trigger sits at `(0, -6464)`.
 spine at `(0, -3200)` / zoom `0.18` and overlays section envelopes, entries and
 exits, the critical path, the optional branch, camera reveal points, encounter
 placeholders, interaction markers, and future-art anchors — all read from
-`awakening_layout.gd`.
+`awakening_layout.gd`. It displays actual instantiated collision contributors
+and the registered 04→05 composition bounds. Number keys focus zones 01–10;
+F1–F5 switch overlay views. Collision proposals save atomically to
+`reports/level_maps/awakening_first_return/collision_draft.json` with scene and
+Layout Git blob provenance, exact world-pixel vertices, stable IDs, ownership,
+purpose, snap and source-art transforms when a sprite covers the proposal.
+Enter/U only finish a chain; Ctrl+S saves the draft. Neither operation edits
+`awakening_first_return.gd`, the scene, or Layout. Draft route checks fail closed
+on protected connector/passage overlap, 128px route-width loss, 11px Operator
+clearance, protected spawn/locker/lift overlap, stale provenance, missing owner,
+or a disconnected 16px occupancy route. Marker/region authoring modes remain
+disabled until they have a safe Awakening-specific persistence contract.
 
 `res://scenes/debug/awakening_first_return_debug.tscn` instances the real scene and
 adds a dev-only panel: zone selector, teleport to entry, show collision, show zone
@@ -840,7 +856,7 @@ The approved ten-region off-route scenery language and nonplayable structural/de
 
 The [interactible affordance overlay](AWAKENING_INTERACTIBLE_AFFORDANCE_OVERLAY_V1.md) explicitly distinguishes functional `CrecheConsole`, the scene-bound P-9 `SidearmLocker`, one two-station `TransitLift`, and `PortStatusPlaque` from inactive Layout markers. The overlay adds readable silhouettes, floor/mounting dressing and restrained state-aware status VFX using a separate presentation-only mount, **not** new gameplay interaction authority. The `lift_mechanism` Layout marker is an audited inconsistency unless a separate live use owner can be demonstrated.
 
-Current art generation remains outstanding: the state-level [Asset V2 manifest](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md) defines exact source-work paths, normalized sizes/frames and art-provenance gates. Foundation/contract packets can proceed without art; the three live visual-integration packets remain blocked/manual until exact required source states are approved and verified. No future Field Terminal, Ashen Forum, Continuity Port, supply, gate control, or Sepulcher interaction is made live by the overlay. Existing 04→05 shared registered art, 05→06 passage, P-9 body/lift artwork and Gate sealed visual state remain authoritative.
+Current art generation remains outstanding: the state-level [Asset V2 manifest](AWAKENING_INTERACTIBLE_AFFORDANCE_ASSET_MANIFEST_V1.md) defines exact source-work paths, normalized sizes/frames and art-provenance gates. Foundation/contract packets can proceed without art; the three live visual-integration packets remain blocked/manual until exact required source states are approved and verified. No future Field Terminal, Ashen Forum, Continuity Port, supply, gate control, or Sepulcher interaction is made live by the overlay. The [Deferred-Family Ownership Crosswalk](AWAKENING_INTERACTIBLE_DEFERRED_HANDOFF_V1.md) records the separate Hub owners and current packet gates for those future states. Existing 04→05 shared registered art, 05→06 passage, P-9 body/lift artwork and Gate sealed visual state remain authoritative.
 
 ### Draft off-route Gate western terrace and paired recovery teaser geography (2026-10-11)
 

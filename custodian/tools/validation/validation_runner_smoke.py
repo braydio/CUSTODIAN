@@ -31,11 +31,12 @@ def main() -> int:
     assert [item["id"] for item in selected] == [
         "operator_melee_soft_targeting",
         "operator_runtime_path_audit",
+        "reciprocal_continuity_canon_docs",
         "operator_sword_cleaver",
         "operator_vigil_dagger",
         "melee_soft_target_spacing",
     ]
-    assert [item["tier"] for item in selected] == ["unit", "unit", "actor", "actor", "moment"]
+    assert [item["tier"] for item in selected] == ["unit", "unit", "unit", "actor", "actor", "moment"]
     assert runner.select_tests(tests, tag="ranged")
     import_truth = runner.select_tests(tests, tag="import_truth")
     assert [item["id"] for item in import_truth] == [
@@ -129,11 +130,11 @@ def main() -> int:
 
     coverage = runner.changed_file_coverage([
         "custodian/game/systems/combat/melee_target_resolver.gd",
-        "custodian/game/uncovered_runtime.gd",
+        "other/uncovered_runtime.gd",
         "design/review.md",
     ], tests, excludes)
     assert coverage["covered_files"] == ["custodian/game/systems/combat/melee_target_resolver.gd"]
-    assert coverage["uncovered_files"] == ["custodian/game/uncovered_runtime.gd"]
+    assert coverage["uncovered_files"] == ["other/uncovered_runtime.gd"]
     assert coverage["excluded_files"] == ["design/review.md"] and not coverage["complete"]
 
     tier_tests = [

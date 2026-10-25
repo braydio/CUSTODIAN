@@ -1,4 +1,4 @@
-> **Historical implementation guidance.** Live runtime files are authoritative for implemented encounter behavior. Lore interpretation is governed by RECIPROCAL_CONTINUITY_DOCTRINE.md and CORE_LORE.md.
+> **Historical implementation guidance; naming superseded for future content (2026-10-12).** This file documents why the live Stilling Pin vocabulary exists; it is **not** authority to keep it as the final Ritualant item. Approved future item: **Receiver Key**, found off-chapel and fitted to the Highland station receiver, per `design/05_levels/FORLORN_RITUALANT_HIGHLAND_STATION_DESIGN_LOCK.md`. Existing code and UI still use Stilling Pin until a separate migration. Live runtime files are authoritative for implemented behavior; lore interpretation is governed by RECIPROCAL_CONTINUITY_DOCTRINE.md and CORE_LORE.md.
 
 # Terminology authority
 

@@ -5,6 +5,8 @@ import re
 import subprocess
 from pathlib import Path
 
+import review_outcome
+
 
 _SECTION_RE = re.compile(r"(?m)^## Independent Review[ \t]*$")
 _NEXT_SECTION_RE = re.compile(r"(?m)^## [^\r]*$")
@@ -71,24 +73,40 @@ def resolve_target_implementation_commit(
             or len(reviewed_main_match) != 1):
         return None, "pinned target is not one complete identified implementation packet"
 
-    history = subprocess.run(
-        ["git", "log", "--follow", "--diff-filter=AR", "--format=%H", pinned_main,
-         "--", target_packet_path], cwd=repo, capture_output=True, check=False,
-    )
-    if history.returncode:
+    def _archive_candidates(*, follow: bool) -> list[str] | None:
+        # The canonical archive path itself is the primary identity boundary.
+        # Looking through renames first can also discover the packet's earlier
+        # active-path introduction and make a perfectly unique archive landing
+        # appear ambiguous. Only fall back to --follow for older histories
+        # where the canonical archive path has no add/rename event at all.
+        command = ["git", "log"]
+        if follow:
+            command.append("--follow")
+        command += ["--diff-filter=AR", "--format=%H", pinned_main, "--", target_packet_path]
+        history = subprocess.run(command, cwd=repo, capture_output=True, check=False)
+        if history.returncode:
+            return None
+        candidates: list[str] = []
+        for raw_sha in history.stdout.decode("ascii", errors="ignore").splitlines():
+            if not _SHA_RE.fullmatch(raw_sha):
+                continue
+            try:
+                archived = read_git_text(repo, raw_sha, target_packet_path)
+            except ValueError:
+                continue
+            if (re.findall(r"(?im)^- Workstream:\s*`?([^`\r\n]+)`?\s*$", archived) == [target_workstream]
+                    and re.findall(r"(?im)^- Kind:\s*`?(implementation|correction)`?\s*$", archived)
+                    and re.findall(r"(?im)^- Status:\s*`?complete`?\s*$", archived)):
+                candidates.append(raw_sha)
+        return candidates
+
+    candidates = _archive_candidates(follow=False)
+    if candidates is None:
         return None, "cannot inspect pinned target archive history"
-    candidates: list[str] = []
-    for raw_sha in history.stdout.decode("ascii", errors="ignore").splitlines():
-        if not _SHA_RE.fullmatch(raw_sha):
-            continue
-        try:
-            archived = read_git_text(repo, raw_sha, target_packet_path)
-        except ValueError:
-            continue
-        if (re.findall(r"(?im)^- Workstream:\s*`?([^`\r\n]+)`?\s*$", archived) == [target_workstream]
-                and re.findall(r"(?im)^- Kind:\s*`?(implementation|correction)`?\s*$", archived)
-                and re.findall(r"(?im)^- Status:\s*`?complete`?\s*$", archived)):
-            candidates.append(raw_sha)
+    if len(candidates) == 0:
+        candidates = _archive_candidates(follow=True)
+        if candidates is None:
+            return None, "cannot inspect pinned target archive history"
     if len(candidates) != 1:
         return None, "pinned target has no unique complete archive-introduction commit"
     archive_commit = candidates[0]
@@ -115,6 +133,35 @@ def _section(text: str) -> tuple[int, int, str] | None:
 def _field(receipt: str, name: str) -> str | None:
     matches = re.findall(rf"(?m)^- {re.escape(name)}: `?([^`\r\n]+)`?\s*$", receipt)
     return matches[0].strip() if len(matches) == 1 else None
+
+
+def render_review_receipt(outcome: dict[str, str]) -> str:
+    """Render the target receipt only from one already-parsed canonical PASS outcome."""
+    required = set(review_outcome.FIELDS)
+    if set(outcome) != required or outcome.get("Outcome") != "passed":
+        raise ValueError("a target receipt requires one complete canonical passed Review Outcome")
+    parsed, error = review_outcome.parse_review_outcome(review_outcome.render_review_outcome(
+        outcome=outcome["Outcome"], review_workstream=outcome["Review workstream"],
+        target_workstream=outcome["Review target workstream"], reviewed_main=outcome["Reviewed main"],
+        implementation_commit=outcome["Reviewed implementation commit"],
+        provenance=outcome["Reviewer provenance"], run_id=outcome["Run ID"],
+        review_cycle=int(outcome["Review cycle"]), ids=review_outcome.finding_ids(outcome),
+    ))
+    if error or parsed != outcome:
+        raise ValueError("target receipt source is not the exact canonical PASS outcome")
+    fields = (
+        ("Schema", "Schema"), ("Review workstream", "Review workstream"),
+        ("Review target workstream", "Review target workstream"), ("Status", "Outcome"),
+        ("Blocking defects", None), ("Material gaps", None), ("Reviewer context", "Reviewer context"),
+        ("Reviewer provenance", "Reviewer provenance"), ("Reviewed main", "Reviewed main"),
+        ("Reviewed implementation commit", "Reviewed implementation commit"),
+    )
+    values = {"Blocking defects": "0", "Material gaps": "0"}
+    values.update({field: outcome[source] for field, source in fields if source is not None})
+    values["Schema"] = "custodian.paired_review.v1"
+    return f"### Review Receipt: {outcome['Review workstream']}\n" + "".join(
+        f"- {field}: `{values[field]}`\n" for field, _ in fields
+    )
 
 
 def verify_review_receipt_delta(

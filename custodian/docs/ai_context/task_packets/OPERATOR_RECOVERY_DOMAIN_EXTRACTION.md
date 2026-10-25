@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, custodian-death-handoff-foundation-recovery-1`
+- Depends on: `operator-dependency-injection-spine, operator-mobile-guard-composition, custodian-death-handoff-foundation-recovery-1, review-operator-chassis-authority-seal-v1`
 - Locks: `operator-runtime, custodian-death-flow`
 - Kind: `implementation`
 - Review: `manual`

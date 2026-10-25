@@ -1,0 +1,39 @@
+{
+  "schema": "custodian.humanoid_raster_plan.v1",
+  "source": {
+    "path": "custodian/asset_drop/source_work/enemies/grunt_cutout_candidate_v1/raider_humanoid_cutout_turnaround_parts_v1_source.png",
+    "sha256": "cbb8f29c9ed2e86c3d3fed7a2664b1828cc6d69a536d199e7bd209a1ff3ec557",
+    "fallback": {
+      "zip": "custodian_grunt_runtime_ab_v1_1.zip",
+      "member": "custodian/asset_drop/source_work/enemies/grunt_cutout_candidate_v1/raider_humanoid_cutout_turnaround_parts_v1_source.png"
+    }
+  },
+  "target": {
+    "cell": [96, 96],
+    "body_heights": [64, 72, 80]
+  },
+  "reduction_modes": ["crisp", "balanced", "clustered"],
+  "conversion": {
+    "colors": 32,
+    "alpha_cutoff": 0
+  },
+  "registration": {
+    "policy": "measured-alpha-contact-to-grunt-collision-ground",
+    "frame_ground_y": 79,
+    "sprite_offset_y": -18,
+    "sprite_center_y": 47.5,
+    "grunt_collision_ground_y": 13,
+    "ground_tolerance_px": 1,
+    "contact": {
+      "alpha_threshold": 0,
+      "minimum_row_pixels": 2,
+      "band_height": 3
+    }
+  },
+  "views": {
+    "s": {"label": "front", "roi": [100, 57, 223, 391]},
+    "n": {"label": "back", "roi": [459, 57, 215, 387]},
+    "e": {"label": "profile_right", "roi": [845, 55, 105, 388]},
+    "w": {"label": "profile_left", "roi": [1196, 54, 104, 389]}
+  }
+}

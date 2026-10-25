@@ -106,6 +106,7 @@ htmlcov/
 # Moment Forge local runs. Curated named evidence and _baselines remain trackable.
 reports/moment_forge/_validation/
 reports/moment_forge/**/20[0-9][0-9][0-9][0-9][0-9][0-9]T[0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]/
+reports/carrow_scale_calibration/
 
 # =======================
 # NODE.JS / JAVASCRIPT
@@ -162,3 +163,8 @@ tools/temporary_aliases.sh
 /CUSTODIAN_Awakening_Next10_Runtime_Assets_*.zip
 /CUSTODIAN_Visual_Identity_Art_Correction_Batch*.zip
 /VALIDATION.json
+
+# =======================
+# DEV ART LIBRARY (local reference art, not tracked by git or imported by Godot)
+# =======================
+dev_art_library/

@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `procgen-archive-resolve-playtest-polish-v1`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `procgen-archive-resolve-presentation, procgen-world-presentation`
@@ -16,7 +16,7 @@
 - Max automatic review cycles: `2`
 - Review rationale: `human gameplay exposed presentation-composition defects that objective AR1-AR4 smokes did not prove; implementation changes shader/timing/world layering and needs a fresh technical pass plus explicit external human visual approval`
 - Reviewed main: `cf03b238416fb06c71a4af946242eb9ccf58228a`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Visual review: `required`
 - Goal: Make the live Archive Resolve frontier read as unresolved CUSTODIAN world-space rather than black streaming squares, make the graphite/brass resolve legible at gameplay scale, slow ordinary first-resolution enough to perceive it, and ensure unresolved cells visually occlude the full world presentation that occupies them, including props, mobs, structures, walls and existing cliff/fascia presentation, without moving gameplay authority into the effect.
 - Completion boundary: Done when the literal Contract sandbox preserves the reviewed AR1-AR4 request/commit/frontier/settlement authority but presents unresolved space through a readable graphite/soot field with visible restrained brass registration; ordinary first-resolve pacing is materially slower and human-readable; a presentation veil/coverage seam above ordinary world presentation prevents rendered enemies/items/props/structures/cliff faces from floating over unresolved cells while the Operator safety pocket remains readable; existing cliff semantics and AP2 art ownership remain untouched; focused machine checks and one compact renderer handoff pass; and the authoring-chat human reviewer explicitly approves or returns bounded tuning feedback.
@@ -155,6 +155,10 @@
   - The separate loot-toast/HUD overlap is owned by `loot-toast-hud-clearance-v1`.
   - The playtest's modular-ranged-presentation warning and performance/navigation incidents are separate follow-ups and must not be folded into this slice; however enlarged-frontier rebuild CPU cost is directly in scope and must be budgeted.
 
+## 2026-10-14 Split Execution Refresh
+
+Do not claim this broad packet. The user re-scoped it into four lower-token, independently reviewable slices: `procgen-streaming-near-player-priority-v1` -> `procgen-archive-resolve-connected-cascade-v1` -> `procgen-archive-resolve-world-cover-v1` -> `procgen-archive-resolve-smooth-front-v1`. This packet remains active only as historical planning context until the split series closes; it must not compete for the same locks.
+
 ## Context Pack
 
 - Repomix: `recommended`
@@ -188,7 +192,7 @@
 - Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
-- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
 - Refresh reason: `none; implementation has a required in-workstream human visual gate but no new planning gate`
 - Next action: `After implementation lands with recorded human visual approval, claim the fresh-context paired technical review.`
 - Blockers or open questions: `none at claim time; visual closeout requires the specified authoring-chat human decision`

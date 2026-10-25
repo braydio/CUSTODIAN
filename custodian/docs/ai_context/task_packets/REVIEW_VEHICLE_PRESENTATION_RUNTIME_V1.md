@@ -1,0 +1,41 @@
+# REVIEW: VEHICLE PRESENTATION RUNTIME V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-vehicle-presentation-runtime-v1`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `vehicle-presentation-runtime-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `vehicle-presentation-runtime-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/VEHICLE_PRESENTATION_RUNTIME_V1.md`
+- Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify VI2 presentation ownership and mechanics independence.
+- Reviewed implementation acceptance: Verify every Acceptance clause from the archived implementation packet against live main.
+- Review evidence: Durable implementation evidence plus focused fresh lifecycle/presentation tests.
+- Correction threshold: Create correction work only for a confirmed acceptance defect or material evidence gap.
+- Focused validation: Re-run presentation runtime and vehicle lifecycle negative controls.
+- Review focus: Semantic-only PilotableVehicle delegation, one rig/recovery presenter, deterministic fallback, fail-soft mechanics, and component-socket overlays that only change presentation under the declared socket state.
+- Acceptance: Produce a findings-first independent review with stable IDs/dispositions. Do not patch implementation.
+- Non-goals: Do not redesign or fix implementation directly.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Next workstream: `vehicle-integrator-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Refresh reason: `none`
+- Next action: Release VI4 when VI3 review is also complete.
+- Blockers or open questions: `none`

@@ -1,0 +1,203 @@
+{
+  "schema": "custodian.dropbox_asset_audit_snapshot.v1",
+  "generated_date": "2026-10-13",
+  "baseline_main": "76c86f4fd52eac4546139925d4c70a50725ed2a0",
+  "source_roots": [
+    "/CUSTODIAN/asset_batches",
+    "/CUSTODIAN/generated_asset_batches",
+    "/CUSTODIAN/implementation_inputs"
+  ],
+  "audit_level": "Dropbox listings and existing registries/packet metadata; not all ZIP bytes downloaded or catalog/scene tests executed",
+  "registry_last_updated": "2026-10-07T14:27:24+00:00",
+  "source_review_status_is_distinct_from_runtime_ingest": true,
+  "packages": [
+    {
+      "batch_id": "alpine-assets-11-20-v2",
+      "lane": "asset_batches",
+      "zip": "custodian_alpine_presentation_assets_11_20_asset_handoff_v2.zip",
+      "size_bytes": 246767,
+      "dropbox_path": "/CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-assets-11-20-v2/payload/custodian_alpine_presentation_assets_11_20_asset_handoff_v2.zip",
+      "family_ids": [
+        "procgen_alpine_cliff_fascia"
+      ],
+      "reported_states": 10,
+      "source_review": "superseded",
+      "runtime_truth": "not_checked",
+      "finding": "Do not ingest; replaced by alpine-cliff-source-family-v1."
+    },
+    {
+      "batch_id": "alpine-cliff-source-family-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_alpine_cliff_source_family_v1.zip",
+      "size_bytes": 33847263,
+      "dropbox_path": "/CUSTODIAN/asset_batches/procgen-alpine-presentation/alpine-cliff-source-family-v1/custodian_alpine_cliff_source_family_v1.zip",
+      "family_ids": [
+        "procgen_alpine_cliff_fascia"
+      ],
+      "reported_states": 12,
+      "source_review": "approved_per_existing_registry",
+      "runtime_truth": "not_verified_on_current_main",
+      "finding": "AP2 workstream ready/auto, contingent on underlay predecessor; family contract file not found on main under this name."
+    },
+    {
+      "batch_id": "rocky-upland-10-source-family-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_rocky_upland_10_asset_handoff_v1.zip",
+      "size_bytes": 31691394,
+      "dropbox_path": "/CUSTODIAN/asset_batches/procgen-alpine-presentation/rocky-upland-10-source-family-v1/custodian_rocky_upland_10_asset_handoff_v1.zip",
+      "family_ids": [
+        "procgen_surface_rocky_upland"
+      ],
+      "reported_states": 10,
+      "source_review": "approved_per_existing_registry",
+      "runtime_truth": "family_exists_increment_not_verified",
+      "finding": "AP3 blocked/auto behind AP2; requires normalizing and extending existing family rather than replacing its current states."
+    },
+    {
+      "batch_id": "meridian-hardstand-6-source-family-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_meridian_hardstand_6_asset_handoff_v1.zip",
+      "size_bytes": 19124392,
+      "dropbox_path": "/CUSTODIAN/asset_batches/procgen-alpine-presentation/meridian-hardstand-6-source-family-v1/custodian_meridian_hardstand_6_asset_handoff_v1.zip",
+      "family_ids": [
+        "procgen_surface_meridian_hardstand"
+      ],
+      "reported_states": 6,
+      "source_review": "approved_per_existing_registry",
+      "runtime_truth": "family_exists_increment_not_verified",
+      "finding": "AP3 same blocker; six additional states not automatically proved bound."
+    },
+    {
+      "batch_id": "ash-bell-ritual-props-chamber-dressing-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_ash_bell_ritual_props_chamber_dressing_handoff_v1.zip",
+      "size_bytes": 6824679,
+      "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/custodian_ash_bell_ritual_props_chamber_dressing_handoff_v1.zip",
+      "family_ids": [
+        "ash_bell_ritual_props",
+        "ash_bell_chamber_dressing"
+      ],
+      "reported_states": 12,
+      "source_review": "approved_per_active_codex_packet",
+      "runtime_truth": "family_contracts_not_found",
+      "finding": "Already-reviewed six+six. Live static intake packet ready/auto; do not regenerate. Exact ZIP hashes recorded in packet, must compare downloaded bytes."
+    },
+    {
+      "batch_id": "ash-bell-chamber-static-closeout-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_ash_bell_chamber_static_closeout_handoff_v1.zip",
+      "size_bytes": 3924735,
+      "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/ritual-props-chamber-dressing-v1/custodian_ash_bell_chamber_static_closeout_handoff_v1.zip",
+      "family_ids": [
+        "ash_bell_ritual_props",
+        "ash_bell_chamber_dressing"
+      ],
+      "reported_states": null,
+      "source_review": "needs_reconciliation",
+      "runtime_truth": "not_checked",
+      "finding": "Same folder as first static prop ZIP, possible alternate/closeout, not independent 12 new states. Diff manifests and checksums."
+    },
+    {
+      "batch_id": "ash-bell-unarrived-bridged-falls-source-v1",
+      "lane": "asset_batches",
+      "zip": "custodian_ash_bell_unarrived_bridged_falls_source_handoff_v1.zip",
+      "size_bytes": 21991270,
+      "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/unarrived-and-bridged-falls-source-v1/custodian_ash_bell_unarrived_bridged_falls_source_handoff_v1.zip",
+      "family_ids": [
+        "unarrived-procession-TBD",
+        "unarrived-saint-TBD",
+        "ash-bell-lift-TBD"
+      ],
+      "reported_states": null,
+      "source_review": "awaiting_inventory_validation",
+      "runtime_truth": "not_checked",
+      "finding": "New October 13 ZIP is unlisted in Dropbox registry; parse internal manifest before family and state attribution."
+    },
+    {
+      "batch_id": "ash-bell-surface-lift-v2-full-resolution-source-20261013",
+      "lane": "asset_batches",
+      "zip": "CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip",
+      "size_bytes": 7801299,
+      "dropbox_path": "/CUSTODIAN/asset_batches/ash-bell-ritualant/CUSTODIAN_Ash_Bell_Surface_Lift_V2_Full_Resolution_Source_20261013.zip",
+      "family_ids": [
+        "ash_bell_surface_lift_ingress_props_v1",
+        "ash_bell_surface_lift_safety_field_v1"
+      ],
+      "reported_states": 5,
+      "source_review": "needs_visual_technical_review",
+      "runtime_truth": "not_registered_or_bound",
+      "finding": "ZIP CRC and 5 RGBA sources verified in current local copy, SHA-256 fb283369cf3546c7615d1ea51a28c6f6fd95591d36d8c1ccafd5e4c2338bcdbc, local ZIP size 7801299. Four-stage VFX contract must be reconciled with only three authored states. Uploaded directly at root, violating one-batch-one-folder and missing registry receipt."
+    },
+    {
+      "batch_id": "awakening-interactible-hero-set-v1",
+      "lane": "generated_asset_batches",
+      "zip": "custodian_awakening_interactible_hero_set_asset_handoff_v1.zip",
+      "size_bytes": 25150471,
+      "dropbox_path": "/CUSTODIAN/generated_asset_batches/custodian_awakening_interactible_hero_set_asset_handoff_v1.zip",
+      "family_ids": [
+        "awakening-interactibles-unresolved"
+      ],
+      "reported_states": null,
+      "source_review": "needs_packet_review",
+      "runtime_truth": "required_registry_27_states_source_pending",
+      "finding": "New October 11 source package; registry still shows p1-awakening-interactible-affordance-v1 27 states source-pending. Verify exact artwork/compatibility, not approval."
+    },
+    {
+      "batch_id": "awakening-creche-northeast-teaser-v1",
+      "lane": "generated_asset_batches",
+      "zip": "custodian_awakening_creche_northeast_teaser_asset_handoff_v1.zip",
+      "size_bytes": 7082448,
+      "dropbox_path": "/CUSTODIAN/generated_asset_batches/custodian_awakening_creche_northeast_teaser_asset_handoff_v1.zip",
+      "family_ids": [
+        "awakening-creche-perimeter-unresolved"
+      ],
+      "reported_states": null,
+      "source_review": "needs_packet_review",
+      "runtime_truth": "not_checked",
+      "finding": "Candidate source package; no asset family or runtime closure proven."
+    },
+    {
+      "batch_id": "field-scout-buggy-mk1-v2",
+      "lane": "implementation_inputs",
+      "zip": "custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip",
+      "size_bytes": 2762182,
+      "dropbox_path": "/CUSTODIAN/implementation_inputs/custodian_field_scout_buggy_mk1_drive_3dir_asset_handoff_v2.zip",
+      "family_ids": [
+        "vehicle-field-scout-buggy-TBD"
+      ],
+      "reported_states": null,
+      "source_review": "not_checked",
+      "runtime_truth": "not_checked",
+      "finding": "Potential replacement for v1; compare pack identity and runtime before ingest."
+    },
+    {
+      "batch_id": "operator-2-5d-walk-ne-20261009",
+      "lane": "implementation_inputs",
+      "zip": "CUSTODIAN_operator_2_5d_walk_ne_working_sources_20261009.zip",
+      "size_bytes": 662583,
+      "dropbox_path": "/CUSTODIAN/implementation_inputs/CUSTODIAN_operator_2_5d_walk_ne_working_sources_20261009.zip",
+      "family_ids": [
+        "operator-2-5d-walk-TBD"
+      ],
+      "reported_states": null,
+      "source_review": "not_checked",
+      "runtime_truth": "required_registry_modular_walking_needed",
+      "finding": "Requires specialized Operator pipeline and pose/direction review; not generic Asset V2 ingest."
+    }
+  ],
+  "unmodeled_packages": [
+    "/CUSTODIAN/implementation_inputs/awakening_designation_locker_reauthor_handoff_v1.zip",
+    "/CUSTODIAN/implementation_inputs/awakening_dustlung_undergate_next10_handoff_v1.zip",
+    "/CUSTODIAN/implementation_inputs/awakening_next10_required_fixtures_handoff_v1.zip",
+    "/CUSTODIAN/implementation_inputs/custodian_operator_unarmed_fast_chain_ns_body_asset_handoff_v1.zip",
+    "/CUSTODIAN/implementation_inputs/operator-unarmed-fast-chain-north-vfx/north-vfx-20261006-a1/payload/CUSTODIAN_operator_unarmed_fast_north_vfx_handoff_20261006.zip",
+    "/CUSTODIAN/implementation_inputs/awakening_04_05_registered_composition_v1/"
+  ],
+  "risk_summary": [
+    "Dropbox index omits uploaded October 9–13 Ash-Bell packages and new generated-assets lane.",
+    "Published lift source ZIP is not normalized or V2-runtime-ready; independent review required.",
+    "DropBox package status active does not prove app/runtime promotion.",
+    "There are existing overlapping binary lanes; inventory all, dedupe by SHA256, avoid treating review media as source."
+  ],
+  "note": "Audit snapshot, not canonical live source-of-truth or permission to ingest."
+}

@@ -328,6 +328,131 @@ class DispatchTests(unittest.TestCase):
         self.add_packet("base-task", status="in_progress", archived=True)
         self.assertIn("dependency: base-task", dispatch.status(self.repo, output=False))
 
+    # --- accepted-review dependency semantics (agent-paired-review-findings-closeout-v1) ---
+
+    MAIN_SHA = "b" * 40
+    IMPL_SHA = "c" * 40
+
+    def _outcome_block(self, review_ws, target_ws, outcome, *, ids=None, cycle=0, review_ws_in_block=None):
+        import review_outcome
+        if ids is None:
+            ids = () if outcome == "passed" else (f"R{cycle}-01",)
+        return review_outcome.render_review_outcome(
+            outcome=outcome, review_workstream=review_ws_in_block or review_ws, target_workstream=target_ws,
+            reviewed_main=self.MAIN_SHA, implementation_commit=self.IMPL_SHA,
+            provenance="same-agent-fresh-context", run_id="20261016T000000Z-aaaaaaaaaaaa",
+            review_cycle=cycle, ids=tuple(ids),
+        )
+
+    def _add_review(self, target_ws, *, outcome_block=None, target_receipt=None, status="complete"):
+        """Archive a review of target_ws with an optional outcome section and target receipt."""
+        review_ws = f"review-{target_ws}"
+        target_path = archived_target(target_ws)
+        review_text = packet(review_ws, status=status, kind="review", review_target_workstream=target_ws,
+                             review_target_packet=target_path)
+        if outcome_block:
+            review_text += "\n" + outcome_block
+        self.add_packet(review_ws, text=review_text, archived=True, push=False)
+        target_text = packet(target_ws, status="complete")
+        if target_receipt:
+            target_text += "\n" + target_receipt
+        self.add_packet(target_ws, text=target_text, archived=True)
+        return review_ws
+
+    def _ready(self):
+        rendered = dispatch.status(self.repo, output=False)
+        return rendered.split("READY", 1)[1].split("CLAIMED", 1)[0] if "READY" in rendered else ""
+
+    def _canonical_receipt(self, review_ws, target_ws, status="passed"):
+        return (f"## Independent Review\n\n### Review Receipt: {review_ws}\n- Status: `{status}`\n"
+                "- Blocking defects: `0`\n- Material gaps: `0`\n")
+
+    def test_findings_and_human_required_reviews_do_not_release_dependents(self):
+        for outcome in ("findings", "human_required"):
+            target = f"target-{outcome.replace('_', '-')}"
+            review = self._add_review(target, outcome_block=self._outcome_block(f"review-{target}", target, outcome))
+            self.add_packet(f"after-{target}", dispatch_value="auto", depends=review)
+            rendered = dispatch.status(self.repo, output=False)
+            self.assertNotIn(f"after-{target}", self._ready(), outcome)
+            self.assertIn(f"dependency: review not accepted: {review}", rendered)
+            audit = {row["workstream"]: row for row in json.loads(json.dumps(dispatch.audit(self.repo)["packets"]))}
+            self.assertFalse(audit[f"after-{target}"]["eligible_now"])
+            self.assertIn(f"dependency review not accepted: {review}", " ".join(audit[f"after-{target}"]["reasons"]))
+
+    def test_verified_pass_and_legacy_flat_pass_release_dependents(self):
+        passed = self._add_review(
+            "target-passed", outcome_block=self._outcome_block("review-target-passed", "target-passed", "passed"),
+            target_receipt=self._canonical_receipt("review-target-passed", "target-passed"))
+        legacy = self._add_review(
+            "target-legacy", target_receipt="## Independent Review\n\n- Status: `passed`\n")
+        for review in (passed, legacy):
+            self.add_packet(f"after-{review}", dispatch_value="auto", depends=review)
+        ready = self._ready()
+        self.assertIn(f"after-{passed}", ready)
+        self.assertIn(f"after-{legacy}", ready)
+
+    def test_forged_missing_or_ambiguous_review_evidence_never_releases(self):
+        # passed outcome with no canonical target receipt (forged), legacy with no receipt,
+        # legacy with a nonpassing status, and an outcome naming a different review.
+        cases = {
+            "forged-pass": dict(outcome_block=self._outcome_block("review-forged-pass", "forged-pass", "passed")),
+            "legacy-none": dict(),
+            "legacy-findings": dict(target_receipt="## Independent Review\n\n- Status: `findings`\n"),
+            "legacy-mixed": dict(target_receipt="## Independent Review\n\n- Status: `passed`\n- Status: `findings`\n"),
+            "wrong-review": dict(
+                outcome_block=self._outcome_block("review-wrong-review", "wrong-review", "passed",
+                                                  review_ws_in_block="review-someone-else"),
+                target_receipt="## Independent Review\n\n- Status: `passed`\n"),
+        }
+        for target, kwargs in cases.items():
+            review = self._add_review(target, **kwargs)
+            self.add_packet(f"after-{target}", dispatch_value="auto", depends=review)
+        ready = self._ready()
+        for target in cases:
+            self.assertNotIn(f"after-{target}", ready, target)
+
+    def test_malformed_outcome_section_fails_closed(self):
+        bad = self._outcome_block("review-bad-out", "bad-out", "findings").replace(
+            "- Finding IDs: `R0-01`", "- Finding IDs: `none`")
+        review = self._add_review("bad-out", outcome_block=bad,
+                                  target_receipt="## Independent Review\n\n- Status: `passed`\n")
+        self.add_packet("after-bad-out", dispatch_value="auto", depends=review)
+        self.assertNotIn("after-bad-out", self._ready())
+
+    def test_ordinary_implementation_dependency_semantics_are_unchanged(self):
+        self.add_packet("impl-dep", status="complete", archived=True)
+        self.add_packet("after-impl", dispatch_value="auto", depends="impl-dep")
+        self.assertIn("after-impl", self._ready())
+
+    def test_only_the_linked_bounded_correction_may_consume_findings(self):
+        target = "lineage-task"
+        review = self._add_review(target, outcome_block=self._outcome_block(f"review-{target}", target, "findings"))
+        correction = f"{target}-review-corrections-1"
+        body = packet(correction, dispatch_value="auto", kind="correction", depends=review) + \
+            "\n- Findings addressed: `R0-01`\n"
+        self.add_packet(correction, text=body)
+        ordinary_body = packet("ordinary-successor", dispatch_value="auto", depends=review)
+        self.add_packet("ordinary-successor", text=ordinary_body)
+        wrong_ids = f"{target}-review-corrections-1"
+        ready = self._ready()
+        self.assertIn(correction, ready)
+        self.assertNotIn("ordinary-successor", ready)
+        # wrong cycle, unrecorded finding and wrong lineage all stay blocked
+        import review_outcome
+        outcome, _ = review_outcome.parse_review_outcome(
+            self._outcome_block(f"review-{target}", target, "findings"))
+        for name, text in (
+            (f"{target}-review-corrections-2", "- Findings addressed: `R0-01`\n"),
+            (wrong_ids, "- Findings addressed: `R0-09`\n"),
+            ("other-review-corrections-1", "- Findings addressed: `R0-01`\n"),
+            (wrong_ids, "- No stable ids\n"),
+        ):
+            self.assertIsNotNone(review_outcome.correction_lineage_error(name, text, f"review-{target}", outcome), name)
+        human = review_outcome.parse_review_outcome(
+            self._outcome_block(f"review-{target}", target, "human_required"))[0]
+        self.assertIsNotNone(review_outcome.correction_lineage_error(
+            correction, "- Findings addressed: `R0-01`\n", f"review-{target}", human))
+
     def test_remote_claim_excludes_duplicate(self):
         self.add_packet("already", dispatch_value="auto")
         git(self.repo, "branch", "agent/already", "origin/main"); git(self.repo, "push", "origin", "agent/already"); git(self.repo, "fetch", "origin")
@@ -507,6 +632,168 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("lock: asset-catalog held by holder", rendered)
         self.assertIn("collision", rendered.split("DEPENDENCY/LOCK BLOCKED (", 1)[1])
         self.assertIn("independent", rendered.split("READY (", 1)[1])
+
+    def test_verified_park_releases_only_lock_while_claim_identity_stays_protected(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self.add_packet("after-held-review", dispatch_value="auto", depends=holder_id)
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "parked", "record_sha": "a" * 40, "lock_released": True, "reason": None}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=(set(), {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            downstream = next(row for row in audit["packets"] if row["workstream"] == "after-held-review")
+            self.assertEqual(holder["actual_class"], "claimed")
+            self.assertTrue(holder["claimed"])
+            self.assertFalse(holder["execution_lock_held"])
+            self.assertEqual(holder["parking_state"], "parked")
+            self.assertTrue(target["eligible_now"])
+            self.assertFalse(downstream["eligible_now"])
+            self.assertIn("dependency not archived complete: " + holder_id, downstream["reasons"])
+            with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+                dispatch.claim(self.repo, holder_id, "codex", False)
+
+    def test_invalid_parking_record_keeps_original_lock_occupancy(self):
+        holder_id = "review-agent-paired-review-declared-doc-archive-gate-v1"
+        target_id = "agent-paired-review-declared-doc-archive-gate-v1"
+        self.add_packet(
+            holder_id, dispatch_value="auto", locks="paired-review-source-provenance",
+            kind="review", review_target_workstream=target_id,
+        )
+        self.add_packet(target_id, dispatch_value="auto", locks="paired-review-source-provenance")
+        self._publish_claimed_workstream(holder_id)
+        state = {"state": "invalid", "record_sha": "b" * 40, "lock_released": False,
+                 "reason": "identity mismatch"}
+        with mock.patch.object(dispatch, "_execution_lock_holders", return_value=({holder_id}, {holder_id: state})):
+            audit = dispatch.audit(self.repo)
+            holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+            target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+            self.assertTrue(holder["claimed"])
+            self.assertTrue(holder["execution_lock_held"])
+            self.assertFalse(target["eligible_now"])
+            self.assertIn("lock: paired-review-source-provenance held by " + holder_id, target["reasons"])
+
+    def test_archived_claim_retains_its_lock_until_quarantine_is_verified(self):
+        holder_id = "archived-stranded-owner"
+        target_id = "archived-owner-lock-candidate"
+        self.add_packet(holder_id, archived=True, status="blocked", dispatch_value="auto", locks="shared-reset-lock")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-reset-lock")
+        git(self.repo, "branch", f"agent/{holder_id}", "origin/main")
+        git(self.repo, "push", "origin", f"agent/{holder_id}")
+        git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertFalse(target["eligible_now"])
+        self.assertIn(f"lock: shared-reset-lock held by {holder_id}", target["reasons"])
+
+    def test_legacy_quarantine_releases_only_verified_lock_and_keeps_identity(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "legacy-held-review"
+        target_id = "next-independent-work"
+        self.add_packet(holder_id, dispatch_value="auto", locks="shared-authoring", kind="review",
+                        review_target_workstream="reviewed-implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="shared-authoring")
+        self.add_packet("dependent-review", dispatch_value="auto", depends=holder_id)
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-inactive"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999999,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": git(path, "rev-parse", "HEAD"),
+                 "upstream": git(path, "rev-parse", "@{upstream}"), "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "reset-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        self.assertTrue(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        dependent = next(row for row in audit["packets"] if row["workstream"] == "dependent-review")
+        self.assertEqual(holder["actual_class"], "legacy_quarantined")
+        self.assertTrue(holder["claimed"])
+        self.assertFalse(holder["execution_lock_held"])
+        self.assertTrue(holder["quarantine_execution_lock_released"])
+        self.assertTrue(target["eligible_now"])
+        self.assertFalse(dependent["eligible_now"])
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch.claim(self.repo, holder_id, "codex", False)
+
+    def test_quarantined_interrupted_claim_is_preserved_without_becoming_claimable(self):
+        import legacy_claim_quarantine as quarantine
+        workstream_id = "interrupted-legacy"
+        self.add_packet(workstream_id, dispatch_value="auto", locks="old-lane")
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{workstream_id}")
+        git(self.repo, "fetch", "origin")
+        snapshot = quarantine.snapshot(self.repo, [workstream_id], self.base / "interrupted-backup")
+        plan = quarantine.build_plan(self.repo, workstream_id, None, Path(snapshot["path"]))
+        self.assertFalse(plan["lock_released"])
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        audit = dispatch.audit(self.repo)
+        row = next(row for row in audit["packets"] if row["workstream"] == workstream_id)
+        claim = next(row for row in audit["remote_dispatch_claims"] if row["workstream"] == workstream_id)
+        self.assertEqual(row["actual_class"], "legacy_quarantined")
+        self.assertTrue(row["claimed"])
+        self.assertEqual(claim["recovery_disposition"], "legacy_quarantined")
+        self.assertTrue(git(self.repo, "ls-remote", "--heads", "origin", f"refs/heads/dispatch-claims/{workstream_id}"))
+        with self.assertRaisesRegex(dispatch.DispatchError, "ALREADY CLAIMED"):
+            dispatch.claim(self.repo, workstream_id, "codex", False)
+
+    def test_quarantine_ref_with_stale_branch_restores_lock(self):
+        import legacy_claim_quarantine as quarantine
+        holder_id = "stale-quarantined-review"
+        target_id = "stale-lock-candidate"
+        self.add_packet(holder_id, dispatch_value="auto", locks="same-lock", kind="review",
+                        review_target_workstream="implementation")
+        self.add_packet(target_id, dispatch_value="auto", locks="same-lock")
+        path = self._publish_claimed_workstream(holder_id)
+        claim_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "push", "origin", f"{claim_sha}:refs/heads/dispatch-claims/{holder_id}")
+        run_id = "20261020T000000Z-stale"
+        trace = quarantine.common_dir(self.repo) / "custodian-workflow" / "traces" / holder_id / f"{run_id}.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        branch_head = git(path, "rev-parse", "HEAD")
+        trace.write_text("\n".join(json.dumps(event) for event in (
+            {"event": "run_started", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "timestamp_utc": "2026-10-20T00:00:00Z"},
+            {"event": "remote_claim_acquired", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "remote_ref": f"refs/heads/dispatch-claims/{holder_id}",
+                 "claim_oid": git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{holder_id}").split()[0]}},
+            {"event": "worktree_published", "host": quarantine.socket.gethostname(), "pid": 999999998,
+             "workstream": holder_id, "run_id": run_id, "data": {
+                 "branch": f"agent/{holder_id}", "head": branch_head, "upstream": branch_head,
+                 "worktree": str(path)}},
+        )) + "\n")
+        snapshot = quarantine.snapshot(self.repo, [holder_id], self.base / "stale-backup")
+        plan = quarantine.build_plan(self.repo, holder_id, run_id, Path(snapshot["path"]))
+        quarantine.apply_plan(self.repo, plan, plan["plan_sha256"])
+        (path / "change.txt").write_text("advance ref\n")
+        git(path, "add", "change.txt"); git(path, "commit", "-m", "advance claim branch")
+        git(path, "push", "origin", f"agent/{holder_id}"); git(self.repo, "fetch", "origin")
+        audit = dispatch.audit(self.repo)
+        holder = next(row for row in audit["packets"] if row["workstream"] == holder_id)
+        target = next(row for row in audit["packets"] if row["workstream"] == target_id)
+        self.assertEqual(holder["quarantine_state"], "invalid")
+        self.assertTrue(holder["execution_lock_held"])
+        self.assertFalse(target["eligible_now"])
 
     def test_cli_busy_dispatcher_fails_fast_without_claim_side_effects(self):
         self.add_packet("busy-task", dispatch_value="auto")
