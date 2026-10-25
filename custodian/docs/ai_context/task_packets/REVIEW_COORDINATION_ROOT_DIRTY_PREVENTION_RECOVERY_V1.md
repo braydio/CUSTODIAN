@@ -47,3 +47,7 @@
 - For root actively edited, unknown owner, local ahead/diverged commits, secrets, large/private/ignored/LFS data, symlink escape or failed verification, preserve the original and **do not** auto-clean; normal dispatch and worktree execution must continue independently of root sync.
 - Prove there is no indefinite retry loop or mutex inversion. An automatic trigger must call existing `persistent_checkout_sync.apply_profiles`, not implement a parallel Git merge.
 - Verify optional machine-local scheduled retry (systemd user timer where supported) runs after startup and after interrupted sync, is idempotent and never touches the Operator art persistent checkout by default.
+
+## Operator art-worktree non-duplicate regression review (2026-10-25)
+
+The reviewer must independently execute the implementation packet's **reported Operator PNG incident** tests A–D using temporary repositories and synthetic PNGs. Verify that `temp/operator__southeast__aim_ranged-2h.png` remains protected when its counterpart has different hash/dimensions, that an unrelated untracked image does not block fast-forward, and that even identical-by-hash images cannot be removed without durable verified rescue and exact-path race/ownership safety. Confirm the tested code **never edits the real Operator art worktree** and does not claim that file authorship or source equivalence can be inferred from these observations. Require a durable PASS/FAIL result for every case and preserve the original incident report as evidence only, not permission to mutate local bytes.
