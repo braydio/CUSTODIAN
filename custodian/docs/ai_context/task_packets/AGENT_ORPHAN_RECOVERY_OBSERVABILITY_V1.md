@@ -46,7 +46,7 @@
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Next action: Independent test of live vs truly dead liveness and read-only preservation, then OR2.
-- Blockers or open questions: No liveness policy decision blocking this read-only slice; exact current chat URL not supplied and must not be inferred.
+- Blockers or open questions: No liveness policy decision blocks this read-only slice; current authoring chat is recorded in this packet.
 
 ## Cooperative-pause observability addition (2026-10-25)
 
