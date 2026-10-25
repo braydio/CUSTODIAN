@@ -15,8 +15,8 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: supervised execution liveness, Git worktree provenance and review-runner integration require independent falsification
-- Reviewed main: 316c984cbb62cc067ab7fc8483994f02573d6f8b
-- Authoring chat: not-recorded
+- Reviewed main: 58934945d0e97020f8caffe078e865eb94409ced
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Visual review: none
 - Goal: Reliably distinguish a live Codex/review execution from a terminated, recoverable or ambiguous CUSTODIAN workstream, without destroying work or weakening current dispatcher locks.
 - Completion boundary: Provide one verified subprocess-supervision journal and read-only deterministic orphan inventory, integrating existing dispatcher claim receipts, workstream traces and paired-review runner's supervised child. **No** automatic parking, claim release, remote lease mutation, archive or packet lifecycle status change in OR1.
@@ -44,6 +44,14 @@
 - Next packet state: ready/auto
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Next action: Independent test of live vs truly dead liveness and read-only preservation, then OR2.
-- Blockers or open questions: No liveness policy decision blocking this read-only slice; exact current chat URL not supplied and must not be inferred.
+- Blockers or open questions: No liveness policy decision blocks this read-only slice; current authoring chat is recorded in this packet.
+
+## Cooperative-pause observability addition (2026-10-25)
+
+Keep OR1 **read-only**. In addition to crash/exit observation, capture a deliberate `PAUSE_REQUESTED` event from a verified supervised agent or user shutdown, bound to its run nonce, exact parent/child start identity, boot, host and workstream. The event is *intent*, not exit proof and not a release of locks. Observe whether the whole process tree has actually stopped; a live/quiet Codex process, child process, tmux session, active review coordinator or unknown owner remains `LIVE` or `UNMANAGED_UNKNOWN`, never presumed parked. Emit `EXITED_CONFIRMED` only with genuine same-host evidence. Append durable idempotent before/after records outside the worktree and provide handoff data consumable by OR2 without giving OR1 lease or Git mutation authority.
+
+Add focused tests for explicit pause followed by actual process exit, pause with a still-running descendant, Ctrl-C/terminal closure, interrupted journal writes, PID recycling, two wrappers for the same claimed workstream and external unmanaged Codex sessions. OR1 must not change any worktree byte, owner lease, dispatcher eligibility, packet state or `agent-workflow` occupancy. OR2 performs the eventual fence and park after independently accepted OR1 proof. The user wants default cooperative pause for future **supervised** sessions; no background timer is authorized by this decision.
+
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
