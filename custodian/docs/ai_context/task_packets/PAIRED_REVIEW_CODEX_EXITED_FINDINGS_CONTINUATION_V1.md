@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-codex-exited-findings-continuation-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `agent-paired-review-procession-pass-closeout-recovery-v1`
