@@ -150,7 +150,6 @@ packet and its paired review, not as chat-only downloads.
 - `NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Create one distinctive Broken Warrant hostile archetype with real melee/reactions/death/corpse/loot and no duplicate Enemy mechanics.
 - `NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Create one real M-7 escort unit as a distinct actor skin/profile over reviewed CombatDrone/AlliedInfantryDroid, with manager-owned command identity.
 - `NPA_SHOWCASE_EXISTING_VAULTWING_PROOF.md` — Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely.
-- `OPERATOR_2_5D_SOURCE_STRIP_EVIDENCE_AVAILABILITY_CORRECTION.md` — Make the 2.5D closure diagnostic accurately distinguish verified, mismatched, and unavailable historical source-strip evidence.
 - `OPERATOR_ELEVATION_TRAVERSAL_ENFORCEMENT_V1.md` — Make existing ElevationMap/ProcGen edge truth physically constrain Operator local motion without creating a second movement or collision authority.
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` — Extract melee timeline/drive/target/contact state into one focused authority and cash in the existing modular art where it genuinely improves moving combat p...
