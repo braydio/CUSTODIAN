@@ -47,12 +47,12 @@
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: high
-- What went wrong: the canonical changed-file report is red on `operator_2_5d_cohort_dependency_closure`; its owning `operator.gd` path was selected and 45 higher-tier checks were skipped. The failure reproduces on clean `origin/main` and is not evidence of an F3-only regression.
-- Root cause / contributing factors: the current-main closure test sees an available authoring workspace, but all eight `idle_relaxed_01` source-strip paths are unavailable; the associated source-session hashes still match their correction receipt. Separately, the sidearm capture exposed repeated local input edges while a button remained held across physics samples; the router fix is local and the existing input-frame smoke plus sidearm capture now pass.
-- Prevention / pipeline improvement: restore or correctly resolve the eight source-strip evidence paths, then rerun the owning closure test and F3 changed-file validation after supported synchronization. Keep the sidearm scenario on the canonical `grant_sidearm` setup path and retain its one-shot recovery assertions.
-- Tooling / docs drift discovered: the first Moment Forge sidearm setup bypassed the public grant API and left the magazine empty; setup now invokes `grant_sidearm`. The validation manifest still has no registered ammo-reconciliation test.
+- What went wrong: after supported synchronization, `operator_ranged_ballistic_aim` timed out because Godot could not load the generated Operator SpriteFrames resource. Separately, canonical changed-file validation selected `operator_2_5d_cohort_dependency_closure`, which fails on clean current main.
+- Root cause / contributing factors: current `operator_runtime_frames.tres` still references the intentionally deleted 128px north relaxed sheet at line 4550, preventing the SpriteFrames resource and Operator scene from loading. The closure smoke sees an available authoring workspace but all eight recorded source-strip PNG paths are absent; its Source Session hashes still match. The sidearm setup and repeated input-edge defects were corrected and their pre-sync checks pass.
+- Prevention / pipeline improvement: repair stale generated Operator references through the canonical publication pipeline under its owning scope, and restore/resolve the eight closure source-strip evidence inputs; then rerun focused F3 checks and changed-file validation after sync.
+- Tooling / docs drift discovered: Godot's editor import exits successfully but does not repair the stale SpriteFrames reference. `operator_input_frame` smoke asserts single-tick press semantics, which the previous raw `is_action_just_pressed` OR bypassed. Ammo reconciliation still has no manifest test ID.
 - Follow-up: manual-follow-up
-- What worked: all seven focused F3 smokes passed; primary and sidearm Moment Forge evidence captures passed; the existing implementation and pre-recovery snapshot remain preserved. Current changed-file result is retained red and was independently reproduced at current main.
+- What worked: verified external snapshots preserve the original F3 worktree and validation artifacts. Focused F3 smokes and both Moment Forge evidence captures passed before synchronization; the same existing F3 branch is now merged with current main and recorded in RunTrace.
 
 ## Next Handoff
 - Next workstream: operator-ranged-domain-extraction
@@ -61,5 +61,5 @@
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: preserve the current F3 worktree, resolve the current-main source-strip provenance failure through its owning evidence authority, synchronize the same branch through the supported lifecycle, then rerun canonical validation.
-- Blockers or open questions: current main fails `operator_2_5d_cohort_dependency_closure` because eight external source-strip paths are unavailable; F3 remains dirty and 614 commits behind `origin/main`, so no checkpoint or finish was attempted.
+- Next action: repair the stale runtime publication and restore/resolve missing source-strip evidence through their owning paths, then rerun this synchronized F3 workstream's focused and canonical validation.
+- Blockers or open questions: current `operator_runtime_frames.tres` points to the missing `operator__full_body__ranged_2h__posture__relaxed_01__n__5f__128.png`; clean current main also fails `operator_2_5d_cohort_dependency_closure` because all eight source-strip PNGs are unavailable. F3 has not completed or released `operator-runtime`.
