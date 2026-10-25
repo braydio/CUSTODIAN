@@ -25,7 +25,7 @@
 - Evidence: `.git/custodian-review-runs/review-agent-paired-review-failed-host-validation-import-recovery-v1/20261022T052405Z-1ce687862e23/`; diagnostic trace run `20261022T052415Z-57e5cf803c6e`; current exact `dispatch.py audit --json`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/paired_review_host_validation.py`; `custodian/tools/agent/test_paired_review_runner.py`.
 - Task-specific authority: `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md`; current claim receipt, immutable run evidence and diagnostic trace; existing host-recovery plan/apply contract in `paired_review_runner.py`.
 - Work surface: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/paired_review_host_validation.py` only if needed; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; root summary `AGENT_PAIRED_REVIEW_PREVALIDATION_CHECKOUT_RECOVERY_V1_CLAUDE_SUMMARY.md`.
-- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/paired_review_host_validation.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/workstream.py`; `custodian/tools/agent/run_trace.py`; `custodian/tools/agent/validation_manifest.json`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md`.
+- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/paired_review_host_validation.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/workstream.py`; `custodian/tools/agent/run_trace.py`; `custodian/tools/validation/validation_manifest.json`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1.md`.
 - Change:
   1. Authenticate a missing-checkout pre-validation interruption from one exact held claim, its immutable run metadata and receipt, the unique matching published trace, the original clean `worktree_published` event at the pinned baseline, current exact local/remote branch heads, absence of an attached or foreign worktree, and absence of reviewer launch, validation reports, prior continuation, or previous recovery journal.
   2. Prove the stop occurred before host validation could mutate the reviewer checkout. If the lifecycle trace, run stage, worktree state, process ownership, or evidence inventory leaves uncertainty about unique local-only data, refuse planning/apply unless the exact supported operator attestation is supplied and recorded. Do not infer absence from a missing directory or exclusive human ownership alone.
@@ -35,6 +35,7 @@
   6. Put new host-validation reports and provenance in an append-only continuation; preserve every original file byte-for-byte. Launch at most one fresh independent reviewer only after full canonical validation genuinely passes with complete required coverage. A failed/partial recovery remains preserved and cannot replay automatically.
   7. Keep this class separate from the Carrow missing-worktree exception and failed-import sidecar recovery. Do not generalize missing-worktree allowance in normal receipt parsing or allow post-validation/post-review runs through this path.
   8. Add real temporary-Git positive and hostile fixtures for exact run/claim/trace, mismatched receipt or SHA, moved branch, missing trace, active reviewer/supervisor, occupied/symlink/foreign destination, competing branch checkout, uncertain unique evidence, report-pair partiality, existing continuation/journal, plan digest change, partial reconstruction, retry, and unchanged historical bytes.
+  9. Close the authenticated `codex_exited` findings interruption `20261024T232113Z-32d8a7c6bb9d` through one same-claim fresh-reviewer continuation. Verify its immutable green report pair and reviewer-session evidence, preserve the inconsistent target receipt before restoring the pinned target bytes, require a canonical reviewer-authored findings outcome, and land only the bounded nonpassing review artifacts. This path must not infer or manufacture a verdict and must not be used until this implementation is independently accepted.
 - Preserve: All original claims, refs, worktrees, reports, source spans, reviewer outcomes and archived packet identities; exact-run Carrow recovery behavior; exact failed-import authorization and sidecar allowlist; existing ordinary and continuation recovery flows; fail-closed race-safe host validation.
 - Non-goals: No duplicate claim, branch reset/rebase/force-push, synthetic lifecycle event, fabricated reviewer outcome, historical report rewrite, generic missing-worktree bypass, code changes to mapper/runtime/art, or application to the protected run before independent accepted review.
 - Acceptance:
@@ -44,9 +45,30 @@
   - A4: A successful continuation records complete report/evidence hashes and launches no reviewer before full canonical validation is green; a second launch or implicit retry is rejected.
   - A5: Ordinary claim receipt parsing remains strict, Carrow and failed-import routes retain their exact scope, and failed/post-validation/post-review runs cannot use this class.
   - A6: Canonical focused and changed-file validation, hostile real-Git fixtures, pairing checks, and diff checks pass; independent review accepts the implementation before the protected run is touched.
+  - A7: The exact exited review can reach canonical findings closeout only after its original claim, report pair, session, target baseline and no-active-owner predicates verify; original reviewer artifacts are preserved, the target remains byte-identical to its pinned baseline, and no acceptance receipt is created.
 - Validation: Add negative tests first. Run `PYTHONPATH=custodian/tools/agent:custodian/tools python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`; focused run-trace/dispatch/workstream tests as changed; `python3 custodian/tools/validation/run_validation.py --test paired_review_runner_unit --json`; `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`; `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/task_packet_index.py`; `python3 custodian/tools/agent/validate_review_pairing.py`; Python compile checks and `git diff --check`. Do not apply the protected recovery before the paired review is accepted.
 - Task overrides: `none`
 - Deferred: Apply to protected run `20261022T052405Z-1ce687862e23` only after the paired implementation review is accepted and a fresh exact plan proves all predicates. If evidence about unique lost data remains uncertain, preserve the claim and stop for a specific operator attestation.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `The missing-checkout reconstruction path, exact Procession read-only planner correction, and authenticated same-claim codex_exited findings continuation are implemented. Paired-review runner validation passed 185 tests; canonical focused and changed-file validation passed with complete code coverage. The Procession continuation and protected host-import reconstruction remain deferred until this implementation's fresh independent review is accepted.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `Three Procession tests used an invalid historical baseline; a preserved review exposed Git-fetch mutations in read-only planning and was stranded at codex_exited without canonical findings.`
+- Root cause / contributing factors: `Fixtures derived historical states from live main; planning fetched refs; the coordinator had no verified findings transition for this exact exited state.`
+- Prevention / pipeline improvement: `Pin historical fixture commits and keep plan operations metadata-read-only; route the held review through the accepted same-claim fresh-reviewer findings path.`
+- Tooling / docs drift discovered: `The packet's validation manifest path was incorrect; it now names custodian/tools/validation/validation_manifest.json.`
+- Follow-up: `fixed-in-scope`
+- What worked: `The existing primary worktree and historical artifacts were preserved, and hostile runner validation is green.`
 
 ## Next Handoff
 - Next workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1`

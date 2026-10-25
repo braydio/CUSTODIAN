@@ -105,6 +105,79 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_readonly_plan_remote_ref_authentication_preserves_git_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            remote = root / "origin.git"
+            repo = root / "repo"
+            subprocess.run(["git", "init", "--bare", str(remote)], check=True,
+                           capture_output=True, text=True)
+            repo.mkdir()
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, check=True,
+                           capture_output=True, text=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+            (repo / "evidence.txt").write_bytes(b"preserved evidence\n")
+            subprocess.run(["git", "add", "evidence.txt"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "initial"], cwd=repo, check=True)
+            first = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, check=True,
+                                   capture_output=True, text=True).stdout.strip()
+            subprocess.run(["git", "branch", "agent/review-sample", first], cwd=repo, check=True)
+            subprocess.run(["git", "remote", "add", "origin", str(remote)], cwd=repo, check=True)
+            subprocess.run(["git", "push", "-q", "origin", "main", "agent/review-sample"],
+                           cwd=repo, check=True)
+            for branch in ("main", "agent/review-sample"):
+                subprocess.run(["git", "update-ref", f"refs/remotes/origin/{branch}", first],
+                               cwd=repo, check=True)
+            fetch_head = repo / ".git/FETCH_HEAD"
+            fetch_head.write_bytes(b"immutable FETCH_HEAD sentinel\n")
+            evidence = repo / "evidence.txt"
+
+            def inventory():
+                refs = subprocess.run(["git", "for-each-ref", "--format=%(refname) %(objectname)"],
+                                      cwd=repo, check=True, capture_output=True, text=True).stdout
+                worktrees = subprocess.run(["git", "worktree", "list", "--porcelain"],
+                                           cwd=repo, check=True, capture_output=True, text=True).stdout
+                return {
+                    "refs": refs,
+                    "fetch_head": fetch_head.read_bytes(),
+                    "index": (repo / ".git/index").read_bytes(),
+                    "worktrees": worktrees,
+                    "evidence": hashlib.sha256(evidence.read_bytes()).hexdigest(),
+                }
+
+            before = inventory()
+            self.assertEqual(runner._cached_remote_ref_for_readonly_plan(repo, "main"), first)
+            self.assertEqual(runner._cached_remote_ref_for_readonly_plan(repo, "agent/review-sample"), first)
+            self.assertEqual(inventory(), before)
+
+            (repo / "evidence.txt").write_bytes(b"remote advanced\n")
+            subprocess.run(["git", "add", "evidence.txt"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "advance main"], cwd=repo, check=True)
+            second = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, check=True,
+                                    capture_output=True, text=True).stdout.strip()
+            subprocess.run(["git", "push", "-q", "origin", "HEAD:refs/heads/main"], cwd=repo, check=True)
+            subprocess.run(["git", "update-ref", "refs/remotes/origin/main", first], cwd=repo, check=True)
+            before_stale_plan = inventory()
+            with self.assertRaisesRegex(runner.RunnerError, "cached origin ref is stale"):
+                runner._cached_remote_ref_for_readonly_plan(repo, "main")
+            self.assertNotEqual(first, second)
+            self.assertEqual(inventory(), before_stale_plan)
+
+    def test_procession_plan_disables_optional_git_metadata_writes(self):
+        previous = os.environ.pop("GIT_OPTIONAL_LOCKS", None)
+        self.addCleanup(lambda: os.environ.pop("GIT_OPTIONAL_LOCKS", None)
+                        if previous is None else os.environ.__setitem__("GIT_OPTIONAL_LOCKS", previous))
+
+        def assert_readonly_environment(_repo):
+            self.assertEqual(os.environ.get("GIT_OPTIONAL_LOCKS"), "0")
+            return {"plan_sha256": "a" * 64}
+
+        with patch.object(runner, "_plan_procession_pass_closeout", side_effect=assert_readonly_environment):
+            plan = runner.plan_procession_pass_closeout(Path.cwd())
+        self.assertEqual(plan["plan_sha256"], "a" * 64)
+        self.assertEqual(os.environ.get("GIT_OPTIONAL_LOCKS"), None)
+
     def test_canonical_receipt_renderer_requires_exact_pass_outcome(self):
         section = runner.review_outcome.render_review_outcome(
             outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
@@ -2103,6 +2176,35 @@ class PairedReviewRunnerTests(unittest.TestCase):
             self.assertEqual(runner.main(["review-sample", "--continue-run", "20261017T120000Z-012345abcdef"]), 2)
             self.assertEqual(runner.main(["review-sample", "--authorize-fresh-reviewer-context"]), 2)
         continuation.assert_not_called()
+
+    def test_codex_exited_findings_recovery_is_exact_and_requires_fresh_reviewer(self):
+        with patch.object(runner, "continue_run", return_value=0) as continuation:
+            self.assertEqual(runner.main([
+                runner.CODEX_EXITED_FINDINGS_WORKSTREAM,
+                "--continue-run", runner.CODEX_EXITED_FINDINGS_RUN_ID,
+                "--recover-codex-exited-findings",
+            ]), 2)
+            self.assertEqual(runner.main([
+                "review-sample", "--continue-run", runner.CODEX_EXITED_FINDINGS_RUN_ID,
+                "--recover-codex-exited-findings", "--authorize-fresh-reviewer-context",
+            ]), 2)
+            self.assertEqual(runner.main([
+                runner.CODEX_EXITED_FINDINGS_WORKSTREAM,
+                "--continue-run", runner.CODEX_EXITED_FINDINGS_RUN_ID,
+                "--recover-codex-exited-findings", "--authorize-fresh-reviewer-context",
+                "--recover-missing-archived-disposition",
+            ]), 2)
+            self.assertEqual(runner.main([
+                runner.CODEX_EXITED_FINDINGS_WORKSTREAM,
+                "--continue-run", runner.CODEX_EXITED_FINDINGS_RUN_ID,
+                "--recover-codex-exited-findings", "--authorize-fresh-reviewer-context",
+            ]), 0)
+        continuation.assert_called_once_with(
+            Path.cwd(), runner.CODEX_EXITED_FINDINGS_WORKSTREAM,
+            runner.CODEX_EXITED_FINDINGS_RUN_ID,
+            authorize_fresh_reviewer_context=True,
+            recover_codex_exited_findings=True, timeout=None,
+        )
 
     def test_invalid_disposition_cli_is_exact_run_recovery_without_reviewer_authorization(self):
         with patch.object(runner, "continue_run", return_value=0) as recovery:

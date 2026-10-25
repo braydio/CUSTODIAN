@@ -1,49 +1,48 @@
-# Pre-Validation Checkout Recovery — Execution Summary
+# Pre-validation Checkout Recovery — Execution Summary
 
 ## Outcome
 
-Implementation and focused failure-class fixes are validated locally. The original protected host-import review remains untouched. The feature is not landed or independently reviewed yet.
+The implementation and failure-class corrections are validated on the preserved primary workstream. They are not landed or independently reviewed yet. The protected host-import and Procession review runs have not been mutated.
 
 ## Work completed
 
-- Added guarded same-claim reconstruction for a missing checkout after a verified pre-validation interruption. Planning verifies the original claim and trace, branch refs, worktree attachment, run state, process ownership, and explicit attestations. Apply journals before reconstruction, restores only the recorded path and branch at the pinned SHA, then runs canonical host validation before a reviewer can launch.
-- Kept normal claim parsing strict and kept the missing-checkout path separate from the Carrow and failed-import recovery classes.
-- Added real temporary-Git fixtures for read-only plans, exact reconstruction, hostile states, stale digests, attestation pairing, and replay prevention.
-- Corrected the Procession tests' historical fixture assumptions. The scope-approval fixture now starts at the verified pre-archive commit `49a93aa726e26bd40220d3bdb658079ea9da3440`; source-span coverage now asserts the current validator's exact rejection of the unverified merge. The validator itself remains fail-closed.
-- Isolated positive owner-check fixtures from the host `/proc` table while retaining the explicit active-owner rejection case.
-- Documented the missing-checkout recovery class in `AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Added guarded same-claim reconstruction for a missing checkout after a verified pre-validation interruption. Planning verifies original claim and trace, branch refs, checkout attachment, run state, process ownership, and required attestations. Apply journals before reconstruction, restores only the recorded path and branch at the pinned SHA, then runs canonical host validation before reviewer launch.
+- Kept ordinary claim parsing strict and separated this route from Carrow and failed-import recovery.
+- Fixed the Procession historical test fixtures using verified pre-archive commit `49a93aa726e26bd40220d3bdb658079ea9da3440`; retained fail-closed validator behavior and isolated positive owner tests from unrelated host `/proc` entries.
+- Fixed the Procession PASS planner so `--plan` authenticates authoritative remote refs without fetches or Git metadata writes. It fails closed when the cached commit is stale or unavailable.
+- Added a same-claim continuation for the exact Procession `codex_exited` run. It authenticates immutable claim/session/report evidence, requires no active checkout owner, preserves the inconsistent target receipt byte-for-byte, restores the pinned target baseline, and permits only a fresh reviewer-authored findings outcome and bounded nonpassing closeout. This path has not been applied to the protected run; independent review must accept the implementation first.
+- Updated the existing implementation and paired-review packets to cover the exact findings transition. Corrected the packet's validation-manifest path to `custodian/tools/validation/validation_manifest.json`.
 
 ## Validation
 
 Passed:
 
-- 5 missing pre-validation checkout tests.
-- 6 Carrow missing-worktree regression tests.
-- All 3 previously failing Procession tests.
-- Full paired-review runner suite: 179 tests.
-- AI-context check, task-packet index, review-pairing validation, Python compilation, and `git diff --check`.
+- Paired-review runner suite: 185 tests.
+- Canonical `paired_review_runner_unit` validation: passed.
+- Changed-file validation against `origin/main`: 5 selected checks passed with complete code coverage.
+- AI-context check, packet index, review-pairing check, packet-authoring preflight, Python compilation, and `git diff --check`.
 
-The first focused run exposed that a positive process-ownership fixture consulted live `/proc` and failed on an unrelated inaccessible process. The fixture now supplies an empty isolated owner set; the hostile active-owner test still verifies fail-closed behavior.
+The earlier three Procession failures were fixture defects: tests constructed an already-archived state from current main. They now pin the verified earlier baseline and keep the validator's rejection intact.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: the preserved branch was six commits behind current main; its runner suite contained three stale Procession history assumptions.
-- Root cause / contributing factors: the active claimed worktree predates the verified fixture repair and current main updates.
-- Prevention / pipeline improvement: make historical Git fixtures pin their intended starting commit and assert that required pre-state before mutation.
-- Tooling / docs drift discovered: test fixtures that derive historical states from live main can silently become invalid when the target transition has already landed.
+- What went wrong: the preserved implementation branch was behind current main and its suite had three stale Procession history assumptions; the Procession review then exposed a real read-only planning defect and lacked a canonical findings disposition.
+- Root cause / contributing factors: historical fixtures followed live main instead of pinning their intended state; planner code used mutating fetches; coordinator continuation accepted neither the authentic exited findings state nor its missing canonical disposition.
+- Prevention / pipeline improvement: pin historical fixture commits, keep plan paths read-only, and route exited reviews through a bounded same-claim continuation that leaves verdict authorship to a fresh reviewer.
+- Tooling / docs drift discovered: the recovery packet referenced the validation manifest under `tools/agent/`; the tracked manifest is under `tools/validation/`.
 - Follow-up: fixed-in-scope
-- What worked: the preserved recovery code passed focused real-Git hostile fixtures; full suite passed after the fixture assumptions were corrected.
+- What worked: the existing primary worktree was preserved, synced through its supported lifecycle, and both historical and hostile runner tests pass.
 
 ## Next Handoff
 
 - Next workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1`
-- Next packet state: `dependency-gated`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
-- Authoring chat: `not-recorded`
-- Refresh reason: `none`
-- Next action: synchronize the preserved branch through the normal workstream lifecycle, fix the read-only plan defect in the shared coordinator, rerun validation, and land for independent review.
-- Blockers or open questions: `the branch is still based on edaae65a; live origin/main is a6b419e23758ba789f1c197a5c76045515b122f5. The protected review remains untouched pending accepted implementation review.`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: finish and land this implementation, then run its fresh-context paired review. Apply the Procession continuation only after the implementation review is accepted.
+- Blockers or open questions: the implementation review and protected original continuations remain pending.
