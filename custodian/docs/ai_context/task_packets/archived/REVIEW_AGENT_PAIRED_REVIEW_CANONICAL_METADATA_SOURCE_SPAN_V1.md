@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-canonical-metadata-source-span-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -56,3 +56,25 @@
 - Refresh reason: `none`
 - Next action: `After accepted correction review and a successful fresh original-run recovery plan, continue the preserved original review only through its same-run authorized recovery.`
 - Blockers or open questions: `Preserved original reviewer launch and recovery-plan apply remain gated on authenticated plan success.`
+
+## Coordinator Finding ID Normalization
+
+These stable IDs are coordinator-assigned administrative labels under explicit user authorization; the reviewer authored the verbatim prose, not the identifiers.
+
+- `R0-01` → - **Human-required closeout gate:** The required preserved-run `--recover-host-validation --plan` could not be generated. Running the plan-only command from the coordination checkout stopped before planning because that checkout is dirty: `custodian/docs/ai_context/PAIRED_REVIEW_CLOSURE_CAMPAIGN_20261020.md` is modified and `temp/operator__southeast__aim_ranged-2h.png` is untracked. I left both untouched. The plan is not present in the preserved run directory. The review packet requires its authenticated result before closeout, so the review remains recoverable and unarchived.
+- `R0-02` → - **Independent suite discrepancy:** `PYTHONPATH=custodian/tools/agent python3 -m unittest test_paired_review_runner -v` ran 189 tests but ended with 3 failures and 1 error in the historical host-import conflict recovery cases. Those paths are outside this patch's changed functions. The immutable coordinator report says the same suite passed 189/189, but I cannot independently reproduce that result in this checkout and do not treat the report as my own verdict.
+- Source: `REVIEW_AGENT_PAIRED_REVIEW_CANONICAL_METADATA_SOURCE_SPAN_V1_CLAUDE_SUMMARY.md` lines 7-8; SHA-256 `e3a1b62af8a1ea49189b8d41b60356b335f429d5cd4a7a9ea26ce66c349839d0`.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `human_required`
+- Review workstream: `review-agent-paired-review-canonical-metadata-source-span-v1`
+- Review target workstream: `agent-paired-review-canonical-metadata-source-span-v1`
+- Reviewed main: `f8d91812e991ea49fce6f05207f455083d8eaa54`
+- Reviewed implementation commit: `f8d91812e991ea49fce6f05207f455083d8eaa54`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261025T211450Z-fa8e71f97c29`
+- Review cycle: `0`
+- Finding IDs: `R0-01, R0-02`
