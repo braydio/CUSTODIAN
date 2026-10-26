@@ -6732,6 +6732,28 @@
       "needs_import": false
     },
     {
+      "id": "agent_session_supervisor_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_session_supervisor.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "orphan_recovery",
+        "session_supervision",
+        "read_only_audit"
+      ],
+      "owners": [
+        "custodian/tools/agent/session_supervisor.py",
+        "custodian/tools/agent/workstream_recovery.py",
+        "custodian/tools/agent/test_session_supervisor.py",
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "paired_review_runner_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_paired_review_runner.py",

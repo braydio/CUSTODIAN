@@ -21,25 +21,48 @@ artifacts use their own workstream worktree. If a worktree cannot be
 used, document the reason in the task record. The project-root checkout is not
 the default implementation surface.
 
-## Planned crash-safe session recovery (NOT IMPLEMENTED)
+## Supervised session observability (OR1; automatic parking remains unimplemented)
 
 Design authority: `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
 Two dependency-gated packets (`agent-orphan-recovery-observability-v1`
 and `agent-orphan-recovery-fenced-parking-v1`), each with independent review,
-propose to distinguish the **execution lease** from the preserved
-`agent/<workstream>` Git branch. OR1 will add supervised Codex/review process
-identity and a **read-only** orphan inventory; OR2 will add exact-owner
+are intended to distinguish the **execution lease** from the preserved
+`agent/<workstream>` Git branch. OR1 adds supervised Codex process identity and
+a **read-only** orphan inventory. `session_supervisor.py run` requires the exact
+latest verified dispatcher claim, and `workstream_recovery.py audit` reads
+remote refs with `ls-remote` without fetching or updating local refs. The
+private Git-common-dir journal records process IDs with OS start ticks, boot
+and host identity, process-group observations, branch/worktree provenance, and
+pause/exit events; it never stores prompts or process output. A pause request
+is intent only. OR1 never releases claims or locks. OR2 owns exact-owner
 CAS-fenced `PARKED` recovery and optional **user-enabled** host-local
 `systemd --user` scanning. A confirmed exited session should release its
 execution lock only after its worktree/commits/untracked files and reviewer
 outcome are preserved. No existing remote ref/lock is currently governed by
 this proposal; the instructions below remain the live supported procedures.
 
-Until both slices pass review: `dispatch.py audit --json` is read-only,
+Until OR1 passes independent review and OR2 is implemented and accepted:
+`dispatch.py audit --json` is read-only,
 `workstream.py resume` requires a clean worktree, no automatic branch deletion
 is permitted, and `paired_review_runner.py post_exit_recovery` remains a
 protected manual-resolution state. Do not infer a dead session merely from
 elapsed time, or mark a findings-only review passed to release its lock.
+
+Launch only an explicitly requested Codex session after an exact dispatcher
+claim has been verified, from a checkout sharing the Git common directory:
+
+```bash
+python3 custodian/tools/agent/session_supervisor.py run <workstream-id> -- codex exec ...
+python3 custodian/tools/agent/workstream_recovery.py audit --json
+```
+
+The supervisor refuses a stale/mismatched receipt or branch. `audit` classifies
+supervised liveness, recoverable checkout evidence, unmanaged historical
+claims, and unresolved paired-review runs; every row includes evidence and a
+safe next action. It is observational only and does not fetch, release, park,
+resume, clean, or edit packet state. A live quiet process stays `LIVE`; PID
+reuse, foreign host, missing process visibility, or mismatched remote SHA stays
+ambiguous. A paired review in `post_exit_recovery` stays nonpassing.
 
 ### Exact paired-review claim parking pilot
 
