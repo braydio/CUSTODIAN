@@ -2411,6 +2411,14 @@ JOURNAL_SCHEMA = "custodian.paired_review_closeout_journal.v1"
 JOURNAL_NAME = "closeout-journal.json"
 CLOSEOUT_STAGES = ("prepared", "outcome_written", "committed", "published", "landed", "complete")
 _RUN_ID_RE = re.compile(r"^[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}$")
+_AUTHORIZED_HUMAN_CLOSEOUT = (
+    "review-agent-paired-review-canonical-metadata-source-span-v1",
+    "20261025T211450Z-fa8e71f97c29",
+)
+_AUTHORIZED_HUMAN_CLOSEOUT_MAIN = "f8d91812e991ea49fce6f05207f455083d8eaa54"
+_AUTHORIZED_HUMAN_CLOSEOUT_LAST_MESSAGE_SHA256 = "d93b59a0de79cc416a12daa34278209e47851c4a148ac3da41bd2b1a74c7fd33"
+_AUTHORIZED_HUMAN_CLOSEOUT_SUMMARY_SHA256 = "e3a1b62af8a1ea49189b8d41b60356b335f429d5cd4a7a9ea26ce66c349839d0"
+_AUTHORIZED_HUMAN_CLOSEOUT_IDS = ("R0-01", "R0-02")
 
 
 def _branch_scope_error(worktree: Path, revision: str, allowed: set[str]) -> str | None:
@@ -2569,8 +2577,34 @@ def recover_closeout(repo: Path, workstream: str, run_id: str, *, isolated_check
     if (metadata.get("schema") != SCHEMA or metadata.get("run_id") != run_id
             or metadata.get("workstream") != workstream):
         raise RunnerError("original run metadata does not match the requested review run")
-    if metadata.get("phase") not in {"post_exit_recovery", "closeout_recovery"}:
+    authorized_codex_exit = (workstream, run_id) == _AUTHORIZED_HUMAN_CLOSEOUT
+    phase = metadata.get("phase")
+    if phase not in {"post_exit_recovery", "closeout_recovery"} and not (
+            authorized_codex_exit and phase == "codex_exited" and outcome == "human_required"
+            and ids == _AUTHORIZED_HUMAN_CLOSEOUT_IDS):
         raise RunnerError(f"run phase {metadata.get('phase')!r} is not a recoverable post-exit state")
+    if authorized_codex_exit:
+        if outcome != "human_required" or ids != _AUTHORIZED_HUMAN_CLOSEOUT_IDS:
+            raise RunnerError("this exact codex-exited recovery permits only its authorized human_required IDs")
+        if _sha256_bytes((run_dir / "last-message.txt").read_bytes()) != _AUTHORIZED_HUMAN_CLOSEOUT_LAST_MESSAGE_SHA256:
+            raise RunnerError("exact-run reviewer output hash changed")
+        expected_hashes = {
+            "metadata.json": "7e2211cbc91bbd4c1007917f5a3e975acf1075f64ab7f09dc2e43eb2f0292aab",
+            "validation.json": "f372f69d5708e1972bf29cb9bbb939ffacc3e7f5d3289f6e26c67041125473e6",
+            "codex.jsonl": "075ca27bea63a8666b02363f3e1133546c5ee13046b5804aa407a5231a2adf74",
+            "claim-receipt.json": "206f41447088875aa67ea70503e74ddd63c66bcadbf9d633b1bdb9fd0890f9b3",
+        }
+        if any(_sha256_bytes((run_dir / name).read_bytes()) != expected for name, expected in expected_hashes.items()):
+            raise RunnerError("exact-run metadata, coordinator report, session, or claim receipt hash changed")
+        coordinator = json.loads((run_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
+        host_span = metadata.get("host_validation", {}).get("source_span", {})
+        trace = host_span.get("provenance", {})
+        if (coordinator.get("reviewed_main") != _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
+                or coordinator.get("implementation_commit") != _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
+                or coordinator.get("report_sha256") != expected_hashes["validation.json"]
+                or trace.get("trace_landing_commit") != _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
+                or metadata.get("fresh") is not True or metadata.get("exit_code") != 0):
+            raise RunnerError("exact-run coordinator validation does not bind the authenticated execution main")
     journal_path = run_dir / JOURNAL_NAME
     journal = json.loads(journal_path.read_text(encoding="utf-8")) if journal_path.is_file() else None
     if journal and journal.get("stage") not in CLOSEOUT_STAGES:
@@ -2585,11 +2619,12 @@ def recover_closeout(repo: Path, workstream: str, run_id: str, *, isolated_check
             raise RunnerError("another supervisor or recovery already holds this review workstream") from exc
         return _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal, journal_path,
                                isolated_checkout, outcome, ids, provenance, apply, release_claim,
-                               lander or _default_lander)
+                               authorized_codex_exit, lander or _default_lander)
 
 
 def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal, journal_path,
-                    isolated_checkout, outcome, ids, provenance, apply, release_claim, lander) -> dict:
+                    isolated_checkout, outcome, ids, provenance, apply, release_claim,
+                    authorized_codex_exit, lander) -> dict:
     git(repo, "fetch", "origin", "main")
     claim = _claim_identity(run_dir, workstream, repo, metadata)
     branch, original = claim["branch"], Path(claim["worktree"]).resolve()
@@ -2618,6 +2653,13 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
     if git(original, "rev-parse", "HEAD") != tip:
         raise RunnerError("original worktree HEAD is not the exact published branch tip")
     reviewed_main = metadata.get("reviewed_main", "")
+    if authorized_codex_exit:
+        coordinator = json.loads((run_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
+        if (coordinator.get("reviewed_main") != _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
+                or coordinator.get("implementation_commit") != _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
+                or coordinator.get("report_sha256") != metadata.get("host_validation", {}).get("report_sha256")):
+            raise RunnerError("exact-run coordinator validation does not bind the authenticated execution main")
+        reviewed_main = _AUTHORIZED_HUMAN_CLOSEOUT_MAIN
     if not re.fullmatch(r"[0-9a-f]{40,64}", reviewed_main) or subprocess.run(
             ["git", "merge-base", "--is-ancestor", reviewed_main, tip], cwd=repo, capture_output=True).returncode:
         raise RunnerError("pinned reviewed main is missing or not an ancestor of the published review branch")
@@ -2638,16 +2680,59 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
     if _show_at(repo, tip, target_path) != target_content:
         raise RunnerError("published review branch changed the reviewed target packet")
     evidence = tip_packet.split("## Review Outcome")[0]
+    authorized_findings = None
+    if authorized_codex_exit:
+        source_summary = original / expected_summary_path(workstream)
+        summary_bytes = source_summary.read_bytes()
+        if _sha256_bytes(summary_bytes) != _AUTHORIZED_HUMAN_CLOSEOUT_SUMMARY_SHA256:
+            raise RunnerError("exact-run reviewer summary hash changed")
+        summary_lines = summary_bytes.decode("utf-8").splitlines()
+        if len(summary_lines) < 8 or not summary_lines[6].startswith("- **Human-required closeout gate:** ") or not summary_lines[7].startswith("- **Independent suite discrepancy:** "):
+            raise RunnerError("exact-run reviewer summary no longer has the two authorized findings at lines 7-8")
+        authorized_findings = (summary_lines[6], summary_lines[7])
+        evidence += ("\n\n## Coordinator Finding ID Normalization\n\n"
+                     "The following IDs are coordinator-assigned administrative labels under explicit user "
+                     "authorization; the reviewer authored the verbatim finding text, not the IDs.\n\n"
+                     f"- `{_AUTHORIZED_HUMAN_CLOSEOUT_IDS[0]}` → {authorized_findings[0]}\n"
+                     f"- `{_AUTHORIZED_HUMAN_CLOSEOUT_IDS[1]}` → {authorized_findings[1]}\n"
+                     "- Source: `REVIEW_AGENT_PAIRED_REVIEW_CANONICAL_METADATA_SOURCE_SPAN_V1_CLAUDE_SUMMARY.md` "
+                     f"lines 7-8; SHA-256 `{_AUTHORIZED_HUMAN_CLOSEOUT_SUMMARY_SHA256}`.\n")
     for finding in ids:
         if not review_outcome.finding_evidenced(evidence, finding):
             raise RunnerError(f"finding {finding} has no written evidence in the preserved review packet")
     summary_path = expected_summary_path(workstream)
-    summary_text = _show_at(repo, tip, summary_path)
+    if authorized_codex_exit:
+        summary_text = (
+            "# Exact-Run Human-Required Review Closeout\n\n"
+            f"Workstream: `{workstream}`\n\n"
+            f"Authoring chat: {header.authoring_chat}\n\n"
+            f"Run: `{run_id}` · execution main: `{reviewed_main}` · implementation commit: `{implementation_commit}`\n\n"
+            "The original independent reviewer disposition remains `human_required`. The coordinator assigned "
+            "R0-01 and R0-02 to the two verbatim reviewer findings under explicit user authorization. "
+            "This is administrative closeout only; the reviewed implementation is not accepted.\n\n"
+            "## Next Handoff\n"
+            "- Next workstream: `review-agent-paired-review-resumed-worktree-provenance-v1`\n"
+            "- Next packet state: `dependency-gated`\n"
+            "- Refresh owner: `none`\n"
+            "- ChatGPT/user planning refresh required: `no`\n"
+            f"- Authoring chat: {header.authoring_chat}\n"
+            "- Refresh reason: `none`\n"
+            "- Next action: Human resolution of R0-01 and R0-02 before any accepted-review dependency advances.\n"
+            "- Blockers or open questions: `Review remains unaccepted; no PASS was inferred.`\n"
+        )
+    else:
+        summary_text = _show_at(repo, tip, summary_path)
     allowed = {active_path, archive_path, f"{PACKET_ROOT}/README.md", summary_path}
     scope_error = _branch_scope_error(repo, tip, allowed)
     if scope_error:
         raise RunnerError(scope_error)
     inventory = _worktree_inventory(original)
+    if authorized_codex_exit and inventory != {
+            "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_CANONICAL_METADATA_SOURCE_SPAN_V1.md":
+                "6232c4f72b59e97dd8663f230580f970550fd4e2b26e9413ed13943fc27c924f",
+            expected_summary_path(workstream): _AUTHORIZED_HUMAN_CLOSEOUT_SUMMARY_SHA256,
+    }:
+        raise RunnerError("protected review worktree inventory changed from the authenticated two-file evidence")
     intent = _closeout_intent(workstream, run_id, outcome, ids, provenance, tip, reviewed_main, implementation_commit)
     if journal and (journal.get("intent") != intent or journal.get("inventory") != inventory):
         raise RunnerError("recovery journal intent or protected inventory changed since it was prepared")
@@ -2701,9 +2786,21 @@ def _recover_locked(repo, common, workstream, run_id, run_dir, metadata, journal
                 reviewed_main=reviewed_main, implementation_commit=implementation_commit,
                 provenance=provenance, run_id=run_id, review_cycle=header.review_cycle, ids=ids)
             archived_file.parent.mkdir(parents=True, exist_ok=True)
+            if authorized_codex_exit:
+                text = text.rstrip("\n") + "\n\n## Coordinator Finding ID Normalization\n\n"
+                text += ("These stable IDs are coordinator-assigned administrative labels under explicit user "
+                         "authorization; the reviewer authored the verbatim prose, not the identifiers.\n\n")
+                text += f"- `{_AUTHORIZED_HUMAN_CLOSEOUT_IDS[0]}` → {authorized_findings[0]}\n"
+                text += f"- `{_AUTHORIZED_HUMAN_CLOSEOUT_IDS[1]}` → {authorized_findings[1]}\n"
+                text += (f"- Source: `REVIEW_AGENT_PAIRED_REVIEW_CANONICAL_METADATA_SOURCE_SPAN_V1_CLAUDE_SUMMARY.md` "
+                         f"lines 7-8; SHA-256 `{_AUTHORIZED_HUMAN_CLOSEOUT_SUMMARY_SHA256}`.\n")
             archived_file.write_text(text.rstrip("\n") + "\n\n" + section, encoding="utf-8")
             if source != archived_file:
                 source.unlink()
+        if authorized_codex_exit:
+            summary_file = checkout / summary_path
+            summary_file.parent.mkdir(parents=True, exist_ok=True)
+            summary_file.write_text(summary_text, encoding="utf-8")
         advance("outcome_written")
     if CLOSEOUT_STAGES.index(stage) < CLOSEOUT_STAGES.index("committed"):
         _stage_bounded(checkout, allowed)
