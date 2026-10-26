@@ -106,7 +106,7 @@ class OperatorWorkbenchApp(App):
         Binding("q", "quit", "Quit", show=False), Binding("slash", "search", "Search", priority=True, show=False),
         Binding("n", "new_animation", "New Animation", show=False),
         Binding("i", "import_animation", "Import 2.5D", show=False),
-        Binding("f5", "full_refresh", "Reload", show=False),
+        Binding("f5", "full_refresh", "Reload", show=False), Binding("shift+r", "refresh_sync", "Refresh sync status", show=False),
         Binding("question_mark", "help", "Help", show=False), Binding("e", "edit", "Edit", show=False),
         Binding("a", "add_frame", "Add Frame", show=False),
         Binding("x", "remove_frame", "Remove Frame", show=False), Binding("p", "publish", "Publish", show=False),
@@ -157,6 +157,9 @@ class OperatorWorkbenchApp(App):
         self._status_dirty = False
         self._status_aseprite = "unavailable"
         self._status_checkout = "unknown checkout"
+        startup_sync = getattr(self.service, "startup_sync_status", lambda: "")()
+        self._status_sync = f"sync at launch: {startup_sync} · refreshing…" if startup_sync else "sync: checking…"
+        self._last_sync_summary = ""
         self.features = {"animations": AnimationFeature(self.service)}; self.session_view = None
         self.main_screen: MainScreen | None = None
         self.preview_view = None
@@ -311,6 +314,8 @@ class OperatorWorkbenchApp(App):
         )
         self.set_interval(0.5, self._refresh_live_bridge_status)
         self.set_interval(1.0, self._watch_selected)
+        self.set_interval(15.0, self._schedule_sync_refresh)
+        self._schedule_sync_refresh()
         self.set_interval(1.0 / 30.0, self._preview_tick)
 
     async def on_unmount(self) -> None:
@@ -547,8 +552,29 @@ class OperatorWorkbenchApp(App):
     def _update_status_bar(self) -> None:
         self._main_widget("#workbench-status", WorkbenchStatusBar).set_status(
             self._status_branch, self._status_dirty, self._status_aseprite,
-            self.live_bridge.snapshot().status.value, checkout=self._status_checkout,
+            self.live_bridge.snapshot().status.value, checkout=f"{self._status_checkout} · {self._status_sync}",
         )
+
+    async def _refresh_sync_status(self, announce: bool = False) -> None:
+        live_status = getattr(self.service, "live_sync_status", None)
+        if live_status is None:
+            return
+        status = await self._thread(live_status)
+        self._status_sync = status
+        if self.main_screen is not None:
+            self._update_status_bar()
+        summary = status.rsplit(" · checked ", 1)[0]
+        if announce or (self._last_sync_summary and summary != self._last_sync_summary):
+            self._activity(f"sync status: {status}", "INFO")
+        self._last_sync_summary = summary
+
+    def _schedule_sync_refresh(self, announce: bool = False) -> None:
+        self.run_worker(self._refresh_sync_status(announce), group="sync-status", exclusive=True, exit_on_error=False)
+
+    def action_refresh_sync(self) -> None:
+        self._status_sync = "sync: checking…"
+        self._update_status_bar()
+        self._schedule_sync_refresh(announce=True)
 
     def _refresh_live_bridge_status(self) -> None:
         snapshot = self.live_bridge.snapshot()
@@ -704,7 +730,7 @@ class OperatorWorkbenchApp(App):
             if not self._browser_generation_current(generation):
                 return
             try:
-                checkout_label = await self._thread(self.service.checkout_status_label, self.state.selection)
+                checkout_label = await self._thread(self.service.checkout_status_label, self.state.selection, include_startup_sync=False)
                 if not self._browser_generation_current(generation):
                     return
                 self._status_checkout = checkout_label

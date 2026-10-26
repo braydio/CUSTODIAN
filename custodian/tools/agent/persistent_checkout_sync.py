@@ -371,6 +371,24 @@ def _sync_lock(coordination_root: Path) -> Iterator[None]:
         yield
 
 
+def sync_lock_busy(coordination_root: Path) -> bool:
+    """Read-only probe: True while another process holds the sync lock.
+
+    Takes a shared lock for an instant and releases it. A writer that races that
+    instant would report SYNC BUSY once and succeed on its next attempt.
+    """
+    path = _common_dir(_top(coordination_root)) / SYNC_LOCK
+    if not path.exists():
+        return False
+    with path.open("a+") as handle:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_SH | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return True
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+    return False
+
+
 @contextmanager
 def _art_creation_guard(coordination_root: Path) -> Iterator[bool]:
     """Serialize against art creation after taking the shared sync lock.

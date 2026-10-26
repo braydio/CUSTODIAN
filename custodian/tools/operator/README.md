@@ -29,6 +29,13 @@ Preview and Timeline use elapsed-time playback at the displayed FPS. Motion
 keeps the Operator screen-anchored in TREADMILL mode while its ground scrolls;
 WORLD mode retains the authored camera-follow lead.
 
+The status bar's `CHECKOUT:` line ends with a live sync status for the
+coordination and art checkouts, re-read every 15 seconds and on `Shift+R`. It is
+read-only (local refs, no fetch, no sync applied) and shows
+`sync lock held by another process` only while another sync actually holds the
+lock. The result `opui` captured at launch (`CUSTODIAN_SYNC_STATUS`) is shown
+as `sync at launch: …` only until the first live read replaces it.
+
 The optional Aseprite Live Bridge extension can be linked into
 the user's extension directory once with:
 

@@ -1,0 +1,45 @@
+# OPERATOR 2.5D SOURCE-STRIP EVIDENCE AVAILABILITY CORRECTION
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `operator-2-5d-source-strip-evidence-availability-correction-v1`
+- Authoring handoff: auto
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: P1
+- Depends on: operator-2-5d-cohort-dependency-closure-review-corrections-1
+- Locks: none
+- Kind: implementation
+- Review: auto
+- Review stage: post-land
+- Review modes: code, workflow
+- Paired review workstream: review-operator-2-5d-source-strip-evidence-availability-correction-v1
+- Review cycle: 0
+- Max automatic review cycles: 2
+- Review rationale: substantial validation-contract correction; paired review must prove missing evidence cannot be mistaken for verified evidence.
+- Reviewed main: `482cd88edc5490c83f34f1793dea39ccfb0f3977`
+- Authoring chat: not-recorded
+- Visual review: none
+- Goal: Make the 2.5D closure diagnostic accurately distinguish verified, mismatched, and unavailable historical source-strip evidence.
+- Completion boundary: Correct the source-strip evidence projection and focused smoke only. Missing physical historical strips are reported as unavailable and do not fail the diagnostic; present incorrect bytes still fail; unavailable evidence never counts as verified or release-eligible.
+- Current measured state: On `origin/main@482cd88edc5490c83f34f1793dea39ccfb0f3977`, the report producer emits `UNAVAILABLE` when a referenced source strip is missing, but the smoke unconditionally requires all eight strips to match and fails at line 42 when those files are absent.
+- Evidence: `custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py::_workspace_evidence`; `custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py`; validation id `operator_2_5d_cohort_dependency_closure` in `custodian/tools/validation/validation_manifest.json`.
+- Task-specific authority: Archived `operator-2-5d-cohort-dependency-closure-review-corrections-1` packet and its paired review; current producer/report schema and its registered smoke.
+- Work surface: `custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py`, `custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py`.
+- Publication inputs: `custodian/tools/validation/operator_2_5d_cohort_dependency_closure.py`, `custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py`, `custodian/tools/validation/validation_manifest.json`.
+- Change: Preserve explicit `PRESENT`, `UNAVAILABLE`, and `UNRECORDED` source states. A present source strip with the recorded hash is verified; a present source with a mismatched hash is a smoke failure; unavailable/unrecorded files remain unverified and are reported as such. Add deterministic positive and negative controls for those cases.
+- Preserve: Seven candidate families, 56 direction slots, zero verified/reviewed/published directions, null timing approval, all conservative edge classifications, and overall `NOT_RELEASE_ELIGIBLE`. Do not change source art, runtime assets, review receipts, or production policy.
+- Non-goals: Recover or regenerate missing 128px source strips; alter Operator animation behavior; promote any 2.5D cohort; modify F3 or Alpine worktrees; weaken unrelated validation.
+- Acceptance: The focused smoke passes with the configured workspace present and its historical strips unavailable; exact/matching bytes are distinguished from tampered bytes; unavailable evidence is visibly `UNAVAILABLE`, never counted as verified, and cannot change `NOT_RELEASE_ELIGIBLE`; the seven-family/56-slot and timing invariants remain intact.
+- Validation: Run the focused smoke directly and through `run_validation.py --test operator_2_5d_cohort_dependency_closure --json`; verify deterministic output and report invariants; run targeted packet/context/changed-file checks for owned paths and `git diff --check`.
+- Task overrides: none
+- Deferred: Physical recovery of historical source strips and any 2.5D cohort planning remain outside this correction.
+
+## Next Handoff
+- Next workstream: none
+- Next packet state: none
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: Return to the already-claimed F3 and Alpine workstreams after this correction and its paired review complete.
+- Blockers or open questions: none
