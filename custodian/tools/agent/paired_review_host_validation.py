@@ -128,6 +128,18 @@ _PROCESSION_RECOVERY_ARCHIVE_BLOBS = {
         "2df333fd1ba82f8c4de6305be3e4629e8743cc5c",
 }
 
+_PROCESSION_RECOVERY_MERGE = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
+_PROCESSION_RECOVERY_MERGE_SECOND_PARENT = "668ab1c793d262fbbbc8d65e6e3406ad17ffe2eb"
+_PROCESSION_RECOVERY_MERGE_TREE = "7ba4a5fa474ab5b5180856c073a212e83a9efc9c"
+_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS = {
+    "custodian/tools/agent/paired_review_host_validation.py":
+        "02b5119da3b92402b99dd1da06f50b3b4a57700e",
+    "custodian/tools/agent/test_paired_review_runner.py":
+        "0aa7360551f57474c62275e3fc14cccc58a4c396",
+    "custodian/tools/validation/validation_manifest.json":
+        "51093242a8d08aed106b631ef1d54c7cfef61215",
+}
+
 _OR1_BOOTSTRAP_WORKSTREAM = "agent-orphan-recovery-observability-v1"
 _OR1_BOOTSTRAP_ARCHIVE = "8ae6be7c9978dd8e7864fb790f9526a7d17f15e8"
 _OR1_BOOTSTRAP_PARENT = "f8d91812e991ea49fce6f05207f455083d8eaa54"
@@ -1823,6 +1835,36 @@ def _verified_procession_recovery_historical_scope(
     return set(_PROCESSION_RECOVERY_UNDECLARED_FILES)
 
 
+def _verified_procession_bootstrap_main_sync(
+    repo: Path, target_workstream: str, landing_commit: str,
+    merge: str, second_parent: str, changed_source_paths: set[str],
+) -> bool:
+    """One historical source reconciliation; not a source-coverage or review waiver.
+
+    The original Procession archive is already independently authenticated. Its
+    exact recorded main-sync commit combined the source with newer upstream
+    validator/tests. Only the three pinned resulting file blobs are recognized.
+    The reviewer must still validate the resulting reviewed-main source.
+    """
+    if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
+        return False
+    if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
+            or merge != _PROCESSION_RECOVERY_MERGE
+            or second_parent != _PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+            or changed_source_paths != set(_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)):
+        return False
+    if _git(repo, "rev-list", "--parents", "-n", "1", merge).split() != [
+        merge, landing_commit, second_parent,
+    ]:
+        raise HostValidationError("Procession bootstrap main-sync parent identity differs")
+    if _git(repo, "rev-parse", f"{merge}^{{tree}}") != _PROCESSION_RECOVERY_MERGE_TREE:
+        raise HostValidationError("Procession bootstrap main-sync tree identity differs")
+    for path, blob in _PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS.items():
+        if _git_tree_entry(repo, merge, path) != ("100644", blob):
+            raise HostValidationError(f"Procession bootstrap merge source differs: {path}")
+    return True
+
+
 def _verified_or1_bootstrap_historical_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
@@ -2774,6 +2816,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                     .get(merge, [])
                 )
                 changed_source_paths.difference_update(authenticated_resolution)
+            if changed_source_paths and _verified_procession_bootstrap_main_sync(
+                repo, target_workstream, landing_commit, merge,
+                sync_merge["main_sha"], changed_source_paths,
+            ):
+                changed_source_paths.clear()
             if changed_source_paths:
                 raise HostValidationError(
                     "main-sync merge changes reviewed source from archive-first-parent version: "
