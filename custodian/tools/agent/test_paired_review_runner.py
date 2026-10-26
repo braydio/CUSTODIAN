@@ -4626,8 +4626,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         scope(ROOT, workstream, target, archive, files)
 
     def test_procession_recovery_actual_source_span_is_bounded(self):
-        # Catch the *next* host-validation path gate before claiming another
-        # reviewer. This is the real landed recovery, not a synthetic packet.
+        # The exact historical main-sync merge is authenticated, not generally waived.
         workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
         refs = subprocess.run(
             ["git", "for-each-ref", "--format=%(refname)",
@@ -4636,21 +4635,55 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         ).stdout.splitlines()
         if not refs:
             self.skipTest("canonical Procession recovery landing traces are not present")
-        reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
-        archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
-        with self.assertRaisesRegex(
-                host_validation.HostValidationError,
-                "main-sync merge changes reviewed source from archive-first-parent version") as caught:
-            host_validation.resolve_validation_source_span(
-                ROOT, reviewed_main, archive, workstream,
-                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+        reviewed_main = host_validation._PROCESSION_RECOVERY_MERGE
+        try:
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                workstream, host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
             )
-        self.assertIn("f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3", str(caught.exception))
-        for source_path in (
-                "custodian/tools/agent/paired_review_host_validation.py",
-                "custodian/tools/agent/test_paired_review_runner.py",
-                "custodian/tools/validation/validation_manifest.json"):
-            self.assertIn(source_path, str(caught.exception))
+        except host_validation.HostValidationError as exc:
+            if "missing or ambiguous exact workstream trace provenance" in str(exc):
+                self.skipTest("historical host-only original-run trace refs are unavailable")
+            raise
+        self.assertEqual(span["provenance"]["trace_landing_commit"], reviewed_main)
+        self.assertIn("custodian/tools/agent/paired_review_host_validation.py", span["paths"])
+
+    def test_procession_exact_main_sync_source_reconciliation_and_negatives(self):
+        helper = host_validation._verified_procession_bootstrap_main_sync
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        landing = host_validation._PROCESSION_RECOVERY_ARCHIVE
+        merge = host_validation._PROCESSION_RECOVERY_MERGE
+        second_parent = host_validation._PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+        changed = set(host_validation._PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)
+        self.assertTrue(helper(ROOT, workstream, landing, merge, second_parent, changed))
+        for args in (
+            ("unrelated", landing, merge, second_parent, changed),
+            (workstream, "f"*40, merge, second_parent, changed),
+            (workstream, landing, "a"*40, second_parent, changed),
+            (workstream, landing, merge, "b"*40, changed),
+            (workstream, landing, merge, second_parent, changed | {"unrelated.md"}),
+            (workstream, landing, merge, second_parent, changed - {next(iter(changed))}),
+        ):
+            with self.subTest(args=args):
+                self.assertFalse(helper(ROOT, *args))
+        real_git = host_validation._git
+        def altered_tree(repository, *args):
+            if args == ("rev-parse", f"{merge}^{{tree}}"):
+                return "f" * 40
+            return real_git(repository, *args)
+        with patch.object(host_validation, "_git", side_effect=altered_tree):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "tree identity"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
+        real_entry = host_validation._git_tree_entry
+        target = sorted(changed)[0]
+        def altered_mode(repository, revision, path):
+            entry = real_entry(repository, revision, path)
+            if revision == merge and path == target:
+                return ("100755", entry[1])
+            return entry
+        with patch.object(host_validation, "_git_tree_entry", side_effect=altered_mode):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "merge source differs"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
 
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
