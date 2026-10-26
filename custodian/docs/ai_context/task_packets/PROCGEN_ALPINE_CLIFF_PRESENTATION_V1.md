@@ -331,3 +331,36 @@ Reviewed-evidence cleanup receipt: CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON {"latest
 - Refresh reason: none
 - Next action: Reconcile AP2 with latest `origin/main@d3ae9fb7`; diagnose `game_scene_operator_startup_integrity` against that baseline and determine whether AP2 tilemap integration is causal; rerun canonical changed-file validation before archive or finish. Keep AP3 dependency-gated.
 - Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped; the report predates latest main by two commits.
+
+## 2026-10-26 Latest-main Recovery and Baseline Validation
+
+- The original claimed workstream was resumed through `workstream.py` from the coordination checkout. No recovery branch or competing claim was created. The historical merge conflict was absent. The supported resume merged fetched `origin/main@2f35ba8948b07b5f960bae2ce23dcd47e9956267` into the original AP2 branch, producing merge commit `03a588a5139d4bf143237822aa976ae400354f0c` without conflict.
+- Canonical validation command: `TMPDIR=/dev/shm python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`. The first invocation stopped at Godot import with two TLS handshake errors and executed no tests. The repeated canonical invocation completed: 223 changed paths, complete ownership coverage, 51 selected, 46 passed, one failed, four skipped, zero timed out, zero infrastructure errors. `procgen_alpine_cliff_presentation` passed. `npa_showcase_existing_enemy` was not selected, confirming the landed manifest-diff selector excludes unrelated tests owned only through the manifest.
+- The sole failure was `game_scene_operator_startup_integrity`, selected through changed owner `custodian/game/world/procgen/proc_gen_tilemap.gd`. It ended with `operator_placement_diverged_before_ready`, `player_group_identity_mismatch`, `player_identity_did_not_match_at_placement`, and `player_group_count=0`; startup did not reach `contract_ready`.
+- Baseline comparison ran the same smoke from a clean detached checkout of `origin/main@2f35ba8948b07b5f960bae2ce23dcd47e9956267`. It also exited 1 with the same placement failure. The referenced Operator runtime PNG `custodian/content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__full_body__ranged_2h__posture__relaxed_01__n__5f__128.png` is absent from both `origin/main` and the AP2 tree, while `operator_runtime_frames.tres` references it. This establishes a mainline baseline failure; it does not make the canonical AP2 report green or authorize waiving that selected test.
+- AP2 remains incomplete and unlanded. Do not run `workstream.py finish`, archive the packet, release its `procgen-presentation` / `asset-pipeline` locks, or claim AP3 until this mainline startup failure is resolved and the canonical AP2 changed-file suite passes.
+- Gate B remains unchanged: manifest SHA-256 `e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6`, 26 exact payloads / 10,125,139 bytes. Recovered October 15 visual disposition remains human-reported PASS / PASS / PASS for the SOUTH join, attached geology, and N/E/W plus playable-edge truthfulness; clean capture `e2c7b7de038e799c5af16b11c63f66a8f86d75a0`, SOUTH SHA-256 `c54e2531138bc5801c9e7a9b78f77088254877ac1a227f018ce140e234508a0b`.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `partial`
+- Friction severity: `medium`
+- What went wrong: `The current-main changed-file suite is still red because the selected Operator startup smoke fails on both AP2 and clean origin/main. Four Moment-tier tests were skipped by tier gating.`
+- Root cause / contributing factors: `The smoke cannot load a referenced Operator runtime frame PNG absent from both trees, then reports zero player-group members and operator_placement_diverged_before_ready. AP2 causality is not indicated by the clean-main reproduction, but the required validation gate remains red.`
+- Prevention / pipeline improvement: `Resolve the missing Operator runtime frame / startup baseline in its owning lane, then resume this AP2 claim and rerun the canonical changed-file suite. Do not waive the selected test.`
+- Tooling / docs drift discovered: `The manifest-diff selection fix works: complete changed-file coverage, and npa_showcase_existing_enemy is not selected.`
+- Follow-up: `manual-follow-up`
+- What worked: `Original branch resumed without conflict; Alpine focused validation passed; Gate B and recorded human visual disposition remain unchanged.`
+
+## Next Handoff
+
+- Next workstream: `procgen-alpine-cliff-presentation-v1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391`
+- Continuation chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adacd4c-dea8-83ea-9afe-b4b69230055d`
+- Refresh reason: `none`
+- Next action: `Resolve the reproduced Operator startup baseline failure in its owning lane, then resume the original AP2 workstream and rerun canonical changed-file validation. Keep AP2 active and AP3 dependency-gated.`
+- Blockers or open questions: `game_scene_operator_startup_integrity fails on origin/main and AP2 with operator_placement_diverged_before_ready; AP2 cannot land or release locks while canonical validation is red.`
