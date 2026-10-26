@@ -4592,9 +4592,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 + b"\n".join(entries) + b"\n"
                 + host_validation.MANAGED_BLOCK_END.encode() + suffix)
 
-    def test_procession_recovery_archive_two_omitted_paths_are_exactly_pinned(self):
-        # The original recovery packet named an obsolete attestation JSON and
-        # omitted the changed paired-review Markdown from Work surface.
+    def test_procession_recovery_archive_five_omitted_paths_are_exactly_pinned(self):
+        # The original archive included five exact extra paths, including an
+        # obsolete declared JSON basename and modified paired-review Markdown.
         scope = host_validation._verified_procession_recovery_historical_scope
         archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
         target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
