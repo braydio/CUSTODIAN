@@ -308,23 +308,26 @@ Canonical Gate B: /CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presenta
 
 Reviewed-evidence cleanup receipt: CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON {"latest_pointer_removed":true,"manifest_path":"/CUSTODIAN/visual_review/procgen-alpine-cliff-presentation-v1/20261015T060324Z/REVIEW_MANIFEST.json","retention_policy":"delete-after-review","reviewed_by":"chatgpt-user","run_id":"20261015T060324Z","schema":"custodian.visual_review_cleanup.v1","status":"deleted","workstream":"procgen-alpine-cliff-presentation-v1"}.
 
+
 ## Execution Feedback
 
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: blocked
-- Friction severity: high
-- What went wrong: Canonical changed-file validation against origin/main had complete ownership coverage but failed one selected actor-tier test; 42 higher-tier tests were skipped.
-- Root cause / contributing factors: npa_showcase_existing_enemy reports missing Operator semantic animation unarmed/transition/dodge_chain_release_01/omni/fx, invalid operator_down access in OperatorDeathCampaignBinding, and a corpse-loot collection assertion. Its causal relationship to Alpine is not established; it was selected via the branch-diff validation manifest. No unrelated runtime change was made.
-- Prevention / pipeline improvement: Preserve the failed report and resolve the NPA owning contract before a new canonical validation and finish. Do not waive the selected test or land with skipped tests.
-- Tooling / docs drift discovered: Alpine preparation and asset-verification paths lacked changed-file ownership; both are now assigned to procgen_alpine_cliff_presentation.
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: Current-main changed-file validation selected 51 tests with complete ownership coverage; 46 passed, one production startup integrity test failed, and four Moment-tier tests were skipped after integration-tier failure.
+- Root cause / contributing factors: `game_scene_operator_startup_integrity` failed with `operator_placement_diverged_before_ready`; the placement report found `player_group_identity_mismatch` and `player_identity_did_not_match_at_placement`, with zero player-group members. The test was selected through the changed `proc_gen_tilemap.gd` owner. AP2 causality is not established.
+- Prevention / pipeline improvement: Keep AP2 open. Establish the failure's current-main baseline and causal owner, then rerun the canonical changed-file validation. Do not waive the test or land with skipped tests.
+- Tooling / docs drift discovered: The landed manifest-diff selector correction behaved as intended: complete ownership coverage and `npa_showcase_existing_enemy` not selected.
 - Follow-up: manual-follow-up
-- What worked: Gate B fetch, recovered human approval record, supported review cleanup and all seven focused Alpine/semantic checks passed.
+- What worked: Alpine focused smoke passed; Gate B still lists 26 matching payloads; recovered human visual disposition remains PASS / PASS / PASS.
+
 ## Next Handoff
 - Next workstream: procgen-alpine-cliff-presentation-v1
 - Next packet state: ready
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade8-83ea-8176-262df8bd4391
+- Continuation chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adacd4c-dea8-83ea-9afe-b4b69230055d
 - Refresh reason: none
-- Next action: Stop within the two-turn closeout budget. Resolve the selected npa_showcase_existing_enemy failure through its owning authority before preflight or finish. Preserve the active Alpine claim until a green canonical changed-file report exists.
-- Blockers or open questions: npa_showcase_existing_enemy fails with missing Operator semantic animation unarmed/transition/dodge_chain_release_01/omni/fx, invalid operator_down access, and corpse-loot collection failure; canonical report has 42 higher-tier skips.
+- Next action: Diagnose `game_scene_operator_startup_integrity` against a clean current-main baseline and determine whether AP2 tilemap integration is causal; rerun canonical changed-file validation before archive or finish. Keep AP3 dependency-gated.
+- Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped.
