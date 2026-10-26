@@ -329,5 +329,5 @@ Reviewed-evidence cleanup receipt: CUSTODIAN_VISUAL_REVIEW_CLEANUP_JSON {"latest
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade8-83ea-8176-262df8bd4391
 - Continuation chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adacd4c-dea8-83ea-9afe-b4b69230055d
 - Refresh reason: none
-- Next action: Diagnose `game_scene_operator_startup_integrity` against a clean current-main baseline and determine whether AP2 tilemap integration is causal; rerun canonical changed-file validation before archive or finish. Keep AP3 dependency-gated.
-- Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped.
+- Next action: Reconcile AP2 with latest `origin/main@d3ae9fb7`; diagnose `game_scene_operator_startup_integrity` against that baseline and determine whether AP2 tilemap integration is causal; rerun canonical changed-file validation before archive or finish. Keep AP3 dependency-gated.
+- Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped; the report predates latest main by two commits.

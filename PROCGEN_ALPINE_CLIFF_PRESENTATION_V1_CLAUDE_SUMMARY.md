@@ -3,14 +3,15 @@
 Workstream: procgen-alpine-cliff-presentation-v1
 Branch: agent/procgen-alpine-cliff-presentation-v1
 Integrated branch HEAD: ceec514974d63e7ff68274df80ae2ddc1789d242
-Validation base (`origin/main`): 8ae6be7c9978dd8e7864fb790f9526a7d17f15e8
+Validation base (`origin/main` at run start): 8ae6be7c9978dd8e7864fb790f9526a7d17f15e8
+Latest fetched `origin/main` after validation: d3ae9fb780fc3a11e1dfc2d857bc31150dcab07b
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 Packet header authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 Continuation chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adacd4c-dea8-83ea-9afe-b4b69230055d
 
 ## Verified
 
-- The original AP2 workstream was resumed through `workstream.py`; the historical merge conflict is no longer present. The existing AP2 worktree is attached to the original branch. `origin/main` is an ancestor of the integrated worktree HEAD.
+- The original AP2 workstream was resumed through `workstream.py`; the historical merge conflict is no longer present. The existing AP2 worktree is attached to the original branch. The tested integration included `origin/main@8ae6be7c`; after validation, a fetch found `origin/main@d3ae9fb7`, two commits ahead of the AP2 branch. The report therefore does not establish readiness against the latest main.
 - No recovery branch, new claim, or competing AP2 workstream was created.
 - The AP2 branch's current-main reconciliation includes the landed validation-manifest diff selector correction.
 - Gate B remains at `/CUSTODIAN/implementation_inputs/procgen-alpine-cliff-presentation-v1/alpine-cliff-presentation-v1/`. The current Dropbox manifest lists exactly 26 payload files totaling 10,125,139 bytes: 12 fascia, 10 contact, and four depth states. The listing's names and sizes match the manifest. The packet records manifest SHA-256 `e185f7a820c658392adc691dea18e48982a60bac02c3c5d2aa86828b092110d6`; no payload was re-uploaded or changed.
@@ -38,7 +39,7 @@ The failure's causal relationship to AP2 has not been established. AP2 does modi
 
 AP2 remains active and unarchived. Its procgen-presentation and asset-pipeline locks remain held. AP3 remains dependency-gated and was not claimed. `workstream.py finish` was not run because the canonical report is red. The active worktree also contains 13 untracked Godot `.import` sidecars produced during validation for unrelated Operator/grunt assets; they were preserved for later artifact classification.
 
-The root coordination checkout remains untouched by this task's closeout edits; its local changes are preserved, so root synchronization is pending.
+The root coordination checkout remains untouched by this task's closeout edits; its local changes are preserved and it is 22 commits behind the latest main, so root synchronization is pending.
 
 ## Process Feedback
 
@@ -60,5 +61,5 @@ The root coordination checkout remains untouched by this task's closeout edits; 
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acfd66f-ade0-83ea-8176-262df8bd4391
 - Continuation chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adacd4c-dea8-83ea-9afe-b4b69230055d
 - Refresh reason: none
-- Next action: diagnose `game_scene_operator_startup_integrity` against a clean current-main baseline and determine whether the AP2 tilemap integration is causal; then rerun canonical changed-file validation. Preserve the AP2 claim and do not start AP3.
-- Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped.
+- Next action: reconcile the AP2 branch with latest `origin/main@d3ae9fb7`, diagnose `game_scene_operator_startup_integrity` against that clean current-main baseline, and determine whether the AP2 tilemap integration is causal; then rerun canonical changed-file validation. Preserve the AP2 claim and do not start AP3.
+- Blockers or open questions: Operator placement startup reports `player_group_identity_mismatch`; causal relation to AP2 is unknown; four Moment tests were skipped; the report predates latest main by two commits.
