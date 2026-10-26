@@ -4592,9 +4592,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 + b"\n".join(entries) + b"\n"
                 + host_validation.MANAGED_BLOCK_END.encode() + suffix)
 
-    def test_procession_recovery_archive_two_omitted_paths_are_exactly_pinned(self):
-        # The original recovery packet named an obsolete attestation JSON and
-        # omitted the changed paired-review Markdown from Work surface.
+    def test_procession_recovery_archive_five_omitted_paths_are_exactly_pinned(self):
+        # The original archive included five exact extra paths, including an
+        # obsolete declared JSON basename and modified paired-review Markdown.
         scope = host_validation._verified_procession_recovery_historical_scope
         archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
         target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
@@ -4626,8 +4626,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         scope(ROOT, workstream, target, archive, files)
 
     def test_procession_recovery_actual_source_span_is_bounded(self):
-        # Catch the *next* host-validation path gate before claiming another
-        # reviewer. This is the real landed recovery, not a synthetic packet.
+        # The exact historical main-sync merge is authenticated, not generally waived.
         workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
         refs = subprocess.run(
             ["git", "for-each-ref", "--format=%(refname)",
@@ -4636,21 +4635,55 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         ).stdout.splitlines()
         if not refs:
             self.skipTest("canonical Procession recovery landing traces are not present")
-        reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
-        archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
-        with self.assertRaisesRegex(
-                host_validation.HostValidationError,
-                "main-sync merge changes reviewed source from archive-first-parent version") as caught:
-            host_validation.resolve_validation_source_span(
-                ROOT, reviewed_main, archive, workstream,
-                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+        reviewed_main = host_validation._PROCESSION_RECOVERY_MERGE
+        try:
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                workstream, host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
             )
-        self.assertIn("f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3", str(caught.exception))
-        for source_path in (
-                "custodian/tools/agent/paired_review_host_validation.py",
-                "custodian/tools/agent/test_paired_review_runner.py",
-                "custodian/tools/validation/validation_manifest.json"):
-            self.assertIn(source_path, str(caught.exception))
+        except host_validation.HostValidationError as exc:
+            if "missing or ambiguous exact workstream trace provenance" in str(exc):
+                self.skipTest("historical host-only original-run trace refs are unavailable")
+            raise
+        self.assertEqual(span["provenance"]["trace_landing_commit"], reviewed_main)
+        self.assertIn("custodian/tools/agent/paired_review_host_validation.py", span["paths"])
+
+    def test_procession_exact_main_sync_source_reconciliation_and_negatives(self):
+        helper = host_validation._verified_procession_bootstrap_main_sync
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        landing = host_validation._PROCESSION_RECOVERY_ARCHIVE
+        merge = host_validation._PROCESSION_RECOVERY_MERGE
+        second_parent = host_validation._PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+        changed = set(host_validation._PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)
+        self.assertTrue(helper(ROOT, workstream, landing, merge, second_parent, changed))
+        for args in (
+            ("unrelated", landing, merge, second_parent, changed),
+            (workstream, "f"*40, merge, second_parent, changed),
+            (workstream, landing, "a"*40, second_parent, changed),
+            (workstream, landing, merge, "b"*40, changed),
+            (workstream, landing, merge, second_parent, changed | {"unrelated.md"}),
+            (workstream, landing, merge, second_parent, changed - {next(iter(changed))}),
+        ):
+            with self.subTest(args=args):
+                self.assertFalse(helper(ROOT, *args))
+        real_git = host_validation._git
+        def altered_tree(repository, *args):
+            if args == ("rev-parse", f"{merge}^{{tree}}"):
+                return "f" * 40
+            return real_git(repository, *args)
+        with patch.object(host_validation, "_git", side_effect=altered_tree):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "tree identity"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
+        real_entry = host_validation._git_tree_entry
+        target = sorted(changed)[0]
+        def altered_mode(repository, revision, path):
+            entry = real_entry(repository, revision, path)
+            if revision == merge and path == target:
+                return ("100755", entry[1])
+            return entry
+        with patch.object(host_validation, "_git_tree_entry", side_effect=altered_mode):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "merge source differs"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
 
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
@@ -7035,6 +7068,100 @@ Verify the exact post-hoc attestation.
             "AGENT_SUMMARY.md", "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
         })
         self.assertNotIn("OTHER_SUMMARY.md", declared)
+
+
+    def test_bootstrap_procession_and_or1_real_archive_paths_are_pinned(self):
+        """Original source bytes may reach prelaunch review, never bypass review PASS."""
+        scenarios = (
+            (
+                host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                host_validation._PROCESSION_RECOVERY_PARENT,
+                set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES),
+                host_validation._verified_procession_recovery_historical_scope,
+            ),
+            (
+                host_validation._OR1_BOOTSTRAP_WORKSTREAM,
+                host_validation._OR1_BOOTSTRAP_PACKET,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE,
+                host_validation._OR1_BOOTSTRAP_PARENT,
+                set(host_validation._OR1_BOOTSTRAP_DOCS),
+                host_validation._verified_or1_bootstrap_historical_scope,
+            ),
+        )
+        for workstream, packet, landing, parent, expected_scope, verifier in scenarios:
+            with self.subTest(workstream=workstream):
+                all_paths = set(host_validation._changed_paths(ROOT, f"{parent}..{landing}"))
+                extra = all_paths - {
+                    packet,
+                    packet.replace("/archived/", "/", 1),
+                    f"{runner.PACKET_ROOT}/README.md",
+                    f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md",
+                }
+                self.assertEqual(verifier(ROOT, workstream, packet, landing, extra),
+                                 expected_scope)
+                self.assertEqual(verifier(ROOT, "unrelated-workstream", packet, landing, extra),
+                                 set())
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet, landing, extra | {"unrelated.md"})
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet, "0" * 40, extra)
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet + "-forged", landing, extra)
+
+    def test_bootstrap_archive_never_admits_altered_git_history_or_extra_bytes(self):
+        scenarios = (
+            (
+                host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                host_validation._PROCESSION_RECOVERY_PARENT,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE_BLOBS,
+                host_validation._verified_procession_recovery_historical_scope,
+            ),
+            (
+                host_validation._OR1_BOOTSTRAP_WORKSTREAM,
+                host_validation._OR1_BOOTSTRAP_PACKET,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE,
+                host_validation._OR1_BOOTSTRAP_PARENT,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE_BLOBS,
+                host_validation._verified_or1_bootstrap_historical_scope,
+            ),
+        )
+        for workstream, packet, landing, parent, blobs, verifier in scenarios:
+            with self.subTest(workstream=workstream):
+                extra = set(host_validation._changed_paths(ROOT, f"{parent}..{landing}")) - {
+                    packet, packet.replace("/archived/", "/", 1),
+                    f"{runner.PACKET_ROOT}/README.md",
+                    f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md",
+                }
+                original_tree_entry = host_validation._git_tree_entry
+                target = next(iter(sorted(extra)))
+                def change_mode(repository, revision, path):
+                    entry = original_tree_entry(repository, revision, path)
+                    if revision == landing and path == target:
+                        return ("100755", entry[1])
+                    return entry
+                with patch.object(host_validation, "_git_tree_entry", side_effect=change_mode):
+                    with self.assertRaisesRegex(host_validation.HostValidationError,
+                                                "blob or mode differs"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                changed = host_validation._changed_paths(ROOT, f"{parent}..{landing}")
+                with patch.object(host_validation, "_changed_paths",
+                                  return_value=changed + ["custodian/extra_review_source.md"]):
+                    with self.assertRaisesRegex(host_validation.HostValidationError,
+                                                "changed-path set"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                original_git = host_validation._git
+                def change_tree(repository, *args):
+                    if args[:1] == ("rev-parse",) and args[1:] == (f"{landing}^{{tree}}",):
+                        return "0" * 40
+                    return original_git(repository, *args)
+                with patch.object(host_validation, "_git", side_effect=change_tree):
+                    with self.assertRaisesRegex(host_validation.HostValidationError, "tree"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                self.assertTrue(blobs)  # The complete archive is pinned, not just two docs.
 
 
 if __name__ == "__main__":
