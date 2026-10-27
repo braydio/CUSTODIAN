@@ -1,0 +1,29 @@
+name: operator-asset-pipeline-tests
+
+# Unit tests for the Operator 3D asset workflow only. No Blender, no Dropbox secrets, no deployments.
+on:
+  pull_request:
+    paths:
+      - 'custodian/asset_drop/source_work/operator/operator_3d_master/scripts/asset_pipeline/**'
+      - 'custodian/tools/iteration/asset_pipeline.py'
+      - 'custodian/tools/iteration/test_asset_pipeline.py'
+      - '.github/workflows/operator-asset-pipeline-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m pip install numpy pillow
+      - name: Unit tests (synthetic fixtures; LFS-dependent tests self-skip)
+        run: python3 -m unittest custodian.tools.iteration.test_asset_pipeline -v

@@ -14,6 +14,8 @@ meshes = [x for x in bpy.data.objects if x.type == 'MESH']
 if not meshes: raise SystemExit('no mesh in asset')
 root = bpy.data.objects.new('ASSET_ROOT', None); bpy.context.scene.collection.objects.link(root)
 for o in [x for x in bpy.data.objects if x.parent is None and x is not root]: o.parent = root   # root is identity now, so world transforms (incl. glTF node scale) are preserved
+broken = [i.name for i in bpy.data.images if i.name != 'Render Result' and (i.size[0] == 0 or i.size[1] == 0)]
+if broken: print('PIPELINE_ERROR texture image(s) failed to decode: ' + ', '.join(broken)); sys.exit(2)
 def bbox():
     bpy.context.view_layer.update(); pts = [m.matrix_world @ Vector(c) for m in meshes for c in m.bound_box]
     return [min(p[i] for p in pts) for i in range(3)], [max(p[i] for p in pts) for i in range(3)]

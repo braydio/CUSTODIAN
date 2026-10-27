@@ -69,3 +69,15 @@ and read-only probes to their runtime scenes; they do not replace feature-owned
 scenarios or grant presentation tools gameplay authority. Run
 `python3 -m unittest custodian.tools.iteration.test_visual_validation_adopter_specs`
 to validate their contract against the current scenario DSL.
+
+## Operator 3D asset workflow
+
+`asset_pipeline.py` is the stable entrypoint for the reviewed Operator 3D asset flow `run -> verify -> freeze -> publish-review`
+(implementation and full contract: `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/asset_pipeline/README.md`).
+
+```bash
+uv run custodian/tools/iteration/asset_pipeline.py run asset.glb --name meshy-004 --dry-run
+uv run custodian/tools/iteration/asset_pipeline.py publish-review <candidate-dir> --reason "..." --question "..." --retain-after-review --dry-run
+```
+A normal `run` never uploads or locks. `publish-review` reuses `publish_review_artifacts.py` (no second uploader), is opt-in, and marks nothing published unless the remote bytes verify.
+Tests: `python3 -m unittest custodian.tools.iteration.test_asset_pipeline -v`.
