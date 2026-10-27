@@ -213,6 +213,24 @@
       "needs_import": false
     },
     {
+      "id": "crg_config_contract",
+      "type": "python",
+      "script": "tools/check_crg_config.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "git"
+      ],
+      "owners": [
+        ".mcp.json",
+        "tools/crg-pin.env",
+        "tools/crg-refresh.sh",
+        "tools/check_crg_config.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "agent_workflow_contract",
       "type": "python",
       "script": "custodian/tools/validation/agent_workflow_smoke.py",
