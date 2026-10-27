@@ -4,7 +4,7 @@
 **Workstream:** procgen-environmental-evidence-v1
 **Recorded:** 2026-10-27
 **Source baseline:** main@bb5a1b16
-**Authoring chat:** exact current link pending from user.
+**Authoring chat:** https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain
 **Primary design:** [Three Evidence Grammars](PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md).
 
 ## Preserved design choices
