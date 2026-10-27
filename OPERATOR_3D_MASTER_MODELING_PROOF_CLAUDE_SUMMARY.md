@@ -1,24 +1,19 @@
-# Operator 3D master modeling proof - summary
+# Operator 3D master modeling proof - summary (exp-006 phase)
 
-Workstream: operator-3d-master-modeling-proof-v1 (branch `agent/operator-3d-master-modeling-proof-v1`, **not landed on main**)
-Return reminder: the project-root checkout `~/Projects/CUSTODIAN` is on `main` (clean); this work lives only in its own worktree.
+Workstream: operator-3d-master-modeling-proof-v1 (branch `agent/operator-3d-master-modeling-proof-v1`, **not merged to main**).
+Return reminder: the project-root checkout `~/Projects/CUSTODIAN` is on clean `main`; this art work lives only in its worktree.
+Authoring chat: not recorded in the packet.
 
-Art source-work only. No operator.gd, sprite selector, manifest, SpriteFrames, promotion or runtime change. No art approval claimed.
+Art source-work only. No runtime, operator.gd, selector, manifest, SpriteFrames, canonical idle or main changes. No candidate selected or approved; no best_candidate.json.
 
-## Verified
-- Both LFS source hashes matched from real bytes (design lock `41782240...`, idle `d4a6a5f5...`).
-- Blender 5.2.3 LTS ran the builder; real .blend + renders exist for every experiment.
+## exp-006 (capeless), frozen, visual approval pending
+- Versioned generator: `model_version: 6` -> `scripts/generate_mesh_v6.py`; exp-001..005 regenerate byte-identical (SHA256 checked), frozen hashes re-verified (`scripts/verify_frozen.py`).
+- Changed: no Cloak__ meshes (0 of 79 parts); forward-peaked hood shell + dark face recess, no ring/halo; three overlapping flattened plates per shoulder with rim trim; tapered arm/leg links; 12 folded tunic panels (front, front-side, back, back-side) with gold edge trim; boots with sole, heel stack, instep, toe cap, sole bottom exactly on Z=0.
+- Objective (Blender-evaluated sole meshes, `walk_audit.json`): both soles at 0.0 m when planted (previous ~2 cm hover gone); 10 / 9 planted frames L / R, alternating; planted foot body-frame step constant (0.0 mm/frame deviation) - reported separately from IK reach error (0.0); F15->F01 foot delta 0.098 m equals the largest inner step, no seam jump. Heights 82-87 px; root (64,106) by camera construction (alpha-bottom is not a registration invariant). 8 cameras correct, facing E=right.
+- Silhouette IoU is triage only: 8-dir mean 0.62 vs exp-005 0.68 - slightly worse by that metric.
 
-## What happened
-- exp-001 (unmodified builder): ran, exit 0, **unusable**: character lying down (Z-up mesh written as Y-up glTF), vertex colours lost, off-contract framing, E/W cameras mirrored. Frozen and kept as REJECTED.
-- Builder fixed (`scripts/create_blend.py`; old one kept as `create_blend_v1_exp001.py`): upright guard, colour shaders, facing-correct camera azimuths, native 128 frame root (64,106), camera-following lights, bone-local hip keys, level-locked boots, neutral renders without IK.
-- exp-002 baseline (v001 shape, pipeline fixed), exp-003 reference-driven reshape, exp-004 stocky contrast, exp-005 = exp-003 + stronger walk + hood ring. All frozen; see `CANDIDATES.md` for hashes.
+## Remaining defects (honest)
+Hood is a tall spire/cone, not the source's rounded cowl; pauldron plates still catch chrome-like highlights; arms/legs read thin next to the source's bulk; gold appears as dotted edge segments, not continuous trim; tunic panels read as flat dark sheets; no source value/highlight language. NE walk alternates and loops, but the pose is stiff.
 
-## Honest evaluation (exp-005 vs source idle)
-Better: silhouette (mean IoU 0.52 -> 0.68), height ~85px, near-black palette, gold accents, E/W facing and near/far projection plausible, 15 alternating NE steps with zero IK reach error, boots level.
-Still wrong: hood reads as a helmet/shell, not a soft peaked hood; hood-opening ring looks like a halo from behind; pauldrons are glossy spheres, limbs beaded segments; cloak a flat grey sheet vs the reference tunic with gold-edged panels; gold is thin rings, not edge-trim along panels; boots blocky and ~2cm above ground; no value/highlight language of the source. Foot-skating check is crude (stance mask includes transition frames; right-side speed spread 0.02-0.03 m/frame) - not proven skate-free.
-exp-004 overshoots width; exp-002 is reference only.
-
-## Next bounded iteration (if go)
-Reshape hood as a peaked cowl; replace ring trims with panel-edge trim on tabard/pauldron; flatten pauldrons; shorten cloak to a mantle; cel/outline shading pass for the source's value language; then re-run the walk with a stricter stance-contact metric.
-FPS (15 frames, 15 fps / 67 ms GIF) is provisional preview cadence only.
+## Evidence
+Dropbox: /CUSTODIAN/visual_review/operator-3d-master/20261027T110803Z/REVIEW_MANIFEST.json (cleanup after review: command in the manifest). Local: `review_pack/`, `experiments/exp-006/`. Tooling: `TOOLING_SETUP_RECEIPT.md`. Cadence 15 fps / 67 ms GIF is provisional, not canonical.

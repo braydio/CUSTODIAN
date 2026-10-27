@@ -37,6 +37,7 @@ def arguments():
     p.add_argument('--hip-drop', type=float, default=.06)
     p.add_argument('--scale-xy', type=float, default=1.0); p.add_argument('--scale-z', type=float, default=1.0)
     p.add_argument('--half-stride', type=float, default=.20); p.add_argument('--lift', type=float, default=.13); p.add_argument('--arm-swing', type=float, default=.30)
+    p.add_argument('--ankle-z', type=float, default=.158); p.add_argument('--stance-offset', type=float, default=.02)
     p.add_argument('--metal-scale', type=float, default=1.0)
     p.add_argument('--skip-render', action='store_true')
     return p.parse_args(sys.argv[sys.argv.index('--') + 1:])
@@ -115,15 +116,15 @@ def shade(meshes, classes, metal_scale=1.0):
         for poly in o.data.polygons: poly.use_smooth = cls != 'visor'
 
 
-def add_walk(rig, scene, col, hip_drop, sxy=1.0, sz=1.0, hs=.20, lift=.13, arm=.30):
+def add_walk(rig, scene, col, hip_drop, sxy=1.0, sz=1.0, hs=.20, lift=.13, arm=.30, ankle0=.158, stance_off=.02):
     action = bpy.data.actions.new('PREVIEW__NE_Walk_15F__NOT_APPROVED')
     rig.animation_data_create(); rig.animation_data.action = action
     hip_drop *= sz
-    ankle_z = .158 * sz          # ankle bone tail sits ~.158 above the sole bottom (boot mesh geometry)
+    ankle_z = ankle0 * sz          # ankle bone tail sits ~.158 above the sole bottom (boot mesh geometry)
     targets, iks = {}, {}
     for side, s in (('L', 1), ('R', -1)):
         t = bpy.data.objects.new('IK_Foot_Target_' + side, None); col.objects.link(t)
-        t.empty_display_type = 'SPHERE'; t.empty_display_size = .09; t.location = (.19 * s * sxy, 0, ankle_z + .02)
+        t.empty_display_type = 'SPHERE'; t.empty_display_size = .09; t.location = (.19 * s * sxy, 0, ankle_z + stance_off)
         ik = rig.pose.bones['Shin.' + side].constraints.new('IK'); ik.name = 'Foot_plant_IK'; ik.target = t
         ik.chain_count = 2; ik.use_stretch = False
         targets[side] = t; iks[side] = ik
@@ -139,9 +140,9 @@ def add_walk(rig, scene, col, hip_drop, sxy=1.0, sz=1.0, hs=.20, lift=.13, arm=.
         for side, off, sign in (('L', 0, 1), ('R', .5, -1)):
             q = ((f - 1) / 15.0 + off) % 1.0
             if q < .62:
-                y = (-hs + 2 * hs * q / .62) * sxy; z = ankle_z + .02
+                y = (-hs + 2 * hs * q / .62) * sxy; z = ankle_z + stance_off
             else:
-                tt = (q - .62) / .38; y = (hs - 2 * hs * tt) * sxy; z = ankle_z + .02 + lift * sz * math.sin(math.pi * tt)
+                tt = (q - .62) / .38; y = (hs - 2 * hs * tt) * sxy; z = ankle_z + stance_off + lift * sz * math.sin(math.pi * tt)
             targets[side].location = (sign * .19 * sxy, y, z); targets[side].keyframe_insert('location', frame=f)
             up = pb['UpperArm.' + side]; up.rotation_mode = 'XYZ'
             up.rotation_euler = (sign * arm * math.sin(phase + math.pi), 0, 0); up.keyframe_insert('rotation_euler', frame=f, group='UpperArm.' + side)
@@ -212,7 +213,7 @@ def main():
     for nm, at, en, size in (('Key', (-3, -4, 6), 900, 4), ('Fill', (3, -2, 3), 300, 3), ('Rim', (1, 3, 5), 1100, 3)):
         d = bpy.data.lights.new(nm, 'AREA'); d.energy = en; d.shape = 'DISK'; d.size = size
         o = bpy.data.objects.new(nm, d); cam_col.objects.link(o); o.parent = rigl; o.location = at; aim(o, (0, 0, 1.1))
-    action, targets, iks = add_walk(rig, scene, rig_col, a.hip_drop, a.scale_xy, a.scale_z, a.half_stride, a.lift, a.arm_swing)
+    action, targets, iks = add_walk(rig, scene, rig_col, a.hip_drop, a.scale_xy, a.scale_z, a.half_stride, a.lift, a.arm_swing, a.ankle_z, a.stance_offset)
     qa = level_boots(rig, scene, targets)
     scene['candidate_status'] = 'NOT APPROVED FOR RUNTIME'
     scene['frame_contract'] = '128x128 root 64,106 ground y107 (operator_2_5d_128)'

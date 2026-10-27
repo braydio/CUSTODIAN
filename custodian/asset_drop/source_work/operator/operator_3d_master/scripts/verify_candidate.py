@@ -19,7 +19,9 @@ def check(path,config):
     if bounds[0][up]<-.01 or bounds[1][up]>2.15:failures.append('Ground/height contract violated')
     if len(parts)!=rece['geometry_count']:failures.append('Part count manifest mismatch')
     if not any(np.max(m.visual.vertex_colors[:,:3].mean(axis=0))>200 for m in parts if hasattr(m.visual,'vertex_colors')):warnings.append('No bright color accent; verify amber visor manually')
-    names=list(scene.geometry.keys());req=['Head__visor_amber','Cloak__one_piece_folded_fabric','Boot_L__sole','Boot_R__sole','Torso__core']
+    names=list(scene.geometry.keys());v6=int(conf.get('model_version',1))>=6
+    req=['Head__visor_amber','Boot_L__sole','Boot_R__sole','Torso__core']+(['Head__hood_shell','Tabard__front_center','Tabard__back_center','Thigh_L__fabric','Thigh_R__fabric'] if v6 else ['Cloak__one_piece_folded_fabric'])
+    if v6 and any(n.startswith('Cloak__') for n in names):failures.append('v6 must be capeless but Cloak__ geometry exists')
     for prefix in req:
         if not any(s.startswith(prefix) for s in names):failures.append('Missing expected semantic mesh '+prefix)
     # open-drapery sheets intentionally need not be watertight.

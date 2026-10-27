@@ -1,0 +1,33 @@
+{
+ "contact_tolerance_m": 0.006,
+ "sides": {
+  "L": {
+   "planted_frames": 10,
+   "planted_mask": "PPPPPPPPPP.....",
+   "min_sole_z_over_loop_m": -0.0,
+   "max_sole_z_when_flat_m": 0.0,
+   "planted_body_frame_step_mean_m": 0.0602,
+   "planted_skate_max_dev_mm_per_frame": 0.0,
+   "swing_peak_clearance_m": 0.1694
+  },
+  "R": {
+   "planted_frames": 9,
+   "planted_mask": "PP......PPPPPPP",
+   "min_sole_z_over_loop_m": -0.0,
+   "max_sole_z_when_flat_m": 0.0,
+   "planted_body_frame_step_mean_m": 0.0602,
+   "planted_skate_max_dev_mm_per_frame": 0.0,
+   "swing_peak_clearance_m": 0.1668
+  }
+ },
+ "alternation": {
+  "left_planted_when_right_swing_frames": 11,
+  "both_planted_frames": 4
+ },
+ "loop_seam": {
+  "f15_to_f01_max_foot_delta_m": 0.0982,
+  "inner_step_max_m": 0.0982,
+  "inner_step_mean_m": 0.0849
+ },
+ "hips_z_range_m": 0.0317
+}
