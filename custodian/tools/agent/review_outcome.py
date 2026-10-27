@@ -153,14 +153,14 @@ def target_receipt_passed(target_text: str | None, review_workstream: str) -> bo
 
 def _legacy_field_values(body: str, field: str) -> list[str]:
     """Read legacy review fields without treating unrelated prose as a receipt."""
-    return re.findall(rf"(?m)^\\s*-\\s*{re.escape(field)}:\\s*([^\\r\\n]+)$", body)
+    return re.findall(rf"(?m)^\s*-\s*{re.escape(field)}:\s*([^\r\n]+)$", body)
 
 
 def _legacy_pin(values: list[str]) -> set[str] | None:
     """Extract the exact abbreviated/full Git token from each recorded pin."""
     pins: set[str] = set()
     for value in values:
-        match = re.fullmatch(r"`?([0-9a-f]{7,64})`?(?:\\s+\\([^\\r\\n]*\\))?", value.strip())
+        match = re.fullmatch(r"`?([0-9a-f]{7,64})`?(?:\s+\([^\r\n]*\))?", value.strip())
         if match is None:
             return None
         pins.add(match.group(1))
@@ -180,12 +180,12 @@ def legacy_target_passed(target_text: str | None, review_workstream: str | None 
     """
     if not target_text:
         return False
-    sections = list(re.finditer(r"(?m)^## Independent Review[^\\r\\n]*$", target_text))
+    sections = list(re.finditer(r"(?m)^## Independent Review[^\r\n]*$", target_text))
     if len(sections) == 1:
         start = sections[0].end()
         following = _NEXT_SECTION_RE.search(target_text, start)
         body = target_text[start:start + following.start() if following else len(target_text)]
-        statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$", body)
+        statuses = re.findall(r"(?m)^\s*-\s*Status:\s*`?([A-Za-z_]+)`?\s*$", body)
         return bool(statuses) and all(item in {"passed", "pass"} for item in statuses)
 
     if len(sections) != 2 or not review_workstream or not review_text:
@@ -206,14 +206,14 @@ def legacy_target_passed(target_text: str | None, review_workstream: str | None 
     has_zero_blockers = False
     has_zero_gaps = False
     for body in bodies:
-        statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$", body)
+        statuses = re.findall(r"(?m)^\s*-\s*Status:\s*`?([A-Za-z_]+)`?\s*$", body)
         if len(statuses) != 1 or statuses[0] not in {"passed", "pass"}:
             return False
         if any(value.strip("` ").lower() not in {"passed", "pass"}
                for value in _legacy_field_values(body, "Result")):
             return False
         for value in _legacy_field_values(body, "Findings"):
-            if not re.match(r"(?i)^none(?:\\s*;|\\s*$)", value.strip("` ")):
+            if not re.match(r"(?i)^none(?:\s*;|\s*$)", value.strip("` ")):
                 return False
 
         names = _legacy_field_values(body, "Review workstream")
@@ -252,10 +252,10 @@ def legacy_target_passed(target_text: str | None, review_workstream: str | None 
         return False
     reviewed_main = next(iter(reviewed_mains))
     implementation_commit = next(iter(implementation_commits))
-    review_sections = list(re.finditer(r"(?m)^## Independent Review[^\\r\\n]*$", review_text))
+    review_sections = list(re.finditer(r"(?m)^## Independent Review[^\r\n]*$", review_text))
     if len(review_sections) != 1:
         return False
-    review_statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$",
+    review_statuses = re.findall(r"(?m)^\s*-\s*Status:\s*`?([A-Za-z_]+)`?\s*$",
                                  review_text[review_sections[0].end():])
     if review_statuses != ["passed"]:
         return False
