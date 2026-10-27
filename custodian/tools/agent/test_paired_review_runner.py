@@ -964,6 +964,114 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertFalse((fixture["run_dir"] / "coordinator-validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
 
+
+    def _synthetic_failed_procession_child(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture, reports=False)
+        self._make_host_recovery_worktree_clean(fixture)
+        run_dir = fixture["run_dir"]
+        metadata_path = run_dir / "metadata.json"
+        original = json.loads(metadata_path.read_text())
+        original["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(original, sort_keys=True) + "\n")
+        original_manifest = runner._file_manifest(run_dir)
+        child_dir = run_dir / "continuation-01"
+        attempt_dir = child_dir / "host-validation/attempt-01"
+        attempt_dir.mkdir(parents=True)
+        (attempt_dir / "validation.json").write_text('{"passed":false}\n')
+        (attempt_dir / "coordinator-validation.json").write_text('{"failed":true}\n')
+        attempt_manifest = runner._file_manifest(attempt_dir)
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "run_id": fixture["run_id"],
+            "workstream": "review-sample", "phase": "host_validation_failed",
+            "original_run_dir": str(run_dir),
+            "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
+            "active_packet_path": fixture["active"],
+            "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": fixture["reviewed_main"],
+            "original_run_manifest": original_manifest,
+            "run_evidence_sha256": original_manifest,
+            "reviewer_launch_count": 0,
+            "host_validation_attempts": [{
+                "attempt": 1, "status": "failed",
+                "manifest": attempt_manifest,
+                "manifest_sha256": runner._manifest_digest(attempt_manifest),
+                "report_sha256": attempt_manifest["validation.json"],
+                "metadata_sha256": attempt_manifest["coordinator-validation.json"],
+            }],
+        }
+        (child_dir / "metadata.json").write_text(json.dumps(child, sort_keys=True) + "\n")
+        return fixture, child, child_dir
+
+    def test_exact_failed_prevalidation_child_plans_second_attempt_read_only(self):
+        fixture, child, child_dir = self._synthetic_failed_procession_child()
+        repo, run_dir = fixture["repo"], fixture["run_dir"]
+        before = runner._file_manifest(run_dir)
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test"}}
+        with (patch.object(runner, "_PROCESSION_RETRY_REVIEW", "review-sample"),
+              patch.object(runner, "_PROCESSION_RETRY_RUN", fixture["run_id"]),
+              patch.object(runner, "_process_owns_worktree", return_value=False),
+              patch.object(runner, "_failed_host_validation_retry_state",
+                           return_value=(child, 2)) as verify_retry,
+              patch.object(runner, "resolve_target_implementation_commit",
+                           return_value=(fixture["reviewed_main"], None)),
+              patch.object(host_validation, "resolve_validation_source_span",
+                           return_value=span)):
+            plan = runner.plan_host_validation_recovery(
+                repo, "review-sample", fixture["run_id"],
+            )
+            self.assertEqual(plan["host_validation_state"], "pre_validation_failed_retry")
+            self.assertEqual(plan["host_validation_attempt"], 2)
+            self.assertEqual(plan["retry_budget"], runner.FAILED_HOST_VALIDATION_MAX_RETRIES)
+            self.assertTrue(plan["requires_fresh_host_validation"])
+            self.assertFalse(plan["will_create_claim"])
+            self.assertFalse(plan["will_modify_original_run_files"])
+            self.assertEqual(plan["existing_continuation_manifest"], runner._file_manifest(child_dir))
+            verify_retry.assert_called_once()
+        self.assertEqual(before, runner._file_manifest(run_dir))
+
+    def test_exact_failed_prevalidation_child_refuses_forged_state_and_extra_files(self):
+        fixture, child, child_dir = self._synthetic_failed_procession_child()
+        repo, run_dir = fixture["repo"], fixture["run_dir"]
+        original = json.loads((run_dir / "metadata.json").read_text())
+        workstream, run_id = "review-sample", fixture["run_id"]
+        with (patch.object(runner, "_PROCESSION_RETRY_REVIEW", workstream),
+              patch.object(runner, "_PROCESSION_RETRY_RUN", run_id),
+              patch.object(runner, "_process_owns_worktree", return_value=False),
+              patch.object(runner, "_failed_host_validation_retry_state",
+                           return_value=(child, 2)) as verify_retry):
+            cases = (
+                ("reviewer_launch_count", 1),
+                ("phase", "prepared"),
+                ("reviewed_main", "0" * 40),
+                ("run_evidence_sha256", {}),
+                ("branch", "agent/foreign"),
+            )
+            for key, bad in cases:
+                with self.subTest(key=key):
+                    altered = {**child, key: bad}
+                    (child_dir / "metadata.json").write_text(json.dumps(altered) + "\n")
+                    with self.assertRaises(runner.RunnerError):
+                        runner._authenticated_procession_prevalidation_retry(
+                            repo, run_dir, original, workstream, run_id, fixture["reviewed_main"],
+                        )
+            (child_dir / "metadata.json").write_text(json.dumps(child) + "\n")
+            extra = child_dir / "unexpected.txt"
+            extra.write_text("untrusted\n")
+            with self.assertRaisesRegex(runner.RunnerError, "unexpected continuation files"):
+                runner._authenticated_procession_prevalidation_retry(
+                    repo, run_dir, original, workstream, run_id, fixture["reviewed_main"],
+                )
+            extra.unlink()
+            with self.assertRaisesRegex(runner.RunnerError, "authorized historical identity"):
+                runner._authenticated_procession_prevalidation_retry(
+                    repo, run_dir, original, "review-unrelated", run_id, fixture["reviewed_main"],
+                )
+            verify_retry.assert_not_called()
+
     def _prepare_missing_prevalidation_checkout(self, fixture):
         self._prepare_host_recovery(fixture, reports=False)
         self._make_host_recovery_worktree_clean(fixture)
