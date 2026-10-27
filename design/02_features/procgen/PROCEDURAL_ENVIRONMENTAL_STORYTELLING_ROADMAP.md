@@ -13,6 +13,18 @@ The user endorsed continued development of three procedurally composed styles: *
 
 **Candidate numbers for validation, not final locks:** 16×12 / 12×12 / 12×9 native 32px cells; 0–3 sites per eligible generated local region in lieu of adding another room quota; 24-cell spacing if possible; max one False Seam; three unregistered 192×192-pixel Asset V2 world_prop families containing 27 required static and 3 optional four-frame 8-FPS animated states. All artwork remains unmade. No implementation action, queue claim, asset request or timeline is authorized by this roadmap.
 
+## ES-1 geography and interaction source review (2026-10-27)
+
+**Design-review record:** [ES-1 Existing Interaction and Geography](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md). Source-audited at main@ce2772f7; **recommended option B pending human decision**, not implementation authorization.
+
+**Preferred physical identity:** treat a tableau as a *region-local child of an existing F02 intent STORY_ROOM reservation*, deriving its stable identity from the actual intent node ID, accepted generation seed, grammar version, and optional verified F15 B1/B2 parent Location. **Do not** register a new F15 Location per tableau. F15-B2 remains data-only; current F02 contract-world generation may have no F15 binding, which must remain honestly transient.
+
+**Important discovered mismatch:** `StoryRoomGeometryStamper` stamps `worldgen_reserved_regions[kind=story_room]`, while `StoryRoomPlacer` independently emits metadata-only markers from unrelated floor cell candidates. These currently have **no canonical join by intent node ID**. Resolve that mismatch before ES-2; do not simply add three templates to the independent marker pass. The queued D2 authored-claim registry excludes intent reservations, so it is not a shortcut or a permitted expansion.
+
+**Preferred interaction:** the existing Operator `interactable` group, max range 84px, and `WorldReadoutInteractable` 72px, repeatable/short HUD readouts (propose two per pilot). Its nearest-only selector lacks LOS/semantic priority; place readouts away from gates and behind-wall ambiguity. Do not adopt authored `WorldEvidenceInteractable2D`'s separate overlay/recovery ledger or hub-specific authored event persistence for ordinary non-collectible evidence.
+
+**Revised ES-1 implementation dependency:** after user approval, first normalize the authoritative F02 story room/reserved rectangle join and deterministic skip/identity contract. Only then create a physical Refused Passage pilot. Existing layout/art/density numbers remain provisional until real camera/route proof.
+
 ## Ownership and dependencies
 
 1. **Canon:** Reciprocal Continuity Doctrine and Procedural Lore Generation. Provenance concerns evidence, not physics; anomalous import claims require explicit eligible world metadata.
