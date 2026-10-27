@@ -195,7 +195,7 @@ def legacy_target_passed(target_text: str | None, review_workstream: str | None 
     for index, match in enumerate(sections):
         start = match.end()
         boundary = _NEXT_SECTION_RE.search(target_text, start)
-        end = boundary.start() + start if boundary else len(target_text)
+        end = boundary.start() if boundary else len(target_text)
         bodies.append(target_text[start:end])
 
     reviewed_mains: set[str] = set()
