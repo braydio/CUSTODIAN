@@ -1,0 +1,266 @@
+{
+ "input": "model(3).meshy",
+ "input_sha256": "c7994d921c68be74e5b222ebf2f4ee4d4595d64db2df56e1a42ea6d1a838a08e",
+ "name": "meshy-002_pipeline_run",
+ "status": "IMPORTED_REFERENCE_CANDIDATE_NOT_APPROVED",
+ "params": {
+  "elev_deg": 45.0,
+  "px_per_m": 50.0,
+  "target_S_height_px": 85.0
+ },
+ "container": "meshy_v1 -> glb (tag NOT verified)",
+ "container_sha256": "e418978c13199b3f96c79388d27b4357fd821cf6665eaece5f0b7229fa5c1bf7",
+ "extensions_required": [
+  "KHR_mesh_quantization",
+  "EXT_meshopt_compression",
+  "EXT_texture_webp"
+ ],
+ "meshopt": "decoded locally",
+ "decoded_sha256": "b9c2f68dfaa555e259a38b504698cfb44d86272683fea274ed03e948c6f33ad6",
+ "asset": {
+  "raw_height_m": 1.9026,
+  "applied_scale": 1.10542,
+  "normalised_height_m": 2.1032,
+  "normalised_dims_m": [
+   0.9157,
+   0.5224,
+   2.1032
+  ],
+  "scale_search_[scale,S_height_px]": [
+   [
+    1.0,
+    76
+   ],
+   [
+    1.11842,
+    86
+   ],
+   [
+    1.10542,
+    85
+   ]
+  ],
+  "verts": 660202,
+  "tris": 1251670,
+  "uv_layers": [
+   "UVMap"
+  ],
+  "images": [
+   [
+    "Image_0",
+    [
+     4096,
+     4096
+    ]
+   ],
+   [
+    "Image_1",
+    [
+     2048,
+     2048
+    ]
+   ],
+   [
+    "Image_2",
+    [
+     4096,
+     4096
+    ]
+   ]
+  ]
+ },
+ "compare": {
+  "note": "IoU is triage only; no approval, no best selection",
+  "per_direction": {
+   "N": {
+    "asset": {
+     "bbox_xyxy": [
+      41,
+      27,
+      86,
+      113
+     ],
+     "height_px": 87,
+     "width_px": 46
+    },
+    "source": {
+     "bbox_xyxy": [
+      41,
+      24,
+      86,
+      107
+     ],
+     "height_px": 84,
+     "width_px": 46
+    },
+    "silhouette_iou": 0.75
+   },
+   "NE": {
+    "asset": {
+     "bbox_xyxy": [
+      47,
+      29,
+      82,
+      116
+     ],
+     "height_px": 88,
+     "width_px": 36
+    },
+    "source": {
+     "bbox_xyxy": [
+      44,
+      22,
+      84,
+      106
+     ],
+     "height_px": 85,
+     "width_px": 41
+    },
+    "silhouette_iou": 0.614
+   },
+   "E": {
+    "asset": {
+     "bbox_xyxy": [
+      51,
+      30,
+      76,
+      120
+     ],
+     "height_px": 91,
+     "width_px": 26
+    },
+    "source": {
+     "bbox_xyxy": [
+      47,
+      20,
+      79,
+      106
+     ],
+     "height_px": 87,
+     "width_px": 33
+    },
+    "silhouette_iou": 0.63
+   },
+   "SE": {
+    "asset": {
+     "bbox_xyxy": [
+      43,
+      29,
+      84,
+      117
+     ],
+     "height_px": 89,
+     "width_px": 42
+    },
+    "source": {
+     "bbox_xyxy": [
+      41,
+      21,
+      81,
+      106
+     ],
+     "height_px": 86,
+     "width_px": 41
+    },
+    "silhouette_iou": 0.678
+   },
+   "S": {
+    "asset": {
+     "bbox_xyxy": [
+      41,
+      29,
+      86,
+      113
+     ],
+     "height_px": 85,
+     "width_px": 46
+    },
+    "source": {
+     "bbox_xyxy": [
+      39,
+      25,
+      89,
+      108
+     ],
+     "height_px": 84,
+     "width_px": 51
+    },
+    "silhouette_iou": 0.75
+   },
+   "SW": {
+    "asset": {
+     "bbox_xyxy": [
+      45,
+      30,
+      80,
+      119
+     ],
+     "height_px": 90,
+     "width_px": 36
+    },
+    "source": {
+     "bbox_xyxy": [
+      46,
+      21,
+      86,
+      106
+     ],
+     "height_px": 86,
+     "width_px": 41
+    },
+    "silhouette_iou": 0.614
+   },
+   "W": {
+    "asset": {
+     "bbox_xyxy": [
+      51,
+      30,
+      76,
+      119
+     ],
+     "height_px": 90,
+     "width_px": 26
+    },
+    "source": {
+     "bbox_xyxy": [
+      48,
+      20,
+      80,
+      106
+     ],
+     "height_px": 87,
+     "width_px": 33
+    },
+    "silhouette_iou": 0.623
+   },
+   "NW": {
+    "asset": {
+     "bbox_xyxy": [
+      43,
+      29,
+      84,
+      116
+     ],
+     "height_px": 88,
+     "width_px": 42
+    },
+    "source": {
+     "bbox_xyxy": [
+      43,
+      22,
+      83,
+      106
+     ],
+     "height_px": 85,
+     "width_px": 41
+    },
+    "silhouette_iou": 0.684
+   }
+  },
+  "mean_iou": 0.668,
+  "asset_height_px_range": [
+   85,
+   91
+  ]
+ }
+}

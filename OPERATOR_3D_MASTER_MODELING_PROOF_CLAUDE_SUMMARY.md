@@ -37,3 +37,6 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 
 ## meshy-002 saved (textured)
 - `model(3).meshy` reconstructed with the user's script (user confirmed Meshy permission; only copies after account deletion), decoded, imported in Blender (UVs + 3 textures), rendered 8-dir at 45°/50 px/m. Saved at `.../operator_3d_master/meshy_candidates/meshy-002_textured/`. Not approved; no runtime change. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## Comparison + one-command pipeline
+- `scripts/asset_pipeline/run_asset.py` (uv inline deps; see its README): .meshy/GLB -> decode -> Blender ground+common scale -> 8-dir 45°/50 px/m renders -> sheet vs locked canonical. Ran on model(3): scale 1.105, heights 85–91 px, mean IoU 0.668 (exp-008 at 45°: 0.610, not the same height basis). Output kept at `meshy_candidates/meshy-002_textured/normalized_45deg_85px/`. No approval/selection. Return to clean `~/Projects/CUSTODIAN` on `main`.
