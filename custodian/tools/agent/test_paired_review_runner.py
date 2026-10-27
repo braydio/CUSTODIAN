@@ -4672,6 +4672,57 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 original.replace(old, b'        base_main = "untrusted"', 1)
             )
 
+    def test_procession_fixture_replay_uses_disposable_checkout_only(self):
+        path = host_validation._PROCESSION_PREARCHIVE_FIXTURE_TEST
+        fixture = """class HistoricalFixtures:
+    def _build_procession_scope_approval_history(self):
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+
+    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review(self):
+        pass
+"""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "source"
+            root.mkdir()
+            subprocess.run(["git", "init", "-q", "-b", "main"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+            source_file = root / path
+            source_file.parent.mkdir(parents=True)
+            source_file.write_text(fixture, encoding="utf-8")
+            subprocess.run(["git", "add", "--", path], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture baseline"], cwd=root, check=True)
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root,
+                check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            blob = subprocess.run(
+                ["git", "rev-parse", f"HEAD:{path}"], cwd=root,
+                check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            with patch.object(host_validation, "_PROCESSION_RECOVERY_MERGE", commit), \\
+                 patch.object(host_validation, "_PROCESSION_PREARCHIVE_FIXTURE_BLOB", blob):
+                with host_validation._procession_prearchive_fixture_checkout(
+                    root, commit, host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                    host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                ) as (checkout, evidence):
+                    self.assertNotEqual(checkout, root)
+                    self.assertEqual(evidence["original_blob"], blob)
+                    self.assertEqual(evidence["pre_archive_base"],
+                                     host_validation._PROCESSION_PREARCHIVE_FIXTURE_BASE)
+                    self.assertEqual((checkout / path).read_bytes(),
+                                     host_validation._procession_prearchive_fixture_bytes(
+                                         fixture.encode("utf-8")))
+                    self.assertEqual(source_file.read_text(encoding="utf-8"), fixture)
+            self.assertEqual(source_file.read_text(encoding="utf-8"), fixture)
+            self.assertEqual(subprocess.run(
+                ["git", "status", "--porcelain"], cwd=root,
+                capture_output=True, text=True, check=True,
+            ).stdout.strip(), "")
+
     def test_procession_host_fixture_override_refuses_wrong_source_mode(self):
         workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
         target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
