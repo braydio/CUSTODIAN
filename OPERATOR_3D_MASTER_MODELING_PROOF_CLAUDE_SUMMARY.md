@@ -31,3 +31,6 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 - Geometry gate passed: top-plane/crown visible, shoulder plates remain oversized (blue lobes in overlay).
 - exp-008: `shoulder_plate_scale` 0.55 about shoulder joint (gated; exp-007 regenerates byte-identical). Plate span 1.336→1.068 m (0.644→0.515 of height). Height, belt, hood, legs unchanged; part count/QA identical except asset hash. Walk/IK/boots unchanged (planted dev 0.0, reach err 0.0). Mean IoU 0.610 at 45°.
 - Open: arms/joint beads now read thin and exposed; tunic/belt/hood/gold-dotted trim/chrome highlight faults unchanged. No select-best. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## meshy-001 saved
+- User's Meshy export saved as first imported candidate at `custodian/asset_drop/source_work/operator/operator_3d_master/meshy_candidates/meshy-001/` (compressed + decoded GLB, 8-dir 128/512 clay renders, scripts, README, SHA256SUMS). Untextured/unrigged; user is producing textures. Not approved, no runtime change. Return to clean `~/Projects/CUSTODIAN` on `main`.

@@ -1,0 +1,9 @@
+# meshy-001 — first real (imported) Operator 3D candidate
+
+**Status: IMPORTED_REFERENCE_CANDIDATE — not approved, not canonical, not a runtime asset.** Texturing is in progress by the user.
+
+- **Provenance:** Meshy.ai generation, user-exported 2026-10-27 as `model.meshy` (proprietary wrapper, not readable; same size as the GLB + 48 bytes) and `operator_meshy_preview_meshopt_compressed.glb` (gltfpack 0.25, EXT_meshopt_compression + KHR_mesh_quantization). Hashes in `SHA256SUMS.txt`. The `.meshy` file itself is NOT stored here (the compressed GLB carries the same geometry); the user keeps the original.
+- **Contents:** one mesh, 1,042,626 verts / 1,251,670 tris, ~1.90 m tall (Z-up after Blender import), normals only — **no UVs, vertex colours or textures yet**. Untextured, unrigged, posed mid-stride (not an idle/T pose). Faces -Y (S view shows the front).
+- **`operator_meshy_decoded.glb`:** the same data rewritten uncompressed by `scripts/unmeshopt.mjs` using the local three.js meshopt WASM decoder (Blender 5.2 on the dev box lacks its meshopt bridge library). Geometry is lossless relative to the source; use `node scripts/unmeshopt.mjs IN.glb OUT.glb` (needs `scripts/meshopt_decoder.mjs`, MIT three.js example).
+- **`renders/`:** grey-clay renders, 8 directions at 512 px and native 128 px, using the working projection (45° above horizon, 50 px/m ortho, root (64,106)); `scripts/rend.py` is the exact script (`blender -b --python rend.py -- decoded.glb`). Height is NOT normalised to the 84–88 px target.
+- **Relation to experiments:** procedural `exp-001..008` are unchanged and independent. No `select-best`, no manifest/SpriteFrames/runtime change, no FPS claim. A rig, UVs/textures and a retopo/decimation pass (1.25M tris is far beyond a sprite-source need) are all still to do.
