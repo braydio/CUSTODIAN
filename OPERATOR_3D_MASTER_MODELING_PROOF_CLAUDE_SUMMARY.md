@@ -17,3 +17,6 @@ Hood is a tall spire/cone, not the source's rounded cowl; pauldron plates still 
 
 ## Evidence
 Dropbox: /CUSTODIAN/visual_review/operator-3d-master/20261027T110803Z/REVIEW_MANIFEST.json (cleanup after review: command in the manifest). Local: `review_pack/`, `experiments/exp-006/`. Tooling: `TOOLING_SETUP_RECEIPT.md`. Cadence 15 fps / 67 ms GIF is provisional, not canonical.
+
+## exp-007 (hood-only), frozen, visual approval pending
+Only `Head__hood_shell` vertices differ from exp-006 (verified per part); `hood_profile_rings` override added with exp-006 default (exp-002..006 regenerate byte-identical). Rounded dome profile from TASK_007 used unadjusted. Mean IoU 0.648 vs 0.637 (triage only). Cloak__ = 0; soles 0.0 m planted; walk unchanged. Dropbox: /CUSTODIAN/visual_review/operator-3d-master/20261027T115104Z/REVIEW_MANIFEST.json (exp-006 walk GIF stays in 20261027T110803Z). Open and unchanged: chrome pauldrons, thin limbs, dotted gold trim, flat tunic, stiff walk, world-space skating not proven (zero body-frame variation only).

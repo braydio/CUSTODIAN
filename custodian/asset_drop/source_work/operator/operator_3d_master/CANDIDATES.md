@@ -12,6 +12,7 @@ experiment; each experiment dir is immutable and frozen (`blender_proof_frozen.j
 | exp-004 | stocky contrast; overshoots width, leaning reject | `579d5c4b0c0af267` | `c2889c1b306ddced` | 0.576 |
 | exp-005 | RECOMMENDED FOR REVIEW: 003 + stronger walk + hood ring | `1277b42f585d45ae` | `23cf2b5d8d145337` | 0.678 |
 | exp-006 | capeless revision; visual approval pending | `33160633a98b2630` | `5a75edef511dbf8f` | 0.637 |
+| exp-007 | hood-only rounded cowl on exp-006; visual approval pending | `7374dc804bdd5719` | `d70b79b947085196` | 0.648 |
 
 IoU is triage only: it says nothing about gold-edge material language, hood shape or recognition.
 `config/shape_v002.json` gained a `blender` block after exp-002 ran; `exp-002/shape.json` (the true snapshot) is

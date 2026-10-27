@@ -82,6 +82,7 @@ def build(add, p):
     # ---- head: forward-peaked fabric hood around a recessed, dark face; no helmet shell, no ring ----
     rings = [(1.50, .30, .25, .05), (1.60, .27, .235, .04), (1.72, .225, .215, .02), (1.84, .19, .195, -.01),
              (1.95, .14, .155, -.05), (2.03, .07, .09, -.10), (2.075, .012, .03, -.155)]
+    rings = [tuple(r) for r in p.get('hood_profile_rings', rings)]   # optional override (exp-007+); default = exp-006 profile
     add('Head__hood_shell', hood_shell(rings, -.6, math.pi + .6), 'cloak', 'Head')
     add('Head__cowl_lower', loft_rings([(1.575, .245, .195, .043), (1.68, .24, .21, .026), (1.765, .195, .18, .055)]), 'cloak', 'Head')
     add('Head__face_recess', ellipsoid([0, -.045, 1.775], [.15, .15, .19], 3), 'armor_dark', 'Head')
