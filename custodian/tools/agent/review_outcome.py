@@ -160,7 +160,7 @@ def _legacy_pin(values: list[str]) -> set[str] | None:
     """Extract the exact abbreviated/full Git token from each recorded pin."""
     pins: set[str] = set()
     for value in values:
-        match = re.fullmatch(r"`?([0-9a-f]{7,64})`?(?:\s+\([^\r\n]*\))?", value.strip())
+        match = re.match(r"^`?([0-9a-f]{7,64})`?(?=\s|\.?$)", value.strip())
         if match is None:
             return None
         pins.add(match.group(1))
