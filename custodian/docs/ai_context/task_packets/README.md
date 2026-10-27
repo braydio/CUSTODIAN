@@ -143,7 +143,6 @@ packet and its paired review, not as chat-only downloads.
 - `HUB_CAMPAIGN_RETURN.md` — Close the first CampaignRegion → persistent Hub return: apply one valid CampaignOutcome to persistent Hub state exactly once, release the disposable Campaign...
 - `HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Close the first real Campaign loop as one reviewed integration: boot → full Awakening → persistent Hub → Forum Contract → optional Twin roundtrip → Muster/Po...
 - `HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Make Muster Court → ordinary Continuity Port the real campaign departure path, consuming the accepted/prewarmed first Contract without duplicate generation a...
-- `HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md` — Sepulcher grave attestation + pale growth; deliver one playable, bounded event slice.
 - `MAPPER_VALIDATION_FEEDBACK_V1.md` — Close validation/save feedback loop with actionable issues and honest statuses across the mapper family.
 - `NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Create one distinctive Broken Warrant hostile archetype with real melee/reactions/death/corpse/loot and no duplicate Enemy mechanics.
 - `NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Create one real M-7 escort unit as a distinct actor skin/profile over reviewed CombatDrone/AlliedInfantryDroid, with manager-owned command identity.
@@ -232,7 +231,6 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_HUB_CAMPAIGN_RETURN.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_FIRST_SET_INTEGRATION_CLOSEOUT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
 - `REVIEW_HUB_MUSTER_CONTINUITY_PORT_DEPLOYMENT.md` — Independently verify the landed implementation against its archived packet and live runtime behavior.
-- `REVIEW_HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
 - `REVIEW_MAPPER_VALIDATION_FEEDBACK_V1.md` — Independently verify the landed result of close validation/save feedback loop with actionable issues and honest statuses across the mapper family.
 - `REVIEW_NPA_SHOWCASE_BROKEN_WARRANT_ACTOR.md` — Independently verify landed npa-showcase-broken-warrant-actor using the actual archived implementation acceptance and real runtime evidence.
@@ -370,6 +368,10 @@ Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custo
 - `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING.md` — paired fresh-context review found blocking R0-01: status/startup hashed all 134,037 ignored root files; cycle 1 correction removes that scan and bounds checks to incoming paths.
 - `archived/PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — correction cycle 1 passed fresh paired review: R0-01 fixed; 2,048 unrelated ignored files synchronized in 0.09s, collision and sparse-overlay guards remain fail-closed.
 - `archived/REVIEW_PERSISTENT_CHECKOUT_SYNC_HARDENING_REVIEW_CORRECTIONS_1.md` — paired fresh-context review passed; R0-01 fixed, no cycle-2 correction required.
+
+### Completed Sepulcher Grave Evidence Review
+
+- `archived/HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md` / `archived/REVIEW_HUB_SEPULCHER_GRAVE_EVIDENCE_V1.md` — fresh-context independent review passed with zero blocking defects or material evidence gaps; all four focused Hub validations passed. The grave-resolution successor is next.
 
 ### Active Hub First-Set / First Campaign Loop Series
 
