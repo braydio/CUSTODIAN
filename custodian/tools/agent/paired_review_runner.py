@@ -3139,7 +3139,7 @@ def _authenticated_procession_prevalidation_retry(
             or _process_owns_worktree(worktree)):
         raise RunnerError("pre-validation retry worktree is missing, foreign, or actively owned")
     child = _continuation_metadata(child_dir / "metadata.json")
-    expected_packet = f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+    expected_packet = f"{PACKET_ROOT}/{workstream.upper().replace(chr(45), chr(95))}.md"
     if (child.get("schema") != CONTINUATION_SCHEMA
             or child.get("phase") != "host_validation_failed"
             or child.get("original_run_dir") != str(run_dir)
