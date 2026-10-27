@@ -279,6 +279,20 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One additional interrupted-merge shape is accepted only when Git reproduces a
+single conflict in `task_packets/README.md`'s managed Ready/Auto block for the
+exact packet archived by the first parent. The committed merge must match
+`git merge-tree --write-tree` everywhere else; its sole conflict hunk must be
+the generated row for that packet. The very next first-parent commit must remove
+only that hunk from the regular README, with all other tree entries unchanged.
+Later linear commits are checked individually and may touch only explicit
+Work-surface file paths, that archived packet, its expected root summary, or a
+managed-index-only README update. The final README must pass
+`task_packet_index.py`; any other conflict, delayed/altered repair, unrelated
+descendant, or stale generated block remains blocked. Bare Work-surface paths
+are recognized only as explicit path tokens, and traversal or absolute paths
+are rejected.
+
 One exact historical compatibility case binds the host-import recovery run
 `20261020T200652Z-2fd156ce23d0` to its two conflict interruptions and resume:
 `dbcf8aec4eb09264b60bea9d26c99f235022efb5` and
@@ -760,6 +774,13 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   applies this identically in `status`, `audit` and `claim`. Only the explicitly linked
   next bounded correction (`<root>-review-corrections-<N+1>`, with `Findings addressed`
   IDs the review recorded) may consume a concluded `findings` review.
+  Historical pre-outcome packets with exactly two duplicate `## Independent Review`
+  sections may still count as a flat PASS, but only when both sections pass, one
+  explicitly matches the expected review workstream, their pinned target/main
+  evidence agrees with the separate archived passing review, reviewer context
+  and provenance are fresh/independent, and recorded blocking defects/material
+  gaps are both zero. Missing or contradictory evidence still fails closed;
+  this does not relax canonical receipt rules for new reviews.
 - **Nonpassing closeout.** `paired_review_runner.coordinator_finish_nonpassing_review`
   lands a findings/human_required review without ever touching the reviewed target
   packet: it must stay byte-identical to its pinned baseline and gains no receipt. Only

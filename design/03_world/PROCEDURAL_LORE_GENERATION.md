@@ -270,6 +270,12 @@ Avoid pairs where the false interpretation is just a paraphrase of the truth. Wr
 
 ---
 
+## Approved-for-refinement procedural evidence tableaux (2026-10-27)
+
+The active design extension [Procedural Environmental Storytelling V1](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md) describes three **procedurally composable, visually readable** causal-tableau grammars: **The Refused Passage** (denied evacuation passage), **The Borrowed Hearth** (domestic reuse of hazardous machinery), and **The False Seam** (physical/record contradiction). Its [roadmap](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md) reserves physical integration, frequency, art and packet authorization for later human review. They are not implemented by documenting them.
+
+All three instantiate this document's rule: **original function → rupture → post-collapse reuse → incomplete/contradictory evidence**, not standalone random props. The existing continuity_anomaly, continuity_origin, source_integrity, provenance_status, surviving_truth and false_local_interpretation vocabulary should inform clue selection without asserting cosmic answers. The seven canonical polities in [Faction Overview](factions/_FACTION_OVERVIEW.md) supersede the historical six-roster **Present Ideology** examples and associated faction cue list below, which remain pre-migration design references. FI-001/FI-002 or a verified compatibility mapping must precede new polity-conditioned runtime tableaux; the Legacy Interdiction Mesh stays a hazard layer. The B2 semantic geography sidecar is data-only and does not create these sites.
+
 ## Room-Level Lore Hooks
 
 Rooms do not need full unique stories. They need strong evidence hooks.
