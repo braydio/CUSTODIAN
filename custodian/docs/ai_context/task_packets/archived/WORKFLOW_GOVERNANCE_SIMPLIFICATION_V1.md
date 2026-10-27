@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `workflow-governance-simplification-v1`
-- Status: `complete`
+- Status: `blocked`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -44,31 +44,31 @@
 
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `yes`
-- Completion boundary satisfied: `yes`
-- Acceptance satisfied: `yes`
+- Completion boundary satisfied: `no`
+- Acceptance satisfied: `no`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: The active guidance, context primer, authoring template, and review policy now define Express/Standard/Protected defaults; Standard Review:none is validated by the current contract, while missing Protected Review:auto pairing is rejected. Focused contract and authoring tests, targeted packet preflight, index check, and AI-context checks passed. Existing dispatcher and review-enforcement code and preexisting packet metadata were unchanged.
+- Evidence: The three-path guidance and Standard/Protected pairing behavior are implemented and focused validation is green. Normal validated landing is not complete: `workstream.py finish` stopped on an origin/main merge conflict, and after the conflict was resolved it rejected the branch because the canonical archive transition commit `6040cb725b4ee16f602c2848ffd263b0bf4cf006` is no longer the current tip `9685d09e725121f15e25908f56a26278e9a69c83`. The supported conflict reconciliation only accepts generated managed-index changes; this conflict was in the active packet catalog outside that region. No landing or final main SHA is claimed.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success`
-- Friction severity: `low`
-- What went wrong: Initial fixture probe duplicated helper-supplied metadata and was corrected. The optional historical archive-boundary diagnostic also reports 18 existing references in unrelated, unchanged files.
-- Root cause / contributing factors: The test fixture reused a packet helper that already supplies Dispatch and Review fields; archive lifecycle correctly changes the managed queue projection. Historical-boundary findings are outside this work surface.
-- Prevention / pipeline improvement: Reuse packet helper metadata by replacement; regenerate and verify the index after archival. Track the pre-existing archive-boundary references in their owning tasks.
-- Tooling / docs drift discovered: Review policy had drifted across the authoring template, context primer, and task-packet policy prose.
-- Follow-up: `fixed-in-scope`
-- What worked: Existing contract and dispatcher checks directly prove Review:none pairing and Protected missing-pair rejection.
+- Outcome: `blocked`
+- Friction severity: `high`
+- What went wrong: A concurrent main update conflicted with this packet's removal from the active packet catalog. After preserving the upstream additions and resolving the conflict, `workstream.py finish` rejected the now-non-tip archive transition.
+- Root cause / contributing factors: Finish recognizes only a tightly scoped managed-index conflict reconciliation, while this README conflict was in the active packet catalog outside the generated block. The task packet explicitly forbids expanding into lifecycle enforcement code.
+- Prevention / pipeline improvement: Add an explicitly authorized, separately reviewed lifecycle path for this documented archive/catalog conflict shape, or ensure packet catalog updates serialize before archive transitions.
+- Tooling / docs drift discovered: `workstream.py finish` cannot safely close this documentation task after a concurrent main update conflicts on the active packet catalog; it requires the canonical archive transition to remain the branch tip unless a supported source-span reconciliation applies.
+- Follow-up: `manual-follow-up`
+- What worked: Focused checks proved the review defaults and the workstream remains preserved on its claimed branch with no forced landing.
 
 ## Handoff
 
 - Next workstream: `none`
-- Next packet state: `none`
-- Refresh owner: `none`
-- ChatGPT/user planning refresh required: `no`
+- Next packet state: `human-required`
+- Refresh owner: `chatgpt-user`
+- ChatGPT/user planning refresh required: `yes`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae03e16-cd34-83e9-ba0e-82b8f95f7690
 - Summary backlink: Include this exact Authoring chat URL in the root closing summary.
-- Refresh reason: `none`
-- Next action: Return verified main landing and measured reduced review ceremony to the authoring conversation; later Pass B/C require independent authorization.
-- Blockers or open questions: `none`
+- Refresh reason: A new, separately risk-reviewed lifecycle follow-up is needed to reconcile this active packet catalog conflict while preserving the archive transition and current main history.
+- Next action: Review the exact finish invariant and authorize a bounded lifecycle follow-up; then resume this preserved workstream through a supported recovery path.
+- Blockers or open questions: `workstream.py finish` rejects archive transition `6040cb725b4ee16f602c2848ffd263b0bf4cf006` because current tip is `9685d09e725121f15e25908f56a26278e9a69c83` after the main-sync conflict merge.
