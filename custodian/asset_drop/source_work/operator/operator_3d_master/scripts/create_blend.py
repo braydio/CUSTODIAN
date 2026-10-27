@@ -40,6 +40,7 @@ def arguments():
     p.add_argument('--ankle-z', type=float, default=.158); p.add_argument('--stance-offset', type=float, default=.02)
     p.add_argument('--metal-scale', type=float, default=1.0)
     p.add_argument('--skip-render', action='store_true')
+    p.add_argument('--elev-deg', type=float, default=30.0)   # camera elevation above horizon; 30 keeps frozen experiments reproducible
     return p.parse_args(sys.argv[sys.argv.index('--') + 1:])
 
 
@@ -180,7 +181,8 @@ def neutral_pose(rig, iks, on, action):
 
 
 def main():
-    a = arguments()
+    global ELEV
+    a = arguments(); ELEV = math.radians(a.elev_deg)
     if pathlib.Path(a.out).exists(): raise RuntimeError('Refusing to overwrite existing .blend; create a new experiment ID')
     if pathlib.Path(a.proof).exists() and any(pathlib.Path(a.proof).iterdir()): raise RuntimeError('Refusing to overwrite existing proof dir')
     bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)

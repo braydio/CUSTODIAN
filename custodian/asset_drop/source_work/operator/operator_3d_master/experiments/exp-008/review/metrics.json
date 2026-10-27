@@ -1,0 +1,203 @@
+{
+ "E": {
+  "model": {
+   "area_px": 1958,
+   "bbox": [
+    49,
+    30,
+    81,
+    116
+   ],
+   "height_px": 87,
+   "width_px": 33
+  },
+  "silhouette_iou": 0.55,
+  "source": {
+   "area_px": 1881,
+   "bbox": [
+    47,
+    20,
+    79,
+    106
+   ],
+   "height_px": 87,
+   "width_px": 33
+  }
+ },
+ "N": {
+  "model": {
+   "area_px": 2783,
+   "bbox": [
+    35,
+    31,
+    92,
+    109
+   ],
+   "height_px": 79,
+   "width_px": 58
+  },
+  "silhouette_iou": 0.675,
+  "source": {
+   "area_px": 2444,
+   "bbox": [
+    41,
+    24,
+    86,
+    107
+   ],
+   "height_px": 84,
+   "width_px": 46
+  }
+ },
+ "NE": {
+  "model": {
+   "area_px": 2571,
+   "bbox": [
+    43,
+    29,
+    87,
+    115
+   ],
+   "height_px": 87,
+   "width_px": 45
+  },
+  "silhouette_iou": 0.693,
+  "source": {
+   "area_px": 2328,
+   "bbox": [
+    44,
+    22,
+    84,
+    106
+   ],
+   "height_px": 85,
+   "width_px": 41
+  }
+ },
+ "NW": {
+  "model": {
+   "area_px": 2582,
+   "bbox": [
+    40,
+    29,
+    84,
+    115
+   ],
+   "height_px": 87,
+   "width_px": 45
+  },
+  "silhouette_iou": 0.695,
+  "source": {
+   "area_px": 2328,
+   "bbox": [
+    43,
+    22,
+    83,
+    106
+   ],
+   "height_px": 85,
+   "width_px": 41
+  }
+ },
+ "S": {
+  "model": {
+   "area_px": 2988,
+   "bbox": [
+    35,
+    31,
+    92,
+    115
+   ],
+   "height_px": 85,
+   "width_px": 58
+  },
+  "silhouette_iou": 0.649,
+  "source": {
+   "area_px": 2764,
+   "bbox": [
+    39,
+    25,
+    89,
+    108
+   ],
+   "height_px": 84,
+   "width_px": 51
+  }
+ },
+ "SE": {
+  "model": {
+   "area_px": 2750,
+   "bbox": [
+    43,
+    30,
+    87,
+    119
+   ],
+   "height_px": 90,
+   "width_px": 45
+  },
+  "silhouette_iou": 0.531,
+  "source": {
+   "area_px": 2215,
+   "bbox": [
+    41,
+    21,
+    81,
+    106
+   ],
+   "height_px": 86,
+   "width_px": 41
+  }
+ },
+ "SW": {
+  "model": {
+   "area_px": 2748,
+   "bbox": [
+    40,
+    30,
+    84,
+    119
+   ],
+   "height_px": 90,
+   "width_px": 45
+  },
+  "silhouette_iou": 0.531,
+  "source": {
+   "area_px": 2215,
+   "bbox": [
+    46,
+    21,
+    86,
+    106
+   ],
+   "height_px": 86,
+   "width_px": 41
+  }
+ },
+ "W": {
+  "model": {
+   "area_px": 1971,
+   "bbox": [
+    46,
+    30,
+    78,
+    116
+   ],
+   "height_px": 87,
+   "width_px": 33
+  },
+  "silhouette_iou": 0.552,
+  "source": {
+   "area_px": 1881,
+   "bbox": [
+    48,
+    20,
+    80,
+    106
+   ],
+   "height_px": 87,
+   "width_px": 33
+  }
+ },
+ "walk_ik_max_reach_error_m": 0.0
+}

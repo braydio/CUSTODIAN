@@ -1,0 +1,159 @@
+{
+  "schema": "custodian.operator_3d_model.parameters.v1",
+  "candidate": "operator_volumetric_v008_shoulder_span",
+  "status": "BLOCKOUT_NOT_CANONICAL",
+  "art_direction": "dark weathered graphite metallic armor, near-black hood and cloak, muted bronze hardware, narrow amber visor",
+  "character_height_m": 1.98,
+  "shoulder_width": 0.59,
+  "torso_width": 0.35,
+  "cloak_spread": 0.48,
+  "cape_hem_z": 0.8,
+  "helmet_scale": 1.0,
+  "metallic_armor": 0.78,
+  "roughness_armor": 0.49,
+  "palette": {
+    "armor": [
+      30,
+      31,
+      35,
+      255
+    ],
+    "armor_light": [
+      54,
+      55,
+      60,
+      255
+    ],
+    "armor_dark": [
+      16,
+      17,
+      19,
+      255
+    ],
+    "undercloth": [
+      14,
+      15,
+      17,
+      255
+    ],
+    "cloak": [
+      22,
+      22,
+      25,
+      255
+    ],
+    "cloak_fold": [
+      34,
+      34,
+      38,
+      255
+    ],
+    "bronze": [
+      214,
+      152,
+      38,
+      255
+    ],
+    "bronze_dim": [
+      150,
+      104,
+      30,
+      255
+    ],
+    "visor": [
+      255,
+      170,
+      40,
+      255
+    ]
+  },
+  "source_contract": {
+    "art_generation": "operator_2_5d_128",
+    "size_px": [
+      128,
+      128
+    ],
+    "root_px": [
+      64,
+      106
+    ],
+    "ground_y_px": 107,
+    "body_height_px_target": [
+      84,
+      88
+    ],
+    "direction_order": [
+      "N",
+      "NE",
+      "E",
+      "SE",
+      "S",
+      "SW",
+      "W",
+      "NW"
+    ],
+    "design_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+    "idle_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+  },
+  "export_y_up": true,
+  "gold_trim": false,
+  "visor_chevron": true,
+  "head_group_scale": 1.0,
+  "blender": {
+    "px_per_m": 50.0,
+    "metal_scale": 0.35,
+    "half_stride": 0.28,
+    "lift": 0.17,
+    "arm_swing": 0.5,
+    "ankle_z": 0.18,
+    "stance_offset": 0.0,
+    "elev_deg": 45.0
+  },
+  "hood_trim": false,
+  "model_version": 6,
+  "hood_profile_rings": [
+    [
+      1.5,
+      0.3,
+      0.25,
+      0.05
+    ],
+    [
+      1.6,
+      0.27,
+      0.235,
+      0.04
+    ],
+    [
+      1.72,
+      0.245,
+      0.22,
+      0.02
+    ],
+    [
+      1.84,
+      0.225,
+      0.205,
+      0.0
+    ],
+    [
+      1.95,
+      0.185,
+      0.18,
+      -0.015
+    ],
+    [
+      2.03,
+      0.125,
+      0.13,
+      -0.025
+    ],
+    [
+      2.075,
+      0.035,
+      0.055,
+      -0.025
+    ]
+  ],
+  "shoulder_plate_scale": 0.55
+}

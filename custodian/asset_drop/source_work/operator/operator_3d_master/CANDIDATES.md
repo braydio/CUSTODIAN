@@ -13,6 +13,7 @@ experiment; each experiment dir is immutable and frozen (`blender_proof_frozen.j
 | exp-005 | RECOMMENDED FOR REVIEW: 003 + stronger walk + hood ring | `1277b42f585d45ae` | `23cf2b5d8d145337` | 0.678 |
 | exp-006 | capeless revision; visual approval pending | `33160633a98b2630` | `5a75edef511dbf8f` | 0.637 |
 | exp-007 | hood-only rounded cowl on exp-006; visual approval pending | `7374dc804bdd5719` | `d70b79b947085196` | 0.648 |
+| exp-008 | shoulder plates only (x0.55), span 1.336→1.068 m; rendered at 45°/50 px/m; visual approval pending | `2fdbd858001c8f4d` | `4653d99850e5787d` | 0.610 (45°, not comparable to 30° rows) |
 
 IoU is triage only: it says nothing about gold-edge material language, hood shape or recognition.
 `config/shape_v002.json` gained a `blender` block after exp-002 ran; `exp-002/shape.json` (the true snapshot) is

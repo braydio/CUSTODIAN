@@ -93,6 +93,8 @@ def build(add, p):
         sd = 'L' if s > 0 else 'R'
         add(f'Shoulder_{sd}__joint', ellipsoid([s * .36, 0, 1.50], [.14, .13, .13], 2), 'undercloth', f'UpperArm.{sd}')
         for k, (cx, cz, rx, ry, rz) in enumerate(((.40, 1.625, .15, .16, .042), (.425, 1.58, .19, .19, .048), (.452, 1.525, .22, .215, .052))):
+            f = float(p.get('shoulder_plate_scale', 1.0))   # exp-008+: shrink plate footprint about the shoulder joint (x=.36); 1.0 = exp-007 geometry
+            cx = .36 + (cx - .36) * f; rx *= f; ry *= f
             c = [s * cx, -.012, cz]
             plate = ellipsoid(c, [rx, ry, rz], 2); rot_about(plate, c, [0, 1, 0], s * .35)
             add(f'Shoulder_{sd}__plate_{"ABC"[k]}', plate, 'armor_light' if k == 0 else 'armor', f'UpperArm.{sd}')

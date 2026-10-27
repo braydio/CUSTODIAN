@@ -9,7 +9,10 @@ from mathutils import Vector
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import create_blend as cb
 
-out = pathlib.Path(sys.argv[sys.argv.index('--') + 1]); out.mkdir(parents=True, exist_ok=True)
+_a = sys.argv[sys.argv.index('--') + 1:]
+out = pathlib.Path(_a[0]); out.mkdir(parents=True, exist_ok=True)
+# optional (Task 009): `--projection ELEV PX_PER_M` renders all 8 directions at one common elevation/scale; legacy sweep otherwise
+PROJ = (float(_a[_a.index('--projection') + 1]), float(_a[_a.index('--projection') + 2])) if '--projection' in _a else None
 scene = bpy.context.scene; rig = bpy.data.objects['RIG__Operator_3D']; rigl = bpy.data.objects['LIGHT_RIG_follows_camera']
 # neutral rest, identical to create_blend.neutral_pose
 for s in 'LR': rig.pose.bones['Shin.' + s].constraints['Foot_plant_IK'].influence = 0.0
@@ -21,15 +24,21 @@ scene.frame_set(1); bpy.context.view_layer.update()
 
 frames = {}
 def shoot(el, d):
-    cam = bpy.data.objects['CAM_2D_' + d]; cb.ELEV = math.radians(el); cb.place_camera(cam, cb.AZIMUTH[d])
+    cam = bpy.data.objects['CAM_2D_' + d]
+    if PROJ: cam.data.ortho_scale = cb.FRAME / PROJ[1]
+    cb.ELEV = math.radians(el); cb.place_camera(cam, cb.AZIMUTH[d])
     rigl.rotation_euler = (0, 0, math.radians(cb.AZIMUTH[d])); scene.camera = cam; bpy.context.view_layer.update()
     name = f'el{el:02d}_{d}.png'; scene.render.filepath = str(out / name); bpy.ops.render.render(write_still=True)
     p = world_to_camera_view(scene, cam, Vector((0, 0, 0)))
     frames[name] = {'elevation_deg_above_horizon': el, 'direction': d, 'ortho_scale': cam.data.ortho_scale, 'shift_y': cam.data.shift_y,
                     'projected_root_px': [round(p.x * cb.FRAME, 2), round((1 - p.y) * cb.FRAME, 2)]}
-for el in (30, 40, 50, 60):
-    for d in ('N', 'NE', 'E', 'SE', 'S'): shoot(el, d)
-for d in ('S', 'E'): shoot(0, d)       # reference-only eye-level anatomy views
+if PROJ:
+    for d in cb.AZIMUTH: shoot(int(PROJ[0]), d)
+    for d in ('S', 'E'): shoot(0, d)
+else:
+    for el in (30, 40, 50, 60):
+        for d in ('N', 'NE', 'E', 'SE', 'S'): shoot(el, d)
+    for d in ('S', 'E'): shoot(0, d)       # reference-only eye-level anatomy views
 
 def bounds(prefixes):
     pts = [o.matrix_world @ Vector(c) for o in bpy.data.objects if o.type == 'MESH' and o.name.startswith(prefixes) for c in o.bound_box]

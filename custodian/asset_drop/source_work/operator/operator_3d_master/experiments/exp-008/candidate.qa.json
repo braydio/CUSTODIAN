@@ -1,0 +1,25 @@
+{
+  "asset_sha256": "2fdbd858001c8f4d6e9f6ef19b7663d13976e4043de3de53ed6397a8fc348a72",
+  "blender_animation_tested": false,
+  "bounds_xyz_m": [
+    [
+      -0.578,
+      0.0,
+      -0.3
+    ],
+    [
+      0.578,
+      2.075,
+      0.365
+    ]
+  ],
+  "failures": [],
+  "geometry_count": 79,
+  "nonwatertight_parts": 13,
+  "schema": "custodian.operator_3d_candidate_qa.v1",
+  "status": "TECHNICAL_PASS_ART_UNREVIEWED",
+  "subjective_art_accepted": false,
+  "warnings": [
+    "13 nonwatertight surfaces (expected open cape/hood; inspect those only)"
+  ]
+}

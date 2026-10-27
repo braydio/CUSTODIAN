@@ -1,0 +1,118 @@
+{
+ "frames": {
+  "el45_N.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "N",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_NE.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "NE",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_E.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "E",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_SE.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "SE",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_S.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "S",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_SW.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "SW",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_W.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "W",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el45_NW.png": {
+   "elevation_deg_above_horizon": 45,
+   "direction": "NW",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el00_S.png": {
+   "elevation_deg_above_horizon": 0,
+   "direction": "S",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "el00_E.png": {
+   "elevation_deg_above_horizon": 0,
+   "direction": "E",
+   "ortho_scale": 2.559999942779541,
+   "shift_y": 0.328125,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  }
+ },
+ "anatomy_3d": {
+  "units": "metres, authoring Z up, mesh geometry in neutral rest (not inferred from 128px)",
+  "total_height": 2.075,
+  "overall_width_x": 1.336,
+  "shoulder_plate_span_x": 1.336,
+  "belt_width_x": 0.602,
+  "hood_height_z": 0.575,
+  "hood_width_x": 0.6,
+  "hood_top_z": 2.075,
+  "leg_length_ground_to_thigh_top_z": 1.031,
+  "hood_height_over_total": 0.277,
+  "shoulder_span_over_height": 0.644,
+  "leg_over_height": 0.497
+ }
+}
