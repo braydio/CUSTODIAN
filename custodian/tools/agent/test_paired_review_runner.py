@@ -988,6 +988,8 @@ class PairedReviewRunnerTests(unittest.TestCase):
             "original_run_dir": str(run_dir),
             "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
             "active_packet_path": fixture["active"],
+            "target_workstream": "sample",
+            "target_packet_path": fixture["target"],
             "reviewed_main": fixture["reviewed_main"],
             "implementation_commit": fixture["reviewed_main"],
             "original_run_manifest": original_manifest,
