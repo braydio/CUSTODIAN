@@ -151,23 +151,118 @@ def target_receipt_passed(target_text: str | None, review_workstream: str) -> bo
                for field, value in (("Status", "passed"), ("Blocking defects", "0"), ("Material gaps", "0")))
 
 
-def legacy_target_passed(target_text: str | None) -> bool:
-    """Recognise the pre-outcome flat receipt: one Independent Review section, every Status a pass.
+def _legacy_field_values(body: str, field: str) -> list[str]:
+    """Read legacy review fields without treating unrelated prose as a receipt."""
+    return re.findall(rf"(?m)^\\s*-\\s*{re.escape(field)}:\\s*([^\\r\\n]+)$", body)
 
-    Older archived targets recorded ``- Status: `passed``` (or ``pass``) without the
-    per-review receipt heading. Any other status anywhere in the section, an absent
-    section, or more than one section is ambiguous and is NOT treated as accepted.
+
+def _legacy_pin(values: list[str]) -> set[str] | None:
+    """Extract the exact abbreviated/full Git token from each recorded pin."""
+    pins: set[str] = set()
+    for value in values:
+        match = re.fullmatch(r"`?([0-9a-f]{7,64})`?(?:\\s+\\([^\\r\\n]*\\))?", value.strip())
+        if match is None:
+            return None
+        pins.add(match.group(1))
+    return pins
+
+
+def legacy_target_passed(target_text: str | None, review_workstream: str | None = None,
+                         review_text: str | None = None) -> bool:
+    """Accept one ordinary legacy PASS or two independently corroborated duplicate records.
+
+    Historical packets sometimes appended the same passing review twice with
+    different levels of detail. Two sections are accepted ONLY when they both
+    pass, identify one review and one pinned target, contain fresh independent
+    reviewer evidence and zero blockers/gaps, and agree with the separate
+    archived review. Contradictory, incomplete, or more numerous sections fail.
+    A present canonical Review Outcome is always handled separately first.
     """
     if not target_text:
         return False
-    sections = list(re.finditer(r"(?m)^## Independent Review[^\r\n]*$", target_text))
-    if len(sections) != 1:
+    sections = list(re.finditer(r"(?m)^## Independent Review[^\\r\\n]*$", target_text))
+    if len(sections) == 1:
+        start = sections[0].end()
+        following = _NEXT_SECTION_RE.search(target_text, start)
+        body = target_text[start:start + following.start() if following else len(target_text)]
+        statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$", body)
+        return bool(statuses) and all(item in {"passed", "pass"} for item in statuses)
+
+    if len(sections) != 2 or not review_workstream or not review_text:
         return False
-    start = sections[0].end()
-    following = _NEXT_SECTION_RE.search(target_text, start)
-    body = target_text[start:following.start() if following else len(target_text)]
-    statuses = re.findall(r"(?m)^\s*-\s*Status:\s*`?([A-Za-z_]+)`?\s*$", body)
-    return bool(statuses) and all(item in {"passed", "pass"} for item in statuses)
+
+    bodies: list[str] = []
+    for index, match in enumerate(sections):
+        start = match.end()
+        boundary = _NEXT_SECTION_RE.search(target_text, start)
+        end = boundary.start() + start if boundary else len(target_text)
+        bodies.append(target_text[start:end])
+
+    reviewed_mains: set[str] = set()
+    implementation_commits: set[str] = set()
+    has_matching_review = False
+    has_fresh_context = False
+    has_independent_provenance = False
+    has_zero_blockers = False
+    has_zero_gaps = False
+    for body in bodies:
+        statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$", body)
+        if len(statuses) != 1 or statuses[0] not in {"passed", "pass"}:
+            return False
+        if any(value.strip("` ").lower() not in {"passed", "pass"}
+               for value in _legacy_field_values(body, "Result")):
+            return False
+        for value in _legacy_field_values(body, "Findings"):
+            if not re.match(r"(?i)^none(?:\\s*;|\\s*$)", value.strip("` ")):
+                return False
+
+        names = _legacy_field_values(body, "Review workstream")
+        if any(value.strip("` ") != review_workstream for value in names):
+            return False
+        has_matching_review |= bool(names)
+        contexts = _legacy_field_values(body, "Reviewer context")
+        if any(value.strip("` ") != "fresh" for value in contexts):
+            return False
+        has_fresh_context |= bool(contexts)
+        provenances = _legacy_field_values(body, "Reviewer provenance")
+        if any(value.strip("` ") not in PROVENANCE for value in provenances):
+            return False
+        has_independent_provenance |= bool(provenances)
+
+        for field in ("Blocking defects", "Material evidence gaps", "Material gaps"):
+            values = _legacy_field_values(body, field)
+            if any(value.strip("` ") != "0" for value in values):
+                return False
+            if field == "Blocking defects":
+                has_zero_blockers |= bool(values)
+            else:
+                has_zero_gaps |= bool(values)
+
+        main_pins = _legacy_pin(_legacy_field_values(body, "Reviewed main") +
+                                _legacy_field_values(body, "Reviewed on main"))
+        target_pins = _legacy_pin(_legacy_field_values(body, "Reviewed implementation commit"))
+        if main_pins is None or target_pins is None:
+            return False
+        reviewed_mains.update(main_pins)
+        implementation_commits.update(target_pins)
+
+    if not (has_matching_review and has_fresh_context and has_independent_provenance and
+            has_zero_blockers and has_zero_gaps and
+            len(reviewed_mains) == 1 and len(implementation_commits) == 1):
+        return False
+    reviewed_main = next(iter(reviewed_mains))
+    implementation_commit = next(iter(implementation_commits))
+    review_sections = list(re.finditer(r"(?m)^## Independent Review[^\\r\\n]*$", review_text))
+    if len(review_sections) != 1:
+        return False
+    review_statuses = re.findall(r"(?m)^\\s*-\\s*Status:\\s*`?([A-Za-z_]+)`?\\s*$",
+                                 review_text[review_sections[0].end():])
+    if review_statuses != ["passed"]:
+        return False
+    return (review_workstream in review_text and reviewed_main in review_text and
+            implementation_commit in review_text)
+
+
 
 
 def review_acceptance(review_text: str, target_text: str | None, review_workstream: str,
@@ -189,7 +284,7 @@ def review_acceptance(review_text: str, target_text: str | None, review_workstre
         if not target_receipt_passed(target_text, review_workstream):
             return False, "passed", "passed outcome has no canonical target receipt"
         return True, "passed", "passed"
-    if target_receipt_passed(target_text, review_workstream) or legacy_target_passed(target_text):
+    if target_receipt_passed(target_text, review_workstream) or legacy_target_passed(target_text, review_workstream, review_text):
         return True, None, "legacy passing target receipt"
     return False, None, "no verified passing outcome or target receipt"
 
