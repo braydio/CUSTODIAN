@@ -9,6 +9,8 @@ import os
 import shutil
 import subprocess
 import secrets
+import sys
+import time
 from pathlib import Path
 from typing import Any, Callable
 from PIL import Image
@@ -105,7 +107,34 @@ class WorkbenchService:
             selected_paths=selected_paths, source_freshness=freshness,
         )
 
-    def checkout_status_label(self, selection: AnimationSelection | None = None) -> str:
+    @staticmethod
+    def startup_sync_status() -> str:
+        """Sync result `opui` captured at launch; a snapshot, never live."""
+        return os.environ.get("CUSTODIAN_SYNC_STATUS", "").strip().replace("\n", " · ")
+
+    def live_sync_status(self) -> str:
+        """Current sync state of both persistent checkouts plus lock occupancy.
+
+        Read-only: inspects local refs (no fetch) and probes the sync lock; it
+        never applies a sync.
+        """
+        agent_dir = str(Path(__file__).resolve().parents[2] / "agent")
+        if agent_dir not in sys.path:
+            sys.path.insert(0, agent_dir)
+        try:
+            import persistent_checkout_sync as sync
+            parts = []
+            for profile in sync.PROFILES:
+                result = sync.inspect_profile(profile, self.coordination_root)
+                detail = f" behind {result.behind}" if result.behind else ""
+                parts.append(f"{result.profile}: {result.state}{detail}")
+            if sync.sync_lock_busy(self.coordination_root):
+                parts.append("sync lock held by another process")
+        except Exception as error:
+            parts = [f"sync status unavailable: {error}"]
+        return " · ".join(parts) + f" · checked {time.strftime('%H:%M:%S')}"
+
+    def checkout_status_label(self, selection: AnimationSelection | None = None, *, include_startup_sync: bool = True) -> str:
         identity = self.checkout_identity()
         readiness = self.readiness(selection)
         suffix = f" · {identity.worktree_state}" if identity.worktree_state != "clean" else ""
@@ -113,9 +142,9 @@ class WorkbenchService:
             suffix += " · LAND PENDING"
         if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
             suffix += " · coordination Operator edits preserved"
-        startup_sync = os.environ.get("CUSTODIAN_SYNC_STATUS", "").strip()
+        startup_sync = self.startup_sync_status() if include_startup_sync else ""
         if startup_sync:
-            suffix += " · startup sync " + startup_sync.replace("\n", " · ")
+            suffix += " · startup sync " + startup_sync
         return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation} · readiness {readiness.status.upper()}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:

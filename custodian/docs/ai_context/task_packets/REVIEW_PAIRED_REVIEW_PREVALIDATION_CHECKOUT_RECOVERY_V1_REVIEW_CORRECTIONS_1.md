@@ -1,0 +1,41 @@
+# Review — Pre-validation Checkout Recovery Corrections 1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
+- Authoring handoff: `auto`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
+- Locks: `paired-review-source-span-provenance`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `none`
+- Review cycle: `1`
+- Max automatic review cycles: `2`
+- Review target workstream: `agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_PREVALIDATION_CHECKOUT_RECOVERY_V1_REVIEW_CORRECTIONS_1.md`
+- Reviewed main: `936e58f3211d5af0d35093bf67d1c70ee1aff5b1`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Goal: `Falsify the new interior main-sync source-span merge acceptance and confirm it unblocks canonical validation without widening source ownership.`
+- Review focus: `Inspect source and temporary-Git tests. Verify the exact trace and event identity binding, first/second parent ordering, checkpoint and no-op sync witnesses, deterministic merge-tree proof, ancestry, source path derivation from first-parent commits only, and fail-closed handling of missing/duplicate/forged/reordered/repeated merges and source loss. Confirm existing checkpoint-resume and direct main-sync landing cases remain unchanged.`
+- Evidence: `Correction implementation source and tests, original blocked review metadata/report absence, and the preserved primary lifecycle trace at run 20261024T055251Z-7abc1a2bf558.`
+- Focused validation: `Run the packet's real-Git positive and hostile tests, canonical paired_review_runner_unit, changed-file validation with complete coverage, AI-context, packet index, review pairing, compile and diff checks.`
+- Acceptance: `Fresh-context PASS only if the exact source span resolves with complete documented code/test coverage, every hostile history fails before evidence mutation, and existing provenance routes remain green. The held primary review run and claim must remain unchanged during this review.`
+- Non-goals: `Do not resume the held primary review, edit unrelated implementation/runtime files, or release any claim or lock.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Next Handoff
+- Next workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1`
+- Next packet state: dependency-gated
+- Refresh owner: none
+- ChatGPT/user planning refresh required: no
+- Authoring chat: not-recorded
+- Refresh reason: none
+- Next action: after accepted correction review, resume the original primary review's preserved host-validation run through its exact same-run recovery path.
+- Blockers or open questions: `none`

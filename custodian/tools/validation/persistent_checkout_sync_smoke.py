@@ -461,6 +461,43 @@ def ignored_tree_performance_smoke(base: Path) -> None:
     print(f"ignored fixture: {count} unrelated files, status+sync {elapsed:.2f}s")
 
 
+def live_sync_status_smoke(base: Path) -> None:
+    _bare, coordination, _source = fixture(base)
+    art.ensure_art_worktree(coordination)
+    service = object.__new__(WorkbenchService)
+    service.coordination_root = coordination
+
+    assert sync.sync_lock_busy(coordination) is False
+    free = service.live_sync_status()
+    assert "coordination-main:" in free and "operator-art:" in free and "checked " in free, free
+    assert "lock held" not in free and "unavailable" not in free, free
+
+    with sync._sync_lock(coordination):
+        assert sync.sync_lock_busy(coordination) is True
+        held = service.live_sync_status()
+        assert "sync lock held by another process" in held, held
+    # The label is live: it clears as soon as the lock is released.
+    assert sync.sync_lock_busy(coordination) is False
+    assert "lock held" not in service.live_sync_status()
+
+    # The probe is read-only and must not leave a lock that blocks a real sync.
+    assert sync.apply_profiles([sync.ROOT_PROFILE], coordination)[0].state != "SYNC BUSY"
+
+    broken = object.__new__(WorkbenchService)
+    broken.coordination_root = base / "missing"
+    assert "sync status unavailable" in broken.live_sync_status()
+
+    old = os.environ.get("CUSTODIAN_SYNC_STATUS")
+    os.environ["CUSTODIAN_SYNC_STATUS"] = "coordination-main: SYNC BUSY"
+    try:
+        assert WorkbenchService.startup_sync_status() == "coordination-main: SYNC BUSY"
+    finally:
+        if old is None:
+            os.environ.pop("CUSTODIAN_SYNC_STATUS", None)
+        else:
+            os.environ["CUSTODIAN_SYNC_STATUS"] = old
+
+
 def shell_routing_smoke(base: Path) -> None:
     home = base / "home"
     python = home / "Projects/CUSTODIAN/.ai/operator-ui-venv/bin/python"
@@ -494,7 +531,7 @@ def main() -> None:
     cases = [
         root_sync_smoke, root_preservation_smoke, root_untracked_sibling_smoke, art_sync_smoke,
         art_blocker_smoke, lock_and_race_smoke, ignored_collision_smoke,
-        ignored_tree_performance_smoke,
+        ignored_tree_performance_smoke, live_sync_status_smoke,
         shell_routing_smoke,
     ]
     for case in cases:
