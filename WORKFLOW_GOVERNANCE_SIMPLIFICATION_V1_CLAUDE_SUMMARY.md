@@ -15,7 +15,7 @@ The three-path review guidance is in place across `custodian/AGENTS.md`, the tas
 - `test_task_packet_contract.py`: 27 passed.
 - `test_validate_task_packet_authoring.py`: 9 passed.
 - `test_dispatch.py`: 92 passed.
-- `check_ai_context.py`: PASS.
+- `check_ai_context.py`: PASS before the blocked status was recorded; afterward it correctly reports the missing completed dependency for the newly published `OWNER_REVIEW_EXCEPTION_LANE_V1.md`. That successor was not modified.
 - `run_validation.py --changed --base origin/main --json`: PASS, 7 selected, 7 passed, 0 failures.
 - `git diff --check`: PASS.
 - `validate_historical_archive_boundaries.py`: reports 18 existing references in unrelated unchanged files. No task-owned file is among those findings; they were left untouched.
@@ -23,7 +23,7 @@ The three-path review guidance is in place across `custodian/AGENTS.md`, the tas
 
 ## Landing Blocker
 
-The final main sync introduced a conflict in `task_packets/README.md` as a newer main commit added other packet entries while this work archived its packet and removed its active catalog entry. The conflict was resolved, retaining the upstream packet additions and removing this completed packet from the active catalog. `workstream.py finish` then refused to land because the canonical archive transition `6040cb725b4ee16f602c2848ffd263b0bf4cf006` is no longer branch tip `9685d09e725121f15e25908f56a26278e9a69c83`. The finish guard permits only generated managed-index conflict reconciliation; this conflict was in the active packet catalog outside that managed region. The workstream branch is preserved. No final main SHA is claimed.
+The final main sync introduced a conflict in `task_packets/README.md` as a newer main commit added other packet entries while this work archived its packet and removed its active catalog entry. The conflict was resolved, retaining the upstream packet additions and removing this completed packet from the active catalog. `workstream.py finish` then refused to land because the canonical archive transition `6040cb725b4ee16f602c2848ffd263b0bf4cf006` is no longer branch tip `9685d09e725121f15e25908f56a26278e9a69c83`. The finish guard permits only generated managed-index conflict reconciliation; this conflict was in the active packet catalog outside that managed region. The workstream branch is preserved. No final main SHA is claimed. The subsequent `check_ai_context.py` check also reports that the newly published `OWNER_REVIEW_EXCEPTION_LANE_V1.md` packet depends on this workstream being complete; that packet was left untouched and remains blocked by the current state.
 
 The task packet prohibits expanding this work into lifecycle enforcement changes. A new, bounded lifecycle follow-up needs separate authorization before this workstream can close through a supported recovery path.
 

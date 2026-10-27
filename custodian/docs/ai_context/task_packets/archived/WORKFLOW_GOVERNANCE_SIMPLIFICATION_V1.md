@@ -47,7 +47,7 @@
 - Completion boundary satisfied: `no`
 - Acceptance satisfied: `no`
 - Superseded/legacy production path disposition: `n/a`
-- Evidence: The three-path guidance and Standard/Protected pairing behavior are implemented and focused validation is green. Normal validated landing is not complete: `workstream.py finish` stopped on an origin/main merge conflict, and after the conflict was resolved it rejected the branch because the canonical archive transition commit `6040cb725b4ee16f602c2848ffd263b0bf4cf006` is no longer the current tip `9685d09e725121f15e25908f56a26278e9a69c83`. The supported conflict reconciliation only accepts generated managed-index changes; this conflict was in the active packet catalog outside that region. No landing or final main SHA is claimed.
+- Evidence: The three-path guidance and Standard/Protected pairing behavior are implemented and focused validation is green. Normal validated landing is not complete: `workstream.py finish` stopped on an origin/main merge conflict, and after the conflict was resolved it rejected the branch because the canonical archive transition commit `6040cb725b4ee16f602c2848ffd263b0bf4cf006` is no longer the current tip `9685d09e725121f15e25908f56a26278e9a69c83`. The supported conflict reconciliation only accepts generated managed-index changes; this conflict was in the active packet catalog outside that region. After recording the blocked status, `check_ai_context.py` also correctly reports that the newly published `OWNER_REVIEW_EXCEPTION_LANE_V1.md` dependency is not complete. That successor remains untouched. No landing or final main SHA is claimed.
 
 ## Execution Feedback
 
@@ -55,7 +55,7 @@
 - Outcome: `blocked`
 - Friction severity: `high`
 - What went wrong: A concurrent main update conflicted with this packet's removal from the active packet catalog. After preserving the upstream additions and resolving the conflict, `workstream.py finish` rejected the now-non-tip archive transition.
-- Root cause / contributing factors: Finish recognizes only a tightly scoped managed-index conflict reconciliation, while this README conflict was in the active packet catalog outside the generated block. The task packet explicitly forbids expanding into lifecycle enforcement code.
+- Root cause / contributing factors: Finish recognizes only a tightly scoped managed-index conflict reconciliation, while this README conflict was in the active packet catalog outside the generated block. The task packet explicitly forbids expanding into lifecycle enforcement code. The newly published owner-review exception packet now depends on this task completing, so its dependency remains blocked.
 - Prevention / pipeline improvement: Add an explicitly authorized, separately reviewed lifecycle path for this documented archive/catalog conflict shape, or ensure packet catalog updates serialize before archive transitions.
 - Tooling / docs drift discovered: `workstream.py finish` cannot safely close this documentation task after a concurrent main update conflicts on the active packet catalog; it requires the canonical archive transition to remain the branch tip unless a supported source-span reconciliation applies.
 - Follow-up: `manual-follow-up`
