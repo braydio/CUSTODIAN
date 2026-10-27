@@ -1,0 +1,160 @@
+{
+  "art_approved": false,
+  "experiment": "exp-001",
+  "files": [
+    {
+      "bytes": 764,
+      "path": "REJECTED.md",
+      "sha256": "ca5bb63d8cdb4e97eb87a5f296d9bdff0f6ac21c5675f59df064e42b676bebb8"
+    },
+    {
+      "bytes": 120,
+      "path": "REVIEW_PENDING.txt",
+      "sha256": "353e0c9cfdd79d418e3c1ba0ffd2b7920e1d4d10c78588087641e6b25987d7f3"
+    },
+    {
+      "bytes": 125428,
+      "path": "blender_proof/rest_E.png",
+      "sha256": "4498c1bbe58af61e13d3b596345a6392dfe3beac7f3b43bd5a7cc6bdc9ad001e"
+    },
+    {
+      "bytes": 147331,
+      "path": "blender_proof/rest_N.png",
+      "sha256": "3b541f7cfeceb3dc5da5b14b9aa6c4e022fc5b574ababddecfdab7aa41d6d80c"
+    },
+    {
+      "bytes": 140538,
+      "path": "blender_proof/rest_NE.png",
+      "sha256": "ad0fd4c4d28a72e88e70c9ac45d7181de7ec83dd14fe750ea3070a103ab611e5"
+    },
+    {
+      "bytes": 143520,
+      "path": "blender_proof/rest_NW.png",
+      "sha256": "a73d567064a3cee97952a94b5aa2ff4bcf437e54f5b8f884279a3d5c507ff74e"
+    },
+    {
+      "bytes": 114110,
+      "path": "blender_proof/rest_S.png",
+      "sha256": "8d9414707bbef5a11cd34e70fdcc912fa6d5f84b3408e27a5e6cc6ab62aee31f"
+    },
+    {
+      "bytes": 118468,
+      "path": "blender_proof/rest_SE.png",
+      "sha256": "cebd9fd8ae0cab9e9758b140be75c5ba4b99967456f67cb23b9a066374d600f2"
+    },
+    {
+      "bytes": 118041,
+      "path": "blender_proof/rest_SW.png",
+      "sha256": "11bd5982f1634db784823db6a5be63e45d051baea9749d0cd437523b54ba4e6c"
+    },
+    {
+      "bytes": 123782,
+      "path": "blender_proof/rest_W.png",
+      "sha256": "132a3b3209eaac266f6042b207981dd798271f9697990b061fd901c107585181"
+    },
+    {
+      "bytes": 140538,
+      "path": "blender_proof/walk_NE_01.png",
+      "sha256": "0afea7f579b70b5af691ca075548f34b54078a9da0ca59219e93269600d31ec4"
+    },
+    {
+      "bytes": 138322,
+      "path": "blender_proof/walk_NE_02.png",
+      "sha256": "1c43971970adf0d0096c147fdb33e3f6fd9b02e09fb3b6442eab24fb75ffda01"
+    },
+    {
+      "bytes": 137778,
+      "path": "blender_proof/walk_NE_03.png",
+      "sha256": "3441203011bffec46777428c351f37f2f1fb7cb193b63d92035d70fb06b9eb5a"
+    },
+    {
+      "bytes": 136163,
+      "path": "blender_proof/walk_NE_04.png",
+      "sha256": "f27785911be3098ea3432e02ca2d0cfac09061d9d555b62d0faa1d6d07760405"
+    },
+    {
+      "bytes": 138363,
+      "path": "blender_proof/walk_NE_05.png",
+      "sha256": "d6b3eaa534acec67a9a5522ce37f1ab01afd7b3dfd9d07362703e0f53a5cd3dc"
+    },
+    {
+      "bytes": 142327,
+      "path": "blender_proof/walk_NE_06.png",
+      "sha256": "3adae316269abc1d9995f149cbd6597b54a05ad63169354c6035c41c8d5d38ed"
+    },
+    {
+      "bytes": 142138,
+      "path": "blender_proof/walk_NE_07.png",
+      "sha256": "dfae34a48019c1e4c1a6771362e963a7346d1601838bca450b29c32e63e90a46"
+    },
+    {
+      "bytes": 139652,
+      "path": "blender_proof/walk_NE_08.png",
+      "sha256": "1c8624cc49007301885e7f50635250b7acad90bcabf80dda8dd4710db02330fc"
+    },
+    {
+      "bytes": 145191,
+      "path": "blender_proof/walk_NE_09.png",
+      "sha256": "9407163e1177ceb32fd406221089ad9de2d05af3748315b744590a99a87ab727"
+    },
+    {
+      "bytes": 152793,
+      "path": "blender_proof/walk_NE_10.png",
+      "sha256": "6a07ed7d1f15ca86284be3e66bccd43b0d6d4ffc38c5b16d26896928d600bbe5"
+    },
+    {
+      "bytes": 157661,
+      "path": "blender_proof/walk_NE_11.png",
+      "sha256": "d5dd617bcb7ffbd081d81c57e9c2e8791c4a0b20cd20b781e3e8e375149c39de"
+    },
+    {
+      "bytes": 156209,
+      "path": "blender_proof/walk_NE_12.png",
+      "sha256": "5373b21180c0547decf9469df6df7b1af1e464e1308e30a0e7ddfe915e4bfd74"
+    },
+    {
+      "bytes": 155336,
+      "path": "blender_proof/walk_NE_13.png",
+      "sha256": "a405eeff18b2f499a407919965d6daedafecbd96468e8dacb2d1b438b699ffd7"
+    },
+    {
+      "bytes": 153608,
+      "path": "blender_proof/walk_NE_14.png",
+      "sha256": "6d4a4db6700d3056df2e17b17907c4698c1aae4eded8212f9f6073e3f2e66f76"
+    },
+    {
+      "bytes": 147492,
+      "path": "blender_proof/walk_NE_15.png",
+      "sha256": "f51592d9116a83af5f48ace31d220eb72c60a706dc0d03cdbd25b9f04da4d062"
+    },
+    {
+      "bytes": 173944,
+      "path": "candidate.glb",
+      "sha256": "6cf4f14e0bf507cbcce3a70c33f679a23da130d6a84715aba8721285c29868e2"
+    },
+    {
+      "bytes": 11615,
+      "path": "candidate.manifest.json",
+      "sha256": "f7c9888f2c9cc2d7f1e655b89587dad83bbb9244ee719dfebcac37a1b860047d"
+    },
+    {
+      "bytes": 555,
+      "path": "candidate.qa.json",
+      "sha256": "e3bbddddf596cb3f69e2bea9ac791fe6ed3d34a82b16a1105404cfe395aa9883"
+    },
+    {
+      "bytes": 311212,
+      "path": "operator_v001.blend",
+      "sha256": "9af6d614244c3881d81443a26c32267ac90ffa24560505701dcd5a5a03add45f"
+    },
+    {
+      "bytes": 1243,
+      "path": "shape.json",
+      "sha256": "f4b64ea59f9f83a021d530b70a82556d6ba601b72fdf9f819c4c4574e0014128"
+    }
+  ],
+  "frozen_at_utc": "2026-10-27T09:46:16.319245+00:00",
+  "gameplay_published": false,
+  "notes": "REJECTED. Blender 5.2.3 ran unmodified builder and produced real .blend/renders, but model is lying on its side (Z-up written as glTF), vertex colours lost, framing off-contract, E/W cameras mirrored. Frozen as failed evidence only; see REJECTED.md.",
+  "schema": "custodian.operator_3d_blender_proof.v1"
+}
