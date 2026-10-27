@@ -3,7 +3,7 @@
 **Status:** three designs endorsed for further refinement on 2026-10-27. Physical integration, art approval and dispatch are NOT authorized.
 **Workstream:** procgen-environmental-evidence-v1
 **Source baseline:** main@bb5a1b16
-**Authoring chat:** exact URL pending from user.
+**Authoring chat:** https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain
 **Planning companion:** [Integration Roadmap](PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md).
 **Canon:** [Reciprocal Continuity](../../03_world/RECIPROCAL_CONTINUITY_DOCTRINE.md), [Procedural Lore](../../03_world/PROCEDURAL_LORE_GENERATION.md), [Faction Overview](../../03_world/factions/_FACTION_OVERVIEW.md).
 
