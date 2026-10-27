@@ -1,0 +1,363 @@
+{
+ "approved": false,
+ "best_candidate": null,
+ "canonical": {
+  "design_lock_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+  "idle_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+  "idle_source": "../operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png"
+ },
+ "files": [
+  {
+   "bytes": 2298,
+   "path": "locks/meshy-002_textured/review_pack/REVIEW_NOTES.md",
+   "sha256": "004a5790cdea2d12ed0a4f714363f7b00239414073f3983959f10e4d00a887c4"
+  },
+  {
+   "bytes": 217608,
+   "path": "locks/meshy-002_textured/review_pack/compare_8dir.png",
+   "sha256": "15b0a9dbb568f6baac3df2adfb579381a0a805646700e4ddac973f8b6f3a3a05"
+  },
+  {
+   "bytes": 710903,
+   "path": "locks/meshy-002_textured/review_pack/details_hood_neck.png",
+   "sha256": "c8cad91d9d963b884209e3593f325ef357d7e8d6d069fb3350c9bfc7bb429c66"
+  },
+  {
+   "bytes": 817738,
+   "path": "locks/meshy-002_textured/review_pack/details_shoulders_armor.png",
+   "sha256": "dbfb037858326aaf4f1b410472963445e44c64405b986bc523464d0f452def94"
+  },
+  {
+   "bytes": 662295,
+   "path": "locks/meshy-002_textured/review_pack/details_tabard_gold_boots.png",
+   "sha256": "4918eb2f3f496561c6ea0f358a9e7e2d0c9bf537ce3a65c31de2c0ae5c635e20"
+  },
+  {
+   "bytes": 516113,
+   "path": "locks/meshy-002_textured/review_pack/eye_level_front_side_back.png",
+   "sha256": "9901ca50f15748b866c8876dd0cff552af18cb8bd63c0eb44a569ff338f2844f"
+  },
+  {
+   "bytes": 1581688,
+   "path": "locks/meshy-002_textured/review_pack/geometry_proof.png",
+   "sha256": "b6308bcd3bcfb3339217a57e1dbcc9781ad67287cc446f560f6952d3a6eae221"
+  },
+  {
+   "bytes": 665154,
+   "path": "locks/meshy-002_textured/review_pack/material_proof.png",
+   "sha256": "3ba7486db61edf26fce423b2fda8d9432a48ce288749b7fadec9fbbd150ae8e2"
+  },
+  {
+   "bytes": 8214,
+   "path": "locks/meshy-002_textured/review_pack/pipeline_report.json",
+   "sha256": "4649b83c9467783b5e38df2113b26c51c14b82e8991dc8781049cda7ee5e8f9e"
+  },
+  {
+   "bytes": 122764,
+   "path": "locks/meshy-002_textured/review_pack/textured_8dir_128_contact.png",
+   "sha256": "c349a1706b6d4ad7c07be7b73a0f71bde0e64d98527685bbfa4ba83fd38a1548"
+  },
+  {
+   "bytes": 466759,
+   "path": "locks/meshy-002_textured/review_pack/textured_8dir_512_contact.png",
+   "sha256": "046294d86890424b53adce80c052e6db483b0ffeb074fbdea34198f464c4336f"
+  },
+  {
+   "bytes": 1649,
+   "path": "meshy_candidates/meshy-002_textured/README.md",
+   "sha256": "6be2da7d4de206ad2e5bfb2eb8985cbea5de41f1d95a0f2375c6e874a62fe610"
+  },
+  {
+   "bytes": 301,
+   "path": "meshy_candidates/meshy-002_textured/SHA256SUMS.txt",
+   "sha256": "d904be6c588a56d8eaa25a8f3ce8e9acd25efc7daf7067847de599d4aaf5c0af"
+  },
+  {
+   "bytes": 207845,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/compare_8dir.png",
+   "sha256": "40b3dbf023a45a64e56b82d5683baf45532117c49cd6adf4d2ed05efd0ac8e3a"
+  },
+  {
+   "bytes": 3868,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/pipeline_report.json",
+   "sha256": "82ed42e8d482c787ebf9ca2856d19b57c31f24f7303a74ffaef1dcc043e65605"
+  },
+  {
+   "bytes": 10787,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_E.png",
+   "sha256": "0397b4f868be31929a4aa1a71bba0309891370d6b19c8247fd1d5d2b71babdcb"
+  },
+  {
+   "bytes": 12864,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_N.png",
+   "sha256": "1fecd7dfdffdf0cb1542e9fb4b8d669b9e36f534b9f32b866f19484c0d0798b7"
+  },
+  {
+   "bytes": 11547,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_NE.png",
+   "sha256": "663920f51e694b6393f530a8a7481fbd31061db8dad78248418d22f73ce87760"
+  },
+  {
+   "bytes": 12478,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_NW.png",
+   "sha256": "400afe5f29ffd34d186774c83b7f8155cd50554682a427b202e3b801af14d85d"
+  },
+  {
+   "bytes": 13064,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_S.png",
+   "sha256": "0033ce18244886a431337457f794fe74ce03f63ad3f5118186b1012d248f5f1a"
+  },
+  {
+   "bytes": 12702,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_SE.png",
+   "sha256": "5dfcb5fd0afb80def4db24000c04ee0b7c894539daa95807e2133e6cb916e95e"
+  },
+  {
+   "bytes": 11714,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_SW.png",
+   "sha256": "3342c535dde5417c663a54c44df961b92dacb69249c8fc7a454f3af778efb112"
+  },
+  {
+   "bytes": 10821,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/128_W.png",
+   "sha256": "2339a5a35e86b9c6b4f020936f30a60b1c3d50da46a6d2569dd38be18619aeb0"
+  },
+  {
+   "bytes": 138319,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_E.png",
+   "sha256": "a79255a337ed8215bcf104f9fc8bba4e920ef9285a67376b3e6f1b81e4632bd3"
+  },
+  {
+   "bytes": 163330,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_N.png",
+   "sha256": "27ea3e85aef502773a01c4066c9ef9e3eb361e5d668be7ea8f7955a709907139"
+  },
+  {
+   "bytes": 148338,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_NE.png",
+   "sha256": "fb9639099843031c283124f33907f6dc6116d1cfcd3cc58d4d53fd29af5e032d"
+  },
+  {
+   "bytes": 156742,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_NW.png",
+   "sha256": "34a7f2b2964ecde8555869bf14b48b51e8bac5cc9f4c531cd018c868383ea280"
+  },
+  {
+   "bytes": 164640,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_S.png",
+   "sha256": "4140392d6870c4b527081a5a4d61a82f2e4ac8fefed0d9915c95bd1d47bc740e"
+  },
+  {
+   "bytes": 157987,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_SE.png",
+   "sha256": "be3824306c8a3eeedc33a2c26a84b2380b4072de7e68201f8676e2ef0de098ae"
+  },
+  {
+   "bytes": 150238,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_SW.png",
+   "sha256": "202eb695ba443d75c9ec99b54ab21380e2cd33bcb3afc80236a83721fe3f72da"
+  },
+  {
+   "bytes": 138996,
+   "path": "meshy_candidates/meshy-002_textured/normalized_45deg_85px/renders/512_W.png",
+   "sha256": "442cabc1c4c32637cbc0e45959a9791b85f26cd79c97d4c721213a7d5c904c9e"
+  },
+  {
+   "bytes": 28421400,
+   "path": "meshy_candidates/meshy-002_textured/operator_meshy_textured_decoded.glb",
+   "sha256": "b9c2f68dfaa555e259a38b504698cfb44d86272683fea274ed03e948c6f33ad6"
+  },
+  {
+   "bytes": 9963,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_E.png",
+   "sha256": "d15e2cb30e8d134e7a1efd1f48fc8ffaf105939225bc38663dcb30cb090258bd"
+  },
+  {
+   "bytes": 11806,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_N.png",
+   "sha256": "6509374303de9b3f319cd5153c5efc4fa3e15be725abb2b9ec8e9aa5203357d0"
+  },
+  {
+   "bytes": 10597,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_NE.png",
+   "sha256": "b5e2800700eb6ccf5e7ae551b96edc8793a0abc7e22c8fca761a61684cf72f79"
+  },
+  {
+   "bytes": 11358,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_NW.png",
+   "sha256": "6a335814a0280740cda49c58698c8cee976f99293a714a5805b7fb02892e17aa"
+  },
+  {
+   "bytes": 11861,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_S.png",
+   "sha256": "ceb2dbda535bfc52a90e381c2bb5e244842905a7815e6636eb1b9724176517cc"
+  },
+  {
+   "bytes": 11525,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_SE.png",
+   "sha256": "1ae7fbf9ae56376bde93e4251dd6cf4c503676bde819a61333d30550e97d81a6"
+  },
+  {
+   "bytes": 10728,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_SW.png",
+   "sha256": "f7f2091cbf7a797a39eadc5642baa735873bec0f3c6716894be9ed06f87ab1d4"
+  },
+  {
+   "bytes": 9883,
+   "path": "meshy_candidates/meshy-002_textured/renders/128_W.png",
+   "sha256": "3ed4771e32bd599ff038dfddd857fdf88aac30d3c58d26438a29798b453e9590"
+  },
+  {
+   "bytes": 127359,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_E.png",
+   "sha256": "efd571bb92592c1739580b667114364b21d36bc07cf1e9a5fa0b523303070fe1"
+  },
+  {
+   "bytes": 148526,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_N.png",
+   "sha256": "0f60a16a2737c4c1e6f0f8fe00138133fc21926fe8e1dcde9dd603f475c36c2e"
+  },
+  {
+   "bytes": 135283,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_NE.png",
+   "sha256": "032edc064eeabd6c578284b891ab4b73d8088756d0c69b08d300b6f47c6e2916"
+  },
+  {
+   "bytes": 142774,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_NW.png",
+   "sha256": "b3edda8af5aabab5d5120f5790b2536a4a3d29a9c455195ea30294f32e82f264"
+  },
+  {
+   "bytes": 149491,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_S.png",
+   "sha256": "3274998a82265ea3e2302fdd57e8136e6d06e540365d38fdf049f423361380c1"
+  },
+  {
+   "bytes": 143844,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_SE.png",
+   "sha256": "a05731199dce7b55fb4a3305f9cb15e6d91b24dcf7073b2a8457bc8a31eb74a9"
+  },
+  {
+   "bytes": 137284,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_SW.png",
+   "sha256": "4c26b1e05c5420c3116f5e7c2f45c87855c27a7dc88c2dfbecc1cb2a6291937e"
+  },
+  {
+   "bytes": 128260,
+   "path": "meshy_candidates/meshy-002_textured/renders/512_W.png",
+   "sha256": "bdf70c5d89f48be0c3aaeb856ae55ae9d28d095fa7653000a98e1352ad4e4c8a"
+  },
+  {
+   "bytes": 389630,
+   "path": "meshy_candidates/meshy-002_textured/renders/sheet512.png",
+   "sha256": "0714e07729c794e4edba347c9eabe34663fdd9f035253ecbda2de5fd59b3ff2d"
+  },
+  {
+   "bytes": 24850,
+   "path": "meshy_candidates/meshy-002_textured/scripts/meshopt_decoder.mjs",
+   "sha256": "01f48524f4bac6141eaba07e94cc36e7ee56f311796fa6117c159842941b0468"
+  },
+  {
+   "bytes": 4370,
+   "path": "meshy_candidates/meshy-002_textured/scripts/reconstruct.py",
+   "sha256": "5b063d14c28eb59bbd6fe49af3420df2e59c33c8193cf03a32c2783e29b0d928"
+  },
+  {
+   "bytes": 1985,
+   "path": "meshy_candidates/meshy-002_textured/scripts/rend3.py",
+   "sha256": "657b13ab085d196924dbc7c6aaf45665caef5294169d6617150c898173e5ecf1"
+  },
+  {
+   "bytes": 2161,
+   "path": "meshy_candidates/meshy-002_textured/scripts/unmeshopt.mjs",
+   "sha256": "2d83a537c57e135164445e2076eaf814d9ca88437980def8226e2bda81b07ec9"
+  },
+  {
+   "bytes": 8220120,
+   "path": "meshy_candidates/meshy-002_textured/source/operator_meshy_model3_meshopt_compressed.glb",
+   "sha256": "e418978c13199b3f96c79388d27b4357fd821cf6665eaece5f0b7229fa5c1bf7"
+  }
+ ],
+ "name": "meshy-002_textured",
+ "note": "Frozen for visual review only; not approved, not selected, no runtime/manifest/SpriteFrames/FPS change.",
+ "provenance": {
+  "container_glb_sha256": "e418978c13199b3f96c79388d27b4357fd821cf6665eaece5f0b7229fa5c1bf7",
+  "decoded_glb_sha256": "b9c2f68dfaa555e259a38b504698cfb44d86272683fea274ed03e948c6f33ad6",
+  "decoded_with": "three.js meshopt WASM decoder via scripts/asset_pipeline/meshopt_decode.mjs (lossless); Blender 5.2.3 lacks its meshopt bridge library",
+  "evidence_script_note": "review_pack was built with evidence_render.py (unchanged) and an earlier build_evidence.py revision; build_evidence.py was later made generic (caption wording only). Pack file hashes in this manifest are authoritative.",
+  "mesh": {
+   "texture_transform": "KHR_texture_transform -> Blender Mapping nodes scale ~15.98/16.00, no extension ignored",
+   "textures": [
+    "Image_0 base colour 4096x4096 sRGB",
+    "Image_1 metallic-roughness 2048x2048 Non-Color",
+    "Image_2 normal 4096x4096 Non-Color"
+   ],
+   "triangles": 1251670,
+   "uv": "UVMap",
+   "vertices": 660202
+  },
+  "model": "meshy-002_textured",
+  "normalized_run_commit": "77d03b77c885e7ac79101d62a46c1cd8ed56235c",
+  "original_meshy_input": {
+   "filename": "model(3).meshy",
+   "note": "original may be absent; recorded unavailable, not invented",
+   "retained_in_repo": false,
+   "sha256": "c7994d921c68be74e5b222ebf2f4ee4d4595d64db2df56e1a42ea6d1a838a08e"
+  },
+  "permission": "USER-REPORTED: the owner states Meshy confirmed recovery is permitted; NOT independently verified by this repo",
+  "reconstruction": "user-supplied reconstruct_meshy_v1_container script (static-key AES-CTR prefix); 16-byte auth tag NOT verified; result is not cryptographically authenticated",
+  "review_dropbox": {
+   "bytes_verified": "11/11 re-downloaded sha256 match",
+   "manifest": "/CUSTODIAN/visual_review/operator-3d-master/meshy002-textured-20261027T224145Z/REVIEW_MANIFEST.json",
+   "retention": "retain",
+   "run_id": "meshy002-textured-20261027T224145Z"
+  },
+  "source": "Meshy.ai generation by the repo owner; recovered from model(3).meshy after the owner's Meshy account was deleted (only copies)",
+  "superseded_incomplete_review": "/CUSTODIAN/visual_review/operator-3d-master/20261027T220404Z/REVIEW_MANIFEST.json (2 artifacts only, delete-after-review; left untouched)"
+ },
+ "render_params": {
+  "asset_height_px_range": [
+   85,
+   91
+  ],
+  "color_management": "Blender 5.2.3 default view transform AgX, look None; EEVEE; sun 3.0 + world 0.45 grey strength 0.8",
+  "directions": [
+   "N",
+   "NE",
+   "E",
+   "SE",
+   "S",
+   "SW",
+   "W",
+   "NW"
+  ],
+  "elev_deg": 45.0,
+  "mirroring": false,
+  "ortho_scale": 2.56,
+  "pose": "mid-stride as exported (not idle)",
+  "px_per_m": 50.0,
+  "root_px": [
+   64,
+   106
+  ],
+  "scale_fit": "S-view silhouette height only; ONE uniform scale; no per-direction transforms",
+  "target_S_height_px": 85,
+  "uniform_scale": 1.10542
+ },
+ "runtime_selection": false,
+ "schema": "custodian.asset_candidate_freeze.v1",
+ "script_blob_revisions": {
+  "scripts/asset_pipeline/blender_render.py@77d03b77c": "1c9fdfb08640715b1e063857bcbdb721704cd49c",
+  "scripts/asset_pipeline/build_evidence.py": "c427cc9fb152a5c2bb463d652a1e3a82699e9582",
+  "scripts/asset_pipeline/evidence_render.py": "5abd1e63312fe94d01d58af73bb482fac67dc8ce",
+  "scripts/asset_pipeline/meshopt_decode.mjs@77d03b77c": "743235bc6c8da4d804609bc0fd6791bd46edaa3f",
+  "scripts/asset_pipeline/meshopt_decoder.mjs@77d03b77c": "d0933a9401f74ce5ef680344a4ae6c27ce293ebc",
+  "scripts/asset_pipeline/run_asset.py@77d03b77c": "21db41063604d0b97be645d9827196b0bca9ed56"
+ },
+ "status": "FROZEN_FOR_REVIEW_NOT_APPROVED",
+ "tools": {
+  "blender": "Blender 5.2.3 LTS",
+  "node": "v26.12.1",
+  "uv": "uv 0.5.9"
+ }
+}

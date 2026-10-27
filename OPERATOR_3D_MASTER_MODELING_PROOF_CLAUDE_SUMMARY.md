@@ -40,3 +40,10 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 
 ## Comparison + one-command pipeline
 - `scripts/asset_pipeline/run_asset.py` (uv inline deps; see its README): .meshy/GLB -> decode -> Blender ground+common scale -> 8-dir 45°/50 px/m renders -> sheet vs locked canonical. Ran on model(3): scale 1.105, heights 85–91 px, mean IoU 0.668 (exp-008 at 45°: 0.610, not the same height basis). Output kept at `meshy_candidates/meshy-002_textured/normalized_45deg_85px/`. No approval/selection. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## Task 011 (freeze meshy-002 evidence; harden asset workflow)
+- Verified meshy-002 bytes (LFS materialised; decoded sha256 b9c2f68d…; container e418978c…; canonical idle d4a6a5f5… OK — the task text's canonical sha had missing characters, real locked bytes verify).
+- Published textured evidence (11 images/reports, retained) to Dropbox run `meshy002-textured-20261027T224145Z`; re-downloaded sha256 match 11/11. Material graph verified (sRGB base colour, Non-Color MR + normal, KHR_texture_transform → Mapping nodes); AgX default view transform noted. Mesh watertight (0 boundary edges, 27 non-manifold edges, 12 degenerate tris).
+- Frozen: `locks/meshy-002_textured/FROZEN_CANDIDATE_MANIFEST.json` (`FROZEN_FOR_REVIEW_NOT_APPROVED`, 54 files), `verify` OK; no select-best, no approval.
+- Workflow hardened (`run → verify → freeze → publish-review`), entrypoint `custodian/tools/iteration/asset_pipeline.py`, 43 unit tests (+1 Blender integration), path-filtered CI. Smoke on new candidate id reproduced the frozen figures exactly (scale 1.10542, 85–91 px, IoU 0.668; renders pixel-identical).
+- Return to clean `~/Projects/CUSTODIAN` on `main`. No PR opened (needs a focused tooling-only branch).

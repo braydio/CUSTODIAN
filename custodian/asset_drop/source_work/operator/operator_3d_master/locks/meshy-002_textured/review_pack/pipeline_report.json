@@ -1,0 +1,456 @@
+{
+ "frozen_pipeline_report": {
+  "input": "model(3).meshy",
+  "input_sha256": "c7994d921c68be74e5b222ebf2f4ee4d4595d64db2df56e1a42ea6d1a838a08e",
+  "name": "meshy-002_pipeline_run",
+  "status": "IMPORTED_REFERENCE_CANDIDATE_NOT_APPROVED",
+  "params": {
+   "elev_deg": 45.0,
+   "px_per_m": 50.0,
+   "target_S_height_px": 85.0
+  },
+  "container": "meshy_v1 -> glb (tag NOT verified)",
+  "container_sha256": "e418978c13199b3f96c79388d27b4357fd821cf6665eaece5f0b7229fa5c1bf7",
+  "extensions_required": [
+   "KHR_mesh_quantization",
+   "EXT_meshopt_compression",
+   "EXT_texture_webp"
+  ],
+  "meshopt": "decoded locally",
+  "decoded_sha256": "b9c2f68dfaa555e259a38b504698cfb44d86272683fea274ed03e948c6f33ad6",
+  "asset": {
+   "raw_height_m": 1.9026,
+   "applied_scale": 1.10542,
+   "normalised_height_m": 2.1032,
+   "normalised_dims_m": [
+    0.9157,
+    0.5224,
+    2.1032
+   ],
+   "scale_search_[scale,S_height_px]": [
+    [
+     1.0,
+     76
+    ],
+    [
+     1.11842,
+     86
+    ],
+    [
+     1.10542,
+     85
+    ]
+   ],
+   "verts": 660202,
+   "tris": 1251670,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "images": [
+    [
+     "Image_0",
+     [
+      4096,
+      4096
+     ]
+    ],
+    [
+     "Image_1",
+     [
+      2048,
+      2048
+     ]
+    ],
+    [
+     "Image_2",
+     [
+      4096,
+      4096
+     ]
+    ]
+   ]
+  },
+  "compare": {
+   "note": "IoU is triage only; no approval, no best selection",
+   "per_direction": {
+    "N": {
+     "asset": {
+      "bbox_xyxy": [
+       41,
+       27,
+       86,
+       113
+      ],
+      "height_px": 87,
+      "width_px": 46
+     },
+     "source": {
+      "bbox_xyxy": [
+       41,
+       24,
+       86,
+       107
+      ],
+      "height_px": 84,
+      "width_px": 46
+     },
+     "silhouette_iou": 0.75
+    },
+    "NE": {
+     "asset": {
+      "bbox_xyxy": [
+       47,
+       29,
+       82,
+       116
+      ],
+      "height_px": 88,
+      "width_px": 36
+     },
+     "source": {
+      "bbox_xyxy": [
+       44,
+       22,
+       84,
+       106
+      ],
+      "height_px": 85,
+      "width_px": 41
+     },
+     "silhouette_iou": 0.614
+    },
+    "E": {
+     "asset": {
+      "bbox_xyxy": [
+       51,
+       30,
+       76,
+       120
+      ],
+      "height_px": 91,
+      "width_px": 26
+     },
+     "source": {
+      "bbox_xyxy": [
+       47,
+       20,
+       79,
+       106
+      ],
+      "height_px": 87,
+      "width_px": 33
+     },
+     "silhouette_iou": 0.63
+    },
+    "SE": {
+     "asset": {
+      "bbox_xyxy": [
+       43,
+       29,
+       84,
+       117
+      ],
+      "height_px": 89,
+      "width_px": 42
+     },
+     "source": {
+      "bbox_xyxy": [
+       41,
+       21,
+       81,
+       106
+      ],
+      "height_px": 86,
+      "width_px": 41
+     },
+     "silhouette_iou": 0.678
+    },
+    "S": {
+     "asset": {
+      "bbox_xyxy": [
+       41,
+       29,
+       86,
+       113
+      ],
+      "height_px": 85,
+      "width_px": 46
+     },
+     "source": {
+      "bbox_xyxy": [
+       39,
+       25,
+       89,
+       108
+      ],
+      "height_px": 84,
+      "width_px": 51
+     },
+     "silhouette_iou": 0.75
+    },
+    "SW": {
+     "asset": {
+      "bbox_xyxy": [
+       45,
+       30,
+       80,
+       119
+      ],
+      "height_px": 90,
+      "width_px": 36
+     },
+     "source": {
+      "bbox_xyxy": [
+       46,
+       21,
+       86,
+       106
+      ],
+      "height_px": 86,
+      "width_px": 41
+     },
+     "silhouette_iou": 0.614
+    },
+    "W": {
+     "asset": {
+      "bbox_xyxy": [
+       51,
+       30,
+       76,
+       119
+      ],
+      "height_px": 90,
+      "width_px": 26
+     },
+     "source": {
+      "bbox_xyxy": [
+       48,
+       20,
+       80,
+       106
+      ],
+      "height_px": 87,
+      "width_px": 33
+     },
+     "silhouette_iou": 0.623
+    },
+    "NW": {
+     "asset": {
+      "bbox_xyxy": [
+       43,
+       29,
+       84,
+       116
+      ],
+      "height_px": 88,
+      "width_px": 42
+     },
+     "source": {
+      "bbox_xyxy": [
+       43,
+       22,
+       83,
+       106
+      ],
+      "height_px": 85,
+      "width_px": 41
+     },
+     "silhouette_iou": 0.684
+    }
+   },
+   "mean_iou": 0.668,
+   "asset_height_px_range": [
+    85,
+    91
+   ]
+  }
+ },
+ "evidence_diagnostics": {
+  "scale": 1.10542,
+  "height_m": 2.1032,
+  "view_transform_default": "AgX",
+  "look": "None",
+  "engine_default": "BLENDER_EEVEE",
+  "materials": [
+   {
+    "material": "Material_0",
+    "blend_method": "HASHED",
+    "use_backface_culling": false,
+    "nodes": [
+     {
+      "name": "Principled BSDF",
+      "type": "ShaderNodeBsdfPrincipled"
+     },
+     {
+      "name": "Material Output",
+      "type": "ShaderNodeOutputMaterial"
+     },
+     {
+      "name": "Image Texture",
+      "type": "ShaderNodeTexImage",
+      "image": "Image_0",
+      "size": [
+       4096,
+       4096
+      ],
+      "colorspace": "sRGB",
+      "interp": "Linear",
+      "ext": "REPEAT"
+     },
+     {
+      "name": "Mapping",
+      "type": "ShaderNodeMapping",
+      "mapping_scale": [
+       15.97823,
+       16.00261,
+       1.0
+      ],
+      "mapping_loc": [
+       1.7e-05,
+       -15.00261116,
+       0.0
+      ]
+     },
+     {
+      "name": "UV Map",
+      "type": "ShaderNodeUVMap"
+     },
+     {
+      "name": "Separate Color",
+      "type": "ShaderNodeSeparateColor"
+     },
+     {
+      "name": "Image Texture.001",
+      "type": "ShaderNodeTexImage",
+      "image": "Image_1",
+      "size": [
+       2048,
+       2048
+      ],
+      "colorspace": "Non-Color",
+      "interp": "Linear",
+      "ext": "REPEAT"
+     },
+     {
+      "name": "Mapping.001",
+      "type": "ShaderNodeMapping",
+      "mapping_scale": [
+       15.97823,
+       16.00261,
+       1.0
+      ],
+      "mapping_loc": [
+       1.7e-05,
+       -15.00261116,
+       0.0
+      ]
+     },
+     {
+      "name": "UV Map.001",
+      "type": "ShaderNodeUVMap"
+     },
+     {
+      "name": "Normal Map",
+      "type": "ShaderNodeNormalMap"
+     },
+     {
+      "name": "Image Texture.002",
+      "type": "ShaderNodeTexImage",
+      "image": "Image_2",
+      "size": [
+       4096,
+       4096
+      ],
+      "colorspace": "Non-Color",
+      "interp": "Linear",
+      "ext": "REPEAT"
+     },
+     {
+      "name": "Mapping.002",
+      "type": "ShaderNodeMapping",
+      "mapping_scale": [
+       15.97823,
+       16.00261,
+       1.0
+      ],
+      "mapping_loc": [
+       1.7e-05,
+       -15.00261116,
+       0.0
+      ]
+     },
+     {
+      "name": "UV Map.002",
+      "type": "ShaderNodeUVMap"
+     }
+    ],
+    "links": [
+     "Principled BSDF.BSDF -> Material Output.Surface",
+     "Image Texture.Color -> Principled BSDF.Base Color",
+     "Mapping.Vector -> Image Texture.Vector",
+     "UV Map.UV -> Mapping.Vector",
+     "Separate Color.Blue -> Principled BSDF.Metallic",
+     "Separate Color.Green -> Principled BSDF.Roughness",
+     "Image Texture.001.Color -> Separate Color.Color",
+     "Mapping.001.Vector -> Image Texture.001.Vector",
+     "UV Map.001.UV -> Mapping.001.Vector",
+     "Normal Map.Normal -> Principled BSDF.Normal",
+     "Image Texture.002.Color -> Normal Map.Color",
+     "Mapping.002.Vector -> Image Texture.002.Vector",
+     "UV Map.002.UV -> Mapping.002.Vector"
+    ]
+   },
+   {
+    "material": "wire",
+    "blend_method": "HASHED",
+    "use_backface_culling": false,
+    "nodes": [
+     {
+      "name": "Wireframe",
+      "type": "ShaderNodeWireframe"
+     },
+     {
+      "name": "Diffuse BSDF",
+      "type": "ShaderNodeBsdfDiffuse"
+     },
+     {
+      "name": "Emission",
+      "type": "ShaderNodeEmission"
+     },
+     {
+      "name": "Mix Shader",
+      "type": "ShaderNodeMixShader"
+     },
+     {
+      "name": "Material Output",
+      "type": "ShaderNodeOutputMaterial"
+     }
+    ],
+    "links": [
+     "Wireframe.Factor -> Mix Shader.Factor",
+     "Diffuse BSDF.BSDF -> Mix Shader.Shader",
+     "Emission.Emission -> Mix Shader.Shader",
+     "Mix Shader.Shader -> Material Output.Surface"
+    ]
+   }
+  ],
+  "uv_range": [
+   [
+    0.0,
+    0.0625,
+    0.9375,
+    1.0
+   ]
+  ],
+  "tris": 1251670,
+  "verts": 660202
+ },
+ "geometry_analysis": {
+  "welded_unique_positions": 625807,
+  "edges": 1877477,
+  "boundary_edges_(count==1)": 0,
+  "non_manifold_edges_(count>2)": 27,
+  "degenerate_triangles": 12,
+  "triangles": 1251670
+ }
+}
