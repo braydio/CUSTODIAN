@@ -77,6 +77,10 @@ Live faction/story profile data still uses prototype **iconoclast, cult_mechanis
 
 The April REGION_GENERATION_SYSTEM phase table predates October F02 story/reservation work; the WORLD_ASCENT next-geometry note also needs distinction between existing rectangle claiming and absent causal dressing. Update these as documentation drift, not as a claim that all region-generation phases are implemented.
 
+## ES-1 integration review update (2026-10-27)
+
+The [source-grounded interaction and geography review](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md) recommends composing these grammars **inside a reserved F02 story-room intent node**, optionally scoped to an existing verified F15-B1/B2 parent Location. It identifies a current split between graph-reserved floor rectangles and independently selected `metadata_only_v1` story markers, which must be joined rather than allowing duplicate site positions. It also selects two repeatable `WorldReadoutInteractable`-compatible clue points as a first-pilot interaction contract, reusing the Operator's existing group/nearest-distance selector and HUD. This remains a **human-decision hold**, not approved runtime geometry, persistence, code packet or art.
+
 ## Acceptance target and Next Agent Slice (PLANNING ONLY)
 
 First pilot **Refused Passage**: repeated seed/profile/site ID yields identical causal choice, layout/clue/inspect identity and transforms; different seeds vary coherently; invalid footprint **skips without rejecting a valid world**. All clue points accessible to a real Operator; no blocking required road, spawn, objective, extraction or vehicle route. Streamed reveal/re-entry stable. Quantitative geometry/alpha checks before tightly cropped human camera-read review.
