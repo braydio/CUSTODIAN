@@ -22,6 +22,12 @@
 | **Phase 3** | Graph-First Mission Assembly | 📋 BACKLOG | RegionGraph not implemented |
 | **Phase 4** | Full Scenario Conditioning | 📋 BACKLOG | CampaignScenario→RegionSpec pending |
 
+### Modern runtime interpretation (design drift note, 2026-10-27)
+
+The dated April phase table above is not an exhaustive inventory of present F02 procgen. As inspected at main@bb5a1b16, current procgen already includes intent/region reservations, deterministic story-room *metadata*, basic reserved story-room floor claiming via StoryRoomGeometryStamper, faction ambient activity metadata, accepted-world export and a canonical road authority. These do **not** implement a coherent physical narrative tableau, full scenario-driven RegionGraph migration, or world-scale streaming. Read current runtime/AI-context status rather than treating every later phase as either fully absent or fully delivered.
+
+The new [Procedural Environmental Storytelling V1](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md) and [integration roadmap](../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md) define three **design-only** causal evidence grammars. Their eventual placement must consume accepted F02 geometry and any B1/B2 Domain/Location semantics without manufacturing another world/physical-route authority. Do not commission its artwork or create claimable task packets before the operational-integration human review.
+
 ### Phase 1 Complete (2026-04-08)
 
 The current implementation provides the **foundation layer**:
