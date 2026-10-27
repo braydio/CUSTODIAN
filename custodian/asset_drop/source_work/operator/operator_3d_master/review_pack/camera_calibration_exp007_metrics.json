@@ -1,0 +1,637 @@
+{
+ "note": "IoU is triage only; angle NOT selected.",
+ "anatomy_3d": {
+  "units": "metres, authoring Z up, mesh geometry in neutral rest (not inferred from 128px)",
+  "total_height": 2.075,
+  "overall_width_x": 1.336,
+  "shoulder_plate_span_x": 1.336,
+  "belt_width_x": 0.602,
+  "hood_height_z": 0.575,
+  "hood_width_x": 0.6,
+  "hood_top_z": 2.075,
+  "leg_length_ground_to_thigh_top_z": 1.031,
+  "hood_height_over_total": 0.277,
+  "shoulder_span_over_height": 0.644,
+  "leg_over_height": 0.497
+ },
+ "per_angle": {
+  "30/N": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     27,
+     92,
+     107
+    ],
+    "height_px": 81,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     24,
+     86,
+     107
+    ],
+    "height_px": 84,
+    "width_px": 46
+   },
+   "silhouette_iou": 0.702,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 107,
+   "bottom_row_source": 107
+  },
+  "30/NE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     26,
+     87,
+     111
+    ],
+    "height_px": 86,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     44,
+     22,
+     84,
+     106
+    ],
+    "height_px": 85,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.736,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 111,
+   "bottom_row_source": 106
+  },
+  "30/E": {
+   "model": {
+    "bbox_xyxy": [
+     51,
+     27,
+     79,
+     112
+    ],
+    "height_px": 86,
+    "width_px": 29
+   },
+   "source": {
+    "bbox_xyxy": [
+     47,
+     20,
+     79,
+     106
+    ],
+    "height_px": 87,
+    "width_px": 33
+   },
+   "silhouette_iou": 0.586,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 112,
+   "bottom_row_source": 106
+  },
+  "30/SE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     27,
+     87,
+     114
+    ],
+    "height_px": 88,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     21,
+     81,
+     106
+    ],
+    "height_px": 86,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.576,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 114,
+   "bottom_row_source": 106
+  },
+  "30/S": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     27,
+     92,
+     111
+    ],
+    "height_px": 85,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     39,
+     25,
+     89,
+     108
+    ],
+    "height_px": 84,
+    "width_px": 51
+   },
+   "silhouette_iou": 0.679,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 111,
+   "bottom_row_source": 108
+  },
+  "40/N": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     35,
+     92,
+     108
+    ],
+    "height_px": 74,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     24,
+     86,
+     107
+    ],
+    "height_px": 84,
+    "width_px": 46
+   },
+   "silhouette_iou": 0.649,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 108,
+   "bottom_row_source": 107
+  },
+  "40/NE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     34,
+     87,
+     113
+    ],
+    "height_px": 80,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     44,
+     22,
+     84,
+     106
+    ],
+    "height_px": 85,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.645,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 113,
+   "bottom_row_source": 106
+  },
+  "40/E": {
+   "model": {
+    "bbox_xyxy": [
+     51,
+     35,
+     79,
+     114
+    ],
+    "height_px": 80,
+    "width_px": 29
+   },
+   "source": {
+    "bbox_xyxy": [
+     47,
+     20,
+     79,
+     106
+    ],
+    "height_px": 87,
+    "width_px": 33
+   },
+   "silhouette_iou": 0.509,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 114,
+   "bottom_row_source": 106
+  },
+  "40/SE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     35,
+     87,
+     116
+    ],
+    "height_px": 82,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     21,
+     81,
+     106
+    ],
+    "height_px": 86,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.518,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 116,
+   "bottom_row_source": 106
+  },
+  "40/S": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     35,
+     92,
+     113
+    ],
+    "height_px": 79,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     39,
+     25,
+     89,
+     108
+    ],
+    "height_px": 84,
+    "width_px": 51
+   },
+   "silhouette_iou": 0.611,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 113,
+   "bottom_row_source": 108
+  },
+  "50/N": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     46,
+     92,
+     108
+    ],
+    "height_px": 63,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     24,
+     86,
+     107
+    ],
+    "height_px": 84,
+    "width_px": 46
+   },
+   "silhouette_iou": 0.557,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 108,
+   "bottom_row_source": 107
+  },
+  "50/NE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     45,
+     87,
+     115
+    ],
+    "height_px": 71,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     44,
+     22,
+     84,
+     106
+    ],
+    "height_px": 85,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.544,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 115,
+   "bottom_row_source": 106
+  },
+  "50/E": {
+   "model": {
+    "bbox_xyxy": [
+     51,
+     43,
+     79,
+     115
+    ],
+    "height_px": 73,
+    "width_px": 29
+   },
+   "source": {
+    "bbox_xyxy": [
+     47,
+     20,
+     79,
+     106
+    ],
+    "height_px": 87,
+    "width_px": 33
+   },
+   "silhouette_iou": 0.476,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 115,
+   "bottom_row_source": 106
+  },
+  "50/SE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     46,
+     87,
+     118
+    ],
+    "height_px": 73,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     21,
+     81,
+     106
+    ],
+    "height_px": 86,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.429,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 118,
+   "bottom_row_source": 106
+  },
+  "50/S": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     46,
+     92,
+     115
+    ],
+    "height_px": 70,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     39,
+     25,
+     89,
+     108
+    ],
+    "height_px": 84,
+    "width_px": 51
+   },
+   "silhouette_iou": 0.515,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 115,
+   "bottom_row_source": 108
+  },
+  "60/N": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     58,
+     92,
+     109
+    ],
+    "height_px": 52,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     24,
+     86,
+     107
+    ],
+    "height_px": 84,
+    "width_px": 46
+   },
+   "silhouette_iou": 0.42,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 109,
+   "bottom_row_source": 107
+  },
+  "60/NE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     53,
+     87,
+     116
+    ],
+    "height_px": 64,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     44,
+     22,
+     84,
+     106
+    ],
+    "height_px": 85,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.403,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 116,
+   "bottom_row_source": 106
+  },
+  "60/E": {
+   "model": {
+    "bbox_xyxy": [
+     51,
+     49,
+     79,
+     117
+    ],
+    "height_px": 69,
+    "width_px": 29
+   },
+   "source": {
+    "bbox_xyxy": [
+     47,
+     20,
+     79,
+     106
+    ],
+    "height_px": 87,
+    "width_px": 33
+   },
+   "silhouette_iou": 0.42,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 117,
+   "bottom_row_source": 106
+  },
+  "60/SE": {
+   "model": {
+    "bbox_xyxy": [
+     41,
+     54,
+     87,
+     120
+    ],
+    "height_px": 67,
+    "width_px": 47
+   },
+   "source": {
+    "bbox_xyxy": [
+     41,
+     21,
+     81,
+     106
+    ],
+    "height_px": 86,
+    "width_px": 41
+   },
+   "silhouette_iou": 0.324,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 120,
+   "bottom_row_source": 106
+  },
+  "60/S": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     57,
+     92,
+     117
+    ],
+    "height_px": 61,
+    "width_px": 58
+   },
+   "source": {
+    "bbox_xyxy": [
+     39,
+     25,
+     89,
+     108
+    ],
+    "height_px": 84,
+    "width_px": 51
+   },
+   "silhouette_iou": 0.386,
+   "projected_root_px": [
+    64.0,
+    106.0
+   ],
+   "bottom_row_model": 117,
+   "bottom_row_source": 108
+  },
+  "0 (eye level, reference only)/E": {
+   "model": {
+    "bbox_xyxy": [
+     51,
+     16,
+     79,
+     105
+    ],
+    "height_px": 90,
+    "width_px": 29
+   },
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  },
+  "0 (eye level, reference only)/S": {
+   "model": {
+    "bbox_xyxy": [
+     35,
+     16,
+     92,
+     105
+    ],
+    "height_px": 90,
+    "width_px": 58
+   },
+   "projected_root_px": [
+    64.0,
+    106.0
+   ]
+  }
+ },
+ "mean_iou_5dir_by_elevation": {
+  "30": 0.656,
+  "40": 0.586,
+  "50": 0.504,
+  "60": 0.391
+ }
+}
