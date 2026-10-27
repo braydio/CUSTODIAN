@@ -34,3 +34,6 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 
 ## meshy-001 saved
 - User's Meshy export saved as first imported candidate at `custodian/asset_drop/source_work/operator/operator_3d_master/meshy_candidates/meshy-001/` (compressed + decoded GLB, 8-dir 128/512 clay renders, scripts, README, SHA256SUMS). Untextured/unrigged; user is producing textures. Not approved, no runtime change. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## meshy-002 saved (textured)
+- `model(3).meshy` reconstructed with the user's script (user confirmed Meshy permission; only copies after account deletion), decoded, imported in Blender (UVs + 3 textures), rendered 8-dir at 45°/50 px/m. Saved at `.../operator_3d_master/meshy_candidates/meshy-002_textured/`. Not approved; no runtime change. Return to clean `~/Projects/CUSTODIAN` on `main`.

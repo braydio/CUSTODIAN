@@ -20,3 +20,4 @@ IoU is triage only: it says nothing about gold-edge material language, hood shap
 `config/shape_v002.json` gained a `blender` block after exp-002 ran; `exp-002/shape.json` (the true snapshot) is
 unchanged and was rendered at px_per_m=50. exp-001 used `scripts/create_blend_v1_exp001.py`.
 Preview cadence (15 fps in the .blend, 67 ms GIF) is provisional and not canonical timing.
+| meshy-002 (imported, `meshy_candidates/meshy-002_textured/`) | Meshy textured generation (model(3).meshy), 660k verts, UVs + 3 textures, unrigged; reference candidate, art approval pending | `b9c2f68dfaa555e2` (decoded) | n/a | n/a |
