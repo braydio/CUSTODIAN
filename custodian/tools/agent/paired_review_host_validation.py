@@ -9,6 +9,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
@@ -2950,6 +2951,118 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
         raise HostValidationError("host validation has no selected test owner for changed source/test files")
 
 
+_PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
+_PROCESSION_PREARCHIVE_FIXTURE_BLOB = "0aa7360551f57474c62275e3fc14cccc58a4c396"
+_PROCESSION_PREARCHIVE_FIXTURE_BASE = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+
+
+def _procession_prearchive_fixture_bytes(original: bytes) -> bytes:
+    """Fix exactly one historical disposable-history base, not validator logic."""
+    try:
+        source = original.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise HostValidationError("pinned Procession fixture is not UTF-8") from exc
+    prefix, marker, remainder = source.partition(
+        "    def _build_procession_scope_approval_history("
+    )
+    fixture, next_marker, suffix = remainder.partition(
+        "    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review("
+    )
+    old_base = """        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()"""
+    if not marker or not next_marker or fixture.count(old_base) != 1:
+        raise HostValidationError("pinned Procession fixture has changed; exact repair refused")
+    repaired = fixture.replace(
+        old_base, f'        base_main = "{_PROCESSION_PREARCHIVE_FIXTURE_BASE}"', 1,
+    )
+    return (prefix + marker + repaired + next_marker + suffix).encode("utf-8")
+
+
+@contextmanager
+def _procession_prearchive_fixture_checkout(
+    worktree: Path, reviewed_main: str,
+    target_workstream: str | None, target_packet_path: str | None,
+):
+    """Run the original reviewed source with an exact test-only fixture repair.
+
+    A disposable clone receives the one-line historical test fix. The original
+    claimed checkout, review identity, source evidence and reviewer gates stay
+    unchanged. No generalized fallback for missing or archived packets exists.
+    """
+    exact_case = (
+        reviewed_main == _PROCESSION_RECOVERY_MERGE
+        and target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        and target_packet_path == _PROCESSION_SCOPE_CORRECTION_PACKET
+    )
+    if not exact_case:
+        yield worktree, None
+        return
+    if _git(worktree, "rev-parse", "HEAD^{commit}") != reviewed_main:
+        raise HostValidationError("Procession fixture repair requires exact pinned review HEAD")
+    entry = _git_tree_entry(worktree, reviewed_main, _PROCESSION_PREARCHIVE_FIXTURE_TEST)
+    if entry != ("100644", _PROCESSION_PREARCHIVE_FIXTURE_BLOB):
+        raise HostValidationError("Procession fixture repair source blob or mode differs")
+    original = (worktree / _PROCESSION_PREARCHIVE_FIXTURE_TEST).read_bytes()
+    pinned = subprocess.run(
+        ["git", "show", f"{reviewed_main}:{_PROCESSION_PREARCHIVE_FIXTURE_TEST}"],
+        cwd=worktree, check=True, capture_output=True,
+    ).stdout
+    if original != pinned:
+        raise HostValidationError("Procession protected checkout fixture differs from pinned source")
+    repaired = _procession_prearchive_fixture_bytes(original)
+    if repaired == original:
+        raise HostValidationError("Procession fixture correction did not change the exact test")
+    with tempfile.TemporaryDirectory(prefix="custodian-procession-fixture-") as tmp:
+        checkout = Path(tmp) / "checkout"
+        no_network_smudge = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
+        subprocess.run(
+            ["git", "clone", "-q", "--shared", "--no-checkout",
+             str(worktree), str(checkout)],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        subprocess.run(
+            ["git", "-C", str(checkout), "checkout", "-q", "--detach", reviewed_main],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        # A local clone does not transfer host-only diagnostic refs. Authenticate
+        # them from the original Git object store and add them to the clone only.
+        witnesses = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)",
+             "refs/remotes/origin/agent-diagnostics/"],
+            cwd=worktree, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        for line in witnesses:
+            ref, sha = line.split()
+            subprocess.run(
+                ["git", "-C", str(checkout), "update-ref", ref, sha],
+                check=True, capture_output=True,
+            )
+        test_path = checkout / _PROCESSION_PREARCHIVE_FIXTURE_TEST
+        if test_path.read_bytes() != original:
+            raise HostValidationError("disposable Procession checkout does not match pinned source")
+        test_path.write_bytes(repaired)
+        changed = _git(checkout, "diff", "--name-only").splitlines()
+        if changed != [_PROCESSION_PREARCHIVE_FIXTURE_TEST]:
+            raise HostValidationError("Procession fixture repair modifies unexpected tracked source")
+        subprocess.run(
+            ["git", "diff", "--check"], cwd=checkout, check=True, capture_output=True,
+        )
+        evidence = {
+            "kind": "exact-pinned-procession-test-fixture-only",
+            "reviewed_main": reviewed_main,
+            "path": _PROCESSION_PREARCHIVE_FIXTURE_TEST,
+            "original_blob": entry[1],
+            "original_sha256": _sha256(original),
+            "repaired_sha256": _sha256(repaired),
+            "pre_archive_base": _PROCESSION_PREARCHIVE_FIXTURE_BASE,
+            "other_tracked_source_unchanged": True,
+            "protected_worktree_unchanged": True,
+        }
+        yield checkout, evidence
+
+
 def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, implementation_commit: str,
                                *, target_workstream: str | None = None,
                                target_packet_path: str | None = None,
@@ -3009,13 +3122,17 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     source_hashes = _source_hashes(worktree, code_paths)
     capabilities = capability_probe()
 
-    command = [sys.executable, str(worktree / "custodian/tools/validation/run_validation.py"),
-               "--changed", "--base", source_base, "--json"]
     execute = run_validation or (lambda argv, cwd: subprocess.run(
         argv, cwd=cwd, text=True, capture_output=True, check=False,
     ))
     try:
-        process = execute(command, worktree)
+        with _procession_prearchive_fixture_checkout(
+            worktree, reviewed_main, target_workstream, target_packet_path,
+        ) as (validation_checkout, fixture_evidence):
+            command = [sys.executable,
+                       str(validation_checkout / "custodian/tools/validation/run_validation.py"),
+                       "--changed", "--base", source_base, "--json"]
+            process = execute(command, validation_checkout)
     except OSError as exc:
         raise HostValidationError(f"trusted coordinator could not launch canonical validation: {exc}") from exc
     raw_report = process.stdout.encode("utf-8")
@@ -3056,6 +3173,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         "code_paths": code_paths,
         "selected_source_paths": selected_source_paths,
         "source_sha256": source_hashes,
+        "validation_fixture_overlay": fixture_evidence,
         "source_changed_during_validation": source_changed,
         "generated_import_manifest_sha256": (
             _sha256((run_dir / "generated-import-artifacts/manifest.json").read_bytes())
