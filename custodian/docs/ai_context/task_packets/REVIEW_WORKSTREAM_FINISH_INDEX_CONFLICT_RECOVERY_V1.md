@@ -28,7 +28,7 @@
 - Review focus: Challenge the actual commit-parent and merge-tree authentication; prove conflict markers and correction are a single immediate managed-index-only pair; test false history/paths/completion; ensure the path parser authorizes only exact repository paths; ensure final managed-index state is regenerated; and confirm existing normal and fail-closed behavior remains.
 - Acceptance: Produce a findings-first independent review of the landed Protected lifecycle implementation against its packet and live repository behavior. Record a fresh-context `passed`, `findings`, or `human_required` disposition. Each finding uses a stable cycle-scoped ID and includes class, domain, affected acceptance, evidence, disposition, and rationale. Do not patch the reviewed implementation.
 - Non-goals: Do not broaden recovery, redesign workstream lifecycle, alter the original governance implementation or its `Review:none` metadata, edit unrelated packet/claim/lock state, or perform subjective review.
-- Task overrides: `TASK OVERRIDE: Paired review may commit only the authorized durable review receipt, this review packet's archive metadata, its required root closing summary, and bounded correction/re-review packets; never edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
