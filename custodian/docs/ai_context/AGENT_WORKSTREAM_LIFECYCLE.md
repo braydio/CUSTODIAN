@@ -774,6 +774,13 @@ implementation commit, originating run ID, review cycle and stable finding IDs
   applies this identically in `status`, `audit` and `claim`. Only the explicitly linked
   next bounded correction (`<root>-review-corrections-<N+1>`, with `Findings addressed`
   IDs the review recorded) may consume a concluded `findings` review.
+  Historical pre-outcome packets with exactly two duplicate `## Independent Review`
+  sections may still count as a flat PASS, but only when both sections pass, one
+  explicitly matches the expected review workstream, their pinned target/main
+  evidence agrees with the separate archived passing review, reviewer context
+  and provenance are fresh/independent, and recorded blocking defects/material
+  gaps are both zero. Missing or contradictory evidence still fails closed;
+  this does not relax canonical receipt rules for new reviews.
 - **Nonpassing closeout.** `paired_review_runner.coordinator_finish_nonpassing_review`
   lands a findings/human_required review without ever touching the reviewed target
   packet: it must stay byte-identical to its pinned baseline and gains no receipt. Only
