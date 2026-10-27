@@ -279,6 +279,20 @@ index conflict resolution. Untraced merges, extra source changes, and
 out-of-surface paths remain blocked. Finish reports the exact blocking commit
 and path without pushing or landing the branch.
 
+One additional interrupted-merge shape is accepted only when Git reproduces a
+single conflict in `task_packets/README.md`'s managed Ready/Auto block for the
+exact packet archived by the first parent. The committed merge must match
+`git merge-tree --write-tree` everywhere else; its sole conflict hunk must be
+the generated row for that packet. The very next first-parent commit must remove
+only that hunk from the regular README, with all other tree entries unchanged.
+Later linear commits are checked individually and may touch only explicit
+Work-surface file paths, that archived packet, its expected root summary, or a
+managed-index-only README update. The final README must pass
+`task_packet_index.py`; any other conflict, delayed/altered repair, unrelated
+descendant, or stale generated block remains blocked. Bare Work-surface paths
+are recognized only as explicit path tokens, and traversal or absolute paths
+are rejected.
+
 One exact historical compatibility case binds the host-import recovery run
 `20261020T200652Z-2fd156ce23d0` to its two conflict interruptions and resume:
 `dbcf8aec4eb09264b60bea9d26c99f235022efb5` and
