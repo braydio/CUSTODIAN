@@ -561,6 +561,23 @@ cold-start prerequisite for every ephemeral worktree.
 - If one cheap graph attempt is unusable, fall back immediately to targeted
   symbol/path reads. Do not spend task time repairing CRG ceremony.
 
+### CRG install contract
+
+- Claude (`.mcp.json`), the refresh hook (`tools/crg-refresh.sh`), and the
+  user-level `~/.codex/config.toml` all run the same pinned, lightweight
+  `code-review-graph==<CRG_VERSION>` from `tools/crg-pin.env`. Do not add the
+  `[embeddings]` extra: it pulls torch + CUDA (~5.9 GB in the uv cache) and the
+  root graph has no embeddings. Without them `semantic_search_nodes_tool` is
+  keyword/FTS search, not vector search.
+- MCP servers run with a read-only `--tools` allowlist, so build/postprocess/
+  embed/refactor-apply tools are not exposed. Graph updates go through
+  `tools/crg-refresh.sh` (the post-commit and session-start hooks). This does
+  not intercept a direct `code-review-graph build|update` CLI call; the
+  worktree skip above covers only `crg-refresh.sh`.
+- Verify drift with `python3 tools/check_crg_config.py` after touching any CRG
+  config. Each MCP server is one process per session over one shared database;
+  that is expected.
+
 ### Task-scoped Repomix context
 
 For broad multi-file tasks, a packet may provide a bounded `## Context Pack`
