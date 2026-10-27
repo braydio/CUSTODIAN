@@ -213,6 +213,24 @@
       "needs_import": false
     },
     {
+      "id": "crg_config_contract",
+      "type": "python",
+      "script": "tools/check_crg_config.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "git"
+      ],
+      "owners": [
+        ".mcp.json",
+        "tools/crg-pin.env",
+        "tools/crg-refresh.sh",
+        "tools/check_crg_config.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "agent_workflow_contract",
       "type": "python",
       "script": "custodian/tools/validation/agent_workflow_smoke.py",
@@ -506,6 +524,29 @@
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/tools/validation/hub_road_empty_procession_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "hub_sepulcher_grave_evidence",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "persistence",
+        "operator_interaction"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
@@ -6729,6 +6770,28 @@
         "custodian/tools/agent/dispatch.py"
       ],
       "timeout_sec": 90,
+      "needs_import": false
+    },
+    {
+      "id": "agent_session_supervisor_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_session_supervisor.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "orphan_recovery",
+        "session_supervision",
+        "read_only_audit"
+      ],
+      "owners": [
+        "custodian/tools/agent/session_supervisor.py",
+        "custodian/tools/agent/workstream_recovery.py",
+        "custodian/tools/agent/test_session_supervisor.py",
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+      ],
+      "timeout_sec": 45,
       "needs_import": false
     },
     {
