@@ -102,6 +102,7 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_QUEUE_EXECUTION_FRONTIER_RESTORATION_V1.md` — Independently falsify the live queue-frontier restoration, eligibility classifications, and preservation of existing claims and review gates.
 - `REVIEW_WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md` — Independently determine whether correction cycle 1 resolves original finding R0-01 for W1's read-only inventory acceptance, without changing or erasing the o...
 - `REVIEW_WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Independently verify the worktree backlog worktree backlog dirty and unique preservation v1 implementation against exact proof of no lost work, no stolen cla...
+- `WORKFLOW_GOVERNANCE_SIMPLIFICATION_V1.md` — Make ordinary new CUSTODIAN work default to proportional, evidence-driven review, so routine Standard changes do not require an independent paired review without a concrete risk justification.
 - `WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Prove that all original dirty work and unique unlanded HEAD history have byte-safe recovery copies before any archive, adoption or retirement decision.
 - `AGENT_BLOCKER_CAPTURE_HOOKS_V1.md` — Capture actionable workflow interruptions automatically at existing owner-controlled lifecycle boundaries.
 - `AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
