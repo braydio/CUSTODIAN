@@ -6,7 +6,7 @@ ROOT=P(__file__).resolve().parents[1];ED=ROOT/'experiments'
 def digest(p):return hashlib.sha256(P(p).read_bytes()).hexdigest()
 def record(exp):
     folder=ED/exp
-    m=folder/'candidate.glb.manifest.json'
+    m=folder/'candidate.manifest.json'
     if not m.exists():raise RuntimeError('Missing built candidate manifest')
     return json.loads(m.read_text())
 def main():

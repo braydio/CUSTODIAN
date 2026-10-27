@@ -1,0 +1,300 @@
+{
+  "art_approved": false,
+  "experiment": "exp-005",
+  "files": [
+    {
+      "bytes": 120,
+      "path": "REVIEW_PENDING.txt",
+      "sha256": "353e0c9cfdd79d418e3c1ba0ffd2b7920e1d4d10c78588087641e6b25987d7f3"
+    },
+    {
+      "bytes": 143403,
+      "path": "blender_proof/look512/rest_E.png",
+      "sha256": "a61a88d1a68a98531671004dd893bc11cb1af0dc88903fe00c29c8ef017053cd"
+    },
+    {
+      "bytes": 141187,
+      "path": "blender_proof/look512/rest_N.png",
+      "sha256": "07780a6912dfdc56694701bc5dd637734b18bd1772b4b0073264e3a223669419"
+    },
+    {
+      "bytes": 144442,
+      "path": "blender_proof/look512/rest_NE.png",
+      "sha256": "1922be018802922a36d55a2bc545ab11df113dd3a800d38edf4cf47758a8c683"
+    },
+    {
+      "bytes": 144311,
+      "path": "blender_proof/look512/rest_NW.png",
+      "sha256": "ce354e074ced99923a52ca0ad7547f2f8f653d4f461e3467624988e66322e48f"
+    },
+    {
+      "bytes": 167672,
+      "path": "blender_proof/look512/rest_S.png",
+      "sha256": "fa009012592eb4558750225a116bc4e660b31bfe76da2ebca29535e929d89013"
+    },
+    {
+      "bytes": 161804,
+      "path": "blender_proof/look512/rest_SE.png",
+      "sha256": "59f859e0806b685fff9371b754c8d40f3afecaf887a20de7fc3c5c07807264e4"
+    },
+    {
+      "bytes": 161466,
+      "path": "blender_proof/look512/rest_SW.png",
+      "sha256": "154793769c71c0618e9e9502a72a85a26db0f28c087658ab7f3195f15782b6db"
+    },
+    {
+      "bytes": 142371,
+      "path": "blender_proof/look512/rest_W.png",
+      "sha256": "7b1ecad3acfea8cdd16f8070d546ee292fb3c85d8fd18234ed7513a1606e548c"
+    },
+    {
+      "bytes": 141663,
+      "path": "blender_proof/look512/walk_NE_01.png",
+      "sha256": "f12d04b021ec1c071f5cf0d8253eba671647add9440b2b4e996c8e6cb7c8c9c3"
+    },
+    {
+      "bytes": 142477,
+      "path": "blender_proof/look512/walk_NE_02.png",
+      "sha256": "e5b65c339547d0eb0c412efb7b7d0ec8653421771d92af4fd9a72a844332b9c9"
+    },
+    {
+      "bytes": 141877,
+      "path": "blender_proof/look512/walk_NE_03.png",
+      "sha256": "2f764f2a99d8edfc9f461fc82dc009c284a8b2f0e3f1ac4d458aeaf22f28e8f3"
+    },
+    {
+      "bytes": 138200,
+      "path": "blender_proof/look512/walk_NE_04.png",
+      "sha256": "ec56f72f3bb655530ad554ba4846895a0711df394a1a4a7f22e5cefef61c120a"
+    },
+    {
+      "bytes": 136813,
+      "path": "blender_proof/look512/walk_NE_05.png",
+      "sha256": "7c713b7ce30e5df645a116219ee8a37f4b1685ed8385d20019d9b70514a0bcd8"
+    },
+    {
+      "bytes": 138970,
+      "path": "blender_proof/look512/walk_NE_06.png",
+      "sha256": "26d16d40554fbf81862ce66cf1d858256c1ac53998631add3bd8b9319bd42272"
+    },
+    {
+      "bytes": 141700,
+      "path": "blender_proof/look512/walk_NE_07.png",
+      "sha256": "48a02adb421186695b5684e9736712ce3daa2b41e2902e9bcaba036fdd3ed043"
+    },
+    {
+      "bytes": 144017,
+      "path": "blender_proof/look512/walk_NE_08.png",
+      "sha256": "ed683d36177ac62a5facb88510e421f6e032bc0502d08f96d718e7bbc251db11"
+    },
+    {
+      "bytes": 145952,
+      "path": "blender_proof/look512/walk_NE_09.png",
+      "sha256": "b9c3ac22aeac712630b5861c09909d122d1fa00f1965094f68fe34caafeac073"
+    },
+    {
+      "bytes": 146331,
+      "path": "blender_proof/look512/walk_NE_10.png",
+      "sha256": "80f347f8f8165880dca02c800d32371a3315597697bcb5b3c70cd68ce81cd8df"
+    },
+    {
+      "bytes": 143929,
+      "path": "blender_proof/look512/walk_NE_11.png",
+      "sha256": "1c716fa3fecd6859dc5c4571d1035b82a62f766e895027bd3707e9a64890976a"
+    },
+    {
+      "bytes": 142036,
+      "path": "blender_proof/look512/walk_NE_12.png",
+      "sha256": "aa821ab702f5b75eaa2ccaecdf3b3dfa7fc84c594d323da445f91f57ddb15281"
+    },
+    {
+      "bytes": 140015,
+      "path": "blender_proof/look512/walk_NE_13.png",
+      "sha256": "1d2df8daff72857d73997aac507732c504151380a226d7b8dd9ff6c6b42abfe1"
+    },
+    {
+      "bytes": 140560,
+      "path": "blender_proof/look512/walk_NE_14.png",
+      "sha256": "bde2cf07f1ecffdc13dee15a04c79b0eeb7c52db192801cba0d9d9e97f0c792f"
+    },
+    {
+      "bytes": 141052,
+      "path": "blender_proof/look512/walk_NE_15.png",
+      "sha256": "af2fa0bcfae18455ed1d281efaeabc6d1427798e4ad03de96ab2a14136528677"
+    },
+    {
+      "bytes": 11145,
+      "path": "blender_proof/px128/rest_E.png",
+      "sha256": "2d492471a9855263ea8dda37b1d4fc23747da4a570589c5c97fa402544e269a2"
+    },
+    {
+      "bytes": 11072,
+      "path": "blender_proof/px128/rest_N.png",
+      "sha256": "db2ae0d70dd5a6a2ab6a75b99661bbaf0ae2c5996eef4f473228216f62beaacb"
+    },
+    {
+      "bytes": 11605,
+      "path": "blender_proof/px128/rest_NE.png",
+      "sha256": "e6bbd186f0876180f6baa9e067ee244c1887495b5def90d790e4df5d4ec9d789"
+    },
+    {
+      "bytes": 11481,
+      "path": "blender_proof/px128/rest_NW.png",
+      "sha256": "d5177101ad503989fd797a02111c89efee8477cf087c06d70b80dfad1ac0577f"
+    },
+    {
+      "bytes": 13276,
+      "path": "blender_proof/px128/rest_S.png",
+      "sha256": "4bd179f638e612cb76ace9ecd0107e2a0cf575af7bea33baefc5b6791557c28c"
+    },
+    {
+      "bytes": 13057,
+      "path": "blender_proof/px128/rest_SE.png",
+      "sha256": "dda1ea0b8df385e79a723294338f3dc99bad0b96234fb4b72faa8506daef0ced"
+    },
+    {
+      "bytes": 12956,
+      "path": "blender_proof/px128/rest_SW.png",
+      "sha256": "8fa39b84dd7c92241974e49d674ad053775d1cfea36e6b89375022ca744d5185"
+    },
+    {
+      "bytes": 11088,
+      "path": "blender_proof/px128/rest_W.png",
+      "sha256": "f77cf396724e793e078694bed9ae8c764b3b384809f25758b26dee681563b968"
+    },
+    {
+      "bytes": 11280,
+      "path": "blender_proof/px128/walk_NE_01.png",
+      "sha256": "8d314efce5581fbd53f1f0278cc27f9a80e1e0d29650545dcc750397489bdee7"
+    },
+    {
+      "bytes": 11188,
+      "path": "blender_proof/px128/walk_NE_02.png",
+      "sha256": "f7dc0529dc23477cdf3f3f14b1c42291bc28df401b7b1535a73826767ab3a152"
+    },
+    {
+      "bytes": 11273,
+      "path": "blender_proof/px128/walk_NE_03.png",
+      "sha256": "6770e53d98dc29d1a47659e995572026f937ad329473743181a7f8086333ed2b"
+    },
+    {
+      "bytes": 11001,
+      "path": "blender_proof/px128/walk_NE_04.png",
+      "sha256": "bf2adc08ec7eb232c6f2566f116e06ac935b4291265444905b63a768296ffe34"
+    },
+    {
+      "bytes": 10853,
+      "path": "blender_proof/px128/walk_NE_05.png",
+      "sha256": "df704900fbdc7bd97665160086854801d0d603264b98f7f2f0651b166f0d42ef"
+    },
+    {
+      "bytes": 11146,
+      "path": "blender_proof/px128/walk_NE_06.png",
+      "sha256": "44ae8492be08b9a3254ab7af2064ec75138d1066088bb1278995ff668c08ffc5"
+    },
+    {
+      "bytes": 11379,
+      "path": "blender_proof/px128/walk_NE_07.png",
+      "sha256": "b84fe4e8a61ba597f986272bd18d4b0e5b3284eb397924964892bb8f7bd024ed"
+    },
+    {
+      "bytes": 11556,
+      "path": "blender_proof/px128/walk_NE_08.png",
+      "sha256": "72c628fdf0cf3d82fc9c25accde9706adc738c63bc914c11b420af6d0d768dd7"
+    },
+    {
+      "bytes": 11724,
+      "path": "blender_proof/px128/walk_NE_09.png",
+      "sha256": "dfa9d4bcaabb9a1a22f498bf66cea2bfbbeddbefd8e66187b86ba81706793fe3"
+    },
+    {
+      "bytes": 11732,
+      "path": "blender_proof/px128/walk_NE_10.png",
+      "sha256": "ea7432ff8e82367c37f58b19c7f2eb1886e9d2b359c3e7306a4e1ccf6ae14428"
+    },
+    {
+      "bytes": 11559,
+      "path": "blender_proof/px128/walk_NE_11.png",
+      "sha256": "8f4cf33697675345d6f702ef3c55ba6185938341cca228e41390529d304d9b7d"
+    },
+    {
+      "bytes": 11224,
+      "path": "blender_proof/px128/walk_NE_12.png",
+      "sha256": "c9a814eda5364907281b6301fbe7c2b9fd6cbe72429cbc244b88160769c5012d"
+    },
+    {
+      "bytes": 11177,
+      "path": "blender_proof/px128/walk_NE_13.png",
+      "sha256": "3dc9551eea25d302e74aab667d044cc99d60ad493a08b0d3923655c5b3756bac"
+    },
+    {
+      "bytes": 11104,
+      "path": "blender_proof/px128/walk_NE_14.png",
+      "sha256": "6ecf3e9252e2e9bcecdee8c21f657d1e6c13c8e67eb5f6ebc0bbfb654374066c"
+    },
+    {
+      "bytes": 11063,
+      "path": "blender_proof/px128/walk_NE_15.png",
+      "sha256": "e16079a5cf47c145bfe06996195b16b09f0e1de1465197773a8f666c81cd1057"
+    },
+    {
+      "bytes": 1233,
+      "path": "blender_run.log",
+      "sha256": "f904bbfbc8a626e405b0cc51f5c0f3ddbeed5328d94c23f79ec7a2660ed0bf76"
+    },
+    {
+      "bytes": 274532,
+      "path": "candidate.glb",
+      "sha256": "1277b42f585d45ae20dfb6089f2dc07a06ef2788b2edc8d1baa116226ced3293"
+    },
+    {
+      "bytes": 14050,
+      "path": "candidate.manifest.json",
+      "sha256": "32cf2256bcd91eb816977513defa55534095df007e1b62fed03bac047fd17728"
+    },
+    {
+      "bytes": 558,
+      "path": "candidate.qa.json",
+      "sha256": "fc6b36707d9549a69e6538a877ef84684d39ee9690a6bfb9a109ac993f9605f7"
+    },
+    {
+      "bytes": 294059,
+      "path": "operator_exp005.blend",
+      "sha256": "23cf2b5d8d145337564833395c2dd67f644f677553616e579c1e5d3aedccf9aa"
+    },
+    {
+      "bytes": 1689,
+      "path": "operator_exp005.rig_qa.json",
+      "sha256": "198834e5210998ac529db2d2f7b69dc287f74c87325676ef02bd324c8586c8c4"
+    },
+    {
+      "bytes": 167896,
+      "path": "review/compare_source_vs_3d_8dir.png",
+      "sha256": "ebdb9cbbc554044a1381ba37721371d9b74629953475758f8e3930b38cbd25a9"
+    },
+    {
+      "bytes": 2384,
+      "path": "review/metrics.json",
+      "sha256": "d3926c6ba06bae1bebeb5855b31af2b3d7c4944567071606ec2ad05cac667d67"
+    },
+    {
+      "bytes": 99223,
+      "path": "review/walk_NE_15f_contact.png",
+      "sha256": "1551c1eb690e3043c4dbab2afe1dfec27474bcb6e552c5eacf35af0d9b73aabb"
+    },
+    {
+      "bytes": 74122,
+      "path": "review/walk_NE_loop_PROVISIONAL_cadence.gif",
+      "sha256": "b5f5b31d1c34140ba2409a14a618f22071b9980b68ac3279bc27a0dc05b07b72"
+    },
+    {
+      "bytes": 1897,
+      "path": "shape.json",
+      "sha256": "0b25b77a2f4d14a066f917d841a3997a7114a1e83aa341251e8ae0ccf419cfa3"
+    }
+  ],
+  "frozen_at_utc": "2026-10-27T09:52:29.100062+00:00",
+  "gameplay_published": false,
+  "notes": "exp-003 model + hood-opening ring + stronger walk (half-stride .28, lift .17, arm .5). Hood ring reads as floating halo from behind; boots blocky; arms beaded. Art unreviewed.",
+  "schema": "custodian.operator_3d_blender_proof.v1"
+}

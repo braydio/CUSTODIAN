@@ -14,8 +14,9 @@ def check(path,config):
     if len(parts)<60:failures.append('Fewer than 60 named editable parts')
     allv=np.vstack([m.vertices for m in parts]);bounds=np.array([allv.min(axis=0),allv.max(axis=0)])
     if not np.isfinite(allv).all():failures.append('Nonfinite mesh coordinates')
-    if np.linalg.norm(bounds[0][:2])>2 or np.linalg.norm(bounds[1][:2])>2:failures.append('Model beyond declared local character bounds')
-    if bounds[0][2]<-.01 or bounds[1][2]>2.15:failures.append('Ground/height contract violated')
+    up=1 if conf.get('export_y_up') else 2;side=[i for i in range(3) if i!=up]
+    if np.linalg.norm(bounds[0][side])>2 or np.linalg.norm(bounds[1][side])>2:failures.append('Model beyond declared local character bounds')
+    if bounds[0][up]<-.01 or bounds[1][up]>2.15:failures.append('Ground/height contract violated')
     if len(parts)!=rece['geometry_count']:failures.append('Part count manifest mismatch')
     if not any(np.max(m.visual.vertex_colors[:,:3].mean(axis=0))>200 for m in parts if hasattr(m.visual,'vertex_colors')):warnings.append('No bright color accent; verify amber visor manually')
     names=list(scene.geometry.keys());req=['Head__visor_amber','Cloak__one_piece_folded_fabric','Boot_L__sole','Boot_R__sole','Torso__core']

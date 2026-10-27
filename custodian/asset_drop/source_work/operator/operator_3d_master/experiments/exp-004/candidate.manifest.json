@@ -1,0 +1,622 @@
+{
+  "approved_as_canonical": false,
+  "asset_sha256": "579d5c4b0c0af2671d3a987242542cc37cabfd6d222b3fdcba80abe275df55b8",
+  "geometry_count": 87,
+  "mesh_parts": [
+    {
+      "faces": 120,
+      "material_class": "armor_dark",
+      "name": "Pelvis__underplate",
+      "rig_group": "Hips",
+      "vertices": 62
+    },
+    {
+      "faces": 160,
+      "material_class": "armor",
+      "name": "Torso__core",
+      "rig_group": "Spine",
+      "vertices": 82
+    },
+    {
+      "faces": 80,
+      "material_class": "undercloth",
+      "name": "Torso__inner_gorget",
+      "rig_group": "Spine",
+      "vertices": 42
+    },
+    {
+      "faces": 16,
+      "material_class": "armor_light",
+      "name": "Torso__breastplate_left",
+      "rig_group": "Spine",
+      "vertices": 10
+    },
+    {
+      "faces": 16,
+      "material_class": "armor",
+      "name": "Torso__breastplate_right",
+      "rig_group": "Spine",
+      "vertices": 10
+    },
+    {
+      "faces": 80,
+      "material_class": "armor",
+      "name": "Torso__abdomen_lamella_0",
+      "rig_group": "Hips",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Torso__abdomen_lamella_1",
+      "rig_group": "Hips",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor",
+      "name": "Torso__abdomen_lamella_2",
+      "rig_group": "Hips",
+      "vertices": 42
+    },
+    {
+      "faces": 12,
+      "material_class": "bronze_dim",
+      "name": "Torso__center_bronze",
+      "rig_group": "Spine",
+      "vertices": 8
+    },
+    {
+      "faces": 80,
+      "material_class": "undercloth",
+      "name": "Hips__belt",
+      "rig_group": "Hips",
+      "vertices": 42
+    },
+    {
+      "faces": 12,
+      "material_class": "bronze",
+      "name": "Hips__buckle",
+      "rig_group": "Hips",
+      "vertices": 8
+    },
+    {
+      "faces": 56,
+      "material_class": "undercloth",
+      "name": "Thigh_R__fabric",
+      "rig_group": "Thigh.R",
+      "vertices": 30
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Thigh_R__outer_plate",
+      "rig_group": "Thigh.R",
+      "vertices": 162
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Thigh_R__ridge",
+      "rig_group": "Thigh.R",
+      "vertices": 18
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Knee_R__cup",
+      "rig_group": "Shin.R",
+      "vertices": 162
+    },
+    {
+      "faces": 48,
+      "material_class": "undercloth",
+      "name": "Shin_R__core",
+      "rig_group": "Shin.R",
+      "vertices": 26
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Shin_R__greave",
+      "rig_group": "Shin.R",
+      "vertices": 162
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Shin_R__vertical_flute",
+      "rig_group": "Shin.R",
+      "vertices": 18
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_dark",
+      "name": "Boot_R__ankle",
+      "rig_group": "Foot.R",
+      "vertices": 162
+    },
+    {
+      "faces": 12,
+      "material_class": "armor_dark",
+      "name": "Boot_R__sole",
+      "rig_group": "Foot.R",
+      "vertices": 8
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Boot_R__toe",
+      "rig_group": "Foot.R",
+      "vertices": 162
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_light",
+      "name": "Boot_R__toe_cap",
+      "rig_group": "Foot.R",
+      "vertices": 42
+    },
+    {
+      "faces": 320,
+      "material_class": "undercloth",
+      "name": "Shoulder_R__joint",
+      "rig_group": "UpperArm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Shoulder_R__pauldron",
+      "rig_group": "UpperArm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Shoulder_R__raised_rim",
+      "rig_group": "UpperArm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 56,
+      "material_class": "undercloth",
+      "name": "UpperArm_R__mail",
+      "rig_group": "UpperArm.R",
+      "vertices": 30
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "UpperArm_R__plate",
+      "rig_group": "UpperArm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_dark",
+      "name": "Elbow_R__pivot",
+      "rig_group": "Forearm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 48,
+      "material_class": "undercloth",
+      "name": "Forearm_R__sleeve",
+      "rig_group": "Forearm.R",
+      "vertices": 26
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Forearm_R__vambrace",
+      "rig_group": "Forearm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Hand_R__gauntlet",
+      "rig_group": "Forearm.R",
+      "vertices": 162
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_R__finger_0",
+      "rig_group": "Forearm.R",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_R__finger_1",
+      "rig_group": "Forearm.R",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_R__finger_2",
+      "rig_group": "Forearm.R",
+      "vertices": 42
+    },
+    {
+      "faces": 56,
+      "material_class": "undercloth",
+      "name": "Thigh_L__fabric",
+      "rig_group": "Thigh.L",
+      "vertices": 30
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Thigh_L__outer_plate",
+      "rig_group": "Thigh.L",
+      "vertices": 162
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Thigh_L__ridge",
+      "rig_group": "Thigh.L",
+      "vertices": 18
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Knee_L__cup",
+      "rig_group": "Shin.L",
+      "vertices": 162
+    },
+    {
+      "faces": 48,
+      "material_class": "undercloth",
+      "name": "Shin_L__core",
+      "rig_group": "Shin.L",
+      "vertices": 26
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Shin_L__greave",
+      "rig_group": "Shin.L",
+      "vertices": 162
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Shin_L__vertical_flute",
+      "rig_group": "Shin.L",
+      "vertices": 18
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_dark",
+      "name": "Boot_L__ankle",
+      "rig_group": "Foot.L",
+      "vertices": 162
+    },
+    {
+      "faces": 12,
+      "material_class": "armor_dark",
+      "name": "Boot_L__sole",
+      "rig_group": "Foot.L",
+      "vertices": 8
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Boot_L__toe",
+      "rig_group": "Foot.L",
+      "vertices": 162
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_light",
+      "name": "Boot_L__toe_cap",
+      "rig_group": "Foot.L",
+      "vertices": 42
+    },
+    {
+      "faces": 320,
+      "material_class": "undercloth",
+      "name": "Shoulder_L__joint",
+      "rig_group": "UpperArm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Shoulder_L__pauldron",
+      "rig_group": "UpperArm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Shoulder_L__raised_rim",
+      "rig_group": "UpperArm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 56,
+      "material_class": "undercloth",
+      "name": "UpperArm_L__mail",
+      "rig_group": "UpperArm.L",
+      "vertices": 30
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "UpperArm_L__plate",
+      "rig_group": "UpperArm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_dark",
+      "name": "Elbow_L__pivot",
+      "rig_group": "Forearm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 48,
+      "material_class": "undercloth",
+      "name": "Forearm_L__sleeve",
+      "rig_group": "Forearm.L",
+      "vertices": 26
+    },
+    {
+      "faces": 320,
+      "material_class": "armor_light",
+      "name": "Forearm_L__vambrace",
+      "rig_group": "Forearm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 320,
+      "material_class": "armor",
+      "name": "Hand_L__gauntlet",
+      "rig_group": "Forearm.L",
+      "vertices": 162
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_L__finger_0",
+      "rig_group": "Forearm.L",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_L__finger_1",
+      "rig_group": "Forearm.L",
+      "vertices": 42
+    },
+    {
+      "faces": 80,
+      "material_class": "armor_dark",
+      "name": "Hand_L__finger_2",
+      "rig_group": "Forearm.L",
+      "vertices": 42
+    },
+    {
+      "faces": 1280,
+      "material_class": "armor",
+      "name": "Head__skull_helmet",
+      "rig_group": "Head",
+      "vertices": 642
+    },
+    {
+      "faces": 400,
+      "material_class": "cloak",
+      "name": "Head__hood_outer",
+      "rig_group": "Head",
+      "vertices": 246
+    },
+    {
+      "faces": 120,
+      "material_class": "cloak",
+      "name": "Head__cowl_lower",
+      "rig_group": "Head",
+      "vertices": 62
+    },
+    {
+      "faces": 20,
+      "material_class": "armor_dark",
+      "name": "Head__cheek_guard",
+      "rig_group": "Head",
+      "vertices": 12
+    },
+    {
+      "faces": 12,
+      "material_class": "armor",
+      "name": "Head__brow",
+      "rig_group": "Head",
+      "vertices": 8
+    },
+    {
+      "faces": 8,
+      "material_class": "visor",
+      "name": "Head__visor_amber",
+      "rig_group": "Head",
+      "vertices": 6
+    },
+    {
+      "faces": 12,
+      "material_class": "bronze_dim",
+      "name": "Head__nose_crest",
+      "rig_group": "Head",
+      "vertices": 8
+    },
+    {
+      "faces": 12,
+      "material_class": "armor",
+      "name": "Head__chin_plate",
+      "rig_group": "Head",
+      "vertices": 8
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__belt_top",
+      "rig_group": "Hips",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__belt_bottom",
+      "rig_group": "Hips",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__gorget",
+      "rig_group": "Spine",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__pauldron_R",
+      "rig_group": "UpperArm.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__arm_cuff_R",
+      "rig_group": "UpperArm.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__wrist_R",
+      "rig_group": "Forearm.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__thigh_R",
+      "rig_group": "Thigh.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__shin_top_R",
+      "rig_group": "Shin.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__boot_cuff_R",
+      "rig_group": "Foot.R",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__pauldron_L",
+      "rig_group": "UpperArm.L",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__arm_cuff_L",
+      "rig_group": "UpperArm.L",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__wrist_L",
+      "rig_group": "Forearm.L",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__thigh_L",
+      "rig_group": "Thigh.L",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__shin_top_L",
+      "rig_group": "Shin.L",
+      "vertices": 384
+    },
+    {
+      "faces": 768,
+      "material_class": "bronze",
+      "name": "Trim__boot_cuff_L",
+      "rig_group": "Foot.L",
+      "vertices": 384
+    },
+    {
+      "faces": 864,
+      "material_class": "cloak",
+      "name": "Cloak__one_piece_folded_fabric",
+      "rig_group": "Cloak",
+      "vertices": 481
+    },
+    {
+      "faces": 120,
+      "material_class": "cloak_fold",
+      "name": "Cloak__upper_mantle",
+      "rig_group": "Cloak",
+      "vertices": 62
+    },
+    {
+      "faces": 20,
+      "material_class": "cloak",
+      "name": "Tabard__front",
+      "rig_group": "Hips",
+      "vertices": 12
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Tabard__edge_ornament_R",
+      "rig_group": "Hips",
+      "vertices": 18
+    },
+    {
+      "faces": 32,
+      "material_class": "bronze_dim",
+      "name": "Tabard__edge_ornament_L",
+      "rig_group": "Hips",
+      "vertices": 18
+    },
+    {
+      "faces": 12,
+      "material_class": "armor",
+      "name": "Hips__side_fauld_R",
+      "rig_group": "Hips",
+      "vertices": 8
+    },
+    {
+      "faces": 12,
+      "material_class": "armor",
+      "name": "Hips__side_fauld_L",
+      "rig_group": "Hips",
+      "vertices": 8
+    }
+  ],
+  "rig_group_count": 14,
+  "schema": "custodian.operator_3d_master.blockout.v1",
+  "size_bytes": 269452,
+  "source_config_sha256": "a9522688e9a872deaad94c47342827ff9f158726046b4aba3acd177219a4e456",
+  "source_reference_sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b",
+  "status": "BLOCKOUT_NOT_CANONICAL"
+}

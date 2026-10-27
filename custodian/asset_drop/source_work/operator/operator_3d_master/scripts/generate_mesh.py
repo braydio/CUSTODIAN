@@ -111,6 +111,9 @@ def main():
     scene=trimesh.Scene(); items=[];palette=p['palette']
     def add(name,mesh,mat,group):
         assert name not in {x['name'] for x in items},name
+        hs=float(p.get('head_group_scale',1.0))
+        if group=='Head' and hs!=1.0:
+            c=np.array([0,-.008,1.70]);mesh.apply_translation(-c);mesh.apply_scale(hs);mesh.apply_translation(c)
         mesh=color_mesh(mesh,palette[mat]);mesh.metadata.update({'rig_group':group,'material_class':mat})
         scene.add_geometry(mesh,geom_name=name,node_name=name)
         items.append({'name':name,'rig_group':group,'material_class':mat,'vertices':len(mesh.vertices),'faces':len(mesh.faces)})
@@ -161,9 +164,30 @@ def main():
     add('Head__cowl_lower',loft_rings([(1.575,.245,.195,.043),(1.68,.24,.21,.026),(1.765,.195,.18,.055)]),'cloak','Head')
     add('Head__cheek_guard',slab_polygon([[-.153,-.166,1.70],[.153,-.166,1.70],[.165,-.132,1.81],[.105,-.20,1.87],[-.105,-.20,1.87],[-.165,-.132,1.81]],.066),'armor_dark','Head')
     add('Head__brow',slab_polygon([[-.155,-.19,1.825],[.155,-.19,1.825],[.18,-.165,1.889],[-.18,-.165,1.889]],.04),'armor','Head')
-    add('Head__visor_amber',slab_polygon([[-.108,-.213,1.823],[.108,-.213,1.823],[.115,-.212,1.848],[-.115,-.212,1.848]],.009),'visor','Head')
+    if p.get('visor_chevron',False):
+        add('Head__visor_amber',slab_polygon([[-.115,-.215,1.855],[.115,-.215,1.855],[.0,-.222,1.745]],.012),'visor','Head')
+    else:
+        add('Head__visor_amber',slab_polygon([[-.108,-.213,1.823],[.108,-.213,1.823],[.115,-.212,1.848],[-.115,-.212,1.848]],.009),'visor','Head')
     add('Head__nose_crest',slab_polygon([[-.020,-.235,1.785],[.020,-.235,1.785],[.021,-.235,1.86],[-.021,-.235,1.86]],.01),'bronze_dim','Head')
     add('Head__chin_plate',slab_polygon([[-.09,-.209,1.707],[.09,-.209,1.707],[.135,-.178,1.766],[-.135,-.178,1.766]],.025),'armor','Head')
+    if p.get('gold_trim',False):
+        def ring(name,c,rx,ry,r,group,rot=False):
+            m=trimesh.creation.torus(1.0,r/max(rx,ry),48,8);m.apply_scale([rx,ry,max(rx,ry)])
+            if rot:m.apply_transform(trimesh.transformations.rotation_matrix(math.pi/2,[1,0,0]))
+            m.apply_translation(c);add(name,m,'bronze',group)
+        ring('Trim__belt_top',[0,0.0,1.10],.285,.19,.011,'Hips');ring('Trim__belt_bottom',[0,0.0,1.015],.28,.185,.011,'Hips')
+        ring('Trim__gorget',[0,0.0,1.60],.20,.165,.010,'Spine')
+        for k in (-1,1):
+            sd='L' if k>0 else 'R'
+            ring(f'Trim__pauldron_{sd}',[k*.425,-.015,1.50],.195,.20,.011,f'UpperArm.{sd}')
+            ring(f'Trim__arm_cuff_{sd}',[k*.45,-.012,1.28],.125,.12,.009,f'UpperArm.{sd}')
+            ring(f'Trim__wrist_{sd}',[k*.485,-.07,.99],.105,.10,.009,f'Forearm.{sd}')
+            ring(f'Trim__thigh_{sd}',[k*.20,-.02,.62],.145,.14,.009,f'Thigh.{sd}')
+            ring(f'Trim__shin_top_{sd}',[k*.19,-.03,.47],.125,.125,.009,f'Shin.{sd}')
+            ring(f'Trim__boot_cuff_{sd}',[k*.19,-.01,.275],.115,.12,.009,f'Foot.{sd}')
+    if p.get('hood_trim',False):
+        m=trimesh.creation.torus(1.0,.014/.16,48,8);m.apply_scale([.135,.16,.16])
+        m.apply_transform(trimesh.transformations.rotation_matrix(math.pi/2,[1,0,0]));m.apply_translation([0,-.17,1.80]);add('Trim__hood_opening',m,'bronze','Head')
     # Solid cloth surfaces, not articulated shreds cut out of a static sprite.
     add('Cloak__one_piece_folded_fabric',cape_mesh(p),'cloak','Cloak')
     add('Cloak__upper_mantle',loft_rings([(1.42,.41,.19,.076),(1.55,.43,.26,.105),(1.65,.27,.21,.042)]),'cloak_fold','Cloak')
@@ -173,6 +197,12 @@ def main():
     # Side waist straps and clasps
     for s in [-1,1]:
         add(f'Hips__side_fauld_{"L" if s>0 else "R"}',slab_polygon([[s*.255,-.05,1.015],[s*.33,-.015,1.0],[s*.4,-.002,.78],[s*.29,-.07,.75]],.035),'armor','Hips')
+    bs=p.get('body_scale',[1,1,1])
+    if bs!=[1,1,1]:scene.apply_transform(np.diag([bs[0],bs[1],bs[2],1.0]))
+    if p.get('export_y_up',False):
+        # glTF is Y-up/-Z-forward; authoring space here is Z-up/-Y-forward. (x,y,z)->(x,z,-y)
+        # so Blender's importer returns the character upright with the front still on -Y.
+        scene.apply_transform(np.array([[1,0,0,0],[0,0,1,0],[0,-1,0,0],[0,0,0,1]],dtype=float))
     glb=scene.export(file_type='glb')
     dst.write_bytes(glb)
     h=hashlib.sha256(glb).hexdigest()

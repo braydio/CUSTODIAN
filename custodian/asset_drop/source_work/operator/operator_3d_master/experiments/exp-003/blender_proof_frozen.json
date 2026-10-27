@@ -1,0 +1,300 @@
+{
+  "art_approved": false,
+  "experiment": "exp-003",
+  "files": [
+    {
+      "bytes": 120,
+      "path": "REVIEW_PENDING.txt",
+      "sha256": "353e0c9cfdd79d418e3c1ba0ffd2b7920e1d4d10c78588087641e6b25987d7f3"
+    },
+    {
+      "bytes": 143139,
+      "path": "blender_proof/look512/rest_E.png",
+      "sha256": "f9975f43c73caf85a7e6974a831d8b4ddd2fc66c089e195773058a20e496d2aa"
+    },
+    {
+      "bytes": 139135,
+      "path": "blender_proof/look512/rest_N.png",
+      "sha256": "57f512e24a5a430e983b932c70abb8a6702e09a1856ff77988d5e66b38681a61"
+    },
+    {
+      "bytes": 143217,
+      "path": "blender_proof/look512/rest_NE.png",
+      "sha256": "5b2503868907f5ee054f193427c6c91efceb84b15a80ff396e4355d76b227071"
+    },
+    {
+      "bytes": 142992,
+      "path": "blender_proof/look512/rest_NW.png",
+      "sha256": "355c7fe06f503a44ade627e0c30cd31cb112e1fbb617dad97dbcfbc5f14674d3"
+    },
+    {
+      "bytes": 165490,
+      "path": "blender_proof/look512/rest_S.png",
+      "sha256": "217f758490d908eb7640d830caa4cd1cc9187e3db477849e6791eb08d5185a21"
+    },
+    {
+      "bytes": 160133,
+      "path": "blender_proof/look512/rest_SE.png",
+      "sha256": "8248b917207f060442c53bf47aae7234494e614645e7f96fadce16b61be99e93"
+    },
+    {
+      "bytes": 159817,
+      "path": "blender_proof/look512/rest_SW.png",
+      "sha256": "febc16847128456408ccbce54508c09627f8806575d4ce7c6b06ab51d827fc99"
+    },
+    {
+      "bytes": 142185,
+      "path": "blender_proof/look512/rest_W.png",
+      "sha256": "aaba298cbfc048d0f8d7e114a52ef1551cb736cfe4fb11b56a321405ec229296"
+    },
+    {
+      "bytes": 139958,
+      "path": "blender_proof/look512/walk_NE_01.png",
+      "sha256": "75e00271cd1b76ef871a2fb9a7800075287405cdf8dde989b19da65f81f70048"
+    },
+    {
+      "bytes": 140259,
+      "path": "blender_proof/look512/walk_NE_02.png",
+      "sha256": "bdb668fee85dae2841b30c60b44d471a2b864af3fcd5f3aa6ca823a31dc3aea4"
+    },
+    {
+      "bytes": 139996,
+      "path": "blender_proof/look512/walk_NE_03.png",
+      "sha256": "e60384d426687bc9996b962ca010c142b6bc9e303b9d1cdc0951cd5f758b1dd8"
+    },
+    {
+      "bytes": 138088,
+      "path": "blender_proof/look512/walk_NE_04.png",
+      "sha256": "166811ce98bcef282bb47b99c2283e539fb092cbe11ea259cedf2ae0c5712243"
+    },
+    {
+      "bytes": 136770,
+      "path": "blender_proof/look512/walk_NE_05.png",
+      "sha256": "8eb1793b3a38f6a744a731015923b523b9eb42ce02bddd61eae72ba5230bc049"
+    },
+    {
+      "bytes": 137555,
+      "path": "blender_proof/look512/walk_NE_06.png",
+      "sha256": "e88ef71e33ac6ed2c530bcd46de9d9731f58e61e887b5d005d82a23d2b8082de"
+    },
+    {
+      "bytes": 139911,
+      "path": "blender_proof/look512/walk_NE_07.png",
+      "sha256": "0904e1338a5d601089f15b627f4b332e4b896d9ccd326a8149bf14475ff4c4b1"
+    },
+    {
+      "bytes": 142296,
+      "path": "blender_proof/look512/walk_NE_08.png",
+      "sha256": "cdd214fd2262421c28cf9cce8d30997d3c8113841c5b897eaf8de3180384bc93"
+    },
+    {
+      "bytes": 143160,
+      "path": "blender_proof/look512/walk_NE_09.png",
+      "sha256": "d6dc035e014282ad68a182b8095463bbf78f5fa095441681e0f1b3d2b2e7420a"
+    },
+    {
+      "bytes": 143978,
+      "path": "blender_proof/look512/walk_NE_10.png",
+      "sha256": "171014b1fb91fc642def4e2bce8df6edad6ae80abe7be50bea7dcad84d28c426"
+    },
+    {
+      "bytes": 142580,
+      "path": "blender_proof/look512/walk_NE_11.png",
+      "sha256": "bf24336e7b8239acff4ca24f01efdf8702efaf630a69f3b9bef93d345d98ad23"
+    },
+    {
+      "bytes": 140618,
+      "path": "blender_proof/look512/walk_NE_12.png",
+      "sha256": "8a9bf7ecf1e150a3231ba5a64d4692f7e305d5a21b847e17f2715311115962c1"
+    },
+    {
+      "bytes": 138977,
+      "path": "blender_proof/look512/walk_NE_13.png",
+      "sha256": "146f54a964af12dc0367c891f228281c9498d0e859912646c7e9d1ac5119c88c"
+    },
+    {
+      "bytes": 139470,
+      "path": "blender_proof/look512/walk_NE_14.png",
+      "sha256": "6e1ee603990a71c32c873a3d726189dc0295485fcbb4f1d4ccee97e7234b9dec"
+    },
+    {
+      "bytes": 140133,
+      "path": "blender_proof/look512/walk_NE_15.png",
+      "sha256": "f342ae0b4826a40ab2bb819f3992b58721c1387b30fadcab2ded25e98a826d00"
+    },
+    {
+      "bytes": 11155,
+      "path": "blender_proof/px128/rest_E.png",
+      "sha256": "bb469acf7cd14e121d6ce01dc14e8de7523271714f31e930b168e25e76734fc8"
+    },
+    {
+      "bytes": 10959,
+      "path": "blender_proof/px128/rest_N.png",
+      "sha256": "349205c8864e80432ddb61aa710e414f84880ef0b7c454705d8b73ee246cb495"
+    },
+    {
+      "bytes": 11520,
+      "path": "blender_proof/px128/rest_NE.png",
+      "sha256": "6fb6bff806f71ca6f0070cc2e3d8b5dd8845f124a2ec7cda45977c0e96e90be5"
+    },
+    {
+      "bytes": 11365,
+      "path": "blender_proof/px128/rest_NW.png",
+      "sha256": "f0e8bccf2dce4c1b86aa1ee0e8b1a9fc4884facc5f35eb61ed0eb9d244f9cfd7"
+    },
+    {
+      "bytes": 13126,
+      "path": "blender_proof/px128/rest_S.png",
+      "sha256": "8bb3410aa0ce27dd9f2c8d24c6075e1cbb3db0c3b8f14826bd20d34efb0340de"
+    },
+    {
+      "bytes": 13010,
+      "path": "blender_proof/px128/rest_SE.png",
+      "sha256": "bfb010af3d3362321fe3e47ab5d53f6779a175ed2a279b2fb0d9a9b8b3ae5d7a"
+    },
+    {
+      "bytes": 12917,
+      "path": "blender_proof/px128/rest_SW.png",
+      "sha256": "fdbf2c407e8bee2bfbe80ceb2667851f427cf3e13b23ae8a1b9a4e6050b647b5"
+    },
+    {
+      "bytes": 11108,
+      "path": "blender_proof/px128/rest_W.png",
+      "sha256": "64747470b89437cebb71df5eae3b7f0bfa502b55bc3b595dff52a07b8c576e19"
+    },
+    {
+      "bytes": 11178,
+      "path": "blender_proof/px128/walk_NE_01.png",
+      "sha256": "9567af36269688fcbca8c8ece995475200721d51c227fee16d2f97f593ffd46c"
+    },
+    {
+      "bytes": 11131,
+      "path": "blender_proof/px128/walk_NE_02.png",
+      "sha256": "9e072d1f833548006e410f666b1792c84c9df3f0ee3829501212b8b5a43050e3"
+    },
+    {
+      "bytes": 11173,
+      "path": "blender_proof/px128/walk_NE_03.png",
+      "sha256": "a2c11139e3bb493f35e9c24ce522dc20758c592ca786fb2523baeda26ab02a2c"
+    },
+    {
+      "bytes": 11018,
+      "path": "blender_proof/px128/walk_NE_04.png",
+      "sha256": "8f6bc58cc5c75f4bb10db01191a99bd1361125bf97537f4b977e9e53e18edb6e"
+    },
+    {
+      "bytes": 10910,
+      "path": "blender_proof/px128/walk_NE_05.png",
+      "sha256": "9c0f1c78bd43e15083f475afe49db057c6b5d75cb5fb75f4a95b724105f1827b"
+    },
+    {
+      "bytes": 11103,
+      "path": "blender_proof/px128/walk_NE_06.png",
+      "sha256": "51db7f3c7ec0bab97f4adf9c4f88de0b0de28630a79a14d2fb039422fe7a3d18"
+    },
+    {
+      "bytes": 11224,
+      "path": "blender_proof/px128/walk_NE_07.png",
+      "sha256": "514517bdbcb21997d38e63177daef07737cde5694a9cc9bca8117f4ac781b4d9"
+    },
+    {
+      "bytes": 11477,
+      "path": "blender_proof/px128/walk_NE_08.png",
+      "sha256": "c11b8ade575f107f96faf66ab5b806b4e7fabc6490d7e91b31fb33a676e3a120"
+    },
+    {
+      "bytes": 11468,
+      "path": "blender_proof/px128/walk_NE_09.png",
+      "sha256": "0cec137f75ebdad840484d5476b176349518b7f97779f4e565fb5c0397850390"
+    },
+    {
+      "bytes": 11495,
+      "path": "blender_proof/px128/walk_NE_10.png",
+      "sha256": "7958e2a67507148e71a90d6df88ef356b189eef259a5f4608145026691b57814"
+    },
+    {
+      "bytes": 11519,
+      "path": "blender_proof/px128/walk_NE_11.png",
+      "sha256": "d63a3aed7adbe0493998811d432c908976caf92a868f05712176b4dcc7c80fd5"
+    },
+    {
+      "bytes": 11171,
+      "path": "blender_proof/px128/walk_NE_12.png",
+      "sha256": "754b44c6d1990d4aa4ca577224bd3593d4ea21779679ca272d12e04c6c6627f6"
+    },
+    {
+      "bytes": 11126,
+      "path": "blender_proof/px128/walk_NE_13.png",
+      "sha256": "a5e57b7766d2a002f59b1cc9e25ae140fdb6a31b223efc5d89d964bbb8bda5b2"
+    },
+    {
+      "bytes": 11109,
+      "path": "blender_proof/px128/walk_NE_14.png",
+      "sha256": "c951e846f5c042365f7dc571b881049b439f79da0db9d42d641954f26c6a7066"
+    },
+    {
+      "bytes": 11019,
+      "path": "blender_proof/px128/walk_NE_15.png",
+      "sha256": "b689399ff06107bd33a951198dd3826cf35daf499df6998e83674673f26583cd"
+    },
+    {
+      "bytes": 1232,
+      "path": "blender_run.log",
+      "sha256": "55bd17188b1e0db5d18a01cbe3ab1a7917d9b4ddcbc17808587ed10707832dce"
+    },
+    {
+      "bytes": 269296,
+      "path": "candidate.glb",
+      "sha256": "54301e55d21048a86d01529a3213045a06ca28f7d1b251ff27fd3d5924234782"
+    },
+    {
+      "bytes": 13898,
+      "path": "candidate.manifest.json",
+      "sha256": "d48593f4952841811ebc5a2c63e4cafa67c1bcea8a5694d90ae2c122c33d5b71"
+    },
+    {
+      "bytes": 558,
+      "path": "candidate.qa.json",
+      "sha256": "2bf5bb39ffc56e32797db84497d48d1236118cf8033a4247ff0a6cf9848b5563"
+    },
+    {
+      "bytes": 294138,
+      "path": "operator_exp003.blend",
+      "sha256": "b30a6e667289f69991f09eb51c38d78694700c21d9079f27b7961869f146b4d4"
+    },
+    {
+      "bytes": 1687,
+      "path": "operator_exp003.rig_qa.json",
+      "sha256": "51d1731e55dae0630985eed5029b961b1af2256ecd9a666de51ff3606d7da594"
+    },
+    {
+      "bytes": 167219,
+      "path": "review/compare_source_vs_3d_8dir.png",
+      "sha256": "c09f507133f9eb8c529aafd0ee7655a4cd8a90166306e8eff2ba24478d1cbf3d"
+    },
+    {
+      "bytes": 2385,
+      "path": "review/metrics.json",
+      "sha256": "1adb631f07bca89868111df840203637049c54be8d1db8c41b0a7115e347de4e"
+    },
+    {
+      "bytes": 97960,
+      "path": "review/walk_NE_15f_contact.png",
+      "sha256": "dbd103106e673fc5c74ca5732afe2f49419006576fcedad1cefdae6e0b087652"
+    },
+    {
+      "bytes": 70022,
+      "path": "review/walk_NE_loop_PROVISIONAL_cadence.gif",
+      "sha256": "462eb2b826caaf337775adaa69ba7a174260ac3c9bfa0446ecfbd043d374c2be"
+    },
+    {
+      "bytes": 1808,
+      "path": "shape.json",
+      "sha256": "47b91f147db8ac942b116b300d7ee593e07ce36b2b94982fd11e2a5fd4ac2a3b"
+    }
+  ],
+  "frozen_at_utc": "2026-10-27T09:52:28.910825+00:00",
+  "gameplay_published": false,
+  "notes": "Reference-driven reshape: near-black palette, gold trim, big hood, short mantle, chevron visor; px_per_m 43.5. Silhouette IoU ~0.62-0.73. Walk stride too subtle at NE (superseded by exp-005 walk). Art unreviewed.",
+  "schema": "custodian.operator_3d_blender_proof.v1"
+}

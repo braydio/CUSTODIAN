@@ -1,0 +1,295 @@
+{
+  "art_approved": false,
+  "experiment": "exp-002",
+  "files": [
+    {
+      "bytes": 120,
+      "path": "REVIEW_PENDING.txt",
+      "sha256": "353e0c9cfdd79d418e3c1ba0ffd2b7920e1d4d10c78588087641e6b25987d7f3"
+    },
+    {
+      "bytes": 161997,
+      "path": "blender_proof/look512/rest_E.png",
+      "sha256": "bacd7823bf40f29bbaaa63fb80df74d6da32d52797702d8f22bbb59d971b3c74"
+    },
+    {
+      "bytes": 163111,
+      "path": "blender_proof/look512/rest_N.png",
+      "sha256": "0cacdcacb3230fb6e51fa3875b0e8399e3625bb1726e90430b8465735a5dee45"
+    },
+    {
+      "bytes": 161035,
+      "path": "blender_proof/look512/rest_NE.png",
+      "sha256": "ac6036d093c2756ba3bbdce7452802e849a42738818f63e0f3ca9571384f500e"
+    },
+    {
+      "bytes": 161566,
+      "path": "blender_proof/look512/rest_NW.png",
+      "sha256": "b03f221f014757cbc431ee285f3643dd6dc1a5b894eaad343aa3e41c95d3ccc8"
+    },
+    {
+      "bytes": 186509,
+      "path": "blender_proof/look512/rest_S.png",
+      "sha256": "8cecf409d96f0f0ee47f70e4a86f49463f97a6975381065c04dd4f33956f00e1"
+    },
+    {
+      "bytes": 180870,
+      "path": "blender_proof/look512/rest_SE.png",
+      "sha256": "76bd481da0488d32226978daee8ee8fa05a7103e86770909b8671d5787013f7c"
+    },
+    {
+      "bytes": 180132,
+      "path": "blender_proof/look512/rest_SW.png",
+      "sha256": "5b998edbe530740e628f410031679b1811d16f1b99ecd973ca844cf909d97da9"
+    },
+    {
+      "bytes": 162400,
+      "path": "blender_proof/look512/rest_W.png",
+      "sha256": "3fa1705129b6b931ccfb4ed3a5c7ace886ec64d530d73a173a441728a43a133f"
+    },
+    {
+      "bytes": 159237,
+      "path": "blender_proof/look512/walk_NE_01.png",
+      "sha256": "11646e27495180493314d2202066adb000e50079abe16c48c63824249bed9b1d"
+    },
+    {
+      "bytes": 159177,
+      "path": "blender_proof/look512/walk_NE_02.png",
+      "sha256": "3a363bd525240c5c41bde1d75253194e4d6643c5e0f529455330ff2d975a95d2"
+    },
+    {
+      "bytes": 158926,
+      "path": "blender_proof/look512/walk_NE_03.png",
+      "sha256": "81944649be6adb4e779e0bb5e67b386821f2761a920fe1db1138325dd6ec34e8"
+    },
+    {
+      "bytes": 159327,
+      "path": "blender_proof/look512/walk_NE_04.png",
+      "sha256": "cdb8ec3091ad4748a417c7bb9ea8b8418a3d85e24188608422c54e9ca4ab5e3e"
+    },
+    {
+      "bytes": 160473,
+      "path": "blender_proof/look512/walk_NE_05.png",
+      "sha256": "c92fdddc9ba0d53788fe18e397f71450ebc31ddc282130342cc6e4c2753ec742"
+    },
+    {
+      "bytes": 161761,
+      "path": "blender_proof/look512/walk_NE_06.png",
+      "sha256": "0da9de3f837ec884cc949ddfe1192fc95f16f05d35da183ed3ffb83be694f5a7"
+    },
+    {
+      "bytes": 162190,
+      "path": "blender_proof/look512/walk_NE_07.png",
+      "sha256": "f3d71a7121ec1ac4192c38b166ea19df4067ffd9917104294140ffea9ee60b6b"
+    },
+    {
+      "bytes": 163783,
+      "path": "blender_proof/look512/walk_NE_08.png",
+      "sha256": "769ae652218a93d3c71b26d60f6812533f9eaa04dbe4a60ae73f830c5235d212"
+    },
+    {
+      "bytes": 163823,
+      "path": "blender_proof/look512/walk_NE_09.png",
+      "sha256": "50fbea17c82394c985882f55ad519b516a6a35055d863995f44394cf4324ff9f"
+    },
+    {
+      "bytes": 162990,
+      "path": "blender_proof/look512/walk_NE_10.png",
+      "sha256": "3379d05aab600bccbf5ddaa0e567c4da6386eac37c580fd417054f55f3f06343"
+    },
+    {
+      "bytes": 162581,
+      "path": "blender_proof/look512/walk_NE_11.png",
+      "sha256": "a8f201c1bf9f7285a658e46b88f74fd63b6427304627bd1509698972695be819"
+    },
+    {
+      "bytes": 161926,
+      "path": "blender_proof/look512/walk_NE_12.png",
+      "sha256": "dd5ddab4172d3429c4488558eccadcee3fd0e74eb4fa8acc96af8a6f71e41cbe"
+    },
+    {
+      "bytes": 161145,
+      "path": "blender_proof/look512/walk_NE_13.png",
+      "sha256": "9b5fb68b5b2aec08980d4321f5abe6638405f0702d97ab4e23f82e0746887196"
+    },
+    {
+      "bytes": 160532,
+      "path": "blender_proof/look512/walk_NE_14.png",
+      "sha256": "85f86e46e7937837a7fea5a291be960eb4e8e1fd1f7fdb6d34a91ea3966307a9"
+    },
+    {
+      "bytes": 159887,
+      "path": "blender_proof/look512/walk_NE_15.png",
+      "sha256": "b197ee7cef008a88e74ab7c157705a846ea9bf66916eac8967b0f3ae537ab7c2"
+    },
+    {
+      "bytes": 12966,
+      "path": "blender_proof/px128/rest_E.png",
+      "sha256": "dc9ea27acba9028dfded8d410f5619dfc7a80583cb9b9c4bac9ade68b7cb39b2"
+    },
+    {
+      "bytes": 12835,
+      "path": "blender_proof/px128/rest_N.png",
+      "sha256": "78e85e60daf128f72eda3b63ec2c0bbaf5941a7f562ad134dd58f553164e375c"
+    },
+    {
+      "bytes": 12946,
+      "path": "blender_proof/px128/rest_NE.png",
+      "sha256": "c9d5880de4288c94f5b60937a8f070b39ef29219f67190590934b88cf8788319"
+    },
+    {
+      "bytes": 12973,
+      "path": "blender_proof/px128/rest_NW.png",
+      "sha256": "85e544a94c452989c20ce1c6146adf05987dc989ae0ca122395bc7cd4e1271fc"
+    },
+    {
+      "bytes": 15389,
+      "path": "blender_proof/px128/rest_S.png",
+      "sha256": "b5034da00c41d48827d1b24009aa568f272756600587ccebcdcaca79f6acb819"
+    },
+    {
+      "bytes": 15056,
+      "path": "blender_proof/px128/rest_SE.png",
+      "sha256": "3b4fed235ef17cef0e4bb68dc043ea4ac0939d7fa0194c287939abd218b9d067"
+    },
+    {
+      "bytes": 15027,
+      "path": "blender_proof/px128/rest_SW.png",
+      "sha256": "480686ceac0f5e42f62565bc65baf5aabf7f46006b8d14ce13ec3824f72f50cf"
+    },
+    {
+      "bytes": 12988,
+      "path": "blender_proof/px128/rest_W.png",
+      "sha256": "a4b8fab3387ce2ec7d2ab180a9fb3b71a6ee96db68bda0ff35577fbbb3d06807"
+    },
+    {
+      "bytes": 12800,
+      "path": "blender_proof/px128/walk_NE_01.png",
+      "sha256": "f0ea09c5b9c3936d67a4371a893ed18cd4e3aba2d5f65feb063a787542989fcf"
+    },
+    {
+      "bytes": 12666,
+      "path": "blender_proof/px128/walk_NE_02.png",
+      "sha256": "9bc3a913253d7d698ceb93854ded49ee3b204ef796e86af6af45461315433a7c"
+    },
+    {
+      "bytes": 12627,
+      "path": "blender_proof/px128/walk_NE_03.png",
+      "sha256": "9bef2376a2f412baeafbaea0457fd4834a9cc7725a8410ba88e2e3a5e62afc6a"
+    },
+    {
+      "bytes": 12752,
+      "path": "blender_proof/px128/walk_NE_04.png",
+      "sha256": "c3f141269888115a82eee8b7b70fa3fc305c2a1d4c39e01338b2a991b131b54f"
+    },
+    {
+      "bytes": 12918,
+      "path": "blender_proof/px128/walk_NE_05.png",
+      "sha256": "3afbfdc6617a78d530e916d5a15ea317f3556cc163ef4fbbab646a54b2a14f8d"
+    },
+    {
+      "bytes": 13110,
+      "path": "blender_proof/px128/walk_NE_06.png",
+      "sha256": "2ebe169e55a12ba1e5461333c55a3ed8d38aee73d3f47027153efa673fbd1700"
+    },
+    {
+      "bytes": 13081,
+      "path": "blender_proof/px128/walk_NE_07.png",
+      "sha256": "e3810ede8deae456beac0fa827b33f756a384832ce9dfb30222efc829511dbff"
+    },
+    {
+      "bytes": 13192,
+      "path": "blender_proof/px128/walk_NE_08.png",
+      "sha256": "7404b0aa4aab69a44412e6006ef700380b73c610e73a3480533c7af7181a1ffd"
+    },
+    {
+      "bytes": 13256,
+      "path": "blender_proof/px128/walk_NE_09.png",
+      "sha256": "bb8f4c604f642ec843a04ad76e6110d102ed0bc77224708c6d7375c2ed705f24"
+    },
+    {
+      "bytes": 13164,
+      "path": "blender_proof/px128/walk_NE_10.png",
+      "sha256": "0644a91a011b59ffae799ce25d7fa04bbab516a074c7c49deda953dbe478f2b5"
+    },
+    {
+      "bytes": 13243,
+      "path": "blender_proof/px128/walk_NE_11.png",
+      "sha256": "69ac33404561a3769ff500a8e69f4b651a7e56ee09bb63d6a64b7aeec56f9f69"
+    },
+    {
+      "bytes": 13078,
+      "path": "blender_proof/px128/walk_NE_12.png",
+      "sha256": "2bf5ec105061019143e96b25369afa3e6a906c98b8ccde886b8e55124085a7e1"
+    },
+    {
+      "bytes": 12966,
+      "path": "blender_proof/px128/walk_NE_13.png",
+      "sha256": "ef64da089e1056f17f2c69d4320f2a8dd39b816011690c66fec04e675a481e23"
+    },
+    {
+      "bytes": 12829,
+      "path": "blender_proof/px128/walk_NE_14.png",
+      "sha256": "b9b54a85b0e61d5b8b6e4014c28de164686f89c16ffc3f7d3bcf2826d50571dd"
+    },
+    {
+      "bytes": 12779,
+      "path": "blender_proof/px128/walk_NE_15.png",
+      "sha256": "f6db8254e4ee9d18e53c6d8a70d2886169fbd7039d545bbef020d3b6177f64c2"
+    },
+    {
+      "bytes": 179380,
+      "path": "candidate.glb",
+      "sha256": "63747ff8434d9d7a5e3ce1c8a2462855e6d04b8cc049cc85e356961cf64f6b10"
+    },
+    {
+      "bytes": 11615,
+      "path": "candidate.manifest.json",
+      "sha256": "eb1fc0fff9b7345f60e2fc841766fcf9dfecdf06e90f0bf99a92be2e12c43d5f"
+    },
+    {
+      "bytes": 555,
+      "path": "candidate.qa.json",
+      "sha256": "43d78896defcb904e0fe7a8e92511d0df4a7000837ab7eb89254a1f010014fa5"
+    },
+    {
+      "bytes": 238034,
+      "path": "operator_exp002.blend",
+      "sha256": "f215b90d92f9bf0137596b9f25d477617bda80d58e396c37bf3e99b4cf38118e"
+    },
+    {
+      "bytes": 1687,
+      "path": "operator_exp002.rig_qa.json",
+      "sha256": "5c36949bb185b8040b60f74ee286da05d8231a2227d30fe4a476f627322ad61d"
+    },
+    {
+      "bytes": 184496,
+      "path": "review/compare_source_vs_3d_8dir.png",
+      "sha256": "9bb9b5284f45093d6b54d9e5faec4867ed75ccb7f6c9c93187cbe75b859faa1c"
+    },
+    {
+      "bytes": 2390,
+      "path": "review/metrics.json",
+      "sha256": "59445c917c5034e35791236c93315d2bd98439e2acca113fc18d40aee18d95ef"
+    },
+    {
+      "bytes": 112008,
+      "path": "review/walk_NE_15f_contact.png",
+      "sha256": "57c72298d4e22b8796f2e1344de4f5e7a8cbf04f1f2542131b594b1c6822241b"
+    },
+    {
+      "bytes": 75859,
+      "path": "review/walk_NE_loop_PROVISIONAL_cadence.gif",
+      "sha256": "f8e70a78908a9353ca061ea66ebcbf265504644577dae38e1faee49f0ad7b2ad"
+    },
+    {
+      "bytes": 1660,
+      "path": "shape.json",
+      "sha256": "d2cc99f88d0d4bd422f7a8c9c725a77fe56473a82542574f1328ed49e8a0d740"
+    }
+  ],
+  "frozen_at_utc": "2026-10-27T09:52:28.808155+00:00",
+  "gameplay_published": false,
+  "notes": "Baseline: v001 shape, pipeline fixed (upright GLB, colour shaders, camera mapping, 128 contract frame). Huge flared cloak, tiny hood, chrome-grey armour, 98px tall vs 85. Reference only; superseded.",
+  "schema": "custodian.operator_3d_blender_proof.v1"
+}
