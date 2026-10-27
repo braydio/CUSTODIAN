@@ -4703,8 +4703,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 ["git", "rev-parse", f"HEAD:{path}"], cwd=root,
                 check=True, capture_output=True, text=True,
             ).stdout.strip()
-            with patch.object(host_validation, "_PROCESSION_RECOVERY_MERGE", commit), \\
-                 patch.object(host_validation, "_PROCESSION_PREARCHIVE_FIXTURE_BLOB", blob):
+            with (
+                patch.object(host_validation, "_PROCESSION_RECOVERY_MERGE", commit),
+                patch.object(host_validation, "_PROCESSION_PREARCHIVE_FIXTURE_BLOB", blob),
+            ):
                 with host_validation._procession_prearchive_fixture_checkout(
                     root, commit, host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
                     host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
