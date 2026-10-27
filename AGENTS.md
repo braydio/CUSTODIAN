@@ -161,6 +161,34 @@ does **not** authorize altering third-party claims, review verdicts, locks, or
 worktree preservation requirements. Preserve the ordinary workflow and review
 contracts.
 
+## Existing-workstream continuity: ownership is not a session veto
+
+**Project-owner directive (2026-10-27):** A Codex session is an expendable worker;
+the canonical workstream ID, existing branch, checkout, Git history, evidence,
+and reviews are the durable work. An absent OR1 supervisor journal or the
+`UNMANAGED_UNKNOWN` diagnosis **alone** does not forbid a new, explicitly
+user-authorized session from continuing the same claim. Do not demand OR2
+parking, a new claim, or a new recovery packet before attempting the supported
+`python3 custodian/tools/agent/workstream.py resume <existing-id>` command.
+
+Before continuation, check the exact branch and attached checkout, latest
+origin state, live processes/writers on the current host, and both tracked and
+untracked changes. Respect any known live competing worker or unresolved
+foreign-host ownership; do not infer process death from age. A clean checkout
+with no conflicting writer may be resumed using the existing lifecycle and its
+mutex under the project owner's authorization. If resume refuses, report its
+**actual failed invariant** rather than citing missing supervisor history.
+Dirty/unique work must be preserved and reconciled, not silently cleaned,
+reset, overwritten, or abandoned. Do not delete or release claims/locks by
+this rule. Pinned independent reviews and evidence/validation gates still apply.
+
+For work already in progress when this policy lands: on the **next safe
+decision boundary**, fetch the current main instructions and re-evaluate
+owner-blocked work against this rule without resetting the active worktree.
+A GitHub commit does not hot-replace prompts already loaded into running agent
+sessions; no claim of instant process-wide delivery is permitted. See
+`custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+
 ## Commit Policy
 
 Normal implementation work follows `implement → validate → commit → land on

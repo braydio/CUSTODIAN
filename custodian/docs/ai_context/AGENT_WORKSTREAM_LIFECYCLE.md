@@ -64,6 +64,50 @@ resume, clean, or edit packet state. A live quiet process stays `LIVE`; PID
 reuse, foreign host, missing process visibility, or mismatched remote SHA stays
 ambiguous. A paired review in `post_exit_recovery` stays nonpassing.
 
+### Project-owner-authorized continuation of historical claims
+
+A missing OR1 supervisor journal is **not** proof that a historical claimed
+worktree is actively being edited, and `UNMANAGED_UNKNOWN` is a read-only
+diagnostic label, **not** an additional admission gate for
+`workstream.py resume`. The owner has authorized continuation of existing
+CUSTODIAN workstreams by new Codex sessions; preserve their original IDs,
+branches, claimed work and review provenance instead of starting duplicate
+claims or demanding a new recovery-packet chain.
+
+Before any mutating continuation, inspect current `origin`, the matching
+agent branch/worktree, `git status --porcelain --untracked-files=all`, and
+live writer/process evidence (including the working directories of unmanaged
+Codex sessions). A confirmed competing writer, incomplete process visibility
+affecting that checkout, foreign-host ambiguity, active review recovery state,
+dirty checkout, remote mismatch, or missing original claim requires targeted
+resolution, **not** speculative takeover. No supervisor journal by itself
+does not require that resolution. Do not equate an absent journal with
+confirmed process exit; verify at the time of action, then take the normal
+workstream mutex and allow the existing lifecycle to recheck its invariants.
+
+For an otherwise clean, non-coordination, already-claimed implementation
+checkout with no live conflicting writer and explicit project-owner
+authorization, attempt:
+
+```bash
+python3 custodian/tools/agent/workstream.py resume <existing-workstream-id>
+```
+
+If that refuses, report the *specific* lifecycle failure and resolve only
+that failure. This does not authorize deleting/parking branch or dispatch
+claims, forcibly removing worktrees, fabricating reviewer PASS, changing
+historically pinned validation source, or overwriting dirty/untracked art.
+For a blocked review run, continue via its exact paired-review recovery
+contract; normal implementation resume does not substitute for an independent
+review.
+
+Already-running Codex contexts do not automatically ingest GitHub file
+changes. On their next safe decision boundary, coordinators should fetch and
+read current `AGENTS.md` and this guide, then apply this clarification to
+the existing claim without resetting the checkout or interrupting a live
+write. Report actual synchronization rather than claiming instantaneous
+propagation.
+
 ### Exact paired-review claim parking pilot
 
 `review_claim_parking.py` and the dispatch integration provide one bounded
