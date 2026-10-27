@@ -7,7 +7,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `none`
-- Locks: `agent-workflow`
+- Locks: `none`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
@@ -43,4 +43,8 @@
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae03e16-cd34-83e9-ba0e-82b8f95f7690
 - Refresh reason: `none`
 - Next action: After the Protected implementation lands, run its exact fresh-context paired review; after a passing disposition, resume and finish the original preserved workstream.
-- Blockers or open questions: Current `agent-workflow` lock is held by `review-agent-paired-review-godot-cache-access-v1`; dispatcher eligibility must be rechecked before claiming.
+- Blockers or open questions: An unrelated preserved review claim still exists, but this workstream no longer reserves its broad `agent-workflow` resource. Verify actual host writers and exact execution eligibility before claim; do not modify the other claim or evidence.
+
+## Concurrency scope decision
+
+The project owner has directed removal of unnecessary cross-workstream logical locks. For this exact recovery the old `agent-workflow` reservation was too broad: the other claimed review is scoped to review of `paired_review_runner.py`, while this correction edits `workstream.py`, its focused tests and related lifecycle text. `Locks: none` changes only packet-level scheduling; it does not waive the unique workstream claim, per-workstream mutex, local dispatcher mutex, validation/Godot job-budget locks, protected review requirement, or Git main landing serialization. Verify real live writers and source overlap before execution. Reevaluate if the actual work surface expands.

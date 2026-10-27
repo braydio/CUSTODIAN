@@ -8,7 +8,7 @@
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `workstream-finish-index-conflict-recovery-v1`
-- Locks: `agent-workflow`
+- Locks: `none`
 - Review: `none`
 - Review target workstream: `workstream-finish-index-conflict-recovery-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/WORKSTREAM_FINISH_INDEX_CONFLICT_RECOVERY_V1.md`
@@ -40,3 +40,7 @@
 - Refresh reason: `none`
 - Next action: Return the independent disposition to the original authoring conversation; on a pass, resume the original `workflow-governance-simplification-v1` workstream and finish its verified claim.
 - Blockers or open questions: `none`
+
+## Concurrency scope decision
+
+No broad `agent-workflow` reservation for this review. Its exact target dependency and protected fresh-context review requirements are unchanged. Review receipt writes and Git landing remain controlled by the existing lifecycle. Do not change another review claim or run evidence.
