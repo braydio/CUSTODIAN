@@ -5,6 +5,14 @@
 **Working worktree:** `/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-20261027T094310Z-29f13eccf5dc`  
 **Reference first report:** commit `9fdf41116e14ff67521ca1c5673e5b98158e3f94`, root `OPERATOR_3D_MASTER_MODELING_PROOF_CLAUDE_SUMMARY.md`, and `CANDIDATES.md`.
 
+## NON-NEGOTIABLE ART CORRECTION — OPERATOR HAS NO CAPE (user clarification, 2026-10-27)
+
+The CUSTODIAN Operator **does not wear a cape**, cloak, shoulder mantle, or superhero-style back drape. Prior descriptions of a "cloak/mantle", "short mantle", or "continuous cloak" were incorrect assistant/agent assumptions, **not** accepted character design. The canonical design-lock and idle imagery remain authoritative for the actual hood and garment silhouettes.
+
+**Exp-006 must remove invented cape/cloak/mantle meshes entirely**, including any long gray sheet descending from the shoulders, and remove associated cloth rig controls, weights, procedural `cloak_spread`/`cape_hem_z` authoring influence and render artifacts where those parameters only control the invented cape. Retain the named parameters only as inert legacy compatibility fields if needed to reproduce frozen experiments; do not rewrite past experiments. **Preserve** the reference-grounded hood, tunic/tabard, gold-edged hanging front garment panels, waist layers, and any other fabric visibly demonstrated by the original canonical 8-direction reference. Never reinterpret tunic tails as a cape or add a substitute back mantle. Check N/NW/NE views specifically for erroneous shoulder-to-back draping; confirm all 8 directions remain recognizable.
+
+This user correction overrides contradictory wording in previous briefs and candidate reports. Document the before/after garment topology, and verify in the new mesh that invented cape geometry is gone. No human approval is implied by removing it.
+
 ## 0. Mandatory continuation / preservation
 
 This is a continuation of the existing Claude modeling experiment, **not another parallel Operator authority or another branch/worktree**. Before doing anything, inspect `git status`, branch HEAD, and whether the existing worktree has uncommitted work. The user may have the local branch open. A read-only discrepancy audit comes first. The present handoff is committed remotely; while in the **clean** art worktree, fetch and fast-forward carefully, without reset, checkout -f, stash, or overwriting local changes. If dirty, preserve the local work and reconcile instead of forcing a pull.
@@ -53,12 +61,12 @@ Create exactly **exp-006** as the principal controlled geometric revision, with 
 - **Hood:** soft, forward-peaked cowl, thick fabric folds around a recessed face/visor; remove gold opening ring/halo *from all directions*, especially rear. Keep reference face/hood proportions; no oversized rigid helmet.
 - **Shoulders/arms:** replace reflective ball pauldrons and bead-jointed tube segments with overlapping directional hard-surface plates and tapering upper-arm, elbow/forearm and wrist armor. Preserve articulation range, near/far order, and sleeve gaps hidden with actual undercloth volumes.
 - **Chest/waist/legs:** strengthen anatomical transition and separation of chest plates, abdominal layer, belt/tabard, thighs, knees and greaves. No uniformly stacked cylinders. Correct stockiness without drifting into rejected exp-004.
-- **Clothing:** model the reference's layered **gold-edged tunic/tabard panels** as contoured geometry, with folds, stitched edges and actual material boundaries. Keep cloak/mantle separate and coherent; reject a giant flat gray hanging sheet. Avoid fake rings around masses.
+- **Clothing:** model the reference's layered **gold-edged tunic/tabard panels** as contoured geometry with folds, stitched edges and actual material boundaries. **No cape, cloak or mantle:** remove the invented gray shoulder/back hanging sheet rather than shortening or reshaping it. Preserve only fabric structures visibly supported by the canonical design reference. Avoid fake rings around masses.
 - **Feet:** boots align to measured ground plane in both static and walk; make heel/toe volumes and sole articulation credible. Explicitly resolve prior ~2cm hover before optimizing stride.
 - **Materials:** source-derived deep neutral values, selectively restrained gold **panel-edge trim**, source-consistent visor shape/highlight, rough rather than spherical gloss. Do not use simple outlines as a substitute for credible geometry or silhouette; add an optional **separate** controlled render/material lookdev branch after geometry.
 - **Camera & lighting:** keep eight exact facing sectors, camera orthographic/canonical fixed registration and root, transparent RGBA, no east/west flips, no per-direction shrink/recenter, stable exposure and directional lighting. Native 128px readability is decisive. Optional 4x source render/downsizing must preserve the physical target and camera proof.
 
-If exp-006 passes objective integrity and looks directionally more accurate **in an actual side-by-side preview**, create at most **exp-007** as a controlled lookdev/render contrast from exp-006, **not** a complete redesign: tuned material response, fabric fold/readability and optional cel/outline post-process. If it becomes geometrically worse, stop without exp-007.
+If exp-006 passes objective integrity and looks directionally more accurate **in an actual side-by-side preview**, create at most **exp-007** as a controlled lookdev/render contrast from exp-006, **not** a complete redesign: tuned material response, tunic/hood fold readability (no cape or cloak), and optional cel/outline post-process. If it becomes geometrically worse, stop without exp-007.
 
 ## 3. Walk audit: geometric solver pass != contact pass
 
@@ -82,4 +90,4 @@ Freeze and receipt/hash any new exp before reporting it as complete. Do not muta
 
 Success for this continuation = official MCP configured **and actually tested** (or documented guarded fallback), exp-006 built/saved/reopened & rendered in **real Blender**, visual comparisons and explicit foot-skating evidence produced, proof frozen and inspectable in Dropbox, and human review requested. **Not** proof of final artistic approval.
 
-Fail early if a stable volumetric hood + undercloth + tunic cannot be made recognizably reference-faithful at 128px after the two bounded experiments. In that case report that the primitive-builder route has reached its limit and propose a controlled mesh-sculpt/reference reconstruction alternative, preserving exp-005 and exp-006 evidence. Never call a mechanistic PASS an art PASS.
+Fail early if a stable volumetric hood + undercloth + capeless tunic cannot be made recognizably reference-faithful at 128px after the two bounded experiments. In that case report that the primitive-builder route has reached its limit and propose a controlled mesh-sculpt/reference reconstruction alternative, preserving exp-005 and exp-006 evidence. Never call a mechanistic PASS an art PASS.
