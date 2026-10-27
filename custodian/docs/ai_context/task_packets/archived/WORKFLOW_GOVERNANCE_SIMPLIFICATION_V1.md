@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `workflow-governance-simplification-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -42,11 +42,24 @@
 
 ## Completion Truth
 
-To be filled truthfully by the implementing agent *before* marking this packet complete and archiving it. Do not report acceptance early; follow AGENT_TASK_PACKET_TEMPLATE.md's custodian.task_completion.v1 schema.
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The active guidance, context primer, authoring template, and review policy now define Express/Standard/Protected defaults; Standard Review:none is validated by the current contract, while missing Protected Review:auto pairing is rejected. Focused contract and authoring tests, targeted packet preflight, index check, and AI-context checks passed. Existing dispatcher and review-enforcement code and preexisting packet metadata were unchanged.
 
 ## Execution Feedback
 
-Fill the custodian.task_feedback.v1 fields and mirror the concise receipt in the root closing summary at completion.
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial fixture probe duplicated helper-supplied metadata and was corrected. The optional historical archive-boundary diagnostic also reports 18 existing references in unrelated, unchanged files.
+- Root cause / contributing factors: The test fixture reused a packet helper that already supplies Dispatch and Review fields; archive lifecycle correctly changes the managed queue projection. Historical-boundary findings are outside this work surface.
+- Prevention / pipeline improvement: Reuse packet helper metadata by replacement; regenerate and verify the index after archival. Track the pre-existing archive-boundary references in their owning tasks.
+- Tooling / docs drift discovered: Review policy had drifted across the authoring template, context primer, and task-packet policy prose.
+- Follow-up: `fixed-in-scope`
+- What worked: Existing contract and dispatcher checks directly prove Review:none pairing and Protected missing-pair rejection.
 
 ## Handoff
 
@@ -58,4 +71,4 @@ Fill the custodian.task_feedback.v1 fields and mirror the concise receipt in the
 - Summary backlink: Include this exact Authoring chat URL in the root closing summary.
 - Refresh reason: `none`
 - Next action: Return verified main landing and measured reduced review ceremony to the authoring conversation; later Pass B/C require independent authorization.
-- Blockers or open questions: Live host claim eligibility must be checked at execution time; no design decision remains.
+- Blockers or open questions: `none`

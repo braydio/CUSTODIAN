@@ -366,6 +366,19 @@ Choose the lightest useful level:
 
 Do not create a packet merely because a task touches several files.
 
+Choose independent review by risk and evidence quality, not by file count or
+the word “runtime.” Express work may skip a packet and paired review for a
+narrow, reversible, low-risk single-session change while retaining focused
+validation and Git safety. Standard work may use a compact packet when scope
+or acceptance needs a durable record; its ordinary default is `Review: none`
+when focused checks directly prove correctness and scope, with a concise
+concrete risk rationale. Protected work keeps `Review: auto` and a fresh
+independent acceptance pass for consequential persistence/save-load,
+concurrency, irreversible operations, authority cutovers, dispatch/review/
+validation enforcement, dangerous asset-pipeline writes, or material evidence
+uncertainty. Human-owned visual and canon decisions remain human-owned. Existing
+published review decisions and dependencies do not change retroactively.
+
 Task packet workflow:
 
 1. Select skip, compact, or full based on risk and handoff value.
