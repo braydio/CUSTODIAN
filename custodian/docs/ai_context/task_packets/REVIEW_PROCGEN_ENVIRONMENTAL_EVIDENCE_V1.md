@@ -4,8 +4,8 @@
 - Workstream: `review-procgen-environmental-evidence-v1`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `procgen-environmental-evidence-v1`
 - Locks: `procgen-runtime`
