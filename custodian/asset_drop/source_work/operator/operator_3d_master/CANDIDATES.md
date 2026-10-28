@@ -21,3 +21,4 @@ IoU is triage only: it says nothing about gold-edge material language, hood shap
 unchanged and was rendered at px_per_m=50. exp-001 used `scripts/create_blend_v1_exp001.py`.
 Preview cadence (15 fps in the .blend, 67 ms GIF) is provisional and not canonical timing.
 | meshy-002 (imported, `meshy_candidates/meshy-002_textured/`) | Meshy textured generation (model(3).meshy), 660k verts, UVs + 3 textures, unrigged; reference candidate, art approval pending | `b9c2f68dfaa555e2` (decoded) | n/a | n/a |
+| meshy-003_reduced_poly | meshy_candidates/meshy-003_reduced_poly | 10,367 tris reduced re-export of meshy-002 model; IMPORTED_REFERENCE_CANDIDATE_NOT_APPROVED; not selected; not frozen |

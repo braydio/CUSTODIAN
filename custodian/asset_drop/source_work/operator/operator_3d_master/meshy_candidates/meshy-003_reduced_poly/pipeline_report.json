@@ -1,0 +1,354 @@
+{
+ "asset": {
+  "applied_scale": 1.10542,
+  "images": [
+   [
+    "normal",
+    [
+     4096,
+     4096
+    ]
+   ],
+   [
+    "texture_0",
+    [
+     4096,
+     4096
+    ]
+   ],
+   [
+    "texture_0_metallic_roughness",
+    [
+     4096,
+     4096
+    ]
+   ]
+  ],
+  "normalised_dims_m": [
+   0.9122,
+   0.521,
+   2.1019
+  ],
+  "normalised_height_m": 2.1019,
+  "raw_height_m": 1.9014,
+  "scale_search_[scale,S_height_px]": [
+   [
+    1.0,
+    76
+   ],
+   [
+    1.11842,
+    86
+   ],
+   [
+    1.10542,
+    85
+   ]
+  ],
+  "tris": 10367,
+  "uv_layers": [
+   "UVMap"
+  ],
+  "verts": 16241
+ },
+ "compare": {
+  "asset_height_px_range": [
+   85,
+   91
+  ],
+  "mean_iou": 0.666,
+  "note": "IoU is triage only; no approval, no best selection",
+  "per_direction": {
+   "E": {
+    "asset": {
+     "bbox_xyxy": [
+      51,
+      30,
+      76,
+      120
+     ],
+     "height_px": 91,
+     "width_px": 26
+    },
+    "silhouette_iou": 0.628,
+    "source": {
+     "bbox_xyxy": [
+      47,
+      20,
+      79,
+      106
+     ],
+     "height_px": 87,
+     "width_px": 33
+    }
+   },
+   "N": {
+    "asset": {
+     "bbox_xyxy": [
+      41,
+      27,
+      86,
+      113
+     ],
+     "height_px": 87,
+     "width_px": 46
+    },
+    "silhouette_iou": 0.749,
+    "source": {
+     "bbox_xyxy": [
+      41,
+      24,
+      86,
+      107
+     ],
+     "height_px": 84,
+     "width_px": 46
+    }
+   },
+   "NE": {
+    "asset": {
+     "bbox_xyxy": [
+      47,
+      29,
+      81,
+      116
+     ],
+     "height_px": 88,
+     "width_px": 35
+    },
+    "silhouette_iou": 0.612,
+    "source": {
+     "bbox_xyxy": [
+      44,
+      22,
+      84,
+      106
+     ],
+     "height_px": 85,
+     "width_px": 41
+    }
+   },
+   "NW": {
+    "asset": {
+     "bbox_xyxy": [
+      43,
+      29,
+      84,
+      116
+     ],
+     "height_px": 88,
+     "width_px": 42
+    },
+    "silhouette_iou": 0.684,
+    "source": {
+     "bbox_xyxy": [
+      43,
+      22,
+      83,
+      106
+     ],
+     "height_px": 85,
+     "width_px": 41
+    }
+   },
+   "S": {
+    "asset": {
+     "bbox_xyxy": [
+      41,
+      29,
+      86,
+      113
+     ],
+     "height_px": 85,
+     "width_px": 46
+    },
+    "silhouette_iou": 0.748,
+    "source": {
+     "bbox_xyxy": [
+      39,
+      25,
+      89,
+      108
+     ],
+     "height_px": 84,
+     "width_px": 51
+    }
+   },
+   "SE": {
+    "asset": {
+     "bbox_xyxy": [
+      43,
+      29,
+      84,
+      117
+     ],
+     "height_px": 89,
+     "width_px": 42
+    },
+    "silhouette_iou": 0.675,
+    "source": {
+     "bbox_xyxy": [
+      41,
+      21,
+      81,
+      106
+     ],
+     "height_px": 86,
+     "width_px": 41
+    }
+   },
+   "SW": {
+    "asset": {
+     "bbox_xyxy": [
+      46,
+      30,
+      80,
+      119
+     ],
+     "height_px": 90,
+     "width_px": 35
+    },
+    "silhouette_iou": 0.614,
+    "source": {
+     "bbox_xyxy": [
+      46,
+      21,
+      86,
+      106
+     ],
+     "height_px": 86,
+     "width_px": 41
+    }
+   },
+   "W": {
+    "asset": {
+     "bbox_xyxy": [
+      51,
+      30,
+      76,
+      119
+     ],
+     "height_px": 90,
+     "width_px": 26
+    },
+    "silhouette_iou": 0.62,
+    "source": {
+     "bbox_xyxy": [
+      48,
+      20,
+      80,
+      106
+     ],
+     "height_px": 87,
+     "width_px": 33
+    }
+   }
+  }
+ },
+ "container": {
+  "authenticated": false,
+  "kind": "meshy_v1",
+  "note": "auth tag skipped; --confirm-authorized is a user assertion, not proof"
+ },
+ "container_audit": {
+  "extensions_required": [
+   "EXT_meshopt_compression",
+   "EXT_texture_webp",
+   "KHR_mesh_quantization"
+  ],
+  "extensions_used": [
+   "KHR_mesh_quantization",
+   "EXT_meshopt_compression",
+   "KHR_texture_transform",
+   "EXT_texture_webp"
+  ],
+  "has_base_color_texture": true,
+  "has_metal_rough_texture": true,
+  "has_normal_texture": true,
+  "has_texcoord0": true,
+  "images": 3,
+  "materials": 1,
+  "meshes": 1,
+  "meshopt": true,
+  "texture_transform_used": true,
+  "textures": 3,
+  "triangles": 10367,
+  "vertices": 16241
+ },
+ "container_sha256": "8ea47c1d3d51fe678d3da05a42236676e6c57109bb676bdc2ebd636049bcb10a",
+ "decoded_audit": {
+  "extensions_required": [
+   "EXT_texture_webp",
+   "KHR_mesh_quantization"
+  ],
+  "extensions_used": [
+   "KHR_mesh_quantization",
+   "KHR_texture_transform",
+   "EXT_texture_webp"
+  ],
+  "has_base_color_texture": true,
+  "has_metal_rough_texture": true,
+  "has_normal_texture": true,
+  "has_texcoord0": true,
+  "images": 3,
+  "materials": 1,
+  "meshes": 1,
+  "meshopt": false,
+  "texture_transform_used": true,
+  "textures": 3,
+  "triangles": 10367,
+  "vertices": 16241
+ },
+ "decoded_sha256": "b35222192feeffedc7aa6e3a0795951a39f848bc9355a08edc545d82c2c25135",
+ "input": {
+  "basename": "operator_meshy_003_reduced_poly_source.meshy",
+  "bytes": 4222812,
+  "sha256": "656337c671fd2ae4c74d4570f58c9b8fdb8b83da3cce8bae2e2bfd5d9bb14238"
+ },
+ "limitations": [
+  "mid-stride/asset pose retained: no rig, pose change or retopology",
+  "one S-fit scale: other directions deviate",
+  "IoU is triage only: no approval, no best-candidate selection"
+ ],
+ "meshopt": "decoded locally (three.js decoder)",
+ "name": "meshy-003_reduced_poly",
+ "render_contract": {
+  "color_management": "Blender default view transform (see evidence diagnostics)",
+  "directions": [
+   "N",
+   "NE",
+   "E",
+   "SE",
+   "S",
+   "SW",
+   "W",
+   "NW"
+  ],
+  "elev_deg": 45.0,
+  "mirroring": false,
+  "ortho_scale": 2.56,
+  "px_per_m": 50.0,
+  "root_px": [
+   64,
+   106
+  ],
+  "scale_fit": "S-view silhouette height only; ONE uniform scale per candidate; no per-direction, per-part or aesthetic transforms",
+  "target_S_height_px": 85.0,
+  "uniform_scale": 1.10542
+ },
+ "script_blobs": {
+  "asset_pipeline_lib.py": "343611bd77434fd9bb16f8abefa1ab585ff8f6d3",
+  "blender_render.py": "1e8cf3f7f9f58dd180fb4f4c78ffbe51d0f78023",
+  "build_evidence.py": "2be1a1ce9997f251e3d7034943d1c2e0a0037630",
+  "evidence_render.py": "5abd1e63312fe94d01d58af73bb482fac67dc8ce",
+  "meshopt_decode.mjs": "743235bc6c8da4d804609bc0fd6791bd46edaa3f",
+  "meshopt_decoder.mjs": "d0933a9401f74ce5ef680344a4ae6c27ce293ebc",
+  "meshy_container.py": "5a3277a789f4d7af88e2c393efdd377763b19d9d",
+  "run_asset.py": "ee0e5ed73d78cc7fbab91f3ac5bb488f3c5ffa6f"
+ },
+ "status": "IMPORTED_REFERENCE_CANDIDATE_NOT_APPROVED",
+ "tools": {
+  "blender": "Blender 5.2.3 LTS",
+  "node": "v26.12.1"
+ }
+}

@@ -47,3 +47,9 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 - Frozen: `locks/meshy-002_textured/FROZEN_CANDIDATE_MANIFEST.json` (`FROZEN_FOR_REVIEW_NOT_APPROVED`, 54 files), `verify` OK; no select-best, no approval.
 - Workflow hardened (`run → verify → freeze → publish-review`), entrypoint `custodian/tools/iteration/asset_pipeline.py`, 43 unit tests (+1 Blender integration), path-filtered CI. Smoke on new candidate id reproduced the frozen figures exactly (scale 1.10542, 85–91 px, IoU 0.668; renders pixel-identical).
 - Return to clean `~/Projects/CUSTODIAN` on `main`. No PR opened (needs a focused tooling-only branch).
+
+## meshy-003_reduced_poly ingest (reduced-poly Meshy export)
+- Source preserved (LFS) at `custodian/asset_drop/source_work/operator/operator_3d_master/source_inputs/meshy-003_reduced_poly/`; sha256 `656337c6…14238`.
+- Pipeline run + verify OK; 10,367 tris (-99.17% vs meshy-002). Comparison in `meshy_candidates/meshy-003_reduced_poly/COMPARISON_VS_meshy-002.md`.
+- Fixed hardcoded "1.25M-tri" geometry-proof caption. Tests: 43 OK (1 skipped), Blender integration OK; publisher test import error is pre-existing.
+- Not approved, not selected, not uploaded to Dropbox. Return to clean `~/Projects/CUSTODIAN` on `main`.

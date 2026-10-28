@@ -51,7 +51,7 @@ prim = j['meshes'][0]['primitives'][0]; pos = acc(prim['attributes']['POSITION']
 _, weld = np.unique(pos, axis=0, return_inverse=True); weld = weld.reshape(-1); tri = weld[idx].reshape(-1, 3)
 e = np.concatenate([tri[:, [0, 1]], tri[:, [1, 2]], tri[:, [2, 0]]]); e.sort(1); _, cnt = np.unique(e[:, 0].astype(np.int64) * (weld.max() + 1) + e[:, 1], return_counts=True)
 geo = {'welded_unique_positions': int(weld.max() + 1), 'edges': int(len(cnt)), 'boundary_edges_(count==1)': int((cnt == 1).sum()), 'non_manifold_edges_(count>2)': int((cnt > 2).sum()), 'degenerate_triangles': int(((tri[:, 0] == tri[:, 1]) | (tri[:, 1] == tri[:, 2]) | (tri[:, 0] == tri[:, 2])).sum()), 'triangles': int(len(tri))}
-gp = grid([cell(F / 'geo_rear_solid.png', 768), cell(F / 'geo_wire_hood.png', 768), cell(F / 'geo_wire_boots.png', 768)], ['rear solid (N, 20deg) - rear surface present?', 'wireframe hood/shoulder crop', 'wireframe boot crop'], 3, 'GEOMETRY PROOF (real 1.25M-tri mesh; rear solid = Workbench, wire = EEVEE Wireframe node 1px): ' + json.dumps(geo))
+gp = grid([cell(F / 'geo_rear_solid.png', 768), cell(F / 'geo_wire_hood.png', 768), cell(F / 'geo_wire_boots.png', 768)], ['rear solid (N, 20deg) - rear surface present?', 'wireframe hood/shoulder crop', 'wireframe boot crop'], 3, f'GEOMETRY PROOF (real {geo["triangles"]:,}-tri mesh; rear solid = Workbench, wire = EEVEE Wireframe node 1px): ' + json.dumps(geo))
 gp.save(OUT / 'geometry_proof.png')
 # 9 compare sheet with caveat footer (original pixels untouched, footer appended)
 cs = Image.open(N / 'compare_8dir.png').convert('RGB'); foot = Image.new('RGB', (cs.width, 34), BG); fd = ImageDraw.Draw(foot)
