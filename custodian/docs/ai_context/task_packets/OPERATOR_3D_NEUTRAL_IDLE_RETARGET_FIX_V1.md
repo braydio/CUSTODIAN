@@ -2,8 +2,8 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-3d-neutral-idle-retarget-fix-v1
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P1
 - Depends on: operator-3d-neutral-idle-blender-proof-v1
 - Locks: operator-3d-animation-pipeline
