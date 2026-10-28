@@ -1034,3 +1034,29 @@ agent refs.
 
 Never force-push, reset user work, or stash automatically. Branches are active
 work queues; tags retain unique retired history.
+
+
+### Opportunistic retirement of finished transient worktrees (2026-10-28)
+
+Normal `workstream.py finish` still owns branch teardown. On each successful
+`workstream.py start` and completed `finish`, a best-effort scan now retires
+up to four *other* checkouts only when `origin/main` has their exact archived
+`Status: complete` packet, their HEAD is reachable from fetched main, their
+local/remote HEADs agree, they have no live dispatch claim, no active packet,
+no tracked/untracked/ignored content, no Git worktree lock and no visible
+same-user process holding their cwd or open files. Reclamation is limited to
+canonical `.custodian-worktrees/<id>-<run-id>` paths, takes the existing
+per-workstream nonblocking mutex, and uses non-force `git worktree remove`.
+No local/remote branch, claim, reviewer receipt, run evidence or packet is
+deleted or treated as accepted by this scan.
+
+`python3 custodian/tools/agent/transient_worktree_gc.py --repo .` previews
+eligible checkouts without mutation; `python3 custodian/tools/agent/workstream.py
+gc --reap-finished` fetches and applies the same conservative sweep (up to
+32 checkouts). The historical `workstream.py gc` remains report-only without
+that flag. Ambiguous, active, detached, dirty, ignored-content, unique,
+unreviewed or incomplete checkouts require their original recovery/ownership
+flow; the janitor never marks them abandoned or overrides the W1-W4 ledger.
+The process liveness test is Linux-specific; on unsupported hosts it skips
+retirement. Publishing this patch on GitHub does not execute housekeeping on
+the local Arch host until a local workstream command runs.

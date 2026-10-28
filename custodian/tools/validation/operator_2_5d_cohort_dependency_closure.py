@@ -53,6 +53,21 @@ def sha(path: Path) -> str | None:
         return None
 
 
+def _source_file_evidence(path: Path | None, expected_hash: Any) -> dict[str, Any]:
+    """Classify source evidence without treating an absent file as verified."""
+    if path is None:
+        return {"status": "UNRECORDED", "sha256": None, "hash_matches_correction": False}
+    actual_hash = sha(path)
+    if actual_hash is None:
+        return {"status": "UNAVAILABLE", "sha256": None, "hash_matches_correction": False}
+    matches = bool(expected_hash and actual_hash == expected_hash)
+    return {
+        "status": "VERIFIED" if matches else "HASH_MISMATCH",
+        "sha256": actual_hash,
+        "hash_matches_correction": matches,
+    }
+
+
 def git_value(root: Path, *args: str) -> str | None:
     try:
         return subprocess.run(["git", "-C", str(root), *args], check=True, capture_output=True,
@@ -95,12 +110,12 @@ def _workspace_evidence(root: Path, workspace_root: Path | None) -> dict[str, An
         correction = read_json(root / CORRECTION)
         source_row = correction.get("directions", {}).get(direction, {})
         source_path = Path(str(source_row.get("source_strip_path", ""))) if source_row.get("source_strip_path") else None
-        source_hash = sha(source_path) if source_path else None
+        source_evidence = _source_file_evidence(source_path, source_row.get("source_strip_sha256_after"))
+        source_hash = source_evidence["sha256"]
         # The correction records a path relative to the Workbench root's parent
         # checkout; resolve it against the physical authoring checkout instead.
         source_session = workspace_root.parents[1] / str(source_row.get("source_session_path", "")) if source_row.get("source_session_path") else None
         session_hash = sha(source_session) if source_session else None
-        expected_source_hash = source_row.get("source_strip_sha256_after")
         expected_session_hash = source_row.get("source_session_sha256_after")
         directions.append({
             "direction": direction,
@@ -108,9 +123,10 @@ def _workspace_evidence(root: Path, workspace_root: Path | None) -> dict[str, An
             "manifest_sha256": sha(manifest_path),
             "saved_document_status": "PRESENT" if document_path.is_file() else "MISSING",
             "saved_document_sha256": sha(document_path),
-            "source_strip_status": "PRESENT" if source_hash else ("UNAVAILABLE" if source_path else "UNRECORDED"),
+            "source_strip_status": "PRESENT" if source_hash else source_evidence["status"],
+            "source_strip_evidence_status": source_evidence["status"],
             "source_strip_sha256": source_hash,
-            "source_strip_hash_matches_correction": bool(source_hash and source_hash == expected_source_hash),
+            "source_strip_hash_matches_correction": source_evidence["hash_matches_correction"],
             "source_session_status": "PRESENT" if session_hash else ("UNAVAILABLE" if source_session else "UNRECORDED"),
             "source_session_sha256": session_hash,
             "source_session_hash_matches_correction": bool(session_hash and session_hash == expected_session_hash),
