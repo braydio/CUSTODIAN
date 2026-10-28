@@ -14,7 +14,7 @@ import sys
 import time
 from contextlib import nullcontext
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
@@ -518,6 +518,224 @@ def _authenticated_managed_index_reconciliation(
     )
 
 
+def _work_surface_paths(packet_text: str) -> set[str]:
+    """Extract only explicit repository-file tokens from a packet Work surface."""
+    field = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
+    if field is None:
+        return set()
+    declared: set[str] = set()
+    raw = field.group(1)
+    path_pattern = re.compile(r"(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+")
+
+    def add(candidate: str) -> None:
+        path = PurePosixPath(candidate)
+        if (not candidate or "\\" in candidate or path.is_absolute()
+                or not path_pattern.fullmatch(candidate)
+                or any(part in {"", ".", ".."} for part in path.parts)):
+            return
+        declared.add(path.as_posix())
+
+    for candidate in re.findall(r"`([^`]+)`", raw):
+        add(candidate.strip())
+    without_backticks = re.sub(r"`[^`]+`", " ", raw)
+    for segment in re.split(r"[;,]|\s+\+\s+", without_backticks):
+        match = re.match(
+            r"^\s*((?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+)(?=$|\s)",
+            segment,
+        )
+        if match:
+            add(match.group(1).rstrip("."))
+    return declared
+
+
+def _git_tree_entries(repo: Path, revision: str) -> dict[str, tuple[str, str, str]] | None:
+    result = subprocess.run(
+        ["git", "ls-tree", "-r", "-z", "--full-tree", revision],
+        cwd=repo, capture_output=True,
+    )
+    if result.returncode:
+        return None
+    entries: dict[str, tuple[str, str, str]] = {}
+    for raw in result.stdout.split(b"\0"):
+        if not raw:
+            continue
+        metadata, separator, raw_path = raw.partition(b"\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3:
+            return None
+        try:
+            path = raw_path.decode("utf-8")
+            entries[path] = (fields[0].decode("ascii"), fields[1].decode("ascii"),
+                             fields[2].decode("ascii"))
+        except UnicodeDecodeError:
+            return None
+    return entries
+
+
+def _git_blob(repo: Path, revision: str, path: str) -> bytes | None:
+    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                            capture_output=True)
+    return result.stdout if result.returncode == 0 else None
+
+
+def _managed_index_split(raw: bytes) -> tuple[bytes, list[bytes], bytes] | None:
+    start = b"<!-- task_packet_index:managed:start -->"
+    end = b"<!-- task_packet_index:managed:end -->"
+    if raw.count(start) != 1 or raw.count(end) != 1:
+        return None
+    lines = raw.splitlines(keepends=True)
+    start_lines = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == start]
+    end_lines = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == end]
+    if (len(start_lines) != 1 or len(end_lines) != 1
+            or end_lines[0] <= start_lines[0]
+            or lines[start_lines[0]] != start + b"\n"
+            or lines[end_lines[0]] != end + b"\n"):
+        return None
+    first, last = start_lines[0], end_lines[0]
+    return b"".join(lines[:first + 1]), lines[first + 1:last], b"".join(lines[last:])
+
+
+def _managed_conflict_lines(raw: bytes, row: bytes) -> tuple[list[bytes], tuple[int, int]] | None:
+    lines = raw.splitlines(keepends=True)
+    openers = [i for i, line in enumerate(lines) if line.startswith(b"<<<<<<< ")]
+    separators = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == b"======="]
+    closers = [i for i, line in enumerate(lines) if line.startswith(b">>>>>>> ")]
+    managed = _managed_index_split(raw)
+    if (managed is None or len(openers) != 1 or len(separators) != 1 or len(closers) != 1
+            or not (openers[0] < separators[0] < closers[0])
+            or not lines[openers[0]].endswith(b"\n")
+            or not lines[separators[0]].endswith(b"\n")
+            or not lines[closers[0]].endswith(b"\n")
+            or any(b"<<<<<<< " in line or b"=======" in line or b">>>>>>> " in line
+                   for line in lines if line not in {
+                       lines[openers[0]], lines[separators[0]], lines[closers[0]],
+                   })):
+        return None
+    start_at = len(b"".join(lines[:openers[0]]))
+    close_at = len(b"".join(lines[:closers[0] + 1]))
+    managed_start = len(managed[0]) - len(b"<!-- task_packet_index:managed:start -->\n")
+    managed_end = len(raw) - len(managed[2])
+    if not (managed_start < start_at < close_at <= managed_end):
+        return None
+    if lines[openers[0] + 1:separators[0]] or lines[separators[0] + 1:closers[0]] != [row + b"\n"]:
+        return None
+    normalized = list(lines)
+    normalized[openers[0]] = b"<<<<<<< LABEL\n"
+    normalized[closers[0]] = b">>>>>>> LABEL\n"
+    return normalized, (openers[0], closers[0] + 1)
+
+
+def _authenticated_managed_index_conflict(
+    repo: Path, workstream_id: str, first_parent: str, second_parent: str,
+    merge_commit: str, archived_packet: str,
+) -> bytes | None:
+    """Authenticate one real, managed-index-only conflict merge and its exact repair bytes."""
+    readme = f"{TASK_PACKET_ROOT}/README.md"
+    filename = Path(archived_packet).name
+    active_packet = f"{TASK_PACKET_ROOT}/{filename}"
+    entries = [_git_tree_entries(repo, revision) for revision in
+               (first_parent, second_parent, merge_commit)]
+    if any(tree is None for tree in entries):
+        return None
+    first_tree, main_tree, merged_tree = entries
+    if (first_tree.get(archived_packet, (None,))[0] != "100644"
+            or active_packet in first_tree
+            or main_tree.get(active_packet, (None,))[0] != "100644"
+            or merged_tree.get(archived_packet, (None,))[0] != "100644"
+            or active_packet in merged_tree
+            or any(tree.get(readme, (None,))[0] != "100644" for tree in entries)):
+        return None
+    archived_text = _git_blob(repo, first_parent, archived_packet)
+    active_text = _git_blob(repo, second_parent, active_packet)
+    if archived_text is None or active_text is None:
+        return None
+    try:
+        archived_text_str = archived_text.decode("utf-8")
+        active_text_str = active_text.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    archived = parse_packet(archived_packet, archived_text_str)
+    active = parse_packet(active_packet, active_text_str)
+    if (archived.error or active.error or archived.workstream != workstream_id
+            or active.workstream != workstream_id or active.status != "ready"
+            or active.dispatch != "auto"):
+        return None
+    first_readme = _git_blob(repo, first_parent, readme)
+    main_readme = _git_blob(repo, second_parent, readme)
+    merged_readme = _git_blob(repo, merge_commit, readme)
+    if first_readme is None or main_readme is None or merged_readme is None:
+        return None
+    first_parts, main_parts = _managed_index_split(first_readme), _managed_index_split(main_readme)
+    if first_parts is None or main_parts is None:
+        return None
+    first_rows = [line for line in first_parts[1] if line.strip()]
+    main_rows = [line for line in main_parts[1] if line.strip()]
+    row_prefix = f"- `{filename}` — ".encode("utf-8")
+    target_rows = [line for line in main_rows if line.startswith(row_prefix)]
+    if len(target_rows) != 1 or any(line.startswith(row_prefix) for line in first_rows):
+        return None
+    row = target_rows[0].removesuffix(b"\n")
+
+    expected = subprocess.run(
+        ["git", "merge-tree", "--write-tree", first_parent, second_parent],
+        cwd=repo, text=True, capture_output=True,
+    )
+    chunks = expected.stdout.split("\n\n", 1)
+    first_lines = chunks[0].splitlines() if chunks else []
+    if expected.returncode != 1 or len(first_lines) != 4:
+        return None
+    expected_tree = first_lines[0]
+    stage_rows = []
+    for line in first_lines[1:]:
+        metadata, separator, path = line.partition("\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3 or fields[2] not in {"1", "2", "3"}:
+            return None
+        stage_rows.append((fields[0], fields[1], fields[2], path))
+    if {row[3] for row in stage_rows} != {readme}:
+        return None
+    merge_base = git("merge-base", first_parent, second_parent, cwd=repo, check=False)
+    base_tree = _git_tree_entries(repo, merge_base) if merge_base else None
+    if base_tree is None:
+        return None
+    expected_stages = set()
+    for stage, tree in (("1", base_tree), ("2", first_tree), ("3", main_tree)):
+        entry = tree.get(readme)
+        if entry is None or entry[0] != "100644" or entry[1] != "blob":
+            return None
+        expected_stages.add((entry[0], entry[2], stage, readme))
+    if len(expected_stages) != 3 or set(stage_rows) != expected_stages:
+        return None
+    expected_entries = _git_tree_entries(repo, expected_tree)
+    if expected_entries is None or expected_entries.get(readme, (None,))[0] != "100644":
+        return None
+    if ({key: value for key, value in expected_entries.items() if key != readme}
+            != {key: value for key, value in merged_tree.items() if key != readme}):
+        return None
+    expected_readme = _git_blob(repo, expected_tree, readme)
+    if expected_readme is None:
+        return None
+    actual_conflict = _managed_conflict_lines(merged_readme, row)
+    expected_conflict = _managed_conflict_lines(expected_readme, row)
+    if (actual_conflict is None or expected_conflict is None
+            or actual_conflict[0] != expected_conflict[0]):
+        return None
+    actual_lines = merged_readme.splitlines(keepends=True)
+    open_index, end_index = actual_conflict[1]
+    return b"".join(actual_lines[:open_index] + actual_lines[end_index:])
+
+
+def _managed_index_is_current(repo: Path) -> bool:
+    for tools_path in (repo / "custodian/tools", repo / "custodian/tools/validation"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import task_packet_index
+        return task_packet_index.check(repo)[0]
+    except Exception:
+        return False
+
+
 def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
     repo = root_repo(path)
@@ -573,6 +791,12 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     transition_commit, packet = transitions[0]
     if transition_commit == head:
         return None
+    transition_packet_blob = _git_blob(path, transition_commit, packet)
+    try:
+        transition_packet_text = transition_packet_blob.decode("utf-8") if transition_packet_blob else ""
+    except UnicodeDecodeError:
+        transition_packet_text = ""
+    declared_work_surface = _work_surface_paths(transition_packet_text)
 
     # This one previously validated recovery has an exact, independently
     # authorized archive -> summary repair -> sync -> completion evidence ->
@@ -650,15 +874,19 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
             trace_matches.append((ref, publication))
         if len(trace_matches) == 1:
             _, publication = trace_matches[0]
-            # A stopped finish attempt leaves HEAD at the traced merge. One
-            # direct child is permitted for the bounded producer correction,
-            # and every changed path must be named by the archived task packet.
+            # A stopped finish attempt may leave HEAD at a clean traced sync
+            # merge. Conflicted merges must continue through the full history
+            # verifier below and cannot use this shortcut.
             if head == merge_candidate:
-                return None
+                expected = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", transition_commit, second_parent],
+                    cwd=path, text=True, capture_output=True,
+                )
+                expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else None
+                if (expected.returncode == 0 and expected_tree
+                        and git("rev-parse", f"{merge_candidate}^{{tree}}", cwd=path) == expected_tree):
+                    return None
             if first_parent == merge_candidate:
-                packet_text = (repo / packet).read_text()
-                work_surface = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
-                declared = set(re.findall(r"`([^`]+)`", work_surface.group(1))) if work_surface else set()
                 child_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", head,
                                       cwd=path).splitlines())
                 child_parents = git("rev-list", "--parents", "-n", "1", head, cwd=path).split()
@@ -668,7 +896,8 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                     left, separator, name = row.partition("\t")
                     if separator and left.split():
                         child_tree_modes[name] = left.split()[0]
-                if (len(child_parents) == 2 and child_paths and child_paths.issubset(declared)
+                if (len(child_parents) == 2 and child_paths
+                        and child_paths.issubset(declared_work_surface)
                         and all(child_tree_modes.get(name) == "100644" for name in child_paths)):
                     return None
 
@@ -682,15 +911,18 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     )
     commits = history.stdout.splitlines() if history.returncode == 0 else []
     if commits:
-        packet_text = (repo / packet).read_text()
-        work_surface = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
-        declared = set(re.findall(r"`([^`]+)`", work_surface.group(1))) if work_surface else set()
         previous = transition_commit
         sync_merges = []
         valid = True
         host_validation = None
+        pending_conflict_repair: tuple[str, bytes] | None = None
+        repaired_managed_conflict = False
         for commit in commits:
             parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
+            if pending_conflict_repair is not None and not (
+                    len(parents) == 2 and parents[1] == previous):
+                valid = False
+                break
             if len(parents) == 3 and parents[1] == previous:
                 main_parent = parents[2]
                 if subprocess.run(["git", "merge-base", "--is-ancestor", main_parent, main],
@@ -701,20 +933,33 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                         != git("rev-parse", f"{commit}:{packet}", cwd=path, check=False)):
                     valid = False
                     break
-                expected = subprocess.run(["git", "merge-tree", "--write-tree", previous, main_parent],
-                                          cwd=path, text=True, capture_output=True)
+                expected = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", "--name-only", previous, main_parent],
+                    cwd=path, text=True, capture_output=True,
+                )
                 actual_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
-                expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else None
-                if not expected_tree:
+                expected_lines = expected.stdout.split("\n\n", 1)[0].splitlines()
+                expected_tree = expected_lines[0].strip() if expected_lines else None
+                if not expected_tree or pending_conflict_repair is not None:
                     valid = False
                     break
-                if expected.returncode or expected_tree != actual_tree:
+                if expected.returncode == 0 and expected_tree == actual_tree:
+                    pass
+                elif expected.returncode == 1 and not repaired_managed_conflict:
+                    repair_bytes = _authenticated_managed_index_conflict(
+                        path, workstream_id, previous, main_parent, commit, packet,
+                    )
+                    if repair_bytes is None:
+                        valid = False
+                        break
+                    pending_conflict_repair = (commit, repair_bytes)
+                else:
                     changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
                                       expected_tree, actual_tree, cwd=path).splitlines())
                     readme = "custodian/docs/ai_context/task_packets/README.md"
                     if host_validation is None:
-                        for tools_path in (repo / "custodian/tools",
-                                           repo / "custodian/tools/validation"):
+                        source_tools = Path(__file__).resolve().parent.parent
+                        for tools_path in (source_tools, source_tools / "validation"):
                             if str(tools_path) not in sys.path:
                                 sys.path.insert(0, str(tools_path))
                         import paired_review_host_validation as host_validation
@@ -735,13 +980,48 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                 status = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
                              "-r", commit, cwd=path).splitlines()
                 operations = [line.split("\t") for line in status]
-                if (not operations or any(len(row) != 2 or row[0] != "M"
-                                           or row[1] not in declared for row in operations)):
-                    valid = False
-                    break
+                readme = "custodian/docs/ai_context/task_packets/README.md"
+                if pending_conflict_repair is not None:
+                    merge_commit, exact_repair = pending_conflict_repair
+                    merge_readme = _git_blob(path, merge_commit, readme)
+                    repaired_readme = _git_blob(path, commit, readme)
+                    before_tree = _git_tree_entries(path, merge_commit)
+                    after_tree = _git_tree_entries(path, commit)
+                    if (merge_readme is None or repaired_readme != exact_repair
+                            or before_tree is None or after_tree is None
+                            or before_tree.get(readme, (None,))[0] != "100644"
+                            or after_tree.get(readme, (None,))[0] != "100644"
+                            or {key: value for key, value in before_tree.items() if key != readme}
+                            != {key: value for key, value in after_tree.items() if key != readme}
+                            or operations != [["M", readme]]):
+                        valid = False
+                        break
+                    pending_conflict_repair = None
+                    repaired_managed_conflict = True
+                else:
+                    archived_summary = _expected_summary_filename(workstream_id)
+                    permitted_admin = {packet, archived_summary, readme}
+                    if (not operations or any(
+                            len(row) != 2 or row[0] not in {"A", "M"}
+                            or row[1] not in declared_work_surface | permitted_admin
+                            or (row[0] == "A" and row[1] not in declared_work_surface | {archived_summary})
+                            for row in operations)):
+                        valid = False
+                        break
+                    if readme in {row[1] for row in operations}:
+                        before_readme = _git_blob(path, previous, readme)
+                        after_readme = _git_blob(path, commit, readme)
+                        before_parts = _managed_index_split(before_readme or b"")
+                        after_parts = _managed_index_split(after_readme or b"")
+                        if (before_parts is None or after_parts is None
+                                or before_parts[0] != after_parts[0]
+                                or before_parts[2] != after_parts[2]):
+                            valid = False
+                            break
                 parent = parents[1]
-                for _, source_path in operations:
-                    for revision in (parent, commit):
+                for operation, source_path in operations:
+                    revisions = (commit,) if operation == "A" else (parent, commit)
+                    for revision in revisions:
                         entry = subprocess.run(["git", "ls-tree", "-z", revision,
                                                 "--", source_path], cwd=path, capture_output=True)
                         if (entry.returncode or not entry.stdout
@@ -757,6 +1037,8 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                 break
             previous = commit
         if (valid and sync_merges and sync_merges[-1][1] == main
+                and pending_conflict_repair is None
+                and (not repaired_managed_conflict or _managed_index_is_current(path))
                 and subprocess.run(["git", "merge-base", "--is-ancestor",
                                     sync_merges[-1][0], head], cwd=path,
                                    capture_output=True).returncode == 0):

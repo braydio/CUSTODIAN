@@ -67,6 +67,9 @@ jobs:
             custodian.tools.agent.test_queue_frontier \
             custodian.tools.agent.test_run_trace
 
+      - name: Validate historical review acceptance regressions
+        run: python3 custodian/tools/agent/test_review_outcome.py -v
+
       - name: Validate Dropbox lifecycle Codex packet pair
         if: ${{ hashFiles('custodian/docs/ai_context/task_packets/DROPBOX_ASSET_LIFECYCLE_RECONCILER_V1.md') != '' }}
         run: >-
