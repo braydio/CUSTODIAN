@@ -9,6 +9,10 @@ from pathlib import Path
 MODULE_DIR = Path(__file__).resolve().parents[1] / "operator/animation_compiler"
 sys.path.insert(0, str(MODULE_DIR))
 from neutral_idle_proof_contract import blender_quaternion, sampled_frames, validate_mapping, validate_motion  # noqa: E402
+from retarget_calibration import (calibrated_target_world_xyzw, multiply_xyzw, source_ground_contact_indices,
+                                  stable_contact_frame_indices)  # noqa: E402
+from finalize_neutral_idle_candidate import decoded_rgba_equal  # noqa: E402
+from PIL import Image  # noqa: E402
 
 
 def motion_fixture():
@@ -24,6 +28,32 @@ def motion_fixture():
 
 
 class NeutralIdleProofContractTests(unittest.TestCase):
+    def test_stable_contact_uses_both_endpoints_of_stable_steps(self):
+        self.assertEqual({0, 1, 2}, stable_contact_frame_indices([(0, 0, 0), (0, 0, 0.001), (0, 0, 0.003)]))
+        self.assertEqual(set(), stable_contact_frame_indices([(0, 0, 0), (0, 0, 0.006)]))
+        self.assertEqual({0, 2}, source_ground_contact_indices({0, 1, 2}, [0.01, 0.08, 0.04]))
+
+    def test_fixed_reference_maps_reference_to_target_rest(self):
+        source_reference = (0.0, 0.0, 0.7071067812, 0.7071067812)
+        target_rest = (0.5, 0.5, 0.5, 0.5)
+        mapped = calibrated_target_world_xyzw(source_reference, source_reference, target_rest)
+        self.assertAlmostEqual(1.0, abs(sum(a*b for a, b in zip(mapped, target_rest))), places=7)
+
+    def test_fixed_reference_preserves_source_world_delta(self):
+        source_reference = (0.0, 0.0, 0.7071067812, 0.7071067812)
+        target_rest = (0.5, 0.5, 0.5, 0.5)
+        source_delta = (0.0, 0.3826834324, 0.0, 0.9238795325)
+        source_pose = multiply_xyzw(source_delta, source_reference)
+        mapped = calibrated_target_world_xyzw(source_pose, source_reference, target_rest)
+        expected = multiply_xyzw(source_delta, target_rest)
+        self.assertAlmostEqual(1.0, abs(sum(a*b for a, b in zip(mapped, expected))), places=7)
+
+    def test_exact_decoded_rgba_comparison_detects_rgb_changes_with_identical_alpha(self):
+        left = Image.new("RGBA", (2, 1), (12, 34, 56, 0))
+        right = Image.new("RGBA", (2, 1), (210, 34, 56, 0))
+        self.assertFalse(decoded_rgba_equal(left, right))
+        self.assertTrue(decoded_rgba_equal(left, left.copy()))
+
     def test_long_authored_range_and_duplicate_loop_endpoint(self):
         self.assertEqual(263, len(sampled_frames(1, 264, True)))
         self.assertEqual(264, len(sampled_frames(1, 264, False)))

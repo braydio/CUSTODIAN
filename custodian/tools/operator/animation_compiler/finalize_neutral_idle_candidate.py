@@ -8,7 +8,6 @@ import subprocess
 from pathlib import Path
 
 from PIL import Image, ImageDraw
-from PIL import ImageChops
 from neutral_idle_proof_contract import sampled_frames, validate_motion
 
 DIRECTIONS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
@@ -20,6 +19,13 @@ def canonical(value):
 
 def sha_bytes(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def decoded_rgba_equal(left, right):
+    """Compare every decoded channel, including RGB beneath transparent pixels."""
+    left = left.convert("RGBA")
+    right = right.convert("RGBA")
+    return left.size == right.size and left.tobytes() == right.tobytes()
 
 
 def sha_file(path):
@@ -127,7 +133,7 @@ def main():
             with Image.open(original) as left, Image.open(repeat) as right:
                 if left.size != right.size or left.mode != right.mode:
                     raise RuntimeError(f"REPEAT_RENDER_FORMAT_MISMATCH:{direction}:{frame}")
-                pixel_equal = ImageChops.difference(left.convert("RGBA"), right.convert("RGBA")).getbbox() is None
+                pixel_equal = decoded_rgba_equal(left, right)
                 repeat_results.append({"direction": direction, "source_frame": frame,
                     "candidate_sha256": sha_file(original), "repeat_sha256": sha_file(repeat),
                     "candidate_pixel_sha256": sha_bytes(left.convert("RGBA").tobytes()),

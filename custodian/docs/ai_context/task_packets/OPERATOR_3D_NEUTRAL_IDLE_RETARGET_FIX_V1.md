@@ -48,6 +48,27 @@
 - Task overrides: TASK OVERRIDE: This user-authorized continuation supersedes Task 002's prior “follow-up changes require explicit authorization” stop condition only for the exact retargeting/Idle.fbx/QA/evidence scope above. It does not approve either clip or authorize production/runtime changes.
 - Deferred: Human visual selection of the default idle; any animation-specific follow-up correction; full directional libraries; production model freeze, candidate promotion and runtime integration.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `OPERATOR_3D_NEUTRAL_IDLE_RETARGET_FIX_V1_CLAUDE_SUMMARY.md`; 32 focused unit tests pass; both hash-pinned clips processed and measured through all unique frames; source and corrected loops remain within declared seams; corrected mesh has no below-ground frames; exact RGBA QA reports 22/24 equal and two single-RGB-pixel differences without misclassifying them; fixed-camera evidence and two full-duration videos published in the Dropbox review bundle; source/master hashes unchanged; no production outputs or approvals.
+
+## Execution Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: low
+- What went wrong: exact repeated render comparison exposed two one-pixel RGB variations previously hidden by the alpha-only bounding-box comparison.
+- Root cause / contributing factors: the old equality predicate ignored RGB-only differences; the render engine also produces a one-pixel RGB variation in two of 24 repeated samples.
+- Prevention / pipeline improvement: compare decoded RGBA bytes exactly and preserve same-alpha RGB regression coverage; record exact equality counts.
+- Tooling / docs drift discovered: none
+- Follow-up: review-operator-3d-neutral-idle-retarget-fix-v1
+- What worked: one hash-pinned calibration and contact-phase IK policy applied to both validated Mixamo clips; the source contact landmarks identify stable phases without per-animation correction constants.
+
 ## Handoff
 - Next workstream: review-operator-3d-neutral-idle-retarget-fix-v1
 - Next packet state: dependency-gated
