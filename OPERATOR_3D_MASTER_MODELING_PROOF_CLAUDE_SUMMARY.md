@@ -53,3 +53,9 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 - Pipeline run + verify OK; 10,367 tris (-99.17% vs meshy-002). Comparison in `meshy_candidates/meshy-003_reduced_poly/COMPARISON_VS_meshy-002.md`.
 - Fixed hardcoded "1.25M-tri" geometry-proof caption. Tests: 43 OK (1 skipped), Blender integration OK; publisher test import error is pre-existing.
 - Not approved, not selected, not uploaded to Dropbox. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## Task 012 — rigged Operator diagnostic (meshy-004_rigged)
+- Inputs preserved (LFS, hashes match task) in `source_inputs/meshy-004_rigged/`. Motion: `REAL_RUN_CLIP_MISSING` (0 animations; MRC1 not decodable, high entropy, no parser).
+- Cause of extremity stretch: mis-parented `Bone_0xx` joints (foot-level bones under hands/forearms; tabard bone under Head). Derivative reparent fixes boot/tabard leak (1.56 m -> 3e-7 m); residual hand-to-thigh edge stretch (topology) remains.
+- Pipeline `run` is not valid for rigged GLBs (output discarded). Report: `rig_diagnostics/meshy-004_rigged/REPORT.md`.
+- Tests: 43 OK (1 skipped), Blender integration OK. Not approved, not uploaded. Return to clean `~/Projects/CUSTODIAN` on `main`.
