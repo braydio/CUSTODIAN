@@ -39,7 +39,7 @@ The repeated retarget pass produced a byte-identical motion artifact. Repeated s
 
 The Task 001 `R0-01` verifier finding remains unresolved. The user waived that review only as a prerequisite to this experimental proof; no global dispatch policy, review claim, or production approval was changed. The Task 002 paired independent review remains required after landing. No shoulder geometry, Task 017 worktree, ITER005 Running source, Workbench/runtime asset, canonical source asset, Godot policy, or original modeling worktree was modified.
 
-The required human animation-quality review is the next gate. The final Dropbox publication path will be recorded here after the implementation commit is pushed; review only the latest manifest.
+The required human animation-quality review is the next gate. The final Dropbox manifest is `/CUSTODIAN/visual_review/operator-3d-neutral-idle-blender-proof-v1/20261028T134009Z/REVIEW_MANIFEST.json` (run `20261028T134009Z`, commit `5b6c3b4365d2191325aaf6a8073cefd877778e7d`). Its retention policy is `delete-after-review`; after your decision, cleanup is `python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-3d-neutral-idle-blender-proof-v1/20261028T134009Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`. Review the latest manifest only.
 
 ## Process Feedback
 - Feedback schema: `custodian.task_feedback.v1`
