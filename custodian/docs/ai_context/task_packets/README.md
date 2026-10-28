@@ -468,7 +468,7 @@ Design authority: `../../../design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE
 - `archived/OPERATOR_DODGE_DOMAIN_EXTRACTION.md` — Slice F4 complete: charge, profile selection, iframe/recovery clocks, Flow/chain, exit carry, and cancellation live in `OperatorDodgeController`; full-body dodge presentation and chassis movement ownership remain intact.
 - `archived/OPERATOR_MOBILE_GUARD_COMPOSITION.md` — complete: movement-owned lower-body locomotion and upper-body unarmed guard presentation were implemented; the active follow-up queue is not this archived slice.
 - `archived/OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md` — Slice F1 complete: loadout selection/pending transactions and per-weapon magazine/reload runtime state are owned behind the loadout authority; weapon-definition runtime debt is zero.
-- `archived/OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — F3 complete: ranged/sidearm phases, ammo, heat and reload now live behind `OperatorRangedController`, with movement-owned lower-body presentation and reviewed source-strip availability correction; preserve the existing current-main controller when implementing vehicle scan input.
+- `archived/OPERATOR_RANGED_DOMAIN_EXTRACTION.md` — F3 complete: ranged/sidearm phases, ammo, heat and reload now live behind `OperatorRangedController`, with movement-owned lower-body presentation; the separate source-strip availability correction remains its own historical-evidence contract; preserve the existing current-main controller when implementing vehicle scan input.
 
 ### Active Archive Resolve Presentation Series
 
