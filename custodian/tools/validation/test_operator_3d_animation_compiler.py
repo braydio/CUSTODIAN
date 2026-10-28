@@ -169,6 +169,26 @@ class Operator3DAnimationCompilerTests(unittest.TestCase):
         proof = json.loads((self.root / "inspection.json").read_text())
         self.assertEqual("synthetic_test", proof["evidence_kind"])
 
+    def test_candidate_only_allows_missing_runtime_timing_without_inventing_values(self):
+        value = copy.deepcopy(self.manifest)
+        value["animations"][0]["runtime_timing_authority"] = {
+            "status": "unavailable", "authority_id": None, "authority_path": None,
+            "authority_sha256": None, "fps": None, "loop": None,
+        }
+        report = compiler._validate_batch(value, self.root, REPO, allow_test_fixtures=True)
+        self.assertIn("RUNTIME_TIMING_AUTHORITY_MISSING", {item["code"] for item in report["errors"]})
+        candidate = compiler._validate_batch(value, self.root, REPO, allow_test_fixtures=True, candidate_only=True)
+        self.assertTrue(candidate["valid"], candidate["errors"])
+        self.assertIsNone(value["animations"][0]["runtime_timing_authority"]["fps"])
+
+    def test_candidate_only_does_not_accept_inconsistent_runtime_timing_claims(self):
+        value = copy.deepcopy(self.manifest)
+        runtime = value["animations"][0]["runtime_timing_authority"]
+        runtime.update({"status": "unavailable", "authority_id": None, "authority_sha256": None, "fps": None, "loop": None})
+        runtime["authority_path"] = "runtime_timing.json"
+        report = compiler._validate_batch(value, self.root, REPO, allow_test_fixtures=True, candidate_only=True)
+        self.assertIn("RUNTIME_TIMING_AVAILABILITY_MISMATCH", {item["code"] for item in report["errors"]})
+
     def test_example_batch_marks_real_inputs_unavailable_without_hashes(self):
         sample_path = COMPILER_DIR / "examples/operator_mixamo_batch_v1.json"
         sample = json.loads(sample_path.read_text())

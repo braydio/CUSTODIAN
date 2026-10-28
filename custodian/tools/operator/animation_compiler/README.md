@@ -25,6 +25,7 @@ The new compiler owns source-batch identity, declared dependencies, compatibilit
 - `schemas/candidate_receipt.v1.schema.json` specifies future output hashes, the eight independent 128×128 RGBA full-body direction streams, optional 512×512 diagnostics, source timing, separate root trajectory and candidate-only approval state. It is a contract, not a renderer implementation.
 - `contracts/full_body_8dir_128_v1.json` is pinned by its actual file SHA-256 in manifests. It fixes 45° elevation, 50 px/m, root `(64,106)`, fixed master-derived scale, consistent registration, no mirroring, and candidate-only output.
 - `contracts/retarget_policy_v1.json` is a versioned policy contract only. It requires compatibility proof and timing preservation but intentionally does not invent Mixamo bone mappings or execute a retarget.
+- `contracts/neutral_idle_mapping_policy_v1.json` is scoped to the experimental Neutral Idle proof. It declares the exact source-only finger chains and target-only inherited bones; the Blender adapter fails on any different mapping gap.
 
 All external master, FBX, proof, texture and master-retarget paths are relative to the explicitly authorized `--asset-root` (or, by default, the manifest directory). Absolute paths, traversal and symlink escapes are rejected. Rendering and batch-retarget contract paths are repository-relative and hash-checked. File hashes stream bytes in bounded blocks; no image decoding is performed for estimates.
 
@@ -50,6 +51,8 @@ Validation never equates authored FBX FPS with runtime FPS. Every item must expl
 
 Root motion distinguishes source world displacement from local sprite poses. The declared `extract_to_metadata` route removes root translation from sprite poses, retains the original trajectory separately, and assigns Godot trajectory application exactly once. `in_place` retains the trajectory as provenance while emitting poses without root displacement and declaring `pose_only`. Inconsistent pose/application combinations fail closed.
 
+`--candidate-only` is available on `plan`, `validate`, and `check` for explicitly unapproved candidate work when runtime timing authority is unavailable. It accepts only a fully empty `status: unavailable` authority record; it never supplies FPS or loop values. Omitting the flag preserves the production gate and returns `RUNTIME_TIMING_AUTHORITY_MISSING`.
+
 ## Representative batch and current availability
 
 `examples/operator_mixamo_batch_v1.json` names the eight requested candidates. Source filenames, paths, hashes, importer settings, skeleton identities/actions/ranges, timing and master identity remain null with `availability: unavailable` because none were supplied as authorized inputs here. The example does not claim real animation validation. Its dry run still reports eight jobs, eight target directions and fixed output dimensions while setting frame/pixel workload to unknown.
@@ -58,7 +61,7 @@ Root motion distinguishes source world displacement from local sprite poses. The
 
 | Existing interface | Safe reuse | Task 001 decision |
 | --- | --- | --- |
-| `operator_3d_master/scripts/rig_diag/inspect_fbx.py`, `retarget_run.py`, `render_rigged.py`, ITER003–005 diagnostics | These exact files were absent from the fetched repository and resumed implementation tree. No conclusions about their internals are asserted. | Do not copy or rewrite. The future inspector-proof schema makes source/action/skeleton/retarget bindings explicit. Locate the authorized original source before Task 002 and record which routines are generic vs `Running.fbx`/ITER005-specific. |
+| Host-local `inspect_fbx.py`, `retarget_run.py`, `render_rigged.py`, and ITER003–005 diagnostics in the preserved modeling worktree | Inspected read-only for Task 002. FBX import/action reporting informed inventory; the old retarget script is Running-specific (hardcoded action, cloth-follow rules, foot-contact metrics); the renderer's fixed 45°/50 px-per-meter/eight-view/root registration and one-time rest-pose scale fit were adapted. Existing scripts/assets were not edited or used as output scenes. | Reuse only compatible inspection and camera ideas through the task-scoped adapter; keep the Running/ITER005 retarget and deformation routines out of Neutral Idle execution. |
 | `custodian/tools/art/broken_warrant_3d/render_pixel_proof.py`, `assemble_pixel_proof.py`, README | Reusable technical precedent: bounded-block SHA-256, background Blender scripting, deterministic removal of volatile PNG metadata, pixel metrics and review-only proof outputs. | Not imported as a dependency: its Broken Warrant GLB, rig, cameras and three-view proof are model-specific. |
 | `custodian/tools/operator/operator_2_5d_ingress.py` | Its explicit source path/hash, semantic binding and source-work → Workbench separation inform the future handoff boundary. | Keep as downstream owner; do not call or change it in compiler planning. |
 | `custodian/tools/operator/operator_2_5d_timing_authority.py` and `custodian/tools/operator/operator_2_5d_review.py` | Explicit timing evidence bound to saved inputs and human approval separate from technical QA. | No FPS inferred; runtime authority is a separate optional hash-bound record. A compiler candidate cannot satisfy the review/approval gate. |
@@ -67,4 +70,4 @@ Root motion distinguishes source world displacement from local sprite poses. The
 
 ## Task 002 proposal
 
-See [TASK_002_NEUTRAL_IDLE_PROPOSAL.md](TASK_002_NEUTRAL_IDLE_PROPOSAL.md). It is a one-clip Blender proof plan only and requires a human-approved source/master contract before execution.
+See [TASK_002_NEUTRAL_IDLE_PROPOSAL.md](TASK_002_NEUTRAL_IDLE_PROPOSAL.md). The first one-clip proof used the user-authorized experimental ITER005 master and verified Neutral Idle FBX. Its reusable local-motion artifact, root trajectory, eight-direction candidate, QA, receipt and human review handoff remain unapproved; no production timing or master approval was inferred.
