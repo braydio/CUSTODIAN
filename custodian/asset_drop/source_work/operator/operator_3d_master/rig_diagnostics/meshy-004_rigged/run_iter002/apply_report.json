@@ -1,0 +1,10 @@
+{
+ "verts": 17578,
+ "tris": 10367,
+ "loops": 31101,
+ "weights_written_for_vertices": 393,
+ "rest_position_change_mm_max": 0.0,
+ "verts_not_normalised": 0,
+ "max_influences": 4,
+ "groups": 42
+}
