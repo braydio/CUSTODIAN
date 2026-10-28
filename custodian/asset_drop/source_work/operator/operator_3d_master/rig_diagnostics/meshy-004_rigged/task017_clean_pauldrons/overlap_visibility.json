@@ -1,0 +1,4864 @@
+{
+  "schema": "custodian.operator_task017_overlap_visibility.v1",
+  "candidate": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task017_clean_pauldrons/operator_iter005_clean_pauldrons_task017.blend",
+  "method": "fixed-camera scene ray cast at centers of body faces intersecting a pauldron surface in that frame",
+  "camera": {
+    "scale": 1.23547,
+    "elevation_deg": 45,
+    "pixels_per_meter_at_128": 50,
+    "root_pixel": [
+      64,
+      106
+    ]
+  },
+  "unique_exposed_body_overlap_faces_by_side": {
+    "Left": [
+      6408,
+      6504,
+      6541,
+      6560,
+      6606,
+      6635,
+      6681,
+      6691,
+      6715,
+      6727,
+      6736,
+      6742,
+      6750,
+      6751,
+      6757,
+      6783,
+      6784,
+      6796,
+      6804,
+      6811,
+      6815,
+      6835,
+      6850,
+      6869,
+      6873,
+      6880,
+      6881,
+      6883,
+      6894,
+      6898,
+      6927,
+      6932,
+      6944,
+      6955,
+      6956,
+      6996,
+      7017,
+      7024,
+      7049,
+      7057,
+      7058,
+      7068,
+      7077,
+      7101,
+      7165,
+      7166,
+      7191,
+      7241,
+      7280,
+      7384
+    ],
+    "Right": [
+      2202,
+      2254,
+      2260,
+      2277,
+      2311,
+      2312,
+      2416,
+      2444,
+      2513,
+      2548,
+      2555,
+      2576,
+      2678,
+      2724,
+      2757,
+      2764,
+      2766,
+      2770,
+      2780,
+      2791,
+      2805,
+      2808,
+      2825,
+      2849,
+      2879,
+      2898,
+      2920,
+      2952,
+      2953,
+      2962,
+      3003,
+      3010,
+      3031,
+      3071,
+      3086,
+      3094,
+      3126,
+      3150,
+      3158,
+      3170,
+      3213,
+      3217,
+      3224,
+      3229,
+      3234,
+      3243,
+      3298,
+      3371,
+      3388,
+      3409,
+      3487,
+      3552,
+      3567
+    ]
+  },
+  "unique_exposed_body_overlap_face_counts_by_side": {
+    "Left": 50,
+    "Right": 53
+  },
+  "frames": [
+    {
+      "frame": 1,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2254,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              6955,
+              6956,
+              7049,
+              7057,
+              7068,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 2,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 17,
+            "visible_face_indices": [
+              6757,
+              6804,
+              6850,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6850,
+              6932,
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2254,
+              2277
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              6804,
+              6932,
+              6955,
+              6956,
+              7049,
+              7057,
+              7068,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 17,
+            "visible_face_indices": [
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 18,
+            "visible_face_indices": [
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2260,
+              2277
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 3,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 18,
+            "visible_face_indices": [
+              6715,
+              6751,
+              6757,
+              6804,
+              6850,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              6715,
+              6751,
+              6850,
+              6932,
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2277,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3371,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              6715,
+              6751,
+              6804,
+              6932,
+              6955,
+              6956,
+              7049,
+              7057,
+              7068,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 19,
+            "visible_face_indices": [
+              6715,
+              6751,
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 19,
+            "visible_face_indices": [
+              6715,
+              6751,
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2260,
+              2277
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 4,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 24,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6811,
+              6835,
+              6850,
+              6932,
+              6955,
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2277,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3371,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6804,
+              6811,
+              6835,
+              6932,
+              6955,
+              6956,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 40,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2260,
+              2277
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 5,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 21,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6881,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6811,
+              6835,
+              6850,
+              6932,
+              6955
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              2920
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2920,
+              3071,
+              3086,
+              3224,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 18,
+            "visible_face_indices": [
+              2898,
+              2920,
+              3071,
+              3086,
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3371,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              3071,
+              3086,
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6804,
+              6811,
+              6835,
+              6932,
+              6955,
+              6956,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 57,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        }
+      }
+    },
+    {
+      "frame": 6,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 24,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6811,
+              6835,
+              6850,
+              6932,
+              6955,
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              2920
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2920,
+              3071,
+              3086,
+              3170,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 21,
+            "visible_face_indices": [
+              2898,
+              2920,
+              3071,
+              3086,
+              3094,
+              3126,
+              3150,
+              3158,
+              3170,
+              3213,
+              3217,
+              3229,
+              3234,
+              3243,
+              3298,
+              3371,
+              3388,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              3071,
+              3086,
+              3094,
+              3150,
+              3170,
+              3213,
+              3229,
+              3234,
+              3371,
+              3388,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6804,
+              6811,
+              6835,
+              6932,
+              6955,
+              6956,
+              7057,
+              7068,
+              7101
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              6408,
+              6560,
+              6606,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6811,
+              6815,
+              6835,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7057,
+              7058,
+              7068,
+              7101,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        }
+      }
+    },
+    {
+      "frame": 7,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6850,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              2805
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6850,
+              6932,
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2780,
+              2805,
+              2849,
+              2920,
+              3031
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2780,
+              2805,
+              2849,
+              2920,
+              3031,
+              3071,
+              3086,
+              3170,
+              3224,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              2780,
+              2805,
+              2849,
+              2898,
+              2920,
+              3031,
+              3071,
+              3086,
+              3094,
+              3126,
+              3150,
+              3158,
+              3170,
+              3213,
+              3217,
+              3229,
+              3234,
+              3243,
+              3298,
+              3371,
+              3388,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              2805,
+              2849,
+              3031,
+              3071,
+              3086,
+              3094,
+              3150,
+              3170,
+              3213,
+              3229,
+              3234,
+              3371,
+              3388,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6751,
+              6804,
+              6932,
+              6955,
+              6956,
+              7049,
+              7057,
+              7068,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 43,
+            "visible_as_first_surface": 23,
+            "visible_face_indices": [
+              6560,
+              6715,
+              6727,
+              6736,
+              6751,
+              6757,
+              6804,
+              6850,
+              6873,
+              6881,
+              6927,
+              6932,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 61,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        }
+      }
+    },
+    {
+      "frame": 8,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              6736,
+              6757,
+              6850,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2805
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6850,
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2724,
+              2780,
+              2805,
+              2849,
+              2920,
+              3031
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              2254,
+              2277,
+              2724,
+              2780,
+              2805,
+              2849,
+              2920,
+              3031,
+              3071,
+              3086,
+              3170,
+              3224,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 26,
+            "visible_face_indices": [
+              2724,
+              2780,
+              2805,
+              2849,
+              2898,
+              2920,
+              3031,
+              3071,
+              3086,
+              3094,
+              3126,
+              3150,
+              3158,
+              3170,
+              3213,
+              3217,
+              3229,
+              3234,
+              3243,
+              3298,
+              3371,
+              3388,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              2805,
+              2849,
+              3031,
+              3071,
+              3086,
+              3094,
+              3150,
+              3170,
+              3213,
+              3229,
+              3234,
+              3371,
+              3388,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6955,
+              6956,
+              7049,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              6736,
+              6757,
+              6850,
+              6873,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              6736,
+              6757,
+              6850,
+              6873,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7166,
+              7241
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 65,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2260,
+              2277
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 9,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              6757,
+              6850,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6850,
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2724,
+              2780,
+              2920
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2254,
+              2277,
+              2724,
+              2780,
+              2920,
+              3071,
+              3224,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 19,
+            "visible_face_indices": [
+              2724,
+              2780,
+              2898,
+              2920,
+              3071,
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3371,
+              3409,
+              3487,
+              3552,
+              3567
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              3071,
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3409,
+              3552,
+              3567
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6955,
+              6956,
+              7049,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              6757,
+              6850,
+              6873,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              6757,
+              6850,
+              6873,
+              6881,
+              6927,
+              6955,
+              6956,
+              7024,
+              7049,
+              7058,
+              7101,
+              7165,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2260,
+              2277
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 10,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6881,
+              6927,
+              7058,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2724,
+              2780,
+              2920
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              2254,
+              2277,
+              2311,
+              2513,
+              2724,
+              2780,
+              2920,
+              3224,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              2724,
+              2780,
+              2898,
+              2920,
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3371,
+              3487,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3371,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6927,
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 32,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6927,
+              7058,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 64,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 11,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6927,
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555,
+              2724,
+              2780,
+              2920
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555,
+              2724,
+              2780,
+              2920,
+              3487
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              2724,
+              2780,
+              2898,
+              2920,
+              3094,
+              3126,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3243,
+              3298,
+              3487,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6927,
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 26,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6927,
+              7058,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 58,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 12,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 28,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              7058,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 45,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 13,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 34,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              7058,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 14,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2825,
+              2952,
+              2953,
+              2962
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2825,
+              2952,
+              2953,
+              2962
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 14,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2825,
+              2952,
+              2953,
+              2962
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2444,
+              2825,
+              2952,
+              2953,
+              2962,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6750,
+              6869,
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              2444,
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6750,
+              6869
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              6541,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 39,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 56,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312,
+              2444,
+              2952
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 15,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 23,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 23,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6635,
+              6691,
+              6742,
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2444,
+              2764,
+              2766,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6784,
+              6796,
+              6869,
+              6880,
+              6898,
+              7077
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2444,
+              2766,
+              3003
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 17,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6783,
+              6784,
+              6796,
+              6869,
+              6880,
+              6883,
+              6894,
+              6944,
+              7077,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6541,
+              6742,
+              6784,
+              6894,
+              7077,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7077,
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312,
+              2444,
+              2576,
+              2678,
+              2764,
+              2766,
+              2952,
+              3010
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 16,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2808,
+              2825,
+              2879,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 25,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2808,
+              2825,
+              2879,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 24,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2808,
+              2825,
+              2879,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6635,
+              6691,
+              6742,
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2444,
+              2764,
+              2766,
+              2808,
+              2825,
+              2879,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6784,
+              6796,
+              6869,
+              6880,
+              6898,
+              7077
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2444,
+              2766,
+              3003
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 17,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6783,
+              6784,
+              6796,
+              6869,
+              6880,
+              6883,
+              6894,
+              6944,
+              7077,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6541,
+              6742,
+              6784,
+              6894,
+              7077,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 54,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7077,
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312,
+              2444,
+              2576,
+              2678,
+              2764,
+              2766,
+              2952,
+              3010
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 17,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 22,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 21,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2764,
+              2766,
+              2770,
+              2791,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6635,
+              6691,
+              6742,
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              2764,
+              2766,
+              2825,
+              2952,
+              2953,
+              2962,
+              3010
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6784,
+              6796,
+              6869,
+              6880,
+              6898,
+              7077
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2766,
+              3003
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 17,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6635,
+              6681,
+              6691,
+              6742,
+              6750,
+              6783,
+              6784,
+              6796,
+              6869,
+              6880,
+              6883,
+              6894,
+              6944,
+              7077,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              6541,
+              6742,
+              6784,
+              6894,
+              7077,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7077,
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 52,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312,
+              2576,
+              2678,
+              2764,
+              2766,
+              2952,
+              3010
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 18,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2770,
+              2791
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2770,
+              2791
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2444,
+              2513,
+              2548,
+              2555,
+              2576,
+              2678,
+              2757,
+              2770,
+              2791
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              6742,
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              2444
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 12,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6742,
+              6750,
+              6784,
+              6869,
+              6880,
+              6898,
+              6996,
+              7017,
+              7077
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              2444,
+              3003
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 16,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6742,
+              6750,
+              6783,
+              6784,
+              6869,
+              6880,
+              6883,
+              6894,
+              6944,
+              6996,
+              7017,
+              7077,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              6541,
+              6742,
+              6784,
+              6894,
+              6996,
+              7017,
+              7077,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 50,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6996,
+              7017,
+              7077,
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 46,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312,
+              2444,
+              2576,
+              2678
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 19,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 2,
+            "visible_face_indices": [
+              6742,
+              6750
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 11,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6742,
+              6750,
+              6784,
+              6869,
+              6898,
+              6996,
+              7017,
+              7077
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              6504,
+              6541,
+              6681,
+              6742,
+              6750,
+              6783,
+              6784,
+              6869,
+              6883,
+              6894,
+              6944,
+              6996,
+              7017,
+              7077,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              3003
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              6541,
+              6742,
+              6784,
+              6894,
+              6996,
+              7017,
+              7077,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6996,
+              7017,
+              7077,
+              7191,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 42,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 20,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              7058,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 10,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 9,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2312,
+              2416,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              6898,
+              6996,
+              7017
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              6996,
+              7017,
+              7280
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              6996,
+              7017,
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 44,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              6996,
+              7017,
+              7058,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 47,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311,
+              2312
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 21,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              7058,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              7058
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 8,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2260,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              2202,
+              2254,
+              2277,
+              2311,
+              2513,
+              2548,
+              2555
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              7058,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 35,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              7058,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 51,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2202,
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    },
+    {
+      "frame": 22,
+      "views": {
+        "N": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "NE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              6955,
+              7049,
+              7058,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 5,
+            "visible_face_indices": [
+              2254,
+              2260,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "E": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              2254,
+              2277,
+              2311,
+              2513
+            ]
+          }
+        },
+        "SE": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              3094,
+              3150,
+              3158,
+              3213,
+              3217,
+              3229,
+              3552
+            ]
+          }
+        },
+        "S": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 1,
+            "visible_face_indices": [
+              6898
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 6,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3213,
+              3229,
+              3552
+            ]
+          }
+        },
+        "SW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 7,
+            "visible_face_indices": [
+              6955,
+              6956,
+              7049,
+              7057,
+              7068,
+              7101,
+              7165
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 4,
+            "visible_face_indices": [
+              3003,
+              3094,
+              3150,
+              3552
+            ]
+          }
+        },
+        "W": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 13,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 0,
+            "visible_face_indices": []
+          }
+        },
+        "NW": {
+          "Left": {
+            "overlap_body_faces_in_frame": 36,
+            "visible_as_first_surface": 15,
+            "visible_face_indices": [
+              6873,
+              6881,
+              6955,
+              6956,
+              7024,
+              7049,
+              7057,
+              7058,
+              7068,
+              7101,
+              7165,
+              7166,
+              7191,
+              7241,
+              7384
+            ]
+          },
+          "Right": {
+            "overlap_body_faces_in_frame": 49,
+            "visible_as_first_surface": 3,
+            "visible_face_indices": [
+              2260,
+              2277,
+              2311
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

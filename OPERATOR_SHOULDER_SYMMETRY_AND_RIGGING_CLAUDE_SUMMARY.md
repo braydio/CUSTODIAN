@@ -1,57 +1,64 @@
-# TASK 016 — shoulder symmetry and rigging
+# TASK 017 — clean pauldron geometry and rigging proof
 
 **Workstream:** `operator-shoulder-symmetry-and-rigging-v1`
-**Branch:** `agent/operator-shoulder-symmetry-and-rigging-v1`
+**Task branch:** `agent/operator-shoulder-symmetry-and-rigging-v1-task017`
+**Starting checkpoint:** `285cff6f99a4dac4cb49267db76f46697d8df455`
+**Motion reference:** ITER005 `6b89c4d503bb2d73d2783443d4280f313c681bfa`
 **Status:** `MODEL_SHOULDER_REPAIR_REQUIRED`
-**Checkpoint commit:** `c51b11dfb9889c3fd2075a575f522854f3951de7`
-**Starting reference:** shoulder study `d8a1e656dcac52e69196779f3ad77eb457d6f2d7`; motion source ITER005 `6b89c4d50`.
 
 ## Outcome
 
-Stopped after Phase A, before editing the model. The existing shoulder study's 917-face source selector produces disconnected patches rather than a defensible pauldron boundary. Integrating, mirroring, deleting, or merely reweighting those patches would not meet the requested geometry and rigging guarantees.
+Created one reversible derivative with a new matched pair of closed pauldron shells. The shell meshes are manifold, symmetric to within 0.000030 mm, rigidly weighted to their corresponding shoulder bones, and clear of the upper-arm surface through 21 unique ITER005 frames, the loop endpoint, and two temporary raised-arm probes.
 
-## Measurements
+The candidate fails clean added-shell integration. Across the cycle, shell surfaces intersect 98 source body faces on anatomical Left and 113 on Right. Those regions comprise 44 and 43 disconnected components, respectively, and orthographic camera-ray checks find 50 / 53 of those source-face centers exposed as first-hit surfaces in at least one direction/frame. This is not a confined hidden attachment overlap. The exact body face IDs are preserved in the diagnostics. No body geometry was removed and no second geometry attempt was made.
 
-- Torso mirror plane: x = +2.386 mm.
-- Baseline selector counts: anatomical Left 503 faces / 864 vertices; anatomical Right 414 faces / 733 vertices.
-- Topology check: Left largest connected face component 41 faces, 865 boundary edges; Right largest component 35 faces, 742 boundary edges. Each side has more than eight components.
-- Baseline selected surface mirrored nearest-neighbor error: mean 31.16 mm, p95 68.50 mm, max 87.21 mm.
-- Existing Variant A overlay mirrored error: mean 29.53 mm, p95 66.58 mm, max 86.96 mm.
-- Existing Variant A is not rigged: no armature modifier or vertex groups. Original surfaces remain underneath. Existing intersection evidence records 96 triangle-pair overlaps involving 52 overlay faces.
-- Camera S image-left is anatomical Right, below the measured mirror plane.
+No GLB was exported because geometry integrity failed. The candidate remains in the experiment worktree, not production. No runtime changes, merge, promotion, or freeze occurred.
 
-These selector-derived comparisons do not independently quantify the baseline sculpt's anatomical asymmetry because selected topology differs between sides. This limitation is explicit in `task016_phaseA/TASK016_REPORT.md`.
+## Geometry and preservation
+
+- Two separate objects: 434 vertices, 456 faces, 864 triangles each (868 added vertices, 912 faces, 1,728 triangles total).
+- Dimensions: 234 × 290 × 145 mm; 4 mm shell thickness; 295 mm outer projection relative to mean shoulder joint; ridge 166 mm above the mean shoulder-bone head.
+- One normalized 1.0 weight per vertex to the matching shoulder bone; no new bones; matching Armature modifiers; existing `BakedMaterial` and nearest-surface source UV projection.
+- Existing body geometry and weights, body material slots/modifiers, bone set/rest transforms, ITER005 action curves, 30 fps timing, and 1–22 action range all hash-match the ITER005 source.
+- Maximum endpoint vertex delta: body 0.00160 mm; left shell 0.00096 mm; right shell 0.00036 mm.
+- Upper-arm intersection pairs: zero. Minimum shell-to-arm vertex clearance: 33.95 mm Left / 11.74 mm Right in the run; 8.4 / 10.5 mm in the temporary 75° probes.
+- Body-shell intersection pair counts: 86–131 Left / 119–148 Right through frames 1–22.
+- Body-overlap region analysis: 98 faces / 181 vertices / 44 components / 186 boundary edges Left; 113 faces / 191 vertices / 43 components / 195 boundary edges Right. Largest components are 11 and 16 faces. This identifies affected faces, not permission to delete them; an exact minimal removal/retopology region is not established.
+
+## Evidence
+
+The retained Dropbox `REVIEW_MANIFEST.json` is recorded below after publication. It contains hashes for the published report, comparison images, loop, and objective diagnostics. Large model files and raw frame PNGs remain local in the experiment worktree.
+
+- Static 128px three-way, all eight directions.
+- Static native 512px three-way, all eight directions; six-view shoulder closeups.
+- Three-way 128px silhouette sheet.
+- Corrected 21-frame, eight-direction 128px loop; unchanged ITER005 comparison at frames 6, 16, and 13.
+- 512px geometry/attachment/intersection diagnostic.
+- Geometry, overlap visibility, and overlap-region JSON reports.
+- Fixed camera contract preserved: scale 1.23547, 45° elevation, 50 px/m at 128px, root pixel (64,106), eight directions, no mirroring. No edge-touch clipping was found in 192 static and loop frames.
 
 ## Files
 
-- `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/rig_diag/diagnose_shoulder_asymmetry.py`
-- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task016_phaseA/check_shoulder_patch_topology.py`
-- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task016_phaseA/phaseA_shoulder_asymmetry.json`
-- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task016_phaseA/phaseA_shoulder_patch_intersections.png`
-- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task016_phaseA/TASK016_REPORT.md`
+- Candidate: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task017_clean_pauldrons/operator_iter005_clean_pauldrons_task017.blend` (local, uncommitted model artifact).
+- Task report: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task017_clean_pauldrons/TASK017_REPORT.md`.
+- Build / validation / render tools: `scripts/rig_diag/create_task017_clean_pauldrons.py`, `validate_task017_clean_pauldrons.py`, `render_task017_pauldrons.py`, `measure_task017_overlap_visibility.py`, and `analyze_task017_overlap_regions.py`.
+- Machine-readable results: `task017_geometry_build.json`, `geometry_validation.json`, `overlap_visibility.json`, `overlap_region_analysis.json`, `render_metadata.json`, `evidence_sha256.json`.
+- Render evidence files are listed in the review manifest and remain under `task017_clean_pauldrons/` locally.
 
-The four individual diagnostic direction renders are retained locally as generated evidence, not included in the compact commit.
+## Human review boundary
 
-## Preservation and validation
-
-No geometry, weights, animation, armature rest transforms, materials, or source models were changed. No `.blend` derivative or GLB was created. Read-only inspection and the topology script completed; no motion, export/reimport, or corrected-model render checks were run because there is no justified corrected model to validate. No Dropbox review bundle was published; the required before/after evidence does not exist without the derivative.
-
-ITER005 source, shoulder-study source blends, original Claude worktree, and coordination checkout were preserved. All work and eventual commit are confined to the new isolated Task 016 worktree.
-
-## Next requirement
-
-Provide a topology-separated pauldron source or authorize a bounded segmentation/annotation task that identifies exact plate perimeters while protecting the underlying torso and arm surfaces. Then repeat the authorized one-derivative implementation and validation cycle. No human aesthetic verdict is sought at this stage; this is a geometry-authority blocker.
+No subjective judgment was made about style, fit, proportions, or preference. Please review whether the shell form follows Variant A's direction and whether the marked source-body intersections make this added-shell approach unsuitable. The branch remains experimental; a new repair or face-removal task needs explicit authorization.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: blocked
+- Outcome: partial
 - Friction severity: medium
-- What went wrong: the static study selector was treated as a plate source despite selecting disconnected, unequal face islands.
-- Root cause / contributing factors: the study duplicated a weight-and-bounds mask but did not provide topology-separated armor regions or exact replacement boundaries.
-- Prevention / pipeline improvement: static shape studies should preserve source face IDs and expose a validated connected plate perimeter before being handed off as an integration source.
+- What went wrong: the new shells were structurally matched and rigged, but overlap testing found exposed intersection regions on the preserved source body.
+- Root cause / contributing factors: the existing shoulder surface envelope intersects the added shell in many disconnected source-face islands.
+- Prevention / pipeline improvement: require overlap visibility and connected-component checks before treating independently authored armor shells as integration-ready.
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
-- What worked: isolated worktree and read-only phase A diagnostics exposed the construction limitation before altering the source rig.
+- What worked: direct source hashes, full-cycle bvh checks, arm-clearance probes, and orthographic face-ray tests exposed the integration issue without destructive edits.
 
 ## Next Handoff
 - Next workstream: none
@@ -59,6 +66,6 @@ Provide a topology-separated pauldron source or authorize a bounded segmentation
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: exact pauldron geometry boundary is not established by existing source topology.
-- Next action: supply or authorize topology-separated pauldron source geometry / bounded segmentation, then define a fresh correction task.
-- Blockers or open questions: which existing faces or separately authored plate mesh represent the intended shoulder armor without removing unrelated body surfaces?
+- Refresh reason: decide whether to authorize a new clearance design or a narrowly specified body-surface replacement task based on the affected face sets and review images.
+- Next action: human visual/technical review; do not continue modeling automatically.
+- Blockers or open questions: should the next task prioritize shell clearance/repositioning, or authorize a bounded topological body-surface integration for the 98/113 face regions?

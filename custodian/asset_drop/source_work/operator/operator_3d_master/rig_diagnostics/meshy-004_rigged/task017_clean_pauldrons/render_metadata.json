@@ -1,0 +1,263 @@
+{
+  "schema": "custodian.operator_task017_render_evidence.v1",
+  "camera": {
+    "scale": 1.23547,
+    "elevation_deg": 45,
+    "pixels_per_meter_at_128": 50,
+    "root_pixel": [
+      64,
+      106
+    ],
+    "direction_mirroring": false
+  },
+  "static_models": {
+    "BASELINE": {
+      "alpha_bounds_px_128": {
+        "N": [
+          46,
+          87
+        ],
+        "NE": [
+          35,
+          88
+        ],
+        "E": [
+          26,
+          91
+        ],
+        "SE": [
+          42,
+          89
+        ],
+        "S": [
+          46,
+          85
+        ],
+        "SW": [
+          35,
+          90
+        ],
+        "W": [
+          26,
+          90
+        ],
+        "NW": [
+          42,
+          88
+        ]
+      },
+      "alpha_bounds_px_512": {
+        "N": [
+          184,
+          349
+        ],
+        "NE": [
+          144,
+          356
+        ],
+        "E": [
+          106,
+          367
+        ],
+        "SE": [
+          171,
+          356
+        ],
+        "S": [
+          184,
+          340
+        ],
+        "SW": [
+          144,
+          362
+        ],
+        "W": [
+          106,
+          359
+        ],
+        "NW": [
+          171,
+          353
+        ]
+      }
+    },
+    "VARIANT_A_MODERATE": {
+      "alpha_bounds_px_128": {
+        "N": [
+          46,
+          87
+        ],
+        "NE": [
+          35,
+          88
+        ],
+        "E": [
+          26,
+          91
+        ],
+        "SE": [
+          42,
+          89
+        ],
+        "S": [
+          46,
+          85
+        ],
+        "SW": [
+          35,
+          90
+        ],
+        "W": [
+          26,
+          90
+        ],
+        "NW": [
+          42,
+          88
+        ]
+      },
+      "alpha_bounds_px_512": {
+        "N": [
+          184,
+          349
+        ],
+        "NE": [
+          144,
+          356
+        ],
+        "E": [
+          106,
+          367
+        ],
+        "SE": [
+          171,
+          356
+        ],
+        "S": [
+          184,
+          340
+        ],
+        "SW": [
+          144,
+          362
+        ],
+        "W": [
+          106,
+          359
+        ],
+        "NW": [
+          171,
+          353
+        ]
+      }
+    },
+    "CORRECTED_TASK017": {
+      "alpha_bounds_px_128": {
+        "N": [
+          46,
+          87
+        ],
+        "NE": [
+          37,
+          88
+        ],
+        "E": [
+          26,
+          93
+        ],
+        "SE": [
+          42,
+          89
+        ],
+        "S": [
+          46,
+          85
+        ],
+        "SW": [
+          37,
+          90
+        ],
+        "W": [
+          26,
+          91
+        ],
+        "NW": [
+          42,
+          88
+        ]
+      },
+      "alpha_bounds_px_512": {
+        "N": [
+          184,
+          349
+        ],
+        "NE": [
+          150,
+          356
+        ],
+        "E": [
+          106,
+          373
+        ],
+        "SE": [
+          171,
+          356
+        ],
+        "S": [
+          184,
+          340
+        ],
+        "SW": [
+          150,
+          362
+        ],
+        "W": [
+          106,
+          367
+        ],
+        "NW": [
+          171,
+          353
+        ]
+      }
+    }
+  },
+  "motion_frames": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "motion_endpoint_frame": 22,
+  "motion_checkpoints": [
+    6,
+    16,
+    13
+  ],
+  "review_artifacts": {
+    "static_128_all8_three_way.png": "static_128_all8_three_way.png",
+    "static_512_all8_three_way.png": "static_512_all8_three_way.png",
+    "static_512_shoulder_closeups.png": "static_512_shoulder_closeups.png",
+    "static_128_silhouette_three_way.png": "static_128_silhouette_three_way.png",
+    "motion_loop": "iter005_clean_pauldrons_loop_128_all8.gif",
+    "motion_comparison": "iter005_running_arm_swing_before_after_128.png",
+    "geometry_diagnostic": "pauldron_geometry_attachment_intersections_512.png"
+  }
+}

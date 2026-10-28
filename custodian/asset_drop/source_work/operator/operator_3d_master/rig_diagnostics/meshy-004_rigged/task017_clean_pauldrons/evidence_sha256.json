@@ -1,0 +1,70 @@
+{
+  "schema": "custodian.operator_task017_review_evidence_sha256.v1",
+  "artifacts": [
+    {
+      "path": "TASK017_REPORT.md",
+      "bytes": 6735,
+      "sha256": "27b428a9261371f42b87f9b0026b2897ec40abc306b683e798dee4d3ea79331b"
+    },
+    {
+      "path": "static_128_all8_three_way.png",
+      "bytes": 130236,
+      "sha256": "b31f49d3e2625cc2af30b606d190f453c5c08e82ea19ee6d220bc2e5752b337c"
+    },
+    {
+      "path": "static_512_all8_three_way.png",
+      "bytes": 1366978,
+      "sha256": "03290d2c40131e54c89a6781b4517ce1af5a1a24bd6087fafbb1e7c3578e79e2"
+    },
+    {
+      "path": "static_512_shoulder_closeups.png",
+      "bytes": 677936,
+      "sha256": "f64390cd042e5fa9d16e8a1d7b9d20f4627e7672526b1bff7a06a7f91febe781"
+    },
+    {
+      "path": "static_128_silhouette_three_way.png",
+      "bytes": 12015,
+      "sha256": "dc2bd91214a3699f47d9557dc619521692e5b7d00d233cffd2f6558bfd3dc401"
+    },
+    {
+      "path": "iter005_clean_pauldrons_loop_128_all8.gif",
+      "bytes": 517375,
+      "sha256": "1a0e4624fe7b2aeda4687c8cbf6c0b930cc2bb67aed5bbf4c684dd0b31fc057e"
+    },
+    {
+      "path": "iter005_running_arm_swing_before_after_128.png",
+      "bytes": 141311,
+      "sha256": "c126fc7ece55382ec2bafa118b98967e385f27d885c1d2981d687ae200d4ed5f"
+    },
+    {
+      "path": "pauldron_geometry_attachment_intersections_512.png",
+      "bytes": 222410,
+      "sha256": "e3a312aabcfb45eacecba0c14339829eded07c039919ce8605780e63d3198aec"
+    },
+    {
+      "path": "task017_geometry_build.json",
+      "bytes": 2933,
+      "sha256": "a9e92cf8d5a75492943e79a1da6292821ba2e9e928b8ee31fb6b44d29f6ff2e1"
+    },
+    {
+      "path": "geometry_validation.json",
+      "bytes": 152403,
+      "sha256": "4f8c65fa18a4175985619a1518f3dddef4da3a99f0c42ff3767d86548bc2a483"
+    },
+    {
+      "path": "overlap_visibility.json",
+      "bytes": 113011,
+      "sha256": "a4c6651571aabe8435cd337d096adcdf67a0720f00aaad88b05e3846ef8a9203"
+    },
+    {
+      "path": "overlap_region_analysis.json",
+      "bytes": 4690,
+      "sha256": "4e42cce021ccef5a9aee2561bafdae77cc30de20ec98401b1d4b3044eeabf0a2"
+    },
+    {
+      "path": "render_metadata.json",
+      "bytes": 4025,
+      "sha256": "c8eec45f1ffd8933c2c7c94b836f929b39df4a38fc0f9f4b5d3c2502e3678b74"
+    }
+  ]
+}
