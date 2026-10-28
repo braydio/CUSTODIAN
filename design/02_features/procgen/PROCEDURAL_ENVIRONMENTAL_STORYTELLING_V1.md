@@ -1,6 +1,6 @@
 # Procedural Environmental Storytelling V1: Three Evidence Grammars
 
-**Status:** three designs endorsed for further refinement on 2026-10-27. Physical integration, art approval and dispatch are NOT authorized.
+**Status:** three designs endorsed 2026-10-27; **ES-1 F02 reserved story-site identity foundation implementation approved 2026-10-28**. ES-2–ES-4 physical tableaux, art and larger campaign rollout remain separately scoped.
 **Workstream:** procgen-environmental-evidence-v1
 **Source baseline:** main@bb5a1b16
 **Authoring chat:** https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain
@@ -79,10 +79,10 @@ The April REGION_GENERATION_SYSTEM phase table predates October F02 story/reserv
 
 ## ES-1 integration review update (2026-10-27)
 
-The [source-grounded interaction and geography review](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md) recommends composing these grammars **inside a reserved F02 story-room intent node**, optionally scoped to an existing verified F15-B1/B2 parent Location. It identifies a current split between graph-reserved floor rectangles and independently selected `metadata_only_v1` story markers, which must be joined rather than allowing duplicate site positions. It also selects two repeatable `WorldReadoutInteractable`-compatible clue points as a first-pilot interaction contract, reusing the Operator's existing group/nearest-distance selector and HUD. This remains a **human-decision hold**, not approved runtime geometry, persistence, code packet or art.
+The [source-grounded interaction and geography review](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md) recommends composing these grammars **inside a reserved F02 story-room intent node**, optionally scoped to an existing verified F15-B1/B2 parent Location. It identifies a current split between graph-reserved floor rectangles and independently selected `metadata_only_v1` story markers, which must be joined rather than allowing duplicate site positions. It also selects two repeatable `WorldReadoutInteractable`-compatible clue points as a first-pilot interaction contract, reusing the Operator's existing group/nearest-distance selector and HUD. The human decision has since **approved the ES-1 foundation only**; no ES-2 physical site, persistent geography or art is implied.
 
-## Acceptance target and Next Agent Slice (PLANNING ONLY)
+## Acceptance target and Next Agent Slice (ES-1 foundation approved)
 
 First pilot **Refused Passage**: repeated seed/profile/site ID yields identical causal choice, layout/clue/inspect identity and transforms; different seeds vary coherently; invalid footprint **skips without rejecting a valid world**. All clue points accessible to a real Operator; no blocking required road, spawn, objective, extraction or vehicle route. Streamed reveal/re-entry stable. Quantitative geometry/alpha checks before tightly cropped human camera-read review.
 
-**Next goal:** compare F02 accepted-world story reservation/inspection seams and F15-B2 identity, choose one narrow authority, validate real pixel/clearance assumptions and prepare the first pilot contract. **Constraints:** no executable task packet, no runtime change or art commissioning until user reviews operational integration. **Exit:** source-backed owner map, verified site envelope, deterministic identity/revisit semantics, art-facing decisions, and exact bounded future packet + review proposal.
+**ES-1 authorized next goal:** implement the single F02 intent-node/actual reserved-rectangle story identity join and deterministic safe-skip/export contract through `custodian/docs/ai_context/task_packets/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md` and its paired review. Claim/dispatch authority is unchanged. **ES-2** remains the first physical Refused Passage tableau with two native HUD readouts; **ES-3** adds Hearth/Seam, and **ES-4** the Asset V2 art/campaign proof. ES-1 is deliberately small and is not the end state.

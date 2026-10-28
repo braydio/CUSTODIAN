@@ -1,6 +1,6 @@
 # Procedural Environmental Storytelling: Refinement and Integration Roadmap
 
-**Status:** DESIGN REFINEMENT / HUMAN INTEGRATION HOLD. Not a claimable task packet.
+**Status:** **ES-1 Option B approved for implementation on 2026-10-28**; paired packet publication in progress. This roadmap itself is not a claimable packet; ES-2–ES-4 remain future expansions.
 **Workstream:** procgen-environmental-evidence-v1
 **Recorded:** 2026-10-27
 **Source baseline:** main@bb5a1b16
@@ -11,11 +11,11 @@
 
 The user endorsed continued development of three procedurally composed styles: **Refused Passage** (evacuation and denied transit), **Borrowed Hearth** (domestic reuse and ordinary life), and **False Seam** (conflicting physical history). The source design specifies narrative layers, causal variants, proposed logical layout coordinates, inspect lines, art state IDs and the semantic constraints.
 
-**Candidate numbers for validation, not final locks:** 16×12 / 12×12 / 12×9 native 32px cells; 0–3 sites per eligible generated local region in lieu of adding another room quota; 24-cell spacing if possible; max one False Seam; three unregistered 192×192-pixel Asset V2 world_prop families containing 27 required static and 3 optional four-frame 8-FPS animated states. All artwork remains unmade. No implementation action, queue claim, asset request or timeline is authorized by this roadmap.
+**Candidate numbers for validation, not final locks:** 16×12 / 12×12 / 12×9 native 32px cells; 0–3 sites per eligible generated local region in lieu of adding another room quota; 24-cell spacing if possible; max one False Seam; three unregistered 192×192-pixel Asset V2 world_prop families containing 27 required static and 3 optional four-frame 8-FPS animated states. All artwork remains unmade. ES-1 identity/geometry integration is newly authorized through its explicit implementation/review packet pair; no ES-2–ES-4 art, physical-storytelling rollout or timing is authorized by this roadmap.
 
 ## ES-1 geography and interaction source review (2026-10-27)
 
-**Design-review record:** [ES-1 Existing Interaction and Geography](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md). Source-audited at main@ce2772f7; **recommended option B pending human decision**, not implementation authorization.
+**Design-review record:** [ES-1 Existing Interaction and Geography](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md). Source-audited at main@ce2772f7; user approved **Option B for the small ES-1 foundation** on 2026-10-28. Implementation packet `custodian/docs/ai_context/task_packets/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md` plus paired review control the exact executable scope.
 
 **Preferred physical identity:** treat a tableau as a *region-local child of an existing F02 intent STORY_ROOM reservation*, deriving its stable identity from the actual intent node ID, accepted generation seed, grammar version, and optional verified F15 B1/B2 parent Location. **Do not** register a new F15 Location per tableau. F15-B2 remains data-only; current F02 contract-world generation may have no F15 binding, which must remain honestly transient.
 
@@ -23,7 +23,7 @@ The user endorsed continued development of three procedurally composed styles: *
 
 **Preferred interaction:** the existing Operator `interactable` group, max range 84px, and `WorldReadoutInteractable` 72px, repeatable/short HUD readouts (propose two per pilot). Its nearest-only selector lacks LOS/semantic priority; place readouts away from gates and behind-wall ambiguity. Do not adopt authored `WorldEvidenceInteractable2D`'s separate overlay/recovery ledger or hub-specific authored event persistence for ordinary non-collectible evidence.
 
-**Revised ES-1 implementation dependency:** after user approval, first normalize the authoritative F02 story room/reserved rectangle join and deterministic skip/identity contract. Only then create a physical Refused Passage pilot. Existing layout/art/density numbers remain provisional until real camera/route proof.
+**Approved ES-1 implementation boundary:** first normalize the authoritative F02 story room/reserved rectangle join and deterministic skip/identity contract. Only then create a physical Refused Passage pilot. Existing layout/art/density numbers remain provisional until real camera/route proof.
 
 ## Ownership and dependencies
 
@@ -44,7 +44,7 @@ The user endorsed continued development of three procedurally composed styles: *
 | **ES-3 · Hearth and Seam extension** | Two additional causal content definitions through the *same* assembler. Hearth actual actors only when present; Seam documented mundane/true-anomaly distinction. | No duplicate generator, false occupancy, misleading access, retconned canon, or uncontrolled rarity/density. |
 | **ES-4 · Art and campaign evaluation** | After visual approval, register/ingest three independent Asset V2 families and conduct multi-seed visual/interactive review. | 27 required static states verified; optional 3 animated states tracked; source/inbox hashes, alpha, native pixel scale, family plan/status/doctor, actual consumer binding, no tracker drift. |
 
-**Order is a dependency concept**, not a preauthorized packet chain. An ES-1 source/audit planning pass comes next. Physical pilot ES-2 and any review pair require explicit approval and publication of every indispensable schema/tool/spec in the same main landing as the packet. Do not auto-author ready/auto workstreams merely because this document now exists.
+**Sequence:** the user has now authorized the ES-1 foundation packet and independent review. Claim only after its real main/dispatcher promotion; physical pilot ES-2 and later ES-3/ES-4 each require their own subsequent scope/publication and any needed art approval. **ES-1 is intentionally small, but never the endpoint of this feature program.**
 
 ## Questions for the next operational-integration discussion
 
@@ -71,7 +71,7 @@ Use pure seed determinism and negative-control fixture first, then accepted-worl
 
 No runtime code has been changed by this design documentation task; only change CURRENT_STATE.md after implementation/asset evidence actually changes current truth. FILE_INDEX should route newcomers to these design and planning entrypoints.
 
-## Next Agent Slice: integration authoring review ONLY
+## Next Agent Slice: ES-1 site identity foundation implementation
 
 **Goal:** return with 2–3 source-backed integration options, identify an F02 reservation/realization owner and explicit F15-B2 join, and settle first Refused Passage vertical-slice acceptance.
 **Likely files:** custodian/game/world/procgen/story/, intent/, roads/, generation/accepted_world_export.gd; geography/campaign_geography_semantic_registry.gd; current interactable/UI and Asset V2 consumers.
