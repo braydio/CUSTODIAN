@@ -3,6 +3,7 @@
 Workstream: `operator-shoulder-symmetry-and-rigging-v1`
 Branch: `agent/operator-shoulder-pose-diagnostic-v1`
 Status: `READY_FOR_HUMAN_VISUAL_REVIEW`
+Commit: `e45b050857e7fdd1212a92b6777cbfb0da0d874d` (diagnostic artifact commit)
 
 ## Result
 
@@ -21,6 +22,7 @@ Recommendation: **mixed evidence**. Bone placement/orientation is a demonstrated
 - Native 128 all-eight comparison, native 512 shoulder crops, and frame 6/13/16 four-direction comparisons are beside the report. Raw renders are retained beneath `renders/` and `motion/`.
 - Reproduction script: `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/rig_diag/diagnose_shoulder_pose_vs_sculpt.py`
 - Local artifact SHA-256 manifest: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_pose_vs_sculpt_iter001/SHA256SUMS.txt`
+- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-shoulder-symmetry-and-rigging-v1/20261028T112745Z/REVIEW_MANIFEST.json` (retention: `delete-after-review`).
 
 ## Scope and negative controls
 
@@ -44,5 +46,5 @@ No production mesh, rest bone, weight, action, GLB, Godot asset, or runtime poli
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
 - Refresh reason: human visual decision required on the pose-vs-sculpt evidence and running deformation tradeoff.
-- Next action: review the published diagnostic evidence and decide whether to keep the rig unchanged or authorize a narrowly scoped follow-up.
+- Next action: review the published diagnostic evidence at `/CUSTODIAN/visual_review/operator-shoulder-symmetry-and-rigging-v1/20261028T112745Z/REVIEW_MANIFEST.json` and decide whether to keep the rig unchanged or authorize a narrowly scoped follow-up.
 - Blockers or open questions: whether the residual mismatch is acceptable and whether any pose-space correction is visually beneficial through motion.
