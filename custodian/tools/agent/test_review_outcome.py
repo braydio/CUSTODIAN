@@ -124,6 +124,50 @@ class AcceptedReviewTests(unittest.TestCase):
         self.assertFalse(accepts("## Independent Review\n\n- Status: `passed`\n- Status: `human_required`\n"))
         self.assertFalse(accepts("## Independent Review\n\n- Status: `passed`\n\n## Independent Review\n\n- Status: `passed`\n"))
 
+    def test_verified_duplicate_legacy_vehicle_review(self):
+        # A real archived case: two consistent PASS summaries for the same
+        # pinned implementation. Do not require a new independent review merely
+        # because the historical author repeated its heading.
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[3]
+        packet_dir = root / "custodian/docs/ai_context/task_packets/archived"
+        target = (packet_dir / "VEHICLE_WRECK_RESTORATION_FOUNDATION_V1_REVIEW_CORRECTIONS_1.md").read_text()
+        review = (packet_dir / "REVIEW_VEHICLE_WRECK_RESTORATION_FOUNDATION_V1_REVIEW_CORRECTIONS_1.md").read_text()
+        workstream = "review-vehicle-wreck-restoration-foundation-v1-review-corrections-1"
+        accepted, _outcome, reason = ro.review_acceptance(review, target, workstream)
+        self.assertTrue(accepted, reason)
+
+        # Red-team every material contradiction; two sections cannot launder a
+        # failing review, absent provenance, mismatched target, or extra review.
+        tampered = {
+            "first nonpass": target.replace("- Status: `passed`", "- Status: `findings`", 1),
+            "second nonpass": target.rsplit("- Status: `passed`", 1)[0] +
+                "- Status: `human_required`" + target.rsplit("- Status: `passed`", 1)[1],
+            "wrong review": target.replace(
+                "- Review workstream: `" + workstream + "`",
+                "- Review workstream: `review-unrelated`"),
+            "wrong main": target.replace("Reviewed on main: `e56a75cfb`",
+                                         "Reviewed on main: `deadbeef0`"),
+            "blocking defect": target.replace("- Blocking defects: `0`",
+                                               "- Blocking defects: `1`"),
+            "material gap": target.replace("- Material evidence gaps: `0`",
+                                            "- Material evidence gaps: `1`"),
+            "missing provenance": target.replace("- Reviewer provenance: `different-agent`", ""),
+            "stale context": target.replace("- Reviewer context: `fresh`",
+                                            "- Reviewer context: `reused`"),
+            "three summaries": target + "\n## Independent Review\n\n- Status: `passed`\n",
+        }
+        for label, altered in tampered.items():
+            accepted, _outcome, _reason = ro.review_acceptance(review, altered, workstream)
+            self.assertFalse(accepted, label)
+        for label, altered_review in {
+            "separate review not passed": review.replace("- Status: `passed`",
+                                                         "- Status: `findings`", 1),
+            "separate review different commit": review.replace("a5df0bb65", "deadbeef0"),
+            "separate review different main": review.replace("e56a75cfb", "deadbeef0"),
+        }.items():
+            self.assertFalse(ro.review_acceptance(altered_review, target, workstream)[0], label)
+
     def test_malformed_outcome_never_falls_back_to_a_legacy_pass(self):
         broken = render(outcome="findings").replace("Finding IDs: `R0-01`", "Finding IDs: `none`")
         accepted, name, reason = ro.review_acceptance(

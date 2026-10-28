@@ -2130,6 +2130,22 @@
       "needs_import": false
     },
     {
+      "id": "godot_csv_import_guard",
+      "type": "python",
+      "script": "custodian/tools/validation/godot_csv_import_guard_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "import_compatibility"
+      ],
+      "owners": [
+        "custodian/**/*.csv.import",
+        "custodian/tools/validation/godot_csv_import_guard_smoke.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
       "id": "operator_animation_timing",
       "type": "python",
       "script": "custodian/tools/validation/operator_animation_timing_smoke.py",
