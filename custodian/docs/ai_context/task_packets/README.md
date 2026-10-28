@@ -104,7 +104,6 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_WORKSTREAM_FINISH_INDEX_CONFLICT_RECOVERY_V1.md` — Independently verify that the Protected lifecycle correction accepts only the exact authenticated managed-index conflict-and-repair sequence, correctly bound...
 - `REVIEW_WORKTREE_BACKLOG_CENSUS_AND_SAFETY_LEDGER_V1_REVIEW_CORRECTIONS_1.md` — Independently determine whether correction cycle 1 resolves original finding R0-01 for W1's read-only inventory acceptance, without changing or erasing the o...
 - `REVIEW_WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Independently verify the worktree backlog worktree backlog dirty and unique preservation v1 implementation against exact proof of no lost work, no stolen cla...
-- `WORKFLOW_GOVERNANCE_SIMPLIFICATION_V1.md` — Make ordinary new CUSTODIAN work default to proportional, evidence-driven review, so routine Standard changes do not require an independent paired review wit...
 - `WORKTREE_BACKLOG_DIRTY_AND_UNIQUE_PRESERVATION_V1.md` — Prove that all original dirty work and unique unlanded HEAD history have byte-safe recovery copies before any archive, adoption or retirement decision.
 - `AGENT_BLOCKER_CAPTURE_HOOKS_V1.md` — Capture actionable workflow interruptions automatically at existing owner-controlled lifecycle boundaries.
 - `AGENT_BLOCKER_INBOX_PUBLISHER_V1.md` — Publish strict, redacted, persistent blocker events into dedicated ops/blocker-inbox branch without affecting dispatcher or reviewer outcomes.
@@ -825,7 +824,7 @@ the manifest/run id, decision, and cleanup/retention result, not the bulk media.
 
 ## Paired Review Default And Independence
 
-For newly authored or materially refreshed V2 implementation packets, use `Review: auto` by default when independent review can materially improve confidence. This includes runtime/state-machine/persistence/streaming changes, architecture extraction or migration, production asset-pipeline/tooling mutations, performance changes that must preserve semantics, validation/workflow infrastructure, substantial bug fixes, and objective technical presentation work. `Review: none` is a low-risk exemption for documentation-only truth repair, tiny mechanical patches with obvious local effects and direct regression coverage, disposable probes, or similarly inspectable changes; record a concrete `Review rationale: low-risk exemption: ...`. Do not disable review merely to reduce queue length.
+Choose review by risk, reversibility, verification quality, and blast radius, not file count or the label `runtime`. Express work may skip a packet and paired review for a narrow, reversible low-risk single-session change while retaining focused checks and Git safety. Standard is the ordinary bounded-engineering path: use a compact packet when durable scope or acceptance helps, and default to `Review: none` when focused checks directly prove correctness and scope; record a concise concrete risk rationale without special exemption ceremony. Protected work keeps `Review: auto` and fresh independent acceptance for consequential persistence/save-load, concurrency, irreversible operations, authority cutovers, dispatch/review/validation enforcement, dangerous asset-pipeline writes, or material evidence uncertainty. Human-owned visual/canon decisions remain human-owned. Do not use `Review: none` for convenience or queue avoidance, and do not change existing published review decisions retroactively.
 
 Paired review requires a **fresh reviewer context**. A different agent/context is preferred when available, but a different model family is not mandatory. The same model/agent family may review prior work only from a newly started context/workstream with no transient implementation reasoning carried forward, reconstructing the target from the archived packet, closing summary, live code, design authority, tests, and fresh traces/mutations. Record `Reviewer context: fresh` and `Reviewer provenance: different-agent | same-agent-fresh-context` in the durable review artifacts. Continuing the implementation conversation/session is self-review and does not satisfy the paired-review contract.
 
@@ -833,7 +832,7 @@ Legacy packets are not bulk-retrofitted. When new work materially depends on an 
 
 ## Paired Review And Correction
 
-Post-land review intent is decided when the implementation packet is created. For newly authored or materially refreshed V2 engineering packets, `Review: auto` is the risk-based default described above; `Review: none` is the explicit low-risk exemption. It uses ordinary dispatcher primitives
+Post-land review intent is decided when the implementation packet is created. For newly authored or materially refreshed V2 engineering packets, use the three-path policy above: Standard work defaults to `Review: none` when focused evidence is sufficient, while Protected work uses `Review: auto`; Express work may omit a packet and paired review. It uses ordinary dispatcher primitives
 (`Dispatch`, `Depends on`, `Locks`) rather than a second scheduler, and
 happens after validated implementation already landed on `main` — it is never
 a `workstream.py finish` blocker.
