@@ -43,7 +43,7 @@ class AnimationRecord:
     @property
     def summary(self) -> str:
         names = "+".join(layer.replace("_body", "") for layer in self.layers)
-        marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇"}.get(self.completeness, "⚠")
+        marker = {"COMPLETE": "●", "PARTIAL": "◐", "REFERENCE/LEGACY": "◇", "NEW": "✚"}.get(self.completeness, "⚠")
         detail = self.completeness_detail or names
         runtime = " · DORMANT/unwired" if self.reachability_status == "DORMANT" else ""
         if self.selection.art_generation == "operator_2_5d_128":

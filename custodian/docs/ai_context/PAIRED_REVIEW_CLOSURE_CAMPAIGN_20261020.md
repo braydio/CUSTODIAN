@@ -2,10 +2,25 @@
 
 Status: user-authorized execution runbook, not a new dispatcher claim or a review verdict.
 Authority: 2026-10-20 conversation, explicit user authorization for a single long-running preserve/repair/review/verify operation.
-Planning chat: not-recorded; ask for its exact current URL after execution, do not substitute an older chat's URL.
+Planning chat at original authoring time: not-recorded.
+Coordination chat (current): https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6addc93a-f8c8-83ea-a6b6-47ae63e90a44
+Current authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 Workstream coordination identity: paired-review-closure-campaign-v1.
 Live repository baseline at authoring: origin/main@030dbe986c0ced4e8b1dc2c816f466c81146b5f2. ALWAYS fetch and re-audit before taking action.
 Read first: root AGENTS.md, custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md, custodian/tools/agent/paired_review_runner.py, custodian/tools/agent/paired_review_host_validation.py, custodian/tools/agent/legacy_claim_quarantine.py, custodian/tools/agent/dispatch.py.
+
+## Current recovery checkpoint — 2026-10-25
+
+This checkpoint supersedes the older live-state descriptions below; those entries remain historical evidence and are not rewritten.
+
+- Current fetched baseline: `origin/main@bda39de1d68fa8f61f77e70ef7e696c6395d4f5d`.
+- Protected correction review: `review-agent-paired-review-prevalidation-checkout-recovery-v1-review-corrections-1`, original run `20261025T034024Z-5cc171b374a4`, pinned review target `482cd88edc5490c83f34f1793dea39ccfb0f3977`. Continuation 1 failed host validation (13 passed, 1 failed, 1 skipped); no reviewer launched and no disposition exists.
+- Exact renderer defect: `operator_runtime_frames.tres` at the pinned commit references `content/sprites/operator/runtime/animations/ranged_2h/posture/relaxed_01/operator__full_body__ranged_2h__posture__relaxed_01__n__5f__128.png`, but that path is absent from the pinned Git tree and the failed validation checkout. The source PNG and its `.import`/`.animation.json` metadata were removed by commit `45c8d6176f0f74fb44b32e7ef7a28a1c34a11805` (`remove superseded 128 full_body ranged_2h relaxed_01 n`) without regenerating `operator_runtime_frames.tres`. The local LFS cache still has the old object, but restoring it would add a file absent from the reviewed source tree and would not be a valid environment-only repair. This is a stale generated runtime resource reference, not an LFS smudge or Godot import-cache failure.
+- Ownership and correction route: the active `operator-ranged-domain-extraction` claim holds `operator-runtime`; its registered worktree was clean at the latest targeted status check. Do not edit that worktree or take its lock. The owner should regenerate the canonical SpriteFrames resource after runtime sync with `godot --headless --path custodian --script res://tools/pipelines/build_operator_runtime_frames.gd`, then run the focused Operator animation and `operator_2_5d_review` checks and land the correction within existing ownership. This changes the generated resource relative to pin `482cd88`; it cannot be smuggled into the old review run as an environment-only repair. Do not hand-edit generated resources or create a recovery packet pair.
+- Same-run retry: attempt 2 of 2 remains unused. The previous read-only plan (`8af26b103760d0baffc4f5c83bf858b1170e9d6a156b22a18c2366213da60e40`) must not be applied; it predates resolution and cannot make the pinned source valid. Do not retry this original run by adding the removed asset or substituting a newer reviewed-main SHA. After the owning correction lands, first determine whether exact pinned-source validation can pass unchanged; if not, preserve this run and report the authorized correction route rather than relabeling a new source revision as the original review.
+- Upstream: original pre-validation review run `20261025T032358Z-3b242f79acdc` and direct-tail packet remain dependency-blocked; no review acceptance has occurred. The direct-tail packet remains the existing owner of the provenance/receipt correction.
+- Frontier: the latest dispatcher audit found six claimable implementation packets and two claimable reviews. No claim was launched by this coordination run.
+- Checkout preservation: the persistent root checkout remains ten commits behind the fetched main and contains the unrelated untracked `temp/operator__southeast__aim_ranged-2h.png`; it was preserved and not synchronized.
 
 ## Mandatory continuation amendment V1.2: storage-and-claim escape hatch
 

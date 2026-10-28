@@ -1,0 +1,44 @@
+# Review Paired Review Pre-Validation Checkout Recovery V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-prevalidation-checkout-recovery-v1`
+- Authoring handoff: `auto`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P0`
+- Depends on: `agent-paired-review-prevalidation-checkout-recovery-v1`
+- Locks: `paired-review-prevalidation-checkout-recovery`
+- Kind: `review`
+- Review: `none`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `none`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review target workstream: `agent-paired-review-prevalidation-checkout-recovery-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/PAIRED_REVIEW_PREVALIDATION_CHECKOUT_RECOVERY_V1.md`
+- Reviewed main: `1f739afebc7cbbba0b90820f69e0c9fc10565d06`
+- Authoring chat: `not-recorded`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Goal: Independently establish that missing-checkout recovery cannot reconstruct or launch a reviewer without authentic exact-run provenance, safe evidence disposition, unchanged branch identity, and fresh green host validation.
+- Current measured state: The protected review is claimed at pinned SHA `6e75b57ea828f5d90679ae737052a4acdefce361`; its checkout and report pair are absent, and current recovery planning rejects it before host validation.
+- Evidence: Independently inspect the implementation diff and tests, protected claim receipt, immutable run metadata, diagnostic trace, current dispatcher audit, and preserved original report/evidence hashes. Do not apply recovery to the protected run during this review.
+- Review focus: Falsify every acceptance claim, especially distinguishing a true pre-validation interruption from post-validation or post-review loss; proving the original checkout could not have acquired unique data; authenticating no active process and supervisor owner; refusing when evidence is incomplete; exact branch/path/pin binding; journal-before-mutation ordering; symlink, occupied and foreign destinations; failure atomicity; replay and race resistance; report continuation immutability; strict ordinary receipt parsing; separation from Carrow and import-specific exceptions; and one-shot fresh reviewer launch only after full canonical validation.
+- Additional review focus: Verify the exact `codex_exited` findings transition for run `20261024T232113Z-32d8a7c6bb9d`, including immutable report/session hashes, no active process, byte-exact preservation of the original target receipt, restoration to the pinned target baseline before fresh review, canonical reviewer-authored nonpassing outcome, and bounded coordinator closeout. Do not apply this transition during the implementation review.
+- Correction threshold: Create correction work only for a confirmed safety defect or evidence gap that prevents acceptance; retain the protected claim and original evidence unchanged.
+- Focused validation: Run the packet’s hostile real-Git and temporary-filesystem suite, canonical `paired_review_runner_unit` validation, required related changed-file tests, and review-pairing/context checks. Do not mutate the protected review claim, branch, worktree, reports, or dispatcher locks.
+- Acceptance: Produce a findings-first fresh independent review of the landed implementation. PASS requires zero blocking defects/material gaps, proof that every negative case fails before unsafe mutation, proof of byte-identical historical evidence, and canonical green validation. A locally green test or a valid recovery plan is not a reviewer PASS. Do not apply the protected run as part of this review.
+- Non-goals: Do not modify implementation/runtime code, resume or reconstruct any protected worktree, change original evidence, or release any claim/lock.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Next Handoff
+- Next workstream: `review-agent-paired-review-failed-host-validation-import-recovery-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Refresh reason: `none`
+- Next action: `After PASS is accepted on origin/main, generate a fresh exact plan for the protected pre-validation run and continue its original review only if every safety predicate passes.`
+- Blockers or open questions: `The protected run's unique-evidence predicate must be proved from immutable lifecycle evidence or supplied as a recorded operator attestation; sole human ownership alone is insufficient.`

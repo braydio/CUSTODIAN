@@ -9,6 +9,8 @@ import os
 import shutil
 import subprocess
 import secrets
+import sys
+import time
 from pathlib import Path
 from typing import Any, Callable
 from PIL import Image
@@ -105,7 +107,34 @@ class WorkbenchService:
             selected_paths=selected_paths, source_freshness=freshness,
         )
 
-    def checkout_status_label(self, selection: AnimationSelection | None = None) -> str:
+    @staticmethod
+    def startup_sync_status() -> str:
+        """Sync result `opui` captured at launch; a snapshot, never live."""
+        return os.environ.get("CUSTODIAN_SYNC_STATUS", "").strip().replace("\n", " · ")
+
+    def live_sync_status(self) -> str:
+        """Current sync state of both persistent checkouts plus lock occupancy.
+
+        Read-only: inspects local refs (no fetch) and probes the sync lock; it
+        never applies a sync.
+        """
+        agent_dir = str(Path(__file__).resolve().parents[2] / "agent")
+        if agent_dir not in sys.path:
+            sys.path.insert(0, agent_dir)
+        try:
+            import persistent_checkout_sync as sync
+            parts = []
+            for profile in sync.PROFILES:
+                result = sync.inspect_profile(profile, self.coordination_root)
+                detail = f" behind {result.behind}" if result.behind else ""
+                parts.append(f"{result.profile}: {result.state}{detail}")
+            if sync.sync_lock_busy(self.coordination_root):
+                parts.append("sync lock held by another process")
+        except Exception as error:
+            parts = [f"sync status unavailable: {error}"]
+        return " · ".join(parts) + f" · checked {time.strftime('%H:%M:%S')}"
+
+    def checkout_status_label(self, selection: AnimationSelection | None = None, *, include_startup_sync: bool = True) -> str:
         identity = self.checkout_identity()
         readiness = self.readiness(selection)
         suffix = f" · {identity.worktree_state}" if identity.worktree_state != "clean" else ""
@@ -113,9 +142,9 @@ class WorkbenchService:
             suffix += " · LAND PENDING"
         if identity.kind == "COORDINATION MAIN" and operator_art_worktree.coordination_operator_changes(self.coordination_root):
             suffix += " · coordination Operator edits preserved"
-        startup_sync = os.environ.get("CUSTODIAN_SYNC_STATUS", "").strip()
+        startup_sync = self.startup_sync_status() if include_startup_sync else ""
         if startup_sync:
-            suffix += " · startup sync " + startup_sync.replace("\n", " · ")
+            suffix += " · startup sync " + startup_sync
         return f"{identity.kind} · {identity.sparse_profile} · {identity.branch} · origin/main {identity.main_relation} · readiness {readiness.status.upper()}{suffix}"
 
     def require_saved_live_document_for_migration(self, active_path: str | None, expected_path: Path, modified: bool | None) -> None:
@@ -154,7 +183,7 @@ class WorkbenchService:
             if status == "SUPERSEDED":
                 detail = f"SUPERSEDED · {detail}"
             records.append(AnimationRecord(selection, frames, layers, completeness, detail, status))
-        legacy_records = tuple(records)
+        legacy_records = (*records, *self._new_workbench_records({r.selection for r in records}))
         if not self.plan_path.is_file():
             return legacy_records
         payload = operator_animation_targets.load_plan(self.plan_path)
@@ -163,6 +192,29 @@ class WorkbenchService:
             legacy_records=legacy_records,
         )
         return (*legacy_records, *targets)
+
+    def _new_workbench_records(self, published: set[AnimationSelection]) -> list[AnimationRecord]:
+        """List created-but-unpublished animations from their saved workbench sessions."""
+        records = []
+        for manifest_path in sorted(self.workspace_root.glob("*/*/*/*/workbench.json")):
+            try:
+                data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                ident = data["identity"]
+                selection = AnimationSelection(ident["profile"], ident["group"], ident["action"], ident["direction"])
+                editable = [row for row in data["layers"] if row.get("role") == "editable"]
+                creation = data.get("creation", {})
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+            if (creation.get("art_generation", "legacy_96") != "legacy_96" or selection in published or not editable
+                    or manifest_path.parent != self.workspace(selection)
+                    or any(row.get("source_contract", {}).get("operation") != "CREATE" for row in editable)):
+                continue
+            layers = tuple(sorted(row["layer"] for row in editable))
+            frames = int(data.get("timeline", {}).get("frames") or 0)
+            document = manifest_path.with_name("workbench.aseprite")
+            detail = "NEW · unpublished workbench" if document.is_file() else "NEW · workbench not assembled"
+            records.append(AnimationRecord(selection, frames, layers, "NEW", detail))
+        return records
 
     def browser_records(self, *, show_superseded: bool = False) -> tuple[AnimationRecord, ...]:
         records = self.discover_browser_records()

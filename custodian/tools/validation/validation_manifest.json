@@ -213,6 +213,24 @@
       "needs_import": false
     },
     {
+      "id": "crg_config_contract",
+      "type": "python",
+      "script": "tools/check_crg_config.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "git"
+      ],
+      "owners": [
+        ".mcp.json",
+        "tools/crg-pin.env",
+        "tools/crg-refresh.sh",
+        "tools/check_crg_config.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "agent_workflow_contract",
       "type": "python",
       "script": "custodian/tools/validation/agent_workflow_smoke.py",
@@ -506,6 +524,29 @@
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/tools/validation/hub_road_empty_procession_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "hub_sepulcher_grave_evidence",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "persistence",
+        "operator_interaction"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
@@ -2089,6 +2130,22 @@
       "needs_import": false
     },
     {
+      "id": "godot_csv_import_guard",
+      "type": "python",
+      "script": "custodian/tools/validation/godot_csv_import_guard_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "import_compatibility"
+      ],
+      "owners": [
+        "custodian/**/*.csv.import",
+        "custodian/tools/validation/godot_csv_import_guard_smoke.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
       "id": "operator_animation_timing",
       "type": "python",
       "script": "custodian/tools/validation/operator_animation_timing_smoke.py",
@@ -2278,6 +2335,20 @@
         "custodian/tools/validation/validation_manifest.json",
         "custodian/tools/validation/known_headless_warnings.json",
         "custodian/tools/validation/validation_runner_smoke.py"
+      ],
+      "timeout_sec": 10,
+      "needs_import": false
+    },
+    {
+      "id": "validation_manifest_diff_selection",
+      "type": "python",
+      "script": "custodian/tools/validation/validation_manifest_diff_selection_smoke.py",
+      "tier": "unit",
+      "tags": ["validation", "tooling"],
+      "owners": [
+        "custodian/tools/validation/run_validation.py",
+        "custodian/tools/validation/validation_manifest.json",
+        "custodian/tools/validation/validation_manifest_diff_selection_smoke.py"
       ],
       "timeout_sec": 10,
       "needs_import": false
@@ -5367,7 +5438,7 @@
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
-      "needs_import": false
+      "needs_import": true
     },
     {
       "id": "sundered_keep_mapper_semantics",
@@ -6718,6 +6789,28 @@
       "needs_import": false
     },
     {
+      "id": "agent_session_supervisor_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_session_supervisor.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "orphan_recovery",
+        "session_supervision",
+        "read_only_audit"
+      ],
+      "owners": [
+        "custodian/tools/agent/session_supervisor.py",
+        "custodian/tools/agent/workstream_recovery.py",
+        "custodian/tools/agent/test_session_supervisor.py",
+        "custodian/tools/agent/workflow_control.py",
+        "custodian/tools/agent/task_packet_contract.py",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md"
+      ],
+      "timeout_sec": 45,
+      "needs_import": false
+    },
+    {
       "id": "paired_review_runner_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_paired_review_runner.py",
@@ -6732,6 +6825,7 @@
         "custodian/tools/agent/paired_review_runner.py",
         "custodian/tools/agent/paired_review_host_validation.py",
         "custodian/tools/agent/test_paired_review_runner.py",
+        "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json",
         "custodian/tools/agent/task_packet_contract.py",
         "custodian/tools/agent/workflow_control.py"
       ],

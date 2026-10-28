@@ -67,7 +67,7 @@ def owner_patterns(test: dict[str, Any]) -> list[str]:
 
 
 def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload = load_manifest_payload(path)
     if payload.get("schema_version") != 1 or not isinstance(payload.get("tests"), list):
         raise ManifestError("unsupported validation manifest")
     ids: set[str] = set()
@@ -91,6 +91,104 @@ def load_manifest(path: Path = MANIFEST_PATH) -> list[dict[str, Any]]:
         ids.add(test_id)
         tests.append(test)
     return tests
+
+
+def load_manifest_payload(path: Path = MANIFEST_PATH) -> dict[str, Any]:
+    payload = parse_manifest_json(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ManifestError("validation manifest must be an object")
+    return payload
+
+
+def parse_manifest_json(contents: str) -> Any:
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ManifestError(f"ambiguous duplicate manifest key: {key}")
+            result[key] = value
+        return result
+    return json.loads(contents, object_pairs_hook=unique_object)
+
+
+def manifest_change_selection(tests: list[dict[str, Any]], *, base_payload: dict[str, Any],
+                              current_payload: dict[str, Any]) -> tuple[set[str], bool]:
+    """Return changed test IDs and whether the manifest itself changed.
+
+    Global configuration and removals are intentionally rejected: they need an
+    explicit broad validation decision rather than being hidden by routing.
+    """
+    if base_payload == current_payload:
+        return set(), False
+    base_global = {key: value for key, value in base_payload.items() if key != "tests"}
+    current_global = {key: value for key, value in current_payload.items() if key != "tests"}
+    if base_global != current_global:
+        raise ManifestError("global validation manifest configuration changed; broad validation required")
+
+    def indexed(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
+        raw = payload.get("tests")
+        if not isinstance(raw, list):
+            raise ManifestError("validation manifest tests must be an array")
+        result: dict[str, dict[str, Any]] = {}
+        for item in raw:
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"]:
+                raise ManifestError("ambiguous validation manifest test definition")
+            if item["id"] in result:
+                raise ManifestError(f"ambiguous duplicate validation test id: {item['id']}")
+            result[item["id"]] = item
+        return result
+
+    before, after = indexed(base_payload), indexed(current_payload)
+    removed = sorted(before.keys() - after.keys())
+    if removed:
+        raise ManifestError("validation test definitions removed; broad validation required: " + ", ".join(removed))
+    changed = {test_id for test_id, definition in after.items() if before.get(test_id) != definition}
+    return changed, True
+
+
+def base_manifest_payload(base: str | None, repo_root: Path = REPO_ROOT) -> dict[str, Any]:
+    if not base:
+        result = subprocess.run(["git", "show", f"HEAD:{MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()}"],
+                                cwd=repo_root, capture_output=True, text=True)
+        if result.returncode:
+            raise ManifestError("cannot load base validation manifest from HEAD")
+        try:
+            payload = parse_manifest_json(result.stdout)
+        except json.JSONDecodeError as error:
+            raise ManifestError(f"malformed base validation manifest: {error}") from error
+        if not isinstance(payload, dict):
+            raise ManifestError("base validation manifest must be an object")
+        return payload
+    merge = subprocess.run(["git", "merge-base", base, "HEAD"], cwd=repo_root, capture_output=True, text=True)
+    if merge.returncode or len(merge.stdout.splitlines()) != 1:
+        raise ManifestError("ambiguous or unavailable base for validation manifest comparison")
+    result = subprocess.run(["git", "show", f"{merge.stdout.strip()}:{MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()}"],
+                            cwd=repo_root, capture_output=True, text=True)
+    if result.returncode:
+        raise ManifestError("cannot load base validation manifest")
+    try:
+        payload = parse_manifest_json(result.stdout)
+    except json.JSONDecodeError as error:
+        raise ManifestError(f"malformed base validation manifest: {error}") from error
+    if not isinstance(payload, dict):
+        raise ManifestError("base validation manifest must be an object")
+    return payload
+
+
+def select_changed_tests(tests: list[dict[str, Any]], files: list[str], *, manifest_ids: set[str] = frozenset(),
+                         manifest_changed: bool = False) -> list[dict[str, Any]]:
+    source_files = [path for path in files if path != MANIFEST_PATH.relative_to(REPO_ROOT).as_posix()]
+    selected = {item["id"]: item for item in select_tests(tests, files=source_files)}
+    by_id = {item["id"]: item for item in tests}
+    if manifest_changed:
+        for test_id in manifest_ids:
+            if test_id not in by_id:
+                raise ManifestError(f"changed test definition is not loadable: {test_id}")
+            selected[test_id] = dict(by_id[test_id], selection_reasons=[f"manifest_definition:{test_id}"])
+        for test in tests:
+            if "validation" in test.get("tags", []) and test["id"] in {"validation_runner", "validation_manifest_diff_selection"}:
+                selected.setdefault(test["id"], dict(test, selection_reasons=["manifest_self_check"]))
+    return sorted(selected.values(), key=lambda item: (TIERS.index(item["tier"]), item["id"]))
 
 
 def load_coverage_excludes(path: Path = MANIFEST_PATH) -> list[str]:
@@ -350,10 +448,26 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(tests, indent=2) if args.json else "\n".join(f"{t['tier']:11} {t['id']}" for t in tests))
         return 0
     files = changed_files(args.base, REPO_ROOT) if args.changed else None
+    manifest_ids: set[str] = set()
+    manifest_changed = False
+    if files is not None and MANIFEST_PATH.relative_to(REPO_ROOT).as_posix() in files:
+        try:
+            manifest_ids, manifest_changed = manifest_change_selection(
+                tests, base_payload=base_manifest_payload(args.base), current_payload=load_manifest_payload()
+            )
+        except (OSError, ManifestError) as error:
+            print(json.dumps({"schema": "custodian.validation.result.v1", "passed": False,
+                              "configuration_error": str(error)}))
+            return EXIT_CONFIG
     coverage = changed_file_coverage(files, tests, coverage_excludes) if files is not None else {
         "covered_files": [], "uncovered_files": [], "excluded_files": [], "covered_by": {}, "complete": True,
     }
-    selected = select_tests(tests, files=files, tag=args.tag, test_id=args.test, tier=args.tier, max_tier=args.max_tier)
+    if files is not None and not any([args.tag, args.test, args.tier]):
+        selected = select_changed_tests(tests, files, manifest_ids=manifest_ids, manifest_changed=manifest_changed)
+        if args.max_tier:
+            selected = [item for item in selected if TIERS.index(item["tier"]) <= TIERS.index(args.max_tier)]
+    else:
+        selected = select_tests(tests, files=files, tag=args.tag, test_id=args.test, tier=args.tier, max_tier=args.max_tier)
     if not any([args.changed, args.tag, args.test, args.tier]):
         print("select tests with --changed, --tag, --test, or --tier", file=sys.stderr)
         return EXIT_CONFIG

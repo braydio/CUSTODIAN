@@ -1,0 +1,495 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.operator_3d_animation_candidate_receipt.v1",
+  "title": "Future full-body directional animation candidate receipt (contract only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "candidate_state",
+    "input_manifest_sha256",
+    "plan_id",
+    "batch_id",
+    "job_id",
+    "output_path",
+    "master",
+    "source",
+    "dependencies",
+    "rendering_contract",
+    "sampling",
+    "root_motion",
+    "directions",
+    "diagnostics",
+    "technical_qa",
+    "production_approval"
+  ],
+  "properties": {
+    "schema": {
+      "const": "custodian.operator_3d_animation_candidate_receipt.v1"
+    },
+    "candidate_state": {
+      "const": "candidate_unapproved"
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "job_id": {
+      "type": "string",
+      "pattern": "^op3d-[a-f0-9]{24}$"
+    },
+    "master": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "master_id",
+        "contract_sha256",
+        "blender_project_sha256",
+        "armature_identity_sha256",
+        "rest_pose_sha256",
+        "skeleton_signature_sha256"
+      ],
+      "properties": {
+        "master_id": {
+          "type": "string"
+        },
+        "contract_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "blender_project_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "armature_identity_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "rest_pose_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "skeleton_signature_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "animation_id",
+        "original_filename",
+        "fbx_sha256",
+        "inspection_proof_sha256",
+        "authored_fps",
+        "frame_start",
+        "frame_end",
+        "duration_seconds"
+      ],
+      "properties": {
+        "animation_id": {
+          "type": "string"
+        },
+        "original_filename": {
+          "type": "string"
+        },
+        "fbx_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "inspection_proof_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "authored_fps": {
+          "type": "number",
+          "minimum": 0
+        },
+        "frame_start": {
+          "type": "integer"
+        },
+        "frame_end": {
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "rendering_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "contract_sha256",
+        "directions",
+        "width",
+        "height",
+        "channels",
+        "elevation_degrees",
+        "pixels_per_meter",
+        "root_pixel",
+        "scale_policy",
+        "mirroring"
+      ],
+      "properties": {
+        "contract_id": {
+          "type": "string"
+        },
+        "contract_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "directions": {
+          "const": [
+            "N",
+            "NE",
+            "E",
+            "SE",
+            "S",
+            "SW",
+            "W",
+            "NW"
+          ]
+        },
+        "width": {
+          "const": 128
+        },
+        "height": {
+          "const": 128
+        },
+        "channels": {
+          "const": "RGBA"
+        },
+        "elevation_degrees": {
+          "const": 45
+        },
+        "pixels_per_meter": {
+          "const": 50
+        },
+        "root_pixel": {
+          "const": [
+            64,
+            106
+          ]
+        },
+        "scale_policy": {
+          "const": "fixed_from_master"
+        },
+        "mirroring": {
+          "const": false
+        }
+      }
+    },
+    "sampling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sampled_frame_indices",
+        "loop_endpoint_policy",
+        "source_timing_preserved",
+        "runtime_timing_authority"
+      ],
+      "properties": {
+        "sampled_frame_indices": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "integer"
+          }
+        },
+        "loop_endpoint_policy": {
+          "enum": [
+            "include_authored_terminal",
+            "omit_declared_duplicate_terminal"
+          ]
+        },
+        "source_timing_preserved": {
+          "const": true
+        },
+        "runtime_timing_authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "sha256"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "approved",
+                "unavailable"
+              ]
+            },
+            "sha256": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "root_motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "source_state",
+        "original_trajectory_path",
+        "original_trajectory_sha256",
+        "pose_root_translation",
+        "godot_application"
+      ],
+      "properties": {
+        "policy": {
+          "enum": [
+            "preserve_world_displacement",
+            "extract_to_metadata",
+            "in_place"
+          ]
+        },
+        "source_state": {
+          "enum": [
+            "present",
+            "absent"
+          ]
+        },
+        "original_trajectory_path": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/relative_path"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "original_trajectory_sha256": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pose_root_translation": {
+          "enum": [
+            "retained",
+            "removed"
+          ]
+        },
+        "godot_application": {
+          "enum": [
+            "pose_only",
+            "trajectory_once_separately"
+          ]
+        }
+      }
+    },
+    "directions": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "direction",
+          "frames"
+        ],
+        "properties": {
+          "direction": {
+            "enum": [
+              "N",
+              "NE",
+              "E",
+              "SE",
+              "S",
+              "SW",
+              "W",
+              "NW"
+            ]
+          },
+          "frames": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_frame",
+                "path",
+                "sha256",
+                "width",
+                "height",
+                "channels"
+              ],
+              "properties": {
+                "path": {
+                  "$ref": "#/$defs/relative_path"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                },
+                "width": {
+                  "const": 128
+                },
+                "height": {
+                  "const": 128
+                },
+                "channels": {
+                  "const": "RGBA"
+                },
+                "source_frame": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "width",
+          "height",
+          "channels"
+        ],
+        "properties": {
+          "path": {
+            "$ref": "#/$defs/relative_path"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "width": {
+            "const": 512
+          },
+          "height": {
+            "const": 512
+          },
+          "channels": {
+            "const": "RGBA"
+          }
+        }
+      }
+    },
+    "technical_qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "report_path",
+        "report_sha256"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "pass",
+            "fail",
+            "incomplete"
+          ]
+        },
+        "report_path": {
+          "$ref": "#/$defs/relative_path"
+        },
+        "report_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "production_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approved",
+        "authority"
+      ],
+      "properties": {
+        "approved": {
+          "const": false
+        },
+        "authority": {
+          "const": "human_asset_review_and_separate_ingress"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "path",
+          "sha256",
+          "scope"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "fbx",
+              "inspection_proof",
+              "master_contract",
+              "blender_project",
+              "armature",
+              "mesh",
+              "material",
+              "texture",
+              "retarget_policy",
+              "rendering_contract",
+              "runtime_timing_authority",
+              "foot_contact",
+              "root_trajectory",
+              "candidate_frame",
+              "diagnostic_render",
+              "technical_qa_report"
+            ]
+          },
+          "path": {
+            "$ref": "#/$defs/relative_path"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "scope": {
+            "enum": [
+              "asset_root",
+              "repository"
+            ]
+          }
+        }
+      }
+    },
+    "input_manifest_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "plan_id": {
+      "$ref": "#/$defs/sha256"
+    },
+    "output_path": {
+      "$ref": "#/$defs/relative_path"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[^\u0000]+$"
+    }
+  }
+}

@@ -9,6 +9,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
@@ -70,6 +71,102 @@ _GRUNT_SCOPE_CODE_FILES = {
     "custodian/tools/validation/validation_manifest.json": "f99d1deec38aac1757838bd52bee102740597808",
 }
 _GRUNT_SCOPE_FILES = {**_GRUNT_SCOPE_MARKDOWN_FILES, **_GRUNT_SCOPE_CODE_FILES}
+
+_PROCESSION_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json"
+)
+_PROCESSION_SCOPE_SOURCE_WORKSTREAM = "hub-road-empty-procession-sequence-v1"
+_PROCESSION_SCOPE_SOURCE_ARCHIVE = "68cef17f59c6d5e04026b56025451b901bd08185"
+_PROCESSION_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/HUB_ROAD_EMPTY_PROCESSION_SEQUENCE_V1.md"
+)
+_PROCESSION_SCOPE_SOURCE_PACKET_BLOB = "9ad75ac27b88508647b6257245242272f49b21aa"
+_PROCESSION_SCOPE_SOURCE_FILES = {
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md": "bf1595c7a554bd307e9c77f241fe94817affe58a",
+    "custodian/game/state/persistent/hub_state.gd": "08216a9df060f0dd8ae703f597c66cc4df9ba4e0",
+    "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd": "5de12336e853024f1e252e7d0dc552e17f36cda7",
+    "custodian/game/world/hub/events/road_procession/road_procession_sequence.gd.uid": "67b4d9d44729a7d828a8061798c7f0f99e9d7a7b",
+    "custodian/game/world/hub/first_set/hub_first_set_map.gd": "338c21b43c2768aca5e3b248393aac90b8f6e1c9",
+    "custodian/tools/validation/hub_road_empty_procession_smoke.gd": "8a1a77c1c29431672990781b926d28e6f3e67c09",
+    "custodian/tools/validation/hub_road_empty_procession_smoke.gd.uid": "e72ccbfef55f557c7b0e050efda20f27e5ea92fb",
+    "custodian/tools/validation/validation_manifest.json": "016101bf9e76309b1991e3e45fb6f15104c1c94a",
+}
+_PROCESSION_SCOPE_CORRECTION_WORKSTREAM = "agent-paired-review-procession-doc-scope-recovery-v1"
+_PROCESSION_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+)
+_PROCESSION_SCOPE_REVIEW_WORKSTREAM = "review-agent-paired-review-procession-doc-scope-recovery-v1"
+_PROCESSION_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
+)
+
+# Exact historical source-scope exceptions authorize PRELAUNCH only.
+# Neither historical case changes the mandatory independent review outcome.
+_PROCESSION_RECOVERY_ARCHIVE = "c0f9d325e75cdb121489898f9f34a5f5c47f3196"
+_PROCESSION_RECOVERY_PARENT = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+_PROCESSION_RECOVERY_TREE = "39230667c764b62213fcf07527cccb810d5e14d5"
+_PROCESSION_RECOVERY_ACTIVE_BLOB = "0dd7ef934ce0cc3ae37fc5493678f80a54df3c67"
+_PROCESSION_RECOVERY_PACKET_BLOB = "73e6e864d5212289d46e1eb88a48fd040435ee95"
+_PROCESSION_RECOVERY_UNDECLARED_FILES = {
+    f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md":
+        "8e37fe7ce02fa4948e05034dbcb49e02401007a0",
+    "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json":
+        "fa581b9ce63a29100219bf57044e9cd0856d426b",
+    "custodian/tools/agent/paired_review_host_validation.py":
+        "8b66f59641830c063c30f9f8b31d4416da261f4b",
+    "custodian/tools/agent/test_paired_review_runner.py":
+        "0981c8ff5e7ab6eaf4a036188521305888bd1932",
+    "custodian/tools/validation/validation_manifest.json":
+        "c7a6d734d5df4e42854a37ea4544b34d783c2e27",
+}
+_PROCESSION_RECOVERY_EXTRA_FILES = frozenset(_PROCESSION_RECOVERY_UNDECLARED_FILES)
+_PROCESSION_RECOVERY_ARCHIVE_BLOBS = {
+    **_PROCESSION_RECOVERY_UNDECLARED_FILES,
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md":
+        _PROCESSION_RECOVERY_PACKET_BLOB,
+    f"{PACKET_ROOT}/README.md": "5ec21636665e03e046b9e9980a6dcbc9cf380b56",
+    "AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1_CLAUDE_SUMMARY.md":
+        "2df333fd1ba82f8c4de6305be3e4629e8743cc5c",
+}
+
+_PROCESSION_RECOVERY_MERGE = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
+_PROCESSION_RECOVERY_MERGE_SECOND_PARENT = "668ab1c793d262fbbbc8d65e6e3406ad17ffe2eb"
+_PROCESSION_RECOVERY_MERGE_TREE = "7ba4a5fa474ab5b5180856c073a212e83a9efc9c"
+_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS = {
+    "custodian/tools/agent/paired_review_host_validation.py":
+        "02b5119da3b92402b99dd1da06f50b3b4a57700e",
+    "custodian/tools/agent/test_paired_review_runner.py":
+        "0aa7360551f57474c62275e3fc14cccc58a4c396",
+    "custodian/tools/validation/validation_manifest.json":
+        "51093242a8d08aed106b631ef1d54c7cfef61215",
+}
+
+_OR1_BOOTSTRAP_WORKSTREAM = "agent-orphan-recovery-observability-v1"
+_OR1_BOOTSTRAP_ARCHIVE = "8ae6be7c9978dd8e7864fb790f9526a7d17f15e8"
+_OR1_BOOTSTRAP_PARENT = "f8d91812e991ea49fce6f05207f455083d8eaa54"
+_OR1_BOOTSTRAP_TREE = "bc94dc738d0b49ce16abc67fcef2f3a5ce5fc01c"
+_OR1_BOOTSTRAP_ACTIVE_BLOB = "55142dc7a62c3c38ea6a9ec5c730d162092560a3"
+_OR1_BOOTSTRAP_PACKET = f"{PACKET_ROOT}/archived/AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md"
+_OR1_BOOTSTRAP_DOCS = {
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md":
+        "1032ef02822956ef5c1980c2cf93ec114dbb606e",
+    "custodian/docs/ai_context/FILE_INDEX.md":
+        "a90881285e5289381aaca5786ecc3101b02e0542",
+}
+_OR1_BOOTSTRAP_EXTRA_BLOBS = {
+    **_OR1_BOOTSTRAP_DOCS,
+    "custodian/tools/agent/session_supervisor.py": "8d4a3d51c31b9993ffb6e750379f7bfbb96b1213",
+    "custodian/tools/agent/test_session_supervisor.py": "54911e8e6603e33768dcb9b9434a7e6b60bb1e9f",
+    "custodian/tools/agent/workstream_recovery.py": "ce5f0580556db52e481d1536658a7b46c68248bc",
+    "custodian/tools/validation/validation_manifest.json": "0c931df98bc1742e8a63b5f55d8e9b980332780d",
+}
+_OR1_BOOTSTRAP_ARCHIVE_BLOBS = {
+    **_OR1_BOOTSTRAP_EXTRA_BLOBS,
+    _OR1_BOOTSTRAP_PACKET: "50ed3aa6da55010252503b2017065b80eeedd434",
+    f"{PACKET_ROOT}/README.md": "54f41405d73cd3b70871a11478f28bc93f3be5b8",
+    "AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1_CLAUDE_SUMMARY.md":
+        "274d987614e6d27b80e3bf31300f13a87ad53208",
+}
 
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
 _RESET_FOLLOWUP_RUN_ID = "20261020T135839Z-db96534ed3a7"
@@ -502,6 +599,17 @@ _BLENDER_SOURCE_ROOT = (
 _BLENDER_SOURCE_PATH = _BLENDER_SOURCE_ROOT + "operator_south_cutout_rig_v1.blend"
 _BLENDER_RECEIPT_PATH = _BLENDER_SOURCE_ROOT + "rig_build_receipt.json"
 _BLENDER_SOURCE_OID = "b13a70b4c26da0b76f5b04d66902d93e7e03fc1394398c3135759305b9fb656f"
+_RESUMED_PROVENANCE_SYNC_MERGE = "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99"
+_RESUMED_PROVENANCE_WORKSTREAM = "agent-paired-review-resumed-worktree-provenance-v1"
+_RESUMED_PROVENANCE_SYNC_PARENTS = (
+    "2e898dddc82a596b0a2bd15c150b1645cf61f29c",
+    "e376be3735707a4e09618ebf3f3e4273a425009b",
+)
+_RESUMED_PROVENANCE_README_BLOBS = (
+    "9c7317d14319a1da42333bd8d1dea572b15d52b2",
+    "f77d5fb9e55546ff367526f85957440357598b22",
+    "e8a77211b5fa4ec43451b45911d98fec1f356d84",
+)
 
 
 def _managed_packet_index_additive_reconciliation(first_parent: bytes,
@@ -638,6 +746,23 @@ def _managed_packet_index_archival_reconciliation(repo: Path, first_parent: str,
     return all(entry in main_entries for entry in merged_entries) and all(
         any(entry == candidate for candidate in prior_iter) for entry in added
     )
+
+
+def _resumed_provenance_index_reconciliation(repo: Path, first_parent: str,
+                                             second_parent: str, merge: str) -> bool:
+    """Pin the verified generated-index delta on the resumed-provenance landing."""
+    parents = subprocess.run(["git", "rev-list", "--parents", "-n", "1", merge],
+                             cwd=repo, text=True, capture_output=True)
+    if parents.returncode or parents.stdout.split() != [merge, first_parent, second_parent]:
+        return False
+    if merge != _RESUMED_PROVENANCE_SYNC_MERGE or (first_parent, second_parent) != _RESUMED_PROVENANCE_SYNC_PARENTS:
+        return False
+    path = f"{PACKET_ROOT}/README.md"
+    blobs = tuple(_git_tree_entry(repo, revision, path) for revision in
+                  (first_parent, second_parent, merge))
+    return all(entry is not None and entry[0] == "100644" for entry in blobs) and tuple(
+        entry[1] for entry in blobs if entry is not None
+    ) == _RESUMED_PROVENANCE_README_BLOBS
 
 
 def _expand_braced_work_surface_paths(work_surface: str) -> set[str]:
@@ -1403,6 +1528,67 @@ def _git_tree_entry(repo: Path, revision: str, path: str) -> tuple[str, str] | N
     return mode_type_sha[0], mode_type_sha[2]
 
 
+def _canonical_review_packet_metadata_path(
+    repo: Path, archive_parent: str, landing_commit: str, target_workstream: str,
+    target_packet_path: str, target_packet_text: str, changed_paths: set[str],
+) -> str | None:
+    """Authenticate only the associated review packet's canonical chat-link closeout."""
+    if target_workstream != _RESUMED_PROVENANCE_WORKSTREAM:
+        return None
+    review_workstream = f"review-{target_workstream}"
+    review_name = f"REVIEW_{target_workstream.upper().replace('-', '_')}.md"
+    review_path = f"{PACKET_ROOT}/{review_name}"
+    if review_path not in changed_paths:
+        return None
+
+    active_packet = target_packet_path.replace("/archived/", "/", 1)
+    active_entry = _git_tree_entry(repo, archive_parent, active_packet)
+    archived_entry = _git_tree_entry(repo, landing_commit, target_packet_path)
+    before_entry = _git_tree_entry(repo, archive_parent, review_path)
+    after_entry = _git_tree_entry(repo, landing_commit, review_path)
+    if (active_entry is None or active_entry[0] != "100644"
+            or archived_entry is None or archived_entry[0] != "100644"
+            or before_entry is None or before_entry[0] != "100644"
+            or after_entry is None or after_entry[0] != "100644"):
+        raise HostValidationError("canonical paired-review metadata path or mode is invalid")
+
+    summary_path = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+    summary_entry = _git_tree_entry(repo, landing_commit, summary_path)
+    if summary_entry is None or summary_entry[0] != "100644":
+        raise HostValidationError("canonical paired-review metadata lacks its regular closeout summary")
+    active_text = _git(repo, "show", f"{archive_parent}:{active_packet}")
+    summary_text = _git(repo, "show", f"{landing_commit}:{summary_path}")
+    before = _git(repo, "show", f"{archive_parent}:{review_path}").encode("utf-8")
+    after = _git(repo, "show", f"{landing_commit}:{review_path}").encode("utf-8")
+    summary_urls = re.findall(r"(?m)^-? ?Authoring chat: (https://\S+)$", summary_text)
+    canonical_url = summary_urls[0] if summary_urls and len(set(summary_urls)) == 1 else None
+    active_authoring_chat = header_field(active_text, "Authoring chat")
+    archived_authoring_chat = header_field(target_packet_text, "Authoring chat")
+    if (header_field(active_text, "Workstream") != target_workstream
+            or header_field(target_packet_text, "Workstream") != target_workstream
+            or not canonical_url
+            or active_authoring_chat not in {"not-recorded", canonical_url}
+            or archived_authoring_chat != canonical_url):
+        raise HostValidationError("implementation archive and summary disagree on canonical review metadata")
+
+    expected_review_identity = {
+        "Workstream": review_workstream,
+        "Review target workstream": target_workstream,
+        "Review target packet": target_packet_path,
+        "Reviewed main": header_field(target_packet_text, "Reviewed main"),
+    }
+    if any(not value or header_field(before.decode("utf-8"), field) != value
+           or header_field(after.decode("utf-8"), field) != value
+           for field, value in expected_review_identity.items()):
+        raise HostValidationError("changed Markdown is not the exact paired review packet")
+
+    old_field = b"- Authoring chat: `not-recorded`"
+    new_field = f"- Authoring chat: `{canonical_url}`".encode("utf-8")
+    if before.count(old_field) != 2 or after != before.replace(old_field, new_field):
+        raise HostValidationError("paired-review archive changes fields beyond canonical authoring chat metadata")
+    return review_path
+
+
 def _is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
     return subprocess.run(["git", "merge-base", "--is-ancestor", ancestor, descendant],
                           cwd=repo, capture_output=True).returncode == 0
@@ -1605,6 +1791,260 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
         "approval_run_id": outcome["Run ID"],
         "approval_implementation_commit": implementation_commit,
         "approval_outcome": outcome["Outcome"],
+    }
+
+
+def _verify_exact_bootstrap_landing(
+    repo: Path, landing_commit: str, parent: str, tree: str,
+    active_packet: str, active_blob: str, archive_blobs: dict[str, str],
+) -> None:
+    """Authenticate complete historical source bytes without granting review PASS."""
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, parent,
+    ]:
+        raise HostValidationError("bootstrap archive parent does not match pinned history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != tree:
+        raise HostValidationError("bootstrap archive tree does not match pinned history")
+    if set(_changed_paths(repo, f"{parent}..{landing_commit}")) != (
+        set(archive_blobs) | {active_packet}
+    ):
+        raise HostValidationError("bootstrap archive changed-path set differs from pinned history")
+    if (_git_tree_entry(repo, parent, active_packet) != ("100644", active_blob)
+            or _git_tree_entry(repo, landing_commit, active_packet) is not None):
+        raise HostValidationError("bootstrap original packet or deletion differs")
+    for path, blob in archive_blobs.items():
+        if _git_tree_entry(repo, landing_commit, path) != ("100644", blob):
+            raise HostValidationError(f"bootstrap archive blob or mode differs: {path}")
+
+
+def _verified_procession_recovery_historical_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Authenticate only the exact five extra files at the original Procession landing."""
+    if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
+        return set()
+    if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
+            or target_packet_path != _PROCESSION_SCOPE_CORRECTION_PACKET
+            or extra_archive_paths != _PROCESSION_RECOVERY_EXTRA_FILES):
+        raise HostValidationError("Procession recovery historical source scope does not match its exact archive")
+    _verify_exact_bootstrap_landing(
+        repo, landing_commit, _PROCESSION_RECOVERY_PARENT, _PROCESSION_RECOVERY_TREE,
+        f"{PACKET_ROOT}/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md",
+        _PROCESSION_RECOVERY_ACTIVE_BLOB, _PROCESSION_RECOVERY_ARCHIVE_BLOBS,
+    )
+    return set(_PROCESSION_RECOVERY_UNDECLARED_FILES)
+
+
+def _verified_procession_bootstrap_main_sync(
+    repo: Path, target_workstream: str, landing_commit: str,
+    merge: str, second_parent: str, changed_source_paths: set[str],
+) -> bool:
+    """One historical source reconciliation; not a source-coverage or review waiver.
+
+    The original Procession archive is already independently authenticated. Its
+    exact recorded main-sync commit combined the source with newer upstream
+    validator/tests. Only the three pinned resulting file blobs are recognized.
+    The reviewer must still validate the resulting reviewed-main source.
+    """
+    if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
+        return False
+    if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
+            or merge != _PROCESSION_RECOVERY_MERGE
+            or second_parent != _PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+            or changed_source_paths != set(_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)):
+        return False
+    if _git(repo, "rev-list", "--parents", "-n", "1", merge).split() != [
+        merge, landing_commit, second_parent,
+    ]:
+        raise HostValidationError("Procession bootstrap main-sync parent identity differs")
+    if _git(repo, "rev-parse", f"{merge}^{{tree}}") != _PROCESSION_RECOVERY_MERGE_TREE:
+        raise HostValidationError("Procession bootstrap main-sync tree identity differs")
+    for path, blob in _PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS.items():
+        if _git_tree_entry(repo, merge, path) != ("100644", blob):
+            raise HostValidationError(f"Procession bootstrap merge source differs: {path}")
+    return True
+
+
+def _verified_or1_bootstrap_historical_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Authenticate only OR1's two historical undeclared documentation paths."""
+    if target_workstream != _OR1_BOOTSTRAP_WORKSTREAM:
+        return set()
+    if (landing_commit != _OR1_BOOTSTRAP_ARCHIVE
+            or target_packet_path != _OR1_BOOTSTRAP_PACKET
+            or extra_archive_paths != set(_OR1_BOOTSTRAP_EXTRA_BLOBS)):
+        raise HostValidationError("OR1 historical source scope does not match its exact archive")
+    _verify_exact_bootstrap_landing(
+        repo, landing_commit, _OR1_BOOTSTRAP_PARENT, _OR1_BOOTSTRAP_TREE,
+        f"{PACKET_ROOT}/AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md",
+        _OR1_BOOTSTRAP_ACTIVE_BLOB, _OR1_BOOTSTRAP_ARCHIVE_BLOBS,
+    )
+    return set(_OR1_BOOTSTRAP_DOCS)
+
+
+def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
+                                          landing_commit: str,
+                                          extra_archive_paths: set[str]) -> dict:
+    """Authenticate only the omitted P1 validation recipe after its paired PASS.
+
+    This is deliberately tied to the single preserved Procession archive. The
+    approval may postdate that run's pinned reviewed-main, but current
+    origin/main is usable only after proving the pin is its ancestor and the
+    exact recovery implementation has an accepted canonical independent PASS.
+    """
+    if landing_commit != _PROCESSION_SCOPE_SOURCE_ARCHIVE:
+        raise HostValidationError("Procession scope attestation names a different source archive")
+    if extra_archive_paths != set(_PROCESSION_SCOPE_SOURCE_FILES):
+        raise HostValidationError("Procession scope attestation must cover exactly the eight pinned P1 source files")
+
+    source_packet_entry = _git_tree_entry(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                                          _PROCESSION_SCOPE_SOURCE_PACKET)
+    if source_packet_entry != ("100644", _PROCESSION_SCOPE_SOURCE_PACKET_BLOB):
+        raise HostValidationError("pinned Procession packet blob or mode does not match")
+    source_entries = {}
+    for source_path, expected_blob in _PROCESSION_SCOPE_SOURCE_FILES.items():
+        entry = _git_tree_entry(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE, source_path)
+        if not expected_blob or entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned Procession source blob or mode does not match: {source_path}")
+        source_entries[source_path] = entry
+
+    approval_main = _git(repo, "rev-parse", "origin/main^{commit}")
+    if not _is_ancestor(repo, reviewed_main, approval_main):
+        raise HostValidationError("post-hoc Procession approval does not descend from the preserved reviewed main")
+    if not _is_ancestor(repo, _PROCESSION_SCOPE_SOURCE_ARCHIVE, approval_main):
+        raise HostValidationError("post-hoc Procession approval main does not contain the exact source archive")
+
+    attestation_entry = _git_tree_entry(repo, approval_main, _PROCESSION_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file Procession scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_PROCESSION_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Procession scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_path": _PROCESSION_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _PROCESSION_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_PROCESSION_SCOPE_SOURCE_FILES.items())
+        ],
+        "reason": "The original archived P1 Work surface omitted these exact eight source paths.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Procession attestation bytes do not match the exact post-hoc authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _PROCESSION_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve Procession scope attestation origin commit")
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _PROCESSION_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("Procession attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+
+    try:
+        correction_text = read_git_text(repo, approval_main, _PROCESSION_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _PROCESSION_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Procession attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_PROCESSION_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_PROCESSION_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _PROCESSION_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _PROCESSION_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Procession attestation correction/review packet identity is incomplete")
+
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Procession attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Procession attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _PROCESSION_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _PROCESSION_SCOPE_CORRECTION_PACKET,
+        _PROCESSION_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Procession attestation target identity is invalid: {identity_error}")
+    if not _is_ancestor(repo, origin_commit, implementation_commit):
+        raise HostValidationError("Procession attestation was not present by its recovery implementation archive")
+    if not _is_ancestor(repo, outcome["Reviewed main"], approval_main):
+        raise HostValidationError("accepted Procession attestation review is not an ancestor of approved main")
+    if not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"]):
+        raise HostValidationError("accepted Procession attestation review predates its implementation")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Procession attestation review target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"accepted Procession attestation review identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted Procession attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items()) or (
+        reviewer_receipt.get("Reviewer provenance") not in {"different-agent", "same-agent-fresh-context"}
+    ):
+        raise HostValidationError("accepted Procession attestation reviewer receipt does not match its PASS outcome")
+
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _PROCESSION_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "source_archive_commit": _PROCESSION_SCOPE_SOURCE_ARCHIVE,
+        "source_packet_blob": _PROCESSION_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": {
+            path: {"mode": mode, "blob": blob}
+            for path, (mode, blob) in source_entries.items()
+        },
+        "approval_review_workstream": _PROCESSION_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _PROCESSION_SCOPE_REVIEW_PACKET,
+        "approval_target_packet": _PROCESSION_SCOPE_CORRECTION_PACKET,
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
     }
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
@@ -2047,6 +2487,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if pinned_reset_archive and archive_paths != _RESET_ARCHIVE_PATHS:
         raise HostValidationError("reset canonical archive has an unpinned closeout path set")
     source_bearing_archive = bool(extra_archive_paths) and not pinned_reset_archive
+    paired_review_metadata_path = None
     source_artifact = _verified_blender_source_artifact(
         repo, landing_commit, target_packet_text, extra_archive_paths,
     ) if target_workstream == _BLENDER_SOURCE_WORKSTREAM else None
@@ -2058,19 +2499,43 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         if path.endswith(".gd.uid") and path[:-4] in extra_archive_paths
     }
     scope_attestation = None
+    historical_recovery_paths = (
+        _verified_procession_recovery_historical_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
+        | _verified_or1_bootstrap_historical_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
+    )
     if source_bearing_archive:
+        paired_review_metadata_path = _canonical_review_packet_metadata_path(
+            repo, archive_parent, landing_commit, target_workstream, target_packet_path,
+            target_packet_text, extra_archive_paths,
+        )
+        paired_review_metadata_paths = (
+            {paired_review_metadata_path} if paired_review_metadata_path else set()
+        )
         work_surface = header_field(target_packet_text, "Work surface") or ""
         declared_markdown_paths = set(_REPOSITORY_MARKDOWN_PATH_RE.findall(work_surface))
-        if (target_workstream == "grunt-candidate-raster-workflow-v1"
+        if (target_workstream == _PROCESSION_SCOPE_SOURCE_WORKSTREAM
+                and landing_commit == _PROCESSION_SCOPE_SOURCE_ARCHIVE):
+            scope_attestation = _verified_procession_scope_attestation(
+                repo, reviewed_main, landing_commit, extra_archive_paths,
+            )
+        elif (target_workstream == "grunt-candidate-raster-workflow-v1"
                 and extra_archive_paths.intersection(_GRUNT_SCOPE_FILES)):
             if landing_commit != _GRUNT_SCOPE_SOURCE_ARCHIVE:
                 raise HostValidationError("post-hoc Grunt scope attestation names a different source archive")
             scope_attestation = _verified_grunt_scope_attestation(
                 repo, reviewed_main, extra_archive_paths,
             )
-        attested_paths = set(scope_attestation["source_files"]) if scope_attestation else set()
+        attested_paths = (
+            (set(scope_attestation["source_files"]) if scope_attestation else set())
+            | historical_recovery_paths
+        )
         if any(Path(path).suffix.lower() not in _IMPLEMENTATION_SUFFIXES
                and path not in uid_companion_paths
+               and path not in paired_review_metadata_paths
                and not (source_artifact is not None and path == source_artifact["path"])
                and not (Path(path).suffix.lower() == ".md"
                         and (path in declared_markdown_paths
@@ -2132,6 +2597,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     if len(merge_commits) > 1:
         raise HostValidationError("split source span contains multiple synchronization merges")
     checkpoint_resume_merge = None
+    source_main_sync_merge = None
     if merge_commits:
         if ref != claim_record["ref"] or run_id != claim_record["run_id"]:
             raise HostValidationError("checkpoint-resume merge claim and lifecycle events are not from one trace")
@@ -2159,32 +2625,52 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             and event["data"].get("branch") == claim_record["branch"]
             and event["data"].get("worktree") == claim_record["worktree"]
         ]
-        if len(checkpoint_events) != 1 or len(resume_events) != 1:
-            raise HostValidationError("checkpoint-resume merge lacks a unique matching lifecycle pair")
+        if len(checkpoint_events) != 1:
+            raise HostValidationError("synchronization merge lacks a unique matching checkpoint")
         checkpoint_pos, checkpoint_event = checkpoint_events[0]
-        resume_pos, resume_event = resume_events[0]
-        if checkpoint_pos >= resume_pos or resume_pos >= len(events) - 1:
-            raise HostValidationError("checkpoint-resume lifecycle events are out of order")
-        preceding_checkpoints = [event for i, event in enumerate(events)
-                                 if i < resume_pos and event.get("event") == "checkpoint_completed"]
         all_resumes = [event for event in events if event.get("event") == "worktree_resumed"]
-        if preceding_checkpoints != [checkpoint_event] or all_resumes != [resume_event]:
-            raise HostValidationError("checkpoint-resume trace contains conflicting lifecycle events")
         sync_events = [(i, event) for i, event in enumerate(events)
                        if event.get("event") == "main_sync"]
         later_noop = [(i, event) for i, event in sync_events
-                      if i > resume_pos and isinstance(event.get("data"), dict)
+                      if isinstance(event.get("data"), dict)
                       and event["data"].get("changed") is False
                       and event["data"].get("head") == landing_commit
                       and event["data"].get("main_sha") == second_parent]
         if len(later_noop) != 1:
-            raise HostValidationError("checkpoint-resume merge lacks its later exact no-op main-sync witness")
+            raise HostValidationError("synchronization merge lacks its exact no-op main-sync witness")
+        if len(resume_events) == 1:
+            resume_pos, resume_event = resume_events[0]
+            if checkpoint_pos >= resume_pos or resume_pos >= later_noop[0][0]:
+                raise HostValidationError("checkpoint-resume lifecycle events are out of order")
+            if all_resumes != [resume_event]:
+                raise HostValidationError("checkpoint-resume trace contains conflicting lifecycle events")
+            if any(isinstance(event.get("data"), dict)
+                   and event["data"].get("changed") is True
+                   and event["data"].get("head") == merge_sha
+                   and event["data"].get("main_sha") == second_parent
+                   for _, event in sync_events):
+                raise HostValidationError("checkpoint-resume trace contains conflicting in-place sync events")
+            merge_kind = "checkpoint-resume"
+        elif not resume_events and not all_resumes:
+            changed_sync = [(i, event) for i, event in sync_events
+                            if isinstance(event.get("data"), dict)
+                            and event["data"].get("changed") is True
+                            and event["data"].get("head") == merge_sha
+                            and event["data"].get("main_sha") == second_parent]
+            if len(changed_sync) != 1 or len(sync_events) != 2:
+                raise HostValidationError("in-place main-sync merge lacks its unique exact lifecycle witness")
+            changed_pos, changed_event = changed_sync[0]
+            if not checkpoint_pos < changed_pos < later_noop[0][0]:
+                raise HostValidationError("in-place main-sync lifecycle events are out of order")
+            merge_kind = "in-place-main-sync"
+        else:
+            raise HostValidationError("synchronization merge trace has conflicting resume events")
         merge_tree = subprocess.run(["git", "merge-tree", "--write-tree", first_parent, second_parent],
                                     cwd=repo, text=True, capture_output=True)
         stored_tree = _git(repo, "rev-parse", f"{merge_sha}^{{tree}}")
         if merge_tree.returncode or not merge_tree.stdout.splitlines() \
                 or merge_tree.stdout.splitlines()[0].strip() != stored_tree:
-            raise HostValidationError("checkpoint-resume merge tree differs from deterministic Git merge")
+            raise HostValidationError("synchronization merge tree differs from deterministic Git merge")
         inherited_paths = set(_changed_paths(repo, f"{source_base}..{second_parent}"))
         # Local authorship is the union of first-parent non-merge commit diffs.
         # Paths touched on both sides remain owned and keep their test coverage.
@@ -2192,21 +2678,33 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             if any(subprocess.run(["git", "cat-file", "-e", f"{revision}:{path}"],
                                   cwd=repo, capture_output=True).returncode
                    for revision in (merge_sha, source_head)):
-                raise HostValidationError("checkpoint-resume merge loses workstream-owned source")
-        checkpoint_resume_merge = {
+                raise HostValidationError("synchronization merge loses workstream-owned source")
+        merge_provenance = {
             "commit": merge_sha, "first_parent": first_parent, "second_parent": second_parent,
-            "checkpoint_event_index": checkpoint_pos, "resume_event_index": resume_pos,
+            "checkpoint_event_index": checkpoint_pos,
             "main_sync_event_index": later_noop[0][0], "tree": stored_tree,
             "checkpoint_event_id": {"run_id": run_id, "position": checkpoint_pos,
                                     "timestamp_utc": checkpoint_event.get("timestamp_utc")},
-            "resume_event_id": {"run_id": run_id, "position": resume_pos,
-                                "timestamp_utc": resume_event.get("timestamp_utc")},
             "main_sync_event_id": {"run_id": run_id, "position": later_noop[0][0],
                                    "timestamp_utc": later_noop[0][1].get("timestamp_utc")},
             "merge_tree_proof": "git-merge-tree-write-tree-exact",
             "owned_paths": sorted(owned_paths), "inherited_paths": sorted(inherited_paths),
             "overlapping_paths": sorted(owned_paths.intersection(inherited_paths)),
         }
+        if merge_kind == "checkpoint-resume":
+            merge_provenance["resume_event_index"] = resume_pos
+            merge_provenance["resume_event_id"] = {
+                "run_id": run_id, "position": resume_pos,
+                "timestamp_utc": resume_event.get("timestamp_utc"),
+            }
+            checkpoint_resume_merge = merge_provenance
+        else:
+            merge_provenance["changed_sync_event_index"] = changed_pos
+            merge_provenance["changed_sync_event_id"] = {
+                "run_id": run_id, "position": changed_pos,
+                "timestamp_utc": changed_event.get("timestamp_utc"),
+            }
+            source_main_sync_merge = merge_provenance
     if followup is None and (
         (source_bearing_archive and commits[-1] != landing_commit)
         or (not source_bearing_archive and archive_parent != commits[-1])
@@ -2216,8 +2714,10 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         source_paths = sorted(set(_changed_paths(repo, f"{source_base}..{landing_commit}")
                                   + followup["followup_paths"]))
     else:
-        source_paths = sorted(owned_paths) if checkpoint_resume_merge else _changed_paths(
+        source_paths = sorted(owned_paths) if (checkpoint_resume_merge or source_main_sync_merge) else _changed_paths(
             repo, f"{source_base}..{source_head}")
+    if paired_review_metadata_path is not None:
+        source_paths = [path for path in source_paths if path != paired_review_metadata_path]
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
@@ -2232,9 +2732,12 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         documented.update(archive_sync_followup.get("authenticated_followup_paths", []))
     packet_terms = set(re.findall(r"[a-z0-9]+", target_packet_text.lower()))
     archive_source_paths = set(extra_archive_paths) if source_bearing_archive else set()
+    if paired_review_metadata_path is not None:
+        archive_source_paths.discard(paired_review_metadata_path)
 
     attested_source_paths = (
-        set(scope_attestation["source_files"]) if scope_attestation is not None else set()
+        (set(scope_attestation["source_files"]) if scope_attestation is not None else set())
+        | historical_recovery_paths
     )
 
     def is_documented(path: str) -> bool:
@@ -2301,6 +2804,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                 merged_readme.stdout)
                                 or _managed_packet_index_archival_reconciliation(
                                     repo, first_parent, sync_merge["main_sha"], merge,
+                                ) or _resumed_provenance_index_reconciliation(
+                                    repo, first_parent, sync_merge["main_sha"], merge,
                                 ))):
                         raise HostValidationError(
                             "main-sync README change is not an authenticated managed-index reconciliation"
@@ -2312,6 +2817,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                     .get(merge, [])
                 )
                 changed_source_paths.difference_update(authenticated_resolution)
+            if changed_source_paths and _verified_procession_bootstrap_main_sync(
+                repo, target_workstream, landing_commit, merge,
+                sync_merge["main_sha"], changed_source_paths,
+            ):
+                changed_source_paths.clear()
             if changed_source_paths:
                 raise HostValidationError(
                     "main-sync merge changes reviewed source from archive-first-parent version: "
@@ -2342,6 +2852,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         provenance["claim_trace"]["resume_event_index"] = claim_record["resume_event_index"]
     if checkpoint_resume_merge is not None:
         provenance["checkpoint_resume_merge"] = checkpoint_resume_merge
+    if source_main_sync_merge is not None:
+        provenance["source_main_sync_merge"] = source_main_sync_merge
     if scope_attestation is not None:
         provenance["scope_attestation"] = scope_attestation
     if followup is not None:
@@ -2439,6 +2951,118 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
         raise HostValidationError("host validation has no selected test owner for changed source/test files")
 
 
+_PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
+_PROCESSION_PREARCHIVE_FIXTURE_BLOB = "0aa7360551f57474c62275e3fc14cccc58a4c396"
+_PROCESSION_PREARCHIVE_FIXTURE_BASE = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+
+
+def _procession_prearchive_fixture_bytes(original: bytes) -> bytes:
+    """Fix exactly one historical disposable-history base, not validator logic."""
+    try:
+        source = original.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise HostValidationError("pinned Procession fixture is not UTF-8") from exc
+    prefix, marker, remainder = source.partition(
+        "    def _build_procession_scope_approval_history("
+    )
+    fixture, next_marker, suffix = remainder.partition(
+        "    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review("
+    )
+    old_base = """        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()"""
+    if not marker or not next_marker or fixture.count(old_base) != 1:
+        raise HostValidationError("pinned Procession fixture has changed; exact repair refused")
+    repaired = fixture.replace(
+        old_base, f'        base_main = "{_PROCESSION_PREARCHIVE_FIXTURE_BASE}"', 1,
+    )
+    return (prefix + marker + repaired + next_marker + suffix).encode("utf-8")
+
+
+@contextmanager
+def _procession_prearchive_fixture_checkout(
+    worktree: Path, reviewed_main: str,
+    target_workstream: str | None, target_packet_path: str | None,
+):
+    """Run the original reviewed source with an exact test-only fixture repair.
+
+    A disposable clone receives the one-line historical test fix. The original
+    claimed checkout, review identity, source evidence and reviewer gates stay
+    unchanged. No generalized fallback for missing or archived packets exists.
+    """
+    exact_case = (
+        reviewed_main == _PROCESSION_RECOVERY_MERGE
+        and target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        and target_packet_path == _PROCESSION_SCOPE_CORRECTION_PACKET
+    )
+    if not exact_case:
+        yield worktree, None
+        return
+    if _git(worktree, "rev-parse", "HEAD^{commit}") != reviewed_main:
+        raise HostValidationError("Procession fixture repair requires exact pinned review HEAD")
+    entry = _git_tree_entry(worktree, reviewed_main, _PROCESSION_PREARCHIVE_FIXTURE_TEST)
+    if entry != ("100644", _PROCESSION_PREARCHIVE_FIXTURE_BLOB):
+        raise HostValidationError("Procession fixture repair source blob or mode differs")
+    original = (worktree / _PROCESSION_PREARCHIVE_FIXTURE_TEST).read_bytes()
+    pinned = subprocess.run(
+        ["git", "show", f"{reviewed_main}:{_PROCESSION_PREARCHIVE_FIXTURE_TEST}"],
+        cwd=worktree, check=True, capture_output=True,
+    ).stdout
+    if original != pinned:
+        raise HostValidationError("Procession protected checkout fixture differs from pinned source")
+    repaired = _procession_prearchive_fixture_bytes(original)
+    if repaired == original:
+        raise HostValidationError("Procession fixture correction did not change the exact test")
+    with tempfile.TemporaryDirectory(prefix="custodian-procession-fixture-") as tmp:
+        checkout = Path(tmp) / "checkout"
+        no_network_smudge = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
+        subprocess.run(
+            ["git", "clone", "-q", "--shared", "--no-checkout",
+             str(worktree), str(checkout)],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        subprocess.run(
+            ["git", "-C", str(checkout), "checkout", "-q", "--detach", reviewed_main],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        # A local clone does not transfer host-only diagnostic refs. Authenticate
+        # them from the original Git object store and add them to the clone only.
+        witnesses = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)",
+             "refs/remotes/origin/agent-diagnostics/"],
+            cwd=worktree, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        for line in witnesses:
+            ref, sha = line.split()
+            subprocess.run(
+                ["git", "-C", str(checkout), "update-ref", ref, sha],
+                check=True, capture_output=True,
+            )
+        test_path = checkout / _PROCESSION_PREARCHIVE_FIXTURE_TEST
+        if test_path.read_bytes() != original:
+            raise HostValidationError("disposable Procession checkout does not match pinned source")
+        test_path.write_bytes(repaired)
+        changed = _git(checkout, "diff", "--name-only").splitlines()
+        if changed != [_PROCESSION_PREARCHIVE_FIXTURE_TEST]:
+            raise HostValidationError("Procession fixture repair modifies unexpected tracked source")
+        subprocess.run(
+            ["git", "diff", "--check"], cwd=checkout, check=True, capture_output=True,
+        )
+        evidence = {
+            "kind": "exact-pinned-procession-test-fixture-only",
+            "reviewed_main": reviewed_main,
+            "path": _PROCESSION_PREARCHIVE_FIXTURE_TEST,
+            "original_blob": entry[1],
+            "original_sha256": _sha256(original),
+            "repaired_sha256": _sha256(repaired),
+            "pre_archive_base": _PROCESSION_PREARCHIVE_FIXTURE_BASE,
+            "other_tracked_source_unchanged": True,
+            "protected_worktree_unchanged": True,
+        }
+        yield checkout, evidence
+
+
 def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, implementation_commit: str,
                                *, target_workstream: str | None = None,
                                target_packet_path: str | None = None,
@@ -2498,13 +3122,17 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     source_hashes = _source_hashes(worktree, code_paths)
     capabilities = capability_probe()
 
-    command = [sys.executable, str(worktree / "custodian/tools/validation/run_validation.py"),
-               "--changed", "--base", source_base, "--json"]
     execute = run_validation or (lambda argv, cwd: subprocess.run(
         argv, cwd=cwd, text=True, capture_output=True, check=False,
     ))
     try:
-        process = execute(command, worktree)
+        with _procession_prearchive_fixture_checkout(
+            worktree, reviewed_main, target_workstream, target_packet_path,
+        ) as (validation_checkout, fixture_evidence):
+            command = [sys.executable,
+                       str(validation_checkout / "custodian/tools/validation/run_validation.py"),
+                       "--changed", "--base", source_base, "--json"]
+            process = execute(command, validation_checkout)
     except OSError as exc:
         raise HostValidationError(f"trusted coordinator could not launch canonical validation: {exc}") from exc
     raw_report = process.stdout.encode("utf-8")
@@ -2545,6 +3173,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         "code_paths": code_paths,
         "selected_source_paths": selected_source_paths,
         "source_sha256": source_hashes,
+        "validation_fixture_overlay": fixture_evidence,
         "source_changed_during_validation": source_changed,
         "generated_import_manifest_sha256": (
             _sha256((run_dir / "generated-import-artifacts/manifest.json").read_bytes())

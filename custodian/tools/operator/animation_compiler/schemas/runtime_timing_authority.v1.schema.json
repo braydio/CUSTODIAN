@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "custodian.operator_runtime_timing_authority.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "authority_id", "semantic", "source_sha256", "master_contract_sha256", "fps", "loop"],
+  "properties": {
+    "schema": {"const": "custodian.operator_runtime_timing_authority.v1"},
+    "authority_id": {"type": "string", "minLength": 1},
+    "semantic": {"type": "object", "additionalProperties": false, "required": ["profile", "group", "action"], "properties": {"profile": {"type": "string"}, "group": {"type": "string"}, "action": {"type": "string"}}},
+    "source_sha256": {"$ref": "#/$defs/sha256"},
+    "master_contract_sha256": {"$ref": "#/$defs/sha256"},
+    "fps": {"type": "number", "minimum": 0},
+    "loop": {"type": "boolean"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}
