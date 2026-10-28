@@ -1,6 +1,6 @@
 # Procedural Environmental Storytelling: Refinement and Integration Roadmap
 
-**Status:** **ES-1 Option B foundation implemented and validated on 2026-10-28; fresh-context paired review pending post-land.** This roadmap itself is not a claimable packet; ES-2–ES-4 remain future expansions.
+**Status:** **ES-1 foundation landed and mechanically validated; independent review remains unresolved. ES-2 Refused Passage design and implementation/review packet pair authored 2026-10-28.** This roadmap is not a claimable packet; ES-3–ES-4 remain future expansions.
 **Workstream:** procgen-environmental-evidence-v1
 **Recorded:** 2026-10-27
 **Source baseline:** main@bb5a1b16
@@ -40,11 +40,11 @@ The user endorsed continued development of three procedurally composed styles: *
 | Slice | Purpose | Acceptance / next gate |
 | --- | --- | --- |
 | **ES-1 · Site identity foundation** | Bind active story metadata to existing F02 STORY_ROOM intent nodes and exact reserved rectangles; keep optional F15 parent association and F02-only identity honest. | Implemented under the published packet with deterministic identity, graph/geometry validation, safe skip/export behavior, non-intent fallback, and focused verification. Paired review pending. |
-| **ES-2 · Refused Passage pilot** | One physical four-layer clue tableau with deterministic optional placement, existing interactions and no mandatory new art. | Same seed exact layout, no blocked route/ingress/extraction, reachable evidence, safe skip, reveal/reentry, visual no-text read, focused independent review. |
+| **ES-2 · Refused Passage pilot** | [Bounded 16×12 physical design](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES2_REFUSED_PASSAGE.md), three coherent variants, sealed physical gate + safe 3-cell bypass, two native readouts, optional one site and no new art. Implementation/review packets now published for authoring/promotion; runtime not yet built. | Same seed exact layout, positive fixture plus safe skips, protected traversal, reachable readouts, idempotent reveal/reentry, focused independent review. |
 | **ES-3 · Hearth and Seam extension** | Two additional causal content definitions through the *same* assembler. Hearth actual actors only when present; Seam documented mundane/true-anomaly distinction. | No duplicate generator, false occupancy, misleading access, retconned canon, or uncontrolled rarity/density. |
 | **ES-4 · Art and campaign evaluation** | After visual approval, register/ingest three independent Asset V2 families and conduct multi-seed visual/interactive review. | 27 required static states verified; optional 3 animated states tracked; source/inbox hashes, alpha, native pixel scale, family plan/status/doctor, actual consumer binding, no tracker drift. |
 
-**Sequence:** ES-1 is implemented and awaits its fresh-context paired review. After PASS, ES-2 Refused Passage is the next development slice to scope and packet; this does not authorize an implementation claim or asset intake. ES-3/ES-4 remain later, separately scoped work. **ES-1 is intentionally small, but never the endpoint of this feature program.**
+**Sequence:** ES-1 implementation is landed; its separate preserved independent review has not passed. **ES-2's physical design is now scoped and its paired executable packets authored** as `PROCGEN_ENVIRONMENTAL_EVIDENCE_REFUSED_PASSAGE_V1.md` and `REVIEW_PROCGEN_ENVIRONMENTAL_EVIDENCE_REFUSED_PASSAGE_V1.md`. Only the dispatcher may authorize ES-2 claim after its declared review dependency, lock and publication checks. ES-3/ES-4 remain future work. **ES-1 is intentionally small, not the endpoint.**
 
 ## ES-2+ operational-integration questions
 
@@ -71,7 +71,7 @@ Use pure seed determinism and negative-control fixture first, then accepted-worl
 
 At the original design-document pass, no runtime code had changed. ES-1 has since changed the runtime and its implementation evidence is recorded above; `CURRENT_STATE.md` and `FILE_INDEX.md` now reflect that accepted foundation. Future edits to those files must follow implementation or asset evidence rather than this earlier documentation-only note.
 
-## Next development slice: ES-2 Refused Passage physical tableau
+## Next development slice: ES-2 Refused Passage physical tableau (packet authored)
 
 After ES-1 receives independent PASS, scope a separate implementation/review
 packet for one optional physical Refused Passage site inside the already joined
