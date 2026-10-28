@@ -52,7 +52,7 @@
   9. A compact visual-review package is published and its exact manifest path/questions are reported. No subjective approval is recorded by the agent.
   10. All Blender-generated files remain under the external proof root. No original/model bytes, Task 017 files, ITER005 Running sources, Workbench/runtime assets or canonical Operator assets change.
   11. Focused tests cover candidate-only vs production timing validation, action timing, skeleton mapping, motion/master independence, root separation, endpoint sampling, output contract/receipt hashes, deterministic motion, stale input, path safety and dry-run/non-mutation.
-- Validation: Run `python3 -m unittest custodian.tools.validation.test_operator_3d_animation_compiler -v`; add and run focused tests for the new proof modules (record exact paths in this packet before closeout); run Python compile checks, Blender headless inspect/retarget/render smoke on the authorized Neutral Idle/model, candidate receipt `check`, repeated-motion/sample-render hash checks, input before/after hashes, `git diff --check`, `python3 custodian/tools/agent/check_ai_context.py`, and applicable packet-index validation. Do not run broad Godot sweeps. Render only the declared eight-view loop and sparse diagnostic subset; no full-resolution diagnostic pass.
+- Validation: Run `python3 -m unittest custodian.tools.validation.test_operator_3d_animation_compiler -v` and `python3 -m unittest custodian.tools.validation.test_operator_neutral_idle_proof -v`; run Python compile checks, Blender headless inspect/retarget/render on the authorized Neutral Idle/model, candidate receipt `check`, repeated-motion/sample-render reproducibility checks, input before/after hashes, `git diff --check`, `python3 custodian/tools/agent/check_ai_context.py`, and applicable packet-index validation. Do not run broad Godot sweeps. Render only the declared eight-view loop and sparse diagnostic subset; no full-resolution diagnostic pass.
 - Task overrides: `TASK OVERRIDE: post-land paired review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, the required root closing summary and bounded correction/re-review packets. It may not edit the reviewed implementation, any source/model asset, or unrelated files.`
 - Deferred: Human animation-quality decision; any master approval; processing the other seven animations; shoulder changes; later candidate ingest/runtime timing authorization; runtime publication.
 
@@ -67,4 +67,23 @@
 - Authoring chat: `not-recorded`
 - Refresh reason: Human animation-quality review of the Neutral Idle candidate remains authoritative.
 - Next action: Review the compact eight-direction Neutral Idle proof package and decide whether its animation quality is acceptable; any follow-up changes require explicit authorization.
-- Blockers or open questions: This packet is dispatcher-gated on the outstanding independent Task 001 review; the exact preserved review claim currently fails host-validation recovery because its immutable workstream trace lacks the provenance shape required by the installed validator. Do not bypass or release that claim.
+- Blockers or open questions: Human animation-quality review is required; the separate Task 001 `R0-01` verifier finding remains unresolved and was waived only as a prerequisite to this experimental proof. Task 002's own post-land independent review remains required by its paired review packet.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: Real source inspection, hash-bound retargeted motion and root trajectory, 2,104 128×128 RGBA frames, objective QA, reproducibility report, current candidate receipt and published human-review handoff are recorded under the external proof root named above. Candidate remains unapproved; no runtime or production approval is claimed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: An initial retarget preview exposed incorrect XYZW-to-WXYZ quaternion assignment; an initial receipt check exposed a trajectory self-hash mismatch.
+- Root cause / contributing factors: Blender quaternion storage order differed from the serialized motion convention; the trajectory hash initially represented canonical payload bytes rather than exact sidecar file bytes.
+- Prevention / pipeline improvement: The adapter now converts quaternion order explicitly, validates normalized motion transforms, binds the exact trajectory file SHA, and enforces explicit source-only/target-only skeleton mapping allowlists through a separately hashed mapping policy.
+- Tooling / docs drift discovered: Task 001's receipt dependency enum did not include retargeted motion, skeleton mapping, or render metadata; those explicit dependency kinds were added to the candidate receipt schema.
+- Follow-up: `fixed-in-scope`
+- What worked: Candidate-only validation preserved the production timing gate; the pure contract tests and 24 repeated sample renders provide machine-checkable evidence.

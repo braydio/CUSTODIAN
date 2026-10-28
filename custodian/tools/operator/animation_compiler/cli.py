@@ -353,7 +353,7 @@ def _validate_root_policy(animation: dict[str, Any], index: int, errors: list[di
 
 
 def _validate_batch(manifest: dict[str, Any], asset_root: Path, repo_root: Path,
-                    *, allow_test_fixtures: bool = False) -> dict[str, Any]:
+                    *, allow_test_fixtures: bool = False, candidate_only: bool = False) -> dict[str, Any]:
     errors = _schema_report(manifest)
     if errors:
         return {"valid": False, "errors": errors, "warnings": [], "dependencies": []}
@@ -459,7 +459,8 @@ def _validate_batch(manifest: dict[str, Any], asset_root: Path, repo_root: Path,
         if runtime["status"] != "approved":
             if any(runtime.get(field) is not None for field in ("authority_id", "authority_path", "authority_sha256", "fps", "loop")):
                 errors.append({"code": "RUNTIME_TIMING_AVAILABILITY_MISMATCH", "path": f"$.animations[{i}].runtime_timing_authority", "message": "unavailable runtime authority must not contain inferred timing values"})
-            errors.append({"code": "RUNTIME_TIMING_AUTHORITY_MISSING", "path": f"$.animations[{i}].runtime_timing_authority", "message": "FBX timing is not runtime timing; an explicit authority record is required to validate for production use"})
+            if not candidate_only:
+                errors.append({"code": "RUNTIME_TIMING_AUTHORITY_MISSING", "path": f"$.animations[{i}].runtime_timing_authority", "message": "FBX timing is not runtime timing; an explicit authority record is required to validate for production use"})
         elif (not runtime["authority_id"] or not runtime["authority_path"] or not runtime["authority_sha256"] or runtime["fps"] is None or runtime["fps"] <= 0 or runtime["loop"] is None):
             errors.append({"code": "RUNTIME_TIMING_AUTHORITY_INVALID", "path": f"$.animations[{i}].runtime_timing_authority", "message": "approved runtime timing must bind an authority ID/path/hash, FPS and loop choice"})
         else:
@@ -520,8 +521,8 @@ def _sample_count(animation: dict[str, Any]) -> int | None:
 
 
 def _build_plan(manifest: dict[str, Any], manifest_path: Path, asset_root: Path,
-                repo_root: Path) -> dict[str, Any]:
-    report = _validate_batch(manifest, asset_root, repo_root)
+                repo_root: Path, *, candidate_only: bool = False) -> dict[str, Any]:
+    report = _validate_batch(manifest, asset_root, repo_root, candidate_only=candidate_only)
     manifest_sha = digest_file(manifest_path)
     jobs = []
     total_frames = 0
@@ -604,7 +605,7 @@ def command_validate(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     manifest, errors = _load_manifest(manifest_path)
     if errors:
         return ({"schema": "custodian.operator_3d_animation_validation.v1", "command": "validate", "valid": False, "errors": errors, "warnings": [], "dependencies": []}, EXIT_INVALID)
-    report = _validate_batch(manifest, Path(args.asset_root or manifest_path.parent), Path(args.repo_root or REPO_ROOT))
+    report = _validate_batch(manifest, Path(args.asset_root or manifest_path.parent), Path(args.repo_root or REPO_ROOT), candidate_only=getattr(args, "candidate_only", False))
     return ({"schema": "custodian.operator_3d_animation_validation.v1", "command": "validate", **report}, EXIT_OK if report["valid"] else EXIT_INVALID)
 
 
@@ -613,7 +614,7 @@ def command_plan(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     manifest, errors = _load_manifest(manifest_path)
     if errors:
         return ({"schema": "custodian.operator_3d_animation_plan.v1", "command": "plan", "valid": False, "errors": errors}, EXIT_INVALID)
-    plan = _build_plan(manifest, manifest_path, Path(args.asset_root or manifest_path.parent), Path(args.repo_root or REPO_ROOT))
+    plan = _build_plan(manifest, manifest_path, Path(args.asset_root or manifest_path.parent), Path(args.repo_root or REPO_ROOT), candidate_only=getattr(args, "candidate_only", False))
     plan_errors = schema_findings(plan, PLAN_SCHEMA)
     if plan_errors:
         return ({"schema": "custodian.operator_3d_animation_plan.v1", "command": "plan", "valid": False, "errors": plan_errors}, EXIT_IO)
@@ -621,12 +622,12 @@ def command_plan(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
 
 def _check_candidate_receipt(receipt: dict[str, Any], manifest: dict[str, Any], manifest_path: Path,
-                             asset_root: Path, repo_root: Path) -> tuple[dict[str, Any], int]:
+                             asset_root: Path, repo_root: Path, *, candidate_only: bool = False) -> tuple[dict[str, Any], int]:
     findings = schema_findings(receipt, RECEIPT_SCHEMA)
     if findings:
         return ({"schema": "custodian.operator_3d_animation_check.v1", "command": "check", "stale": True,
                  "errors": findings}, EXIT_INVALID)
-    current = _build_plan(manifest, manifest_path, asset_root, repo_root)
+    current = _build_plan(manifest, manifest_path, asset_root, repo_root, candidate_only=candidate_only)
     changes: list[dict[str, str]] = []
 
     def changed(code: str, path: str, message: str) -> None:
@@ -751,11 +752,11 @@ def command_check(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     asset_root = Path(args.asset_root or manifest_path.parent)
     repo_root = Path(args.repo_root or REPO_ROOT)
     if artifact_schema == "custodian.operator_3d_animation_candidate_receipt.v1":
-        return _check_candidate_receipt(old_plan, manifest, manifest_path, asset_root, repo_root)
+        return _check_candidate_receipt(old_plan, manifest, manifest_path, asset_root, repo_root, candidate_only=getattr(args, "candidate_only", False))
     if schema_findings(old_plan, PLAN_SCHEMA):
         return ({"schema": "custodian.operator_3d_animation_check.v1", "command": "check", "stale": True,
                  "errors": [{"code": "PLAN_FORMAT_INVALID", "path": str(plan_path), "message": "input is not a supported animation plan"}]}, EXIT_INVALID)
-    current = _build_plan(manifest, manifest_path, asset_root, repo_root)
+    current = _build_plan(manifest, manifest_path, asset_root, repo_root, candidate_only=getattr(args, "candidate_only", False))
     stale = canonical_bytes(old_plan) != canonical_bytes(current)
     changes = []
     if old_plan.get("input_manifest_sha256") != current["input_manifest_sha256"]:
@@ -789,12 +790,14 @@ def build_parser() -> argparse.ArgumentParser:
         child.add_argument("manifest", type=Path)
         child.add_argument("--asset-root", type=Path, help="authorized root for external FBX/master dependencies (defaults to manifest directory)")
         child.add_argument("--repo-root", type=Path, help=argparse.SUPPRESS)
+        child.add_argument("--candidate-only", action="store_true", help="allow unavailable runtime timing authority for an unapproved candidate; never supplies timing values")
         child.set_defaults(run=command_plan if name == "plan" else command_validate)
     check = sub.add_parser("check")
     check.add_argument("artifact", type=Path, help="saved plan or candidate receipt JSON")
     check.add_argument("manifest", type=Path)
     check.add_argument("--asset-root", type=Path)
     check.add_argument("--repo-root", type=Path, help=argparse.SUPPRESS)
+    check.add_argument("--candidate-only", action="store_true", help="check an unapproved candidate without runtime timing authority")
     check.set_defaults(run=command_check)
     return parser
 
