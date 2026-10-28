@@ -8,6 +8,7 @@ import hashlib
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,6 +18,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
+import paired_review_finish_index_pass_recovery as finish_index_recovery
 import paired_review_host_validation as host_validation
 from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
@@ -105,6 +107,209 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_finish_index_recovery_authenticates_original_five_message_pass(self):
+        messages = ["progress: reconstructing", "progress: checking evidence",
+                    "progress: running focused tests", "progress: findings-first review"]
+        final = (f"Workstream: {finish_index_recovery.WORKSTREAM}\n\n"
+                 "**Passed:** I found no blocking defects or material acceptance gaps.")
+        summary = ("## Findings first\nNo blocking defects or material acceptance gaps.\n"
+                   "## Evidence and verification\n"
+                   f"{finish_index_recovery.REVIEWED_MAIN}\n{finish_index_recovery.IMPLEMENTATION}\n"
+                   "## Review disposition\n- Status: `passed`\n"
+                   "- Blocking defects: `0`\n- Material gaps: `0`\n")
+        with tempfile.TemporaryDirectory() as temp:
+            run = Path(temp)
+            events = [{"item": {"type": "agent_message", "text": message}} for message in messages]
+            events.append({"item": {"type": "agent_message", "text": final}})
+            events.append({"type": "turn.completed"})
+            (run / "last-message.txt").write_text(final)
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            metadata = {"phase": "codex_exited", "fresh": True, "exit_code": 0,
+                        "run_id": finish_index_recovery.RUN_ID,
+                        "workstream": finish_index_recovery.WORKSTREAM}
+            captured, outcome = finish_index_recovery._parse_session(run, summary, metadata)
+            self.assertEqual(captured, final)
+            self.assertEqual(outcome["Reviewer provenance"], "different-agent")
+
+            events[1] = {"item": {"type": "agent_message", "text": "Verdict: findings"}}
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "earlier reviewer message"):
+                finish_index_recovery._parse_session(run, summary, metadata)
+
+            events[1] = {"item": {"type": "agent_message", "text": messages[1]}}
+            events.append({"type": "turn.completed"})
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "one completed turn"):
+                finish_index_recovery._parse_session(run, summary, metadata)
+
+    def test_missing_archived_review_is_recoverable_before_target_receipt_write(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            target = repo / "target.md"
+            baseline = "# Target\n\n- Workstream: `sample-impl`\n"
+            target.write_text(baseline)
+            subprocess.run(["git", "add", "target.md"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            report = repo / "validation.json"
+            report.write_text("{}")
+            with (patch.object(runner, "verify_coordinator_validation"),
+                  patch.object(runner, "validation_report_is_green", return_value=True),
+                  patch.object(runner, "landed_review_state", return_value={"complete": False}),
+                  patch.object(runner, "_changed_paths", return_value=[]),
+                  patch.object(runner, "resolve_target_implementation_commit", return_value=("b" * 40, None))):
+                with self.assertRaisesRegex(runner.RunnerError, "archived review packet is missing"):
+                    runner.coordinator_finish_review(
+                        repo, "review-sample", repo, "custodian/docs/active.md", "sample-impl",
+                        "target.md", baseline, None, "a" * 40, repo / "run", {
+                            "implementation_commit": "b" * 40,
+                            "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                        })
+            self.assertEqual(target.read_text(), baseline)
+
+    def test_missing_archive_blocks_even_when_target_receipt_is_already_present(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            target = repo / "target.md"
+            baseline = "# Target\n\n- Workstream: `sample-impl`\n"
+            target.write_text(baseline)
+            subprocess.run(["git", "add", "target.md"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main="a" * 40, implementation_commit="b" * 40,
+                provenance="different-agent", run_id="20261024T074548Z-1c9611762049",
+                review_cycle=0, ids=(),
+            )
+            outcome, _ = runner.review_outcome.parse_review_outcome(outcome_text)
+            target_text = baseline + "\n## Independent Review\n\n" + render_review_receipt(outcome)
+            target.write_text(target_text)
+            report = repo / "validation.json"
+            report.write_text("{}")
+            with (patch.object(runner, "verify_coordinator_validation"),
+                  patch.object(runner, "validation_report_is_green", return_value=True),
+                  patch.object(runner, "landed_review_state", return_value={"complete": False}),
+                  patch.object(runner, "_changed_paths", return_value=[]),
+                  patch.object(runner, "resolve_target_implementation_commit", return_value=("b" * 40, None))):
+                with self.assertRaisesRegex(runner.RunnerError, "archived review packet is missing"):
+                    runner.coordinator_finish_review(
+                        repo, "review-sample", repo, "custodian/docs/active.md", "sample-impl",
+                        "target.md", baseline, None, "a" * 40, repo / "run", {
+                            "implementation_commit": "b" * 40,
+                            "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                        })
+            self.assertEqual(target.read_text(), target_text)
+
+    def test_finish_index_recovery_archives_metadata_and_preserves_review_evidence(self):
+        active = ("# Review\n- Status: `ready`\n- Review: `none`\n"
+                  "- Workstream: `review-workstream-finish-index-conflict-recovery-v1`\n\n"
+                  "## Independent Review\n\n### Review Receipt: review-workstream-finish-index-conflict-recovery-v1\n"
+                  "- Status: `passed`\n\n## Findings\nOriginal finding-free review evidence.\n")
+        archived = finish_index_recovery._archived_packet_text(active)
+        self.assertIn("- Status: `complete`", archived.split("## Independent Review", 1)[0])
+        self.assertIn("- Review: `passed`", archived.split("## Independent Review", 1)[0])
+        self.assertIn("### Review Receipt: review-workstream-finish-index-conflict-recovery-v1", archived)
+        self.assertIn("## Findings\nOriginal finding-free review evidence.", archived)
+        parsed, error = runner.review_outcome.parse_review_outcome(archived)
+        self.assertIsNone(error)
+        self.assertEqual(parsed["Outcome"], "passed")
+
+    def test_finish_index_recovery_disposable_packet_tree_closeout_is_exactly_once(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            packets = repo / runner.PACKET_ROOT
+            shutil.copytree(ROOT / runner.PACKET_ROOT, packets, symlinks=True)
+            active_path = repo / finish_index_recovery.ACTIVE
+            archived_path = repo / finish_index_recovery.ARCHIVED
+            archived_path.unlink(missing_ok=True)
+            active_text = active_path.read_text()
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream=finish_index_recovery.WORKSTREAM,
+                target_workstream=finish_index_recovery.TARGET,
+                reviewed_main=finish_index_recovery.REVIEWED_MAIN,
+                implementation_commit=finish_index_recovery.IMPLEMENTATION,
+                provenance="different-agent", run_id=finish_index_recovery.RUN_ID,
+                review_cycle=0, ids=(),
+            )
+            outcome, error = runner.review_outcome.parse_review_outcome(outcome_text)
+            self.assertIsNone(error)
+            active_text += ("\n\n## Independent Review\n\n" + render_review_receipt(outcome))
+            active_path.write_text(active_text)
+            target_baseline = runner._show_at(
+                ROOT, finish_index_recovery.REVIEWED_MAIN, finish_index_recovery.TARGET_PACKET)
+            target_path = repo / finish_index_recovery.TARGET_PACKET
+            target_path.write_text(target_baseline)
+            summary_text = (
+                "# Independent review\n\n## Findings first\nNo blocking defects or material gaps.\n\n"
+                "## Evidence and verification\nPinned review evidence.\n\n"
+                "## Review disposition\nStatus: passed\nBlocking defects: 0\nMaterial gaps: 0\n\n"
+                f"Authoring chat: {finish_index_recovery.AUTHORING_CHAT}\n"
+            )
+            (repo / finish_index_recovery.SUMMARY).write_text(summary_text)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "add", "custodian/docs/ai_context/task_packets",
+                            finish_index_recovery.SUMMARY], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "fixture baseline"], cwd=repo, check=True)
+            archived_text = finish_index_recovery._archived_packet_text(active_text)
+            target_after = target_baseline + "\n## Independent Review\n\n" + render_review_receipt(outcome)
+            summary_after = finish_index_recovery._summary_handoff(summary_text)
+            expected = {
+                finish_index_recovery.ARCHIVED: finish_index_recovery._sha(archived_text.encode()),
+                finish_index_recovery.TARGET_PACKET: finish_index_recovery._sha(target_after.encode()),
+                finish_index_recovery.SUMMARY: finish_index_recovery._sha(summary_after.encode()),
+                f"{runner.PACKET_ROOT}/README.md": finish_index_recovery._intended_index_sha(
+                    repo, archived_text, target_after),
+            }
+            result = finish_index_recovery._prepare_artifacts(
+                repo, active_text, summary_text, target_baseline, outcome, expected)
+            self.assertEqual(result, expected)
+            changed = set(subprocess.run(
+                ["git", "diff", "--name-only", "HEAD"], cwd=repo, text=True,
+                capture_output=True, check=True).stdout.splitlines())
+            changed.update(subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"], cwd=repo,
+                text=True, capture_output=True, check=True).stdout.splitlines())
+            self.assertEqual(changed, {
+                finish_index_recovery.ACTIVE, finish_index_recovery.ARCHIVED,
+                finish_index_recovery.TARGET_PACKET, finish_index_recovery.SUMMARY,
+                f"{runner.PACKET_ROOT}/README.md",
+            })
+            self.assertFalse(active_path.exists())
+            self.assertEqual(finish_index_recovery._sha(archived_path.read_bytes()), expected[finish_index_recovery.ARCHIVED])
+            archived = archived_path.read_text()
+            parsed, parse_error = runner.review_outcome.parse_review_outcome(archived)
+            self.assertIsNone(parse_error)
+            self.assertEqual(parsed["Outcome"], "passed")
+            _, receipt_error = verify_review_receipt_delta(
+                target_baseline, target_path.read_text(),
+                review_workstream=finish_index_recovery.WORKSTREAM,
+                target_workstream=finish_index_recovery.TARGET,
+                reviewed_main=finish_index_recovery.REVIEWED_MAIN,
+                target_implementation_commit=finish_index_recovery.IMPLEMENTATION)
+            self.assertIsNone(receipt_error)
+            with self.assertRaisesRegex(runner.RunnerError, "active or archived reviewer packet changed"):
+                finish_index_recovery._prepare_artifacts(
+                    repo, active_text, summary_text, target_baseline, outcome, expected)
+
+    def test_finish_index_recovery_stale_plan_digest_has_no_apply_effect(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            marker = repo / "marker"
+            marker.write_text("safe\n")
+            subprocess.run(["git", "add", "marker"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            with patch.object(finish_index_recovery, "plan", return_value={"plan_sha256": "a" * 64}):
+                with self.assertRaisesRegex(runner.RunnerError, "changed; obtain a fresh plan"):
+                    finish_index_recovery.apply(repo, "b" * 64)
+            self.assertEqual(marker.read_text(), "safe\n")
+            self.assertFalse((repo / "custodian-review-recoveries").exists())
+
     def test_readonly_plan_remote_ref_authentication_preserves_git_metadata(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

@@ -900,6 +900,8 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         reviewed_main=reviewed_main,
         target_implementation_commit=implementation_commit,
     )
+    if not (worktree / archive_path).is_file():
+        raise RunnerError("archived review packet is missing; coordinator closeout is recoverable")
     if receipt_error:
         archive_text = (worktree / archive_path).read_text(encoding="utf-8")
         run_metadata_path = Path(host_evidence.get("continuation_dir", run_dir)) / "metadata.json"
@@ -5180,6 +5182,9 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "recover-finish-index-codex-exited-pass":
+        from paired_review_finish_index_pass_recovery import main as recovery_main
+        return recovery_main(argv[1:])
     if argv and argv[0] == "recover-procession-pass-closeout":
         return _procession_pass_closeout_recovery_main(argv[1:])
     if argv and argv[0] == "recover-closeout":

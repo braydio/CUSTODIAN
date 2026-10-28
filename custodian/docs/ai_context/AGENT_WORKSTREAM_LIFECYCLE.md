@@ -872,6 +872,46 @@ interruption remain preserved. An incomplete continuation-02 cannot launch
 again; a completed PASS may retry coordinator verification/closeout without a
 second reviewer. No other run or phase is covered by this exception.
 
+### Exact recovery of the stranded finish-index reviewer PASS
+
+One coordinator-only PASS recovery is bound to
+`review-workstream-finish-index-conflict-recovery-v1`, paired-review run
+`20261027T113425Z-50d9c7adf7a0`, and its distinct dispatcher claim run
+`20261027T113443Z-6f08c7ced9a2`. It exists only for the preserved fresh reviewer
+session whose final message says Passed but whose runner stopped before writing
+the canonical archived outcome and target receipt. It does not change
+`_verified_reviewer_pass`, resume the reviewer, or authorize another
+`codex_exited` identity.
+
+After the exact recovery implementation has landed and passed its independent
+review, first inspect the plan from a clean coordination checkout:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-finish-index-codex-exited-pass \
+  review-workstream-finish-index-conflict-recovery-v1 \
+  --run-id 20261027T113425Z-50d9c7adf7a0 --plan
+```
+
+The read-only plan verifies the immutable original run manifest, the distinct
+claim receipt, exact reviewer worktree and branch tip, local process and
+supervisor-lock state, the single completed turn and captured final message,
+the findings-first reviewer summary and prewritten receipt, the pinned target,
+and complete green host validation. It also reports SHA-256 values for every
+intended archive, receipt, summary, and managed-index result. The plan does not
+fetch or update Git refs and does not write `FETCH_HEAD`. Stop on any changed or
+ambiguous evidence. Only the project owner may authorize apply, using the
+`--apply --plan-sha256 <exact-plan-digest>` form; apply rechecks the plan while
+holding the original review lock, preserves the dirty reviewer-authored files
+byte-for-byte, journals before changing them, and delegates publication to the
+original review's normal `workstream.py finish` lifecycle. A partial journal is
+preserved and fails closed; do not replay it or edit the original run evidence.
+
+The ordinary review coordinator checks for the canonical archived packet before
+attempting receipt recovery. A missing archive is surfaced as a recoverable
+`RunnerError` before any target receipt write, rather than escaping as an
+unclassified filesystem exception.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure
@@ -994,3 +1034,29 @@ agent refs.
 
 Never force-push, reset user work, or stash automatically. Branches are active
 work queues; tags retain unique retired history.
+
+
+### Opportunistic retirement of finished transient worktrees (2026-10-28)
+
+Normal `workstream.py finish` still owns branch teardown. On each successful
+`workstream.py start` and completed `finish`, a best-effort scan now retires
+up to four *other* checkouts only when `origin/main` has their exact archived
+`Status: complete` packet, their HEAD is reachable from fetched main, their
+local/remote HEADs agree, they have no live dispatch claim, no active packet,
+no tracked/untracked/ignored content, no Git worktree lock and no visible
+same-user process holding their cwd or open files. Reclamation is limited to
+canonical `.custodian-worktrees/<id>-<run-id>` paths, takes the existing
+per-workstream nonblocking mutex, and uses non-force `git worktree remove`.
+No local/remote branch, claim, reviewer receipt, run evidence or packet is
+deleted or treated as accepted by this scan.
+
+`python3 custodian/tools/agent/transient_worktree_gc.py --repo .` previews
+eligible checkouts without mutation; `python3 custodian/tools/agent/workstream.py
+gc --reap-finished` fetches and applies the same conservative sweep (up to
+32 checkouts). The historical `workstream.py gc` remains report-only without
+that flag. Ambiguous, active, detached, dirty, ignored-content, unique,
+unreviewed or incomplete checkouts require their original recovery/ownership
+flow; the janitor never marks them abandoned or overrides the W1-W4 ledger.
+The process liveness test is Linux-specific; on unsupported hosts it skips
+retirement. Publishing this patch on GitHub does not execute housekeeping on
+the local Arch host until a local workstream command runs.

@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-2-5d-source-strip-evidence-availability-correction-v1`
 - Authoring handoff: auto
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P1
 - Depends on: operator-2-5d-cohort-dependency-closure-review-corrections-1
@@ -34,12 +34,41 @@
 - Task overrides: none
 - Deferred: Physical recovery of historical source strips and any 2.5D cohort planning remain outside this correction.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Evidence: The producer now reports source-strip evidence as `VERIFIED`, `HASH_MISMATCH`, `UNAVAILABLE`, or `UNRECORDED`, with hash-match status remaining false unless the file bytes match the recorded correction hash. The live configured authoring workspace is readable and reports eight unavailable historical strips, zero verified strips, zero effective review receipts, seven candidate families / 56 directions, no timing authority, and `NOT_RELEASE_ELIGIBLE`. The focused smoke passes and exercises matching, tampered, missing, and unrecorded inputs.
+- Validation: Direct source-strip smoke passed; focused runner passed 1/1; `test_workstream` passed 69 tests; canonical changed-file validation passed 7/7 with complete ownership coverage and zero uncovered, skipped, or failed tests; archive-transition preflight passed against the preserved Git history; Python compilation and `git diff --check` passed.
+- Protected surfaces: No source strips were restored or generated. Runtime assets, timing authority, review receipts, candidate scope, release policy, and F3/Alpine worktrees were unchanged.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The source evidence smoke passed, but closeout then stopped because archive verification rejected a bounded summary correction and README-only synchronization conflict resolutions.
+- Root cause / contributing factors: The verifier treated incidental administrative ordering as an acceptance condition and checked a deleted file in the wrong tree.
+- Prevention / pipeline improvement: The verifier now validates Git parent/tree/blob identity, permits the exact legacy-summary rename, accepts managed-index conflict resolutions only when archived packet identity and all non-README tree entries are preserved, and reports the failed predicate for rejected histories.
+- Tooling / docs drift discovered: Repeated managed-index-only synchronization after archive completion was not covered by the generic archive-history contract.
+- Follow-up: review-operator-2-5d-source-strip-evidence-availability-correction-v1
+- What worked: Canonical changed-file validation selected only the registered closure smoke and covered both changed paths completely.
+
+## Independent Review
+
+- Status: pending
+- Review workstream: `review-operator-2-5d-source-strip-evidence-availability-correction-v1`
+- Review packet: `custodian/docs/ai_context/task_packets/REVIEW_OPERATOR_2_5D_SOURCE_STRIP_EVIDENCE_AVAILABILITY_CORRECTION.md`
+
 ## Next Handoff
-- Next workstream: none
-- Next packet state: none
+
+- Next workstream: review-operator-2-5d-source-strip-evidence-availability-correction-v1
+- Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: Return to the already-claimed F3 and Alpine workstreams after this correction and its paired review complete.
+- Next action: Run the fresh-context paired review after this implementation is archived complete.
 - Blockers or open questions: none
