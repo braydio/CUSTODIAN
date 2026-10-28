@@ -12,11 +12,13 @@ The configured authoring workspace was available and contained eight unavailable
 
 - Direct `python3 custodian/tools/validation/operator_2_5d_cohort_dependency_closure_smoke.py`: PASS.
 - `python3 custodian/tools/validation/run_validation.py --test operator_2_5d_cohort_dependency_closure --json`: PASS, 1/1.
-- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`: PASS, 1/1; both changed paths covered, no uncovered paths, no skips.
+- `python3 -m unittest custodian.tools.agent.test_workstream`: PASS, 69 tests, including archive-history continuation and legacy-summary correction.
+- `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json`: PASS, 7/7; complete ownership coverage, no uncovered paths, no skips or failures.
+- Archive preflight accepted the preserved transition `ab4071ba` through branch `f63924e2`; sync merge parents, archived packet blob identity, README-only managed-block conflict resolutions, and generated index integrity were verified.
 - Python compilation and `git diff --check`: PASS.
 - Negative controls: matching bytes verified; changed bytes classified `HASH_MISMATCH`; missing path classified `UNAVAILABLE`; absent path authority classified `UNRECORDED`. Only the first can be verified.
 
-No missing art was generated or restored. Runtime assets, timing authority, review receipts, F3, and Alpine were not changed.
+The checkpoint `2eeb1eb1` remains an ancestor of the published branch; synchronization used a normal non-forcing push. No missing art was generated or restored. Runtime assets, timing authority, review receipts, F3, and Alpine were not changed.
 
 Authoring chat: not-recorded
 
@@ -24,13 +26,13 @@ Authoring chat: not-recorded
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: success
-- Friction severity: low
-- What went wrong: The prior smoke failed whenever source-strip bytes were unavailable, even though the producer already represented that state.
-- Root cause / contributing factors: An unconditional hash assertion conflated unavailable files with present files whose bytes fail verification.
-- Prevention / pipeline improvement: Added explicit evidence-state reporting and deterministic positive/negative controls for verified, mismatched, unavailable, and unrecorded inputs.
-- Tooling / docs drift discovered: none
+- Friction severity: medium
+- What went wrong: Closeout was stopped after the evidence smoke passed because the archive verifier rejected a bounded legacy-summary rename and later managed-index sync resolutions.
+- Root cause / contributing factors: The verifier treated administrative commit ordering as an independent condition and checked a deleted file in the wrong commit tree.
+- Prevention / pipeline improvement: The verifier now authenticates parent/tree/blob identities, permits the exact summary rename, validates conflict-free README managed-block resolutions against merge trees, and reports a failed predicate for rejected history.
+- Tooling / docs drift discovered: Repeated managed-index-only sync after archive completion was not represented by the generic history check.
 - Follow-up: review-operator-2-5d-source-strip-evidence-availability-correction-v1
-- What worked: The changed-file runner selected the single registered closure smoke and reported complete ownership coverage.
+- What worked: The changed-file runner selected seven focused checks with complete ownership coverage; the original checkpoint remained on its existing branch.
 
 ## Next Handoff
 

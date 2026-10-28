@@ -41,18 +41,18 @@
 - Completion boundary satisfied: yes
 - Acceptance satisfied: yes
 - Evidence: The producer now reports source-strip evidence as `VERIFIED`, `HASH_MISMATCH`, `UNAVAILABLE`, or `UNRECORDED`, with hash-match status remaining false unless the file bytes match the recorded correction hash. The live configured authoring workspace is readable and reports eight unavailable historical strips, zero verified strips, zero effective review receipts, seven candidate families / 56 directions, no timing authority, and `NOT_RELEASE_ELIGIBLE`. The focused smoke passes and exercises matching, tampered, missing, and unrecorded inputs.
-- Validation: Direct `operator_2_5d_cohort_dependency_closure_smoke.py` passed; `run_validation.py --test operator_2_5d_cohort_dependency_closure --json` passed 1/1; canonical `run_validation.py --changed --base origin/main --json` passed 1/1 with complete ownership coverage (2/2 changed files, zero uncovered, skipped, or failed tests); Python compilation and `git diff --check` passed.
+- Validation: Direct source-strip smoke passed; focused runner passed 1/1; `test_workstream` passed 69 tests; canonical changed-file validation passed 7/7 with complete ownership coverage and zero uncovered, skipped, or failed tests; archive-transition preflight passed against the preserved Git history; Python compilation and `git diff --check` passed.
 - Protected surfaces: No source strips were restored or generated. Runtime assets, timing authority, review receipts, candidate scope, release policy, and F3/Alpine worktrees were unchanged.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
 - Outcome: success
-- Friction severity: low
-- What went wrong: The prior smoke treated missing physical source files as hash failures despite the producer explicitly reporting them unavailable.
-- Root cause / contributing factors: Smoke asserted every historical source-strip hash matched without branching on the producer's availability state.
-- Prevention / pipeline improvement: The report now exposes a four-state source evidence classification; regression controls distinguish matching bytes, tampering, unavailable files, and unrecorded paths.
-- Tooling / docs drift discovered: none
+- Friction severity: medium
+- What went wrong: The source evidence smoke passed, but closeout then stopped because archive verification rejected a bounded summary correction and README-only synchronization conflict resolutions.
+- Root cause / contributing factors: The verifier treated incidental administrative ordering as an acceptance condition and checked a deleted file in the wrong tree.
+- Prevention / pipeline improvement: The verifier now validates Git parent/tree/blob identity, permits the exact legacy-summary rename, accepts managed-index conflict resolutions only when archived packet identity and all non-README tree entries are preserved, and reports the failed predicate for rejected histories.
+- Tooling / docs drift discovered: Repeated managed-index-only synchronization after archive completion was not covered by the generic archive-history contract.
 - Follow-up: review-operator-2-5d-source-strip-evidence-availability-correction-v1
 - What worked: Canonical changed-file validation selected only the registered closure smoke and covered both changed paths completely.
 

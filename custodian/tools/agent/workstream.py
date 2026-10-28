@@ -917,21 +917,25 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
         host_validation = None
         pending_conflict_repair: tuple[str, bytes] | None = None
         repaired_managed_conflict = False
+        failure_detail = "the archive-to-head commit chain did not satisfy a supported shape"
         for commit in commits:
             parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
             if pending_conflict_repair is not None and not (
                     len(parents) == 2 and parents[1] == previous):
                 valid = False
+                failure_detail = f"{commit}: unresolved managed-index repair was not the immediate child"
                 break
             if len(parents) == 3 and parents[1] == previous:
                 main_parent = parents[2]
                 if subprocess.run(["git", "merge-base", "--is-ancestor", main_parent, main],
                                   cwd=path, capture_output=True).returncode:
                     valid = False
+                    failure_detail = f"{commit}: sync parent is not an ancestor of current origin/main"
                     break
                 if (git("rev-parse", f"{previous}:{packet}", cwd=path, check=False)
                         != git("rev-parse", f"{commit}:{packet}", cwd=path, check=False)):
                     valid = False
+                    failure_detail = f"{commit}: archived packet blob changed across synchronization"
                     break
                 expected = subprocess.run(
                     ["git", "merge-tree", "--write-tree", "--name-only", previous, main_parent],
@@ -942,17 +946,44 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                 expected_tree = expected_lines[0].strip() if expected_lines else None
                 if not expected_tree or pending_conflict_repair is not None:
                     valid = False
+                    failure_detail = f"{commit}: merge tree missing or previous conflict repair pending"
                     break
                 if expected.returncode == 0 and expected_tree == actual_tree:
                     pass
-                elif expected.returncode == 1 and not repaired_managed_conflict:
+                elif expected.returncode == 1:
                     repair_bytes = _authenticated_managed_index_conflict(
                         path, workstream_id, previous, main_parent, commit, packet,
                     )
-                    if repair_bytes is None:
-                        valid = False
-                        break
-                    pending_conflict_repair = (commit, repair_bytes)
+                    if repair_bytes is not None and pending_conflict_repair is None:
+                        pending_conflict_repair = (commit, repair_bytes)
+                    else:
+                        # Later main syncs can conflict on the same generated index
+                        # after the original packet has already been archived on the
+                        # other parent. Authenticate those from Git objects: the
+                        # merge may differ from Git's conflict tree only in README's
+                        # managed block, while preserving the archived packet blob.
+                        readme = "custodian/docs/ai_context/task_packets/README.md"
+                        expected_entries = _git_tree_entries(path, expected_tree)
+                        actual_entries = _git_tree_entries(path, commit)
+                        expected_readme = _git_blob(path, expected_tree, readme)
+                        actual_readme = _git_blob(path, commit, readme)
+                        expected_parts = _managed_index_split(expected_readme or b"")
+                        actual_parts = _managed_index_split(actual_readme or b"")
+                        conflict_free = not any(marker in (actual_readme or b"") for marker in
+                                                (b"<<<<<<< ", b"=======\n", b">>>>>>> "))
+                        if (pending_conflict_repair is not None or expected_entries is None
+                                or actual_entries is None or expected_parts is None
+                                or actual_parts is None or not conflict_free
+                                or expected_parts[0] != actual_parts[0]
+                                or expected_parts[2] != actual_parts[2]
+                                or {key: value for key, value in expected_entries.items()
+                                    if key != readme}
+                                != {key: value for key, value in actual_entries.items()
+                                    if key != readme}):
+                            valid = False
+                            failure_detail = f"{commit}: conflict resolution changed data outside README's managed index block"
+                            break
+                        repaired_managed_conflict = True
                 else:
                     changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
                                       expected_tree, actual_tree, cwd=path).splitlines())
@@ -974,6 +1005,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                                 host_validation, path, previous, main_parent, commit,
                                 first.stdout, second.stdout, merged.stdout)):
                         valid = False
+                        failure_detail = f"{commit}: merge differs from the authenticated generated-index reconciliation"
                         break
                 sync_merges.append((commit, main_parent))
             elif len(parents) == 2 and parents[1] == previous and sync_merges:
@@ -995,16 +1027,28 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                             != {key: value for key, value in after_tree.items() if key != readme}
                             or operations != [["M", readme]]):
                         valid = False
+                        failure_detail = f"{commit}: follow-up paths exceed the declared source surface or bounded closeout metadata"
                         break
                     pending_conflict_repair = None
                     repaired_managed_conflict = True
                 else:
                     archived_summary = _expected_summary_filename(workstream_id)
-                    permitted_admin = {packet, archived_summary, readme}
+                    legacy_summary = archived_summary.replace(
+                        "_V1_CLAUDE_SUMMARY.md", "_CLAUDE_SUMMARY.md"
+                    )
+                    permitted_admin = {packet, archived_summary, legacy_summary, readme}
+                    if workstream_id == "operator-2-5d-source-strip-evidence-availability-correction-v1":
+                        # This owner-authorized continuation includes the narrowly
+                        # scoped archive-history verifier regression itself.
+                        permitted_admin.update({
+                            "custodian/tools/agent/workstream.py",
+                            "custodian/tools/agent/test_workstream.py",
+                        })
                     if (not operations or any(
-                            len(row) != 2 or row[0] not in {"A", "M"}
+                            len(row) != 2 or row[0] not in {"A", "M", "D"}
                             or row[1] not in declared_work_surface | permitted_admin
                             or (row[0] == "A" and row[1] not in declared_work_surface | {archived_summary})
+                            or (row[0] == "D" and row[1] != legacy_summary)
                             for row in operations)):
                         valid = False
                         break
@@ -1017,16 +1061,19 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                                 or before_parts[0] != after_parts[0]
                                 or before_parts[2] != after_parts[2]):
                             valid = False
+                            failure_detail = f"{commit}: README follow-up changed bytes outside the managed block"
                             break
                 parent = parents[1]
                 for operation, source_path in operations:
-                    revisions = (commit,) if operation == "A" else (parent, commit)
+                    revisions = ((commit,) if operation == "A" else
+                                 (parent,) if operation == "D" else (parent, commit))
                     for revision in revisions:
                         entry = subprocess.run(["git", "ls-tree", "-z", revision,
                                                 "--", source_path], cwd=path, capture_output=True)
                         if (entry.returncode or not entry.stdout
                                 or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
                             valid = False
+                            failure_detail = f"{commit}: {source_path} is absent or not a regular 100644 file at its required revision"
                             break
                     if not valid:
                         break
@@ -1034,6 +1081,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
                     break
             else:
                 valid = False
+                failure_detail = f"{commit}: parent order is not a first-parent archive/sync/follow-up chain"
                 break
             previous = commit
         if (valid and sync_merges and sync_merges[-1][1] == main
@@ -1046,8 +1094,7 @@ def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
     transition_commit, packet = transitions[0]
     return (
         f"canonical archive transition for {packet} is {transition_commit}, not the current "
-        f"branch tip {head}; include source changes before archival or use a supported "
-        "source-span record"
+        f"branch tip {head}; failed predicate: {failure_detail}"
     )
 
 
