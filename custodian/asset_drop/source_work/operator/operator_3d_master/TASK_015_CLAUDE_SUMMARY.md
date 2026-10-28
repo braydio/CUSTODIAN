@@ -54,3 +54,16 @@ Worktree: `~/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-
 3. Finish the Phase 1 deliverables (foot skating, arm swing, annotated images, ledger JSON).
 4. Run the full 21 frames x 8 directions metric comparison (iter001 vs iter002). Then export a GLB, reimport it in a clean Blender, run the fast tests plus targeted replay, and publish the real renders to a new Dropbox run with hash verification. Mark `RUN_MOTION_NEEDS_REPAIR` unless the fragments are genuinely gone.
 5. Per the task and memory conventions: commit single-purpose changes, and remind the user to switch back to their original branch (this was a separate worktree).
+
+## Codex continuation — 2026-10-28
+
+- Preserved and resumed from the existing local WIP commit `a1eb44a9762c83b3bcf6fe594faae7cb9a5bb564` in a separate Codex worktree. The original worktree is unchanged. Fetch showed `origin/agent/operator-3d-master-modeling-proof-v1` still at `5e7f8c70346dd539dc0ef229700e40432ce6335c`; the WIP commit was not remotely visible at that point.
+- Independently recomputed the 21-frame >3× edge count: 17 unique edges, not approximately 40. The raw vertex trajectories and `stretch_edges_base.json` agree. The approximate count has no edge-ID ledger.
+- Reused the existing complete 128px/512px before-and-after renders and face-ID ledgers. Fragment pixels improved 31.4% at 128px and 34.2% at 512px, while affected 128px views rose 49→51. Residual left-hip cloth gap remains unresolved; no triangles were deleted.
+- Measured source versus target gait. Arm/forearm direction error is ≤0.00005°. Stance-width ratio and toe axes differ in rest pose; skating remains inconclusive from sparse moving contact samples. No arbitrary gait offsets were applied.
+- Exported and clean-reimported an animated iter002 GLB: 0.70s, 21 samples, maximum vertex delta 0.00228mm, loop seam 0.00187mm, 42 bones, 10,367 triangles, normalized weights, UV and 4096px textures retained.
+- Validation: 45 asset-pipeline tests including Blender integration; 10 review-publisher tests; both new scripts compile; baseline SHA256SUMS pass.
+- Retained Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter002-review-20261028/REVIEW_MANIFEST.json`.
+- Status remains `RUN_MOTION_NEEDS_REPAIR`. Human visual review is required before another subjective repair. No runtime changes, main merge, candidate approval, or freeze.
+
+See `rig_diagnostics/meshy-004_rigged/run_iter002/REPORT_task015_codex.md` for the detailed report.

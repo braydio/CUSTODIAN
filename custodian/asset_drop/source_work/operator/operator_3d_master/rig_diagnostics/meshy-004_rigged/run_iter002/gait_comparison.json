@@ -1,0 +1,1509 @@
+{
+  "schema": "custodian.operator_run_gait_comparison.v1",
+  "fps": 30,
+  "unique_frames": 21,
+  "source_action": "Armature|mixamo.com|Layer0",
+  "target_action": "operator_run_mixamo_iter001",
+  "rest_axes": {
+    "target": {
+      "hip_width_m": 0.24313578009605452,
+      "left_foot_axis_yaw_deg": -155.31552306060053,
+      "left_toe_axis_yaw_deg": -162.92359416409178,
+      "left_ankle_lateral_m": -0.22136284683599838,
+      "left_ankle_forward_m": 0.044486509107806035,
+      "left_ankle_z_m": 0.15276142954826355,
+      "left_upperarm_pitch_deg": -179.34899167855622,
+      "left_forearm_pitch_deg": -159.28416993855654,
+      "right_foot_axis_yaw_deg": 130.02191214252713,
+      "right_toe_axis_yaw_deg": 130.02192685191645,
+      "right_ankle_lateral_m": 0.22136279667959477,
+      "right_ankle_forward_m": 0.04448642075731291,
+      "right_ankle_z_m": 0.15276148915290833,
+      "right_upperarm_pitch_deg": 173.08847648659702,
+      "right_forearm_pitch_deg": -171.48745369781705,
+      "stance_width_over_hip_width": 1.8208987724500592
+    },
+    "source": {
+      "hip_width_m": 0.1641559898853302,
+      "left_foot_axis_yaw_deg": -179.9999960143497,
+      "left_toe_axis_yaw_deg": 180.0,
+      "left_ankle_lateral_m": -0.08207807689905167,
+      "left_ankle_forward_m": 0.04296993464231491,
+      "left_ankle_z_m": 0.08729560673236847,
+      "left_upperarm_pitch_deg": -90.0,
+      "left_forearm_pitch_deg": 90.0,
+      "right_foot_axis_yaw_deg": -179.99999601434902,
+      "right_toe_axis_yaw_deg": 180.0,
+      "right_ankle_lateral_m": 0.08207792043685913,
+      "right_ankle_forward_m": 0.04297146573662758,
+      "right_ankle_z_m": 0.0872938483953476,
+      "right_upperarm_pitch_deg": 90.0,
+      "right_forearm_pitch_deg": 90.0,
+      "stance_width_over_hip_width": 1.000000045387199
+    }
+  },
+  "summary": {
+    "target.stance_width_over_hip_width": {
+      "min": 1.307463943280828,
+      "max": 1.7689852724579396,
+      "mean": 1.5654251972088564
+    },
+    "target.left_foot_axis_yaw_deg": {
+      "min": -167.83974506334025,
+      "max": -21.35544750404113,
+      "mean": -108.58608143409414
+    },
+    "target.right_foot_axis_yaw_deg": {
+      "min": 10.103264094655412,
+      "max": 157.37234716015084,
+      "mean": 74.01205106681512
+    },
+    "target.left_toe_axis_yaw_deg": {
+      "min": -173.80418689518825,
+      "max": -77.53659712218563,
+      "mean": -147.3594916944025
+    },
+    "target.right_toe_axis_yaw_deg": {
+      "min": 81.11669282446003,
+      "max": 141.543688689958,
+      "mean": 119.22776931651507
+    },
+    "target.left_upperarm_pitch_deg": {
+      "min": 117.18720694808806,
+      "max": 171.3436739424182,
+      "mean": 140.5684190722207
+    },
+    "target.right_upperarm_pitch_deg": {
+      "min": 98.37253470277447,
+      "max": 177.75809147448396,
+      "mean": 134.83223390155575
+    },
+    "source.stance_width_over_hip_width": {
+      "min": 0.02716320817520153,
+      "max": 0.8886600923636615,
+      "mean": 0.5350268512431363
+    },
+    "source.left_foot_axis_yaw_deg": {
+      "min": -178.45617973562764,
+      "max": 178.22327723950934,
+      "mean": 49.9635212195531
+    },
+    "source.right_foot_axis_yaw_deg": {
+      "min": -179.71243275952858,
+      "max": 179.36216913451852,
+      "mean": 28.98345433746523
+    },
+    "source.left_toe_axis_yaw_deg": {
+      "min": -179.66503351067882,
+      "max": 176.56914123592045,
+      "mean": 44.07650768260097
+    },
+    "source.right_toe_axis_yaw_deg": {
+      "min": -178.10532939524384,
+      "max": 149.60921556236698,
+      "mean": -153.3478986401813
+    },
+    "source.left_upperarm_pitch_deg": {
+      "min": 117.18721026300075,
+      "max": 171.34365410903106,
+      "mean": 140.5684089565514
+    },
+    "source.right_upperarm_pitch_deg": {
+      "min": 98.3725354817616,
+      "max": 177.75807963788117,
+      "mean": 134.832219910584
+    },
+    "arm_direction_error.LeftArm_direction_error_deg": {
+      "max": 4.031764686889986e-05,
+      "mean": 2.659906110078036e-05
+    },
+    "arm_direction_error.LeftForeArm_direction_error_deg": {
+      "max": 4.030860602410207e-05,
+      "mean": 1.9274597172522826e-05
+    },
+    "arm_direction_error.RightArm_direction_error_deg": {
+      "max": 4.996582160528058e-05,
+      "mean": 2.096692767248536e-05
+    },
+    "arm_direction_error.RightForeArm_direction_error_deg": {
+      "max": 3.311057046181443e-05,
+      "mean": 1.4568699733257007e-05
+    }
+  },
+  "foot_contact_proxy_summary": {
+    "left": {
+      "contact_threshold_m": 0.04,
+      "contact_frames": 5,
+      "consecutive_pairs": 3,
+      "speed_mps_min_max_mean": [
+        1.3535898189099733,
+        4.051259215498947,
+        3.1314121889774444
+      ],
+      "proxy": "centroid of per-frame lowest 5mm of vertices dominated by foot/toe groups"
+    },
+    "right": {
+      "contact_threshold_m": 0.04,
+      "contact_frames": 2,
+      "consecutive_pairs": 1,
+      "speed_mps_min_max_mean": [
+        3.4947241061415752,
+        3.4947241061415752,
+        3.4947241061415752
+      ],
+      "proxy": "centroid of per-frame lowest 5mm of vertices dominated by foot/toe groups"
+    }
+  },
+  "frames": [
+    {
+      "frame": 1,
+      "time_s": 0.0,
+      "target": {
+        "hip_width_m": 0.24265064325066005,
+        "left_foot_axis_yaw_deg": -79.97561992603964,
+        "left_toe_axis_yaw_deg": -143.60452232562986,
+        "left_ankle_lateral_m": -0.17405738770526194,
+        "left_ankle_forward_m": 0.04909473726360415,
+        "left_ankle_z_m": 0.4262169897556305,
+        "left_upperarm_pitch_deg": 120.98951246803746,
+        "left_forearm_pitch_deg": -134.16619515925757,
+        "right_foot_axis_yaw_deg": 114.41330791031194,
+        "right_toe_axis_yaw_deg": 139.56558698475735,
+        "right_ankle_lateral_m": 0.19508639026078448,
+        "right_ankle_forward_m": 0.0906513228150232,
+        "right_ankle_z_m": 0.21652691066265106,
+        "right_upperarm_pitch_deg": 143.061140092299,
+        "right_forearm_pitch_deg": -130.93324147116175,
+        "stance_width_over_hip_width": 1.521297339338672
+      },
+      "source": {
+        "hip_width_m": 0.16382846082509014,
+        "left_foot_axis_yaw_deg": -78.99662216250599,
+        "left_toe_axis_yaw_deg": -171.51154100911373,
+        "left_ankle_lateral_m": -0.032017298104347884,
+        "left_ankle_forward_m": 0.17226817662794547,
+        "left_ankle_z_m": 0.3602202236652374,
+        "left_upperarm_pitch_deg": 120.98949542917873,
+        "left_forearm_pitch_deg": -134.1661930067301,
+        "right_foot_axis_yaw_deg": 178.4481860560868,
+        "right_toe_axis_yaw_deg": -170.4562620959479,
+        "right_ankle_lateral_m": 0.05082269929580367,
+        "right_ankle_forward_m": 0.1535350949147587,
+        "right_ankle_z_m": 0.10823110491037369,
+        "right_upperarm_pitch_deg": 143.06113502682774,
+        "right_forearm_pitch_deg": -130.9332430967862,
+        "stance_width_over_hip_width": 0.5056508312593797
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.654947772641942e-05,
+        "LeftForeArm_direction_error_deg": 1.935638736085189e-05,
+        "RightArm_direction_error_deg": 1.1581149199548762e-05,
+        "RightForeArm_direction_error_deg": 6.722620413208828e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.17783373594284058,
+          "ground_band_vertices": 7,
+          "lowest_band_xy_m": [
+            0.24857160449028015,
+            0.03776473551988602
+          ]
+        },
+        "right": {
+          "min_z_m": 0.04882945492863655,
+          "ground_band_vertices": 11,
+          "lowest_band_xy_m": [
+            -0.22937460243701935,
+            0.003114467952400446
+          ]
+        }
+      }
+    },
+    {
+      "frame": 2,
+      "time_s": 0.03333333333333333,
+      "target": {
+        "hip_width_m": 0.24288104900264354,
+        "left_foot_axis_yaw_deg": -127.55696767488143,
+        "left_toe_axis_yaw_deg": -147.34576358259724,
+        "left_ankle_lateral_m": -0.1846143355554009,
+        "left_ankle_forward_m": -0.048900463501831776,
+        "left_ankle_z_m": 0.3766017258167267,
+        "left_upperarm_pitch_deg": 118.79133492360974,
+        "left_forearm_pitch_deg": -142.88620862105086,
+        "right_foot_axis_yaw_deg": 101.53656584966019,
+        "right_toe_axis_yaw_deg": 141.543688689958,
+        "right_ankle_lateral_m": 0.19314090432551423,
+        "right_ankle_forward_m": 0.21995637346443167,
+        "right_ankle_z_m": 0.2238767296075821,
+        "right_upperarm_pitch_deg": 156.59462177910737,
+        "right_forearm_pitch_deg": -119.30877599047062,
+        "stance_width_over_hip_width": 1.5553096523261625
+      },
+      "source": {
+        "hip_width_m": 0.16398397659395036,
+        "left_foot_axis_yaw_deg": -176.96242484122342,
+        "left_toe_axis_yaw_deg": -167.5681211582807,
+        "left_ankle_lateral_m": -0.04174325503218246,
+        "left_ankle_forward_m": 0.01960810658095867,
+        "left_ankle_z_m": 0.2832624614238739,
+        "left_upperarm_pitch_deg": 118.79134331738138,
+        "left_forearm_pitch_deg": -142.8861969923482,
+        "right_foot_axis_yaw_deg": -179.71243275952858,
+        "right_toe_axis_yaw_deg": -168.47275884702415,
+        "right_ankle_lateral_m": 0.0467452172795792,
+        "right_ankle_forward_m": 0.29880599623925486,
+        "right_ankle_z_m": 0.12312714755535126,
+        "right_upperarm_pitch_deg": 156.5946074095034,
+        "right_forearm_pitch_deg": -119.30877320143884,
+        "stance_width_over_hip_width": 0.5396165780933144
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.6958164824717834e-05,
+        "LeftForeArm_direction_error_deg": 1.9766288961818032e-05,
+        "RightArm_direction_error_deg": 2.511023625464716e-05,
+        "RightForeArm_direction_error_deg": 5.399738656763834e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.14852391183376312,
+          "ground_band_vertices": 7,
+          "lowest_band_xy_m": [
+            0.24824455380439758,
+            -0.1407543420791626
+          ]
+        },
+        "right": {
+          "min_z_m": 0.04716150090098381,
+          "ground_band_vertices": 13,
+          "lowest_band_xy_m": [
+            -0.23734667897224426,
+            0.15391209721565247
+          ]
+        }
+      }
+    },
+    {
+      "frame": 3,
+      "time_s": 0.06666666666666667,
+      "target": {
+        "hip_width_m": 0.24305969043920325,
+        "left_foot_axis_yaw_deg": -144.03244763371055,
+        "left_toe_axis_yaw_deg": -156.1103739177129,
+        "left_ankle_lateral_m": -0.17674679742504537,
+        "left_ankle_forward_m": -0.1423099293460677,
+        "left_ankle_z_m": 0.3086920976638794,
+        "left_upperarm_pitch_deg": 117.4778079249199,
+        "left_forearm_pitch_deg": -151.57307384468638,
+        "right_foot_axis_yaw_deg": 39.805965372570114,
+        "right_toe_axis_yaw_deg": 136.7983611279016,
+        "right_ankle_lateral_m": 0.20320850957399322,
+        "right_ankle_forward_m": 0.3166213990625827,
+        "right_ankle_z_m": 0.2665807008743286,
+        "right_upperarm_pitch_deg": 163.70150460742906,
+        "right_forearm_pitch_deg": -110.98273250841773,
+        "stance_width_over_hip_width": 1.5632180980419588
+      },
+      "source": {
+        "hip_width_m": 0.16410460919142347,
+        "left_foot_axis_yaw_deg": -172.216049155439,
+        "left_toe_axis_yaw_deg": -173.28987177238014,
+        "left_ankle_lateral_m": -0.029965685623930816,
+        "left_ankle_forward_m": -0.13338679733892425,
+        "left_ankle_z_m": 0.20615193247795105,
+        "left_upperarm_pitch_deg": 117.47778143841501,
+        "left_forearm_pitch_deg": -151.57306388896214,
+        "right_foot_axis_yaw_deg": -129.76470357896963,
+        "right_toe_axis_yaw_deg": -172.56255236916087,
+        "right_ankle_lateral_m": 0.058586587998640985,
+        "right_ankle_forward_m": 0.3991318994786284,
+        "right_ankle_z_m": 0.1721385270357132,
+        "right_upperarm_pitch_deg": 163.70149134363328,
+        "right_forearm_pitch_deg": -110.98272914663964,
+        "stance_width_over_hip_width": 0.5396086926435931
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 3.2845327974766325e-05,
+        "LeftForeArm_direction_error_deg": 1.059505231752994e-05,
+        "RightArm_direction_error_deg": 1.7990127040434818e-05,
+        "RightForeArm_direction_error_deg": 7.3444386094852035e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.13515184819698334,
+          "ground_band_vertices": 10,
+          "lowest_band_xy_m": [
+            0.2796016037464142,
+            -0.28422579169273376
+          ]
+        },
+        "right": {
+          "min_z_m": 0.06913767755031586,
+          "ground_band_vertices": 5,
+          "lowest_band_xy_m": [
+            -0.2508227229118347,
+            0.30913716554641724
+          ]
+        }
+      }
+    },
+    {
+      "frame": 4,
+      "time_s": 0.1,
+      "target": {
+        "hip_width_m": 0.2431333425800668,
+        "left_foot_axis_yaw_deg": -157.23667227993766,
+        "left_toe_axis_yaw_deg": -160.8556444832918,
+        "left_ankle_lateral_m": -0.16519047117592073,
+        "left_ankle_forward_m": -0.24904595479377412,
+        "left_ankle_z_m": 0.24340124428272247,
+        "left_upperarm_pitch_deg": 117.18720694808806,
+        "left_forearm_pitch_deg": -158.07204930361533,
+        "right_foot_axis_yaw_deg": 13.417137472893517,
+        "right_toe_axis_yaw_deg": 118.88700264165091,
+        "right_ankle_lateral_m": 0.18846661888044008,
+        "right_ankle_forward_m": 0.37095661575112393,
+        "right_ankle_z_m": 0.3389820456504822,
+        "right_upperarm_pitch_deg": 170.03597539649616,
+        "right_forearm_pitch_deg": -101.57251155786511,
+        "stance_width_over_hip_width": 1.4545807921836027
+      },
+      "source": {
+        "hip_width_m": 0.16415432602314578,
+        "left_foot_axis_yaw_deg": -178.45617973562764,
+        "left_toe_axis_yaw_deg": -177.57515662031616,
+        "left_ankle_lateral_m": -0.006772779595825468,
+        "left_ankle_forward_m": -0.2915187831635972,
+        "left_ankle_z_m": 0.1591525375843048,
+        "left_upperarm_pitch_deg": 117.18721026300075,
+        "left_forearm_pitch_deg": -158.07204395855246,
+        "right_foot_axis_yaw_deg": -49.94181724868791,
+        "right_toe_axis_yaw_deg": -173.51618587072798,
+        "right_ankle_lateral_m": 0.04931533209884274,
+        "right_ankle_forward_m": 0.4684882255977647,
+        "right_ankle_z_m": 0.25437724590301514,
+        "right_upperarm_pitch_deg": 170.035975260311,
+        "right_forearm_pitch_deg": -101.57251099694567,
+        "stance_width_over_hip_width": 0.3416791567634945
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 1.8744172150678372e-05,
+        "LeftForeArm_direction_error_deg": 7.443026089337888e-06,
+        "RightArm_direction_error_deg": 1.6086328072527303e-05,
+        "RightForeArm_direction_error_deg": 5.9764155237611605e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.08314693719148636,
+          "ground_band_vertices": 8,
+          "lowest_band_xy_m": [
+            0.19631817936897278,
+            -0.19928178191184998
+          ]
+        },
+        "right": {
+          "min_z_m": 0.15037749707698822,
+          "ground_band_vertices": 4,
+          "lowest_band_xy_m": [
+            -0.2616426348686218,
+            0.4227258861064911
+          ]
+        }
+      }
+    },
+    {
+      "frame": 5,
+      "time_s": 0.13333333333333333,
+      "target": {
+        "hip_width_m": 0.24312822195224382,
+        "left_foot_axis_yaw_deg": -162.87767814149473,
+        "left_toe_axis_yaw_deg": -161.3073122768275,
+        "left_ankle_lateral_m": -0.16057700526844698,
+        "left_ankle_forward_m": -0.3266368670578877,
+        "left_ankle_z_m": 0.23556265234947205,
+        "left_upperarm_pitch_deg": 117.35028024942574,
+        "left_forearm_pitch_deg": -161.88589699986903,
+        "right_foot_axis_yaw_deg": 10.57074665882728,
+        "right_toe_axis_yaw_deg": 90.90251007955938,
+        "right_ankle_lateral_m": 0.17858472964783595,
+        "right_ankle_forward_m": 0.40551080677187584,
+        "right_ankle_z_m": 0.4204002618789673,
+        "right_upperarm_pitch_deg": 175.47148453623277,
+        "right_forearm_pitch_deg": -95.91589730049022,
+        "stance_width_over_hip_width": 1.394991219830096
+      },
+      "source": {
+        "hip_width_m": 0.1641508777322385,
+        "left_foot_axis_yaw_deg": 178.22327723950934,
+        "left_toe_axis_yaw_deg": -179.66503351067882,
+        "left_ankle_lateral_m": 0.002950239703286145,
+        "left_ankle_forward_m": -0.38921988582097755,
+        "left_ankle_z_m": 0.16685545444488525,
+        "left_upperarm_pitch_deg": 117.35027207332902,
+        "left_forearm_pitch_deg": -161.8858837547335,
+        "right_foot_axis_yaw_deg": -29.289868658848032,
+        "right_toe_axis_yaw_deg": -172.79996115332528,
+        "right_ankle_lateral_m": 0.03885535786568285,
+        "right_ankle_forward_m": 0.5356138863107562,
+        "right_ankle_z_m": 0.3526400029659271,
+        "right_upperarm_pitch_deg": 175.4714769271315,
+        "right_forearm_pitch_deg": -95.91590134497672,
+        "stance_width_over_hip_width": 0.218732416533068
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 1.6086328072527303e-05,
+        "LeftForeArm_direction_error_deg": 1.3281600966983096e-05,
+        "RightArm_direction_error_deg": 1.3171378306389627e-05,
+        "RightForeArm_direction_error_deg": 3.6222548091772e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.07238231599330902,
+          "ground_band_vertices": 6,
+          "lowest_band_xy_m": [
+            0.19934332370758057,
+            -0.31627821922302246
+          ]
+        },
+        "right": {
+          "min_z_m": 0.254982590675354,
+          "ground_band_vertices": 8,
+          "lowest_band_xy_m": [
+            -0.2748393714427948,
+            0.4963011145591736
+          ]
+        }
+      }
+    },
+    {
+      "frame": 6,
+      "time_s": 0.16666666666666666,
+      "target": {
+        "hip_width_m": 0.24313501403136875,
+        "left_foot_axis_yaw_deg": -166.73191792358486,
+        "left_toe_axis_yaw_deg": -166.6536573805341,
+        "left_ankle_lateral_m": -0.16772956817979617,
+        "left_ankle_forward_m": -0.35055740978980365,
+        "left_ankle_z_m": 0.23763114213943481,
+        "left_upperarm_pitch_deg": 117.61149309272022,
+        "left_forearm_pitch_deg": -162.72612822702823,
+        "right_foot_axis_yaw_deg": 10.103264094655412,
+        "right_toe_axis_yaw_deg": 81.11669282446003,
+        "right_ankle_lateral_m": 0.17980845120025013,
+        "right_ankle_forward_m": 0.40011760200145025,
+        "right_ankle_z_m": 0.5024747848510742,
+        "right_upperarm_pitch_deg": 177.75809147448396,
+        "right_forearm_pitch_deg": -95.40547080761212,
+        "stance_width_over_hip_width": 1.42940341507212
+      },
+      "source": {
+        "hip_width_m": 0.16415543127856777,
+        "left_foot_axis_yaw_deg": 174.61352208475253,
+        "left_toe_axis_yaw_deg": 173.9739081683195,
+        "left_ankle_lateral_m": -0.001821945607097121,
+        "left_ankle_forward_m": -0.4135389090500009,
+        "left_ankle_z_m": 0.16846826672554016,
+        "left_upperarm_pitch_deg": 117.6114886209757,
+        "left_forearm_pitch_deg": -162.7261132721878,
+        "right_foot_axis_yaw_deg": -13.572784980287702,
+        "right_toe_axis_yaw_deg": 149.60921556236698,
+        "right_ankle_lateral_m": 0.04884687821108662,
+        "right_ankle_forward_m": 0.561925753221185,
+        "right_ankle_z_m": 0.44840380549430847,
+        "right_upperarm_pitch_deg": 177.75807963788117,
+        "right_forearm_pitch_deg": -95.4054385148188,
+        "stance_width_over_hip_width": 0.3086637062419213
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.9845464889983747e-05,
+        "LeftForeArm_direction_error_deg": 1.4738418260860163e-05,
+        "RightArm_direction_error_deg": 1.3171378306389627e-05,
+        "RightForeArm_direction_error_deg": 2.7039160995690242e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.07623931765556335,
+          "ground_band_vertices": 8,
+          "lowest_band_xy_m": [
+            0.19360484182834625,
+            -0.3595641553401947
+          ]
+        },
+        "right": {
+          "min_z_m": 0.38047724962234497,
+          "ground_band_vertices": 14,
+          "lowest_band_xy_m": [
+            -0.2726726531982422,
+            0.5291414856910706
+          ]
+        }
+      }
+    },
+    {
+      "frame": 7,
+      "time_s": 0.2,
+      "target": {
+        "hip_width_m": 0.24313582763503175,
+        "left_foot_axis_yaw_deg": -167.83974506334025,
+        "left_toe_axis_yaw_deg": -167.90301474697105,
+        "left_ankle_lateral_m": -0.16416739542838366,
+        "left_ankle_forward_m": -0.32860937335139434,
+        "left_ankle_z_m": 0.21584562957286835,
+        "left_upperarm_pitch_deg": 120.19680066075482,
+        "left_forearm_pitch_deg": -159.06755221430856,
+        "right_foot_axis_yaw_deg": 11.731701636770861,
+        "right_toe_axis_yaw_deg": 86.21108601996497,
+        "right_ankle_lateral_m": 0.17979312328041297,
+        "right_ankle_forward_m": 0.3591647878152898,
+        "right_ankle_z_m": 0.5567325949668884,
+        "right_upperarm_pitch_deg": 173.9805367916352,
+        "right_forearm_pitch_deg": -100.12636302673171,
+        "stance_width_over_hip_width": 1.4146846314444106
+      },
+      "source": {
+        "hip_width_m": 0.1641559963837692,
+        "left_foot_axis_yaw_deg": 173.3916902516512,
+        "left_toe_axis_yaw_deg": 172.97206582547932,
+        "left_ankle_lateral_m": 0.00436687387778513,
+        "left_ankle_forward_m": -0.38372929550816387,
+        "left_ankle_z_m": 0.14207400381565094,
+        "left_upperarm_pitch_deg": 120.19680791624188,
+        "left_forearm_pitch_deg": -159.06754790650686,
+        "right_foot_axis_yaw_deg": -11.83270271619645,
+        "right_toe_axis_yaw_deg": -175.53099426389053,
+        "right_ankle_lateral_m": 0.04145272354211439,
+        "right_ankle_forward_m": 0.5411387907742358,
+        "right_ankle_z_m": 0.5272669792175293,
+        "right_upperarm_pitch_deg": 173.98052564273232,
+        "right_forearm_pitch_deg": -100.12636418251321,
+        "stance_width_over_hip_width": 0.22591833671204287
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.6618028002480006e-05,
+        "LeftForeArm_direction_error_deg": 8.144481502960801e-06,
+        "RightArm_direction_error_deg": 1.1197136397927998e-05,
+        "RightForeArm_direction_error_deg": 5.915117333884395e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.05362328141927719,
+          "ground_band_vertices": 8,
+          "lowest_band_xy_m": [
+            0.1906934678554535,
+            -0.33141154050827026
+          ]
+        },
+        "right": {
+          "min_z_m": 0.4561206102371216,
+          "ground_band_vertices": 14,
+          "lowest_band_xy_m": [
+            -0.2805350124835968,
+            0.49042385816574097
+          ]
+        }
+      }
+    },
+    {
+      "frame": 8,
+      "time_s": 0.23333333333333334,
+      "target": {
+        "hip_width_m": 0.24313375101178522,
+        "left_foot_axis_yaw_deg": -164.9659025672075,
+        "left_toe_axis_yaw_deg": -170.99033689603192,
+        "left_ankle_lateral_m": -0.15020575812051,
+        "left_ankle_forward_m": -0.26814787285235114,
+        "left_ankle_z_m": 0.18161171674728394,
+        "left_upperarm_pitch_deg": 125.95997566804355,
+        "left_forearm_pitch_deg": -151.94462610770142,
+        "right_foot_axis_yaw_deg": 10.638911635241355,
+        "right_toe_axis_yaw_deg": 82.53943840472071,
+        "right_ankle_lateral_m": 0.1676828547220177,
+        "right_ankle_forward_m": 0.2950766123393161,
+        "right_ankle_z_m": 0.5727885961532593,
+        "right_upperarm_pitch_deg": 162.2657442574468,
+        "right_forearm_pitch_deg": -109.4592313969045,
+        "stance_width_over_hip_width": 1.307463943280828
+      },
+      "source": {
+        "hip_width_m": 0.16415458266605504,
+        "left_foot_axis_yaw_deg": 175.09989164341567,
+        "left_toe_axis_yaw_deg": 170.77585801603865,
+        "left_ankle_lateral_m": 0.02456199388078585,
+        "left_ankle_forward_m": -0.30785790946535585,
+        "left_ankle_z_m": 0.1028141975402832,
+        "left_upperarm_pitch_deg": 125.95994538684302,
+        "left_forearm_pitch_deg": -151.9446199969024,
+        "right_foot_axis_yaw_deg": -10.968819103528181,
+        "right_toe_axis_yaw_deg": -165.8462401161185,
+        "right_ankle_lateral_m": 0.029020958982657233,
+        "right_ankle_forward_m": 0.48368893366177035,
+        "right_ankle_z_m": 0.5563931465148926,
+        "right_upperarm_pitch_deg": 162.2657274974232,
+        "right_forearm_pitch_deg": -109.45922006203277,
+        "stance_width_over_hip_width": 0.02716320817520153
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 3.12299149763039e-05,
+        "LeftForeArm_direction_error_deg": 1.1033187042674263e-05,
+        "RightArm_direction_error_deg": 2.1632676668865267e-05,
+        "RightForeArm_direction_error_deg": 1.1358719589327517e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.01782672293484211,
+          "ground_band_vertices": 8,
+          "lowest_band_xy_m": [
+            0.19008278846740723,
+            -0.2382609248161316
+          ]
+        },
+        "right": {
+          "min_z_m": 0.4858420789241791,
+          "ground_band_vertices": 16,
+          "lowest_band_xy_m": [
+            -0.27505242824554443,
+            0.4258471131324768
+          ]
+        }
+      }
+    },
+    {
+      "frame": 9,
+      "time_s": 0.26666666666666666,
+      "target": {
+        "hip_width_m": 0.24312170475560546,
+        "left_foot_axis_yaw_deg": -162.03986891026844,
+        "left_toe_axis_yaw_deg": -173.80418689518825,
+        "left_ankle_lateral_m": -0.16484819514764432,
+        "left_ankle_forward_m": -0.1911272204447536,
+        "left_ankle_z_m": 0.18828123807907104,
+        "left_upperarm_pitch_deg": 134.74523394094766,
+        "left_forearm_pitch_deg": -143.0059945290034,
+        "right_foot_axis_yaw_deg": 15.236148188753425,
+        "right_toe_axis_yaw_deg": 84.48208221460378,
+        "right_ankle_lateral_m": 0.18303583116821456,
+        "right_ankle_forward_m": 0.2176275685520227,
+        "right_ankle_z_m": 0.5573233962059021,
+        "right_upperarm_pitch_deg": 150.06819517649348,
+        "right_forearm_pitch_deg": -122.23833065803679,
+        "stance_width_over_hip_width": 1.4309048493451633
+      },
+      "source": {
+        "hip_width_m": 0.16414645717933551,
+        "left_foot_axis_yaw_deg": 173.27566604707923,
+        "left_toe_axis_yaw_deg": 169.14583128601345,
+        "left_ankle_lateral_m": 0.007447149701948817,
+        "left_ankle_forward_m": -0.1957931723424721,
+        "left_ankle_z_m": 0.08729603886604309,
+        "left_upperarm_pitch_deg": 134.74523445634185,
+        "left_forearm_pitch_deg": -143.00598855568484,
+        "right_foot_axis_yaw_deg": -8.605100675732908,
+        "right_toe_axis_yaw_deg": -133.70549647591855,
+        "right_ankle_lateral_m": 0.042483948726241415,
+        "right_ankle_forward_m": 0.4063121380860085,
+        "right_ankle_z_m": 0.5479828119277954,
+        "right_upperarm_pitch_deg": 150.06818790462972,
+        "right_forearm_pitch_deg": -122.23831137844043,
+        "stance_width_over_hip_width": 0.21344840227659448
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 3.280091236557045e-05,
+        "LeftForeArm_direction_error_deg": 6.776618231767655e-06,
+        "RightArm_direction_error_deg": 1.7308668332453254e-05,
+        "RightForeArm_direction_error_deg": 2.1052056881276945e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.03820531815290451,
+          "ground_band_vertices": 59,
+          "lowest_band_xy_m": [
+            0.18573538959026337,
+            -0.19335119426250458
+          ]
+        },
+        "right": {
+          "min_z_m": 0.46467846632003784,
+          "ground_band_vertices": 16,
+          "lowest_band_xy_m": [
+            -0.2887222170829773,
+            0.3428581655025482
+          ]
+        }
+      }
+    },
+    {
+      "frame": 10,
+      "time_s": 0.3,
+      "target": {
+        "hip_width_m": 0.24311115790840226,
+        "left_foot_axis_yaw_deg": -160.45191465690434,
+        "left_toe_axis_yaw_deg": -172.49781033937137,
+        "left_ankle_lateral_m": -0.18087322797856142,
+        "left_ankle_forward_m": -0.07528073606176298,
+        "left_ankle_z_m": 0.19550280272960663,
+        "left_upperarm_pitch_deg": 144.9025301081789,
+        "left_forearm_pitch_deg": -133.82392684999903,
+        "right_foot_axis_yaw_deg": 18.34707156321933,
+        "right_toe_axis_yaw_deg": 92.40473624701619,
+        "right_ankle_lateral_m": 0.20296477906547125,
+        "right_ankle_forward_m": 0.12913023378392077,
+        "right_ankle_z_m": 0.5233698487281799,
+        "right_upperarm_pitch_deg": 139.41369507768658,
+        "right_forearm_pitch_deg": -138.35947190517476,
+        "stance_width_over_hip_width": 1.5788580431534636
+      },
+      "source": {
+        "hip_width_m": 0.1641393117546223,
+        "left_foot_axis_yaw_deg": 174.86361530515398,
+        "left_toe_axis_yaw_deg": 170.49767977917918,
+        "left_ankle_lateral_m": -0.011392351500320495,
+        "left_ankle_forward_m": -0.04031308012758762,
+        "left_ankle_z_m": 0.08729598671197891,
+        "left_upperarm_pitch_deg": 144.90252817108274,
+        "left_forearm_pitch_deg": -133.82391667896772,
+        "right_foot_axis_yaw_deg": -7.98898913739625,
+        "right_toe_axis_yaw_deg": -151.77772344730295,
+        "right_ankle_lateral_m": 0.06338865226648618,
+        "right_ankle_forward_m": 0.3050363864447532,
+        "right_ankle_z_m": 0.5014710426330566,
+        "right_upperarm_pitch_deg": 139.41367771482362,
+        "right_forearm_pitch_deg": -138.35947139060124,
+        "stance_width_over_hip_width": 0.4555947199205969
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.0526110585337575e-05,
+        "LeftForeArm_direction_error_deg": 2.574095686025837e-05,
+        "RightArm_direction_error_deg": 1.9949823901789886e-05,
+        "RightForeArm_direction_error_deg": 8.099607985145754e-06
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.045460671186447144,
+          "ground_band_vertices": 36,
+          "lowest_band_xy_m": [
+            0.20166096091270447,
+            -0.11852660775184631
+          ]
+        },
+        "right": {
+          "min_z_m": 0.40791794657707214,
+          "ground_band_vertices": 14,
+          "lowest_band_xy_m": [
+            -0.29644539952278137,
+            0.24251961708068848
+          ]
+        }
+      }
+    },
+    {
+      "frame": 11,
+      "time_s": 0.3333333333333333,
+      "target": {
+        "hip_width_m": 0.24310449945206292,
+        "left_foot_axis_yaw_deg": -159.34209264383162,
+        "left_toe_axis_yaw_deg": -171.58033758280214,
+        "left_ankle_lateral_m": -0.19225507974849457,
+        "left_ankle_forward_m": 0.050637801384564904,
+        "left_ankle_z_m": 0.19369469583034515,
+        "left_upperarm_pitch_deg": 153.39790699647162,
+        "left_forearm_pitch_deg": -125.59062013824925,
+        "right_foot_axis_yaw_deg": 24.066802983718112,
+        "right_toe_axis_yaw_deg": 109.28247622113032,
+        "right_ankle_lateral_m": 0.21463741723747903,
+        "right_ankle_forward_m": 0.054924231898861156,
+        "right_ankle_z_m": 0.48555988073349,
+        "right_upperarm_pitch_deg": 128.78890623866138,
+        "right_forearm_pitch_deg": -153.79482159298536,
+        "stance_width_over_hip_width": 1.6737349489749267
+      },
+      "source": {
+        "hip_width_m": 0.1641348125455776,
+        "left_foot_axis_yaw_deg": 175.97344118687013,
+        "left_toe_axis_yaw_deg": 171.4696620697925,
+        "left_ankle_lateral_m": -0.02606256510946814,
+        "left_ankle_forward_m": 0.11708069198644551,
+        "left_ankle_z_m": 0.08729544281959534,
+        "left_upperarm_pitch_deg": 153.39789010710845,
+        "left_forearm_pitch_deg": -125.5906095775436,
+        "right_foot_axis_yaw_deg": -5.852624096246941,
+        "right_toe_axis_yaw_deg": -168.91635963259284,
+        "right_ankle_lateral_m": 0.07865843327050237,
+        "right_ankle_forward_m": 0.19759476408427426,
+        "right_ankle_z_m": 0.4267843961715698,
+        "right_upperarm_pitch_deg": 128.78888112619848,
+        "right_forearm_pitch_deg": -153.79481870776448,
+        "stance_width_over_hip_width": 0.6380182044006731
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.9894271897060604e-05,
+        "LeftForeArm_direction_error_deg": 2.3225154141253322e-05,
+        "RightArm_direction_error_deg": 2.50084277532787e-05,
+        "RightForeArm_direction_error_deg": 1.3898428017007624e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.04368724301457405,
+          "ground_band_vertices": 28,
+          "lowest_band_xy_m": [
+            0.20514485239982605,
+            -0.012894034385681152
+          ]
+        },
+        "right": {
+          "min_z_m": 0.33383870124816895,
+          "ground_band_vertices": 12,
+          "lowest_band_xy_m": [
+            -0.29722437262535095,
+            0.1381138265132904
+          ]
+        }
+      }
+    },
+    {
+      "frame": 12,
+      "time_s": 0.36666666666666664,
+      "target": {
+        "hip_width_m": 0.24311823476156696,
+        "left_foot_axis_yaw_deg": -158.58246805648335,
+        "left_toe_axis_yaw_deg": -170.93533206214929,
+        "left_ankle_lateral_m": -0.20119153910751364,
+        "left_ankle_forward_m": 0.18899917109814465,
+        "left_ankle_z_m": 0.18993529677391052,
+        "left_upperarm_pitch_deg": 159.41892315272332,
+        "left_forearm_pitch_deg": -117.10419474754102,
+        "right_foot_axis_yaw_deg": 36.07300437763504,
+        "right_toe_axis_yaw_deg": 121.88285344894263,
+        "right_ankle_lateral_m": 0.2221850381166923,
+        "right_ankle_forward_m": -0.011465275874996152,
+        "right_ankle_z_m": 0.43828409910202026,
+        "right_upperarm_pitch_deg": 119.04663100251362,
+        "right_forearm_pitch_deg": -163.97388924761822,
+        "stance_width_over_hip_width": 1.7414431198031013
+      },
+      "source": {
+        "hip_width_m": 0.1641440941296715,
+        "left_foot_axis_yaw_deg": 176.15411514234205,
+        "left_toe_axis_yaw_deg": 172.00800211406582,
+        "left_ankle_lateral_m": -0.040031380391243335,
+        "left_ankle_forward_m": 0.27182598662477336,
+        "left_ankle_z_m": 0.09031419456005096,
+        "left_upperarm_pitch_deg": 159.41890883131066,
+        "left_forearm_pitch_deg": -117.10418824507961,
+        "right_foot_axis_yaw_deg": 7.529083560875256,
+        "right_toe_axis_yaw_deg": -178.10532939524384,
+        "right_ankle_lateral_m": 0.0916105052802247,
+        "right_ankle_forward_m": 0.0809068089986402,
+        "right_ankle_z_m": 0.3434825539588928,
+        "right_upperarm_pitch_deg": 119.04660721849947,
+        "right_forearm_pitch_deg": -163.97388234917943,
+        "stance_width_over_hip_width": 0.8019897783679797
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.2604856486221263e-05,
+        "LeftForeArm_direction_error_deg": 3.017338014464347e-05,
+        "RightArm_direction_error_deg": 2.62040365510697e-05,
+        "RightForeArm_direction_error_deg": 1.0966921055636708e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.036007314920425415,
+          "ground_band_vertices": 20,
+          "lowest_band_xy_m": [
+            0.21502292156219482,
+            0.07173101603984833
+          ]
+        },
+        "right": {
+          "min_z_m": 0.25890201330184937,
+          "ground_band_vertices": 7,
+          "lowest_band_xy_m": [
+            -0.29667314887046814,
+            0.024647636339068413
+          ]
+        }
+      }
+    },
+    {
+      "frame": 13,
+      "time_s": 0.4,
+      "target": {
+        "hip_width_m": 0.24286752763278424,
+        "left_foot_axis_yaw_deg": -142.28916731052695,
+        "left_toe_axis_yaw_deg": -170.2936227613554,
+        "left_ankle_lateral_m": -0.19859918593633422,
+        "left_ankle_forward_m": 0.29871403612445646,
+        "left_ankle_z_m": 0.21867597103118896,
+        "left_upperarm_pitch_deg": 164.89129176551938,
+        "left_forearm_pitch_deg": -106.79247772735638,
+        "right_foot_axis_yaw_deg": 65.92257428954188,
+        "right_toe_axis_yaw_deg": 130.42024432966954,
+        "right_ankle_lateral_m": 0.23102989360433276,
+        "right_ankle_forward_m": -0.10237561296712133,
+        "right_ankle_z_m": 0.38064637780189514,
+        "right_upperarm_pitch_deg": 109.34663058904353,
+        "right_forearm_pitch_deg": -171.19924042930407,
+        "stance_width_over_hip_width": 1.7689852724579396
+      },
+      "source": {
+        "hip_width_m": 0.16397480894775554,
+        "left_foot_axis_yaw_deg": 173.32727862071232,
+        "left_toe_axis_yaw_deg": 172.66018801372124,
+        "left_ankle_lateral_m": -0.043163292310902976,
+        "left_ankle_forward_m": 0.3816904728101396,
+        "left_ankle_z_m": 0.12908867001533508,
+        "left_upperarm_pitch_deg": 164.89127875371892,
+        "left_forearm_pitch_deg": -106.79248499720018,
+        "right_foot_axis_yaw_deg": 163.7764617415098,
+        "right_toe_axis_yaw_deg": -177.812009678111,
+        "right_ankle_lateral_m": 0.1025545765539232,
+        "right_ankle_forward_m": -0.06907629117572538,
+        "right_ankle_z_m": 0.26868149638175964,
+        "right_upperarm_pitch_deg": 109.34661361679483,
+        "right_forearm_pitch_deg": -171.1992301345532,
+        "stance_width_over_hip_width": 0.8886600923636615
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.23942727958561e-05,
+        "LeftForeArm_direction_error_deg": 3.105436600289344e-05,
+        "RightArm_direction_error_deg": 2.5896236867758488e-05,
+        "RightForeArm_direction_error_deg": 2.002276682850205e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 2.6567373424768448e-05,
+          "ground_band_vertices": 3,
+          "lowest_band_xy_m": [
+            0.16063626110553741,
+            0.1930803507566452
+          ]
+        },
+        "right": {
+          "min_z_m": 0.19377921521663666,
+          "ground_band_vertices": 5,
+          "lowest_band_xy_m": [
+            -0.296554297208786,
+            -0.13626053929328918
+          ]
+        }
+      }
+    },
+    {
+      "frame": 14,
+      "time_s": 0.43333333333333335,
+      "target": {
+        "hip_width_m": 0.24242338186541118,
+        "left_foot_axis_yaw_deg": -71.21241915385063,
+        "left_toe_axis_yaw_deg": -162.12924828641908,
+        "left_ankle_lateral_m": -0.17359865423338433,
+        "left_ankle_forward_m": 0.35880329336516814,
+        "left_ankle_z_m": 0.2867954671382904,
+        "left_upperarm_pitch_deg": 169.21252150169786,
+        "left_forearm_pitch_deg": -96.1441326685459,
+        "right_foot_axis_yaw_deg": 110.04122372569572,
+        "right_toe_axis_yaw_deg": 134.72218433863233,
+        "right_ankle_lateral_m": 0.23115092506357235,
+        "right_ankle_forward_m": -0.2101226583053077,
+        "right_ankle_z_m": 0.3170488178730011,
+        "right_upperarm_pitch_deg": 102.87971678820844,
+        "right_forearm_pitch_deg": -176.09156274279258,
+        "stance_width_over_hip_width": 1.669597941347365
+      },
+      "source": {
+        "hip_width_m": 0.16367496318497732,
+        "left_foot_axis_yaw_deg": 61.596147368441436,
+        "left_toe_axis_yaw_deg": 176.56914123592045,
+        "left_ankle_lateral_m": -0.02600518270380911,
+        "left_ankle_forward_m": 0.45630021460778136,
+        "left_ankle_z_m": 0.20958280563354492,
+        "left_upperarm_pitch_deg": 169.2125074319982,
+        "left_forearm_pitch_deg": -96.14414679877173,
+        "right_foot_axis_yaw_deg": 173.76335604302702,
+        "right_toe_axis_yaw_deg": -175.4680244487973,
+        "right_ankle_lateral_m": 0.09624618264458398,
+        "right_ankle_forward_m": -0.23777713433850162,
+        "right_ankle_z_m": 0.2133258879184723,
+        "right_upperarm_pitch_deg": 102.87970026317792,
+        "right_forearm_pitch_deg": -176.09155562526345,
+        "stance_width_over_hip_width": 0.746915490124355
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.4448356591142834e-05,
+        "LeftForeArm_direction_error_deg": 4.030860602410207e-05,
+        "RightArm_direction_error_deg": 2.1800504449438904e-05,
+        "RightForeArm_direction_error_deg": 1.3004292747236537e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.036755502223968506,
+          "ground_band_vertices": 7,
+          "lowest_band_xy_m": [
+            0.1976853907108307,
+            0.3229406476020813
+          ]
+        },
+        "right": {
+          "min_z_m": 0.1498364955186844,
+          "ground_band_vertices": 11,
+          "lowest_band_xy_m": [
+            -0.2710171639919281,
+            -0.2834259867668152
+          ]
+        }
+      }
+    },
+    {
+      "frame": 15,
+      "time_s": 0.4666666666666667,
+      "target": {
+        "hip_width_m": 0.24244050320379956,
+        "left_foot_axis_yaw_deg": -59.422849121258864,
+        "left_toe_axis_yaw_deg": -153.64661348896274,
+        "left_ankle_lateral_m": -0.17118714258318043,
+        "left_ankle_forward_m": 0.41602840009173875,
+        "left_ankle_z_m": 0.3477705717086792,
+        "left_upperarm_pitch_deg": 171.3436739424182,
+        "left_forearm_pitch_deg": -88.2422850808881,
+        "right_foot_axis_yaw_deg": 132.56186796072657,
+        "right_toe_axis_yaw_deg": 131.44691184936687,
+        "right_ankle_lateral_m": 0.22111360972449964,
+        "right_ankle_forward_m": -0.29986274435800725,
+        "right_ankle_z_m": 0.2591164708137512,
+        "right_upperarm_pitch_deg": 99.60137112585326,
+        "right_forearm_pitch_deg": 179.81448620076014,
+        "stance_width_over_hip_width": 1.6181320659028062
+      },
+      "source": {
+        "hip_width_m": 0.16368653814308975,
+        "left_foot_axis_yaw_deg": 30.486724329870807,
+        "left_toe_axis_yaw_deg": 165.57053997273346,
+        "left_ankle_lateral_m": -0.023665786023251926,
+        "left_ankle_forward_m": 0.5379845837674246,
+        "left_ankle_z_m": 0.2886738181114197,
+        "left_upperarm_pitch_deg": 171.34365410903106,
+        "left_forearm_pitch_deg": -88.24227900443417,
+        "right_foot_axis_yaw_deg": 173.02456360851585,
+        "right_toe_axis_yaw_deg": -175.91708971154546,
+        "right_ankle_lateral_m": 0.08926789589894685,
+        "right_ankle_forward_m": -0.3816651046278549,
+        "right_ankle_z_m": 0.1867605447769165,
+        "right_upperarm_pitch_deg": 99.60132356990033,
+        "right_forearm_pitch_deg": 179.81451078690492,
+        "stance_width_over_hip_width": 0.6899387280307413
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.3350358035739973e-05,
+        "LeftForeArm_direction_error_deg": 1.571963993965638e-05,
+        "RightArm_direction_error_deg": 4.996582160528058e-05,
+        "RightForeArm_direction_error_deg": 2.94025562612171e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.07830606400966644,
+          "ground_band_vertices": 4,
+          "lowest_band_xy_m": [
+            0.22611713409423828,
+            0.4022011160850525
+          ]
+        },
+        "right": {
+          "min_z_m": 0.08744648098945618,
+          "ground_band_vertices": 12,
+          "lowest_band_xy_m": [
+            -0.15573714673519135,
+            -0.21076925098896027
+          ]
+        }
+      }
+    },
+    {
+      "frame": 16,
+      "time_s": 0.5,
+      "target": {
+        "hip_width_m": 0.24265530980145217,
+        "left_foot_axis_yaw_deg": -30.344818249302474,
+        "left_toe_axis_yaw_deg": -151.34474063133877,
+        "left_ankle_lateral_m": -0.17675291140179722,
+        "left_ankle_forward_m": 0.42745557821129637,
+        "left_ankle_z_m": 0.4249582886695862,
+        "left_upperarm_pitch_deg": 169.6270641727166,
+        "left_forearm_pitch_deg": -84.86041504719321,
+        "right_foot_axis_yaw_deg": 147.7250677750674,
+        "right_toe_axis_yaw_deg": 132.6678215834559,
+        "right_ankle_lateral_m": 0.22665382221081834,
+        "right_ankle_forward_m": -0.359471354666356,
+        "right_ankle_z_m": 0.2527635991573334,
+        "right_upperarm_pitch_deg": 98.37253470277447,
+        "right_forearm_pitch_deg": 178.34160366709375,
+        "stance_width_over_hip_width": 1.6624681897243256
+      },
+      "source": {
+        "hip_width_m": 0.1638315789739345,
+        "left_foot_axis_yaw_deg": 19.615884449095155,
+        "left_toe_axis_yaw_deg": 157.80682933776242,
+        "left_ankle_lateral_m": -0.028495516580250825,
+        "left_ankle_forward_m": 0.585865532051425,
+        "left_ankle_z_m": 0.3891158401966095,
+        "left_upperarm_pitch_deg": 169.62704578415406,
+        "left_forearm_pitch_deg": -84.86043772963562,
+        "right_foot_axis_yaw_deg": 179.36216913451852,
+        "right_toe_axis_yaw_deg": -169.2020093299361,
+        "right_ankle_lateral_m": 0.08869079259916057,
+        "right_ankle_forward_m": -0.4561617363388139,
+        "right_ankle_z_m": 0.19522689282894135,
+        "right_upperarm_pitch_deg": 98.3725354817616,
+        "right_forearm_pitch_deg": 178.34161555768327,
+        "stance_width_over_hip_width": 0.7152852332458791
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.4979263396123047e-05,
+        "LeftForeArm_direction_error_deg": 2.047277283233529e-05,
+        "RightArm_direction_error_deg": 1.6860678551682353e-05,
+        "RightForeArm_direction_error_deg": 1.833129759167522e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.15513181686401367,
+          "ground_band_vertices": 2,
+          "lowest_band_xy_m": [
+            0.21181988716125488,
+            0.4514850080013275
+          ]
+        },
+        "right": {
+          "min_z_m": 0.06279321014881134,
+          "ground_band_vertices": 12,
+          "lowest_band_xy_m": [
+            -0.17250041663646698,
+            -0.3054410517215729
+          ]
+        }
+      }
+    },
+    {
+      "frame": 17,
+      "time_s": 0.5333333333333333,
+      "target": {
+        "hip_width_m": 0.24276454574333745,
+        "left_foot_axis_yaw_deg": -21.35544750404113,
+        "left_toe_axis_yaw_deg": -99.4777404600652,
+        "left_ankle_lateral_m": -0.16890595720796847,
+        "left_ankle_forward_m": 0.4012375349292772,
+        "left_ankle_z_m": 0.48673951625823975,
+        "left_upperarm_pitch_deg": 164.225668747422,
+        "left_forearm_pitch_deg": -86.31325711626337,
+        "right_foot_axis_yaw_deg": 157.37234716015084,
+        "right_toe_axis_yaw_deg": 138.3375282593733,
+        "right_ankle_lateral_m": 0.22765785442084419,
+        "right_ankle_forward_m": -0.3701313214523065,
+        "right_ankle_z_m": 0.2437816858291626,
+        "right_upperarm_pitch_deg": 99.64308604378732,
+        "right_forearm_pitch_deg": -177.57227724608407,
+        "stance_width_over_hip_width": 1.6335326495660505
+      },
+      "source": {
+        "hip_width_m": 0.16390528624691966,
+        "left_foot_axis_yaw_deg": 10.041203215676928,
+        "left_toe_axis_yaw_deg": 159.76349503408616,
+        "left_ankle_lateral_m": -0.02311994906191075,
+        "left_ankle_forward_m": 0.5787347960304035,
+        "left_ankle_z_m": 0.4687170684337616,
+        "left_upperarm_pitch_deg": 164.2256458212955,
+        "left_forearm_pitch_deg": -86.3132895075521,
+        "right_foot_axis_yaw_deg": -173.49868629903284,
+        "right_toe_axis_yaw_deg": -160.97381349980805,
+        "right_ankle_lateral_m": 0.08208666284983247,
+        "right_ankle_forward_m": -0.4623795595368677,
+        "right_ankle_z_m": 0.182931050658226,
+        "right_upperarm_pitch_deg": 99.6430766870439,
+        "right_forearm_pitch_deg": -177.57225993889992,
+        "stance_width_over_hip_width": 0.6418744283405955
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.659062909866448e-05,
+        "LeftForeArm_direction_error_deg": 3.1635741176608346e-05,
+        "RightArm_direction_error_deg": 2.1514418276737845e-05,
+        "RightForeArm_direction_error_deg": 2.134434115628997e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.23291656374931335,
+          "ground_band_vertices": 4,
+          "lowest_band_xy_m": [
+            0.217115119099617,
+            0.48645317554473877
+          ]
+        },
+        "right": {
+          "min_z_m": 0.05221761018037796,
+          "ground_band_vertices": 12,
+          "lowest_band_xy_m": [
+            -0.17983941733837128,
+            -0.3181927502155304
+          ]
+        }
+      }
+    },
+    {
+      "frame": 18,
+      "time_s": 0.5666666666666667,
+      "target": {
+        "hip_width_m": 0.24279563902247517,
+        "left_foot_axis_yaw_deg": -24.129391592738248,
+        "left_toe_axis_yaw_deg": -79.29559646209601,
+        "left_ankle_lateral_m": -0.1693327058925777,
+        "left_ankle_forward_m": 0.3547413233349239,
+        "left_ankle_z_m": 0.5168831944465637,
+        "left_upperarm_pitch_deg": 156.5550367896064,
+        "left_forearm_pitch_deg": -93.18170481555262,
+        "right_foot_axis_yaw_deg": 154.57633833684724,
+        "right_toe_axis_yaw_deg": 136.20657774326114,
+        "right_ankle_lateral_m": 0.2249870528272378,
+        "right_ankle_forward_m": -0.3200126281085182,
+        "right_ankle_z_m": 0.20318898558616638,
+        "right_upperarm_pitch_deg": 102.94044892284019,
+        "right_forearm_pitch_deg": -170.18074608145093,
+        "stance_width_over_hip_width": 1.6240808949756877
+      },
+      "source": {
+        "hip_width_m": 0.1639263413955545,
+        "left_foot_axis_yaw_deg": 1.3454905794613132,
+        "left_toe_axis_yaw_deg": -164.70427885645606,
+        "left_ankle_lateral_m": -0.02673519676841158,
+        "left_ankle_forward_m": 0.5417965693473163,
+        "left_ankle_z_m": 0.5117320418357849,
+        "left_upperarm_pitch_deg": 156.55503148964087,
+        "left_forearm_pitch_deg": -93.1816795747811,
+        "right_foot_axis_yaw_deg": -175.07370703562665,
+        "right_toe_axis_yaw_deg": -164.7204542838306,
+        "right_ankle_lateral_m": 0.08226478689517772,
+        "right_ankle_forward_m": -0.40369164710786076,
+        "right_ankle_z_m": 0.13531027734279633,
+        "right_upperarm_pitch_deg": 102.94043242049158,
+        "right_forearm_pitch_deg": -170.18071760149851,
+        "stance_width_over_hip_width": 0.6649326931574234
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 4.031764686889986e-05,
+        "LeftForeArm_direction_error_deg": 2.3428270691461952e-05,
+        "RightArm_direction_error_deg": 2.5698444928917023e-05,
+        "RightForeArm_direction_error_deg": 3.311057046181443e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.27991783618927,
+          "ground_band_vertices": 5,
+          "lowest_band_xy_m": [
+            0.23186545073986053,
+            0.46616512537002563
+          ]
+        },
+        "right": {
+          "min_z_m": 0.01578970067203045,
+          "ground_band_vertices": 12,
+          "lowest_band_xy_m": [
+            -0.16988201439380646,
+            -0.25983425974845886
+          ]
+        }
+      }
+    },
+    {
+      "frame": 19,
+      "time_s": 0.6,
+      "target": {
+        "hip_width_m": 0.24290061127406049,
+        "left_foot_axis_yaw_deg": -29.670966378495628,
+        "left_toe_axis_yaw_deg": -77.53659712218563,
+        "left_ankle_lateral_m": -0.17474027268959444,
+        "left_ankle_forward_m": 0.27633539525827183,
+        "left_ankle_z_m": 0.5218887329101562,
+        "left_upperarm_pitch_deg": 146.43458489456756,
+        "left_forearm_pitch_deg": -104.06620848503515,
+        "right_foot_axis_yaw_deg": 133.4045787330821,
+        "right_toe_axis_yaw_deg": 139.40313145811814,
+        "right_ankle_lateral_m": 0.21115159075912399,
+        "right_ankle_forward_m": -0.23670552331877745,
+        "right_ankle_z_m": 0.18598178029060364,
+        "right_upperarm_pitch_deg": 108.65793505737176,
+        "right_forearm_pitch_deg": -161.23581492024465,
+        "stance_width_over_hip_width": 1.5886821421512332
+      },
+      "source": {
+        "hip_width_m": 0.16399719892720716,
+        "left_foot_axis_yaw_deg": -7.809751022173361,
+        "left_toe_axis_yaw_deg": -97.83690336435468,
+        "left_ankle_lateral_m": -0.03848921271945181,
+        "left_ankle_forward_m": 0.46514472195270706,
+        "left_ankle_z_m": 0.5191682577133179,
+        "left_upperarm_pitch_deg": 146.43458024481902,
+        "left_forearm_pitch_deg": -104.06621220210931,
+        "right_foot_axis_yaw_deg": 177.91408993934502,
+        "right_toe_axis_yaw_deg": -169.1375122948195,
+        "right_ankle_lateral_m": 0.07087203095141238,
+        "right_ankle_forward_m": -0.2925286325422585,
+        "right_ankle_z_m": 0.09740743786096573,
+        "right_upperarm_pitch_deg": 108.65791486761981,
+        "right_forearm_pitch_deg": -161.235801856542,
+        "stance_width_over_hip_width": 0.6668482412276199
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.2813496432377448e-05,
+        "LeftForeArm_direction_error_deg": 6.502146373618258e-06,
+        "RightArm_direction_error_deg": 2.705263678072602e-05,
+        "RightForeArm_direction_error_deg": 1.8430439999894915e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.29826390743255615,
+          "ground_band_vertices": 5,
+          "lowest_band_xy_m": [
+            0.25873059034347534,
+            0.4006947875022888
+          ]
+        },
+        "right": {
+          "min_z_m": 0.022857503965497017,
+          "ground_band_vertices": 25,
+          "lowest_band_xy_m": [
+            -0.1555664986371994,
+            -0.14422641694545746
+          ]
+        }
+      }
+    },
+    {
+      "frame": 20,
+      "time_s": 0.6333333333333333,
+      "target": {
+        "hip_width_m": 0.24257674318527914,
+        "left_foot_axis_yaw_deg": -37.681211895640146,
+        "left_toe_axis_yaw_deg": -96.32629688382153,
+        "left_ankle_lateral_m": -0.18638981176973532,
+        "left_ankle_forward_m": 0.1900646051532335,
+        "left_ankle_z_m": 0.4976985454559326,
+        "left_upperarm_pitch_deg": 135.01227532220767,
+        "left_forearm_pitch_deg": -116.42464079497704,
+        "right_foot_axis_yaw_deg": 125.28903547350905,
+        "right_toe_axis_yaw_deg": 138.22114405281874,
+        "right_ankle_lateral_m": 0.20964102752636507,
+        "right_ankle_forward_m": -0.13204611837522343,
+        "right_ankle_z_m": 0.19667908549308777,
+        "right_upperarm_pitch_deg": 118.26226776989296,
+        "right_forearm_pitch_deg": -152.81284948317239,
+        "stance_width_over_hip_width": 1.6326001994082906
+      },
+      "source": {
+        "hip_width_m": 0.16377853703919001,
+        "left_foot_axis_yaw_deg": -13.112697381371792,
+        "left_toe_axis_yaw_deg": -151.07451601764464,
+        "left_ankle_lateral_m": -0.0493830984897325,
+        "left_ankle_forward_m": 0.372157220624698,
+        "left_ankle_z_m": 0.4910651445388794,
+        "left_upperarm_pitch_deg": 135.0122787663933,
+        "left_forearm_pitch_deg": -116.4246553289997,
+        "right_foot_axis_yaw_deg": 176.31730501471736,
+        "right_toe_axis_yaw_deg": -171.74872203161212,
+        "right_ankle_lateral_m": 0.068524595853423,
+        "right_ankle_forward_m": -0.1473176325953382,
+        "right_ankle_z_m": 0.08943253755569458,
+        "right_upperarm_pitch_deg": 118.26226099521409,
+        "right_forearm_pitch_deg": -152.81285554360326,
+        "stance_width_over_hip_width": 0.7199215261944962
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 3.1876757018446245e-05,
+        "LeftForeArm_direction_error_deg": 1.569643750643458e-05,
+        "RightArm_direction_error_deg": 1.5649929441225564e-05,
+        "RightForeArm_direction_error_deg": 1.1952831047522336e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.2598339915275574,
+          "ground_band_vertices": 4,
+          "lowest_band_xy_m": [
+            0.266492635011673,
+            0.29298242926597595
+          ]
+        },
+        "right": {
+          "min_z_m": 0.042319316416978836,
+          "ground_band_vertices": 17,
+          "lowest_band_xy_m": [
+            -0.23864328861236572,
+            -0.2030775547027588
+          ]
+        }
+      }
+    },
+    {
+      "frame": 21,
+      "time_s": 0.6666666666666666,
+      "target": {
+        "hip_width_m": 0.24202753053903636,
+        "left_foot_axis_yaw_deg": -52.56814343243924,
+        "left_toe_axis_yaw_deg": -140.9105769971002,
+        "left_ankle_lateral_m": -0.1913220751226063,
+        "left_ankle_forward_m": 0.11085811015753755,
+        "left_ankle_z_m": 0.46216776967048645,
+        "left_upperarm_pitch_deg": 126.60567724655824,
+        "left_forearm_pitch_deg": -126.59078812251516,
+        "right_foot_axis_yaw_deg": 121.41941120423976,
+        "right_toe_axis_yaw_deg": 136.74109712745502,
+        "right_ankle_lateral_m": 0.19833250333665475,
+        "right_ankle_forward_m": -0.019135261096430028,
+        "right_ankle_z_m": 0.20773330330848694,
+        "right_upperarm_pitch_deg": 131.58639450241503,
+        "right_forearm_pitch_deg": -142.33319007998475,
+        "stance_width_over_hip_width": 1.6099597330577815
+      },
+      "source": {
+        "hip_width_m": 0.1634077363477688,
+        "left_foot_axis_yaw_deg": -21.220277555075764,
+        "left_toe_axis_yaw_deg": 175.6188827907333,
+        "left_ankle_lateral_m": -0.055716774799270466,
+        "left_ankle_forward_m": 0.2764336547210568,
+        "left_ankle_z_m": 0.43131187558174133,
+        "left_upperarm_pitch_deg": 126.60565967531946,
+        "left_forearm_pitch_deg": -126.59076156256022,
+        "right_foot_axis_yaw_deg": 174.61956227825618,
+        "right_toe_axis_yaw_deg": -173.2455880604611,
+        "right_ankle_lateral_m": 0.05623442292521238,
+        "right_ankle_forward_m": 0.009078090623034538,
+        "right_ankle_z_m": 0.09308334439992905,
+        "right_upperarm_pitch_deg": 131.58638751066496,
+        "right_forearm_pitch_deg": -142.3331785069198,
+        "stance_width_over_hip_width": 0.6851034120332298
+      },
+      "arm_direction_errors": {
+        "LeftArm_direction_error_deg": 2.7106472927070858e-05,
+        "LeftForeArm_direction_error_deg": 2.9674008194930117e-05,
+        "RightArm_direction_error_deg": 1.7455443435103742e-05,
+        "RightForeArm_direction_error_deg": 1.2948118433879161e-05
+      },
+      "foot_contact_proxy": {
+        "left": {
+          "min_z_m": 0.20726487040519714,
+          "ground_band_vertices": 4,
+          "lowest_band_xy_m": [
+            0.26714572310447693,
+            0.1510208696126938
+          ]
+        },
+        "right": {
+          "min_z_m": 0.050498176366090775,
+          "ground_band_vertices": 11,
+          "lowest_band_xy_m": [
+            -0.21439701318740845,
+            -0.11811091750860214
+          ]
+        }
+      }
+    }
+  ],
+  "interpretation_limits": [
+    "Foot/toe axes are measured from rig bones; rest-axis offsets are reported separately and are not automatically corrected.",
+    "Arm direction errors compare upper-arm and forearm bone directions; this does not judge whether the motion looks natural.",
+    "Stance width is normalized to the inter-UpLeg-head distance; different rig proportions can affect this ratio.",
+    "Foot contact speeds use the lowest 5mm of a per-frame foot/toe vertex subset and are only a proxy because the lowest vertices can change as the sole rolls."
+  ]
+}
