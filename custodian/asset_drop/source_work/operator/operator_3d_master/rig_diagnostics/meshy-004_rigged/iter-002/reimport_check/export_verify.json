@@ -1,0 +1,94 @@
+{
+ "glb_sha256": "488d61d2db6bbc428c6581a1f72ffa9e9e11a2e3804f402273d6d3e27942b0a3",
+ "glb_bytes": 47255508,
+ "bones": 42,
+ "animations_in_blender": 0,
+ "reparent_survived": {
+  "Bone_013": "Bone_006",
+  "Bone_023": "mixamorig:LeftFoot",
+  "Bone_027": "mixamorig:LeftFoot",
+  "Bone_018": "mixamorig:RightFoot",
+  "Bone_028": "mixamorig:RightFoot"
+ },
+ "reparent_expected": {
+  "Bone_013": "Bone_006",
+  "Bone_023": "mixamorig:LeftFoot",
+  "Bone_027": "mixamorig:LeftFoot",
+  "Bone_018": "mixamorig:RightFoot",
+  "Bone_028": "mixamorig:RightFoot"
+ },
+ "verts": 17509,
+ "tris": 10367,
+ "verts_not_normalised": 0,
+ "max_influences": 4,
+ "uv_layers": [
+  "UVMap"
+ ],
+ "materials": [
+  "BakedMaterial"
+ ],
+ "images": {
+  "normal": [
+   4096,
+   4096
+  ],
+  "Render Result": [
+   0,
+   0
+  ],
+  "texture_0": [
+   4096,
+   4096
+  ],
+  "texture_0_metallic_roughness": [
+   4096,
+   4096
+  ]
+ },
+ "material_nodes": [
+  "ShaderNodeBsdfPrincipled",
+  "ShaderNodeNormalMap",
+  "ShaderNodeOutputMaterial",
+  "ShaderNodeSeparateColor",
+  "ShaderNodeTexImage"
+ ],
+ "replay_vs_blend": {
+  "P1_arms_elbows": {
+   "reexport_max": 3.439462423324585,
+   "blend_max": 3.4394161701202393,
+   "reexport_gt3x": 10,
+   "blend_gt3x": 10
+  },
+  "P2_legs_knees_ankles": {
+   "reexport_max": 2.56843900680542,
+   "blend_max": 2.5684409141540527,
+   "reexport_gt3x": 0,
+   "blend_gt3x": 0
+  },
+  "P3_wrists": {
+   "reexport_max": 1.30967116355896,
+   "blend_max": 1.3096699714660645,
+   "reexport_gt3x": 0,
+   "blend_gt3x": 0
+  },
+  "P4_head_turn": {
+   "reexport_max": 1.5545965433120728,
+   "blend_max": 1.554593801498413,
+   "reexport_gt3x": 0,
+   "blend_gt3x": 0
+  },
+  "P5_modest_20_30deg": {
+   "reexport_max": 2.3062546253204346,
+   "blend_max": 2.3062546253204346,
+   "reexport_gt3x": 0,
+   "blend_gt3x": 0
+  }
+ },
+ "replay_boots_mean_disp": {
+  "P1_arms_elbows": 1.8212132602002384e-07,
+  "P2_legs_knees_ankles": 0.24853743612766266,
+  "P3_wrists": 1.8212132602002384e-07,
+  "P4_head_turn": 1.8212132602002384e-07,
+  "P5_modest_20_30deg": 0.2669246792793274
+ }
+}

@@ -1,0 +1,298 @@
+{
+ "verts": 17397,
+ "edges": 24272,
+ "edge_components": 3495,
+ "position_welded_components": 1,
+ "unique_positions": 5182,
+ "min_rest_edge_mm": 3.2107813358306885,
+ "zero_len_edges(<0.01mm)": 0,
+ "coincident_position_groups": 4744,
+ "coincident_groups_with_weight_mismatch(>0.05)": 0,
+ "rest_edges_hand_to_thigh": 111,
+ "summary": {
+  "P1_arms_elbows": {
+   "edges_gt3x": 330,
+   "by_cause": {
+    "c_mixed_hand_thigh_weights_on_endpoint": 240,
+    "c_weight_mismatch_between_endpoints": 73,
+    "a_bridge_across_parts": 17
+   },
+   "max_ratio": 12.349122047424316,
+   "max_delta_mm": 365.1
+  },
+  "P3_wrists": {
+   "edges_gt3x": 2,
+   "by_cause": {
+    "c_mixed_hand_thigh_weights_on_endpoint": 2
+   },
+   "max_ratio": 3.1054959297180176,
+   "max_delta_mm": 40.7
+  }
+ },
+ "faces": {
+  "triangles": 10367,
+  "straddling_hand_thigh_triangles": 66,
+  "straddle_area_cm2": 91.54000091552734,
+  "total_area_cm2": 33702.19921875,
+  "straddle_area_pct": 0.2720000147819519,
+  "straddle_max_rest_edge_mm_range": [
+   8.899999618530273,
+   50.0
+  ],
+  "straddle_triangle_indices": [
+   452,
+   489,
+   491,
+   492,
+   515,
+   540,
+   554,
+   560,
+   568,
+   584,
+   633,
+   634,
+   681,
+   690,
+   719,
+   725,
+   799,
+   805,
+   817,
+   820,
+   824,
+   847,
+   851,
+   859,
+   8817,
+   8829,
+   8932,
+   8943,
+   8949,
+   9042,
+   9049,
+   9067,
+   9073,
+   9087,
+   9173,
+   9221,
+   9248,
+   9258,
+   9307,
+   9309,
+   9314,
+   9338,
+   9339,
+   9354,
+   9380,
+   9407,
+   9424,
+   9429,
+   9444,
+   9460,
+   9473,
+   9493,
+   9499,
+   9518,
+   9519,
+   9524,
+   9542,
+   9555,
+   9577,
+   9590
+  ],
+  "verts_with_hand_and_thigh_weights_gt0.2": 256,
+  "mixed_vert_indices": [
+   8808,
+   8810,
+   8819,
+   8820,
+   8821,
+   8822,
+   9072,
+   9073,
+   9091,
+   9092,
+   9093,
+   9094,
+   9095,
+   9096,
+   9097,
+   9098,
+   9099,
+   9100,
+   9101,
+   9102,
+   9103,
+   9104,
+   9105,
+   9106,
+   9107,
+   9108,
+   9109,
+   9110,
+   9111,
+   9112,
+   9113,
+   9114,
+   9115,
+   9116,
+   9117,
+   9118,
+   9122,
+   9123,
+   9124,
+   9129,
+   9130,
+   9131,
+   9132,
+   9133,
+   9134,
+   9135,
+   9136,
+   9137,
+   9138,
+   9139,
+   9140,
+   9141,
+   9142,
+   9143,
+   9144,
+   9145,
+   9146,
+   9147,
+   9148,
+   9153
+  ]
+ },
+ "outlier_edges_by_(pose,in_straddle_tri,endpoint_mixed)": {
+  "('P1_arms_elbows', False, True)": 135,
+  "('P1_arms_elbows', False, False)": 109,
+  "('P1_arms_elbows', True, True)": 83,
+  "('P1_arms_elbows', True, False)": 3,
+  "('P3_wrists', True, True)": 1,
+  "('P3_wrists', False, True)": 1
+ },
+ "single_bone_30deg": {
+  "mixamorig:LeftArm": {
+   "edges_gt1.5x_rest>2mm": 346,
+   "max_ratio_rest>2mm": 5.04,
+   "max_edge_delta_mm": 123.9
+  },
+  "mixamorig:LeftForeArm": {
+   "edges_gt1.5x_rest>2mm": 142,
+   "max_ratio_rest>2mm": 2.96,
+   "max_edge_delta_mm": 60.2
+  },
+  "mixamorig:LeftHand": {
+   "edges_gt1.5x_rest>2mm": 2,
+   "max_ratio_rest>2mm": 1.53,
+   "max_edge_delta_mm": 16.5
+  },
+  "mixamorig:RightArm": {
+   "edges_gt1.5x_rest>2mm": 279,
+   "max_ratio_rest>2mm": 5.43,
+   "max_edge_delta_mm": 138.7
+  },
+  "mixamorig:RightForeArm": {
+   "edges_gt1.5x_rest>2mm": 174,
+   "max_ratio_rest>2mm": 3.17,
+   "max_edge_delta_mm": 62.3
+  },
+  "mixamorig:RightHand": {
+   "edges_gt1.5x_rest>2mm": 16,
+   "max_ratio_rest>2mm": 1.65,
+   "max_edge_delta_mm": 19.0
+  },
+  "mixamorig:LeftUpLeg": {
+   "edges_gt1.5x_rest>2mm": 58,
+   "max_ratio_rest>2mm": 2.11,
+   "max_edge_delta_mm": 55.2
+  },
+  "Bone_027": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.18,
+   "max_edge_delta_mm": 5.9
+  },
+  "Bone_023": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.36,
+   "max_edge_delta_mm": 8.8
+  },
+  "Bone_022": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.15,
+   "max_edge_delta_mm": 5.8
+  },
+  "mixamorig:RightUpLeg": {
+   "edges_gt1.5x_rest>2mm": 22,
+   "max_ratio_rest>2mm": 2.42,
+   "max_edge_delta_mm": 47.6
+  },
+  "Bone_028": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.16,
+   "max_edge_delta_mm": 3.4
+  },
+  "Bone_018": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.34,
+   "max_edge_delta_mm": 7.7
+  },
+  "Bone_017": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.1,
+   "max_edge_delta_mm": 2.4
+  },
+  "Bone_005": {
+   "edges_gt1.5x_rest>2mm": 58,
+   "max_ratio_rest>2mm": 2.4,
+   "max_edge_delta_mm": 64.0
+  },
+  "Bone_004": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.38,
+   "max_edge_delta_mm": 14.2
+  },
+  "Bone_007": {
+   "edges_gt1.5x_rest>2mm": 46,
+   "max_ratio_rest>2mm": 2.17,
+   "max_edge_delta_mm": 90.0
+  },
+  "Bone_006": {
+   "edges_gt1.5x_rest>2mm": 2,
+   "max_ratio_rest>2mm": 1.51,
+   "max_edge_delta_mm": 40.3
+  },
+  "Bone_013": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.31,
+   "max_edge_delta_mm": 14.9
+  },
+  "Bone_010": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.26,
+   "max_edge_delta_mm": 9.7
+  },
+  "Bone_009": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.25,
+   "max_edge_delta_mm": 11.6
+  },
+  "Bone_008": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.21,
+   "max_edge_delta_mm": 7.3
+  },
+  "Bone_012": {
+   "edges_gt1.5x_rest>2mm": 9,
+   "max_ratio_rest>2mm": 1.61,
+   "max_edge_delta_mm": 28.0
+  },
+  "Bone_011": {
+   "edges_gt1.5x_rest>2mm": 0,
+   "max_ratio_rest>2mm": 1.11,
+   "max_edge_delta_mm": 4.9
+  }
+ }
+}

@@ -22,7 +22,7 @@ def tiny_png(bad=False):
     out = b'\x89PNG\r\n\x1a\n' + ch(b'IHDR', struct.pack('>IIBBBBB', 2, 2, 8, 6, 0, 0, 0)) + ch(b'IDAT', zlib.compress((b'\x00' + b'\xff\x80\x40\xff' * 2) * 2)) + ch(b'IEND', b'')
     return out[:-20] + b'\x00' * 8 + out[-12:] if bad else out
 def pad4(b, fill=b'\x00'): return b + fill * ((4 - len(b) % 4) % 4)
-def make_glb(textured=False, nan=False, bad_index=False, version=2, truncate=0, len_delta=0, req_ext=None, idx_count=3, magic=b'glTF', no_json_first=False, solid=False, bad_png=False):
+def make_glb(textured=False, nan=False, bad_index=False, version=2, truncate=0, len_delta=0, req_ext=None, idx_count=3, magic=b'glTF', no_json_first=False, solid=False, bad_png=False, skin=None):
     pos = [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
     if nan: pos[1] = (float('nan'), 0, 0)
     idx = [0, 1, 2] if idx_count == 3 else [0, 1, 2, 3]
@@ -40,6 +40,8 @@ def make_glb(textured=False, nan=False, bad_index=False, version=2, truncate=0, 
         tt = {'KHR_texture_transform': {'offset': [0, 0], 'scale': [4.0, 4.0]}}
         j.update({'images': [{'bufferView': 3, 'mimeType': 'image/png'}], 'textures': [{'source': 0}], 'extensionsUsed': ['KHR_texture_transform'],
                   'materials': [{'pbrMetallicRoughness': {'baseColorTexture': {'index': 0, 'extensions': tt}}, 'normalTexture': {'index': 0}}]})
+    if skin in ('skins', 'node'): j['skins'] = [{'joints': [0]}]; j['nodes'][0]['skin'] = 0
+    if skin == 'attrs': prim['attributes'].update({'JOINTS_0': 0, 'WEIGHTS_0': 0})
     if req_ext: j['extensionsRequired'] = req_ext; j.setdefault('extensionsUsed', []).extend(req_ext)
     j['bufferViews'] = views; j['accessors'] = accs
     jb = pad4(json.dumps(j).encode(), b' '); bb = pad4(binb)
@@ -65,6 +67,10 @@ class GlbAuditTests(unittest.TestCase):
         for kw in ({'magic': b'GLTF'}, {'version': 1}, {'truncate': 9}, {'len_delta': 4}, {'no_json_first': True}):
             with self.subTest(kw), self.assertRaises(L.PipelineError) as c: self.audit(make_glb(**kw))
             self.assertEqual(c.exception.code, L.EXIT['INPUT'])
+    def test_skinned_rigged_glb_is_rejected(self):
+        for mode in ('skins', 'node', 'attrs'):
+            with self.subTest(mode), self.assertRaises(L.PipelineError) as c: self.audit(make_glb(skin=mode))
+            self.assertEqual(c.exception.code, L.EXIT['INPUT']); self.assertIn('skinned/rigged', str(c.exception))
     def test_short_and_garbage(self):
         for d in (b'', b'glTF', os.urandom(64)):
             with self.assertRaises(L.PipelineError): L.read_glb(d)
@@ -141,6 +147,10 @@ class CliPreflightTests(unittest.TestCase):
             p = write(self.tmp / 'b.glb', make_glb(**kw)); rc = self.run_cli('run', str(p), '--name', 'bad', '--out-root', str(self.out), env={'CUSTODIAN_BLENDER': self.ok_tool})[0]
             self.assertIn(rc, (3, 4), kw)
         self.assertEqual(list(self.out.iterdir()) if self.out.exists() else [], [])
+    def test_rigged_glb_rejected_before_staging(self):
+        p = write(self.tmp / 'r.glb', make_glb(textured=True, skin='skins')); rc, err, _ = self.run_cli('run', str(p), '--name', 'rig', '--out-root', str(self.out), env={'CUSTODIAN_BLENDER': self.ok_tool})
+        self.assertEqual(rc, 3); self.assertIn('rigged', err); self.assertFalse(self.out.exists())
+        rc = self.run_cli('run', str(p), '--name', 'rig', '--out-root', str(self.out), '--dry-run', env={'CUSTODIAN_BLENDER': self.ok_tool})[0]; self.assertEqual(rc, 3)
     def test_unsafe_name_and_params(self):
         for args in (['--name', '../x'], ['--name', 'ok', '--target-height', 'nan'], ['--name', 'ok', '--elev', '-5'], ['--name', 'ok', '--px-per-m', '0']):
             self.assertEqual(self.run_cli('run', str(self.glb), *args, '--out-root', str(self.out), env={'CUSTODIAN_BLENDER': self.ok_tool})[0], 2, args)

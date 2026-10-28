@@ -100,6 +100,9 @@ def audit_gltf(j, binb, decoded=True):
     meshopt_used = 'EXT_meshopt_compression' in (j.get('extensionsUsed') or [])
     if decoded and meshopt_used: raise PipelineError('DECODE', 'asset still declares EXT_meshopt_compression after decode')
     if not j.get('meshes'): raise PipelineError('INPUT', 'no meshes in asset')
+    skinned = bool(j.get('skins')) or any('skin' in n for n in j.get('nodes', [])) or any(
+        k in (p.get('attributes') or {}) for m in j['meshes'] for p in m.get('primitives', []) for k in ('JOINTS_0', 'WEIGHTS_0'))
+    if skinned: raise PipelineError('INPUT', 'skinned/rigged glTF is not supported: this pipeline renders static models and would produce misleading renders (armature measured/cropped); use the rig_diag tools or a static export')
     bufs = j.get('buffers') or []; views = j.get('bufferViews') or []; accs = j.get('accessors') or []
     if not bufs or bufs[0].get('byteLength', 0) > len(binb) + 3: raise PipelineError('INPUT', 'buffer 0 larger than BIN chunk (truncated asset)')
     for k, bv in enumerate(views):

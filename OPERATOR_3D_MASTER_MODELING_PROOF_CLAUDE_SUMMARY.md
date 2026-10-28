@@ -59,3 +59,9 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 - Cause of extremity stretch: mis-parented `Bone_0xx` joints (foot-level bones under hands/forearms; tabard bone under Head). Derivative reparent fixes boot/tabard leak (1.56 m -> 3e-7 m); residual hand-to-thigh edge stretch (topology) remains.
 - Pipeline `run` is not valid for rigged GLBs (output discarded). Report: `rig_diagnostics/meshy-004_rigged/REPORT.md`.
 - Tests: 43 OK (1 skipped), Blender integration OK. Not approved, not uploaded. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## Task 013 — hand/thigh deformation isolation + repair (meshy-004 iter-002)
+- Task 012 evidence published (retained): `/CUSTODIAN/visual_review/operator-3d-master/meshy004-rig-iter1-20261027T2200Z/REVIEW_MANIFEST.json` (9 files, remote bytes verified).
+- Cause: mixed hand/thigh weights (313 of 330 P1 outliers) plus 66 straddling hand/thigh triangles; no tiny-edge artifacts. Fix: detach the 66 triangles on duplicated verts + remove cross-chain weights. P1 max stretch 12.35x -> 3.44x, P3 3.11x -> 1.31x; P2/P4 unchanged; rest change 0.0006 mm.
+- Exported rigged GLB (no animation) re-imported and replayed; matches. Pipeline now rejects skinned GLBs (exit 3). Tests: 45 OK (1 skipped), Blender integration OK.
+- Report: `rig_diagnostics/meshy-004_rigged/REPORT_iter002.md`. Not approved/frozen. Return to clean `~/Projects/CUSTODIAN` on `main`.

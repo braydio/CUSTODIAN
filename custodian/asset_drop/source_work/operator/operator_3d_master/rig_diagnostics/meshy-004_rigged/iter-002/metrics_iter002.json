@@ -1,0 +1,516 @@
+{
+ "fixed": {
+  "min_rest_edge_mm": 3.210782289505005,
+  "poses": {
+   "P1_arms_elbows": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftHand|mixamorig:LeftHand",
+      123
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftHand",
+      54
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      16
+     ],
+     [
+      "mixamorig:LeftHand|mixamorig:LeftUpLeg",
+      7
+     ]
+    ],
+    "edge_stretch_max": 12.34912109375,
+    "edge_stretch_p999": 9.169111251831055,
+    "edges_gt1.5x": 788,
+    "edges_gt3x": 330,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.3451783061027527,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.8114844351657666e-05
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.8056628704071045,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.0021533125545829535
+    }
+   },
+   "P2_legs_knees_ankles": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      76
+     ],
+     [
+      "mixamorig:RightUpLeg|mixamorig:RightUpLeg",
+      65
+     ],
+     [
+      "mixamorig:LeftHand|mixamorig:LeftHand",
+      10
+     ],
+     [
+      "mixamorig:RightUpLeg|Bone_004",
+      9
+     ],
+     [
+      "mixamorig:RightUpLeg|mixamorig:LeftUpLeg",
+      8
+     ],
+     [
+      "Bone_004|Bone_004",
+      6
+     ]
+    ],
+    "edge_stretch_max": 2.5684409141540527,
+    "edge_stretch_p999": 2.088876247406006,
+    "edges_gt1.5x": 190,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 0.24865254759788513,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.008206122554838657,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.11757918447256088
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 0.4178970754146576,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.12354286015033722,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.24984049797058105
+    }
+   },
+   "P3_wrists": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:RightHand|mixamorig:RightHand",
+      70
+     ],
+     [
+      "mixamorig:LeftHand|mixamorig:LeftHand",
+      54
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftHand",
+      40
+     ],
+     [
+      "mixamorig:RightHand|mixamorig:RightUpLeg",
+      17
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      7
+     ],
+     [
+      "mixamorig:RightUpLeg|mixamorig:RightHand",
+      5
+     ]
+    ],
+    "edge_stretch_max": 3.1054954528808594,
+    "edge_stretch_p999": 2.5423848628997803,
+    "edges_gt1.5x": 324,
+    "edges_gt3x": 2,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.08291500061750412,
+     "tabard(z 0.37-0.73,|x|<0.2)": 2.3745824364596047e-05
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.22934122383594513,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.0031129068229347467
+    }
+   },
+   "P4_head_turn": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftShoulder|mixamorig:LeftShoulder",
+      110
+     ],
+     [
+      "mixamorig:Head|mixamorig:Head",
+      46
+     ],
+     [
+      "mixamorig:RightShoulder|mixamorig:RightShoulder",
+      26
+     ],
+     [
+      "mixamorig:Head|mixamorig:LeftShoulder",
+      9
+     ],
+     [
+      "mixamorig:RightShoulder|mixamorig:Head",
+      4
+     ],
+     [
+      "mixamorig:LeftShoulder|mixamorig:Head",
+      3
+     ]
+    ],
+    "edge_stretch_max": 1.554593801498413,
+    "edge_stretch_p999": 1.3993035554885864,
+    "edges_gt1.5x": 6,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 6.796055345148488e-07,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.9833862552331993e-07
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 9.55651330514229e-07,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.5097451750989421e-06
+    }
+   },
+   "P5_modest_20_30deg": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftHand|mixamorig:LeftHand",
+      117
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftHand",
+      57
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      19
+     ],
+     [
+      "mixamorig:LeftHand|mixamorig:LeftUpLeg",
+      7
+     ]
+    ],
+    "edge_stretch_max": 6.821262836456299,
+    "edge_stretch_p999": 5.073524475097656,
+    "edges_gt1.5x": 542,
+    "edges_gt3x": 155,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 0.26700082421302795,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.20197619497776031,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.09882796555757523
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 0.3803735673427582,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.4962244927883148,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.21431772410869598
+    }
+   }
+  }
+ },
+ "corrected": {
+  "min_rest_edge_mm": 3.210782289505005,
+  "poses": {
+   "P1_arms_elbows": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:Hips|mixamorig:Hips",
+      46
+     ],
+     [
+      "mixamorig:RightArm|mixamorig:RightArm",
+      28
+     ],
+     [
+      "mixamorig:LeftArm|mixamorig:LeftArm",
+      22
+     ],
+     [
+      "mixamorig:Spine|mixamorig:LeftArm",
+      16
+     ],
+     [
+      "mixamorig:RightArm|mixamorig:Hips",
+      12
+     ],
+     [
+      "Bone_010|mixamorig:LeftArm",
+      11
+     ]
+    ],
+    "edge_stretch_max": 3.4394161701202393,
+    "edge_stretch_p999": 2.4737651348114014,
+    "edges_gt1.5x": 171,
+    "edges_gt3x": 10,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.346304327249527,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.983680419925804e-07
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.8434696793556213,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.5097451750989421e-06
+    }
+   },
+   "P2_legs_knees_ankles": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      77
+     ],
+     [
+      "mixamorig:RightUpLeg|mixamorig:RightUpLeg",
+      70
+     ],
+     [
+      "mixamorig:RightUpLeg|Bone_004",
+      11
+     ],
+     [
+      "mixamorig:RightUpLeg|mixamorig:LeftUpLeg",
+      8
+     ],
+     [
+      "Bone_004|Bone_004",
+      7
+     ],
+     [
+      "Bone_013|mixamorig:RightUpLeg",
+      4
+     ]
+    ],
+    "edge_stretch_max": 2.5684409141540527,
+    "edge_stretch_p999": 2.0884971618652344,
+    "edges_gt1.5x": 179,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 0.24865254759788513,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.00911633763462305,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.11758431047201157
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 0.4178970754146576,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.1251031756401062,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.24984049797058105
+    }
+   },
+   "P3_wrists": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftHand|mixamorig:LeftHand",
+      73
+     ],
+     [
+      "mixamorig:RightHand|mixamorig:RightHand",
+      66
+     ],
+     [
+      "mixamorig:LeftForeArm|mixamorig:LeftForeArm",
+      19
+     ],
+     [
+      "mixamorig:RightForeArm|mixamorig:RightForeArm",
+      14
+     ],
+     [
+      "mixamorig:LeftArm|mixamorig:LeftForeArm",
+      8
+     ],
+     [
+      "mixamorig:LeftArm|mixamorig:LeftArm",
+      8
+     ]
+    ],
+    "edge_stretch_max": 1.3096699714660645,
+    "edge_stretch_p999": 1.1814614534378052,
+    "edges_gt1.5x": 0,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.08415849506855011,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.983680419925804e-07
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.24912478029727936,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.5097451750989421e-06
+    }
+   },
+   "P4_head_turn": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:LeftShoulder|mixamorig:LeftShoulder",
+      110
+     ],
+     [
+      "mixamorig:Head|mixamorig:Head",
+      46
+     ],
+     [
+      "mixamorig:RightShoulder|mixamorig:RightShoulder",
+      26
+     ],
+     [
+      "mixamorig:Head|mixamorig:LeftShoulder",
+      9
+     ],
+     [
+      "mixamorig:RightShoulder|mixamorig:Head",
+      4
+     ],
+     [
+      "mixamorig:LeftShoulder|mixamorig:Head",
+      3
+     ]
+    ],
+    "edge_stretch_max": 1.554593801498413,
+    "edge_stretch_p999": 1.3992869853973389,
+    "edges_gt1.5x": 6,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 2.0011327706015436e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 6.798956064812955e-07,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.983680419925804e-07
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 3.3060771897908126e-07,
+     "hands(z 0.6-0.95,|x|>0.25)": 9.55651330514229e-07,
+     "tabard(z 0.37-0.73,|x|<0.2)": 1.5097451750989421e-06
+    }
+   },
+   "P5_modest_20_30deg": {
+    "worst200_edge_dominant_bone_pairs": [
+     [
+      "mixamorig:RightUpLeg|mixamorig:RightUpLeg",
+      64
+     ],
+     [
+      "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg",
+      45
+     ],
+     [
+      "mixamorig:RightUpLeg|Bone_004",
+      11
+     ],
+     [
+      "Bone_010|mixamorig:LeftArm",
+      9
+     ],
+     [
+      "mixamorig:Spine|mixamorig:LeftArm",
+      9
+     ],
+     [
+      "mixamorig:Hips|mixamorig:Hips",
+      8
+     ]
+    ],
+    "edge_stretch_max": 2.3062546253204346,
+    "edge_stretch_p999": 1.980866551399231,
+    "edges_gt1.5x": 181,
+    "edges_gt3x": 0,
+    "region_mean_disp_m": {
+     "boots(z<0.10)": 0.26700082421302795,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.20421695709228516,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.09882409125566483
+    },
+    "region_max_disp_m": {
+     "boots(z<0.10)": 0.3803735673427582,
+     "hands(z 0.6-0.95,|x|>0.25)": 0.5226710438728333,
+     "tabard(z 0.37-0.73,|x|<0.2)": 0.21431772410869598
+    }
+   }
+  }
+ },
+ "corrected_skin_checks": {
+  "verts_not_normalised": 0,
+  "max_influences": 4,
+  "vertex_count": 17495
+ },
+ "rest_pose_change_max_mm": 0.0006241167744819362,
+ "weight_changes": {
+  "reweighted_vertices": 1084,
+  "straddling_triangles_detached": 66,
+  "new_vertex_count": 17495,
+  "verts_in_detached_triangles": 198,
+  "corner_weight_fallbacks": 0,
+  "sides": {
+   "arm": 6,
+   "lower": 60
+  },
+  "verts": [
+   17397,
+   17398,
+   17399,
+   17400,
+   17401,
+   17402,
+   17403,
+   17404,
+   17405,
+   17406,
+   17407,
+   17408,
+   17409,
+   17410,
+   17411,
+   17412,
+   17413,
+   17414,
+   17415,
+   17416,
+   17417,
+   17418,
+   17419,
+   17420,
+   17421,
+   17422,
+   17423,
+   17424,
+   17425,
+   17426,
+   17427,
+   17428,
+   17429,
+   17430,
+   17431,
+   17432,
+   17433,
+   17434,
+   17435,
+   17436,
+   17437,
+   17438,
+   17439,
+   17440,
+   17441,
+   17442,
+   17443,
+   17444,
+   17445,
+   17446,
+   17447,
+   17448,
+   17449,
+   17450,
+   17451,
+   17452,
+   17453,
+   17454,
+   17455,
+   17456,
+   17457,
+   17458,
+   17459,
+   17460,
+   17461,
+   17462,
+   17463,
+   17464,
+   17465,
+   17466,
+   17467,
+   17468,
+   17469,
+   17470,
+   17471,
+   17472,
+   17473,
+   17474,
+   17475,
+   17476
+  ],
+  "verts_total_listed_in": "changed_vertices.json"
+ }
+}

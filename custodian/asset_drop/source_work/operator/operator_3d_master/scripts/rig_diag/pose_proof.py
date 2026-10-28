@@ -4,8 +4,7 @@ Builds baseline + derivative (localized reparenting, world rest pose preserved),
 import bpy, sys, json, math, os
 import numpy as np
 from mathutils import Matrix, Vector, Euler
-glb, out = sys.argv[sys.argv.index('--') + 1:][:2]
-os.makedirs(out, exist_ok=True)
+glb = out = None   # set by main() or by importing scripts
 
 # bone -> new parent. Evidence: joint world positions + weighted vertex heights (see REPORT.md)
 FIXES = {
@@ -52,9 +51,12 @@ def verts(me):
     dg = bpy.context.evaluated_depsgraph_get(); ev = me.evaluated_get(dg)
     m = ev.to_mesh(); a = np.array([me.matrix_world @ v.co for v in m.vertices]); ev.to_mesh_clear(); return a
 
+CLEANUP = None   # optional callable(me) applied for variant 'corrected' (iter-002)
+
 def analyse(variant):
     arm, me = load()
-    if variant == 'fixed': reparent(arm)
+    if variant in ('fixed', 'corrected'): reparent(arm)
+    if variant == 'corrected': CLEANUP(me)
     bpy.context.view_layer.update()
     rest = verts(me)
     edges = np.array([e.vertices[:] for e in me.data.edges]); L0 = np.linalg.norm(rest[edges[:, 0]] - rest[edges[:, 1]], axis=1) + 1e-9
@@ -63,7 +65,7 @@ def analyse(variant):
     dom = [max(v.groups, key=lambda g: g.weight).group for v in me.data.vertices]
     dom_name = lambda i: vg[dom[i]].name
     regions = {'boots(z<0.10)': z < 0.10, 'hands(z 0.6-0.95,|x|>0.25)': (z > .6) & (z < .95) & (np.abs(rest[:, 0]) > .25), 'tabard(z 0.37-0.73,|x|<0.2)': (z > .37) & (z < .73) & (np.abs(rest[:, 0]) < .2)}
-    res = {'rest_vs_baseline_rest_note': 'compared across variants in compare()', 'poses': {}}
+    res = {'min_rest_edge_mm': float(L0.min() * 1000), 'poses': {}}
     outv = {'rest': rest}
     for name, ops in POSES.items():
         pose(arm, ops); v = verts(me); outv[name] = v
@@ -98,9 +100,19 @@ def render_set(variant, arm, me, out):
             shoot(name + '_tabard', (1.5, -2.2, .9), (0, 0, .6), 1.4)
     pose(arm, [])
 
-R = {}; V = {}
-for var in ('baseline', 'fixed'):
-    R[var], V[var], _, _ = analyse(var)
-R['rest_pose_change_max_m'] = float(np.abs(V['fixed']['rest'] - V['baseline']['rest']).max())
-R['reparented'] = FIXES
-json.dump(R, open(f'{out}/metrics.json', 'w'), indent=1); print(json.dumps(R, indent=1))
+def main():
+    global glb, out
+    glb, out = sys.argv[sys.argv.index('--') + 1:][:2]
+    os.makedirs(out, exist_ok=True)
+    _main()
+
+def _main():
+  R = {}; V = {}
+  for var in ('baseline', 'fixed'):
+      R[var], V[var], _, _ = analyse(var)
+  R['rest_pose_change_max_m'] = float(np.abs(V['fixed']['rest'] - V['baseline']['rest']).max())
+  R['reparented'] = FIXES
+  json.dump(R, open(f'{out}/metrics.json', 'w'), indent=1); print(json.dumps(R, indent=1))
+
+if __name__ == '__main__' and '--' in sys.argv:
+    main()
