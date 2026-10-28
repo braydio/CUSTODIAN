@@ -4,6 +4,7 @@
 **Task branch:** `agent/operator-shoulder-symmetry-and-rigging-v1-task017`
 **Starting checkpoint:** `285cff6f99a4dac4cb49267db76f46697d8df455`
 **Motion reference:** ITER005 `6b89c4d503bb2d73d2783443d4280f313c681bfa`
+**Implementation/evidence commit:** `1a290f0a94ccde640bd2ebd5e5dfa0d76bf0091d`
 **Status:** `MODEL_SHOULDER_REPAIR_REQUIRED`
 
 ## Outcome
@@ -27,7 +28,7 @@ No GLB was exported because geometry integrity failed. The candidate remains in 
 
 ## Evidence
 
-The retained Dropbox `REVIEW_MANIFEST.json` is recorded below after publication. It contains hashes for the published report, comparison images, loop, and objective diagnostics. Large model files and raw frame PNGs remain local in the experiment worktree.
+The retained Dropbox `REVIEW_MANIFEST.json` is at `/CUSTODIAN/visual_review/operator-shoulder-symmetry-and-rigging-v1/task017-clean-pauldrons-review-20261028/REVIEW_MANIFEST.json`. All 14 uploaded artifact hashes were verified against Dropbox. Large model files and raw frame PNGs remain local in the experiment worktree.
 
 - Static 128px three-way, all eight directions.
 - Static native 512px three-way, all eight directions; six-view shoulder closeups.
