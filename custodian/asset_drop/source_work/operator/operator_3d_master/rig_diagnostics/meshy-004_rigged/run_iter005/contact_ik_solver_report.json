@@ -1,0 +1,1429 @@
+{
+  "schema": "custodian.operator_run_iter005_contact_ik.v1",
+  "status": "RUN_MOTION_NEEDS_REPAIR",
+  "source_action": "operator_run_mixamo_iter003_gait_corrected",
+  "derivative_action": "operator_run_mixamo_iter005_contact_ik",
+  "source_action_preserved": true,
+  "source_frame_range": [
+    1.0,
+    22.0
+  ],
+  "fps": 30.0,
+  "unique_frames": 21,
+  "loop_endpoint_frame": 22,
+  "clearance_target_mm": 1.0,
+  "contact_detection": {
+    "fixed_centroid_band_mm": 40.0,
+    "foot_geometry_group_weight_min": 0.2,
+    "foot_geometry_contact_rule": "minimum evaluated vertex among Foot/ToeBase weighted sets below or at z=0 establishes direct surface contact; fixed centroid in the 40mm band establishes the eased contact phase; right-toe contact is not forced",
+    "fixed_landmark_indices_reused": {
+      "left": {
+        "heel": [
+          15333,
+          15334,
+          15317,
+          15318,
+          15365,
+          15366,
+          15315,
+          15316,
+          15313,
+          15314,
+          15367,
+          15368
+        ],
+        "toe": [
+          14268,
+          14269,
+          14278,
+          14279,
+          14286,
+          14287,
+          14265,
+          14266,
+          14267,
+          14288,
+          14289,
+          14273
+        ]
+      },
+      "right": {
+        "heel": [
+          17069,
+          17070,
+          17052,
+          17053,
+          17078,
+          17079,
+          17084,
+          17085,
+          17086,
+          16858,
+          16859,
+          16981
+        ],
+        "toe": [
+          16017,
+          16018,
+          16015,
+          16016,
+          16004,
+          16005,
+          16025,
+          16026,
+          15997,
+          15998,
+          16008,
+          16009
+        ]
+      }
+    }
+  },
+  "solver": {
+    "type": "two-bone IK on UpLeg+Leg with animated knee pole and Copy Rotation on Foot",
+    "stretch_enabled": false,
+    "root_pelvis_arms_weights_mesh_materials_timing_edited": false,
+    "only leg chains baked": true,
+    "per_frame_records": [
+      {
+        "side": "Left",
+        "frame": 1,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 85.02694095174472,
+        "baseline_sole_min_mm": 73.54869693517685,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 73.54869693517685,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 2,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 95.42461360494296,
+        "baseline_sole_min_mm": 73.44844937324524,
+        "sole_min_vertex_id": 14284,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 73.44844937324524,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 3,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 125.11912484963736,
+        "baseline_sole_min_mm": 78.55764776468277,
+        "sole_min_vertex_id": 14316,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 78.55764776468277,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 4,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 83.97318981587887,
+        "baseline_sole_min_mm": 59.70229580998421,
+        "sole_min_vertex_id": 15340,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 59.70229580998421,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 5,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 87.54841859141986,
+        "baseline_sole_min_mm": 68.84115934371948,
+        "sole_min_vertex_id": 15367,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 68.84115934371948,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 6,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 91.89246594905853,
+        "baseline_sole_min_mm": 75.3907784819603,
+        "sole_min_vertex_id": 15367,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 75.3907784819603,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 7,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 69.84978665908177,
+        "baseline_sole_min_mm": 52.77731269598007,
+        "sole_min_vertex_id": 15367,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 52.77731269598007,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 8,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm"
+        ],
+        "anchor_z_mm": 32.10981500645479,
+        "baseline_sole_min_mm": 13.235356658697128,
+        "sole_min_vertex_id": 15367,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.8852433399308152,
+        "calibrated_pole_angle_deg": -81.5,
+        "baseline_knee_reconstruction_error_mm": 0.07010180926816213,
+        "corrected_sole_min_mm": 13.234397396445274,
+        "corrected_knee_displacement_mm": 0.062109655795793944,
+        "ik_end_target_error_mm": 0.00021696418193818684
+      },
+      {
+        "side": "Left",
+        "frame": 9,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm"
+        ],
+        "anchor_z_mm": 30.455216610183317,
+        "baseline_sole_min_mm": 3.4893425181508064,
+        "sole_min_vertex_id": 15393,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.9939719970748473,
+        "calibrated_pole_angle_deg": -81.25,
+        "baseline_knee_reconstruction_error_mm": 0.19529501199864585,
+        "corrected_sole_min_mm": 3.488719929009676,
+        "corrected_knee_displacement_mm": 0.19408766516339102,
+        "ik_end_target_error_mm": 0.0003094458528950093
+      },
+      {
+        "side": "Left",
+        "frame": 10,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 25.56044957600534,
+        "baseline_sole_min_mm": -5.241903010755777,
+        "sole_min_vertex_id": 14489,
+        "ankle_target_rise_mm": 6.241903010755777,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -79.75,
+        "baseline_knee_reconstruction_error_mm": 0.11769561969545432,
+        "corrected_sole_min_mm": 1.0000180918723345,
+        "corrected_knee_displacement_mm": 6.7960742563373016,
+        "ik_end_target_error_mm": 7.920075813483186e-05
+      },
+      {
+        "side": "Left",
+        "frame": 11,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 20.72462315360705,
+        "baseline_sole_min_mm": -14.406772330403328,
+        "sole_min_vertex_id": 14489,
+        "ankle_target_rise_mm": 15.406772330403328,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -81.0,
+        "baseline_knee_reconstruction_error_mm": 0.3662142019650996,
+        "corrected_sole_min_mm": 0.9999019093811512,
+        "corrected_knee_displacement_mm": 14.715127178390748,
+        "ik_end_target_error_mm": 0.00011151007970493857
+      },
+      {
+        "side": "Left",
+        "frame": 12,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 22.12504871810476,
+        "baseline_sole_min_mm": -18.32588203251362,
+        "sole_min_vertex_id": 14316,
+        "ankle_target_rise_mm": 19.32588203251362,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -85.25,
+        "baseline_knee_reconstruction_error_mm": 0.06554841952150386,
+        "corrected_sole_min_mm": 1.000006916001439,
+        "corrected_knee_displacement_mm": 22.67841598511945,
+        "ik_end_target_error_mm": 6.537857940340134e-05
+      },
+      {
+        "side": "Left",
+        "frame": 13,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": -1.5457738190889359,
+        "baseline_sole_min_mm": -31.985528767108917,
+        "sole_min_vertex_id": 14316,
+        "ankle_target_rise_mm": 32.98552876710892,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -89.0,
+        "baseline_knee_reconstruction_error_mm": 0.005425925923048063,
+        "corrected_sole_min_mm": 1.0001136688515544,
+        "corrected_knee_displacement_mm": 53.685112045029555,
+        "ik_end_target_error_mm": 0.0001375838019894018
+      },
+      {
+        "side": "Left",
+        "frame": 14,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": -11.954602474967638,
+        "baseline_sole_min_mm": -24.169042706489563,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 25.169042706489563,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -91.75,
+        "baseline_knee_reconstruction_error_mm": 0.041150095562658084,
+        "corrected_sole_min_mm": 0.9997878223657608,
+        "corrected_knee_displacement_mm": 33.51313638036191,
+        "ik_end_target_error_mm": 0.0003224474937972784
+      },
+      {
+        "side": "Left",
+        "frame": 15,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm"
+        ],
+        "anchor_z_mm": 31.247707394262154,
+        "baseline_sole_min_mm": 20.31901851296425,
+        "sole_min_vertex_id": 14286,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.957181583966522,
+        "calibrated_pole_angle_deg": -94.5,
+        "baseline_knee_reconstruction_error_mm": 0.0944066028024529,
+        "corrected_sole_min_mm": 20.320391282439232,
+        "corrected_knee_displacement_mm": 0.09035013338741678,
+        "ik_end_target_error_mm": 0.00020116567611694336
+      },
+      {
+        "side": "Left",
+        "frame": 16,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 106.05208203196526,
+        "baseline_sole_min_mm": 96.94879502058029,
+        "sole_min_vertex_id": 14286,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 96.94879502058029,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 17,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 167.336355894804,
+        "baseline_sole_min_mm": 160.95495223999023,
+        "sole_min_vertex_id": 14286,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 160.95495223999023,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 18,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 196.13657395044962,
+        "baseline_sole_min_mm": 191.2708431482315,
+        "sole_min_vertex_id": 14286,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 191.2708431482315,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 19,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 194.53166301051775,
+        "baseline_sole_min_mm": 188.8989508152008,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 188.8989508152008,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 20,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 160.46431909004846,
+        "baseline_sole_min_mm": 154.02692556381226,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 154.02692556381226,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 21,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 113.63604788978894,
+        "baseline_sole_min_mm": 104.82020676136017,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 104.82020676136017,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Left",
+        "frame": 22,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 85.0271408756574,
+        "baseline_sole_min_mm": 73.54889810085297,
+        "sole_min_vertex_id": 14268,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 73.54889810085297,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 1,
+        "active": true,
+        "activation_reason": [
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 55.523693871994816,
+        "baseline_sole_min_mm": -10.837648995220661,
+        "sole_min_vertex_id": 15992,
+        "ankle_target_rise_mm": 11.837648995220661,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -96.75,
+        "baseline_knee_reconstruction_error_mm": 0.04670367431011352,
+        "corrected_sole_min_mm": 0.9999013273045421,
+        "corrected_knee_displacement_mm": 11.01184891926796,
+        "ik_end_target_error_mm": 7.300048299977714e-05
+      },
+      {
+        "side": "Right",
+        "frame": 2,
+        "active": true,
+        "activation_reason": [
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 54.86376831928889,
+        "baseline_sole_min_mm": -8.506320416927338,
+        "sole_min_vertex_id": 15979,
+        "ankle_target_rise_mm": 9.506320416927338,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -94.25,
+        "baseline_knee_reconstruction_error_mm": 0.08410662380962987,
+        "corrected_sole_min_mm": 0.9998693130910397,
+        "corrected_knee_displacement_mm": 11.24062689915725,
+        "ik_end_target_error_mm": 5.8190894692440736e-05
+      },
+      {
+        "side": "Right",
+        "frame": 3,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 59.29703203340372,
+        "baseline_sole_min_mm": 14.261018484830856,
+        "sole_min_vertex_id": 15960,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 14.261018484830856,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 4,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 97.84558167060216,
+        "baseline_sole_min_mm": 73.0685293674469,
+        "sole_min_vertex_id": 15958,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 73.0685293674469,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 5,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 164.98960802952448,
+        "baseline_sole_min_mm": 149.00679886341095,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 149.00679886341095,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 6,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 243.73447398344675,
+        "baseline_sole_min_mm": 232.4427366256714,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 232.4427366256714,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 7,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 315.44505059719086,
+        "baseline_sole_min_mm": 305.139422416687,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 305.139422416687,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 8,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 337.564875682195,
+        "baseline_sole_min_mm": 328.07356119155884,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 328.07356119155884,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 9,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 321.2878406047821,
+        "baseline_sole_min_mm": 311.97115778923035,
+        "sole_min_vertex_id": 15986,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 311.97115778923035,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 10,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 268.32691331704456,
+        "baseline_sole_min_mm": 257.61929154396057,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 257.61929154396057,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 11,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 204.9665500720342,
+        "baseline_sole_min_mm": 189.88703191280365,
+        "sole_min_vertex_id": 15968,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 189.88703191280365,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 12,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 158.7632273634275,
+        "baseline_sole_min_mm": 135.44422388076782,
+        "sole_min_vertex_id": 15958,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 135.44422388076782,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 13,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 146.3433876633644,
+        "baseline_sole_min_mm": 112.65397816896439,
+        "sole_min_vertex_id": 15960,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 112.65397816896439,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 14,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 129.62862414618334,
+        "baseline_sole_min_mm": 101.35011374950409,
+        "sole_min_vertex_id": 15992,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 101.35011374950409,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 15,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 70.48534632970889,
+        "baseline_sole_min_mm": 58.58747288584709,
+        "sole_min_vertex_id": 16858,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 58.58747288584709,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 16,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 69.08683727184932,
+        "baseline_sole_min_mm": 59.90041419863701,
+        "sole_min_vertex_id": 17069,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 59.90041419863701,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 17,
+        "active": false,
+        "activation_reason": [],
+        "anchor_z_mm": 60.92180901517471,
+        "baseline_sole_min_mm": 52.10663005709648,
+        "sole_min_vertex_id": 17069,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 0.0,
+        "calibrated_pole_angle_deg": -90.0,
+        "baseline_knee_reconstruction_error_mm": 0.0,
+        "corrected_sole_min_mm": 52.10663005709648,
+        "corrected_knee_displacement_mm": 0.0,
+        "ik_end_target_error_mm": 0.0
+      },
+      {
+        "side": "Right",
+        "frame": 18,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm"
+        ],
+        "anchor_z_mm": 20.441683785368998,
+        "baseline_sole_min_mm": 11.338874697685242,
+        "sole_min_vertex_id": 17069,
+        "ankle_target_rise_mm": 0.0,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -97.0,
+        "baseline_knee_reconstruction_error_mm": 0.0029019031068906855,
+        "corrected_sole_min_mm": 11.339484713971615,
+        "corrected_knee_displacement_mm": 0.0029019031068906855,
+        "ik_end_target_error_mm": 0.0002546311540996292
+      },
+      {
+        "side": "Right",
+        "frame": 19,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": -1.7878511377299826,
+        "baseline_sole_min_mm": -14.489252120256424,
+        "sole_min_vertex_id": 16858,
+        "ankle_target_rise_mm": 15.489252120256424,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -97.75,
+        "baseline_knee_reconstruction_error_mm": 0.17271582337309216,
+        "corrected_sole_min_mm": 3.62924812361598,
+        "corrected_knee_displacement_mm": 26.293357950063218,
+        "ik_end_target_error_mm": 0.00030547380447387695
+      },
+      {
+        "side": "Right",
+        "frame": 20,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 11.187535244971514,
+        "baseline_sole_min_mm": -4.894859157502651,
+        "sole_min_vertex_id": 16834,
+        "ankle_target_rise_mm": 5.894859157502651,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -101.0,
+        "baseline_knee_reconstruction_error_mm": 0.3292989308542943,
+        "corrected_sole_min_mm": 1.6527896514162421,
+        "corrected_knee_displacement_mm": 7.250246048605869,
+        "ik_end_target_error_mm": 0.00017249341164216736
+      },
+      {
+        "side": "Right",
+        "frame": 21,
+        "active": true,
+        "activation_reason": [
+          "fixed_heel_or_toe_centroid_within_40mm",
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 29.567527351900935,
+        "baseline_sole_min_mm": -6.241851020604372,
+        "sole_min_vertex_id": 16099,
+        "ankle_target_rise_mm": 7.241851020604372,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -100.75,
+        "baseline_knee_reconstruction_error_mm": 0.33480428667511425,
+        "corrected_sole_min_mm": 1.1043515987694263,
+        "corrected_knee_displacement_mm": 7.2931694920022005,
+        "ik_end_target_error_mm": 0.00017265424469495517
+      },
+      {
+        "side": "Right",
+        "frame": 22,
+        "active": true,
+        "activation_reason": [
+          "weighted_foot_toe_surface_crosses_ground"
+        ],
+        "anchor_z_mm": 55.52415798107783,
+        "baseline_sole_min_mm": -10.83738449960947,
+        "sole_min_vertex_id": 15992,
+        "ankle_target_rise_mm": 11.83738449960947,
+        "contact_blend_weight": 1.0,
+        "calibrated_pole_angle_deg": -96.75,
+        "baseline_knee_reconstruction_error_mm": 0.04671724594578837,
+        "corrected_sole_min_mm": 0.9997037705034018,
+        "corrected_knee_displacement_mm": 11.011648595661015,
+        "ik_end_target_error_mm": 0.00017120130796843851
+      }
+    ]
+  },
+  "penetration": {
+    "threshold_mm": -5.0,
+    "vertex_frame_observations": 0,
+    "distinct_vertex_ids_across_cycle": [],
+    "distinct_vertex_count_across_cycle": 0,
+    "minimum_mesh_z_mm_across_cycle": 0.9995864238590002,
+    "frames": [
+      {
+        "frame": 1,
+        "time_s": 0.0,
+        "minimum_mesh_z_mm": 0.9996320586651564,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 2,
+        "time_s": 0.03333333333333333,
+        "minimum_mesh_z_mm": 1.0000206530094147,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 3,
+        "time_s": 0.06666666666666667,
+        "minimum_mesh_z_mm": 14.26110789179802,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 4,
+        "time_s": 0.1,
+        "minimum_mesh_z_mm": 59.70237776637077,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 5,
+        "time_s": 0.13333333333333333,
+        "minimum_mesh_z_mm": 68.84140521287918,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 6,
+        "time_s": 0.16666666666666666,
+        "minimum_mesh_z_mm": 75.39097964763641,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 7,
+        "time_s": 0.2,
+        "minimum_mesh_z_mm": 52.7774803340435,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 8,
+        "time_s": 0.23333333333333334,
+        "minimum_mesh_z_mm": 13.234270736575127,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 9,
+        "time_s": 0.26666666666666666,
+        "minimum_mesh_z_mm": 3.488959511741996,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 10,
+        "time_s": 0.3,
+        "minimum_mesh_z_mm": 0.99976547062397,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 11,
+        "time_s": 0.3333333333333333,
+        "minimum_mesh_z_mm": 0.9995864238590002,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 12,
+        "time_s": 0.36666666666666664,
+        "minimum_mesh_z_mm": 1.000006916001439,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 13,
+        "time_s": 0.4,
+        "minimum_mesh_z_mm": 1.0002877097576857,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 14,
+        "time_s": 0.43333333333333335,
+        "minimum_mesh_z_mm": 0.9997058659791946,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 15,
+        "time_s": 0.4666666666666667,
+        "minimum_mesh_z_mm": 20.320476964116096,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 16,
+        "time_s": 0.5,
+        "minimum_mesh_z_mm": 59.90038067102432,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 17,
+        "time_s": 0.5333333333333333,
+        "minimum_mesh_z_mm": 52.10666358470917,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 18,
+        "time_s": 0.5666666666666667,
+        "minimum_mesh_z_mm": 11.339377611875534,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 19,
+        "time_s": 0.6,
+        "minimum_mesh_z_mm": 3.628717502579093,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 20,
+        "time_s": 0.6333333333333333,
+        "minimum_mesh_z_mm": 1.6526221297681332,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      },
+      {
+        "frame": 21,
+        "time_s": 0.6666666666666666,
+        "minimum_mesh_z_mm": 1.104151364415884,
+        "vertices_below_minus5mm": 0,
+        "penetrating_vertex_ids": []
+      }
+    ]
+  },
+  "max_edge_stretch_over_rest_all_frames": 2.9687235726446675,
+  "loop_seam_max_vertex_delta_mm_frame22_vs_frame1": 0.0016000718127436788,
+  "outside_contact_max_vertex_deltas_mm": [
+    {
+      "frame": 3,
+      "max_vertex_delta_mm": 0.00016391277313232422
+    },
+    {
+      "frame": 4,
+      "max_vertex_delta_mm": 0.00015787497237635471
+    },
+    {
+      "frame": 5,
+      "max_vertex_delta_mm": 0.0003375038997204937
+    },
+    {
+      "frame": 6,
+      "max_vertex_delta_mm": 0.0003375038997204937
+    },
+    {
+      "frame": 7,
+      "max_vertex_delta_mm": 0.0002995096332168844
+    },
+    {
+      "frame": 16,
+      "max_vertex_delta_mm": 0.0003769728732309794
+    },
+    {
+      "frame": 17,
+      "max_vertex_delta_mm": 0.00021073424255447018
+    }
+  ],
+  "contact_subframe_samples": [
+    {
+      "frame": 1.0,
+      "minimum_mesh_z_mm": 0.9996320586651564,
+      "left_sole_min_mm": 73.5488310456276,
+      "right_sole_min_mm": 0.9996320586651564
+    },
+    {
+      "frame": 1.25,
+      "minimum_mesh_z_mm": -6.723850034177303,
+      "left_sole_min_mm": 64.987912774086,
+      "right_sole_min_mm": -6.723850034177303
+    },
+    {
+      "frame": 1.5,
+      "minimum_mesh_z_mm": -8.824845775961876,
+      "left_sole_min_mm": 63.46726417541504,
+      "right_sole_min_mm": -8.824845775961876
+    },
+    {
+      "frame": 1.75,
+      "minimum_mesh_z_mm": -5.914231762290001,
+      "left_sole_min_mm": 67.62652844190598,
+      "right_sole_min_mm": -5.914231762290001
+    },
+    {
+      "frame": 2.0,
+      "minimum_mesh_z_mm": 1.0000206530094147,
+      "left_sole_min_mm": 73.44844192266464,
+      "right_sole_min_mm": 1.0000206530094147
+    },
+    {
+      "frame": 2.25,
+      "minimum_mesh_z_mm": -2.4494831450283527,
+      "left_sole_min_mm": 69.85175609588623,
+      "right_sole_min_mm": -2.4494831450283527
+    },
+    {
+      "frame": 2.5,
+      "minimum_mesh_z_mm": -0.7718857377767563,
+      "left_sole_min_mm": 69.44917142391205,
+      "right_sole_min_mm": -0.7718857377767563
+    },
+    {
+      "frame": 2.75,
+      "minimum_mesh_z_mm": 5.240899045020342,
+      "left_sole_min_mm": 73.70625436306,
+      "right_sole_min_mm": 5.240899045020342
+    },
+    {
+      "frame": 3.0,
+      "minimum_mesh_z_mm": 14.26110789179802,
+      "left_sole_min_mm": 78.55762541294098,
+      "right_sole_min_mm": 14.26110789179802
+    },
+    {
+      "frame": 7.0,
+      "minimum_mesh_z_mm": 52.7774803340435,
+      "left_sole_min_mm": 52.7774803340435,
+      "right_sole_min_mm": 305.13957142829895
+    },
+    {
+      "frame": 7.25,
+      "minimum_mesh_z_mm": 43.05367171764374,
+      "left_sole_min_mm": 43.05367171764374,
+      "right_sole_min_mm": 310.79116463661194
+    },
+    {
+      "frame": 7.5,
+      "minimum_mesh_z_mm": 33.398207277059555,
+      "left_sole_min_mm": 33.398207277059555,
+      "right_sole_min_mm": 316.80184602737427
+    },
+    {
+      "frame": 7.75,
+      "minimum_mesh_z_mm": 23.54729175567627,
+      "left_sole_min_mm": 23.54729175567627,
+      "right_sole_min_mm": 322.71358370780945
+    },
+    {
+      "frame": 8.0,
+      "minimum_mesh_z_mm": 13.234270736575127,
+      "left_sole_min_mm": 13.234270736575127,
+      "right_sole_min_mm": 328.07353138923645
+    },
+    {
+      "frame": 8.25,
+      "minimum_mesh_z_mm": 8.320690132677555,
+      "left_sole_min_mm": 8.320690132677555,
+      "right_sole_min_mm": 323.67029786109924
+    },
+    {
+      "frame": 8.5,
+      "minimum_mesh_z_mm": 4.517491441220045,
+      "left_sole_min_mm": 4.517491441220045,
+      "right_sole_min_mm": 319.32657957077026
+    },
+    {
+      "frame": 8.75,
+      "minimum_mesh_z_mm": 2.9614686500281096,
+      "left_sole_min_mm": 2.9614686500281096,
+      "right_sole_min_mm": 315.2866065502167
+    },
+    {
+      "frame": 9.0,
+      "minimum_mesh_z_mm": 3.488959511741996,
+      "left_sole_min_mm": 3.488959511741996,
+      "right_sole_min_mm": 311.97109818458557
+    },
+    {
+      "frame": 9.25,
+      "minimum_mesh_z_mm": -0.4309597425162792,
+      "left_sole_min_mm": -0.4309597425162792,
+      "right_sole_min_mm": 293.1581735610962
+    },
+    {
+      "frame": 9.5,
+      "minimum_mesh_z_mm": -2.572942990809679,
+      "left_sole_min_mm": -2.572942990809679,
+      "right_sole_min_mm": 277.729868888855
+    },
+    {
+      "frame": 9.75,
+      "minimum_mesh_z_mm": -2.236937638372183,
+      "left_sole_min_mm": -2.236937638372183,
+      "right_sole_min_mm": 265.84768295288086
+    },
+    {
+      "frame": 10.0,
+      "minimum_mesh_z_mm": 0.99976547062397,
+      "left_sole_min_mm": 0.99976547062397,
+      "right_sole_min_mm": 257.6194703578949
+    },
+    {
+      "frame": 10.25,
+      "minimum_mesh_z_mm": -4.3139285407960415,
+      "left_sole_min_mm": -4.3139285407960415,
+      "right_sole_min_mm": 233.26413333415985
+    },
+    {
+      "frame": 10.5,
+      "minimum_mesh_z_mm": -5.843886639922857,
+      "left_sole_min_mm": -5.843886639922857,
+      "right_sole_min_mm": 213.66548538208008
+    },
+    {
+      "frame": 10.75,
+      "minimum_mesh_z_mm": -3.9643035270273685,
+      "left_sole_min_mm": -3.9643035270273685,
+      "right_sole_min_mm": 199.14045929908752
+    },
+    {
+      "frame": 11.0,
+      "minimum_mesh_z_mm": 0.9995864238590002,
+      "left_sole_min_mm": 0.9995864238590002,
+      "right_sole_min_mm": 189.88703191280365
+    },
+    {
+      "frame": 11.25,
+      "minimum_mesh_z_mm": -4.030913580209017,
+      "left_sole_min_mm": -4.030913580209017,
+      "right_sole_min_mm": 170.5581396818161
+    },
+    {
+      "frame": 11.5,
+      "minimum_mesh_z_mm": -5.612039472907782,
+      "left_sole_min_mm": -5.612039472907782,
+      "right_sole_min_mm": 154.69829738140106
+    },
+    {
+      "frame": 11.75,
+      "minimum_mesh_z_mm": -3.8230710197240114,
+      "left_sole_min_mm": -3.8230710197240114,
+      "right_sole_min_mm": 143.10027658939362
+    },
+    {
+      "frame": 12.0,
+      "minimum_mesh_z_mm": 1.000006916001439,
+      "left_sole_min_mm": 1.000006916001439,
+      "right_sole_min_mm": 135.44408977031708
+    },
+    {
+      "frame": 12.25,
+      "minimum_mesh_z_mm": -4.4560907408595085,
+      "left_sole_min_mm": -4.4560907408595085,
+      "right_sole_min_mm": 122.99910932779312
+    },
+    {
+      "frame": 12.5,
+      "minimum_mesh_z_mm": -6.0927411541342735,
+      "left_sole_min_mm": -6.0927411541342735,
+      "right_sole_min_mm": 115.04673957824707
+    },
+    {
+      "frame": 12.75,
+      "minimum_mesh_z_mm": -4.171071574091911,
+      "left_sole_min_mm": -4.171071574091911,
+      "right_sole_min_mm": 111.73511296510696
+    },
+    {
+      "frame": 13.0,
+      "minimum_mesh_z_mm": 1.0002877097576857,
+      "left_sole_min_mm": 1.0002877097576857,
+      "right_sole_min_mm": 112.6539334654808
+    },
+    {
+      "frame": 13.25,
+      "minimum_mesh_z_mm": 2.9956272337585688,
+      "left_sole_min_mm": 2.9956272337585688,
+      "right_sole_min_mm": 106.93125426769257
+    },
+    {
+      "frame": 13.5,
+      "minimum_mesh_z_mm": 3.8822884671390057,
+      "left_sole_min_mm": 3.8822884671390057,
+      "right_sole_min_mm": 103.64082455635071
+    },
+    {
+      "frame": 13.75,
+      "minimum_mesh_z_mm": 1.1600330471992493,
+      "left_sole_min_mm": 1.1600330471992493,
+      "right_sole_min_mm": 101.92708671092987
+    },
+    {
+      "frame": 14.0,
+      "minimum_mesh_z_mm": 0.9997058659791946,
+      "left_sole_min_mm": 0.9997058659791946,
+      "right_sole_min_mm": 101.35017335414886
+    },
+    {
+      "frame": 14.25,
+      "minimum_mesh_z_mm": 5.211705341935158,
+      "left_sole_min_mm": 5.211705341935158,
+      "right_sole_min_mm": 93.45046430826187
+    },
+    {
+      "frame": 14.5,
+      "minimum_mesh_z_mm": 9.637410752475262,
+      "left_sole_min_mm": 9.637410752475262,
+      "right_sole_min_mm": 76.6248106956482
+    },
+    {
+      "frame": 14.75,
+      "minimum_mesh_z_mm": 14.873072504997253,
+      "left_sole_min_mm": 14.873072504997253,
+      "right_sole_min_mm": 64.7108256816864
+    },
+    {
+      "frame": 15.0,
+      "minimum_mesh_z_mm": 20.320476964116096,
+      "left_sole_min_mm": 20.320476964116096,
+      "right_sole_min_mm": 58.58759954571724
+    },
+    {
+      "frame": 15.25,
+      "minimum_mesh_z_mm": 39.197854697704315,
+      "left_sole_min_mm": 39.197854697704315,
+      "right_sole_min_mm": 57.01455846428871
+    },
+    {
+      "frame": 15.5,
+      "minimum_mesh_z_mm": 56.87474459409714,
+      "left_sole_min_mm": 58.344125747680664,
+      "right_sole_min_mm": 56.87474459409714
+    },
+    {
+      "frame": 15.75,
+      "minimum_mesh_z_mm": 58.088742196559906,
+      "left_sole_min_mm": 77.5969922542572,
+      "right_sole_min_mm": 58.088742196559906
+    },
+    {
+      "frame": 16.0,
+      "minimum_mesh_z_mm": 59.90038067102432,
+      "left_sole_min_mm": 96.94889187812805,
+      "right_sole_min_mm": 59.90038067102432
+    },
+    {
+      "frame": 17.0,
+      "minimum_mesh_z_mm": 52.10666358470917,
+      "left_sole_min_mm": 160.95508635044098,
+      "right_sole_min_mm": 52.10666358470917
+    },
+    {
+      "frame": 17.25,
+      "minimum_mesh_z_mm": 42.703013867139816,
+      "left_sole_min_mm": 168.5011088848114,
+      "right_sole_min_mm": 42.703013867139816
+    },
+    {
+      "frame": 17.5,
+      "minimum_mesh_z_mm": 32.47904032468796,
+      "left_sole_min_mm": 175.86123943328857,
+      "right_sole_min_mm": 32.47904032468796
+    },
+    {
+      "frame": 17.75,
+      "minimum_mesh_z_mm": 21.87608741223812,
+      "left_sole_min_mm": 183.339461684227,
+      "right_sole_min_mm": 21.87608741223812
+    },
+    {
+      "frame": 18.0,
+      "minimum_mesh_z_mm": 11.339377611875534,
+      "left_sole_min_mm": 191.2708431482315,
+      "right_sole_min_mm": 11.339377611875534
+    },
+    {
+      "frame": 18.25,
+      "minimum_mesh_z_mm": 4.925710614770651,
+      "left_sole_min_mm": 189.45664167404175,
+      "right_sole_min_mm": 4.925710614770651
+    },
+    {
+      "frame": 18.5,
+      "minimum_mesh_z_mm": 1.493329182267189,
+      "left_sole_min_mm": 188.7039989233017,
+      "right_sole_min_mm": 1.493329182267189
+    },
+    {
+      "frame": 18.75,
+      "minimum_mesh_z_mm": 1.1524003930389881,
+      "left_sole_min_mm": 188.70148062705994,
+      "right_sole_min_mm": 1.1524003930389881
+    },
+    {
+      "frame": 19.0,
+      "minimum_mesh_z_mm": 3.628717502579093,
+      "left_sole_min_mm": 188.8991892337799,
+      "right_sole_min_mm": 3.628717502579093
+    },
+    {
+      "frame": 19.25,
+      "minimum_mesh_z_mm": 0.9755340870469809,
+      "left_sole_min_mm": 177.54018306732178,
+      "right_sole_min_mm": 0.9755340870469809
+    },
+    {
+      "frame": 19.5,
+      "minimum_mesh_z_mm": -0.5479385145008564,
+      "left_sole_min_mm": 167.73097217082977,
+      "right_sole_min_mm": -0.5479385145008564
+    },
+    {
+      "frame": 19.75,
+      "minimum_mesh_z_mm": -0.11859135702252388,
+      "left_sole_min_mm": 159.76236760616302,
+      "right_sole_min_mm": -0.11859135702252388
+    },
+    {
+      "frame": 20.0,
+      "minimum_mesh_z_mm": 1.6526221297681332,
+      "left_sole_min_mm": 154.0268361568451,
+      "right_sole_min_mm": 1.6526221297681332
+    },
+    {
+      "frame": 20.25,
+      "minimum_mesh_z_mm": -2.006269060075283,
+      "left_sole_min_mm": 135.87042689323425,
+      "right_sole_min_mm": -2.006269060075283
+    },
+    {
+      "frame": 20.5,
+      "minimum_mesh_z_mm": -3.6447723396122456,
+      "left_sole_min_mm": 121.41790241003036,
+      "right_sole_min_mm": -3.6447723396122456
+    },
+    {
+      "frame": 20.75,
+      "minimum_mesh_z_mm": -2.4732290767133236,
+      "left_sole_min_mm": 111.00683361291885,
+      "right_sole_min_mm": -2.4732290767133236
+    },
+    {
+      "frame": 21.0,
+      "minimum_mesh_z_mm": 1.104151364415884,
+      "left_sole_min_mm": 104.8203557729721,
+      "right_sole_min_mm": 1.104151364415884
+    },
+    {
+      "frame": 21.25,
+      "minimum_mesh_z_mm": -1.2511835666373372,
+      "left_sole_min_mm": 91.35061502456665,
+      "right_sole_min_mm": -1.2511835666373372
+    },
+    {
+      "frame": 21.5,
+      "minimum_mesh_z_mm": -1.421956461854279,
+      "left_sole_min_mm": 83.7678462266922,
+      "right_sole_min_mm": -1.421956461854279
+    },
+    {
+      "frame": 21.75,
+      "minimum_mesh_z_mm": 0.08740066550672054,
+      "left_sole_min_mm": 78.90352606773376,
+      "right_sole_min_mm": 0.08740066550672054
+    },
+    {
+      "frame": 22.0,
+      "minimum_mesh_z_mm": 0.9995265863835812,
+      "left_sole_min_mm": 73.54902476072311,
+      "right_sole_min_mm": 0.9995265863835812
+    }
+  ],
+  "interpretation_limits": [
+    "Fixed-landmark reconstructed travel speed is inferred from the same contact windows and is not independent gameplay skating evidence.",
+    "Foot/toe-group minimum vertices are geometric support candidates; their actual surface appearance remains for human visual review.",
+    "A low right-toe centroid is not targeted; right-foot corrections are derived only from measured foot/toe surface clearance and the heel/toe contact evidence."
+  ]
+}

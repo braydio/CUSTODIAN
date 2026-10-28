@@ -67,11 +67,19 @@ for frame in range(1,22):
             v_z=pts[np.asarray(ids,dtype=np.int64),2]*1000
             landmark_frame[f'{side}_{kind}']={'xyz_m':p.tolist(),'z_mm':float(p[2]*1000),
                                                'fixed_vertex_z_mm_min':float(v_z.min()),'fixed_vertex_z_mm_max':float(v_z.max())}
+    foot_geometry_min={}
+    for side in ('Left','Right'):
+        names=(f'mixamorig:{side}Foot',f'mixamorig:{side}ToeBase')
+        ids=np.asarray([v.index for v in mesh.data.vertices if any(
+            mesh.vertex_groups[g.group].name in names and g.weight>=0.20 for g in v.groups)],dtype=np.int64)
+        vi=int(ids[np.argmin(pts[ids,2])])
+        foot_geometry_min[side]={'vertex':vi,'xyz_m':pts[vi].tolist(),'z_mm':float(pts[vi,2]*1000),
+                                 'candidate_vertex_count':int(len(ids))}
     toe_pb=arm.pose.bones['mixamorig:RightToeBase']; foot_pb=arm.pose.bones['mixamorig:RightFoot']
     right_bones={'foot_head_xyz_m':list(arm.matrix_world@foot_pb.head),'toe_head_xyz_m':list(arm.matrix_world@toe_pb.head),'toe_tail_xyz_m':list(arm.matrix_world@toe_pb.tail)}
     rows.append({'frame':frame,'time_s':(frame-1)/fps,'hip_center_xyz_m':list(hip),'vertices_below_minus5mm':int(len(low)),
                  'min_mesh_z_mm':float(pts[:,2].min()*1000),'penetrating_vertices':entries,'fixed_landmarks':landmark_frame,
-                 'right_foot_bones':right_bones})
+                 'foot_geometry_min':foot_geometry_min,'right_foot_bones':right_bones})
 
 # Signed forward contact estimates from fixed points relative to pelvis.
 forward_np=np.asarray(forward[:],dtype=np.float64)

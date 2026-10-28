@@ -43,25 +43,35 @@ Please assess toe direction, knee/ankle tracking, stance width and armored silho
 - One in-memory uniform pitch sensitivity sweep (−20° to +20°, 5° increments) did not justify a correction: the best tested result still has 56 vertex/frame observations below −5mm and −18.77mm minimum; right-toe contact remains absent. Global lift would remove existing contact windows. No mesh, weight, timing, or animation changes and no ITER004 blend/GLB were made. A phase-specific contact/IK solution would be a different authorized approach.
 - Report and JSON evidence: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter004/`. Contact overlays and 128px/512px comparison loops are published to the Dropbox manifest listed in Next Handoff. Status remains `RUN_MOTION_NEEDS_REPAIR`; stop for human review. No artistic approval, promotion, runtime integration, or main merge.
 
-## Process Feedback
 
+## ITER005 bounded foot-contact experiment — 2026-10-28
+
+- Started from ITER004 `84763fc3e357585b889683f113f008b6dcc5096c` in the isolated Codex worktree on `agent/operator-3d-master-modeling-proof-v1-iter005`. The original Claude worktree was treated as preservation-only and was not modified.
+- Created one reversible contact-phase two-bone IK derivative from ITER003. It uses fixed heel/toe indices plus evaluated Foot/ToeBase weighted sole geometry; right-toe contact was not forced. Source action, root/pelvis, arms, mesh, skin weights, materials, timing (30fps/0.70s), and off-contact motion were preserved. Mesh/topology/weights/material/rest hashes match ITER003.
+- Across all 21 integer frames, below−5mm observations improved 164→0 and distinct vertices 95→0; minimum mesh Z improved −31.99mm→+0.9996mm. Max edge stretch remains 2.9687×; loop seam delta is 0.00160mm; max off-contact mesh delta is 0.00038mm.
+- The single validation cycle also found unresolved quarter-frame sole dips: right −8.82mm at frame 1.50 and left −6.09mm at frame 12.50 (additional samples are in the detailed report). A linear interpolation probe did not resolve them. No second correction technique was attempted; status remains `RUN_MOTION_NEEDS_REPAIR`.
+- Fixed-landmark contact intervals are left heel 8–11, left toe 13–15, right heel 18–21, and no right-toe samples. Cycle-inferred-speed heel drift is descriptive only and not independent gameplay-skating evidence. See `rig_diagnostics/meshy-004_rigged/run_iter005/REPORT_task015_iter005.md`.
+- GLB clean reimport retained 0.70s/21 samples, 42 bones, 10,367 triangles, normalized weights, max four influences, UV/material/4096px textures; max sampled vertex delta 0.00228mm and seam 0.00186mm.
+- Retained visual evidence is at `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter005-foot-contact-review-20261028/REVIEW_MANIFEST.json`. It includes 128px eight-direction comparisons, focused native 512px contacts, full-cycle loops, overlays, and diagnostics. Codex makes no visual-quality judgment; stop for user/ChatGPT review.
+- No candidate promotion, Godot integration, main merge, or deployment.
+
+## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: initial GLB replay selected an inactive retained action; fixed by exporting only the active corrected action. Stable contacts still show high sliding speed, and correction introduces ground penetration.
-- Root cause / contributing factors: Blender retained a source action datablock alongside the active derivative; retarget-direction alignment does not itself solve contact constraints.
-- Prevention / pipeline improvement: export explicitly in active-action mode and verify action identity after reimport; keep stable fixed-index contacts and pelvis-relative speed in gait checks.
+- What went wrong: integer-frame sole clearance did not survive quarter-frame interpolation; one test of linear baked leg curves did not remove all dips.
+- Root cause / contributing factors: the evaluated surface changes between keyed poses, while the baked contact correction is sampled at 30fps; fitted cycle velocity is not independently established gameplay motion.
+- Prevention / pipeline improvement: include subframe sole sampling in contact validation before reporting contact as clear; retain fixed landmarks and separate inferred-speed diagnostics from gameplay claims.
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
-- What worked: per-joint source-direction checks exposed the exact toe offset and yielded a reversible correction while preserving mesh, weights, materials and timing.
+- What worked: one contact-gated two-bone IK experiment cleared integer-frame penetration while preserving topology, weights, materials, root trajectory, arms, and timing.
 
 ## Next Handoff
-
 - Next workstream: none
 - Next packet state: human-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: human visual review of ITER004 contact and gait evidence is required before any correction iteration.
-- Next action: review `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter004-contact-review-20261028/REVIEW_MANIFEST.json`; decide whether to authorize phase-specific contact/IK correction or return to planning.
-- Blockers or open questions: measured penetration/sliding persist; no single uniform correction was justified; visual acceptability is human-owned.
+- Refresh reason: review ITER005's rendered contact/gait evidence and decide whether any follow-up is warranted; subframe penetration remains measurable.
+- Next action: review `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter005-foot-contact-review-20261028/REVIEW_MANIFEST.json`; choose whether to stop with this experimental reference or authorize a separately scoped correction.
+- Blockers or open questions: between-frame foot penetration persists; reconstructed drift uses inferred speed; visual acceptability is human-owned.

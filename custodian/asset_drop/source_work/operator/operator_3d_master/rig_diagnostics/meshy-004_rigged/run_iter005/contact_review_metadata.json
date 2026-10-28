@@ -1,0 +1,67 @@
+{
+  "schema": "custodian.operator_run_contact_review.v1",
+  "before": "ITER003 gait-corrected Blender asset",
+  "after": "ITER005 experimental contact-phase two-bone IK derivative",
+  "camera": {
+    "uniform_scale": 1.23547,
+    "rest_bounds_min_m": [
+      -0.3688926100730896,
+      -0.2106744796037674,
+      1.7372927629821788e-07
+    ],
+    "rest_bounds_max_m": [
+      0.3688929080963135,
+      0.21067437529563904,
+      1.6999998092651367
+    ],
+    "pivot_center_xy_m": [
+      1.4901161193847656e-07,
+      -5.21540641784668e-08
+    ],
+    "ground_pivot_z_m": 1.7372927629821788e-07,
+    "root_pixel_128": [
+      64,
+      106
+    ],
+    "elevation_deg": 45.0,
+    "pixels_per_meter_at_128": 50.0
+  },
+  "contact_frames_in_sheets": [
+    1,
+    2,
+    10,
+    11,
+    12,
+    13,
+    14,
+    19,
+    20,
+    21
+  ],
+  "directions_128": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "directions_native_512": [
+    "N",
+    "E",
+    "S",
+    "SE"
+  ],
+  "overlay": "green line z=0; circular markers in cyan/magenta/blue/orange are LH/LT/RH/RT fixed 12-vertex centroids; red/yellow squares mark per-frame minimum z among Left/Right Foot/ToeBase group-weighted geometry candidates. Exact heights and vertex IDs are in the JSON diagnostics.",
+  "sheets": [
+    "contact_128_all8_iter003_vs_iter005.png",
+    "contact_512_native_focused_iter003_vs_iter005.png"
+  ],
+  "loops": [
+    "contact_loop_128_all8_iter003_vs_iter005.gif",
+    "contact_loop_512_focused_iter003_vs_iter005.gif"
+  ],
+  "render_note": "ITER005 was independently rendered by render_rigged.py at native 128px and native 512px. The 512px loop is resized for playback; the contact sheet remains native512."
+}
