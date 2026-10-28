@@ -203,6 +203,7 @@ Last updated: 2026-10-02
 - `custodian/tools/agent/validate_review_pairing.py` — standalone paired-review and validation-reference guard over checked-out `HEAD`; dispatch runs the same structural checks over fetched `origin/main` before eligibility
 - `custodian/tools/agent/branch_hygiene.py` — report-only ancestry-based remote branch classification and verified archive-before-delete operation
 - `custodian/tools/agent/worktree_backlog_census.py` — read-only normalized census of canonical attached/detached worktrees, dispatcher packet/claim identities, ancestry, and hashed porcelain status; unknown ownership remains protected
+- `custodian/tools/agent/transient_worktree_gc.py` — bounded, conservative cleanup of verified landed/archived clean agent checkouts at normal workstream boundaries; preview/apply, no ref deletion.
 - `custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md` — W1 host-measured 62-path inventory, count reconciliation, and preservation-first baseline for the staged backlog recovery series
 - `custodian/tools/agent/review_contract.py` and `test_review_contract.py` — structural finding and delta-correction contract with fixture coverage, without subjective prose scoring
 - `custodian/tools/agent/test_dispatch.py`, `test_workstream.py`, `test_workstream_artifacts.py`, `test_branch_hygiene.py`, and `test_land_main.py` — temporary-repository dispatch, lifecycle, run-artifact finalization, hygiene, and landing tests

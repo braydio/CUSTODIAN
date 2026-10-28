@@ -2115,6 +2115,19 @@ def fetch(repo: Path) -> None:
     git("worktree", "prune", cwd=repo)
 
 
+def reap_finished_checkouts(repo: Path, *, exclude: set[str] | None = None) -> None:
+    """Best-effort transient checkout maintenance; no claim/branch/ref deletion."""
+    try:
+        from transient_worktree_gc import sweep
+        report = sweep(repo, apply=True, limit=4, exclude=exclude)
+        if report["removed"]:
+            print(f"reclaimed {len(report['removed'])} verified finished transient worktree(s)", file=sys.stderr)
+    except Exception as exc:
+        # Cleanup is never a new admission or finish gate. The helper fails
+        # closed and cannot make an otherwise valid workstream unavailable.
+        print(f"transient worktree cleanup skipped: {exc}", file=sys.stderr)
+
+
 def tracking_branch(repo: Path, branch: str) -> None:
     git("branch", "--set-upstream-to", f"origin/{branch}", branch, cwd=repo)
 
@@ -2175,6 +2188,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
             before = worktree_records(repo)
             trace.record("start_inspection", main_sha=git("rev-parse", "origin/main", cwd=repo, check=False), worktrees=before)
             fetch(repo)
+            reap_finished_checkouts(repo, exclude={workstream_id})
             trace.record("remote_fetched", main_sha=git("rev-parse", "origin/main", cwd=repo), branch_ref=branch,
                          remote_branch_present=subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0)
             records = worktree_records(repo)
@@ -2696,6 +2710,8 @@ def finish(workstream_id: str, validation_report: Path, validation_report_after_
                                    defer_teardown=defer_teardown)
             trace.record("finish_completed", outcome=outcome)
             trace.complete(outcome, clear_active=True)
+            if outcome == "finished":
+                reap_finished_checkouts(repo, exclude={workstream_id})
     except Exception as exc:
         if not _is_quarantine_fence_error(exc):
             trace.finish_blocked(str(exc))
@@ -2749,9 +2765,13 @@ def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
         print(f"remote {branch}: {'present' if subprocess.run(['git','show-ref','--verify','--quiet',f'refs/remotes/origin/{branch}'],cwd=repo).returncode == 0 else 'absent'}")
 
 
-def gc(repo: Path | None = None) -> None:
+def gc(repo: Path | None = None, *, reap_finished: bool = False) -> None:
     repo = (repo or root_repo()).resolve()
     fetch(repo)
+    if reap_finished:
+        from transient_worktree_gc import sweep
+        print(json.dumps(sweep(repo, apply=True, limit=32), indent=2, sort_keys=True))
+        return
     script = Path(__file__).with_name("branch_hygiene.py")
     subprocess.run([sys.executable, str(script)], cwd=repo, check=True)
 
@@ -2771,7 +2791,8 @@ def main() -> int:
     p.add_argument("--defer-teardown", action="store_true",
                     help="leave the exact recovered review claim/worktree intact for independent post-land verification")
     p = subs.add_parser("preflight"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--json", action="store_true")
-    subs.add_parser("gc")
+    p = subs.add_parser("gc"); p.add_argument("--reap-finished", action="store_true",
+                                           help="remove only verified clean, archived, landed transient checkouts")
     args = parser.parse_args()
     try:
         if args.command == "start": start(args.workstream_id, agent=args.agent)
@@ -2790,7 +2811,7 @@ def main() -> int:
             else:
                 print(f"closeout preflight: {'READY' if result['ready_before_sync'] else 'BLOCKED'} (before final sync)")
                 print(json.dumps(result, sort_keys=True, indent=2))
-        else: gc()
+        else: gc(reap_finished=args.reap_finished)
         return 0
     except WorkstreamError as error:
         print(f"workstream: BLOCKED: {error}", file=sys.stderr)
