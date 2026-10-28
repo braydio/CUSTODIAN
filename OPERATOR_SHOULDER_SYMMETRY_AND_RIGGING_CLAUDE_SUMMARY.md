@@ -3,6 +3,7 @@
 **Workstream:** `operator-shoulder-symmetry-and-rigging-v1`
 **Branch:** `agent/operator-shoulder-symmetry-and-rigging-v1`
 **Status:** `MODEL_SHOULDER_REPAIR_REQUIRED`
+**Checkpoint commit:** `c51b11dfb9889c3fd2075a575f522854f3951de7`
 **Starting reference:** shoulder study `d8a1e656dcac52e69196779f3ad77eb457d6f2d7`; motion source ITER005 `6b89c4d50`.
 
 ## Outcome
