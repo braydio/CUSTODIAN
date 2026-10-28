@@ -461,6 +461,7 @@ Last updated: 2026-10-02
 - `custodian/game/world/procgen/story/story_room_template.gd` — story-room metadata template model
 - `custodian/game/world/procgen/story/story_room_placer.gd` — deterministic environmental story-site projection from exact F02 STORY_ROOM reservations in intent mode, with a legacy non-intent metadata fallback
 - `custodian/game/world/procgen/story/story_room_geometry_stamper.gd` — F02 story-room floor reservation stamper with exact projected-site/node/rectangle binding assertion
+- `design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES2_REFUSED_PASSAGE.md` — ES-2 physical Refused Passage blockout and accepted-world/interaction/collision contract; ES-2 implementation and paired review are separately packeted, not yet runtime-landed
 - `custodian/game/actors/enemies/ambient/ambient_activity_anchor.gd` — claimable non-combat activity anchor used by behavior-driven enemies
 - `custodian/tools/tiles/ingest_generated_terrain_packs.py` — unified wrapper that runs per-pack normalize scripts for connector, ascent, and chasm+bridge terrain gameplay packs; writes combined ingest report to `reports/terrain_pack_ingest/`
 - `custodian/tools/tiles/register_terrain_gameplay_packs.py` — registers runtime terrain gameplay pack PNGs as TileSetAtlasSource entries in `procgen_world_tileset.tres`; writes source-ID mapping report to `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json`
