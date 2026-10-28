@@ -28,7 +28,7 @@
 - Review focus: Confirm the target mapping uses the validated source and target rest frames rather than animation-specific posing; the same policy is applied to both clips; asymmetric source stance and knee/elbow behavior are preserved within target proportions; loop/root-motion contracts remain honest; and the prior rejected candidate remains intact.
 - Acceptance: Record a genuine PASS or stable R0-NN findings with class, domain, affected acceptance, evidence, disposition and rationale. Blocking defects or material evidence gaps create a bounded correction/re-review packet. Do not approve either animation or decide which should be the default.
 - Non-goals: No implementation edits, no aesthetic judgment, no further animation/model changes, no additional clips, no full directional library, no production/runtime promotion.
-- Task overrides: TASK OVERRIDE: Paired post-land review may stage, commit and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets. Do not edit reviewed implementation or unrelated work.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 
