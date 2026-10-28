@@ -28,7 +28,7 @@
 - Review focus: Try forged final, conflicting preceding message, two completed turns, duplicate PASS, mismatched run and target, missing archive, edited original reviewer packet, stale main branch, false approval, replayed apply, symlinks, untracked artifacts, missing owner and reviewer self-approval. Verify no side effects in read-only plan and original live case remains unapplied. The coordinator must not invent reviewer judgment or bypass independent validation.
 - Acceptance: New fresh-context findings-first genuine review disposition, PASS only with zero blocking defects/material gaps and complete negative controls. Do not apply the historical original-run closeout during this independent code review.
 - Non-goals: Do not edit reviewed implementation or original historical claim, alter original run phase, launch original reviewer again, relax unrelated review policies or initiate further general recovery.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt, its lifecycle/archive metadata, required closing summary and narrowly bounded correction/re-review packets; never edit implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 
