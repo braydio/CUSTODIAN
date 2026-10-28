@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-operator-3d-neutral-idle-blender-proof-v1`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-3d-neutral-idle-blender-proof-v1`
 - Locks: `operator-3d-animation-pipeline`

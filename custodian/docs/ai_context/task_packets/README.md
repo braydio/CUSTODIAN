@@ -151,6 +151,7 @@ packet and its paired review, not as chat-only downloads.
 - `NPA_SHOWCASE_ESCORT_FRAME_M7_ACTOR.md` — Create one real M-7 escort unit as a distinct actor skin/profile over reviewed CombatDrone/AlliedInfantryDroid, with manager-owned command identity.
 - `NPA_SHOWCASE_EXISTING_VAULTWING_PROOF.md` — Make the existing Common Vaultwing a reliable wildlife/relationship demonstration without adding companion commands prematurely.
 - `OPERATOR_2_5D_SOURCE_STRIP_EVIDENCE_AVAILABILITY_CORRECTION.md` — Make the 2.5D closure diagnostic accurately distinguish verified, mismatched, and unavailable historical source-strip evidence.
+- `OPERATOR_3D_NEUTRAL_IDLE_BLENDER_PROOF_V1.md` — Produce one reproducible, candidate-only Neutral Idle proof from the authorized Mixamo FBX on the experimental 42-bone ITER005 Operator rig, with reusable re...
 - `OPERATOR_ELEVATION_TRAVERSAL_ENFORCEMENT_V1.md` — Make existing ElevationMap/ProcGen edge truth physically constrain Operator local motion without creating a second movement or collision authority.
 - `OPERATOR_INTERACTION_DOMAIN_EXTRACTION.md` — Extract interaction target/build/repair/terminal field-work coordination into one focused authority and give interactables an opt-in semantic Operator succes...
 - `OPERATOR_MELEE_DOMAIN_EXTRACTION.md` — Extract melee timeline/drive/target/contact state into one focused authority and cash in the existing modular art where it genuinely improves moving combat p...
@@ -247,6 +248,7 @@ packet and its paired review, not as chat-only downloads.
 - `REVIEW_OPERATOR_2_5D_RUNTIME_PROMOTION.md` — Independently verify the landed implementation against its archived packet and live behavior.
 - `REVIEW_OPERATOR_2_5D_SOURCE_STRIP_EVIDENCE_AVAILABILITY_CORRECTION.md` — Independently verify that missing historical source strips are treated as unavailable evidence while present tampered bytes still fail.
 - `REVIEW_OPERATOR_3D_ANIMATION_BATCH_PIPELINE_V1.md` — Independently verify the landed Task 001 compiler foundation against its archived packet, stable behavior and live repository boundaries.
+- `REVIEW_OPERATOR_3D_NEUTRAL_IDLE_BLENDER_PROOF_V1.md` — Independently verify the real one-clip Neutral Idle retarget/render proof, reusable motion boundary and candidate receipt against its archived implementation...
 - `REVIEW_OPERATOR_ELEVATION_TRAVERSAL_ENFORCEMENT_V1.md` — Prove the landed guard consumes existing terrain truth without becoming a second motor or breaking authored-level movement.
 - `REVIEW_OPERATOR_MOTION_FOUNDRY_BLENDER_2D_RIG_V1.md` — Independently falsify the 2D Blender Operator rig's source-identity, editable control, neutral pixel fidelity and no-runtime-publication gates.
 - `REVIEW_OPERATOR_MOTION_FOUNDRY_CORE_V1.md` — Independently falsify MF1 deterministic candidate-generation, identity and write-boundary acceptance.
