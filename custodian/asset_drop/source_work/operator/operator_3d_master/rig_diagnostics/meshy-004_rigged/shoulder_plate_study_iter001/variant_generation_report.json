@@ -1,0 +1,48 @@
+{
+  "schema": "custodian.operator_shoulder_plate_study.v1",
+  "source": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter005/operator_run_mixamo_iter005_contact_ik.blend",
+  "variants": [
+    {
+      "variant": "BASELINE",
+      "blend": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/BASELINE.blend",
+      "overlay": null,
+      "source_mesh_object": "output_unwrapped",
+      "source_action_disabled_for_static_pose": true,
+      "shoulder_patch_source_faces": 917
+    },
+    {
+      "variant": "VARIANT_A_MODERATE",
+      "blend": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/VARIANT_A_MODERATE.blend",
+      "overlay": {
+        "object": "SHOULDER_PLATE_OVERLAY_VARIANT_A_MODERATE",
+        "source_vertices": 1597,
+        "source_faces": 917,
+        "outward_offset_m": 0.04,
+        "vertical_offset_m": 0.015,
+        "solidify_thickness_m": 0.004,
+        "weights_changed": false,
+        "material_source": "BakedMaterial"
+      },
+      "source_mesh_object": "output_unwrapped",
+      "source_action_disabled_for_static_pose": true,
+      "shoulder_patch_source_faces": 917
+    },
+    {
+      "variant": "VARIANT_B_LAYERED",
+      "blend": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/VARIANT_B_LAYERED.blend",
+      "overlay": {
+        "object": "SHOULDER_PLATE_OVERLAY_VARIANT_B_LAYERED",
+        "source_vertices": 1597,
+        "source_faces": 917,
+        "outward_offset_m": 0.065,
+        "vertical_offset_m": 0.02,
+        "solidify_thickness_m": 0.008,
+        "weights_changed": false,
+        "material_source": "BakedMaterial"
+      },
+      "source_mesh_object": "output_unwrapped",
+      "source_action_disabled_for_static_pose": true,
+      "shoulder_patch_source_faces": 917
+    }
+  ]
+}

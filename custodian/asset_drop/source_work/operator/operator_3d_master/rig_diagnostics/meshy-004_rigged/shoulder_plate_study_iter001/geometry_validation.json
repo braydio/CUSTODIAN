@@ -1,0 +1,117 @@
+{
+  "schema": "custodian.operator_shoulder_plate_geometry_validation.v1",
+  "variants": [
+    {
+      "variant": "BASELINE",
+      "source_mesh_vertices": 17578,
+      "source_mesh_faces": 10367,
+      "replaced_surface_faces": 917,
+      "source_material_count": 1,
+      "base_mesh_hashes": {
+        "vertices": "1fc1dec3fb8406626a73c0fd008492041abb79727635c21e4365957d432f0fc6",
+        "topology": "4e540f99dbd19c7d4c068df88ed09732932bbf10b2c6cb53db18c4481a2c90b4",
+        "weights": "85f45c34c23240b0b70cd997a785e09409cf35060a791e801ed446b934afe820",
+        "uv": "62ac02d7f260049559b912dbff4146c7af0fd7065149cfc8676ba71ead1ca7b8",
+        "materials": "7991cfbac2618c26de97bf0200dec92476de7062164c88bd74979cb4634662e8"
+      },
+      "source_action_disabled": true,
+      "overlay_object": null,
+      "base_mesh_matches_baseline": {
+        "vertices": true,
+        "topology": true,
+        "weights": true,
+        "uv": true,
+        "materials": true
+      },
+      "weights_unchanged": true
+    },
+    {
+      "variant": "VARIANT_A_MODERATE",
+      "source_mesh_vertices": 17578,
+      "source_mesh_faces": 10367,
+      "replaced_surface_faces": 917,
+      "source_material_count": 1,
+      "base_mesh_hashes": {
+        "vertices": "1fc1dec3fb8406626a73c0fd008492041abb79727635c21e4365957d432f0fc6",
+        "topology": "4e540f99dbd19c7d4c068df88ed09732932bbf10b2c6cb53db18c4481a2c90b4",
+        "weights": "85f45c34c23240b0b70cd997a785e09409cf35060a791e801ed446b934afe820",
+        "uv": "62ac02d7f260049559b912dbff4146c7af0fd7065149cfc8676ba71ead1ca7b8",
+        "materials": "7991cfbac2618c26de97bf0200dec92476de7062164c88bd74979cb4634662e8"
+      },
+      "source_action_disabled": true,
+      "overlay_object": "SHOULDER_PLATE_OVERLAY_VARIANT_A_MODERATE",
+      "overlay_vertices_after_thickness": 3194,
+      "overlay_faces_after_thickness": 3441,
+      "triangle_intersections_with_non_plate_base_surface": 96,
+      "distinct_overlay_faces_intersecting_base": 52,
+      "intersection_face_bounds_xyz_m": [
+        [
+          -0.2493,
+          0.306
+        ],
+        [
+          -0.0709,
+          0.156
+        ],
+        [
+          1.2072,
+          1.2728
+        ]
+      ],
+      "overlay_material_count": 1,
+      "minimum_distance_to_non_plate_base_surface_mm": 0.115,
+      "base_mesh_matches_baseline": {
+        "vertices": true,
+        "topology": true,
+        "weights": true,
+        "uv": true,
+        "materials": true
+      },
+      "weights_unchanged": true
+    },
+    {
+      "variant": "VARIANT_B_LAYERED",
+      "source_mesh_vertices": 17578,
+      "source_mesh_faces": 10367,
+      "replaced_surface_faces": 917,
+      "source_material_count": 1,
+      "base_mesh_hashes": {
+        "vertices": "1fc1dec3fb8406626a73c0fd008492041abb79727635c21e4365957d432f0fc6",
+        "topology": "4e540f99dbd19c7d4c068df88ed09732932bbf10b2c6cb53db18c4481a2c90b4",
+        "weights": "85f45c34c23240b0b70cd997a785e09409cf35060a791e801ed446b934afe820",
+        "uv": "62ac02d7f260049559b912dbff4146c7af0fd7065149cfc8676ba71ead1ca7b8",
+        "materials": "7991cfbac2618c26de97bf0200dec92476de7062164c88bd74979cb4634662e8"
+      },
+      "source_action_disabled": true,
+      "overlay_object": "SHOULDER_PLATE_OVERLAY_VARIANT_B_LAYERED",
+      "overlay_vertices_after_thickness": 3194,
+      "overlay_faces_after_thickness": 3441,
+      "triangle_intersections_with_non_plate_base_surface": 75,
+      "distinct_overlay_faces_intersecting_base": 45,
+      "intersection_face_bounds_xyz_m": [
+        [
+          -0.2643,
+          0.3023
+        ],
+        [
+          -0.0728,
+          0.1512
+        ],
+        [
+          1.2088,
+          1.2732
+        ]
+      ],
+      "overlay_material_count": 1,
+      "minimum_distance_to_non_plate_base_surface_mm": 0.33,
+      "base_mesh_matches_baseline": {
+        "vertices": true,
+        "topology": true,
+        "weights": true,
+        "uv": true,
+        "materials": true
+      },
+      "weights_unchanged": true
+    }
+  ]
+}

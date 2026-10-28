@@ -1,0 +1,395 @@
+{
+  "schema": "custodian.operator_shoulder_plate_render.v1",
+  "camera": {
+    "elevation_deg": 45,
+    "pixels_per_meter_at_128": 50,
+    "root_pixel_128": [
+      64,
+      106
+    ],
+    "uniform_scale": 1.23547,
+    "background_rgb": [
+      30,
+      32,
+      37
+    ],
+    "lighting": "single sun, energy 3, per-view rotation; identical for all variants",
+    "pose": "armature rest pose, action disabled, identity pose-bone transforms; same for all variants"
+  },
+  "variants": {
+    "BASELINE": {
+      "silhouette_bounds_px": {
+        "128": {
+          "N": [
+            46,
+            87
+          ],
+          "NE": [
+            35,
+            88
+          ],
+          "E": [
+            26,
+            91
+          ],
+          "SE": [
+            42,
+            89
+          ],
+          "S": [
+            46,
+            85
+          ],
+          "SW": [
+            35,
+            90
+          ],
+          "W": [
+            26,
+            90
+          ],
+          "NW": [
+            42,
+            88
+          ]
+        },
+        "512": {
+          "N": [
+            184,
+            349
+          ],
+          "NE": [
+            144,
+            356
+          ],
+          "E": [
+            106,
+            367
+          ],
+          "SE": [
+            171,
+            356
+          ],
+          "S": [
+            184,
+            340
+          ],
+          "SW": [
+            144,
+            362
+          ],
+          "W": [
+            106,
+            359
+          ],
+          "NW": [
+            171,
+            353
+          ]
+        }
+      },
+      "upper_body_band_width_px": {
+        "N": [
+          39,
+          56
+        ],
+        "NE": [
+          27,
+          52
+        ],
+        "E": [
+          24,
+          39
+        ],
+        "SE": [
+          36,
+          56
+        ],
+        "S": [
+          42,
+          56
+        ],
+        "SW": [
+          29,
+          55
+        ],
+        "W": [
+          24,
+          40
+        ],
+        "NW": [
+          36,
+          56
+        ]
+      }
+    },
+    "VARIANT_A_MODERATE": {
+      "silhouette_bounds_px": {
+        "128": {
+          "N": [
+            46,
+            87
+          ],
+          "NE": [
+            35,
+            88
+          ],
+          "E": [
+            26,
+            91
+          ],
+          "SE": [
+            42,
+            89
+          ],
+          "S": [
+            46,
+            85
+          ],
+          "SW": [
+            35,
+            90
+          ],
+          "W": [
+            26,
+            90
+          ],
+          "NW": [
+            42,
+            88
+          ]
+        },
+        "512": {
+          "N": [
+            184,
+            349
+          ],
+          "NE": [
+            144,
+            356
+          ],
+          "E": [
+            106,
+            367
+          ],
+          "SE": [
+            171,
+            356
+          ],
+          "S": [
+            184,
+            340
+          ],
+          "SW": [
+            144,
+            362
+          ],
+          "W": [
+            106,
+            359
+          ],
+          "NW": [
+            171,
+            353
+          ]
+        }
+      },
+      "width_change_percent_vs_baseline": {
+        "N": 0.0,
+        "NE": 0.0,
+        "E": 0.0,
+        "SE": 0.0,
+        "S": 0.0,
+        "SW": 0.0,
+        "W": 0.0,
+        "NW": 0.0
+      },
+      "upper_body_band_width_px": {
+        "N": [
+          42,
+          52
+        ],
+        "NE": [
+          29,
+          52
+        ],
+        "E": [
+          24,
+          39
+        ],
+        "SE": [
+          38,
+          56
+        ],
+        "S": [
+          42,
+          56
+        ],
+        "SW": [
+          31,
+          55
+        ],
+        "W": [
+          24,
+          40
+        ],
+        "NW": [
+          38,
+          56
+        ]
+      },
+      "upper_body_band_change_percent_vs_baseline": {
+        "N": 7.69,
+        "NE": 7.41,
+        "E": 0.0,
+        "SE": 5.56,
+        "S": 0.0,
+        "SW": 6.9,
+        "W": 0.0,
+        "NW": 5.56
+      }
+    },
+    "VARIANT_B_LAYERED": {
+      "silhouette_bounds_px": {
+        "128": {
+          "N": [
+            47,
+            87
+          ],
+          "NE": [
+            37,
+            88
+          ],
+          "E": [
+            26,
+            92
+          ],
+          "SE": [
+            42,
+            89
+          ],
+          "S": [
+            47,
+            85
+          ],
+          "SW": [
+            37,
+            90
+          ],
+          "W": [
+            26,
+            90
+          ],
+          "NW": [
+            42,
+            88
+          ]
+        },
+        "512": {
+          "N": [
+            189,
+            349
+          ],
+          "NE": [
+            150,
+            356
+          ],
+          "E": [
+            106,
+            369
+          ],
+          "SE": [
+            172,
+            356
+          ],
+          "S": [
+            189,
+            340
+          ],
+          "SW": [
+            150,
+            362
+          ],
+          "W": [
+            106,
+            359
+          ],
+          "NW": [
+            172,
+            353
+          ]
+        }
+      },
+      "width_change_percent_vs_baseline": {
+        "N": 2.17,
+        "NE": 5.71,
+        "E": 0.0,
+        "SE": 0.0,
+        "S": 2.17,
+        "SW": 5.71,
+        "W": 0.0,
+        "NW": 0.0
+      },
+      "upper_body_band_width_px": {
+        "N": [
+          46,
+          50
+        ],
+        "NE": [
+          30,
+          52
+        ],
+        "E": [
+          24,
+          39
+        ],
+        "SE": [
+          39,
+          56
+        ],
+        "S": [
+          45,
+          50
+        ],
+        "SW": [
+          32,
+          55
+        ],
+        "W": [
+          24,
+          40
+        ],
+        "NW": [
+          39,
+          56
+        ]
+      },
+      "upper_body_band_change_percent_vs_baseline": {
+        "N": 17.95,
+        "NE": 11.11,
+        "E": 0.0,
+        "SE": 8.33,
+        "S": 7.14,
+        "SW": 10.34,
+        "W": 0.0,
+        "NW": 8.33
+      }
+    }
+  },
+  "review_artifacts": {
+    "sheets": {
+      "128": "shoulder_128_all8_three_variants.png",
+      "512": "shoulder_512_all8_three_variants.png"
+    },
+    "closeups": "shoulder_512_closeups_five_views.png",
+    "silhouette": "shoulder_128_silhouette_optional.png"
+  },
+  "shoulder_band_pixel_measurement": {
+    "resolution": 128,
+    "rows_inclusive": [
+      32,
+      56
+    ],
+    "meaning": "maximum alpha width within this fixed upper-body image band; coarse silhouette measure, not an aesthetic score"
+  }
+}
