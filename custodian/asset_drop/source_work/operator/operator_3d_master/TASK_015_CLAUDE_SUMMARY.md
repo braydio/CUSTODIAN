@@ -81,17 +81,26 @@ See `rig_diagnostics/meshy-004_rigged/run_iter002/REPORT_task015_codex.md` for t
 - Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter003-review-20261028/REVIEW_MANIFEST.json`.
 - Status remains `RUN_MOTION_NEEDS_REPAIR`; visual assessment belongs to the user and ChatGPT.
 
+
+## ITER004 ground-contact diagnosis — 2026-10-28
+
+- Re-evaluated all 17,578 vertices across 21 frames in Blender. ITER002: 0 vertices below −5mm. ITER003: 164 vertex/frame observations across 95 distinct vertices; 42 at the worst single frame (frame 13), minimum −31.99mm. The prior “42 vertices” is a per-frame maximum, while 95 counts unique IDs across the cycle.
+- Rest-pose weighted soles are at/above ground. Failures occur only during ITER003's animated action and concentrate around the foot/toe chain; this supports animated foot rotation/deformation rather than a static sole or global ground-height issue.
+- Reused the same fixed 12-vertex heel/toe centroids and z≤40mm threshold. The right toe never contacts (centroid minimum 54.86mm; selected vertices minimum 41.79mm). Cycle-inferred root speed is 3.539m/s for ITER003 and 4.213m/s for ITER002. The estimator is fit to the contact windows, so reconstructed residuals are descriptive, not independent proof. ITER003 contact net/path displacement: left heel 63.8/67.7mm; left toe 30.1/58.7mm; right heel 50.8/51.2mm.
+- One in-memory uniform pitch sensitivity sweep (−20° to +20°, 5° increments) did not justify a correction: the best tested result still has 56 vertex/frame observations below −5mm and −18.77mm minimum; right-toe contact remains absent. Global lift would remove existing contact windows. No mesh, weight, timing, or animation changes and no ITER004 blend/GLB were made. A phase-specific contact/IK solution would be a different authorized approach.
+- Report and JSON evidence: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter004/`. Contact overlays and 128px/512px comparison loops are published to the Dropbox manifest listed in Next Handoff. Status remains `RUN_MOTION_NEEDS_REPAIR`; stop for human review. No artistic approval, promotion, runtime integration, or main merge.
+
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: the first GLB export replayed an inactive source action; stable contact speeds and ground penetration remain unresolved.
-- Root cause / contributing factors: inactive source action was retained in Blender's datablocks; source-axis alignment alone does not enforce planted-foot contact.
-- Prevention / pipeline improvement: export only the active action and verify its identity; measure fixed landmarks relative to pelvis and test ground penetration.
+- What went wrong: the first GLB export replayed an inactive source action; ITER003 retains ground penetration and sliding, and the one tested uniform pitch correction class did not resolve them.
+- Root cause / contributing factors: inactive source action was retained in Blender's datablocks; source-axis alignment alone does not enforce planted-foot contact, and the observed penetration is animation-dependent foot rotation/deformation.
+- Prevention / pipeline improvement: export only the active action and verify its identity; measure fixed landmarks relative to pelvis and test cycle-wide penetration with per-frame and unique-vertex scopes reported separately.
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
-- What worked: preserved iter002 and created a separate, measurable derivative without mesh/weight edits.
+- What worked: preserved iter002/003; reused fixed contact landmarks; diagnosed the bounded correction failure without editing mesh, weights, timing, or animation.
 
 ## Next Handoff
 
@@ -100,6 +109,6 @@ See `rig_diagnostics/meshy-004_rigged/run_iter002/REPORT_task015_codex.md` for t
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: visually assess gait, ground contact, and residual fragments before authorizing another correction.
-- Next action: review the iter003 Dropbox manifest and record a visual decision.
-- Blockers or open questions: skating/ground penetration need a decision; rest-pose toe asymmetry remains outside the animated action.
+- Refresh reason: human visual review of ITER004 contact and gait evidence is required before any correction iteration.
+- Next action: review `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter004-contact-review-20261028/REVIEW_MANIFEST.json`; decide whether to authorize phase-specific contact/IK correction or return to planning.
+- Blockers or open questions: measured penetration/sliding persist; no single uniform correction was justified; visual acceptability is human-owned.

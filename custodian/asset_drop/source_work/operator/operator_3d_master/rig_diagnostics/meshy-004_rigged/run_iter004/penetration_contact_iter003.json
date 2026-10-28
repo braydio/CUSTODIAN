@@ -1,0 +1,6350 @@
+{
+  "schema": "custodian.operator_run_contact_diagnosis.v1",
+  "action": "operator_run_mixamo_iter003_gait_corrected",
+  "fps": 30.0,
+  "unique_frames": 21,
+  "cycle_duration_s": 0.7,
+  "ground_plane_z_m": 0.0,
+  "penetration_threshold_m": -0.005,
+  "penetrating_vertex_observations": 164,
+  "distinct_penetrating_vertices": 95,
+  "render_camera_contract": {
+    "uniform_scale": 1.23547,
+    "rest_bounds_min_m": [
+      -0.3688926100730896,
+      -0.2106744796037674,
+      1.7372927629821788e-07
+    ],
+    "rest_bounds_max_m": [
+      0.3688929080963135,
+      0.21067437529563904,
+      1.6999998092651367
+    ],
+    "pivot_center_xy_m": [
+      1.4901161193847656e-07,
+      -5.21540641784668e-08
+    ],
+    "ground_pivot_z_m": 1.7372927629821788e-07,
+    "root_pixel_128": [
+      64,
+      106
+    ],
+    "elevation_deg": 45.0,
+    "pixels_per_meter_at_128": 50.0
+  },
+  "penetrating_vertices_by_dominant_group": {
+    "mixamorig:RightFoot": 34,
+    "mixamorig:LeftFoot": 55,
+    "Bone_027": 12,
+    "mixamorig:LeftToeBase": 35,
+    "Bone_022": 28
+  },
+  "penetrating_bone_rest_context": {
+    "Bone_022": {
+      "parent": "Bone_023",
+      "rest_head_m": [
+        0.2623048424720764,
+        -0.13613206148147583,
+        0.029883885756134987
+      ],
+      "rest_tail_m": [
+        0.268945574760437,
+        -0.1759757697582245,
+        0.036524493247270584
+      ]
+    },
+    "Bone_027": {
+      "parent": "mixamorig:LeftFoot",
+      "rest_head_m": [
+        0.34594962000846863,
+        -0.09628823399543762,
+        0.023251118138432503
+      ],
+      "rest_tail_m": [
+        0.3735950291156769,
+        -0.11456134170293808,
+        -0.8315224051475525
+      ]
+    },
+    "mixamorig:LeftFoot": {
+      "parent": "mixamorig:LeftLeg",
+      "rest_head_m": [
+        0.22136282920837402,
+        0.04448655620217323,
+        0.15276142954826355
+      ],
+      "rest_tail_m": [
+        0.2712337374687195,
+        -0.06401799619197845,
+        0.055130742490291595
+      ]
+    },
+    "mixamorig:LeftToeBase": {
+      "parent": "mixamorig:LeftFoot",
+      "rest_head_m": [
+        0.2712337076663971,
+        -0.06401800364255905,
+        0.055130764842033386
+      ],
+      "rest_tail_m": [
+        0.2979680895805359,
+        -0.1510469615459442,
+        0.04875323921442032
+      ]
+    },
+    "mixamorig:RightFoot": {
+      "parent": "mixamorig:RightLeg",
+      "rest_head_m": [
+        -0.22136282920837402,
+        0.04448641091585159,
+        0.15276159346103668
+      ],
+      "rest_tail_m": [
+        -0.2837677001953125,
+        -0.007918175309896469,
+        0.044348105788230896
+      ]
+    }
+  },
+  "frame_summary": [
+    {
+      "frame": 1,
+      "vertices_below_minus5mm": 11,
+      "min_mesh_z_mm": -10.837648995220661
+    },
+    {
+      "frame": 2,
+      "vertices_below_minus5mm": 8,
+      "min_mesh_z_mm": -8.506320416927338
+    },
+    {
+      "frame": 3,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 14.261018484830856
+    },
+    {
+      "frame": 4,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 59.70229580998421
+    },
+    {
+      "frame": 5,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 68.84115934371948
+    },
+    {
+      "frame": 6,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 75.3907784819603
+    },
+    {
+      "frame": 7,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 52.77731269598007
+    },
+    {
+      "frame": 8,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 13.235356658697128
+    },
+    {
+      "frame": 9,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 3.4893425181508064
+    },
+    {
+      "frame": 10,
+      "vertices_below_minus5mm": 7,
+      "min_mesh_z_mm": -5.241903010755777
+    },
+    {
+      "frame": 11,
+      "vertices_below_minus5mm": 22,
+      "min_mesh_z_mm": -14.406772330403328
+    },
+    {
+      "frame": 12,
+      "vertices_below_minus5mm": 29,
+      "min_mesh_z_mm": -18.32588203251362
+    },
+    {
+      "frame": 13,
+      "vertices_below_minus5mm": 42,
+      "min_mesh_z_mm": -31.985528767108917
+    },
+    {
+      "frame": 14,
+      "vertices_below_minus5mm": 30,
+      "min_mesh_z_mm": -24.169042706489563
+    },
+    {
+      "frame": 15,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 20.31901851296425
+    },
+    {
+      "frame": 16,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 59.90041419863701
+    },
+    {
+      "frame": 17,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 52.10663005709648
+    },
+    {
+      "frame": 18,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 11.338874697685242
+    },
+    {
+      "frame": 19,
+      "vertices_below_minus5mm": 12,
+      "min_mesh_z_mm": -14.489252120256424
+    },
+    {
+      "frame": 20,
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": -4.894859157502651
+    },
+    {
+      "frame": 21,
+      "vertices_below_minus5mm": 3,
+      "min_mesh_z_mm": -6.241851020604372
+    }
+  ],
+  "rest_pose_foot_geometry": {
+    "Left": {
+      "weighted_vertex_count": 1075,
+      "min_z_mm": 2.6037110947072506,
+      "min_z_vertex_ids": [
+        14223,
+        14224,
+        14341,
+        14342
+      ]
+    },
+    "Right": {
+      "weighted_vertex_count": 1099,
+      "min_z_mm": 0.00017372927629821788,
+      "min_z_vertex_ids": [
+        16027,
+        16070,
+        16071,
+        16168
+      ]
+    }
+  },
+  "fixed_landmark_indices": {
+    "left": {
+      "heel": [
+        15333,
+        15334,
+        15317,
+        15318,
+        15365,
+        15366,
+        15315,
+        15316,
+        15313,
+        15314,
+        15367,
+        15368
+      ],
+      "toe": [
+        14268,
+        14269,
+        14278,
+        14279,
+        14286,
+        14287,
+        14265,
+        14266,
+        14267,
+        14288,
+        14289,
+        14273
+      ]
+    },
+    "right": {
+      "heel": [
+        17069,
+        17070,
+        17052,
+        17053,
+        17078,
+        17079,
+        17084,
+        17085,
+        17086,
+        16858,
+        16859,
+        16981
+      ],
+      "toe": [
+        16017,
+        16018,
+        16015,
+        16016,
+        16004,
+        16005,
+        16025,
+        16026,
+        15997,
+        15998,
+        16008,
+        16009
+      ]
+    }
+  },
+  "contact_frames": {
+    "left_heel": [
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "left_toe": [
+      13,
+      14,
+      15
+    ],
+    "right_heel": [
+      18,
+      19,
+      20,
+      21
+    ],
+    "right_toe": []
+  },
+  "reconstructed_contact_intervals": {
+    "left_heel": [
+      {
+        "frames": [
+          8,
+          12
+        ],
+        "sample_count": 5,
+        "reconstructed_net_displacement_xy_m": [
+          -0.006217262035297419,
+          0.06348950314778001
+        ],
+        "reconstructed_net_displacement_mm": 63.793192091065,
+        "reconstructed_path_length_mm": 67.66480846908377,
+        "max_reconstructed_pair_displacement_mm": 25.942242941057042
+      }
+    ],
+    "left_toe": [
+      {
+        "frames": [
+          13,
+          15
+        ],
+        "sample_count": 3,
+        "reconstructed_net_displacement_xy_m": [
+          -0.021544669263406133,
+          0.02108608880767182
+        ],
+        "reconstructed_net_displacement_mm": 30.146242135207828,
+        "reconstructed_path_length_mm": 58.670650146275065,
+        "max_reconstructed_pair_displacement_mm": 39.432068417723045
+      }
+    ],
+    "right_heel": [
+      {
+        "frames": [
+          18,
+          21
+        ],
+        "sample_count": 4,
+        "reconstructed_net_displacement_xy_m": [
+          0.018895644034678447,
+          0.04719939752115243
+        ],
+        "reconstructed_net_displacement_mm": 50.841208579704805,
+        "reconstructed_path_length_mm": 51.22620059208745,
+        "max_reconstructed_pair_displacement_mm": 18.55182332786838
+      }
+    ],
+    "right_toe": []
+  },
+  "forward_axis_world": [
+    6.128740892563656e-08,
+    -1.0,
+    0.0
+  ],
+  "lateral_axis_world": [
+    -1.0,
+    -6.128740892563656e-08,
+    0.0
+  ],
+  "root_velocity_method": "negative median signed forward velocity of pelvis-relative fixed heel/toe centroids over adjacent pairs with both heights <=40mm; 21-frame 30fps cycle; root velocity held constant for reconstructed trajectory",
+  "estimated_forward_root_velocity_mps": 3.5393654072092553,
+  "contact_pairs": [
+    {
+      "landmark": "left_heel",
+      "frame_pair": [
+        8,
+        9
+      ],
+      "contact_height_mm": [
+        32.10981500645479,
+        30.455216610183317
+      ],
+      "relative_velocity_forward_mps": -3.4149357489482512,
+      "relative_velocity_lateral_mps": -0.3051583699194531,
+      "estimated_root_forward_mps": 3.4149357489482512,
+      "reconstructed_velocity_forward_mps": -0.4215856251644648,
+      "reconstructed_velocity_lateral_mps": 0.20855515535408956,
+      "reconstructed_horizontal_speed_mps": 0.4703506170372606
+    },
+    {
+      "landmark": "left_heel",
+      "frame_pair": [
+        9,
+        10
+      ],
+      "contact_height_mm": [
+        30.455216610183317,
+        25.56044957600534
+      ],
+      "relative_velocity_forward_mps": -3.022803218307925,
+      "relative_velocity_lateral_mps": 0.018524044266742902,
+      "estimated_root_forward_mps": 3.022803218307925,
+      "reconstructed_velocity_forward_mps": -0.2170664654267912,
+      "reconstructed_velocity_lateral_mps": -0.1619278705543806,
+      "reconstructed_horizontal_speed_mps": 0.27081078517437385
+    },
+    {
+      "landmark": "left_heel",
+      "frame_pair": [
+        10,
+        11
+      ],
+      "contact_height_mm": [
+        25.56044957600534,
+        20.72462315360705
+      ],
+      "relative_velocity_forward_mps": -3.5132094453093856,
+      "relative_velocity_lateral_mps": -0.03190375044314381,
+      "estimated_root_forward_mps": 3.5132094453093856,
+      "reconstructed_velocity_forward_mps": -0.4957701823456883,
+      "reconstructed_velocity_lateral_mps": -0.12181163494055766,
+      "reconstructed_horizontal_speed_mps": 0.5105155636291658
+    },
+    {
+      "landmark": "left_heel",
+      "frame_pair": [
+        11,
+        12
+      ],
+      "contact_height_mm": [
+        20.72462315360705,
+        22.12504871810476
+      ],
+      "relative_velocity_forward_mps": -4.297600538896556,
+      "relative_velocity_lateral_mps": 0.022158061329673868,
+      "estimated_root_forward_mps": 4.297600538896556,
+      "reconstructed_velocity_forward_mps": -0.7702628329276485,
+      "reconstructed_velocity_lateral_mps": -0.1113335109180739,
+      "reconstructed_horizontal_speed_mps": 0.7782672882317085
+    },
+    {
+      "landmark": "left_toe",
+      "frame_pair": [
+        13,
+        14
+      ],
+      "contact_height_mm": [
+        -1.5457738190889359,
+        -11.954602474967638
+      ],
+      "relative_velocity_forward_mps": -4.758471699865557,
+      "relative_velocity_lateral_mps": 0.03747333480040229,
+      "estimated_root_forward_mps": 4.758471699865557,
+      "reconstructed_velocity_forward_mps": -1.1292632623099832,
+      "reconstructed_velocity_lateral_mps": -0.35236877117817905,
+      "reconstructed_horizontal_speed_mps": 1.1829620525316902
+    },
+    {
+      "landmark": "left_toe",
+      "frame_pair": [
+        14,
+        15
+      ],
+      "contact_height_mm": [
+        -11.954602474967638,
+        31.247707394262154
+      ],
+      "relative_velocity_forward_mps": -2.902076522532943,
+      "relative_velocity_lateral_mps": 0.284044713735091,
+      "estimated_root_forward_mps": 2.902076522532943,
+      "reconstructed_velocity_forward_mps": 0.49668055846732345,
+      "reconstructed_velocity_lateral_mps": -0.293971306724005,
+      "reconstructed_horizontal_speed_mps": 0.5771574518565626
+    },
+    {
+      "landmark": "right_heel",
+      "frame_pair": [
+        18,
+        19
+      ],
+      "contact_height_mm": [
+        20.441683785368998,
+        -1.7878511377299826
+      ],
+      "relative_velocity_forward_mps": -3.6822045489956388,
+      "relative_velocity_lateral_mps": -0.1705041176772667,
+      "estimated_root_forward_mps": 3.6822045489956388,
+      "reconstructed_velocity_forward_mps": -0.3621027966529886,
+      "reconstructed_velocity_lateral_mps": 0.22044739957386963,
+      "reconstructed_horizontal_speed_mps": 0.42392865096297205
+    },
+    {
+      "landmark": "right_heel",
+      "frame_pair": [
+        19,
+        20
+      ],
+      "contact_height_mm": [
+        -1.7878511377299826,
+        11.187535244971514
+      ],
+      "relative_velocity_forward_mps": -3.5393654072092553,
+      "relative_velocity_lateral_mps": -0.18023419465357815,
+      "estimated_root_forward_mps": 3.5393654072092553,
+      "reconstructed_velocity_forward_mps": -0.5405933067409674,
+      "reconstructed_velocity_lateral_mps": 0.13126890446478823,
+      "reconstructed_horizontal_speed_mps": 0.556302666963594
+    },
+    {
+      "landmark": "right_heel",
+      "frame_pair": [
+        20,
+        21
+      ],
+      "contact_height_mm": [
+        11.187535244971514,
+        29.567527351900935
+      ],
+      "relative_velocity_forward_mps": -3.8254155628930446,
+      "relative_velocity_lateral_mps": -0.24224301030725742,
+      "estimated_root_forward_mps": 3.8254155628930446,
+      "reconstructed_velocity_forward_mps": -0.5132857874986606,
+      "reconstructed_velocity_lateral_mps": 0.21515301700169548,
+      "reconstructed_horizontal_speed_mps": 0.5565546998360543
+    }
+  ],
+  "reconstructed_contact_horizontal_speed_mps_median_max": [
+    0.556302666963594,
+    1.1829620525316902
+  ],
+  "frames": [
+    {
+      "frame": 1,
+      "time_s": 0.0,
+      "hip_center_xyz_m": [
+        0.0024449042975902557,
+        -0.027604836970567703,
+        0.7941240668296814
+      ],
+      "vertices_below_minus5mm": 11,
+      "min_mesh_z_mm": -10.837648995220661,
+      "penetrating_vertices": [
+        {
+          "vertex": 15979,
+          "xyz_m": [
+            -0.133827,
+            -0.05721,
+            -0.006495
+          ],
+          "z_mm": -6.495,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15980,
+          "xyz_m": [
+            -0.133827,
+            -0.05721,
+            -0.006495
+          ],
+          "z_mm": -6.495,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15981,
+          "xyz_m": [
+            -0.133827,
+            -0.05721,
+            -0.006495
+          ],
+          "z_mm": -6.495,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15992,
+          "xyz_m": [
+            -0.122351,
+            -0.020839,
+            -0.010838
+          ],
+          "z_mm": -10.838,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 15993,
+          "xyz_m": [
+            -0.122351,
+            -0.020839,
+            -0.010838
+          ],
+          "z_mm": -10.838,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 16069,
+          "xyz_m": [
+            -0.133827,
+            -0.05721,
+            -0.006495
+          ],
+          "z_mm": -6.495,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 16099,
+          "xyz_m": [
+            -0.109245,
+            0.030972,
+            -0.005015
+          ],
+          "z_mm": -5.015,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        },
+        {
+          "vertex": 16100,
+          "xyz_m": [
+            -0.109245,
+            0.030972,
+            -0.005015
+          ],
+          "z_mm": -5.015,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        },
+        {
+          "vertex": 16101,
+          "xyz_m": [
+            -0.122351,
+            -0.020839,
+            -0.010838
+          ],
+          "z_mm": -10.838,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 16267,
+          "xyz_m": [
+            -0.109245,
+            0.030972,
+            -0.005015
+          ],
+          "z_mm": -5.015,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        },
+        {
+          "vertex": 16268,
+          "xyz_m": [
+            -0.122351,
+            -0.020839,
+            -0.010838
+          ],
+          "z_mm": -10.838,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.046708727876345314,
+            0.18939951807260513,
+            0.31374727686246234
+          ],
+          "z_mm": 313.74727686246234,
+          "fixed_vertex_z_mm_min": 297.7561950683594,
+          "fixed_vertex_z_mm_max": 327.35612988471985
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.09786029284199078,
+            -0.02560344710946083,
+            0.08502694095174472
+          ],
+          "z_mm": 85.02694095174472,
+          "fixed_vertex_z_mm_min": 73.54869693517685,
+          "fixed_vertex_z_mm_max": 103.46473753452301
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.022363693763812382,
+            0.1924597422281901,
+            0.055523693871994816
+          ],
+          "z_mm": 55.523693871994816,
+          "fixed_vertex_z_mm_min": 37.95760124921799,
+          "fixed_vertex_z_mm_max": 79.7044187784195
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.07044265170892079,
+            -0.11568065981070201,
+            0.06150217851003011
+          ],
+          "z_mm": 61.50217851003011,
+          "fixed_vertex_z_mm_min": 50.175778567790985,
+          "fixed_vertex_z_mm_max": 67.68451631069183
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.09690694510936737,
+          0.04920392483472824,
+          0.16041746735572815
+        ],
+        "toe_head_xyz_m": [
+          -0.0940026268362999,
+          -0.03810099512338638,
+          0.05667014792561531
+        ],
+        "toe_tail_xyz_m": [
+          -0.07900340110063553,
+          -0.1030653566122055,
+          0.0565057136118412
+        ]
+      }
+    },
+    {
+      "frame": 2,
+      "time_s": 0.03333333333333333,
+      "hip_center_xyz_m": [
+        0.0070195794105529785,
+        -0.04341321438550949,
+        0.8146482706069946
+      ],
+      "vertices_below_minus5mm": 8,
+      "min_mesh_z_mm": -8.506320416927338,
+      "penetrating_vertices": [
+        {
+          "vertex": 15979,
+          "xyz_m": [
+            -0.134597,
+            0.097534,
+            -0.008506
+          ],
+          "z_mm": -8.506,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15980,
+          "xyz_m": [
+            -0.134597,
+            0.097534,
+            -0.008506
+          ],
+          "z_mm": -8.506,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15981,
+          "xyz_m": [
+            -0.134597,
+            0.097534,
+            -0.008506
+          ],
+          "z_mm": -8.506,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 15992,
+          "xyz_m": [
+            -0.123577,
+            0.134617,
+            -0.008238
+          ],
+          "z_mm": -8.238,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 15993,
+          "xyz_m": [
+            -0.123577,
+            0.134617,
+            -0.008238
+          ],
+          "z_mm": -8.238,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 16069,
+          "xyz_m": [
+            -0.134597,
+            0.097534,
+            -0.008506
+          ],
+          "z_mm": -8.506,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.44614672660827637
+            ],
+            [
+              "Bone_028",
+              0.3810819983482361
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.1062764897942543
+            ],
+            [
+              "Bone_018",
+              0.06649477779865265
+            ]
+          ]
+        },
+        {
+          "vertex": 16101,
+          "xyz_m": [
+            -0.123577,
+            0.134617,
+            -0.008238
+          ],
+          "z_mm": -8.238,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        },
+        {
+          "vertex": 16268,
+          "xyz_m": [
+            -0.123577,
+            0.134617,
+            -0.008238
+          ],
+          "z_mm": -8.238,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7103093266487122
+            ],
+            [
+              "Bone_018",
+              0.16752293705940247
+            ],
+            [
+              "Bone_028",
+              0.06703916192054749
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.055128566920757294
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.04240304231643677,
+            0.03573396056890488,
+            0.22281078000863394
+          ],
+          "z_mm": 222.81078000863394,
+          "fixed_vertex_z_mm_min": 198.89111816883087,
+          "fixed_vertex_z_mm_max": 241.90622568130493
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.09850940605004628,
+            -0.25227876255909604,
+            0.09542461360494296
+          ],
+          "z_mm": 95.42461360494296,
+          "fixed_vertex_z_mm_min": 81.19712024927139,
+          "fixed_vertex_z_mm_max": 113.74802142381668
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.023440569639205933,
+            0.33489128450552624,
+            0.0781873045489192
+          ],
+          "z_mm": 78.1873045489192,
+          "fixed_vertex_z_mm_min": 60.12018397450447,
+          "fixed_vertex_z_mm_max": 102.54122316837311
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.07040543109178543,
+            0.03209620465834936,
+            0.05486376831928889
+          ],
+          "z_mm": 54.86376831928889,
+          "fixed_vertex_z_mm_min": 41.79288446903229,
+          "fixed_vertex_z_mm_max": 62.02181428670883
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.09882110357284546,
+          0.18095290660858154,
+          0.1710636168718338
+        ],
+        "toe_head_xyz_m": [
+          -0.09508180618286133,
+          0.10891672968864441,
+          0.05621197074651718
+        ],
+        "toe_tail_xyz_m": [
+          -0.07871688902378082,
+          0.04429607838392258,
+          0.054895732551813126
+        ]
+      }
+    },
+    {
+      "frame": 3,
+      "time_s": 0.06666666666666667,
+      "hip_center_xyz_m": [
+        0.013644237071275711,
+        -0.05748984217643738,
+        0.847376823425293
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 14.261018484830856,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.05399014552434286,
+            -0.11139912406603496,
+            0.13656163588166237
+          ],
+          "z_mm": 136.56163588166237,
+          "fixed_vertex_z_mm_min": 112.85816878080368,
+          "fixed_vertex_z_mm_max": 156.71777725219727
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.11513133843739827,
+            -0.4234057267506917,
+            0.12511912484963736
+          ],
+          "z_mm": 125.11912484963736,
+          "fixed_vertex_z_mm_min": 111.16576194763184,
+          "fixed_vertex_z_mm_max": 144.36109364032745
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.03988484169046084,
+            0.4486410319805145,
+            0.16336575026313463
+          ],
+          "z_mm": 163.36575026313463,
+          "fixed_vertex_z_mm_min": 144.11315321922302,
+          "fixed_vertex_z_mm_max": 186.7554783821106
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.06440241634845734,
+            0.18348572154839835,
+            0.05929703203340372
+          ],
+          "z_mm": 59.29703203340372,
+          "fixed_vertex_z_mm_min": 43.676476925611496,
+          "fixed_vertex_z_mm_max": 68.28151643276215
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.1136869415640831,
+          0.2727729082107544,
+          0.21778222918510437
+        ],
+        "toe_head_xyz_m": [
+          -0.09090839326381683,
+          0.25604185461997986,
+          0.08513497561216354
+        ],
+        "toe_tail_xyz_m": [
+          -0.07858842611312866,
+          0.19209234416484833,
+          0.07085040211677551
+        ]
+      }
+    },
+    {
+      "frame": 4,
+      "time_s": 0.1,
+      "hip_center_xyz_m": [
+        0.024343814700841904,
+        -0.0754392147064209,
+        0.8734021186828613
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 59.70229580998421,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.057469027737776436,
+            -0.267805740237236,
+            0.08397318981587887
+          ],
+          "z_mm": 83.97318981587887,
+          "fixed_vertex_z_mm_min": 61.76744028925896,
+          "fixed_vertex_z_mm_max": 103.98498922586441
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.11298891032735507,
+            -0.5608675082524618,
+            0.18903551374872526
+          ],
+          "z_mm": 189.03551374872526,
+          "fixed_vertex_z_mm_min": 176.97985470294952,
+          "fixed_vertex_z_mm_max": 204.4503092765808
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.04778140224516392,
+            0.5068509380022684,
+            0.27695592244466144
+          ],
+          "z_mm": 276.95592244466144,
+          "fixed_vertex_z_mm_min": 258.80563259124756,
+          "fixed_vertex_z_mm_max": 297.19457030296326
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.05803461869557699,
+            0.30298824111620587,
+            0.09784558167060216
+          ],
+          "z_mm": 97.84558167060216,
+          "fixed_vertex_z_mm_min": 88.22372555732727,
+          "fixed_vertex_z_mm_max": 105.51884770393372
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.11663340032100677,
+          0.324467271566391,
+          0.28503555059432983
+        ],
+        "toe_head_xyz_m": [
+          -0.08549025654792786,
+          0.35654789209365845,
+          0.15699255466461182
+        ],
+        "toe_tail_xyz_m": [
+          -0.07619728147983551,
+          0.3138374984264374,
+          0.10664540529251099
+        ]
+      }
+    },
+    {
+      "frame": 5,
+      "time_s": 0.13333333333333333,
+      "hip_center_xyz_m": [
+        0.02651265263557434,
+        -0.09138238430023193,
+        0.8758649826049805
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 68.84115934371948,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.061682507395744324,
+            -0.3767763475577037,
+            0.08754841859141986
+          ],
+          "z_mm": 87.54841859141986,
+          "fixed_vertex_z_mm_min": 68.84115934371948,
+          "fixed_vertex_z_mm_max": 105.31840473413467
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.10473223899801572,
+            -0.6321481118599573,
+            0.2728295971949895
+          ],
+          "z_mm": 272.8295971949895,
+          "fixed_vertex_z_mm_min": 263.3479833602905,
+          "fixed_vertex_z_mm_max": 283.68932008743286
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.04531404748558998,
+            0.5507888595263163,
+            0.39064473907152814
+          ],
+          "z_mm": 390.64473907152814,
+          "fixed_vertex_z_mm_min": 374.55859780311584,
+          "fixed_vertex_z_mm_max": 407.52094984054565
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.06887450565894444,
+            0.3986353675524394,
+            0.16498960802952448
+          ],
+          "z_mm": 164.98960802952448,
+          "fixed_vertex_z_mm_min": 155.26612102985382,
+          "fixed_vertex_z_mm_max": 174.47330057621002
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.11784013360738754,
+          0.3721000552177429,
+          0.3574158549308777
+        ],
+        "toe_head_xyz_m": [
+          -0.0919070616364479,
+          0.4332583248615265,
+          0.23917368054389954
+        ],
+        "toe_tail_xyz_m": [
+          -0.08702871203422546,
+          0.41295626759529114,
+          0.17585384845733643
+        ]
+      }
+    },
+    {
+      "frame": 6,
+      "time_s": 0.16666666666666666,
+      "hip_center_xyz_m": [
+        0.02503325417637825,
+        -0.09978989511728287,
+        0.8763560056686401
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 75.3907784819603,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.05661560595035553,
+            -0.40926527480284375,
+            0.09189246594905853
+          ],
+          "z_mm": 91.89246594905853,
+          "fixed_vertex_z_mm_min": 75.3907784819603,
+          "fixed_vertex_z_mm_max": 108.06296765804291
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.07064967602491379,
+            -0.6467510312795639,
+            0.30578646312157315
+          ],
+          "z_mm": 305.78646312157315,
+          "fixed_vertex_z_mm_min": 297.629714012146,
+          "fixed_vertex_z_mm_max": 314.98101353645325
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.029802522311607998,
+            0.5492397745450338,
+            0.4927213390668233
+          ],
+          "z_mm": 492.7213390668233,
+          "fixed_vertex_z_mm_min": 482.0307791233063,
+          "fixed_vertex_z_mm_max": 504.2955279350281
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.09741816421349843,
+            0.4563128153483073,
+            0.24373447398344675
+          ],
+          "z_mm": 243.73447398344675,
+          "fixed_vertex_z_mm_min": 235.3695183992386,
+          "fixed_vertex_z_mm_max": 252.1584928035736
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.12119113653898239,
+          0.3883853554725647,
+          0.4278876781463623
+        ],
+        "toe_head_xyz_m": [
+          -0.1075049564242363,
+          0.4762783348560333,
+          0.3255080580711365
+        ],
+        "toe_tail_xyz_m": [
+          -0.112563855946064,
+          0.465751975774765,
+          0.25986528396606445
+        ]
+      }
+    },
+    {
+      "frame": 7,
+      "time_s": 0.2,
+      "hip_center_xyz_m": [
+        0.027064919471740723,
+        -0.1046411320567131,
+        0.8709849119186401
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 52.77731269598007,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.052650252978006996,
+            -0.37919395168622333,
+            0.06984978665908177
+          ],
+          "z_mm": 69.84978665908177,
+          "fixed_vertex_z_mm_min": 52.77731269598007,
+          "fixed_vertex_z_mm_max": 86.42862737178802
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.06237678602337837,
+            -0.6242315272490183,
+            0.2746119325359662
+          ],
+          "z_mm": 274.6119325359662,
+          "fixed_vertex_z_mm_min": 266.0074532032013,
+          "fixed_vertex_z_mm_max": 284.49901938438416
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.033273441096146904,
+            0.5119742304086685,
+            0.5835950374603271
+          ],
+          "z_mm": 583.5950374603271,
+          "fixed_vertex_z_mm_min": 574.5378136634827,
+          "fixed_vertex_z_mm_max": 591.4031267166138
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.08777579665184021,
+            0.45894162853558856,
+            0.31544505059719086
+          ],
+          "z_mm": 315.44505059719086,
+          "fixed_vertex_z_mm_min": 308.7839186191559,
+          "fixed_vertex_z_mm_max": 322.3521411418915
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.11661633849143982,
+          0.3646247982978821,
+          0.48203787207603455
+        ],
+        "toe_head_xyz_m": [
+          -0.10426484048366547,
+          0.46939072012901306,
+          0.3967992067337036
+        ],
+        "toe_tail_xyz_m": [
+          -0.10276857763528824,
+          0.4605235159397125,
+          0.33073481917381287
+        ]
+      }
+    },
+    {
+      "frame": 8,
+      "time_s": 0.23333333333333334,
+      "hip_center_xyz_m": [
+        0.030765660107135773,
+        -0.09809179604053497,
+        0.8575824499130249
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 13.235356658697128,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.051753342151641846,
+            -0.29127322137355804,
+            0.03210981500645479
+          ],
+          "z_mm": 32.10981500645479,
+          "fixed_vertex_z_mm_min": 13.235356658697128,
+          "fixed_vertex_z_mm_max": 49.846917390823364
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.059999982515970864,
+            -0.5683684746424357,
+            0.18347424020369849
+          ],
+          "z_mm": 183.47424020369849,
+          "fixed_vertex_z_mm_min": 172.89447784423828,
+          "fixed_vertex_z_mm_max": 197.61613011360168
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.021864024301369984,
+            0.44508260240157443,
+            0.6105726659297943
+          ],
+          "z_mm": 610.5726659297943,
+          "fixed_vertex_z_mm_min": 603.823184967041,
+          "fixed_vertex_z_mm_max": 615.8040165901184
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.08833989997704823,
+            0.41640538970629376,
+            0.337564875682195
+          ],
+          "z_mm": 337.564875682195,
+          "fixed_vertex_z_mm_min": 331.27686381340027,
+          "fixed_vertex_z_mm_max": 344.11874413490295
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.1110769510269165,
+          0.30980217456817627,
+          0.49646440148353577
+        ],
+        "toe_head_xyz_m": [
+          -0.10305154323577881,
+          0.4208812117576599,
+          0.41906195878982544
+        ],
+        "toe_tail_xyz_m": [
+          -0.10114575177431107,
+          0.4159138798713684,
+          0.35260096192359924
+        ]
+      }
+    },
+    {
+      "frame": 9,
+      "time_s": 0.26666666666666666,
+      "hip_center_xyz_m": [
+        0.02754555270075798,
+        -0.07989128679037094,
+        0.8276799321174622
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 3.4893425181508064,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.058705173432826996,
+            -0.15924151986837387,
+            0.030455216610183317
+          ],
+          "z_mm": 30.455216610183317,
+          "fixed_vertex_z_mm_min": 7.949087768793106,
+          "fixed_vertex_z_mm_max": 50.20494759082794
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.050613137582937874,
+            -0.47042202949523926,
+            0.0665193038682143
+          ],
+          "z_mm": 66.5193038682143,
+          "fixed_vertex_z_mm_min": 53.27789485454559,
+          "fixed_vertex_z_mm_max": 85.61471104621887
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.03250149513284365,
+            0.37348243594169617,
+            0.6037238190571467
+          ],
+          "z_mm": 603.7238190571467,
+          "fixed_vertex_z_mm_min": 596.5202450752258,
+          "fixed_vertex_z_mm_max": 608.5656881332397
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.09253185987472534,
+            0.3473869015773137,
+            0.3212878406047821
+          ],
+          "z_mm": 321.2878406047821,
+          "fixed_vertex_z_mm_min": 315.44268131256104,
+          "fixed_vertex_z_mm_max": 327.8227150440216
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.11329115182161331,
+          0.23953166604042053,
+          0.4808562397956848
+        ],
+        "toe_head_xyz_m": [
+          -0.10944340378046036,
+          0.350322961807251,
+          0.4027244448661804
+        ],
+        "toe_tail_xyz_m": [
+          -0.10593023896217346,
+          0.34766697883605957,
+          0.3361964523792267
+        ]
+      }
+    },
+    {
+      "frame": 10,
+      "time_s": 0.3,
+      "hip_center_xyz_m": [
+        0.022765424102544785,
+        -0.05543699860572815,
+        0.7940414547920227
+      ],
+      "vertices_below_minus5mm": 7,
+      "min_mesh_z_mm": -5.241903010755777,
+      "penetrating_vertices": [
+        {
+          "vertex": 14489,
+          "xyz_m": [
+            0.106996,
+            -0.215039,
+            -0.005242
+          ],
+          "z_mm": -5.242,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14518,
+          "xyz_m": [
+            0.106996,
+            -0.215039,
+            -0.005242
+          ],
+          "z_mm": -5.242,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14519,
+          "xyz_m": [
+            0.106996,
+            -0.215039,
+            -0.005242
+          ],
+          "z_mm": -5.242,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 15173,
+          "xyz_m": [
+            0.095946,
+            -0.088588,
+            -0.005048
+          ],
+          "z_mm": -5.048,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15429,
+          "xyz_m": [
+            0.095946,
+            -0.088588,
+            -0.005048
+          ],
+          "z_mm": -5.048,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15430,
+          "xyz_m": [
+            0.095946,
+            -0.088588,
+            -0.005048
+          ],
+          "z_mm": -5.048,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15431,
+          "xyz_m": [
+            0.095946,
+            -0.088588,
+            -0.005048
+          ],
+          "z_mm": -5.048,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.05330757051706314,
+            -0.034027124444643654,
+            0.02556044957600534
+          ],
+          "z_mm": 25.56044957600534,
+          "fixed_vertex_z_mm_min": 1.8864679150283337,
+          "fixed_vertex_z_mm_max": 46.05671763420105
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.055318284779787064,
+            -0.35251493255297345,
+            0.05761264016230901
+          ],
+          "z_mm": 57.61264016230901,
+          "fixed_vertex_z_mm_min": 44.3108007311821,
+          "fixed_vertex_z_mm_max": 76.38078927993774
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.042063421259323754,
+            0.29395274817943573,
+            0.5515360236167908
+          ],
+          "z_mm": 551.5360236167908,
+          "fixed_vertex_z_mm_min": 541.9910550117493,
+          "fixed_vertex_z_mm_max": 559.0954422950745
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.09519141415754954,
+            0.23418034613132477,
+            0.26832691331704456
+          ],
+          "z_mm": 268.32691331704456,
+          "fixed_vertex_z_mm_min": 262.05694675445557,
+          "fixed_vertex_z_mm_max": 274.99082684516907
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.11871027946472168,
+          0.14751891791820526,
+          0.4407578408718109
+        ],
+        "toe_head_xyz_m": [
+          -0.11461667716503143,
+          0.246574267745018,
+          0.34820854663848877
+        ],
+        "toe_tail_xyz_m": [
+          -0.10840324312448502,
+          0.23730844259262085,
+          0.28247493505477905
+        ]
+      }
+    },
+    {
+      "frame": 11,
+      "time_s": 0.3333333333333333,
+      "hip_center_xyz_m": [
+        0.017641577869653702,
+        -0.03803946077823639,
+        0.7865852117538452
+      ],
+      "vertices_below_minus5mm": 22,
+      "min_mesh_z_mm": -14.406772330403328,
+      "penetrating_vertices": [
+        {
+          "vertex": 14316,
+          "xyz_m": [
+            0.107178,
+            -0.126764,
+            -0.013544
+          ],
+          "z_mm": -13.544,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14437,
+          "xyz_m": [
+            0.107178,
+            -0.126764,
+            -0.013544
+          ],
+          "z_mm": -13.544,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14439,
+          "xyz_m": [
+            0.100119,
+            -0.064633,
+            -0.010599
+          ],
+          "z_mm": -10.599,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14440,
+          "xyz_m": [
+            0.100119,
+            -0.064633,
+            -0.010599
+          ],
+          "z_mm": -10.599,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14441,
+          "xyz_m": [
+            0.100119,
+            -0.064633,
+            -0.010599
+          ],
+          "z_mm": -10.599,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14489,
+          "xyz_m": [
+            0.106214,
+            -0.082919,
+            -0.014407
+          ],
+          "z_mm": -14.407,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14518,
+          "xyz_m": [
+            0.106214,
+            -0.082919,
+            -0.014407
+          ],
+          "z_mm": -14.407,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14519,
+          "xyz_m": [
+            0.106214,
+            -0.082919,
+            -0.014407
+          ],
+          "z_mm": -14.407,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14520,
+          "xyz_m": [
+            0.100119,
+            -0.064633,
+            -0.010599
+          ],
+          "z_mm": -10.599,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14521,
+          "xyz_m": [
+            0.107178,
+            -0.126764,
+            -0.013544
+          ],
+          "z_mm": -13.544,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 15115,
+          "xyz_m": [
+            0.091718,
+            0.016628,
+            -0.012509
+          ],
+          "z_mm": -12.509,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15116,
+          "xyz_m": [
+            0.091718,
+            0.016628,
+            -0.012509
+          ],
+          "z_mm": -12.509,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15117,
+          "xyz_m": [
+            0.091718,
+            0.016628,
+            -0.012509
+          ],
+          "z_mm": -12.509,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15173,
+          "xyz_m": [
+            0.09249,
+            0.0471,
+            -0.012393
+          ],
+          "z_mm": -12.393,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15340,
+          "xyz_m": [
+            0.079647,
+            0.081901,
+            -0.009255
+          ],
+          "z_mm": -9.255,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8227827548980713
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.17698490619659424
+            ],
+            [
+              "Bone_023",
+              0.00023235782282426953
+            ]
+          ]
+        },
+        {
+          "vertex": 15341,
+          "xyz_m": [
+            0.079647,
+            0.081901,
+            -0.009255
+          ],
+          "z_mm": -9.255,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8227827548980713
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.17698490619659424
+            ],
+            [
+              "Bone_023",
+              0.00023235782282426953
+            ]
+          ]
+        },
+        {
+          "vertex": 15344,
+          "xyz_m": [
+            0.091718,
+            0.016628,
+            -0.012509
+          ],
+          "z_mm": -12.509,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15393,
+          "xyz_m": [
+            0.086311,
+            0.071418,
+            -0.010924
+          ],
+          "z_mm": -10.924,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8293587565422058
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.16996222734451294
+            ],
+            [
+              "Bone_023",
+              0.0005572804948315024
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.00012172443530289456
+            ]
+          ]
+        },
+        {
+          "vertex": 15394,
+          "xyz_m": [
+            0.086311,
+            0.071418,
+            -0.010924
+          ],
+          "z_mm": -10.924,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8293587565422058
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.16996222734451294
+            ],
+            [
+              "Bone_023",
+              0.0005572804948315024
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.00012172443530289456
+            ]
+          ]
+        },
+        {
+          "vertex": 15429,
+          "xyz_m": [
+            0.09249,
+            0.0471,
+            -0.012393
+          ],
+          "z_mm": -12.393,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15430,
+          "xyz_m": [
+            0.09249,
+            0.0471,
+            -0.012393
+          ],
+          "z_mm": -12.393,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15431,
+          "xyz_m": [
+            0.09249,
+            0.0471,
+            -0.012393
+          ],
+          "z_mm": -12.393,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.049247175455093384,
+            0.10047739495833714,
+            0.02072462315360705
+          ],
+          "z_mm": 20.72462315360705,
+          "fixed_vertex_z_mm_min": -3.4434590488672256,
+          "fixed_vertex_z_mm_max": 41.473351418972015
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.05866155152519544,
+            -0.22141856576005617,
+            0.04940473474562168
+          ],
+          "z_mm": 49.40473474562168,
+          "fixed_vertex_z_mm_min": 36.07138991355896,
+          "fixed_vertex_z_mm_max": 67.94807314872742
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.04842470896740755,
+            0.22273630276322365,
+            0.46036386489868164
+          ],
+          "z_mm": 460.36386489868164,
+          "fixed_vertex_z_mm_min": 446.89980149269104,
+          "fixed_vertex_z_mm_max": 474.11903738975525
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.10135479768117268,
+            0.08546208590269089,
+            0.2049665500720342
+          ],
+          "z_mm": 204.9665500720342,
+          "fixed_vertex_z_mm_min": 196.61256670951843,
+          "fixed_vertex_z_mm_max": 212.1986746788025
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.12251443415880203,
+          0.04992904141545296,
+          0.39521726965904236
+        ],
+        "toe_head_xyz_m": [
+          -0.1217486709356308,
+          0.11855299025774002,
+          0.27823755145072937
+        ],
+        "toe_tail_xyz_m": [
+          -0.11409986019134521,
+          0.09239089488983154,
+          0.21739010512828827
+        ]
+      }
+    },
+    {
+      "frame": 12,
+      "time_s": 0.36666666666666664,
+      "hip_center_xyz_m": [
+        0.014669064432382584,
+        -0.03763853758573532,
+        0.8042656183242798
+      ],
+      "vertices_below_minus5mm": 29,
+      "min_mesh_z_mm": -18.32588203251362,
+      "penetrating_vertices": [
+        {
+          "vertex": 14241,
+          "xyz_m": [
+            0.09558,
+            -0.030704,
+            -0.007431
+          ],
+          "z_mm": -7.431,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14316,
+          "xyz_m": [
+            0.104438,
+            0.018144,
+            -0.018326
+          ],
+          "z_mm": -18.326,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14329,
+          "xyz_m": [
+            0.09558,
+            -0.030704,
+            -0.007431
+          ],
+          "z_mm": -7.431,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14330,
+          "xyz_m": [
+            0.09558,
+            -0.030704,
+            -0.007431
+          ],
+          "z_mm": -7.431,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14331,
+          "xyz_m": [
+            0.09558,
+            -0.030704,
+            -0.007431
+          ],
+          "z_mm": -7.431,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14395,
+          "xyz_m": [
+            0.0658,
+            0.079194,
+            -0.006045
+          ],
+          "z_mm": -6.045,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.9068822860717773
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.050590984523296356
+            ],
+            [
+              "Bone_023",
+              0.0337015837430954
+            ],
+            [
+              "Bone_027",
+              0.008825138211250305
+            ]
+          ]
+        },
+        {
+          "vertex": 14396,
+          "xyz_m": [
+            0.0658,
+            0.079194,
+            -0.006045
+          ],
+          "z_mm": -6.045,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.9068822860717773
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.050590984523296356
+            ],
+            [
+              "Bone_023",
+              0.0337015837430954
+            ],
+            [
+              "Bone_027",
+              0.008825138211250305
+            ]
+          ]
+        },
+        {
+          "vertex": 14437,
+          "xyz_m": [
+            0.104438,
+            0.018144,
+            -0.018326
+          ],
+          "z_mm": -18.326,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14438,
+          "xyz_m": [
+            0.09558,
+            -0.030704,
+            -0.007431
+          ],
+          "z_mm": -7.431,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14439,
+          "xyz_m": [
+            0.096881,
+            0.080165,
+            -0.013722
+          ],
+          "z_mm": -13.722,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14440,
+          "xyz_m": [
+            0.096881,
+            0.080165,
+            -0.013722
+          ],
+          "z_mm": -13.722,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14441,
+          "xyz_m": [
+            0.096881,
+            0.080165,
+            -0.013722
+          ],
+          "z_mm": -13.722,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14489,
+          "xyz_m": [
+            0.103131,
+            0.062014,
+            -0.01801
+          ],
+          "z_mm": -18.01,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14518,
+          "xyz_m": [
+            0.103131,
+            0.062014,
+            -0.01801
+          ],
+          "z_mm": -18.01,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14519,
+          "xyz_m": [
+            0.103131,
+            0.062014,
+            -0.01801
+          ],
+          "z_mm": -18.01,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14520,
+          "xyz_m": [
+            0.096881,
+            0.080165,
+            -0.013722
+          ],
+          "z_mm": -13.722,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8542529940605164
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.07429804652929306
+            ],
+            [
+              "Bone_027",
+              0.0470258966088295
+            ],
+            [
+              "Bone_023",
+              0.02442304417490959
+            ]
+          ]
+        },
+        {
+          "vertex": 14521,
+          "xyz_m": [
+            0.104438,
+            0.018144,
+            -0.018326
+          ],
+          "z_mm": -18.326,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 15115,
+          "xyz_m": [
+            0.088633,
+            0.161564,
+            -0.013214
+          ],
+          "z_mm": -13.214,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15116,
+          "xyz_m": [
+            0.088633,
+            0.161564,
+            -0.013214
+          ],
+          "z_mm": -13.214,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15117,
+          "xyz_m": [
+            0.088633,
+            0.161564,
+            -0.013214
+          ],
+          "z_mm": -13.214,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15173,
+          "xyz_m": [
+            0.089299,
+            0.192047,
+            -0.012176
+          ],
+          "z_mm": -12.176,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15340,
+          "xyz_m": [
+            0.076232,
+            0.226662,
+            -0.008101
+          ],
+          "z_mm": -8.101,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8227827548980713
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.17698490619659424
+            ],
+            [
+              "Bone_023",
+              0.00023235782282426953
+            ]
+          ]
+        },
+        {
+          "vertex": 15341,
+          "xyz_m": [
+            0.076232,
+            0.226662,
+            -0.008101
+          ],
+          "z_mm": -8.101,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8227827548980713
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.17698490619659424
+            ],
+            [
+              "Bone_023",
+              0.00023235782282426953
+            ]
+          ]
+        },
+        {
+          "vertex": 15344,
+          "xyz_m": [
+            0.088633,
+            0.161564,
+            -0.013214
+          ],
+          "z_mm": -13.214,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8662192821502686
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.12378457188606262
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.005590413697063923
+            ],
+            [
+              "Bone_023",
+              0.0044056265614926815
+            ]
+          ]
+        },
+        {
+          "vertex": 15393,
+          "xyz_m": [
+            0.08297,
+            0.216276,
+            -0.010028
+          ],
+          "z_mm": -10.028,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8293587565422058
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.16996222734451294
+            ],
+            [
+              "Bone_023",
+              0.0005572804948315024
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.00012172443530289456
+            ]
+          ]
+        },
+        {
+          "vertex": 15394,
+          "xyz_m": [
+            0.08297,
+            0.216276,
+            -0.010028
+          ],
+          "z_mm": -10.028,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8293587565422058
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.16996222734451294
+            ],
+            [
+              "Bone_023",
+              0.0005572804948315024
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.00012172443530289456
+            ]
+          ]
+        },
+        {
+          "vertex": 15429,
+          "xyz_m": [
+            0.089299,
+            0.192047,
+            -0.012176
+          ],
+          "z_mm": -12.176,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15430,
+          "xyz_m": [
+            0.089299,
+            0.192047,
+            -0.012176
+          ],
+          "z_mm": -12.176,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        },
+        {
+          "vertex": 15431,
+          "xyz_m": [
+            0.089299,
+            0.192047,
+            -0.012176
+          ],
+          "z_mm": -12.176,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.8436680436134338
+            ],
+            [
+              "mixamorig:LeftLeg",
+              0.1536119133234024
+            ],
+            [
+              "Bone_023",
+              0.0015708516584709287
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0011490843025967479
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.045536051193873085,
+            0.2441316694021225,
+            0.02212504871810476
+          ],
+          "z_mm": 22.12504871810476,
+          "fixed_vertex_z_mm_min": -1.9937441684305668,
+          "fixed_vertex_z_mm_max": 42.72919148206711
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.0563973014553388,
+            -0.07853080766896407,
+            0.04186128949125608
+          ],
+          "z_mm": 41.86128949125608,
+          "fixed_vertex_z_mm_min": 28.41823548078537,
+          "fixed_vertex_z_mm_max": 60.79524755477905
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.05364035318295161,
+            0.13845322405298552,
+            0.3473968704541524
+          ],
+          "z_mm": 347.3968704541524,
+          "fixed_vertex_z_mm_min": 331.0452997684479,
+          "fixed_vertex_z_mm_max": 367.28742718696594
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.11159253617127736,
+            -0.0808833713332812,
+            0.1587632273634275
+          ],
+          "z_mm": 158.7632273634275,
+          "fixed_vertex_z_mm_min": 147.8557139635086,
+          "fixed_vertex_z_mm_max": 166.38919711112976
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.12522408366203308,
+          -0.047228213399648666,
+          0.3502618968486786
+        ],
+        "toe_head_xyz_m": [
+          -0.13048610091209412,
+          -0.024333199486136436,
+          0.2166871428489685
+        ],
+        "toe_tail_xyz_m": [
+          -0.12460661679506302,
+          -0.07017102092504501,
+          0.16862782835960388
+        ]
+      }
+    },
+    {
+      "frame": 13,
+      "time_s": 0.4,
+      "hip_center_xyz_m": [
+        0.007342133671045303,
+        -0.0450800359249115,
+        0.8287768363952637
+      ],
+      "vertices_below_minus5mm": 42,
+      "min_mesh_z_mm": -31.985528767108917,
+      "penetrating_vertices": [
+        {
+          "vertex": 14225,
+          "xyz_m": [
+            -0.016947,
+            0.141284,
+            -0.011408
+          ],
+          "z_mm": -11.408,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.35503774881362915
+            ],
+            [
+              "Bone_022",
+              0.32734206318855286
+            ],
+            [
+              "Bone_023",
+              0.24197538197040558
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0756448283791542
+            ]
+          ]
+        },
+        {
+          "vertex": 14226,
+          "xyz_m": [
+            -0.016947,
+            0.141284,
+            -0.011408
+          ],
+          "z_mm": -11.408,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.35503774881362915
+            ],
+            [
+              "Bone_022",
+              0.32734206318855286
+            ],
+            [
+              "Bone_023",
+              0.24197538197040558
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0756448283791542
+            ]
+          ]
+        },
+        {
+          "vertex": 14240,
+          "xyz_m": [
+            -0.004137,
+            0.112016,
+            -0.016826
+          ],
+          "z_mm": -16.826,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5544005632400513
+            ],
+            [
+              "Bone_023",
+              0.1920085996389389
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.13813939690589905
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.11545152962207794
+            ]
+          ]
+        },
+        {
+          "vertex": 14241,
+          "xyz_m": [
+            0.082489,
+            0.139097,
+            -0.028381
+          ],
+          "z_mm": -28.381,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14258,
+          "xyz_m": [
+            0.008227,
+            0.098374,
+            -0.016719
+          ],
+          "z_mm": -16.719,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14268,
+          "xyz_m": [
+            0.032723,
+            0.087898,
+            -0.016918
+          ],
+          "z_mm": -16.918,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6000697016716003
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2837198078632355
+            ],
+            [
+              "Bone_023",
+              0.11621049791574478
+            ]
+          ]
+        },
+        {
+          "vertex": 14269,
+          "xyz_m": [
+            0.032723,
+            0.087898,
+            -0.016918
+          ],
+          "z_mm": -16.918,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6000697016716003
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2837198078632355
+            ],
+            [
+              "Bone_023",
+              0.11621049791574478
+            ]
+          ]
+        },
+        {
+          "vertex": 14284,
+          "xyz_m": [
+            0.074982,
+            0.119557,
+            -0.020476
+          ],
+          "z_mm": -20.476,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.6166577339172363
+            ],
+            [
+              "Bone_022",
+              0.18410788476467133
+            ],
+            [
+              "Bone_023",
+              0.11392819881439209
+            ],
+            [
+              "Bone_027",
+              0.08530617505311966
+            ]
+          ]
+        },
+        {
+          "vertex": 14285,
+          "xyz_m": [
+            0.074982,
+            0.119557,
+            -0.020476
+          ],
+          "z_mm": -20.476,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.6166577339172363
+            ],
+            [
+              "Bone_022",
+              0.18410788476467133
+            ],
+            [
+              "Bone_023",
+              0.11392819881439209
+            ],
+            [
+              "Bone_027",
+              0.08530617505311966
+            ]
+          ]
+        },
+        {
+          "vertex": 14286,
+          "xyz_m": [
+            0.042555,
+            0.086827,
+            -0.014632
+          ],
+          "z_mm": -14.632,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5433880686759949
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3516433537006378
+            ],
+            [
+              "Bone_023",
+              0.10496855527162552
+            ]
+          ]
+        },
+        {
+          "vertex": 14287,
+          "xyz_m": [
+            0.042555,
+            0.086827,
+            -0.014632
+          ],
+          "z_mm": -14.632,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5433880686759949
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3516433537006378
+            ],
+            [
+              "Bone_023",
+              0.10496855527162552
+            ]
+          ]
+        },
+        {
+          "vertex": 14300,
+          "xyz_m": [
+            0.063144,
+            0.097106,
+            -0.008624
+          ],
+          "z_mm": -8.624,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5986543297767639
+            ],
+            [
+              "Bone_022",
+              0.30941295623779297
+            ],
+            [
+              "Bone_023",
+              0.09193272143602371
+            ]
+          ]
+        },
+        {
+          "vertex": 14301,
+          "xyz_m": [
+            0.063144,
+            0.097106,
+            -0.008624
+          ],
+          "z_mm": -8.624,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5986543297767639
+            ],
+            [
+              "Bone_022",
+              0.30941295623779297
+            ],
+            [
+              "Bone_023",
+              0.09193272143602371
+            ]
+          ]
+        },
+        {
+          "vertex": 14306,
+          "xyz_m": [
+            0.087568,
+            0.146955,
+            -0.011001
+          ],
+          "z_mm": -11.001,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4721076786518097
+            ],
+            [
+              "Bone_027",
+              0.3919902443885803
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.07890897244215012
+            ],
+            [
+              "Bone_023",
+              0.056993111968040466
+            ]
+          ]
+        },
+        {
+          "vertex": 14307,
+          "xyz_m": [
+            0.087568,
+            0.146955,
+            -0.011001
+          ],
+          "z_mm": -11.001,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4721076786518097
+            ],
+            [
+              "Bone_027",
+              0.3919902443885803
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.07890897244215012
+            ],
+            [
+              "Bone_023",
+              0.056993111968040466
+            ]
+          ]
+        },
+        {
+          "vertex": 14308,
+          "xyz_m": [
+            0.087568,
+            0.146955,
+            -0.011001
+          ],
+          "z_mm": -11.001,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4721076786518097
+            ],
+            [
+              "Bone_027",
+              0.3919902443885803
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.07890897244215012
+            ],
+            [
+              "Bone_023",
+              0.056993111968040466
+            ]
+          ]
+        },
+        {
+          "vertex": 14311,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14312,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14313,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14314,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14315,
+          "xyz_m": [
+            0.099699,
+            0.194286,
+            -0.011608
+          ],
+          "z_mm": -11.608,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.41353559494018555
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.35892581939697266
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.17911556363105774
+            ],
+            [
+              "Bone_023",
+              0.04842303693294525
+            ]
+          ]
+        },
+        {
+          "vertex": 14316,
+          "xyz_m": [
+            0.092625,
+            0.196798,
+            -0.031986
+          ],
+          "z_mm": -31.986,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14322,
+          "xyz_m": [
+            0.008227,
+            0.098374,
+            -0.016719
+          ],
+          "z_mm": -16.719,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14323,
+          "xyz_m": [
+            0.008227,
+            0.098374,
+            -0.016719
+          ],
+          "z_mm": -16.719,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14326,
+          "xyz_m": [
+            -0.004137,
+            0.112016,
+            -0.016826
+          ],
+          "z_mm": -16.826,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5544005632400513
+            ],
+            [
+              "Bone_023",
+              0.1920085996389389
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.13813939690589905
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.11545152962207794
+            ]
+          ]
+        },
+        {
+          "vertex": 14328,
+          "xyz_m": [
+            -0.016947,
+            0.141284,
+            -0.011408
+          ],
+          "z_mm": -11.408,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.35503774881362915
+            ],
+            [
+              "Bone_022",
+              0.32734206318855286
+            ],
+            [
+              "Bone_023",
+              0.24197538197040558
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.0756448283791542
+            ]
+          ]
+        },
+        {
+          "vertex": 14329,
+          "xyz_m": [
+            0.082489,
+            0.139097,
+            -0.028381
+          ],
+          "z_mm": -28.381,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14330,
+          "xyz_m": [
+            0.082489,
+            0.139097,
+            -0.028381
+          ],
+          "z_mm": -28.381,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14331,
+          "xyz_m": [
+            0.082489,
+            0.139097,
+            -0.028381
+          ],
+          "z_mm": -28.381,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14437,
+          "xyz_m": [
+            0.092625,
+            0.196798,
+            -0.031986
+          ],
+          "z_mm": -31.986,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        },
+        {
+          "vertex": 14438,
+          "xyz_m": [
+            0.082489,
+            0.139097,
+            -0.028381
+          ],
+          "z_mm": -28.381,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14489,
+          "xyz_m": [
+            0.093465,
+            0.237933,
+            -0.015653
+          ],
+          "z_mm": -15.653,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14497,
+          "xyz_m": [
+            0.105087,
+            0.20669,
+            -0.010691
+          ],
+          "z_mm": -10.691,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.46891430020332336
+            ],
+            [
+              "Bone_027",
+              0.34063011407852173
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.14921127259731293
+            ],
+            [
+              "Bone_023",
+              0.04124428331851959
+            ]
+          ]
+        },
+        {
+          "vertex": 14498,
+          "xyz_m": [
+            0.105087,
+            0.20669,
+            -0.010691
+          ],
+          "z_mm": -10.691,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.46891430020332336
+            ],
+            [
+              "Bone_027",
+              0.34063011407852173
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.14921127259731293
+            ],
+            [
+              "Bone_023",
+              0.04124428331851959
+            ]
+          ]
+        },
+        {
+          "vertex": 14499,
+          "xyz_m": [
+            0.099699,
+            0.194286,
+            -0.011608
+          ],
+          "z_mm": -11.608,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.41353559494018555
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.35892581939697266
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.17911556363105774
+            ],
+            [
+              "Bone_023",
+              0.04842303693294525
+            ]
+          ]
+        },
+        {
+          "vertex": 14500,
+          "xyz_m": [
+            0.099699,
+            0.194286,
+            -0.011608
+          ],
+          "z_mm": -11.608,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.41353559494018555
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.35892581939697266
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.17911556363105774
+            ],
+            [
+              "Bone_023",
+              0.04842303693294525
+            ]
+          ]
+        },
+        {
+          "vertex": 14501,
+          "xyz_m": [
+            0.087568,
+            0.146955,
+            -0.011001
+          ],
+          "z_mm": -11.001,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4721076786518097
+            ],
+            [
+              "Bone_027",
+              0.3919902443885803
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.07890897244215012
+            ],
+            [
+              "Bone_023",
+              0.056993111968040466
+            ]
+          ]
+        },
+        {
+          "vertex": 14503,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14504,
+          "xyz_m": [
+            0.090401,
+            0.132831,
+            -0.01359
+          ],
+          "z_mm": -13.59,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5372716784477234
+            ],
+            [
+              "Bone_027",
+              0.3690137267112732
+            ],
+            [
+              "Bone_023",
+              0.05572076141834259
+            ],
+            [
+              "Bone_022",
+              0.03799393028020859
+            ]
+          ]
+        },
+        {
+          "vertex": 14518,
+          "xyz_m": [
+            0.093465,
+            0.237933,
+            -0.015653
+          ],
+          "z_mm": -15.653,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14519,
+          "xyz_m": [
+            0.093465,
+            0.237933,
+            -0.015653
+          ],
+          "z_mm": -15.653,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftFoot",
+              0.6689888834953308
+            ],
+            [
+              "Bone_027",
+              0.19890330731868744
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.09980929642915726
+            ],
+            [
+              "Bone_023",
+              0.0322985015809536
+            ]
+          ]
+        },
+        {
+          "vertex": 14521,
+          "xyz_m": [
+            0.092625,
+            0.196798,
+            -0.031986
+          ],
+          "z_mm": -31.986,
+          "dominant_weights": [
+            [
+              "Bone_027",
+              0.49225369095802307
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.2959361970424652
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1476159542798996
+            ],
+            [
+              "Bone_023",
+              0.06419415771961212
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.045016768078009285,
+            0.38469375173250836,
+            0.08663425346215566
+          ],
+          "z_mm": 86.63425346215566,
+          "fixed_vertex_z_mm_min": 62.765076756477356,
+          "fixed_vertex_z_mm_max": 106.02199286222458
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.04088014488418897,
+            0.08723841731746991,
+            -0.0015457738190889359
+          ],
+          "z_mm": -1.5457738190889359,
+          "fixed_vertex_z_mm_min": -16.918033361434937,
+          "fixed_vertex_z_mm_max": 24.61450546979904
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.05860073926548163,
+            0.010771493117014566,
+            0.22862388690312704
+          ],
+          "z_mm": 228.62388690312704,
+          "fixed_vertex_z_mm_min": 211.40357851982117,
+          "fixed_vertex_z_mm_max": 252.38677859306335
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.1191624328494072,
+            -0.26793932418028515,
+            0.1463433876633644
+          ],
+          "z_mm": 146.3433876633644,
+          "fixed_vertex_z_mm_min": 133.2261860370636,
+          "fixed_vertex_z_mm_max": 154.00026738643646
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.1297609508037567,
+          -0.15729258954524994,
+          0.307608425617218
+        ],
+        "toe_head_xyz_m": [
+          -0.1377466320991516,
+          -0.19315141439437866,
+          0.17705398797988892
+        ],
+        "toe_tail_xyz_m": [
+          -0.13153760135173798,
+          -0.25368234515190125,
+          0.14979912340641022
+        ]
+      }
+    },
+    {
+      "frame": 14,
+      "time_s": 0.43333333333333335,
+      "hip_center_xyz_m": [
+        -0.0031543783843517303,
+        -0.04807480424642563,
+        0.8495218753814697
+      ],
+      "vertices_below_minus5mm": 30,
+      "min_mesh_z_mm": -24.169042706489563,
+      "penetrating_vertices": [
+        {
+          "vertex": 14240,
+          "xyz_m": [
+            -0.016792,
+            0.269677,
+            -0.008427
+          ],
+          "z_mm": -8.427,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5544005632400513
+            ],
+            [
+              "Bone_023",
+              0.1920085996389389
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.13813939690589905
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.11545152962207794
+            ]
+          ]
+        },
+        {
+          "vertex": 14241,
+          "xyz_m": [
+            0.073558,
+            0.304955,
+            -0.010882
+          ],
+          "z_mm": -10.882,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14258,
+          "xyz_m": [
+            -0.004473,
+            0.257706,
+            -0.015626
+          ],
+          "z_mm": -15.626,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14259,
+          "xyz_m": [
+            0.007251,
+            0.242516,
+            -0.006035
+          ],
+          "z_mm": -6.035,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6402443647384644
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1884053647518158
+            ],
+            [
+              "Bone_023",
+              0.13873884081840515
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.0326114296913147
+            ]
+          ]
+        },
+        {
+          "vertex": 14260,
+          "xyz_m": [
+            0.007251,
+            0.242516,
+            -0.006035
+          ],
+          "z_mm": -6.035,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6402443647384644
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1884053647518158
+            ],
+            [
+              "Bone_023",
+              0.13873884081840515
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.0326114296913147
+            ]
+          ]
+        },
+        {
+          "vertex": 14265,
+          "xyz_m": [
+            0.019164,
+            0.243366,
+            -0.005541
+          ],
+          "z_mm": -5.541,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6207925081253052
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2293161004781723
+            ],
+            [
+              "Bone_023",
+              0.1187349259853363
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.03115646354854107
+            ]
+          ]
+        },
+        {
+          "vertex": 14266,
+          "xyz_m": [
+            0.019164,
+            0.243366,
+            -0.005541
+          ],
+          "z_mm": -5.541,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6207925081253052
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2293161004781723
+            ],
+            [
+              "Bone_023",
+              0.1187349259853363
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.03115646354854107
+            ]
+          ]
+        },
+        {
+          "vertex": 14267,
+          "xyz_m": [
+            0.019164,
+            0.243366,
+            -0.005541
+          ],
+          "z_mm": -5.541,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6207925081253052
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2293161004781723
+            ],
+            [
+              "Bone_023",
+              0.1187349259853363
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.03115646354854107
+            ]
+          ]
+        },
+        {
+          "vertex": 14268,
+          "xyz_m": [
+            0.020751,
+            0.250166,
+            -0.024169
+          ],
+          "z_mm": -24.169,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6000697016716003
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2837198078632355
+            ],
+            [
+              "Bone_023",
+              0.11621049791574478
+            ]
+          ]
+        },
+        {
+          "vertex": 14269,
+          "xyz_m": [
+            0.020751,
+            0.250166,
+            -0.024169
+          ],
+          "z_mm": -24.169,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6000697016716003
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.2837198078632355
+            ],
+            [
+              "Bone_023",
+              0.11621049791574478
+            ]
+          ]
+        },
+        {
+          "vertex": 14278,
+          "xyz_m": [
+            0.030822,
+            0.237504,
+            -0.011044
+          ],
+          "z_mm": -11.044,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5458650588989258
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3452422320842743
+            ],
+            [
+              "Bone_023",
+              0.10889267921447754
+            ]
+          ]
+        },
+        {
+          "vertex": 14279,
+          "xyz_m": [
+            0.030822,
+            0.237504,
+            -0.011044
+          ],
+          "z_mm": -11.044,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5458650588989258
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3452422320842743
+            ],
+            [
+              "Bone_023",
+              0.10889267921447754
+            ]
+          ]
+        },
+        {
+          "vertex": 14284,
+          "xyz_m": [
+            0.066618,
+            0.2856,
+            -0.015122
+          ],
+          "z_mm": -15.122,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.6166577339172363
+            ],
+            [
+              "Bone_022",
+              0.18410788476467133
+            ],
+            [
+              "Bone_023",
+              0.11392819881439209
+            ],
+            [
+              "Bone_027",
+              0.08530617505311966
+            ]
+          ]
+        },
+        {
+          "vertex": 14285,
+          "xyz_m": [
+            0.066618,
+            0.2856,
+            -0.015122
+          ],
+          "z_mm": -15.122,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.6166577339172363
+            ],
+            [
+              "Bone_022",
+              0.18410788476467133
+            ],
+            [
+              "Bone_023",
+              0.11392819881439209
+            ],
+            [
+              "Bone_027",
+              0.08530617505311966
+            ]
+          ]
+        },
+        {
+          "vertex": 14286,
+          "xyz_m": [
+            0.031102,
+            0.249165,
+            -0.024144
+          ],
+          "z_mm": -24.144,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5433880686759949
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3516433537006378
+            ],
+            [
+              "Bone_023",
+              0.10496855527162552
+            ]
+          ]
+        },
+        {
+          "vertex": 14287,
+          "xyz_m": [
+            0.031102,
+            0.249165,
+            -0.024144
+          ],
+          "z_mm": -24.144,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5433880686759949
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.3516433537006378
+            ],
+            [
+              "Bone_023",
+              0.10496855527162552
+            ]
+          ]
+        },
+        {
+          "vertex": 14288,
+          "xyz_m": [
+            0.04323,
+            0.239064,
+            -0.00861
+          ],
+          "z_mm": -8.61,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4780730605125427
+            ],
+            [
+              "Bone_022",
+              0.4304285943508148
+            ],
+            [
+              "Bone_023",
+              0.09149834513664246
+            ]
+          ]
+        },
+        {
+          "vertex": 14289,
+          "xyz_m": [
+            0.04323,
+            0.239064,
+            -0.00861
+          ],
+          "z_mm": -8.61,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.4780730605125427
+            ],
+            [
+              "Bone_022",
+              0.4304285943508148
+            ],
+            [
+              "Bone_023",
+              0.09149834513664246
+            ]
+          ]
+        },
+        {
+          "vertex": 14300,
+          "xyz_m": [
+            0.054012,
+            0.259557,
+            -0.017251
+          ],
+          "z_mm": -17.251,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5986543297767639
+            ],
+            [
+              "Bone_022",
+              0.30941295623779297
+            ],
+            [
+              "Bone_023",
+              0.09193272143602371
+            ]
+          ]
+        },
+        {
+          "vertex": 14301,
+          "xyz_m": [
+            0.054012,
+            0.259557,
+            -0.017251
+          ],
+          "z_mm": -17.251,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5986543297767639
+            ],
+            [
+              "Bone_022",
+              0.30941295623779297
+            ],
+            [
+              "Bone_023",
+              0.09193272143602371
+            ]
+          ]
+        },
+        {
+          "vertex": 14317,
+          "xyz_m": [
+            0.007251,
+            0.242516,
+            -0.006035
+          ],
+          "z_mm": -6.035,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6402443647384644
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1884053647518158
+            ],
+            [
+              "Bone_023",
+              0.13873884081840515
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.0326114296913147
+            ]
+          ]
+        },
+        {
+          "vertex": 14318,
+          "xyz_m": [
+            0.007251,
+            0.242516,
+            -0.006035
+          ],
+          "z_mm": -6.035,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6402443647384644
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1884053647518158
+            ],
+            [
+              "Bone_023",
+              0.13873884081840515
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.0326114296913147
+            ]
+          ]
+        },
+        {
+          "vertex": 14319,
+          "xyz_m": [
+            0.007251,
+            0.242516,
+            -0.006035
+          ],
+          "z_mm": -6.035,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.6402443647384644
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.1884053647518158
+            ],
+            [
+              "Bone_023",
+              0.13873884081840515
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.0326114296913147
+            ]
+          ]
+        },
+        {
+          "vertex": 14322,
+          "xyz_m": [
+            -0.004473,
+            0.257706,
+            -0.015626
+          ],
+          "z_mm": -15.626,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14323,
+          "xyz_m": [
+            -0.004473,
+            0.257706,
+            -0.015626
+          ],
+          "z_mm": -15.626,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.634035587310791
+            ],
+            [
+              "Bone_023",
+              0.15431968867778778
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.15038557350635529
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.06125912815332413
+            ]
+          ]
+        },
+        {
+          "vertex": 14326,
+          "xyz_m": [
+            -0.016792,
+            0.269677,
+            -0.008427
+          ],
+          "z_mm": -8.427,
+          "dominant_weights": [
+            [
+              "Bone_022",
+              0.5544005632400513
+            ],
+            [
+              "Bone_023",
+              0.1920085996389389
+            ],
+            [
+              "mixamorig:LeftFoot",
+              0.13813939690589905
+            ],
+            [
+              "mixamorig:LeftToeBase",
+              0.11545152962207794
+            ]
+          ]
+        },
+        {
+          "vertex": 14329,
+          "xyz_m": [
+            0.073558,
+            0.304955,
+            -0.010882
+          ],
+          "z_mm": -10.882,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14330,
+          "xyz_m": [
+            0.073558,
+            0.304955,
+            -0.010882
+          ],
+          "z_mm": -10.882,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14331,
+          "xyz_m": [
+            0.073558,
+            0.304955,
+            -0.010882
+          ],
+          "z_mm": -10.882,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        },
+        {
+          "vertex": 14438,
+          "xyz_m": [
+            0.073558,
+            0.304955,
+            -0.010882
+          ],
+          "z_mm": -10.882,
+          "dominant_weights": [
+            [
+              "mixamorig:LeftToeBase",
+              0.5167628526687622
+            ],
+            [
+              "Bone_027",
+              0.2743957042694092
+            ],
+            [
+              "Bone_023",
+              0.13109435141086578
+            ],
+            [
+              "Bone_022",
+              0.07774719595909119
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.03844495117664337,
+            0.4650438626607259,
+            0.1970710555712382
+          ],
+          "z_mm": 197.0710555712382,
+          "fixed_vertex_z_mm_min": 177.08487808704376,
+          "fixed_vertex_z_mm_max": 212.14818954467773
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.029134511947631836,
+            0.24285937224825224,
+            -0.011954602474967638
+          ],
+          "z_mm": -11.954602474967638,
+          "fixed_vertex_z_mm_min": -24.169042706489563,
+          "fixed_vertex_z_mm_max": 9.104076772928238
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.06133656017482281,
+            -0.14935800929864249,
+            0.12962862414618334
+          ],
+          "z_mm": 129.62862414618334,
+          "fixed_vertex_z_mm_min": 114.30420726537704,
+          "fixed_vertex_z_mm_max": 153.16006541252136
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.12585067749023438,
+            -0.43632303675015766,
+            0.16738435626029968
+          ],
+          "z_mm": 167.38435626029968,
+          "fixed_vertex_z_mm_min": 154.3712019920349,
+          "fixed_vertex_z_mm_max": 174.1713434457779
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.13496901094913483,
+          -0.2692090570926666,
+          0.2701808214187622
+        ],
+        "toe_head_xyz_m": [
+          -0.14356884360313416,
+          -0.35544106364250183,
+          0.1658535748720169
+        ],
+        "toe_tail_xyz_m": [
+          -0.13767538964748383,
+          -0.42182424664497375,
+          0.16387568414211273
+        ]
+      }
+    },
+    {
+      "frame": 15,
+      "time_s": 0.4666666666666667,
+      "hip_center_xyz_m": [
+        -0.0034852661192417145,
+        -0.04338786005973816,
+        0.8571675419807434
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 20.31901851296425,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.04306389639774958,
+            0.53680619597435,
+            0.26919714361429214
+          ],
+          "z_mm": 269.19714361429214,
+          "fixed_vertex_z_mm_min": 249.83184039592743,
+          "fixed_vertex_z_mm_max": 283.48878026008606
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.01933546115954717,
+            0.344282199939092,
+            0.031247707394262154
+          ],
+          "z_mm": 31.247707394262154,
+          "fixed_vertex_z_mm_min": 20.31901851296425,
+          "fixed_vertex_z_mm_max": 44.81954872608185
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.04737989045679569,
+            -0.312766137222449,
+            0.07048534632970889
+          ],
+          "z_mm": 70.48534632970889,
+          "fixed_vertex_z_mm_min": 58.58747288584709,
+          "fixed_vertex_z_mm_max": 90.33679962158203
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.13358750442663828,
+            -0.5549417734146118,
+            0.2083327372868856
+          ],
+          "z_mm": 208.3327372868856,
+          "fixed_vertex_z_mm_min": 197.41228222846985,
+          "fixed_vertex_z_mm_max": 214.92475271224976
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.13205838203430176,
+          -0.3621533215045929,
+          0.2436385303735733
+        ],
+        "toe_head_xyz_m": [
+          -0.14663837850093842,
+          -0.4800253212451935,
+          0.17815794050693512
+        ],
+        "toe_tail_xyz_m": [
+          -0.14222589135169983,
+          -0.5430151224136353,
+          0.19956311583518982
+        ]
+      }
+    },
+    {
+      "frame": 16,
+      "time_s": 0.5,
+      "hip_center_xyz_m": [
+        -0.0016214512288570404,
+        -0.05157233774662018,
+        0.8556481599807739
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 59.90041419863701,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.0504435400168101,
+            0.57110995054245,
+            0.37831543385982513
+          ],
+          "z_mm": 378.31543385982513,
+          "fixed_vertex_z_mm_min": 361.28756403923035,
+          "fixed_vertex_z_mm_max": 390.10077714920044
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.0080853799978892,
+            0.43007682263851166,
+            0.10605208203196526
+          ],
+          "z_mm": 106.05208203196526,
+          "fixed_vertex_z_mm_min": 96.94879502058029,
+          "fixed_vertex_z_mm_max": 117.72781610488892
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.04953966165582339,
+            -0.40127305686473846,
+            0.06908683727184932
+          ],
+          "z_mm": 69.08683727184932,
+          "fixed_vertex_z_mm_min": 59.90041419863701,
+          "fixed_vertex_z_mm_max": 85.0280225276947
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.11352405200401942,
+            -0.6113948325316111,
+            0.26864150166511536
+          ],
+          "z_mm": 268.64150166511536,
+          "fixed_vertex_z_mm_min": 260.18741726875305,
+          "fixed_vertex_z_mm_max": 274.5080590248108
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.13089534640312195,
+          -0.4168457090854645,
+          0.24934197962284088
+        ],
+        "toe_head_xyz_m": [
+          -0.13278715312480927,
+          -0.5491347312927246,
+          0.2195068895816803
+        ],
+        "toe_tail_xyz_m": [
+          -0.12256190925836563,
+          -0.6036859750747681,
+          0.25645244121551514
+        ]
+      }
+    },
+    {
+      "frame": 17,
+      "time_s": 0.5333333333333333,
+      "hip_center_xyz_m": [
+        -0.0019658245146274567,
+        -0.0603070929646492,
+        0.8492189049720764
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 52.10663005709648,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.04277422030766805,
+            0.551114042599996,
+            0.46684413651625317
+          ],
+          "z_mm": 466.8441365162532,
+          "fixed_vertex_z_mm_min": 455.35531640052795,
+          "fixed_vertex_z_mm_max": 473.6265540122986
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.01924786592523257,
+            0.47493261595567066,
+            0.167336355894804
+          ],
+          "z_mm": 167.336355894804,
+          "fixed_vertex_z_mm_min": 160.95495223999023,
+          "fixed_vertex_z_mm_max": 176.31027102470398
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.046776325752337776,
+            -0.4072984606027603,
+            0.06092180901517471
+          ],
+          "z_mm": 60.92180901517471,
+          "fixed_vertex_z_mm_min": 52.10663005709648,
+          "fixed_vertex_z_mm_max": 75.65013319253922
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.0889272391796112,
+            -0.6115237971146902,
+            0.2764383902152379
+          ],
+          "z_mm": 276.4383902152379,
+          "fixed_vertex_z_mm_min": 268.8848376274109,
+          "fixed_vertex_z_mm_max": 281.9828391075134
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.1278599202632904,
+          -0.42276182770729065,
+          0.24019384384155273
+        ],
+        "toe_head_xyz_m": [
+          -0.11394601315259933,
+          -0.556487500667572,
+          0.22236284613609314
+        ],
+        "toe_tail_xyz_m": [
+          -0.0973922535777092,
+          -0.6060620546340942,
+          0.2637597620487213
+        ]
+      }
+    },
+    {
+      "frame": 18,
+      "time_s": 0.5666666666666667,
+      "hip_center_xyz_m": [
+        -0.0007303692400455475,
+        -0.054492052644491196,
+        0.8328976631164551
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": 11.338874697685242,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.03404470533132553,
+            0.5108405301968256,
+            0.5046700338522593
+          ],
+          "z_mm": 504.6700338522593,
+          "fixed_vertex_z_mm_min": 497.7056384086609,
+          "fixed_vertex_z_mm_max": 508.8263750076294
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.0436696894466877,
+            0.4679543524980545,
+            0.19613657395044962
+          ],
+          "z_mm": 196.13657395044962,
+          "fixed_vertex_z_mm_min": 191.2708431482315,
+          "fixed_vertex_z_mm_max": 204.7300636768341
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.03771217664082845,
+            -0.3495847632487615,
+            0.020441683785368998
+          ],
+          "z_mm": 20.441683785368998,
+          "fixed_vertex_z_mm_min": 11.338874697685242,
+          "fixed_vertex_z_mm_max": 36.50955855846405
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.08489557107289632,
+            -0.5667972266674042,
+            0.22092546025911966
+          ],
+          "z_mm": 220.92546025911966,
+          "fixed_vertex_z_mm_min": 213.7424498796463,
+          "fixed_vertex_z_mm_max": 226.27851366996765
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.12042390555143356,
+          -0.3756199777126312,
+          0.19803591072559357
+        ],
+        "toe_head_xyz_m": [
+          -0.10828130692243576,
+          -0.5077674984931946,
+          0.17004135251045227
+        ],
+        "toe_tail_xyz_m": [
+          -0.09377802163362503,
+          -0.5597010254859924,
+          0.2092578411102295
+        ]
+      }
+    },
+    {
+      "frame": 19,
+      "time_s": 0.6,
+      "hip_center_xyz_m": [
+        0.000934407114982605,
+        -0.047183264046907425,
+        0.8133628368377686
+      ],
+      "vertices_below_minus5mm": 12,
+      "min_mesh_z_mm": -14.489252120256424,
+      "penetrating_vertices": [
+        {
+          "vertex": 16858,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 16859,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 16981,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 16990,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 17034,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 17035,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 17036,
+          "xyz_m": [
+            -0.049593,
+            -0.232303,
+            -0.014489
+          ],
+          "z_mm": -14.489,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5189699530601501
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.45707273483276367
+            ],
+            [
+              "Bone_018",
+              0.023957299068570137
+            ]
+          ]
+        },
+        {
+          "vertex": 17069,
+          "xyz_m": [
+            -0.025808,
+            -0.221068,
+            -0.012328
+          ],
+          "z_mm": -12.328,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5147096514701843
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.4636707305908203
+            ],
+            [
+              "Bone_018",
+              0.021619632840156555
+            ]
+          ]
+        },
+        {
+          "vertex": 17070,
+          "xyz_m": [
+            -0.025808,
+            -0.221068,
+            -0.012328
+          ],
+          "z_mm": -12.328,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5147096514701843
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.4636707305908203
+            ],
+            [
+              "Bone_018",
+              0.021619632840156555
+            ]
+          ]
+        },
+        {
+          "vertex": 17084,
+          "xyz_m": [
+            -0.010566,
+            -0.219946,
+            -0.007618
+          ],
+          "z_mm": -7.618,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5115364193916321
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.4675354063510895
+            ],
+            [
+              "Bone_018",
+              0.02092815563082695
+            ]
+          ]
+        },
+        {
+          "vertex": 17085,
+          "xyz_m": [
+            -0.010566,
+            -0.219946,
+            -0.007618
+          ],
+          "z_mm": -7.618,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5115364193916321
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.4675354063510895
+            ],
+            [
+              "Bone_018",
+              0.02092815563082695
+            ]
+          ]
+        },
+        {
+          "vertex": 17086,
+          "xyz_m": [
+            -0.010566,
+            -0.219946,
+            -0.007618
+          ],
+          "z_mm": -7.618,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.5115364193916321
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.4675354063510895
+            ],
+            [
+              "Bone_018",
+              0.02092815563082695
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.0294682780901591,
+            0.4401854674021403,
+            0.5025969296693802
+          ],
+          "z_mm": 502.5969296693802,
+          "fixed_vertex_z_mm_min": 498.7720549106598,
+          "fixed_vertex_z_mm_max": 506.71809911727905
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.08210420235991478,
+            0.40753090878327686,
+            0.19453166301051775
+          ],
+          "z_mm": 194.53166301051775,
+          "fixed_vertex_z_mm_min": 188.8989508152008,
+          "fixed_vertex_z_mm_max": 204.1187584400177
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.030363937218983967,
+            -0.219535822669665,
+            -0.0017878511377299826
+          ],
+          "z_mm": -1.7878511377299826,
+          "fixed_vertex_z_mm_min": -14.489252120256424,
+          "fixed_vertex_z_mm_max": 19.2525926977396
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.07762258251508077,
+            -0.48583805561065674,
+            0.11425509303808212
+          ],
+          "z_mm": 114.25509303808212,
+          "fixed_vertex_z_mm_min": 100.91136395931244,
+          "fixed_vertex_z_mm_max": 121.74458801746368
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.1019660085439682,
+          -0.2976745069026947,
+          0.16642089188098907
+        ],
+        "toe_head_xyz_m": [
+          -0.10251873731613159,
+          -0.41117072105407715,
+          0.0921754464507103
+        ],
+        "toe_tail_xyz_m": [
+          -0.08822781592607498,
+          -0.4747430682182312,
+          0.10630686581134796
+        ]
+      }
+    },
+    {
+      "frame": 20,
+      "time_s": 0.6333333333333333,
+      "hip_center_xyz_m": [
+        -0.0006977692246437073,
+        -0.029163487255573273,
+        0.7866319417953491
+      ],
+      "vertices_below_minus5mm": 0,
+      "min_mesh_z_mm": -4.894859157502651,
+      "penetrating_vertices": [],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.04238878935575485,
+            0.36420240501562756,
+            0.4667693078517914
+          ],
+          "z_mm": 466.7693078517914,
+          "fixed_vertex_z_mm_min": 460.50989627838135,
+          "fixed_vertex_z_mm_max": 472.2500443458557
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.08536395554741223,
+            0.2992277517914772,
+            0.16046431909004846
+          ],
+          "z_mm": 160.46431909004846,
+          "fixed_vertex_z_mm_min": 154.02692556381226,
+          "fixed_vertex_z_mm_max": 171.52751982212067
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.025988314300775528,
+            -0.08353719860315323,
+            0.011187535244971514
+          ],
+          "z_mm": 11.187535244971514,
+          "fixed_vertex_z_mm_min": -4.082611761987209,
+          "fixed_vertex_z_mm_max": 34.35926139354706
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.07473212977250417,
+            -0.37499357263247174,
+            0.08133417616287868
+          ],
+          "z_mm": 81.33417616287868,
+          "fixed_vertex_z_mm_min": 65.79652428627014,
+          "fixed_vertex_z_mm_max": 89.6458551287651
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.09875626116991043,
+          -0.19416913390159607,
+          0.15711469948291779
+        ],
+        "toe_head_xyz_m": [
+          -0.09887486696243286,
+          -0.2977737486362457,
+          0.06959232687950134
+        ],
+        "toe_tail_xyz_m": [
+          -0.08517416566610336,
+          -0.3629666268825531,
+          0.07234028726816177
+        ]
+      }
+    },
+    {
+      "frame": 21,
+      "time_s": 0.6666666666666666,
+      "hip_center_xyz_m": [
+        -0.0016007684171199799,
+        -0.021588966250419617,
+        0.7768184542655945
+      ],
+      "vertices_below_minus5mm": 3,
+      "min_mesh_z_mm": -6.241851020604372,
+      "penetrating_vertices": [
+        {
+          "vertex": 16099,
+          "xyz_m": [
+            -0.11056,
+            -0.114611,
+            -0.006242
+          ],
+          "z_mm": -6.242,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        },
+        {
+          "vertex": 16100,
+          "xyz_m": [
+            -0.11056,
+            -0.114611,
+            -0.006242
+          ],
+          "z_mm": -6.242,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        },
+        {
+          "vertex": 16267,
+          "xyz_m": [
+            -0.11056,
+            -0.114611,
+            -0.006242
+          ],
+          "z_mm": -6.242,
+          "dominant_weights": [
+            [
+              "mixamorig:RightFoot",
+              0.7697257399559021
+            ],
+            [
+              "Bone_018",
+              0.1435401886701584
+            ],
+            [
+              "mixamorig:RightLeg",
+              0.08165879547595978
+            ],
+            [
+              "mixamorig:RightToeBase",
+              0.005075300578027964
+            ]
+          ]
+        }
+      ],
+      "fixed_landmarks": {
+        "left_heel": {
+          "xyz_m": [
+            0.05462177594502767,
+            0.286002183953921,
+            0.39644591013590497
+          ],
+          "z_mm": 396.44591013590497,
+          "fixed_vertex_z_mm_min": 384.5728933811188,
+          "fixed_vertex_z_mm_max": 405.7357609272003
+        },
+        "left_toe": {
+          "xyz_m": [
+            0.0837663859128952,
+            0.14600924775004387,
+            0.11363604788978894
+          ],
+          "z_mm": 113.63604788978894,
+          "fixed_vertex_z_mm_min": 104.82020676136017,
+          "fixed_vertex_z_mm_max": 128.64163517951965
+        },
+        "right_heel": {
+          "xyz_m": [
+            -0.018816554298003513,
+            0.05155117499331633,
+            0.029567527351900935
+          ],
+          "z_mm": 29.567527351900935,
+          "fixed_vertex_z_mm_min": 13.134446926414967,
+          "fixed_vertex_z_mm_max": 53.31333726644516
+        },
+        "right_toe": {
+          "xyz_m": [
+            -0.07208828379710515,
+            -0.2521959071358045,
+            0.07483437905708949
+          ],
+          "z_mm": 74.83437905708949,
+          "fixed_vertex_z_mm_min": 60.33965200185776,
+          "fixed_vertex_z_mm_max": 82.6607346534729
+        }
+      },
+      "right_foot_bones": {
+        "foot_head_xyz_m": [
+          -0.09410154819488525,
+          -0.07421662658452988,
+          0.1550862044095993
+        ],
+        "toe_head_xyz_m": [
+          -0.09474880993366241,
+          -0.17474247515201569,
+          0.0640464648604393
+        ],
+        "toe_tail_xyz_m": [
+          -0.08116045594215393,
+          -0.23998013138771057,
+          0.06623174250125885
+        ]
+      }
+    }
+  ],
+  "interpretation_limits": [
+    "Forward travel is inferred from in-place contact-phase motion, not authored root translation.",
+    "The inferred constant speed is fit to the same contact windows being evaluated; reconstructed residuals are descriptive, not independent proof of natural planted contact.",
+    "Only fixed landmarks from the existing gait report are used; no lowest-vertex identity changes occur."
+  ]
+}

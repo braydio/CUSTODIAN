@@ -1,0 +1,318 @@
+{
+  "schema": "custodian.operator_run_contact_pitch_sensitivity.v1",
+  "purpose": "Temporary uniform foot-pitch sensitivity probe on an in-memory copy of ITER003; no candidate saved.",
+  "candidate_results": [
+    {
+      "pitch_offset_deg": -20,
+      "minimum_mesh_z_mm": -68.11052703857422,
+      "frames_with_vertices_below_minus5mm": 11,
+      "vertex_frame_observations_below_minus5mm": 782,
+      "contact_frames": {
+        "left_heel": [],
+        "left_toe": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20
+        ],
+        "right_toe": [
+          1,
+          2,
+          3,
+          20,
+          21
+        ]
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 40.83,
+        "left_toe": -53.89,
+        "right_heel": 16.31,
+        "right_toe": 10.96
+      }
+    },
+    {
+      "pitch_offset_deg": -15,
+      "minimum_mesh_z_mm": -57.90852737426758,
+      "frames_with_vertices_below_minus5mm": 10,
+      "vertex_frame_observations_below_minus5mm": 602,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          11,
+          12
+        ],
+        "left_toe": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20
+        ],
+        "right_toe": [
+          1,
+          2,
+          20,
+          21
+        ]
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 36.85,
+        "left_toe": -43.23,
+        "right_heel": 10.85,
+        "right_toe": 20.3
+      }
+    },
+    {
+      "pitch_offset_deg": -10,
+      "minimum_mesh_z_mm": -48.31121826171875,
+      "frames_with_vertices_below_minus5mm": 11,
+      "vertex_frame_observations_below_minus5mm": 432,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": [
+          1,
+          2
+        ]
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 30.74,
+        "left_toe": -30.89,
+        "right_heel": 5.99,
+        "right_toe": 30.78
+      }
+    },
+    {
+      "pitch_offset_deg": -5,
+      "minimum_mesh_z_mm": -39.17182922363281,
+      "frames_with_vertices_below_minus5mm": 11,
+      "vertex_frame_observations_below_minus5mm": 291,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 25.35,
+        "left_toe": -18.35,
+        "right_heel": 1.77,
+        "right_toe": 42.33
+      }
+    },
+    {
+      "pitch_offset_deg": 0,
+      "minimum_mesh_z_mm": -31.985536575317383,
+      "frames_with_vertices_below_minus5mm": 9,
+      "vertex_frame_observations_below_minus5mm": 164,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 20.72,
+        "left_toe": -11.95,
+        "right_heel": -1.79,
+        "right_toe": 54.86
+      }
+    },
+    {
+      "pitch_offset_deg": 5,
+      "minimum_mesh_z_mm": -24.6412353515625,
+      "frames_with_vertices_below_minus5mm": 7,
+      "vertex_frame_observations_below_minus5mm": 97,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          13,
+          14,
+          15
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 16.89,
+        "left_toe": -3.66,
+        "right_heel": -4.64,
+        "right_toe": 67.68
+      }
+    },
+    {
+      "pitch_offset_deg": 10,
+      "minimum_mesh_z_mm": -17.96650505065918,
+      "frames_with_vertices_below_minus5mm": 7,
+      "vertex_frame_observations_below_minus5mm": 69,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          13,
+          14
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 13.88,
+        "left_toe": 6.47,
+        "right_heel": -6.78,
+        "right_toe": 77.21
+      }
+    },
+    {
+      "pitch_offset_deg": 15,
+      "minimum_mesh_z_mm": -18.52871322631836,
+      "frames_with_vertices_below_minus5mm": 6,
+      "vertex_frame_observations_below_minus5mm": 58,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          14
+        ],
+        "right_heel": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 11.72,
+        "left_toe": 18.35,
+        "right_heel": -8.19,
+        "right_toe": 87.81
+      }
+    },
+    {
+      "pitch_offset_deg": 20,
+      "minimum_mesh_z_mm": -18.768539428710938,
+      "frames_with_vertices_below_minus5mm": 5,
+      "vertex_frame_observations_below_minus5mm": 56,
+      "contact_frames": {
+        "left_heel": [
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "left_toe": [
+          14
+        ],
+        "right_heel": [
+          1,
+          18,
+          19,
+          20,
+          21
+        ],
+        "right_toe": []
+      },
+      "minimum_fixed_landmark_z_mm": {
+        "left_heel": 10.43,
+        "left_toe": 31.9,
+        "right_heel": -8.85,
+        "right_toe": 99.39
+      }
+    }
+  ],
+  "conclusion": "No tested uniform pitch offset removes penetration or establishes right-toe contact. A uniform offset cannot satisfy this task\u2019s ground/contact goals; a phase-specific contact solver would be a materially different correction approach and was not attempted."
+}

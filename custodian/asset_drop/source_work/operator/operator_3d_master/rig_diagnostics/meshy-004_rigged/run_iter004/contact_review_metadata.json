@@ -1,0 +1,10 @@
+{
+  "schema": "custodian.operator_run_contact_review.v1",
+  "renders_reused_from": "Task 015 ITER002/ITER003 full native render sets; no camera or frame resampling changes",
+  "overlay": "green line is z=0 ground plane; LH/LT/RH/RT labels mark the same fixed 12-vertex centroids used by contact measurements; labels show centroid z in mm",
+  "native_128_sheet": "contact_128_all8_iter002_vs_iter003.png",
+  "native_512_sheet": "contact_512_native_focused_iter002_vs_iter003.png",
+  "loop_128": "contact_loop_128_all8.gif",
+  "loop_512": "contact_loop_512_all8.gif",
+  "512_loop_note": "independently rendered 512px frames are reduced to 128px per direction only for the loop; native 512px stills are in the focused contact sheet."
+}
