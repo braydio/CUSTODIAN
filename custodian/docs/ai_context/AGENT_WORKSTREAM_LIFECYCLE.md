@@ -872,6 +872,46 @@ interruption remain preserved. An incomplete continuation-02 cannot launch
 again; a completed PASS may retry coordinator verification/closeout without a
 second reviewer. No other run or phase is covered by this exception.
 
+### Exact recovery of the stranded finish-index reviewer PASS
+
+One coordinator-only PASS recovery is bound to
+`review-workstream-finish-index-conflict-recovery-v1`, paired-review run
+`20261027T113425Z-50d9c7adf7a0`, and its distinct dispatcher claim run
+`20261027T113443Z-6f08c7ced9a2`. It exists only for the preserved fresh reviewer
+session whose final message says Passed but whose runner stopped before writing
+the canonical archived outcome and target receipt. It does not change
+`_verified_reviewer_pass`, resume the reviewer, or authorize another
+`codex_exited` identity.
+
+After the exact recovery implementation has landed and passed its independent
+review, first inspect the plan from a clean coordination checkout:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-finish-index-codex-exited-pass \
+  review-workstream-finish-index-conflict-recovery-v1 \
+  --run-id 20261027T113425Z-50d9c7adf7a0 --plan
+```
+
+The read-only plan verifies the immutable original run manifest, the distinct
+claim receipt, exact reviewer worktree and branch tip, local process and
+supervisor-lock state, the single completed turn and captured final message,
+the findings-first reviewer summary and prewritten receipt, the pinned target,
+and complete green host validation. It also reports SHA-256 values for every
+intended archive, receipt, summary, and managed-index result. The plan does not
+fetch or update Git refs and does not write `FETCH_HEAD`. Stop on any changed or
+ambiguous evidence. Only the project owner may authorize apply, using the
+`--apply --plan-sha256 <exact-plan-digest>` form; apply rechecks the plan while
+holding the original review lock, preserves the dirty reviewer-authored files
+byte-for-byte, journals before changing them, and delegates publication to the
+original review's normal `workstream.py finish` lifecycle. A partial journal is
+preserved and fails closed; do not replay it or edit the original run evidence.
+
+The ordinary review coordinator checks for the canonical archived packet before
+attempting receipt recovery. A missing archive is surfaced as a recoverable
+`RunnerError` before any target receipt write, rather than escaping as an
+unclassified filesystem exception.
+
 ## Exit paths
 
 For blocked, paused, or review-pending work, make intentional commits, ensure
