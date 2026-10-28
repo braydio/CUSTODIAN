@@ -1,0 +1,48 @@
+{
+  "schema": "custodian.operator_3d_rendering_contract.v1",
+  "contract_id": "operator_full_body_8dir_128_v1",
+  "directions": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "frame": {
+    "width": 128,
+    "height": 128,
+    "channels": "RGBA"
+  },
+  "camera": {
+    "elevation_degrees": 45,
+    "pixels_per_meter": 50
+  },
+  "registration": {
+    "root_pixel": [
+      64,
+      106
+    ],
+    "scale_policy": "fixed_from_master",
+    "registration_policy": "fixed_root_all_frames"
+  },
+  "direction_policy": {
+    "independent_renders": true,
+    "mirroring": false
+  },
+  "body_policy": "full_body_only",
+  "sampling": {
+    "source_timing": "preserve_authored_action_range",
+    "loop_endpoints": "manifest_declared"
+  },
+  "root_motion": {
+    "trajectory": "preserved_separately_from_sprite_poses",
+    "godot": "single_declared_application"
+  },
+  "approval_state": "candidate_unapproved",
+  "diagnostic_size_options_px": [
+    512
+  ]
+}
