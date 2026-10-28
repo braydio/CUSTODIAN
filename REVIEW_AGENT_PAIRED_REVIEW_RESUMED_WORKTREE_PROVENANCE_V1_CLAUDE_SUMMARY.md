@@ -24,7 +24,7 @@ The original reviewer summary, original review packet, original archived target 
 
 ## Closeout
 
-Canonical outcome: `findings`; finding `R0-01`; one blocking defect. The review packet is archived with its exact run ID, target workstream, cycle 0, fresh-context provenance, and authoring-chat backlink. The target packet now contains the matching findings receipt. No implementation/runtime files, claims, worktrees, or original run evidence were changed. Git refs were changed only inside the disposable `/tmp` real-Git fixture and removed with that fixture. The claim remains recoverable for bounded correction and re-review.
+Canonical outcome: `findings`; finding `R0-01`; one blocking defect. The archived review packet records its exact run ID, target workstream, cycle 0, fresh-context provenance, and authoring-chat backlink. The reviewed implementation packet and implementation/runtime files were left unchanged. No implementation/runtime files, claims, worktrees, or original run evidence were changed. Git refs were changed only inside the disposable `/tmp` real-Git fixture and removed with that fixture. The claim remains recoverable for bounded correction and re-review.
 
 Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad556b3-998c-83ea-8620-22173524205f
 
