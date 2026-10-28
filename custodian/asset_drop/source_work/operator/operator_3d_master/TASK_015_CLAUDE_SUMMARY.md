@@ -67,3 +67,39 @@ Worktree: `~/Projects/.custodian-worktrees/operator-3d-master-modeling-proof-v1-
 - Status remains `RUN_MOTION_NEEDS_REPAIR`. Human visual review is required before another subjective repair. No runtime changes, main merge, candidate approval, or freeze.
 
 See `rig_diagnostics/meshy-004_rigged/run_iter002/REPORT_task015_codex.md` for the detailed report.
+
+## Codex human-review iteration — 2026-10-28
+
+- User rejected the iter002 running gait visually and authorized a new reversible derivative. Original iter002 files remain unchanged.
+- Iter003 copies the active run action and minimally rotates the four left/right leg-chain axes per frame to match the actual Mixamo FBX. It preserves 30fps / 0.70s timing, 17,578 vertices, 10,367 triangles, topology, rest positions, skin weights, bones, UVs, materials and textures; no cloth geometry was removed.
+- Animated toe-axis errors: left 17.53°→0°, right 49.98°→0°. Mean knee width ratio: 1.393→0.909 (source 0.853). Mean stance width ratio: 1.565→0.755 (source 0.535). Arm swing and timing remain intact. The unanimated rest pose is unchanged.
+- Whole-clip stretch stays at 2.969× max and 0 edges over 3×; maximum p99.9 improves 2.354×→2.320×. However, 42 vertices penetrate below −5mm in at least one frame, max depth 32.0mm versus 2.7mm before. Fixed heel/toe points show contact windows but pelvis-relative speeds of about 3.6–3.8m/s; right toe remains without contact samples.
+- Residual fragments are retained. The fragment metric is nearly flat/slightly worse: 128px 190→188 pixels with affected views 51→58; 512px 3,697→3,749 pixels with affected views 83→84.
+- Fresh rest + 21-frame renders were generated independently at 128px and 512px across all eight directions with the canonical camera. The review package includes representative sheets and all-eight-direction loops. Face-ID passes have zero invalid pixels.
+- GLB clean reimport initially selected an inactive source action and failed. Export was corrected to active-action-only; the resulting GLB reimports with one corrected action over 0.700s, maximum vertex delta 0.00228mm, seam 0.00186mm, 42 bones, 10,367 triangles, normalized weights, UVMap, and 4096px textures.
+- Validation: 45 asset-pipeline tests passed with Blender integration; 10 review-publisher tests passed; baseline SHA256SUMS passed; diagnostic scripts compile. No runtime change, main merge, promotion, freeze, or artistic approval.
+- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter003-review-20261028/REVIEW_MANIFEST.json`.
+- Status remains `RUN_MOTION_NEEDS_REPAIR`; visual assessment belongs to the user and ChatGPT.
+
+## Process Feedback
+
+- Feedback schema: custodian.task_feedback.v1
+- Outcome: partial
+- Friction severity: medium
+- What went wrong: the first GLB export replayed an inactive source action; stable contact speeds and ground penetration remain unresolved.
+- Root cause / contributing factors: inactive source action was retained in Blender's datablocks; source-axis alignment alone does not enforce planted-foot contact.
+- Prevention / pipeline improvement: export only the active action and verify its identity; measure fixed landmarks relative to pelvis and test ground penetration.
+- Tooling / docs drift discovered: none
+- Follow-up: manual-follow-up
+- What worked: preserved iter002 and created a separate, measurable derivative without mesh/weight edits.
+
+## Next Handoff
+
+- Next workstream: none
+- Next packet state: human-required
+- Refresh owner: chatgpt-user
+- ChatGPT/user planning refresh required: yes
+- Authoring chat: not-recorded
+- Refresh reason: visually assess gait, ground contact, and residual fragments before authorizing another correction.
+- Next action: review the iter003 Dropbox manifest and record a visual decision.
+- Blockers or open questions: skating/ground penetration need a decision; rest-pose toe asymmetry remains outside the animated action.

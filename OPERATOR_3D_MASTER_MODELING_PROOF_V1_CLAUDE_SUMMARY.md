@@ -1,46 +1,50 @@
-# Operator 3D master modeling proof — Task 015 closeout
+# Operator 3D master modeling proof — Task 015
 
 Workstream: `operator-3d-master-modeling-proof-v1`
 
 ## Outcome
 
-Partial; status remains `RUN_MOTION_NEEDS_REPAIR`. The existing iter002 weight-only repair is quantitatively improved and exported/reimported, but residual fragments, foot skating, stance width, and foot orientation still need review. No new model or animation correction was made in this continuation.
+Partial; status is `RUN_MOTION_NEEDS_REPAIR`. Iter003 is a reversible animation-only derivative of iter002, provided for human visual review. No artistic approval is claimed. No main merge, candidate promotion, freeze, runtime change, or Godot integration occurred.
 
-The authoritative >3× edge count is 17 unique edges over frames 1–21; this was independently recomputed from the saved vertex trajectories and agrees with the edge-ID ledger. The approximately-40 figure is not reproducible from that metric and has no per-edge ledger.
+The verified edge-count definition is: a distinct mesh edge whose maximum posed/rest length ratio exceeds 3× over frames 1–21. It gives 17 unique edges for iter001, matching the per-edge ledger. The older “about 40” estimate has no matching edge-ID ledger and is not authoritative. Iter002 reduces maximum stretch from 6.436× to 2.969× and leaves zero edges above 3×.
 
-Fragments decreased by 31.4% at native 128px and 34.2% at 512px. At 128px, affected views increased from 49 to 51. The left-hip 26-triangle cluster remains; no visible geometry was deleted.
+Iter002 reduced disconnected-alpha pixels by 31.4% at 128px and 34.2% at 512px, but its affected 128px views rose from 49 to 51. No triangles were deleted; the residual 26-triangle left-hip cluster remains a possible cloth flap.
 
-Gait measurements show target stance width is much larger relative to pelvis width than the Mixamo source, and this difference exists in rest pose. Rest toe axes also differ. Upper-arm and forearm directions match the source to ≤0.00005°. Contact sampling is too sparse and sensitive to rolling-foot point changes to certify skating. No arbitrary foot offset was applied.
+The user's review rejected the iter002 running gait. Iter003 aligns each leg-chain segment direction to the actual Mixamo source at each existing frame. Animated right-toe axis error falls 49.98°→0°; left-toe error 17.53°→0°. Mean knee-width ratio moves 1.393→0.909 (source 0.853), and stance-width ratio 1.565→0.755 (source 0.535). Arm motion and timing remain unchanged. The unanimated rest pose remains unchanged, so its measured right-toe axis offset still exists outside the run action.
 
-## Validation
+## Iter003 blockers
 
-- Baseline SHA256 manifest verified.
-- Asset-pipeline unittest: 45 passed, including Blender integration.
-- Review-publisher unittest: 10 passed.
-- New gait comparison and animated GLB replay scripts compile and run.
-- Animated iter002 GLB clean reimport: 21 samples / 0.70s, max vertex delta 0.00228mm, seam 0.00187mm, 42 bones, 10,367 triangles, normalized weights, max four influences, UVMap, 4096px textures.
-- Existing paired face-ID render ledgers cover rest plus all 21 unique frames, eight directions, and independently rendered 128px/512px; zero invalid face-ID pixels.
+- Fixed vertex-index heel/toe landmarks show the contact intervals, but their pelvis-relative horizontal speeds remain roughly 3.6–3.8m/s while inside the 40mm ground band. Right-toe contact was not sampled in either version. Planting/skating is not verified as acceptable.
+- Corrected animation has 42 vertices below −5mm at some frame; the minimum is −32.0mm versus −2.7mm in iter002.
+- Fragment pixels did not materially improve: 128px 190→188 with affected views 51→58; 512px 3,697→3,749 with affected views 83→84. Geometry remains intact.
 
-## Human visual gate
+These are objective review flags, not a subjective judgment of the rendered gait. Stop for the user's and ChatGPT's visual assessment before any next artistic correction.
 
-Retained Dropbox manifest:
-`/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter002-review-20261028/REVIEW_MANIFEST.json`
+## Preservation and verification
 
-Please assess: (1) residual fragments at gameplay size, especially the left hip; (2) whether the target's wide stance and toe-axis offsets still read duck-footed; (3) whether foot contact appears planted; (4) whether the arm swing feels natural. No visual approval is claimed. Stop before another subjective correction, candidate promotion, freeze, runtime integration, or main merge.
+Iter003 preserves the 17,578 vertices, 10,367 triangles, face topology, bone set, skin-weight hash, rest-position hash, UVMap, materials, and source iter002 files. It uses 30fps and the original 0.70s timing. Native 128px and independently rendered 512px evidence covers rest plus 21 unique frames in all eight directions under the fixed camera/scale. Face-ID passes report zero invalid pixels. The comparison loops cover all 21 unique frames and eight directions.
 
-Detailed report: `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter002/REPORT_task015_codex.md`.
+The GLB is verified in a clean Blender reimport: only the corrected action is included, 21 samples span 0.700s, maximum nearest-vertex delta is 0.00228mm, seam delta 0.00186mm, 42 bones, 10,367 triangles, normalized weights, max four influences, UVMap, and 4096px textures. An initial export included a retained inactive source action; it was replaced by an active-action-only export and the corrected reimport verification passed.
+
+Validation passed: 45 asset-pipeline tests including Blender integration; 10 review-publisher tests; Python compile checks for the added/changed diagnostics; baseline `SHA256SUMS_run_iter001.txt` checks. Detailed measurements are in `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter003/REPORT_task015_iter003.md`.
+
+## Human visual review
+
+Dropbox manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter003-review-20261028/REVIEW_MANIFEST.json`.
+
+Please assess toe direction, knee/ankle tracking, stance width and armored silhouette in the 128px loops; inspect the 512px views for cloth/armor deformation and ground penetration; compare visible foot planting against the fixed-landmark measurements; and decide whether the remaining tiny fragments are acceptable. The agent does not approve visual quality.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: remote branch did not contain the WIP commit described by the handoff; WIP was present only in the clean local source worktree.
-- Root cause / contributing factors: `origin/agent/operator-3d-master-modeling-proof-v1` fetched at `5e7f8c7`, while the local WIP was one commit ahead at `a1eb44a`.
-- Prevention / pipeline improvement: verify remote SHA against the claimed WIP commit before starting a new worktree; record exact SHA in the handoff.
+- What went wrong: initial GLB replay selected an inactive retained action; fixed by exporting only the active corrected action. Stable contacts still show high sliding speed, and correction introduces ground penetration.
+- Root cause / contributing factors: Blender retained a source action datablock alongside the active derivative; retarget-direction alignment does not itself solve contact constraints.
+- Prevention / pipeline improvement: export explicitly in active-action mode and verify action identity after reimport; keep stable fixed-index contacts and pelvis-relative speed in gait checks.
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
-- What worked: reused Claude's complete render/triangle-ID scratchpad instead of rerunning discovery.
+- What worked: per-joint source-direction checks exposed the exact toe offset and yielded a reversible correction while preserving mesh, weights, materials and timing.
 
 ## Next Handoff
 
@@ -49,6 +53,6 @@ Detailed report: `custodian/asset_drop/source_work/operator/operator_3d_master/r
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: human visual assessment is required before another subjective gait or cloth correction.
-- Next action: inspect the retained Dropbox manifest and record the visual decision.
-- Blockers or open questions: whether fragments are acceptable cloth/armor separation; whether the rest-pose stance/toe-axis mismatch is visually unacceptable; whether near-ground foot motion is skating.
+- Refresh reason: visual assessment and a decision on foot contact/penetration are required before further corrections.
+- Next action: review the iter003 Dropbox manifest and record the visual decision.
+- Blockers or open questions: whether the corrected gait reads naturally; whether ground penetration/skating needs correction; whether residual cloth/armor fragments are acceptable.

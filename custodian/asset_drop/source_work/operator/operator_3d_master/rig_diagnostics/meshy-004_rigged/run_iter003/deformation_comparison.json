@@ -1,0 +1,428 @@
+{
+  "schema": "custodian.operator_run_deformation_comparison.v1",
+  "baseline": {
+    "label": "iter002",
+    "action": "operator_run_mixamo_iter001",
+    "vertices": 17578,
+    "triangles": 10367,
+    "fps": 30.0,
+    "duration_s": 0.7,
+    "per_frame": [
+      {
+        "frame": 1,
+        "max_stretch": 2.306485620088266,
+        "p999_stretch": 1.7258060601373386,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.04882945492863655,
+        "max_z_m": 1.623068928718567
+      },
+      {
+        "frame": 2,
+        "max_stretch": 2.5416143245614773,
+        "p999_stretch": 1.989874186982047,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.04716150090098381,
+        "max_z_m": 1.6452285051345825
+      },
+      {
+        "frame": 3,
+        "max_stretch": 2.6903869928785844,
+        "p999_stretch": 2.2294156125973097,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.06913767755031586,
+        "max_z_m": 1.6805956363677979
+      },
+      {
+        "frame": 4,
+        "max_stretch": 2.7926935062087956,
+        "p999_stretch": 2.136197681059977,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.08314693719148636,
+        "max_z_m": 1.707527756690979
+      },
+      {
+        "frame": 5,
+        "max_stretch": 2.878432273974689,
+        "p999_stretch": 2.2000211419109705,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.07238231599330902,
+        "max_z_m": 1.7111647129058838
+      },
+      {
+        "frame": 6,
+        "max_stretch": 2.886086445522512,
+        "p999_stretch": 2.220514132628288,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.07623931765556335,
+        "max_z_m": 1.7119672298431396
+      },
+      {
+        "frame": 7,
+        "max_stretch": 2.805265885586212,
+        "p999_stretch": 2.0715125781068133,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05362328141927719,
+        "max_z_m": 1.7055890560150146
+      },
+      {
+        "frame": 8,
+        "max_stretch": 2.6344302896784138,
+        "p999_stretch": 1.876832678009453,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.01782672293484211,
+        "max_z_m": 1.6909884214401245
+      },
+      {
+        "frame": 9,
+        "max_stretch": 2.418988339659182,
+        "p999_stretch": 1.7260480242022929,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.03820531815290451,
+        "max_z_m": 1.6603871583938599
+      },
+      {
+        "frame": 10,
+        "max_stretch": 2.1500970741773324,
+        "p999_stretch": 1.659912532352198,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.045460671186447144,
+        "max_z_m": 1.6274185180664062
+      },
+      {
+        "frame": 11,
+        "max_stretch": 2.155995075957546,
+        "p999_stretch": 1.7404312138500302,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.04368724301457405,
+        "max_z_m": 1.6181985139846802
+      },
+      {
+        "frame": 12,
+        "max_stretch": 2.3538560399474306,
+        "p999_stretch": 1.9611750096367702,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.036007314920425415,
+        "max_z_m": 1.6355890035629272
+      },
+      {
+        "frame": 13,
+        "max_stretch": 2.795911286793042,
+        "p999_stretch": 2.2950646171907136,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": -0.0026677176356315613,
+        "max_z_m": 1.6604820489883423
+      },
+      {
+        "frame": 14,
+        "max_stretch": 2.7685653798113927,
+        "p999_stretch": 2.3377243805637606,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.016855886206030846,
+        "max_z_m": 1.6781352758407593
+      },
+      {
+        "frame": 15,
+        "max_stretch": 2.9042390107375855,
+        "p999_stretch": 2.3317248503222774,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.06653398275375366,
+        "max_z_m": 1.6853066682815552
+      },
+      {
+        "frame": 16,
+        "max_stretch": 2.9687235725746377,
+        "p999_stretch": 2.3542975540872875,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.06279321014881134,
+        "max_z_m": 1.6853996515274048
+      },
+      {
+        "frame": 17,
+        "max_stretch": 2.8905428784148,
+        "p999_stretch": 2.2615228411468404,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05221761018037796,
+        "max_z_m": 1.6797553300857544
+      },
+      {
+        "frame": 18,
+        "max_stretch": 2.755096173554702,
+        "p999_stretch": 2.08465226559163,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.01578970067203045,
+        "max_z_m": 1.661886215209961
+      },
+      {
+        "frame": 19,
+        "max_stretch": 2.5197520482011644,
+        "p999_stretch": 1.9296860883963955,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.022857503965497017,
+        "max_z_m": 1.641727089881897
+      },
+      {
+        "frame": 20,
+        "max_stretch": 2.1124894008525534,
+        "p999_stretch": 1.7075495359908908,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.042319316416978836,
+        "max_z_m": 1.6147427558898926
+      },
+      {
+        "frame": 21,
+        "max_stretch": 2.0914187200181042,
+        "p999_stretch": 1.5959779514505177,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.050498176366090775,
+        "max_z_m": 1.6042050123214722
+      }
+    ],
+    "summary": {
+      "max_stretch": 2.9687235725746377,
+      "max_p999_stretch": 2.3542975540872875,
+      "distinct_edges_over_3x": 0,
+      "max_edges_over_3x_in_one_frame": 0,
+      "frames_with_edges_over_3x": [],
+      "max_vertices_below_ground": 0,
+      "min_z_m": -0.0026677176356315613,
+      "loop_seam_max_vertex_delta_mm": 0.0016000718127436788,
+      "loop_seam_p99_vertex_delta_mm": 0.0014724277647776157
+    }
+  },
+  "corrected": {
+    "label": "iter003",
+    "action": "operator_run_mixamo_iter003_gait_corrected",
+    "vertices": 17578,
+    "triangles": 10367,
+    "fps": 30.0,
+    "duration_s": 0.7,
+    "per_frame": [
+      {
+        "frame": 1,
+        "max_stretch": 2.306485620088266,
+        "p999_stretch": 1.7400557928637654,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 11,
+        "min_z_m": -0.010837648995220661,
+        "max_z_m": 1.623068928718567
+      },
+      {
+        "frame": 2,
+        "max_stretch": 2.5416143245614773,
+        "p999_stretch": 1.936181862328565,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 8,
+        "min_z_m": -0.008506320416927338,
+        "max_z_m": 1.6452285051345825
+      },
+      {
+        "frame": 3,
+        "max_stretch": 2.6810951510558794,
+        "p999_stretch": 2.1462393247825258,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.014261018484830856,
+        "max_z_m": 1.6805956363677979
+      },
+      {
+        "frame": 4,
+        "max_stretch": 2.7926935062087956,
+        "p999_stretch": 2.0864928668719935,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05970229580998421,
+        "max_z_m": 1.707527756690979
+      },
+      {
+        "frame": 5,
+        "max_stretch": 2.878432273974689,
+        "p999_stretch": 2.08632018184427,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.06884115934371948,
+        "max_z_m": 1.7111647129058838
+      },
+      {
+        "frame": 6,
+        "max_stretch": 2.886086445522512,
+        "p999_stretch": 2.101362816773721,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.0753907784819603,
+        "max_z_m": 1.7119672298431396
+      },
+      {
+        "frame": 7,
+        "max_stretch": 2.805265885586212,
+        "p999_stretch": 2.006297578038475,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05277731269598007,
+        "max_z_m": 1.7055890560150146
+      },
+      {
+        "frame": 8,
+        "max_stretch": 2.6344302896784138,
+        "p999_stretch": 1.8914380266242445,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.013235356658697128,
+        "max_z_m": 1.6909884214401245
+      },
+      {
+        "frame": 9,
+        "max_stretch": 2.418988339659182,
+        "p999_stretch": 1.7859849138449666,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.0034893425181508064,
+        "max_z_m": 1.6603871583938599
+      },
+      {
+        "frame": 10,
+        "max_stretch": 2.1500970741773324,
+        "p999_stretch": 1.6510630418761454,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 7,
+        "min_z_m": -0.005241903010755777,
+        "max_z_m": 1.6274185180664062
+      },
+      {
+        "frame": 11,
+        "max_stretch": 2.096216943753853,
+        "p999_stretch": 1.7329630599081267,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 22,
+        "min_z_m": -0.014406772330403328,
+        "max_z_m": 1.6181985139846802
+      },
+      {
+        "frame": 12,
+        "max_stretch": 2.178751485298604,
+        "p999_stretch": 1.9147630665233712,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 29,
+        "min_z_m": -0.01832588203251362,
+        "max_z_m": 1.6355890035629272
+      },
+      {
+        "frame": 13,
+        "max_stretch": 2.6549464048912808,
+        "p999_stretch": 2.1430785131199808,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 42,
+        "min_z_m": -0.03198552876710892,
+        "max_z_m": 1.6604820489883423
+      },
+      {
+        "frame": 14,
+        "max_stretch": 2.7093277893401306,
+        "p999_stretch": 2.1785953288106246,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 30,
+        "min_z_m": -0.024169042706489563,
+        "max_z_m": 1.6781352758407593
+      },
+      {
+        "frame": 15,
+        "max_stretch": 2.9042390107375855,
+        "p999_stretch": 2.2879819750930035,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.02031901851296425,
+        "max_z_m": 1.6853066682815552
+      },
+      {
+        "frame": 16,
+        "max_stretch": 2.9687235725746377,
+        "p999_stretch": 2.3196882702351203,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05990041419863701,
+        "max_z_m": 1.6853996515274048
+      },
+      {
+        "frame": 17,
+        "max_stretch": 2.8905428784148,
+        "p999_stretch": 2.253354445351223,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.05210663005709648,
+        "max_z_m": 1.6797553300857544
+      },
+      {
+        "frame": 18,
+        "max_stretch": 2.755096173554702,
+        "p999_stretch": 2.061244007200224,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": 0.011338874697685242,
+        "max_z_m": 1.661886215209961
+      },
+      {
+        "frame": 19,
+        "max_stretch": 2.5197520482011644,
+        "p999_stretch": 1.9402176418556316,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 12,
+        "min_z_m": -0.014489252120256424,
+        "max_z_m": 1.641727089881897
+      },
+      {
+        "frame": 20,
+        "max_stretch": 2.1124894008525534,
+        "p999_stretch": 1.7730621651522602,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 0,
+        "min_z_m": -0.004894859157502651,
+        "max_z_m": 1.6147427558898926
+      },
+      {
+        "frame": 21,
+        "max_stretch": 2.0914187200181042,
+        "p999_stretch": 1.6580675140318044,
+        "edges_over_3x": 0,
+        "vertices_below_ground": 3,
+        "min_z_m": -0.006241851020604372,
+        "max_z_m": 1.6042050123214722
+      }
+    ],
+    "summary": {
+      "max_stretch": 2.9687235725746377,
+      "max_p999_stretch": 2.3196882702351203,
+      "distinct_edges_over_3x": 0,
+      "max_edges_over_3x_in_one_frame": 0,
+      "frames_with_edges_over_3x": [],
+      "max_vertices_below_ground": 42,
+      "min_z_m": -0.03198552876710892,
+      "loop_seam_max_vertex_delta_mm": 0.0016000718127436788,
+      "loop_seam_p99_vertex_delta_mm": 0.0014724277647776157
+    }
+  },
+  "interpretation": [
+    "Edge stretch uses each mesh edge against its own frame-zero length over frames 1\u201321.",
+    "The loop seam compares frame 22 with frame 1 by corresponding vertex index.",
+    "Ground check counts vertices below -5 mm; armor/cloth geometry may extend below the nominal sole."
+  ]
+}
