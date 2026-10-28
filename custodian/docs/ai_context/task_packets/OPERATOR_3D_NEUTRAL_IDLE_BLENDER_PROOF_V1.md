@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `review-operator-3d-animation-batch-pipeline-v1`
+- Depends on: `none`
 - Locks: `operator-3d-animation-pipeline`
 - Kind: `implementation`
 - Review: `auto`
@@ -15,11 +15,12 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: A real retarget/render proof crosses Blender action data, root-motion decomposition, a preserved experimental rig, deterministic pixels and asset review. A fresh code/pipeline review plus a separate human animation-quality decision is required; neither technical QA nor the implementation review implies visual approval.
-- Reviewed main: `be34dc59382997d086b9a0454ae0602f171d7531`
+- Reviewed main: `6d686650f225261c1a5f285c1b9d36cf1a20d35e`
 - Authoring chat: `not-recorded`
 - Visual review: `required`
 - Authoring handoff: `auto`
 - Goal: Produce one reproducible, candidate-only Neutral Idle proof from the authorized Mixamo FBX on the experimental 42-bone ITER005 Operator rig, with reusable retargeted motion data separate from model-specific rendering.
+- Human override (2026-10-28): The user explicitly waives `review-operator-3d-animation-batch-pipeline-v1` as a prerequisite for this experimental Neutral Idle proof only. This does not waive Task 002 input/hash validation, its own post-land review, the required human animation-quality review, or any candidate-only/production-approval boundary. It does not change global dispatcher policy.
 - Completion boundary: Task 002 only. Inspect the real Neutral Idle FBX and experimental master; generate a content-addressed, model-independent motion artifact and separate root trajectory; render its loop in eight unmirrored 128px full-body directions; run objective QA; create a hash-bound candidate receipt and one compact visual-review handoff; stop for human animation-quality review. Do not process the other seven clips or publish runtime assets.
 - Current measured state: `/home/braydenchaffee/Downloads/` contains all eight requested FBXs plus an unrelated `Running_Roll.fbx`. Blender 5.2.3 imported the eight clips as one `Armature|mixamo.com|Layer0` action each, 30 FPS, 65 Mixamo bones: Neutral Idle 1–264 (264 frames), Breathing Idle 1–299, Walking 1–32, Running Slide 1–47, React Small Front 1–37, React Small Back 1–39, React Large Front 1–42, React Large Left 1–48. Neutral Idle source SHA-256 is `40fda03b9e87092978f31c0721a3de2ad686a35983d73386769a17029684e1a3`. The selected read-only experimental master is `/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-study-20261028/custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter005/operator_run_mixamo_iter005_contact_ik.blend`, SHA-256 `a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969`; it contains `SmartRigArmature` (42 bones), mesh `output_unwrapped` (17,578 vertices), material `BakedMaterial`, and three packed 4096×4096 images. Four preserved modeling-worktree copies were hash-identical; this task uses the clean shoulder-study snapshot and does not depend on or write to any shoulder/Task 017 checkout. Neutral Idle's action is `Armature|mixamo.com|Layer0`, range 1–264 at 30 FPS; imported action endpoints have identical sampled pose (0-degree maximum bone rotation delta), so the loop output may omit the duplicate terminal frame while retaining the 264-frame authored source record.
 - Evidence: Task 001 archived packet and compiler under `custodian/tools/operator/animation_compiler/`; source inventory and hashes above; Blender 5.2.3 read-only FBX inspection. Local reference scripts: `inspect_fbx.py` SHA `ac338de2ace4d4b20aa3fcb9846717e9a1504020883b8bc1bbe0a6cb18d7f7c4`, `retarget_run.py` SHA `c13c0f1c6c1eada52af4cf254b996f30284f2d5b4b49a369246cea861890c47c`, `render_rigged.py` SHA `d7852a3478ed4100d1c42dae399eb79eb3444d1ff398578d77b1f2b7f22c47b9`.
