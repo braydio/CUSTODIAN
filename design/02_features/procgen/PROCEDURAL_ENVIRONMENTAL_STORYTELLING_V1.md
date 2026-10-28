@@ -1,6 +1,6 @@
 # Procedural Environmental Storytelling V1: Three Evidence Grammars
 
-**Status:** three designs endorsed 2026-10-27; **ES-1 F02 reserved story-site identity foundation implementation approved 2026-10-28**. ES-2–ES-4 physical tableaux, art and larger campaign rollout remain separately scoped.
+**Status:** three designs endorsed 2026-10-27; **ES-1 F02 reserved story-site identity foundation implemented and validated 2026-10-28; paired review pending post-land**. ES-2–ES-4 physical tableaux, art and larger campaign rollout remain separately scoped.
 **Workstream:** procgen-environmental-evidence-v1
 **Source baseline:** main@bb5a1b16
 **Authoring chat:** https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain
@@ -71,18 +71,38 @@ Proposed runtime domain: sprites/environment/props/procgen. **Exact schema, faci
 
 ## Current runtime seam, drift and preservation
 
-At main@bb5a1b16: story_room_template.gd and story_room_placer.gd supply deterministic metadata (including metadata_only_v1); story_room_geometry_stamper.gd can claim basic reserved floor rectangles but does not create composed scenes; intent/region_footprint_reserver.gd, roads/procgen_road_authority.gd and accepted_world_export.gd provide supporting reservation/route/export data. AmbientActivityAnchor supports actual actor activity but not fictional habitation by itself. **CampaignGeographySemanticRegistry (F15-B2)** is data-only Domain/Location site binding, not a physical placer/streamer. ProcGenTilemap is a large integration façade: do not grow a second narrative authority into it.
+At the pre-ES-1 baseline main@bb5a1b16: story_room_template.gd and story_room_placer.gd supplied deterministic metadata (including metadata_only_v1); story_room_geometry_stamper.gd could claim basic reserved floor rectangles but did not create composed scenes; intent/region_footprint_reserver.gd, roads/procgen_road_authority.gd and accepted_world_export.gd provided supporting reservation/route/export data. AmbientActivityAnchor supported actual actor activity but not fictional habitation by itself. **CampaignGeographySemanticRegistry (F15-B2)** remains data-only Domain/Location site binding, not a physical placer/streamer. ProcGenTilemap remains a large integration façade: do not grow a second narrative authority into it.
 
 Live faction/story profile data still uses prototype **iconoclast, cult_mechanist and scavenger** strings; these are compatibility state, **not** current canonical polities. FI-001/FI-002 migration or explicit safe adapter is a prerequisite for canonical polity-conditioned tableau dressing. **Legacy Interdiction Mesh is a hazard layer, not an eighth polity**. Existing Empty Convoy and Abandoned Station authored-event placement claims take precedence and must not be duplicated. No new save authority, actor AI, geography, world clock, collision/nav or quest system.
 
 The April REGION_GENERATION_SYSTEM phase table predates October F02 story/reservation work; the WORLD_ASCENT next-geometry note also needs distinction between existing rectangle claiming and absent causal dressing. Update these as documentation drift, not as a claim that all region-generation phases are implemented.
 
-## ES-1 integration review update (2026-10-27)
+## ES-1 site identity foundation (2026-10-28)
 
-The [source-grounded interaction and geography review](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md) recommends composing these grammars **inside a reserved F02 story-room intent node**, optionally scoped to an existing verified F15-B1/B2 parent Location. It identifies a current split between graph-reserved floor rectangles and independently selected `metadata_only_v1` story markers, which must be joined rather than allowing duplicate site positions. It also selects two repeatable `WorldReadoutInteractable`-compatible clue points as a first-pilot interaction contract, reusing the Operator's existing group/nearest-distance selector and HUD. The human decision has since **approved the ES-1 foundation only**; no ES-2 physical site, persistent geography or art is implied.
+Intent-enabled story sites now project exclusively from existing F02
+STORY_ROOM reservations. Each normalized record carries the exact intent-node
+ID, center, and reserved rectangle, plus an es1-prefixed SHA-256 identity over
+length-prefixed identity version, effective generation seed, stable region
+frame/profile scope, and node ID. The projection verifies the source graph node
+and its STORY_APPROACH edge, rejects clipped or conflicting footprints with
+stable reasons, and leaves optional zero-site outcomes valid. Accepted-world
+export detaches both active site records and skip records. Existing markers and
+ruin/foliage clearances consume only joined records; the F02 reservation remains
+the floor-claim authority and verifies exact site binding before stamping.
 
-## Acceptance target and Next Agent Slice (ES-1 foundation approved)
+The former cell-sampled metadata_only_v1 candidate path is retained only for
+non-intent generation. No verified F15 parent is supplied, so these identities
+remain local to the generated F02 region. No F15 Location, durable visit state,
+physical tableau, new interaction, or art was added. ES-2 Refused Passage is
+the next separately authorized physical composition; ES-3 Hearth/Seam and ES-4
+art/campaign integration remain planned.
+
+## ES-1 integration review and implementation status (2026-10-27/28)
+
+The [source-grounded interaction and geography review](PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md) recommended composing these grammars **inside a reserved F02 story-room intent node**, optionally scoped to an existing verified F15-B1/B2 parent Location. Its pre-ES-1 audit found a split between graph-reserved floor rectangles and independently selected `metadata_only_v1` story markers. The ES-1 foundation now joins both through the exact reservation ID and rectangle. The review also selected two repeatable `WorldReadoutInteractable`-compatible clue points as a future first-pilot interaction contract, reusing the Operator's existing group/nearest-distance selector and HUD. The human decision approved the ES-1 foundation only; no ES-2 physical site, persistent geography or art is implied.
+
+## Acceptance target and Next Agent Slice
 
 First pilot **Refused Passage**: repeated seed/profile/site ID yields identical causal choice, layout/clue/inspect identity and transforms; different seeds vary coherently; invalid footprint **skips without rejecting a valid world**. All clue points accessible to a real Operator; no blocking required road, spawn, objective, extraction or vehicle route. Streamed reveal/re-entry stable. Quantitative geometry/alpha checks before tightly cropped human camera-read review.
 
-**ES-1 authorized next goal:** implement the single F02 intent-node/actual reserved-rectangle story identity join and deterministic safe-skip/export contract through `custodian/docs/ai_context/task_packets/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md` and its paired review. Claim/dispatch authority is unchanged. **ES-2** remains the first physical Refused Passage tableau with two native HUD readouts; **ES-3** adds Hearth/Seam, and **ES-4** the Asset V2 art/campaign proof. ES-1 is deliberately small and is not the end state.
+**ES-1 boundary:** the F02 intent-node/actual reserved-rectangle identity join and deterministic safe-skip/export contract is implemented under its task packet; independent paired review is required before moving the program forward. **ES-2** is the next development slice: the first physical Refused Passage tableau with two native HUD readouts. **ES-3** adds Hearth/Seam, and **ES-4** the Asset V2 art/campaign proof. ES-1 is deliberately small and is not the end state.

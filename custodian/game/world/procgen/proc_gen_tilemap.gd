@@ -787,6 +787,7 @@ var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
 var _faction_activity_sites: Array[Dictionary] = []
 var _story_room_sites: Array[Dictionary] = []
+var _story_room_site_skips: Array[Dictionary] = []
 var _special_room_sites: Array[Dictionary] = []
 var _faction_site_placer: RefCounted = null
 var _story_room_placer: RefCounted = null
@@ -5756,14 +5757,20 @@ func _place_faction_ambient_sites(map_size: Vector2i) -> void:
 
 func _place_story_rooms(map_size: Vector2i) -> void:
 	_story_room_sites.clear()
+	_story_room_site_skips.clear()
 	if _world_progress_profile == null or _story_room_placer == null:
 		return
 	var protected_cells := _collect_terrain_required_cells(map_size)
 	protected_cells.append_array(
 		_get_sundered_keep_site_exclusion_cells()
 	)
-	_story_room_sites = _story_room_placer.call("place_story_rooms", {
+	var region_identity := String(_region_frame_profile_id)
+	if region_identity.is_empty():
+		region_identity = String(_world_progress_profile.profile_id)
+	var projection: Dictionary = _story_room_placer.call("project_story_rooms", {
 		"seed": _tile_noise_hash(Vector2i(1201, 1709)),
+		"identity_seed": _get_generation_seed(),
+		"region_identity": region_identity,
 		"map_size": map_size,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
@@ -5771,14 +5778,33 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 		"count": story_room_count,
 		"world_progress_profile": _world_progress_profile,
 		"faction_sites": _faction_activity_sites,
+		"worldgen_intent_enabled": worldgen_intent_enabled,
+		"reserved_regions": _worldgen_reserved_regions,
+		"intent_graph": _worldgen_intent_graph,
+		"collision_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
+		"void_cells": _story_site_void_cells(),
 	})
+	for site in projection.get("sites", []):
+		if site is Dictionary:
+			_story_room_sites.append(site)
+	for skipped in projection.get("skipped", []):
+		if skipped is Dictionary:
+			_story_room_site_skips.append(skipped)
 	for room in _story_room_sites:
 		var cell: Vector2i = room.get("cell", Vector2i.ZERO)
 		if not _is_tile_inside_map(cell, map_size):
 			continue
 		if get_region_type_at_tile(cell) == "exterior":
-			_set_region_tile(cell, "story_room_%s" % String(room.get("story_id", "unknown")), "story_room")
-		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % String(room.get("story_id", "unknown")))
+			var story_label := String(room.get("story_id", room.get("intent_node_id", "unknown")))
+			_set_region_tile(cell, "story_room_%s" % story_label, "story_room")
+		var marker_identity := String(room.get("site_id", room.get("story_id", "unknown")))
+		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % marker_identity)
+
+
+func _story_site_void_cells() -> Array[Vector2i]:
+	var result := _dict_keys_as_vector2i_array(_chasm_cells)
+	result.append_array(_dict_keys_as_vector2i_array(_ocean_cells))
+	return result
 
 
 func _get_sundered_keep_site_exclusion_cells() -> Array[Vector2i]:
@@ -5834,6 +5860,7 @@ func _clear_world_progression_runtime() -> void:
 		void_cliff_face.visible = false
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
+	_story_room_site_skips.clear()
 	_special_room_sites.clear()
 	if _world_progress_marker_parent == null:
 		_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
@@ -9036,6 +9063,11 @@ func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
 		if faction_cell is Vector2i and cell.distance_to(faction_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"faction_activity"
 	for site in _story_room_sites:
+		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
+		if story_rect is Rect2i:
+			if (story_rect as Rect2i).grow(combat_readability_prop_clearance_tiles).has_point(cell):
+				return &"story_room"
+			continue
 		var story_cell: Variant = site.get("cell", Vector2i.ZERO)
 		if story_cell is Vector2i and cell.distance_to(story_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"story_room"
@@ -9255,6 +9287,11 @@ func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = 
 		if cell is Vector2i:
 			anchors.append(cell)
 	for site in _story_room_sites:
+		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
+		if story_rect is Rect2i:
+			if (story_rect as Rect2i).grow(clearance_radius).has_point(pos):
+				return true
+			continue
 		var cell: Variant = site.get("cell", Vector2i.ZERO)
 		if cell is Vector2i:
 			anchors.append(cell)
@@ -12244,6 +12281,7 @@ func get_level_data() -> Dictionary:
 		"worldgen_reserved_regions": _worldgen_reserved_regions,
 		"faction_activity_sites": _faction_activity_sites,
 		"story_room_sites": _story_room_sites,
+		"story_room_site_skips": _story_room_site_skips,
 		"special_room_sites": _special_room_sites,
 	})
 

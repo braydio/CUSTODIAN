@@ -1012,6 +1012,49 @@
       "needs_import": true
     },
     {
+      "id": "procgen_story_site_identity",
+      "type": "godot_script",
+      "script": "res://tools/validation/faction_story_sites_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "determinism",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/story/story_room_geometry_stamper.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/faction_story_sites_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_worldgen_story_site_export",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_worldgen_shape_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "accepted_world_export",
+        "determinism",
+        "parity"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/intent/region_footprint_reserver.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/procgen_worldgen_shape_smoke.gd"
+      ],
+      "timeout_sec": 120,
+      "needs_import": true
+    },
+    {
       "id": "procgen_meridian_hardstand_macro",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_meridian_hardstand_macro_smoke.gd",

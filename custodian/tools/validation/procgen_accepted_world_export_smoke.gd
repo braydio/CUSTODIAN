@@ -2,15 +2,16 @@ extends SceneTree
 
 # Parity smoke for the accepted-world capture/export owner. The expected hashes
 # were captured from ProcGenTilemap before the extraction (see
-# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md); update them only for
-# an intentional, explicitly tested level-data contract migration.
+# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md). ES-1 intentionally adds
+# the normalized optional story-site skip list to level data; keep the field
+# assertion and parity values aligned with that contract migration.
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
-const EXPECTED_LEVEL_DATA_HASH := "1404166550"
+const EXPECTED_LEVEL_DATA_HASH := "3026032867"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
-const EXPECTED_LEVEL_DATA_KEY_COUNT := 80
+const EXPECTED_LEVEL_DATA_KEY_COUNT := 81
 
 
 func _init() -> void:
@@ -47,6 +48,9 @@ func _run() -> void:
 		return
 
 	var level_data := tilemap.get_level_data()
+	if not level_data.get("story_room_site_skips", null) is Array:
+		_fail("accepted-world export is missing the story_room_site_skips array")
+		return
 	var fingerprint := tilemap.debug_get_runtime_authoring_fingerprint()
 	# Excluded from the value hash: random_floor_tiles is RNG-sampled by design,
 	# health is timing counters, foliage holds live Node references. They are

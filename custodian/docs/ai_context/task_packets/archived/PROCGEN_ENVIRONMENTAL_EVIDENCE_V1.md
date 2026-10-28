@@ -4,7 +4,7 @@
 - Workstream: `procgen-environmental-evidence-v1`
 - Authoring handoff: `auto`
 - Kind: `implementation`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
@@ -51,18 +51,30 @@ The user explicitly authorizes normal repair **within this packet** of compilati
 ## Next Handoff
 
 - Next workstream: `review-procgen-environmental-evidence-v1`
-- Next packet state: `dependency-gated on this accepted implementation`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: `https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain`
-- Next action: Claim after published ready/auto promotion; implement and validate A1–A5; finish normally; launch independent fresh-context paired review; only then narrow ES-2.
-- Blockers or open questions: Verify dispatcher lock availability and main freshness; no further subjective integration choice is required to execute ES-1.
+- Next action: Launch the fresh-context paired review `review-procgen-environmental-evidence-v1`; after PASS, prepare ES-2: Refused Passage Physical Tableau as the next development slice.
+- Blockers or open questions: none
 
 ## Completion Truth
 
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `<fill at closeout>`
-- Completion boundary satisfied: `<fill at closeout>`
-- Acceptance satisfied: `<fill at closeout>`
-- Superseded/legacy production path disposition: `<fill at closeout>`
-- Evidence: `<fill at closeout>`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `49/49 changed-file validations passed; five packet-focused Godot tests passed; accepted-world parity smoke passed after correcting its stale schema pin; check_ai_context, validate_review_pairing, and git diff --check passed. See PROCGEN_ENVIRONMENTAL_EVIDENCE_V1_CLAUDE_SUMMARY.md.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The existing accepted-world parity fixture pinned the pre-ES-1 export hash; one unrelated agent workflow test hit its timeout once and passed on retry. Godot validation regenerated 13 unrelated PNG import sidecars; byte-exact copies are preserved outside the repository at /home/braydenchaffee/Projects/.custodian-preserved/procgen-es1-generated-import-sidecars-20261028T1109Z before cleanup.`
+- Root cause / contributing factors: `The export schema change intentionally changed its stable fixture hash. Validation imports generated metadata for unrelated art assets in the shared worktree.`
+- Prevention / pipeline improvement: `Update parity pins alongside intentional export schema changes; continue preserving generated import metadata before removing only those generated sidecars.`
+- Tooling / docs drift discovered: `The focused world-shape fixture's story-room placement was unsuitable and required an explicit stable clipped_rect skip assertion; fixed in scope.`
+- Follow-up: `fixed-in-scope`
+- What worked: `Focused contract tests exposed the identity, exact-rectangle and skip behavior; the full changed-file sweep then passed.`

@@ -1,5 +1,29 @@
 # CURRENT STATE — CUSTODIAN
 
+## Procgen Environmental Evidence ES-1 site identity foundation (2026-10-28)
+
+Intent-enabled story sites now project only from existing F02
+worldgen_reserved_regions[kind=story_room] records. Each exported site binds
+the exact intent-node ID, center, and reserved rectangle; versioned es1:
+SHA-256 identities encode the effective generation seed, region-frame scope,
+node ID, and identity version with length-prefixed inputs. Normalized sites and
+stable optional-site skip reasons are detached through accepted-world export.
+Markers, ruin protection, and foliage clearance consume the same joined site
+records. Floor claiming remains owned by F02 reservations and asserts any
+projected site matches its source reservation.
+
+The legacy cell-sampled metadata_only_v1 path remains available only when
+intent generation is disabled. No verified F15 parent Location is currently
+passed into procgen, so ES-1 records remain F02-region-local; F15-B1/B2 remain
+unchanged data authorities, with no new Location or cross-visit persistence.
+The fixed 160×160 world-shape fixture has one clipped story-room reservation,
+story_room_required_11;
+it exports zero active story sites and a stable clipped_rect skip, with no
+StoryRoom marker. This is an accepted optional-site outcome, not a site quota.
+This is an identity and geometry foundation, not a physical tableau: ES-2
+Refused Passage is the next separately scoped slice; ES-3 Hearth/Seam and ES-4
+art/campaign integration remain planned.
+
 ## Initial vehicle fleet asset program locked (2026-10-21)
 
 `design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
