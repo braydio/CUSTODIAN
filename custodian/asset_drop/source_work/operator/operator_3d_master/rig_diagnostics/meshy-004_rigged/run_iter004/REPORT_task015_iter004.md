@@ -51,4 +51,4 @@ The coding agent does not decide whether gait, silhouettes, boots, cloth, armor,
 - `pitch_sensitivity.json`
 - `contact_review_metadata.json`
 - Native review media: `contact_128_all8_iter002_vs_iter003.png`, `contact_512_native_focused_iter002_vs_iter003.png`, `contact_loop_128_all8.gif`, `contact_loop_512_all8.gif` (published separately to Dropbox; not committed as bulk media).
-- Published Dropbox manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter004-contact-review-20261028/REVIEW_MANIFEST.json`.
+- Planned Dropbox manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/task015-iter004-contact-review-20261028/REVIEW_MANIFEST.json`.
