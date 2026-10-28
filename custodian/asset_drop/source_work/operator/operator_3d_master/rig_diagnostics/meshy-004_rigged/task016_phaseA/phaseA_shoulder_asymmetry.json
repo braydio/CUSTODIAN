@@ -1,0 +1,311 @@
+{
+  "schema": "custodian.operator_shoulder_asymmetry_diagnosis.v1",
+  "source_baseline": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/BASELINE.blend",
+  "variant_a": {
+    "sides": {
+      "Left": {
+        "underlying_source_faces_retained": 503,
+        "overlay_vertex_count_in_side_bbox": 1728,
+        "overlay_bounds_in_shoulder_local_frame": {
+          "axes": [
+            "outward_from_joint",
+            "forward",
+            "up"
+          ],
+          "minimum_m": [
+            0.103889,
+            -0.182662,
+            -0.143412
+          ],
+          "maximum_m": [
+            0.304547,
+            0.107979,
+            0.166154
+          ],
+          "size_mm": [
+            200.66,
+            290.64,
+            309.57
+          ],
+          "outwardmost_from_joint_mm": 304.55,
+          "highest_point_from_joint_mm": 166.15
+        },
+        "base_skin_weight_summary": {
+          "mixamorig:LeftShoulder": {
+            "mean": 0.5853,
+            "max": 0.8985,
+            "nonzero_vertex_count": 864
+          },
+          "mixamorig:LeftArm": {
+            "mean": 0.2614,
+            "max": 0.9021,
+            "nonzero_vertex_count": 780
+          },
+          "mixamorig:Spine2": {
+            "mean": 0.0005,
+            "max": 0.0011,
+            "nonzero_vertex_count": 13
+          },
+          "mixamorig:Spine1": {
+            "mean": 0.0332,
+            "max": 0.0961,
+            "nonzero_vertex_count": 170
+          },
+          "mixamorig:Hips": {
+            "mean": 0.0,
+            "max": 0.0,
+            "nonzero_vertex_count": 0
+          }
+        },
+        "overlay_has_armature_modifier": false,
+        "overlay_vertex_groups": []
+      },
+      "Right": {
+        "underlying_source_faces_retained": 414,
+        "overlay_vertex_count_in_side_bbox": 1466,
+        "overlay_bounds_in_shoulder_local_frame": {
+          "axes": [
+            "outward_from_joint",
+            "forward",
+            "up"
+          ],
+          "minimum_m": [
+            0.094536,
+            -0.152838,
+            -0.140101
+          ],
+          "maximum_m": [
+            0.292471,
+            0.117862,
+            0.166172
+          ],
+          "size_mm": [
+            197.93,
+            270.7,
+            306.27
+          ],
+          "outwardmost_from_joint_mm": 292.47,
+          "highest_point_from_joint_mm": 166.17
+        },
+        "base_skin_weight_summary": {
+          "mixamorig:RightShoulder": {
+            "mean": 0.596,
+            "max": 0.9095,
+            "nonzero_vertex_count": 733
+          },
+          "mixamorig:RightArm": {
+            "mean": 0.2921,
+            "max": 0.9433,
+            "nonzero_vertex_count": 652
+          },
+          "mixamorig:Spine2": {
+            "mean": 0.0015,
+            "max": 0.0122,
+            "nonzero_vertex_count": 39
+          },
+          "mixamorig:Spine1": {
+            "mean": 0.06,
+            "max": 0.3448,
+            "nonzero_vertex_count": 266
+          },
+          "mixamorig:Hips": {
+            "mean": 0.0,
+            "max": 0.0,
+            "nonzero_vertex_count": 0
+          }
+        },
+        "overlay_has_armature_modifier": false,
+        "overlay_vertex_groups": []
+      }
+    },
+    "mirrored_overlay_deviation": {
+      "mean_mm": 29.53,
+      "median_mm": 24.93,
+      "p95_mm": 66.58,
+      "max_mm": 86.96
+    },
+    "intersections": {
+      "triangle_pair_count_with_nonplate_base": 96,
+      "distinct_overlay_faces": 52,
+      "intentionality": "undetermined pending construction review",
+      "intersection_face_ids": [
+        113,
+        139,
+        488,
+        856,
+        857,
+        859,
+        862,
+        863,
+        865,
+        867,
+        869,
+        885,
+        895,
+        1030,
+        1056,
+        1727,
+        1747,
+        1748,
+        1773,
+        1774,
+        1776,
+        1778,
+        1779,
+        1782,
+        1800,
+        1802,
+        2051,
+        2052,
+        2082,
+        2083,
+        2724,
+        3273,
+        3304,
+        3306,
+        3338,
+        3340,
+        3343,
+        3344,
+        3349,
+        3350,
+        3351,
+        3353,
+        3354,
+        3356,
+        3357,
+        3358,
+        3359,
+        3360,
+        3365,
+        3366,
+        3391,
+        3407
+      ]
+    }
+  },
+  "screen_side_mapping": "camera S projects world x<torso mirror plane to image-left; this is anatomical RightShoulder",
+  "torso_mirror_plane_x_m": 0.0023857727646827698,
+  "baseline": {
+    "sides": {
+      "Left": {
+        "selected_face_count": 503,
+        "selected_vertex_count": 864,
+        "shoulder_local_bounds": {
+          "axes": [
+            "outward_from_joint",
+            "forward",
+            "up"
+          ],
+          "minimum_m": [
+            0.063964,
+            -0.181203,
+            -0.15661
+          ],
+          "maximum_m": [
+            0.261094,
+            0.104225,
+            0.151154
+          ],
+          "size_mm": [
+            197.13,
+            285.43,
+            307.76
+          ],
+          "outwardmost_from_joint_mm": 261.09,
+          "highest_point_from_joint_mm": 151.15
+        },
+        "mean_surface_normal_vs_outward_axis_deg": 14.55,
+        "mean_skin_weights": {
+          "mixamorig:LeftShoulder": {
+            "mean": 0.5853,
+            "max": 0.8985,
+            "nonzero_vertex_count": 864
+          },
+          "mixamorig:LeftArm": {
+            "mean": 0.2614,
+            "max": 0.9021,
+            "nonzero_vertex_count": 780
+          },
+          "mixamorig:Spine2": {
+            "mean": 0.0005,
+            "max": 0.0011,
+            "nonzero_vertex_count": 13
+          },
+          "mixamorig:Spine1": {
+            "mean": 0.0332,
+            "max": 0.0961,
+            "nonzero_vertex_count": 170
+          },
+          "mixamorig:Hips": {
+            "mean": 0.0,
+            "max": 0.0,
+            "nonzero_vertex_count": 0
+          }
+        }
+      },
+      "Right": {
+        "selected_face_count": 414,
+        "selected_vertex_count": 733,
+        "shoulder_local_bounds": {
+          "axes": [
+            "outward_from_joint",
+            "forward",
+            "up"
+          ],
+          "minimum_m": [
+            0.055296,
+            -0.148966,
+            -0.155065
+          ],
+          "maximum_m": [
+            0.249653,
+            0.115398,
+            0.149767
+          ],
+          "size_mm": [
+            194.36,
+            264.36,
+            304.83
+          ],
+          "outwardmost_from_joint_mm": 249.65,
+          "highest_point_from_joint_mm": 149.77
+        },
+        "mean_surface_normal_vs_outward_axis_deg": 19.63,
+        "mean_skin_weights": {
+          "mixamorig:RightShoulder": {
+            "mean": 0.596,
+            "max": 0.9095,
+            "nonzero_vertex_count": 733
+          },
+          "mixamorig:RightArm": {
+            "mean": 0.2921,
+            "max": 0.9433,
+            "nonzero_vertex_count": 652
+          },
+          "mixamorig:Spine2": {
+            "mean": 0.0015,
+            "max": 0.0122,
+            "nonzero_vertex_count": 39
+          },
+          "mixamorig:Spine1": {
+            "mean": 0.06,
+            "max": 0.3448,
+            "nonzero_vertex_count": 266
+          },
+          "mixamorig:Hips": {
+            "mean": 0.0,
+            "max": 0.0,
+            "nonzero_vertex_count": 0
+          }
+        }
+      }
+    },
+    "mirrored_surface_deviation": {
+      "mean_mm": 31.16,
+      "median_mm": 26.16,
+      "p95_mm": 68.5,
+      "max_mm": 87.21
+    }
+  }
+}
