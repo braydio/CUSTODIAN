@@ -21,7 +21,7 @@
 - Authoring chat: `https://chatgpt.com/share/6ae08da1-832c-83ea-8ea3-db1d47ac0576?ogimg=plain`
 - Visual review: `none`
 - Reviewer context: `fresh`
-- Reviewer provenance: `different-agent | same-agent-fresh-context`
+- Reviewer provenance: `different-agent`
 - Goal: Independently verify that ES-1 binds story metadata and story geometry to one existing F02 intent node/rectangle and produces stable optional, safe site identity without new state authorities.
 - Reviewed implementation acceptance: `A1–A5` from the archived `PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md`.
 - Review evidence: Archived implementation packet and closing summary, exact landed commit, live F02 placer/stamper/intent source, exported `story_room_sites` and `worldgen_reserved_regions`, current relevant tests, independent negative controls, data/route/cell fingerprints and any material gaps.
