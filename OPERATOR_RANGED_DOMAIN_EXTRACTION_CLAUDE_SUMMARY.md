@@ -1,42 +1,49 @@
-# Operator Ranged Domain Extraction (F3) — Recovery Continuation
+# Operator Ranged Domain Extraction (F3) — Completion Handoff
 
 Workstream: `operator-ranged-domain-extraction`
-Status: partial; the original claimed branch and worktree remain active.
 Authoring chat: not-recorded
 
-## Recovery and runtime publication
+## Existing-claim continuation and synchronization
 
-- On 2026-10-27, fetched current `origin/main` at `ce2772f7ccf450d179b73da1dcdda051e0dcb2e2`. The original F3 branch `agent/operator-ranged-domain-extraction` was attached at `/home/braydenchaffee/Projects/.custodian-worktrees/operator-ranged-domain-extraction-20261012T023824Z-1d7e0a9b4533`, clean, and exactly at its published remote tip `70af4eb969cb32c74cbd23a871557313b12ae5da`. The attached checkout was clean, no process had that worktree as its cwd or held files there, and the current main was fetched. `workstream.py resume operator-ranged-domain-extraction` resumed the same branch and worktree. It merged current main without conflict; no claim, branch, or worktree was replaced.
-- The resume synchronization is checkpointed at `dd24a372558f48f8220d10be92a4ff4da9eed3f0` on the same remote branch. The workstream remains active and continues to hold `operator-runtime`.
-- Earlier continuation evidence remains: canonical strict Operator sync selected 588 assets with zero warnings; the generated manifest no longer referenced the intentionally removed north relaxed posture PNG. Godot import and `build_operator_runtime_frames.gd` completed, the SpriteFrames resource contained 588 animations, and a structured check found no missing PNG references. Commit `c1676941236324883ecc2ac5a9908b36c38951d7` contains the generated runtime manifest and SpriteFrames correction and was pushed to this branch.
+- Continued the original claim and worktree at `/home/braydenchaffee/Projects/.custodian-worktrees/operator-ranged-domain-extraction-20261012T023824Z-1d7e0a9b4533`; no replacement claim, branch, or checkout was created. Current `origin/main` is `735b7170f03f89f438f96538dafef741d3288ea0`.
+- Supported resume synchronized the existing F3 branch. The local continuation head before closeout edits is `db5bbe4a5032508e9f317b0592bc502264dbae0e`, retaining F3 history and the merge from current main. The original source-strip correction checkpoint `2eeb1eb1` is retained in the correction branch ancestry and landed through its existing lifecycle at `735b7170`.
+- The source-strip correction distinguishes unavailable historical source strips from present-but-tampered files. Its negative control remains: present bytes with a wrong hash fail. The correction's focused and canonical changed-file validations passed before landing.
 
-## Validation and remaining gates
+## Operator publication repair
 
-- This continuation's first primary-ranged and ranged-ready smoke attempts failed because the cold checkout had not completed Godot import. After `godot --headless --path custodian --import --quit`, both passed on rerun. The seven focused F3 checks are green: `operator_modular_defense_ranged`, `operator_ranged_ballistic_aim`, `operator_fixed_tick_spine`, `operator_primary_ranged_modular_fire`, `operator_ranged_ready_input`, `operator_sidearm_canonical`, and `operator_weapon_socket`.
-- Changed-file validation against `origin/main` selected 57 tests: 11 passed, one failed, and 45 later-tier tests were skipped after the unit-tier failure. The exact failure is `operator_2_5d_cohort_dependency_closure` at `operator_2_5d_cohort_dependency_closure_smoke.py:42`, where the assertion that every historical source-strip hash matches its correction fails. Coverage is incomplete for `moment_runner.gd` and the two F3 Moment Forge scenario JSON files; Moment Forge evidence was not run after the validation failure.
-- The separately owned `operator-2-5d-source-strip-evidence-availability-correction-v1` remains the documented follow-up. Earlier evidence records its focused smoke and changed-file validation green (3/3, complete coverage), but normal finish was blocked by its archive transition: archived packet transition `ab4071bad05854eaed87e14f5baef69a6365da41` was not the current tip after main synchronization and required summary-name repair at `c2bfac58fdf02bb12b7ca3fdf303b969f7ef4e39`. This continuation did not edit that workstream's files or history.
-- Godot validation generated 13 untracked `.png.import` sidecars. They were all created during this continuation after an initially clean checkout and were removed by exact path. The F3 worktree is clean. No source PNG, unique art, or unrelated work was removed or changed.
-- `workstream.py preflight operator-ranged-domain-extraction` remains blocked because the packet has no Completion Truth and the required validation report is not green. No completion was claimed and no finish/landing was attempted.
+- Canonical source-to-runtime publication removed the intentionally superseded north-facing relaxed sheet from generated runtime publication. The generated runtime manifest and SpriteFrames agree; SpriteFrames contain 588 animations and all 588 referenced PNGs exist.
+- No north-facing placeholder or fallback artwork was introduced. Existing accepted facing projection remains in force.
+
+## F3 implementation and validation
+
+- Focused F3 checks passed 7/7: `operator_modular_defense_ranged`, `operator_ranged_ballistic_aim`, `operator_fixed_tick_spine`, `operator_primary_ranged_modular_fire`, `operator_ranged_ready_input`, `operator_sidearm_canonical`, and `operator_weapon_socket`. Cold-import failures on initial attempts passed after canonical Godot import; the first cold `operator_weapon_socket` attempt also failed once before its passing rerun.
+- The authored Moment Forge primary and sidearm scenarios passed. Evidence runs `f3-final-primary` and `f3-final-sidearm` have passing assertions, keyframes, and telemetry with no capture failures. Their manifests say `partial_media` because the optional audio source is unavailable. Evidence is preserved at `/home/braydenchaffee/Projects/.custodian-preserved/operator-ranged-domain-extraction/f3-final-evidence-db5bbe4a/`; its 51-file preservation inventory SHA-256 is `b04b7c67dc96e28a751a1243b5e9acbe82ecfbf7987b8d431554402411a969ac`.
+- Added ownership for `moment_runner.gd` and the two authored scenario JSON files, and registered both scenarios as validation tests. The changed-file validator now selects both scenarios and covers every changed implementation path.
+- Canonical changed-file validation against `origin/main@735b7170` passed 61/61 tests, with zero failures, skips, timeouts, or infrastructure errors. All 14 changed paths have complete coverage, with no uncovered files. This includes `operator_2_5d_cohort_dependency_closure` and `npa_showcase_existing_enemy`. The full report is preserved at `/home/braydenchaffee/Projects/.custodian-preserved/operator-ranged-domain-extraction/f3-final-evidence-db5bbe4a/final-changed-validation-20261028/f3-changed-green.json`, SHA-256 `1df09cad624b3c47b29aa16e651dd6bb83e8e863f70e68c3809c1e19ee9b5064`.
+- The final archived-tree canonical changed-file run passed 62/62 tests with zero skipped, failed, timed out, or infrastructure-error tests; coverage is complete over 16 changed paths and has no uncovered files. Its JSON report is preserved at `/home/braydenchaffee/Projects/.custodian-preserved/operator-ranged-domain-extraction/f3-final-evidence-db5bbe4a/final-archived-tree-validation-20261028/f3-final-archived-green.json`, SHA-256 `2174e47b816b0bf2fb3b0666ff57b221192102eba559836c07f6c45f5de85d3d`. Thirteen generated `.import` sidecars were independently copied and verified outside Git before removing those exact transient files. Their final-run preservation manifest is `/home/braydenchaffee/Projects/.custodian-preserved/operator-ranged-domain-extraction/f3-final-evidence-db5bbe4a/final-archived-tree-validation-20261028/PRESERVATION_MANIFEST.json`, SHA-256 `9a754bd098cd881cc90c732c0248c82a12ba7230fccec58ffaf3b7c4ce2a638e`.
+
+## Lifecycle state
+
+The original F3 packet is archived as complete and the managed index is current. The next required actions are to commit and publish this archive transition, run the genuine lifecycle preflight, and call `workstream.py finish` with the archived-tree green report. `operator-runtime` remains held until that succeeds. No completion or lock release is claimed here.
 
 ## Process Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: partial
-- Friction severity: high
-- What went wrong: the cold checkout initially produced texture-load failures until the documented Godot import completed; after import the seven focused checks passed. The canonical changed-file suite still stops on the separately owned source-strip hash-evidence failure.
-- Root cause / contributing factors: imported runtime texture state was missing in the cold checkout; source-strip evidence still treats unavailable historical files as hash mismatches, and its validated correction is blocked by archive-transition provenance.
-- Prevention / pipeline improvement: import the project before focused SpriteFrames checks in a cold worktree; keep source-strip evidence's unavailable and hash-mismatch states distinct; reconcile the correction's archive-transition provenance through its existing lifecycle.
-- Tooling / docs drift discovered: none newly identified; existing source-strip correction finish drift remains as documented above.
-- Follow-up: `operator-2-5d-source-strip-evidence-availability-correction-v1`
-- What worked: supported same-claim resume preserved the exact branch and worktree; the main-sync merge was checkpointed; canonical import restored focused texture tests; the red changed-suite result names the remaining owner and assertion.
+- Outcome: success
+- Friction severity: medium
+- What went wrong: stale generated SpriteFrames survived the intentional source deletion until canonical runtime publication was rerun. The source-strip evidence smoke initially rejected unavailable historical evidence; its bounded correction is now landed. Initial cold-import validation attempts failed until the canonical import completed.
+- Root cause / contributing factors: runtime publication outputs were stale; the source-strip smoke treated missing bytes as equivalent to hash mismatch; F3's two Moment Forge scenarios and shared driver were not registered in changed-file ownership.
+- Prevention / pipeline improvement: regenerate manifest and SpriteFrames together; distinguish unavailable evidence from tampered evidence; register scenario/driver inputs so changed-file coverage is explicit.
+- Tooling / docs drift discovered: Godot import does not repair stale SpriteFrames references. Archive-history verification now uses preserved object identity and exact tree predicates instead of incidental administrative commit ordering.
+- Follow-up: none
+- What worked: the owner-authorized same-claim continuation preserved the existing branch and dirty work; the source-strip checkpoint landed without force-push; focused checks, both authored scenarios, and all 61 changed-file tests passed.
 
 ## Next Handoff
-
-- Next workstream: `operator-ranged-domain-extraction`
+- Next workstream: `operator-chassis-authority-seal-v1`
 - Next packet state: dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: resolve the existing source-strip correction's archive-transition provenance through its supported lifecycle, land that correction, rerun F3 changed-file validation, complete the two required Moment Forge scenarios and any remaining uncovered-file checks, then finish F3 and reevaluate AP2.
-- Blockers or open questions: the source-strip closure smoke fails because historical source-strip hashes do not match its correction evidence; F3 cannot finish green until the owning correction lands and changed validation passes.
+- Next action: after F3 finish, re-run dispatcher audit; the chassis-seal packet is currently held by this `operator-runtime` claim and must become ordinarily eligible only if its review/dependency gates are satisfied.
+- Blockers or open questions: F3 archive/preflight/finish and lock release are still pending at the time of this summary.

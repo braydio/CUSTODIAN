@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-ranged-domain-extraction`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-loadout-domain-extraction, operator-dependency-injection-spine, operator-mobile-guard-composition, review-operator-chassis-authority-seal-v1`
@@ -12,7 +12,7 @@
 - Reviewed main: `03b6221adb01402b1cf4393b9a1773cdd519f6ae`
 - Goal: Extract primary-ranged/sidearm combat state into one ranged authority and make all movement-permissive ranged presentation use the same lower-locomotion + upper/weapon action contract that already works during primary fire.
 - Completion boundary: Done when ammo/heat/reload/fire-ready/pending-shot/sidearm phase state is owned behind an `OperatorRangedController`-class authority using `OperatorWeaponRuntimeState`; Operator public ranged APIs remain delegates; primary raise/ready/fire/recover/lower and sidearm draw/held/fire/recover express legal movement without frozen/sliding lower-body poses; movement-locked reload remains committed; and current ballistic/socket authority is preserved for a later static-weapon closeout.
-- Current measured state: Primary ranged ready movement already composes movement-owned lower cadence with aim-owned upper+weapon stance, and primary fire already keeps lower locomotion while upper/weapon/FX fire. The 5-frame primary `aim_01` raise and reverse lower currently replace both lower and upper despite movement remaining legal, while its partial-progress reverse logic is already robust. Sidearm draw/fire uses four-diagonal 5-frame lower+upper+weapon+FX stacks; held state freezes every layer on the final draw frame, so moving with the sidearm held can display frozen legs. Sidearm fire similarly owns the lower body. Reload is explicitly movement-locked and uses a complete committed presentation. Frame-aware Carbine sockets are live for the phase-1 supported sectors.
+- Current measured state: Ranged phase/ammo/heat/reload/ready/fire and sidearm action state are delegated to the ranged controller. Primary raise/lower, sidearm held/fire/recovery, and movement-permissive primary fire preserve movement-owned lower cadence while upper/weapon/FX follow action state. Reload remains movement-locked and committed. Canonical runtime publication now has 588 animations and every SpriteFrames texture reference resolves; ballistic and frame-aware Carbine socket authority remains covered.
 - Evidence: ranged/sidearm functions in `operator.gd`; `operator_weapon_runtime_state` seam from F1; `operator_ranged_ready_input_smoke.gd`; `operator_primary_ranged_modular_fire_smoke.gd`; `operator_sidearm_canonical_smoke.gd`; `operator_ranged_ballistic_aim_smoke.gd`; `operator_weapon_socket_smoke.gd`; hybrid socket design.
 - Task-specific authority: ranged combat/balance docs; `design/02_features/operator_modular_weapon/HYBRID_WEAPON_SOCKET_SYSTEM.md`; Operator runtime architecture; canonical animation authority.
 - Work surface: New ranged authority under `game/actors/operator/combat/`; actor facade; weapon runtime state; semantic presentation controller; primary/sidearm focused validation. Do not absorb loadout selection, melee or dodge lifecycle.
@@ -36,30 +36,45 @@
 
 ## Handoff
 
-- Next action: Extract ranged state against F1 runtime-state APIs, then replace the remaining movement-permissive lower-body action ownership with the shared presentation seam.
-- Best starting files: ranged/sidearm sections of `operator.gd`; weapon runtime state; presentation controller; ranged/sidearm focused smokes.
-- Blockers or open questions: None.
+- Next action: Complete normal lifecycle closeout for this validated implementation, then let the dispatcher evaluate newly available Operator work.
+- Best starting files: n/a; F3 implementation and validation are complete.
+- Blockers or open questions: none identified in F3 validation; finish/preflight remains to be executed.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: F3 controller and presentation acceptance is covered by seven focused passing checks and 61/61 canonical changed-file tests with complete coverage. Both authored Moment Forge scenarios passed. The stale generated runtime references were removed by canonical publication; all 588 SpriteFrames textures resolve.
+- Ranged phase, ammo, heat, reload, pending-shot and sidearm action state are owned by the ranged controller; public Operator APIs delegate through that authority. Movement-permissive primary raise/lower and sidearm held/fire/recovery preserve the movement-owned lower cadence; reload remains committed and movement-locked. Existing ballistic and frame-aware socket behavior remains covered.
+- The stale deleted north relaxed-sheet reference was removed from generated runtime manifest and SpriteFrames through the canonical publication pipeline. The generated SpriteFrames contain 588 animations and all 588 texture references resolve to runtime PNGs.
+- Focused validation passed: `operator_modular_defense_ranged`, `operator_ranged_ballistic_aim`, `operator_fixed_tick_spine`, `operator_primary_ranged_modular_fire`, `operator_ranged_ready_input`, `operator_sidearm_canonical`, and `operator_weapon_socket` (7/7). Initial cold-import failures were rerun successfully after the canonical Godot import; the first cold `operator_weapon_socket` attempt also failed once before its passing rerun.
+- Both authored Moment Forge scenarios passed their assertions and keyframe/telemetry checks: primary `f3-final-primary` and sidearm `f3-final-sidearm`. Their evidence is preserved outside Git at `/home/braydenchaffee/Projects/.custodian-preserved/operator-ranged-domain-extraction/f3-final-evidence-db5bbe4a/`; capture manifests report `partial_media` because the optional audio source is unavailable. No scenario assertion or capture failed.
+- Canonical changed-file validation against `origin/main@735b7170f03f89f438f96538dafef741d3288ea0` passed 62/62 tests on the final archived tree, with zero skipped, failed, timed out, or infrastructure-error tests. Coverage is complete for all 14 changed paths; uncovered files: none. This includes both registered Moment Forge scenarios, `operator_2_5d_cohort_dependency_closure`, and `npa_showcase_existing_enemy`. The archived-tree report is preserved externally with SHA-256 `2174e47b816b0bf2fb3b0666ff57b221192102eba559836c07f6c45f5de85d3d`; the earlier 61-test receipt is retained separately.
+- Thirteen untracked Godot `.import` sidecars from the validation run were copied and SHA-256 verified outside Git before removing those exact generated files. The validation manifest change remains the only tracked local change before closeout edits.
 
 
 
 ## Execution Feedback
 
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
-- Friction severity: high
-- What went wrong: after same-claim resume and current-main synchronization, the generated runtime manifest and SpriteFrames still referenced the intentionally removed north relaxed sheet. Canonical changed-file validation also selected the separately owned source-strip closure smoke, which failed because historical evidence files are unavailable.
-- Root cause / contributing factors: the runtime producer had not been rerun after the source art superseded the old sheet. The source-strip smoke conflated missing evidence with present bytes that fail hash verification. The ranged controller, sidearm setup, and input-edge corrections remain intact.
-- Prevention / pipeline improvement: regenerate both the runtime manifest and SpriteFrames through the canonical pipeline, then validate path coverage. Preserve explicit `UNAVAILABLE` separately from `HASH_MISMATCH` in the source-strip evidence contract.
-- Tooling / docs drift discovered: Godot editor import succeeds without repairing stale SpriteFrames references. The separately owned source-strip correction now passes focused and changed-file validation, but normal finish rejects its archived packet transition after main synchronization and the required summary-name repair. `operator_input_frame` continues to enforce single-tick press semantics; ammo reconciliation still has no manifest test ID.
-- Follow-up: manual-follow-up
-- What worked: the original claim resumed in place, the strict source-to-runtime sync removed the stale manifest entry, Godot rebuilt 588 animations, all 588 PNG references resolved, seven focused F3 actor smokes passed, and the exact generated import sidecars were classified and removed. The runtime-resource fix is checkpointed on the original branch.
+- Outcome: success
+- Friction severity: medium
+- What went wrong: stale generated SpriteFrames survived the intentional source deletion until canonical runtime publication was rerun. The first changed-file attempt exposed the independently owned unavailable-source-strip assertion; that correction is now landed. Cold-import focused checks initially failed and passed after canonical import. A first archive-verifier decision depended on incidental administrative commit ordering; the source-strip correction preserved-history fix is landed and its paired review remains separate.
+- Root cause / contributing factors: generated SpriteFrames were not synchronized with the runtime manifest, and source evidence availability had been conflated with hash mismatch. The F3 validation manifest initially omitted its two authored Moment Forge scenarios and shared driver ownership; this packet now registers them explicitly.
+- Prevention / pipeline improvement: keep generated manifest and SpriteFrames in the canonical publication cycle; distinguish unavailable authoring evidence from tampered bytes; register scenario inputs and driver ownership so changed-file coverage is complete.
+- Tooling / docs drift discovered: Godot import does not repair stale SpriteFrames resource paths. First-time cold imports can cause transient false negatives until the canonical import pass completes. The archive verifier correction accepts the legitimate renamed summary and managed-index-only sync based on preserved Git object identity and tree checks. `operator_input_frame` retains single-tick press semantics; ammo reconciliation still lacks a dedicated manifest test ID.
+- Follow-up: none
+- What worked: existing claim and worktree continued in place under the updated continuity rule; the `2eeb1eb1` source-strip checkpoint and its history were preserved; the correction landed at `735b7170`; canonical publication rebuilt 588 animations with all references resolving; seven focused checks, both authored scenarios, and changed-file validation passed.
 
 ## Next Handoff
-- Next workstream: operator-ranged-domain-extraction
-- Next packet state: dependency-gated
+- Next workstream: none
+- Next packet state: none
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
 - Authoring chat: not-recorded
 - Refresh reason: none
-- Next action: resolve the source-strip correction's archive-transition provenance through its supported lifecycle, land it, rerun F3 changed-file validation, then finish F3 and reevaluate AP2.
-- Blockers or open questions: F3 changed-file validation selected 61 tests (13 passed, 1 failed, 47 skipped); the only failure is `operator_2_5d_cohort_dependency_closure`. Its correction passes on the existing source-strip branch but is not on main because finish rejects the post-archive summary repair. The F3 runtime fix is on the original branch at `c1676941236324883ecc2ac5a9908b36c38951d7`; F3 has not landed or released `operator-runtime`.
+- Next action: execute the existing F3 preflight and finish lifecycle; then verify `operator-runtime` release and let ordinary dispatch recalculate eligibility.
+- Blockers or open questions: finish lifecycle and independent paired-review ordering remain to be verified. Do not claim lock release before a successful finish/audit.

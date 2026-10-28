@@ -6018,6 +6018,52 @@
       "needs_import": false
     },
     {
+      "id": "operator_primary_ranged_strafe_raise_fire_lower",
+      "type": "moment",
+      "scenario": "combat/operator_primary_ranged_strafe_raise_fire_lower",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "ranged",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_primary_ranged_strafe_raise_fire_lower.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_sidearm_strafe_fire_recovery",
+      "type": "moment",
+      "scenario": "combat/operator_sidearm_strafe_fire_recovery",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "sidearm",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/input/operator_input_router.gd",
+        "custodian/game/actors/operator/loadout/operator_weapon_runtime_state.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_sidearm_strafe_fire_recovery.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "field_fabricator_cycle",
       "type": "moment",
       "scenario": "infrastructure/field_fabricator_cycle",
