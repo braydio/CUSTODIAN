@@ -1,9 +1,9 @@
 # Operator shoulder plate silhouette study — closeout
 
-Workstream: `operator-3d-master-modeling-proof-v1`  
-Status: `READY_FOR_HUMAN_VISUAL_REVIEW`  
-Base: pushed ITER005 commit `6b89c4d503bb2d73d2783443d4280f313c681bfa`  
-Worktree: `/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-study-20261028`  
+Workstream: `operator-3d-master-modeling-proof-v1`
+Status: `READY_FOR_HUMAN_VISUAL_REVIEW`
+Base: pushed ITER005 commit `6b89c4d503bb2d73d2783443d4280f313c681bfa`
+Worktree: `/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-study-20261028`
 
 ## Result
 
@@ -12,12 +12,12 @@ Worktree: `/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-
 - Base mesh vertex, topology, weight, UV, and material hashes match across all three outputs. The upper-body silhouette band (128px rows 32–56) averages +4.14% for A and +7.90% for B versus baseline. These are fixed pixel measurements only.
 - BVH checks find 96 triangle-pair intersections for A and 75 for B where the new shell meets non-plate base surfaces; bounds place them at the lower shoulder/upper-arm band, z≈1.207–1.273m. They are recorded as potential clipping; no aesthetic severity judgment is made.
 - Comparison evidence includes 128px/512px eight-direction sheets, five-view native-512 closeups, and an optional silhouette sheet. Full renders were generated at both native resolutions under the fixed camera/light/background contract.
-- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/operator-shoulder-plate-study-20261028/REVIEW_MANIFEST.json`.
-- Final implementation commit and manifest are recorded in the detailed report after commit. No variant is selected or approved. No main merge, runtime promotion, or Godot integration.
+- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/operator-shoulder-plate-study-20261028/REVIEW_MANIFEST.json`; all eight artifact hashes matched on read-back. Default retention is `delete-after-review`.
+- Implementation commit: `2001befe518843bde89ef1c8cb07e813a1be95bf`. The manifest path is recorded in the detailed report. No variant is selected or approved. No main merge, runtime promotion, or Godot integration.
 
 ## Process Feedback
 - Feedback schema: custodian.task_feedback.v1
-- Outcome: partial
+- Outcome: success
 - Friction severity: high
 - What went wrong: an initial `workstream.py resume operator-3d-master-modeling-proof-v1` resolved to the preservation-only Claude worktree, contrary to its earlier boundary. Subsequent read-only Git inspection showed its HEAD remained `cf1f3aee` and its status remained clean/ahead 15; no model edits were made there. A separate shoulder-study worktree was then created from the pushed ITER005 commit. Geometry diagnostics also report localized shell/base intersections.
 - Root cause / contributing factors: the resume command resolves a workstream ID to its attached checkout and can run branch synchronization; the ID's attached worktree was the protected Claude checkout.

@@ -1,7 +1,7 @@
 # Operator shoulder plate silhouette study — static variants
 
-**Status:** `READY_FOR_HUMAN_VISUAL_REVIEW`  
-**Source:** ITER005 static rest pose, from commit `6b89c4d503bb2d73d2783443d4280f313c681bfa`.  
+**Status:** `READY_FOR_HUMAN_VISUAL_REVIEW`
+**Source:** ITER005 static rest pose, from commit `6b89c4d503bb2d73d2783443d4280f313c681bfa`.
 **Scope:** Three static reversible model files; no canonical selection or animation work.
 
 ## Variants
@@ -27,7 +27,18 @@ The source body mesh is retained unchanged beneath the extra shells. The copied 
 - `shoulder_512_closeups_five_views.png`
 - `shoulder_128_silhouette_optional.png`
 - Detailed generation, geometry, and pixel reports are in this directory.
-- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/operator-shoulder-plate-study-20261028/REVIEW_MANIFEST.json`
+- Dropbox review manifest: `/CUSTODIAN/visual_review/operator-3d-master-modeling-proof-v1/operator-shoulder-plate-study-20261028/REVIEW_MANIFEST.json` (eight artifacts; SHA-256 verified; retention `delete-after-review`)
 
-**Implementation commit:** recorded in the closeout summary after commit.  
+**Implementation commit:** `2001befe518843bde89ef1c8cb07e813a1be95bf`.
+
+## Exact changed files
+
+- `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/rig_diag/create_shoulder_plate_variants.py`
+- `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/rig_diag/render_shoulder_plate_study.py`
+- `custodian/asset_drop/source_work/operator/operator_3d_master/scripts/rig_diag/validate_shoulder_plate_study.py`
+- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/BASELINE.blend`
+- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/VARIANT_A_MODERATE.blend`
+- `custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/shoulder_plate_study_iter001/VARIANT_B_LAYERED.blend`
+- The report, generation/geometry/render JSON, and four contact/silhouette sheets named above in `shoulder_plate_study_iter001/`.
+- `OPERATOR_SHOULDER_PLATE_STUDY_CLAUDE_SUMMARY.md`
 **Review boundary:** The user and ChatGPT decide whether the shoulder plates still read too flush, which variant best fits the silhouette, and whether the measured underside intersections are visually acceptable. No variant is approved or selected here.
