@@ -1,0 +1,37 @@
+{
+ "glb": "operator_run_mixamo_iter001.glb",
+ "glb_sha256": "97aff509f5e5db9051aec1b262af4111a9d485706ba4e944dcb1cba05a79b274",
+ "glb_bytes": 47292640,
+ "reimport_actions": [
+  [
+   "operator_run_mixamo_iter001",
+   [
+    0.8000000715255737,
+    17.600000381469727
+   ]
+  ]
+ ],
+ "reimport_bones": 42,
+ "reimport_verts": 17509,
+ "reimport_tris": 10367,
+ "uv": [
+  "UVMap"
+ ],
+ "images": {
+  "normal": [
+   4096,
+   4096
+  ],
+  "texture_0": [
+   4096,
+   4096
+  ],
+  "texture_0_metallic_roughness": [
+   4096,
+   4096
+  ]
+ },
+ "replay_frame_offset10_max_vertex_diff_mm_vs_blend": 0.0015597359400584044,
+ "replay_p99_mm": 0.001399856831827681,
+ "scene_fps_after_import": 24
+}

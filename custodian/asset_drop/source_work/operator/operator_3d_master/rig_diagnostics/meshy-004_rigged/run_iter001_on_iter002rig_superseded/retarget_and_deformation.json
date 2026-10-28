@@ -1,0 +1,768 @@
+{
+ "meta": {
+  "arm_retarget": "joint-direction matching (Arm, ForeArm); wrist keeps rest relation to forearm; other bones world-delta",
+  "ground_offset_m_constant": 0.0358,
+  "follow_chains": {
+   "Bone_005": "mixamorig:RightUpLeg",
+   "Bone_004": "mixamorig:RightUpLeg",
+   "Bone_012": "mixamorig:LeftUpLeg",
+   "Bone_011": "mixamorig:LeftUpLeg",
+   "Bone_010": "mixamorig:Spine1",
+   "Bone_009": "mixamorig:Spine1",
+   "Bone_008": "mixamorig:Spine1",
+   "Bone_007": "AVG_UPLEG",
+   "Bone_006": "AVG_UPLEG",
+   "Bone_013": "AVG_UPLEG"
+  },
+  "follow_factor": 0.5,
+  "fbx_fps": 30,
+  "fbx_action": "Armature|mixamo.com|Layer0",
+  "fbx_frames": [
+   1,
+   22
+  ],
+  "fbx_bones": 65,
+  "target_bones": 42,
+  "mapped_bones": 25,
+  "unmapped_target_bones(follow parent, no motion)": [
+   "Bone_004",
+   "Bone_005",
+   "Bone_006",
+   "Bone_007",
+   "Bone_008",
+   "Bone_009",
+   "Bone_010",
+   "Bone_011",
+   "Bone_012",
+   "Bone_013",
+   "Bone_017",
+   "Bone_018",
+   "Bone_022",
+   "Bone_023",
+   "Bone_027",
+   "Bone_028",
+   "headfront"
+  ],
+  "fbx_only_bones_ignored": 40,
+  "hips_height_target_m": 0.9586,
+  "hips_height_fbx_m": 1.0427,
+  "translation_scale": 0.9193,
+  "loop_seam_max_bone_deg_last_vs_first": 0.0,
+  "mean_per_frame_max_bone_step_deg": 22.318,
+  "baked_action": "operator_run_mixamo_iter001",
+  "baked_fcurves": 294,
+  "baked_keyframes": 6468,
+  "baked_frame_range": [
+   1,
+   22
+  ]
+ },
+ "deformation": {
+  "per_frame": [
+   {
+    "frame": 1,
+    "max": 3.1530635356903076,
+    "p999": 2.1833274364471436,
+    "gt1.5": 162,
+    "gt3": 4,
+    "worst_edge_bone_pairs": [
+     "Bone_005|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.04882945492863655,
+    "max_z": 1.623068928718567,
+    "bbox_xy": [
+     -0.4041081666946411,
+     0.3813495635986328,
+     -0.38924089074134827,
+     0.25595927238464355
+    ],
+    "foot_min_z": 0.04882945492863655,
+    "foot_min_xyz": [
+     -0.22619999945163727,
+     0.0038999998942017555,
+     0.04879999905824661
+    ],
+    "hand_spike_max_mm": 292.6238098144531
+   },
+   {
+    "frame": 2,
+    "max": 3.648824453353882,
+    "p999": 2.549805164337158,
+    "gt1.5": 285,
+    "gt3": 11,
+    "worst_edge_bone_pairs": [
+     "Bone_005|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.04716150090098381,
+    "max_z": 1.6452285051345825,
+    "bbox_xy": [
+     -0.4011276364326477,
+     0.3871830105781555,
+     -0.39699602127075195,
+     0.3969281017780304
+    ],
+    "foot_min_z": 0.04716150090098381,
+    "foot_min_xyz": [
+     -0.25290000438690186,
+     0.13670000433921814,
+     0.047200001776218414
+    ],
+    "hand_spike_max_mm": 434.1304016113281
+   },
+   {
+    "frame": 3,
+    "max": 4.113772869110107,
+    "p999": 2.872037172317505,
+    "gt1.5": 381,
+    "gt3": 17,
+    "worst_edge_bone_pairs": [
+     "Bone_005|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.06913767755031586,
+    "max_z": 1.6805956363677979,
+    "bbox_xy": [
+     -0.3944804072380066,
+     0.3941460847854614,
+     -0.4182376563549042,
+     0.5020484924316406
+    ],
+    "foot_min_z": 0.06913767755031586,
+    "foot_min_xyz": [
+     -0.2621000111103058,
+     0.30329999327659607,
+     0.06909999996423721
+    ],
+    "hand_spike_max_mm": 539.1997680664062
+   },
+   {
+    "frame": 4,
+    "max": 4.435354232788086,
+    "p999": 3.0288236141204834,
+    "gt1.5": 379,
+    "gt3": 28,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.08314693719148636,
+    "max_z": 1.707527756690979,
+    "bbox_xy": [
+     -0.383723646402359,
+     0.3940911591053009,
+     -0.4899827241897583,
+     0.5421423316001892
+    ],
+    "foot_min_z": 0.08314693719148636,
+    "foot_min_xyz": [
+     0.2084999978542328,
+     -0.20149999856948853,
+     0.08309999853372574
+    ],
+    "hand_spike_max_mm": 639.3082885742188
+   },
+   {
+    "frame": 5,
+    "max": 4.60618257522583,
+    "p999": 3.1754238605499268,
+    "gt1.5": 398,
+    "gt3": 32,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.07238231599330902,
+    "max_z": 1.7111647129058838,
+    "bbox_xy": [
+     -0.3772009611129761,
+     0.39315110445022583,
+     -0.5792713761329651,
+     0.5620853900909424
+    ],
+    "foot_min_z": 0.07238231599330902,
+    "foot_min_xyz": [
+     0.20399999618530273,
+     -0.31279999017715454,
+     0.07240000367164612
+    ],
+    "hand_spike_max_mm": 696.0519409179688
+   },
+   {
+    "frame": 6,
+    "max": 4.595957279205322,
+    "p999": 3.192612648010254,
+    "gt1.5": 408,
+    "gt3": 35,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.07623931765556335,
+    "max_z": 1.7119672298431396,
+    "bbox_xy": [
+     -0.37868598103523254,
+     0.4039420783519745,
+     -0.6109070777893066,
+     0.5645182132720947
+    ],
+    "foot_min_z": 0.07623931765556335,
+    "foot_min_xyz": [
+     0.18060000240802765,
+     -0.3555999994277954,
+     0.07620000094175339
+    ],
+    "hand_spike_max_mm": 701.3322143554688
+   },
+   {
+    "frame": 7,
+    "max": 4.372133255004883,
+    "p999": 3.0858047008514404,
+    "gt1.5": 363,
+    "gt3": 27,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.05362328141927719,
+    "max_z": 1.7055890560150146,
+    "bbox_xy": [
+     -0.38872385025024414,
+     0.41345730423927307,
+     -0.5900366902351379,
+     0.519126832485199
+    ],
+    "foot_min_z": 0.05362328141927719,
+    "foot_min_xyz": [
+     0.1776999980211258,
+     -0.3271999955177307,
+     0.053599998354911804
+    ],
+    "hand_spike_max_mm": 674.56884765625
+   },
+   {
+    "frame": 8,
+    "max": 3.9385855197906494,
+    "p999": 2.8512449264526367,
+    "gt1.5": 293,
+    "gt3": 18,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.01782672293484211,
+    "max_z": 1.6909884214401245,
+    "bbox_xy": [
+     -0.3977389633655548,
+     0.4191805422306061,
+     -0.5241560935974121,
+     0.453889936208725
+    ],
+    "foot_min_z": 0.01782672293484211,
+    "foot_min_xyz": [
+     0.17710000276565552,
+     -0.23420000076293945,
+     0.017799999564886093
+    ],
+    "hand_spike_max_mm": 604.5725708007812
+   },
+   {
+    "frame": 9,
+    "max": 3.2778451442718506,
+    "p999": 2.5124499797821045,
+    "gt1.5": 219,
+    "gt3": 10,
+    "worst_edge_bone_pairs": [
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:LeftArm|mixamorig:LeftArm"
+    ],
+    "min_z": 0.03820531815290451,
+    "max_z": 1.6603871583938599,
+    "bbox_xy": [
+     -0.4092554450035095,
+     0.4092896282672882,
+     -0.41875725984573364,
+     0.3719418942928314
+    ],
+    "foot_min_z": 0.03820531815290451,
+    "foot_min_xyz": [
+     0.15399999916553497,
+     -0.30809998512268066,
+     0.03819999843835831
+    ],
+    "hand_spike_max_mm": 483.50433349609375
+   },
+   {
+    "frame": 10,
+    "max": 2.556688070297241,
+    "p999": 2.1035728454589844,
+    "gt1.5": 144,
+    "gt3": 0,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.045460671186447144,
+    "max_z": 1.6274185180664062,
+    "bbox_xy": [
+     -0.41815757751464844,
+     0.4161411225795746,
+     -0.3923928141593933,
+     0.27418607473373413
+    ],
+    "foot_min_z": 0.045460671186447144,
+    "foot_min_xyz": [
+     0.15700000524520874,
+     -0.19470000267028809,
+     0.045499999076128006
+    ],
+    "hand_spike_max_mm": 313.7738037109375
+   },
+   {
+    "frame": 11,
+    "max": 2.9460277557373047,
+    "p999": 1.858838677406311,
+    "gt1.5": 115,
+    "gt3": 0,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips"
+    ],
+    "min_z": 0.04368724301457405,
+    "max_z": 1.6181985139846802,
+    "bbox_xy": [
+     -0.42647191882133484,
+     0.41639095544815063,
+     -0.38701194524765015,
+     0.20423400402069092
+    ],
+    "foot_min_z": 0.04368724301457405,
+    "foot_min_xyz": [
+     0.15809999406337738,
+     -0.07000000029802322,
+     0.043699998408555984
+    ],
+    "hand_spike_max_mm": 158.49954223632812
+   },
+   {
+    "frame": 12,
+    "max": 3.041696310043335,
+    "p999": 2.0852644443511963,
+    "gt1.5": 218,
+    "gt3": 1,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightUpLeg|Bone_004"
+    ],
+    "min_z": 0.036007314920425415,
+    "max_z": 1.6355890035629272,
+    "bbox_xy": [
+     -0.4195321202278137,
+     0.4203793704509735,
+     -0.3877543807029724,
+     0.29439714550971985
+    ],
+    "foot_min_z": 0.036007314920425415,
+    "foot_min_xyz": [
+     0.15459999442100525,
+     0.07339999824762344,
+     0.035999998450279236
+    ],
+    "hand_spike_max_mm": 255.3578338623047
+   },
+   {
+    "frame": 13,
+    "max": 3.6760029792785645,
+    "p999": 2.4515693187713623,
+    "gt1.5": 326,
+    "gt3": 1,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:LeftUpLeg|mixamorig:LeftUpLeg"
+    ],
+    "min_z": -0.0026677176356315613,
+    "max_z": 1.6604820489883423,
+    "bbox_xy": [
+     -0.41714370250701904,
+     0.424629807472229,
+     -0.4230261445045471,
+     0.4417230188846588
+    ],
+    "foot_min_z": 2.6567373424768448e-05,
+    "foot_min_xyz": [
+     0.16060000658035278,
+     0.1931000053882599,
+     0.0
+    ],
+    "hand_spike_max_mm": 374.3237609863281
+   },
+   {
+    "frame": 14,
+    "max": 4.271407604217529,
+    "p999": 2.492887496948242,
+    "gt1.5": 379,
+    "gt3": 4,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.016855886206030846,
+    "max_z": 1.6781352758407593,
+    "bbox_xy": [
+     -0.39119794964790344,
+     0.41590407490730286,
+     -0.4880734086036682,
+     0.5189359188079834
+    ],
+    "foot_min_z": 0.036755502223968506,
+    "foot_min_xyz": [
+     0.24369999766349792,
+     0.31299999356269836,
+     0.03680000081658363
+    ],
+    "hand_spike_max_mm": 484.846923828125
+   },
+   {
+    "frame": 15,
+    "max": 4.666847229003906,
+    "p999": 2.595700263977051,
+    "gt1.5": 400,
+    "gt3": 6,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.06653398275375366,
+    "max_z": 1.6853066682815552,
+    "bbox_xy": [
+     -0.36867523193359375,
+     0.41378557682037354,
+     -0.512108325958252,
+     0.5782381296157837
+    ],
+    "foot_min_z": 0.07830606400966644,
+    "foot_min_xyz": [
+     0.2190999984741211,
+     0.3878999948501587,
+     0.07829999923706055
+    ],
+    "hand_spike_max_mm": 543.4824829101562
+   },
+   {
+    "frame": 16,
+    "max": 4.877468585968018,
+    "p999": 2.617555856704712,
+    "gt1.5": 397,
+    "gt3": 6,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.06279321014881134,
+    "max_z": 1.6853996515274048,
+    "bbox_xy": [
+     -0.36169591546058655,
+     0.41610440611839294,
+     -0.536972165107727,
+     0.5912430286407471
+    ],
+    "foot_min_z": 0.06279321014881134,
+    "foot_min_xyz": [
+     -0.16099999845027924,
+     -0.3025999963283539,
+     0.06279999762773514
+    ],
+    "hand_spike_max_mm": 557.7728881835938
+   },
+   {
+    "frame": 17,
+    "max": 4.722214221954346,
+    "p999": 2.5172464847564697,
+    "gt1.5": 353,
+    "gt3": 6,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.05221761018037796,
+    "max_z": 1.6797553300857544,
+    "bbox_xy": [
+     -0.3564126491546631,
+     0.42224183678627014,
+     -0.5587202906608582,
+     0.5583539009094238
+    ],
+    "foot_min_z": 0.05221761018037796,
+    "foot_min_xyz": [
+     -0.16869999468326569,
+     -0.3142000138759613,
+     0.05220000073313713
+    ],
+    "hand_spike_max_mm": 540.1049194335938
+   },
+   {
+    "frame": 18,
+    "max": 4.399799823760986,
+    "p999": 2.3756370544433594,
+    "gt1.5": 276,
+    "gt3": 4,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.01578970067203045,
+    "max_z": 1.661886215209961,
+    "bbox_xy": [
+     -0.36657822132110596,
+     0.429278165102005,
+     -0.5065661668777466,
+     0.5167497396469116
+    ],
+    "foot_min_z": 0.01578970067203045,
+    "foot_min_xyz": [
+     -0.15870000422000885,
+     -0.25589999556541443,
+     0.015799999237060547
+    ],
+    "hand_spike_max_mm": 481.64898681640625
+   },
+   {
+    "frame": 19,
+    "max": 3.847222089767456,
+    "p999": 2.1900813579559326,
+    "gt1.5": 207,
+    "gt3": 1,
+    "worst_edge_bone_pairs": [
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm",
+     "mixamorig:RightArm|mixamorig:Hips",
+     "mixamorig:RightArm|mixamorig:RightArm"
+    ],
+    "min_z": 0.022857503965497017,
+    "max_z": 1.641727089881897,
+    "bbox_xy": [
+     -0.38705363869667053,
+     0.43460261821746826,
+     -0.4099277853965759,
+     0.44708582758903503
+    ],
+    "foot_min_z": 0.022857503965497017,
+    "foot_min_xyz": [
+     -0.14650000631809235,
+     -0.12549999356269836,
+     0.02290000021457672
+    ],
+    "hand_spike_max_mm": 391.4058532714844
+   },
+   {
+    "frame": 20,
+    "max": 2.874926805496216,
+    "p999": 1.9462251663208008,
+    "gt1.5": 156,
+    "gt3": 0,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|mixamorig:Hips",
+     "mixamorig:Hips|mixamorig:RightArm"
+    ],
+    "min_z": 0.042319316416978836,
+    "max_z": 1.6147427558898926,
+    "bbox_xy": [
+     -0.39047306776046753,
+     0.43758559226989746,
+     -0.3976598381996155,
+     0.3562314808368683
+    ],
+    "foot_min_z": 0.042319316416978836,
+    "foot_min_xyz": [
+     -0.22169999778270721,
+     -0.23229999840259552,
+     0.04230000078678131
+    ],
+    "hand_spike_max_mm": 261.82086181640625
+   },
+   {
+    "frame": 21,
+    "max": 2.4825961589813232,
+    "p999": 1.8266278505325317,
+    "gt1.5": 132,
+    "gt3": 0,
+    "worst_edge_bone_pairs": [
+     "Bone_004|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.050498176366090775,
+    "max_z": 1.6042050123214722,
+    "bbox_xy": [
+     -0.3820139765739441,
+     0.42633408308029175,
+     -0.38761454820632935,
+     0.2894703149795532
+    ],
+    "foot_min_z": 0.050498176366090775,
+    "foot_min_xyz": [
+     -0.21719999611377716,
+     -0.11829999834299088,
+     0.05050000175833702
+    ],
+    "hand_spike_max_mm": 161.8532257080078
+   },
+   {
+    "frame": 22,
+    "max": 3.153049945831299,
+    "p999": 2.183330535888672,
+    "gt1.5": 162,
+    "gt3": 4,
+    "worst_edge_bone_pairs": [
+     "Bone_005|mixamorig:RightUpLeg",
+     "Bone_010|mixamorig:LeftArm",
+     "mixamorig:Hips|Bone_010",
+     "mixamorig:Hips|mixamorig:Hips"
+    ],
+    "min_z": 0.04882970079779625,
+    "max_z": 1.62306809425354,
+    "bbox_xy": [
+     -0.4041084945201874,
+     0.38134944438934326,
+     -0.38924044370651245,
+     0.2559593617916107
+    ],
+    "foot_min_z": 0.04882970079779625,
+    "foot_min_xyz": [
+     -0.22619999945163727,
+     0.0038999998942017555,
+     0.04879999905824661
+    ],
+    "hand_spike_max_mm": 292.6226501464844
+   }
+  ],
+  "summary": {
+   "max_edge_stretch_over_clip": 4.877468585968018,
+   "worst_frame": 16,
+   "max_p999_over_clip": 3.192612648010254,
+   "max_edges_gt1.5x_in_a_frame": 408,
+   "max_edges_gt3x_in_a_frame": 35,
+   "frames_with_any_gt3x": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    22
+   ],
+   "rest_min_z_m": 1.7372927629821788e-07,
+   "clip_min_z_m": -0.0026677176356315613,
+   "clip_max_z_m": 1.7119672298431396,
+   "foot_lowest_z_range_m": [
+    2.6567373424768448e-05,
+    0.08314693719148636
+   ],
+   "per_foot_stance": {
+    "Left": {
+     "stance_frames": 2,
+     "pairs": 0,
+     "speed_mps_min_max_mean": null,
+     "lowest_z_range_m": [
+      2.6567373424768448e-05,
+      0.29826390743255615
+     ]
+    },
+    "Right": {
+     "stance_frames": 3,
+     "pairs": 2,
+     "speed_mps_min_max_mean": [
+      3.9205665588378906,
+      3.9305219650268555,
+      3.925544261932373
+     ],
+     "lowest_z_range_m": [
+      0.01578970067203045,
+      0.4858420789241791
+     ]
+    }
+   },
+   "hand_region_spread_m": {
+    "rest": 0.38917842507362366,
+    "clip_max": 0.51685631275177,
+    "clip_min": 0.3841154873371124
+   },
+   "hand_penetration_(count_of_hand_verts_<=2cm_inside, max_depth_mm)": {
+    "1": [
+     0,
+     0.0
+    ],
+    "6": [
+     0,
+     0.0
+    ],
+    "11": [
+     0,
+     0.0
+    ],
+    "16": [
+     0,
+     0.0
+    ],
+    "22": [
+     0,
+     0.0
+    ]
+   },
+   "loop_seam_vertex_displacement_mm_last_vs_first": 0.0016000719042494893,
+   "mean_vertex_step_mm_per_frame": 151.23976135253906,
+   "rest_pose_unchanged_check_note": "rest edge lengths from frame-less rest evaluation before baking"
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "zmax": 1.25,
+ "straddling_triangles_detached": 60,
+ "sides": {
+  "arm": 4,
+  "torso": 56
+ },
+ "reweighted_vertices": 1162,
+ "weight_fallbacks": 0,
+ "verts_before": 17495,
+ "verts_after": 17578,
+ "triangles": 10367,
+ "verts_not_normalised": 0,
+ "max_influences": 4,
+ "rest_point_set_change_mm": 0.0
+}

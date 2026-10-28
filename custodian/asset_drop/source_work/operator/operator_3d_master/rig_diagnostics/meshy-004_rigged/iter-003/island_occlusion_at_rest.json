@@ -1,0 +1,19 @@
+{
+ "island_triangles": 1860,
+ "visible_from_any_of_8_dirs_at_rest": 1159,
+ "visible_from_all_8": 0,
+ "visible_dirs_histogram": {
+  "0": 701,
+  "1": 230,
+  "2": 291,
+  "3": 356,
+  "4": 221,
+  "5": 47,
+  "6": 13,
+  "7": 1,
+  "8": 0
+ },
+ "island_area_cm2": 4431.5627780451905,
+ "visible_island_area_cm2": 2963.760286602337,
+ "total_triangles": 10367
+}

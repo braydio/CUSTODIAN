@@ -65,3 +65,9 @@ Fixed-scale result: S height 85/79/70/61 px at 30/40/50/60 (source 84); 5-dir me
 - Cause: mixed hand/thigh weights (313 of 330 P1 outliers) plus 66 straddling hand/thigh triangles; no tiny-edge artifacts. Fix: detach the 66 triangles on duplicated verts + remove cross-chain weights. P1 max stretch 12.35x -> 3.44x, P3 3.11x -> 1.31x; P2/P4 unchanged; rest change 0.0006 mm.
 - Exported rigged GLB (no animation) re-imported and replayed; matches. Pipeline now rejects skinned GLBs (exit 3). Tests: 45 OK (1 skipped), Blender integration OK.
 - Report: `rig_diagnostics/meshy-004_rigged/REPORT_iter002.md`. Not approved/frozen. Return to clean `~/Projects/CUSTODIAN` on `main`.
+
+## Task 014 Phase A — Running.fbx retarget proof (`RUN_MOTION_NEEDS_REPAIR`)
+- Real clip ingested (22 frames @30fps, in-place, loop seam 0.0 deg; sha256 `ff821e18…e7e939`, LFS). Retargeted onto iter-003 rig (iter-002 + arm/torso contact fix); arms by joint-direction matching, constant +35.8 mm ground offset, cloth-chain follow 0.5.
+- Whole-clip deformation: max stretch 6.4x, up to 11 edges >3x in a frame (17 of 22 frames), floating dark fragments visible near hips/hands (cause unconfirmed). Not promotable.
+- Rig-aware 8-dir renderer (128/512, one scale, no root edits), GLB export/reimport replay 0.0016 mm. Tests: 45 OK (1 skipped), Blender integration OK. No Godot/runtime/main change; Phase B not started.
+- Report: `rig_diagnostics/meshy-004_rigged/REPORT_run_iter001.md`. Return to clean `~/Projects/CUSTODIAN` on `main`.
