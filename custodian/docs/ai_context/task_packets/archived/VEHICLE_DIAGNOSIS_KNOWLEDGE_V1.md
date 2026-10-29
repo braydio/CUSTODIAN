@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `vehicle-diagnosis-knowledge-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `review-vehicle-wreck-restoration-foundation-v1-review-corrections-1`
@@ -157,3 +157,24 @@ The smoke must use two distinct vehicle instances and at least one fixture profi
 - Refresh reason: `none`
 - Next action: Land the focused diagnosis/knowledge authority, then review anti-farming, persistence, input ownership, and condition observability before fabrication consumes it.
 - Blockers or open questions: `none; if operator-interaction-domain-extraction is concurrently active, logical/file lock must serialize the narrow Operator seam rather than merging competing interaction ownership.`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `VehicleKnowledgeState` owns progression, deterministic fingerprints, archetype diminishing returns, pattern evidence, and save/load serialization in `custodian/game/state/persistent/vehicle_knowledge_state.gd`; profile and progression values are data-owned in `custodian/content/vehicles/vehicle_scan_profiles.json` and `vehicle_knowledge_progression.json`; the Field Scout registry and `PilotableVehicle` expose a condition-aware scan snapshot; the production `repair` press reaches the scanner through `OperatorInputFrame`, preserves valid structure-repair priority, and changes no physical vehicle/resources/inventory. The `vehicle_diagnosis_knowledge` smoke passed, as did `vehicle_wreck_restoration`, `vehicle_runtime_lifecycle`, `vehicle_registry_contract`, `vehicle_exit_clearance`, `operator_dependency_binding`, and `operator_architecture_debt`. Changed-file closeout passed 68/68 selected checks with zero uncovered files.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial changed validation caught an absolute autoload lookup in the scanner; replacing it with direct autoload access then failed an isolated script compile because that test does not register autoload globals.
+- Root cause / contributing factors: The scanner bypassed the established Operator dependency-injection seam, while isolated validation compiles scripts outside the full project autoload environment.
+- Prevention / pipeline improvement: Bind `VehicleKnowledgeState` once in `OperatorRuntimeDependencies` and pass it into the scanner; retain architecture-debt and dependency-binding checks in changed-file coverage.
+- Tooling / docs drift discovered: none
+- Follow-up: fixed-in-scope
+- What worked: The required changed-file suite supplied full ownership coverage and caught both integration issues before landing.

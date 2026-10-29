@@ -4829,6 +4829,31 @@
       "needs_import": true
     },
     {
+      "id": "vehicle_diagnosis_knowledge",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_diagnosis_knowledge_smoke.gd",
+      "tier": "actor",
+      "tags": ["vehicle", "diagnosis", "knowledge", "input", "persistence"],
+      "owners": [
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/content/vehicles/vehicle_knowledge_progression.json",
+        "custodian/content/vehicles/vehicle_registry_schema.json",
+        "custodian/content/vehicles/vehicle_scan_profiles.json",
+        "custodian/game/actors/operator/interaction/operator_vehicle_scanner.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/state/persistent/vehicle_knowledge_state.gd",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/vehicle_registry.gd",
+        "custodian/game/vehicles/vehicle_spawn_resolver.gd",
+        "custodian/project.godot",
+        "custodian/tools/validation/vehicle_diagnosis_knowledge_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "vehicle_wreck_restoration",
       "type": "godot_script",
       "script": "res://tools/validation/vehicle_wreck_restoration_smoke.gd",

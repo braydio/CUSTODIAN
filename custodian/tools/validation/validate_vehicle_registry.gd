@@ -11,6 +11,7 @@ const LOADOUTS_PATH := "res://content/vehicles/vehicle_loadouts.json"
 const VISUAL_KITS_PATH := "res://content/vehicles/vehicle_visual_kits.json"
 const RESTORATION_PROFILES_PATH := "res://content/vehicles/vehicle_restoration_profiles.json"
 const VEHICLE_SCHEMA_PATH := "res://content/vehicles/vehicle_registry_schema.json"
+const SCAN_PROFILES_PATH := "res://content/vehicles/vehicle_scan_profiles.json"
 
 var errors: PackedStringArray = PackedStringArray()
 
@@ -24,12 +25,15 @@ func _init() -> void:
 	var loadouts := Dictionary(_read_json(LOADOUTS_PATH).get("loadouts", {}))
 	var visual_kits := Dictionary(_read_json(VISUAL_KITS_PATH).get("visual_kits", {}))
 	var restoration_profiles := Dictionary(_read_json(RESTORATION_PROFILES_PATH).get("profiles", {}))
+	var scan_profiles := Dictionary(_read_json(SCAN_PROFILES_PATH).get("profiles", {}))
 	var vehicle_schema := _read_json(VEHICLE_SCHEMA_PATH)
 	var required_fields := Array(vehicle_schema.get("required_vehicle_fields", []))
 	for required_identity in ["restoration_profile", "durability_profile"]:
 		if not required_fields.has(required_identity):
 			errors.append("Vehicle registry schema must require %s identity" % required_identity)
-	_validate_registry(taxonomy, archetypes, movement_profiles, durability_profiles, hardpoint_profiles, loadouts, visual_kits, restoration_profiles)
+	if not Array(vehicle_schema.get("optional_vehicle_fields", [])).has("scan_profile"):
+		errors.append("Vehicle registry schema must document optional scan_profile identity")
+	_validate_registry(taxonomy, archetypes, movement_profiles, durability_profiles, hardpoint_profiles, loadouts, visual_kits, restoration_profiles, scan_profiles)
 	if errors.is_empty():
 		print("Vehicle registry validation passed.")
 		quit(0)
@@ -40,7 +44,7 @@ func _init() -> void:
 		quit(1)
 
 
-func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, durability_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary, restoration_profiles: Dictionary) -> void:
+func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_profiles: Dictionary, durability_profiles: Dictionary, hardpoint_profiles: Dictionary, loadouts: Dictionary, visual_kits: Dictionary, restoration_profiles: Dictionary, scan_profiles: Dictionary) -> void:
 	var vehicles := Dictionary(archetypes.get("vehicles", {}))
 	if vehicles.is_empty():
 		errors.append("No vehicles defined in %s" % ARCHETYPES_PATH)
@@ -57,6 +61,8 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 		var definition = VehicleDefinitionScript.from_dict(data)
 		if not definition.restoration_profile.is_empty():
 			definition.restoration_profile_data = Dictionary(restoration_profiles.get(definition.restoration_profile, {})).duplicate(true)
+		if not definition.scan_profile.is_empty():
+			definition.scan_profile_data = Dictionary(scan_profiles.get(definition.scan_profile, {})).duplicate(true)
 		if not definition.durability_profile.is_empty():
 			definition.durability_profile_data = Dictionary(durability_profiles.get(definition.durability_profile, {})).duplicate(true)
 		errors.append_array(definition.validate())
@@ -79,6 +85,11 @@ func _validate_registry(taxonomy: Dictionary, archetypes: Dictionary, movement_p
 			errors.append("%s references missing loadout '%s'" % [id, definition.loadout])
 		if definition.visual_kit.is_empty() or not visual_kits.has(definition.visual_kit):
 			errors.append("%s references missing visual_kit '%s'" % [id, definition.visual_kit])
+		if not definition.scan_profile.is_empty():
+			if not scan_profiles.has(definition.scan_profile):
+				errors.append("%s references missing scan_profile '%s'" % [id, definition.scan_profile])
+			elif String(Dictionary(scan_profiles[definition.scan_profile]).get("id", "")) != definition.scan_profile:
+				errors.append("%s scan_profile identity does not match '%s'" % [id, definition.scan_profile])
 		if definition.spawnable and not definition.runtime_scene.is_empty() and not ResourceLoader.exists(definition.runtime_scene):
 			errors.append("%s runtime.scene does not exist: %s" % [id, definition.runtime_scene])
 		elif definition.spawnable and not definition.runtime_scene.is_empty():

@@ -22,6 +22,8 @@ var loadout: String = ""
 var visual_kit: String = ""
 var restoration_profile: String = ""
 var restoration_profile_data: Dictionary = {}
+var scan_profile: String = ""
+var scan_profile_data: Dictionary = {}
 var runtime_scene: String = ""
 var spawnable: bool = false
 var pilotable: bool = false
@@ -54,6 +56,8 @@ static func from_dict(data: Dictionary):
 	definition.visual_kit = String(data.get("visual_kit", ""))
 	definition.restoration_profile = String(data.get("restoration_profile", ""))
 	definition.restoration_profile_data = Dictionary(data.get("restoration_profile_data", {})).duplicate(true)
+	definition.scan_profile = String(data.get("scan_profile", ""))
+	definition.scan_profile_data = Dictionary(data.get("scan_profile_data", {})).duplicate(true)
 	definition.footprint = Dictionary(data.get("footprint", {})).duplicate(true)
 	definition.seat_profile = Dictionary(data.get("seat_profile", {})).duplicate(true)
 	definition.runtime = Dictionary(data.get("runtime", {})).duplicate(true)
@@ -93,6 +97,8 @@ func validate() -> PackedStringArray:
 		errors.append("%s is spawnable and pilotable but has no restoration_profile" % id_or_placeholder())
 	if not restoration_profile.is_empty() and restoration_profile_data.is_empty():
 		errors.append("%s references missing restoration_profile '%s'" % [id_or_placeholder(), restoration_profile])
+	if not scan_profile.is_empty() and scan_profile_data.is_empty():
+		errors.append("%s references missing scan_profile '%s'" % [id_or_placeholder(), scan_profile])
 	if not restoration_profile_data.is_empty():
 		if String(restoration_profile_data.get("initial_state", "")) != "WRECKAGE":
 			errors.append("%s restoration profile '%s' must begin in WRECKAGE" % [id_or_placeholder(), restoration_profile])

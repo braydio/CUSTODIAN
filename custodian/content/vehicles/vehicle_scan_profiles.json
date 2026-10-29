@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "field_scout_service_v1": {
+      "id": "field_scout_service_v1",
+      "base_xp": {
+        "CHASSIS": 24,
+        "MOBILITY": 36,
+        "POWERTRAIN": 24,
+        "CONTROL": 18,
+        "SPECIALTY": 12
+      },
+      "patterns": [
+        {"pattern_id": "field_drive_coupler_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED"]},
+        {"pattern_id": "custodian_control_relay_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED", "WRECKAGE"]},
+        {"pattern_id": "structural_brace_kit_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED", "WRECKAGE"]},
+        {"pattern_id": "electrohydraulic_steering_rack", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED"]}
+      ],
+      "tags": ["starter_service", "wheeled"],
+      "notes": "Starter Scout service knowledge; a wreck cannot reveal patterns whose assemblies are destroyed."
+    },
+    "diagnosis_fixture_v1": {
+      "id": "diagnosis_fixture_v1",
+      "base_xp": {"MOBILITY": 10},
+      "patterns": [
+        {"pattern_id": "fixture_intact_only", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED"]},
+        {"pattern_id": "fixture_surviving_relay", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED", "WRECKAGE"]}
+      ],
+      "tags": ["validation_fixture"]
+    },
+    "field_scout_repeated_example_fixture_v1": {
+      "id": "field_scout_repeated_example_fixture_v1",
+      "base_xp": {
+        "CHASSIS": 24,
+        "MOBILITY": 36,
+        "POWERTRAIN": 24,
+        "CONTROL": 18,
+        "SPECIALTY": 12
+      },
+      "patterns": [
+        {"pattern_id": "field_drive_coupler_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED"]},
+        {"pattern_id": "custodian_control_relay_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED", "WRECKAGE"]},
+        {"pattern_id": "structural_brace_kit_mk1", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED", "WRECKAGE"]},
+        {"pattern_id": "electrohydraulic_steering_rack", "base_evidence": 1, "observable_conditions": ["OPERATIONAL", "DISABLED"]},
+        {"pattern_id": "fixture_new_disabled_pattern", "base_evidence": 2, "observable_conditions": ["DISABLED"]}
+      ],
+      "tags": ["validation_fixture", "repeated_example"]
+    }
+  }
+}

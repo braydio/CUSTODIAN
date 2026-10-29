@@ -5,11 +5,13 @@ const VehicleDefinitionScript = preload("res://game/vehicles/vehicle_definition.
 const DEFAULT_ARCHETYPES_PATH := "res://content/vehicles/vehicle_archetypes.json"
 const DEFAULT_RESTORATION_PROFILES_PATH := "res://content/vehicles/vehicle_restoration_profiles.json"
 const DEFAULT_DURABILITY_PROFILES_PATH := "res://content/vehicles/vehicle_durability_profiles.json"
+const DEFAULT_SCAN_PROFILES_PATH := "res://content/vehicles/vehicle_scan_profiles.json"
 
 var vehicles: Dictionary = {}
 var load_errors: PackedStringArray = PackedStringArray()
 var restoration_profiles_path := DEFAULT_RESTORATION_PROFILES_PATH
 var durability_profiles_path := DEFAULT_DURABILITY_PROFILES_PATH
+var scan_profiles_path := DEFAULT_SCAN_PROFILES_PATH
 
 
 func _ready() -> void:
@@ -28,6 +30,8 @@ func load_registry(path := DEFAULT_ARCHETYPES_PATH) -> void:
 	var restoration_profiles := Dictionary(restoration_root.get("profiles", {}))
 	var durability_root := _read_json_dictionary(durability_profiles_path)
 	var durability_profiles := Dictionary(durability_root.get("profiles", {}))
+	var scan_root := _read_json_dictionary(scan_profiles_path)
+	var scan_profiles := Dictionary(scan_root.get("profiles", {}))
 	var vehicle_data := Dictionary(root.get("vehicles", {}))
 	for vehicle_id in vehicle_data.keys():
 		var data := Dictionary(vehicle_data[vehicle_id])
@@ -38,6 +42,8 @@ func load_registry(path := DEFAULT_ARCHETYPES_PATH) -> void:
 			definition.restoration_profile_data = Dictionary(restoration_profiles.get(definition.restoration_profile, {})).duplicate(true)
 		if not definition.durability_profile.is_empty():
 			definition.durability_profile_data = Dictionary(durability_profiles.get(definition.durability_profile, {})).duplicate(true)
+		if not definition.scan_profile.is_empty():
+			definition.scan_profile_data = Dictionary(scan_profiles.get(definition.scan_profile, {})).duplicate(true)
 		var errors: PackedStringArray = definition.validate()
 		if not errors.is_empty():
 			load_errors.append_array(errors)

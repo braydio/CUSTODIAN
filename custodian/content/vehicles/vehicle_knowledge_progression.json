@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "domains": ["CHASSIS", "MOBILITY", "POWERTRAIN", "CONTROL", "SPECIALTY"],
+  "level_thresholds": {
+    "CHASSIS": [0, 100, 250, 500],
+    "MOBILITY": [0, 100, 250, 500],
+    "POWERTRAIN": [0, 100, 250, 500],
+    "CONTROL": [0, 100, 250, 500],
+    "SPECIALTY": [0, 100, 250, 500]
+  },
+  "archetype_diminishing_multipliers": [1.0, 0.5, 0.25, 0.1],
+  "condition_multipliers": {
+    "OPERATIONAL": 1.0,
+    "DISABLED": 0.7,
+    "WRECKAGE": 0.35
+  },
+  "minimum_xp_gain": 1
+}

@@ -19,6 +19,7 @@
       "loadout": "none",
       "visual_kit": "custodian_field_scout_buggy_mk1_compat_hover",
       "restoration_profile": "field_scout_recovery_light",
+      "scan_profile": "field_scout_service_v1",
       "seat_profile": {
         "driver_seats": 1,
         "passenger_seats": 0,

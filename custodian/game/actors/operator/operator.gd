@@ -13,6 +13,7 @@ signal dodge_chain_started(index: int, flow: float, direction: Vector2)
 signal dodge_chain_ended(count: int, flow: float, reason: StringName)
 signal dodge_flow_changed(value: float, direction: Vector2)
 signal integrity_reclaim_changed(status: Dictionary)
+signal vehicle_scan_result(result: Dictionary)
 
 const WeaponSocketTracks = preload("res://game/actors/operator/animations/operator_weapon_socket_tracks.gd")
 const OperatorRuntimeDependenciesScript = preload("res://game/actors/operator/operator_runtime_dependencies.gd")
@@ -20,6 +21,7 @@ const OperatorDodgeControllerScript = preload("res://game/actors/operator/traver
 const OperatorActionControllerScript = preload("res://game/actors/operator/combat/operator_action_controller.gd")
 const OperatorPresentationControllerScript = preload("res://game/actors/operator/presentation/operator_presentation_controller.gd")
 const OperatorLoadoutControllerScript = preload("res://game/actors/operator/loadout/operator_loadout_controller.gd")
+const OperatorVehicleScannerScript = preload("res://game/actors/operator/interaction/operator_vehicle_scanner.gd")
 const OperatorWeaponRuntimeStateScript = preload("res://game/actors/operator/loadout/operator_weapon_runtime_state.gd")
 const OperatorRangedControllerScript = preload("res://game/actors/operator/combat/operator_ranged_controller.gd")
 const MeleeAttackProfile = preload("res://game/systems/combat/melee_attack_profile.gd")
@@ -393,6 +395,7 @@ var arrow_aim_enabled: bool = false
 var _input_router: OperatorInputRouter = null
 var _aim_controller: OperatorAimController = null
 var _input_frame: OperatorInputFrame = OperatorInputFrame.neutral()
+var _vehicle_scanner: OperatorVehicleScanner
 ## Set by `process_input()`; consumed and cleared by the next fixed tick.
 var _external_control_frame: OperatorInputFrame = null
 @export_range(0.0, 1.0, 0.01) var controller_aim_deadzone := 0.25
@@ -1114,6 +1117,7 @@ func _compose_runtime_dependencies() -> OperatorRuntimeDependencies:
 	if scene_root != null:
 		dependencies.inventory_manager = scene_root.get_node_or_null("InventoryManager")
 		dependencies.cognitive_state = scene_root.get_node_or_null("CognitiveState")
+		dependencies.vehicle_knowledge_state = scene_root.get_node_or_null("VehicleKnowledgeState")
 		dependencies.dev_observatory = scene_root.get_node_or_null("DevObservatory")
 		dependencies.sector_heatmap = scene_root.get_node_or_null("SectorHeatmap")
 		dependencies.material_intelligence = scene_root.get_node_or_null("MaterialIntelligence")
@@ -1135,6 +1139,8 @@ func _exit_tree() -> void:
 
 func _ready():
 	bind_runtime_dependencies(_compose_runtime_dependencies())
+	_vehicle_scanner = OperatorVehicleScannerScript.new()
+	_vehicle_scanner.scan_completed.connect(_on_vehicle_scan_completed)
 	_ensure_dodge_controller()
 	add_to_group("player")
 	guard_config = guard_config.duplicate(true) as OperatorGuardConfig
@@ -14570,11 +14576,18 @@ func _damage_nearest_sector(amount: float):
 
 func _try_repair(delta: float) -> bool:
 	repair_target = _find_nearest_repair_target(interaction_range)
-	if repair_target == null:
-		return false
-	var repair_amount = repair_rate * delta
-	repair_target.repair(repair_amount)
-	return true
+	if repair_target != null:
+		var repair_amount = repair_rate * delta
+		repair_target.repair(repair_amount)
+		return true
+	if _input_frame.just_pressed(&"repair") and _vehicle_scanner != null:
+		_vehicle_scanner.scan_nearest(self, _input_frame, _runtime_dependencies.vehicle_knowledge_state)
+	return false
+
+
+func _on_vehicle_scan_completed(result: Dictionary) -> void:
+	vehicle_scan_result.emit(result.duplicate(true))
+	_obs_log(&"vehicle_scan_result", result)
 
 
 func _find_nearest_repair_target(max_distance: float) -> Damageable:
