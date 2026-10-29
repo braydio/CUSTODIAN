@@ -168,6 +168,36 @@ _OR1_BOOTSTRAP_ARCHIVE_BLOBS = {
         "274d987614e6d27b80e3bf31300f13a87ad53208",
 }
 
+
+# User-authorized ES-1 prelaunch recovery: the original implementation was
+# validated but archived five related Markdown changes without listing their
+# exact paths in Work surface. This exception authenticates one immutable
+# archive; it is NOT a review PASS or a generic Markdown exemption.
+_ES1_SCOPE_WORKSTREAM = "procgen-environmental-evidence-v1"
+_ES1_SCOPE_ARCHIVE = "e96019d98e86380a87f43bf0fa6104d4004d6c1d"
+_ES1_SCOPE_PARENT = "48081acad473894e39823aa87cf5ab5fe8c47896"
+_ES1_SCOPE_TREE = "f3a99a2ac51299941ebe6df335bcf3420c114144"
+_ES1_SCOPE_PACKET = f"{PACKET_ROOT}/archived/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md"
+_ES1_SCOPE_PACKET_BLOB = "60b378ace9dd4be649c37fbd0c099ccafbce1de1"
+_ES1_SCOPE_MARKDOWN = {
+    "custodian/docs/ai_context/CURRENT_STATE.md": "c5dda63d39a60d6fe3da54cf1005df22767159df",
+    "custodian/docs/ai_context/FILE_INDEX.md": "ebb742e300cdc8e2e2c42e899746e7ab3290cf69",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md": "9c90ccf97c88e17dbe928f6c38612bd8d794aaaf",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md": "7dc344583227c5a7e2e1dbef6b935a84702271cf",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md": "57867698834e78c74380aefc1e69f5ef1e50c4fd",
+}
+_ES1_SCOPE_EXTRA_PATHS = frozenset(_ES1_SCOPE_MARKDOWN) | {
+    "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+    "custodian/game/world/procgen/generation/accepted_world_export.gd",
+    "custodian/game/world/procgen/proc_gen_tilemap.gd",
+    "custodian/game/world/procgen/story/story_room_geometry_stamper.gd",
+    "custodian/game/world/procgen/story/story_room_placer.gd",
+    "custodian/tools/validation/faction_story_sites_smoke.gd",
+    "custodian/tools/validation/procgen_accepted_world_export_smoke.gd",
+    "custodian/tools/validation/procgen_worldgen_shape_smoke.gd",
+    "custodian/tools/validation/validation_manifest.json",
+}
+
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
 _RESET_FOLLOWUP_RUN_ID = "20261020T135839Z-db96534ed3a7"
 _RESET_FOLLOWUP_BASE = "b5a46e82913455cb341c84811fd9be66b78ed138"
@@ -1866,6 +1896,37 @@ def _verified_procession_bootstrap_main_sync(
     return True
 
 
+
+def _verified_es1_story_documentation_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Admit only five exact historical ES-1 docs at its immutable source landing.
+
+    Full source/coverage validation and real independent review remain required.
+    """
+    if target_workstream != _ES1_SCOPE_WORKSTREAM:
+        return set()
+    if (target_packet_path != _ES1_SCOPE_PACKET
+            or landing_commit != _ES1_SCOPE_ARCHIVE
+            or extra_archive_paths != _ES1_SCOPE_EXTRA_PATHS):
+        raise HostValidationError("ES-1 exact historical documentation scope differs")
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, _ES1_SCOPE_PARENT,
+    ]:
+        raise HostValidationError("ES-1 source archive has unpinned parent history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _ES1_SCOPE_TREE:
+        raise HostValidationError("ES-1 source archive tree differs from original implementation")
+    if _git_tree_entry(repo, landing_commit, target_packet_path) != (
+        "100644", _ES1_SCOPE_PACKET_BLOB,
+    ):
+        raise HostValidationError("ES-1 archived packet blob or mode differs")
+    for path, expected_blob in _ES1_SCOPE_MARKDOWN.items():
+        if _git_tree_entry(repo, landing_commit, path) != ("100644", expected_blob):
+            raise HostValidationError("ES-1 undeclared documentation blob/mode differs: " + path)
+    return set(_ES1_SCOPE_MARKDOWN)
+
+
 def _verified_or1_bootstrap_historical_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
@@ -2504,6 +2565,9 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
         )
         | _verified_or1_bootstrap_historical_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
+        | _verified_es1_story_documentation_scope(
             repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
         )
     )
