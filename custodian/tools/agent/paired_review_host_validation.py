@@ -1901,9 +1901,11 @@ def _verified_es1_story_documentation_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
 ) -> set[str]:
-    """Admit only five exact historical ES-1 docs at its immutable source landing.
+    """Attest the complete immutable ES-1 source set after exact archive checks.
 
-    Full source/coverage validation and real independent review remain required.
+    The five omitted Markdown files are individually pinned; the archive's
+    commit/parent/tree and full extra-path set bind the code, tests, and JSON.
+    Full source/coverage validation and independent review remain required.
     """
     if target_workstream != _ES1_SCOPE_WORKSTREAM:
         return set()
@@ -1924,7 +1926,7 @@ def _verified_es1_story_documentation_scope(
     for path, expected_blob in _ES1_SCOPE_MARKDOWN.items():
         if _git_tree_entry(repo, landing_commit, path) != ("100644", expected_blob):
             raise HostValidationError("ES-1 undeclared documentation blob/mode differs: " + path)
-    return set(_ES1_SCOPE_MARKDOWN)
+    return set(_ES1_SCOPE_EXTRA_PATHS)
 
 
 def _verified_or1_bootstrap_historical_scope(
