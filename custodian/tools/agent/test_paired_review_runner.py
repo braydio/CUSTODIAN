@@ -4907,6 +4907,39 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 + b"\n".join(entries) + b"\n"
                 + host_validation.MANAGED_BLOCK_END.encode() + suffix)
 
+    def test_es1_story_review_five_historical_docs_exactly_pinned(self):
+        # An original source-bearing closeout accidentally omitted five
+        # documentation paths from Work surface. No other commit is exempt.
+        scope = host_validation._verified_es1_story_documentation_scope
+        workstream = host_validation._ES1_SCOPE_WORKSTREAM
+        archive = host_validation._ES1_SCOPE_ARCHIVE
+        packet = host_validation._ES1_SCOPE_PACKET
+        paths = set(host_validation._ES1_SCOPE_EXTRA_PATHS)
+        declared = set(host_validation._ES1_SCOPE_MARKDOWN)
+
+        self.assertEqual(scope(ROOT, workstream, packet, archive, paths), declared)
+        self.assertEqual(scope(ROOT, "unrelated-workstream", packet, archive, paths), set())
+        for invalid_commit, invalid_packet, invalid_paths in (
+            ("f" * 40, packet, paths),
+            (archive, "custodian/docs/ai_context/task_packets/archived/OTHER.md", paths),
+            (archive, packet, paths - {sorted(declared)[0]}),
+            (archive, packet, paths | {"design/unrelated.md"}),
+        ):
+            with self.subTest(commit=invalid_commit, packet=invalid_packet):
+                with self.assertRaises(host_validation.HostValidationError):
+                    scope(ROOT, workstream, invalid_packet, invalid_commit, invalid_paths)
+
+        tree_entry = host_validation._git_tree_entry
+        for corrupted in (packet, *sorted(declared)):
+            with self.subTest(corrupted=corrupted):
+                def corrupt(repo, revision, path):
+                    if revision == archive and path == corrupted:
+                        return ("100755", "0" * 40)
+                    return tree_entry(repo, revision, path)
+                with patch.object(host_validation, "_git_tree_entry", side_effect=corrupt):
+                    with self.assertRaises(host_validation.HostValidationError):
+                        scope(ROOT, workstream, packet, archive, paths)
+
     def test_procession_recovery_archive_five_omitted_paths_are_exactly_pinned(self):
         # The original archive included five exact extra paths, including an
         # obsolete declared JSON basename and modified paired-review Markdown.
