@@ -4917,12 +4917,23 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         paths = set(host_validation._ES1_SCOPE_EXTRA_PATHS)
         declared = set(host_validation._ES1_SCOPE_MARKDOWN)
 
-        self.assertEqual(scope(ROOT, workstream, packet, archive, paths), declared)
+        # The later source-path documentation gate needs all paths, including
+        # three formerly rejected data/validation/manifest files, not just MD.
+        self.assertEqual(scope(ROOT, workstream, packet, archive, paths), paths)
+        self.assertEqual(len(declared), 5)
+        self.assertTrue({
+            "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+            "custodian/tools/validation/procgen_accepted_world_export_smoke.gd",
+            "custodian/tools/validation/validation_manifest.json",
+        } <= scope(ROOT, workstream, packet, archive, paths))
         self.assertEqual(scope(ROOT, "unrelated-workstream", packet, archive, paths), set())
         for invalid_commit, invalid_packet, invalid_paths in (
             ("f" * 40, packet, paths),
             (archive, "custodian/docs/ai_context/task_packets/archived/OTHER.md", paths),
             (archive, packet, paths - {sorted(declared)[0]}),
+            (archive, packet, paths - {"custodian/content/data/dev/procgen_showcase/exhibits.v1.json"}),
+            (archive, packet, paths - {"custodian/tools/validation/procgen_accepted_world_export_smoke.gd"}),
+            (archive, packet, paths - {"custodian/tools/validation/validation_manifest.json"}),
             (archive, packet, paths | {"design/unrelated.md"}),
         ):
             with self.subTest(commit=invalid_commit, packet=invalid_packet):
