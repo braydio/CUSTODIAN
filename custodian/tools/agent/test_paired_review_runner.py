@@ -7296,6 +7296,31 @@ Verify the exact post-hoc attestation.
             "custodian/tools/agent/test_paired_review_runner.py",
         })
 
+    def test_es1_exact_historical_readme_reconciliation_and_adversarial_mutations(self):
+        # This original ES-1 merge legitimately removes five archived-complete
+        # packets and adds one from incoming main; it is not a generic permit
+        # to replace an arbitrary generated README or ignore invalid packets.
+        first, second = host_validation._ES1_SYNC_INDEX_PARENTS
+        merge = host_validation._ES1_SYNC_INDEX_MERGE
+        reconcile = host_validation._es1_exact_main_sync_index_reconciliation
+        self.assertTrue(reconcile(ROOT, first, second, merge))
+        self.assertFalse(reconcile(ROOT, second, first, merge))
+        self.assertFalse(reconcile(ROOT, first, second, first))
+        self.assertFalse(reconcile(ROOT, "0" * 40, second, merge))
+        actual_entry = host_validation._git_tree_entry
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        for mutated_revision in (first, second, merge):
+            with self.subTest(revision=mutated_revision):
+                def mutated(repo, revision, path):
+                    if revision == mutated_revision and path == readme:
+                        return ("100644", "0" * 40)
+                    return actual_entry(repo, revision, path)
+                with patch.object(host_validation, "_git_tree_entry", side_effect=mutated):
+                    self.assertFalse(reconcile(ROOT, first, second, merge))
+        with patch.object(host_validation, "_git_tree_entry", return_value=("100755", "0" * 40)):
+            self.assertFalse(reconcile(ROOT, first, second, merge))
+
+
     def test_resumed_provenance_index_exception_rejects_wrong_history_and_tree(self):
         first_parent, second_parent = host_validation._RESUMED_PROVENANCE_SYNC_PARENTS
         merge = host_validation._RESUMED_PROVENANCE_SYNC_MERGE

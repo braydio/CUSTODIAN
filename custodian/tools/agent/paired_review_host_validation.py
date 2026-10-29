@@ -629,6 +629,21 @@ _BLENDER_SOURCE_ROOT = (
 _BLENDER_SOURCE_PATH = _BLENDER_SOURCE_ROOT + "operator_south_cutout_rig_v1.blend"
 _BLENDER_RECEIPT_PATH = _BLENDER_SOURCE_ROOT + "rig_build_receipt.json"
 _BLENDER_SOURCE_OID = "b13a70b4c26da0b76f5b04d66902d93e7e03fc1394398c3135759305b9fb656f"
+# Exact ES-1 main-sync merge: the generated packet index removes five
+# completed archived packets and adds one queued packet. One historical
+# archived review writes "Review: passed", now invalid as a review *intent*.
+# Pin this merge's three README blobs instead of weakening generic validation.
+_ES1_SYNC_INDEX_MERGE = "1917c8940d3d980b5ee58a73da8a2e57eec08bf4"
+_ES1_SYNC_INDEX_PARENTS = (
+    "e96019d98e86380a87f43bf0fa6104d4004d6c1d",
+    "d7f9a2c71c0a0909bdc169646474834d775a227f",
+)
+_ES1_SYNC_INDEX_README_BLOBS = (
+    "90ea627fb0f42f2e97ea0790a2e560b498752e9d",
+    "415d3c71ea52fc9defd7ffd37d5f58fc4d5615e8",
+    "d95d9d0c8b64d0c726d2e76acc237c20a6faffbe",
+)
+
 _RESUMED_PROVENANCE_SYNC_MERGE = "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99"
 _RESUMED_PROVENANCE_WORKSTREAM = "agent-paired-review-resumed-worktree-provenance-v1"
 _RESUMED_PROVENANCE_SYNC_PARENTS = (
@@ -776,6 +791,30 @@ def _managed_packet_index_archival_reconciliation(repo: Path, first_parent: str,
     return all(entry in main_entries for entry in merged_entries) and all(
         any(entry == candidate for candidate in prior_iter) for entry in added
     )
+
+
+def _es1_exact_main_sync_index_reconciliation(repo: Path, first_parent: str,
+                                              second_parent: str, merge: str) -> bool:
+    """Admit only the immutable ES-1 managed-index reconciliation.
+
+    The existing source-merge, archived-target, and independent-review checks
+    still run; this does not accept other README mutations or claim a PASS.
+    """
+    if merge != _ES1_SYNC_INDEX_MERGE or (
+        first_parent, second_parent,
+    ) != _ES1_SYNC_INDEX_PARENTS:
+        return False
+    parents = subprocess.run(
+        ["git", "rev-list", "--parents", "-n", "1", merge],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if parents.returncode or parents.stdout.split() != [merge, first_parent, second_parent]:
+        return False
+    path = f"{PACKET_ROOT}/README.md"
+    blobs = tuple(_git_tree_entry(repo, revision, path) for revision in (
+        first_parent, second_parent, merge,
+    ))
+    return blobs == tuple(("100644", oid) for oid in _ES1_SYNC_INDEX_README_BLOBS)
 
 
 def _resumed_provenance_index_reconciliation(repo: Path, first_parent: str,
@@ -2871,6 +2910,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                 or _managed_packet_index_archival_reconciliation(
                                     repo, first_parent, sync_merge["main_sha"], merge,
                                 ) or _resumed_provenance_index_reconciliation(
+                                    repo, first_parent, sync_merge["main_sha"], merge,
+                                ) or _es1_exact_main_sync_index_reconciliation(
                                     repo, first_parent, sync_merge["main_sha"], merge,
                                 ))):
                         raise HostValidationError(
