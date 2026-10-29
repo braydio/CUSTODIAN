@@ -2,8 +2,8 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-operator-idle-retarget-source-scope-attestation-v1`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P0
 - Depends on: `none`
 - Locks: `paired-review-source-provenance`
