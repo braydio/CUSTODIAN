@@ -8,6 +8,7 @@ import hashlib
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,6 +18,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paired_review_runner as runner
+import paired_review_finish_index_pass_recovery as finish_index_recovery
 import paired_review_host_validation as host_validation
 from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
@@ -105,6 +107,209 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_finish_index_recovery_authenticates_original_five_message_pass(self):
+        messages = ["progress: reconstructing", "progress: checking evidence",
+                    "progress: running focused tests", "progress: findings-first review"]
+        final = (f"Workstream: {finish_index_recovery.WORKSTREAM}\n\n"
+                 "**Passed:** I found no blocking defects or material acceptance gaps.")
+        summary = ("## Findings first\nNo blocking defects or material acceptance gaps.\n"
+                   "## Evidence and verification\n"
+                   f"{finish_index_recovery.REVIEWED_MAIN}\n{finish_index_recovery.IMPLEMENTATION}\n"
+                   "## Review disposition\n- Status: `passed`\n"
+                   "- Blocking defects: `0`\n- Material gaps: `0`\n")
+        with tempfile.TemporaryDirectory() as temp:
+            run = Path(temp)
+            events = [{"item": {"type": "agent_message", "text": message}} for message in messages]
+            events.append({"item": {"type": "agent_message", "text": final}})
+            events.append({"type": "turn.completed"})
+            (run / "last-message.txt").write_text(final)
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            metadata = {"phase": "codex_exited", "fresh": True, "exit_code": 0,
+                        "run_id": finish_index_recovery.RUN_ID,
+                        "workstream": finish_index_recovery.WORKSTREAM}
+            captured, outcome = finish_index_recovery._parse_session(run, summary, metadata)
+            self.assertEqual(captured, final)
+            self.assertEqual(outcome["Reviewer provenance"], "different-agent")
+
+            events[1] = {"item": {"type": "agent_message", "text": "Verdict: findings"}}
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "earlier reviewer message"):
+                finish_index_recovery._parse_session(run, summary, metadata)
+
+            events[1] = {"item": {"type": "agent_message", "text": messages[1]}}
+            events.append({"type": "turn.completed"})
+            (run / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "one completed turn"):
+                finish_index_recovery._parse_session(run, summary, metadata)
+
+    def test_missing_archived_review_is_recoverable_before_target_receipt_write(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            target = repo / "target.md"
+            baseline = "# Target\n\n- Workstream: `sample-impl`\n"
+            target.write_text(baseline)
+            subprocess.run(["git", "add", "target.md"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            report = repo / "validation.json"
+            report.write_text("{}")
+            with (patch.object(runner, "verify_coordinator_validation"),
+                  patch.object(runner, "validation_report_is_green", return_value=True),
+                  patch.object(runner, "landed_review_state", return_value={"complete": False}),
+                  patch.object(runner, "_changed_paths", return_value=[]),
+                  patch.object(runner, "resolve_target_implementation_commit", return_value=("b" * 40, None))):
+                with self.assertRaisesRegex(runner.RunnerError, "archived review packet is missing"):
+                    runner.coordinator_finish_review(
+                        repo, "review-sample", repo, "custodian/docs/active.md", "sample-impl",
+                        "target.md", baseline, None, "a" * 40, repo / "run", {
+                            "implementation_commit": "b" * 40,
+                            "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                        })
+            self.assertEqual(target.read_text(), baseline)
+
+    def test_missing_archive_blocks_even_when_target_receipt_is_already_present(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            target = repo / "target.md"
+            baseline = "# Target\n\n- Workstream: `sample-impl`\n"
+            target.write_text(baseline)
+            subprocess.run(["git", "add", "target.md"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
+                reviewed_main="a" * 40, implementation_commit="b" * 40,
+                provenance="different-agent", run_id="20261024T074548Z-1c9611762049",
+                review_cycle=0, ids=(),
+            )
+            outcome, _ = runner.review_outcome.parse_review_outcome(outcome_text)
+            target_text = baseline + "\n## Independent Review\n\n" + render_review_receipt(outcome)
+            target.write_text(target_text)
+            report = repo / "validation.json"
+            report.write_text("{}")
+            with (patch.object(runner, "verify_coordinator_validation"),
+                  patch.object(runner, "validation_report_is_green", return_value=True),
+                  patch.object(runner, "landed_review_state", return_value={"complete": False}),
+                  patch.object(runner, "_changed_paths", return_value=[]),
+                  patch.object(runner, "resolve_target_implementation_commit", return_value=("b" * 40, None))):
+                with self.assertRaisesRegex(runner.RunnerError, "archived review packet is missing"):
+                    runner.coordinator_finish_review(
+                        repo, "review-sample", repo, "custodian/docs/active.md", "sample-impl",
+                        "target.md", baseline, None, "a" * 40, repo / "run", {
+                            "implementation_commit": "b" * 40,
+                            "report_sha256": "c" * 64, "metadata_sha256": "d" * 64,
+                        })
+            self.assertEqual(target.read_text(), target_text)
+
+    def test_finish_index_recovery_archives_metadata_and_preserves_review_evidence(self):
+        active = ("# Review\n- Status: `ready`\n- Review: `none`\n"
+                  "- Workstream: `review-workstream-finish-index-conflict-recovery-v1`\n\n"
+                  "## Independent Review\n\n### Review Receipt: review-workstream-finish-index-conflict-recovery-v1\n"
+                  "- Status: `passed`\n\n## Findings\nOriginal finding-free review evidence.\n")
+        archived = finish_index_recovery._archived_packet_text(active)
+        self.assertIn("- Status: `complete`", archived.split("## Independent Review", 1)[0])
+        self.assertIn("- Review: `passed`", archived.split("## Independent Review", 1)[0])
+        self.assertIn("### Review Receipt: review-workstream-finish-index-conflict-recovery-v1", archived)
+        self.assertIn("## Findings\nOriginal finding-free review evidence.", archived)
+        parsed, error = runner.review_outcome.parse_review_outcome(archived)
+        self.assertIsNone(error)
+        self.assertEqual(parsed["Outcome"], "passed")
+
+    def test_finish_index_recovery_disposable_packet_tree_closeout_is_exactly_once(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            packets = repo / runner.PACKET_ROOT
+            shutil.copytree(ROOT / runner.PACKET_ROOT, packets, symlinks=True)
+            active_path = repo / finish_index_recovery.ACTIVE
+            archived_path = repo / finish_index_recovery.ARCHIVED
+            archived_path.unlink(missing_ok=True)
+            active_text = active_path.read_text()
+            outcome_text = runner.review_outcome.render_review_outcome(
+                outcome="passed", review_workstream=finish_index_recovery.WORKSTREAM,
+                target_workstream=finish_index_recovery.TARGET,
+                reviewed_main=finish_index_recovery.REVIEWED_MAIN,
+                implementation_commit=finish_index_recovery.IMPLEMENTATION,
+                provenance="different-agent", run_id=finish_index_recovery.RUN_ID,
+                review_cycle=0, ids=(),
+            )
+            outcome, error = runner.review_outcome.parse_review_outcome(outcome_text)
+            self.assertIsNone(error)
+            active_text += ("\n\n## Independent Review\n\n" + render_review_receipt(outcome))
+            active_path.write_text(active_text)
+            target_baseline = runner._show_at(
+                ROOT, finish_index_recovery.REVIEWED_MAIN, finish_index_recovery.TARGET_PACKET)
+            target_path = repo / finish_index_recovery.TARGET_PACKET
+            target_path.write_text(target_baseline)
+            summary_text = (
+                "# Independent review\n\n## Findings first\nNo blocking defects or material gaps.\n\n"
+                "## Evidence and verification\nPinned review evidence.\n\n"
+                "## Review disposition\nStatus: passed\nBlocking defects: 0\nMaterial gaps: 0\n\n"
+                f"Authoring chat: {finish_index_recovery.AUTHORING_CHAT}\n"
+            )
+            (repo / finish_index_recovery.SUMMARY).write_text(summary_text)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "add", "custodian/docs/ai_context/task_packets",
+                            finish_index_recovery.SUMMARY], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "fixture baseline"], cwd=repo, check=True)
+            archived_text = finish_index_recovery._archived_packet_text(active_text)
+            target_after = target_baseline + "\n## Independent Review\n\n" + render_review_receipt(outcome)
+            summary_after = finish_index_recovery._summary_handoff(summary_text)
+            expected = {
+                finish_index_recovery.ARCHIVED: finish_index_recovery._sha(archived_text.encode()),
+                finish_index_recovery.TARGET_PACKET: finish_index_recovery._sha(target_after.encode()),
+                finish_index_recovery.SUMMARY: finish_index_recovery._sha(summary_after.encode()),
+                f"{runner.PACKET_ROOT}/README.md": finish_index_recovery._intended_index_sha(
+                    repo, archived_text, target_after),
+            }
+            result = finish_index_recovery._prepare_artifacts(
+                repo, active_text, summary_text, target_baseline, outcome, expected)
+            self.assertEqual(result, expected)
+            changed = set(subprocess.run(
+                ["git", "diff", "--name-only", "HEAD"], cwd=repo, text=True,
+                capture_output=True, check=True).stdout.splitlines())
+            changed.update(subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"], cwd=repo,
+                text=True, capture_output=True, check=True).stdout.splitlines())
+            self.assertEqual(changed, {
+                finish_index_recovery.ACTIVE, finish_index_recovery.ARCHIVED,
+                finish_index_recovery.TARGET_PACKET, finish_index_recovery.SUMMARY,
+                f"{runner.PACKET_ROOT}/README.md",
+            })
+            self.assertFalse(active_path.exists())
+            self.assertEqual(finish_index_recovery._sha(archived_path.read_bytes()), expected[finish_index_recovery.ARCHIVED])
+            archived = archived_path.read_text()
+            parsed, parse_error = runner.review_outcome.parse_review_outcome(archived)
+            self.assertIsNone(parse_error)
+            self.assertEqual(parsed["Outcome"], "passed")
+            _, receipt_error = verify_review_receipt_delta(
+                target_baseline, target_path.read_text(),
+                review_workstream=finish_index_recovery.WORKSTREAM,
+                target_workstream=finish_index_recovery.TARGET,
+                reviewed_main=finish_index_recovery.REVIEWED_MAIN,
+                target_implementation_commit=finish_index_recovery.IMPLEMENTATION)
+            self.assertIsNone(receipt_error)
+            with self.assertRaisesRegex(runner.RunnerError, "active or archived reviewer packet changed"):
+                finish_index_recovery._prepare_artifacts(
+                    repo, active_text, summary_text, target_baseline, outcome, expected)
+
+    def test_finish_index_recovery_stale_plan_digest_has_no_apply_effect(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            marker = repo / "marker"
+            marker.write_text("safe\n")
+            subprocess.run(["git", "add", "marker"], cwd=repo, check=True)
+            subprocess.run(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "-qm", "baseline"], cwd=repo, check=True)
+            with patch.object(finish_index_recovery, "plan", return_value={"plan_sha256": "a" * 64}):
+                with self.assertRaisesRegex(runner.RunnerError, "changed; obtain a fresh plan"):
+                    finish_index_recovery.apply(repo, "b" * 64)
+            self.assertEqual(marker.read_text(), "safe\n")
+            self.assertFalse((repo / "custodian-review-recoveries").exists())
+
     def test_readonly_plan_remote_ref_authentication_preserves_git_metadata(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -963,6 +1168,116 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertFalse((fixture["run_dir"] / "validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "coordinator-validation.json").exists())
         self.assertFalse((fixture["run_dir"] / "continuation-01").exists())
+
+
+    def _synthetic_failed_procession_child(self):
+        fixture = self._continuation_fixture()
+        self.addCleanup(fixture["temp"].cleanup)
+        self._prepare_host_recovery(fixture, reports=False)
+        self._make_host_recovery_worktree_clean(fixture)
+        run_dir = fixture["run_dir"]
+        metadata_path = run_dir / "metadata.json"
+        original = json.loads(metadata_path.read_text())
+        original["implementation_commit"] = fixture["reviewed_main"]
+        metadata_path.write_text(json.dumps(original, sort_keys=True) + "\n")
+        original_manifest = runner._file_manifest(run_dir)
+        child_dir = run_dir / "continuation-01"
+        attempt_dir = child_dir / "host-validation/attempt-01"
+        attempt_dir.mkdir(parents=True)
+        (attempt_dir / "validation.json").write_text('{"passed":false}\n')
+        (attempt_dir / "coordinator-validation.json").write_text('{"failed":true}\n')
+        attempt_manifest = runner._file_manifest(attempt_dir)
+        child = {
+            "schema": runner.CONTINUATION_SCHEMA, "run_id": fixture["run_id"],
+            "workstream": "review-sample", "phase": "host_validation_failed",
+            "original_run_dir": str(run_dir),
+            "branch": "agent/review-sample", "worktree": str(fixture["worktree"]),
+            "active_packet_path": fixture["active"],
+            "target_workstream": "sample",
+            "target_packet_path": fixture["target"],
+            "reviewed_main": fixture["reviewed_main"],
+            "implementation_commit": fixture["reviewed_main"],
+            "original_run_manifest": original_manifest,
+            "run_evidence_sha256": original_manifest,
+            "reviewer_launch_count": 0,
+            "host_validation_attempts": [{
+                "attempt": 1, "status": "failed",
+                "manifest": attempt_manifest,
+                "manifest_sha256": runner._manifest_digest(attempt_manifest),
+                "report_sha256": attempt_manifest["validation.json"],
+                "metadata_sha256": attempt_manifest["coordinator-validation.json"],
+            }],
+        }
+        (child_dir / "metadata.json").write_text(json.dumps(child, sort_keys=True) + "\n")
+        return fixture, child, child_dir
+
+    def test_exact_failed_prevalidation_child_plans_second_attempt_read_only(self):
+        fixture, child, child_dir = self._synthetic_failed_procession_child()
+        repo, run_dir = fixture["repo"], fixture["run_dir"]
+        before = runner._file_manifest(run_dir)
+        span = {"base": fixture["reviewed_main"], "head": fixture["reviewed_main"],
+                "paths": ["custodian/tools/agent/sample.py"],
+                "provenance": {"kind": "test"}}
+        with (patch.object(runner, "_PROCESSION_RETRY_REVIEW", "review-sample"),
+              patch.object(runner, "_PROCESSION_RETRY_RUN", fixture["run_id"]),
+              patch.object(runner, "_process_owns_worktree", return_value=False),
+              patch.object(runner, "_failed_host_validation_retry_state",
+                           return_value=(child, 2)) as verify_retry,
+              patch.object(runner, "resolve_target_implementation_commit",
+                           return_value=(fixture["reviewed_main"], None)),
+              patch.object(host_validation, "resolve_validation_source_span",
+                           return_value=span)):
+            plan = runner.plan_host_validation_recovery(
+                repo, "review-sample", fixture["run_id"],
+            )
+            self.assertEqual(plan["host_validation_state"], "pre_validation_failed_retry")
+            self.assertEqual(plan["host_validation_attempt"], 2)
+            self.assertEqual(plan["retry_budget"], runner.FAILED_HOST_VALIDATION_MAX_RETRIES)
+            self.assertTrue(plan["requires_fresh_host_validation"])
+            self.assertFalse(plan["will_create_claim"])
+            self.assertFalse(plan["will_modify_original_run_files"])
+            self.assertEqual(plan["existing_continuation_manifest"], runner._file_manifest(child_dir))
+            verify_retry.assert_called_once()
+        self.assertEqual(before, runner._file_manifest(run_dir))
+
+    def test_exact_failed_prevalidation_child_refuses_forged_state_and_extra_files(self):
+        fixture, child, child_dir = self._synthetic_failed_procession_child()
+        repo, run_dir = fixture["repo"], fixture["run_dir"]
+        original = json.loads((run_dir / "metadata.json").read_text())
+        workstream, run_id = "review-sample", fixture["run_id"]
+        with (patch.object(runner, "_PROCESSION_RETRY_REVIEW", workstream),
+              patch.object(runner, "_PROCESSION_RETRY_RUN", run_id),
+              patch.object(runner, "_process_owns_worktree", return_value=False),
+              patch.object(runner, "_failed_host_validation_retry_state",
+                           return_value=(child, 2)) as verify_retry):
+            cases = (
+                ("reviewer_launch_count", 1),
+                ("phase", "prepared"),
+                ("reviewed_main", "0" * 40),
+                ("run_evidence_sha256", {}),
+                ("branch", "agent/foreign"),
+            )
+            for key, bad in cases:
+                with self.subTest(key=key):
+                    altered = {**child, key: bad}
+                    (child_dir / "metadata.json").write_text(json.dumps(altered) + "\n")
+                    with self.assertRaises(runner.RunnerError):
+                        runner._authenticated_procession_prevalidation_retry(
+                            repo, run_dir, original, workstream, run_id, fixture["reviewed_main"],
+                        )
+            (child_dir / "metadata.json").write_text(json.dumps(child) + "\n")
+            extra = child_dir / "unexpected.txt"
+            extra.write_text("untrusted\n")
+            with self.assertRaisesRegex(runner.RunnerError, "unexpected continuation files"):
+                runner._authenticated_procession_prevalidation_retry(
+                    repo, run_dir, original, workstream, run_id, fixture["reviewed_main"],
+                )
+            extra.unlink()
+            with self.assertRaisesRegex(runner.RunnerError, "authorized historical identity"):
+                runner._authenticated_procession_prevalidation_retry(
+                    repo, run_dir, original, "review-unrelated", run_id, fixture["reviewed_main"],
+                )
+            verify_retry.assert_not_called()
 
     def _prepare_missing_prevalidation_checkout(self, fixture):
         self._prepare_host_recovery(fixture, reports=False)
@@ -4592,9 +4907,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 + b"\n".join(entries) + b"\n"
                 + host_validation.MANAGED_BLOCK_END.encode() + suffix)
 
-    def test_procession_recovery_archive_two_omitted_paths_are_exactly_pinned(self):
-        # The original recovery packet named an obsolete attestation JSON and
-        # omitted the changed paired-review Markdown from Work surface.
+    def test_procession_recovery_archive_five_omitted_paths_are_exactly_pinned(self):
+        # The original archive included five exact extra paths, including an
+        # obsolete declared JSON basename and modified paired-review Markdown.
         scope = host_validation._verified_procession_recovery_historical_scope
         archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
         target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
@@ -4626,8 +4941,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         scope(ROOT, workstream, target, archive, files)
 
     def test_procession_recovery_actual_source_span_is_bounded(self):
-        # Catch the *next* host-validation path gate before claiming another
-        # reviewer. This is the real landed recovery, not a synthetic packet.
+        # The exact historical main-sync merge is authenticated, not generally waived.
         workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
         refs = subprocess.run(
             ["git", "for-each-ref", "--format=%(refname)",
@@ -4636,21 +4950,149 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         ).stdout.splitlines()
         if not refs:
             self.skipTest("canonical Procession recovery landing traces are not present")
-        reviewed_main = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
-        archive = host_validation._PROCESSION_RECOVERY_ARCHIVE
-        with self.assertRaisesRegex(
-                host_validation.HostValidationError,
-                "main-sync merge changes reviewed source from archive-first-parent version") as caught:
-            host_validation.resolve_validation_source_span(
-                ROOT, reviewed_main, archive, workstream,
-                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+        reviewed_main = host_validation._PROCESSION_RECOVERY_MERGE
+        try:
+            span = host_validation.resolve_validation_source_span(
+                ROOT, reviewed_main, host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                workstream, host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
             )
-        self.assertIn("f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3", str(caught.exception))
-        for source_path in (
-                "custodian/tools/agent/paired_review_host_validation.py",
-                "custodian/tools/agent/test_paired_review_runner.py",
-                "custodian/tools/validation/validation_manifest.json"):
-            self.assertIn(source_path, str(caught.exception))
+        except host_validation.HostValidationError as exc:
+            if "missing or ambiguous exact workstream trace provenance" in str(exc):
+                self.skipTest("historical host-only original-run trace refs are unavailable")
+            raise
+        self.assertEqual(span["provenance"]["trace_landing_commit"], reviewed_main)
+        self.assertIn("custodian/tools/agent/paired_review_host_validation.py", span["paths"])
+
+    def test_procession_host_fixture_repair_changes_only_the_historical_base(self):
+        path = host_validation._PROCESSION_PREARCHIVE_FIXTURE_TEST
+        original = subprocess.run(
+            ["git", "show", f"{host_validation._PROCESSION_RECOVERY_MERGE}:{path}"],
+            cwd=ROOT, check=True, capture_output=True,
+        ).stdout
+        repaired = host_validation._procession_prearchive_fixture_bytes(original)
+        old = b"""        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()"""
+        fixed = (b'        base_main = "'
+                 + host_validation._PROCESSION_PREARCHIVE_FIXTURE_BASE.encode()
+                 + b'"')
+        self.assertEqual(original.count(old), 1)
+        self.assertEqual(repaired, original.replace(old, fixed, 1))
+        self.assertNotEqual(repaired, original)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact repair refused"):
+            host_validation._procession_prearchive_fixture_bytes(repaired)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact repair refused"):
+            host_validation._procession_prearchive_fixture_bytes(
+                original.replace(old, b'        base_main = "untrusted"', 1)
+            )
+
+    def test_procession_fixture_replay_uses_disposable_checkout_only(self):
+        path = host_validation._PROCESSION_PREARCHIVE_FIXTURE_TEST
+        fixture = """class HistoricalFixtures:
+    def _build_procession_scope_approval_history(self):
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+
+    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review(self):
+        pass
+"""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "source"
+            root.mkdir()
+            subprocess.run(["git", "init", "-q", "-b", "main"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+            source_file = root / path
+            source_file.parent.mkdir(parents=True)
+            source_file.write_text(fixture, encoding="utf-8")
+            subprocess.run(["git", "add", "--", path], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture baseline"], cwd=root, check=True)
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root,
+                check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            blob = subprocess.run(
+                ["git", "rev-parse", f"HEAD:{path}"], cwd=root,
+                check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            with (
+                patch.object(host_validation, "_PROCESSION_RECOVERY_MERGE", commit),
+                patch.object(host_validation, "_PROCESSION_PREARCHIVE_FIXTURE_BLOB", blob),
+            ):
+                with host_validation._procession_prearchive_fixture_checkout(
+                    root, commit, host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                    host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                ) as (checkout, evidence):
+                    self.assertNotEqual(checkout, root)
+                    self.assertEqual(evidence["original_blob"], blob)
+                    self.assertEqual(evidence["pre_archive_base"],
+                                     host_validation._PROCESSION_PREARCHIVE_FIXTURE_BASE)
+                    self.assertEqual((checkout / path).read_bytes(),
+                                     host_validation._procession_prearchive_fixture_bytes(
+                                         fixture.encode("utf-8")))
+                    self.assertEqual(source_file.read_text(encoding="utf-8"), fixture)
+            self.assertEqual(source_file.read_text(encoding="utf-8"), fixture)
+            self.assertEqual(subprocess.run(
+                ["git", "status", "--porcelain"], cwd=root,
+                capture_output=True, text=True, check=True,
+            ).stdout.strip(), "")
+
+    def test_procession_host_fixture_override_refuses_wrong_source_mode(self):
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        target = host_validation._PROCESSION_SCOPE_CORRECTION_PACKET
+        landing = host_validation._PROCESSION_RECOVERY_MERGE
+        with patch.object(host_validation, "_git", return_value=landing):
+            with patch.object(host_validation, "_git_tree_entry", return_value=("100755", "0" * 40)):
+                with self.assertRaisesRegex(host_validation.HostValidationError, "blob or mode"):
+                    with host_validation._procession_prearchive_fixture_checkout(
+                        ROOT, landing, workstream, target,
+                    ):
+                        self.fail("wrong-mode Procession fixture must not run")
+        with host_validation._procession_prearchive_fixture_checkout(
+            ROOT, landing, "unrelated-workstream", target,
+        ) as (checkout, evidence):
+            self.assertEqual(checkout, ROOT)
+            self.assertIsNone(evidence)
+
+    def test_procession_exact_main_sync_source_reconciliation_and_negatives(self):
+        helper = host_validation._verified_procession_bootstrap_main_sync
+        workstream = host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        landing = host_validation._PROCESSION_RECOVERY_ARCHIVE
+        merge = host_validation._PROCESSION_RECOVERY_MERGE
+        second_parent = host_validation._PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+        changed = set(host_validation._PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)
+        self.assertTrue(helper(ROOT, workstream, landing, merge, second_parent, changed))
+        for args in (
+            ("unrelated", landing, merge, second_parent, changed),
+            (workstream, "f"*40, merge, second_parent, changed),
+            (workstream, landing, "a"*40, second_parent, changed),
+            (workstream, landing, merge, "b"*40, changed),
+            (workstream, landing, merge, second_parent, changed | {"unrelated.md"}),
+            (workstream, landing, merge, second_parent, changed - {next(iter(changed))}),
+        ):
+            with self.subTest(args=args):
+                self.assertFalse(helper(ROOT, *args))
+        real_git = host_validation._git
+        def altered_tree(repository, *args):
+            if args == ("rev-parse", f"{merge}^{{tree}}"):
+                return "f" * 40
+            return real_git(repository, *args)
+        with patch.object(host_validation, "_git", side_effect=altered_tree):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "tree identity"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
+        real_entry = host_validation._git_tree_entry
+        target = sorted(changed)[0]
+        def altered_mode(repository, revision, path):
+            entry = real_entry(repository, revision, path)
+            if revision == merge and path == target:
+                return ("100755", entry[1])
+            return entry
+        with patch.object(host_validation, "_git_tree_entry", side_effect=altered_mode):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "merge source differs"):
+                helper(ROOT, workstream, landing, merge, second_parent, changed)
 
     def test_managed_index_reconciliation_accepts_only_additive_prior_main_entries(self):
         prefix, suffix = b"before\n", b"\nafter\n"
@@ -7035,6 +7477,100 @@ Verify the exact post-hoc attestation.
             "AGENT_SUMMARY.md", "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
         })
         self.assertNotIn("OTHER_SUMMARY.md", declared)
+
+
+    def test_bootstrap_procession_and_or1_real_archive_paths_are_pinned(self):
+        """Original source bytes may reach prelaunch review, never bypass review PASS."""
+        scenarios = (
+            (
+                host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                host_validation._PROCESSION_RECOVERY_PARENT,
+                set(host_validation._PROCESSION_RECOVERY_UNDECLARED_FILES),
+                host_validation._verified_procession_recovery_historical_scope,
+            ),
+            (
+                host_validation._OR1_BOOTSTRAP_WORKSTREAM,
+                host_validation._OR1_BOOTSTRAP_PACKET,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE,
+                host_validation._OR1_BOOTSTRAP_PARENT,
+                set(host_validation._OR1_BOOTSTRAP_DOCS),
+                host_validation._verified_or1_bootstrap_historical_scope,
+            ),
+        )
+        for workstream, packet, landing, parent, expected_scope, verifier in scenarios:
+            with self.subTest(workstream=workstream):
+                all_paths = set(host_validation._changed_paths(ROOT, f"{parent}..{landing}"))
+                extra = all_paths - {
+                    packet,
+                    packet.replace("/archived/", "/", 1),
+                    f"{runner.PACKET_ROOT}/README.md",
+                    f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md",
+                }
+                self.assertEqual(verifier(ROOT, workstream, packet, landing, extra),
+                                 expected_scope)
+                self.assertEqual(verifier(ROOT, "unrelated-workstream", packet, landing, extra),
+                                 set())
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet, landing, extra | {"unrelated.md"})
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet, "0" * 40, extra)
+                with self.assertRaises(host_validation.HostValidationError):
+                    verifier(ROOT, workstream, packet + "-forged", landing, extra)
+
+    def test_bootstrap_archive_never_admits_altered_git_history_or_extra_bytes(self):
+        scenarios = (
+            (
+                host_validation._PROCESSION_SCOPE_CORRECTION_WORKSTREAM,
+                host_validation._PROCESSION_SCOPE_CORRECTION_PACKET,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE,
+                host_validation._PROCESSION_RECOVERY_PARENT,
+                host_validation._PROCESSION_RECOVERY_ARCHIVE_BLOBS,
+                host_validation._verified_procession_recovery_historical_scope,
+            ),
+            (
+                host_validation._OR1_BOOTSTRAP_WORKSTREAM,
+                host_validation._OR1_BOOTSTRAP_PACKET,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE,
+                host_validation._OR1_BOOTSTRAP_PARENT,
+                host_validation._OR1_BOOTSTRAP_ARCHIVE_BLOBS,
+                host_validation._verified_or1_bootstrap_historical_scope,
+            ),
+        )
+        for workstream, packet, landing, parent, blobs, verifier in scenarios:
+            with self.subTest(workstream=workstream):
+                extra = set(host_validation._changed_paths(ROOT, f"{parent}..{landing}")) - {
+                    packet, packet.replace("/archived/", "/", 1),
+                    f"{runner.PACKET_ROOT}/README.md",
+                    f"{workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md",
+                }
+                original_tree_entry = host_validation._git_tree_entry
+                target = next(iter(sorted(extra)))
+                def change_mode(repository, revision, path):
+                    entry = original_tree_entry(repository, revision, path)
+                    if revision == landing and path == target:
+                        return ("100755", entry[1])
+                    return entry
+                with patch.object(host_validation, "_git_tree_entry", side_effect=change_mode):
+                    with self.assertRaisesRegex(host_validation.HostValidationError,
+                                                "blob or mode differs"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                changed = host_validation._changed_paths(ROOT, f"{parent}..{landing}")
+                with patch.object(host_validation, "_changed_paths",
+                                  return_value=changed + ["custodian/extra_review_source.md"]):
+                    with self.assertRaisesRegex(host_validation.HostValidationError,
+                                                "changed-path set"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                original_git = host_validation._git
+                def change_tree(repository, *args):
+                    if args[:1] == ("rev-parse",) and args[1:] == (f"{landing}^{{tree}}",):
+                        return "0" * 40
+                    return original_git(repository, *args)
+                with patch.object(host_validation, "_git", side_effect=change_tree):
+                    with self.assertRaisesRegex(host_validation.HostValidationError, "tree"):
+                        verifier(ROOT, workstream, packet, landing, extra)
+                self.assertTrue(blobs)  # The complete archive is pinned, not just two docs.
 
 
 if __name__ == "__main__":

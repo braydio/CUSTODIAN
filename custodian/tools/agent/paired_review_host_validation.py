@@ -9,6 +9,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Callable
@@ -99,24 +100,73 @@ _PROCESSION_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/archived/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md"
 )
 
-# Historical review-of-recovery source scope: permit exactly the two omitted
-# files in this one immutable recovery archive. This does NOT approve the P1
-# source-scope attestation, which still requires its independent review PASS.
+# Exact historical source-scope exceptions authorize PRELAUNCH only.
+# Neither historical case changes the mandatory independent review outcome.
 _PROCESSION_RECOVERY_ARCHIVE = "c0f9d325e75cdb121489898f9f34a5f5c47f3196"
+_PROCESSION_RECOVERY_PARENT = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+_PROCESSION_RECOVERY_TREE = "39230667c764b62213fcf07527cccb810d5e14d5"
+_PROCESSION_RECOVERY_ACTIVE_BLOB = "0dd7ef934ce0cc3ae37fc5493678f80a54df3c67"
 _PROCESSION_RECOVERY_PACKET_BLOB = "73e6e864d5212289d46e1eb88a48fd040435ee95"
 _PROCESSION_RECOVERY_UNDECLARED_FILES = {
     f"{PACKET_ROOT}/REVIEW_AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md":
         "8e37fe7ce02fa4948e05034dbcb49e02401007a0",
     "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json":
         "fa581b9ce63a29100219bf57044e9cd0856d426b",
+    "custodian/tools/agent/paired_review_host_validation.py":
+        "8b66f59641830c063c30f9f8b31d4416da261f4b",
+    "custodian/tools/agent/test_paired_review_runner.py":
+        "0981c8ff5e7ab6eaf4a036188521305888bd1932",
+    "custodian/tools/validation/validation_manifest.json":
+        "c7a6d734d5df4e42854a37ea4544b34d783c2e27",
 }
-_PROCESSION_RECOVERY_EXTRA_FILES = frozenset({
-    *_PROCESSION_RECOVERY_UNDECLARED_FILES,
-    "custodian/tools/agent/paired_review_host_validation.py",
-    "custodian/tools/agent/test_paired_review_runner.py",
-    "custodian/tools/validation/validation_manifest.json",
-})
+_PROCESSION_RECOVERY_EXTRA_FILES = frozenset(_PROCESSION_RECOVERY_UNDECLARED_FILES)
+_PROCESSION_RECOVERY_ARCHIVE_BLOBS = {
+    **_PROCESSION_RECOVERY_UNDECLARED_FILES,
+    f"{PACKET_ROOT}/archived/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md":
+        _PROCESSION_RECOVERY_PACKET_BLOB,
+    f"{PACKET_ROOT}/README.md": "5ec21636665e03e046b9e9980a6dcbc9cf380b56",
+    "AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1_CLAUDE_SUMMARY.md":
+        "2df333fd1ba82f8c4de6305be3e4629e8743cc5c",
+}
 
+_PROCESSION_RECOVERY_MERGE = "f01a4982f1f1ddd05e4eb68740a2b1bddcaeefe3"
+_PROCESSION_RECOVERY_MERGE_SECOND_PARENT = "668ab1c793d262fbbbc8d65e6e3406ad17ffe2eb"
+_PROCESSION_RECOVERY_MERGE_TREE = "7ba4a5fa474ab5b5180856c073a212e83a9efc9c"
+_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS = {
+    "custodian/tools/agent/paired_review_host_validation.py":
+        "02b5119da3b92402b99dd1da06f50b3b4a57700e",
+    "custodian/tools/agent/test_paired_review_runner.py":
+        "0aa7360551f57474c62275e3fc14cccc58a4c396",
+    "custodian/tools/validation/validation_manifest.json":
+        "51093242a8d08aed106b631ef1d54c7cfef61215",
+}
+
+_OR1_BOOTSTRAP_WORKSTREAM = "agent-orphan-recovery-observability-v1"
+_OR1_BOOTSTRAP_ARCHIVE = "8ae6be7c9978dd8e7864fb790f9526a7d17f15e8"
+_OR1_BOOTSTRAP_PARENT = "f8d91812e991ea49fce6f05207f455083d8eaa54"
+_OR1_BOOTSTRAP_TREE = "bc94dc738d0b49ce16abc67fcef2f3a5ce5fc01c"
+_OR1_BOOTSTRAP_ACTIVE_BLOB = "55142dc7a62c3c38ea6a9ec5c730d162092560a3"
+_OR1_BOOTSTRAP_PACKET = f"{PACKET_ROOT}/archived/AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md"
+_OR1_BOOTSTRAP_DOCS = {
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md":
+        "1032ef02822956ef5c1980c2cf93ec114dbb606e",
+    "custodian/docs/ai_context/FILE_INDEX.md":
+        "a90881285e5289381aaca5786ecc3101b02e0542",
+}
+_OR1_BOOTSTRAP_EXTRA_BLOBS = {
+    **_OR1_BOOTSTRAP_DOCS,
+    "custodian/tools/agent/session_supervisor.py": "8d4a3d51c31b9993ffb6e750379f7bfbb96b1213",
+    "custodian/tools/agent/test_session_supervisor.py": "54911e8e6603e33768dcb9b9434a7e6b60bb1e9f",
+    "custodian/tools/agent/workstream_recovery.py": "ce5f0580556db52e481d1536658a7b46c68248bc",
+    "custodian/tools/validation/validation_manifest.json": "0c931df98bc1742e8a63b5f55d8e9b980332780d",
+}
+_OR1_BOOTSTRAP_ARCHIVE_BLOBS = {
+    **_OR1_BOOTSTRAP_EXTRA_BLOBS,
+    _OR1_BOOTSTRAP_PACKET: "50ed3aa6da55010252503b2017065b80eeedd434",
+    f"{PACKET_ROOT}/README.md": "54f41405d73cd3b70871a11478f28bc93f3be5b8",
+    "AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1_CLAUDE_SUMMARY.md":
+        "274d987614e6d27b80e3bf31300f13a87ad53208",
+}
 
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
 _RESET_FOLLOWUP_RUN_ID = "20261020T135839Z-db96534ed3a7"
@@ -1744,32 +1794,95 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
     }
 
 
+def _verify_exact_bootstrap_landing(
+    repo: Path, landing_commit: str, parent: str, tree: str,
+    active_packet: str, active_blob: str, archive_blobs: dict[str, str],
+) -> None:
+    """Authenticate complete historical source bytes without granting review PASS."""
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, parent,
+    ]:
+        raise HostValidationError("bootstrap archive parent does not match pinned history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != tree:
+        raise HostValidationError("bootstrap archive tree does not match pinned history")
+    if set(_changed_paths(repo, f"{parent}..{landing_commit}")) != (
+        set(archive_blobs) | {active_packet}
+    ):
+        raise HostValidationError("bootstrap archive changed-path set differs from pinned history")
+    if (_git_tree_entry(repo, parent, active_packet) != ("100644", active_blob)
+            or _git_tree_entry(repo, landing_commit, active_packet) is not None):
+        raise HostValidationError("bootstrap original packet or deletion differs")
+    for path, blob in archive_blobs.items():
+        if _git_tree_entry(repo, landing_commit, path) != ("100644", blob):
+            raise HostValidationError(f"bootstrap archive blob or mode differs: {path}")
+
+
 def _verified_procession_recovery_historical_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
 ) -> set[str]:
-    """Admit only two exact P1-recovery source files omitted by its packet.
-
-    The correction's archived packet and omitted files must match the Git
-    objects committed in its original source-bearing archive. This grants no
-    approval to the separate P1 attestation, and applies to no other review.
-    """
+    """Authenticate only the exact five extra files at the original Procession landing."""
     if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
         return set()
     if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
             or target_packet_path != _PROCESSION_SCOPE_CORRECTION_PACKET
             or extra_archive_paths != _PROCESSION_RECOVERY_EXTRA_FILES):
         raise HostValidationError("Procession recovery historical source scope does not match its exact archive")
-    if _git_tree_entry(repo, landing_commit, target_packet_path) != (
-        "100644", _PROCESSION_RECOVERY_PACKET_BLOB,
-    ):
-        raise HostValidationError("pinned Procession recovery archived packet blob or mode changed")
-    for path, blob in _PROCESSION_RECOVERY_UNDECLARED_FILES.items():
-        if _git_tree_entry(repo, landing_commit, path) != ("100644", blob):
-            raise HostValidationError(
-                f"pinned Procession recovery source blob or mode changed: {path}"
-            )
+    _verify_exact_bootstrap_landing(
+        repo, landing_commit, _PROCESSION_RECOVERY_PARENT, _PROCESSION_RECOVERY_TREE,
+        f"{PACKET_ROOT}/AGENT_PAIRED_REVIEW_PROCESSION_DOC_SCOPE_RECOVERY_V1.md",
+        _PROCESSION_RECOVERY_ACTIVE_BLOB, _PROCESSION_RECOVERY_ARCHIVE_BLOBS,
+    )
     return set(_PROCESSION_RECOVERY_UNDECLARED_FILES)
+
+
+def _verified_procession_bootstrap_main_sync(
+    repo: Path, target_workstream: str, landing_commit: str,
+    merge: str, second_parent: str, changed_source_paths: set[str],
+) -> bool:
+    """One historical source reconciliation; not a source-coverage or review waiver.
+
+    The original Procession archive is already independently authenticated. Its
+    exact recorded main-sync commit combined the source with newer upstream
+    validator/tests. Only the three pinned resulting file blobs are recognized.
+    The reviewer must still validate the resulting reviewed-main source.
+    """
+    if target_workstream != _PROCESSION_SCOPE_CORRECTION_WORKSTREAM:
+        return False
+    if (landing_commit != _PROCESSION_RECOVERY_ARCHIVE
+            or merge != _PROCESSION_RECOVERY_MERGE
+            or second_parent != _PROCESSION_RECOVERY_MERGE_SECOND_PARENT
+            or changed_source_paths != set(_PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS)):
+        return False
+    if _git(repo, "rev-list", "--parents", "-n", "1", merge).split() != [
+        merge, landing_commit, second_parent,
+    ]:
+        raise HostValidationError("Procession bootstrap main-sync parent identity differs")
+    if _git(repo, "rev-parse", f"{merge}^{{tree}}") != _PROCESSION_RECOVERY_MERGE_TREE:
+        raise HostValidationError("Procession bootstrap main-sync tree identity differs")
+    for path, blob in _PROCESSION_RECOVERY_MERGED_SOURCE_BLOBS.items():
+        if _git_tree_entry(repo, merge, path) != ("100644", blob):
+            raise HostValidationError(f"Procession bootstrap merge source differs: {path}")
+    return True
+
+
+def _verified_or1_bootstrap_historical_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Authenticate only OR1's two historical undeclared documentation paths."""
+    if target_workstream != _OR1_BOOTSTRAP_WORKSTREAM:
+        return set()
+    if (landing_commit != _OR1_BOOTSTRAP_ARCHIVE
+            or target_packet_path != _OR1_BOOTSTRAP_PACKET
+            or extra_archive_paths != set(_OR1_BOOTSTRAP_EXTRA_BLOBS)):
+        raise HostValidationError("OR1 historical source scope does not match its exact archive")
+    _verify_exact_bootstrap_landing(
+        repo, landing_commit, _OR1_BOOTSTRAP_PARENT, _OR1_BOOTSTRAP_TREE,
+        f"{PACKET_ROOT}/AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md",
+        _OR1_BOOTSTRAP_ACTIVE_BLOB, _OR1_BOOTSTRAP_ARCHIVE_BLOBS,
+    )
+    return set(_OR1_BOOTSTRAP_DOCS)
 
 
 def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
@@ -2386,9 +2499,14 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         if path.endswith(".gd.uid") and path[:-4] in extra_archive_paths
     }
     scope_attestation = None
-    historical_recovery_paths = _verified_procession_recovery_historical_scope(
-        repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
-    ) if target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM else set()
+    historical_recovery_paths = (
+        _verified_procession_recovery_historical_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
+        | _verified_or1_bootstrap_historical_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
+    )
     if source_bearing_archive:
         paired_review_metadata_path = _canonical_review_packet_metadata_path(
             repo, archive_parent, landing_commit, target_workstream, target_packet_path,
@@ -2699,6 +2817,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                     .get(merge, [])
                 )
                 changed_source_paths.difference_update(authenticated_resolution)
+            if changed_source_paths and _verified_procession_bootstrap_main_sync(
+                repo, target_workstream, landing_commit, merge,
+                sync_merge["main_sha"], changed_source_paths,
+            ):
+                changed_source_paths.clear()
             if changed_source_paths:
                 raise HostValidationError(
                     "main-sync merge changes reviewed source from archive-first-parent version: "
@@ -2828,6 +2951,118 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
         raise HostValidationError("host validation has no selected test owner for changed source/test files")
 
 
+_PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
+_PROCESSION_PREARCHIVE_FIXTURE_BLOB = "0aa7360551f57474c62275e3fc14cccc58a4c396"
+_PROCESSION_PREARCHIVE_FIXTURE_BASE = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+
+
+def _procession_prearchive_fixture_bytes(original: bytes) -> bytes:
+    """Fix exactly one historical disposable-history base, not validator logic."""
+    try:
+        source = original.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise HostValidationError("pinned Procession fixture is not UTF-8") from exc
+    prefix, marker, remainder = source.partition(
+        "    def _build_procession_scope_approval_history("
+    )
+    fixture, next_marker, suffix = remainder.partition(
+        "    def test_procession_scope_attestation_accepts_actual_p1_source_span_only_after_review("
+    )
+    old_base = """        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()"""
+    if not marker or not next_marker or fixture.count(old_base) != 1:
+        raise HostValidationError("pinned Procession fixture has changed; exact repair refused")
+    repaired = fixture.replace(
+        old_base, f'        base_main = "{_PROCESSION_PREARCHIVE_FIXTURE_BASE}"', 1,
+    )
+    return (prefix + marker + repaired + next_marker + suffix).encode("utf-8")
+
+
+@contextmanager
+def _procession_prearchive_fixture_checkout(
+    worktree: Path, reviewed_main: str,
+    target_workstream: str | None, target_packet_path: str | None,
+):
+    """Run the original reviewed source with an exact test-only fixture repair.
+
+    A disposable clone receives the one-line historical test fix. The original
+    claimed checkout, review identity, source evidence and reviewer gates stay
+    unchanged. No generalized fallback for missing or archived packets exists.
+    """
+    exact_case = (
+        reviewed_main == _PROCESSION_RECOVERY_MERGE
+        and target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        and target_packet_path == _PROCESSION_SCOPE_CORRECTION_PACKET
+    )
+    if not exact_case:
+        yield worktree, None
+        return
+    if _git(worktree, "rev-parse", "HEAD^{commit}") != reviewed_main:
+        raise HostValidationError("Procession fixture repair requires exact pinned review HEAD")
+    entry = _git_tree_entry(worktree, reviewed_main, _PROCESSION_PREARCHIVE_FIXTURE_TEST)
+    if entry != ("100644", _PROCESSION_PREARCHIVE_FIXTURE_BLOB):
+        raise HostValidationError("Procession fixture repair source blob or mode differs")
+    original = (worktree / _PROCESSION_PREARCHIVE_FIXTURE_TEST).read_bytes()
+    pinned = subprocess.run(
+        ["git", "show", f"{reviewed_main}:{_PROCESSION_PREARCHIVE_FIXTURE_TEST}"],
+        cwd=worktree, check=True, capture_output=True,
+    ).stdout
+    if original != pinned:
+        raise HostValidationError("Procession protected checkout fixture differs from pinned source")
+    repaired = _procession_prearchive_fixture_bytes(original)
+    if repaired == original:
+        raise HostValidationError("Procession fixture correction did not change the exact test")
+    with tempfile.TemporaryDirectory(prefix="custodian-procession-fixture-") as tmp:
+        checkout = Path(tmp) / "checkout"
+        no_network_smudge = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
+        subprocess.run(
+            ["git", "clone", "-q", "--shared", "--no-checkout",
+             str(worktree), str(checkout)],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        subprocess.run(
+            ["git", "-C", str(checkout), "checkout", "-q", "--detach", reviewed_main],
+            check=True, capture_output=True, env=no_network_smudge,
+        )
+        # A local clone does not transfer host-only diagnostic refs. Authenticate
+        # them from the original Git object store and add them to the clone only.
+        witnesses = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)",
+             "refs/remotes/origin/agent-diagnostics/"],
+            cwd=worktree, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        for line in witnesses:
+            ref, sha = line.split()
+            subprocess.run(
+                ["git", "-C", str(checkout), "update-ref", ref, sha],
+                check=True, capture_output=True,
+            )
+        test_path = checkout / _PROCESSION_PREARCHIVE_FIXTURE_TEST
+        if test_path.read_bytes() != original:
+            raise HostValidationError("disposable Procession checkout does not match pinned source")
+        test_path.write_bytes(repaired)
+        changed = _git(checkout, "diff", "--name-only").splitlines()
+        if changed != [_PROCESSION_PREARCHIVE_FIXTURE_TEST]:
+            raise HostValidationError("Procession fixture repair modifies unexpected tracked source")
+        subprocess.run(
+            ["git", "diff", "--check"], cwd=checkout, check=True, capture_output=True,
+        )
+        evidence = {
+            "kind": "exact-pinned-procession-test-fixture-only",
+            "reviewed_main": reviewed_main,
+            "path": _PROCESSION_PREARCHIVE_FIXTURE_TEST,
+            "original_blob": entry[1],
+            "original_sha256": _sha256(original),
+            "repaired_sha256": _sha256(repaired),
+            "pre_archive_base": _PROCESSION_PREARCHIVE_FIXTURE_BASE,
+            "other_tracked_source_unchanged": True,
+            "protected_worktree_unchanged": True,
+        }
+        yield checkout, evidence
+
+
 def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, implementation_commit: str,
                                *, target_workstream: str | None = None,
                                target_packet_path: str | None = None,
@@ -2887,13 +3122,17 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     source_hashes = _source_hashes(worktree, code_paths)
     capabilities = capability_probe()
 
-    command = [sys.executable, str(worktree / "custodian/tools/validation/run_validation.py"),
-               "--changed", "--base", source_base, "--json"]
     execute = run_validation or (lambda argv, cwd: subprocess.run(
         argv, cwd=cwd, text=True, capture_output=True, check=False,
     ))
     try:
-        process = execute(command, worktree)
+        with _procession_prearchive_fixture_checkout(
+            worktree, reviewed_main, target_workstream, target_packet_path,
+        ) as (validation_checkout, fixture_evidence):
+            command = [sys.executable,
+                       str(validation_checkout / "custodian/tools/validation/run_validation.py"),
+                       "--changed", "--base", source_base, "--json"]
+            process = execute(command, validation_checkout)
     except OSError as exc:
         raise HostValidationError(f"trusted coordinator could not launch canonical validation: {exc}") from exc
     raw_report = process.stdout.encode("utf-8")
@@ -2934,6 +3173,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         "code_paths": code_paths,
         "selected_source_paths": selected_source_paths,
         "source_sha256": source_hashes,
+        "validation_fixture_overlay": fixture_evidence,
         "source_changed_during_validation": source_changed,
         "generated_import_manifest_sha256": (
             _sha256((run_dir / "generated-import-artifacts/manifest.json").read_bytes())

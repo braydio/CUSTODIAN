@@ -213,6 +213,24 @@
       "needs_import": false
     },
     {
+      "id": "crg_config_contract",
+      "type": "python",
+      "script": "tools/check_crg_config.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "git"
+      ],
+      "owners": [
+        ".mcp.json",
+        "tools/crg-pin.env",
+        "tools/crg-refresh.sh",
+        "tools/check_crg_config.py"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
       "id": "agent_workflow_contract",
       "type": "python",
       "script": "custodian/tools/validation/agent_workflow_smoke.py",
@@ -506,6 +524,29 @@
         "custodian/scenes/hub_runtime_host.tscn",
         "custodian/game/actors/operator/operator.tscn",
         "custodian/tools/validation/hub_road_empty_procession_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
+      "id": "hub_sepulcher_grave_evidence",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "persistence",
+        "operator_interaction"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd",
         "custodian/tools/validation/validation_manifest.json"
       ],
       "timeout_sec": 90,
@@ -996,6 +1037,49 @@
         "custodian/tools/validation/procgen_road_semantics_v2_review.gd"
       ],
       "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_story_site_identity",
+      "type": "godot_script",
+      "script": "res://tools/validation/faction_story_sites_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "determinism",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/story/story_room_geometry_stamper.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/faction_story_sites_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_worldgen_story_site_export",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_worldgen_shape_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "accepted_world_export",
+        "determinism",
+        "parity"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/intent/region_footprint_reserver.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/procgen_worldgen_shape_smoke.gd"
+      ],
+      "timeout_sec": 120,
       "needs_import": true
     },
     {
@@ -2112,6 +2196,22 @@
         "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_enter_02/*.png",
         "custodian/content/sprites/operator/runtime/animations/unarmed/defense/block_hold_02/*.png",
         "custodian/tools/validation/operator_runtime_spriteframes_import_smoke.py"
+      ],
+      "timeout_sec": 15,
+      "needs_import": false
+    },
+    {
+      "id": "godot_csv_import_guard",
+      "type": "python",
+      "script": "custodian/tools/validation/godot_csv_import_guard_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "import_compatibility"
+      ],
+      "owners": [
+        "custodian/**/*.csv.import",
+        "custodian/tools/validation/godot_csv_import_guard_smoke.py"
       ],
       "timeout_sec": 15,
       "needs_import": false
@@ -5984,6 +6084,52 @@
       "owners": [
         "custodian/game/actors/operator/animations/operator_weapon_socket_library.gd",
         "custodian/content/data/operator/generated/operator_weapon_sockets.generated.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_primary_ranged_strafe_raise_fire_lower",
+      "type": "moment",
+      "scenario": "combat/operator_primary_ranged_strafe_raise_fire_lower",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "ranged",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_primary_ranged_strafe_raise_fire_lower.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_sidearm_strafe_fire_recovery",
+      "type": "moment",
+      "scenario": "combat/operator_sidearm_strafe_fire_recovery",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "sidearm",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/input/operator_input_router.gd",
+        "custodian/game/actors/operator/loadout/operator_weapon_runtime_state.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_sidearm_strafe_fire_recovery.json"
       ],
       "timeout_sec": 60,
       "needs_import": false

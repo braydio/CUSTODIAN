@@ -300,6 +300,44 @@ class SessionSupervisorTests(unittest.TestCase):
         self.assertEqual(live, [])
         self.assertFalse(complete)
 
+    def test_unmanaged_clean_claim_missing_journal_allows_resume_advice_only(self):
+        # The old session has no OR1 journal. That is not a second gate on
+        # the original clean workstream's supported resume entrypoint.
+        result = recovery.audit(self.fixture.repo)
+        row = next(item for item in result["items"]
+                   if item.get("workstream") == self.fixture.workstream)
+        self.assertEqual(row["classification"], "UNMANAGED_UNKNOWN")
+        self.assertFalse(row["dirty"])
+        self.assertIn("workstream.py resume fixture-supervised-run",
+                      row["recommended_action"])
+        self.assertIn("project-owner authorization", row["recommended_action"])
+
+        # A possible live unmanaged Codex writer cannot be silently adopted.
+        observed_writer = {"workstream": None, "classification": "UNMANAGED_UNKNOWN",
+                           "candidate_workstream": self.fixture.workstream}
+        with mock.patch.object(recovery, "_unmanaged_codex_processes",
+                               return_value=([observed_writer], True)):
+            writer_result = recovery.audit(self.fixture.repo)
+        writer_row = next(item for item in writer_result["items"]
+                          if item.get("workstream") == self.fixture.workstream)
+        self.assertNotIn("workstream.py resume", writer_row["recommended_action"])
+
+        # Incomplete local process visibility likewise suppresses the hint.
+        with mock.patch.object(recovery, "_unmanaged_codex_processes",
+                               return_value=([], False)):
+            unseen_result = recovery.audit(self.fixture.repo)
+        unseen_row = next(item for item in unseen_result["items"]
+                          if item.get("workstream") == self.fixture.workstream)
+        self.assertNotIn("workstream.py resume", unseen_row["recommended_action"])
+
+        # Dirty user data must remain protected, even with explicit authority.
+        (self.fixture.worktree / "untracked-art.txt").write_text("preserve")
+        dirty_result = recovery.audit(self.fixture.repo)
+        dirty_row = next(item for item in dirty_result["items"]
+                         if item.get("workstream") == self.fixture.workstream)
+        self.assertTrue(dirty_row["dirty"])
+        self.assertNotIn("workstream.py resume", dirty_row["recommended_action"])
+
     def test_audit_is_read_only_and_marks_unmanaged_branch(self):
         git(self.fixture.repo, "branch", "agent/fixture-historical", "HEAD")
         git(self.fixture.repo, "push", "origin", "agent/fixture-historical")

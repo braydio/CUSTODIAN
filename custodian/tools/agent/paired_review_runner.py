@@ -900,6 +900,8 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         reviewed_main=reviewed_main,
         target_implementation_commit=implementation_commit,
     )
+    if not (worktree / archive_path).is_file():
+        raise RunnerError("archived review packet is missing; coordinator closeout is recoverable")
     if receipt_error:
         archive_text = (worktree / archive_path).read_text(encoding="utf-8")
         run_metadata_path = Path(host_evidence.get("continuation_dir", run_dir)) / "metadata.json"
@@ -3110,6 +3112,73 @@ def _failed_host_validation_retry_state(run_dir: Path, worktree: Path, workstrea
     return child, len(attempts) + 1
 
 
+
+_PROCESSION_RETRY_REVIEW = "review-agent-paired-review-procession-doc-scope-recovery-v1"
+_PROCESSION_RETRY_RUN = "20261023T150519Z-8f6f90e681a3"
+
+
+def _authenticated_procession_prevalidation_retry(
+    repo: Path, run_dir: Path, original: dict, workstream: str, run_id: str,
+    reviewed_main: str,
+) -> tuple[dict, int]:
+    """Authenticate the one failed child of the exact historical prelaunch run.
+
+    Original prelaunch evidence has no report pair; the failed first validation
+    was written append-only in continuation-01. Never admit an arbitrary child
+    or infer any reviewer verdict from validation evidence.
+    """
+    if (workstream != _PROCESSION_RETRY_REVIEW or run_id != _PROCESSION_RETRY_RUN):
+        raise RunnerError("pre-validation child retry has no authorized historical identity")
+    child_dir = run_dir / "continuation-01"
+    children = sorted(path.name for path in run_dir.glob("continuation-*"))
+    if children != ["continuation-01"] or child_dir.is_symlink() or not child_dir.is_dir():
+        raise RunnerError("pre-validation retry requires exactly one regular continuation-01")
+    recorded = original.get("recovery_worktree")
+    if not isinstance(recorded, str) or not recorded:
+        raise RunnerError("pre-validation retry has no pinned original review checkout")
+    worktree = Path(recorded).resolve()
+    if (str(worktree) != recorded or not worktree.is_dir()
+            or _process_owns_worktree(worktree)):
+        raise RunnerError("pre-validation retry worktree is missing, foreign, or actively owned")
+    child = _continuation_metadata(child_dir / "metadata.json")
+    expected_packet = f"{PACKET_ROOT}/{workstream.upper().replace('-', '_')}.md"
+    if (child.get("schema") != CONTINUATION_SCHEMA
+            or child.get("phase") != "host_validation_failed"
+            or child.get("original_run_dir") != str(run_dir)
+            or child.get("branch") != f"agent/{workstream}"
+            or child.get("worktree") != recorded
+            or child.get("reviewed_main") != reviewed_main
+            or child.get("implementation_commit") != original.get("implementation_commit")
+            or child.get("active_packet_path") != expected_packet
+            or original.get("packet") not in (None, expected_packet)
+            or child.get("reviewer_launch_count") != 0
+            or child.get("host_evidence") is not None):
+        raise RunnerError("pre-validation retry child is not the original unreviewed failed run")
+    original_manifest = _file_manifest(run_dir, omit=child_dir)
+    if (child.get("original_run_manifest") != original_manifest
+            or child.get("run_evidence_sha256") != original_manifest):
+        raise RunnerError("pre-validation retry original evidence manifest changed")
+    if (common_dir(worktree).resolve() != common_dir(repo).resolve()
+            or git(worktree, "branch", "--show-current") != f"agent/{workstream}"
+            or git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_main
+            or git(worktree, "status", "--porcelain", "--untracked-files=all")):
+        raise RunnerError("pre-validation retry protected checkout identity or cleanliness changed")
+    child_files = _file_manifest(child_dir)
+    attempted = child.get("host_validation_attempts")
+    allowed = {"metadata.json"}
+    if isinstance(attempted, list):
+        for index, attempt in enumerate(attempted, 1):
+            if isinstance(attempt, dict) and isinstance(attempt.get("manifest"), dict):
+                allowed.update(f"host-validation/attempt-{index:02d}/{p}"
+                               for p in attempt["manifest"])
+    if set(child_files) != allowed:
+        raise RunnerError("pre-validation retry contains unexpected continuation files")
+    verified, attempt_number = _failed_host_validation_retry_state(
+        run_dir, worktree, workstream, run_id, original_manifest,
+    )
+    return verified, attempt_number
+
+
 def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
                                  attest_no_active_owner: bool = False,
                                  attest_no_unique_evidence: bool = False) -> dict:
@@ -3154,7 +3223,14 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         pinned_result_keys = ("host_validation", "validation_evidence_sha256", "host_validation_dir")
         if any(key in original for key in pinned_result_keys):
             raise RunnerError("original metadata claims pinned host-validation evidence but its reports are missing")
-        if any(path.exists() or path.is_symlink() for path in run_dir.glob("continuation-*")):
+        existing_children = list(run_dir.glob("continuation-*"))
+        authorized_retry = (
+            workstream == _PROCESSION_RETRY_REVIEW
+            and run_id == _PROCESSION_RETRY_RUN
+            and len(existing_children) == 1
+            and existing_children[0].name == "continuation-01"
+        )
+        if existing_children and not authorized_retry:
             raise RunnerError("pre-validation recovery already has continuation children; inspect them before planning")
     if not re.fullmatch(r"[0-9a-f]{40,64}", str(original.get("reviewed_main", ""))):
         raise RunnerError("original run omits its exact pinned reviewed-main SHA")
@@ -3166,6 +3242,10 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     retry_child = None
     retry_number = 1
     failed_import_sidecars = []
+    if prevalidation_interruption and existing_children:
+        retry_child, retry_number = _authenticated_procession_prevalidation_retry(
+            repo, run_dir, original, workstream, run_id, reviewed_main,
+        )
     if failed_host_validation:
         if not all(reports_present):
             raise RunnerError("failed host-validation recovery requires the complete original failed report pair")
@@ -3233,7 +3313,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
                     failed_import_sidecars = host_validation.verified_failed_import_sidecars(worktree_from_metadata)
                 except HostValidationError as exc:
                     raise RunnerError(str(exc)) from exc
-    completed_child = None if failed_host_validation else _completed_host_continuation(repo, run_dir, workstream, run_id)
+    completed_child = None if (failed_host_validation or retry_child) else _completed_host_continuation(repo, run_dir, workstream, run_id)
     carrow_missing_worktree = (
         workstream == CARROW_MISSING_WORKTREE_WORKSTREAM
         and run_id == CARROW_MISSING_WORKTREE_RUN_ID
@@ -3508,7 +3588,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError(f"original pre-launch evidence is missing or unsafe: {path.name}")
         evidence_hashes[path.name] = _sha256_bytes(path.read_bytes())
     continuation_dirs = sorted(path.name for path in run_dir.glob("continuation-*") if path.is_dir())
-    if continuation_dirs and not (failed_host_validation and continuation_dirs == ["continuation-01"] and retry_child):
+    if continuation_dirs and not (retry_child and continuation_dirs == ["continuation-01"]):
         raise RunnerError("original run already has continuation children; inspect them before any new attempt")
     manifest = _file_manifest(run_dir)
     plan = {
@@ -3522,6 +3602,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         "host_validation_state": ("carrow_failed_nonimport_missing_worktree" if carrow_missing_worktree else
                                   "pre_validation_missing_worktree" if prevalidation_missing_worktree else
                                   failed_host_validation["kind"] if failed_host_validation else
+                                  "pre_validation_failed_retry" if retry_child and prevalidation_interruption else
                                   "pre_validation_interrupted" if prevalidation_interruption else "validated"),
         "operator_attestations": {
             "no_active_review_owner": attest_no_active_owner,
@@ -5101,6 +5182,9 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "recover-finish-index-codex-exited-pass":
+        from paired_review_finish_index_pass_recovery import main as recovery_main
+        return recovery_main(argv[1:])
     if argv and argv[0] == "recover-procession-pass-closeout":
         return _procession_pass_closeout_recovery_main(argv[1:])
     if argv and argv[0] == "recover-closeout":

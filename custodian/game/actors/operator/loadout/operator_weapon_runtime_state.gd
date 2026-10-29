@@ -7,6 +7,9 @@ var loaded_magazine: int = 0
 var is_reloading: bool = false
 var reload_remaining: float = 0.0
 var reload_total: float = 0.0
+var heat: float = 0.0
+var heat_decay_delay: float = 0.0
+var overheat_lockout: float = 0.0
 
 
 func begin_reload(duration: float) -> void:

@@ -198,6 +198,9 @@ func _load_and_configure_scene() -> bool:
 	for assignment: Dictionary in setup.properties:
 		if not _apply_property(assignment):
 			return false
+	for operation: Dictionary in setup.get("operations", []):
+		if not _apply_setup_operation(operation):
+			return false
 	for item: Dictionary in setup.processing:
 		var node := roles.get(str(item.get("role", ""))) as Node
 		if node == null:
@@ -252,6 +255,19 @@ func _resolve_roles(definitions: Dictionary, skip_spawn_roles := false) -> bool:
 			failures.append("role did not resolve uniquely: %s" % role_name)
 			return false
 		roles[role_name] = node
+	return true
+
+
+func _apply_setup_operation(operation: Dictionary) -> bool:
+	var node := roles.get(str(operation.get("role", ""))) as Node
+	var name := str(operation.get("operation", ""))
+	if node == null or name != "grant_sidearm" or not node.has_method("grant_sidearm"):
+		failures.append("unsafe or unresolved setup operation: %s" % operation)
+		return false
+	var result: Variant = node.call("grant_sidearm")
+	if not result is Dictionary or not bool(result.get("granted", false)):
+		failures.append("sidearm setup operation did not grant a sidearm")
+		return false
 	return true
 
 

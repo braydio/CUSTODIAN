@@ -203,6 +203,7 @@ Last updated: 2026-10-02
 - `custodian/tools/agent/validate_review_pairing.py` — standalone paired-review and validation-reference guard over checked-out `HEAD`; dispatch runs the same structural checks over fetched `origin/main` before eligibility
 - `custodian/tools/agent/branch_hygiene.py` — report-only ancestry-based remote branch classification and verified archive-before-delete operation
 - `custodian/tools/agent/worktree_backlog_census.py` — read-only normalized census of canonical attached/detached worktrees, dispatcher packet/claim identities, ancestry, and hashed porcelain status; unknown ownership remains protected
+- `custodian/tools/agent/transient_worktree_gc.py` — bounded, conservative cleanup of verified landed/archived clean agent checkouts at normal workstream boundaries; preview/apply, no ref deletion.
 - `custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md` — W1 host-measured 62-path inventory, count reconciliation, and preservation-first baseline for the staged backlog recovery series
 - `custodian/tools/agent/review_contract.py` and `test_review_contract.py` — structural finding and delta-correction contract with fixture coverage, without subjective prose scoring
 - `custodian/tools/agent/test_dispatch.py`, `test_workstream.py`, `test_workstream_artifacts.py`, `test_branch_hygiene.py`, and `test_land_main.py` — temporary-repository dispatch, lifecycle, run-artifact finalization, hygiene, and landing tests
@@ -458,8 +459,9 @@ Last updated: 2026-10-02
 - `custodian/game/world/procgen/factions/faction_site_placer.gd` — deterministic faction ambient site selector
 - `custodian/game/world/procgen/factions/faction_site_geometry_stamper.gd` — V1 faction-site geometry reservation stamper using the shared procgen authored-scene claim API
 - `custodian/game/world/procgen/story/story_room_template.gd` — story-room metadata template model
-- `custodian/game/world/procgen/story/story_room_placer.gd` — deterministic environmental story-room candidate placer
-- `custodian/game/world/procgen/story/story_room_geometry_stamper.gd` — V1 story-room geometry reservation stamper using the shared procgen authored-scene claim API
+- `custodian/game/world/procgen/story/story_room_placer.gd` — deterministic environmental story-site projection from exact F02 STORY_ROOM reservations in intent mode, with a legacy non-intent metadata fallback
+- `custodian/game/world/procgen/story/story_room_geometry_stamper.gd` — F02 story-room floor reservation stamper with exact projected-site/node/rectangle binding assertion
+- `design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES2_REFUSED_PASSAGE.md` — ES-2 physical Refused Passage blockout and accepted-world/interaction/collision contract; ES-2 implementation and paired review are separately packeted, not yet runtime-landed
 - `custodian/game/actors/enemies/ambient/ambient_activity_anchor.gd` — claimable non-combat activity anchor used by behavior-driven enemies
 - `custodian/tools/tiles/ingest_generated_terrain_packs.py` — unified wrapper that runs per-pack normalize scripts for connector, ascent, and chasm+bridge terrain gameplay packs; writes combined ingest report to `reports/terrain_pack_ingest/`
 - `custodian/tools/tiles/register_terrain_gameplay_packs.py` — registers runtime terrain gameplay pack PNGs as TileSetAtlasSource entries in `procgen_world_tileset.tres`; writes source-ID mapping report to `reports/terrain_pack_ingest/terrain_gameplay_tileset_sources.json`
@@ -478,7 +480,7 @@ Last updated: 2026-10-02
 - `custodian/tools/validation/procgen_intent_graph_smoke.gd` — deterministic intent graph and reservation validation
 - `custodian/tools/validation/procgen_worldgen_shape_smoke.gd` — integrated procgen shape validation for intent graph export and reserved-region generation
 - `custodian/tools/validation/procgen_ascent_style_smoke.gd` — smoke validation for world profile loading and uphill ascent metadata
-- `custodian/tools/validation/faction_story_sites_smoke.gd` — smoke validation for faction ambient site, story-room candidate, and activity-anchor behavior
+- `custodian/tools/validation/faction_story_sites_smoke.gd` — smoke validation for faction ambient sites, legacy story metadata, ES-1 deterministic intent identity/geometry/skip behavior, and activity anchors
 - `custodian/game/world/elevation/elevation_map.gd` — script-owned elevation metadata map for cell height, traversal type, ramp/stair direction, builder-result ingestion, serialization, spawn validity, and directional cardinal traversal checks
 - `custodian/game/world/procgen/portal_teleporter.gd` — Area2D trigger component used by procgen portal-ring props to teleport the player to their linked endpoint with a physics-frame cooldown, one runtime-built `PortalStateSprite` for idle/activation/arrival playback, delayed destination arrival playback, and a 2.5D stair/platform impostor for top-only portal access plus mirrored north-side dual approach when enabled; this is local tactical traversal, not cross-map route authority
 - `custodian/game/actors/operator/presentation/melee_posture_resolver.gd` — presentation-only sheathed/ready/relaxed resolver driven by melee equipment, EngagementTracker state, draw grace, and gameplay presentation locks; `mark_sheathed()` forces SHEATHED once a weapon-switch transaction commits

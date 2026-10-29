@@ -17,6 +17,7 @@ SPEC = importlib.util.spec_from_file_location("workstream", SCRIPT)
 workstream = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(workstream)
 import persistent_checkout_sync as persistent_sync
+import task_packet_index
 
 
 def git(cwd: Path, *args: str) -> str:
@@ -255,7 +256,10 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
+        git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "implement source")
         archived.parent.mkdir(parents=True)
         archived.write_text(active.read_text().replace("in_progress", "complete"))
@@ -292,7 +296,10 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
+        git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "implement source")
         archived.parent.mkdir(parents=True, exist_ok=True)
         archived.write_text(active.read_text().replace("in_progress", "complete"))
@@ -345,6 +352,15 @@ class WorkstreamTests(unittest.TestCase):
         git(trace_repo, "commit", "-m", "publish immutable trace")
         git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
         git(self.repo, "fetch", "origin")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        # Correcting a historical summary filename is a bounded administrative
+        # follow-up when both Git objects are present and the canonical file lands.
+        legacy_summary.unlink()
+        canonical_summary = self.repo / workstream._expected_summary_filename(workstream_id)
+        canonical_summary.write_text("completed summary\n")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "correct summary filename")
         self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
         (self.repo / "test_source.py").write_text("regression\n")
@@ -858,6 +874,267 @@ class WorkstreamTests(unittest.TestCase):
         (self.repo / "outside.py").write_text("out of scope\n")
         git(self.repo, "add", "outside.py")
         git(self.repo, "commit", "-m", "unbound follow-up")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def _managed_index_conflict_history(self, mode: str = "success") -> tuple[str, str]:
+        workstream_id = "agent-test-resolved-main-sync"
+        filename = "AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        packet_rel = f"custodian/docs/ai_context/task_packets/{filename}"
+        archived_rel = f"custodian/docs/ai_context/task_packets/archived/{filename}"
+        active = self.repo / packet_rel
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Test archive conflict\n\n"
+            f"- Workstream: `{workstream_id}`\n- Status: `ready`\n"
+            "- Dispatch: `auto`\n- Priority: `P0`\n- Depends on: `none`\n"
+            "- Locks: `none`\n- Kind: `implementation`\n- Review: `none`\n"
+            "- Goal: Preserve this generated row while the archive transition is merged.\n"
+            "- Work surface: source.py; test_source.py\n"
+        )
+        extra_rel = "custodian/docs/ai_context/task_packets/ZZ_EXTRA_READY.md"
+        extra = self.repo / extra_rel
+        extra.write_text(
+            "# Extra ready packet\n\n"
+            "- Workstream: `agent-test-extra-ready`\n- Status: `ready`\n"
+            "- Dispatch: `auto`\n- Priority: `P0`\n- Depends on: `none`\n"
+            "- Locks: `none`\n- Kind: `implementation`\n- Review: `none`\n"
+            "- Goal: Keep a neighboring generated index entry.\n"
+        )
+        readme_rel = "custodian/docs/ai_context/task_packets/README.md"
+        readme = self.repo / readme_rel
+        readme.write_text(
+            "### Ready / Auto Dispatch\n\n"
+            "<!-- task_packet_index:managed:start -->\n_None._\n"
+            "<!-- task_packet_index:managed:end -->\n"
+        )
+        (self.repo / "source.py").write_text("base source\n")
+        (self.repo / "test_source.py").write_text("base test\n")
+        if mode == "extra-conflict":
+            (self.repo / "outside.py").write_text("base outside\n")
+        git(self.repo, "add", packet_rel, extra_rel, readme_rel, "source.py", "test_source.py")
+        if mode == "extra-conflict":
+            git(self.repo, "add", "outside.py")
+        self.assertTrue(task_packet_index.write(self.repo))
+        git(self.repo, "add", readme_rel)
+        git(self.repo, "commit", "-m", "publish active test packet")
+        git(self.repo, "push", "origin", "main")
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        (self.repo / "source.py").write_text("implemented source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "complete scoped source work")
+        archived = self.repo / archived_rel
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("Status: `ready`", "Status: `blocked`"))
+        active.unlink()
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", archived_rel, packet_rel, readme_rel)
+        git(self.repo, "commit", "-m", "archive the bounded task")
+        archive_commit = git(self.repo, "rev-parse", "HEAD")
+
+        git(self.repo, "checkout", "main")
+        row = next(line for line in readme.read_text().splitlines()
+                   if line.startswith(f"- `{filename}` — "))
+        readme.write_text(readme.read_text().replace(row, row + " updated on main"))
+        if mode == "extra-conflict":
+            (self.repo / "outside.py").write_text("main outside\n")
+            git(self.repo, "add", "outside.py")
+        git(self.repo, "add", readme_rel)
+        git(self.repo, "commit", "-m", "refresh generated row on main")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        main_sha = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "checkout", branch)
+        merge = subprocess.run(
+            ["git", "merge", "--no-ff", "origin/main", "-m", "interrupted sync merge"],
+            cwd=self.repo, text=True, capture_output=True,
+        )
+        self.assertNotEqual(merge.returncode, 0, merge.stdout + merge.stderr)
+        conflicted = subprocess.run(["git", "status", "--porcelain"], cwd=self.repo,
+                                    text=True, capture_output=True, check=True).stdout
+        expected_conflicts = {"custodian/docs/ai_context/task_packets/README.md"}
+        if mode == "extra-conflict":
+            expected_conflicts.add("outside.py")
+        self.assertEqual({line[3:] for line in conflicted.splitlines()}, expected_conflicts)
+        git(self.repo, "add", *sorted(expected_conflicts))
+        if mode == "altered-merge-tree":
+            (self.repo / "unauthorized.txt").write_text("forged merge content\n")
+            git(self.repo, "add", "unauthorized.txt")
+        git(self.repo, "commit", "-m", "record interrupted merge")
+        merge_commit = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^1"), archive_commit)
+        self.assertEqual(git(self.repo, "rev-parse", "HEAD^2"), main_sha)
+        return workstream_id, merge_commit
+
+    def test_archive_guard_authenticates_managed_index_conflict_repair_and_bare_paths(self):
+        workstream_id, merge_commit = self._managed_index_conflict_history()
+        readme = self.repo / "custodian/docs/ai_context/task_packets/README.md"
+        self.assertTrue(readme.read_text().count("<<<<<<< HEAD") == 1)
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+        self.assertEqual(
+            workstream._work_surface_paths(
+                "- Work surface: source.py; prose mentions outside.py; "
+                "`custodian/docs/AGENTS.md`; ../outside.py; /tmp/secret.py; test_source.py"
+            ),
+            {"source.py", "custodian/docs/AGENTS.md", "test_source.py"},
+        )
+        self.assertEqual(
+            workstream._work_surface_paths(
+                "- Work surface: custodian/AGENTS.md; "
+                "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md; "
+                "custodian/docs/ai_context/CONTEXT.md; "
+                "custodian/docs/ai_context/task_packets/README.md policy prose "
+                "(do not hand-edit its managed index); directly stale governance text only."
+            ),
+            {
+                "custodian/AGENTS.md",
+                "custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md",
+                "custodian/docs/ai_context/CONTEXT.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+            },
+        )
+
+        self.assertTrue(task_packet_index.write(self.repo))
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        repair = git(self.repo, "rev-parse", "HEAD")
+        self.assertEqual(git(self.repo, "rev-parse", f"{repair}^1"), merge_commit)
+        (self.repo / "source.py").write_text("bounded in-surface follow-up\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "record scoped follow-up")
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        archived.write_text(archived.read_text().replace("Status: `blocked`", "Status: `complete`"))
+        (self.repo / "AGENT_TEST_RESOLVED_MAIN_SYNC_CLAUDE_SUMMARY.md").write_text(
+            "completed\nAuthoring chat: not-recorded\n"
+        )
+        git(self.repo, "add", str(archived.relative_to(self.repo)),
+            "AGENT_TEST_RESOLVED_MAIN_SYNC_CLAUDE_SUMMARY.md")
+        git(self.repo, "commit", "-m", "record bounded closeout evidence")
+        self.assertTrue(task_packet_index.check(self.repo)[0])
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_unrepaired_managed_index_conflict(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_delayed_managed_index_repair(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        (self.repo / "source.py").write_text("post-conflict commit before repair\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "delay the managed index repair")
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair after an intervening commit")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_repair_that_changes_content_outside_managed_index(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        readme = self.repo / "custodian/docs/ai_context/task_packets/README.md"
+        task_packet_index.write(self.repo)
+        readme.write_text(readme.read_text().replace("### Ready / Auto Dispatch", "### altered heading"))
+        git(self.repo, "add", str(readme.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "alter content around repair")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_additional_conflict_path(self):
+        workstream_id, _ = self._managed_index_conflict_history("extra-conflict")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_altered_merge_tree(self):
+        workstream_id, _ = self._managed_index_conflict_history("altered-merge-tree")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_unauthorized_post_archive_file(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        (self.repo / "unrelated.py").write_text("outside declared scope\n")
+        git(self.repo, "add", "unrelated.py")
+        git(self.repo, "commit", "-m", "add unauthorized post archive file")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_pins_work_surface_to_archive_transition(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        archived = self.repo / "custodian/docs/ai_context/task_packets/archived/AGENT_TEST_RESOLVED_MAIN_SYNC.md"
+        archived.write_text(archived.read_text().replace(
+            "source.py; test_source.py", "source.py; test_source.py; unrelated.py"
+        ))
+        git(self.repo, "add", str(archived.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "attempt to widen archived work surface")
+        (self.repo / "unrelated.py").write_text("scope expansion must not authorize this\n")
+        git(self.repo, "add", "unrelated.py")
+        git(self.repo, "commit", "-m", "change newly declared path")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_executable_work_surface_followup(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        source = self.repo / "source.py"
+        source.write_text("unexpected executable follow-up\n")
+        source.chmod(0o755)
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "make scoped file executable")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_symlink_work_surface_followup(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        task_packet_index.write(self.repo)
+        git(self.repo, "add", "custodian/docs/ai_context/task_packets/README.md")
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        target = self.repo / "test_source.py"
+        target.unlink()
+        target.symlink_to("source.py")
+        git(self.repo, "add", "test_source.py")
+        git(self.repo, "commit", "-m", "replace scoped file with symlink")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_stale_final_managed_index(self):
+        workstream_id, _ = self._managed_index_conflict_history()
+        task_packet_index.write(self.repo)
+        readme = self.repo / "custodian/docs/ai_context/task_packets/README.md"
+        git(self.repo, "add", str(readme.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "repair exact managed index conflict")
+        readme.write_text(readme.read_text().replace(
+            "<!-- task_packet_index:managed:end -->",
+            "- `STALE.md` — stale generated entry\n<!-- task_packet_index:managed:end -->",
+        ))
+        git(self.repo, "add", str(readme.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "leave stale managed index after repair")
+        self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+    def test_archive_guard_rejects_missing_duplicate_or_reversed_index_markers(self):
+        valid = (
+            b"<!-- task_packet_index:managed:start -->\n_None._\n"
+            b"<!-- task_packet_index:managed:end -->\n"
+        )
+        malformed = (
+            valid.replace(b"<!-- task_packet_index:managed:start -->\n",
+                          b"<!-- task_packet_index:managed:start -->\n"
+                          b"<!-- task_packet_index:managed:start -->\n"),
+            valid.replace(b"<!-- task_packet_index:managed:end -->\n", b""),
+            b"<!-- task_packet_index:managed:end -->\n_None._\n"
+            b"<!-- task_packet_index:managed:start -->\n",
+        )
+        for readme in malformed:
+            with self.subTest(readme=readme):
+                self.assertIsNone(workstream._managed_index_split(readme))
+
+    def test_archive_guard_rejects_forged_conflict_merge_parent(self):
+        workstream_id, merge_commit = self._managed_index_conflict_history()
+        archive = git(self.repo, "rev-parse", f"{merge_commit}^1")
+        wrong_main = git(self.repo, "rev-parse", f"{merge_commit}^2^1")
+        tree = git(self.repo, "rev-parse", f"{merge_commit}^{{tree}}")
+        forged = subprocess.run(
+            ["git", "commit-tree", tree, "-p", archive, "-p", wrong_main],
+            cwd=self.repo, input="forged merge ancestry\n", text=True, capture_output=True, check=True,
+        ).stdout.strip()
+        git(self.repo, "checkout", "--detach", forged)
         self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
     def test_advanced_head_review_can_defer_teardown_without_deferring_root_sync(self):

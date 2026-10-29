@@ -1,0 +1,9 @@
+{
+  "schema": "custodian.operator_3d_retarget_policy.v1",
+  "policy_id": "mixamo_humanoid_conservative",
+  "version": "1.0",
+  "description": "Contract only: require explicit skeleton compatibility proof, preserve source action range and original root trajectory, and keep candidate pose displacement separate. No retarget mapping or Blender execution is defined in Task 001.",
+  "timing_policy": "preserve_source_action_timing",
+  "root_motion_policy": "declare_per_animation",
+  "approval_state": "engineering_contract"
+}

@@ -449,6 +449,13 @@ def audit(repo: Path) -> dict:
                 continue
     unmanaged, process_scan_complete = _unmanaged_codex_processes(worktree_map, packet_map, known_live)
     rows.extend(unmanaged)
+    # Journal absence is not an additional veto for the existing same-claim
+    # workstream resume lifecycle. A live unmanaged process may still own the
+    # checkout, so suppress the resume hint when that process is observed.
+    unmanaged_candidate_workstreams = {
+        item.get("candidate_workstream") for item in unmanaged
+        if item.get("candidate_workstream")
+    }
     if not process_scan_complete:
         rows.append({"workstream": None, "classification": "REMOTE_RACE_OR_AMBIGUOUS",
                      "evidence": [{"kind": "local_process_scan", "complete": False}],
@@ -471,13 +478,25 @@ def audit(repo: Path) -> dict:
             dirty, untracked, tracked, status_hash = _dirty(Path(worktree_value)) if worktree_value else (None, None, None, None)
             packet = packet_map.get(workstream)
             classification = "UNMANAGED_UNKNOWN" if f"agent/{workstream}" in remote else "REMOTE_RACE_OR_AMBIGUOUS"
+            recommendation = "Do not infer liveness or release its claim from branch age; preserve and investigate owner locally."
+            if (classification == "UNMANAGED_UNKNOWN" and worktree_value
+                    and dirty is False and process_scan_complete
+                    and workstream not in unmanaged_candidate_workstreams):
+                recommendation = (
+                    "Missing supervisor journal is not a standalone resume veto. "
+                    "With explicit project-owner authorization, recheck the exact "
+                    "claim, clean checkout and absence of competing live writers; "
+                    "then attempt python3 custodian/tools/agent/workstream.py "
+                    f"resume {workstream}. The audit itself does not authorize "
+                    "claim release, force-removal, or review acceptance."
+                )
             row = {"workstream": workstream, "classification": classification,
                    "branch": branch, "remote_branch_sha": sha, "worktree": worktree_value,
                    "dirty": dirty, "untracked_count": untracked, "tracked_change_count": tracked,
                    "affected_locks": list(getattr(packet, "locks", ())),
                    "packet": packet_paths.get(workstream),
                    "evidence": [{"kind": "remote_agent_branch", "ref": f"refs/heads/{branch}", "sha": sha}],
-                   "recommended_action": "Do not infer liveness or release its claim from branch age; preserve and investigate owner locally.",
+                   "recommended_action": recommendation,
                    "evidence_gap": ("no verified supervised process journal for this workstream"
                                     if classification == "UNMANAGED_UNKNOWN"
                                     else "local agent branch has not been verified on origin")}

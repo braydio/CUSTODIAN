@@ -11,6 +11,9 @@ const ADJUDICATION_DAIS_SCRIPT := preload(
 const ROAD_PROCESSION_SCRIPT := preload(
 	"res://game/world/hub/events/road_procession/road_procession_sequence.gd"
 )
+const SEPULCHER_GRAVE_SCRIPT := preload(
+	"res://game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd"
+)
 const CROWN_TRANSFER_ROUTE := &"hub_twin_solaria"
 const CROWN_TRANSFER_PROFILE := &"production"
 
@@ -34,6 +37,7 @@ func _ready() -> void:
 	_build_crown_transfer_ingress()
 	_build_adjudication_dais()
 	call_deferred("_build_road_procession_sequence")
+	call_deferred("_build_sepulcher_grave_evidence")
 
 
 func get_authoring_markers() -> Dictionary:
@@ -196,3 +200,16 @@ func _build_road_procession_sequence() -> void:
 	sequence.name = "RoadProcessionSequence"
 	sequence.call("configure", authority.get("hub_state") as HubState)
 	add_child(sequence)
+
+
+func _build_sepulcher_grave_evidence() -> void:
+	if get_node_or_null("SepulcherGraveEvidence") != null:
+		return
+	var host := get_node_or_null("/root/GameRoot")
+	var authority := host.get_node_or_null("HubCampaignAuthority") if host != null else null
+	if authority == null or authority.get("hub_state") == null:
+		return
+	var event := SEPULCHER_GRAVE_SCRIPT.new() as Node2D
+	event.name = "SepulcherGraveEvidence"
+	event.call("configure", authority.get("hub_state") as HubState, self)
+	add_child(event)

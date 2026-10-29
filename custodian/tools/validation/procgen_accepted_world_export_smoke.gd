@@ -2,17 +2,18 @@ extends SceneTree
 
 # Parity smoke for the accepted-world capture/export owner. The expected hashes
 # were captured from ProcGenTilemap before the extraction (see
-# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md); they must not change
-# unless a versioned level-data migration is intended and explicitly tested.
+# PROCGEN_GENERATION_STATE_EXTRACTION_CLAUDE_SUMMARY.md). ES-1 adds the normalized
+# optional story-site skip list to level data; assert and count that contract field.
+# macro_presentation remains presentation-only and excluded from semantic parity.
 
 const PROCGEN_MAP_SCENE := preload("res://game/world/procgen/proc_gen_map.tscn")
 const SEED := 3716816988
 const MAP_SIZE := Vector2i(72, 64)
 # Semantic accepted-world parity baseline. Presentation-only
 # macro_presentation is validated separately and excluded from this value hash.
-const EXPECTED_LEVEL_DATA_HASH := "1430988263"
+const EXPECTED_LEVEL_DATA_HASH := "68912596"
 const EXPECTED_FINGERPRINT_HASH := "2896026968"
-const EXPECTED_LEVEL_DATA_KEY_COUNT := 80
+const EXPECTED_LEVEL_DATA_KEY_COUNT := 81
 
 
 func _init() -> void:
@@ -49,6 +50,9 @@ func _run() -> void:
 		return
 
 	var level_data := tilemap.get_level_data()
+	if not level_data.get("story_room_site_skips", null) is Array:
+		_fail("accepted-world export is missing the story_room_site_skips array")
+		return
 	var fingerprint := tilemap.debug_get_runtime_authoring_fingerprint()
 	# Excluded from value parity:
 	# - random_floor_tiles is RNG-sampled by design.

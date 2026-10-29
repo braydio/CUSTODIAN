@@ -103,6 +103,7 @@ const LEVEL_DATA_SCHEMA := [
 	["worldgen_reserved_regions", LEVEL_DATA_MODE_DEEP],
 	["faction_activity_sites", LEVEL_DATA_MODE_DEEP],
 	["story_room_sites", LEVEL_DATA_MODE_DEEP],
+	["story_room_site_skips", LEVEL_DATA_MODE_DEEP],
 	["special_room_sites", LEVEL_DATA_MODE_DEEP],
 	["intent_zones_enabled", LEVEL_DATA_MODE_PASS], # derived
 ]
