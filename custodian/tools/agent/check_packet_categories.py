@@ -12,12 +12,19 @@ import sys
 
 REPO = Path(__file__).resolve().parents[3]
 MANIFEST = REPO / 'custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json'
-FIELD = re.compile(r'^- Category:\\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?\\s*$')
+FIELD = re.compile(r'^- Category:\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?\s*$')
 
 
 def check_packet(text, ids):
-    head = text.split('\\n\\n', 1)[0]
-    category_lines = [line for line in head.splitlines() if line.startswith('- Category:')]
+    category_lines = []
+    started = False
+    for line in text.splitlines():
+        if line.startswith('- '):
+            started = True
+            if line.startswith('- Category:'):
+                category_lines.append(line)
+        elif started and (not line.strip() or not line.startswith('-')):
+            break
     if len(category_lines) != 1:
         raise ValueError('expected exactly one Category header')
     m = FIELD.fullmatch(category_lines[0])
