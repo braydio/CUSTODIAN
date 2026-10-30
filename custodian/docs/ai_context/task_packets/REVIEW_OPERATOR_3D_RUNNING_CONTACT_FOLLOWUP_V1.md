@@ -2,6 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-3d-running-contact-followup-v1
+- Category: `operator-actors`
 - Kind: review
 - Status: draft
 - Dispatch: manual

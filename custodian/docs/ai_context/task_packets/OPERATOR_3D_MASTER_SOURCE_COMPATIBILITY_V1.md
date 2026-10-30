@@ -2,6 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-3d-master-source-compatibility-v1
+- Category: `assets-art`
 - Status: draft
 - Dispatch: manual
 - Priority: P2

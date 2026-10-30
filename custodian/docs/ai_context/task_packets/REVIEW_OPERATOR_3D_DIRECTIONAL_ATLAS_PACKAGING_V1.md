@@ -2,6 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: review-operator-3d-directional-atlas-packaging-v1
+- Category: `assets-art`
 - Kind: review
 - Status: draft
 - Dispatch: manual

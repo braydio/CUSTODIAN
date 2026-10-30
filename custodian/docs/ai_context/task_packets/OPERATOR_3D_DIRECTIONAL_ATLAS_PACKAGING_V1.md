@@ -2,6 +2,7 @@
 
 - Packet schema: custodian.task_packet.v2
 - Workstream: operator-3d-directional-atlas-packaging-v1
+- Category: `assets-art`
 - Status: draft
 - Dispatch: manual
 - Priority: P2
