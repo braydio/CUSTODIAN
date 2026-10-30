@@ -1938,13 +1938,14 @@ class PairedReviewRunnerTests(unittest.TestCase):
                        "provenance": {"kind": "test-fixture"}}
 
         def fake_validation(worktree, run_dir, reviewed_main, implementation_commit,
-                            *, target_workstream=None, target_packet_path=None):
+                            *, target_workstream=None, target_packet_path=None, approval_main=None):
             self.assertEqual(Path(worktree), fixture["worktree"])
             self.assertEqual(Path(run_dir), fixture["run_dir"] / "continuation-01/host-validation/attempt-01")
             self.assertEqual(reviewed_main, fixture["reviewed_main"])
             self.assertEqual(implementation_commit, "a" * 40)
             self.assertEqual(target_workstream, "sample")
             self.assertEqual(target_packet_path, fixture["target"])
+            self.assertEqual(approval_main, fixture["reviewed_main"])
             run_dir.mkdir(parents=True, exist_ok=True)
             (run_dir / "validation.json").write_text(json.dumps({
                 "schema": "custodian.validation.result.v1", "passed": True,
@@ -1990,6 +1991,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
         patches = [
             patch.object(runner, "_host_recovery_plan_unlocked", return_value={
                 "plan_sha256": "e" * 64, "source_span": source_span,
+                "coordinator_main": fixture["reviewed_main"],
                 "host_validation_attempt": 1, "failed_validation_evidence": None,
                 "generated_import_sidecars": []}),
             patch.object(runner, "validate_eligible_review", return_value=(
@@ -3781,6 +3783,197 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _git(self, *args):
         return subprocess.run(["git", *args], cwd=self.root, check=True, text=True,
                               capture_output=True).stdout.strip()
+
+    def _build_admin_scope_approval_history(self, *, outcome="passed"):
+        """Build a disposable, accepted one-path approval on top of the real pinned history."""
+        repository = Path(self.temp.name) / "admin-approval"
+        subprocess.run(["git", "clone", "--shared", "--no-checkout", str(ROOT), str(repository)],
+                       check=True, capture_output=True)
+        run = lambda *args, check=True: subprocess.run(
+            ["git", *args], cwd=repository, check=check, text=True, capture_output=True,
+        )
+        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+                                   check=True, text=True, capture_output=True).stdout.strip()
+        run("checkout", "--detach", base_main)
+        run("update-ref", "refs/remotes/origin/main", base_main)
+        run("config", "user.name", "test")
+        run("config", "user.email", "test@example.invalid")
+        trace_prefix = "refs/remotes/origin/agent-diagnostics/agent-persistent-task-administrator-v1/"
+        trace_refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)", trace_prefix],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not trace_refs:
+            self.fail("the original administrator implementation lifecycle trace is unavailable")
+        for row in trace_refs:
+            ref, commit = row.split()
+            run("update-ref", ref, commit)
+        active_target = "custodian/docs/ai_context/task_packets/AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
+        active_review = "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
+        archive_target = host_validation._ADMIN_SCOPE_CORRECTION_PACKET
+        archive_review = host_validation._ADMIN_SCOPE_REVIEW_PACKET
+        target_text = (repository / active_target).read_text(encoding="utf-8")
+        target_text = target_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        (repository / archive_target).parent.mkdir(parents=True, exist_ok=True)
+        (repository / archive_target).write_text(target_text, encoding="utf-8")
+        (repository / active_target).unlink()
+        attestation = ROOT / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
+        destination = repository / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(attestation.read_bytes())
+        run("add", "--", archive_target, active_target, host_validation._ADMIN_SCOPE_ATTESTATION_PATH)
+        run("commit", "-qm", "archive correction and attest exact source")
+        implementation_commit = run("rev-parse", "HEAD").stdout.strip()
+
+        review_text = (repository / active_review).read_text(encoding="utf-8")
+        review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        review_text += f"""
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{host_validation._ADMIN_SCOPE_REVIEW_WORKSTREAM}`
+- Review target workstream: `{host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM}`
+- Status: `{outcome}`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+        review_text += "\n" + runner.review_outcome.render_review_outcome(
+            outcome=outcome, review_workstream=host_validation._ADMIN_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+            provenance="different-agent", run_id="20261030T070000Z-abcdef123456",
+            review_cycle=0, ids=("R0-01",) if outcome != "passed" else (),
+        )
+        updated_target = append_receipt(
+            (repository / archive_target).read_text(encoding="utf-8"),
+            review_workstream=host_validation._ADMIN_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+            reviewed_main=implementation_commit, implementation_commit=implementation_commit,
+        )
+        (repository / archive_target).write_text(updated_target, encoding="utf-8")
+        (repository / archive_review).parent.mkdir(parents=True, exist_ok=True)
+        (repository / archive_review).write_text(review_text, encoding="utf-8")
+        (repository / active_review).unlink()
+        run("add", "--", archive_target, archive_review, active_review)
+        run("commit", "-qm", "record independent correction PASS")
+        approval_main = run("rev-parse", "HEAD").stdout.strip()
+        run("update-ref", "refs/remotes/origin/main", approval_main)
+        return repository, implementation_commit, approval_main
+
+    def test_admin_scope_attestation_accepts_only_exact_historically_reviewed_service_path(self):
+        repository, _, approval_main = self._build_admin_scope_approval_history()
+        source_span = host_validation.resolve_validation_source_span(
+            repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+            host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+            host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+            approval_main=approval_main,
+        )
+        self.assertEqual(source_span["provenance"]["scope_attestation"]["approval_main"], approval_main)
+        self.assertEqual(
+            set(source_span["provenance"]["scope_attestation"]["source_files"]),
+            set(host_validation._ADMIN_SCOPE_ATTESTED_FILES),
+        )
+        provenance = host_validation._verified_admin_scope_attestation(
+            repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE, approval_main,
+            host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+            host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+            host_validation._ADMIN_SCOPE_SOURCE_BASE,
+            host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+            set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+        )
+        self.assertEqual(provenance["approval_main"], approval_main)
+        self.assertEqual(set(provenance["source_files"]), set(host_validation._ADMIN_SCOPE_ATTESTED_FILES))
+        self.assertEqual(provenance["approval_outcome"], "passed")
+        for changed in (
+            {"reviewed_main": "0" * 40},
+            {"source_base": "0" * 40},
+            {"target_packet_path": "custodian/docs/ai_context/task_packets/archived/OTHER.md"},
+        ):
+            arguments = {
+                "reviewed_main": host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                "approval_main": approval_main,
+                "landing_commit": host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                "target_workstream": host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                "target_packet_path": host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                "source_base": host_validation._ADMIN_SCOPE_SOURCE_BASE,
+                "source_head": host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+                "source_code_paths": set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+            }
+            arguments.update(changed)
+            with self.subTest(changed=changed), self.assertRaises(host_validation.HostValidationError):
+                host_validation._verified_admin_scope_attestation(repository, **arguments)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "inventory or pinned identity"):
+            host_validation._verified_admin_scope_attestation(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE, approval_main,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                host_validation._ADMIN_SCOPE_SOURCE_BASE,
+                host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+                set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS) | {"custodian/tools/agent/extra.py"},
+            )
+
+    def test_admin_scope_attestation_rejects_nonpassing_independent_review(self):
+        repository, _, approval_main = self._build_admin_scope_approval_history(outcome="findings")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "no canonical independent PASS"):
+            host_validation._verified_admin_scope_attestation(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE, approval_main,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                host_validation._ADMIN_SCOPE_SOURCE_BASE,
+                host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+                set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+            )
+
+    def test_admin_scope_attestation_rejects_before_accepted_review_and_changed_json(self):
+        repository, _, approval_main = self._build_admin_scope_approval_history()
+        preapproval = subprocess.run(
+            ["git", "rev-parse", f"{approval_main}^1"], cwd=repository,
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation.resolve_validation_source_span(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                approval_main=preapproval,
+            )
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation._verified_admin_scope_attestation(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE, preapproval,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                host_validation._ADMIN_SCOPE_SOURCE_BASE,
+                host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+                set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+            )
+        path = repository / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
+        path.write_text(path.read_text(encoding="utf-8").replace("exactly the service installer", "any source"),
+                        encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "add", "--", host_validation._ADMIN_SCOPE_ATTESTATION_PATH], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "mutate attestation"], check=True)
+        moved_main = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                                    text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", moved_main], check=True)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "exact one-path authorization"):
+            host_validation._verified_admin_scope_attestation(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE, moved_main,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                host_validation._ADMIN_SCOPE_SOURCE_BASE,
+                host_validation._ADMIN_SCOPE_SOURCE_HEAD,
+                set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+            )
 
     @contextmanager
     def _historical_claim_objects(self):

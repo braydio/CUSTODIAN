@@ -3,7 +3,7 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: agent-persistent-task-administrator-review-scope-recovery-v1
 - Category: agent-ops
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P0
@@ -53,3 +53,21 @@
 - Refresh reason: none
 - Next action: Land independently review-gated source-scope fix, then re-plan the existing original administrator review from a clean coordinator using its original run ID.
 - Blockers or open questions: Original reviewer remains unaccepted; host-private original run metadata and no-conflicting-owner proof are needed only at same-run recovery time.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: The exact administrator source-span authorization is bound to the immutable archive, packet blob, parent/tree, and three-file code inventory. Only `task_administrator_service.py` is returned as an attested path. A separately pinned approval main requires a canonical accepted independent correction review and is recorded in the source-span digest for planning, apply validation, and post-review verification. Preapproval rejection, positive approved replay, hostile path/identity/JSON/nonpassing-review cases, the paired-review recovery fakes, neighboring Procession/Grunt attestation regressions, packet authoring, review pairing, py_compile, diff-check, and canonical changed-file validation passed. The original administrator review remains unaccepted pending its separate fresh review.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The original review pin predates its omitted service-file scope, so packet edits on newer main could not repair the historical validator input.
+- Root cause / contributing factors: The preserved review reads an immutable archived target from its pinned reviewed-main commit; approval needed its own exact, separately reviewed provenance while retaining that original baseline.
+- Prevention / pipeline improvement: Bind exact path, blob, mode, packet/archive identities, source inventory, and accepted review provenance to a separately pinned approval main; include that main in the continuation plan digest and replay the same authorization during validation and closeout.
+- Tooling / docs drift discovered: none
+- Follow-up: Fresh independent paired review, then same-run original administrator recovery plan; no original evidence or claim was changed.
+- What worked: Disposable Git history exercised preapproval refusal and postapproval one-path admission against the actual archived administrator source history.
