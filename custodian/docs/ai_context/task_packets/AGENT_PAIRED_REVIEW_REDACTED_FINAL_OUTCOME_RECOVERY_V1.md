@@ -50,6 +50,27 @@
 - Task overrides: `none`
 - Deferred: Applying a verified plan to the protected run requires a later matching coordinator control after this implementation lands and its fresh independent paired review passes. The original host-private evidence owner must run the plan against the preserved Git-common-dir run directory; if that evidence is missing or differs, stop without recovery.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `paired_review_runner.py` provides a source-pinned exact capture transform, exact-run read-only plan, and SHA-256-bound separately authorized apply with strict journal validation. The 12 `RedactedFinalCaptureTests` cover exact transformation, the actual supported reviewer PASS form, claim/run identity, symlink/path safety, tampering, changed refs, and replay. The protected run's read-only plan reproduced the 1,200-character JSONL event exactly and preserved all original run hashes. Changed-file validation passed both selected groups with complete coverage; no protected recovery apply or reviewer launch occurred.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The required combined runner/outcome/closeout unittest invocation exposed one pre-existing closeout assertion mismatch. The same failure reproduces on clean `origin/main`: the fixture expects a later receipt-delta error, while coordinator verification correctly stops earlier because the fixture metadata does not authenticate a pinned PASS. The packet's canonical changed-file validation passed all selected tests.
+- Root cause / contributing factors: The unrelated closeout test fixture and expected error message have drifted from the current coordinator gate order.
+- Prevention / pipeline improvement: Update that fixture or expected predicate in a separately scoped test-maintenance change; it was left untouched here to keep this implementation's work surface bounded.
+- Tooling / docs drift discovered: none
+- Follow-up: `manual-follow-up`
+- What worked: The read-only plan was exercised against the exact protected run without mutating its artifacts, and its recorded claim run ID and original file hashes matched the preserved evidence.
+
 ## Handoff
 - Next workstream: `none`
 - Next packet state: `none`

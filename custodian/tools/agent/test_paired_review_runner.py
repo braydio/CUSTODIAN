@@ -8110,5 +8110,438 @@ Verify the exact post-hoc attestation.
                 self.assertTrue(blobs)  # The complete archive is pinned, not just two docs.
 
 
+class RedactedFinalCaptureTests(unittest.TestCase):
+    def pass_fixture(self, root: Path):
+        def git(cwd, *args):
+            result = subprocess.run(["git", "-C", str(cwd), *args], text=True, capture_output=True)
+            if result.returncode:
+                raise AssertionError(result.stderr or result.stdout)
+            return result.stdout.strip()
+
+        repo = root / "repo"
+        remote = root / "origin.git"
+        worktree = root / "reviewer"
+        subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+        subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True)
+        git(repo, "config", "user.name", "fixture")
+        git(repo, "config", "user.email", "fixture@example.invalid")
+        (repo / "implementation.py").write_text("implementation\n")
+        git(repo, "add", "implementation.py")
+        git(repo, "commit", "-qm", "implementation")
+        implementation = git(repo, "rev-parse", "HEAD")
+        target = f"{runner.PACKET_ROOT}/archived/SAMPLE_IMPL.md"
+        review = f"{runner.PACKET_ROOT}/REVIEW_SAMPLE.md"
+        archive = f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md"
+        readme = f"{runner.PACKET_ROOT}/README.md"
+        chat = "https://chatgpt.com/g/example"
+        for path, content in (
+            (target, target_packet(implementation)),
+            (review, f"""# Review
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-sample`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `sample-impl`
+- Locks: `agent-workflow`
+- Review target workstream: `sample-impl`
+- Review target packet: `{target}`
+- Reviewed main: `{implementation}`
+- Authoring chat: {chat}
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review cycle: `0`
+
+## Goal
+Review sample.
+"""),
+            (readme, "- [review-sample](REVIEW_SAMPLE.md)\n"),
+        ):
+            path_obj = repo / path
+            path_obj.parent.mkdir(parents=True, exist_ok=True)
+            path_obj.write_text(content)
+        for path in ("custodian/tools/agent/paired_review_runner.py",
+                     "custodian/tools/agent/workflow_control.py"):
+            path_obj = repo / path
+            path_obj.parent.mkdir(parents=True, exist_ok=True)
+            path_obj.write_text((ROOT / path).read_text())
+        git(repo, "add", "-A")
+        git(repo, "commit", "-qm", "review baseline")
+        reviewed_main = git(repo, "rev-parse", "HEAD")
+        git(repo, "remote", "add", "origin", str(remote))
+        git(repo, "push", "-qu", "origin", "main")
+        git(repo, "worktree", "add", "-qb", "agent/review-sample", str(worktree))
+        target_candidate = append_receipt(
+            (repo / target).read_text(), review_workstream="review-sample",
+            target_workstream="sample-impl", reviewed_main=reviewed_main,
+            implementation_commit=implementation)
+        (worktree / target).write_text(target_candidate)
+        (worktree / review).unlink()
+        review_text = (worktree / review).read_text() if (worktree / review).exists() else ""
+        review_text = f"""# Review
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-sample`
+- Kind: `review`
+- Status: `complete`
+- Dispatch: `auto`
+- Priority: `P1`
+- Depends on: `sample-impl`
+- Locks: `agent-workflow`
+- Review: `none`
+- Review target workstream: `sample-impl`
+- Review target packet: `{target}`
+- Reviewed main: `{implementation}`
+- Authoring chat: {chat}
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review cycle: `0`
+
+## Handoff
+- Authoring chat: {chat}
+
+## Independent Review
+
+Findings: none.
+"""
+        (worktree / archive).parent.mkdir(parents=True, exist_ok=True)
+        (worktree / archive).write_text(review_text)
+        (worktree / review).unlink(missing_ok=True)
+        (worktree / readme).write_text("- [review-sample](archived/REVIEW_SAMPLE.md)\n")
+        summary_path = worktree / runner.expected_summary_path("review-sample")
+        summary_path.write_text(f"""# Review summary
+Workstream: `review-sample`
+
+## Verdict: passed
+Findings: none
+No blocking defects or material acceptance gaps found.
+
+## Reviewed identities
+- Reviewed main: `{reviewed_main}`
+- Reviewed implementation commit: `{implementation}`
+
+Authoring chat: {chat}
+
+## Next Handoff
+- Next workstream: none
+""")
+        git(repo, "push", "-qu", "origin", "agent/review-sample")
+        git(repo, "fetch", "-q", "origin")
+        common = Path(git(repo, "rev-parse", "--git-common-dir"))
+        if not common.is_absolute():
+            common = (repo / common).resolve()
+        run_id = "20261030T000000Z-0123456789ab"
+        run_dir = common / "custodian-review-runs/review-sample" / run_id
+        run_dir.mkdir(parents=True)
+        (common / "custodian-review-runs/locks").mkdir(parents=True, exist_ok=True)
+        (common / "custodian-review-runs/locks/review-sample.lock").touch()
+        validation = b"{}"
+        validation_meta = json.dumps({"reviewed_main": reviewed_main,
+                                      "implementation_commit": implementation}).encode()
+        (run_dir / "validation.json").write_bytes(validation)
+        (run_dir / "coordinator-validation.json").write_bytes(validation_meta)
+        metadata = {"schema": runner.SCHEMA, "workstream": "review-sample", "run_id": run_id,
+                    "run_dir": str(run_dir), "phase": "post_exit_recovery", "fresh": True,
+                    "exit_code": 0, "branch": "agent/review-sample", "worktree": str(worktree),
+                    "packet": review, "reviewed_main": reviewed_main,
+                    "post_exit_error": "existing target receipt differs from the archived independent-review receipt",
+                    "host_validation": {"report_path": str(run_dir / "validation.json"),
+                                        "report_sha256": hashlib.sha256(validation).hexdigest(),
+                                        "metadata_sha256": hashlib.sha256(validation_meta).hexdigest()}}
+        (run_dir / "metadata.json").write_text(json.dumps(metadata))
+        claim = {"schema": "custodian.dispatch.claim.v1", "result": "claimed", "verified": True,
+                 "workstream": "review-sample", "branch": "agent/review-sample",
+                 "worktree": str(worktree), "packet": review, "run_id": "20261030T000001Z-abcdefabcdef"}
+        (run_dir / "claim.stdout").write_text(runner.CLAIM_SENTINEL + json.dumps(claim) + "\n")
+        (run_dir / "claim-receipt.json").write_text(json.dumps(claim))
+        (run_dir / "claim.stderr").write_text("")
+        (run_dir / "codex.stderr").write_text("")
+        final = (f"Workstream: review-sample\nReviewed main: {reviewed_main}\n"
+                 f"Reviewed implementation commit: {implementation}\n"
+                 "**Verdict: passed.** I found no blocking defects or material evidence gaps.\n"
+                 + "review evidence\n" * 200)
+        (run_dir / "last-message.txt").write_text(final)
+        events = [{"type": "thread.started", "thread_id": "synthetic-thread"},
+                  {"type": "turn.started"},
+                  {"item": {"type": "agent_message", "text": "progress: checked evidence"}},
+                  {"item": {"type": "agent_message", "text": runner._redacted_agent_message(final)}},
+                  {"type": "turn.completed"}]
+        (run_dir / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+        (run_dir / "RECOVERY.md").write_text(
+            "Coordinator could not verify/land review evidence: existing target receipt differs from the archived independent-review receipt. Preserve the exact review.\n")
+        return repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary_path
+
+    def write_session(self, root: Path, *, prior: str = "progress: inspected", turns: int = 1,
+                      logged: str | None = None):
+        source = (ROOT / "custodian/tools/agent/paired_review_runner.py").read_text()
+        control = (ROOT / "custodian/tools/agent/workflow_control.py").read_text()
+        final = ("Verdict: `passed` — 0 blocking defects and 0 material gaps.\n"
+                 + "detail text\n" * 250)
+        (root / "last-message.txt").write_text(final)
+        events = [{"type": "thread.started", "thread_id": "thread-synthetic"}]
+        for _ in range(turns):
+            events.extend([{"type": "turn.started"},
+                           {"item": {"type": "agent_message", "text": prior}},
+                           {"item": {"type": "agent_message",
+                                     "text": runner._redacted_agent_message(final) if logged is None else logged}},
+                           {"type": "turn.completed"}])
+        (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+        return final, source, control
+
+    def test_exact_safe_output_transformation_is_accepted_but_prefix_is_not(self):
+        source = (ROOT / "custodian/tools/agent/paired_review_runner.py").read_text()
+        control = (ROOT / "custodian/tools/agent/workflow_control.py").read_text()
+        final = ("Verdict: `passed` https://user:password@example.invalid/\n"
+                 + ("review evidence " * 50 + "\n") * 12)
+        logged = runner._redacted_agent_message(final)
+        self.assertGreater(len(final), 1200)
+        runner._verify_redacted_final_capture(final, logged, source, control)
+        with self.assertRaisesRegex(runner.RunnerError, "exact pinned transformation"):
+            runner._verify_redacted_final_capture(final, runner.safe_output(final), source, control)
+        with self.assertRaisesRegex(runner.RunnerError, "exact pinned transformation"):
+            runner._verify_redacted_final_capture(final, final[:1200], source, control)
+
+    def test_session_parser_accepts_one_completed_turn_and_rejects_contradiction_or_replay(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _, source, control = self.write_session(root)
+            _, evidence = runner._parse_redacted_final_session(
+                root, {"fresh": True, "exit_code": 0}, source, control)
+            self.assertEqual(evidence["thread_id"], "thread-synthetic")
+            self.write_session(root, prior="Verdict: findings")
+            with self.assertRaisesRegex(runner.RunnerError, "contradictory earlier verdict"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+            self.write_session(root, turns=2)
+            with self.assertRaisesRegex(runner.RunnerError, "exactly one identified completed turn"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+    def test_session_parser_rejects_unapproved_truncation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _, source, control = self.write_session(root, logged="unrelated prefix")
+            with self.assertRaisesRegex(runner.RunnerError, "exact pinned transformation"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+    def test_read_only_plan_authenticates_exact_run_and_artifacts(self):
+        with tempfile.TemporaryDirectory() as temp:
+            (repo, worktree, run_dir, reviewed_main, implementation,
+             target, archive, summary_path) = self.pass_fixture(Path(temp))
+            before = runner._file_manifest(run_dir)
+            inventory_before = runner._worktree_inventory(worktree)
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                plan = runner.plan_redacted_final_outcome_recovery(repo, "review-sample",
+                                                                    "20261030T000000Z-0123456789ab")
+            self.assertEqual(plan["implementation_commit"], implementation)
+            self.assertEqual(plan["reviewed_main"], reviewed_main)
+            self.assertEqual(plan["claim_run_id"], "20261030T000001Z-abcdefabcdef")
+            self.assertEqual(plan["outcome"]["Outcome"], "passed")
+            self.assertEqual(plan["archived_review_receipt_state"], "missing")
+            self.assertRegex(plan["plan_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(runner._file_manifest(run_dir), before)
+            self.assertEqual(runner._worktree_inventory(worktree), inventory_before)
+            self.assertFalse(Path(plan["journal"]).exists())
+            (run_dir / "last-message.txt").write_text("tampered\n")
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                with self.assertRaisesRegex(runner.RunnerError, "exact pinned transformation"):
+                    runner.plan_redacted_final_outcome_recovery(repo, "review-sample",
+                                                                 "20261030T000000Z-0123456789ab")
+
+    def test_plan_rejects_nonpassing_complete_final_even_when_capture_is_exact(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, _worktree, run_dir, _main, implementation, *_rest = self.pass_fixture(Path(temp))
+            final_path = run_dir / "last-message.txt"
+            final = final_path.read_text().replace("**Verdict: passed.**", "**Verdict: findings.**")
+            final_path.write_text(final)
+            events = [json.loads(line) for line in (run_dir / "codex.jsonl").read_text().splitlines()]
+            messages = [event for event in events if event.get("item", {}).get("type") == "agent_message"]
+            messages[-1]["item"]["text"] = runner._redacted_agent_message(final)
+            (run_dir / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                with self.assertRaisesRegex(runner.RunnerError, "complete reviewer final message"):
+                    runner.plan_redacted_final_outcome_recovery(
+                        repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+    def test_apply_is_digest_bound_labels_admin_records_and_replays_idempotently(self):
+        with tempfile.TemporaryDirectory() as temp:
+            (repo, worktree, run_dir, reviewed_main, implementation,
+             target, archive, summary_path) = self.pass_fixture(Path(temp))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+
+            def fake_finish(_repo, _workstream, checkout, active, _target_ws, target_path,
+                            _target_content, _chat, _reviewed_main, _run_dir, _host):
+                sh = lambda *args: subprocess.run(["git", "-C", str(checkout), *args], check=True,
+                                                   text=True, capture_output=True)
+                sh("add", "-A", "--", active, archive, target_path, summary_path.name,
+                   f"{runner.PACKET_ROOT}/README.md")
+                sh("-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid",
+                   "commit", "-m", "recovered review closeout")
+                sh("push", "origin", "HEAD:refs/heads/main")
+                return subprocess.check_output(["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True).strip()
+
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                plan = runner.plan_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab")
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence), \
+                    patch.object(runner, "coordinator_finish_review", side_effect=fake_finish):
+                result = runner.apply_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab", plan["plan_sha256"])
+                replay = runner.apply_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab", plan["plan_sha256"])
+            self.assertTrue(result["canonical_finish_verified"])
+            self.assertEqual(replay["landed_commit"], result["landed_commit"])
+            self.assertEqual(runner._file_manifest(run_dir), plan["run_evidence_sha256"])
+            landed = subprocess.check_output(["git", "-C", str(repo), "show",
+                                              f"origin/main:{archive}"], text=True)
+            self.assertIn("- Authored by: `coordinator`", landed)
+            self.assertIn("Coordinator-authored mirror of the authenticated reviewer target receipt", landed)
+            self.assertEqual(landed.count("## Review Outcome"), 1)
+
+    def test_plan_rejects_bad_claim_receipt_target_receipt_and_unbounded_worktree(self):
+        mutations = (
+            ("claim", lambda run, worktree, target: (run / "claim-receipt.json").write_text(
+                json.dumps({"workstream": "other-review"}))),
+            ("receipt", lambda run, worktree, target: (worktree / target).write_text(
+                (worktree / target).read_text().replace("- Status: `passed`", "- Status: `findings`"))),
+            ("conflicting_authoring_chat", lambda run, worktree, target: (
+                worktree / f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md").write_text(
+                    (worktree / f"{runner.PACKET_ROOT}/archived/REVIEW_SAMPLE.md").read_text()
+                    + "\n- Authoring chat: https://chatgpt.com/g/other\n")),
+            ("unbounded", lambda run, worktree, target: (worktree / "unexpected-evidence.txt").write_text("keep")),
+        )
+        for name, mutate in mutations:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
+                repo, worktree, run_dir, *_rest, target, _archive, _summary = self.pass_fixture(Path(temp))
+                mutate(run_dir, worktree, target)
+                evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                            "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                            "implementation_commit": _rest[1]}
+                with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                    with self.assertRaises(runner.RunnerError):
+                        runner.plan_redacted_final_outcome_recovery(
+                            repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+    def test_apply_rejects_changed_remote_ref_before_journaling_or_mutation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, _reviewed_main, implementation, target, archive, _summary = self.pass_fixture(Path(temp))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                plan = runner.plan_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab")
+            subprocess.run(["git", "-C", str(worktree), "-c", "user.name=fixture", "-c",
+                            "user.email=fixture@example.invalid", "commit", "--allow-empty", "-m", "remote drift"],
+                           check=True, capture_output=True)
+            subprocess.run(["git", "-C", str(worktree), "push", "origin", "HEAD:refs/heads/agent/review-sample"],
+                           check=True, capture_output=True)
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                with self.assertRaisesRegex(runner.RunnerError, "remote refs changed"):
+                    runner.apply_redacted_final_outcome_recovery(
+                        repo, "review-sample", "20261030T000000Z-0123456789ab", plan["plan_sha256"])
+            self.assertFalse(Path(plan["journal"]).exists())
+            self.assertNotIn("## Coordinator Recovery Provenance", (worktree / archive).read_text())
+
+    def test_apply_rejects_tampered_journal_plan_before_recovery_write(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, _main, implementation, _target, archive, _summary = self.pass_fixture(Path(temp))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                plan = runner.plan_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab")
+            original_packet = (worktree / archive).read_text()
+            tampered_plan = dict(plan)
+            tampered_plan["target_packet"] = "outside.md"
+            journal_path = Path(plan["journal"])
+            journal_path.parent.mkdir(parents=True)
+            journal_path.write_text(json.dumps({
+                "schema": runner.REDACTED_FINAL_RECOVERY_SCHEMA,
+                "workstream": "review-sample",
+                "run_id": "20261030T000000Z-0123456789ab",
+                "plan_sha256": plan["plan_sha256"],
+                "plan": tampered_plan,
+                "review_packet_original": original_packet,
+                "stage": "prepared",
+            }))
+            with self.assertRaisesRegex(runner.RunnerError, "journal plan or original packet failed digest"):
+                runner.apply_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab", plan["plan_sha256"])
+            self.assertEqual((worktree / archive).read_text(), original_packet)
+
+    def test_plan_refuses_wrong_run_locked_supervisor_and_missing_host_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, _worktree, run_dir, _reviewed_main, implementation, *_rest = self.pass_fixture(Path(temp))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence):
+                with self.assertRaisesRegex(runner.RunnerError, "run directory is missing or unsafe"):
+                    runner.plan_redacted_final_outcome_recovery(
+                        repo, "review-sample", "20261030T000002Z-0123456789ab")
+            lock_path = Path(runner.common_dir(repo)) / "custodian-review-runs/locks/review-sample.lock"
+            with lock_path.open("rb") as lock:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                with self.assertRaisesRegex(runner.RunnerError, "another supervisor"):
+                    runner.plan_redacted_final_outcome_recovery(
+                        repo, "review-sample", "20261030T000000Z-0123456789ab")
+            with patch.object(runner, "_host_evidence_for_continuation",
+                              side_effect=runner.RunnerError("pinned host evidence missing")):
+                with self.assertRaisesRegex(runner.RunnerError, "pinned host evidence missing"):
+                    runner.plan_redacted_final_outcome_recovery(
+                        repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+    def test_plan_rejects_symlinked_run_and_archived_review_artifacts(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            repo, _worktree, run_dir, *_rest = self.pass_fixture(root)
+            metadata = run_dir / "metadata.json"
+            external_metadata = root / "metadata-copy.json"
+            external_metadata.write_bytes(metadata.read_bytes())
+            metadata.unlink()
+            metadata.symlink_to(external_metadata)
+            with self.assertRaisesRegex(runner.RunnerError, "symlink in protected run evidence"):
+                runner.plan_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            repo, worktree, _run_dir, *_rest, archive, _summary = self.pass_fixture(root)
+            archived = worktree / archive
+            external_packet = root / "outside.md"
+            external_packet.write_bytes(archived.read_bytes())
+            archived.unlink()
+            archived.symlink_to(external_packet)
+            with self.assertRaisesRegex(runner.RunnerError, "archived reviewer packet is missing or unsafe"):
+                runner.plan_redacted_final_outcome_recovery(
+                    repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+    def test_unknown_capture_source_is_rejected(self):
+        source = (ROOT / "custodian/tools/agent/paired_review_runner.py").read_text()
+        control = (ROOT / "custodian/tools/agent/workflow_control.py").read_text()
+        altered = source.replace('return "\\n".join(safe_lines)', 'return "\\n".join(safe_lines[:1200])', 1)
+        with self.assertRaisesRegex(runner.RunnerError, "pinned capture source"):
+            runner._verify_redacted_final_capture("Verdict: passed", "Verdict: passed", altered, control)
+        altered_import = source.replace(
+            "from workflow_control import common_dir, redact",
+            "from workflow_control import common_dir, redact as other_redactor", 1)
+        with self.assertRaisesRegex(runner.RunnerError, "pinned capture source"):
+            runner._verify_redacted_final_capture("Verdict: passed", "Verdict: passed",
+                                                  altered_import, control)
+        secret_line = re.search(r"(?m)^SECRET_VALUE = .*?$", control).group(0)
+        altered_control = control.replace(secret_line, 'SECRET_VALUE = re.compile(r"never-match")', 1)
+        with self.assertRaisesRegex(runner.RunnerError, "pinned capture source"):
+            runner._verify_redacted_final_capture("Verdict: passed", "Verdict: passed", source,
+                                                  altered_control)
+
+
 if __name__ == "__main__":
     unittest.main()
