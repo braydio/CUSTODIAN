@@ -257,7 +257,7 @@
         ".claude/settings.json",
         ".agents/skills/custodian-next/agents/openai.yaml"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
