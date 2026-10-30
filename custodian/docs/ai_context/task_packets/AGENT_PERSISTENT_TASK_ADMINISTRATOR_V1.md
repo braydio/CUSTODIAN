@@ -3,8 +3,8 @@
 - Packet schema: custodian.task_packet.v2
 - Workstream: agent-persistent-task-administrator-v1
 - Category: agent-ops
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: auto
 - Priority: P0
 - Depends on: none
