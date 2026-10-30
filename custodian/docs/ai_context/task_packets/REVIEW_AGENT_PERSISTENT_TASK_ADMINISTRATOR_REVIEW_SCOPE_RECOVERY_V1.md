@@ -9,7 +9,7 @@
 - Authoring handoff: auto
 - Priority: P0
 - Depends on: agent-persistent-task-administrator-review-scope-recovery-v1
-- Locks: paired-review-source-provenance
+- Locks: agent-persistent-task-administrator-scope-recovery
 - Review: none
 - Review target workstream: agent-persistent-task-administrator-review-scope-recovery-v1
 - Review target packet: custodian/docs/ai_context/task_packets/archived/AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md

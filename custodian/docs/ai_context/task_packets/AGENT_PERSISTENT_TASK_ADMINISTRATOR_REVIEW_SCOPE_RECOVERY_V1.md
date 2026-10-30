@@ -8,7 +8,7 @@
 - Authoring handoff: auto
 - Priority: P0
 - Depends on: none
-- Locks: paired-review-source-provenance
+- Locks: agent-persistent-task-administrator-scope-recovery
 - Kind: implementation
 - Review: auto
 - Review stage: post-land
