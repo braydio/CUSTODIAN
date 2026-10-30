@@ -1,6 +1,8 @@
 # Fabrication Terminal Readability Pass
 
 - Status: `complete`
+- Disposition: `superseded`
+- Superseded because: The existing runtime and active fabrication design already provide the work-order view model, clickable work orders, Ready Build placement flow, and focused readability validation. No separate unlanded implementation worktree or unique changes for this packet were found.
 - Authority: `design/02_features/resource_fabrication/RESOURCE_FABRICATION_SYSTEM.md`
 - Goal: Turn the player-facing FABRICATION terminal into a work-order screen that translates raw fabrication state into decisions, ready builds, and concrete next actions.
 - Files: `custodian/game/ui/hud/ui.gd`, `custodian/game/ui/terminal/fabrication_terminal_view_model.gd`, `custodian/game/systems/core/systems/turret_placement.gd`, `custodian/autoload/fab_pipeline.gd`, `custodian/autoload/resource_ledger.gd`, `custodian/autoload/build_inventory.gd`, docs/context updates, validation.
