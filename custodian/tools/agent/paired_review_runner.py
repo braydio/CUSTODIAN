@@ -2996,6 +2996,14 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or metadata.get("report_sha256") != _sha256_bytes(report_bytes)
             or metadata.get("report_parse_error") is not None):
         return None
+    if complete_suite_failure and (
+        any(not isinstance(coverage.get(key), list)
+            or any(not isinstance(path, str) for path in coverage.get(key, []))
+            or len(coverage.get(key, [])) != len(set(coverage.get(key, [])))
+            for key in ("covered_files", "uncovered_files", "excluded_files"))
+        or not isinstance(coverage.get("covered_by"), dict)
+    ):
+        return None
     code_paths = metadata.get("code_paths")
     source_hashes = metadata.get("source_sha256")
     source_changed = metadata.get("source_changed_during_validation")
@@ -3016,8 +3024,6 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                        and ".." not in Path(path).parts for path in code_paths)
             or len(code_paths) != len(set(code_paths))
             or not isinstance(source_hashes, dict) or set(source_hashes) != set(code_paths)
-            or (complete_suite_failure
-                and not set(code_paths).issubset(set(coverage.get("covered_files", []))))
             or metadata.get("summary") != report.get("summary")
             or metadata.get("selected") != report.get("selected")
             or not isinstance(parent, str) or not re.fullmatch(r"[0-9a-f]{40,64}", parent)
@@ -3029,6 +3035,14 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or source_changed not in (False, True)
             or (source_changed and report.get("infrastructure_failure") != "import")):
         return None
+    if complete_suite_failure:
+        try:
+            manifest = host_validation._pinned_coverage_manifest(
+                Path(metadata["worktree"]), metadata["reviewed_main"],
+            )
+            host_validation._validate_canonical_coverage(report, set(code_paths), manifest)
+        except (HostValidationError, OSError, ValueError):
+            return None
     return {
         "report_sha256": _sha256_bytes(report_bytes),
         "metadata_sha256": _sha256_bytes(metadata_bytes),

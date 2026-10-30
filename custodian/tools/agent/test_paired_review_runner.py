@@ -2,6 +2,7 @@
 """Focused contract tests for the synchronous paired-review runner."""
 from __future__ import annotations
 
+import copy
 import json
 import fcntl
 import hashlib
@@ -32,6 +33,8 @@ from review_receipt_delta import (
 )
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
+import run_validation
 
 
 def review_packet(*, visual="none", refresh="no"):
@@ -3763,6 +3766,15 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         subprocess.run(["git", "-C", str(self.root), "config", "user.email", "test@example.invalid"], check=True)
         subprocess.run(["git", "-C", str(self.root), "config", "core.filemode", "true"], check=True)
         (self.root / "README.md").write_text("base\n")
+        manifest_path = self.root / "custodian/tools/validation/validation_manifest.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps({
+            "schema_version": 1,
+            "coverage_excludes": ["custodian/docs/**", "*_CLAUDE_SUMMARY.md", "*.md"],
+            "tests": [{"id": "transfer_smoke", "type": "godot_script", "tier": "unit",
+                       "script": "res://tools/validation/transfer_smoke.gd",
+                       "owners": ["custodian/**"]}],
+        }) + "\n")
         self._commit("base")
         self.base = self._git("rev-parse", "HEAD")
         self.changed_paths = [
@@ -3808,22 +3820,18 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         for row in trace_refs:
             ref, commit = row.split()
             run("update-ref", ref, commit)
-        active_target = "custodian/docs/ai_context/task_packets/AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
-        active_review = "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
         archive_target = host_validation._ADMIN_SCOPE_CORRECTION_PACKET
         archive_review = host_validation._ADMIN_SCOPE_REVIEW_PACKET
-        target_text = (repository / active_target).read_text(encoding="utf-8")
+        active_review = (f"{runner.PACKET_ROOT}/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_"
+                         "REVIEW_SCOPE_RECOVERY_V1.md")
+        target_text = (repository / archive_target).read_text(encoding="utf-8")
         target_text = target_text.replace("- Status: `ready`", "- Status: `complete`", 1)
-        (repository / archive_target).parent.mkdir(parents=True, exist_ok=True)
-        (repository / archive_target).write_text(target_text, encoding="utf-8")
-        (repository / active_target).unlink()
-        attestation = ROOT / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
-        destination = repository / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(attestation.read_bytes())
-        run("add", "--", archive_target, active_target, host_validation._ADMIN_SCOPE_ATTESTATION_PATH)
-        run("commit", "-qm", "archive correction and attest exact source")
-        implementation_commit = run("rev-parse", "HEAD").stdout.strip()
+        implementation_commit, identity_error = resolve_target_implementation_commit(
+            repository, base_main, archive_target, host_validation._ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+            target_text,
+        )
+        if identity_error:
+            self.fail(f"the published administrator correction identity is unavailable: {identity_error}")
 
         review_text = (repository / active_review).read_text(encoding="utf-8")
         review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
@@ -3857,8 +3865,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         (repository / archive_target).write_text(updated_target, encoding="utf-8")
         (repository / archive_review).parent.mkdir(parents=True, exist_ok=True)
         (repository / archive_review).write_text(review_text, encoding="utf-8")
-        (repository / active_review).unlink()
-        run("add", "--", archive_target, archive_review, active_review)
+        run("add", "--", archive_target, archive_review)
         run("commit", "-qm", "record independent correction PASS")
         approval_main = run("rev-parse", "HEAD").stdout.strip()
         run("update-ref", "refs/remotes/origin/main", approval_main)
@@ -4569,15 +4576,31 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         files = list(self.changed_paths if changed_paths is None else changed_paths)
         ids = ["transfer_smoke"] if selected else []
         return {
-            "schema": "custodian.validation.result.v1",
-            "passed": passed,
-            "changed_files": files,
-            "selected": ids,
+            "schema": "custodian.validation.result.v1", "passed": passed,
+            "changed_files": files, "selected": ids,
             "tests": ([{"id": "transfer_smoke", "status": "passed"}] if selected else []),
             "summary": {"selected": len(ids), "passed": len(ids), "failed": 0,
                         "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
             "coverage": {"complete": True, "covered_files": files, "uncovered_files": [],
                          "excluded_files": [], "covered_by": {path: ids for path in files}},
+        }
+
+    def _canonical_report(self, repository, reviewed_main, changed_files, *, passed=True):
+        manifest = host_validation._pinned_coverage_manifest(repository, reviewed_main)
+        selected_tests = run_validation.select_changed_tests(manifest["tests"], changed_files)
+        selected = [item["id"] for item in selected_tests]
+        tests = [{"id": test_id, "status": "passed" if passed else "failed"}
+                 for test_id in selected]
+        count = len(tests)
+        return {
+            "schema": "custodian.validation.result.v1", "passed": passed,
+            "changed_files": changed_files, "selected": selected, "tests": tests,
+            "summary": {"selected": count, "passed": count if passed else 0,
+                        "failed": 0 if passed else count, "timed_out": 0,
+                        "skipped": 0, "infrastructure_errors": 0},
+            "coverage": run_validation.changed_file_coverage(
+                changed_files, selected_tests, manifest.get("coverage_excludes", []),
+            ),
         }
 
     def _run(self, report, *, source_edit=False):
@@ -4782,6 +4805,85 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertIsNone(runner._failed_host_validation_report_pair(
             self.run_dir, original, workstream, run_id,
         ))
+
+    def test_failed_report_authenticates_canonical_excluded_hashed_json(self):
+        path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
+        target = self.root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text('{"fixture":true}\n')
+        self._git("add", path)
+        self._git("commit", "-m", "add attestation fixture")
+        self.reviewed_main = self._git("rev-parse", "HEAD")
+        code_paths = [*self.changed_paths, path]
+        original = {"workstream": "review-coverage-exclusion", "run_id": "20261030T010203Z-abcdef012345",
+                    "phase": "host_validation_recovery", "reviewed_main": self.reviewed_main,
+                    "implementation_commit": self.implementation, "recovery_worktree": str(self.root)}
+        manifest = host_validation._pinned_coverage_manifest(self.root, self.reviewed_main)
+        report = {"schema": "custodian.validation.result.v1", "passed": False,
+                  "changed_files": code_paths, "selected": ["transfer_smoke"],
+                  "tests": [{"id": "transfer_smoke", "status": "failed"}],
+                  "summary": {"selected": 1, "passed": 0, "failed": 1, "timed_out": 0,
+                              "skipped": 0, "infrastructure_errors": 0},
+                  "coverage": run_validation.changed_file_coverage(
+                      code_paths, manifest["tests"], manifest["coverage_excludes"])}
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        metadata = {"schema": "custodian.paired_review_host_validation.v1",
+                    "reviewed_main": self.reviewed_main, "implementation_commit": self.implementation,
+                    "worktree": str(self.root), "implementation_parent": self.base, "exit_code": 4,
+                    "source_changed_during_validation": False,
+                    "report_path": str((self.run_dir / "validation.json").resolve()),
+                    "report_sha256": hashlib.sha256(report_bytes).hexdigest(), "report_parse_error": None,
+                    "summary": report["summary"], "selected": report["selected"],
+                    "command": ["/usr/bin/python3", str(self.root / "custodian/tools/validation/run_validation.py"),
+                                "--changed", "--base", self.base, "--json"],
+                    "code_paths": code_paths,
+                    "source_sha256": {item: hashlib.sha256((self.root / item).read_bytes()).hexdigest()
+                                      for item in code_paths}}
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+        evidence = runner._failed_host_validation_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"])
+        self.assertIsNotNone(evidence)
+        runner._verify_failed_host_validation_source_identity(
+            self.root, self.root, self.reviewed_main, evidence)
+        for mutate in (
+            lambda value: value["coverage"].update(excluded_files=[path, path]),
+            lambda value: value["coverage"].update(excluded_files=[path, "custodian/game/world/transfer.gd"]),
+            lambda value: value["coverage"].update(covered_files=[]),
+            lambda value: value["coverage"].update(uncovered_files=[self.changed_paths[0]]),
+        ):
+            with self.subTest(mutate=mutate):
+                hostile = json.loads(json.dumps(report))
+                mutate(hostile)
+                hostile_bytes = (json.dumps(hostile) + "\n").encode()
+                (self.run_dir / "validation.json").write_bytes(hostile_bytes)
+                metadata["report_sha256"] = hashlib.sha256(hostile_bytes).hexdigest()
+                (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+                self.assertIsNone(runner._failed_host_validation_report_pair(
+                    self.run_dir, original, original["workstream"], original["run_id"]))
+        stale = json.loads(json.dumps(metadata))
+        stale["source_sha256"][path] = "0" * 64
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        stale["report_sha256"] = hashlib.sha256(report_bytes).hexdigest()
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(stale))
+        stale_evidence = runner._failed_host_validation_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"])
+        with self.assertRaises(runner.RunnerError):
+            runner._verify_failed_host_validation_source_identity(
+                self.root, self.root, self.reviewed_main, stale_evidence)
+
+    def test_green_report_accepts_policy_exclusion_but_rejects_false_exclusion(self):
+        path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
+        paths = [*self.changed_paths, path]
+        manifest = host_validation._pinned_coverage_manifest(self.root, self.reviewed_main)
+        report = self._report()
+        report["changed_files"] = paths
+        report["coverage"] = run_validation.changed_file_coverage(paths, manifest["tests"],
+                                                                    manifest["coverage_excludes"])
+        host_validation._validate_report(report, paths, manifest)
+        manifest["coverage_excludes"] = ["**/*.py"]
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation._validate_report(report, paths, manifest)
 
     def test_failed_host_validation_retry_state_is_append_only_and_bounded_to_two_attempts(self):
         workstream = "review-generic-host-validation-failure"
@@ -5457,8 +5559,11 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def test_host_rejects_code_path_without_a_selected_test_owner(self):
         report = self._report()
         report["coverage"]["covered_by"][self.changed_paths[0]] = []
-        with self.assertRaisesRegex(host_validation.HostValidationError, "selected test owner"):
-            host_validation._validate_report(report, self.changed_paths)
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation._validate_report(
+                report, self.changed_paths,
+                host_validation._pinned_coverage_manifest(self.root, self.reviewed_main),
+            )
 
     def test_host_rejects_source_drift_during_validation(self):
         with self.assertRaisesRegex(host_validation.HostValidationError, "source changed"):
@@ -5534,15 +5639,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         selected_paths = subprocess.run(["git", "diff", "--name-only", f"{source_base}...{landing}"],
                                         cwd=self.root, check=True, text=True,
                                         capture_output=True).stdout.splitlines()
-        report = {"schema": "custodian.validation.result.v1", "passed": True,
-                  "changed_files": selected_paths, "selected": ["census_contract"],
-                  "tests": [{"id": "census_contract", "status": "passed"}],
-                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
-                              "skipped": 0, "infrastructure_errors": 0},
-                  "coverage": {"complete": True, "covered_files": code_paths,
-                               "uncovered_files": [],
-                               "excluded_files": sorted(set(selected_paths) - set(code_paths)),
-                               "covered_by": {path: ["census_contract"] for path in code_paths}}}
+        report = self._canonical_report(self.root, landing, selected_paths)
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), self.root)
@@ -6018,16 +6115,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ["git", "diff", "--name-only", f"{fixture['source_base']}..{fixture['reviewed_main']}"],
             cwd=self.root, check=True, text=True, capture_output=True,
         ).stdout.splitlines()
-        report = {"schema": "custodian.validation.result.v1", "passed": True,
-                  "changed_files": selected_paths, "selected": ["transfer_contract"],
-                  "tests": [{"id": "transfer_contract", "status": "passed"}],
-                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
-                              "skipped": 0, "infrastructure_errors": 0},
-                  "coverage": {"complete": True, "covered_files": fixture["code_paths"],
-                               "uncovered_files": [],
-                               "excluded_files": sorted(set(selected_paths) - set(fixture["code_paths"])),
-                               "covered_by": {path: ["transfer_contract"]
-                                              for path in fixture["code_paths"]}}}
+        report = self._canonical_report(self.root, fixture["reviewed_main"], selected_paths)
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), self.root)
@@ -6641,16 +6729,15 @@ Verify the exact post-hoc attestation.
              f"{replay['base']}..{approved_main}"], cwd=repository,
             check=True, text=True, capture_output=True,
         ).stdout.splitlines()
-        report = {
-            "schema": "custodian.validation.result.v1", "passed": True,
-            "changed_files": changed_paths, "selected": ["historical_grunt_source"],
-            "tests": [{"id": "historical_grunt_source", "status": "passed"}],
-            "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
-                        "skipped": 0, "infrastructure_errors": 0},
-            "coverage": {"complete": True, "covered_files": sorted(source_paths),
-                         "uncovered_files": [], "excluded_files": [],
-                         "covered_by": {path: ["historical_grunt_source"] for path in source_paths}},
-        }
+        report = {"schema": "custodian.validation.result.v1", "passed": True,
+                  "changed_files": changed_paths, "selected": ["historical_grunt_source"],
+                  "tests": [{"id": "historical_grunt_source", "status": "passed"}],
+                  "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                              "skipped": 0, "infrastructure_errors": 0},
+                  "coverage": {"complete": True, "covered_files": sorted(source_paths),
+                               "uncovered_files": [], "excluded_files": [],
+                               "covered_by": {path: ["historical_grunt_source"]
+                                              for path in source_paths}}}
         run_dir = self.run_dir / "grunt-six-file-coordinator"
         run_dir.mkdir()
 
@@ -6902,16 +6989,20 @@ Verify the exact post-hoc attestation.
                 ["git", "diff", "--name-only", "--no-renames", f"{span['base']}..{reviewed_main}"],
                 cwd=repository, check=True, text=True, capture_output=True,
             ).stdout.splitlines()
+            manifest = host_validation._pinned_coverage_manifest(repository, reviewed_main)
+            selected_tests = run_validation.select_changed_tests(manifest["tests"], changed_paths)
+            selected_ids = [item["id"] for item in selected_tests]
+            canonical_coverage = run_validation.changed_file_coverage(
+                changed_paths, selected_tests, manifest.get("coverage_excludes", []),
+            )
             report = {
                 "schema": "custodian.validation.result.v1", "passed": True,
-                "changed_files": changed_paths, "selected": ["historical_checkpoint_resume"],
-                "tests": [{"id": "historical_checkpoint_resume", "status": "passed"}],
-                "summary": {"selected": 1, "passed": 1, "failed": 0, "timed_out": 0,
+                "changed_files": changed_paths, "selected": selected_ids,
+                "tests": [{"id": test_id, "status": "passed"} for test_id in selected_ids],
+                "summary": {"selected": len(selected_ids), "passed": len(selected_ids),
+                            "failed": 0, "timed_out": 0,
                             "skipped": 0, "infrastructure_errors": 0},
-                "coverage": {"complete": True, "covered_files": sorted(code_paths),
-                             "uncovered_files": [], "excluded_files": [],
-                             "covered_by": {path: ["historical_checkpoint_resume"]
-                                            for path in code_paths}},
+                "coverage": canonical_coverage,
             }
             run_dir = self.run_dir / "checkpoint-resume-replay"
             run_dir.mkdir()

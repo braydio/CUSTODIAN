@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: agent-paired-review-excluded-coverage-evidence-recovery-v1
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -47,3 +47,35 @@ Claim this implementation with the normal dispatcher; implement in its isolated 
 - Refresh reason: none
 - Next action: On independent PASS, recover the preserved attestation review by its exact run ID using read-only plan and SHA-pinned apply.
 - Blockers or open questions: Fresh implementation/review and host-private same-run recovery remain outstanding.
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `AGENT_PAIRED_REVIEW_EXCLUDED_COVERAGE_EVIDENCE_RECOVERY_V1_CLAUDE_SUMMARY.md`; focused excluded-JSON green/failed report tests; full 210-test paired-review runner suite; canonical changed-file validation report with complete coverage. The original Procession and administrator review run evidence was not modified.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: medium
+- What went wrong: The preserved runner test suite contained synthetic coverage reports with obsolete, noncanonical selected-test IDs and assumed archive paths that had since moved.
+- Root cause / contributing factors: Coverage authentication now binds excluded paths to the pinned validation manifest, while several historical fixtures encoded policy claims directly in their fake reports.
+- Prevention / pipeline improvement: Keep exclusion checks manifest-pinned and update synthetic reports to derive their classification from the canonical helper. Do not weaken source/path checks to preserve fabricated fixture IDs.
+- Tooling / docs drift discovered: Historical administrator review evidence currently references an active paired-review packet path while its implementation packet is archived; the verifier and fixture now use the tracked canonical location.
+- Follow-up: `review-agent-paired-review-excluded-coverage-evidence-recovery-v1`
+- What worked: A source-hashed attestation JSON fixture exercised both failed-report retry authentication and successful-report consistency, including false/extra/duplicate exclusions and stale source hashes.
+
+## Handoff
+
+- Next workstream: `review-agent-paired-review-excluded-coverage-evidence-recovery-v1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
+- Next action: Run the fresh-context paired review. After its genuine PASS, continue the existing Procession retry using its exact original run and the supported host-validation recovery plan.
+- Blockers or open questions: The independent review and the original host-private Procession recovery remain outstanding.

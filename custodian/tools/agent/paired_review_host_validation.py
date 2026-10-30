@@ -101,7 +101,7 @@ _ADMIN_SCOPE_CORRECTION_PACKET = (
 )
 _ADMIN_SCOPE_REVIEW_WORKSTREAM = "review-agent-persistent-task-administrator-review-scope-recovery-v1"
 _ADMIN_SCOPE_REVIEW_PACKET = (
-    f"{PACKET_ROOT}/archived/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
+    f"{PACKET_ROOT}/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
 )
 
 _PROCESSION_SCOPE_ATTESTATION_PATH = (
@@ -1556,6 +1556,69 @@ def _changed_paths(repo: Path, revision: str) -> list[str]:
 
 def _source_code_paths(paths: list[str]) -> set[str]:
     return {path for path in paths if Path(path).suffix.lower() in _IMPLEMENTATION_SUFFIXES}
+
+
+def _pinned_coverage_manifest(repo: Path, reviewed_main: str) -> dict:
+    """Load coverage policy only from the immutable reviewed-main commit."""
+    path = "custodian/tools/validation/validation_manifest.json"
+    result = subprocess.run(["git", "show", f"{reviewed_main}:{path}"], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise HostValidationError("pinned validation coverage manifest is unavailable")
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    try:
+        manifest = run_validation.parse_manifest_json(result.stdout)
+    except (json.JSONDecodeError, run_validation.ManifestError) as exc:
+        raise HostValidationError("pinned validation coverage manifest is malformed") from exc
+    if (not isinstance(manifest, dict) or manifest.get("schema_version") != 1
+            or not isinstance(manifest.get("tests"), list)
+            or not isinstance(manifest.get("coverage_excludes", []), list)
+            or any(not isinstance(pattern, str) for pattern in manifest.get("coverage_excludes", []))):
+        raise HostValidationError("pinned validation coverage manifest has an invalid schema")
+    return manifest
+
+
+def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: dict) -> None:
+    """Require report coverage to equal the pinned manifest's classification."""
+    coverage = report.get("coverage")
+    changed_files = report.get("changed_files")
+    selected = report.get("selected")
+    if (not isinstance(coverage, dict) or not isinstance(changed_files, list)
+            or any(not isinstance(path, str) or not path for path in changed_files)
+            or len(changed_files) != len(set(changed_files))
+            or not isinstance(selected, list) or any(not isinstance(item, str) for item in selected)):
+        raise HostValidationError("host validation coverage inventory is malformed")
+    tests = manifest["tests"]
+    by_id = {item.get("id"): item for item in tests if isinstance(item, dict)}
+    if len(by_id) != len(tests) or any(item not in by_id for item in selected):
+        raise HostValidationError("host validation selected tests are not defined by the pinned manifest")
+    # Use the canonical runner's own glob and owner mapping implementation.
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    manifest_path = "custodian/tools/validation/validation_manifest.json"
+    if manifest_path in changed_files:
+        raise HostValidationError("validation manifest changes require independently authenticated selection")
+    canonical_selected = [item["id"] for item in run_validation.select_changed_tests(
+        tests, changed_files,
+    )]
+    if selected != canonical_selected:
+        raise HostValidationError("host validation selected tests differ from canonical changed-file selection")
+    expected = run_validation.changed_file_coverage(
+        changed_files, [by_id[item] for item in selected], manifest.get("coverage_excludes", []),
+    )
+    actual = {key: coverage.get(key) for key in
+              ("covered_files", "uncovered_files", "excluded_files", "covered_by", "complete")}
+    if actual != expected:
+        raise HostValidationError("host validation coverage differs from the pinned canonical policy")
+    eligible = set(expected["covered_files"])
+    excluded = set(expected["excluded_files"])
+    if not code_paths.issubset(eligible | excluded) or code_paths & set(expected["uncovered_files"]):
+        raise HostValidationError("host validation coverage omits eligible implementation source/test files")
 
 
 def _trace_events(repo: Path, ref: str) -> list[dict]:
@@ -3267,7 +3330,8 @@ def verify_pinned_canonical_commit_source_span(repo: Path, implementation_commit
     return source_span
 
 
-def _validate_report(report: dict, implementation_paths: list[str]) -> None:
+def _validate_report(report: dict, implementation_paths: list[str],
+                     manifest: dict | None = None) -> None:
     if report.get("schema") != "custodian.validation.result.v1":
         raise HostValidationError("host validation report has the wrong schema")
     coverage = report.get("coverage")
@@ -3277,6 +3341,11 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
             or coverage.get("complete") is not True or coverage.get("uncovered_files")
             or not isinstance(tests, list) or not tests or not isinstance(selected, list) or not selected):
         raise HostValidationError("host validation report is failed, incomplete, or vacuous")
+    for field in ("covered_files", "uncovered_files", "excluded_files"):
+        values = coverage.get(field)
+        if (not isinstance(values, list) or any(not isinstance(path, str) for path in values)
+                or len(values) != len(set(values))):
+            raise HostValidationError("host validation coverage inventory is malformed")
     test_ids = {item.get("id") for item in tests if isinstance(item, dict)}
     if (len(test_ids) != len(tests) or test_ids != set(selected)
             or any(item.get("status") != "passed" for item in tests)):
@@ -3290,18 +3359,33 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
     reported_paths = set(report.get("changed_files") or [])
     if not code_paths.issubset(reported_paths):
         raise HostValidationError("host validation changed-file selection omits part of the implementation diff")
-    covered = set(coverage.get("covered_files") or [])
+    if not code_paths:
+        raise HostValidationError("host validation has no changed implementation source/test files")
     excluded = set(coverage.get("excluded_files") or [])
-    if not code_paths.issubset(covered | excluded):
-        raise HostValidationError("host validation coverage omits files from the implementation diff")
-    code_paths = _source_code_paths(implementation_paths)
-    if not code_paths or not code_paths.issubset(covered):
-        raise HostValidationError("host validation does not cover changed implementation source/test files")
-    covered_by = coverage.get("covered_by")
-    if not isinstance(covered_by, dict) or any(
-        not (set(covered_by.get(path, [])) & set(selected)) for path in code_paths
-    ):
-        raise HostValidationError("host validation has no selected test owner for changed source/test files")
+    policy_excluded = set()
+    if manifest is not None:
+        validation_dir = Path(__file__).resolve().parents[1] / "validation"
+        if str(validation_dir) not in sys.path:
+            sys.path.insert(0, str(validation_dir))
+        import run_validation
+        policy_excluded = set(run_validation.changed_file_coverage(
+            implementation_paths, [], manifest.get("coverage_excludes", []),
+        )["excluded_files"])
+    json_inputs = {path for path in implementation_paths if Path(path).suffix.lower() == ".json"}
+    needs_policy = bool(excluded or policy_excluded & json_inputs or (json_inputs and manifest is None))
+    if needs_policy:
+        if manifest is None:
+            raise HostValidationError("host validation exclusions have no pinned coverage policy")
+        _validate_canonical_coverage(report, code_paths, manifest)
+    else:
+        covered = set(coverage.get("covered_files") or [])
+        if not code_paths.issubset(covered):
+            raise HostValidationError("host validation does not cover changed implementation source/test files")
+        covered_by = coverage.get("covered_by")
+        if not isinstance(covered_by, dict) or any(
+            not (set(covered_by.get(path, [])) & set(selected)) for path in code_paths
+        ):
+            raise HostValidationError("host validation has no selected test owner for changed source/test files")
 
 
 _PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
@@ -3557,7 +3641,11 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         raise HostValidationError(f"canonical host validation failed with exit code {process.returncode}")
     if not isinstance(report, dict):
         raise HostValidationError("canonical host validation did not return structured JSON")
-    _validate_report(report, implementation_paths)
+    try:
+        coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
+    except HostValidationError:
+        coverage_manifest = None
+    _validate_report(report, implementation_paths, coverage_manifest)
     return metadata
 
 
@@ -3612,5 +3700,9 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
     _verify_generated_import_manifest(Path(repo), run_dir, metadata)
     if metadata.get("implementation_paths") != expected_span.get("paths"):
         raise HostValidationError("coordinator source path inventory differs from the verified source span")
-    _validate_report(report, expected_span.get("paths") or [])
+    try:
+        coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
+    except HostValidationError:
+        coverage_manifest = None
+    _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
     return report
