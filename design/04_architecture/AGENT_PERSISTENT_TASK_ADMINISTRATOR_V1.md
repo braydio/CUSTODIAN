@@ -49,7 +49,7 @@ Bootstrap packet `agent-persistent-task-administrator-v1` uses `Locks: agent-adm
 
 ## PR #101 category and Quickshell interface
 
-PR #101 (`https://github.com/braydio/CUSTODIAN/pull/101`) defines `custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json`, `TASK_PACKET_CATEGORY_AUTHORING.md` and authoring validator `check_packet_categories.py`. It was **open and not yet merged** during this design inspection; use its live state at implementation, do not pretend files already exist on main. Its canonical category for this program is `agent-ops`, inherited unchanged by its review/correction packets.
+PR #101 (`https://github.com/braydio/CUSTODIAN/pull/101`) defines `custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json`, `TASK_PACKET_CATEGORY_AUTHORING.md` and authoring validator `check_packet_categories.py`. It merged on 2026-10-30 at `main@38db9d88459c09ad0b9b5b7f24007913afebc0d2`. Its category registry and validator are now on main; verify the latest ref at implementation. Its canonical category for this program is `agent-ops`, inherited unchanged by its review/correction packets.
 
 The administrator **consumes**, never forks, that registry. Categories remain purely editorial/display metadata, not a dispatch, priority, claim, or acceptance signal. Preserve the ordered nine category IDs/labels; missing category in legacy packets displays `Uncategorized` without guessing or bulk backfill.
 
@@ -72,4 +72,4 @@ For slice A, prove read-only source inspection, stable frontier grouping, side-e
 
 Before landing, run scoped tests, targeted authoring/category validator (once PR #101 lands), pairing/index checks, canonical `run_validation.py --changed --json` and independent review according to packet. Do not loosen the real validation gate to make the first run green. Compare active docs and CURRENT_STATE with live source; correct only relevant drift. No asset pipeline schema/files are required for this developer tooling.
 
-**Next action:** land PR #101 only after its actual validation gate is resolved; publish/validate the slice-A pair and invoke the live dispatcher for exact eligibility. For an existing historical blocker, continue its original workstream and accepted recovery procedure rather than introducing a duplicate new claim.
+**Publication complete (2026-10-30):** PR #101 merged; the slice-A implementation and review pair passed the automatic authoring handoff and became `ready/auto` at `main@4e3e88df4512f5bc8e4088d087b7bee3b974d3fe`. **Next action:** use the host-local dispatcher to verify an exact named claim for `agent-persistent-task-administrator-v1`, then implement in its claimed worktree and run genuine fresh post-land review. Never infer a running worker from publication. For an existing historical blocker, continue its original workstream and accepted recovery procedure rather than introducing a duplicate new claim.

@@ -22,7 +22,7 @@
 - Visual review: none
 - Goal: Ship the first genuinely usable P0, host-local persistent task administrator with read-only recovery-frontier inventory, durable event/history store, low-token Codex operator and versioned status feed for PR #101 Quickshell grouping, without gaining execution/claim/lock authority.
 - Completion boundary: One idempotent observer/service with no model calls on unchanged polls, bounded Codex app-server (or supported exec fallback) diagnostic turns, durable evidence-linked incident decisions, guarded typed PROPOSAL-only operator output, read-only JSON CLI, isolated service install/uninstall and focused host smoke; service must remain disabled until explicitly enabled.
-- Current measured state: Existing dispatch.py audit --json, queue_frontier.py, workstream_recovery.py, session_supervisor.py and worktree_backlog_census.py provide separate evidence; no persistent reasoning administrator is installed by this packet. Historical 2026-10-17 census is stale baseline, not a live queue. PR #101 category taxonomy is open at this authoring time and must be merged and checked before readiness promotion. OR1 code exists but its review is not established as passed; OR2 and LF1 are not proved accepted/installed.
+- Current measured state: Existing dispatch.py audit --json, queue_frontier.py, workstream_recovery.py, session_supervisor.py and worktree_backlog_census.py provide separate evidence; no persistent reasoning administrator is installed by this packet. Historical 2026-10-17 census is stale baseline, not a live queue. PR #101 category taxonomy merged at `38db9d8` on 2026-10-30. This implementation/review pair passed the automatic authoring handoff and became `ready/auto` at `main@4e3e88df4512f5bc8e4088d087b7bee3b974d3fe`; no host-local claim or service installation is established. OR1 code exists but its review is not established as passed; OR2 and LF1 are not proved accepted/installed.
 - Evidence: design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md; PR https://github.com/braydio/CUSTODIAN/pull/101; custodian/docs/ai_context/WORKTREE_BACKLOG_RECOVERY_20261017_LEDGER.md; current agent tooling and lifecycle.
 - Task-specific authority: AGENTS.md, custodian/AGENTS.md, design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md, custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md, and existing dispatcher, task packet contract, queue frontier, OR1 observer, RunTrace and review outcome owners.
 - Work surface: New narrowly scoped custodian/tools/agent/task_administrator.py, custodian/tools/agent/task_admin/ modules and tests, and source-controlled disabled-by-default systemd user unit/installer; relevant validation manifest ownership and concise current-state documentation only.
@@ -39,7 +39,7 @@
 
 This is the owner's **first P0 campaign** ahead of prior P0 scheduling at the next safe assignment boundary. Current dispatcher only orders P0 ties by path, so select this packet by its exact workstream ID after promotion/eligibility verification; do not edit other P0s, bypass active claims or implement new priority levels. The isolated bootstrap must not use agent-workflow lock to jump into contested runtime authority or affect extant workers.
 
-The PR #101 category registry and validator must land before promoting this pair, then run targeted authoring and category validation and publish both together. Current draft/manual is intentional pending this exact publication prerequisite. The paired independent review may start only after genuine implementation landing, not merely after this planning publication.
+The PR #101 registry/validator landed and the pair passed the automatic authoring handoff. Before implementation, recheck live dispatcher eligibility, source SHA and original ownership. `ready/auto` is publication intent, not proof of a claim, installed daemon or passing review. The paired independent review may start only after genuine implementation landing, not merely after this planning publication.
 
 ## Handoff
 
@@ -49,5 +49,5 @@ The PR #101 category registry and validator must land before promoting this pair
 - ChatGPT/user planning refresh required: no
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
 - Refresh reason: none
-- Next action: Verify PR #101 is green and landed; promote this same packet/review pair together and claim by exact ID after the live dispatcher says eligible.
-- Blockers or open questions: PR #101 still unmerged at authoring; true host run and service verification need the actual Arch machine.
+- Next action: On the actual CUSTODIAN host, check dispatcher eligibility, claim `agent-persistent-task-administrator-v1` by exact ID if permitted, implement in its own worktree, and run genuine fresh-context post-land review.
+- Blockers or open questions: PR #101 and packet publication gates are complete. Host-local claim and real service/restart verification require the actual Arch host; later OR1/OR2 recovery authority remains separately acceptance-gated.
