@@ -58,6 +58,18 @@ Use this map to land on the right material fast:
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
+## Packet Categories for ChatGPT Authoring and Mission Control
+
+Before authoring a new implementation, review or correction packet, read
+`docs/ai_context/TASK_PACKET_CATEGORIES.json` and
+`docs/ai_context/TASK_PACKET_CATEGORY_AUTHORING.md` from current main. Use
+one valid `Category:` ID based on the work's primary domain; reviews and
+corrections inherit their implementation category. Validate newly authored
+packets with `tools/agent/check_packet_categories.py` before publication.
+The category is display metadata, not a dispatcher status or new claim gate.
+Old packets without a category remain valid and display as Uncategorized until
+explicitly backfilled.
+
 ## Automatic Task Packet Handoff
 
 ### Automatic task packet authoring handoff

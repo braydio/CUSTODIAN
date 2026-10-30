@@ -15,6 +15,16 @@ Independent, separately landable work should use separate workstreams.
 New packets use `Packet schema: custodian.task_packet.v2`. Existing packets
 without that field remain valid legacy packets and do not need bulk migration.
 
+New task-packet category contract: before drafting, read the **current**
+`custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json` and select exactly one
+category ID for the primary work surface. Copy that ID into `- Category:`
+(after `Workstream:`). Reviews and corrections inherit their parent category;
+never classify them as agent-ops merely because they are reviews. Run
+`python3 custodian/tools/agent/check_packet_categories.py <new packet paths...>`
+and the existing paired authoring preflight before publication. See
+`TASK_PACKET_CATEGORY_AUTHORING.md`. Existing legacy packets without categories
+remain valid and are shown as Uncategorized by Mission Control.
+
 Before authoring, inspect current `origin/main`, applicable AGENTS, the relevant
 design/runtime authority, current tests, and any existing packet/workstream for
 the same semantic task. Reuse a stable Workstream ID when continuing the same
@@ -30,6 +40,7 @@ Ready/Auto view, never selection authority.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<lowercase-kebab-id>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
