@@ -161,6 +161,43 @@ does **not** authorize altering third-party claims, review verdicts, locks, or
 worktree preservation requirements. Preserve the ordinary workflow and review
 contracts.
 
+## Direct Repository Execution With Connected Tools
+
+**Project-owner directive (2026-10-29):** An assistant with connected repository
+write tools is an implementation participant, not merely an author of Codex or
+Claude instructions. For a user-requested change, prefer inspecting the live
+repository, making the smallest safe change directly, performing available
+focused checks, committing/publishing when permitted, and reporting verified
+results. Do not create a task packet or delegate a trivial documentation fix,
+metadata correction, or bounded housekeeping change solely to have another
+agent perform the edit.
+
+Before mutating, read the applicable repository authority, check current
+`origin/main`, resolve any existing workstream/packet and claim ownership, and
+identify the exact paths and validation obligations. Connected GitHub write
+access does **not** establish access to the user's local host, process liveness,
+worktrees, Blender/Godot runtime, or private source artifacts. Preserve all
+claimed branches, independent-review evidence, locks, and human approval gates.
+Never use direct API writes to bypass a claimed workstream, mandatory review,
+worktree/dispatcher requirements, runtime or Asset V2 approval, or a failed
+validation.
+
+For a **bounded, unclaimed documentation or packet-metadata correction** with
+no host-only acceptance requirement, the project owner permits a direct GitHub
+API edit as a documented exception to the usual local-worktree implementation
+route when that is the available write surface. Use an exact expected
+`origin/main` parent, a non-force atomic update, and narrow changed-path
+verification; include `[skip render]` when the Render isolation rule applies.
+Report the resulting commit and re-read the landed contents. Do not represent
+GitHub publication as synchronization of the user's persistent local checkout;
+that still requires its existing guarded local sync procedure.
+
+For normal packeted implementations, source or runtime edits, and work needing
+host-local tests, use the established dispatcher/workstream lifecycle and
+independent review. Delegate only operations unavailable through connected
+tools or those requiring a distinct reviewer context. Clearly distinguish
+inspected, edited, landed, tested, independently reviewed, and approved.
+
 ## Existing-workstream continuity: ownership is not a session veto
 
 **Project-owner directive (2026-10-27):** A Codex session is an expendable worker;
