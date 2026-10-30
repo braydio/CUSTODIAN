@@ -1,0 +1,33 @@
+# REVIEW: Paired-review dual-disposition recovery V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-dual-disposition-recovery-v1`
+- Category: `agent-ops`
+- Authoring handoff: `auto`
+- Kind: `review`
+- Status: `draft`
+- Dispatch: `manual`
+- Priority: `P1`
+- Depends on: `agent-paired-review-dual-disposition-recovery-v1`
+- Locks: `paired-review-dual-disposition-recovery`
+- Review: `none`
+- Review target workstream: `agent-paired-review-dual-disposition-recovery-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_DUAL_DISPOSITION_RECOVERY_V1.md`
+- Reviewed main: `ff5e3a02a6516f3a9388ec5763a68a50e4fbbf82`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify the exact-run dual-disposition recovery and prompt correction without changing or accepting the protected original review.
+- Reviewed implementation acceptance: Verify every acceptance item in the paired implementation packet, with emphasis on complete evidence binding, both-defect recognition, immutable preservation before baseline restoration, separate fresh reviewer disposition, canonical receipt/outcome enforcement, exact generated prompt, journaling/idempotence, and claim/lock release only after canonical landing.
+- Review evidence: Landed implementation diff and archived packet; focused positive and adversarial tests; exact source-span and changed-file validation evidence; prompt-generation tests; synthetic temporary-repository recovery journal and preservation checks. The host-local protected run is read-only reference evidence and must not be opened or executed by this paired review unless a later explicit control authorizes access.
+- Correction threshold: Any capability to accept the original PASS, fabricate/rewrite reviewer judgment, restore baseline before durable evidence preservation, mutate protected host-local artifacts during implementation/review, accept noncanonical receipt bytes, release a claim before canonical landed outcome, or generalize beyond the exact authorized run is a blocking finding.
+- Focused validation: Independently inspect the exact landed diff and tests; run `python3 custodian/tools/agent/test_paired_review_runner.py`, relevant workstream tests if lifecycle code changed, canonical changed-file validation, syntax checks, and `git diff --check`. Do not execute recovery on the protected run.
+- Review focus: Exact source/run/claim binding; immutable manifests and preservation copies; plan/apply separation; crash/race/ref/lock/process behavior; safe target baseline restoration; canonical reviewer-authored outcome/receipt; prompt clarity; idempotent recovery; no early claim release; isolation of existing recovery modes.
+- Acceptance: Produce a fresh-context, findings-first independent review of the landed implementation. Record a canonical PASS only if every acceptance invariant is independently established; otherwise report stable cycle-scoped findings or `human_required` and preserve all claims and worktrees. Do not run the new recovery against the protected original.
+- Non-goals: Execute any recovery plan/apply; inspect or mutate protected reviewer artifacts; author or infer the original review disposition; alter reviewed implementation; release the protected claim/lock; review unrelated recovery systems beyond regression isolation.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Deferred: Any recovery of the protected run, its continuation reviewer launch, or acceptance/disposition of its review; all operations on the two other protected reviews.
