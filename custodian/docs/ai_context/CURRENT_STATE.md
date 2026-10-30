@@ -1,5 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
+## Persistent task administrator bootstrap (2026-10-30)
+
+`custodian/tools/agent/task_administrator.py` provides a read-only observer,
+versioned JSON snapshot, safe-retirement diagnostics, and private evidence event
+ledger. Its user systemd unit template is disabled by default; host smoke passed
+and the temporary installation was removed. Slice A does not dispatch, resume,
+park, release claims, accept reviews, or clean worktrees. See
+`design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md` and the
+paired task packet for implementation evidence and the remaining independent
+review gate.
+
 ## Procgen Environmental Evidence ES-1 site identity foundation (2026-10-28)
 
 Intent-enabled story sites now project only from existing F02
@@ -157,6 +168,10 @@ The user-approved **future** Highland Station redesign is locked in `design/05_l
 
 
 
+## P0 Persistent Codex Task Administrator campaign (2026-10-30)
+
+The owner approved `agent-persistent-task-administrator-v1` as the top P0 *scheduling campaign* ahead of previously authored P0s at the next safe assignment boundary, not an override of existing claims, locks, review, validation or human gates. Architecture: `design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md`. PR #101 merged at `38db9d8`, and the first implementation/independent review packet pair passed authoring validation and is **`ready/auto`** at `main@4e3e88d`. A host-local claim/dispatcher decision is not verified, and no persistent administrator is installed through packet publication. Category: `agent-ops`, shared with Quickshell/Mission Control; PR: https://github.com/braydio/CUSTODIAN/pull/101. First slice builds an opt-in read-only persistent evidence/watcher daemon and low-token Codex reasoning operator; later separately reviewed slices handle authorized delegation, historical blocker remediation and the taskbar consumer. Historical worktree/queue counts require fresh host audit before any recovery action. No review PASS, OR2 lock parking, or auto-claim is inferred from this plan.
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
 ## Mission Control TUI-first planning (2026-10-12)
 
 The proposed developer operations console is specified at
@@ -167,8 +182,8 @@ read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
 supervisor integration, validation, attention and guarded workflow actions,
 with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
 Dispatcher eligibility, actual Git landing, independent review receipts and
-verified OR1 process identity remain separate authorities; before OR1/OR2
-land, unknown execution ownership must not be shown as LIVE. Source Codex
+verified OR1 process identity remain separate authorities; without verified local OR1 evidence, unknown execution ownership must not
+be shown as LIVE. OR2 recovery/lease mutation is still not available. Source Codex
 usage tracker is user-supplied, not the canonical packet/claim parser.
 Authoring chat: `not-recorded` pending exact current conversation URL.
 
@@ -178,9 +193,13 @@ Authoring chat: `not-recorded` pending exact current conversation URL.
 An approved architectural plan now separates execution-liveness from durable
 `agent/<workstream>` branch preservation. Spec:
 `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
-The OR1 `agent-orphan-recovery-observability-v1` and OR2
-`agent-orphan-recovery-fenced-parking-v1` paired Codex packets are
-**authored but not implemented**; both honor the `agent-workflow` lock.
+OR1 `agent-orphan-recovery-observability-v1` has landed additive read-only
+`session_supervisor.py` and `workstream_recovery.py` code; its implementation
+packet is archived complete, but its independent review remains active
+`ready/auto` in the inspected main and has NOT been verified accepted. OR2
+`agent-orphan-recovery-fenced-parking-v1` remains an authored dependency-gated
+packet, not implemented. OR1 uses its narrower observability lock; OR2
+retains the `agent-workflow` lock.
 An OR1 live-process/journal classifier precedes OR2 exact-owner CAS-fenced
 park/resume. The existing dispatcher still treats agent branches as claimed,
 and the existing review runner still preserves `post_exit_recovery` with no

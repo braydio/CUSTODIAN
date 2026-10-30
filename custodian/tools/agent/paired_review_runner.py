@@ -2996,6 +2996,14 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or metadata.get("report_sha256") != _sha256_bytes(report_bytes)
             or metadata.get("report_parse_error") is not None):
         return None
+    if complete_suite_failure and (
+        any(not isinstance(coverage.get(key), list)
+            or any(not isinstance(path, str) for path in coverage.get(key, []))
+            or len(coverage.get(key, [])) != len(set(coverage.get(key, [])))
+            for key in ("covered_files", "uncovered_files", "excluded_files"))
+        or not isinstance(coverage.get("covered_by"), dict)
+    ):
+        return None
     code_paths = metadata.get("code_paths")
     source_hashes = metadata.get("source_sha256")
     source_changed = metadata.get("source_changed_during_validation")
@@ -3016,8 +3024,6 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                        and ".." not in Path(path).parts for path in code_paths)
             or len(code_paths) != len(set(code_paths))
             or not isinstance(source_hashes, dict) or set(source_hashes) != set(code_paths)
-            or (complete_suite_failure
-                and not set(code_paths).issubset(set(coverage.get("covered_files", []))))
             or metadata.get("summary") != report.get("summary")
             or metadata.get("selected") != report.get("selected")
             or not isinstance(parent, str) or not re.fullmatch(r"[0-9a-f]{40,64}", parent)
@@ -3029,6 +3035,14 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or source_changed not in (False, True)
             or (source_changed and report.get("infrastructure_failure") != "import")):
         return None
+    if complete_suite_failure:
+        try:
+            manifest = host_validation._pinned_coverage_manifest(
+                Path(metadata["worktree"]), metadata["reviewed_main"],
+            )
+            host_validation._validate_canonical_coverage(report, set(code_paths), manifest)
+        except (HostValidationError, OSError, ValueError):
+            return None
     return {
         "report_sha256": _sha256_bytes(report_bytes),
         "metadata_sha256": _sha256_bytes(metadata_bytes),
@@ -3575,6 +3589,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     else:
         source_span = host_validation.resolve_validation_source_span(
             repo, reviewed_main, implementation_commit, packet.review_target_workstream, target_path,
+            approval_main=origin_main,
         )
 
     required_evidence = [run_dir / "metadata.json", run_dir / "claim.stdout"]
@@ -3899,8 +3914,14 @@ def _verify_host_validation_at_commit(repo: Path, run_dir: Path, reviewed_main: 
             or metadata.get("report_sha256") != host_evidence.get("report_sha256")
             or metadata.get("source_changed_during_validation") is not False):
         raise RunnerError("completed continuation host-validation provenance has the wrong identity")
+    source_provenance = metadata.get("source_span", {}).get("provenance", {})
+    scope_attestation = (source_provenance.get("scope_attestation")
+                         if isinstance(source_provenance, dict) else None)
+    approval_main = (scope_attestation.get("approval_main")
+                     if isinstance(scope_attestation, dict) else None)
     expected_span = host_validation.resolve_validation_source_span(
         repo, reviewed_main, implementation_commit, target_workstream, target_packet_path,
+        approval_main=approval_main,
     )
     if (metadata.get("source_span") != expected_span
             or metadata.get("source_span_base") != expected_span.get("base")
@@ -4934,6 +4955,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                     worktree, validation_dir, reviewed_main, implementation_commit,
                     target_workstream=packet.review_target_workstream,
                     target_packet_path=target_path,
+                    approval_main=plan["coordinator_main"],
                     **({"source_span_override": plan["source_span"]}
                        if missing_checkout_reconstruction else {}),
                 )

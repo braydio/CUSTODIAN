@@ -11,6 +11,10 @@ Copy this file into `custodian/docs/ai_context/task_packets/` alongside the
 implementation packet it pairs with, only when that packet declares
 `Review: auto`.
 
+Inherit the implementation packet's `Category:` ID exactly. Verify it exists
+in `TASK_PACKET_CATEGORIES.json` and validate both packet headers with
+`custodian/tools/agent/check_packet_categories.py` before publication.
+
 Naming convention:
 
 ```text
@@ -35,6 +39,7 @@ required fresh-review metadata without being blocked by unrelated packet drift.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-<implementation-id>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Kind: `review`
 - Status: `ready`
 - Dispatch: `auto`
