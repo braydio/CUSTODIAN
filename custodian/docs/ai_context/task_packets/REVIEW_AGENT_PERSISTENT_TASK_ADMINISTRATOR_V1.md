@@ -6,6 +6,7 @@
 - Kind: review
 - Status: draft
 - Dispatch: manual
+- Authoring handoff: auto
 - Priority: P0
 - Depends on: agent-persistent-task-administrator-v1
 - Locks: agent-administration-bootstrap

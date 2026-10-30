@@ -5,6 +5,7 @@
 - Category: agent-ops
 - Status: draft
 - Dispatch: manual
+- Authoring handoff: auto
 - Priority: P0
 - Depends on: none
 - Locks: agent-administration-bootstrap
