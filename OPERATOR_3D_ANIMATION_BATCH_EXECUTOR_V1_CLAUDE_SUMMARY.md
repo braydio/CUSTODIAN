@@ -46,7 +46,7 @@ The accepted source SHA-256 is `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52
 
 Both presentations use preview scale 1.0 and offset `(0,-42)`, with root pixel `(64,106)`. The Awakening source scene still contains `RuinFloorCrackC`; the capture hid only that exact no-collision Sprite2D detail in the isolated preview instance after checking its texture and position. The authored scene remains untouched.
 
-Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T170643Z/REVIEW_MANIFEST.json`. The five listed artifacts and their SHA-256/byte counts were independently verified from Dropbox. Retention is delete-after-review.
+Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T170942Z/REVIEW_MANIFEST.json`. The five listed artifacts and their SHA-256/byte counts were independently verified from Dropbox. Retention is delete-after-review.
 
 ## Process Feedback
 
