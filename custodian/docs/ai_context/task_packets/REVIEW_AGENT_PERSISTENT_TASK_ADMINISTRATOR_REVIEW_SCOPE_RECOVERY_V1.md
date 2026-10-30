@@ -29,7 +29,7 @@
 - Review focus: One source-scope correction only. Confirm newer `origin/main` is **approval evidence**, never an alternate implementation/test source or authorization for a new review claim. Ensure no unrelated previous exception behavior changes.
 - Acceptance: Genuine fresh independent review with zero blocking defects and gaps; canonical findings/PASS and target receipt through existing review lifecycle. Does not grant original administrator review PASS or permit autonomous delegation.
 - Non-goals: Do not mutate the original administrator review claim, archived packet, private host run, root dirty files, unrelated historical attestation cases, runtime, or B/C executable authority.
-- Task overrides: TASK OVERRIDE: paired post-land review may commit only its durable reviewer outcome/summary and bounded correction/re-review packets under the established paired-review lifecycle.
+- Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
 ## Procedure
 
