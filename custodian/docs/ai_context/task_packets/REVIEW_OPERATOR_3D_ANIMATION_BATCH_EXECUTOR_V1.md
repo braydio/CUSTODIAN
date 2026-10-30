@@ -7,7 +7,7 @@
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-3d-animation-batch-executor-v1`
-- Locks: `operator-3d-animation-pipeline`
+- Locks: `operator-3d-animation-batch-executor`
 - Review: `none`
 - Review target workstream: `operator-3d-animation-batch-executor-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/OPERATOR_3D_ANIMATION_BATCH_EXECUTOR_V1.md`

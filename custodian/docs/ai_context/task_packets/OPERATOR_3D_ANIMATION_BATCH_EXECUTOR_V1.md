@@ -6,7 +6,7 @@
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `operator-3d-animation-batch-pipeline-v1`
-- Locks: `operator-3d-animation-pipeline`
+- Locks: `operator-3d-animation-batch-executor`
 - Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
