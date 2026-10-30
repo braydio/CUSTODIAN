@@ -4,8 +4,8 @@
 - Workstream: `agent-paired-review-dual-disposition-recovery-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `paired-review-dual-disposition-recovery`

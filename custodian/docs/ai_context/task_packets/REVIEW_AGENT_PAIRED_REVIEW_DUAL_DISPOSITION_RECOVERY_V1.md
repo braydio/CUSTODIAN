@@ -5,8 +5,8 @@
 - Category: `agent-ops`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-paired-review-dual-disposition-recovery-v1`
 - Locks: `paired-review-dual-disposition-recovery`
