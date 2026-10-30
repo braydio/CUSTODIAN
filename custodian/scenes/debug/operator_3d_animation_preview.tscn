@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://tools/debug/operator_3d_animation_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://game/actors/operator/operator.tscn" id="2_operator"]
+[ext_resource type="Script" path="res://game/world/camera.gd" id="3_camera"]
+[ext_resource type="Texture2D" path="res://content/masters/sundered_keep/sundered_keep_main_overlay.png" id="4_environment"]
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("1_preview")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="RepresentativeEnvironment" type="Sprite2D" parent="World"]
+z_index = -120
+position = Vector2(0, 0)
+scale = Vector2(0.710776, 0.731429)
+texture = ExtResource("4_environment")
+centered = false
+
+[node name="Operator" parent="World" instance=ExtResource("2_operator")]
+position = Vector2(1808, 2448)
+
+[node name="Camera2D" type="Camera2D" parent="World"]
+position = Vector2(1808, 2448)
+zoom = Vector2(0.84, 0.84)
+script = ExtResource("3_camera")
+base_zoom = Vector2(0.84, 0.84)
