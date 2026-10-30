@@ -30,6 +30,24 @@ Added a dev-only wrapper for the real Awakening scene at Attestation Gallery (`z
 - Review questions: Do the corrected hands and arms read relaxed through the loop? Does the stance/weight distribution look natural, including Southwest boundary contact and the raised-foot/stagger impression? Does the idle read alive at actual game scale?
 - Default cleanup after the human decision: delete-after-review.
 
+## Approved 2.5D vs. corrected 3D visual comparison
+
+The earlier review bundle did not contain approved-runtime A/B evidence. Reused its existing v2 candidate identity and full 2,104-frame package; did not rerender or mutate the candidate frames. Captured the approved runtime and candidate separately through the same Awakening preview/presenter, preserving one visible body at a time.
+
+Compact local bundle: `/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/visual_comparison_20261030/review_bundle/`
+
+- `operator_3d_vs_approved_8dir.png`: first, middle and late frames across all eight directions; approved pixels remain 96×96, candidate pixels remain 128×128, and the sheet uses nearest-neighbor 2× enlargement only.
+- `operator_3d_vs_approved_ingame.png`: South middle-frame gameplay views, same real Awakening camera, spawn, floor, shadow and viewport size.
+- `operator_3d_vs_approved_motion.mp4`: H.264, `yuv420p`, 3840×1440, 30fps, 526 frames / 17.533s. Four synchronized A/B panels show N, NE, S and SW. This is two complete candidate loops; approved playback keeps the existing 12fps SpriteFrames resource cadence and therefore loops at its own period. NE and SW approved panels explicitly use N and S fallback art.
+- `operator_3d_technical_comparison.md`: timing, scale/offset, technical measurements, visual concerns and human questions.
+- `comparison_manifest.json`: source/dependency hashes, captured frame identities, settings and artifact hashes.
+
+The approved resource's 12fps value is observed cadence only; its timing-authority receipt is unavailable. The candidate remains 30fps preview-only and `candidate_unapproved`. The existing transform is disclosed: candidate `scale=(0.75,0.75)`, `position=(0,-31.5)`, mapping root `(64,106)` to the actor origin. No runtime timing or approval authority was granted.
+
+Validation for this handoff: the nine `test_operator_3d_animation_preview_package` tests pass; the final Awakening smoke passes after checking all 2,104 candidate frames, root registration, the actual 1.89 camera, walkable Attestation Gallery spawn, disabled simulation/triggers, shadow, and one body owner. The composed motion file probes as 526 frames at 30fps, H.264 `yuv420p`; every remote artifact hash and size matches the local manifest.
+
+Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T162611Z/REVIEW_MANIFEST.json` (uploaded; five artifacts independently verified). Reviewer questions cover eight-direction identity, natural arms/stance/feet/garment motion at game scale, Southwest bottom-edge contact, and diagonal fallback limitations. Retention remains delete-after-review.
+
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
@@ -39,7 +57,7 @@ Added a dev-only wrapper for the real Awakening scene at Attestation Gallery (`z
 - Root cause / contributing factors: the preview reused the old top-left control placement and the runtime multiply shadow material's transparent texels darkened the scene; the fixed camera/scale produced a directional boundary contact; Blender EEVEE output varied between processes
 - Prevention / pipeline improvement: capture the actual target environment early, test alpha bounds across all directions, and report repeat-render pixel identity instead of assuming determinism
 - Tooling / docs drift discovered: none
-- Follow-up: manual-follow-up
+- Follow-up: human-visual-review-required
 - What worked: hash-bound packaging and the Awakening smoke validated every frame through the real presenter before the compact visual handoff
 
 ## Next Handoff
@@ -50,5 +68,5 @@ Added a dev-only wrapper for the real Awakening scene at Attestation Gallery (`z
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
 - Refresh reason: Human visual assessment of corrected hands, stance, foot contact and subtle movement is required before further retarget iteration or executor expansion.
-- Next action: Review the published full loop and matched comparison, record the visual decision, then explicitly continue this same workstream if engineering should resume.
-- Blockers or open questions: Does the corrected hand/arm pose remain relaxed in motion? Is the Southwest boundary contact acceptable? Does the idle feel alive at the Awakening camera scale?
+- Next action: Review the published A/B comparison package, record the visual decision, then explicitly continue this same workstream if engineering should resume.
+- Blockers or open questions: Does the candidate preserve the approved Operator identity? Are hands, arms, stance, grounding and subtle motion acceptable across the loop? Is Southwest boundary contact acceptable? Are the missing exact approved diagonal frames a material limitation?
