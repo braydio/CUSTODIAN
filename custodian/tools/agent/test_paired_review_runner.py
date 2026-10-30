@@ -4603,6 +4603,190 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ),
         }
 
+    def _completed_host_validation_fixture(self):
+        excluded_path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
+        excluded_file = self.root / excluded_path
+        excluded_file.parent.mkdir(parents=True, exist_ok=True)
+        excluded_file.write_text('{"fixture":true}\n')
+        self._git("add", excluded_path)
+        self._git("commit", "-m", "add excluded evidence fixture")
+        reviewed_main = self._git("rev-parse", "HEAD")
+        paths = sorted([*self.changed_paths, excluded_path])
+        report = self._canonical_report(self.root, reviewed_main, paths)
+        span = {
+            "base": self.base,
+            "head": reviewed_main,
+            "commits": [reviewed_main],
+            "paths": paths,
+            "provenance": {"kind": "canonical-implementation-commit"},
+        }
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": reviewed_main,
+            "implementation_commit": reviewed_main,
+            "source_changed_during_validation": False,
+            "source_span": span,
+            "source_span_base": span["base"],
+            "source_span_head": span["head"],
+            "implementation_paths": paths,
+            "code_paths": paths,
+            "source_sha256": {
+                path: hashlib.sha256(subprocess.run(
+                    ["git", "show", f"{reviewed_main}:{path}"], cwd=self.root,
+                    check=True, capture_output=True,
+                ).stdout).hexdigest()
+                for path in paths
+            },
+        }
+        fixture = {
+            "reviewed_main": reviewed_main,
+            "implementation_commit": reviewed_main,
+            "paths": paths,
+            "span": span,
+            "report": report,
+            "metadata": metadata,
+        }
+        self._persist_completed_host_validation_fixture(fixture)
+        return fixture
+
+    def _persist_completed_host_validation_fixture(self, fixture):
+        report_bytes = (json.dumps(fixture["report"], sort_keys=True) + "\n").encode()
+        fixture["metadata"]["report_sha256"] = hashlib.sha256(report_bytes).hexdigest()
+        metadata_bytes = (json.dumps(fixture["metadata"], sort_keys=True) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        (self.run_dir / "coordinator-validation.json").write_bytes(metadata_bytes)
+        fixture["host_evidence"] = {
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+            "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest(),
+        }
+        fixture["report_bytes"] = report_bytes
+        fixture["metadata_bytes"] = metadata_bytes
+
+    def _set_completed_host_validation_baseline(self, fixture, reviewed_main):
+        fixture["reviewed_main"] = reviewed_main
+        fixture["implementation_commit"] = reviewed_main
+        fixture["span"] = {
+            **fixture["span"],
+            "head": reviewed_main,
+            "commits": [reviewed_main],
+        }
+        fixture["metadata"].update({
+            "reviewed_main": reviewed_main,
+            "implementation_commit": reviewed_main,
+            "source_span": fixture["span"],
+            "source_span_head": reviewed_main,
+        })
+        self._persist_completed_host_validation_fixture(fixture)
+
+    def _verify_completed_host_validation_fixture(self, fixture, *, host_evidence=None):
+        with patch.object(host_validation, "resolve_validation_source_span",
+                          return_value=fixture["span"]):
+            return runner._verify_host_validation_at_commit(
+                self.root, self.run_dir, fixture["reviewed_main"],
+                fixture["implementation_commit"],
+                host_evidence or fixture["host_evidence"],
+                target_workstream="review-sample",
+                target_packet_path="custodian/docs/ai_context/task_packets/archived/SAMPLE.md",
+            )
+
+    def test_completed_host_evidence_uses_pinned_manifest_and_preserves_original_bytes(self):
+        fixture = self._completed_host_validation_fixture()
+        report_bytes = fixture["report_bytes"]
+        metadata_bytes = fixture["metadata_bytes"]
+        manifest_path = self.root / "custodian/tools/validation/validation_manifest.json"
+        working_manifest = json.loads(manifest_path.read_text())
+        working_manifest["coverage_excludes"] = []
+        manifest_path.write_text(json.dumps(working_manifest) + "\n")
+
+        self._verify_completed_host_validation_fixture(fixture)
+
+        self.assertEqual((self.run_dir / "validation.json").read_bytes(), report_bytes)
+        self.assertEqual((self.run_dir / "coordinator-validation.json").read_bytes(), metadata_bytes)
+
+    def test_completed_host_evidence_rejects_exclusions_under_a_different_pinned_baseline(self):
+        fixture = self._completed_host_validation_fixture()
+        manifest_path = self.root / "custodian/tools/validation/validation_manifest.json"
+        pinned_manifest = json.loads(manifest_path.read_text())
+        pinned_manifest["coverage_excludes"] = []
+        manifest_path.write_text(json.dumps(pinned_manifest) + "\n")
+        self._git("add", "custodian/tools/validation/validation_manifest.json")
+        self._git("commit", "-m", "change pinned coverage policy")
+        self._set_completed_host_validation_baseline(fixture, self._git("rev-parse", "HEAD"))
+
+        with self.assertRaisesRegex(runner.RunnerError, "not canonical and green"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_fails_closed_when_pinned_manifest_is_missing(self):
+        fixture = self._completed_host_validation_fixture()
+        self._git("rm", "custodian/tools/validation/validation_manifest.json")
+        self._git("commit", "-m", "remove pinned manifest")
+        self._set_completed_host_validation_baseline(fixture, self._git("rev-parse", "HEAD"))
+
+        with self.assertRaisesRegex(runner.RunnerError, "no pinned coverage policy"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_fails_closed_when_pinned_manifest_is_malformed(self):
+        fixture = self._completed_host_validation_fixture()
+        manifest_path = "custodian/tools/validation/validation_manifest.json"
+        (self.root / manifest_path).write_text("{malformed json\n")
+        self._git("add", manifest_path)
+        self._git("commit", "-m", "malform pinned manifest")
+        self._set_completed_host_validation_baseline(fixture, self._git("rev-parse", "HEAD"))
+
+        with self.assertRaisesRegex(runner.RunnerError, "no pinned coverage policy"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_rejects_a_forged_excluded_path(self):
+        fixture = self._completed_host_validation_fixture()
+        fixture["report"]["coverage"]["excluded_files"].append(self.changed_paths[0])
+        self._persist_completed_host_validation_fixture(fixture)
+
+        with self.assertRaisesRegex(runner.RunnerError, "not canonical and green"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_enforces_report_and_source_hashes(self):
+        fixture = self._completed_host_validation_fixture()
+        forged_evidence = dict(fixture["host_evidence"])
+        forged_evidence["report_sha256"] = "0" * 64
+        with self.assertRaisesRegex(runner.RunnerError, "digests changed"):
+            self._verify_completed_host_validation_fixture(fixture, host_evidence=forged_evidence)
+
+        source_path = fixture["paths"][0]
+        fixture["metadata"]["source_sha256"][source_path] = "0" * 64
+        self._persist_completed_host_validation_fixture(fixture)
+        with self.assertRaisesRegex(runner.RunnerError, "source hash changed"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_enforces_source_span_identity(self):
+        fixture = self._completed_host_validation_fixture()
+        fixture["metadata"]["source_span_base"] = "f" * 40
+        self._persist_completed_host_validation_fixture(fixture)
+
+        with self.assertRaisesRegex(runner.RunnerError, "source-span provenance changed"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+    def test_completed_host_evidence_rejects_missing_test_ownership_and_failed_report(self):
+        fixture = self._completed_host_validation_fixture()
+        fixture["report"]["coverage"]["covered_by"].pop(self.changed_paths[0])
+        self._persist_completed_host_validation_fixture(fixture)
+        with self.assertRaisesRegex(runner.RunnerError, "not canonical and green"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+        fixture["report"]["passed"] = False
+        fixture["report"]["tests"][0]["status"] = "failed"
+        fixture["report"]["summary"].update({"passed": 0, "failed": len(fixture["report"]["tests"])})
+        self._persist_completed_host_validation_fixture(fixture)
+        with self.assertRaisesRegex(runner.RunnerError, "not canonical and green"):
+            self._verify_completed_host_validation_fixture(fixture)
+
+        fixture["report"] = self._canonical_report(
+            self.root, fixture["reviewed_main"], fixture["paths"],
+        )
+        fixture["report"]["summary"]["timed_out"] = 1
+        self._persist_completed_host_validation_fixture(fixture)
+        with self.assertRaisesRegex(runner.RunnerError, "not canonical and green"):
+            self._verify_completed_host_validation_fixture(fixture)
+
     def _run(self, report, *, source_edit=False):
         def execute(command, cwd):
             self.assertEqual(Path(cwd), self.root)
