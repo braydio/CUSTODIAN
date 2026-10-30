@@ -171,8 +171,8 @@ read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
 supervisor integration, validation, attention and guarded workflow actions,
 with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
 Dispatcher eligibility, actual Git landing, independent review receipts and
-verified OR1 process identity remain separate authorities; before OR1/OR2
-land, unknown execution ownership must not be shown as LIVE. Source Codex
+verified OR1 process identity remain separate authorities; without verified local OR1 evidence, unknown execution ownership must not
+be shown as LIVE. OR2 recovery/lease mutation is still not available. Source Codex
 usage tracker is user-supplied, not the canonical packet/claim parser.
 Authoring chat: `not-recorded` pending exact current conversation URL.
 
@@ -182,9 +182,13 @@ Authoring chat: `not-recorded` pending exact current conversation URL.
 An approved architectural plan now separates execution-liveness from durable
 `agent/<workstream>` branch preservation. Spec:
 `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
-The OR1 `agent-orphan-recovery-observability-v1` and OR2
-`agent-orphan-recovery-fenced-parking-v1` paired Codex packets are
-**authored but not implemented**; both honor the `agent-workflow` lock.
+OR1 `agent-orphan-recovery-observability-v1` has landed additive read-only
+`session_supervisor.py` and `workstream_recovery.py` code; its implementation
+packet is archived complete, but its independent review remains active
+`ready/auto` in the inspected main and has NOT been verified accepted. OR2
+`agent-orphan-recovery-fenced-parking-v1` remains an authored dependency-gated
+packet, not implemented. OR1 uses its narrower observability lock; OR2
+retains the `agent-workflow` lock.
 An OR1 live-process/journal classifier precedes OR2 exact-owner CAS-fenced
 park/resume. The existing dispatcher still treats agent branches as claimed,
 and the existing review runner still preserves `post_exit_recovery` with no

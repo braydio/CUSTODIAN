@@ -1,6 +1,6 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-10-13
+Last updated: 2026-10-30
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
 
@@ -60,10 +60,11 @@ See `AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md` and the active
 `AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md` /
 `AGENT_ORPHAN_RECOVERY_FENCED_PARKING_V1.md` paired packet series. Unlike
 the original V1 dispatcher deferral, the proposal deliberately separates a
-time-bounded **execution lease** from retained work branch history. OR1 is
-read-only supervised-process evidence; OR2 is exact-owner, independently
-reviewed `PARKED` recovery that can release only inactive logical locks
-while preserving dirty/untracked data. Optional `systemd --user` support is
+time-bounded **execution lease** from retained work branch history. OR1 now has landed additive, read-only supervised-process code, but its
+independent review remains active and is not verified accepted at the
+2026-10-30 main inspection. OR2 is still an unimplemented exact-owner,
+independently reviewed `PARKED` recovery proposal that would release only
+inactive logical locks while preserving dirty/untracked data. Optional `systemd --user` support is
 disabled by default and cannot force-claim work from unknown/foreign hosts.
 This is **planned**, not yet part of the active dispatcher. Existing no-stash,
 no-reset, no-age-delete, review receipt and branch archive rules remain in
