@@ -30,32 +30,32 @@ Added a dev-only wrapper for the real Awakening scene at Attestation Gallery (`z
 - Review questions: Do the corrected hands and arms read relaxed through the loop? Does the stance/weight distribution look natural, including Southwest boundary contact and the raised-foot/stagger impression? Does the idle read alive at actual game scale?
 - Default cleanup after the human decision: delete-after-review.
 
-## Approved 2.5D vs. corrected 3D visual comparison
+## Corrected accepted 128px vs. 3D visual comparison
 
-The earlier review bundle did not contain approved-runtime A/B evidence. Reused its existing v2 candidate identity and full 2,104-frame package; did not rerender or mutate the candidate frames. Captured the approved runtime and candidate separately through the same Awakening preview/presenter, preserving one visible body at a time.
+The previous A/B package is withdrawn as design evidence: it compared the candidate with the live legacy 96px runtime idle, which lacks exact diagonal art. The runtime screenshots and technical smoke data remain diagnostic evidence only. This corrected package uses the accepted, hash-verified 128px 8-direction full-body source. It reuses the existing 2,104-frame v2 candidate without rerendering or mutation.
 
-Compact local bundle: `/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/visual_comparison_20261030/review_bundle/`
+Local bundle: `/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/visual_comparison_approved128_20261030T1254/review_bundle/`
 
-- `operator_3d_vs_approved_8dir.png`: first, middle and late frames across all eight directions; approved pixels remain 96×96, candidate pixels remain 128×128, and the sheet uses nearest-neighbor 2× enlargement only.
-- `operator_3d_vs_approved_ingame.png`: South middle-frame gameplay views, same real Awakening camera, spawn, floor, shadow and viewport size.
-- `operator_3d_vs_approved_motion.mp4`: H.264, `yuv420p`, 3840×1440, 30fps, 526 frames / 17.533s. Four synchronized A/B panels show N, NE, S and SW. This is two complete candidate loops; approved playback keeps the existing 12fps SpriteFrames resource cadence and therefore loops at its own period. NE and SW approved panels explicitly use N and S fallback art.
-- `operator_3d_technical_comparison.md`: timing, scale/offset, technical measurements, visual concerns and human questions.
-- `comparison_manifest.json`: source/dependency hashes, captured frame identities, settings and artifact hashes.
+- `operator_3d_vs_approved_8dir.png`: first, middle and last accepted 2D atlas frames and candidate frames across N/NE/E/SE/S/SW/W/NW. Both sources are shown in native 128×128 cells with nearest-neighbor enlargement only.
+- `operator_3d_vs_approved_ingame.png`: South middle-frame side-by-side captures through the same actual Awakening scene, camera, spawn, floor, shadow and viewport. Captures were made separately, with only one body owner active each time.
+- `operator_3d_vs_approved_motion.mp4`: H.264 `yuv420p`, 3840×1440, 30fps, 526 frames / 17.533s. Four A/B pairs show N, NE, S and SW. This is two complete 263-frame candidate loops. The accepted 15-frame source uses a labeled 10fps preview cadence because its source FPS is unknown; cycles are not retimed or synchronized by dropping/duplicating frames.
+- `operator_3d_technical_comparison.md`: source/runtime distinction, capture controls, QA measurements, limits and review questions.
+- `comparison_manifest.json`: pinned source, candidate, scene and runtime identities, timing, transforms, prop state, and artifact hashes.
 
-The approved resource's 12fps value is observed cadence only; its timing-authority receipt is unavailable. The candidate remains 30fps preview-only and `candidate_unapproved`. The existing transform is disclosed: candidate `scale=(0.75,0.75)`, `position=(0,-31.5)`, mapping root `(64,106)` to the actor origin. No runtime timing or approval authority was granted.
+The accepted source SHA-256 is `d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3`; it is an accepted art source, not runtime-promoted and has no approved FPS. The live `operator.tscn` still uses the `legacy_96` runtime resource and diagonal fallback behavior; WB25-6 remains `draft/manual`. No production runtime source or timing authority changed.
 
-Validation for this handoff: the nine `test_operator_3d_animation_preview_package` tests pass; the final Awakening smoke passes after checking all 2,104 candidate frames, root registration, the actual 1.89 camera, walkable Attestation Gallery spawn, disabled simulation/triggers, shadow, and one body owner. The composed motion file probes as 526 frames at 30fps, H.264 `yuv420p`; every remote artifact hash and size matches the local manifest.
+Both presentations use preview scale 1.0 and offset `(0,-42)`, with root pixel `(64,106)`. The Awakening source scene still contains `RuinFloorCrackC`; the capture hid only that exact no-collision Sprite2D detail in the isolated preview instance after checking its texture and position. The authored scene remains untouched.
 
-Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T162611Z/REVIEW_MANIFEST.json` (uploaded; five artifacts independently verified). Reviewer questions cover eight-direction identity, natural arms/stance/feet/garment motion at game scale, Southwest bottom-edge contact, and diagonal fallback limitations. Retention remains delete-after-review.
+Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T170643Z/REVIEW_MANIFEST.json`. The five listed artifacts and their SHA-256/byte counts were independently verified from Dropbox. Retention is delete-after-review.
 
 ## Process Feedback
 
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
 - Friction severity: medium
-- What went wrong: the first in-game capture exposed preview controls over the Awakening HUD and an opaque-looking shadow rectangle; wide-view QA also found frequent Southwest last-row contact and repeated renders were not bit-identical
-- Root cause / contributing factors: the preview reused the old top-left control placement and the runtime multiply shadow material's transparent texels darkened the scene; the fixed camera/scale produced a directional boundary contact; Blender EEVEE output varied between processes
-- Prevention / pipeline improvement: capture the actual target environment early, test alpha bounds across all directions, and report repeat-render pixel identity instead of assuming determinism
+- What went wrong: the previous visual A/B used legacy 96px runtime artwork instead of the accepted 128px design source; initial captures also exposed preview-control and shadow-presentation issues. Southwest alpha touches the bottom row in 152 frames and repeat render pixels are not fully deterministic.
+- Root cause / contributing factors: the preview treated the current runtime resource as the approved design reference; the runtime is still `legacy_96`, while the accepted 128px source is not runtime-promoted. A prior source/selector distinction was missing.
+- Prevention / pipeline improvement: keep accepted design reference and live runtime identities explicit in preview requests and labels; verify all eight reference directions before comparison; continue recording alpha-boundary and repeated-render evidence.
 - Tooling / docs drift discovered: none
 - Follow-up: human-visual-review-required
 - What worked: hash-bound packaging and the Awakening smoke validated every frame through the real presenter before the compact visual handoff
@@ -69,4 +69,4 @@ Dropbox handoff: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-
 - Authoring chat: not-recorded
 - Refresh reason: Human visual assessment of corrected hands, stance, foot contact and subtle movement is required before further retarget iteration or executor expansion.
 - Next action: Review the published A/B comparison package, record the visual decision, then explicitly continue this same workstream if engineering should resume.
-- Blockers or open questions: Does the candidate preserve the approved Operator identity? Are hands, arms, stance, grounding and subtle motion acceptable across the loop? Is Southwest boundary contact acceptable? Are the missing exact approved diagonal frames a material limitation?
+- Blockers or open questions: Does the candidate preserve the accepted 128px Operator identity? Are hands, arms, stance, grounding and subtle motion acceptable across the loop? Is Southwest boundary contact acceptable?
