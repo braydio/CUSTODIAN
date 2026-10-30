@@ -3929,7 +3929,11 @@ def _verify_host_validation_at_commit(repo: Path, run_dir: Path, reviewed_main: 
             or metadata.get("implementation_paths") != expected_span.get("paths")):
         raise RunnerError("completed continuation source-span provenance changed")
     try:
-        _validate_report(report, expected_span.get("paths") or [])
+        coverage_manifest = host_validation._pinned_coverage_manifest(repo, reviewed_main)
+    except HostValidationError:
+        coverage_manifest = None
+    try:
+        _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
     except HostValidationError as exc:
         raise RunnerError(f"completed continuation report is not canonical and green: {exc}") from exc
     source_hashes = metadata.get("source_sha256")
