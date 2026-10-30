@@ -30,7 +30,7 @@
 - Review focus: Reconstruct the contract from the archived implementation packet, pinned reviewed-main sources, source diff, tests, and exact plan/apply artifacts. Treat redacted operational logs as transformed capture; do not equate them with raw reviewer text. Verify the only accepted administrative outcome is a byte-preserving, independently corroborated reconciliation for the exact plan/run.
 - Acceptance: Record a canonical findings-first fresh-context verdict. PASS only if all implementation acceptance claims and adversarial cases hold, the validation report is complete, and no recovery was applied. Never accept the original protected review or launch a reviewer for either protected run as part of this review.
 - Non-goals: Execute a recovery plan/apply; accept or close any protected review; launch another reviewer for either held run; modify reviewer evidence, historical reports, target receipt, claims, branches, worktrees, or locks.
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only its durable review receipt, review packet lifecycle/archive metadata, required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 1. Claim only after the implementation lands complete and the dispatcher confirms this exact review is eligible.
