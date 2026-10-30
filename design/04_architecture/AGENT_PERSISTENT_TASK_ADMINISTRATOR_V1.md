@@ -1,6 +1,6 @@
 # Persistent Codex Task Administrator V1
 
-**Status:** approved P0 architecture; production service NOT implemented.
+**Status:** approved P0 architecture; slice-A observer source is implemented; user service remains opt-in and independent acceptance is pending.
 **Workstream family:** `agent-persistent-task-administrator-v1`.
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
 **Inspected repository:** `braydio/CUSTODIAN` at `main@64c9f407744e6569b620ac0ad6ef3c9beedcd6fe` (2026-10-30). Refresh before work.

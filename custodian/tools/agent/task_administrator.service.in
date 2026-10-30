@@ -1,0 +1,19 @@
+[Unit]
+Description=CUSTODIAN read-only persistent task administrator
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=@REPO@
+ExecStart=/usr/bin/python3 @REPO@/custodian/tools/agent/task_administrator.py run --interval 60
+Restart=on-failure
+RestartSec=10
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=@COMMON_DIR@
+
+[Install]
+WantedBy=default.target

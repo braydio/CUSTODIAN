@@ -1,5 +1,16 @@
 # CURRENT STATE — CUSTODIAN
 
+## Persistent task administrator bootstrap (2026-10-30)
+
+`custodian/tools/agent/task_administrator.py` provides a read-only observer,
+versioned JSON snapshot, safe-retirement diagnostics, and private evidence event
+ledger. Its user systemd unit template is disabled by default; host smoke passed
+and the temporary installation was removed. Slice A does not dispatch, resume,
+park, release claims, accept reviews, or clean worktrees. See
+`design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md` and the
+paired task packet for implementation evidence and the remaining independent
+review gate.
+
 ## Procgen Environmental Evidence ES-1 site identity foundation (2026-10-28)
 
 Intent-enabled story sites now project only from existing F02
