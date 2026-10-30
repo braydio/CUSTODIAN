@@ -97,6 +97,7 @@ class PreviewPackageTests(unittest.TestCase):
 		receipt = {
 			"schema": "custodian.operator_3d_animation_candidate_receipt.v1",
 			"job_id": "fixture-job-001",
+			"candidate_version": "fixture-neutral-idle-v2",
 			"candidate_state": "candidate_unapproved",
 			"production_approval": {"approved": False},
 			"source": {
@@ -135,10 +136,23 @@ class PreviewPackageTests(unittest.TestCase):
 		self.assertEqual(request["candidate_state"], "candidate_unapproved")
 		self.assertFalse(request["production_approval"])
 		self.assertFalse(request["timing_authority_granted"])
+		self.assertEqual(request["candidate_version"], "fixture-neutral-idle-v2")
 		self.assertEqual(request["source"]["authored_fps"], 30)
 		self.assertEqual([item["direction"] for item in request["directions"]], list(DIRECTIONS))
 		self.assertEqual((self.project / "content" / "canonical.marker").read_text(), "preserve\n")
 		self.assertEqual(len(list((self.project / ".ai").rglob("*.png"))), 24)
+
+	def test_awakening_smoke_selection_is_recorded_in_preview_request(self) -> None:
+		result = build_package(
+			self.proof,
+			self.project,
+			Path("candidate/receipt.json"),
+			run_import=False,
+			smoke_script="res://tools/validation/operator_3d_animation_preview_awakening_smoke.gd",
+		)
+		package = self.project / ".ai" / "operator_3d_animation_preview" / result["package_path"].split("/")[-1]
+		request = json.loads((package / "request.json").read_text())
+		self.assertEqual(request["preview_scene"], "res://scenes/debug/operator_3d_animation_preview_awakening.tscn")
 
 	def test_repeat_package_is_deterministic_and_reuses_exact_output(self) -> None:
 		first = build_package(self.proof, self.project, Path("candidate/receipt.json"), run_import=False)

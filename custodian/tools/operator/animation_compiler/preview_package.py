@@ -224,7 +224,8 @@ def _canonical_json_bytes(value: Any) -> bytes:
     return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode("utf-8")
 
 
-def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, run_import: bool = True, godot: str = "godot") -> dict[str, Any]:
+def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, run_import: bool = True,
+                  godot: str = "godot", smoke_script: str = "res://tools/validation/operator_3d_animation_preview_smoke.gd") -> dict[str, Any]:
     project_root = project_root.resolve(strict=True)
     proof_root = proof_root.resolve(strict=True)
     if receipt_path.is_absolute():
@@ -297,6 +298,9 @@ def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, r
         "candidate_receipt_path": str(receipt_path.resolve()),
         "candidate_receipt_sha256": receipt_sha,
         "candidate_job_id": job_id,
+        "candidate_version": receipt.get("candidate_version", job_id),
+        "preview_scene": "res://scenes/debug/operator_3d_animation_preview_awakening.tscn"
+        if "awakening" in smoke_script else "res://scenes/debug/operator_3d_animation_preview.tscn",
         "animation_id": source.get("animation_id"),
         "source": {
             "filename": source.get("original_filename"),
@@ -355,7 +359,7 @@ def build_package(proof_root: Path, project_root: Path, receipt_path: Path, *, r
         result = subprocess.run(
             [
                 str(resolved_godot), "--headless", "--path", str(project_root),
-                "--script", "res://tools/validation/operator_3d_animation_preview_smoke.gd",
+                "--script", smoke_script,
                 "--", "--request", manifest["package_path"] + "/request.json",
             ],
             cwd=project_root,
@@ -379,10 +383,12 @@ def main(argv: list[str] | None = None) -> int:
     prepare.add_argument("--project-root", type=Path, default=Path("custodian"))
     prepare.add_argument("--receipt", type=Path, default=Path("candidate/neutral_idle_candidate_receipt.v1.json"))
     prepare.add_argument("--godot", default="godot")
+    prepare.add_argument("--smoke-script", default="res://tools/validation/operator_3d_animation_preview_smoke.gd")
     prepare.add_argument("--skip-import", action="store_true", help="package only; do not run the Godot editor import pass")
     args = parser.parse_args(argv)
     try:
-        result = build_package(args.proof_root, args.project_root, args.receipt, run_import=not args.skip_import, godot=args.godot)
+        result = build_package(args.proof_root, args.project_root, args.receipt, run_import=not args.skip_import,
+                               godot=args.godot, smoke_script=args.smoke_script)
         print(json.dumps({"ok": True, **result}, sort_keys=True))
         return 0
     except PackageError as exc:

@@ -1,51 +1,54 @@
-# Operator 3D Animation Batch Executor V1 — Slice A
+# Operator 3D Animation Batch Executor V1 — corrected Neutral Idle preview
 
 Workstream: `operator-3d-animation-batch-executor-v1`
 
 ## Delivered
 
-Implemented the isolated Godot candidate preview adapter, standalone scene and focused smoke. The adapter verifies the Task 001 candidate receipt and exact source/master/QA identities, all 2,104 direction-frame file and RGBA-pixel hashes, dimensions, order, root registration, and safe path confinement before copying frames only under ignored `custodian/.ai/operator_3d_animation_preview/`.
+Resumed the existing claimed workstream and used the complete calibrated v2 rest-frame retarget, not the rejected Task 002 receipt. It contains frames 1–264 at authored 30 FPS for the compatible 42-bone Operator rig; source frame 264 is the verified duplicate loop endpoint, so the candidate samples 1–263. Source trajectory remains separate metadata from in-place poses.
 
-The dev scene uses the real Operator scene, existing `OperatorBodyPresenter`, full-body renderer, game camera script, Sundered Keep environment and existing shadow. The same one body presenter switches between candidate and approved runtime art. It offers all eight candidate directions, candidate/approved selection, the experimental warning and stationary 30 FPS source-authored playback without granting runtime timing authority. Approved runtime comparison has no full-body diagonal clips, so NE/NW use N and SE/SW use S; that fallback is displayed, not mirrored.
+Rendered a new candidate under the experimental ITER005 baseline: eight independent directions × 263 frames = 2,104 128×128 RGBA images; 45° elevation, 50 px/m, root `(64,106)`, fixed master-derived scale `1.2287417600294088`, no mirroring. Candidate version is `neutral_idle_rest_frame_v2_awakening_128_v1`; job ID is `op3d-neutral-idle-v2-f7832b29158a1aa7e78e9c53`; receipt SHA-256 is `5c237de902397e1bae1f0de6bc3951334369b95db46c9b9e9064ef38b916853b`. The rejected receipt remains unchanged at SHA-256 `1fd0b407d4ac1267b687cea024647ff7be7bf6bc8fe95b08dcc1b300aa13aee6`.
 
-A full in-game loop was captured and encoded as a 960×540 H.264 MP4 at 30 FPS, yuv420p: 263 frames, 8.766667 seconds. A decoded frame confirmed the expected scene, UI and one Operator body. The playable scene itself remains available for inspecting each direction and switching art interactively.
+Added a dev-only wrapper for the real Awakening scene at Attestation Gallery (`zone03_attestation`), spawn `(0,-1824)`, facing South, with the real camera at its authored `1.89` zoom. The wrapper disables its actor simulation/collision and progression triggers while retaining real lighting, underlay, foreground/occlusion, Operator presenter and renderer. It preserves the candidate/approved toggle, eight direction controls, authored-FPS playback and unapproved badge; the exact candidate version is displayed. A preview-instance-only alpha blend is applied to the existing shadow texture/material to avoid the multiply material's opaque-looking rectangle on the floor; no source/runtime material or scene was changed.
 
-## Verification
+## Verification and findings
 
-- `python3 -m unittest custodian.tools.validation.test_operator_3d_animation_preview_package -v` — 8 passed.
-- `python3 -m py_compile custodian/tools/operator/animation_compiler/preview_package.py custodian/tools/validation/test_operator_3d_animation_preview_package.py` — passed.
-- Preview package/Godot smoke — passed; all 2,104 frames checked; eight directions, 263 frames each, 30 FPS; canonical root/shadow registration; one visible body owner; production approval and timing authority false.
-- `python3 custodian/tools/validation/operator_2_5d_review_smoke.py` — passed.
-- `git diff --cached --check` — passed; commit hook filename check passed.
-- Review publisher uploaded the compact notes, full-loop MP4 and machine-readable receipts. It omitted the staged PNG frame set.
+- `python3 -m unittest custodian.tools.validation.test_operator_3d_animation_preview_package -v` — 9 passed.
+- `python3 -m py_compile .../finalize_corrected_neutral_idle.py .../preview_package.py` — passed.
+- `git diff --check` — passed.
+- Final Awakening preview package smoke — passed: exact 2,104 frames loaded and checked at 30 FPS; eight directions, correct scene/camera/spawn, one visible body owner, visible shadow, zero ground-registration residual, disabled gameplay/triggers, no timing authority and no production approval.
+- Repeated 24 key renders (frames 1, 132, 263 in all eight directions): 19 decoded RGBA matches, 0 PNG byte-identical outputs. This nondeterminism is recorded in the QA report.
+- Southwest alpha touches the last image row in 152/263 frames. The candidate QA records this as a visual-review finding. Existing cycle diagnostics report zero below-ground mesh frames and minimum mesh height `0.00116504 m`.
+- Retarget measurements: mean normalized ankle spacing `0.496191` target leg lengths and `1.213221` pelvis widths; mean elbow angles L/R `157.217° / 162.146°`; mean knee angles L/R `159.929° / 153.098°`; mean shoulder-to-wrist direction error L/R `7.49° / 17.012°`.
+- Experimental master and original FBX hashes remained respectively `a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969` and `40fda03b9e87092978f31c0721a3de2ad686a35983d73386769a17029684e1a3`. Original rejected receipt hash also remains unchanged.
+- No shoulder geometry, ITER005 Running, source FBX, master `.blend`, canonical/runtime/Workbench assets, timing authority or production scene was changed.
 
-## Limits and deferred work
+## Visual handoff
 
-The preview establishes technical frame integrity and makes the full motion playable in the actual renderer. It does not establish artistic quality, ground perception or whether the comparison is useful; those remain human decisions. Slice B executor, Slice C multi-clip batch, and Slice D runtime handoff were not started. No production asset, runtime policy, source FBX, Blender master, ITER005 Running action or Operator model asset was changed.
-
-Implementation branch: `agent/operator-3d-animation-batch-executor-v1`
-
-Slice A code commit: `c654481c45afd86faca5b77710c018d46a5c0636`
-
-Visual review manifest: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T013804Z/REVIEW_MANIFEST.json`
+- Final loop: `neutral_idle_awakening_full_loop.mp4`, 1280×720 H.264, 30 FPS, 263 frames, 8.766667 seconds; SHA-256 `1b8440a522394a517803f862e599f94566c3e798e13793995e9e84917c41a084`.
+- Matched previous-vs-corrected South comparison: frames 1, 132 and 263, same Awakening scene, camera and scale.
+- Dropbox manifest: `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T032053Z/REVIEW_MANIFEST.json`
+- Review questions: Do the corrected hands and arms read relaxed through the loop? Does the stance/weight distribution look natural, including Southwest boundary contact and the raised-foot/stagger impression? Does the idle read alive at actual game scale?
+- Default cleanup after the human decision: delete-after-review.
 
 ## Process Feedback
+
 - Feedback schema: custodian.task_feedback.v1
 - Outcome: partial
-- Friction severity: low
-- What went wrong: full 263-frame game capture took about four minutes on the current renderer host
-- Root cause / contributing factors: real environment capture at 1280×720 is slower than the headless invariant smoke
-- Prevention / pipeline improvement: retain the full loop as optional visual evidence; rely on the per-frame headless smoke for routine integrity validation
+- Friction severity: medium
+- What went wrong: the first in-game capture exposed preview controls over the Awakening HUD and an opaque-looking shadow rectangle; wide-view QA also found frequent Southwest last-row contact and repeated renders were not bit-identical
+- Root cause / contributing factors: the preview reused the old top-left control placement and the runtime multiply shadow material's transparent texels darkened the scene; the fixed camera/scale produced a directional boundary contact; Blender EEVEE output varied between processes
+- Prevention / pipeline improvement: capture the actual target environment early, test alpha bounds across all directions, and report repeat-render pixel identity instead of assuming determinism
 - Tooling / docs drift discovered: none
 - Follow-up: manual-follow-up
-- What worked: hash-bound ignored staging and the actual Godot renderer/presenter provided a compact end-to-end proof
+- What worked: hash-bound packaging and the Awakening smoke validated every frame through the real presenter before the compact visual handoff
 
 ## Next Handoff
+
 - Next workstream: none
 - Next packet state: human-required
 - Refresh owner: chatgpt-user
 - ChatGPT/user planning refresh required: yes
 - Authoring chat: not-recorded
-- Refresh reason: Required visual judgment of the playable Slice A proof before executor expansion.
-- Next action: Review the playable preview and visual handoff; record a decision before resuming this workstream for Slice B.
-- Blockers or open questions: Does the idle read naturally at actual game scale? Is direction selection and ground/shadow registration clear? Is the experimental/approved comparison useful without confusing ownership?
+- Refresh reason: Human visual assessment of corrected hands, stance, foot contact and subtle movement is required before further retarget iteration or executor expansion.
+- Next action: Review the published full loop and matched comparison, record the visual decision, then explicitly continue this same workstream if engineering should resume.
+- Blockers or open questions: Does the corrected hand/arm pose remain relaxed in motion? Is the Southwest boundary contact acceptable? Does the idle feel alive at the Awakening camera scale?

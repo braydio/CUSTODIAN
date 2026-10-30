@@ -9,9 +9,13 @@ const CANDIDATE_SCALE := Vector2(0.75, 0.75)
 const CANDIDATE_POSITION := Vector2(0, -31.5)
 
 @export var request_path := ""
+@export var operator_path: NodePath = NodePath("World/Operator")
+@export var camera_path: NodePath = NodePath("World/Camera2D")
+@export var preserve_scene_camera_profile := false
+@export var initial_direction := "N"
 
-@onready var _operator: CharacterBody2D = $World/Operator
-@onready var _camera: Camera2D = $World/Camera2D
+@onready var _operator: CharacterBody2D = get_node_or_null(operator_path) as CharacterBody2D
+@onready var _camera: Camera2D = get_node_or_null(camera_path) as Camera2D
 
 var _request: Dictionary = {}
 var _approved_frames: SpriteFrames
@@ -23,6 +27,7 @@ var _approved_sprite_position := Vector2.ZERO
 var _approved_sprite_scale := Vector2.ONE
 var _approved_sprite_offset := Vector2.ZERO
 var _status_label: Label
+var _badge_label: Label
 var _setup_error := ""
 
 
@@ -37,7 +42,7 @@ func _ready() -> void:
 	if not _configure_operator():
 		return
 	_build_controls()
-	_select_preview("candidate", "N")
+	_select_preview("candidate", initial_direction)
 
 
 func _request_argument() -> String:
@@ -121,16 +126,18 @@ func _configure_operator() -> bool:
 	if _camera.get_script() != load("res://game/world/camera.gd"):
 		_fail("preview camera is not the existing game CameraController")
 		return false
-	_camera.zoom = OPERATOR_CAMERA_ZOOM
-	if _has_property(_camera, "base_zoom"):
-		_camera.set("base_zoom", OPERATOR_CAMERA_ZOOM)
-	if _has_property(_camera, "target_zoom"):
-		_camera.set("target_zoom", OPERATOR_CAMERA_ZOOM)
+	if not preserve_scene_camera_profile:
+		_camera.zoom = OPERATOR_CAMERA_ZOOM
+		if _has_property(_camera, "base_zoom"):
+			_camera.set("base_zoom", OPERATOR_CAMERA_ZOOM)
+		if _has_property(_camera, "target_zoom"):
+			_camera.set("target_zoom", OPERATOR_CAMERA_ZOOM)
 	if _has_property(_camera, "auto_zoom_enabled"):
 		_camera.set("auto_zoom_enabled", false)
 	if _has_property(_camera, "follow_enabled"):
 		_camera.set("follow_enabled", false)
-	_camera.call("set_authored_map_bounds", Rect2(Vector2.ZERO, Vector2(3712, 2688)))
+	if not preserve_scene_camera_profile:
+		_camera.call("set_authored_map_bounds", Rect2(Vector2.ZERO, Vector2(3712, 2688)))
 	_camera.position = _operator.position
 	_camera.position_smoothing_enabled = false
 	_camera.make_current()
@@ -143,17 +150,20 @@ func _build_controls() -> void:
 	canvas.name = "DiagnosticControls"
 	add_child(canvas)
 	var panel := PanelContainer.new()
-	panel.position = Vector2(18, 18)
+	panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	panel.position = Vector2(-980.0, 18.0)
 	canvas.add_child(panel)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
 	panel.add_child(column)
-	var badge := Label.new()
-	badge.text = "EXPERIMENTAL / UNAPPROVED"
-	badge.add_theme_color_override("font_color", Color(1.0, 0.42, 0.08))
-	badge.add_theme_font_size_override("font_size", 19)
-	column.add_child(badge)
+	_badge_label = Label.new()
+	_badge_label.text = "EXPERIMENTAL / UNAPPROVED"
+	_badge_label.add_theme_color_override("font_color", Color(1.0, 0.42, 0.08))
+	_badge_label.add_theme_font_size_override("font_size", 19)
+	column.add_child(_badge_label)
 	_status_label = Label.new()
+	_status_label.custom_minimum_size.x = 720.0
+	_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(_status_label)
 	var modes := HBoxContainer.new()
 	column.add_child(modes)
@@ -280,8 +290,8 @@ func _update_status() -> void:
 		return
 	if _selected_mode == "candidate":
 		var source: Dictionary = _request.get("source", {})
-		_status_label.text = "%s — %s — %d frames @ %.3f FPS (preview only; no runtime timing authority)" % [
-			String(_request.get("animation_id", "candidate")), _selected_direction,
+		_status_label.text = "%s — %s — %s — %d frames @ %.3f FPS (preview only; no runtime timing authority)" % [
+			String(_request.get("animation_id", "candidate")), String(_request.get("candidate_version", _request.get("candidate_job_id", "unversioned"))), _selected_direction,
 			_request.get("directions", [])[DIRECTIONS.find(_selected_direction)].get("frames", []).size(),
 			float(source.get("authored_fps", 0.0)),
 		]
@@ -363,8 +373,14 @@ func run_smoke_check() -> Dictionary:
 		return {"ok": false, "error": "Operator's existing ground shadow placement changed"}
 	if _operator.collision_layer != 0 or _operator.collision_mask != 0 or _operator.is_physics_processing():
 		return {"ok": false, "error": "preview Operator simulation/collision is enabled"}
-	if _camera.get_script() != load("res://game/world/camera.gd") or _camera.zoom != OPERATOR_CAMERA_ZOOM:
+	if _camera.get_script() != load("res://game/world/camera.gd"):
 		return {"ok": false, "error": "preview does not use the fixed real game camera profile"}
+	if not preserve_scene_camera_profile and _camera.zoom != OPERATOR_CAMERA_ZOOM:
+		return {"ok": false, "error": "preview does not use the fixed real game camera profile"}
+	if _badge_label == null or _badge_label.text != "EXPERIMENTAL / UNAPPROVED" or not _badge_label.visible:
+		return {"ok": false, "error": "experimental unapproved indicator is not visible"}
+	if not _status_label.text.contains(String(_request.get("candidate_version", _request.get("candidate_job_id", "unversioned")))):
+		return {"ok": false, "error": "exact candidate version is not displayed"}
 	return {
 		"ok": true,
 		"candidate_state": _request["candidate_state"],
@@ -378,6 +394,8 @@ func run_smoke_check() -> Dictionary:
 		"real_operator_scene": "res://game/actors/operator/operator.tscn",
 		"real_camera_script": "res://game/world/camera.gd",
 		"camera_zoom": [_camera.zoom.x, _camera.zoom.y],
+		"camera_profile_preserved": preserve_scene_camera_profile,
+		"candidate_version": _request.get("candidate_version", _request.get("candidate_job_id", "unversioned")),
 		"candidate_sprite_position": [_sprite.position.x, _sprite.position.y],
 		"candidate_sprite_scale": [_sprite.scale.x, _sprite.scale.y],
 		"ground_registration_residual_y": expected_ground_y,
