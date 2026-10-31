@@ -34,6 +34,8 @@ def _mock_no_active_review_processes(test_case: unittest.TestCase) -> None:
         owner_probe = patch.object(runner, name, return_value=[])
         owner_probe.start()
         test_case.addCleanup(owner_probe.stop)
+
+
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -44,6 +46,27 @@ from review_receipt_delta import (
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
+
+
+def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
+    """Check out historical source without hydrating unrelated LFS assets."""
+    env = os.environ.copy()
+    env["GIT_LFS_SKIP_SMUDGE"] = "1"
+    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                    str(repository)], check=True, env=env)
+    subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", revision],
+                   check=True, env=env)
+
+
+class HistoricalGitFixtureTests(unittest.TestCase):
+    def test_historical_fixture_clone_and_checkout_skip_lfs_smudge(self):
+        repository = Path("/tmp/historical-fixture")
+        with patch("subprocess.run") as run:
+            _prepare_historical_git_fixture(repository, "a" * 40)
+
+        self.assertEqual(run.call_count, 2)
+        for call in run.call_args_list:
+            self.assertEqual(call.kwargs["env"]["GIT_LFS_SKIP_SMUDGE"], "1")
 
 
 def review_packet(*, visual="none", refresh="no"):
@@ -4335,8 +4358,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "9845e1db2^"],
             check=True, text=True, capture_output=True,
         ).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT), str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
@@ -7786,9 +7808,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         """Create disposable Git history for exact Procession scope approval checks."""
         repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
         base_main = "49a93aa726e26bd40220d3bdb658079ea9da3440"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
