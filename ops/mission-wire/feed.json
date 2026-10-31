@@ -1,9 +1,163 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T14:05:33Z",
-  "source_main_sha": "f4c6c1fb388e49e11db5ae14d6fd7ec757233636",
+  "generated_at": "2026-10-31T14:41:19Z",
+  "source_main_sha": "bbc5c580bf4e350ef168b7a1cad1b2712781caec",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-checkout-blocked-ab738a8c",
+      "headline": "Lightweight checkout hits a second bottleneck: the independent reviewer still requests a full worktree",
+      "summary": "The new selective checkout passed its implementation milestone, but the canonical paired-review runner did not forward the checkout profile. A documented retry was rejected before claim creation because its full checkout exceeded available storage. A narrowly scoped runner integration packet and paired review were added; neither is an accepted fix.",
+      "body": "Main now documents a failed review-claim preflight and a new runner integration workstream. The packet reports 7,264,018,781 bytes required including reserve against 2,279,641,088 available at the failed attempt. The runner did not pass the supported checkout-profile option through to the dispatcher. New implementation and review packets were prepared and their dispatch states changed by workflow commits, but no runner implementation or accepted review is established. Host liveness and current disk space remain unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-runner-checkout-profile-v1",
+      "occurred_at": "2026-10-31T14:41:19Z",
+      "bullets": [
+        "Original provisioning review failed before acquiring a claim, according to the new packet.",
+        "Runner profile forwarding and dependency-closure checks remain to be implemented.",
+        "Independent review and protected Awakening recovery remain gated."
+      ],
+      "links": [
+        {
+          "title": "New runner integration packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ab738a8c0e63c10bee3abe645abda09e909d2f45"
+        },
+        {
+          "title": "Tracked minimal review profile and dispatch revision",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/d13102ca267495696945786cb201f1c3c96f98d7"
+        },
+        {
+          "title": "Latest automatic packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/bbc5c580bf4e350ef168b7a1cad1b2712781caec"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's new lightweight worktrees solve the asset-download problem, but the first independent review exposed another obstacle: the review launcher still requested a full checkout. The storage guard correctly refused the request before creating a claim. A follow-up workstream now targets the missing connection between the reviewer and the selective-checkout system.",
+        "sections": [
+          {
+            "heading": "A safety check did its job",
+            "text": "The new packet records a review attempt needing roughly 7.26 GB including reserve with only 2.28 GB available at that attempt. Rather than creating another stranded claim, the dispatcher rejected it. These are reported measurements from the attempt, not a live disk reading."
+          },
+          {
+            "heading": "The missing link is in the review launcher",
+            "text": "The dispatcher already understands a checkout profile, but the paired-review runner did not forward one. The proposed fix must check that the smaller checkout contains every file needed to evaluate the implementation, including the actual changed files. A small checkout cannot become an excuse for incomplete review."
+          },
+          {
+            "heading": "A new gate before Awakening",
+            "text": "New implementation and independent-review packets define the repair and its checks. GitHub workflow commits show packet handoffs, not proof that an agent is running or that the fix is landed. The original provisioning review still needs a genuine accepted verdict before protected recovery can be considered."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A safe failure is progress, not completion",
+            "explanation": "The capacity preflight prevented a second stranded claim. That validates an important failure boundary while revealing that the reviewer still needs to adopt the new checkout mechanism."
+          },
+          {
+            "title": "Review completeness is the real constraint",
+            "explanation": "The proposed minimal profile must cover the exact implementation diff and both packets' declared evidence. Otherwise a smaller reviewer worktree could silently omit the material needed for independent judgment."
+          }
+        ],
+        "takeaway": "Selective checkout is implemented, but the canonical independent-review path has not yet adopted it. The new runner integration is the next dependency.",
+        "next_watch": "Look for the runner implementation landing, tests proving profile completeness and fail-before-claim behavior, then an authentic independent review receipt."
+      },
+      "details": {
+        "overview": "The new packet reports claim-failed record 20261031T140744Z-6260ae2c2aca. Its proposed runner change adds optional --checkout-profile handling, validates required tracked paths against packet publication inputs and exact implementation diff before claim, and binds profile digest to claim receipt. Commits at 14:14-14:17 UTC toggled implementation/review packet dispatch states; this does not demonstrate execution.",
+        "ledger": [
+          {
+            "stage": "Selective provisioning implementation",
+            "status": "verified landed",
+            "evidence": "Previously inspected main f4c6c1fb archived the provisioning implementation."
+          },
+          {
+            "stage": "Original provisioning independent review",
+            "status": "reported claim failure",
+            "evidence": "New packet cites failed attempt and capacity figures; no accepted PASS receipt."
+          },
+          {
+            "stage": "Runner integration packet",
+            "status": "verified authored and handed off",
+            "evidence": "Commits ab738a8c, d13102ca and bbc5c580 contain packet/profile and dispatch-state changes, not implementation code."
+          },
+          {
+            "stage": "Runner integration implementation",
+            "status": "not verified",
+            "evidence": "No implementation commit inspected."
+          },
+          {
+            "stage": "Independent review and teardown",
+            "status": "unknown",
+            "evidence": "No accepted review or trusted host audit inspected."
+          }
+        ],
+        "notes": [
+          "Latest inspected main is bbc5c580bf4e350ef168b7a1cad1b2712781caec.",
+          "One open PR #78 concerns a separate bounded archive transition recovery; no disposition inferred."
+        ],
+        "unknowns": [
+          "Canonical full dispatcher audit unavailable; project-wide counts unknown.",
+          "Current host free disk, process, locks and worktree disposition unknown."
+        ],
+        "actions": [
+          "Runner implementation owner: land exact profile-forwarding and dependency-closure safeguards with tests.",
+          "Independent reviewer: verify runner integration and retry the original provisioning review only through authorized canonical flow."
+        ]
+      },
+      "scorecard": {
+        "stage": "Reviewer checkout blocked; runner integration packet prepared",
+        "as_of": "2026-10-31T14:41:19Z",
+        "scope": "Runner integration and original provisioning review only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Land selective provisioning",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Archived implementation f4c6c1fb."
+          },
+          {
+            "label": "Attempt original independent review",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Packet reports preclaim capacity rejection."
+          },
+          {
+            "label": "Implement runner profile forwarding",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Defined in new packet; no implementation landed in inspected commits."
+          },
+          {
+            "label": "Independently review runner fix",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Paired review packet exists; no accepted receipt."
+          },
+          {
+            "label": "Accept original provisioning review",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Retry requires working runner and authentic reviewer verdict."
+          },
+          {
+            "label": "Authorize protected recovery and verify teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Separate authorization and host proof required."
+          }
+        ],
+        "next_gate": "Runner implementation owner must land and validate exact profile forwarding and complete review dependency coverage."
+      },
+      "related": [
+        {
+          "title": "CUSTODIAN lands smaller worktree checkouts to reopen storage-blocked Awakening development",
+          "context": "The previously landed storage remedy exposed this separate review-launcher integration gap.",
+          "story_id": "lightweight-lfs-provisioning-f4c6c1fb"
+        }
+      ]
+    },
     {
       "id": "lightweight-lfs-provisioning-f4c6c1fb",
       "headline": "CUSTODIAN lands smaller worktree checkouts to reopen storage-blocked Awakening development",
@@ -1564,166 +1718,23 @@
       "bullets": [],
       "images": [],
       "related": []
-    },
-    {
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-merged-source-validation-isolation-v1",
-      "occurred_at": "2026-10-31T03:25:39Z",
-      "bullets": [],
-      "links": [
-        {
-          "title": "Promote recovery pair",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
-        },
-        {
-          "title": "Publish recovery packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/9762afaa336e8dbb7dc55463c6ad683818b282cb"
-        }
-      ],
-      "images": [],
-      "related": [],
-      "id": "gate-6baf6a3f-merged-source",
-      "headline": "Review recovery faces a new validation gap; a focused correction pair is ready",
-      "summary": "A protected review remains held after validation passed its selected checks but failed completeness coverage. CUSTODIAN has published and promoted a narrowly scoped implementation and independent-review pair to distinguish genuine source changes from unrelated later commits, without treating incomplete validation as success.",
-      "body": "A new agent-ops recovery pair is ready, not claimed or running by verified evidence. The packet reports that a protected archived-receipt review was held before launch: nine selected checks passed but validation exited 6 with thirteen uncovered paths. Its planned fix isolates the exact implementation source span and authenticates coverage-only failed reports while preserving fail-closed behavior. The held review cannot be considered accepted. Host evidence described in the packet was not directly inspected. No canonical teardown is verified.",
-      "article": {
-        "lead": "CUSTODIAN's review pipeline has found another precise obstacle: the system can pass its selected checks yet still refuse to start a reviewer because its coverage report includes changes from unrelated work. A new correction pair is ready to address that mismatch without weakening the rules that protect review integrity.",
-        "sections": [
-          {
-            "heading": "Why the review is still waiting",
-            "text": "The new task packet describes a protected review stopped before reviewer launch. Nine selected checks passed, but thirteen paths were not covered by validation. The packet attributes part of the mismatch to later Operator-related changes being included in the wrong source span. These figures are reported in the packet, not independently verified host measurements."
-          },
-          {
-            "heading": "What the proposed correction changes",
-            "text": "The implementation would identify exactly which files belong to the reviewed change, then recognize a complete, authentic coverage-only failure report as failed evidence eligible for controlled recovery. It would not turn incomplete coverage into a PASS or authorize the protected review to run."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Green checks are not complete validation",
-            "explanation": "Passing individual tests does not prove that every relevant changed file was validated. The recovery must preserve this distinction or risk accepting incomplete work."
-          },
-          {
-            "title": "A newer game-art change can block older infrastructure review",
-            "explanation": "The reported source-span contamination links otherwise separate workstreams. Isolating the historical implementation diff could prevent later Operator commits from distorting an older review's coverage gate."
-          }
-        ],
-        "takeaway": "The correction pair is published and ready, but no implementation landing or independent acceptance is established.",
-        "next_watch": "Look for the correction's validated landing and a genuine independent receipt before any separately authorized continuation of the held review."
-      },
-      "details": {
-        "overview": "Main 6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004. Two new agent-ops packets were promoted ready/auto. This is packet state, not proof of live execution.",
-        "ledger": [
-          {
-            "stage": "Correction packet publication",
-            "status": "verified",
-            "evidence": "9762afaa3 added the implementation and review packets."
-          },
-          {
-            "stage": "Dispatch readiness",
-            "status": "verified",
-            "evidence": "6baf6a3f marks both ready/auto; review depends on implementation."
-          },
-          {
-            "stage": "Implementation and validation",
-            "status": "not verified",
-            "evidence": "No implementation landing or acceptance established."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "not verified",
-            "evidence": "No canonical passing receipt inspected."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host worktree, lock or disk proof accessible."
-          }
-        ],
-        "notes": [
-          "The packet describes exit 6 and thirteen uncovered paths as host-reported evidence, not a green validation."
-        ],
-        "unknowns": [
-          "Live claim/owner/process and host evidence remain unavailable."
-        ],
-        "actions": [
-          "Existing implementation owner: complete and validate the correction before its independent reviewer acts."
-        ]
-      },
-      "scorecard": {
-        "stage": "Ready for implementation; protected review held",
-        "as_of": "2026-10-31T03:25:39Z",
-        "scope": "The new merged-source validation isolation pair only",
-        "metrics": [
-          {
-            "id": "ready-pair-packets",
-            "label": "READY PACKETS IN PAIR",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Both named packets marked ready/auto in 6baf6a3f.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish correction pair",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "9762afaa3"
-          },
-          {
-            "label": "Promote implementation and review",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "6baf6a3f"
-          },
-          {
-            "label": "Implement and validate correction",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Ready packet; no landing established"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Depends on implementation"
-          },
-          {
-            "label": "Protected review continuation",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Separate authorization and evidence required"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host state unavailable"
-          }
-        ],
-        "next_gate": "Existing implementation owner completes and validates merged-source isolation, then independent reviewer assesses it."
-      }
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T14:05:33Z",
-    "source_main_sha": "f4c6c1fb388e49e11db5ae14d6fd7ec757233636",
+    "observed_at": "2026-10-31T14:41:19Z",
+    "source_main_sha": "bbc5c580bf4e350ef168b7a1cad1b2712781caec",
     "coverage": "partial",
-    "scope": "Exactly one archived lightweight provisioning implementation packet and its paired ready review packet inspected; prior grave/validator review counts not refreshed.",
+    "scope": "Selected provisioning and runner-integration packets and latest GitHub commits only; no canonical full dispatcher audit",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY REVIEW (INSPECTED)",
-        "value": 1,
-        "verification": "verified",
-        "basis": "One specifically inspected paired lightweight-provisioning review packet has status ready and dispatch auto; excludes all other reviews.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/f4c6c1fb388e49e11db5ae14d6fd7ec757233636/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md"
+        "label": "READY / AUTO (INSPECTED)",
+        "value": null,
+        "verification": "unknown",
+        "basis": "Packet dispatch states changed across latest commits; no full queue or stable final count verified"
       }
     ],
-    "focus": "Obtain independent accepted PASS for lightweight worktree provisioning before protected Awakening recovery.",
-    "note": "Not a full dispatcher audit; no project-wide queue totals or live host disk/process/claim verification."
+    "focus": "Land and independently validate runner checkout-profile forwarding before retrying original provisioning review",
+    "note": "Original review attempt reported storage preflight failure; no live host audit or project-wide counts."
   }
 }
