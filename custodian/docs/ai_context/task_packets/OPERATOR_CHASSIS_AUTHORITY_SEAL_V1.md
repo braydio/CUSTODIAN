@@ -9,6 +9,7 @@
 - Depends on: `none`
 - Locks: `operator-runtime, validation-infrastructure`
 - Kind: `implementation`
+- Category: `agent-ops`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
@@ -46,7 +47,7 @@
   5. New guard selection is deterministic and scoped, and no newly named validation path is missing from the landed tree.
   6. Existing architecture, path, animation, action, dodge and loadout focused checks remain green; targeted agent/validation regression passes.
   7. Documentation identifies GitHub branch-protection limitation accurately. No false statement of server-side main protection.
-- Validation: New guard focused unit/negative fixture suite (created by this workstream); existing `custodian/tools/validation/operator_architecture_debt_audit.py --final`; existing `custodian/tools/validation/operator_runtime_path_audit.py --final`; existing `custodian/tools/validation/operator_runtime_animation_authority_smoke.py --final`; focused workstream-finish/preflight tests; `custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`. Do not require the not-yet-created guard test file at authoring time.
+- Validation: New chassis guard focused unit and negative tests; existing `custodian/tools/validation/operator_architecture_debt_audit.py --final`; existing `custodian/tools/validation/operator_runtime_path_audit.py` without `--final`; existing `custodian/tools/validation/operator_runtime_animation_authority_smoke.py` without `--final`; focused workstream preflight/finish tests; `custodian/tools/validation/run_validation.py --changed --json`; `git diff --check`. The ordinary path and animation audits must exit 0 and preserve all enforced invariants. Their existing legacy migration debt must be measured against the authenticated pre-change baseline, reported as outstanding, and must not increase or gain new prohibited identities. Their `--final` failures are expected incomplete-migration results, not passing validations. Do not alter audit semantics or require the not-yet-created guard test file at authoring time. Slice G remains responsible for the three final zero-debt audits and final chassis authority gate.
 - Task overrides: `none`
 - Deferred: F2 repairs foreign-body impact fallbacks and owns melee state extraction; F3 ranged, F5 interaction, F6 recovery each permanently ratchet their own debt; static socket closeout follows F3; G owns final shell contraction and hard-zero structural gate. GitHub repository ruleset/main protection is separately administered where available, never asserted present without verification.
 

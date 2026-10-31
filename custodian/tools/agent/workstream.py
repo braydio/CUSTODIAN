@@ -1893,6 +1893,57 @@ def _validation_report_status(report: Path | None) -> dict[str, object]:
     return result
 
 
+def _run_operator_chassis_authority_guard(repo: Path, path: Path) -> dict[str, object]:
+    """Run the mandatory structural guard for Operator-touching task branches."""
+    guard_rel = Path("custodian/tools/validation/operator_chassis_authority_guard.py")
+    try:
+        branch = git("branch", "--show-current", cwd=path)
+        changed = set(git("diff", "--no-renames", "--name-only", "origin/main...HEAD", cwd=path).splitlines())
+        changed.update(git("diff", "--no-renames", "--name-only", cwd=path).splitlines())
+        changed.update(git("diff", "--cached", "--no-renames", "--name-only", cwd=path).splitlines())
+        changed.update(git("ls-files", "--others", "--exclude-standard", cwd=path).splitlines())
+    except WorkstreamError as error:
+        return {"status": "blocked", "failures": [f"cannot determine Operator guard scope: {error}"]}
+    operator_prefixes = (
+        "custodian/game/actors/operator/",
+        "custodian/tools/validation/operator_chassis_authority_",
+        "custodian/tools/validation/operator_architecture_debt_audit.py",
+        "custodian/tools/validation/operator_runtime_path_audit.py",
+        "custodian/tools/validation/operator_runtime_animation_authority_smoke.py",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/validation/validation_manifest.json",
+    )
+    scoped = branch.startswith("agent/operator-") or any(
+        item.startswith(operator_prefixes) for item in changed
+    )
+    if not scoped:
+        return {"status": "not_applicable", "failures": []}
+    script = path / guard_rel
+    if not script.is_file():
+        return {"status": "blocked", "failures": [f"mandatory Operator authority guard is missing: {guard_rel}"]}
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script), "--root", str(path), "--against-ref", "origin/main", "--json"],
+            cwd=path, text=True, capture_output=True, timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        return {"status": "blocked", "failures": ["Operator authority guard exceeded its 120-second bound"]}
+    try:
+        report = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return {"status": "blocked", "failures": [
+            f"Operator authority guard emitted invalid JSON (exit {result.returncode}): "
+            f"{(result.stderr or result.stdout).strip()[:500]}"
+        ]}
+    passed = result.returncode == 0 and report.get("passed") is True
+    failures = report.get("failures", [])
+    if not passed and not failures:
+        failures = [f"Operator authority guard failed with exit {result.returncode}"]
+    return {"status": "passed" if passed else "blocked", "failures": failures,
+            "source_sha256": report.get("source_sha256"), "budget_sha256": report.get("budget_sha256")}
+
+
 def closeout_preflight(
     workstream_id: str, path: Path, validation_report: Path | None = None,
 ) -> dict[str, object]:
@@ -1972,6 +2023,7 @@ def closeout_preflight(
     archive_transition_error = _archive_transition_tip_error(workstream_id, path)
 
     validation = _validation_report_status(validation_report)
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
     review_blockers = [
         item["path"] for item in packet_reports
         if item["review_receipt"] is not None and not item["review_receipt"]["receipt_present"]
@@ -2014,10 +2066,13 @@ def closeout_preflight(
                     for item in review_artifact_reports if item["error"])
     if not validation["green"]:
         blockers.append({"gate": "validation", "detail": "report missing, invalid, or non-green"})
+    if operator_guard["status"] == "blocked":
+        blockers.extend({"gate": "operator_chassis_authority_guard", "detail": str(item)}
+                        for item in operator_guard["failures"])
     ready = (
         branch_ready and not archive_transition_error and not packet_blockers and not truth_blockers and not stale_index
         and not artifact_report and summary_ok and not review_blockers and not review_artifact_blockers
-        and bool(validation["green"])
+        and bool(validation["green"]) and operator_guard["status"] != "blocked"
     )
     return {
         "schema": "custodian.workstream.closeout_preflight.v1",
@@ -2065,6 +2120,7 @@ def closeout_preflight(
                  or not item["review_receipt"]["provenance_matches_packet"])
         ],
         "validation": validation,
+        "operator_chassis_authority_guard": operator_guard,
         "post_sync": {
             "status": "unknown",
             "reason": "This read-only preflight does not fetch or synchronize; latest-main merge, after-sync validation, and race-safe landing are only knowable during finish.",
@@ -2644,6 +2700,17 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     if git("branch", "--show-current", cwd=path) != branch:
         raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
 
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
+    if operator_guard["status"] == "blocked":
+        raise WorkstreamError(
+            "Operator chassis authority guard blocked finish: "
+            + "; ".join(map(str, operator_guard["failures"]))
+        )
+    if trace and operator_guard["status"] == "passed":
+        trace.record("operator_chassis_authority_guard", result="passed",
+                     source_sha256=operator_guard.get("source_sha256"),
+                     budget_sha256=operator_guard.get("budget_sha256"))
+
     # PREPARED: artifacts, cleanliness, a durably committed summary, and green
     # validation are required regardless of whether this task already landed.
     packets = artifact_preflight(workstream_id, path)
@@ -2692,6 +2759,12 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
             import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
+    if operator_guard["status"] == "blocked":
+        raise WorkstreamError(
+            "Operator chassis authority guard blocked post-sync finish: "
+            + "; ".join(map(str, operator_guard["failures"]))
+        )
     packets = artifact_preflight(workstream_id, path)
     _completion_truth_preflight(packets)
     if not status_clean(path):

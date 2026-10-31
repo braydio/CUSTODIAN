@@ -46,6 +46,50 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_finish_runs_operator_authority_guard_before_any_push(self):
+        workstream_id = "operator-guard-fixture"
+        branch = workstream.branch_for(workstream_id)
+        git(self.repo, "checkout", "-b", branch)
+        actor = self.repo / "custodian/game/actors/operator/operator.gd"
+        actor.parent.mkdir(parents=True)
+        actor.write_text("extends CharacterBody2D\n")
+        guard = self.repo / "custodian/tools/validation/operator_chassis_authority_guard.py"
+        guard.parent.mkdir(parents=True)
+        guard.write_text(
+            "import json, sys\n"
+            "print(json.dumps({'passed': False, 'failures': ['fixture rejected']}))\n"
+            "sys.exit(1)\n"
+        )
+        git(self.repo, "add", "custodian/game/actors/operator/operator.gd",
+            "custodian/tools/validation/operator_chassis_authority_guard.py")
+        git(self.repo, "commit", "-m", "add operator authority fixture")
+
+        with mock.patch.object(workstream, "fetch"), \
+             mock.patch.object(workstream, "find_worktree", return_value=self.repo), \
+             mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "fixture rejected"):
+                workstream._finish_impl(workstream_id, self.repo / "validation.json", repo=self.repo)
+
+        self.assertFalse(any(call.args and call.args[0] == "push" for call in git_call.call_args_list))
+        self.assertEqual(git(self.repo, "branch", "--show-current"), branch)
+        self.assertTrue(actor.exists())
+
+    def test_operator_authority_guard_leaves_unrelated_workstreams_unaffected(self):
+        result = workstream._run_operator_chassis_authority_guard(self.repo, self.repo)
+        self.assertEqual(result["status"], "not_applicable")
+
+    def test_closeout_preflight_reports_operator_authority_guard_failure(self):
+        failure = {"status": "blocked", "failures": ["fixture rejected"]}
+        with mock.patch.object(workstream, "_run_operator_chassis_authority_guard",
+                                return_value=failure) as guard_call:
+            result = workstream.closeout_preflight("operator-guard-fixture", self.repo)
+        self.assertEqual(result["operator_chassis_authority_guard"], failure)
+        self.assertTrue(any(
+            item["gate"] == "operator_chassis_authority_guard" and item["detail"] == "fixture rejected"
+            for item in result["blockers"]
+        ))
+        guard_call.assert_called_once_with(self.repo.resolve(), self.repo.resolve())
+
     def test_failed_import_recovery_accepts_only_pinned_carow_main_advance(self):
         repo = Path(__file__).resolve().parents[3]
         pinned = workstream.FAILED_IMPORT_ARCHIVE_RECOVERY

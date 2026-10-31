@@ -614,11 +614,52 @@ plan: the playback funnel and the selector cutover have different blast radii an
 different failure modes, and bundling them would have made one monster slice whose
 regression surface could not be reasoned about.
 
-### Anti-rebloat seal (2026-10-23 authorization; not yet implemented)
+### Anti-rebloat seal (authorized 2026-10-23; implementation in progress)
 
 At `main@65ee6fef70a6ad326a16ffbd46ebf18d7f3326db`, `operator.gd` measures 14,676 lines / 738 top-level methods / 478 top-level fields despite a zero-entry pattern architecture-debt ledger. `OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md` and its fresh-context review own a **separate structural gate**: classify actual domain mutation/state/delegation, prevent new authority in the actor, ratchet budgets after each F2/F3/F5/F6 extraction, and make an Operator-touching `workstream.py finish` fail before landing on guard violations. The old `enemy.move_and_slide()` melee fallback is an explicitly temporary F2 exception, never evidence that moving another actor is permitted chassis behavior. Ordinary GitHub push CI is not pre-push protection; do not claim server branch rulesets exist without verification.
 
-After F2/F3/F5/F6, Slice G must pass both the original three `--final` audits **and** the new final structural authority gate. No budget may be raised or historical exception restored merely to make a test pass. The initial publication of the task pair is planning/authoring only, not proof the guard is operational.
+The original 2026-10-23 measurements above are historical and remain tied to
+their pinned source snapshot. The implementation workstream remeasured the
+current claimed source tree before changing gameplay code:
+
+| Source-backed measure | Current claimed tree |
+|---|---:|
+| `operator.gd` lines | 14,792 |
+| Top-level fields | 577 (477 mutable, 100 constants) |
+| Top-level functions | 742 |
+| Largest method | 175 code lines / 49 branch statements |
+
+The initial field ownership inventory accounts for all 477 mutable fields:
+198 F2 melee, 94 F3 ranged, 6 F5 interaction, 57 F6 survivability, 75 chassis,
+36 presentation bridge, and 11 delegation references. Immutable configuration
+is separately listed as 100 constants. The method inventory preserves measured
+mixed-domain, post-extraction compatibility, and `legacy_other_gameplay_authority`
+categories as outstanding evidence; it does not treat those methods as compliant
+or claim that the actor has zero domain debt. The 742 methods classify as 213 F2,
+157 F3, 11 F5, 42 F6, 79 chassis, 44 presentation, 12 delegation references,
+64 post-extraction compatibility, 68 mixed-domain, and 52
+`legacy_other_gameplay_authority` methods.
+
+The measured foreign-body exception remains exactly one
+`enemy.move_and_slide()` in `operator.gd::_apply_melee_hitbox_tick()` (line 7177
+at this snapshot). F2 owns removing it after melee impact/knockback behavior is
+covered. No other foreign-body motor call is permitted. The budget records
+source-backed field readers/writers and method read/write/delegation/clock
+evidence. A method token fingerprint makes edits to an existing method explicit;
+future F2/F3/F5/F6 changes must ratchet their owned field/method records down or
+use the packet's named, bounded approval record. Those slices may remove their
+state and method records, but cannot raise a ceiling or restore an expired
+exception.
+
+The claimed implementation now enforces no-regrowth in Operator-touching
+workstream preflight and finish, including a measured baseline for the existing
+23 legacy path-identity lines and 188 runtime animation files. These are open
+migration debts; the non-final audit passes do not say that the complete
+Operator migration is finished. F2/F3/F5/F6 own their respective domain
+extractions and debt reductions; Slice G owns final elimination and all three
+final zero-debt audits. This implementation is still in its claimed, unlanded
+worktree and has not received its independent review. No budget may be raised
+or historical exception restored merely to make a test pass.
 
 ### Current queued Operator program
 

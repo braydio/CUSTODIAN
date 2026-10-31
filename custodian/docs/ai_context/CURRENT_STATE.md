@@ -1,5 +1,31 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator chassis authority seal (implementation in progress, 2026-10-31)
+
+The existing `operator-chassis-authority-seal-v1` claim is implementing the
+source-aware ownership guard required before F2/F3/F5/F6 extraction. Its
+current source measurement is 14,792 lines, 577 top-level fields (477 mutable,
+100 constants), and 742 top-level functions. The checked inventory classifies
+477 mutable fields across F2 melee (198), F3 ranged (94), F5 interaction (6),
+F6 survivability (57), chassis (75), presentation bridge (36), and delegation
+references (11). Mixed-domain, post-extraction compatibility, and
+`legacy_other_gameplay_authority` methods remain visible migration evidence;
+they are not treated as compliant or as zero debt.
+
+The only measured foreign-body motor exception is
+`enemy.move_and_slide()` in `operator.gd::_apply_melee_hitbox_tick()`; F2 owns
+removing it after the impact/knockback behavior is protected. The claimed
+implementation is still unlanded and awaits the packet's complete validation
+and fresh independent review. The separate existing migration audit baseline
+contains 23 legacy path-identity lines and 188 legacy runtime animation files.
+They remain outstanding: F2/F3/F5/F6 own their domain extractions, and Slice G
+owns final elimination and final zero-debt checks. The ordinary audit passes do
+not mean the Operator migration is complete. See
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md` for the ownership
+inventory and `custodian/docs/ai_context/VALIDATION_RECIPES.md` for its focused
+validation/finish gate. This guard does not assert server-side protection from
+arbitrary direct Git pushes.
+
 ## Persistent task administrator bootstrap (2026-10-30)
 
 `custodian/tools/agent/task_administrator.py` provides a read-only observer,

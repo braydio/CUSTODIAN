@@ -7340,6 +7340,33 @@
       ],
       "timeout_sec": 30,
       "needs_import": false
-    }
+    },
+{
+  "id": "operator_chassis_authority_guard",
+  "type": "python",
+  "script": "custodian/tools/validation/test_operator_chassis_authority_guard.py",
+  "tier": "unit",
+  "tags": [
+    "operator",
+    "architecture",
+    "authority",
+    "negative_control"
+  ],
+  "owners": [
+    "custodian/game/actors/operator/operator.gd",
+    "custodian/game/actors/operator/**",
+    "custodian/tools/validation/operator_chassis_authority_guard.py",
+    "custodian/tools/validation/operator_chassis_authority_budget.json",
+    "custodian/tools/validation/test_operator_chassis_authority_guard.py",
+    "custodian/tools/agent/workstream.py",
+    "custodian/tools/agent/test_workstream.py",
+    "custodian/tools/validation/validation_manifest.json",
+    "custodian/tools/validation/operator_architecture_debt_audit.py",
+    "custodian/tools/validation/operator_runtime_path_audit.py",
+    "custodian/tools/validation/operator_runtime_animation_authority_smoke.py"
+  ],
+  "timeout_sec": 30,
+  "needs_import": false
+}
   ]
 }

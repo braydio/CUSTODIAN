@@ -58,6 +58,31 @@ This item audits the named system's responsibility, integration seams, observed 
 ### Newly authorized anti-rebloat packet
 - [`OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md`](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/OPERATOR_CHASSIS_AUTHORITY_SEAL_V1.md): structural guard, pre-landing integration and shrinking exception budget; independent paired review gates remaining extractions.
 
+### 2026-10-31 implementation measurement (unlanded)
+
+The active `operator-chassis-authority-seal-v1` workstream measured its claimed
+source tree as 14,792 lines, 577 top-level fields (477 mutable and 100
+constants), and 742 top-level functions. It records field readers/writers and
+method ownership, state, clock, delegation, branch, and normalized code-token
+fingerprint evidence. The current inventory reports 198 mutable F2 melee
+fields, 94 F3 ranged, 6 F5 interaction, 57 F6 survivability, 75 chassis, 36
+presentation bridge, and 11 delegation references. These are measured legacy
+counts, not a claim of zero debt. Fifty-two methods remain explicitly labeled
+`legacy_other_gameplay_authority`; mixed-domain and post-extraction compatibility
+methods are also retained as measured categories.
+
+Exactly one foreign-body movement exception remains: `enemy.move_and_slide()`
+inside `_apply_melee_hitbox_tick()` at source line 7177 in this snapshot. F2
+owns its retirement after the impact/knockback regression surface is covered.
+The new guard work is in progress and unlanded; this note does not report an
+independent review or completed acceptance. The existing migration-audit debt
+is 23 legacy path-identity lines and 188 legacy runtime animation files; the
+guard records their pre-change identities and prevents growth while leaving
+the debt outstanding. F2/F3/F5/F6 own domain extraction and reduction; Slice G
+owns final elimination and the final zero-debt audits. Passing ordinary audit
+modes does not close these migrations. The dated 2026-10-23 snapshot and its
+“not yet proved” findings above remain historical evidence.
+
 ### Existing task packets (do not duplicate)
 - [`OPERATOR_LOADOUT_DOMAIN_EXTRACTION`](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/archived/OPERATOR_LOADOUT_DOMAIN_EXTRACTION.md) · **existing queue authority; not created by this audit**
 - [`OPERATOR_MELEE_DOMAIN_EXTRACTION`](https://github.com/braydio/CUSTODIAN/blob/main/custodian/docs/ai_context/task_packets/OPERATOR_MELEE_DOMAIN_EXTRACTION.md) · **existing queue authority; not created by this audit**
