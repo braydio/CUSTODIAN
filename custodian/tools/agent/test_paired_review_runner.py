@@ -521,12 +521,18 @@ class PairedReviewRunnerTests(unittest.TestCase):
             expected = published_target
         self.assertEqual(published_target, expected)
         actual = (repository / manifest_path).read_bytes()
-        # Main may later add unrelated manifest owners. Preserve the exact
-        # historical timeout contract while checking its current record.
+        # Main may later add owners or an explicitly authorized timeout
+        # increase. Keep the historical timeout proof above exact while
+        # checking the current manifest's other fields precisely.
         actual_pair = pair_record(actual)
         published_pair = pair_record(published_target)
-        self.assertEqual({key: value for key, value in actual_pair.items() if key != "owners"},
-                         {key: value for key, value in published_pair.items() if key != "owners"})
+        self.assertEqual(
+            {key: value for key, value in actual_pair.items()
+             if key not in {"owners", "timeout_sec"}},
+            {key: value for key, value in published_pair.items()
+             if key not in {"owners", "timeout_sec"}},
+        )
+        self.assertIn(actual_pair["timeout_sec"], (90, 120))
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
@@ -3333,7 +3339,11 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         self.assertIn("validation.json", prompt)
         self.assertIn("Write the canonical review summary only to `REVIEW_SAMPLE_CLAUDE_SUMMARY.md`", prompt)
         self.assertIn("Do not edit reviewed implementation/runtime code or `SAMPLE_IMPL_CLAUDE_SUMMARY.md`", prompt)
-        self.assertIn("Choose `passed`, `findings`, or `human_required`", prompt)
+        self.assertIn("Choose your verdict from your own evidence-backed conclusion", prompt)
+        self.assertIn("the archive is an output and may not exist before your review", prompt)
+        self.assertIn("same canonical `### Review Receipt", prompt)
+        self.assertIn("leave the target at its pinned baseline", prompt)
+        self.assertIn("do not default to PASS", prompt)
         self.assertIn("SHA-256 `abc123`", prompt)
         self.assertNotIn("transcript contents", prompt)
         line = json.dumps({"type": "event", "api_key": "private-value", "message": "Bearer abcdefghijklmnop"})
@@ -3347,7 +3357,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         prompt = runner.prompt_for(
             "review-sample", active, target, run_dir=Path("/tmp/20261030T000000Z-0123456789ab"),
             reviewed_main="b" * 40, implementation_commit="a" * 40,
-            implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md",
+            implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md", target_workstream="sample-impl",
         )
         for required in (
             active,
@@ -3357,12 +3367,12 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             "REVIEW_SAMPLE_CLAUDE_SUMMARY.md",
             "custodian.review_outcome.v1",
             "20261030T000000Z-0123456789ab",
-            "Review cycle: `0`",
+            "cycle `0`",
             "Finding IDs: `none`",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, prompt)
-        self.assertIn("Choose `passed`, `findings`, or `human_required`", prompt)
+        self.assertIn("Choose your verdict from your own evidence-backed conclusion", prompt)
 
     def test_next_handoff_is_returned_from_durable_summary(self):
         summary = "## Findings\nPass\n\n## Next Handoff\n- Next workstream: none\n- Next action: done\n"
@@ -8316,6 +8326,17 @@ Authoring chat: {chat}
         )
         return repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary
 
+    def archived_receipt_capture_fixture(self, root: Path):
+        repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary = \
+            self.pass_fixture(root)
+        outcome = runner.review_outcome.render_review_outcome(
+            outcome="passed", review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main=reviewed_main, implementation_commit=implementation,
+            provenance="different-agent", run_id=run_dir.name, review_cycle=0, ids=())
+        with (worktree / archive).open("a", encoding="utf-8") as stream:
+            stream.write("\n" + outcome)
+        return repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary
+
     def write_session(self, root: Path, *, prior: str = "progress: inspected", turns: int = 1,
                       logged: str | None = None):
         source = (ROOT / "custodian/tools/agent/paired_review_runner.py").read_text()
@@ -8393,6 +8414,157 @@ Authoring chat: {chat}
                 with self.assertRaisesRegex(runner.RunnerError, "exact pinned transformation"):
                     runner.plan_redacted_final_outcome_recovery(repo, "review-sample",
                                                                  "20261030T000000Z-0123456789ab")
+
+    def test_archived_receipt_capture_plan_preserves_authenticated_outcome_and_binds_exact_bytes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            (repo, worktree, run_dir, reviewed_main, implementation,
+             target, archive, _summary) = self.archived_receipt_capture_fixture(Path(temp))
+            original = (worktree / archive).read_bytes()
+            outcome, error = runner.review_outcome.parse_review_outcome(original.decode())
+            self.assertIsNone(error)
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            patches = (
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM", "review-sample"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_RUN_ID", run_dir.name),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN", reviewed_main),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_TARGET", "sample-impl"),
+                patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+            )
+            with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5]:
+                plan = runner.plan_archived_receipt_capture_recovery(repo, "review-sample", run_dir.name)
+            self.assertEqual(plan["outcome"], outcome)
+            self.assertEqual(plan["archived_original_sha256"], hashlib.sha256(original).hexdigest())
+            self.assertEqual(plan["archived_review_receipt_state"], "missing")
+            self.assertEqual(plan["target_candidate_sha256"], hashlib.sha256((worktree / target).read_bytes()).hexdigest())
+            self.assertEqual((worktree / archive).read_bytes(), original)
+            self.assertFalse(Path(plan["journal"]).exists())
+            recovered = runner._archived_receipt_capture_packet(original.decode(), plan)
+            preserved, preserved_error = runner.review_outcome.parse_review_outcome(recovered)
+            self.assertIsNone(preserved_error)
+            self.assertEqual(preserved, outcome)
+            self.assertEqual(runner._independent_review_receipt(recovered)["Status"], "passed")
+            self.assertIn("- Authored by: `coordinator`", recovered)
+            self.assertEqual(recovered.count("## Independent Review"), 1)
+
+    def test_archived_receipt_capture_plan_rejects_contradictory_outcome_and_target_receipt(self):
+        for mutation, expected in (
+            ("outcome", "existing Review Outcome does not authenticate"),
+            ("target", "existing canonical PASS does not exactly match"),
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temp:
+                (repo, worktree, run_dir, reviewed_main, implementation,
+                 target, archive, _summary) = self.archived_receipt_capture_fixture(Path(temp))
+                if mutation == "outcome":
+                    path = worktree / archive
+                    path.write_text(path.read_text().replace(
+                        f"- Reviewed main: `{reviewed_main}`", f"- Reviewed main: `{'f' * 40}`"))
+                else:
+                    path = worktree / target
+                    path.write_text(path.read_text().replace(
+                        "- Reviewer provenance: `different-agent`", "- Reviewer provenance: `same-agent-fresh-context`"))
+                evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                            "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                            "implementation_commit": implementation}
+                patches = (
+                    patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM", "review-sample"),
+                    patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_RUN_ID", run_dir.name),
+                    patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                    patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN", reviewed_main),
+                    patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_TARGET", "sample-impl"),
+                    patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                )
+                with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5]:
+                    with self.assertRaisesRegex(runner.RunnerError, expected):
+                        runner.plan_archived_receipt_capture_recovery(repo, "review-sample", run_dir.name)
+
+    def test_archived_receipt_capture_is_pinned_to_exact_run_and_claim(self):
+        with self.assertRaisesRegex(runner.RunnerError, "exact authorized workstream and run"):
+            runner.plan_archived_receipt_capture_recovery(
+                Path("."), runner.ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM, "20261031T005523Z-c70dd87f67a4")
+        with tempfile.TemporaryDirectory() as temp:
+            (repo, _worktree, run_dir, reviewed_main, implementation,
+             _target, _archive, _summary) = self.archived_receipt_capture_fixture(Path(temp))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            patches = (
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM", "review-sample"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_RUN_ID", run_dir.name),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID", "wrong-claim-id"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN", reviewed_main),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_TARGET", "sample-impl"),
+                patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+            )
+            with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5]:
+                with self.assertRaisesRegex(runner.RunnerError, "exact authorized identity"):
+                    runner.plan_archived_receipt_capture_recovery(repo, "review-sample", run_dir.name)
+
+    def test_archived_receipt_capture_apply_is_exact_and_replay_safe(self):
+        with tempfile.TemporaryDirectory() as temp:
+            (repo, worktree, run_dir, reviewed_main, implementation,
+             target, archive, summary) = self.archived_receipt_capture_fixture(Path(temp))
+            original = (worktree / archive).read_bytes()
+            run_before = runner._file_manifest(run_dir)
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+
+            def fake_finish(_repo, _workstream, checkout, _active, _target_ws, target_path,
+                            _target_content, _chat, _main, _run_dir, _host):
+                sh = lambda *args: subprocess.run(["git", "-C", str(checkout), *args], check=True,
+                                                   text=True, capture_output=True)
+                sh("add", "--", archive, target_path, summary.name, f"{runner.PACKET_ROOT}/README.md")
+                sh("-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid",
+                   "commit", "-m", "recovered archived receipt")
+                sh("push", "origin", "HEAD:refs/heads/main")
+                return subprocess.check_output(["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True).strip()
+
+            patches = (
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM", "review-sample"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_RUN_ID", run_dir.name),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN", reviewed_main),
+                patch.object(runner, "ARCHIVED_RECEIPT_CAPTURE_TARGET", "sample-impl"),
+                patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+            )
+            with patches[0], patches[1], patches[2], patches[3], patches[4], patches[5]:
+                plan = runner.plan_archived_receipt_capture_recovery(repo, "review-sample", run_dir.name)
+                with patch.object(runner, "_host_evidence_for_continuation", return_value=evidence), \
+                        patch.object(runner, "coordinator_finish_review", side_effect=fake_finish):
+                    write_atomic = runner._write_atomic
+
+                    def interrupt_after_receipt(path, content):
+                        if Path(path) == Path(plan["journal"]):
+                            state = json.loads(content)
+                            if state.get("stage") == "receipt_written":
+                                raise OSError("synthetic interruption after atomic packet write")
+                        return write_atomic(path, content)
+
+                    with patch.object(runner, "_write_atomic", side_effect=interrupt_after_receipt):
+                        with self.assertRaisesRegex(OSError, "after atomic packet write"):
+                            runner.apply_archived_receipt_capture_recovery(
+                                repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                    journal = runner._read_archived_receipt_capture_journal(Path(plan["journal"]), plan["plan_sha256"])
+                    self.assertEqual(journal["stage"], "prepared")
+                    result = runner.apply_archived_receipt_capture_recovery(
+                        repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                    replay = runner.apply_archived_receipt_capture_recovery(
+                        repo, "review-sample", run_dir.name, plan["plan_sha256"])
+            landed = subprocess.check_output(["git", "-C", str(repo), "show",
+                                               f"origin/main:{archive}"], text=True)
+            self.assertEqual(result["landed_commit"], replay["landed_commit"])
+            self.assertTrue(result["canonical_finish_verified"])
+            self.assertTrue(result["reviewer_outcome_preserved"])
+            self.assertIn("- Authored by: `coordinator`", landed)
+            self.assertEqual(landed.count("## Review Outcome"), 1)
+            original_outcome, _ = runner.review_outcome.parse_review_outcome(original.decode())
+            landed_outcome, error = runner.review_outcome.parse_review_outcome(landed)
+            self.assertIsNone(error)
+            self.assertEqual(landed_outcome, original_outcome)
+            self.assertEqual(runner._file_manifest(run_dir), run_before)
 
     def test_plan_rejects_nonpassing_complete_final_even_when_capture_is_exact(self):
         with tempfile.TemporaryDirectory() as temp:

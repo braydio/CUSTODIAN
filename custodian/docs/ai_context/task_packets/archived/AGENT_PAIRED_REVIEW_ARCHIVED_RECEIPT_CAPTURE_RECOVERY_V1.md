@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-archived-receipt-capture-recovery-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -55,3 +55,33 @@
 
 - Repomix: `none`
 - Purpose: The work surface is bounded to the existing paired-review runner, its tests and lifecycle authority.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `paired_review_runner.py` implements the source-pinned archived receipt capture plan and separately authorized apply, with original reviewer evidence preserved and coordinator provenance labeled. The complete three-module suite passed 294 tests; canonical changed-file validation passed 8/8 checks with complete coverage and zero uncovered files; py_compile and git diff --check passed. The authorized regression correction preserves exact historical 30-to-90 timeout verification and permits only the current manifest timeout values 90 or 120 while retaining all other field checks. No protected-run recovery was executed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: The runner validation hit its original 90-second limit after the required test surface expanded; the authorized 120-second limit then exposed a stale current-manifest equality assertion.
+- Root cause / contributing factors: A historical timeout guard and current manifest comparison shared an assumption that the current timeout could not be explicitly increased.
+- Prevention / pipeline improvement: Keep historical manifest/blob verification exact and separately bound current configuration values, preserving checks on every other field.
+- Tooling / docs drift discovered: Current manifest test expectation did not account for the explicitly authorized 90-to-120-second adjustment; fixed in the existing regression test.
+- Follow-up: `fixed-in-scope`
+- What worked: The narrow timeout change, precise fixture expectation correction and canonical coverage gate isolated the issue without changing production validators.
+
+## Handoff
+- Next workstream: `review-agent-paired-review-archived-receipt-capture-recovery-v1`
+- Next packet state: `dependency-gated until implementation lands`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
+- Summary backlink: Include this exact Authoring chat URL in every durable summary and final Next Handoff.
+- Refresh reason: `none`
+- Next action: After this implementation lands and its claim/worktree teardown is verified, confirm dispatcher eligibility and launch the existing fresh-context paired review.
+- Blockers or open questions: `none`

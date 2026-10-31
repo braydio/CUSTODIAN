@@ -10,6 +10,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import threading
@@ -49,6 +50,12 @@ DUAL_DISPOSITION_RUN_ID = "20261030T191402Z-4dd067b9b8e2"
 DUAL_DISPOSITION_CLAIM_RUN_ID = "20261030T191411Z-efd97a2bdb1f"
 DUAL_DISPOSITION_RECOVERY_SCHEMA = "custodian.paired_review_dual_disposition_recovery.v1"
 DUAL_DISPOSITION_ERROR = "archived review packet is missing; coordinator closeout is recoverable"
+ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM = "review-agent-paired-review-dual-disposition-recovery-v1"
+ARCHIVED_RECEIPT_CAPTURE_RUN_ID = "20261031T005522Z-c70dd87f67a4"
+ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID = "20261031T005536Z-066de2554c75"
+ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN = "a696aef8d5aff23e9f2a477c85f1f792da6dcd02"
+ARCHIVED_RECEIPT_CAPTURE_TARGET = "agent-paired-review-dual-disposition-recovery-v1"
+ARCHIVED_RECEIPT_CAPTURE_SCHEMA = "custodian.paired_review_archived_receipt_capture_recovery.v1"
 
 # This recovery exists for one independently reviewed, already-held run. It is
 # intentionally not an alternate parser or a general invalid-disposition retry.
@@ -348,7 +355,7 @@ def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: 
     archived_review_path = f"{PACKET_ROOT}/archived/{Path(packet_path).name}"
     run_id = run_dir.name if run_dir else "the exact run ID from the claim receipt"
     target_identity = target_workstream or "the exact target workstream from the review packet"
-    outcome_contract = f"""The required complete archived review packet is `{archived_review_path}` (archive this exact active review packet `{packet_path}`, preserving its identity and review cycle). It must contain exactly one canonical `## Review Outcome` section using schema `{review_outcome.SCHEMA}` with these fields: `Schema`, `Outcome`, `Review workstream`, `Review target workstream`, `Reviewed main`, `Reviewed implementation commit`, `Reviewer context`, `Reviewer provenance`, `Run ID`, `Review cycle`, and `Finding IDs`. Bind them to review workstream `{workstream}`, target workstream `{target_identity}`, run ID `{run_id}`, review cycle `{review_cycle}`, reviewed main `{reviewed_main or 'the exact pinned main SHA'}`, and implementation commit `{implementation_commit or 'the exact pinned implementation SHA'}`. Record the exact line `- Review cycle: `{review_cycle}``. Reviewer context is `fresh`; provenance must be truthful. Record `- Finding IDs: `none`` only for your own `passed` outcome; findings and human-required outcomes require unique stable IDs for this review cycle. The canonical target receipt is written only in `{target_path}` and must pass the strict receipt verifier. The exact root summary path is `{review_summary_path}`. These artifacts are required for every outcome; never infer or transcribe an earlier verdict."""
+    outcome_contract = f"""Create the complete archived review packet at `{archived_review_path}` by archiving this active packet `{packet_path}`; the archive is an output and may not exist before your review. Preserve the packet identity and review cycle. The archive must contain exactly one canonical `## Review Outcome` using schema `{review_outcome.SCHEMA}` with fields `Schema`, `Outcome`, `Review workstream`, `Review target workstream`, `Reviewed main`, `Reviewed implementation commit`, `Reviewer context`, `Reviewer provenance`, `Run ID`, `Review cycle`, and `Finding IDs`, bound to review workstream `{workstream}`, target `{target_identity}`, run `{run_id}`, cycle `{review_cycle}`, reviewed main `{reviewed_main or 'the exact pinned main SHA'}`, and implementation `{implementation_commit or 'the exact pinned implementation SHA'}`. Reviewer context is `fresh`; provenance must be truthful. Use `Finding IDs: `none`` only for your own `passed` outcome; findings and human-required outcomes require unique stable IDs for this review cycle. For `passed` only, write the same canonical `### Review Receipt: {workstream}` under `## Independent Review` in both `{archived_review_path}` and `{target_path}`; the target receipt must pass the unchanged strict receipt verifier. For findings or `human_required`, record the outcome in the archive and leave the target at its pinned baseline. The exact root summary path is `{review_summary_path}`. Never infer or transcribe an earlier verdict."""
     implementation_summary = implementation_summary_path or "the target implementation's exact root summary path"
     backlink = f"Use this exact Authoring chat URL in the summary: {authoring_chat}" if authoring_chat else "Preserve the packet's exact Authoring chat URL in the summary."
     pinned = f"Review the immutable baseline `origin/main` at `{reviewed_main}`; report this exact SHA in the review receipt." if reviewed_main else "Record the exact immutable reviewed-main SHA in the review receipt."
@@ -358,11 +365,11 @@ def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: 
                     if source_span else "Use the pinned canonical implementation commit as the source range unless coordinator provenance records a separate source span.")
     return f"""You are the fresh independent paired reviewer for CUSTODIAN workstream `{workstream}`.
 
-Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{archived_review_path}`, `{target_path}`, `{implementation_summary}`, and the landed diff/current main. {pinned} {implementation} {source_range} Inspect the coordinator-authored validation report at `{validation_path}` (SHA-256 `{validation_sha256 or 'provided in coordinator-validation.json'}`) as immutable execution evidence. Do not run or replace the host validation report. Independently assess the implementation and report your own verdict. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code or `{implementation_summary}`; treat it as read-only. Record findings first. Write the canonical review summary only to `{review_summary_path}`. Write the complete canonical archived review packet at `{archived_review_path}` and the required review receipt only at `{target_path}` if your independent verdict is `passed`. Choose `passed`, `findings`, or `human_required` from your own evidence-backed conclusion; do not default to PASS. {backlink}
+Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, `{implementation_summary}`, and the landed diff/current main. The archived packet `{archived_review_path}` is an output and may not exist yet; do not require it as an input. {pinned} {implementation} {source_range} Inspect the coordinator-authored validation report at `{validation_path}` (SHA-256 `{validation_sha256 or 'provided in coordinator-validation.json'}`) as immutable execution evidence. Do not run or replace the host validation report. Independently assess the implementation and report your own verdict. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code or `{implementation_summary}`; treat it as read-only. Record findings first. Write the canonical review summary only to `{review_summary_path}`. Create the complete canonical archived review packet at `{archived_review_path}` and include its canonical Review Outcome. For `passed`, write the exact same canonical receipt under `## Independent Review` in both the archived packet and `{target_path}`; for findings or `human_required`, leave the target at its pinned baseline. Choose your verdict from your own evidence-backed conclusion; do not default to PASS. {backlink}
 
 {outcome_contract}
 
-This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. If the target packet needs its receipt, append exactly one `### Review Receipt: {workstream}` block under `## Independent Review` (or append that section at EOF), preserving all existing target bytes. Use this exact field layout, substituting the review packet's exact target identity and the pinned main and implementation SHAs:
+This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. For a passing verdict, append exactly one identical `### Review Receipt: {workstream}` block under `## Independent Review` in the archive and target, preserving the target's existing bytes. Do not add a PASS receipt to the target for findings or `human_required`. Use this exact field layout, substituting the review packet's exact target identity and pinned main and implementation SHAs:
 
 ```markdown
 ### Review Receipt: {workstream}
@@ -2099,7 +2106,8 @@ def _redacted_final_journal_path(common: Path, workstream: str, run_id: str) -> 
     return path
 
 
-def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
+                                  allow_existing_outcome: bool = False) -> dict:
     repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
     common = common_dir(repo).resolve()
     main_sha = _cached_remote_ref_for_readonly_plan(repo, "main")
@@ -2236,8 +2244,23 @@ def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str) -> d
                           + str(receipt_error or "receipt does not say passed"))
 
     existing, outcome_error = review_outcome.parse_review_outcome(review_text)
-    if outcome_error or existing is not None:
-        raise RunnerError("canonical archived Review Outcome is present or malformed; recovery is not applicable")
+    if outcome_error:
+        raise RunnerError("canonical archived Review Outcome is malformed; recovery is not applicable")
+    if allow_existing_outcome:
+        if existing is None or existing.get("Outcome") != "passed":
+            raise RunnerError("archived-receipt capture requires one existing canonical PASS outcome")
+        outcome_identity_error = review_outcome.outcome_identity_error(
+            existing, review_workstream=workstream, target_workstream=target_workstream,
+            reviewed_main=reviewed_main, implementation_commit=implementation_commit,
+            run_id=run_id, review_cycle=int(header["Review cycle"]),
+        )
+        canonical_receipt = render_review_receipt(existing)
+        if outcome_identity_error or header.get("Reviewer provenance") != existing.get("Reviewer provenance"):
+            raise RunnerError("existing Review Outcome does not authenticate this exact archived review")
+        if target_candidate.count(canonical_receipt) != 1:
+            raise RunnerError("existing canonical PASS does not exactly match the reviewer target receipt")
+    elif existing is not None:
+        raise RunnerError("canonical archived Review Outcome is present; redacted-final recovery is not applicable")
     archived_receipt = _independent_review_receipt(review_text)
     receipt_fields = ("Schema", "Review workstream", "Review target workstream", "Status",
                       "Blocking defects", "Material gaps", "Reviewer context", "Reviewer provenance",
@@ -2262,6 +2285,8 @@ def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str) -> d
             raise RunnerError("archived review receipt contradicts the authenticated reviewer target receipt")
         archived_receipt_state = "verified"
         review_section_state = "present"
+    if allow_existing_outcome and archived_receipt_state != "missing":
+        raise RunnerError("archived-receipt capture requires the archive receipt to be the sole missing artifact")
     summary_path = worktree / expected_summary_path(workstream)
     if summary_path.is_symlink() or not summary_path.is_file():
         raise RunnerError("reviewer-authored canonical summary is missing or unsafe")
@@ -2316,7 +2341,8 @@ def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str) -> d
         raise RunnerError("reviewer worktree has staged changes; refusing to authorize hidden content")
     journal_path = _redacted_final_journal_path(common, workstream, run_id)
     plan = {
-        "schema": "custodian.paired_review_redacted_final_outcome_plan.v1",
+        "schema": (ARCHIVED_RECEIPT_CAPTURE_SCHEMA if allow_existing_outcome
+                   else "custodian.paired_review_redacted_final_outcome_plan.v1"),
         "workstream": workstream, "run_id": run_id,
         "claim_run_id": claim_record["run_id"], "branch": branch,
         "claim_receipt_sha256": _sha256_bytes(claim_receipt_path.read_bytes()),
@@ -2348,13 +2374,16 @@ def _redacted_final_plan_unlocked(repo: Path, workstream: str, run_id: str) -> d
         "review_section_state": review_section_state,
         "host_validation": {key: host_evidence[key] for key in
                             ("report_sha256", "metadata_sha256", "implementation_commit")},
-        "journal": str(journal_path), "action": "append-coordinator-administrative-pass-outcome",
+        "journal": str(journal_path),
+        "action": ("append-coordinator-administrative-archived-receipt-mirror" if allow_existing_outcome
+                   else "append-coordinator-administrative-pass-outcome"),
     }
-    plan["outcome"] = review_outcome.parse_review_outcome(review_outcome.render_review_outcome(
-        outcome="passed", review_workstream=workstream, target_workstream=target_workstream,
-        reviewed_main=reviewed_main, implementation_commit=implementation_commit,
-        provenance=header["Reviewer provenance"], run_id=run_id,
-        review_cycle=int(header["Review cycle"]), ids=()))[0]
+    plan["outcome"] = (existing if allow_existing_outcome else review_outcome.parse_review_outcome(
+        review_outcome.render_review_outcome(
+            outcome="passed", review_workstream=workstream, target_workstream=target_workstream,
+            reviewed_main=reviewed_main, implementation_commit=implementation_commit,
+            provenance=header["Reviewer provenance"], run_id=run_id,
+            review_cycle=int(header["Review cycle"]), ids=()))[0])
     plan["plan_sha256"] = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
     return plan
 
@@ -2373,6 +2402,329 @@ def plan_redacted_final_outcome_recovery(repo: Path, workstream: str, run_id: st
         except BlockingIOError as exc:
             raise RunnerError("another supervisor or recovery holds the exact review run") from exc
         return _redacted_final_plan_unlocked(repo, workstream, run_id)
+
+
+def _archived_receipt_capture_root(common: Path, workstream: str, run_id: str) -> Path:
+    root = common / "custodian-review-recoveries" / "archived-receipt-capture" / workstream / run_id
+    current = common
+    for part in root.relative_to(common).parts:
+        current = current / part
+        if current.is_symlink() or (current.exists() and not current.is_dir()):
+            raise RunnerError("archived-receipt recovery journal path is occupied or unsafe")
+    if not root.resolve().is_relative_to(common.resolve()):
+        raise RunnerError("archived-receipt recovery journal escapes shared Git metadata")
+    return root
+
+
+def _verify_archived_receipt_capture_lock(lock_path: Path, lock_fd: int, plan: dict | None = None) -> None:
+    """Require the held descriptor and canonical lock path to retain one inode."""
+    try:
+        path_stat = lock_path.lstat()
+        fd_stat = os.fstat(lock_fd)
+    except OSError as exc:
+        raise RunnerError("original paired-review supervisor lock changed or disappeared") from exc
+    if (not stat.S_ISREG(path_stat.st_mode) or path_stat.st_dev != fd_stat.st_dev
+            or path_stat.st_ino != fd_stat.st_ino):
+        raise RunnerError("original paired-review supervisor lock path no longer names the held inode")
+    if plan is not None and {"device": fd_stat.st_dev, "inode": fd_stat.st_ino} != plan.get("lock_identity"):
+        raise RunnerError("paired-review supervisor lock identity changed after planning")
+
+
+def _archived_receipt_capture_plan_unlocked(repo: Path, workstream: str, run_id: str,
+                                           lock_fd: int | None = None) -> dict:
+    if (workstream != ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM
+            or run_id != ARCHIVED_RECEIPT_CAPTURE_RUN_ID):
+        raise RunnerError("archived-receipt capture is pinned to its one exact protected run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    plan = _redacted_final_plan_unlocked(repo, workstream, run_id, allow_existing_outcome=True)
+    if (plan["claim_run_id"] != ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID
+            or plan["reviewed_main"] != ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN
+            or plan["target_workstream"] != ARCHIVED_RECEIPT_CAPTURE_TARGET
+            or plan["outcome"].get("Outcome") != "passed"
+            or plan["archived_review_receipt_state"] != "missing"):
+        raise RunnerError("archived-receipt capture evidence does not match the exact authorized identity")
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    lock_stat = lock_path.stat()
+    if lock_fd is not None:
+        _verify_archived_receipt_capture_lock(lock_path, lock_fd)
+        lock_stat = os.fstat(lock_fd)
+    worktree = Path(plan["worktree"])
+    original_packet = (worktree / plan["review_packet"]).read_bytes()
+    original_text = original_packet.decode("utf-8")
+    outcome, error = review_outcome.parse_review_outcome(original_text)
+    if error or outcome != plan["outcome"]:
+        raise RunnerError("canonical reviewer-authored Review Outcome changed during planning")
+    outcome_match = re.search(r"(?m)^## Review Outcome[ \t]*$", original_text)
+    if outcome_match is None:
+        raise RunnerError("canonical reviewer-authored Review Outcome section is missing")
+    next_section = re.search(r"(?m)^## [^\r]*$", original_text[outcome_match.end():])
+    outcome_end = outcome_match.end() + next_section.start() if next_section else len(original_text)
+    plan.update({
+        "schema": ARCHIVED_RECEIPT_CAPTURE_SCHEMA,
+        "recovery_mode": "source-pinned-redacted-final-archived-receipt-mirror",
+        "common_dir": str(common),
+        "action": "append-coordinator-administrative-archived-receipt-mirror",
+        "journal": str(_archived_receipt_capture_root(common, workstream, run_id) / "recovery.json"),
+        "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        "archived_outcome_sha256": _sha256_bytes(original_text[outcome_match.start():outcome_end].encode("utf-8")),
+        "archived_original_sha256": _sha256_bytes(original_packet),
+        "target_receipt_text_sha256": _sha256_bytes(render_review_receipt(outcome).encode("utf-8")),
+    })
+    plan.pop("plan_sha256", None)
+    plan["plan_sha256"] = _redacted_final_plan_digest(plan)
+    return plan
+
+
+def plan_archived_receipt_capture_recovery(repo: Path, workstream: str, run_id: str) -> dict:
+    if (workstream != ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM
+            or run_id != ARCHIVED_RECEIPT_CAPTURE_RUN_ID):
+        raise RunnerError("archived-receipt plan requires the one exact authorized workstream and run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    generic_journal = _redacted_final_journal_path(common, workstream, run_id)
+    if generic_journal.exists():
+        raise RunnerError("another recovery journal already exists for the exact protected run")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery holds the exact review run") from exc
+        root = _archived_receipt_capture_root(common, workstream, run_id)
+        if root.exists():
+            raise RunnerError("archived-receipt recovery journal already exists; inspect before planning")
+        return _archived_receipt_capture_plan_unlocked(repo, workstream, run_id, lock.fileno())
+
+
+def _archived_receipt_capture_packet(original: str, plan: dict) -> str:
+    outcome, error = review_outcome.parse_review_outcome(original)
+    if (error or outcome != plan.get("outcome") or outcome is None
+            or outcome.get("Outcome") != "passed"):
+        raise RunnerError("recovery source no longer contains the exact reviewer-authored PASS outcome")
+    if _sha256_bytes(render_review_receipt(outcome).encode("utf-8")) != plan.get("target_receipt_text_sha256"):
+        raise RunnerError("canonical reviewer outcome no longer yields the planned receipt bytes")
+    if _sha256_bytes(original.encode("utf-8")) != plan.get("archived_original_sha256"):
+        raise RunnerError("archived reviewer packet changed after read-only planning")
+    if _independent_review_receipt(original) not in (None, {}):
+        raise RunnerError("archived reviewer receipt appeared after planning; refusing to duplicate it")
+    if "### Review Receipt:" in original:
+        raise RunnerError("archived reviewer packet already contains a receipt heading")
+    sections = list(re.finditer(r"(?m)^## Independent Review[ \t]*$", original))
+    if len(sections) != (1 if plan.get("review_section_state") == "present" else 0):
+        raise RunnerError("archived Independent Review section state changed after planning")
+    receipt_text = render_review_receipt(outcome)
+    mirror = "**Coordinator-authored mirror of the authenticated reviewer target receipt.**\n\n" + receipt_text
+    if sections:
+        start = sections[0].end()
+        following = re.search(r"(?m)^## [^\r]*$", original[start:])
+        end = start + following.start() if following else len(original)
+        before, after = original[:end], original[end:]
+        separator = "" if before.endswith("\n\n") else "\n" if before.endswith("\n") else "\n\n"
+        content = before + separator + mirror + ("\n" if after and not after.startswith("\n") else "") + after
+    else:
+        separator = "" if original.endswith("\n\n") else "\n" if original.endswith("\n") else "\n\n"
+        content = original + separator + "## Independent Review\n\n" + mirror
+    provenance = (
+        "\n\n## Coordinator Recovery Provenance\n\n"
+        "- Authored by: `coordinator`\n"
+        "- Recovery: `archived-receipt-capture`\n"
+        f"- Plan SHA-256: `{plan['plan_sha256']}`\n"
+        f"- Reviewer final SHA-256: `{plan['session']['last_message_sha256']}`\n"
+        f"- Reviewer JSONL SHA-256: `{plan['session']['codex_jsonl_sha256']}`\n"
+        f"- Capture runner source SHA-256: `{plan['runner_source_sha256']}`\n"
+        f"- Capture redactor source SHA-256: `{plan['workflow_control_source_sha256']}`\n"
+        f"- Reviewer target receipt SHA-256: `{plan['target_receipt_text_sha256']}`\n"
+        "- The mirrored receipt is administrative evidence derived from the unchanged canonical reviewer outcome; "
+        "the reviewer-authored outcome, target receipt, message, and summary remain distinct evidence.\n"
+    )
+    recovered = content + provenance
+    preserved_outcome, preserved_error = review_outcome.parse_review_outcome(recovered)
+    if preserved_error or preserved_outcome != outcome:
+        raise RunnerError("administrative receipt append changed the reviewer-authored Review Outcome")
+    original_outcome_sections = list(re.finditer(r"(?m)^## Review Outcome[ \t]*$", original))
+    recovered_outcome_sections = list(re.finditer(r"(?m)^## Review Outcome[ \t]*$", recovered))
+    if len(original_outcome_sections) != 1 or len(recovered_outcome_sections) != 1:
+        raise RunnerError("administrative receipt append changed Review Outcome section cardinality")
+    outcome_start = original_outcome_sections[0].start()
+    outcome_end_match = re.search(r"(?m)^## [^\r]*$", original[original_outcome_sections[0].end():])
+    outcome_end = (original_outcome_sections[0].end() + outcome_end_match.start()
+                   if outcome_end_match else len(original))
+    original_outcome_bytes = original[outcome_start:outcome_end]
+    if (_sha256_bytes(original_outcome_bytes.encode("utf-8")) != plan.get("archived_outcome_sha256")
+            or recovered.count(original_outcome_bytes) != 1):
+        raise RunnerError("administrative receipt append changed original Review Outcome bytes")
+    receipt_fields = _independent_review_receipt(recovered)
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": outcome["Review workstream"],
+        "Review target workstream": outcome["Review target workstream"],
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": outcome["Reviewer context"],
+        "Reviewer provenance": outcome["Reviewer provenance"],
+        "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": outcome["Reviewed implementation commit"],
+    }
+    if receipt_fields != expected_receipt or len(re.findall(r"(?m)^## Independent Review[ \t]*$", recovered)) != 1:
+        raise RunnerError("coordinator-authored archived receipt mirror failed exact field verification")
+    if _sha256_bytes(recovered.encode("utf-8")) == plan["archived_original_sha256"]:
+        raise RunnerError("recovery did not add the planned archived receipt mirror")
+    return recovered
+
+
+def _read_archived_receipt_capture_journal(path: Path, plan_sha256: str | None = None) -> dict | None:
+    if not path.exists():
+        return None
+    if path.is_symlink() or not path.is_file():
+        raise RunnerError("archived-receipt recovery journal is missing or unsafe")
+    try:
+        journal = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("archived-receipt recovery journal is malformed") from exc
+    plan = journal.get("plan") if isinstance(journal, dict) else None
+    if (not isinstance(journal, dict) or not isinstance(plan, dict)
+            or journal.get("schema") != ARCHIVED_RECEIPT_CAPTURE_SCHEMA
+            or journal.get("workstream") != ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM
+            or journal.get("run_id") != ARCHIVED_RECEIPT_CAPTURE_RUN_ID
+            or journal.get("stage") not in {"prepared", "receipt_written", "closeout_blocked", "complete"}
+            or journal.get("plan_sha256") != _redacted_final_plan_digest(plan)
+            or plan.get("plan_sha256") != journal.get("plan_sha256")
+            or (plan_sha256 is not None and journal.get("plan_sha256") != plan_sha256)
+            or not isinstance(journal.get("review_packet_original"), str)
+            or _sha256_bytes(journal["review_packet_original"].encode("utf-8"))
+            != plan.get("archived_original_sha256")):
+        raise RunnerError("archived-receipt journal identity, plan, stage, or original packet digest is invalid")
+    common_value = plan.get("common_dir")
+    if not isinstance(common_value, str) or not Path(common_value).is_absolute():
+        raise RunnerError("archived-receipt journal has no valid common Git metadata path")
+    common = Path(common_value).resolve()
+    if not common.is_dir():
+        raise RunnerError("archived-receipt journal has no valid common Git metadata path")
+    run_dir = common / "custodian-review-runs" / plan["workstream"] / plan["run_id"]
+    if _file_manifest(run_dir) != plan.get("run_evidence_sha256"):
+        raise RunnerError("original reviewer evidence changed during archived-receipt recovery")
+    return journal
+
+
+def _verify_archived_receipt_capture_landing(repo: Path, plan: dict, original_packet: str) -> dict:
+    main = fetch_and_pin_main(repo)
+    baseline = _show_at(repo, plan["reviewed_main"], plan["target_packet"])
+    state = landed_review_state(
+        repo, main, plan["workstream"], f"{PACKET_ROOT}/{Path(plan['review_packet']).name}",
+        plan["target_workstream"], plan["target_packet"], baseline,
+        plan["authoring_chat"], plan["reviewed_main"])
+    if not state["complete"]:
+        raise RunnerError("landed archived-receipt recovery is incomplete: " + "; ".join(state["reasons"]))
+    archived = _show_at(repo, main, plan["review_packet"])
+    expected = _archived_receipt_capture_packet(original_packet, plan)
+    outcome, error = review_outcome.parse_review_outcome(archived)
+    if (error or outcome != plan["outcome"] or archived != expected
+            or f"- Plan SHA-256: `{plan['plan_sha256']}`" not in archived):
+        raise RunnerError("landed archived receipt or preserved reviewer outcome differs from the exact plan")
+    target = _show_at(repo, main, plan["target_packet"])
+    if _sha256_bytes(target.encode("utf-8")) != plan["target_candidate_sha256"]:
+        raise RunnerError("landed target receipt changed during archived-receipt recovery")
+    run_dir = common_dir(repo) / "custodian-review-runs" / plan["workstream"] / plan["run_id"]
+    if _file_manifest(run_dir) != plan["run_evidence_sha256"]:
+        raise RunnerError("original reviewer evidence changed during canonical closeout")
+    return {"schema": ARCHIVED_RECEIPT_CAPTURE_SCHEMA, "workstream": plan["workstream"],
+            "run_id": plan["run_id"], "landed_commit": main, "verified_main": main,
+            "outcome": "passed", "plan_sha256": plan["plan_sha256"],
+            "coordinator_authored_mirror": True, "reviewer_outcome_preserved": True,
+            "original_run_evidence_unchanged": True, "canonical_finish_verified": True}
+
+
+def apply_archived_receipt_capture_recovery(repo: Path, workstream: str, run_id: str,
+                                            plan_sha256: str) -> dict:
+    if (workstream != ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM
+            or run_id != ARCHIVED_RECEIPT_CAPTURE_RUN_ID
+            or not re.fullmatch(r"[0-9a-f]{64}", plan_sha256)):
+        raise RunnerError("archived-receipt apply requires the exact protected run and plan SHA-256")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery holds the exact review run") from exc
+        journal_path = _archived_receipt_capture_root(common, workstream, run_id) / "recovery.json"
+        journal = _read_archived_receipt_capture_journal(journal_path, plan_sha256)
+        if journal is None:
+            fresh = _archived_receipt_capture_plan_unlocked(repo, workstream, run_id, lock.fileno())
+            if fresh["plan_sha256"] != plan_sha256:
+                raise RunnerError("reviewer evidence, claim, lock, worktree, or remote refs changed; obtain a fresh plan")
+            _verify_archived_receipt_capture_lock(lock_path, lock.fileno(), fresh)
+            original = (Path(fresh["worktree"]) / fresh["review_packet"]).read_bytes().decode("utf-8")
+            if _sha256_bytes(original.encode("utf-8")) != fresh["archived_original_sha256"]:
+                raise RunnerError("archived reviewer packet changed while the exact plan was being bound")
+            journal = {"schema": ARCHIVED_RECEIPT_CAPTURE_SCHEMA, "workstream": workstream,
+                       "run_id": run_id, "plan_sha256": plan_sha256, "plan": fresh,
+                       "review_packet_original": original, "stage": "prepared"}
+            _write_bytes_exclusive(journal_path, (json.dumps(journal, indent=2, sort_keys=True) + "\n").encode())
+        plan = journal["plan"]
+        _verify_archived_receipt_capture_lock(lock_path, lock.fileno(), plan)
+        if journal["stage"] == "complete":
+            return _verify_archived_receipt_capture_landing(repo, plan, journal["review_packet_original"])
+        run_dir = common / "custodian-review-runs" / workstream / run_id
+        if _file_manifest(run_dir) != plan["run_evidence_sha256"]:
+            raise RunnerError("original reviewer evidence changed after exact recovery planning")
+        worktree = Path(plan["worktree"])
+        if not worktree.is_dir():
+            result = _verify_archived_receipt_capture_landing(repo, plan, journal["review_packet_original"])
+            journal.update({"stage": "complete", "result": result})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+            return result
+        archive_path = worktree / plan["review_packet"]
+        original = journal["review_packet_original"]
+        expected = _archived_receipt_capture_packet(original, plan)
+        if journal["stage"] == "prepared":
+            _verify_redacted_final_apply_refs(repo, plan)
+            if (git(worktree, "rev-parse", "HEAD") != plan["reviewer_commit"]
+                    or archive_path.is_symlink() or not archive_path.is_file()):
+                raise RunnerError("reviewer checkout or archived packet changed after exact planning")
+            archive_bytes = archive_path.read_bytes()
+            if _sha256_bytes(archive_bytes) == plan["archived_original_sha256"]:
+                fresh = _archived_receipt_capture_plan_unlocked(repo, workstream, run_id, lock.fileno())
+                if fresh != plan or fresh["plan_sha256"] != plan_sha256:
+                    raise RunnerError("exact archived-receipt plan changed before the first reviewer-packet write")
+                if _worktree_inventory(worktree) != plan["worktree_inventory"]:
+                    raise RunnerError("reviewer checkout changed outside the exact planned recovery append")
+                _write_atomic(archive_path, expected)
+            elif archive_bytes != expected.encode("utf-8"):
+                raise RunnerError("prepared journal found an unplanned archived packet mutation")
+            # Recover only the exact planned bytes if interruption followed the atomic write.
+            journal["stage"] = "receipt_written"
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+        elif not archive_path.is_file() or archive_path.read_text(encoding="utf-8") != expected:
+            raise RunnerError("archived receipt differs from its journaled coordinator mirror")
+        _verify_redacted_final_apply_refs(repo, plan)
+        _verify_redacted_final_outcome_written(worktree, plan, expected)
+        metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
+        target_baseline = _show_at(repo, plan["reviewed_main"], plan["target_packet"])
+        host_evidence = _host_evidence_for_continuation(
+            repo, worktree, run_dir, metadata, plan["reviewed_main"],
+            plan["implementation_commit"], plan["target_workstream"], plan["target_packet"])
+        host_evidence.update({"run_id": run_id, "review_cycle": plan["review_cycle"]})
+        try:
+            coordinator_finish_review(
+                repo, workstream, worktree, f"{PACKET_ROOT}/{Path(plan['review_packet']).name}",
+                plan["target_workstream"], plan["target_packet"], target_baseline,
+                plan["authoring_chat"], plan["reviewed_main"], run_dir, host_evidence)
+            result = _verify_archived_receipt_capture_landing(repo, plan, original)
+            journal.update({"stage": "complete", "result": result})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+            return result
+        except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError) as exc:
+            journal.update({"stage": "closeout_blocked", "reason": redact(str(exc))})
+            _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+            raise
 
 
 def _redacted_final_recovery_packet(original: str, plan: dict) -> str:
@@ -3928,6 +4280,33 @@ def _redacted_final_recovery_main(argv: list[str]) -> int:
             result = apply_redacted_final_outcome_recovery(
                 Path.cwd(), args.review_workstream, args.run_id, args.plan_sha256)
     except (RunnerError, OSError, ValueError, subprocess.SubprocessError) as exc:
+        print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def _archived_receipt_capture_recovery_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(prog="paired_review_runner.py recover-archived-receipt-capture")
+    parser.add_argument("review_workstream", choices=(ARCHIVED_RECEIPT_CAPTURE_WORKSTREAM,))
+    parser.add_argument("run_id", choices=(ARCHIVED_RECEIPT_CAPTURE_RUN_ID,))
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--plan", action="store_true", help="emit a read-only exact-run reconciliation plan")
+    mode.add_argument("--apply", action="store_true", help="apply the exactly authorized receipt mirror plan")
+    parser.add_argument("--plan-sha256", help="exact digest from a fresh read-only --plan; required with --apply")
+    args = parser.parse_args(argv)
+    try:
+        if args.plan:
+            if args.plan_sha256:
+                raise RunnerError("read-only archived-receipt plan cannot include an apply digest")
+            result = plan_archived_receipt_capture_recovery(
+                Path.cwd(), args.review_workstream, args.run_id)
+        else:
+            if not args.plan_sha256:
+                raise RunnerError("archived-receipt apply requires the exact plan SHA-256")
+            result = apply_archived_receipt_capture_recovery(
+                Path.cwd(), args.review_workstream, args.run_id, args.plan_sha256)
+    except (RunnerError, HostValidationError, OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
         return 2
     print(json.dumps(result, indent=2, sort_keys=True))
@@ -6396,6 +6775,8 @@ def main(argv: list[str] | None = None) -> int:
         return _recover_main(argv[1:])
     if argv and argv[0] == "recover-redacted-final-outcome":
         return _redacted_final_recovery_main(argv[1:])
+    if argv and argv[0] == "recover-archived-receipt-capture":
+        return _archived_receipt_capture_recovery_main(argv[1:])
     if argv and argv[0] == "recover-advanced-head-pass":
         return _advanced_head_pass_recovery_main(argv[1:])
     if argv and argv[0] == "recover-dual-disposition":

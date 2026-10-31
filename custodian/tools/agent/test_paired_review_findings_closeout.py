@@ -269,17 +269,39 @@ class NonpassingCoordinatorTests(FixtureCase):
         self.assertEqual(sh(fx.worktree, "rev-list", "--count", f"{fx.tip}..HEAD"), "1")
 
     def test_ordinary_pass_path_rejects_a_findings_closeout(self):
-        self.fx.reviewer_closeout()
-        (self.fx.run_dir / "validation.json").write_text(json.dumps({
+        fx = self.fx
+        fx.reviewer_closeout()
+        (fx.run_dir / "validation.json").write_text(json.dumps({
             "schema": "custodian.validation.result.v1", "passed": True, "coverage": {"complete": True},
             "tests": [{"status": "passed"}]}))
-        host_evidence = {"implementation_commit": self.fx.implementation,
+        metadata_path = fx.run_dir / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata.update({"fresh": True, "exit_code": 0, "run_dir": str(fx.run_dir),
+                         "implementation_commit": fx.implementation, "review_cycle": 0})
+        metadata_path.write_text(json.dumps(metadata))
+        final = (f"Workstream: {WORKSTREAM}\nReviewed main: {fx.reviewed_main}\n"
+                 f"Reviewed implementation commit: {fx.implementation}\n"
+                 "Verdict: findings — 1 blocking defect and 0 material gaps. R0-01.\n")
+        (fx.run_dir / "last-message.txt").write_text(final)
+        events = [
+            {"type": "thread.started", "thread_id": "synthetic-findings-thread"},
+            {"type": "turn.started"},
+            {"item": {"type": "agent_message", "text": final}},
+            {"type": "turn.completed"},
+        ]
+        (fx.run_dir / "codex.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in events))
+        before = fx.snapshot()
+        refs_before = sh(fx.repo, "for-each-ref")
+        host_evidence = {"implementation_commit": fx.implementation,
                          "report_sha256": "pinned-report", "metadata_sha256": "pinned-metadata"}
         with patch.object(runner, "verify_coordinator_validation"):
-            with self.assertRaisesRegex(runner.RunnerError, "receipt-delta verification"):
+            with self.assertRaisesRegex(runner.RunnerError, "archived packet does not contain one canonical PASS outcome"):
                 runner.coordinator_finish_review(
-                    self.fx.repo, WORKSTREAM, self.fx.worktree, ACTIVE, TARGET_WORKSTREAM, TARGET,
-                    self.fx.baseline, CHAT, self.fx.reviewed_main, self.fx.run_dir, host_evidence)
+                    fx.repo, WORKSTREAM, fx.worktree, ACTIVE, TARGET_WORKSTREAM, TARGET,
+                    fx.baseline, CHAT, fx.reviewed_main, fx.run_dir, host_evidence)
+        self.assertEqual(fx.snapshot(), before)
+        self.assertEqual(sh(fx.repo, "for-each-ref"), refs_before)
 
 
 class RecoverCloseoutTests(FixtureCase):

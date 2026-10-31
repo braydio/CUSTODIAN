@@ -1088,6 +1088,46 @@ agent refs.
 Never force-push, reset user work, or stash automatically. Branches are active
 work queues; tags retain unique retired history.
 
+### Exact archived PASS receipt capture recovery
+
+The `recover-archived-receipt-capture` mode is reserved for the one source-pinned
+paired-review run named by constants in `paired_review_runner.py`. It addresses
+the case where a reviewer-authored canonical PASS outcome and matching target
+receipt are already authenticated, but the archived review packet is missing
+only the redundant `Independent Review` receipt. The existing reviewer outcome,
+target, summary and session artifacts remain immutable. The appended receipt is
+labeled coordinator-authored and is never presented as reviewer-authored
+evidence.
+
+Run the read-only reconciliation first:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-archived-receipt-capture <exact-review-workstream> <exact-run-id> --plan
+```
+
+The plan verifies the pinned safe-output transformation, one completed reviewer
+turn, claim and host-validation provenance, exact target receipt, canonical
+reviewer outcome, unchanged remote refs, lock identity, and original artifact
+hashes. It emits a plan SHA-256 without writing to the reviewer worktree. Apply
+is a separate, explicitly authorized action and must use the exact fresh plan
+digest:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-archived-receipt-capture <exact-review-workstream> <exact-run-id> \
+  --apply --plan-sha256 <exact-plan-sha256>
+```
+
+The apply path journals the exact archive append, preserves the reviewer outcome
+byte-for-byte, and finishes through the ordinary canonical paired-review
+landing checks. A changed source artifact, claim, lock, checkout, ref, or
+journal fails closed. A prepared journal can resume only when the archive is
+either byte-identical to its planned original or already contains the exact
+planned append, covering interruption after an atomic packet write. This mode
+cannot accept a review, synthesize a verdict, launch a reviewer, or release a
+claim outside canonical finish.
+
 
 ### Opportunistic retirement of finished transient worktrees (2026-10-28)
 

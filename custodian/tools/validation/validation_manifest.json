@@ -6971,7 +6971,7 @@
         "custodian/tools/agent/task_packet_contract.py",
         "custodian/tools/agent/workflow_control.py"
       ],
-      "timeout_sec": 90,
+      "timeout_sec": 120,
       "needs_import": false
     },
     {
