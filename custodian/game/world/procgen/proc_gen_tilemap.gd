@@ -33,6 +33,9 @@ const ROAD_AUTHORITY_SCRIPT := preload("res://game/world/procgen/roads/procgen_r
 const MACRO_PRESENTATION_COMPOSER_SCRIPT := preload(
 	"res://game/world/procgen/presentation/procgen_macro_presentation_composer.gd"
 )
+const ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT := preload(
+	"res://game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd"
+)
 const DRESSING_CLUSTER_PLANNER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_planner.gd")
 const DRESSING_CLUSTER_REALIZER_SCRIPT := preload("res://game/world/procgen/dressing/dressing_cluster_realizer.gd")
 const DRESSING_CLUSTER_CATALOG := preload("res://content/procgen/dressing_clusters/dressing_cluster_catalog_v1.tres")
@@ -770,6 +773,8 @@ var _biome_field: BiomeField = null
 var _biome_id_by_cell: Dictionary = {}
 var _biome_summary: Dictionary = {}
 var _macro_presentation_composer: RefCounted = null
+var _alpine_cliff_contact_composer: RefCounted = null
+var _alpine_cliff_contact_summary: Dictionary = {}
 var _macro_presentation_plan: Dictionary = {}
 var _macro_presentation_summary: Dictionary = {}
 var _macro_presentation_dressing_clearance_cells: Dictionary = {}
@@ -787,6 +792,7 @@ var _world_progress_profile = null
 var _world_progress_samples: Dictionary = {}
 var _faction_activity_sites: Array[Dictionary] = []
 var _story_room_sites: Array[Dictionary] = []
+var _story_room_site_skips: Array[Dictionary] = []
 var _special_room_sites: Array[Dictionary] = []
 var _faction_site_placer: RefCounted = null
 var _story_room_placer: RefCounted = null
@@ -5756,14 +5762,20 @@ func _place_faction_ambient_sites(map_size: Vector2i) -> void:
 
 func _place_story_rooms(map_size: Vector2i) -> void:
 	_story_room_sites.clear()
+	_story_room_site_skips.clear()
 	if _world_progress_profile == null or _story_room_placer == null:
 		return
 	var protected_cells := _collect_terrain_required_cells(map_size)
 	protected_cells.append_array(
 		_get_sundered_keep_site_exclusion_cells()
 	)
-	_story_room_sites = _story_room_placer.call("place_story_rooms", {
+	var region_identity := String(_region_frame_profile_id)
+	if region_identity.is_empty():
+		region_identity = String(_world_progress_profile.profile_id)
+	var projection: Dictionary = _story_room_placer.call("project_story_rooms", {
 		"seed": _tile_noise_hash(Vector2i(1201, 1709)),
+		"identity_seed": _get_generation_seed(),
+		"region_identity": region_identity,
 		"map_size": map_size,
 		"floor_cells": _dict_keys_as_vector2i_array(_generated_floor_cells),
 		"blocked_cells": _dict_keys_as_vector2i_array(_generated_wall_cells),
@@ -5771,14 +5783,33 @@ func _place_story_rooms(map_size: Vector2i) -> void:
 		"count": story_room_count,
 		"world_progress_profile": _world_progress_profile,
 		"faction_sites": _faction_activity_sites,
+		"worldgen_intent_enabled": worldgen_intent_enabled,
+		"reserved_regions": _worldgen_reserved_regions,
+		"intent_graph": _worldgen_intent_graph,
+		"collision_cells": _dict_keys_as_vector2i_array(_runtime_prop_blocker_cells),
+		"void_cells": _story_site_void_cells(),
 	})
+	for site in projection.get("sites", []):
+		if site is Dictionary:
+			_story_room_sites.append(site)
+	for skipped in projection.get("skipped", []):
+		if skipped is Dictionary:
+			_story_room_site_skips.append(skipped)
 	for room in _story_room_sites:
 		var cell: Vector2i = room.get("cell", Vector2i.ZERO)
 		if not _is_tile_inside_map(cell, map_size):
 			continue
 		if get_region_type_at_tile(cell) == "exterior":
-			_set_region_tile(cell, "story_room_%s" % String(room.get("story_id", "unknown")), "story_room")
-		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % String(room.get("story_id", "unknown")))
+			var story_label := String(room.get("story_id", room.get("intent_node_id", "unknown")))
+			_set_region_tile(cell, "story_room_%s" % story_label, "story_room")
+		var marker_identity := String(room.get("site_id", room.get("story_id", "unknown")))
+		_spawn_placeholder_marker(cell, Vector2i(3, 2), "StoryRoom_%s" % marker_identity)
+
+
+func _story_site_void_cells() -> Array[Vector2i]:
+	var result := _dict_keys_as_vector2i_array(_chasm_cells)
+	result.append_array(_dict_keys_as_vector2i_array(_ocean_cells))
+	return result
 
 
 func _get_sundered_keep_site_exclusion_cells() -> Array[Vector2i]:
@@ -5834,6 +5865,7 @@ func _clear_world_progression_runtime() -> void:
 		void_cliff_face.visible = false
 	_faction_activity_sites.clear()
 	_story_room_sites.clear()
+	_story_room_site_skips.clear()
 	_special_room_sites.clear()
 	if _world_progress_marker_parent == null:
 		_world_progress_marker_parent = _find_or_create_world_progress_marker_parent()
@@ -8235,6 +8267,8 @@ func debug_get_biome_field() -> Dictionary:
 func _ensure_macro_presentation_composer() -> void:
 	if _macro_presentation_composer == null:
 		_macro_presentation_composer = MACRO_PRESENTATION_COMPOSER_SCRIPT.new()
+	if _alpine_cliff_contact_composer == null:
+		_alpine_cliff_contact_composer = ALPINE_CLIFF_CONTACT_COMPOSER_SCRIPT.new()
 
 
 func _macro_presentation_roots() -> Dictionary:
@@ -8250,6 +8284,7 @@ func _clear_macro_presentation() -> void:
 		_macro_presentation_composer.clear(_macro_presentation_roots())
 	_macro_presentation_plan.clear()
 	_macro_presentation_summary.clear()
+	_alpine_cliff_contact_summary.clear()
 	_macro_presentation_dressing_clearance_cells.clear()
 	_publish_macro_presentation_gauges()
 
@@ -8371,6 +8406,11 @@ func _macro_presentation_surface_claims() -> Dictionary:
 func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 	_build_macro_presentation_plan(map_size)
 	if _macro_presentation_plan.is_empty():
+		var fallback_scale := Vector2.ONE
+		if macro_presentation_back != null:
+			fallback_scale = macro_presentation_back.global_transform.get_scale()
+		_refresh_alpine_cliff_contacts(fallback_scale)
+		_refresh_macro_streaming_visibility()
 		return
 	var world_scale := Vector2.ONE
 	if macro_presentation_back != null:
@@ -8383,17 +8423,61 @@ func _rebuild_macro_presentation(map_size: Vector2i) -> void:
 		walls_tilemap,
 		world_scale
 	)
+	_refresh_alpine_cliff_contacts(world_scale)
 	_refresh_macro_streaming_visibility()
 
 
 func _refresh_macro_streaming_visibility() -> void:
-	if _macro_presentation_composer == null or _macro_presentation_plan.is_empty():
+	if _macro_presentation_composer != null and not _macro_presentation_plan.is_empty():
+		_macro_presentation_composer.refresh_streaming_visibility(
+			_macro_presentation_plan,
+			_macro_presentation_roots(),
+			floor_tilemap,
+			walls_tilemap
+		)
+	if _alpine_cliff_contact_composer != null:
+		_alpine_cliff_contact_composer.refresh_streaming_visibility(
+			macro_presentation_back,
+			enable_streaming_reveal,
+			floor_tilemap,
+			walls_tilemap
+		)
+
+
+func _refresh_alpine_cliff_contacts(world_scale: Vector2 = Vector2.ONE) -> void:
+	if macro_presentation_back == null:
 		return
-	_macro_presentation_composer.refresh_streaming_visibility(
-		_macro_presentation_plan,
-		_macro_presentation_roots(),
-		floor_tilemap,
-		walls_tilemap
+	_ensure_macro_presentation_composer()
+	var frame_state := _resolve_region_frame_state()
+	if frame_state.get("cliff_fascia_profile") == null or void_cliff_face == null:
+		_alpine_cliff_contact_composer.clear(macro_presentation_back)
+		_alpine_cliff_contact_summary = {"sprite_count": 0, "qualified_runs": 0}
+		return
+	var fascia_profile := frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
+	var blocked_frontier_cells := _macro_presentation_protected_cells()
+	for cell: Variant in _macro_presentation_dressing_clearance_cells:
+		if cell is Vector2i:
+			blocked_frontier_cells[cell] = true
+	_alpine_cliff_contact_summary = _alpine_cliff_contact_composer.apply_frontier_plan(
+		void_cliff_face.get_debug_paint_plan(),
+		_exterior_chasm_cells,
+		blocked_frontier_cells,
+		macro_presentation_back,
+		_get_generation_seed(),
+		enable_streaming_reveal,
+		world_scale,
+		fascia_profile,
+		Callable(self, "_tile_to_world_position")
+	)
+	var contact_blend: Dictionary = _alpine_cliff_contact_composer.get_fascia_blend_frontiers()
+	void_cliff_face.configure_from_surface_cells(
+		_generated_floor_cells,
+		_chasm_cells,
+		_get_generation_seed(),
+		_generated_wall_cells,
+		fascia_profile,
+		contact_blend.get("core", {}),
+		contact_blend.get("shoulder", {})
 	)
 
 
@@ -9036,6 +9120,11 @@ func _get_ruin_prop_protected_zone_type(cell: Vector2i) -> StringName:
 		if faction_cell is Vector2i and cell.distance_to(faction_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"faction_activity"
 	for site in _story_room_sites:
+		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
+		if story_rect is Rect2i:
+			if (story_rect as Rect2i).grow(combat_readability_prop_clearance_tiles).has_point(cell):
+				return &"story_room"
+			continue
 		var story_cell: Variant = site.get("cell", Vector2i.ZERO)
 		if story_cell is Vector2i and cell.distance_to(story_cell) <= float(combat_readability_prop_clearance_tiles):
 			return &"story_room"
@@ -9255,6 +9344,11 @@ func _is_inside_combat_readability_spawn_clearance(pos: Vector2i, radius: int = 
 		if cell is Vector2i:
 			anchors.append(cell)
 	for site in _story_room_sites:
+		var story_rect: Variant = site.get("reserved_rect", site.get("rect", Rect2i()))
+		if story_rect is Rect2i:
+			if (story_rect as Rect2i).grow(clearance_radius).has_point(pos):
+				return true
+			continue
 		var cell: Variant = site.get("cell", Vector2i.ZERO)
 		if cell is Vector2i:
 			anchors.append(cell)
@@ -10524,9 +10618,11 @@ func _resolve_region_frame_state() -> Dictionary:
 		"fallback_reason": "",
 		"underlay_source": "default",
 		"underlay": ENDLESS_FOREST_UNDERLAY,
+		"cliff_fascia_profile": null,
 	}
 	if frame != null and frame.is_valid():
 		state["underlay"] = frame.underlay_profile
+		state["cliff_fascia_profile"] = frame.cliff_fascia_profile
 		state["underlay_source"] = "region_frame"
 		state["visual_fallback"] = frame.visual_fallback
 		state["fallback_reason"] = frame.fallback_reason
@@ -10569,6 +10665,12 @@ func get_region_frame_debug_snapshot() -> Dictionary:
 	}
 
 
+func debug_get_alpine_cliff_contact_state() -> Dictionary:
+	var result := _alpine_cliff_contact_summary.duplicate(true)
+	result["fascia"] = void_cliff_face.get_debug_state() if void_cliff_face != null else {}
+	return result
+
+
 func debug_get_exterior_chasm_cells() -> Dictionary:
 	return _exterior_chasm_cells.duplicate(true)
 
@@ -10595,13 +10697,21 @@ func _refresh_void_cliff_face() -> void:
 	if _generated_floor_cells.is_empty() or _chasm_cells.is_empty():
 		void_cliff_face.clear()
 		void_cliff_face.visible = false
+		if _alpine_cliff_contact_composer != null and macro_presentation_back != null:
+			_alpine_cliff_contact_composer.clear(macro_presentation_back)
 		return
+	var frame_state := _resolve_region_frame_state()
 	void_cliff_face.configure_from_surface_cells(
 		_generated_floor_cells,
 		_chasm_cells,
 		_get_generation_seed(),
-		_generated_wall_cells
+		_generated_wall_cells,
+		frame_state.get("cliff_fascia_profile") as ProcgenCliffFasciaProfile
 	)
+	var presentation_scale := Vector2.ONE
+	if macro_presentation_back != null:
+		presentation_scale = macro_presentation_back.global_transform.get_scale()
+	_refresh_alpine_cliff_contacts(presentation_scale)
 
 
 func _get_chasm_presentation_cells() -> Array:
@@ -12244,6 +12354,7 @@ func get_level_data() -> Dictionary:
 		"worldgen_reserved_regions": _worldgen_reserved_regions,
 		"faction_activity_sites": _faction_activity_sites,
 		"story_room_sites": _story_room_sites,
+		"story_room_site_skips": _story_room_site_skips,
 		"special_room_sites": _special_room_sites,
 	})
 

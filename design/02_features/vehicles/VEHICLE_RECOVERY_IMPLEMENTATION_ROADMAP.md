@@ -2,7 +2,9 @@
 
 **Status:** active  
 **Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b  
-**Current reviewed main:** `977f04644b85958a1a12f5f93a51763964917557`
+**Historical roadmap design-review baseline:** `977f04644b85958a1a12f5f93a51763964917557`
+
+**Pre-implementation packet reconciliation (2026-10-28):** Checked V2/V3 instructions against `main@1917c8940d3d980b5ee58a73da8a2e57eec08bf4`. F3 ranged extraction is archived complete in repository content; its ranged controller must not be reopened by V2. F5 interaction extraction is still queued, so V2's service scanner must use the live sampled `repair` input seam, preserve held structure repair priority, and handle wrecks independently of operational-only `interactable` membership. V2 and its paired review have matching pre-claim notes; V3 has a follow-on accepted-API note. This is a bounded documentation refresh, **not** an assertion of live dispatcher eligibility, a new dependency, or a rewritten independent-review receipt. Refresh V4C/V5 immediately before their own claims if their source APIs change, rather than speculatively rewriting the full DAG now.
 
 ## Program boundary
 

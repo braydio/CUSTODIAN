@@ -8,7 +8,7 @@
 **Reviewed main:** `5537b1022a17f805db87ccf9e66c40d1f3c0ca66`  
 **Last Updated:** 2026-10-07  
 **Depends on:** none for measurement; slice dependencies below
-**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac1a7fa-340c-83ea-83b3-ffb3b715d0d9
+**Planning refresh chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac40778-bccc-83ea-8932-3a9099cd581d
 
 ## Purpose
 

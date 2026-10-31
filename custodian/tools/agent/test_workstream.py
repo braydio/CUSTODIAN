@@ -256,7 +256,10 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
+        git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "implement source")
         archived.parent.mkdir(parents=True)
         archived.write_text(active.read_text().replace("in_progress", "complete"))
@@ -293,7 +296,10 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", str(active.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "publish active packet")
         (self.repo / "source.py").write_text("source\n")
+        legacy_summary = self.repo / "AGENT_TEST_ARCHIVE_TRACE_CLAUDE_SUMMARY.md"
+        legacy_summary.write_text("historical summary filename\n")
         git(self.repo, "add", "source.py")
+        git(self.repo, "add", str(legacy_summary.relative_to(self.repo)))
         git(self.repo, "commit", "-m", "implement source")
         archived.parent.mkdir(parents=True, exist_ok=True)
         archived.write_text(active.read_text().replace("in_progress", "complete"))
@@ -346,6 +352,15 @@ class WorkstreamTests(unittest.TestCase):
         git(trace_repo, "commit", "-m", "publish immutable trace")
         git(trace_repo, "push", "origin", f"HEAD:refs/heads/agent-diagnostics/{workstream_id}/{run_id}")
         git(self.repo, "fetch", "origin")
+        self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        # Correcting a historical summary filename is a bounded administrative
+        # follow-up when both Git objects are present and the canonical file lands.
+        legacy_summary.unlink()
+        canonical_summary = self.repo / workstream._expected_summary_filename(workstream_id)
+        canonical_summary.write_text("completed summary\n")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "correct summary filename")
         self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
         (self.repo / "test_source.py").write_text("regression\n")

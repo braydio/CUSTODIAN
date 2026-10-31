@@ -1,9 +1,12 @@
 # AGENT AUTOMATION BACKLOG
 
-Last updated: 2026-10-13
+Last updated: 2026-10-30
 
 Prioritized automation candidates for CUSTODIAN agent workflow. These are intentionally lightweight checks first; avoid adding a large framework until the simple checks prove insufficient.
 
+## Top P0 — Persistent Codex Task Administrator (approved 2026-10-30)
+
+New campaign authority: `design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md`; first paired bootstrap packet `task_packets/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md` and `task_packets/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md`. Priority P0 takes assignment precedence over previous P0 *only when safely eligible*, initially via named dispatcher claim (no queue/lock bypass). It is not yet implemented; PR #101 merged at `38db9d8`, and the pair passed the authoring handoff, becoming `ready/auto` at `main@4e3e88d`. Real host-local claim and service installation still require verification. The local systemd observer and bounded Codex app-server operator diagnose blocker frontiers without agent-workflow mutations; future independently reviewed P0 slices grant dispatch and exact safe recovery. PR #101 introduces canonical `agent-ops` category for Quickshell display, not a new lifecycle authority. Historical backlog counts remain dated evidence; protect all worktree/ref/review bytes. Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
 ## Planned — Longform Codex Session Framework (2026-10-12)
 
 Owning spec: `design/04_architecture/AGENT_LONGFORM_SESSION_FRAMEWORK_V1.md`.
@@ -57,10 +60,11 @@ See `AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md` and the active
 `AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1.md` /
 `AGENT_ORPHAN_RECOVERY_FENCED_PARKING_V1.md` paired packet series. Unlike
 the original V1 dispatcher deferral, the proposal deliberately separates a
-time-bounded **execution lease** from retained work branch history. OR1 is
-read-only supervised-process evidence; OR2 is exact-owner, independently
-reviewed `PARKED` recovery that can release only inactive logical locks
-while preserving dirty/untracked data. Optional `systemd --user` support is
+time-bounded **execution lease** from retained work branch history. OR1 now has landed additive, read-only supervised-process code, but its
+independent review remains active and is not verified accepted at the
+2026-10-30 main inspection. OR2 is still an unimplemented exact-owner,
+independently reviewed `PARKED` recovery proposal that would release only
+inactive logical locks while preserving dirty/untracked data. Optional `systemd --user` support is
 disabled by default and cannot force-claim work from unknown/foreign hosts.
 This is **planned**, not yet part of the active dispatcher. Existing no-stash,
 no-reset, no-age-delete, review receipt and branch archive rules remain in

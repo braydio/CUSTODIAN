@@ -58,6 +58,18 @@ Use this map to land on the right material fast:
 | Reusable agent prompts | `docs/ai_context/prompts/README.md` | task-specific prompt template |
 | Agent workflow automation | `docs/ai_context/AGENT_AUTOMATION_BACKLOG.md` | `tools/agent/` when scripts exist |
 
+## Packet Categories for ChatGPT Authoring and Mission Control
+
+Before authoring a new implementation, review or correction packet, read
+`docs/ai_context/TASK_PACKET_CATEGORIES.json` and
+`docs/ai_context/TASK_PACKET_CATEGORY_AUTHORING.md` from current main. Use
+one valid `Category:` ID based on the work's primary domain; reviews and
+corrections inherit their implementation category. Validate newly authored
+packets with `tools/agent/check_packet_categories.py` before publication.
+The category is display metadata, not a dispatcher status or new claim gate.
+Old packets without a category remain valid and display as Uncategorized until
+explicitly backfilled.
+
 ## Automatic Task Packet Handoff
 
 ### Automatic task packet authoring handoff
@@ -365,6 +377,19 @@ Choose the lightest useful level:
 - Full packet: multi-session work; architecture or ownership changes; migrations; high-risk runtime or asset-pipeline changes; reviews producing substantial follow-up implementation.
 
 Do not create a packet merely because a task touches several files.
+
+Choose independent review by risk and evidence quality, not by file count or
+the word “runtime.” Express work may skip a packet and paired review for a
+narrow, reversible, low-risk single-session change while retaining focused
+validation and Git safety. Standard work may use a compact packet when scope
+or acceptance needs a durable record; its ordinary default is `Review: none`
+when focused checks directly prove correctness and scope, with a concise
+concrete risk rationale. Protected work keeps `Review: auto` and a fresh
+independent acceptance pass for consequential persistence/save-load,
+concurrency, irreversible operations, authority cutovers, dispatch/review/
+validation enforcement, dangerous asset-pipeline writes, or material evidence
+uncertainty. Human-owned visual and canon decisions remain human-owned. Existing
+published review decisions and dependencies do not change retroactively.
 
 Task packet workflow:
 

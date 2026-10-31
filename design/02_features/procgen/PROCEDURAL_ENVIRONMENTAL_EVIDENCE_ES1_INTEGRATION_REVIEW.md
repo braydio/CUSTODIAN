@@ -1,6 +1,6 @@
 # ES-1 · Environmental Evidence, Existing Interaction and Geographic Ownership
 
-**Status:** SOURCE-AUDITED DESIGN RECOMMENDATION, **PENDING HUMAN INTEGRATION DECISION**; no implementation packet, art intake or runtime change authorized.
+**Status:** **Option B ES-1 foundation implemented and validated (2026-10-28); fresh-context paired review pending post-land**. Full physical tableaux, new art, ES-2–ES-4, and permanent cross-visit geography remain separately scoped.
 **Workstream:** procgen-environmental-evidence-v1
 **Date:** 2026-10-27
 **Source audit:** main@ce2772f7ccf450d179b73da1dcdda051e0dcb2e2
@@ -9,7 +9,7 @@
 **Roadmap:** [Integration Roadmap](PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md).
 **Boundary:** F15-B1/B2 geography and F02 accepted-world geometry, original actor interaction, Asset V2 and canon remain single-owner authorities.
 
-## 1. Audited state: what already exists
+## 1. Pre-ES-1 audited state (2026-10-27): what already existed
 
 ### Geographic identity and semantics
 
@@ -41,7 +41,7 @@
 | **B: Child evidence site on existing F02 reserved story node** **PREFERRED** | Existing B1/B2 Location is the parent when bound; intent-node ID and actual reserved rect identify the *local* site | Two generic WorldReadoutInteractable points plus physical props | Reuses already-carved approach, stable per-cell site identity, no new graph, natural optional skip | Requires explicit join/migration to remove competing independent metadata anchor placement and focused reachability tests. |
 | **C: Metadata-anchor/post-accept prop scattering** | Reuse independent StoryRoomPlacer cell, no authored reservation | Readout close to marker | Quick prototype | Center-only clearance, misleading checkpoint/door geometry, story and floor stamp drift; unsuitable for structural styles. Fallback only for pure visual hints with no footprint. |
 
-**Recommendation for the next human decision:** choose B. This is a proposal, not a canon or implementation lock. A tableau is a **region-local child** of the active F02 generated region. If an existing B1/B2 Domain/Location context is available, use its established address/seed as the scope; **do not** register a new F15 Location or create a second semantic registry for each tableau. If no F15 context exists in current contract-world generation, generate/replay a region-local site without claiming cross-visit Domain persistence.
+**Approved ES-1 decision (2026-10-28):** adopt B for the first narrow implementation, retaining its limits. A tableau is a **region-local child** of the active F02 generated region. If an existing B1/B2 Domain/Location context is available, use its established address/seed as the scope; **do not** register a new F15 Location or create a second semantic registry for each tableau. If no F15 context exists in current contract-world generation, generate/replay a region-local site without claiming cross-visit Domain persistence.
 
 ## 3. Recommended site record (proposed V1 payload, not current API)
 
@@ -106,11 +106,13 @@ The diagram describes a proposed adapter, **not a currently implemented call gra
 
 ## 5. Implementation boundaries if subsequently authorized
 
-**ES-1 first narrow code packet candidate** (NOT authored, NOT authorized): normalize/refactor existing `story_room_sites` projection so each accepted evidence candidate matches an existing `worldgen_reserved_regions[kind=story_room]` by immutable intent-node ID and contains actual validated rect, or is explicitly rejected. Preserve legacy non-intent mode where needed without duplicating active story claims. Add focused pure deterministic geometry/identity/skip tests. Existing story/intent modules should own this; `proc_gen_tilemap.gd` should remain a thin call/delegation and `accepted_world_export.gd` retains detached authoritative output. Do not couple this to D2 authored-claims extraction.
+**ES-1 authorized implementation packet:** `custodian/docs/ai_context/task_packets/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md`, with paired independent review `REVIEW_PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md`. Its claim/ready state remains governed by the dispatcher. Scope: normalize/refactor existing `story_room_sites` projection so each accepted evidence candidate matches an existing `worldgen_reserved_regions[kind=story_room]` by immutable intent-node ID and contains actual validated rect, or is explicitly rejected. Preserve legacy non-intent mode where needed without duplicating active story claims. Add focused pure deterministic geometry/identity/skip tests. Existing story/intent modules should own this; `proc_gen_tilemap.gd` should remain a thin call/delegation and `accepted_world_export.gd` retains detached authoritative output. Do not couple this to D2 authored-claims extraction.
 
 **ES-2 subsequent code packet candidate:** small composition planner (pure RefCounted, e.g. `game/world/procgen/story/story_evidence_composer.gd`) and scene-local presentation adapter (e.g. `game/world/procgen/story/story_evidence_site_2d.gd`), binding two existing WorldReadoutInteractable instances to a selected validated plan. Prefer reuse of existing interactables, keep asset family IDs data-only until Asset V2 approval, and avoid modifying `operator.gd` or `CustodianHUD`. An independent paired post-land review checks the actual rendered/interactive Operator proof. Both packet and review plus all requisite source/fixtures must publish atomically on main when user authorizes.
 
-The exact runtime file boundaries should be rechecked against whatever F02/D2 migrations have landed **on the day of packet authoring**; this record intentionally does not claim exact API compatibility or source compilation.
+**ES-1 implementation result:** `story_room_sites` now projects only from reserved F02 story-room nodes, validates exact source node geometry and a STORY_APPROACH graph edge, emits versioned region-local identities and stable skip reasons, and exports both detached site and skip records. The reserved floor stamper asserts exact node/rectangle binding. The non-intent metadata-only compatibility path remains available. No verified F15 parent is passed, and no new Location, persistent state, physical tableau, interaction, art, Operator or HUD authority was introduced. See the task packet and closing summary for exact source and test evidence.
+
+The preceding caution records the packet-authoring posture before ES-1. The implementation now compiles and runs against the current F02 intent/reservation APIs in the focused story-site, intent-graph, world-shape and changed-file validation suites.
 
 ## 6. Focused acceptance and failure cases (planned, not executed)
 
@@ -124,10 +126,14 @@ The exact runtime file boundaries should be rechecked against whatever F02/D2 mi
 
 ## 7. ES-1 sign-off questions and next slice
 
-**Recommended approval question:** Adopt existing **F02 story intent node/actual reserved rect as physical site identity**, with **F15 B1/B2 Location as optional verified parent** and **repeatable native HUD readouts**? If yes, ES-1 can be narrowed into one deterministic join/migration packet and later ES-2 physical pilot. If no, revisit A/B/C above before authoring executable packets.
+**Recorded human decision (2026-10-28):** Option B was approved for the small ES-1 foundation. An existing verified F15 B1/B2 Location remains optional; no parent was available in current procgen input, so ES-1 records are explicitly F02-region-local. Repeatable native HUD readouts remain part of the future physical pilot, not this foundation.
 
-**Next Agent Slice (design only):**
-- **Goal:** choose option B or revise it; explicitly decide whether road/service-hardstand eligibility is required for Refused Passage and how an F02-only region maps to campaign geography.
-- **Files:** this record, the companion roadmap, the current FI tracker, live story/intent/procgen owner files, existing Operator/WorldReadout contracts and F15-B2 registry.
-- **Constraints:** no dispatch, code/art generation or changes to adjacent D2 authoring/locks.
-- **Acceptance:** human recorded owner/identity/interaction/clearance choice and a bounded ES-1 implementation contract that is eligible for normal task-packet authoring only after the explicit authorization.
+**Next development slice: ES-2 Refused Passage physical tableau (after ES-1 review PASS).**
+
+Scope a separate implementation/review packet for one optional physical
+Refused Passage site inside the joined F02 reservation. Preserve causal
+evidence, a real clear through-route, two reachable repeatable
+WorldReadoutInteractable points, and safe skip without changing accepted
+terrain/routes. This handoff does not authorize an implementation claim or new
+Asset V2 intake. ES-3 Borrowed Hearth/False Seam and ES-4 artwork/campaign proof
+remain the intended continuation, not abandoned scope.

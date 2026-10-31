@@ -257,7 +257,7 @@
         ".claude/settings.json",
         ".agents/skills/custodian-next/agents/openai.yaml"
       ],
-      "timeout_sec": 30,
+      "timeout_sec": 180,
       "needs_import": false
     },
     {
@@ -925,6 +925,34 @@
       "needs_import": true
     },
     {
+      "id": "procgen_alpine_cliff_presentation",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_alpine_cliff_presentation_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "presentation",
+        "chasm",
+        "assets",
+        "determinism"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/presentation/procgen_alpine_cliff_contact_composer.gd",
+        "custodian/tools/validation/procgen_alpine_cliff_presentation_smoke.gd",
+        "custodian/tools/validation/fixtures/alpine_plateau_edge_moment.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/godot/moment_action_driver.gd",
+        "custodian/tools/iteration/godot/moment_probe_collector.gd",
+        "custodian/tools/iteration/scenarios/procgen/alpine_plateau_edge_review.json",
+        "custodian/game/world/procgen/presentation/fascia/alpine_plateau.tres",
+        "custodian/content/tiles/procgen_macro/runtime/alpine_cliff_contact/**",
+        "custodian/tools/art/prepare_alpine_cliff_presentation_v1.py",
+        "custodian/tools/validation/verify_alpine_cliff_presentation_assets.py"
+      ],
+      "timeout_sec": 45,
+      "needs_import": true
+    },
+    {
       "id": "procgen_macro_presentation",
       "type": "godot_script",
       "script": "res://tools/validation/procgen_macro_presentation_smoke.gd",
@@ -1009,6 +1037,49 @@
         "custodian/tools/validation/procgen_road_semantics_v2_review.gd"
       ],
       "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_story_site_identity",
+      "type": "godot_script",
+      "script": "res://tools/validation/faction_story_sites_smoke.gd",
+      "tier": "unit",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "determinism",
+        "negative_control"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/story/story_room_geometry_stamper.gd",
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/faction_story_sites_smoke.gd"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
+      "id": "procgen_worldgen_story_site_export",
+      "type": "godot_script",
+      "script": "res://tools/validation/procgen_worldgen_shape_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "procgen",
+        "story_sites",
+        "accepted_world_export",
+        "determinism",
+        "parity"
+      ],
+      "owners": [
+        "custodian/game/world/procgen/proc_gen_tilemap.gd",
+        "custodian/game/world/procgen/story/story_room_placer.gd",
+        "custodian/game/world/procgen/intent/region_footprint_reserver.gd",
+        "custodian/game/world/procgen/generation/accepted_world_export.gd",
+        "custodian/tools/validation/procgen_worldgen_shape_smoke.gd"
+      ],
+      "timeout_sec": 120,
       "needs_import": true
     },
     {
@@ -4758,6 +4829,31 @@
       "needs_import": true
     },
     {
+      "id": "vehicle_diagnosis_knowledge",
+      "type": "godot_script",
+      "script": "res://tools/validation/vehicle_diagnosis_knowledge_smoke.gd",
+      "tier": "actor",
+      "tags": ["vehicle", "diagnosis", "knowledge", "input", "persistence"],
+      "owners": [
+        "custodian/content/vehicles/vehicle_archetypes.json",
+        "custodian/content/vehicles/vehicle_knowledge_progression.json",
+        "custodian/content/vehicles/vehicle_registry_schema.json",
+        "custodian/content/vehicles/vehicle_scan_profiles.json",
+        "custodian/game/actors/operator/interaction/operator_vehicle_scanner.gd",
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/state/persistent/vehicle_knowledge_state.gd",
+        "custodian/game/vehicles/pilotable_vehicle.gd",
+        "custodian/game/vehicles/vehicle_definition.gd",
+        "custodian/game/vehicles/vehicle_registry.gd",
+        "custodian/game/vehicles/vehicle_spawn_resolver.gd",
+        "custodian/project.godot",
+        "custodian/tools/validation/vehicle_diagnosis_knowledge_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": true
+    },
+    {
       "id": "vehicle_wreck_restoration",
       "type": "godot_script",
       "script": "res://tools/validation/vehicle_wreck_restoration_smoke.gd",
@@ -6013,6 +6109,52 @@
       "owners": [
         "custodian/game/actors/operator/animations/operator_weapon_socket_library.gd",
         "custodian/content/data/operator/generated/operator_weapon_sockets.generated.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_primary_ranged_strafe_raise_fire_lower",
+      "type": "moment",
+      "scenario": "combat/operator_primary_ranged_strafe_raise_fire_lower",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "ranged",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_primary_ranged_strafe_raise_fire_lower.json"
+      ],
+      "timeout_sec": 60,
+      "needs_import": false
+    },
+    {
+      "id": "operator_sidearm_strafe_fire_recovery",
+      "type": "moment",
+      "scenario": "combat/operator_sidearm_strafe_fire_recovery",
+      "tier": "moment",
+      "tags": [
+        "combat",
+        "operator",
+        "sidearm",
+        "presentation"
+      ],
+      "owners": [
+        "custodian/game/actors/operator/operator.gd",
+        "custodian/game/actors/operator/combat/operator_ranged_controller.gd",
+        "custodian/game/actors/operator/input/operator_input_router.gd",
+        "custodian/game/actors/operator/loadout/operator_weapon_runtime_state.gd",
+        "custodian/game/actors/operator/presentation/operator_presentation_controller.gd",
+        "custodian/tools/iteration/godot/moment_runner.gd",
+        "custodian/tools/iteration/run_moment.py",
+        "custodian/tools/iteration/scenarios/combat/operator_sidearm_strafe_fire_recovery.json"
       ],
       "timeout_sec": 60,
       "needs_import": false

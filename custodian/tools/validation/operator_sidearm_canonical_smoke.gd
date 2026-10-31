@@ -46,6 +46,7 @@ func _run() -> void:
 	_check_authored_sector_policy()
 	_check_stack_shares_one_sector()
 	_check_ranged_2h_stays_distinct()
+	_check_moving_sidearm_composition()
 	_report()
 
 
@@ -120,6 +121,33 @@ func _check_ranged_2h_stays_distinct() -> void:
 			if String(selected).contains("sidearm"):
 				_fail("ranged_2h %s sector %s resolved P-9 Sidearm art: %s" % [
 					action, requested, selected])
+
+
+func _check_moving_sidearm_composition() -> void:
+	_operator.set("combat_loadout_mode", &"melee")
+	_operator.set("using_unarmed", true)
+	_operator.set("sidearm_slot_equipped", true)
+	_operator.set("movement_direction", Vector2.DOWN)
+	_operator.set("velocity", Vector2.DOWN * 100.0)
+	_operator.call("_initialize_magazines")
+	_operator.call("_enter_ranged_ready")
+	if not bool(_operator.call("_sync_modular_sidearm_presentation", false)):
+		_fail("sidearm draw did not compose against movement-owned locomotion")
+		return
+	var lower := _operator.get_node_or_null("ModularLowerBodySprite") as AnimatedSprite2D
+	var upper := _operator.get_node_or_null("ModularUpperBodySprite") as AnimatedSprite2D
+	var pistol := _operator.get_node_or_null("ModularSidearmSprite") as AnimatedSprite2D
+	_operator.set("_sidearm_action_phase", &"held")
+	_operator.set("_sidearm_action_phase_started", false)
+	if not bool(_operator.call("_sync_modular_sidearm_presentation", false)):
+		_fail("held sidearm did not compose against movement-owned locomotion")
+		return
+	if lower == null or not String(lower.animation).contains("unarmed/locomotion/walk_01/s/lower_body"):
+		_fail("held sidearm froze the lower-body walk cadence")
+	if upper == null or not String(upper.animation).begins_with("sidearm/posture/draw_sidearm_01/"):
+		_fail("held sidearm upper pose did not use canonical draw art")
+	if pistol == null or not String(pistol.animation).begins_with("sidearm/posture/draw_sidearm_01/"):
+		_fail("held pistol did not use canonical draw art")
 
 
 func _fail(message: String) -> void:

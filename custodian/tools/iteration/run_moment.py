@@ -130,7 +130,7 @@ def _validate_res_scene(path: Any, label: str, require_scene: bool) -> str:
 
 
 def _validate_setup(setup: dict[str, Any], require_scene: bool) -> set[str]:
-    allowed = {"remove_nodes", "roles", "spawns", "properties", "processing", "fixture"}
+    allowed = {"remove_nodes", "roles", "spawns", "properties", "operations", "processing", "fixture"}
     unknown = sorted(set(setup).difference(allowed))
     if unknown:
         raise ScenarioError(f"setup contains unsupported fields: {', '.join(unknown)}")
@@ -162,6 +162,17 @@ def _validate_setup(setup: dict[str, Any], require_scene: bool) -> set[str]:
         for record in _require_array(setup, key):
             if not isinstance(record, dict) or str(record.get("role", "")) not in role_ids:
                 raise ScenarioError(f"setup.{key} references an unknown role")
+    operations = setup.get("operations", [])
+    if not isinstance(operations, list):
+        raise ScenarioError("setup.operations must be an array")
+    for operation in operations:
+        if (
+            not isinstance(operation, dict)
+            or set(operation) != {"role", "operation"}
+            or str(operation.get("role", "")) not in role_ids
+            or operation.get("operation") != "grant_sidearm"
+        ):
+            raise ScenarioError("setup.operations only permits grant_sidearm for a known role")
     for node_path in _require_array(setup, "remove_nodes"):
         if not isinstance(node_path, str) or node_path.startswith("/") or ".." in node_path:
             raise ScenarioError("setup.remove_nodes must contain scene-relative NodePaths")

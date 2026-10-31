@@ -72,6 +72,38 @@ _GRUNT_SCOPE_CODE_FILES = {
 }
 _GRUNT_SCOPE_FILES = {**_GRUNT_SCOPE_MARKDOWN_FILES, **_GRUNT_SCOPE_CODE_FILES}
 
+_ADMIN_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/"
+    "agent_persistent_task_administrator_service_scope_v1.json"
+)
+_ADMIN_SCOPE_SOURCE_WORKSTREAM = "agent-persistent-task-administrator-v1"
+_ADMIN_SCOPE_SOURCE_ARCHIVE = "1ea8acc6a95866c04c4cfd3957e897a1d831a0dc"
+_ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT = "dc8488f26cdf614a52ff48de167a4e8bac4dfa21"
+_ADMIN_SCOPE_SOURCE_ARCHIVE_TREE = "4d7d3d4fd2c26096c7a91d1ccf8779ea9b804e19"
+_ADMIN_SCOPE_SOURCE_BASE = "c1e1739e0bf44fbbc4453d879e1eec089e62c8e9"
+_ADMIN_SCOPE_SOURCE_HEAD = "dc8488f26cdf614a52ff48de167a4e8bac4dfa21"
+_ADMIN_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md"
+)
+_ADMIN_SCOPE_SOURCE_PACKET_BLOB = "3387dd7346b12aa41ea4fd496f0b162d245cc8a9"
+_ADMIN_SCOPE_SOURCE_CODE_BLOBS = {
+    "custodian/tools/agent/task_administrator.py": "66260ab534caa362c7744f38392f4de806f4b8f9",
+    "custodian/tools/agent/task_administrator_service.py": "326e0b074d0b84dbfe35cde7714de852dbbb91af",
+    "custodian/tools/agent/test_task_administrator.py": "905fec71ba3d9225fcfbe9e8743973d289d49a62",
+}
+_ADMIN_SCOPE_ATTESTED_FILES = {
+    "custodian/tools/agent/task_administrator_service.py":
+        "326e0b074d0b84dbfe35cde7714de852dbbb91af",
+}
+_ADMIN_SCOPE_CORRECTION_WORKSTREAM = "agent-persistent-task-administrator-review-scope-recovery-v1"
+_ADMIN_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
+)
+_ADMIN_SCOPE_REVIEW_WORKSTREAM = "review-agent-persistent-task-administrator-review-scope-recovery-v1"
+_ADMIN_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
+)
+
 _PROCESSION_SCOPE_ATTESTATION_PATH = (
     "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json"
 )
@@ -166,6 +198,36 @@ _OR1_BOOTSTRAP_ARCHIVE_BLOBS = {
     f"{PACKET_ROOT}/README.md": "54f41405d73cd3b70871a11478f28bc93f3be5b8",
     "AGENT_ORPHAN_RECOVERY_OBSERVABILITY_V1_CLAUDE_SUMMARY.md":
         "274d987614e6d27b80e3bf31300f13a87ad53208",
+}
+
+
+# User-authorized ES-1 prelaunch recovery: the original implementation was
+# validated but archived five related Markdown changes without listing their
+# exact paths in Work surface. This exception authenticates one immutable
+# archive; it is NOT a review PASS or a generic Markdown exemption.
+_ES1_SCOPE_WORKSTREAM = "procgen-environmental-evidence-v1"
+_ES1_SCOPE_ARCHIVE = "e96019d98e86380a87f43bf0fa6104d4004d6c1d"
+_ES1_SCOPE_PARENT = "48081acad473894e39823aa87cf5ab5fe8c47896"
+_ES1_SCOPE_TREE = "f3a99a2ac51299941ebe6df335bcf3420c114144"
+_ES1_SCOPE_PACKET = f"{PACKET_ROOT}/archived/PROCGEN_ENVIRONMENTAL_EVIDENCE_V1.md"
+_ES1_SCOPE_PACKET_BLOB = "60b378ace9dd4be649c37fbd0c099ccafbce1de1"
+_ES1_SCOPE_MARKDOWN = {
+    "custodian/docs/ai_context/CURRENT_STATE.md": "c5dda63d39a60d6fe3da54cf1005df22767159df",
+    "custodian/docs/ai_context/FILE_INDEX.md": "ebb742e300cdc8e2e2c42e899746e7ab3290cf69",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_EVIDENCE_ES1_INTEGRATION_REVIEW.md": "9c90ccf97c88e17dbe928f6c38612bd8d794aaaf",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md": "7dc344583227c5a7e2e1dbef6b935a84702271cf",
+    "design/02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md": "57867698834e78c74380aefc1e69f5ef1e50c4fd",
+}
+_ES1_SCOPE_EXTRA_PATHS = frozenset(_ES1_SCOPE_MARKDOWN) | {
+    "custodian/content/data/dev/procgen_showcase/exhibits.v1.json",
+    "custodian/game/world/procgen/generation/accepted_world_export.gd",
+    "custodian/game/world/procgen/proc_gen_tilemap.gd",
+    "custodian/game/world/procgen/story/story_room_geometry_stamper.gd",
+    "custodian/game/world/procgen/story/story_room_placer.gd",
+    "custodian/tools/validation/faction_story_sites_smoke.gd",
+    "custodian/tools/validation/procgen_accepted_world_export_smoke.gd",
+    "custodian/tools/validation/procgen_worldgen_shape_smoke.gd",
+    "custodian/tools/validation/validation_manifest.json",
 }
 
 _RESET_FOLLOWUP_WORKSTREAM = "agent-execution-reset-v1"
@@ -599,6 +661,21 @@ _BLENDER_SOURCE_ROOT = (
 _BLENDER_SOURCE_PATH = _BLENDER_SOURCE_ROOT + "operator_south_cutout_rig_v1.blend"
 _BLENDER_RECEIPT_PATH = _BLENDER_SOURCE_ROOT + "rig_build_receipt.json"
 _BLENDER_SOURCE_OID = "b13a70b4c26da0b76f5b04d66902d93e7e03fc1394398c3135759305b9fb656f"
+# Exact ES-1 main-sync merge: the generated packet index removes five
+# completed archived packets and adds one queued packet. One historical
+# archived review writes "Review: passed", now invalid as a review *intent*.
+# Pin this merge's three README blobs instead of weakening generic validation.
+_ES1_SYNC_INDEX_MERGE = "1917c8940d3d980b5ee58a73da8a2e57eec08bf4"
+_ES1_SYNC_INDEX_PARENTS = (
+    "e96019d98e86380a87f43bf0fa6104d4004d6c1d",
+    "d7f9a2c71c0a0909bdc169646474834d775a227f",
+)
+_ES1_SYNC_INDEX_README_BLOBS = (
+    "90ea627fb0f42f2e97ea0790a2e560b498752e9d",
+    "415d3c71ea52fc9defd7ffd37d5f58fc4d5615e8",
+    "d95d9d0c8b64d0c726d2e76acc237c20a6faffbe",
+)
+
 _RESUMED_PROVENANCE_SYNC_MERGE = "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99"
 _RESUMED_PROVENANCE_WORKSTREAM = "agent-paired-review-resumed-worktree-provenance-v1"
 _RESUMED_PROVENANCE_SYNC_PARENTS = (
@@ -746,6 +823,30 @@ def _managed_packet_index_archival_reconciliation(repo: Path, first_parent: str,
     return all(entry in main_entries for entry in merged_entries) and all(
         any(entry == candidate for candidate in prior_iter) for entry in added
     )
+
+
+def _es1_exact_main_sync_index_reconciliation(repo: Path, first_parent: str,
+                                              second_parent: str, merge: str) -> bool:
+    """Admit only the immutable ES-1 managed-index reconciliation.
+
+    The existing source-merge, archived-target, and independent-review checks
+    still run; this does not accept other README mutations or claim a PASS.
+    """
+    if merge != _ES1_SYNC_INDEX_MERGE or (
+        first_parent, second_parent,
+    ) != _ES1_SYNC_INDEX_PARENTS:
+        return False
+    parents = subprocess.run(
+        ["git", "rev-list", "--parents", "-n", "1", merge],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if parents.returncode or parents.stdout.split() != [merge, first_parent, second_parent]:
+        return False
+    path = f"{PACKET_ROOT}/README.md"
+    blobs = tuple(_git_tree_entry(repo, revision, path) for revision in (
+        first_parent, second_parent, merge,
+    ))
+    return blobs == tuple(("100644", oid) for oid in _ES1_SYNC_INDEX_README_BLOBS)
 
 
 def _resumed_provenance_index_reconciliation(repo: Path, first_parent: str,
@@ -1457,6 +1558,69 @@ def _source_code_paths(paths: list[str]) -> set[str]:
     return {path for path in paths if Path(path).suffix.lower() in _IMPLEMENTATION_SUFFIXES}
 
 
+def _pinned_coverage_manifest(repo: Path, reviewed_main: str) -> dict:
+    """Load coverage policy only from the immutable reviewed-main commit."""
+    path = "custodian/tools/validation/validation_manifest.json"
+    result = subprocess.run(["git", "show", f"{reviewed_main}:{path}"], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise HostValidationError("pinned validation coverage manifest is unavailable")
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    try:
+        manifest = run_validation.parse_manifest_json(result.stdout)
+    except (json.JSONDecodeError, run_validation.ManifestError) as exc:
+        raise HostValidationError("pinned validation coverage manifest is malformed") from exc
+    if (not isinstance(manifest, dict) or manifest.get("schema_version") != 1
+            or not isinstance(manifest.get("tests"), list)
+            or not isinstance(manifest.get("coverage_excludes", []), list)
+            or any(not isinstance(pattern, str) for pattern in manifest.get("coverage_excludes", []))):
+        raise HostValidationError("pinned validation coverage manifest has an invalid schema")
+    return manifest
+
+
+def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: dict) -> None:
+    """Require report coverage to equal the pinned manifest's classification."""
+    coverage = report.get("coverage")
+    changed_files = report.get("changed_files")
+    selected = report.get("selected")
+    if (not isinstance(coverage, dict) or not isinstance(changed_files, list)
+            or any(not isinstance(path, str) or not path for path in changed_files)
+            or len(changed_files) != len(set(changed_files))
+            or not isinstance(selected, list) or any(not isinstance(item, str) for item in selected)):
+        raise HostValidationError("host validation coverage inventory is malformed")
+    tests = manifest["tests"]
+    by_id = {item.get("id"): item for item in tests if isinstance(item, dict)}
+    if len(by_id) != len(tests) or any(item not in by_id for item in selected):
+        raise HostValidationError("host validation selected tests are not defined by the pinned manifest")
+    # Use the canonical runner's own glob and owner mapping implementation.
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    manifest_path = "custodian/tools/validation/validation_manifest.json"
+    if manifest_path in changed_files:
+        raise HostValidationError("validation manifest changes require independently authenticated selection")
+    canonical_selected = [item["id"] for item in run_validation.select_changed_tests(
+        tests, changed_files,
+    )]
+    if selected != canonical_selected:
+        raise HostValidationError("host validation selected tests differ from canonical changed-file selection")
+    expected = run_validation.changed_file_coverage(
+        changed_files, [by_id[item] for item in selected], manifest.get("coverage_excludes", []),
+    )
+    actual = {key: coverage.get(key) for key in
+              ("covered_files", "uncovered_files", "excluded_files", "covered_by", "complete")}
+    if actual != expected:
+        raise HostValidationError("host validation coverage differs from the pinned canonical policy")
+    eligible = set(expected["covered_files"])
+    excluded = set(expected["excluded_files"])
+    if not code_paths.issubset(eligible | excluded) or code_paths & set(expected["uncovered_files"]):
+        raise HostValidationError("host validation coverage omits eligible implementation source/test files")
+
+
 def _trace_events(repo: Path, ref: str) -> list[dict]:
     result = subprocess.run(["git", "show", f"{ref}:trace.jsonl"], cwd=repo,
                             text=True, capture_output=True)
@@ -1794,6 +1958,211 @@ def _verified_grunt_scope_attestation(repo: Path, reviewed_main: str,
     }
 
 
+def _verified_admin_scope_attestation(
+    repo: Path, reviewed_main: str, approval_main: str, landing_commit: str,
+    target_workstream: str, target_packet_path: str, source_base: str,
+    source_head: str, source_code_paths: set[str],
+) -> dict | None:
+    """Authorize only the one omitted administrator service installer after its accepted review."""
+    if target_workstream != _ADMIN_SCOPE_SOURCE_WORKSTREAM:
+        return None
+    if (target_packet_path != _ADMIN_SCOPE_SOURCE_PACKET
+            or landing_commit != _ADMIN_SCOPE_SOURCE_ARCHIVE
+            or reviewed_main != _ADMIN_SCOPE_SOURCE_ARCHIVE
+            or source_base != _ADMIN_SCOPE_SOURCE_BASE
+            or source_head != _ADMIN_SCOPE_SOURCE_HEAD
+            or source_code_paths != set(_ADMIN_SCOPE_SOURCE_CODE_BLOBS)):
+        raise HostValidationError("administrator historical source inventory or pinned identity differs")
+
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, _ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT,
+    ]:
+        raise HostValidationError("administrator archive commit parent differs from its pinned history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _ADMIN_SCOPE_SOURCE_ARCHIVE_TREE:
+        raise HostValidationError("administrator archive tree differs from its pinned history")
+    expected_archive_paths = {
+        f"{PACKET_ROOT}/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md",
+        f"{PACKET_ROOT}/README.md",
+        _ADMIN_SCOPE_SOURCE_PACKET,
+    }
+    if set(_changed_paths(repo, f"{_ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT}..{landing_commit}")) != expected_archive_paths:
+        raise HostValidationError("administrator archive changed-path set differs from pinned history")
+    if _git_tree_entry(repo, landing_commit, _ADMIN_SCOPE_SOURCE_PACKET) != (
+        "100644", _ADMIN_SCOPE_SOURCE_PACKET_BLOB,
+    ):
+        raise HostValidationError("pinned administrator packet blob or mode does not match")
+    active_packet = f"{PACKET_ROOT}/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md"
+    if _git_tree_entry(repo, _ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT, active_packet) != (
+        "100644", "272cc6d25ce43e34a87fb2d6a396f423131a584d",
+    ) or _git_tree_entry(repo, landing_commit, active_packet) is not None:
+        raise HostValidationError("administrator active-to-archive packet transition differs")
+
+    source_entries = {}
+    for path, expected_blob in _ADMIN_SCOPE_SOURCE_CODE_BLOBS.items():
+        entry = _git_tree_entry(repo, _ADMIN_SCOPE_SOURCE_HEAD, path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned administrator source blob or mode differs: {path}")
+        if _git_tree_entry(repo, landing_commit, path) != entry:
+            raise HostValidationError(f"administrator source changed between source and archive commits: {path}")
+        source_entries[path] = {"mode": entry[0], "blob": entry[1]}
+
+    try:
+        approval_main = _git(repo, "rev-parse", "--verify", f"{approval_main}^{{commit}}")
+        current_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+    except HostValidationError as exc:
+        raise HostValidationError("administrator approval main is unavailable") from exc
+    if (not _is_ancestor(repo, reviewed_main, approval_main)
+            or not _is_ancestor(repo, landing_commit, approval_main)):
+        raise HostValidationError("administrator approval main does not descend from the preserved baseline")
+    if not _is_ancestor(repo, approval_main, current_main):
+        raise HostValidationError("administrator approval main is not an ancestor of current origin/main")
+
+    attestation_entry = _git_tree_entry(repo, approval_main, _ADMIN_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file administrator scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_ADMIN_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("administrator scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _ADMIN_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _ADMIN_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT,
+        "source_archive_tree": _ADMIN_SCOPE_SOURCE_ARCHIVE_TREE,
+        "source_span_base": _ADMIN_SCOPE_SOURCE_BASE,
+        "source_span_head": _ADMIN_SCOPE_SOURCE_HEAD,
+        "source_packet_path": _ADMIN_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _ADMIN_SCOPE_SOURCE_PACKET_BLOB,
+        "source_code_paths": sorted(_ADMIN_SCOPE_SOURCE_CODE_BLOBS),
+        "source_code_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_ADMIN_SCOPE_SOURCE_CODE_BLOBS.items())
+        ],
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_ADMIN_SCOPE_ATTESTED_FILES.items())
+        ],
+        "reason": "The original archived administrator Work surface omitted exactly the service installer.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("administrator attestation bytes do not match the exact one-path authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _ADMIN_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve administrator attestation origin commit")
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _ADMIN_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("administrator attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+
+    try:
+        correction_text = read_git_text(repo, approval_main, _ADMIN_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _ADMIN_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("administrator attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_ADMIN_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_ADMIN_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _ADMIN_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _ADMIN_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _ADMIN_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _ADMIN_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("administrator attestation correction/review packet identity is incomplete")
+
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("administrator attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _ADMIN_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"administrator attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _ADMIN_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _ADMIN_SCOPE_CORRECTION_PACKET,
+        _ADMIN_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"administrator attestation target identity is invalid: {identity_error}")
+    if (not _is_ancestor(repo, origin_commit, implementation_commit)
+            or not _is_ancestor(repo, outcome["Reviewed main"], approval_main)
+            or not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"])):
+        raise HostValidationError("administrator attestation review ancestry is invalid")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_ADMIN_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted administrator correction target receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_ADMIN_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"administrator review outcome identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted administrator attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _ADMIN_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _ADMIN_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if (any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items())
+            or reviewer_receipt.get("Reviewer provenance") not in review_outcome.PROVENANCE):
+        raise HostValidationError("accepted administrator reviewer receipt does not match its PASS outcome")
+
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _ADMIN_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "approval_main": approval_main,
+        "source_archive_commit": _ADMIN_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _ADMIN_SCOPE_SOURCE_ARCHIVE_PARENT,
+        "source_archive_tree": _ADMIN_SCOPE_SOURCE_ARCHIVE_TREE,
+        "source_packet_blob": _ADMIN_SCOPE_SOURCE_PACKET_BLOB,
+        "source_files": {
+            path: source_entries[path] for path in _ADMIN_SCOPE_ATTESTED_FILES
+        },
+        "source_code_files": source_entries,
+        "approval_review_workstream": _ADMIN_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _ADMIN_SCOPE_REVIEW_PACKET,
+        "approval_review_packet_blob": _git_tree_entry(
+            repo, approval_main, _ADMIN_SCOPE_REVIEW_PACKET,
+        )[1],
+        "approval_target_packet": _ADMIN_SCOPE_CORRECTION_PACKET,
+        "approval_target_packet_blob": _git_tree_entry(
+            repo, approval_main, _ADMIN_SCOPE_CORRECTION_PACKET,
+        )[1],
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
+    }
+
+
 def _verify_exact_bootstrap_landing(
     repo: Path, landing_commit: str, parent: str, tree: str,
     active_packet: str, active_blob: str, archive_blobs: dict[str, str],
@@ -1864,6 +2233,39 @@ def _verified_procession_bootstrap_main_sync(
         if _git_tree_entry(repo, merge, path) != ("100644", blob):
             raise HostValidationError(f"Procession bootstrap merge source differs: {path}")
     return True
+
+
+
+def _verified_es1_story_documentation_scope(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    landing_commit: str, extra_archive_paths: set[str],
+) -> set[str]:
+    """Attest the complete immutable ES-1 source set after exact archive checks.
+
+    The five omitted Markdown files are individually pinned; the archive's
+    commit/parent/tree and full extra-path set bind the code, tests, and JSON.
+    Full source/coverage validation and independent review remain required.
+    """
+    if target_workstream != _ES1_SCOPE_WORKSTREAM:
+        return set()
+    if (target_packet_path != _ES1_SCOPE_PACKET
+            or landing_commit != _ES1_SCOPE_ARCHIVE
+            or extra_archive_paths != _ES1_SCOPE_EXTRA_PATHS):
+        raise HostValidationError("ES-1 exact historical documentation scope differs")
+    if _git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+        landing_commit, _ES1_SCOPE_PARENT,
+    ]:
+        raise HostValidationError("ES-1 source archive has unpinned parent history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _ES1_SCOPE_TREE:
+        raise HostValidationError("ES-1 source archive tree differs from original implementation")
+    if _git_tree_entry(repo, landing_commit, target_packet_path) != (
+        "100644", _ES1_SCOPE_PACKET_BLOB,
+    ):
+        raise HostValidationError("ES-1 archived packet blob or mode differs")
+    for path, expected_blob in _ES1_SCOPE_MARKDOWN.items():
+        if _git_tree_entry(repo, landing_commit, path) != ("100644", expected_blob):
+            raise HostValidationError("ES-1 undeclared documentation blob/mode differs: " + path)
+    return set(_ES1_SCOPE_EXTRA_PATHS)
 
 
 def _verified_or1_bootstrap_historical_scope(
@@ -2048,7 +2450,7 @@ def _verified_procession_scope_attestation(repo: Path, reviewed_main: str,
     }
 def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: str,
                                target_workstream: str, target_packet_path: str,
-                               target_packet_text: str) -> dict:
+                               target_packet_text: str, approval_main: str | None = None) -> dict:
     """Resolve an archive landing to its exact source-bearing workstream range.
 
     The archive-introduction commit remains the canonical implementation identity.
@@ -2506,6 +2908,9 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         | _verified_or1_bootstrap_historical_scope(
             repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
         )
+        | _verified_es1_story_documentation_scope(
+            repo, target_workstream, target_packet_path, landing_commit, extra_archive_paths,
+        )
     )
     if source_bearing_archive:
         paired_review_metadata_path = _canonical_review_packet_metadata_path(
@@ -2721,6 +3126,14 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     code_paths = _source_code_paths(source_paths)
     if not code_paths:
         raise HostValidationError("split source span contains no implementation source or test files")
+    if (target_workstream == _ADMIN_SCOPE_SOURCE_WORKSTREAM
+            and landing_commit == _ADMIN_SCOPE_SOURCE_ARCHIVE):
+        if approval_main is None:
+            approval_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+        scope_attestation = _verified_admin_scope_attestation(
+            repo, reviewed_main, approval_main, landing_commit, target_workstream,
+            target_packet_path, source_base, source_head, set(code_paths),
+        )
 
     # The archived task must itself identify every source/test path so a branch
     # carrying unrelated code cannot be laundered through an archive-only commit.
@@ -2806,6 +3219,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                                     repo, first_parent, sync_merge["main_sha"], merge,
                                 ) or _resumed_provenance_index_reconciliation(
                                     repo, first_parent, sync_merge["main_sha"], merge,
+                                ) or _es1_exact_main_sync_index_reconciliation(
+                                    repo, first_parent, sync_merge["main_sha"], merge,
                                 ))):
                         raise HostValidationError(
                             "main-sync README change is not an authenticated managed-index reconciliation"
@@ -2866,7 +3281,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
 
 def resolve_validation_source_span(repo: Path, reviewed_main: str, implementation_commit: str,
                                    target_workstream: str | None = None,
-                                   target_packet_path: str | None = None) -> dict:
+                                   target_packet_path: str | None = None,
+                                   *, approval_main: str | None = None) -> dict:
     """Keep canonical review identity separate from the source/test validation range."""
     repo = Path(repo).resolve()
     landing = _git(repo, "rev-parse", "--verify", f"{implementation_commit}^{{commit}}")
@@ -2893,7 +3309,7 @@ def resolve_validation_source_span(repo: Path, reviewed_main: str, implementatio
     except HostValidationError as exc:
         raise HostValidationError("cannot load pinned target packet for source-span provenance") from exc
     return _split_landing_source_span(repo, reviewed_main, landing, target_workstream,
-                                      target_packet_path, packet_text)
+                                      target_packet_path, packet_text, approval_main)
 
 
 def verify_pinned_canonical_commit_source_span(repo: Path, implementation_commit: str,
@@ -2914,7 +3330,8 @@ def verify_pinned_canonical_commit_source_span(repo: Path, implementation_commit
     return source_span
 
 
-def _validate_report(report: dict, implementation_paths: list[str]) -> None:
+def _validate_report(report: dict, implementation_paths: list[str],
+                     manifest: dict | None = None) -> None:
     if report.get("schema") != "custodian.validation.result.v1":
         raise HostValidationError("host validation report has the wrong schema")
     coverage = report.get("coverage")
@@ -2924,6 +3341,11 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
             or coverage.get("complete") is not True or coverage.get("uncovered_files")
             or not isinstance(tests, list) or not tests or not isinstance(selected, list) or not selected):
         raise HostValidationError("host validation report is failed, incomplete, or vacuous")
+    for field in ("covered_files", "uncovered_files", "excluded_files"):
+        values = coverage.get(field)
+        if (not isinstance(values, list) or any(not isinstance(path, str) for path in values)
+                or len(values) != len(set(values))):
+            raise HostValidationError("host validation coverage inventory is malformed")
     test_ids = {item.get("id") for item in tests if isinstance(item, dict)}
     if (len(test_ids) != len(tests) or test_ids != set(selected)
             or any(item.get("status") != "passed" for item in tests)):
@@ -2937,18 +3359,33 @@ def _validate_report(report: dict, implementation_paths: list[str]) -> None:
     reported_paths = set(report.get("changed_files") or [])
     if not code_paths.issubset(reported_paths):
         raise HostValidationError("host validation changed-file selection omits part of the implementation diff")
-    covered = set(coverage.get("covered_files") or [])
+    if not code_paths:
+        raise HostValidationError("host validation has no changed implementation source/test files")
     excluded = set(coverage.get("excluded_files") or [])
-    if not code_paths.issubset(covered | excluded):
-        raise HostValidationError("host validation coverage omits files from the implementation diff")
-    code_paths = _source_code_paths(implementation_paths)
-    if not code_paths or not code_paths.issubset(covered):
-        raise HostValidationError("host validation does not cover changed implementation source/test files")
-    covered_by = coverage.get("covered_by")
-    if not isinstance(covered_by, dict) or any(
-        not (set(covered_by.get(path, [])) & set(selected)) for path in code_paths
-    ):
-        raise HostValidationError("host validation has no selected test owner for changed source/test files")
+    policy_excluded = set()
+    if manifest is not None:
+        validation_dir = Path(__file__).resolve().parents[1] / "validation"
+        if str(validation_dir) not in sys.path:
+            sys.path.insert(0, str(validation_dir))
+        import run_validation
+        policy_excluded = set(run_validation.changed_file_coverage(
+            implementation_paths, [], manifest.get("coverage_excludes", []),
+        )["excluded_files"])
+    json_inputs = {path for path in implementation_paths if Path(path).suffix.lower() == ".json"}
+    needs_policy = bool(excluded or policy_excluded & json_inputs or (json_inputs and manifest is None))
+    if needs_policy:
+        if manifest is None:
+            raise HostValidationError("host validation exclusions have no pinned coverage policy")
+        _validate_canonical_coverage(report, code_paths, manifest)
+    else:
+        covered = set(coverage.get("covered_files") or [])
+        if not code_paths.issubset(covered):
+            raise HostValidationError("host validation does not cover changed implementation source/test files")
+        covered_by = coverage.get("covered_by")
+        if not isinstance(covered_by, dict) or any(
+            not (set(covered_by.get(path, [])) & set(selected)) for path in code_paths
+        ):
+            raise HostValidationError("host validation has no selected test owner for changed source/test files")
 
 
 _PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
@@ -3066,6 +3503,7 @@ def _procession_prearchive_fixture_checkout(
 def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, implementation_commit: str,
                                *, target_workstream: str | None = None,
                                target_packet_path: str | None = None,
+                               approval_main: str | None = None,
                                source_span_override: dict | None = None,
                                run_validation: Callable | None = None,
                                capability_probe: Callable[[], dict[str, bool]] = probe_host_capabilities) -> dict:
@@ -3107,6 +3545,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     else:
         source_span = resolve_validation_source_span(
             worktree, reviewed_main, implementation_commit, target_workstream, target_packet_path,
+            approval_main=approval_main,
         )
     source_base = source_span["base"]
     source_head = source_span["head"]
@@ -3202,7 +3641,11 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         raise HostValidationError(f"canonical host validation failed with exit code {process.returncode}")
     if not isinstance(report, dict):
         raise HostValidationError("canonical host validation did not return structured JSON")
-    _validate_report(report, implementation_paths)
+    try:
+        coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
+    except HostValidationError:
+        coverage_manifest = None
+    _validate_report(report, implementation_paths, coverage_manifest)
     return metadata
 
 
@@ -3232,8 +3675,14 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
             repo, implementation_commit, source_span_override,
         )
     else:
+        approval_main = None
+        attestation = (metadata.get("source_span", {}).get("provenance", {})
+                       .get("scope_attestation", {}))
+        if isinstance(attestation, dict):
+            approval_main = attestation.get("approval_main")
         expected_span = resolve_validation_source_span(
             repo, reviewed_main, implementation_commit, target_workstream, target_packet_path,
+            approval_main=approval_main,
         )
     if (metadata.get("schema") != "custodian.paired_review_host_validation.v1"
             or metadata.get("reviewed_main") != reviewed_main
@@ -3251,5 +3700,9 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
     _verify_generated_import_manifest(Path(repo), run_dir, metadata)
     if metadata.get("implementation_paths") != expected_span.get("paths"):
         raise HostValidationError("coordinator source path inventory differs from the verified source span")
-    _validate_report(report, expected_span.get("paths") or [])
+    try:
+        coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
+    except HostValidationError:
+        coverage_manifest = None
+    _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
     return report
