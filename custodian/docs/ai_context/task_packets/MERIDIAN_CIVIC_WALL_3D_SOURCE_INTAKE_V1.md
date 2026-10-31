@@ -4,7 +4,7 @@
 - Workstream: `meridian-civic-wall-3d-source-intake-v1`
 - Category: `assets-art`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -34,6 +34,27 @@
 - Validation: Verify both source hashes and `cmp`; run existing decoder only when output path does not exist; parse GLB header, binary length, chunk structure and glTF JSON; compare canonical/root output hashes; inspect `git lfs ls-files` and `git check-attr filter -- <binary paths>`; run `python3 custodian/tools/validation/meridian_civic_wall_source_smoke.py`, canonical changed-file validation including the manifest self-check, and `git diff --check`; independently review provenance and LFS publication.
 - Task overrides: `none`
 - Deferred: Any downstream rendering, source approval, Asset V2 intake, Godot use, and visual assessment.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: n/a
+- Evidence: Both original `.meshy` inputs and the preserved source hash to `9ca53b5bd034380e9afe46dbed3138ce17aed1628830f2d035fe8fdb62188fc2`; canonical and root GLBs hash to `342056035401bfa626233072c629ceaf0ff7517a5a6687ad564dc2d5cb49c666`. Repeat decoding reproduced identical bytes. GLB 2.0 header, byte length, chunks, JSON and inventory parsed; LFS pointers and attributes were confirmed; the dedicated source smoke plus `run_validation.py --changed --base origin/main --json` passed with complete coverage and all five selected tests passing. The root record clearly limits the result to unauthenticated archival source validation.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: Initial changed-file validation exposed that the required root archival GLB and `.gitattributes` had no test owner.
+- Root cause / contributing factors: Existing asset pipeline ownership covered source-work files, not the root archival copy or scoped LFS rule.
+- Prevention / pipeline improvement: Added a focused archival identity/GLB/LFS smoke and a narrow validation owner mapping, including the manifest self-check.
+- Tooling / docs drift discovered: The initial task packet did not name this necessary changed-file coverage path; its work surface and validation contract were tightened before closeout.
+- Follow-up: `review-meridian-civic-wall-3d-source-intake-v1`
+- What worked: The existing decoder was reused unchanged, repeated decoding was byte-deterministic, and the canonical changed-file validator reported complete coverage.
 
 ## Handoff
 
