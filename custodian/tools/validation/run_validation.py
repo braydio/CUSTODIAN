@@ -14,6 +14,7 @@ from contextlib import nullcontext
 import sys
 import time
 from pathlib import Path
+from pathlib import PurePosixPath
 from typing import Any
 
 VALIDATION_DIR = Path(__file__).resolve().parent
@@ -220,6 +221,21 @@ def changed_file_coverage(files: list[str], tests: list[dict[str, Any]], exclude
     }
 
 
+def exact_changed_paths(raw_paths: list[str]) -> list[str]:
+    """Validate and normalize an explicitly authenticated changed-file inventory."""
+    files = []
+    for raw_path in raw_paths:
+        path = PurePosixPath(raw_path)
+        if (not raw_path or path.is_absolute() or "\\" in raw_path
+                or any(part in {"", ".", ".."} for part in raw_path.split("/"))
+                or path.as_posix() != raw_path):
+            raise ValueError(f"invalid repository-relative --changed-path: {raw_path!r}")
+        files.append(raw_path)
+    if len(files) != len(set(files)):
+        raise ValueError("--changed-path values must be unique")
+    return sorted(files)
+
+
 def select_tests(tests: list[dict[str, Any]], *, files: list[str] | None = None,
                  tag: str | None = None, test_id: str | None = None,
                  tier: str | None = None, max_tier: str | None = None) -> list[dict[str, Any]]:
@@ -423,6 +439,10 @@ def execute_tiered(selected: list[dict[str, Any]], patterns: list[dict[str, str]
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument("--changed", action="store_true")
+    parser.add_argument(
+        "--changed-path", action="append", default=None,
+        help="use this exact repository-relative changed-file inventory (repeatable)",
+    )
     parser.add_argument("--base")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--tag")
@@ -438,7 +458,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
     try:
         tests = load_manifest(); patterns = load_warning_patterns(test_ids={test["id"] for test in tests}); coverage_excludes = load_coverage_excludes()
     except (OSError, json.JSONDecodeError, ManifestError) as error:
@@ -447,7 +468,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         print(json.dumps(tests, indent=2) if args.json else "\n".join(f"{t['tier']:11} {t['id']}" for t in tests))
         return 0
-    files = changed_files(args.base, REPO_ROOT) if args.changed else None
+    if args.changed_path is not None and not args.changed:
+        parser.error("--changed-path requires --changed")
+    if args.changed_path is not None:
+        try:
+            files = exact_changed_paths(args.changed_path)
+        except ValueError as error:
+            parser.error(str(error))
+    else:
+        files = changed_files(args.base, REPO_ROOT) if args.changed else None
     manifest_ids: set[str] = set()
     manifest_changed = False
     if files is not None and MANIFEST_PATH.relative_to(REPO_ROOT).as_posix() in files:

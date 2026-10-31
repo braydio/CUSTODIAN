@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-merged-source-validation-isolation-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -32,23 +32,36 @@
 - Acceptance: (1) Real temporary-Git histories prove source-bearing changes are derived from authenticated implementation provenance and omit unrelated later-main paths. (2) An actual implementation source path cannot be hidden as unrelated or omitted from required coverage. (3) The exact coverage-only exit-6 report shape is authenticated as a failed/incomplete report only with a complete consistent summary, all selected checks passing, exact nonempty uncovered inventory, matching source/claim/run/main identities and original report digest. (4) The correction cannot convert incomplete coverage to a passing validation or launch a reviewer without the existing separate plan/apply and review gates. (5) Reject forged, partial, conflicting, stale, tampered or replayed provenance/report evidence; wrong run/claim/target/main; incomplete test inventory; exit/summary disagreement; modified original bytes; repeated continuation; missing required coverage; changing remote refs; and any unauthorized reviewer relaunch. (6) Existing source-span and manifest exclusion cases remain intact; canonical manifest ownership is not broadened to accommodate unrelated files. (7) Original protected claim, lock, worktree and run files remain unchanged.
 - Validation: Add focused real-Git regression cases for merged-main contamination and source-bearing-span derivation, plus positive/negative coverage-only report fixtures and all rejection controls above. Run the focused new tests, `python3 -m unittest custodian.tools.agent.test_paired_review_runner`, canonical changed-file validation against the exact implementation source span with complete coverage, `python3 custodian/tools/agent/validate_task_packet_authoring.py` on this pair, `python3 custodian/tools/agent/check_packet_categories.py` on this pair, and `git diff --check`. Do not run broad Godot sweeps. Before recovery planning for the preserved run, require this implementation to land and receive its own fresh independent accepted review; any recovery apply and protected reviewer launch remain separately authorized operations.
 - Task overrides: `none`
-- Deferred: Any recovery plan/apply for host run `20261031T024441Z-9c08b75951b6`; resumption of the protected review; any action on the four other protected review claims; any worktree or claim creation while the disk-capacity hold remains.
+- Deferred: Any recovery plan/apply for host run `20261031T024441Z-9c08b75951b6`; resumption of the protected review; any action on the four other protected review claims; any additional claim or worktree beyond the one implementation assignment authorized by RC-027.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: The coordinator now supplies canonical validation with an explicit, sorted inventory derived from the authenticated implementation source span and only the exact authorized Procession fixture overlay. Host validation and later verification require report inventory and command arguments to match that authenticated set. The legacy coverage-only exit-6 path is recognized only after exact session/claim/target/main/source-span, unchanged source hashes, report digest, complete all-passing test inventory, and canonical nonempty uncovered coverage are verified. The report remains failed/incomplete. Focused host-validation tests passed 112/112; the complete paired-review runner suite passed 245/245; canonical exact changed-file validation passed 7/7 with complete coverage using a process-local 360-second timeout for the 130.2-second runner test; packet authoring and category preflights passed. Original protected review artifacts and claim state remain unchanged. The protected review still requires its own separate recovery authorization after this correction receives fresh independent review.
 
 ## Execution Feedback
 
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `pending`
-- Friction severity: `none`
-- Tooling / docs drift discovered: The persistent root synchronization path preserves unrelated untracked files, while the host-recovery planner rejects any untracked coordination-root file. Keep both contracts intact; a separately reviewed safe apply-time solution is required before recovery planning can proceed with the preserved `.codex/config.toml` present.
-- Follow-up: `none`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The canonical runner test exceeded its default 120-second test budget during concurrent validation activity. Its direct full-suite run passed; canonical validation was rerun with a process-local 360-second timeout and passed all selected checks. No repository-wide timeout or validation policy was changed.
+- Root cause / contributing factors: The paired-review runner suite takes about 130 seconds on this host, slightly longer than the default canonical test budget.
+- Prevention / pipeline improvement: If this measured duration persists, revise the paired-review test timeout in a separate validation-manifest workstream.
+- Tooling / docs drift discovered: The packet still described worktree/claim creation as deferred under the capacity hold after RC-027 had passed its two-sample capacity gate and authorized this exact implementation claim. This packet now records that single authorized assignment and leaves further claims deferred.
+- Follow-up: `review-agent-paired-review-merged-source-validation-isolation-v1`; recover the preserved archived-receipt review only after this implementation receives its own fresh independent accepted review and a separate recovery authorization.
+- What worked: The exact source inventory prevented later-main paths from entering validation; adversarial report checks kept incomplete coverage nonpassing; all validation used the canonical manifest without broadening exclusions.
 
 ## Handoff
 
-- Next workstream: `none`
-- Next packet state: `ready/auto after the authorized promotion; claim only after final live checks`
+- Next workstream: `review-agent-paired-review-merged-source-validation-isolation-v1`
+- Next packet state: `dependency-gated until this implementation lands and archives complete`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
-- Refresh instruction: `Before claim, recheck current main, dispatcher eligibility, no conflicting lock, no equivalent owner, and at least 26 GiB free with no active ENOSPC or rapid decline. After worktree creation require at least 18 GiB free. During implementation stop and preserve the claim if free space falls below 12 GiB or ENOSPC recurs.`
-- Blockers or open questions: `The exact output of the single read-only planner invocation is unavailable after context compaction. No retry is authorized or needed for this correction. RC-027 capacity samples were 30,523,658,240 and 30,517,944,320 bytes free; both exceeded its 26 GiB preclaim threshold, with no recent kernel ENOSPC entries. Recheck at claim time; do not infer future capacity from these measurements.`
+- Refresh instruction: `After implementation lands, recheck current main, exact paired-review dispatcher eligibility, no conflicting lock, protected claims unchanged, and sufficient disk capacity before launching the one named fresh-context review. Stop and preserve if capacity falls below the active control's floor or ENOSPC recurs.`
+- Blockers or open questions: `Implementation is complete and validation is green. A later origin/main advance occurred during implementation; canonical workstream finish must synchronize and validate the merged source span before landing. This workstream does not authorize protected recovery or reviewer relaunch.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199

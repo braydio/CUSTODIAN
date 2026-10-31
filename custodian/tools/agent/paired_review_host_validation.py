@@ -3355,10 +3355,11 @@ def _validate_report(report: dict, implementation_paths: list[str],
             or summary.get("passed") != len(tests)
             or any(summary.get(key) != 0 for key in ("failed", "timed_out", "skipped", "infrastructure_errors"))):
         raise HostValidationError("host validation summary does not verify all selected checks passed")
+    expected_paths = sorted(set(implementation_paths))
+    reported_paths = report.get("changed_files")
+    if reported_paths != expected_paths:
+        raise HostValidationError("host validation changed-file inventory differs from the authenticated source span")
     code_paths = _source_code_paths(implementation_paths)
-    reported_paths = set(report.get("changed_files") or [])
-    if not code_paths.issubset(reported_paths):
-        raise HostValidationError("host validation changed-file selection omits part of the implementation diff")
     if not code_paths:
         raise HostValidationError("host validation has no changed implementation source/test files")
     excluded = set(coverage.get("excluded_files") or [])
@@ -3391,6 +3392,44 @@ def _validate_report(report: dict, implementation_paths: list[str],
 _PROCESSION_PREARCHIVE_FIXTURE_TEST = "custodian/tools/agent/test_paired_review_runner.py"
 _PROCESSION_PREARCHIVE_FIXTURE_BLOB = "0aa7360551f57474c62275e3fc14cccc58a4c396"
 _PROCESSION_PREARCHIVE_FIXTURE_BASE = "49a93aa726e26bd40220d3bdb658079ea9da3440"
+
+
+def _expected_validation_fixture(repo: Path, reviewed_main: str,
+                                 target_workstream: str | None,
+                                 target_packet_path: str | None) -> dict | None:
+    exact_case = (
+        reviewed_main == _PROCESSION_RECOVERY_MERGE
+        and target_workstream == _PROCESSION_SCOPE_CORRECTION_WORKSTREAM
+        and target_packet_path == _PROCESSION_SCOPE_CORRECTION_PACKET
+    )
+    if not exact_case:
+        return None
+    entry = _git_tree_entry(repo, reviewed_main, _PROCESSION_PREARCHIVE_FIXTURE_TEST)
+    if entry != ("100644", _PROCESSION_PREARCHIVE_FIXTURE_BLOB):
+        raise HostValidationError("Procession fixture repair source blob or mode differs")
+    original = subprocess.run(
+        ["git", "show", f"{reviewed_main}:{_PROCESSION_PREARCHIVE_FIXTURE_TEST}"],
+        cwd=repo, check=True, capture_output=True,
+    ).stdout
+    repaired = _procession_prearchive_fixture_bytes(original)
+    return {
+        "kind": "exact-pinned-procession-test-fixture-only",
+        "reviewed_main": reviewed_main,
+        "path": _PROCESSION_PREARCHIVE_FIXTURE_TEST,
+        "original_blob": entry[1],
+        "original_sha256": _sha256(original),
+        "repaired_sha256": _sha256(repaired),
+        "pre_archive_base": _PROCESSION_PREARCHIVE_FIXTURE_BASE,
+        "other_tracked_source_unchanged": True,
+        "protected_worktree_unchanged": True,
+    }
+
+
+def _expected_validation_paths(source_span: dict, fixture_evidence: dict | None) -> list[str]:
+    paths = set(source_span.get("paths") or [])
+    if fixture_evidence is not None:
+        paths.add(fixture_evidence["path"])
+    return sorted(paths)
 
 
 def _procession_prearchive_fixture_bytes(original: bytes) -> bytes:
@@ -3550,12 +3589,16 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
     source_base = source_span["base"]
     source_head = source_span["head"]
     implementation_paths = list(source_span["paths"])
-    # The validation base is the source-span base, so every source/test file
-    # under review must also be selected by the canonical changed-file runner.
-    selected_source_paths = _git_paths(worktree, f"{source_base}..{reviewed_main}")
+    expected_fixture = _expected_validation_fixture(
+        worktree, reviewed_main, target_workstream, target_packet_path,
+    )
+    validation_paths = _expected_validation_paths(source_span, expected_fixture)
+    # This exact authenticated inventory prevents later-main changes from entering
+    # coverage selection while retaining a separately proven historical fixture.
+    selected_source_paths = validation_paths
     required_changed_paths = set(_source_code_paths(implementation_paths))
     if not required_changed_paths or not required_changed_paths.issubset(selected_source_paths):
-        raise HostValidationError("canonical changed-file selection does not include the implementation diff")
+        raise HostValidationError("authenticated source span omits part of the implementation diff")
     code_paths = [path for path in implementation_paths
                   if Path(path).suffix.lower() in {".gd", ".py", ".gdshader", ".tscn", ".tres", ".json"}]
     source_hashes = _source_hashes(worktree, code_paths)
@@ -3568,9 +3611,14 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         with _procession_prearchive_fixture_checkout(
             worktree, reviewed_main, target_workstream, target_packet_path,
         ) as (validation_checkout, fixture_evidence):
+            if fixture_evidence != expected_fixture:
+                raise HostValidationError("validation fixture overlay differs from its pinned authorization")
             command = [sys.executable,
                        str(validation_checkout / "custodian/tools/validation/run_validation.py"),
-                       "--changed", "--base", source_base, "--json"]
+                       "--changed", "--base", source_base,
+                       *[argument for path in validation_paths
+                         for argument in ("--changed-path", path)],
+                       "--json"]
             process = execute(command, validation_checkout)
     except OSError as exc:
         raise HostValidationError(f"trusted coordinator could not launch canonical validation: {exc}") from exc
@@ -3609,6 +3657,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         "source_span_base": source_base,
         "source_span_head": source_head,
         "implementation_paths": implementation_paths,
+        "validation_paths": validation_paths,
         "code_paths": code_paths,
         "selected_source_paths": selected_source_paths,
         "source_sha256": source_hashes,
@@ -3645,7 +3694,7 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
     except HostValidationError:
         coverage_manifest = None
-    _validate_report(report, implementation_paths, coverage_manifest)
+    _validate_report(report, validation_paths, coverage_manifest)
     return metadata
 
 
@@ -3700,9 +3749,26 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
     _verify_generated_import_manifest(Path(repo), run_dir, metadata)
     if metadata.get("implementation_paths") != expected_span.get("paths"):
         raise HostValidationError("coordinator source path inventory differs from the verified source span")
+    expected_fixture = _expected_validation_fixture(
+        Path(repo), reviewed_main, target_workstream, target_packet_path,
+    )
+    if metadata.get("validation_fixture_overlay") != expected_fixture:
+        raise HostValidationError("coordinator validation fixture overlay is not authorized")
+    expected_paths = _expected_validation_paths(expected_span, expected_fixture)
+    if metadata.get("validation_paths") != expected_paths:
+        raise HostValidationError("coordinator validation inventory differs from the authenticated source span")
+    command = metadata.get("command")
+    expected_args = ["--changed", "--base", expected_span["base"],
+                     *[argument for path in expected_paths
+                       for argument in ("--changed-path", path)], "--json"]
+    if (not isinstance(command, list) or len(command) != len(expected_args) + 2
+            or command[0] != sys.executable
+            or not str(command[1]).endswith("custodian/tools/validation/run_validation.py")
+            or command[2:] != expected_args):
+        raise HostValidationError("coordinator validation command does not use the authenticated inventory")
     try:
         coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
     except HostValidationError:
         coverage_manifest = None
-    _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
+    _validate_report(report, expected_paths, coverage_manifest)
     return report

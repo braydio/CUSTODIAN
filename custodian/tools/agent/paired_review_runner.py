@@ -4453,6 +4453,74 @@ def _completed_host_continuation(repo: Path, run_dir: Path, workstream: str, run
                 _file_manifest(child_dir), sort_keys=True, separators=(",", ":")).encode()).hexdigest()}
 
 
+def _verify_coverage_only_failed_report_provenance(
+    run_dir: Path, original: dict, workstream: str, metadata: dict, report: dict,
+) -> bool:
+    """Authenticate the legacy broad inventory against its exact pinned source span."""
+    try:
+        worktree = Path(metadata["worktree"]).resolve()
+        reviewed_main = metadata["reviewed_main"]
+        implementation_commit = metadata["implementation_commit"]
+        if (str(worktree) != str(Path(original.get("recovery_worktree", "")).resolve())
+                or git(worktree, "status", "--porcelain", "--untracked-files=all")
+                or git(worktree, "rev-parse", "HEAD") != reviewed_main):
+            return False
+        receipt_payload = json.loads((run_dir / "claim-receipt.json").read_text(encoding="utf-8"))
+        receipt = parse_claim_receipt(
+            CLAIM_SENTINEL + json.dumps(receipt_payload, sort_keys=True), workstream, worktree,
+        )
+        packet_text = git(worktree, "show", f"{reviewed_main}:{receipt['packet']}")
+        packet = parse_packet(receipt["packet"], packet_text)
+        if (packet.error or packet.kind != "review" or packet.workstream != workstream
+                or not packet.review_target_workstream or not packet.review_target_packet):
+            return False
+        target_content = git(worktree, "show", f"{reviewed_main}:{packet.review_target_packet}")
+        implementation, identity_error = resolve_target_implementation_commit(
+            worktree, reviewed_main, packet.review_target_packet,
+            packet.review_target_workstream, target_content,
+        )
+        if identity_error or implementation != implementation_commit:
+            return False
+        span = host_validation.resolve_validation_source_span(
+            worktree, reviewed_main, implementation, packet.review_target_workstream,
+            packet.review_target_packet,
+        )
+        code_paths = sorted(host_validation._source_code_paths(span["paths"]))
+        selected_paths = host_validation._git_paths(worktree, f"{span['base']}..{reviewed_main}")
+        # The historical runner used base...HEAD plus the clean checkout's local deltas.
+        reported_paths = host_validation._git_paths(worktree, f"{span['base']}...{reviewed_main}")
+        command = metadata.get("command")
+        if (metadata.get("source_span") != span
+                or metadata.get("source_span_base") != span["base"]
+                or metadata.get("source_span_head") != span["head"]
+                or metadata.get("implementation_paths") != span["paths"]
+                or metadata.get("selected_source_paths") != selected_paths
+                or metadata.get("code_paths") != code_paths
+                or metadata.get("source_changed_during_validation") is not False
+                or metadata.get("source_sha256") is None
+                or set(metadata["source_sha256"]) != set(code_paths)
+                or report.get("changed_files") != reported_paths
+                or not isinstance(command, list) or len(command) != 6
+                or command[0] != sys.executable
+                or not command[1].endswith("custodian/tools/validation/run_validation.py")
+                or command[2:] != ["--changed", "--base", span["base"], "--json"]):
+            return False
+        for path in code_paths:
+            expected_sha = metadata["source_sha256"].get(path)
+            pinned = subprocess.run(["git", "show", f"{reviewed_main}:{path}"],
+                                    cwd=worktree, capture_output=True)
+            target = worktree / path
+            if (not isinstance(expected_sha, str) or pinned.returncode
+                    or target.is_symlink() or not target.is_file()
+                    or hashlib.sha256(pinned.stdout).hexdigest() != expected_sha
+                    or hashlib.sha256(target.read_bytes()).hexdigest() != expected_sha):
+                return False
+        return True
+    except (KeyError, OSError, ValueError, TypeError, RunnerError,
+            HostValidationError, json.JSONDecodeError, subprocess.SubprocessError):
+        return False
+
+
 def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                                         workstream: str, run_id: str) -> dict | None:
     """Authenticate a complete pre-review failed report pair without rewriting it."""
@@ -4481,7 +4549,7 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
         "skipped": statuses.count("skipped"),
         "infrastructure_errors": statuses.count("infrastructure_error"),
     }
-    complete_suite_failure = (
+    complete_test_inventory = (
         isinstance(tests, list) and bool(tests)
         and isinstance(selected, list) and bool(selected)
         and len(tests) == len(selected)
@@ -4489,9 +4557,19 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
         and test_ids == selected and len(set(selected)) == len(selected)
         and isinstance(summary, dict)
         and all(summary.get(key) == value for key, value in expected_counts.items())
+    )
+    complete_suite_failure = (
+        complete_test_inventory
         and any(expected_counts[key] for key in ("failed", "timed_out", "infrastructure_errors"))
         and isinstance(coverage, dict) and coverage.get("complete") is True
         and coverage.get("uncovered_files") == []
+    )
+    coverage_only_failure = (
+        complete_test_inventory and expected_counts["passed"] == len(selected)
+        and all(expected_counts[key] == 0 for key in ("failed", "timed_out", "skipped", "infrastructure_errors"))
+        and isinstance(coverage, dict) and coverage.get("complete") is False
+        and isinstance(coverage.get("uncovered_files"), list)
+        and bool(coverage["uncovered_files"])
     )
     import_report = report.get("import") if isinstance(report, dict) else None
     complete_import_failure = (
@@ -4502,17 +4580,18 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
     if (not isinstance(report, dict) or not isinstance(metadata, dict)
             or report.get("schema") != "custodian.validation.result.v1"
             or report.get("passed") is not False
-            or not (complete_suite_failure or complete_import_failure)
+            or not (complete_suite_failure or coverage_only_failure or complete_import_failure)
             or metadata.get("schema") != "custodian.paired_review_host_validation.v1"
             or metadata.get("reviewed_main") != original.get("reviewed_main")
             or metadata.get("implementation_commit") != original.get("implementation_commit")
             or metadata.get("worktree") != (original.get("recovery_worktree") or original.get("worktree"))
             or not isinstance(metadata.get("exit_code"), int) or metadata["exit_code"] <= 0
+            or (coverage_only_failure and metadata.get("exit_code") != 6)
             or metadata.get("report_path") != str((run_dir / "validation.json").resolve())
             or metadata.get("report_sha256") != _sha256_bytes(report_bytes)
             or metadata.get("report_parse_error") is not None):
         return None
-    if complete_suite_failure and (
+    if (complete_suite_failure or coverage_only_failure) and (
         any(not isinstance(coverage.get(key), list)
             or any(not isinstance(path, str) for path in coverage.get(key, []))
             or len(coverage.get(key, [])) != len(set(coverage.get(key, [])))
@@ -4551,7 +4630,7 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or source_changed not in (False, True)
             or (source_changed and report.get("infrastructure_failure") != "import")):
         return None
-    if complete_suite_failure:
+    if complete_suite_failure or coverage_only_failure:
         try:
             manifest = host_validation._pinned_coverage_manifest(
                 Path(metadata["worktree"]), metadata["reviewed_main"],
@@ -4559,6 +4638,10 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             host_validation._validate_canonical_coverage(report, set(code_paths), manifest)
         except (HostValidationError, OSError, ValueError):
             return None
+    if coverage_only_failure and not _verify_coverage_only_failed_report_provenance(
+        run_dir, original, workstream, metadata, report,
+    ):
+        return None
     return {
         "report_sha256": _sha256_bytes(report_bytes),
         "metadata_sha256": _sha256_bytes(metadata_bytes),
@@ -4566,6 +4649,8 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
         "exit_code": metadata["exit_code"],
         "kind": "failed_import" if report.get("infrastructure_failure") == "import"
                 else "failed_validation",
+        "failure_kind": "coverage_only_incomplete" if coverage_only_failure
+                        else ("test_or_infrastructure" if complete_suite_failure else "import"),
         "source_sha256": source_hashes,
         "source_changed_during_validation": source_changed,
     }

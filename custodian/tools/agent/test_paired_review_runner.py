@@ -16,6 +16,7 @@ import tempfile
 import unittest
 from contextlib import contextmanager
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import paired_review_runner as runner
@@ -4662,6 +4663,13 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             "source_span_base": span["base"],
             "source_span_head": span["head"],
             "implementation_paths": paths,
+            "validation_paths": paths,
+            "validation_fixture_overlay": None,
+            "command": [sys.executable,
+                        str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"],
+                        *[argument for path in paths
+                          for argument in ("--changed-path", path)], "--json"],
             "code_paths": paths,
             "source_sha256": {
                 path: hashlib.sha256(subprocess.run(
@@ -4823,7 +4831,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _run(self, report, *, source_edit=False):
         def execute(command, cwd):
             self.assertEqual(Path(cwd), self.root)
-            self.assertEqual(command[-4:], ["--changed", "--base", self.base, "--json"])
+            self._assert_exact_validation_command(command, self.base, self.changed_paths)
             self.assertNotIn("--no-godot-lock", command)
             if source_edit:
                 (self.root / self.changed_paths[0]).write_text("modified after validation\n")
@@ -5023,6 +5031,121 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             self.run_dir, original, workstream, run_id,
         ))
 
+    def test_coverage_only_exit_six_report_requires_exact_source_span_provenance(self):
+        workstream = "review-coverage-only-incomplete"
+        run_id = "20261030T010203Z-abcdef012345"
+        review_packet_path = "custodian/docs/ai_context/task_packets/REVIEW_COVERAGE_ONLY_FIXTURE.md"
+        target_packet_path = "custodian/docs/ai_context/task_packets/archived/COVERAGE_ONLY_FIXTURE.md"
+        for path, content in ((review_packet_path, "review fixture\n"),
+                              (target_packet_path, "target fixture\n")):
+            target = self.root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content)
+        unrelated = self.root / "design/unowned_coverage_fixture.gd"
+        unrelated.parent.mkdir(parents=True, exist_ok=True)
+        unrelated.write_text("extends Node\n")
+        self._commit("add review identity and unrelated uncovered source")
+        self.reviewed_main = self._git("rev-parse", "HEAD")
+        span = host_validation.resolve_validation_source_span(
+            self.root, self.reviewed_main, self.implementation,
+            "sample-implementation", target_packet_path,
+        )
+        code_paths = sorted(host_validation._source_code_paths(span["paths"]))
+        selected_source_paths = host_validation._git_paths(
+            self.root, f"{span['base']}..{self.reviewed_main}",
+        )
+        changed_paths = host_validation._git_paths(
+            self.root, f"{span['base']}...{self.reviewed_main}",
+        )
+        manifest = host_validation._pinned_coverage_manifest(self.root, self.reviewed_main)
+        selected_tests = run_validation.select_changed_tests(manifest["tests"], changed_paths)
+        selected_ids = [item["id"] for item in selected_tests]
+        coverage = run_validation.changed_file_coverage(
+            changed_paths, selected_tests, manifest.get("coverage_excludes", []),
+        )
+        self.assertFalse(coverage["complete"])
+        report = {
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "changed_files": changed_paths, "selected": selected_ids,
+            "tests": [{"id": item, "status": "passed"} for item in selected_ids],
+            "summary": {"selected": len(selected_ids), "passed": len(selected_ids),
+                        "failed": 0, "timed_out": 0, "skipped": 0,
+                        "infrastructure_errors": 0},
+            "coverage": coverage,
+        }
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": self.reviewed_main,
+            "implementation_commit": self.implementation,
+            "implementation_parent": span["base"],
+            "worktree": str(self.root),
+            "source_span": span,
+            "source_span_base": span["base"],
+            "source_span_head": span["head"],
+            "implementation_paths": span["paths"],
+            "selected_source_paths": selected_source_paths,
+            "code_paths": code_paths,
+            "source_sha256": {path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                              for path in code_paths},
+            "source_changed_during_validation": False,
+            "exit_code": 6,
+            "report_path": str((self.run_dir / "validation.json").resolve()),
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+            "report_parse_error": None,
+            "summary": report["summary"], "selected": report["selected"],
+            "command": [sys.executable,
+                        str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"], "--json"],
+        }
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+        (self.run_dir / "claim-receipt.json").write_text("{}\n")
+        original = {"workstream": workstream, "run_id": run_id,
+                    "phase": "host_validation_recovery",
+                    "reviewed_main": self.reviewed_main,
+                    "implementation_commit": self.implementation,
+                    "recovery_worktree": str(self.root)}
+        parsed_packet = SimpleNamespace(
+            error=None, kind="review", workstream=workstream,
+            review_target_workstream="sample-implementation",
+            review_target_packet=target_packet_path,
+        )
+        with patch.object(runner, "parse_claim_receipt",
+                          return_value={"packet": review_packet_path}), \
+             patch.object(runner, "parse_packet", return_value=parsed_packet), \
+             patch.object(runner, "resolve_target_implementation_commit",
+                          return_value=(self.implementation, None)):
+            evidence = runner._failed_host_validation_report_pair(
+                self.run_dir, original, workstream, run_id,
+            )
+            self.assertIsNotNone(evidence)
+            self.assertEqual(evidence["failure_kind"], "coverage_only_incomplete")
+            self.assertEqual(evidence["exit_code"], 6)
+
+            pristine_report = json.loads(json.dumps(report))
+            pristine_metadata = json.loads(json.dumps(metadata))
+            for label, mutate in (
+                ("wrong exit", lambda r, m: m.update(exit_code=5)),
+                ("changed inventory", lambda r, m: r["changed_files"].pop()),
+                ("green coverage", lambda r, m: r["coverage"].update(complete=True, uncovered_files=[])),
+                ("contradictory test", lambda r, m: r["tests"][0].update(status="failed")),
+                ("forged source span", lambda r, m: m["source_span"].update(base="f" * 40)),
+                ("source digest", lambda r, m: m["source_sha256"].update({code_paths[0]: "0" * 64})),
+            ):
+                with self.subTest(predicate=label):
+                    altered_report = json.loads(json.dumps(pristine_report))
+                    altered_metadata = json.loads(json.dumps(pristine_metadata))
+                    mutate(altered_report, altered_metadata)
+                    altered_bytes = (json.dumps(altered_report) + "\n").encode()
+                    (self.run_dir / "validation.json").write_bytes(altered_bytes)
+                    altered_metadata["report_sha256"] = hashlib.sha256(altered_bytes).hexdigest()
+                    (self.run_dir / "coordinator-validation.json").write_text(
+                        json.dumps(altered_metadata),
+                    )
+                    self.assertIsNone(runner._failed_host_validation_report_pair(
+                        self.run_dir, original, workstream, run_id,
+                    ))
     def test_failed_report_authenticates_canonical_excluded_hashed_json(self):
         path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
         target = self.root / path
@@ -5091,7 +5214,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_green_report_accepts_policy_exclusion_but_rejects_false_exclusion(self):
         path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
-        paths = [*self.changed_paths, path]
+        paths = sorted([*self.changed_paths, path])
         manifest = host_validation._pinned_coverage_manifest(self.root, self.reviewed_main)
         report = self._report()
         report["changed_files"] = paths
@@ -5209,6 +5332,25 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             run_validation=self._run(report or self._report(), **kwargs),
             capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
         )
+
+    def _assert_exact_validation_command(self, command, base, paths):
+        expected = ["--changed", "--base", base,
+                    *[argument for path in sorted(set(paths))
+                      for argument in ("--changed-path", path)], "--json"]
+        self.assertEqual(command[0], sys.executable)
+        self.assertTrue(command[1].endswith("custodian/tools/validation/run_validation.py"))
+        self.assertEqual(command[2:], expected)
+
+    def test_exact_changed_path_inventory_is_sorted_and_rejects_unsafe_or_replayed_paths(self):
+        self.assertEqual(run_validation.exact_changed_paths([
+            "custodian/tools/test.py", "custodian/game/test.gd",
+        ]), ["custodian/game/test.gd", "custodian/tools/test.py"])
+        for invalid in ("../outside.py", "/absolute.py", "custodian\\outside.py",
+                        "custodian//empty.py", "custodian/./dot.py"):
+            with self.subTest(path=invalid), self.assertRaises(ValueError):
+                run_validation.exact_changed_paths([invalid])
+        with self.assertRaisesRegex(ValueError, "unique"):
+            run_validation.exact_changed_paths(["custodian/game/test.gd"] * 2)
 
     def _install_trace(self, workstream, packet_path, run_id, base, landing, *,
                        ref_suffix=None, main_sync=None, malformed_data=False,
@@ -5762,6 +5904,22 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         )
         self.assertTrue(verified["passed"])
 
+    def test_host_validation_inventory_excludes_unrelated_later_main_changes(self):
+        unrelated = "custodian/game/operator/unrelated_later_main.gd"
+        path = self.root / unrelated
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("extends Node\n")
+        self._commit("unrelated later main change")
+        self.reviewed_main = self._git("rev-parse", "HEAD")
+
+        evidence = self._run_validation()
+
+        expected = sorted(self.changed_paths)
+        self.assertEqual(evidence["selected_source_paths"], expected)
+        report = json.loads((self.run_dir / "validation.json").read_text())
+        self.assertEqual(report["changed_files"], expected)
+        self._assert_exact_validation_command(evidence["command"], self.base, expected)
+
     def test_host_rejects_vacuous_or_failed_validation_reports(self):
         for report in (self._report(selected=False), self._report(passed=False)):
             with self.subTest(report=report):
@@ -5770,7 +5928,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_host_rejects_report_that_does_not_cover_implementation_diff(self):
         report = self._report(changed_paths=["README.md"])
-        with self.assertRaisesRegex(host_validation.HostValidationError, "implementation diff"):
+        with self.assertRaisesRegex(host_validation.HostValidationError, "authenticated source span"):
             self._run_validation(report)
 
     def test_host_rejects_code_path_without_a_selected_test_owner(self):
@@ -5853,14 +6011,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(span["paths"]), set(code_paths))
         self.assertEqual(span["provenance"]["kind"], "workstream-lifecycle-trace")
 
-        selected_paths = subprocess.run(["git", "diff", "--name-only", f"{source_base}...{landing}"],
-                                        cwd=self.root, check=True, text=True,
-                                        capture_output=True).stdout.splitlines()
+        selected_paths = sorted(span["paths"])
         report = self._canonical_report(self.root, landing, selected_paths)
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), self.root)
-            self.assertEqual(command[-4:], ["--changed", "--base", source_base, "--json"])
+            self._assert_exact_validation_command(command, source_base, selected_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         run_dir = self.run_dir / "split-landing"
@@ -6328,15 +6484,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(host_validation._source_code_paths(span["paths"])),
                          set(fixture["code_paths"]))
 
-        selected_paths = subprocess.run(
-            ["git", "diff", "--name-only", f"{fixture['source_base']}..{fixture['reviewed_main']}"],
-            cwd=self.root, check=True, text=True, capture_output=True,
-        ).stdout.splitlines()
+        selected_paths = sorted(span["paths"])
         report = self._canonical_report(self.root, fixture["reviewed_main"], selected_paths)
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), self.root)
-            self.assertEqual(command[-4:], ["--changed", "--base", fixture["source_base"], "--json"])
+            self._assert_exact_validation_command(command, fixture["source_base"], selected_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         run_dir = self.run_dir / "source-bearing-split-traces"
@@ -6941,11 +7094,7 @@ Verify the exact post-hoc attestation.
         self.assertEqual(set(replay["paths"]).intersection(exact_paths), exact_paths)
         self.assertEqual(replay["provenance"]["scope_attestation"]["approval_outcome"], "passed")
         source_paths = host_validation._source_code_paths(replay["paths"])
-        changed_paths = subprocess.run(
-            ["git", "diff", "--name-only", "--no-renames",
-             f"{replay['base']}..{approved_main}"], cwd=repository,
-            check=True, text=True, capture_output=True,
-        ).stdout.splitlines()
+        changed_paths = sorted(replay["paths"])
         report = {"schema": "custodian.validation.result.v1", "passed": True,
                   "changed_files": changed_paths, "selected": ["historical_grunt_source"],
                   "tests": [{"id": "historical_grunt_source", "status": "passed"}],
@@ -6960,7 +7109,7 @@ Verify the exact post-hoc attestation.
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), repository)
-            self.assertEqual(command[-4:], ["--changed", "--base", replay["base"], "--json"])
+            self._assert_exact_validation_command(command, replay["base"], changed_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         evidence = host_validation.run_coordinator_validation(
@@ -7202,10 +7351,7 @@ Verify the exact post-hoc attestation.
             self.assertNotIn("custodian/tools/agent/workstream.py", span["paths"])
 
             code_paths = host_validation._source_code_paths(span["paths"])
-            changed_paths = subprocess.run(
-                ["git", "diff", "--name-only", "--no-renames", f"{span['base']}..{reviewed_main}"],
-                cwd=repository, check=True, text=True, capture_output=True,
-            ).stdout.splitlines()
+            changed_paths = sorted(span["paths"])
             manifest = host_validation._pinned_coverage_manifest(repository, reviewed_main)
             selected_tests = run_validation.select_changed_tests(manifest["tests"], changed_paths)
             selected_ids = [item["id"] for item in selected_tests]
@@ -7226,7 +7372,7 @@ Verify the exact post-hoc attestation.
 
             def validate(command, cwd):
                 self.assertEqual(Path(cwd), repository)
-                self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+                self._assert_exact_validation_command(command, span["base"], changed_paths)
                 return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
             evidence = host_validation.run_coordinator_validation(
@@ -7896,6 +8042,7 @@ Verify the exact post-hoc attestation.
             ["git", "diff", "--name-only", f"{span['base']}..{reviewed_main}"],
             cwd=repository, check=True, text=True, capture_output=True,
         ).stdout.splitlines()
+        selected_paths = sorted(span["paths"])
         code_paths = sorted(host_validation._source_code_paths(span["paths"]))
         report = {"schema": "custodian.validation.result.v1", "passed": True,
                   "changed_files": selected_paths, "selected": ["historical_resume_source"],
@@ -7911,7 +8058,7 @@ Verify the exact post-hoc attestation.
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), repository)
-            self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+            self._assert_exact_validation_command(command, span["base"], selected_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         evidence = host_validation.run_coordinator_validation(
@@ -7991,10 +8138,7 @@ Verify the exact post-hoc attestation.
             fixture["source_path"], fixture["test_path"],
         })
 
-        selected = subprocess.run(
-            ["git", "diff", "--name-only", f"{span['base']}..{fixture['reviewed_main']}"],
-            cwd=fixture["repo"], check=True, text=True, capture_output=True,
-        ).stdout.splitlines()
+        selected = sorted(span["paths"])
         code_paths = sorted(host_validation._source_code_paths(span["paths"]))
         report = {"schema": "custodian.validation.result.v1", "passed": True,
                   "changed_files": selected, "selected": ["resume_source_contract"],
@@ -8009,7 +8153,7 @@ Verify the exact post-hoc attestation.
 
         def validate(command, cwd):
             self.assertEqual(Path(cwd), fixture["repo"])
-            self.assertEqual(command[-4:], ["--changed", "--base", span["base"], "--json"])
+            self._assert_exact_validation_command(command, span["base"], selected)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
         evidence = host_validation.run_coordinator_validation(
