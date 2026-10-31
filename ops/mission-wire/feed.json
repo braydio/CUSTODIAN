@@ -1,9 +1,170 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T16:25:07Z",
+  "generated_at": "2026-10-31T22:37:53Z",
   "source_main_sha": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "emergency-checkout-recovery-pr102-ci-failure-2fb8ed43",
+      "headline": "Emergency review recovery remains unmerged as validation fails",
+      "summary": "An emergency PR proposes preserving a stranded review claim while adding a SHA-bound, two-phase recovery plan. The proposal remains unmerged. The current head's GitHub validation run failed in Fast changed validation, and no independent approval or recovery execution is established.",
+      "body": "PR #102 proposes separating checkout disposition from profile evidence and adding read-only planning plus digest-bound authorized apply for a held claim_profile_mismatch review. The PR description reports local tests and an exact-run planning smoke test, but those are author reports. A prior COMMENTED technical review objected to an earlier head's missing plan/apply boundary; the PR description now says the two-phase design exists, but that comment is not approval of the current head. Workflow run 41222525601 for head 2fb8ed43 concluded failure in Fast changed validation; the job result alone does not prove its exact root cause. Main remains e1bff4eb. No merge, independent acceptance, authorized recovery, or canonical teardown was verified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "review-agent-paired-review-redacted-final-outcome-recovery-v1",
+      "occurred_at": "2026-10-31T17:02:02Z",
+      "bullets": [
+        "Emergency PR #102 is open and unmerged.",
+        "Current-head validation failed at Fast changed validation.",
+        "Earlier technical review was COMMENTED, not approval.",
+        "Require passing CI and independent human approval before considering merge.",
+        "Any recovery apply needs fresh exact-run plan and separate authorization."
+      ],
+      "links": [
+        {
+          "title": "Emergency recovery PR #102",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/102"
+        },
+        {
+          "title": "Failed validation run",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41222525601"
+        },
+        {
+          "title": "Current main",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A proposed emergency route to recover a stranded CUSTODIAN review is now open for scrutiny, but it has not crossed the merge gate. The proposal aims to preserve the original claim and evidence while requiring a read-only recovery plan before any authorized continuation. Its current GitHub validation run failed, so the recovery remains a proposal rather than a deployed remedy.",
+        "sections": [
+          {
+            "heading": "A recovery designed to preserve the original evidence",
+            "text": "PR #102 proposes keeping the existing claim, lock, worktree and review artifacts intact. It separates checkout state from checkout-profile evidence and describes a two-phase process: first generate a pinned, read-only plan; later apply that exact plan only with fresh authorization."
+          },
+          {
+            "heading": "The validation gate is still red",
+            "text": "The current head's Validate Repository run failed in Fast changed validation. An earlier technical review also challenged an earlier revision for lacking the required plan/apply separation. The PR description now reports a two-phase implementation and local tests, but that earlier comment is not an independent approval of the revised head."
+          },
+          {
+            "heading": "What this means for game development",
+            "text": "This is infrastructure recovery, not an Operator or gameplay feature. It matters because stranded review claims and incomplete evidence can delay acceptance of downstream work. Until CI, review and explicit recovery authorization are satisfied, the project cannot treat the held review as safely resumed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A recovery plan is not permission to recover",
+            "explanation": "The proposed digest-bound plan records exactly what would be acted on. That is useful for safety and reproducibility, but the later apply remains a separate authorization gate."
+          },
+          {
+            "title": "Local tests and CI answer different questions",
+            "explanation": "The author reports successful local checks, while the inspected GitHub workflow failed. Neither a test count nor an open PR establishes independent acceptance or safe host continuation."
+          }
+        ],
+        "takeaway": "The emergency recovery has a concrete proposal, but current-head CI is failing and the PR is unmerged. No protected recovery has been verified.",
+        "next_watch": "Watch for a passing rerun on the current head and a fresh independent human approval before any merge or newly authorized exact-run recovery."
+      },
+      "details": {
+        "overview": "Observed PR #102 open at head 2fb8ed43, main e1bff4eb. GitHub Actions run 41222525601 failed in job Fast changed validation, step Run fast changed validation. An earlier COMMENTED review targets head c512ba20 and is not an approval of the current head. PR text reports 444 local tests and a later 271-test focused suite; those results were not independently reproduced here.",
+        "ledger": [
+          {
+            "stage": "Recovery implementation proposal",
+            "status": "open PR, unmerged",
+            "evidence": "PR #102 head 2fb8ed43; base main e1bff4eb."
+          },
+          {
+            "stage": "Local validation",
+            "status": "author-reported",
+            "evidence": "PR description lists local tests and planning smoke test."
+          },
+          {
+            "stage": "GitHub validation",
+            "status": "verified failure",
+            "evidence": "Run 41222525601: Fast changed validation failed."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not approved",
+            "evidence": "COMMENTED technical review on older head c512ba20; no approval inspected."
+          },
+          {
+            "stage": "Landing",
+            "status": "not landed",
+            "evidence": "PR #102 remains open, merged=false."
+          },
+          {
+            "stage": "Exact-run apply and teardown",
+            "status": "unknown / not authorized",
+            "evidence": "No live host receipt or separate recovery authorization inspected."
+          }
+        ],
+        "notes": [
+          "Earlier reviewer comment identifies a missing plan/apply boundary in a prior revision.",
+          "No new main commits since e1bff4eb."
+        ],
+        "unknowns": [
+          "Exact failure cause within the fast changed-validation step was not independently established.",
+          "Live host claim, lock, process, disk and teardown state unavailable."
+        ],
+        "actions": [
+          "PR author: resolve failing CI on current head and obtain fresh independent approval.",
+          "Recovery owner: after any authorized merge, regenerate the exact-run plan; do not apply without separate authorization."
+        ]
+      },
+      "scorecard": {
+        "stage": "Emergency recovery proposed; CI failing; unmerged",
+        "as_of": "2026-10-31T22:37:53Z",
+        "scope": "PR #102 only, not full dispatcher queue",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Propose exact-run recovery",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Open PR #102."
+          },
+          {
+            "label": "Validate current head",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Run 41222525601 failed."
+          },
+          {
+            "label": "Obtain independent human approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Only earlier COMMENTED review inspected."
+          },
+          {
+            "label": "Merge authorized fix",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "PR remains open."
+          },
+          {
+            "label": "Generate fresh pinned plan",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Post-merge plan required."
+          },
+          {
+            "label": "Separately authorize apply and verify teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "No authorization or host evidence."
+          }
+        ],
+        "next_gate": "PR author resolves current-head CI failure, then obtains independent human approval."
+      },
+      "related": [
+        {
+          "title": "Review parser fix lands, then a missing evidence file stalls the next checkout",
+          "context": "The landed profile correction is part of the same review infrastructure; its independent acceptance is still distinct from emergency recovery.",
+          "story_id": "paired-review-profile-summary-coverage-e1bff4eb"
+        }
+      ]
+    },
     {
       "id": "paired-review-profile-summary-coverage-e1bff4eb",
       "headline": "Review parser fix lands, then a missing evidence file stalls the next checkout",
@@ -1615,164 +1776,6 @@
           }
         ],
         "next_gate": "Existing independent reviewer must accept the landed verifier before protected evidence resolution."
-      },
-      "related": []
-    },
-    {
-      "id": "merged-source-rc035-4693df7b",
-      "headline": "A landed review fix remains stranded after a final validation timeout",
-      "summary": "The merged-source validation correction reached main through an authorized manual landing, but its ordinary finish failed and its independent review is blocked. A subsequent canonical check timed out on one of nine selected tests. The existing workstream and protected evidence remain held; the next step is a supported lifecycle resolution, not automatic cleanup.",
-      "body": "The RC-032 through RC-035 audit records a manually authorized fast-forward landing at 3ff5e637, followed by review deferment to blocked/manual. RC-035 canonical validation at the exact implementation commit reported 9 selected checks, 8 passed and 1 timed out (exit 5), with complete changed-file coverage. The audit says the implementation claim/lock/worktree remain preserved and no normal finish, reviewer launch or teardown occurred. These host details are documented relay reports, not directly inspected live host telemetry. No accepted PASS can be inferred from the earlier read-only ACCEPTABLE assessment.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-merged-source-validation-isolation-v1",
-      "occurred_at": "2026-10-31T07:05:43Z",
-      "bullets": [
-        "Code is on main, but canonical finish remains failed.",
-        "RC-035 reported 8/9 checks passing and one timeout.",
-        "Paired review is blocked/manual; no accepted PASS.",
-        "Preserve the existing claim and evidence until supported lifecycle resolution."
-      ],
-      "links": [
-        {
-          "title": "Exact manual landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3ff5e6379cb7193f9fb40b1730c2e4a31647c06b"
-        },
-        {
-          "title": "Review deferment",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/c8c5ffc8d77a6df5eb69543ad1478f1d1dd6528f"
-        },
-        {
-          "title": "Final validation audit update",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4693df7b1fa6184b6ea4596f5a672d0f60c123b0"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A correction intended to make CUSTODIAN's reviews more reliable has reached the main codebase, but its own closeout is stuck. An authorized manual landing succeeded; the normal finish did not. The latest documented validation attempt then timed out on one test, leaving independent review on hold.",
-        "sections": [
-          {
-            "heading": "Code integration is not administrative completion",
-            "text": "The audit records a carefully bounded fast-forward landing and an independent read-only assessment with no blocking findings. Neither replaces the canonical review receipt or the ordinary lifecycle finish. The review packet is explicitly blocked and manual."
-          },
-          {
-            "heading": "A timeout with real consequences",
-            "text": "The final documented check selected nine tests. Eight passed, one timed out, and file coverage was complete. That is a failed validation, not a near-PASS that can be rounded up. The existing claim and worktree are deliberately preserved while a supported resolution is determined."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The project's bottleneck is now lifecycle integrity",
-            "explanation": "The code can be integrated while the dispatcher still sees an unresolved execution lock and a failed finish. Fixing source validation alone does not make the workstream safe to retire."
-          },
-          {
-            "title": "A clean diff is not a clean teardown",
-            "explanation": "The audit distinguishes source integration from release of the claim, lock and worktree. Those host-side gates need their own trustworthy evidence before downstream review can start."
-          }
-        ],
-        "takeaway": "The merged-source correction is landed but not fully validated, independently accepted or cleanly retired.",
-        "next_watch": "A supported, explicitly authorized resolution of the failed finish and timeout, followed by fresh validation and a canonical independent review."
-      },
-      "details": {
-        "overview": "RC-032 through RC-035 document an authorized manual landing at 3ff5e637 and subsequent blocked/manual review. RC-035 validation exited 5 with 8 passes and 1 timeout among 9 selected checks. This is documented host reporting, not live host inspection.",
-        "ledger": [
-          {
-            "stage": "Manual landing",
-            "status": "verified on main",
-            "evidence": "3ff5e637 commit and RC-032 audit."
-          },
-          {
-            "stage": "Final canonical validation",
-            "status": "reported failed",
-            "evidence": "RC-035: 9 selected, 8 pass, 1 timeout, exit 5."
-          },
-          {
-            "stage": "Normal finish",
-            "status": "failed",
-            "evidence": "Immutable original trace and RC-032 audit."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "blocked",
-            "evidence": "Review packet status blocked/manual; no canonical PASS."
-          },
-          {
-            "stage": "Claim and lock retirement",
-            "status": "reported held",
-            "evidence": "RC-035 audit states worktree, claim and lock preserved."
-          },
-          {
-            "stage": "Teardown",
-            "status": "not verified",
-            "evidence": "No live host teardown proof."
-          }
-        ],
-        "notes": [
-          "Earlier read-only ACCEPTABLE assessment is not canonical independent PASS.",
-          "An older 9/9 report was explicitly rejected as final evidence."
-        ],
-        "unknowns": [
-          "Current host resource counts and whether any subsequent local state changed.",
-          "Authorized supported path to reconcile failed finish without rewriting history."
-        ],
-        "actions": [
-          "Existing lifecycle owner: obtain authorization and a supported resolution for the held claim and failed validation before enabling paired review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed manually; finish and review blocked",
-        "as_of": "2026-10-31T07:05:43Z",
-        "scope": "Merged-source correction and paired review",
-        "metrics": [
-          {
-            "id": "rc035-passed-checks",
-            "label": "RC-035 PASSED CHECKS",
-            "value": 8,
-            "verification": "reported",
-            "basis": "8 of 9 selected checks passed; 1 timed out, exit 5, per RC-035 audit.",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/reports/RC032_MANUAL_LANDING_AUDIT.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Land corrected implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "3ff5e637"
-          },
-          {
-            "label": "Pass final canonical validation",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "RC-035 exit 5, one timeout"
-          },
-          {
-            "label": "Canonical finish and retirement",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Original finish failed; claim and lock preserved"
-          },
-          {
-            "label": "Independent review",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Review packet blocked/manual"
-          },
-          {
-            "label": "Protected recovery",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No authorized apply proof"
-          },
-          {
-            "label": "Clean teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No live host proof"
-          }
-        ],
-        "next_gate": "Existing lifecycle owner needs a supported authorized resolution and passing validation before the paired reviewer may claim."
       },
       "related": []
     }
