@@ -1511,13 +1511,34 @@ class WorkstreamTests(unittest.TestCase):
             workstream.start("interrupted-create", self.repo)
 
     def test_start_report_records_created_then_resumed_disposition(self):
-        report: dict[str, str] = {}
+        report: dict[str, object] = {}
         path = workstream.start("disposition-work", self.repo, report=report)
         self.assertEqual(report["checkout"], "created")
-        resumed_report: dict[str, str] = {}
+        self.assertNotIn("checkout_profile", report)
+        resumed_report: dict[str, object] = {}
         resumed = workstream.resume("disposition-work", self.repo, report=resumed_report)
         self.assertEqual(resumed_report["checkout"], "resumed")
         self.assertEqual(resumed, path)
+
+    def test_start_report_keeps_profile_receipt_separate_from_checkout_disposition(self):
+        profile_path = "profile.json"
+        (self.repo / profile_path).write_text(json.dumps({
+            "schema": workstream.worktree_provisioning.PROFILE_SCHEMA,
+            "include_paths": ["base"], "hydrate_lfs_paths": [],
+        }) + "\n")
+        git(self.repo, "add", profile_path)
+        git(self.repo, "commit", "-m", "publish fixture checkout profile")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        report: dict[str, object] = {}
+        path = workstream.start("profile-report", self.repo, report=report, profile_path=profile_path)
+        evidence = report["checkout_profile"]
+        self.assertEqual(report["checkout"], "created")
+        self.assertIsInstance(evidence, dict)
+        self.assertEqual(evidence["profile"], profile_path)
+        self.assertEqual(evidence["paths"], ["base"])
+        self.assertEqual(evidence["hydrated_lfs_paths"], [])
+        self.assertTrue((path / "base").is_file())
 
     def test_existing_remote_is_resumed_and_main_merge_is_non_rewriting(self):
         task = workstream.start("resume-me", self.repo)

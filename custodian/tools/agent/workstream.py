@@ -2788,7 +2788,7 @@ def sync_remote_branch(path: Path, branch: str, *, skip_lfs: bool = False) -> bo
     return True
 
 
-def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None,
+def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, object] | None = None,
           agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
           _lock_held: bool = False, _publish_trace: bool = True,
           profile_path: str | None = None) -> Path:
@@ -2856,6 +2856,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                 trace.record("claim_cleanup_pending", remote_ref=claim.ref)
             if report is not None:
                 report["checkout"] = "created"
+                if checkout is not None:
+                    report["checkout_profile"] = checkout
             trace.record("start_completed", disposition="created", worktree=str(path), branch=branch)
             if _publish_trace:
                 trace.publish()

@@ -298,21 +298,92 @@ class PairedReviewRunnerTests(unittest.TestCase):
         profiled = runner.dispatcher_claim_command(Path("repo"), "review-sample", "profile.json")
         self.assertEqual(profiled[-2:], ["--checkout-profile", "profile.json"])
         profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
-        receipt = {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
-                                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"]}}
+        receipt = {"checkout": "created", "checkout_profile": {
+            "profile": "profile.json", "profile_sha256": "d" * 64,
+            "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+            "hydrated_lfs_paths": [], "hydrated_lfs": [],
+        }}
         runner.verify_checkout_profile_receipt(receipt, profile,
                                               {"custodian/tools/a.py", "custodian/tools/test_a.py"})
         for invalid in (
-            {"checkout": {"profile": "other.json", "profile_sha256": "d" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
-            {"checkout": {"profile": "profile.json", "profile_sha256": "e" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
-            {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "other.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "e" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
         ):
             with self.subTest(invalid=invalid), self.assertRaises(runner.RunnerError):
                 runner.verify_checkout_profile_receipt(
                     invalid, profile, {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+
+    def test_profile_receipt_keeps_legacy_disposition_and_requires_separate_profile_evidence(self):
+        profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
+        with self.assertRaisesRegex(runner.RunnerError, "checkout_profile"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": "created"}, profile, {"custodian/tools/a.py"},
+            )
+        with self.assertRaisesRegex(runner.RunnerError, "disposition"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": {"profile": "profile.json"}, "checkout_profile": {
+                    "profile": "profile.json", "profile_sha256": "d" * 64,
+                    "paths": ["custodian/tools/a.py"],
+                    "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                }}, profile, {"custodian/tools/a.py"},
+            )
+
+    def test_profiled_worktree_is_verified_against_sparse_rules_and_git_blobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "Test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (repo / "review.py").write_text("print('ok')\n")
+            subprocess.run(["git", "-C", str(repo), "add", "review.py"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "init", "--no-cone"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "--no-cone", "--stdin"],
+                           input="/review.py\n", text=True, check=True)
+            main = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                                  text=True, capture_output=True, check=True).stdout.strip()
+            profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64, ("review.py",), ())
+            runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
+            (repo / "review.py").write_text("tampered\n")
+            with self.assertRaisesRegex(runner.RunnerError, "dirty"):
+                runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
+
+    def test_checkout_profile_mismatch_recovery_cli_is_exact_and_requires_fresh_context(self):
+        with patch.object(runner, "continue_run", return_value=0) as continuation:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch",
+            ]), 2)
+            self.assertEqual(runner.main([
+                "review-other", "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--authorize-fresh-reviewer-context",
+            ]), 2)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--authorize-fresh-reviewer-context",
+            ]), 0)
+        continuation.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+            authorize_fresh_reviewer_context=True,
+            recover_checkout_profile_mismatch=True, timeout=None,
+        )
 
     def test_finish_index_recovery_authenticates_original_five_message_pass(self):
         messages = ["progress: reconstructing", "progress: checking evidence",
@@ -3631,8 +3702,11 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             required_paths = {"custodian/tools/agent/paired_review_runner.py"}
             receipt = {"result": "claimed", "workstream": "review-sample", "verified": True,
                        "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path,
-                       "checkout": {"profile": profile.path, "profile_sha256": profile.digest,
-                                    "paths": sorted(required_paths)}}
+                       "checkout": "created", "checkout_profile": {
+                           "profile": profile.path, "profile_sha256": profile.digest,
+                           "paths": sorted(required_paths),
+                           "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                       }}
             completed = subprocess.CompletedProcess([], 0, "CLAIMED\n" + runner.CLAIM_SENTINEL + json.dumps(receipt), "")
             original_run = subprocess.run
             def run_side_effect(argv, *args, **kwargs):
@@ -3736,6 +3810,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
 
             with patch.object(runner, "validate_eligible_review", return_value=(packet_path, review_packet(), runner.parse_packet(packet_path, review_packet()))), \
                  patch.object(runner, "validate_checkout_profile", return_value=(profile, "a" * 40, required_paths)), \
+                 patch.object(runner, "verify_checkout_profile_receipt") as verify_profile_receipt, \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
                  patch.object(runner, "run_coordinator_validation", side_effect=fake_host_validation), \
                  patch.object(runner, "verify_coordinator_validation"), \
@@ -3750,6 +3825,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                      "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \
                  patch.object(runner, "common_dir", return_value=repo / ".git"):
                 self.assertEqual(runner.run(repo, "review-sample", checkout_profile=profile.path), 0)
+                verify_profile_receipt.assert_called_once()
                 summary_available["value"] = False
                 with self.assertRaisesRegex(runner.RunnerError, "without durable review state"):
                     runner.run(repo, "review-sample")
