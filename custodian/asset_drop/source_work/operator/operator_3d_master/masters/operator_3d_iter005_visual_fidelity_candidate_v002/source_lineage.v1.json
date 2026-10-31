@@ -1,0 +1,84 @@
+{
+  "schema": "custodian.operator_3d_visual_fidelity_lineage.v1",
+  "candidate_state": "candidate_unapproved",
+  "approval_state": "experimental",
+  "created_utc": "2026-10-31T11:06:31.069285+00:00",
+  "derivation": "Immutable derivative copied from the ITER005 experimental master; scoped geometry and material edits, with a separate per-animation neutral-pose overlay. Source model, GLB, FBX, and prior Task 017 files are unchanged.",
+  "candidate_blend": {
+    "path": "operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+    "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23",
+    "bytes": 94267409,
+    "master_contract_path": "master.v1.json",
+    "master_contract_sha256": "ce5e7a740715b5fc572b053207a11591a37415436a3bf4e083fee6f690be5988"
+  },
+  "source_master": {
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.blend",
+    "sha256": "a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969",
+    "bytes": 47225804,
+    "master_contract_sha256": "e7e49c41fcf5c0a5e1835d0afda9f0358b832faf8ebc50f960640f5ece17e672",
+    "source_branch": "agent/operator-3d-master-modeling-proof-v1-iter005",
+    "source_commit": "6b89c4d503bb2d73d2783443d4280f313c681bfa",
+    "glb_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.glb",
+    "glb_sha256": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479"
+  },
+  "source_fbx": {
+    "path": "/home/braydenchaffee/Downloads/Neutral Idle.fbx",
+    "sha256": "40fda03b9e87092978f31c0721a3de2ad686a35983d73386769a17029684e1a3"
+  },
+  "task017_pauldron_donor": {
+    "path": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-task017-20261028/custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task017_clean_pauldrons/operator_iter005_clean_pauldrons_task017.blend",
+    "sha256": "cb34e495bcece5e76a50efa14abc02dab64170af988304135123a8182773f1b5",
+    "owner_branch": "agent/operator-shoulder-symmetry-and-rigging-v1-task017",
+    "ownership": "host-local source in existing dirty Task 017 worktree; read-only; not copied into or modified by this candidate build"
+  },
+  "motion_inputs": [
+    {
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/retarget_fix_v1/motion/neutral_idle_motion.v2_rest_frame.json",
+      "sha256": "6915baf7cf56c7606d328d5de497bf8e768f2c48c9b7f8b6d0eff1d39cce0bb5",
+      "motion_sha256": "548dc02a458fe8858143fb363e143071b07b3c05749d842fe80b04674d0c72e6"
+    },
+    {
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/diagnostics/candidates/neutral_idle_motion.v2_calibrated_candidate.json",
+      "sha256": "550bc67a5cb7b893202ddb6c1c72b05e2088225b2a1f5f106065d52fa93220ef",
+      "motion_sha256": "50c65dc41fec100cf374d09a8fe1cccc5615ee431fadefcf7629e31f54ee91b4"
+    }
+  ],
+  "approved_visual_reference": {
+    "path": "custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
+    "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+  },
+  "rig_invariants": {
+    "bone_count": 42,
+    "identity_sha256": "36ed6d35469faf5e6f03802371df345321147e1624be35d079fd5140de36d597",
+    "rest_pose_sha256": "62b18ce51ea85907f7270855608be0cdc804ec7e1c17fff5d6da97bf543e55eb",
+    "skeleton_signature_sha256": "abcadb2f29bb273b25d8db278b5e33af27597a8a68a1c90550a92e2b7da7bbd2",
+    "rest_pose_changed": false
+  },
+  "source_changes": {
+    "original_master_modified": false,
+    "source_glb_modified": false,
+    "source_fbx_modified": false,
+    "source_motion_receipts_modified": false,
+    "task017_donor_modified": false
+  },
+  "variants": [
+    {
+      "id": "pose_proportion",
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002_pose.blend",
+      "sha256": "7ec75e6f59495ce7fbe9d5d5062d95a9fc1605e79a7002c10427be0b1ce80d56",
+      "bytes": 94261897
+    },
+    {
+      "id": "material_visor",
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002_material.blend",
+      "sha256": "33c12ba593b01861bfa5f137813af0c650f779ccfc4e462876c893221ebcc3ef",
+      "bytes": 47229386
+    },
+    {
+      "id": "final_combined",
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+      "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23",
+      "bytes": 94267409
+    }
+  ]
+}
