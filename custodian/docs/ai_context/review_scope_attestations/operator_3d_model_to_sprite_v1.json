@@ -1,0 +1,190 @@
+{
+  "post_hoc": true,
+  "preserved_review_branch": "agent/review-operator-3d-model-to-sprite-tooling-integration-v1",
+  "preserved_review_claim_run_id": "20261031T022429Z-2a9000413aca",
+  "preserved_review_run_id": "20261031T022410Z-7204104581e7",
+  "preserved_review_workstream": "review-operator-3d-model-to-sprite-tooling-integration-v1",
+  "preserved_reviewed_main": "f2d5f04236aeac20f00c3489091cc777ab2a08c4",
+  "reason": "The original archived Operator 3D Work surface omitted these exact 12 source paths.",
+  "schema": "custodian.review_source_scope_attestation.v1",
+  "source_archive_commit": "f2d5f04236aeac20f00c3489091cc777ab2a08c4",
+  "source_archive_parent": "5afa6280a32de7855bb60fbdf2c839c8b297810c",
+  "source_archive_tree": "d9be8349154720daf7e09a05eea58f918ae77ae0",
+  "source_branch": "agent/operator-3d-model-to-sprite-tooling-integration-v1",
+  "source_claim_oid": "e8198ffaf650f40495a051ca96974f7b267bcd9f",
+  "source_code_files": [
+    {
+      "blob": "a7d51a0ac0a5c7a55210dc743a8633dcdb64c571",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/blend_inspection.v1.json"
+    },
+    {
+      "blob": "41b23afb26994adaa5e96eba05789b19157ce87e",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/glb_inspection.v1.json"
+    },
+    {
+      "blob": "36b2e6c3b86d7ff309d81888abce760873a2390d",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/master.v1.json"
+    },
+    {
+      "blob": "cc239a1ca78d781e118aad7876734fa962a7f9da",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/snapshot_manifest.v1.json"
+    },
+    {
+      "blob": "58cdc172fb7c887132c7dd7ad7a0d111600d6856",
+      "mode": "100644",
+      "path": "custodian/tools/operator/animation_compiler/schemas/master.v1.schema.json"
+    },
+    {
+      "blob": "05a6ff09718cb9b8c127d798938c41dc89389a8f",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite.py"
+    },
+    {
+      "blob": "331e7ca516864abb5fddec220bcf36205edf52f0",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/__init__.py"
+    },
+    {
+      "blob": "eb53e2f31b2f703ad32ef64b8a41faa3e7d18e08",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/__main__.py"
+    },
+    {
+      "blob": "fd95e29ac6e7d2d8ad34f20bc51a8180dc3e9ff7",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/blend_inspection.py"
+    },
+    {
+      "blob": "03654b07803ddbc22ef7391de53657603aa65273",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/cli.py"
+    },
+    {
+      "blob": "4544f496969b570218b3bb96debb36cd0884f8fa",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/glb.py"
+    },
+    {
+      "blob": "dc1a300adfd654c76f4bc46f8364a01c2f890add",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/inspect_blend.py"
+    },
+    {
+      "blob": "cf99dbe14f581dd9ccb0aed5c636585995f8ddec",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/pipeline.py"
+    },
+    {
+      "blob": "2f81dae0cfb0e2d69d6c0947ac33410f2e286e49",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/profile.v1.json"
+    },
+    {
+      "blob": "af9968246db5388403db75bc8d98f93eea72d39d",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/render_static_blender.py"
+    },
+    {
+      "blob": "7b0f057e597bb5083ef0d281c98233ed27fd18b3",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/schemas/static_candidate.v1.schema.json"
+    },
+    {
+      "blob": "942eaaec5bc342612d338944db3ce68eae121b42",
+      "mode": "100644",
+      "path": "custodian/tools/validation/test_operator_3d_model_to_sprite.py"
+    }
+  ],
+  "source_code_paths": [
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/blend_inspection.v1.json",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/glb_inspection.v1.json",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/master.v1.json",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/snapshot_manifest.v1.json",
+    "custodian/tools/operator/animation_compiler/schemas/master.v1.schema.json",
+    "custodian/tools/operator/model_to_sprite.py",
+    "custodian/tools/operator/model_to_sprite/__init__.py",
+    "custodian/tools/operator/model_to_sprite/__main__.py",
+    "custodian/tools/operator/model_to_sprite/blend_inspection.py",
+    "custodian/tools/operator/model_to_sprite/cli.py",
+    "custodian/tools/operator/model_to_sprite/glb.py",
+    "custodian/tools/operator/model_to_sprite/inspect_blend.py",
+    "custodian/tools/operator/model_to_sprite/pipeline.py",
+    "custodian/tools/operator/model_to_sprite/profile.v1.json",
+    "custodian/tools/operator/model_to_sprite/render_static_blender.py",
+    "custodian/tools/operator/model_to_sprite/schemas/static_candidate.v1.schema.json",
+    "custodian/tools/validation/test_operator_3d_model_to_sprite.py"
+  ],
+  "source_files": [
+    {
+      "blob": "a7d51a0ac0a5c7a55210dc743a8633dcdb64c571",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/blend_inspection.v1.json"
+    },
+    {
+      "blob": "41b23afb26994adaa5e96eba05789b19157ce87e",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/glb_inspection.v1.json"
+    },
+    {
+      "blob": "36b2e6c3b86d7ff309d81888abce760873a2390d",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/master.v1.json"
+    },
+    {
+      "blob": "cc239a1ca78d781e118aad7876734fa962a7f9da",
+      "mode": "100644",
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/snapshot_manifest.v1.json"
+    },
+    {
+      "blob": "331e7ca516864abb5fddec220bcf36205edf52f0",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/__init__.py"
+    },
+    {
+      "blob": "eb53e2f31b2f703ad32ef64b8a41faa3e7d18e08",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/__main__.py"
+    },
+    {
+      "blob": "fd95e29ac6e7d2d8ad34f20bc51a8180dc3e9ff7",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/blend_inspection.py"
+    },
+    {
+      "blob": "4544f496969b570218b3bb96debb36cd0884f8fa",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/glb.py"
+    },
+    {
+      "blob": "dc1a300adfd654c76f4bc46f8364a01c2f890add",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/inspect_blend.py"
+    },
+    {
+      "blob": "2f81dae0cfb0e2d69d6c0947ac33410f2e286e49",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/profile.v1.json"
+    },
+    {
+      "blob": "af9968246db5388403db75bc8d98f93eea72d39d",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/render_static_blender.py"
+    },
+    {
+      "blob": "7b0f057e597bb5083ef0d281c98233ed27fd18b3",
+      "mode": "100644",
+      "path": "custodian/tools/operator/model_to_sprite/schemas/static_candidate.v1.schema.json"
+    }
+  ],
+  "source_packet_blob": "15952e4c6277ef78cd7ae1ab17a685e0cb687434",
+  "source_packet_path": "custodian/docs/ai_context/task_packets/archived/OPERATOR_3D_MODEL_TO_SPRITE_TOOLING_INTEGRATION_V1.md",
+  "source_run_id": "20261031T020602Z-9e1691d59e2e",
+  "source_span_base": "cfa1c476e054a68eaf139b8a05610726ffc6cb92",
+  "source_span_head": "5afa6280a32de7855bb60fbdf2c839c8b297810c",
+  "source_workstream": "operator-3d-model-to-sprite-tooling-integration-v1",
+  "source_worktree": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-model-to-sprite-tooling-integration-v1-20261031T020602Z-9e1691d59e2e"
+}

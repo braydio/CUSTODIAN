@@ -104,6 +104,80 @@ _ADMIN_SCOPE_REVIEW_PACKET = (
     f"{PACKET_ROOT}/REVIEW_AGENT_PERSISTENT_TASK_ADMINISTRATOR_REVIEW_SCOPE_RECOVERY_V1.md"
 )
 
+_OPERATOR_3D_SCOPE_ATTESTATION_PATH = (
+    "custodian/docs/ai_context/review_scope_attestations/operator_3d_model_to_sprite_v1.json"
+)
+_OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM = "operator-3d-model-to-sprite-tooling-integration-v1"
+_OPERATOR_3D_SCOPE_SOURCE_BASE = "cfa1c476e054a68eaf139b8a05610726ffc6cb92"
+_OPERATOR_3D_SCOPE_SOURCE_HEAD = "5afa6280a32de7855bb60fbdf2c839c8b297810c"
+_OPERATOR_3D_SCOPE_SOURCE_ARCHIVE = "f2d5f04236aeac20f00c3489091cc777ab2a08c4"
+_OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_PARENT = "5afa6280a32de7855bb60fbdf2c839c8b297810c"
+_OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_TREE = "d9be8349154720daf7e09a05eea58f918ae77ae0"
+_OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN = "f2d5f04236aeac20f00c3489091cc777ab2a08c4"
+_OPERATOR_3D_SCOPE_SOURCE_RUN_ID = "20261031T020602Z-9e1691d59e2e"
+_OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID = "e8198ffaf650f40495a051ca96974f7b267bcd9f"
+_OPERATOR_3D_SCOPE_SOURCE_BRANCH = "agent/operator-3d-model-to-sprite-tooling-integration-v1"
+_OPERATOR_3D_SCOPE_SOURCE_WORKTREE = (
+    "/home/braydenchaffee/Projects/.custodian-worktrees/"
+    "operator-3d-model-to-sprite-tooling-integration-v1-20261031T020602Z-9e1691d59e2e"
+)
+_OPERATOR_3D_SCOPE_PRESERVED_REVIEW_WORKSTREAM = "review-operator-3d-model-to-sprite-tooling-integration-v1"
+_OPERATOR_3D_SCOPE_PRESERVED_REVIEW_RUN_ID = "20261031T022410Z-7204104581e7"
+_OPERATOR_3D_SCOPE_PRESERVED_REVIEW_CLAIM_RUN_ID = "20261031T022429Z-2a9000413aca"
+_OPERATOR_3D_SCOPE_PRESERVED_REVIEW_BRANCH = "agent/review-operator-3d-model-to-sprite-tooling-integration-v1"
+_OPERATOR_3D_SCOPE_SOURCE_PACKET = (
+    f"{PACKET_ROOT}/archived/OPERATOR_3D_MODEL_TO_SPRITE_TOOLING_INTEGRATION_V1.md"
+)
+_OPERATOR_3D_SCOPE_SOURCE_PACKET_BLOB = "15952e4c6277ef78cd7ae1ab17a685e0cb687434"
+_OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS = {
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/blend_inspection.v1.json": "a7d51a0ac0a5c7a55210dc743a8633dcdb64c571",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/glb_inspection.v1.json": "41b23afb26994adaa5e96eba05789b19157ce87e",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/master.v1.json": "36b2e6c3b86d7ff309d81888abce760873a2390d",
+    "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/snapshot_manifest.v1.json": "cc239a1ca78d781e118aad7876734fa962a7f9da",
+    "custodian/tools/operator/animation_compiler/schemas/master.v1.schema.json": "58cdc172fb7c887132c7dd7ad7a0d111600d6856",
+    "custodian/tools/operator/model_to_sprite.py": "05a6ff09718cb9b8c127d798938c41dc89389a8f",
+    "custodian/tools/operator/model_to_sprite/__init__.py": "331e7ca516864abb5fddec220bcf36205edf52f0",
+    "custodian/tools/operator/model_to_sprite/__main__.py": "eb53e2f31b2f703ad32ef64b8a41faa3e7d18e08",
+    "custodian/tools/operator/model_to_sprite/blend_inspection.py": "fd95e29ac6e7d2d8ad34f20bc51a8180dc3e9ff7",
+    "custodian/tools/operator/model_to_sprite/cli.py": "03654b07803ddbc22ef7391de53657603aa65273",
+    "custodian/tools/operator/model_to_sprite/glb.py": "4544f496969b570218b3bb96debb36cd0884f8fa",
+    "custodian/tools/operator/model_to_sprite/inspect_blend.py": "dc1a300adfd654c76f4bc46f8364a01c2f890add",
+    "custodian/tools/operator/model_to_sprite/pipeline.py": "cf99dbe14f581dd9ccb0aed5c636585995f8ddec",
+    "custodian/tools/operator/model_to_sprite/profile.v1.json": "2f81dae0cfb0e2d69d6c0947ac33410f2e286e49",
+    "custodian/tools/operator/model_to_sprite/render_static_blender.py": "af9968246db5388403db75bc8d98f93eea72d39d",
+    "custodian/tools/operator/model_to_sprite/schemas/static_candidate.v1.schema.json": "7b0f057e597bb5083ef0d281c98233ed27fd18b3",
+    "custodian/tools/validation/test_operator_3d_model_to_sprite.py": "942eaaec5bc342612d338944db3ce68eae121b42",
+}
+_OPERATOR_3D_SCOPE_ATTESTED_FILES = {
+    path: blob for path, blob in _OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS.items()
+    if path in {
+        "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/blend_inspection.v1.json",
+        "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/inspection/glb_inspection.v1.json",
+        "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/master.v1.json",
+        "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/snapshot_manifest.v1.json",
+        "custodian/tools/operator/model_to_sprite/__init__.py",
+        "custodian/tools/operator/model_to_sprite/__main__.py",
+        "custodian/tools/operator/model_to_sprite/blend_inspection.py",
+        "custodian/tools/operator/model_to_sprite/glb.py",
+        "custodian/tools/operator/model_to_sprite/inspect_blend.py",
+        "custodian/tools/operator/model_to_sprite/profile.v1.json",
+        "custodian/tools/operator/model_to_sprite/render_static_blender.py",
+        "custodian/tools/operator/model_to_sprite/schemas/static_candidate.v1.schema.json",
+    }
+}
+_OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM = (
+    "agent-operator-3d-model-to-sprite-source-scope-recovery-v1"
+)
+_OPERATOR_3D_SCOPE_CORRECTION_PACKET = (
+    f"{PACKET_ROOT}/archived/AGENT_OPERATOR_3D_MODEL_TO_SPRITE_SOURCE_SCOPE_RECOVERY_V1.md"
+)
+_OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM = (
+    "review-agent-operator-3d-model-to-sprite-source-scope-recovery-v1"
+)
+_OPERATOR_3D_SCOPE_REVIEW_PACKET = (
+    f"{PACKET_ROOT}/archived/REVIEW_AGENT_OPERATOR_3D_MODEL_TO_SPRITE_SOURCE_SCOPE_RECOVERY_V1.md"
+)
+
 _PROCESSION_SCOPE_ATTESTATION_PATH = (
     "custodian/docs/ai_context/review_scope_attestations/road_procession_p1_source_scope_v1.json"
 )
@@ -2270,6 +2344,249 @@ def _verify_exact_bootstrap_landing(
             raise HostValidationError(f"bootstrap archive blob or mode differs: {path}")
 
 
+def _verified_operator_3d_scope_attestation(
+    repo: Path, reviewed_main: str, approval_main: str | None, landing_commit: str,
+    target_workstream: str, target_packet_path: str, source_base: str,
+    source_head: str, source_code_paths: set[str], source_run_id: str,
+    source_trace_ref: str, source_worktree: str, source_branch: str, source_claim_oid: str,
+) -> dict | None:
+    """Authorize exactly the 12 omitted paths in the preserved Operator 3D source span."""
+    if target_workstream != _OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM:
+        return None
+    if (target_packet_path != _OPERATOR_3D_SCOPE_SOURCE_PACKET
+            or landing_commit != _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE
+            or reviewed_main != _OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN
+            or source_base != _OPERATOR_3D_SCOPE_SOURCE_BASE
+            or source_head != _OPERATOR_3D_SCOPE_SOURCE_HEAD
+            or source_code_paths != set(_OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS)
+            or source_run_id != _OPERATOR_3D_SCOPE_SOURCE_RUN_ID
+            or source_trace_ref != (
+                f"refs/remotes/origin/agent-diagnostics/"
+                f"{_OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM}/{_OPERATOR_3D_SCOPE_SOURCE_RUN_ID}"
+            )
+            or source_worktree != _OPERATOR_3D_SCOPE_SOURCE_WORKTREE
+            or source_branch != _OPERATOR_3D_SCOPE_SOURCE_BRANCH
+            or source_claim_oid != _OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID):
+        raise HostValidationError("Operator 3D historical source inventory or pinned identity differs")
+
+    if (_OPERATOR_3D_SCOPE_SOURCE_HEAD != _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_PARENT
+            or not _is_ancestor(repo, source_base, source_head)
+            or not _is_ancestor(repo, source_head, landing_commit)):
+        raise HostValidationError("Operator 3D source span ancestry differs from pinned history")
+    actual_source_code_paths = set(_source_code_paths(_changed_paths(
+        repo, f"{source_base}..{source_head}",
+    )))
+    if actual_source_code_paths != set(_OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS):
+        raise HostValidationError("Operator 3D source code path inventory differs from pinned history")
+
+    archive_parent = _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_PARENT
+    if (_git(repo, "rev-list", "--parents", "-n", "1", landing_commit).split() != [
+            landing_commit, archive_parent,
+        ]):
+        raise HostValidationError("Operator 3D archive commit parent differs from pinned history")
+    if _git(repo, "rev-parse", f"{landing_commit}^{{tree}}") != _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_TREE:
+        raise HostValidationError("Operator 3D archive tree differs from pinned history")
+    expected_archive_paths = {
+        f"{PACKET_ROOT}/OPERATOR_3D_MODEL_TO_SPRITE_TOOLING_INTEGRATION_V1.md",
+        _OPERATOR_3D_SCOPE_SOURCE_PACKET,
+        f"{PACKET_ROOT}/README.md",
+    }
+    if set(_changed_paths(repo, f"{archive_parent}..{landing_commit}")) != expected_archive_paths:
+        raise HostValidationError("Operator 3D archive changed-path set differs from pinned history")
+    if (_git_tree_entry(repo, landing_commit, _OPERATOR_3D_SCOPE_SOURCE_PACKET) != (
+            "100644", _OPERATOR_3D_SCOPE_SOURCE_PACKET_BLOB,
+        )):
+        raise HostValidationError("pinned Operator 3D archived packet blob or mode does not match")
+    active_packet = f"{PACKET_ROOT}/OPERATOR_3D_MODEL_TO_SPRITE_TOOLING_INTEGRATION_V1.md"
+    if (_git_tree_entry(repo, archive_parent, active_packet) is None
+            or _git_tree_entry(repo, landing_commit, active_packet) is not None):
+        raise HostValidationError("Operator 3D active-to-archive packet transition differs")
+
+    source_entries = {}
+    for path, expected_blob in _OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS.items():
+        entry = _git_tree_entry(repo, _OPERATOR_3D_SCOPE_SOURCE_HEAD, path)
+        if entry != ("100644", expected_blob):
+            raise HostValidationError(f"pinned Operator 3D source blob or mode differs: {path}")
+        if _git_tree_entry(repo, landing_commit, path) != entry:
+            raise HostValidationError(f"Operator 3D source changed between source and archive commits: {path}")
+        source_entries[path] = {"mode": entry[0], "blob": entry[1]}
+
+    try:
+        approval_main = _git(repo, "rev-parse", "--verify", f"{approval_main or 'origin/main'}^{{commit}}")
+        current_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+    except HostValidationError as exc:
+        raise HostValidationError("Operator 3D approval main is unavailable") from exc
+    if (not _is_ancestor(repo, reviewed_main, approval_main)
+            or not _is_ancestor(repo, landing_commit, approval_main)
+            or not _is_ancestor(repo, approval_main, current_main)):
+        raise HostValidationError("Operator 3D approval main does not descend from the preserved baseline")
+
+    attestation_entry = _git_tree_entry(repo, approval_main, _OPERATOR_3D_SCOPE_ATTESTATION_PATH)
+    if attestation_entry is None or attestation_entry[0] != "100644":
+        raise HostValidationError("approved main lacks the regular-file Operator 3D scope attestation")
+    try:
+        attestation_bytes = subprocess.run(
+            ["git", "show", f"{approval_main}:{_OPERATOR_3D_SCOPE_ATTESTATION_PATH}"],
+            cwd=repo, capture_output=True, check=True,
+        ).stdout
+        attestation = json.loads(attestation_bytes)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        raise HostValidationError("Operator 3D scope attestation is unreadable or invalid JSON") from exc
+    expected_attestation = {
+        "schema": "custodian.review_source_scope_attestation.v1",
+        "source_workstream": _OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+        "source_archive_commit": _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_PARENT,
+        "source_archive_tree": _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_TREE,
+        "source_span_base": _OPERATOR_3D_SCOPE_SOURCE_BASE,
+        "source_span_head": _OPERATOR_3D_SCOPE_SOURCE_HEAD,
+        "source_run_id": _OPERATOR_3D_SCOPE_SOURCE_RUN_ID,
+        "source_claim_oid": _OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID,
+        "source_branch": _OPERATOR_3D_SCOPE_SOURCE_BRANCH,
+        "source_worktree": _OPERATOR_3D_SCOPE_SOURCE_WORKTREE,
+        "source_packet_path": _OPERATOR_3D_SCOPE_SOURCE_PACKET,
+        "source_packet_blob": _OPERATOR_3D_SCOPE_SOURCE_PACKET_BLOB,
+        "preserved_review_workstream": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_WORKSTREAM,
+        "preserved_review_run_id": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_RUN_ID,
+        "preserved_review_claim_run_id": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_CLAIM_RUN_ID,
+        "preserved_review_branch": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_BRANCH,
+        "preserved_reviewed_main": _OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+        "source_code_paths": sorted(_OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS),
+        "source_code_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS.items())
+        ],
+        "source_files": [
+            {"path": path, "blob": blob, "mode": "100644"}
+            for path, blob in sorted(_OPERATOR_3D_SCOPE_ATTESTED_FILES.items())
+        ],
+        "reason": "The original archived Operator 3D Work surface omitted these exact 12 source paths.",
+        "post_hoc": True,
+    }
+    canonical_bytes = (json.dumps(expected_attestation, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    if attestation != expected_attestation or attestation_bytes != canonical_bytes:
+        raise HostValidationError("Operator 3D attestation bytes do not match the exact 12-path authorization")
+
+    origin_result = subprocess.run(
+        ["git", "log", "--format=%H", approval_main, "--", _OPERATOR_3D_SCOPE_ATTESTATION_PATH],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if origin_result.returncode:
+        raise HostValidationError("cannot resolve Operator 3D attestation origin commit")
+    origins = [commit for commit in origin_result.stdout.splitlines()
+               if _git_tree_entry(repo, commit, _OPERATOR_3D_SCOPE_ATTESTATION_PATH) == attestation_entry]
+    if len(origins) != 1:
+        raise HostValidationError("Operator 3D attestation has missing or ambiguous exact-blob origin history")
+    origin_commit = origins[0]
+
+    try:
+        correction_text = read_git_text(repo, approval_main, _OPERATOR_3D_SCOPE_CORRECTION_PACKET)
+        review_text = read_git_text(repo, approval_main, _OPERATOR_3D_SCOPE_REVIEW_PACKET)
+    except ValueError as exc:
+        raise HostValidationError("Operator 3D attestation lacks archived correction review evidence") from exc
+    correction = parse_packet(_OPERATOR_3D_SCOPE_CORRECTION_PACKET, correction_text)
+    review = parse_packet(_OPERATOR_3D_SCOPE_REVIEW_PACKET, review_text)
+    if (correction.error or correction.kind not in {"implementation", "correction"}
+            or correction.status != "complete"
+            or correction.workstream != _OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM
+            or review.error or review.kind != "review" or review.status != "complete"
+            or review.workstream != _OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM
+            or review.review_target_workstream != _OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM
+            or review.review_target_packet != _OPERATOR_3D_SCOPE_CORRECTION_PACKET):
+        raise HostValidationError("Operator 3D correction/review packet identity is incomplete")
+
+    outcome, outcome_error = review_outcome.parse_review_outcome(review_text)
+    if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
+        raise HostValidationError("Operator 3D attestation has no canonical independent PASS outcome")
+    accepted, _, acceptance_reason = review_outcome.review_acceptance(
+        review_text, correction_text, _OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+    )
+    if not accepted:
+        raise HostValidationError(f"Operator 3D attestation review is not accepted: {acceptance_reason}")
+    review_baseline = read_git_text(repo, outcome["Reviewed main"], _OPERATOR_3D_SCOPE_CORRECTION_PACKET)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, outcome["Reviewed main"], _OPERATOR_3D_SCOPE_CORRECTION_PACKET,
+        _OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM, review_baseline,
+    )
+    if identity_error:
+        raise HostValidationError(f"Operator 3D attestation target identity is invalid: {identity_error}")
+    if (not _is_ancestor(repo, origin_commit, implementation_commit)
+            or not _is_ancestor(repo, outcome["Reviewed main"], approval_main)
+            or not _is_ancestor(repo, implementation_commit, outcome["Reviewed main"])):
+        raise HostValidationError("Operator 3D attestation review ancestry is invalid")
+    receipt, receipt_error = verify_review_receipt_delta(
+        review_baseline, correction_text, review_workstream=_OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], target_implementation_commit=implementation_commit,
+    )
+    if receipt_error or not receipt:
+        raise HostValidationError(f"accepted Operator 3D correction receipt is invalid: {receipt_error}")
+    identity_error = review_outcome.outcome_identity_error(
+        outcome, review_workstream=_OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+        target_workstream=_OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM,
+        reviewed_main=outcome["Reviewed main"], implementation_commit=implementation_commit,
+        run_id=outcome["Run ID"], review_cycle=review.review_cycle,
+    )
+    if identity_error:
+        raise HostValidationError(f"Operator 3D review outcome identity is invalid: {identity_error}")
+    reviewer_receipt = _scope_review_receipt(review_text)
+    if reviewer_receipt is None:
+        raise HostValidationError("accepted Operator 3D attestation review lacks one canonical reviewer receipt")
+    expected_receipt = {
+        "Schema": "custodian.paired_review.v1",
+        "Review workstream": _OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+        "Review target workstream": _OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM,
+        "Status": "passed", "Blocking defects": "0", "Material gaps": "0",
+        "Reviewer context": "fresh", "Reviewed main": outcome["Reviewed main"],
+        "Reviewed implementation commit": implementation_commit,
+    }
+    if (any(reviewer_receipt.get(field) != value for field, value in expected_receipt.items())
+            or reviewer_receipt.get("Reviewer provenance") not in review_outcome.PROVENANCE):
+        raise HostValidationError("accepted Operator 3D reviewer receipt does not match its PASS outcome")
+
+    return {
+        "kind": "accepted-post-hoc-exact-source-attestation",
+        "attestation_path": _OPERATOR_3D_SCOPE_ATTESTATION_PATH,
+        "attestation_commit": origin_commit,
+        "attestation_blob": attestation_entry[1],
+        "attestation_sha256": _sha256(attestation_bytes),
+        "approval_main": approval_main,
+        "source_archive_commit": _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+        "source_archive_parent": archive_parent,
+        "source_archive_tree": _OPERATOR_3D_SCOPE_SOURCE_ARCHIVE_TREE,
+        "source_span_base": _OPERATOR_3D_SCOPE_SOURCE_BASE,
+        "source_span_head": _OPERATOR_3D_SCOPE_SOURCE_HEAD,
+        "source_run_id": _OPERATOR_3D_SCOPE_SOURCE_RUN_ID,
+        "source_claim_oid": _OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID,
+        "source_branch": _OPERATOR_3D_SCOPE_SOURCE_BRANCH,
+        "source_worktree": _OPERATOR_3D_SCOPE_SOURCE_WORKTREE,
+        "source_packet_blob": _OPERATOR_3D_SCOPE_SOURCE_PACKET_BLOB,
+        "preserved_review_workstream": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_WORKSTREAM,
+        "preserved_review_run_id": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_RUN_ID,
+        "preserved_review_claim_run_id": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_CLAIM_RUN_ID,
+        "preserved_review_branch": _OPERATOR_3D_SCOPE_PRESERVED_REVIEW_BRANCH,
+        "preserved_reviewed_main": _OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+        "source_files": {
+            path: source_entries[path] for path in _OPERATOR_3D_SCOPE_ATTESTED_FILES
+        },
+        "source_code_files": source_entries,
+        "approval_review_workstream": _OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+        "approval_review_packet": _OPERATOR_3D_SCOPE_REVIEW_PACKET,
+        "approval_review_packet_blob": _git_tree_entry(
+            repo, approval_main, _OPERATOR_3D_SCOPE_REVIEW_PACKET,
+        )[1],
+        "approval_target_packet": _OPERATOR_3D_SCOPE_CORRECTION_PACKET,
+        "approval_target_packet_blob": _git_tree_entry(
+            repo, approval_main, _OPERATOR_3D_SCOPE_CORRECTION_PACKET,
+        )[1],
+        "approval_reviewed_main": outcome["Reviewed main"],
+        "approval_run_id": outcome["Run ID"],
+        "approval_implementation_commit": implementation_commit,
+        "approval_outcome": outcome["Outcome"],
+        "preserved_reviewed_main": reviewed_main,
+    }
+
+
 def _verified_procession_recovery_historical_scope(
     repo: Path, target_workstream: str, target_packet_path: str,
     landing_commit: str, extra_archive_paths: set[str],
@@ -3217,6 +3534,21 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         scope_attestation = _verified_admin_scope_attestation(
             repo, reviewed_main, approval_main, landing_commit, target_workstream,
             target_packet_path, source_base, source_head, set(code_paths),
+        )
+    elif target_workstream == _OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM:
+        if approval_main is None:
+            approval_main = _git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+        source_claim_oids = {
+            event.get("data", {}).get("claim_oid")
+            for event in events if event.get("event") == "remote_claim_acquired"
+            and isinstance(event.get("data"), dict)
+        }
+        if len(source_claim_oids) != 1:
+            raise HostValidationError("Operator 3D lifecycle trace lacks its unique source claim identity")
+        scope_attestation = _verified_operator_3d_scope_attestation(
+            repo, reviewed_main, approval_main, landing_commit, target_workstream,
+            target_packet_path, source_base, source_head, set(code_paths), run_id, ref,
+            claim_record["worktree"], claim_record["branch"], next(iter(source_claim_oids)),
         )
 
     # The archived task must itself identify every source/test path so a branch

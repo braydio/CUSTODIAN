@@ -3996,6 +3996,312 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 host_validation._ADMIN_SCOPE_SOURCE_HEAD,
                 set(host_validation._ADMIN_SCOPE_SOURCE_CODE_BLOBS),
             )
+
+    def _build_operator_3d_scope_approval_history(self, *, review_outcome="passed"):
+        """Build a disposable Git history with the exact source span and a synthetic correction review."""
+        repository = Path(self.temp.name) / f"operator-3d-scope-{len(list(Path(self.temp.name).glob('operator-3d-scope-*')))}"
+        base_main = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT), str(repository)], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
+        subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
+        trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
+                        f"{host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM}/")
+        trace_refs = subprocess.run(
+            ["git", "for-each-ref", "--format=%(refname) %(objectname)", trace_prefix],
+            cwd=ROOT, check=True, text=True, capture_output=True,
+        ).stdout.splitlines()
+        if not trace_refs:
+            self.fail("the original Operator 3D workstream lifecycle trace is unavailable")
+        for record in trace_refs:
+            ref, commit = record.split()
+            subprocess.run(["git", "-C", str(repository), "update-ref", ref, commit], check=True)
+
+        correction_ws = host_validation._OPERATOR_3D_SCOPE_CORRECTION_WORKSTREAM
+        correction_active = f"{runner.PACKET_ROOT}/AGENT_OPERATOR_3D_MODEL_TO_SPRITE_SOURCE_SCOPE_RECOVERY_V1.md"
+        correction_archive = host_validation._OPERATOR_3D_SCOPE_CORRECTION_PACKET
+        review_active = f"{runner.PACKET_ROOT}/REVIEW_AGENT_OPERATOR_3D_MODEL_TO_SPRITE_SOURCE_SCOPE_RECOVERY_V1.md"
+        review_archive = host_validation._OPERATOR_3D_SCOPE_REVIEW_PACKET
+        attestation_path = host_validation._OPERATOR_3D_SCOPE_ATTESTATION_PATH
+        correction_file = repository / correction_active
+        review_file = repository / review_active
+        if (not correction_file.is_file() or not review_file.is_file()
+                or (repository / correction_archive).exists()
+                or (repository / review_archive).exists()):
+            self.fail("operator 3D recovery fixture base must contain active, unarchived packets")
+
+        correction_text = correction_file.read_text(encoding="utf-8")
+        correction_text = correction_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        correction_text += """
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: disposable Git approval fixture
+"""
+        correction_file.write_text(correction_text, encoding="utf-8")
+        subprocess.run(["git", "-C", str(repository), "mv", correction_active, correction_archive], check=True)
+        attestation_file = repository / attestation_path
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_bytes((ROOT / attestation_path).read_bytes())
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, attestation_path], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "archive exact scope correction"], check=True)
+        implementation_commit = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+
+        outcome = {
+            "Schema": "custodian.review_outcome.v1",
+            "Outcome": review_outcome,
+            "Review workstream": host_validation._OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+            "Review target workstream": correction_ws,
+            "Reviewed main": implementation_commit,
+            "Reviewed implementation commit": implementation_commit,
+            "Reviewer context": "fresh",
+            "Reviewer provenance": "different-agent",
+            "Run ID": "20261031T030000Z-abcdef123456",
+            "Review cycle": "0",
+            "Finding IDs": "none" if review_outcome == "passed" else "R0-01",
+        }
+        review_text = review_file.read_text(encoding="utf-8")
+        review_text = review_text.replace("- Status: `ready`", "- Status: `complete`", 1)
+        review_text += f"""
+
+## Independent Review
+
+- Schema: `custodian.paired_review.v1`
+- Review workstream: `{host_validation._OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM}`
+- Review target workstream: `{correction_ws}`
+- Status: `{review_outcome}`
+- Blocking defects: `0`
+- Material gaps: `0`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Reviewed main: `{implementation_commit}`
+- Reviewed implementation commit: `{implementation_commit}`
+"""
+        review_text += "\n" + runner.review_outcome.render_review_outcome(
+            outcome=review_outcome,
+            review_workstream=host_validation._OPERATOR_3D_SCOPE_REVIEW_WORKSTREAM,
+            target_workstream=correction_ws, reviewed_main=implementation_commit,
+            implementation_commit=implementation_commit, provenance="different-agent",
+            run_id=outcome["Run ID"], review_cycle=0,
+            ids=() if review_outcome == "passed" else ("R0-01",),
+        )
+        review_file.write_text(review_text, encoding="utf-8")
+        target_file = repository / correction_archive
+        if review_outcome == "passed":
+            target_file.write_text(
+                target_file.read_text(encoding="utf-8")
+                + "\n## Independent Review\n\n" + render_review_receipt(outcome),
+                encoding="utf-8",
+            )
+        subprocess.run(["git", "-C", str(repository), "mv", review_active, review_archive], check=True)
+        subprocess.run(["git", "-C", str(repository), "add", "--", correction_archive, review_archive], check=True)
+        subprocess.run(["git", "-C", str(repository), "commit", "-qm", "record correction review"], check=True)
+        approval_main = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", approval_main], check=True)
+        return repository, implementation_commit, approval_main
+
+    def _operator_3d_scope_arguments(self, repository, approval_main):
+        return {
+            "repo": repository,
+            "reviewed_main": host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+            "approval_main": approval_main,
+            "landing_commit": host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+            "target_workstream": host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+            "target_packet_path": host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+            "source_base": host_validation._OPERATOR_3D_SCOPE_SOURCE_BASE,
+            "source_head": host_validation._OPERATOR_3D_SCOPE_SOURCE_HEAD,
+            "source_code_paths": set(host_validation._OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS),
+            "source_run_id": host_validation._OPERATOR_3D_SCOPE_SOURCE_RUN_ID,
+            "source_trace_ref": (
+                "refs/remotes/origin/agent-diagnostics/"
+                f"{host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM}/"
+                f"{host_validation._OPERATOR_3D_SCOPE_SOURCE_RUN_ID}"
+            ),
+            "source_worktree": host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKTREE,
+            "source_branch": host_validation._OPERATOR_3D_SCOPE_SOURCE_BRANCH,
+            "source_claim_oid": host_validation._OPERATOR_3D_SCOPE_SOURCE_CLAIM_OID,
+        }
+
+    def test_operator_3d_scope_attestation_activates_only_after_accepted_review(self):
+        repository, implementation_commit, approval_main = self._build_operator_3d_scope_approval_history()
+        arguments = self._operator_3d_scope_arguments(repository, implementation_commit)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+            host_validation._verified_operator_3d_scope_attestation(**arguments)
+        arguments["approval_main"] = approval_main
+        provenance = host_validation._verified_operator_3d_scope_attestation(**arguments)
+        self.assertEqual(provenance["approval_outcome"], "passed")
+        self.assertEqual(provenance["approval_implementation_commit"], implementation_commit)
+        self.assertEqual(provenance["preserved_reviewed_main"], host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN)
+        self.assertEqual(set(provenance["source_files"]), set(host_validation._OPERATOR_3D_SCOPE_ATTESTED_FILES))
+        self.assertEqual(set(provenance["source_code_files"]), set(host_validation._OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS))
+
+        # Exercise the full original source-span resolver with its real immutable run trace.
+        span = host_validation.resolve_validation_source_span(
+            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+            approval_main=approval_main,
+        )
+        self.assertEqual(span["base"], host_validation._OPERATOR_3D_SCOPE_SOURCE_BASE)
+        self.assertEqual(span["head"], host_validation._OPERATOR_3D_SCOPE_SOURCE_HEAD)
+        self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
+
+    def test_operator_3d_scope_attestation_rejects_unaccepted_and_forged_reviews(self):
+        repository, _, approval_main = self._build_operator_3d_scope_approval_history(review_outcome="findings")
+        arguments = self._operator_3d_scope_arguments(repository, approval_main)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "no canonical independent PASS"):
+            host_validation._verified_operator_3d_scope_attestation(**arguments)
+
+        repository, _, approval_main = self._build_operator_3d_scope_approval_history()
+        review_path = host_validation._OPERATOR_3D_SCOPE_REVIEW_PACKET
+        worktree = Path(self.temp.name) / "operator-3d-forged-review"
+        subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
+                        "fixture/operator-3d-forged-review", str(worktree), approval_main], check=True)
+        review_file = worktree / review_path
+        forged = review_file.read_text(encoding="utf-8").replace("- Outcome: `passed`", "- Outcome: `findings`", 1)
+        review_file.write_text(forged, encoding="utf-8")
+        subprocess.run(["git", "-C", str(worktree), "add", "--", review_path], check=True)
+        subprocess.run(["git", "-C", str(worktree), "commit", "-qm", "forge review outcome"], check=True)
+        forged_main = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
+                                     text=True, capture_output=True).stdout.strip()
+        arguments = self._operator_3d_scope_arguments(repository, forged_main)
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation._verified_operator_3d_scope_attestation(**arguments)
+        subprocess.run(["git", "-C", str(repository), "worktree", "remove", "--force", str(worktree)], check=True)
+
+    def test_operator_3d_scope_attestation_rejects_identity_path_hash_and_mode_changes(self):
+        repository, _, approval_main = self._build_operator_3d_scope_approval_history()
+        exact = self._operator_3d_scope_arguments(repository, approval_main)
+        identity_changes = (
+            {"reviewed_main": "0" * 40},
+            {"landing_commit": "0" * 40},
+            {"source_base": "0" * 40},
+            {"source_head": "0" * 40},
+            {"source_code_paths": set(exact["source_code_paths"]) - {sorted(exact["source_code_paths"])[0]}},
+            {"source_run_id": "20261031T020000Z-000000000000"},
+            {"source_trace_ref": "refs/remotes/origin/agent-diagnostics/unrelated/run"},
+            {"source_worktree": "/tmp/unrelated-worktree"},
+            {"source_branch": "agent/unrelated"},
+            {"source_claim_oid": "0" * 40},
+            {"target_packet_path": "custodian/docs/ai_context/task_packets/archived/OTHER.md"},
+            {"source_code_paths": set(exact["source_code_paths"]) | {"custodian/tools/extra.py"}},
+        )
+        for changed in identity_changes:
+            arguments = {**exact, **changed}
+            with self.subTest(changed=changed), self.assertRaises(host_validation.HostValidationError):
+                host_validation._verified_operator_3d_scope_attestation(**arguments)
+
+        attestation_path = host_validation._OPERATOR_3D_SCOPE_ATTESTATION_PATH
+        source_files = host_validation._OPERATOR_3D_SCOPE_ATTESTED_FILES
+        mutations = (
+            ("archive-commit", lambda data: data.update(source_archive_commit="0" * 40)),
+            ("archive-parent", lambda data: data.update(source_archive_parent="0" * 40)),
+            ("archive-tree", lambda data: data.update(source_archive_tree="0" * 40)),
+            ("source-base", lambda data: data.update(source_span_base="0" * 40)),
+            ("source-head", lambda data: data.update(source_span_head="0" * 40)),
+            ("packet-blob", lambda data: data.update(source_packet_blob="0" * 40)),
+            ("code-paths", lambda data: data.update(source_code_paths=data["source_code_paths"][:-1])),
+            ("code-blob", lambda data: data["source_code_files"][0].update(blob="0" * 40)),
+            ("source-mode", lambda data: data["source_files"][0].update(mode="100755")),
+            ("missing", lambda data: data["source_files"].pop()),
+            ("extra", lambda data: data["source_files"].append({
+                "path": "custodian/tools/operator/model_to_sprite/unlisted.py",
+                "blob": "0" * 40, "mode": "100644",
+            })),
+            ("path", lambda data: data["source_files"][0].update(path="custodian/docs/renamed.json")),
+            ("blob", lambda data: data["source_files"][0].update(blob="0" * 40)),
+            ("mode", lambda data: data["source_files"][0].update(mode="100755")),
+        )
+        for index, (name, mutate) in enumerate(mutations):
+            attestation_file = repository / attestation_path
+            original = json.loads(subprocess.run(
+                ["git", "-C", str(repository), "show", f"{approval_main}:{attestation_path}"],
+                check=True, capture_output=True,
+            ).stdout)
+            altered = copy.deepcopy(original)
+            mutate(altered)
+            attestation_file.write_text(json.dumps(altered, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repository), "add", "--", attestation_path], check=True)
+            if name == "mode":
+                subprocess.run(["git", "-C", str(repository), "update-index", "--chmod=+x", "--", attestation_path], check=True)
+            subprocess.run(["git", "-C", str(repository), "commit", "-qm", f"mutate attestation {index}"], check=True)
+            mutated_main = subprocess.run(["git", "-C", str(repository), "rev-parse", "HEAD"], check=True,
+                                          text=True, capture_output=True).stdout.strip()
+            arguments = self._operator_3d_scope_arguments(repository, mutated_main)
+            with self.subTest(mutation=name), self.assertRaises(host_validation.HostValidationError):
+                host_validation._verified_operator_3d_scope_attestation(**arguments)
+            subprocess.run(["git", "-C", str(repository), "reset", "--hard", approval_main], check=True,
+                           stdout=subprocess.DEVNULL)
+
+    def test_operator_3d_scope_attestation_rejects_divergent_approval_history(self):
+        repository, _, approval_main = self._build_operator_3d_scope_approval_history()
+        arguments = self._operator_3d_scope_arguments(repository, approval_main)
+        tree = subprocess.run(["git", "-C", str(repository), "rev-parse", f"{approval_main}^{{tree}}"],
+                              check=True, text=True, capture_output=True).stdout.strip()
+        divergent = subprocess.run(["git", "-C", str(repository), "commit-tree", tree, "-m",
+                                    "unrelated divergent history"], check=True,
+                                   text=True, capture_output=True).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main", divergent], check=True)
+        arguments["approval_main"] = divergent
+        with self.assertRaisesRegex(host_validation.HostValidationError, "does not descend from the preserved baseline"):
+            host_validation._verified_operator_3d_scope_attestation(**arguments)
+
+    def test_operator_3d_source_span_rejects_unrelated_trace_worktree(self):
+        repository, implementation_commit, approval_main = self._build_operator_3d_scope_approval_history()
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation.resolve_validation_source_span(
+                repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                approval_main=implementation_commit,
+            )
+        span = host_validation.resolve_validation_source_span(
+            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+            approval_main=approval_main,
+        )
+        trace_ref = span["provenance"]["ref"]
+        trace_path = Path(self.temp.name) / "operator-3d-forged-trace"
+        subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
+                        "fixture/operator-3d-forged-trace", str(trace_path), trace_ref], check=True)
+        file_path = trace_path / "trace.jsonl"
+        events = [json.loads(line) for line in file_path.read_text(encoding="utf-8").splitlines()]
+        published = [event for event in events if event.get("event") == "worktree_published"]
+        self.assertEqual(len(published), 1)
+        published[0]["data"]["worktree"] = "/tmp/unrelated-operator-3d-worktree"
+        file_path.write_text("".join(json.dumps(event, sort_keys=True) + "\n" for event in events), encoding="utf-8")
+        subprocess.run(["git", "-C", str(trace_path), "add", "--", "trace.jsonl"], check=True)
+        subprocess.run(["git", "-C", str(trace_path), "commit", "-qm", "forge unrelated trace worktree"], check=True)
+        forged_trace_commit = subprocess.run(
+            ["git", "-C", str(trace_path), "rev-parse", "HEAD"], check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, forged_trace_commit], check=True)
+        with self.assertRaisesRegex(host_validation.HostValidationError, "missing or ambiguous exact workstream trace provenance"):
+            host_validation.resolve_validation_source_span(
+                repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                approval_main=approval_main,
+            )
+        subprocess.run(["git", "-C", str(repository), "worktree", "remove", str(trace_path)], check=True)
         path = repository / host_validation._ADMIN_SCOPE_ATTESTATION_PATH
         path.write_text(path.read_text(encoding="utf-8").replace("exactly the service installer", "any source"),
                         encoding="utf-8")
