@@ -1,9 +1,162 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T12:41:00Z",
-  "source_main_sha": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
+  "generated_at": "2026-10-31T14:05:33Z",
+  "source_main_sha": "f4c6c1fb388e49e11db5ae14d6fd7ec757233636",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "lightweight-lfs-provisioning-f4c6c1fb",
+      "headline": "CUSTODIAN lands smaller worktree checkouts to reopen storage-blocked Awakening development",
+      "summary": "A new opt-in checkout profile avoids downloading the entire Git LFS asset collection into each worktree. Capacity checks now happen before a dispatch claim, and interrupted initial checkouts have a guarded same-claim recovery path. The implementation is archived on main; independent review and authorization are still required before the protected Awakening claim can resume.",
+      "body": "The lightweight worktree implementation is landed and archived on main. The opt-in Awakening profile hydrates only named local Git LFS objects and verifies pointer identities; ordinary full checkout remains the default. The archived packet reports isolated fixture and validation results. The paired independent review is ready/auto, not accepted. The protected Awakening claim has not been recovered by this publication. Host disk, process and worktree state are not independently observable from GitHub.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-workstream-lightweight-lfs-provisioning-v1",
+      "occurred_at": "2026-10-31T14:05:33Z",
+      "bullets": [
+        "Implementation landed and packet archived on main.",
+        "Review packet ready/auto, independent PASS not evidenced.",
+        "Do not resume protected Awakening claim before accepted review and explicit authorization."
+      ],
+      "links": [
+        {
+          "title": "Implementation source and tests",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/7e5d5fa3f57f58246c664c6654f1ae86827a32a5"
+        },
+        {
+          "title": "Archived completion packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f4c6c1fb388e49e11db5ae14d6fd7ec757233636"
+        },
+        {
+          "title": "Paired independent review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/f4c6c1fb388e49e11db5ae14d6fd7ec757233636/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A storage bottleneck that stranded Awakening development now has a code-level remedy. CUSTODIAN has landed an optional lightweight checkout that prepares only the assets a task needs, while preserving its ordinary full-checkout behavior. The fix is not yet clearance to restart the interrupted work: independent review remains outstanding.",
+        "sections": [
+          {
+            "heading": "Why the old checkout stalled",
+            "text": "CUSTODIAN's art-heavy repository uses Git Large File Storage (LFS). Preparing a new worktree could require several gigabytes of assets before the agent could begin. The archived task records an Awakening checkout that failed when storage ran out after its claim was already acquired."
+          },
+          {
+            "heading": "A smaller, verifiable path",
+            "text": "The new profile lists exact required files and hydrates them from existing local LFS objects, checking expected sizes and hashes. Capacity is checked before acquiring a claim and again before checkout writes. The original full checkout remains the default, while a guarded recovery path targets the exact interrupted claim rather than creating another one."
+          },
+          {
+            "heading": "A gate remains before gameplay resumes",
+            "text": "The implementation and its completion packet are on main, but the paired independent review is still marked ready. The review must challenge ownership, identity, storage, asset integrity and interrupted-checkout safeguards. Neither landing nor reported tests constitute accepted review or proof of clean host teardown."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Storage pressure is now addressed before ownership changes",
+            "explanation": "The new preflight is intended to reject predictable capacity failures before creating a remote dispatch claim. That directly targets the failure mode that stranded the Awakening workstream, rather than merely shrinking asset downloads."
+          },
+          {
+            "title": "The smaller checkout remains reproducible",
+            "explanation": "The published profile names exact files and LFS objects, and its local-only hydration checks identities. This makes a selective checkout auditable instead of treating missing art assets as an acceptable shortcut."
+          }
+        ],
+        "takeaway": "The storage remedy has landed, but its safety claims still need independent acceptance before the protected Awakening recovery can proceed.",
+        "next_watch": "Watch for a genuine independent PASS on the lightweight provisioning review, followed by separately authorized exact-claim recovery with trustworthy host evidence."
+      },
+      "details": {
+        "overview": "Main includes the implementation, isolated test fixtures, an Awakening profile, lifecycle documentation and an archived completion packet. The packet reports a 52,245,835-byte profiled checkout estimate, plus a 1 GiB reserve, compared with a 6,190,134,467-byte full-checkout estimate before reserve. These are documented estimates at the pinned base, not observed current free space.",
+        "ledger": [
+          {
+            "stage": "Implementation",
+            "status": "verified landed",
+            "evidence": "Implementation commit 7e5d5fa3 contains provisioning code, tests and profile."
+          },
+          {
+            "stage": "Packet completion",
+            "status": "verified archived",
+            "evidence": "Main commit f4c6c1fb archives the complete implementation packet."
+          },
+          {
+            "stage": "Focused validation",
+            "status": "reported by implementation",
+            "evidence": "Archived completion packet describes fixture and validation results; independent reproduction not inspected."
+          },
+          {
+            "stage": "Independent review",
+            "status": "verified ready, not accepted",
+            "evidence": "Paired review packet says Status: ready and Dispatch: auto; no accepted PASS receipt inspected."
+          },
+          {
+            "stage": "Protected Awakening recovery",
+            "status": "not verified",
+            "evidence": "Packet explicitly defers recovery until accepted review and further authorization."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trusted live host process, lock, worktree or disk audit available."
+          }
+        ],
+        "notes": [
+          "Profile estimates and asset counts are bounded to the archived packet's reviewed base.",
+          "A ready review packet is not proof of an active reviewer process."
+        ],
+        "unknowns": [
+          "Independent review outcome and any host-side recovery/teardown state remain unknown.",
+          "Project-wide dispatcher queue and current disk capacity were not inspected."
+        ],
+        "actions": [
+          "Independent reviewer: falsify the landed provisioning and same-claim recovery contract.",
+          "After accepted PASS and separate authorization, host operator: verify the exact protected Awakening claim and recover only that claim."
+        ]
+      },
+      "scorecard": {
+        "stage": "Implementation landed; independent review ready",
+        "as_of": "2026-10-31T14:05:33Z",
+        "scope": "Lightweight provisioning implementation and its paired review only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement selective checkout and capacity checks",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Implementation commit 7e5d5fa3."
+          },
+          {
+            "label": "Archive completed implementation packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit f4c6c1fb."
+          },
+          {
+            "label": "Reproduce focused validation independently",
+            "status": "current",
+            "verification": "unknown",
+            "evidence": "Implementation reports passing tests; independent reproduction not evidenced."
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Review packet ready/auto; no accepted PASS."
+          },
+          {
+            "label": "Authorize and recover exact Awakening claim",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Archived packet requires accepted review and separate authorization."
+          },
+          {
+            "label": "Verify canonical host teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host audit accessible."
+          }
+        ],
+        "next_gate": "Independent reviewer must produce an authentic accepted PASS for the landed implementation before any protected claim recovery."
+      },
+      "related": []
+    },
     {
       "id": "hub-sepulcher-grave-resolution-c8e39576",
       "headline": "The Sepulcher grave now lets the Operator choose what the evidence means",
@@ -1553,152 +1706,24 @@
         ],
         "next_gate": "Existing implementation owner completes and validates merged-source isolation, then independent reviewer assesses it."
       }
-    },
-    {
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "meridian-civic-wall-3d-source-intake-v1",
-      "occurred_at": "2026-10-31T03:25:39Z",
-      "bullets": [],
-      "links": [
-        {
-          "title": "Archival source landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5397b2b554124bfde31819bfe421743210144f7e"
-        },
-        {
-          "title": "Archive intake packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/28a887ce55628c3516a52af24c7084e156f9be1a"
-        }
-      ],
-      "images": [],
-      "related": [],
-      "id": "asset-5397b2b5-meridian-wall",
-      "headline": "Meridian Civic Wall's 3D source is preserved, but not yet game-ready",
-      "summary": "CUSTODIAN landed a versioned source archive and decoded GLB model for the Meridian Civic Wall, alongside a provenance smoke test. The work preserves the asset for future development, but explicitly stops short of Godot import, visual approval or gameplay integration.",
-      "body": "Commit 5397b2b5 added LFS-backed source and GLB archives, a provenance record and a focused validation script. A later commit archived the intake packet. The source record explicitly labels the result archival-only: Godot compatibility, rendering suitability and production approval remain unverified. No independent accepted PASS or host teardown was established.",
-      "article": {
-        "lead": "A new piece of CUSTODIAN's world has gained a durable starting point. The Meridian Civic Wall's original 3D source and a decoded model are now committed with provenance checks, making the asset easier to preserve and revisit as the environment pipeline develops.",
-        "sections": [
-          {
-            "heading": "A source archive, not a finished environment",
-            "text": "The landing preserves the original model in Git LFS, records the decoded GLB, and adds a small validation tool to check the archival evidence. The intake packet was subsequently archived. These are useful foundations for later art work, not proof that the model looks right or runs correctly in the game."
-          },
-          {
-            "heading": "The remaining art gate",
-            "text": "The source record explicitly leaves Godot import compatibility, 2.5D rendering suitability, visual quality and production approval open. Those decisions still need their own evidence."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Provenance is now reproducible",
-            "explanation": "The project can trace the preserved source to a specific decoded asset and check its recorded identity, reducing ambiguity when later artists or tooling revisit the wall."
-          },
-          {
-            "title": "Archival completion and gameplay completion are different",
-            "explanation": "The packet can be archived while the actual environment asset remains unapproved. This avoids treating an importable-looking file as a finished game object."
-          }
-        ],
-        "takeaway": "Meridian Civic Wall source preservation has landed; runtime and visual acceptance remain unverified.",
-        "next_watch": "Look for an independently reviewed asset import or a concrete in-engine visual proof before calling the wall game-ready."
-      },
-      "details": {
-        "overview": "Source landing 5397b2b5, main 6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004. The archival record explicitly limits acceptance to source preservation.",
-        "ledger": [
-          {
-            "stage": "Source and decoded GLB publication",
-            "status": "verified",
-            "evidence": "5397b2b5 contains Git LFS pointers, archival record and validation script."
-          },
-          {
-            "stage": "Intake packet archive",
-            "status": "verified",
-            "evidence": "28a887ce archives the source intake."
-          },
-          {
-            "stage": "Godot/runtime integration",
-            "status": "unknown",
-            "evidence": "The archival record expressly excludes compatibility and production approval."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not verified",
-            "evidence": "No accepted independent receipt inspected."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No trustworthy host proof available."
-          }
-        ],
-        "notes": [
-          "Git LFS pointer publication is not a live render or approved screenshot."
-        ],
-        "unknowns": [
-          "In-engine quality and import behavior",
-          "Host cleanup and disk impact"
-        ],
-        "actions": [
-          "Existing asset/review owners: validate the archival intake independently and pursue runtime/visual gates only under existing approved work."
-        ]
-      },
-      "scorecard": {
-        "stage": "Source archived; game integration unverified",
-        "as_of": "2026-10-31T03:25:39Z",
-        "scope": "Meridian Civic Wall source intake",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Publish source archive",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5397b2b5"
-          },
-          {
-            "label": "Archive intake packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "28a887ce"
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted receipt inspected"
-          },
-          {
-            "label": "Godot import and visual approval",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Explicitly excluded from archival record"
-          },
-          {
-            "label": "Host teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Existing asset review owner confirms archival review; later asset owner validates in-engine suitability."
-      }
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T12:41:00Z",
-    "source_main_sha": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
+    "observed_at": "2026-10-31T14:05:33Z",
+    "source_main_sha": "f4c6c1fb388e49e11db5ae14d6fd7ec757233636",
     "coverage": "partial",
-    "scope": "Two specifically inspected ready review packets (grave resolution and validator recertification), plus the archived grave implementation; no full dispatcher audit.",
+    "scope": "Exactly one archived lightweight provisioning implementation packet and its paired ready review packet inspected; prior grave/validator review counts not refreshed.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY REVIEWS (INSPECTED)",
-        "value": 2,
+        "label": "READY REVIEW (INSPECTED)",
+        "value": 1,
         "verification": "verified",
-        "basis": "Exactly two named inspected review packets have status ready and dispatch auto; not a project-wide queue count.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
+        "basis": "One specifically inspected paired lightweight-provisioning review packet has status ready and dispatch auto; excludes all other reviews.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/f4c6c1fb388e49e11db5ae14d6fd7ec757233636/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md"
       }
     ],
-    "focus": "Obtain independent review receipts for the landed grave resolution and provenance guard.",
-    "note": "No full active queue or host evidence; reported implementation tests are not accepted independent reviews."
+    "focus": "Obtain independent accepted PASS for lightweight worktree provisioning before protected Awakening recovery.",
+    "note": "Not a full dispatcher audit; no project-wide queue totals or live host disk/process/claim verification."
   }
 }
