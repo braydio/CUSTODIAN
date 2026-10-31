@@ -1581,7 +1581,78 @@ def _pinned_coverage_manifest(repo: Path, reviewed_main: str) -> dict:
     return manifest
 
 
-def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: dict) -> None:
+def _manifest_at_revision(repo: Path, revision: str) -> tuple[dict, str]:
+    path = "custodian/tools/validation/validation_manifest.json"
+    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                            text=True, capture_output=True)
+    if result.returncode:
+        raise HostValidationError(f"validation manifest is unavailable at pinned revision {revision}")
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    try:
+        value = run_validation.parse_manifest_json(result.stdout)
+    except (json.JSONDecodeError, run_validation.ManifestError) as exc:
+        raise HostValidationError(f"validation manifest is malformed at pinned revision {revision}") from exc
+    if (not isinstance(value, dict) or value.get("schema_version") != 1
+            or not isinstance(value.get("tests"), list)):
+        raise HostValidationError(f"validation manifest has an invalid schema at pinned revision {revision}")
+    return value, result.stdout
+
+
+def _attested_manifest_comparison(repo: Path, reviewed_main: str, source_span: dict,
+                                  changed_files: list[str], pinned_manifest: dict) -> tuple[dict, set[str], bool]:
+    """Authenticate an attested test-definition delta without changing pinned policy."""
+    path = "custodian/tools/validation/validation_manifest.json"
+    if not isinstance(source_span, dict) or not isinstance(source_span.get("provenance"), dict):
+        raise HostValidationError("changed validation manifest has no authenticated source-span provenance")
+    provenance = source_span["provenance"].get("scope_attestation")
+    if not isinstance(provenance, dict) or provenance.get("kind") != "accepted-post-hoc-exact-source-attestation":
+        raise HostValidationError("changed validation manifest is not covered by an accepted exact source attestation")
+    archive = provenance.get("source_archive_commit")
+    attested_paths = provenance.get("source_files")
+    if not isinstance(archive, str) or not isinstance(attested_paths, dict):
+        raise HostValidationError("changed validation manifest attestation identity is incomplete")
+    authenticated = _verified_procession_scope_attestation(
+        repo, reviewed_main, archive, set(attested_paths),
+    )
+    if authenticated != provenance:
+        raise HostValidationError("changed validation manifest source attestation does not authenticate")
+    source_files = provenance.get("source_files")
+    binding = source_files.get(path) if isinstance(source_files, dict) else None
+    if (path not in source_span.get("paths", []) or path not in changed_files
+            or not isinstance(binding, dict) or binding.get("mode") != "100644"
+            or not isinstance(binding.get("blob"), str)
+            or not re.fullmatch(r"[0-9a-f]{40,64}", binding["blob"])):
+        raise HostValidationError("attested validation manifest is missing from the exact source inventory")
+    source_entry = _git_tree_entry(repo, source_span.get("head", ""), path)
+    reviewed_entry = _git_tree_entry(repo, reviewed_main, path)
+    if (source_entry != (binding["mode"], binding["blob"])
+            or reviewed_entry != source_entry):
+        raise HostValidationError("attested validation manifest blob or mode differs at its pinned revisions")
+    base_manifest, _ = _manifest_at_revision(repo, source_span.get("base", ""))
+    revised_manifest, _ = _manifest_at_revision(repo, reviewed_main)
+    if revised_manifest != pinned_manifest:
+        raise HostValidationError("revised validation manifest differs from the authenticated pinned policy")
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    try:
+        manifest_ids, manifest_changed = run_validation.manifest_change_selection(
+            revised_manifest["tests"], base_payload=base_manifest, current_payload=revised_manifest,
+        )
+    except run_validation.ManifestError as exc:
+        raise HostValidationError(f"attested validation manifest changes are not permitted: {exc}") from exc
+    if not manifest_changed:
+        raise HostValidationError("changed validation manifest has no authenticated test-definition delta")
+    return revised_manifest, manifest_ids, manifest_changed
+
+
+def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: dict, *,
+                                 repo: Path | None = None, reviewed_main: str | None = None,
+                                 source_span: dict | None = None) -> None:
     """Require report coverage to equal the pinned manifest's classification."""
     coverage = report.get("coverage")
     changed_files = report.get("changed_files")
@@ -1601,11 +1672,24 @@ def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: d
         sys.path.insert(0, str(validation_dir))
     import run_validation
     manifest_path = "custodian/tools/validation/validation_manifest.json"
+    manifest_ids: set[str] = set()
+    manifest_changed = False
     if manifest_path in changed_files:
-        raise HostValidationError("validation manifest changes require independently authenticated selection")
-    canonical_selected = [item["id"] for item in run_validation.select_changed_tests(
-        tests, changed_files,
-    )]
+        if repo is None or reviewed_main is None or source_span is None:
+            raise HostValidationError("changed validation manifest has no pinned provenance")
+        manifest, manifest_ids, manifest_changed = _attested_manifest_comparison(
+            Path(repo), reviewed_main, source_span, changed_files, manifest,
+        )
+        tests = manifest["tests"]
+        by_id = {item.get("id"): item for item in tests if isinstance(item, dict)}
+        if len(by_id) != len(tests):
+            raise HostValidationError("attested validation manifest has malformed or duplicate test definitions")
+    try:
+        canonical_selected = [item["id"] for item in run_validation.select_changed_tests(
+            tests, changed_files, manifest_ids=manifest_ids, manifest_changed=manifest_changed,
+        )]
+    except (run_validation.ManifestError, KeyError, TypeError) as exc:
+        raise HostValidationError(f"host validation changed-file selection is invalid: {exc}") from exc
     if selected != canonical_selected:
         raise HostValidationError("host validation selected tests differ from canonical changed-file selection")
     expected = run_validation.changed_file_coverage(
@@ -3331,7 +3415,8 @@ def verify_pinned_canonical_commit_source_span(repo: Path, implementation_commit
 
 
 def _validate_report(report: dict, implementation_paths: list[str],
-                     manifest: dict | None = None) -> None:
+                     manifest: dict | None = None, *, repo: Path | None = None,
+                     reviewed_main: str | None = None, source_span: dict | None = None) -> None:
     if report.get("schema") != "custodian.validation.result.v1":
         raise HostValidationError("host validation report has the wrong schema")
     coverage = report.get("coverage")
@@ -3376,7 +3461,8 @@ def _validate_report(report: dict, implementation_paths: list[str],
     if needs_policy:
         if manifest is None:
             raise HostValidationError("host validation exclusions have no pinned coverage policy")
-        _validate_canonical_coverage(report, code_paths, manifest)
+        _validate_canonical_coverage(report, code_paths, manifest, repo=repo,
+                                     reviewed_main=reviewed_main, source_span=source_span)
     else:
         covered = set(coverage.get("covered_files") or [])
         if not code_paths.issubset(covered):
@@ -3645,7 +3731,8 @@ def run_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str, im
         coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
     except HostValidationError:
         coverage_manifest = None
-    _validate_report(report, implementation_paths, coverage_manifest)
+    _validate_report(report, implementation_paths, coverage_manifest, repo=worktree,
+                     reviewed_main=reviewed_main, source_span=source_span)
     return metadata
 
 
@@ -3704,5 +3791,6 @@ def verify_coordinator_validation(repo: Path, run_dir: Path, reviewed_main: str,
         coverage_manifest = _pinned_coverage_manifest(repo, reviewed_main)
     except HostValidationError:
         coverage_manifest = None
-    _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
+    _validate_report(report, expected_span.get("paths") or [], coverage_manifest, repo=repo,
+                     reviewed_main=reviewed_main, source_span=expected_span)
     return report

@@ -4636,6 +4636,199 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ),
         }
 
+    def _attested_manifest_change_fixture(self):
+        manifest_path = "custodian/tools/validation/validation_manifest.json"
+        payload = json.loads((self.root / manifest_path).read_text())
+        payload["tests"][0]["owners"] = ["custodian/**"]
+        payload["tests"].extend([
+            {"id": "validation_runner", "type": "python", "tier": "unit",
+             "script": "custodian/tools/validation/run_validation.py",
+             "owners": ["custodian/**"], "tags": ["validation"]},
+            {"id": "validation_manifest_diff_selection", "type": "python", "tier": "unit",
+             "script": "custodian/tools/validation/test_validation_manifest_diff_selection.py",
+             "owners": ["custodian/**"], "tags": ["validation"]},
+        ])
+        (self.root / manifest_path).write_text(json.dumps(payload) + "\n")
+        attestation_path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
+        attestation_file = self.root / attestation_path
+        attestation_file.parent.mkdir(parents=True, exist_ok=True)
+        attestation_file.write_text('{"fixture":true}\n')
+        self._git("add", manifest_path, attestation_path)
+        self._commit("attested validation manifest change")
+        reviewed_main = self._git("rev-parse", "HEAD")
+        paths = sorted([*self.changed_paths, manifest_path, attestation_path])
+        source_files = {}
+        for path in (manifest_path, attestation_path):
+            mode, blob = host_validation._git_tree_entry(self.root, reviewed_main, path)
+            source_files[path] = {"mode": mode, "blob": blob}
+        attestation = {"kind": "accepted-post-hoc-exact-source-attestation",
+                       "source_archive_commit": reviewed_main, "source_files": source_files}
+        span = {"base": self.base, "head": reviewed_main, "commits": [reviewed_main],
+                "paths": paths, "provenance": {"kind": "workstream-lifecycle-trace",
+                                                "scope_attestation": attestation}}
+        revised = host_validation._pinned_coverage_manifest(self.root, reviewed_main)
+        changed_ids, changed = run_validation.manifest_change_selection(
+            revised["tests"], base_payload=host_validation._manifest_at_revision(self.root, self.base)[0],
+            current_payload=revised,
+        )
+        selected = run_validation.select_changed_tests(
+            revised["tests"], paths, manifest_ids=changed_ids, manifest_changed=changed,
+        )
+        report = {
+            "schema": "custodian.validation.result.v1", "passed": True,
+            "changed_files": paths, "selected": [item["id"] for item in selected],
+            "tests": [{"id": item["id"], "status": "passed"} for item in selected],
+            "summary": {"selected": len(selected), "passed": len(selected), "failed": 0,
+                        "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
+            "coverage": run_validation.changed_file_coverage(
+                paths, selected, revised.get("coverage_excludes", []),
+            ),
+        }
+        return reviewed_main, paths, span, attestation, revised, report
+
+    def test_attested_manifest_test_changes_use_exact_revisions_and_self_checks(self):
+        reviewed_main, paths, span, attestation, revised, report = self._attested_manifest_change_fixture()
+        with patch.object(host_validation, "_verified_procession_scope_attestation",
+                          return_value=attestation) as authenticate:
+            host_validation._validate_report(
+                report, paths, revised, repo=self.root, reviewed_main=reviewed_main, source_span=span,
+            )
+        authenticate.assert_called_once_with(
+            self.root, reviewed_main, reviewed_main, set(attestation["source_files"]),
+        )
+        self.assertIn("validation_runner", report["selected"])
+        self.assertIn("validation_manifest_diff_selection", report["selected"])
+        missing_attestation = json.loads(json.dumps(span))
+        missing_attestation["provenance"].pop("scope_attestation")
+        with self.assertRaisesRegex(host_validation.HostValidationError, "not covered by an accepted exact"):
+            host_validation._validate_report(
+                report, paths, revised, repo=self.root, reviewed_main=reviewed_main,
+                source_span=missing_attestation,
+            )
+
+        forged_selection = json.loads(json.dumps(report))
+        forged_selection["selected"].remove("validation_runner")
+        forged_selection["tests"] = [item for item in forged_selection["tests"]
+                                     if item["id"] != "validation_runner"]
+        forged_selection["summary"]["selected"] -= 1
+        forged_selection["summary"]["passed"] -= 1
+        selected_definitions = [item for item in revised["tests"]
+                                if item["id"] in forged_selection["selected"]]
+        forged_selection["coverage"] = run_validation.changed_file_coverage(
+            paths, selected_definitions, revised["coverage_excludes"],
+        )
+        with patch.object(host_validation, "_verified_procession_scope_attestation",
+                          return_value=attestation):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "canonical changed-file selection"):
+                host_validation._validate_report(
+                    forged_selection, paths, revised, repo=self.root,
+                    reviewed_main=reviewed_main, source_span=span,
+                )
+
+    def test_attested_manifest_rejects_global_policy_change(self):
+        reviewed_main, paths, span, attestation, revised, report = self._attested_manifest_change_fixture()
+        manifest_path = "custodian/tools/validation/validation_manifest.json"
+        revised["coverage_excludes"] = ["custodian/docs/**"]
+        (self.root / manifest_path).write_text(json.dumps(revised) + "\n")
+        self._git("add", manifest_path)
+        self._commit("unauthorized validation policy change")
+        reviewed_main = self._git("rev-parse", "HEAD")
+        span["head"] = reviewed_main
+        span["commits"] = [reviewed_main]
+        mode, blob = host_validation._git_tree_entry(self.root, reviewed_main, manifest_path)
+        attestation["source_files"][manifest_path] = {"mode": mode, "blob": blob}
+        span["provenance"]["scope_attestation"] = attestation
+        revised = host_validation._pinned_coverage_manifest(self.root, reviewed_main)
+        with patch.object(host_validation, "_verified_procession_scope_attestation",
+                          return_value=attestation):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "global validation manifest"):
+                host_validation._validate_report(
+                    report, paths, revised, repo=self.root, reviewed_main=reviewed_main, source_span=span,
+                )
+
+    def test_attested_manifest_rejects_mismatched_source_blob(self):
+        reviewed_main, paths, span, attestation, revised, report = self._attested_manifest_change_fixture()
+        authentic = json.loads(json.dumps(attestation))
+        attestation["source_files"]["custodian/tools/validation/validation_manifest.json"]["blob"] = "0" * 40
+        span["provenance"]["scope_attestation"] = attestation
+        with patch.object(host_validation, "_verified_procession_scope_attestation",
+                          return_value=authentic):
+            with self.assertRaisesRegex(host_validation.HostValidationError, "does not authenticate"):
+                host_validation._validate_report(
+                    report, paths, revised, repo=self.root, reviewed_main=reviewed_main, source_span=span,
+                )
+
+    def test_attested_manifest_is_reused_for_successful_continuation_closeout(self):
+        reviewed_main, paths, span, attestation, revised, report = self._attested_manifest_change_fixture()
+        code_paths = sorted(host_validation._source_code_paths(paths))
+        report_bytes = (json.dumps(report, sort_keys=True) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": reviewed_main, "implementation_commit": reviewed_main,
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+            "source_changed_during_validation": False, "source_span": span,
+            "source_span_base": span["base"], "source_span_head": span["head"],
+            "implementation_paths": paths, "code_paths": code_paths,
+        }
+        metadata["source_sha256"] = {
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{reviewed_main}:{path}"], cwd=self.root,
+                check=True, capture_output=True,
+            ).stdout).hexdigest() for path in code_paths
+        }
+        metadata_bytes = (json.dumps(metadata, sort_keys=True) + "\n").encode()
+        (self.run_dir / "coordinator-validation.json").write_bytes(metadata_bytes)
+        with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                           return_value=attestation),
+              patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+            runner._verify_host_validation_at_commit(
+                self.root, self.run_dir, reviewed_main, reviewed_main,
+                {"report_sha256": hashlib.sha256(report_bytes).hexdigest(),
+                 "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest()},
+                target_workstream="review-sample", target_packet_path="sample.md",
+            )
+
+    def test_attested_manifest_uses_same_policy_for_failed_report_authentication(self):
+        reviewed_main, paths, span, attestation, revised, report = self._attested_manifest_change_fixture()
+        report["passed"] = False
+        report["tests"] = [{"id": item["id"], "status": "failed"} for item in report["tests"]]
+        report["summary"] = {"selected": len(report["selected"]), "passed": 0,
+                             "failed": len(report["selected"]), "timed_out": 0,
+                             "skipped": 0, "infrastructure_errors": 0}
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        recorded_span = json.loads(json.dumps(span))
+        recorded_span["provenance"].pop("scope_attestation")
+        code_paths = sorted(host_validation._source_code_paths(paths))
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": reviewed_main, "implementation_commit": reviewed_main,
+            "worktree": str(self.root), "implementation_parent": self.base,
+            "exit_code": 4, "source_changed_during_validation": False,
+            "report_path": str((self.run_dir / "validation.json").resolve()),
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(), "report_parse_error": None,
+            "summary": report["summary"], "selected": report["selected"],
+            "command": ["/usr/bin/python3", str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", self.base, "--json"],
+            "code_paths": code_paths, "implementation_paths": paths, "source_span": recorded_span,
+            "source_sha256": {path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{reviewed_main}:{path}"], cwd=self.root,
+                check=True, capture_output=True,
+            ).stdout).hexdigest() for path in code_paths},
+        }
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+        original = {"workstream": "review-sample", "run_id": "20261031T000000Z-123456789abc",
+                    "phase": "host_validation_recovery", "reviewed_main": reviewed_main,
+                    "implementation_commit": reviewed_main, "recovery_worktree": str(self.root)}
+        with patch.object(host_validation, "_verified_procession_scope_attestation",
+                          return_value=attestation):
+            result = runner._failed_host_validation_report_pair(
+                self.run_dir, original, original["workstream"], original["run_id"], span,
+            )
+        self.assertIsNotNone(result)
+        self.assertEqual(result["kind"], "failed_validation")
+
     def _completed_host_validation_fixture(self):
         excluded_path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
         excluded_file = self.root / excluded_path
