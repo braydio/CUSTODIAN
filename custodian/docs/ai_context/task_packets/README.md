@@ -349,7 +349,6 @@ packet and its paired review, not as chat-only downloads.
 - `HUB_FORUM_HEARING_EVIDENCE_V1.md` — Forum hearing evidence plinths; deliver one playable, bounded event slice.
 - `HUB_FORUM_HEARING_FINDING_V1.md` — Forum hearing determination; deliver one playable, bounded event slice.
 - `HUB_ROAD_PROCESSION_TESTIMONY_V1.md` — Road witness testimony + revisit; deliver one playable, bounded event slice.
-- `MERIDIAN_CIVIC_WALL_3D_SOURCE_INTAKE_V1.md` — Preserve the user's Meridian Civic Wall source and a reproducible archival GLB on `origin/main`.
 - `OPERATOR_GUARD_BREAK_PRESENTATION.md` — Give guard break its own committed, readable whole-body failure presentation, distinct from ordinary non-breaking recoil, without weakening the existing move...
 - `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — Turn the newly generated unarmed-defense source-work set into reviewed, registration-correct 96×96 Operator production assets through Source Session + Asset...
 - `REVIEW_BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Independently verify Asset V2 correctness, geometry registration and generated-seed bridge readability against the user-approved art lock.
