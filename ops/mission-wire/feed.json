@@ -1,9 +1,279 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T02:55:17Z",
-  "source_main_sha": "d4bd1f126346fb82554dd9a6557aaefb379854e1",
+  "generated_at": "2026-10-31T03:25:39Z",
+  "source_main_sha": "6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-merged-source-validation-isolation-v1",
+      "occurred_at": "2026-10-31T03:25:39Z",
+      "bullets": [],
+      "links": [
+        {
+          "title": "Promote recovery pair",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
+        },
+        {
+          "title": "Publish recovery packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/9762afaa336e8dbb7dc55463c6ad683818b282cb"
+        }
+      ],
+      "images": [],
+      "related": [],
+      "id": "gate-6baf6a3f-merged-source",
+      "headline": "Review recovery faces a new validation gap; a focused correction pair is ready",
+      "summary": "A protected review remains held after validation passed its selected checks but failed completeness coverage. CUSTODIAN has published and promoted a narrowly scoped implementation and independent-review pair to distinguish genuine source changes from unrelated later commits, without treating incomplete validation as success.",
+      "body": "A new agent-ops recovery pair is ready, not claimed or running by verified evidence. The packet reports that a protected archived-receipt review was held before launch: nine selected checks passed but validation exited 6 with thirteen uncovered paths. Its planned fix isolates the exact implementation source span and authenticates coverage-only failed reports while preserving fail-closed behavior. The held review cannot be considered accepted. Host evidence described in the packet was not directly inspected. No canonical teardown is verified.",
+      "article": {
+        "lead": "CUSTODIAN's review pipeline has found another precise obstacle: the system can pass its selected checks yet still refuse to start a reviewer because its coverage report includes changes from unrelated work. A new correction pair is ready to address that mismatch without weakening the rules that protect review integrity.",
+        "sections": [
+          {
+            "heading": "Why the review is still waiting",
+            "text": "The new task packet describes a protected review stopped before reviewer launch. Nine selected checks passed, but thirteen paths were not covered by validation. The packet attributes part of the mismatch to later Operator-related changes being included in the wrong source span. These figures are reported in the packet, not independently verified host measurements."
+          },
+          {
+            "heading": "What the proposed correction changes",
+            "text": "The implementation would identify exactly which files belong to the reviewed change, then recognize a complete, authentic coverage-only failure report as failed evidence eligible for controlled recovery. It would not turn incomplete coverage into a PASS or authorize the protected review to run."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Green checks are not complete validation",
+            "explanation": "Passing individual tests does not prove that every relevant changed file was validated. The recovery must preserve this distinction or risk accepting incomplete work."
+          },
+          {
+            "title": "A newer game-art change can block older infrastructure review",
+            "explanation": "The reported source-span contamination links otherwise separate workstreams. Isolating the historical implementation diff could prevent later Operator commits from distorting an older review's coverage gate."
+          }
+        ],
+        "takeaway": "The correction pair is published and ready, but no implementation landing or independent acceptance is established.",
+        "next_watch": "Look for the correction's validated landing and a genuine independent receipt before any separately authorized continuation of the held review."
+      },
+      "details": {
+        "overview": "Main 6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004. Two new agent-ops packets were promoted ready/auto. This is packet state, not proof of live execution.",
+        "ledger": [
+          {
+            "stage": "Correction packet publication",
+            "status": "verified",
+            "evidence": "9762afaa3 added the implementation and review packets."
+          },
+          {
+            "stage": "Dispatch readiness",
+            "status": "verified",
+            "evidence": "6baf6a3f marks both ready/auto; review depends on implementation."
+          },
+          {
+            "stage": "Implementation and validation",
+            "status": "not verified",
+            "evidence": "No implementation landing or acceptance established."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "not verified",
+            "evidence": "No canonical passing receipt inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host worktree, lock or disk proof accessible."
+          }
+        ],
+        "notes": [
+          "The packet describes exit 6 and thirteen uncovered paths as host-reported evidence, not a green validation."
+        ],
+        "unknowns": [
+          "Live claim/owner/process and host evidence remain unavailable."
+        ],
+        "actions": [
+          "Existing implementation owner: complete and validate the correction before its independent reviewer acts."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ready for implementation; protected review held",
+        "as_of": "2026-10-31T03:25:39Z",
+        "scope": "The new merged-source validation isolation pair only",
+        "metrics": [
+          {
+            "id": "ready-pair-packets",
+            "label": "READY PACKETS IN PAIR",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Both named packets marked ready/auto in 6baf6a3f.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish correction pair",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "9762afaa3"
+          },
+          {
+            "label": "Promote implementation and review",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "6baf6a3f"
+          },
+          {
+            "label": "Implement and validate correction",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Ready packet; no landing established"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Depends on implementation"
+          },
+          {
+            "label": "Protected review continuation",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Separate authorization and evidence required"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host state unavailable"
+          }
+        ],
+        "next_gate": "Existing implementation owner completes and validates merged-source isolation, then independent reviewer assesses it."
+      }
+    },
+    {
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "meridian-civic-wall-3d-source-intake-v1",
+      "occurred_at": "2026-10-31T03:25:39Z",
+      "bullets": [],
+      "links": [
+        {
+          "title": "Archival source landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5397b2b554124bfde31819bfe421743210144f7e"
+        },
+        {
+          "title": "Archive intake packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/28a887ce55628c3516a52af24c7084e156f9be1a"
+        }
+      ],
+      "images": [],
+      "related": [],
+      "id": "asset-5397b2b5-meridian-wall",
+      "headline": "Meridian Civic Wall's 3D source is preserved, but not yet game-ready",
+      "summary": "CUSTODIAN landed a versioned source archive and decoded GLB model for the Meridian Civic Wall, alongside a provenance smoke test. The work preserves the asset for future development, but explicitly stops short of Godot import, visual approval or gameplay integration.",
+      "body": "Commit 5397b2b5 added LFS-backed source and GLB archives, a provenance record and a focused validation script. A later commit archived the intake packet. The source record explicitly labels the result archival-only: Godot compatibility, rendering suitability and production approval remain unverified. No independent accepted PASS or host teardown was established.",
+      "article": {
+        "lead": "A new piece of CUSTODIAN's world has gained a durable starting point. The Meridian Civic Wall's original 3D source and a decoded model are now committed with provenance checks, making the asset easier to preserve and revisit as the environment pipeline develops.",
+        "sections": [
+          {
+            "heading": "A source archive, not a finished environment",
+            "text": "The landing preserves the original model in Git LFS, records the decoded GLB, and adds a small validation tool to check the archival evidence. The intake packet was subsequently archived. These are useful foundations for later art work, not proof that the model looks right or runs correctly in the game."
+          },
+          {
+            "heading": "The remaining art gate",
+            "text": "The source record explicitly leaves Godot import compatibility, 2.5D rendering suitability, visual quality and production approval open. Those decisions still need their own evidence."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Provenance is now reproducible",
+            "explanation": "The project can trace the preserved source to a specific decoded asset and check its recorded identity, reducing ambiguity when later artists or tooling revisit the wall."
+          },
+          {
+            "title": "Archival completion and gameplay completion are different",
+            "explanation": "The packet can be archived while the actual environment asset remains unapproved. This avoids treating an importable-looking file as a finished game object."
+          }
+        ],
+        "takeaway": "Meridian Civic Wall source preservation has landed; runtime and visual acceptance remain unverified.",
+        "next_watch": "Look for an independently reviewed asset import or a concrete in-engine visual proof before calling the wall game-ready."
+      },
+      "details": {
+        "overview": "Source landing 5397b2b5, main 6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004. The archival record explicitly limits acceptance to source preservation.",
+        "ledger": [
+          {
+            "stage": "Source and decoded GLB publication",
+            "status": "verified",
+            "evidence": "5397b2b5 contains Git LFS pointers, archival record and validation script."
+          },
+          {
+            "stage": "Intake packet archive",
+            "status": "verified",
+            "evidence": "28a887ce archives the source intake."
+          },
+          {
+            "stage": "Godot/runtime integration",
+            "status": "unknown",
+            "evidence": "The archival record expressly excludes compatibility and production approval."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not verified",
+            "evidence": "No accepted independent receipt inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trustworthy host proof available."
+          }
+        ],
+        "notes": [
+          "Git LFS pointer publication is not a live render or approved screenshot."
+        ],
+        "unknowns": [
+          "In-engine quality and import behavior",
+          "Host cleanup and disk impact"
+        ],
+        "actions": [
+          "Existing asset/review owners: validate the archival intake independently and pursue runtime/visual gates only under existing approved work."
+        ]
+      },
+      "scorecard": {
+        "stage": "Source archived; game integration unverified",
+        "as_of": "2026-10-31T03:25:39Z",
+        "scope": "Meridian Civic Wall source intake",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Publish source archive",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5397b2b5"
+          },
+          {
+            "label": "Archive intake packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "28a887ce"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No accepted receipt inspected"
+          },
+          {
+            "label": "Godot import and visual approval",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Explicitly excluded from archival record"
+          },
+          {
+            "label": "Host teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Existing asset review owner confirms archival review; later asset owner validates in-engine suitability."
+      }
+    },
     {
       "id": "operator-3d-tooling-f2d5f042",
       "headline": "Operator's 3D-to-sprite tooling reaches main, but source-scope review catches a gap",
@@ -514,29 +784,21 @@
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T02:55:17Z",
-    "source_main_sha": "d4bd1f126346fb82554dd9a6557aaefb379854e1",
+    "observed_at": "2026-10-31T03:25:39Z",
+    "source_main_sha": "6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004",
     "coverage": "partial",
-    "scope": "Four specifically inspected GitHub packet files: archived receipt recovery implementation and review, Operator tooling implementation and source-scope correction review; not the dispatcher queue.",
+    "scope": "Two newly promoted merged-source validation packets on main; selected-packet inventory only, not canonical dispatcher audit.",
     "metrics": [
       {
-        "id": "other-inspected-complete-implementations",
-        "label": "INSPECTED LANDED PACKETS",
+        "id": "other-new-ready-pair",
+        "label": "NEW READY PAIR PACKETS",
         "value": 2,
         "verification": "verified",
-        "basis": "Exactly two of four named inspected packet files have Status complete in archived/; no project-wide extrapolation.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/f2d5f04236aeac20f00c3489091cc777ab2a08c4"
-      },
-      {
-        "id": "other-inspected-ready-reviews",
-        "label": "INSPECTED READY REVIEWS",
-        "value": 2,
-        "verification": "verified",
-        "basis": "Exactly two of four inspected packet files are independent-review packets with Status ready; not a full queue count.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
+        "basis": "Implementation and dependent review both ready/auto in commit 6baf6a3f; no claim or live execution inferred.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
       }
     ],
-    "focus": "Independent review of landed archived-receipt recovery; separately, exact-scope correction for Operator tooling.",
-    "note": "Partial selected-packet inventory only. Full live dispatcher audit and Arch-local counts unavailable. Main advanced 11 commits from previous feed baseline."
+    "focus": "Validate and independently review merged-source isolation before considering protected review continuation.",
+    "note": "Main advanced 13 commits from previous snapshot. Full dispatcher counts and Arch-local resources unavailable."
   }
 }
