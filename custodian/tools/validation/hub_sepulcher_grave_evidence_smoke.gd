@@ -140,8 +140,14 @@ func _run() -> void:
 	await process_frame
 	var loaded_event := map.get_node_or_null("SepulcherGraveEvidence") as SepulcherGraveEvidence
 	_expect(loaded_event != null and loaded_event.get_completed_readings() == 3, "completed HubState snapshot lost the grave evidence", failures)
-	operator.global_position = positions[2]
-	_expect(operator.call("_find_best_interactable", 88.0) == null, "completed grave event replayed an inspection on return", failures)
+	if loaded_event != null:
+		for reading_index in positions.size():
+			operator.global_position = positions[reading_index]
+			var reread_point := loaded_event.get_inspection_point(reading_index)
+			_expect(_operator_targets(operator, reread_point), "completed grave reading %d was not available for rereading" % (reading_index + 1), failures)
+			if reread_point != null:
+				reread_point.call("interact", operator)
+		_expect(loaded_state.get_authored_event_record(EVENT_ID) == completed_record, "rereading a completed grave event changed its evidence record", failures)
 	if bootstrap != null:
 		_expect(int(bootstrap.get("generation_count")) == generation_count_before, "grave event touched Contract prewarm", failures)
 

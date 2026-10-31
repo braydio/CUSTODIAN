@@ -553,6 +553,29 @@
       "needs_import": true
     },
     {
+      "id": "hub_sepulcher_grave_resolution",
+      "type": "godot_script",
+      "script": "res://tools/validation/hub_sepulcher_grave_resolution_smoke.gd",
+      "tier": "integration",
+      "tags": [
+        "hub",
+        "authored_event",
+        "persistence",
+        "operator_interaction"
+      ],
+      "owners": [
+        "custodian/game/state/persistent/hub_state.gd",
+        "custodian/game/world/hub/first_set/hub_first_set_map.gd",
+        "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd",
+        "custodian/scenes/hub_runtime_host.tscn",
+        "custodian/game/actors/operator/operator.tscn",
+        "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 90,
+      "needs_import": true
+    },
+    {
       "id": "biome_field",
       "type": "godot_script",
       "script": "res://tools/validation/biome_field_smoke.gd",

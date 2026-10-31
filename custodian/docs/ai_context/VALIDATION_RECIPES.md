@@ -241,6 +241,21 @@ ordered lamp/bell beats, resumes from a partial HubState snapshot, and rejects
 replay after restoring a completed snapshot. It also asserts that the Forum
 Dais, Crown Transfer ingress, and Contract prewarm remain untouched.
 
+## Hub Sepulcher Grave Resolution
+
+Run the production-host resolution smoke, then the predecessor evidence/
+persistence smoke and first-set traversal regression:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_sepulcher_grave_resolution --json
+python3 custodian/tools/validation/run_validation.py --test hub_sepulcher_grave_evidence --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+```
+
+The focused resolution smoke exercises both findings with a real Operator,
+exactly-once HubState persistence, restore/return behavior, evidence rereads,
+non-colliding pale-growth presentation, and unchanged Contract prewarm state.
+
 ## Preferred Agent Entry Point
 
 For App/Boot startup routing, run the focused spine smoke and its existing
