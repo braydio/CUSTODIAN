@@ -1,9 +1,160 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T10:19:37Z",
-  "source_main_sha": "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f",
+  "generated_at": "2026-10-31T12:41:00Z",
+  "source_main_sha": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "hub-sepulcher-grave-resolution-c8e39576",
+      "headline": "The Sepulcher grave now lets the Operator choose what the evidence means",
+      "summary": "CUSTODIAN landed a playable resolution to the Hub's three-part grave mystery. After reading all three inscriptions, the Operator can attest a provenance conflict or leave it unresolved. Either choice persists, the inscriptions remain readable, and a pale growth appears on later visits. Implementation validation is reported passing; independent review remains ready, not accepted.",
+      "body": "Commit c8e39576 adds two physical resolution interactions to the existing Sepulcher grave controller and persists one finding in HubState. The implementation archive reports focused grave resolution, predecessor evidence, Hub traversal and 9/9 changed-file checks passing. The separate review-hub-sepulcher-grave-resolution-v1 packet is ready/auto; this is not proof of execution or accepted PASS. The implementation also records an unrelated F14-C2a dependency mismatch: its declared original review has findings, while a later correction review passed against a different target. No claim was released. Host process, lock, worktree, disk and teardown status remain unknown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-grave-resolution-v1",
+      "occurred_at": "2026-10-31T12:34:26Z",
+      "bullets": [
+        "Two mutually exclusive findings become physically selectable after three readings.",
+        "Either outcome persists once; all inscriptions remain available for rereading.",
+        "Later visits show a subtle non-colliding growth cue.",
+        "Author reports focused runtime smokes and 9/9 changed-file checks passing.",
+        "Paired independent review is ready, not accepted.",
+        "F14-C2a exact dependency mismatch remains for its authoring owner."
+      ],
+      "links": [
+        {
+          "title": "Implementation and closeout",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c8e3957628e5d453a7ca10d49517ee71b78fd2bf"
+        },
+        {
+          "title": "Independent review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A small mystery in CUSTODIAN's Hub can now end with a deliberate choice. Once the Operator has examined all three inscriptions at the Sepulcher grave, two physical interactions become available: attest that the records conflict, or leave the matter unresolved. The choice is remembered, without rewriting the evidence.",
+        "sections": [
+          {
+            "heading": "A choice that respects the mystery",
+            "text": "Both outcomes are persistent and mutually exclusive. The original three readings stay available, so the player can revisit the clues without changing the record. The design avoids turning a disputed history into a forced revelation."
+          },
+          {
+            "heading": "The world remembers quietly",
+            "text": "On a later visit, a pale growth appears beside the slab. It is a small environmental response rather than a new obstacle: the implementation adds no collision owner and leaves Contract preparation unchanged."
+          },
+          {
+            "heading": "Landed code still needs independent eyes",
+            "text": "The implementation reports passing focused runtime checks and nine changed-file validations. Its separate reviewer is ready, but there is no accepted independent verdict yet. A distinct campaign dependency mismatch was documented, not fixed, during the work."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Persistence creates consequence without locking away evidence",
+            "explanation": "The player commits to an interpretation while retaining access to every inscription. That keeps the event replayable as investigation, not as a repeatable reward or choice."
+          },
+          {
+            "title": "A separate dependency remains blocked by exact review identity",
+            "explanation": "The closeout found that F14-C2a names an original review with findings, even though a later correction review passed. Those are not interchangeable receipts; its authoring owner must reconcile the dependency."
+          }
+        ],
+        "takeaway": "The playable grave resolution has landed with author-reported passing checks, while independent acceptance and host cleanup remain unverified.",
+        "next_watch": "A fresh independent review disposition for the grave resolution, followed by a separately authorized correction of the F14-C2a dependency if warranted."
+      },
+      "details": {
+        "overview": "Inspected commit c8e39576, the archived implementation packet and the ready independent review packet. The code extends SepulcherGraveEvidence and HubState, updates the G1 reread regression and adds a dedicated G2 smoke. The closeout reports focused smokes and 9/9 changed-file validation; no independent receipt was observed. GitHub combined status returned an empty statuses list, not a CI PASS.",
+        "ledger": [
+          {
+            "stage": "Implementation and landing",
+            "status": "verified in inspected commit and main-path archive",
+            "evidence": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf and archived packet status complete"
+          },
+          {
+            "stage": "Validation",
+            "status": "author-reported passing",
+            "evidence": "Focused G2, G1 and first-set smokes; changed-file 9/9 and diff check"
+          },
+          {
+            "stage": "Independent review",
+            "status": "ready, not accepted",
+            "evidence": "review-hub-sepulcher-grave-resolution-v1 packet status ready / dispatch auto"
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No current host worktree, lock or process evidence"
+          },
+          {
+            "stage": "F14-C2a dependency",
+            "status": "reported mismatch, not corrected",
+            "evidence": "Closeout notes original review findings versus correction review passed for different target"
+          }
+        ],
+        "notes": [
+          "No new raster art or generalized event framework.",
+          "No full canonical dispatcher audit was available."
+        ],
+        "unknowns": [
+          "Current host liveness, worktrees, locks, disk and teardown.",
+          "Independent review outcome and complete CI workflow health.",
+          "Full project packet and workstream totals."
+        ],
+        "actions": [
+          "Existing paired reviewer: inspect landed grave behavior and produce canonical findings-first disposition.",
+          "F14-C2a authoring owner: reconcile exact dependency after examining review targets; do not release claims based on this report."
+        ]
+      },
+      "scorecard": {
+        "stage": "Implementation landed; independent review ready",
+        "as_of": "2026-10-31T12:41:00Z",
+        "scope": "Only the named Sepulcher grave implementation and paired review",
+        "metrics": [
+          {
+            "id": "ready_review",
+            "label": "READY REVIEW PACKET",
+            "value": 1,
+            "verification": "verified",
+            "basis": "One inspected paired review packet is status ready / dispatch auto; excludes all other packets.",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Implement physical grave choices",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "c8e39576 production controller diff"
+          },
+          {
+            "label": "Persist finding and restore visit cue",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "c8e39576 HubState controller changes"
+          },
+          {
+            "label": "Run author runtime validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Archive reports focused smoke PASS and changed-file 9/9"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Paired packet ready; no accepted receipt inspected"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host state unavailable"
+          }
+        ],
+        "next_gate": "Existing paired reviewer must independently validate the landed grave implementation and record a canonical disposition."
+      },
+      "related": []
+    },
     {
       "id": "validator-finish-guard-landed-0de885c5",
       "headline": "CUSTODIAN lands a safeguard against unverifiable code merges; independent review is next",
@@ -1530,189 +1681,24 @@
         ],
         "next_gate": "Existing asset review owner confirms archival review; later asset owner validates in-engine suitability."
       }
-    },
-    {
-      "id": "operator-3d-tooling-f2d5f042",
-      "headline": "Operator's 3D-to-sprite tooling reaches main, but source-scope review catches a gap",
-      "summary": "A versioned Operator 3D master and model-to-sprite tooling landed and the implementation packet was archived. The original independent review is blocked before reviewer launch because its source declaration omitted 12 of 22 changed paths. A separate exact-scope correction pair is ready; neither visual approval nor live gameplay integration is established.",
-      "body": "Commits 5afa6280 and f2d5f042 land the Operator ITER005 master provenance, inspection tools, static model-to-sprite pipeline and tests, and archive the implementation packet. Commit 26956c12 publishes an exact historical source-scope correction for 12 omitted paths among 22 changed paths. The packet says original review run 20261031T022410Z-7204104581e7 stopped at host validation before reviewer launch. Correction and independent-review packets are published, with review ready; correction implementation is not landed. No genuine accepted PASS, visual fidelity approval or in-game deployment is verified. Next owner: existing correction implementation owner, then separate reviewer.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "assets-art",
-      "workstream": "operator-3d-model-to-sprite-tooling-integration-v1",
-      "occurred_at": "2026-10-31T02:49:14Z",
-      "bullets": [
-        "Operator model-to-sprite implementation landed and archived.",
-        "Original independent review blocked by an exact 12-path source declaration mismatch.",
-        "A bounded correction pair was published; independent acceptance remains outstanding.",
-        "Visual quality and runtime integration are not approved."
-      ],
-      "links": [
-        {
-          "title": "Operator tooling implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5afa6280a32de7855bb60fbdf2c839c8b297810c"
-        },
-        {
-          "title": "Operator implementation archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f2d5f04236aeac20f00c3489091cc777ab2a08c4"
-        },
-        {
-          "title": "Exact source-scope correction packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/26956c120a3cc941068aef2e64bd90d1f74609af"
-        },
-        {
-          "title": "Operator production roadmap",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/design/02_features/animation/OPERATOR_3D_TO_2_5D_PRODUCTION_ROADMAP_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now has a committed foundation for turning the Operator's experimental 3D model into reproducible sprite candidates. The pipeline and source records have landed, but a review safeguard caught an incomplete declaration of the files involved. That prevents the original independent review from starting.",
-        "sections": [
-          {
-            "heading": "A more reproducible character pipeline",
-            "text": "The new tooling preserves a versioned experimental Operator master and provides inspection and static sprite-generation utilities. This is infrastructure for producing and comparing future character visuals, not a claim that a finished animation or playable character has been approved."
-          },
-          {
-            "heading": "Why the reviewer could not begin",
-            "text": "The original review's host validator reconstructed 22 changed source paths, but 12 were absent from the archived packet's declaration. A newly published correction proposes to attest only those exact historical files and identities, without weakening the general check or replacing the original review run."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Source provenance is now a practical art-pipeline gate",
-            "explanation": "The code can land while its independent review remains blocked by mismatched file accounting. For 3D assets, trustworthy source lineage matters alongside render quality."
-          },
-          {
-            "title": "The correction preserves the original review identity",
-            "explanation": "The proposed exception is tied to immutable commits, file blobs and modes, and activates only after its own accepted independent review. It is not a blanket bypass."
-          }
-        ],
-        "takeaway": "Operator 3D-to-sprite tooling is landed, but its original review and visual approval remain pending.",
-        "next_watch": "Look for the exact source-scope correction implementation and independent PASS, then a fresh plan for the preserved original review run."
-      },
-      "details": {
-        "overview": "Main d4bd1f126346fb82554dd9a6557aaefb379854e1. Operator tooling landed at 5afa6280 and archived at f2d5f042. New correction packet 26956c12 describes 12 omitted paths among 22 changed paths in the original implementation source span.",
-        "ledger": [
-          {
-            "stage": "Operator tooling implementation",
-            "status": "Verified landed and archived",
-            "evidence": "5afa6280 and f2d5f042."
-          },
-          {
-            "stage": "Original independent review",
-            "status": "Blocked before reviewer launch, packet-reported host state",
-            "evidence": "26956c12 packet names original run 20261031T022410Z-7204104581e7 and source-scope mismatch."
-          },
-          {
-            "stage": "Exact-scope correction",
-            "status": "Packet published; implementation not verified landed",
-            "evidence": "26956c12 publishes bounded correction."
-          },
-          {
-            "stage": "Correction independent review",
-            "status": "Ready; not accepted",
-            "evidence": "Review packet Status ready on current main."
-          },
-          {
-            "stage": "Visual/runtime acceptance",
-            "status": "Unknown / not verified",
-            "evidence": "No accepted visual proof or live Godot integration evidence."
-          }
-        ],
-        "notes": [
-          "The exact correction must not edit original implementation or review evidence.",
-          "A separate Meridian Civic Wall archival intake pair was also published as draft/manual, not an imported asset."
-        ],
-        "unknowns": [
-          "Original Arch review process, claim lock, worktree and disk state not independently inspected.",
-          "Current main CI conclusion not established."
-        ],
-        "actions": [
-          "Existing correction owner: implement and validate exact historical attestation.",
-          "Separate reviewer: authenticate correction before any original-run re-plan.",
-          "Existing original review owner: re-plan exact preserved run only after correction acceptance."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Tooling landed; original review blocked at source validation",
-        "as_of": "2026-10-31T02:55:17Z",
-        "scope": "Operator model-to-sprite implementation and its exact historical correction",
-        "metrics": [
-          {
-            "id": "omitted-source-paths",
-            "label": "OMITTED PATHS",
-            "value": 12,
-            "verification": "reported",
-            "basis": "Correction packet reports 12 omitted among 22 changed source paths.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/26956c120a3cc941068aef2e64bd90d1f74609af"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Land Operator tooling",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5afa6280."
-          },
-          {
-            "label": "Archive implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "f2d5f042."
-          },
-          {
-            "label": "Original source-scope validation",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "12 omitted paths reported in correction packet."
-          },
-          {
-            "label": "Implement exact-scope correction",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Packet published, no correction landing verified."
-          },
-          {
-            "label": "Independently accept correction",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Review packet ready."
-          },
-          {
-            "label": "Resume original review",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Requires correction acceptance and exact-run plan."
-          },
-          {
-            "label": "Visual approval and runtime use",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Not established."
-          }
-        ],
-        "next_gate": "Correction implementation owner must land the exact attestation, then separate reviewer must accept it."
-      }
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T10:19:37Z",
-    "source_main_sha": "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f",
+    "observed_at": "2026-10-31T12:41:00Z",
+    "source_main_sha": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf",
     "coverage": "partial",
-    "scope": "Only the validator implementation and its named dependent review packet inspected on GitHub; no canonical full dispatcher audit.",
+    "scope": "Two specifically inspected ready review packets (grave resolution and validator recertification), plus the archived grave implementation; no full dispatcher audit.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY REVIEW (INSPECTED)",
-        "value": 1,
+        "label": "READY REVIEWS (INSPECTED)",
+        "value": 2,
         "verification": "verified",
-        "basis": "One named validator recertification review packet is ready/auto; not a queue-wide count.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_VALIDATOR_RECERTIFICATION_V1.md"
+        "basis": "Exactly two named inspected review packets have status ready and dispatch auto; not a project-wide queue count.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
       }
     ],
-    "focus": "Obtain authentic independent review of the landed provenance guard.",
-    "note": "Implementation landed; reported validation is not independent acceptance. Full queue, host and CI conclusions unavailable."
+    "focus": "Obtain independent review receipts for the landed grave resolution and provenance guard.",
+    "note": "No full active queue or host evidence; reported implementation tests are not accepted independent reviews."
   }
 }
