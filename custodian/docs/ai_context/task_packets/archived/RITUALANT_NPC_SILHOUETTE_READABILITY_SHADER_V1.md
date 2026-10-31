@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `ritualant-npc-silhouette-readability-shader-v1`
-- Status: `blocked`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
@@ -42,28 +42,28 @@
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
 - Goal satisfied: `Implementation is present and objectively validated; the final aesthetic acceptance remains pending human review.`
-- Completion boundary satisfied: `No. The packet requires human approval of the paired ROI before implementation closeout.`
-- Acceptance satisfied: `Mechanical and runtime contracts pass. Human visual acceptance is not yet recorded.`
+- Completion boundary satisfied: `Yes. The actor-local material, production binding, focused phase/render checks, current-main integration, and user-owned visual approval are recorded; no scene geometry or gameplay authority changed.`
+- Acceptance satisfied: `Yes. Focused presentation/runtime checks and authored Underground smoke passed; changed-file validation passed 13/13 on the synchronized implementation candidate; the human approved the published kneeling ROI on 2026-10-17.`
 - Superseded/legacy production path disposition: `The hidden legacy Visual placeholder remains hidden and unchanged; production AnimatedSprite2D remains the sole Ritualant sprite.`
-- Evidence: `forlorn_ritualant_presentation PASS; forlorn_ritualant_runtime PASS; forlorn_ritualant_underground_smoke PASS; traversal/forlorn_ritualant_completion capture-mode none PASS; validation run --changed --json PASS (42/42). Final before/after ROI is published at /CUSTODIAN/visual_review/ritualant-npc-silhouette-readability-shader-v1/ritualant-readability-human-gate/REVIEW_MANIFEST.json.`
+- Evidence: `forlorn_ritualant_presentation PASS; forlorn_ritualant_runtime PASS; forlorn_ritualant_underground_smoke PASS; changed-file validation PASS (13/13) after the original-main integration; human visual decision approved 2026-10-17 for candidate 03678c0af88caf911166040a06fba460bcf4d2e0, run ritualant-readability-human-gate, artifact SHA-256 dffb67e0369b018c4fd5deb2410bf1634207bac62622f4695f20af3ef42931df. Evidence escrows: `.git/custodian-workflow/preserved-evidence/ritualant-npc-silhouette-readability-shader-v1/20261017T035803Z-c5ab7b12713c/MANIFEST.json` (SHA-256 17c0f94d6c6c956c301620131f4eac16a372207e81691039df435cda83617626) and `sidecars-rc058/MANIFEST.json` (SHA-256 84754e74d5bd693083fdcd0f29615a9dc29e1407d8cd54e5864d299eb3ba1445). Final synchronized validation is recorded by the canonical workstream finish report.`
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
+- Outcome: `complete`
 - Friction severity: `medium`
 - What went wrong: `The original Moment Forge completion fixture kept its camera near the lift, leaving the Ritualant offscreen; the first shader pass also multiplied the sampled texture twice, and a reserved shader identifier prevented compilation.`
 - Root cause / contributing factors: `The fixture camera did not follow authored Operator placement, so initial captures compared an unrelated foreground object. Renderer capture exposed the shader compile and COLOR-input contract issues before review.`
 - Prevention / pipeline improvement: `The fixture now follows the Operator at scene commands, and the focused presentation smoke checks production binding, per-scene material isolation, canonical animations, atlas bounds, no neighbor sampling, and alpha pass-through. A dedicated short Moment Forge scenario captures matched pre/post material frames.`
 - Tooling / docs drift discovered: `The authored Underground smoke still expected the retired lower-lift Y=1670; live LOWER_LIFT_DOCK/SPAWN_DESCENT_LANDING authority is Y=1696. Updated only that stale assertion, not scene geometry.`
-- Follow-up: `human-required`
+- Follow-up: `existing-independent-review`
 
 ## Handoff
 - Next workstream: `review-ritualant-npc-silhouette-readability-shader-v1`
-- Next packet state: `human-required`
+- Next packet state: `post-land review`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6acb367f-4ca0-83e8-a226-31a3ae38da20
 - Summary backlink: Include this exact Authoring chat URL in every durable implementation/review/correction/recovery/closeout summary and final Next Handoff.
 - Refresh reason: `none`
-- Next action: `Review the published matched kneeling ROI at the original gameplay zoom. Decide whether the actor is immediately legible, the edge reads as ash/continuity separation rather than magic, and the treatment remains natural in hostile/dissolve phases. After approval, resume and finish this implementation through workstream.py, then allow the paired review to run in fresh context.`
-- Blockers or open questions: `Human-owned visual approval is outstanding; do not close AP2-equivalent implementation acceptance or launch the paired review before that decision.`
+- Next action: `Implementation closeout is complete. The existing review-ritualant-npc-silhouette-readability-shader-v1 may proceed through normal post-land fresh-context dispatch; do not infer or claim reviewer acceptance.`
+- Blockers or open questions: `The existing mandatory independent review remains outstanding.`
