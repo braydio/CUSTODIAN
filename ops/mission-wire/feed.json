@@ -1,9 +1,300 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T04:22:00Z",
-  "source_main_sha": "fa7789b7ee6fda763ae683ed144117f353655ea9",
+  "generated_at": "2026-10-31T07:05:43Z",
+  "source_main_sha": "5c02e0dc6c0ff404625c50bbb7796cb47002bba7",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "multi-sync-4693df7b-5c02e0dc",
+      "headline": "Review system learns to verify repeated code synchronizations, but missing historical evidence still blocks recovery",
+      "summary": "CUSTODIAN landed a source-history verifier that handles multiple merges back into main without confusing later code with the original work. Tests are reported passing, and its independent review is ready. A preserved historical review still lacks a required checkpoint witness, so the landing does not unblock its recovery.",
+      "body": "The multi-sync verifier is on main and its implementation packet is archived. The published implementation summary reports 258 runner tests, four focused real-Git tests and 2/2 selected checks passed. The new resolver authenticates merge parentage, ordering, deterministic trees and unique lifecycle witnesses. In a read-only attempt against the protected correction history, it progressed beyond the former one-merge limitation but stopped at a missing checkpoint witness. No original run was modified. The paired independent review remains ready, not accepted. Host teardown, process and disk status are unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-multi-sync-source-span-verification-v1",
+      "occurred_at": "2026-10-31T07:05:43Z",
+      "bullets": [
+        "Implementation landed and archived; review packet ready.",
+        "Protected historical correction still lacks an authenticated checkpoint witness.",
+        "No recovery applied; no independent PASS or teardown established."
+      ],
+      "links": [
+        {
+          "title": "Multi-sync implementation and archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4693df7b1fa6184b6ea4596f5a672d0f60c123b0"
+        },
+        {
+          "title": "Ready independent review handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4f90902381aabce73075258cb0baa803f703ac12"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN can now examine development histories that synchronize with the main codebase more than once. That removes a hard limitation in its independent review machinery, but the first preserved case has exposed a second, more fundamental gap: a missing historical checkpoint record.",
+        "sections": [
+          {
+            "heading": "A stronger account of what actually changed",
+            "text": "The new verifier checks each merge's parents, event order and resulting code, then separates files authored by the workstream from unrelated changes inherited from main. This matters when older review work overlaps newer Operator or infrastructure commits."
+          },
+          {
+            "heading": "Why the original review is still held",
+            "text": "The implementation's own read-only check reached the next authenticity gate and could not find a unique checkpoint witness for the first historical merge. The system correctly refused to reconstruct evidence from Git history alone. Its own independent review is still pending."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Removing one blocker can expose the next",
+            "explanation": "The earlier blanket rejection of multi-merge histories is gone, but a missing authenticated lifecycle event remains. The recovery chain now needs real provenance evidence, not merely more permissive code."
+          },
+          {
+            "title": "Source isolation protects game-development work",
+            "explanation": "Separating inherited main changes from workstream-authored changes helps prevent newer art and gameplay edits from distorting the validation scope of older infrastructure reviews."
+          }
+        ],
+        "takeaway": "Multiple-sync verification is landed, not independently accepted, and it has not recovered the protected review.",
+        "next_watch": "An authenticated independent review receipt for this verifier, followed by an evidence-supported decision about the missing historical checkpoint."
+      },
+      "details": {
+        "overview": "At main 5c02e0dc6c0ff404625c50bbb7796cb47002bba7, the multi-sync implementation is archived complete. Its summary reports passing local tests. The preserved correction-1 source span now fails on an absent unique checkpoint witness; original evidence remains protected.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "4693df7b landed verifier and archived packet."
+          },
+          {
+            "stage": "Implementation validation",
+            "status": "reported passing",
+            "evidence": "Summary reports 258 runner tests, 4 focused tests and 2/2 selected checks."
+          },
+          {
+            "stage": "Independent review",
+            "status": "ready; not accepted",
+            "evidence": "REVIEW_AGENT_PAIRED_REVIEW_MULTI_SYNC_SOURCE_SPAN_VERIFICATION_V1.md status ready."
+          },
+          {
+            "stage": "Historical recovery",
+            "status": "blocked",
+            "evidence": "Missing first-merge checkpoint witness in preserved trace."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No authoritative host cleanup proof."
+          }
+        ],
+        "notes": [
+          "A GitHub packet state does not establish active execution."
+        ],
+        "unknowns": [
+          "Current local worktree, lock, disk and process counts.",
+          "Whether a supported historical witness exists elsewhere."
+        ],
+        "actions": [
+          "Existing independent reviewer: authenticate the landed multi-sync verifier.",
+          "Existing recovery owner: assess the missing checkpoint only after review acceptance and separate authorization."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed and archived; independent review ready",
+        "as_of": "2026-10-31T07:05:43Z",
+        "scope": "Multi-sync verifier and its paired review only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Land verifier",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "4693df7b"
+          },
+          {
+            "label": "Implementation tests",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Published summary reports passing suites"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Ready review packet; no accepted receipt"
+          },
+          {
+            "label": "Historical evidence resolution",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Missing unique checkpoint witness reported in implementation summary"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Existing independent reviewer must accept the landed verifier before protected evidence resolution."
+      },
+      "related": []
+    },
+    {
+      "id": "merged-source-rc035-4693df7b",
+      "headline": "A landed review fix remains stranded after a final validation timeout",
+      "summary": "The merged-source validation correction reached main through an authorized manual landing, but its ordinary finish failed and its independent review is blocked. A subsequent canonical check timed out on one of nine selected tests. The existing workstream and protected evidence remain held; the next step is a supported lifecycle resolution, not automatic cleanup.",
+      "body": "The RC-032 through RC-035 audit records a manually authorized fast-forward landing at 3ff5e637, followed by review deferment to blocked/manual. RC-035 canonical validation at the exact implementation commit reported 9 selected checks, 8 passed and 1 timed out (exit 5), with complete changed-file coverage. The audit says the implementation claim/lock/worktree remain preserved and no normal finish, reviewer launch or teardown occurred. These host details are documented relay reports, not directly inspected live host telemetry. No accepted PASS can be inferred from the earlier read-only ACCEPTABLE assessment.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-merged-source-validation-isolation-v1",
+      "occurred_at": "2026-10-31T07:05:43Z",
+      "bullets": [
+        "Code is on main, but canonical finish remains failed.",
+        "RC-035 reported 8/9 checks passing and one timeout.",
+        "Paired review is blocked/manual; no accepted PASS.",
+        "Preserve the existing claim and evidence until supported lifecycle resolution."
+      ],
+      "links": [
+        {
+          "title": "Exact manual landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3ff5e6379cb7193f9fb40b1730c2e4a31647c06b"
+        },
+        {
+          "title": "Review deferment",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c8c5ffc8d77a6df5eb69543ad1478f1d1dd6528f"
+        },
+        {
+          "title": "Final validation audit update",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4693df7b1fa6184b6ea4596f5a672d0f60c123b0"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A correction intended to make CUSTODIAN's reviews more reliable has reached the main codebase, but its own closeout is stuck. An authorized manual landing succeeded; the normal finish did not. The latest documented validation attempt then timed out on one test, leaving independent review on hold.",
+        "sections": [
+          {
+            "heading": "Code integration is not administrative completion",
+            "text": "The audit records a carefully bounded fast-forward landing and an independent read-only assessment with no blocking findings. Neither replaces the canonical review receipt or the ordinary lifecycle finish. The review packet is explicitly blocked and manual."
+          },
+          {
+            "heading": "A timeout with real consequences",
+            "text": "The final documented check selected nine tests. Eight passed, one timed out, and file coverage was complete. That is a failed validation, not a near-PASS that can be rounded up. The existing claim and worktree are deliberately preserved while a supported resolution is determined."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The project's bottleneck is now lifecycle integrity",
+            "explanation": "The code can be integrated while the dispatcher still sees an unresolved execution lock and a failed finish. Fixing source validation alone does not make the workstream safe to retire."
+          },
+          {
+            "title": "A clean diff is not a clean teardown",
+            "explanation": "The audit distinguishes source integration from release of the claim, lock and worktree. Those host-side gates need their own trustworthy evidence before downstream review can start."
+          }
+        ],
+        "takeaway": "The merged-source correction is landed but not fully validated, independently accepted or cleanly retired.",
+        "next_watch": "A supported, explicitly authorized resolution of the failed finish and timeout, followed by fresh validation and a canonical independent review."
+      },
+      "details": {
+        "overview": "RC-032 through RC-035 document an authorized manual landing at 3ff5e637 and subsequent blocked/manual review. RC-035 validation exited 5 with 8 passes and 1 timeout among 9 selected checks. This is documented host reporting, not live host inspection.",
+        "ledger": [
+          {
+            "stage": "Manual landing",
+            "status": "verified on main",
+            "evidence": "3ff5e637 commit and RC-032 audit."
+          },
+          {
+            "stage": "Final canonical validation",
+            "status": "reported failed",
+            "evidence": "RC-035: 9 selected, 8 pass, 1 timeout, exit 5."
+          },
+          {
+            "stage": "Normal finish",
+            "status": "failed",
+            "evidence": "Immutable original trace and RC-032 audit."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "blocked",
+            "evidence": "Review packet status blocked/manual; no canonical PASS."
+          },
+          {
+            "stage": "Claim and lock retirement",
+            "status": "reported held",
+            "evidence": "RC-035 audit states worktree, claim and lock preserved."
+          },
+          {
+            "stage": "Teardown",
+            "status": "not verified",
+            "evidence": "No live host teardown proof."
+          }
+        ],
+        "notes": [
+          "Earlier read-only ACCEPTABLE assessment is not canonical independent PASS.",
+          "An older 9/9 report was explicitly rejected as final evidence."
+        ],
+        "unknowns": [
+          "Current host resource counts and whether any subsequent local state changed.",
+          "Authorized supported path to reconcile failed finish without rewriting history."
+        ],
+        "actions": [
+          "Existing lifecycle owner: obtain authorization and a supported resolution for the held claim and failed validation before enabling paired review."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed manually; finish and review blocked",
+        "as_of": "2026-10-31T07:05:43Z",
+        "scope": "Merged-source correction and paired review",
+        "metrics": [
+          {
+            "id": "rc035-passed-checks",
+            "label": "RC-035 PASSED CHECKS",
+            "value": 8,
+            "verification": "reported",
+            "basis": "8 of 9 selected checks passed; 1 timed out, exit 5, per RC-035 audit.",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/reports/RC032_MANUAL_LANDING_AUDIT.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Land corrected implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "3ff5e637"
+          },
+          {
+            "label": "Pass final canonical validation",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "RC-035 exit 5, one timeout"
+          },
+          {
+            "label": "Canonical finish and retirement",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Original finish failed; claim and lock preserved"
+          },
+          {
+            "label": "Independent review",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Review packet blocked/manual"
+          },
+          {
+            "label": "Protected recovery",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No authorized apply proof"
+          },
+          {
+            "label": "Clean teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No live host proof"
+          }
+        ],
+        "next_gate": "Existing lifecycle owner needs a supported authorized resolution and passing validation before the paired reviewer may claim."
+      },
+      "related": []
+    },
     {
       "id": "review-manifest-4e2e7dcb-fa7789b7",
       "headline": "Review validation now checks historical test rules consistently",
@@ -1056,21 +1347,29 @@
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T04:22:00Z",
-    "source_main_sha": "fa7789b7ee6fda763ae683ed144117f353655ea9",
+    "observed_at": "2026-10-31T07:05:43Z",
+    "source_main_sha": "5c02e0dc6c0ff404625c50bbb7796cb47002bba7",
     "coverage": "partial",
-    "scope": "GitHub comparison and the two named correction implementation packets; not the live dispatcher queue",
+    "scope": "Two specifically inspected new independent-review packets and their archived implementation packets; no full live dispatcher audit.",
     "metrics": [
       {
-        "id": "other-archived-corrections",
-        "label": "NEWLY ARCHIVED CORRECTIONS",
-        "value": 2,
+        "id": "ready_auto",
+        "label": "READY REVIEW PACKETS (INSPECTED)",
+        "value": 1,
         "verification": "verified",
-        "basis": "Two named implementation packets archived in the nine main commits since 6baf6a3f; excludes all other packets.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/fa7789b7ee6fda763ae683ed144117f353655ea9"
+        "basis": "Of two inspected named review packets, multi-sync is ready/auto; merged-source is blocked/manual.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_MULTI_SYNC_SOURCE_SPAN_VERIFICATION_V1.md"
+      },
+      {
+        "id": "blocked",
+        "label": "BLOCKED REVIEW PACKETS (INSPECTED)",
+        "value": 1,
+        "verification": "verified",
+        "basis": "Of two inspected named review packets, merged-source is blocked/manual.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_MERGED_SOURCE_VALIDATION_ISOLATION_V1.md"
       }
     ],
-    "focus": "Authenticated independent acceptance of the landed review corrections before protected same-run recovery",
-    "note": "Nine main commits since prior snapshot; no full dispatcher audit or host proof. CI status not independently established."
+    "focus": "Resolve the merged-source correction's failed final validation and held lifecycle without compromising protected evidence.",
+    "note": "Eleven commits since prior inspected main; two named review packets counted, not the project queue. RC-035 host facts are documented relay evidence, not live telemetry."
   }
 }
