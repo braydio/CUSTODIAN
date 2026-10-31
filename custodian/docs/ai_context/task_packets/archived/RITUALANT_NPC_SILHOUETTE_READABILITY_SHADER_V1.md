@@ -41,10 +41,10 @@
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `Implementation is present and objectively validated; the final aesthetic acceptance remains pending human review.`
-- Completion boundary satisfied: `Yes. The actor-local material, production binding, focused phase/render checks, current-main integration, and user-owned visual approval are recorded; no scene geometry or gameplay authority changed.`
-- Acceptance satisfied: `Yes. Focused presentation/runtime checks and authored Underground smoke passed; changed-file validation passed 13/13 on the synchronized implementation candidate; the human approved the published kneeling ROI on 2026-10-17.`
-- Superseded/legacy production path disposition: `The hidden legacy Visual placeholder remains hidden and unchanged; production AnimatedSprite2D remains the sole Ritualant sprite.`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved — the hidden legacy Visual placeholder remains hidden and unchanged; production AnimatedSprite2D remains the sole Ritualant sprite.`
 - Evidence: `forlorn_ritualant_presentation PASS; forlorn_ritualant_runtime PASS; forlorn_ritualant_underground_smoke PASS; changed-file validation PASS (13/13) after the original-main integration; human visual decision approved 2026-10-17 for candidate 03678c0af88caf911166040a06fba460bcf4d2e0, run ritualant-readability-human-gate, artifact SHA-256 dffb67e0369b018c4fd5deb2410bf1634207bac62622f4695f20af3ef42931df. Evidence escrows: `.git/custodian-workflow/preserved-evidence/ritualant-npc-silhouette-readability-shader-v1/20261017T035803Z-c5ab7b12713c/MANIFEST.json` (SHA-256 17c0f94d6c6c956c301620131f4eac16a372207e81691039df435cda83617626) and `sidecars-rc058/MANIFEST.json` (SHA-256 84754e74d5bd693083fdcd0f29615a9dc29e1407d8cd54e5864d299eb3ba1445). Final synchronized validation is recorded by the canonical workstream finish report.`
 
 ## Execution Feedback
