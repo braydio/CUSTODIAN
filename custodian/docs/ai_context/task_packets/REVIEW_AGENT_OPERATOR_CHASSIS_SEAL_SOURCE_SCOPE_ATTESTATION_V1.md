@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-operator-chassis-seal-source-scope-attestation-v1`
 - Category: `agent-ops`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-operator-chassis-seal-source-scope-attestation-v1`
 - Locks: `paired-review-source-provenance`
