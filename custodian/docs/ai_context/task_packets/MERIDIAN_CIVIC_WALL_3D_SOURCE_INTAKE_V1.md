@@ -4,8 +4,8 @@
 - Workstream: `meridian-civic-wall-3d-source-intake-v1`
 - Category: `assets-art`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `none`
 - Locks: `meridian-civic-wall-source-intake`

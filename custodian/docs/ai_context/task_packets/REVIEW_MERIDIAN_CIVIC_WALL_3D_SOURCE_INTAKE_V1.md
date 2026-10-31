@@ -5,8 +5,8 @@
 - Category: `assets-art`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P2`
 - Depends on: `meridian-civic-wall-3d-source-intake-v1`
 - Locks: `meridian-civic-wall-source-intake`
