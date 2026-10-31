@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-multi-sync-source-span-verification-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-multi-sync-source-span-verification-v1`
