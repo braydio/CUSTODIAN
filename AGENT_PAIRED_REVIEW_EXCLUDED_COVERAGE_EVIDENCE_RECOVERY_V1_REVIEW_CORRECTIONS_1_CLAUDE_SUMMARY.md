@@ -16,10 +16,9 @@ Implementation and technical validation are complete; fresh paired review is pen
 ## Validation so far
 
 - Focused attested-manifest tests: PASS.
-- Paired-review runner suite: PASS, 247 tests, 154.527 seconds, as selected by canonical changed-file validation.
-- Canonical changed-file validation: PASS, 2 selected checks, 2 passed, 0 failed/timed out. The runner test used a process-local 360-second timeout because its 247 tests take longer than the manifest's 120-second limit; no manifest or shared validation policy was changed. Report: `/tmp/custodian-procession-correction-validation.json`.
+- Canonical changed-file validation after synchronizing with `origin/main`: PASS, 3 selected checks, 3 passed, 0 failed/timed out, with complete coverage. `paired_review_runner_unit` passed all 247 tests in 144.414 seconds using a process-local 360-second timeout; no manifest or shared policy was changed. Report: `/tmp/custodian-procession-correction-after-sync.json`.
 - Packet authoring preflight: PASS.
-- Review pairing validation: PASS (148 review packets).
+- Review pairing validation: PASS (149 review packets).
 - `py_compile` and `git diff --check`: PASS.
 
 ## Safety boundary
