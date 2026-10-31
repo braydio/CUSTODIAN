@@ -29,7 +29,7 @@
 - Review focus: Schema extension backward compatibility; exact source provenance/derivation; no false LFS hydration; unsafe path handling; static renderer rejecting rigged assets; no second animation pipeline or registry; vendored decoder notice and legacy `.meshy` decoder exclusion; fixed 128/512 projection and alpha/root contract; candidate-only publication.
 - Acceptance: Produce a findings-first independent review of the landed implementation, with stable cycle-scoped IDs and dispositions. Record `passed` only if all acceptance claims are evidenced; do not infer art approval or runtime eligibility.
 - Non-goals: Do not edit the implementation, source master, animation compiler, model geometry, runtime or review artifacts. Do not approve the experimental model.
-- Task overrides: `TASK OVERRIDE: Paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 

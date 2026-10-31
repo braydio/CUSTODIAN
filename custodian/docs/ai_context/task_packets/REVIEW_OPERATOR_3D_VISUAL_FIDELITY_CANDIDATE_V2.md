@@ -29,7 +29,7 @@
 - Review focus: No original/master/motion mutation; source provenance and parent identity; rest/mapping invalidation correctness; pose selection and timing; fixed-scale/root/camera/direction contract; compliant pixelart conversion; visor hierarchy; contact/alpha/temporal proof; candidate-only status; human art gate; no unintended runtime changes.
 - Acceptance: Record a findings-first fresh-context review with stable cycle IDs and dispositions. Technical pass does not grant art approval; any unresolved visual decision remains human-required.
 - Non-goals: No candidate correction, model edit, full animation render, runtime integration, timing approval or aesthetic approval.
-- Task overrides: `TASK OVERRIDE: Paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Procedure
 
