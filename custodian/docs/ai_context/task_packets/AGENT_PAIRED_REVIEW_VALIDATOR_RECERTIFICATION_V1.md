@@ -4,8 +4,8 @@
 - Workstream: `agent-paired-review-validator-recertification-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `workstream-finish-sync-provenance`
