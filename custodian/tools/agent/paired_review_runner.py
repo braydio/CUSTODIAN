@@ -44,6 +44,11 @@ SCHEMA = "custodian.paired_review_run.v1"
 CLAIM_SENTINEL = "CUSTODIAN_DISPATCH_RESULT_JSON:"
 CONTINUATION_SCHEMA = "custodian.paired_review_continuation.v1"
 REDACTED_FINAL_RECOVERY_SCHEMA = "custodian.paired_review_redacted_final_recovery.v1"
+DUAL_DISPOSITION_WORKSTREAM = "review-agent-paired-review-redacted-final-outcome-recovery-v1"
+DUAL_DISPOSITION_RUN_ID = "20261030T191402Z-4dd067b9b8e2"
+DUAL_DISPOSITION_CLAIM_RUN_ID = "20261030T191411Z-efd97a2bdb1f"
+DUAL_DISPOSITION_RECOVERY_SCHEMA = "custodian.paired_review_dual_disposition_recovery.v1"
+DUAL_DISPOSITION_ERROR = "archived review packet is missing; coordinator closeout is recoverable"
 
 # This recovery exists for one independently reviewed, already-held run. It is
 # intentionally not an alternate parser or a general invalid-disposition retry.
@@ -336,9 +341,14 @@ def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: 
                implementation_commit: str | None = None,
                implementation_summary_path: str | None = None,
                validation_sha256: str | None = None,
-               source_span: dict | None = None) -> str:
+               source_span: dict | None = None, target_workstream: str | None = None,
+               review_cycle: int = 0) -> str:
     validation_path = str(run_dir / "validation.json") if run_dir else "the run evidence directory's validation.json"
     review_summary_path = expected_summary_path(workstream)
+    archived_review_path = f"{PACKET_ROOT}/archived/{Path(packet_path).name}"
+    run_id = run_dir.name if run_dir else "the exact run ID from the claim receipt"
+    target_identity = target_workstream or "the exact target workstream from the review packet"
+    outcome_contract = f"""The required complete archived review packet is `{archived_review_path}` (archive this exact active review packet `{packet_path}`, preserving its identity and review cycle). It must contain exactly one canonical `## Review Outcome` section using schema `{review_outcome.SCHEMA}` with these fields: `Schema`, `Outcome`, `Review workstream`, `Review target workstream`, `Reviewed main`, `Reviewed implementation commit`, `Reviewer context`, `Reviewer provenance`, `Run ID`, `Review cycle`, and `Finding IDs`. Bind them to review workstream `{workstream}`, target workstream `{target_identity}`, run ID `{run_id}`, review cycle `{review_cycle}`, reviewed main `{reviewed_main or 'the exact pinned main SHA'}`, and implementation commit `{implementation_commit or 'the exact pinned implementation SHA'}`. Record the exact line `- Review cycle: `{review_cycle}``. Reviewer context is `fresh`; provenance must be truthful. Record `- Finding IDs: `none`` only for your own `passed` outcome; findings and human-required outcomes require unique stable IDs for this review cycle. The canonical target receipt is written only in `{target_path}` and must pass the strict receipt verifier. The exact root summary path is `{review_summary_path}`. These artifacts are required for every outcome; never infer or transcribe an earlier verdict."""
     implementation_summary = implementation_summary_path or "the target implementation's exact root summary path"
     backlink = f"Use this exact Authoring chat URL in the summary: {authoring_chat}" if authoring_chat else "Preserve the packet's exact Authoring chat URL in the summary."
     pinned = f"Review the immutable baseline `origin/main` at `{reviewed_main}`; report this exact SHA in the review receipt." if reviewed_main else "Record the exact immutable reviewed-main SHA in the review receipt."
@@ -348,7 +358,9 @@ def prompt_for(workstream: str, packet_path: str, target_path: str, *, run_dir: 
                     if source_span else "Use the pinned canonical implementation commit as the source range unless coordinator provenance records a separate source span.")
     return f"""You are the fresh independent paired reviewer for CUSTODIAN workstream `{workstream}`.
 
-Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{target_path}`, `{implementation_summary}`, and the landed diff/current main. {pinned} {implementation} {source_range} Inspect the coordinator-authored validation report at `{validation_path}` (SHA-256 `{validation_sha256 or 'provided in coordinator-validation.json'}`) as immutable execution evidence. Do not run or replace the host validation report. Independently assess the implementation and report your own verdict. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code or `{implementation_summary}`; treat it as read-only. Record findings first. Write the canonical review summary only to `{review_summary_path}` and the required review receipt. Choose `passed`, `findings`, or `human_required` from your own evidence-backed conclusion; do not default to PASS. {backlink}
+Reconstruct the review solely from durable repository evidence in this claimed worktree. Read `AGENTS.md`, `custodian/AGENTS.md`, `{packet_path}`, `{archived_review_path}`, `{target_path}`, `{implementation_summary}`, and the landed diff/current main. {pinned} {implementation} {source_range} Inspect the coordinator-authored validation report at `{validation_path}` (SHA-256 `{validation_sha256 or 'provided in coordinator-validation.json'}`) as immutable execution evidence. Do not run or replace the host validation report. Independently assess the implementation and report your own verdict. Do not use, request, or infer the implementation-session transcript. Do not edit reviewed implementation/runtime code or `{implementation_summary}`; treat it as read-only. Record findings first. Write the canonical review summary only to `{review_summary_path}`. Write the complete canonical archived review packet at `{archived_review_path}` and the required review receipt only at `{target_path}` if your independent verdict is `passed`. Choose `passed`, `findings`, or `human_required` from your own evidence-backed conclusion; do not default to PASS. {backlink}
+
+{outcome_contract}
 
 This is a restricted reviewer checkout. Do not run `git fetch`, `git push`, `git add`, `git commit`, `workstream.py checkpoint`, or `workstream.py finish`; shared Git metadata and landing belong to the coordinator. Do not remove the worktree or branch. If the target packet needs its receipt, append exactly one `### Review Receipt: {workstream}` block under `## Independent Review` (or append that section at EOF), preserving all existing target bytes. Use this exact field layout, substituting the review packet's exact target identity and the pinned main and implementation SHAs:
 
@@ -1188,6 +1200,11 @@ def _write_atomic(path: Path, value: str):
         handle.flush()
         os.fsync(handle.fileno())
     os.replace(temporary, path)
+    directory_fd = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory_fd)
+    finally:
+        os.close(directory_fd)
 
 
 def _write_bytes_exclusive(path: Path, value: bytes) -> None:
@@ -1874,6 +1891,13 @@ For this explicitly authorized second continuation, use these exact artifact pat
 - Exact root review summary: `{summary_path}`.
 
 The coordinator will reject a missing archived packet, a receipt placed only in the review packet, an extra or malformed Independent Review section, a mismatched Review Outcome, or a missing summary. Earlier PASS text is not a verdict and is not supplied as review evidence. Prior worktree notes are historical context only; independently re-evaluate the implementation and produce only the verdict you reach. Preserve findings or human-required outcomes without claiming PASS.{receipt_shape}""" if continuation_number == 2 else ""
+    if continuation_number == 3:
+        receipt_instruction = f"""
+For this exact dual-disposition recovery continuation, independently author every canonical artifact:
+- Archive `{packet_path}` to `{archive_path}` and include one `## Review Outcome` with schema `{review_outcome.SCHEMA}`, bound to review workstream `{workstream}`, target workstream `{receipt_target_workstream}`, run `{run_id}`, the active packet's review cycle, pinned main `{reviewed_main}`, and implementation `{implementation_commit}`. Include all canonical fields: Schema, Outcome, Review workstream, Review target workstream, Reviewed main, Reviewed implementation commit, Reviewer context, Reviewer provenance, Run ID, Review cycle, and Finding IDs.
+- Write the exact root summary `{summary_path}` and preserve the exact authoring-chat backlink.
+- Write a target receipt only to `{target_path}` if your own independent disposition is `passed`; it must satisfy the strict canonical receipt verifier. Findings and `human_required` outcomes leave the target at its pinned baseline and require unique cycle-scoped finding IDs.
+- Preserved prior reviewer files are historical evidence only. Do not copy, paraphrase, or infer their reported PASS as your disposition."""
     return f"""You are a new fresh independent reviewer continuing the exact preserved paired-review claim `{workstream}`.
 
 This is a new ephemeral reviewer context, not a restoration of the original Codex session. The original claim, branch, worktree, and run ID remain unchanged. Review run ID: `{run_id}`. Review the immutable baseline `{reviewed_main}` and implementation commit `{implementation_commit}`. {source_range} Read `{packet_path}`, the archived target `{target_path}`, the original reviewer disposition snapshots below, the implementation's exact root summary, the original authoring-chat URL `{backlink}`, and the immutable coordinator validation report at `{report_path}` (SHA-256 `{report_sha256}`). Independently inspect the exact archived implementation diff and all applicable acceptance claims. A green coordinator report proves execution coverage only; it is not a review verdict.
@@ -2401,6 +2425,393 @@ def _redacted_final_plan_digest(plan: dict) -> str:
     body = dict(plan)
     body.pop("plan_sha256", None)
     return _sha256_bytes(json.dumps(body, sort_keys=True, separators=(",", ":")).encode())
+
+
+def _dual_disposition_recovery_root(common: Path, workstream: str, run_id: str) -> Path:
+    root = common / "custodian-review-recoveries" / "dual-disposition" / workstream / run_id
+    current = common
+    for part in root.relative_to(common).parts:
+        current = current / part
+        if current.is_symlink() or (current.exists() and not current.is_dir()):
+            raise RunnerError("dual-disposition recovery evidence path is unsafe")
+    if not root.resolve().is_relative_to(common.resolve()):
+        raise RunnerError("dual-disposition recovery evidence path escapes shared Git metadata")
+    return root
+
+
+def _dual_disposition_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+    """Build the exact-run plan for the one known missing-archive/extra-newline state."""
+    if workstream != DUAL_DISPOSITION_WORKSTREAM or run_id != DUAL_DISPOSITION_RUN_ID:
+        raise RunnerError("dual-disposition recovery is pinned to its one exact protected run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    run_dir = common / "custodian-review-runs" / workstream / run_id
+    if any(path.is_symlink() for path in (run_dir.parent.parent, run_dir.parent, run_dir)) or not run_dir.is_dir():
+        raise RunnerError("exact dual-disposition run directory is missing or unsafe")
+    run_manifest = _file_manifest(run_dir)
+    required = {"metadata.json", "claim.stdout", "claim-receipt.json", "codex.jsonl",
+                "last-message.txt", "validation.json", "coordinator-validation.json", "RECOVERY.md"}
+    if set(run_manifest) - required - {"claim.stderr", "codex.stderr"} or not required.issubset(run_manifest):
+        raise RunnerError("dual-disposition run evidence has missing or unexpected files")
+    metadata = json.loads((run_dir / "metadata.json").read_text(encoding="utf-8"))
+    if (not isinstance(metadata, dict) or metadata.get("schema") != SCHEMA
+            or metadata.get("workstream") != workstream or metadata.get("run_id") != run_id
+            or metadata.get("run_dir") != str(run_dir) or metadata.get("phase") != "post_exit_recovery"
+            or metadata.get("fresh") is not True or metadata.get("exit_code") != 0
+            or metadata.get("post_exit_error") != DUAL_DISPOSITION_ERROR
+            or metadata.get("claim_run_id") != DUAL_DISPOSITION_CLAIM_RUN_ID):
+        raise RunnerError("run metadata does not match the exact dual-disposition claim and failure")
+    if not (run_dir / "RECOVERY.md").read_text(encoding="utf-8").startswith(
+            f"Coordinator could not verify/land review evidence: {DUAL_DISPOSITION_ERROR}."):
+        raise RunnerError("recovery note does not corroborate the exact dual-disposition failure")
+    if any((run_dir / name).read_bytes().strip() for name in ("claim.stderr", "codex.stderr")
+           if (run_dir / name).is_file()):
+        raise RunnerError("claim or reviewer stderr contains unexplained errors")
+    reviewed_main = metadata.get("reviewed_main")
+    main_sha = _cached_remote_ref_for_readonly_plan(repo, "main")
+    if (not re.fullmatch(r"[0-9a-f]{40,64}", str(reviewed_main or ""))
+            or subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, main_sha], cwd=repo,
+                              capture_output=True).returncode):
+        raise RunnerError("pinned reviewed main is invalid or no longer an ancestor of current main")
+    branch = f"agent/{workstream}"
+    if metadata.get("branch") != branch:
+        raise RunnerError("dual-disposition branch does not match the exact review workstream")
+    claim = _claim_identity(run_dir, workstream, repo, metadata)
+    claim_path = run_dir / "claim-receipt.json"
+    if claim_path.is_symlink():
+        raise RunnerError("structured claim receipt is unsafe")
+    claim_record = json.loads(claim_path.read_text(encoding="utf-8"))
+    verified_claim = parse_claim_receipt(CLAIM_SENTINEL + json.dumps(claim_record), workstream, repo)
+    worktree = Path(claim["worktree"]).resolve()
+    if (claim_record.get("run_id") != DUAL_DISPOSITION_CLAIM_RUN_ID
+            or verified_claim.get("run_id") != DUAL_DISPOSITION_CLAIM_RUN_ID
+            or metadata.get("worktree") != str(worktree) or claim.get("branch") != branch
+            or claim.get("packet") != metadata.get("packet")
+            or common_dir(worktree).resolve() != common
+            or git(worktree, "branch", "--show-current") != branch
+            or git(worktree, "rev-parse", "HEAD^{commit}") != reviewed_main):
+        raise RunnerError("claim receipt, branch, worktree, and pinned baseline do not agree")
+    if _process_owns_worktree(worktree):
+        raise RunnerError("a live process still owns the original reviewer worktree")
+    remote_tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+    if remote_tip != reviewed_main:
+        raise RunnerError("published reviewer branch moved from its pinned baseline")
+    recovery_root = _dual_disposition_recovery_root(common, workstream, run_id)
+    if recovery_root.exists() or (run_dir / "continuation-01").exists():
+        raise RunnerError("dual-disposition recovery or continuation already exists; inspect before replay")
+
+    runner_source = _show_at(repo, reviewed_main, "custodian/tools/agent/paired_review_runner.py")
+    control_source = _show_at(repo, reviewed_main, "custodian/tools/agent/workflow_control.py")
+    final, session = _parse_redacted_final_session(run_dir, metadata, runner_source, control_source)
+    active_path = claim["packet"]
+    archive_path = f"{PACKET_ROOT}/archived/{Path(active_path).name}"
+    if active_path != f"{PACKET_ROOT}/{Path(active_path).name}":
+        raise RunnerError("claimed review packet is not a canonical root packet")
+    packet_text = _show_at(repo, reviewed_main, active_path)
+    packet = parse_packet(active_path, packet_text)
+    if (packet.error or packet.workstream != workstream or packet.kind != "review"
+            or packet.review_target_workstream is None or packet.review_target_packet is None):
+        raise RunnerError("pinned active review packet identity is invalid")
+    if (worktree / archive_path).exists() or (worktree / archive_path).is_symlink():
+        raise RunnerError("archived review packet is present; exact missing-archive predicate failed")
+    if (worktree / active_path).is_symlink() or not (worktree / active_path).is_file():
+        raise RunnerError("active review packet is missing or unsafe in the original checkout")
+    if (worktree / active_path).read_bytes() != packet_text.encode("utf-8"):
+        raise RunnerError("active reviewer packet differs from its pinned baseline")
+    target_path = packet.review_target_packet
+    target_workstream = packet.review_target_workstream
+    if target_path != f"{PACKET_ROOT}/archived/{Path(target_path).name}":
+        raise RunnerError("review target packet is not its exact canonical archived path")
+    baseline = _show_at(repo, reviewed_main, target_path)
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, reviewed_main, target_path, target_workstream, baseline)
+    if identity_error:
+        raise RunnerError("pinned target implementation identity is invalid: " + identity_error)
+    target_file = worktree / target_path
+    if target_file.is_symlink() or not target_file.is_file():
+        raise RunnerError("reviewer-authored target receipt is missing or unsafe")
+    candidate_bytes = target_file.read_bytes()
+    try:
+        candidate = candidate_bytes.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise RunnerError("reviewer-authored target receipt is not UTF-8") from exc
+    malformed_marker = "\n\n\n## Independent Review"
+    if candidate.count(malformed_marker) != 1 or "\n\n\n\n## Independent Review" in candidate:
+        raise RunnerError("target receipt does not contain exactly one diagnosed extra separator newline")
+    normalized = candidate.replace(malformed_marker, "\n\n## Independent Review", 1)
+    receipt, receipt_error = verify_review_receipt_delta(
+        baseline, normalized, review_workstream=workstream, target_workstream=target_workstream,
+        reviewed_main=reviewed_main, target_implementation_commit=implementation_commit)
+    if (receipt_error or receipt is None or receipt.get("Status") != "passed"
+            or receipt.get("Blocking defects") != "0" or receipt.get("Material gaps") != "0"):
+        raise RunnerError("target receipt fails exact verification after the one diagnosed separator normalization")
+    summary_path = worktree / expected_summary_path(workstream)
+    if summary_path.is_symlink() or not summary_path.is_file():
+        raise RunnerError("original reviewer summary is missing or unsafe")
+    summary_bytes = summary_path.read_bytes()
+    summary = summary_bytes.decode("utf-8")
+    authoring = packet.authoring_chat
+    pass_markers = len(re.findall(r"(?im)^\s*(?:\*\*)?Verdict:\s*`?passed\b", final))
+    contradiction = re.search(r"(?im)^\s*(?:Verdict|Review Outcome):\s*`?(?:findings|human_required|blocked|failed)\b", final)
+    if (pass_markers != 1 or contradiction or workstream not in final
+            or reviewed_main not in final or implementation_commit not in final
+            or summary.count("## Verdict: passed") != 1 or "Findings: none" not in summary
+            or f"Workstream: `{workstream}`" not in summary
+            or implementation_commit not in summary or not authoring
+            or f"Authoring chat: {authoring}" not in summary):
+        raise RunnerError("original reviewer summary contradicts the exact packet or target identity")
+    inventory = _worktree_inventory(worktree)
+    allowed = {target_path, expected_summary_path(workstream), active_path,
+               archive_path, f"{PACKET_ROOT}/README.md"}
+    if set(inventory) - allowed or target_path not in inventory:
+        raise RunnerError("reviewer worktree contains unexpected or missing changed-artifact evidence")
+    for relative in inventory:
+        candidate_path = worktree / relative
+        if candidate_path.is_symlink() or not candidate_path.resolve().is_relative_to(worktree.resolve()):
+            raise RunnerError("reviewer worktree changes contain a symlink or path escape")
+    host = _host_evidence_for_continuation(
+        repo, worktree, run_dir, metadata, reviewed_main, implementation_commit,
+        target_workstream, target_path)
+    journal_path = recovery_root / "recovery.json"
+    plan = {
+        "schema": DUAL_DISPOSITION_RECOVERY_SCHEMA, "workstream": workstream,
+        "run_id": run_id, "claim_run_id": DUAL_DISPOSITION_CLAIM_RUN_ID,
+        "reviewed_main": reviewed_main, "coordinator_main": main_sha,
+        "branch": branch, "remote_tip": remote_tip, "reviewer_commit": reviewed_main,
+        "local_tip": git(worktree, "rev-parse", f"refs/heads/{branch}^{{commit}}"),
+        "lock_path": str(common / "custodian-review-runs" / "locks" / f"{workstream}.lock"),
+        "lock_identity": {"device": (common / "custodian-review-runs" / "locks" / f"{workstream}.lock").stat().st_dev,
+                          "inode": (common / "custodian-review-runs" / "locks" / f"{workstream}.lock").stat().st_ino},
+        "process_owners": [],
+        "worktree": str(worktree), "claim_receipt_sha256": _sha256_bytes(claim_path.read_bytes()),
+        "packet": active_path, "archive_packet": archive_path,
+        "target_workstream": target_workstream, "target_packet": target_path,
+        "implementation_commit": implementation_commit, "review_cycle": packet.review_cycle,
+        "authoring_chat": authoring, "review_summary": str(summary_path),
+        "target_baseline_sha256": _sha256_bytes(baseline.encode()),
+        "target_candidate_sha256": _sha256_bytes(candidate_bytes),
+        "normalized_receipt_sha256": _sha256_bytes(normalized.encode()),
+        "target_receipt": receipt,
+        "review_summary_sha256": _sha256_bytes(summary_bytes),
+        "worktree_inventory": inventory,
+        "run_evidence_sha256": run_manifest,
+        "run_manifest_sha256": _manifest_digest(run_manifest),
+        "session": session,
+        "host_validation": {key: host[key] for key in ("report_sha256", "metadata_sha256", "implementation_commit")},
+        "recovery_root": str(recovery_root), "journal": str(journal_path),
+        "actions": ["preserve changed reviewer artifacts byte-for-byte", "verify preservation manifest",
+                    "restore target packet to pinned baseline", "authorize fresh independent continuation separately"],
+    }
+    plan["plan_sha256"] = _redacted_final_plan_digest(plan)
+    return plan
+
+
+def plan_dual_disposition_recovery(repo: Path, workstream: str, run_id: str) -> dict:
+    if not ID_RE.fullmatch(workstream) or not _RUN_ID_RE.fullmatch(run_id):
+        raise RunnerError("dual-disposition recovery requires exact workstream and run IDs")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery owns the exact review run") from exc
+        return _dual_disposition_plan_unlocked(repo, workstream, run_id)
+
+
+def _dual_plan_digest(plan: dict) -> str:
+    body = dict(plan)
+    body.pop("plan_sha256", None)
+    return _sha256_bytes(json.dumps(body, sort_keys=True, separators=(",", ":")).encode())
+
+
+def _read_dual_disposition_journal(common: Path, workstream: str, run_id: str) -> dict | None:
+    root = _dual_disposition_recovery_root(common, workstream, run_id)
+    path = root / "recovery.json"
+    if not root.exists() and not path.exists():
+        return None
+    if path.is_symlink() or not path.is_file():
+        raise RunnerError("dual-disposition recovery journal is missing or unsafe")
+    try:
+        journal = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("dual-disposition recovery journal is malformed") from exc
+    plan = journal.get("plan") if isinstance(journal, dict) else None
+    if (not isinstance(journal, dict) or not isinstance(plan, dict)
+            or journal.get("schema") != DUAL_DISPOSITION_RECOVERY_SCHEMA
+            or journal.get("workstream") != workstream or journal.get("run_id") != run_id
+            or journal.get("stage") not in {"preserving", "artifacts_preserved", "target_restored"}
+            or journal.get("plan_sha256") != _dual_plan_digest(plan)
+            or plan.get("plan_sha256") != journal.get("plan_sha256")):
+        raise RunnerError("dual-disposition recovery journal identity, stage, or plan digest is invalid")
+    run_dir = common / "custodian-review-runs" / workstream / run_id
+    if _file_manifest(run_dir) != plan.get("run_evidence_sha256"):
+        raise RunnerError("original reviewer run evidence changed after dual-disposition planning")
+    if journal["stage"] == "preserving":
+        partial_manifest = root / "preservation-manifest.json"
+        if not partial_manifest.exists():
+            return journal
+        if partial_manifest.is_symlink() or not partial_manifest.is_file():
+            raise RunnerError("partial dual-disposition preservation manifest is unsafe")
+        try:
+            partial = json.loads(partial_manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RunnerError("partial dual-disposition preservation manifest is malformed") from exc
+        if (not isinstance(partial, dict) or partial.get("plan_sha256") != journal["plan_sha256"]
+                or partial.get("schema") != DUAL_DISPOSITION_RECOVERY_SCHEMA
+                or partial.get("workstream") != workstream or partial.get("run_id") != run_id
+                or partial.get("run_evidence_sha256") != plan.get("run_evidence_sha256")
+                or not isinstance(partial.get("artifacts"), list)):
+            raise RunnerError("partial dual-disposition preservation manifest has another identity")
+        for item in partial["artifacts"]:
+            if not isinstance(item, dict):
+                raise RunnerError("partial dual-disposition manifest contains an invalid artifact")
+            if item.get("state") == "absent":
+                continue
+            copy = Path(item.get("copy", ""))
+            if copy.is_symlink() or not copy.is_file() or _sha256_bytes(copy.read_bytes()) != item.get("sha256"):
+                raise RunnerError("partial dual-disposition artifact copy failed verification")
+        return journal
+    manifest = root / "preservation-manifest.json"
+    if manifest.is_symlink() or not manifest.is_file():
+        raise RunnerError("dual-disposition preservation manifest is missing or unsafe")
+    raw = manifest.read_bytes()
+    if _sha256_bytes(raw) != journal.get("manifest_sha256"):
+        raise RunnerError("dual-disposition preservation manifest changed")
+    data = json.loads(raw)
+    if (not isinstance(data, dict) or data.get("schema") != DUAL_DISPOSITION_RECOVERY_SCHEMA
+            or data.get("workstream") != workstream or data.get("run_id") != run_id
+            or not isinstance(data.get("artifacts"), list)
+            or data.get("plan_sha256") != journal["plan_sha256"]
+            or data.get("run_evidence_sha256") != journal["plan"].get("run_evidence_sha256")):
+        raise RunnerError("dual-disposition preservation manifest identity is invalid")
+    for item in data["artifacts"]:
+        if not isinstance(item, dict):
+            raise RunnerError("dual-disposition manifest contains an invalid artifact")
+        if item.get("state") == "absent":
+            continue
+        copy = Path(item.get("copy", ""))
+        if copy.is_symlink() or not copy.is_file() or _sha256_bytes(copy.read_bytes()) != item.get("sha256"):
+            raise RunnerError("dual-disposition preserved reviewer artifact changed")
+    return journal
+
+
+def apply_dual_disposition_recovery(repo: Path, workstream: str, run_id: str,
+                                    plan_sha256: str) -> dict:
+    if (workstream != DUAL_DISPOSITION_WORKSTREAM or run_id != DUAL_DISPOSITION_RUN_ID
+            or not re.fullmatch(r"[0-9a-f]{64}", plan_sha256)):
+        raise RunnerError("dual-disposition apply requires the one exact run and plan SHA-256")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if lock_path.is_symlink() or not lock_path.is_file():
+        raise RunnerError("original paired-review lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError("another supervisor or recovery owns the exact review run") from exc
+        prior = _read_dual_disposition_journal(common, workstream, run_id)
+        if prior is not None:
+            if prior["plan_sha256"] != plan_sha256:
+                raise RunnerError("existing dual-disposition journal belongs to a different plan")
+            fresh = prior["plan"]
+            root = Path(fresh["recovery_root"])
+            if prior["stage"] == "target_restored":
+                target = Path(fresh["worktree"]) / fresh["target_packet"]
+                baseline = _show_at(repo, fresh["reviewed_main"], fresh["target_packet"]).encode()
+                if target.is_symlink() or not target.is_file() or target.read_bytes() != baseline:
+                    raise RunnerError("idempotent dual-disposition replay found a changed restored target")
+                return {"schema": DUAL_DISPOSITION_RECOVERY_SCHEMA, "workstream": workstream,
+                        "run_id": run_id, "plan_sha256": plan_sha256,
+                        "preservation_manifest_sha256": prior["manifest_sha256"],
+                        "restored_target_sha256": _sha256_bytes(baseline),
+                        "stage": prior["stage"], "fresh_reviewer_required": True,
+                        "reviewer_launched": False, "idempotent_replay": True}
+        else:
+            fresh = _dual_disposition_plan_unlocked(repo, workstream, run_id)
+            if fresh["plan_sha256"] != plan_sha256:
+                raise RunnerError("dual-disposition evidence or identities changed; obtain a fresh read-only plan")
+            root = Path(fresh["recovery_root"])
+            root.mkdir(parents=True, exist_ok=False)
+        evidence_dir = root / "original-reviewer-artifacts"
+        evidence_dir.mkdir(exist_ok=True)
+        worktree = Path(fresh["worktree"])
+        expected_copy_names = {f"{index:02d}-{Path(relative).name}"
+                               for index, (relative, digest) in enumerate(sorted(fresh["worktree_inventory"].items()))
+                               if digest != "<absent>"}
+        if {path.name for path in evidence_dir.iterdir()} - expected_copy_names:
+            raise RunnerError("partial preservation directory contains unplanned reviewer artifacts")
+        journal_path = Path(fresh["journal"])
+        if prior is None:
+            journal = {"schema": DUAL_DISPOSITION_RECOVERY_SCHEMA, "workstream": workstream,
+                       "run_id": run_id, "plan_sha256": plan_sha256, "plan": fresh,
+                       "stage": "preserving"}
+            _write_bytes_exclusive(journal_path, (json.dumps(journal, indent=2, sort_keys=True) + "\n").encode())
+        else:
+            journal = prior
+        copies = []
+        for index, (relative, digest) in enumerate(sorted(fresh["worktree_inventory"].items())):
+            if digest == "<absent>":
+                copies.append({"source": relative, "state": "absent", "sha256": digest})
+                continue
+            source = worktree / relative
+            if source.is_symlink() or not source.is_file() or _sha256_bytes(source.read_bytes()) != digest:
+                raise RunnerError("reviewer artifact changed before byte-exact preservation")
+            destination = evidence_dir / f"{index:02d}-{Path(relative).name}"
+            if destination.exists():
+                if destination.is_symlink() or not destination.is_file() or _sha256_bytes(destination.read_bytes()) != digest:
+                    raise RunnerError("partial reviewer-artifact preservation copy is corrupt")
+                record = {"source": str(source), "copy": str(destination), "sha256": digest}
+            else:
+                record = _preserve_file(source, destination)
+            record.update({"relative_path": relative, "evidence_path": str(destination)})
+            copies.append(record)
+        artifact_manifest = {"schema": DUAL_DISPOSITION_RECOVERY_SCHEMA,
+                             "workstream": workstream, "run_id": run_id,
+                             "plan_sha256": plan_sha256, "artifacts": copies,
+                             "run_evidence_sha256": fresh["run_evidence_sha256"]}
+        manifest_bytes = (json.dumps(artifact_manifest, indent=2, sort_keys=True) + "\n").encode()
+        manifest_path = root / "preservation-manifest.json"
+        if manifest_path.exists():
+            if manifest_path.is_symlink() or manifest_path.read_bytes() != manifest_bytes:
+                raise RunnerError("existing partial preservation manifest differs from the exact plan")
+        else:
+            _write_bytes_exclusive(manifest_path, manifest_bytes)
+        for item in copies:
+            if item.get("state") == "absent":
+                continue
+            if _sha256_bytes(Path(item["evidence_path"]).read_bytes()) != item["sha256"]:
+                raise RunnerError("durable reviewer-artifact preservation copy failed verification")
+        journal.update({"stage": "artifacts_preserved", "manifest": str(manifest_path),
+                        "manifest_sha256": _sha256_bytes(manifest_bytes)})
+        _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+        if _file_manifest(Path(common / "custodian-review-runs" / workstream / run_id)) != fresh["run_evidence_sha256"]:
+            raise RunnerError("original reviewer run evidence changed during preservation")
+        target = worktree / fresh["target_packet"]
+        baseline = _show_at(repo, fresh["reviewed_main"], fresh["target_packet"]).encode()
+        current_target = target.read_bytes()
+        if current_target == baseline:
+            pass  # The journal proves a prior atomic restore completed before an interrupted journal update.
+        elif _sha256_bytes(current_target) == fresh["target_candidate_sha256"]:
+            _write_atomic(target, baseline.decode("utf-8"))
+        else:
+            raise RunnerError("reviewer target changed before pinned baseline restoration")
+        if target.read_bytes() != baseline:
+            raise RunnerError("pinned target baseline restoration did not verify byte-for-byte")
+        journal.update({"stage": "target_restored", "restored_target_sha256": _sha256_bytes(baseline)})
+        _write_atomic(journal_path, json.dumps(journal, indent=2, sort_keys=True) + "\n")
+        if _file_manifest(Path(common / "custodian-review-runs" / workstream / run_id)) != fresh["run_evidence_sha256"]:
+            raise RunnerError("original reviewer run evidence changed during baseline restoration")
+        return {"schema": DUAL_DISPOSITION_RECOVERY_SCHEMA, "workstream": workstream,
+                "run_id": run_id, "plan_sha256": plan_sha256,
+                "preservation_manifest_sha256": journal["manifest_sha256"],
+                "restored_target_sha256": journal["restored_target_sha256"],
+                "stage": journal["stage"], "fresh_reviewer_required": True,
+                "reviewer_launched": False}
 
 
 def _read_redacted_final_journal(path: Path, workstream: str, run_id: str) -> dict | None:
@@ -3022,7 +3433,9 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
                                       implementation_commit=implementation_commit,
                                       implementation_summary_path=expected_summary_path(packet.review_target_workstream or ""),
                                       validation_sha256=host_evidence["report_sha256"],
-                                      source_span=host_evidence.get("source_span")), run_dir, timeout)
+                                      source_span=host_evidence.get("source_span"),
+                                      target_workstream=packet.review_target_workstream,
+                                      review_cycle=packet.review_cycle), run_dir, timeout)
         except subprocess.TimeoutExpired:
             metadata.update({"phase": "codex_timeout_recovery", "elapsed_seconds": round(time.monotonic() - started, 3),
                              "recovery_worktree": str(worktree)})
@@ -5015,6 +5428,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                  recover_invalid_disposition: bool = False,
                  recover_missing_archived_disposition: bool = False,
                  recover_codex_exited_findings: bool = False,
+                 recover_dual_disposition: bool = False,
                  attest_no_active_owner: bool = False,
                  attest_no_unique_evidence: bool = False,
                  plan_sha256: str | None = None,
@@ -5032,13 +5446,19 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 or plan_sha256 or workstream != MISSING_ARCHIVED_DISPOSITION_WORKSTREAM
                 or run_id != MISSING_ARCHIVED_DISPOSITION_RUN_ID):
             raise RunnerError("missing-archived-disposition recovery accepts only its exact run with explicit fresh-reviewer authorization")
+    if recover_dual_disposition and (
+            not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
+            or recover_missing_archived_disposition or recover_codex_exited_findings
+            or workstream != DUAL_DISPOSITION_WORKSTREAM or run_id != DUAL_DISPOSITION_RUN_ID
+            or not plan_sha256):
+        raise RunnerError("dual-disposition continuation requires its exact applied plan and fresh-reviewer authorization")
     if recover_invalid_disposition:
         if (authorize_fresh_reviewer_context or recover_host_validation or recover_missing_archived_disposition or plan_sha256
                 or workstream != INVALID_DISPOSITION_WORKSTREAM or run_id != INVALID_DISPOSITION_RUN_ID):
             raise RunnerError("invalid-disposition recovery accepts only the exact held run and does not launch a reviewer")
     elif not authorize_fresh_reviewer_context:
         raise RunnerError("same-run continuation requires --authorize-fresh-reviewer-context")
-    if (recover_invalid_disposition or recover_missing_archived_disposition
+    if (recover_invalid_disposition or recover_missing_archived_disposition or recover_dual_disposition
             or recover_codex_exited_findings) and codex_path is not None:
         raise RunnerError("special exact-run recovery must not accept an injected reviewer executable")
     if not ID_RE.fullmatch(workstream) or not _RUN_ID_RE.fullmatch(run_id):
@@ -5056,10 +5476,12 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
     mutex_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
     mutex_path.parent.mkdir(parents=True, exist_ok=True)
     if (recover_host_validation or recover_invalid_disposition or recover_missing_archived_disposition
+            or recover_dual_disposition
             or recover_codex_exited_findings) and not mutex_path.is_file():
         raise RunnerError("original paired-review supervisor lock is missing")
     locked_recovery = (recover_host_validation or recover_invalid_disposition
-                       or recover_missing_archived_disposition or recover_codex_exited_findings)
+                       or recover_missing_archived_disposition or recover_dual_disposition
+                       or recover_codex_exited_findings)
     with mutex_path.open("rb" if locked_recovery else "a") as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -5080,6 +5502,31 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                                                else "post_exit_recovery")):
             expected_phase = "host_validation_recovery" if recover_host_validation else "post-exit recovery"
             raise RunnerError(f"original run metadata is not the exact eligible {expected_phase}")
+        if recover_dual_disposition:
+            journal = _read_dual_disposition_journal(common, workstream, run_id)
+            if (journal is None or journal.get("stage") != "target_restored"
+                    or journal.get("plan_sha256") != plan_sha256
+                    or journal["plan"].get("claim_run_id") != original.get("claim_run_id")):
+                raise RunnerError("fresh reviewer continuation requires the exact verified dual-disposition apply journal")
+            plan = journal["plan"]
+            lock_stat = Path(plan["lock_path"]).stat()
+            checkout = Path(plan["worktree"])
+            if (_cached_remote_ref_for_readonly_plan(repo, "main") != plan.get("coordinator_main")
+                    or _cached_remote_ref_for_readonly_plan(repo, plan.get("branch", "")) != plan.get("remote_tip")
+                    or _file_manifest(run_dir) != plan.get("run_evidence_sha256")
+                    or {"device": lock_stat.st_dev, "inode": lock_stat.st_ino} != plan.get("lock_identity")
+                    or _sha256_bytes((run_dir / "claim-receipt.json").read_bytes())
+                    != plan.get("claim_receipt_sha256")
+                    or common_dir(checkout).resolve() != common
+                    or git(checkout, "branch", "--show-current") != plan.get("branch")
+                    or git(checkout, "rev-parse", "HEAD^{commit}") != plan.get("local_tip")):
+                raise RunnerError("dual-disposition refs or original run evidence changed after apply")
+            restored = Path(journal["plan"]["worktree"]) / journal["plan"]["target_packet"]
+            baseline = _show_at(repo, journal["plan"]["reviewed_main"], journal["plan"]["target_packet"]).encode()
+            if restored.is_symlink() or not restored.is_file() or restored.read_bytes() != baseline:
+                raise RunnerError("dual-disposition target baseline changed after recovery apply")
+            if (run_dir / "continuation-01").exists() or (run_dir / "continuation-01").is_symlink():
+                raise RunnerError("dual-disposition recovery already consumed its single reviewer continuation")
         if recover_codex_exited_findings:
             if original.get("exit_code") != 0 or original.get("fresh") is not True:
                 raise RunnerError("original reviewer did not exit normally from a fresh context")
@@ -5589,6 +6036,13 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             "initial_tracked_changes": tracked_changes,
             "initial_untracked_files": untracked,
         })
+        if recover_dual_disposition:
+            initial.update({"dual_disposition_recovery": {
+                "schema": DUAL_DISPOSITION_RECOVERY_SCHEMA,
+                "journal": str(_dual_disposition_recovery_root(common, workstream, run_id) / "recovery.json"),
+                "plan_sha256": plan_sha256,
+                "preservation_manifest_sha256": journal["manifest_sha256"],
+            }, "continuation_number": 3, "reviewer_launch_count": 0})
         if recover_host_validation and not retry_host_validation:
             initial.update({
                 "original_run_manifest": original_run_manifest,
@@ -5800,7 +6254,8 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                         Path(host_evidence["evidence_run_dir"]) / "validation.json"
                         if recover_host_validation else continuation_dir / "prior-run-evidence/validation.json"
                     ),
-                            continuation_number=2 if recover_missing_archived_disposition else 1,
+                            continuation_number=(3 if recover_dual_disposition else
+                                                 2 if recover_missing_archived_disposition else 1),
                 ), continuation_dir, timeout,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
@@ -5943,6 +6398,30 @@ def main(argv: list[str] | None = None) -> int:
         return _redacted_final_recovery_main(argv[1:])
     if argv and argv[0] == "recover-advanced-head-pass":
         return _advanced_head_pass_recovery_main(argv[1:])
+    if argv and argv[0] == "recover-dual-disposition":
+        parser = argparse.ArgumentParser(prog="paired_review_runner.py recover-dual-disposition")
+        parser.add_argument("workstream")
+        parser.add_argument("run_id")
+        mode = parser.add_mutually_exclusive_group(required=True)
+        mode.add_argument("--plan", action="store_true", help="emit a read-only exact-run plan")
+        mode.add_argument("--apply", action="store_true", help="preserve evidence and restore only the pinned target baseline")
+        parser.add_argument("--plan-sha256", default=None, help="exact digest from the fresh read-only plan")
+        args = parser.parse_args(argv[1:])
+        try:
+            if args.plan:
+                if args.plan_sha256:
+                    raise RunnerError("read-only dual-disposition plan cannot accept an apply digest")
+                result = plan_dual_disposition_recovery(Path.cwd(), args.workstream, args.run_id)
+            else:
+                if not args.plan_sha256:
+                    raise RunnerError("dual-disposition apply requires the exact --plan-sha256")
+                result = apply_dual_disposition_recovery(
+                    Path.cwd(), args.workstream, args.run_id, args.plan_sha256)
+            print(json.dumps(result, indent=2, sort_keys=True))
+            return 0
+        except (RunnerError, OSError, ValueError, subprocess.SubprocessError) as exc:
+            print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
+            return 2
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("review_workstream", help="exact paired review workstream; global-next is unsupported")
     parser.add_argument("--timeout", type=float, default=None)
@@ -5958,6 +6437,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="launch the one explicitly authorized continuation-02 for the exact held missing-archive run")
     parser.add_argument("--recover-codex-exited-findings", action="store_true",
                         help="launch one fresh reviewer for the exact authenticated codex-exited findings run")
+    parser.add_argument("--recover-dual-disposition", action="store_true",
+                        help="launch one fresh reviewer only after the exact dual-disposition plan was separately applied")
     recovery_mode = parser.add_mutually_exclusive_group()
     recovery_mode.add_argument("--plan", action="store_true",
                                help="print a read-only, SHA-pinned host-validation recovery plan")
@@ -5971,11 +6452,25 @@ def main(argv: list[str] | None = None) -> int:
                         help="operator attests missing checkout held no unique untracked/ignored evidence")
     args = parser.parse_args(argv)
     try:
+        if args.recover_dual_disposition:
+            if (args.continue_run is None or not args.authorize_fresh_reviewer_context
+                    or not args.plan_sha256 or args.recover_host_validation or args.recover_invalid_disposition
+                    or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
+                    or args.plan or args.apply or args.attest_no_active_review_owner
+                    or args.attest_no_unique_worktree_evidence or args.review_workstream != DUAL_DISPOSITION_WORKSTREAM
+                    or args.continue_run != DUAL_DISPOSITION_RUN_ID):
+                raise RunnerError("dual-disposition continuation requires its exact run, applied plan SHA, and fresh-reviewer authorization")
+            return continue_run(
+                Path.cwd(), args.review_workstream, args.continue_run,
+                authorize_fresh_reviewer_context=True, recover_dual_disposition=True,
+                plan_sha256=args.plan_sha256, timeout=args.timeout,
+            )
         if args.recover_invalid_disposition:
             if (args.continue_run is None or args.review_workstream != INVALID_DISPOSITION_WORKSTREAM
                     or args.continue_run != INVALID_DISPOSITION_RUN_ID
                     or args.authorize_fresh_reviewer_context or args.recover_host_validation
                     or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
+                    or args.recover_dual_disposition
                     or args.plan or args.apply or args.plan_sha256 or args.timeout is not None):
                 raise RunnerError("invalid-disposition recovery requires only its exact workstream and --continue-run ID")
             return continue_run(
@@ -5986,6 +6481,7 @@ def main(argv: list[str] | None = None) -> int:
             if (args.continue_run is None or not args.authorize_fresh_reviewer_context
                     or args.recover_host_validation or args.plan or args.apply or args.plan_sha256
                     or args.recover_codex_exited_findings
+                    or args.recover_dual_disposition
                     or args.review_workstream != MISSING_ARCHIVED_DISPOSITION_WORKSTREAM
                     or args.continue_run != MISSING_ARCHIVED_DISPOSITION_RUN_ID):
                 raise RunnerError("missing-archive recovery requires its exact run, --recover-missing-archived-disposition, and --authorize-fresh-reviewer-context")
@@ -5998,7 +6494,8 @@ def main(argv: list[str] | None = None) -> int:
             if (args.continue_run is None or not args.authorize_fresh_reviewer_context
                     or args.recover_host_validation or args.recover_invalid_disposition
                     or args.recover_missing_archived_disposition or args.plan or args.apply
-                    or args.plan_sha256 or args.review_workstream != CODEX_EXITED_FINDINGS_WORKSTREAM
+                    or args.recover_dual_disposition or args.plan_sha256
+                    or args.review_workstream != CODEX_EXITED_FINDINGS_WORKSTREAM
                     or args.continue_run != CODEX_EXITED_FINDINGS_RUN_ID):
                 raise RunnerError("codex-exited findings recovery requires its exact run and fresh-reviewer authorization")
             return continue_run(

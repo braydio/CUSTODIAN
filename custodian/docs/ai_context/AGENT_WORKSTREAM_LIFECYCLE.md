@@ -872,6 +872,59 @@ interruption remain preserved. An incomplete continuation-02 cannot launch
 again; a completed PASS may retry coordinator verification/closeout without a
 second reviewer. No other run or phase is covered by this exception.
 
+### Exact dual-disposition recovery after missing archive and malformed target receipt
+
+The dual-disposition recovery capability is bound only to review workstream
+`review-agent-paired-review-redacted-final-outcome-recovery-v1`, review run
+`20261030T191402Z-4dd067b9b8e2`, and claim run
+`20261030T191411Z-efd97a2bdb1f`. It recognizes the missing archived review
+packet together with exactly one extra separator newline before the target's
+otherwise valid reviewer receipt. It does not relax the canonical receipt
+verifier or treat the original reported PASS as a disposition.
+
+After this capability has landed and passed its own fresh independent review, a
+separate control must authorize recovery. First inspect a read-only exact-run
+plan from the coordination checkout:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-dual-disposition \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  20261030T191402Z-4dd067b9b8e2 --plan
+```
+
+Only an explicitly authorized apply may use the exact printed `plan_sha256`:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  recover-dual-disposition \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  20261030T191402Z-4dd067b9b8e2 --apply --plan-sha256 <exact-plan-sha256>
+```
+
+The plan binds the claim, checkout, branch and refs, lock identity, run manifest,
+capture transformation, validation evidence, exact target baseline and the
+complete changed-file inventory. Apply verifies byte-exact preservation copies
+and a journal before restoring the target to its pinned baseline. It never
+authors an archived packet or Review Outcome and never launches a reviewer.
+After apply, a separate explicit authorization is required to start exactly one
+fresh reviewer on the same claim:
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-redacted-final-outcome-recovery-v1 \
+  --continue-run 20261030T191402Z-4dd067b9b8e2 \
+  --recover-dual-disposition --authorize-fresh-reviewer-context \
+  --plan-sha256 <exact-applied-plan-sha256>
+```
+
+That reviewer independently authors the archived review packet, run-bound
+canonical outcome, summary, and a passing target receipt only if its own review
+passes. Findings and `human_required` remain valid outcomes. The ordinary
+paired-review validators and `workstream.py finish` remain the only closeout
+and claim-release path. An incomplete continuation cannot relaunch the reviewer;
+the original run and the other held reviews remain protected.
+
 ### Exact recovery of the stranded finish-index reviewer PASS
 
 One coordinator-only PASS recovery is bound to

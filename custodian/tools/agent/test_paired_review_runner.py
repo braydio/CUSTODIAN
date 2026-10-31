@@ -3341,6 +3341,29 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
         self.assertNotIn("private-value", safe)
         self.assertNotIn("abcdefghijklmnop", safe)
 
+    def test_initial_prompt_names_exact_archived_packet_and_outcome_identity(self):
+        active = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+        target = "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md"
+        prompt = runner.prompt_for(
+            "review-sample", active, target, run_dir=Path("/tmp/20261030T000000Z-0123456789ab"),
+            reviewed_main="b" * 40, implementation_commit="a" * 40,
+            implementation_summary_path="SAMPLE_IMPL_CLAUDE_SUMMARY.md",
+        )
+        for required in (
+            active,
+            "custodian/docs/ai_context/task_packets/archived/REVIEW_SAMPLE.md",
+            target,
+            "SAMPLE_IMPL.md",
+            "REVIEW_SAMPLE_CLAUDE_SUMMARY.md",
+            "custodian.review_outcome.v1",
+            "20261030T000000Z-0123456789ab",
+            "Review cycle: `0`",
+            "Finding IDs: `none`",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, prompt)
+        self.assertIn("Choose `passed`, `findings`, or `human_required`", prompt)
+
     def test_next_handoff_is_returned_from_durable_summary(self):
         summary = "## Findings\nPass\n\n## Next Handoff\n- Next workstream: none\n- Next action: done\n"
         self.assertIn("Next workstream: none", runner.next_handoff(summary))
@@ -8271,6 +8294,28 @@ Authoring chat: {chat}
             "Coordinator could not verify/land review evidence: existing target receipt differs from the archived independent-review receipt. Preserve the exact review.\n")
         return repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary_path
 
+    def dual_disposition_fixture(self, root: Path):
+        repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary = self.pass_fixture(root)
+        metadata_path = run_dir / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        review_path = repo / metadata["packet"]
+        (worktree / archive).unlink()
+        (worktree / metadata["packet"]).write_bytes(review_path.read_bytes())
+        baseline = (repo / target).read_text()
+        canonical = append_receipt(
+            baseline, review_workstream="review-sample", target_workstream="sample-impl",
+            reviewed_main=reviewed_main, implementation_commit=implementation,
+        )
+        malformed = canonical.replace("\n## Independent Review", "\n\n## Independent Review", 1)
+        (worktree / target).write_text(malformed)
+        metadata["post_exit_error"] = "archived review packet is missing; coordinator closeout is recoverable"
+        metadata_path.write_text(json.dumps(metadata))
+        (run_dir / "RECOVERY.md").write_text(
+            "Coordinator could not verify/land review evidence: archived review packet is missing; "
+            "coordinator closeout is recoverable. Preserve the exact review.\n"
+        )
+        return repo, worktree, run_dir, reviewed_main, implementation, target, archive, summary
+
     def write_session(self, root: Path, *, prior: str = "progress: inspected", turns: int = 1,
                       logged: str | None = None):
         source = (ROOT / "custodian/tools/agent/paired_review_runner.py").read_text()
@@ -8498,6 +8543,190 @@ Authoring chat: {chat}
                 with self.assertRaisesRegex(runner.RunnerError, "pinned host evidence missing"):
                     runner.plan_redacted_final_outcome_recovery(
                         repo, "review-sample", "20261030T000000Z-0123456789ab")
+
+    def test_dual_disposition_recovery_exposes_exact_run_plan_api(self):
+        planner = getattr(runner, "plan_dual_disposition_recovery", None)
+        self.assertTrue(callable(planner), "missing exact-run dual-disposition recovery planner")
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, reviewed_main, implementation, target, _archive, _summary = \
+                self.dual_disposition_fixture(Path(temp))
+            metadata_path = run_dir / "metadata.json"
+            metadata = json.loads(metadata_path.read_text())
+            metadata["claim_run_id"] = "20261030T000001Z-abcdefabcdef"
+            metadata_path.write_text(json.dumps(metadata))
+            report = run_dir / "validation.json"
+            coordinator = run_dir / "coordinator-validation.json"
+            evidence = {"report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256(coordinator.read_bytes()).hexdigest(),
+                        "implementation_commit": implementation}
+            with (patch.object(runner, "DUAL_DISPOSITION_WORKSTREAM", "review-sample"),
+                  patch.object(runner, "DUAL_DISPOSITION_RUN_ID", run_dir.name),
+                  patch.object(runner, "DUAL_DISPOSITION_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                  patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                  patch.object(runner, "_process_owns_worktree", return_value=[])):
+                plan = planner(repo, "review-sample", run_dir.name)
+                self.assertEqual(plan["target_packet"], target)
+                self.assertEqual(plan["run_evidence_sha256"], runner._file_manifest(run_dir))
+                self.assertEqual(plan["target_candidate_sha256"], hashlib.sha256(
+                    (worktree / target).read_bytes()).hexdigest())
+                self.assertFalse(Path(plan["recovery_root"]).exists())
+                self.assertFalse(Path(plan["journal"]).exists())
+
+    def test_dual_disposition_apply_preserves_originals_before_restoring_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, _reviewed_main, _implementation, target, _archive, summary = \
+                self.dual_disposition_fixture(Path(temp))
+            metadata_path = run_dir / "metadata.json"
+            metadata = json.loads(metadata_path.read_text())
+            metadata["claim_run_id"] = "20261030T000001Z-abcdefabcdef"
+            metadata_path.write_text(json.dumps(metadata))
+            report = run_dir / "validation.json"
+            coordinator = run_dir / "coordinator-validation.json"
+            evidence = {"report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256(coordinator.read_bytes()).hexdigest(),
+                        "implementation_commit": metadata["reviewed_main"]}
+            artifact_before = {target: (worktree / target).read_bytes(),
+                               summary.name: summary.read_bytes()}
+            run_before = runner._file_manifest(run_dir)
+            mocks = (patch.object(runner, "DUAL_DISPOSITION_WORKSTREAM", "review-sample"),
+                     patch.object(runner, "DUAL_DISPOSITION_RUN_ID", run_dir.name),
+                     patch.object(runner, "DUAL_DISPOSITION_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                     patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                     patch.object(runner, "_process_owns_worktree", return_value=[]))
+            with mocks[0], mocks[1], mocks[2], mocks[3], mocks[4]:
+                plan = runner.plan_dual_disposition_recovery(repo, "review-sample", run_dir.name)
+                result = runner.apply_dual_disposition_recovery(
+                    repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                self.assertEqual(result["stage"], "target_restored")
+                self.assertFalse(result["reviewer_launched"])
+                self.assertEqual((worktree / target).read_bytes(),
+                                 runner._show_at(repo, plan["reviewed_main"], target).encode())
+                self.assertEqual(summary.read_bytes(), artifact_before[summary.name])
+                self.assertEqual(runner._file_manifest(run_dir), run_before)
+                journal = json.loads(Path(plan["journal"]).read_text())
+                preserved = json.loads(Path(journal["manifest"]).read_text())
+                self.assertEqual(next(item for item in preserved["artifacts"]
+                                      if item.get("relative_path") == target)["sha256"],
+                                 hashlib.sha256(artifact_before[target]).hexdigest())
+                replay = runner.apply_dual_disposition_recovery(
+                    repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                self.assertTrue(replay["idempotent_replay"])
+
+    def test_dual_disposition_plan_rejects_an_unapproved_extra_newline(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, _main, _implementation, target, _archive, _summary = \
+                self.dual_disposition_fixture(Path(temp))
+            path = worktree / target
+            path.write_bytes(path.read_bytes().replace(b"\n\n## Independent Review", b"\n\n\n## Independent Review", 1))
+            metadata_path = run_dir / "metadata.json"
+            metadata = json.loads(metadata_path.read_text())
+            metadata["claim_run_id"] = "20261030T000001Z-abcdefabcdef"
+            metadata_path.write_text(json.dumps(metadata))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": metadata["reviewed_main"]}
+            with (patch.object(runner, "DUAL_DISPOSITION_WORKSTREAM", "review-sample"),
+                  patch.object(runner, "DUAL_DISPOSITION_RUN_ID", run_dir.name),
+                  patch.object(runner, "DUAL_DISPOSITION_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                  patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                  patch.object(runner, "_process_owns_worktree", return_value=[])):
+                with self.assertRaisesRegex(runner.RunnerError, "exactly one diagnosed extra separator"):
+                    runner.plan_dual_disposition_recovery(repo, "review-sample", run_dir.name)
+
+    def test_dual_disposition_plan_rejects_contradictory_original_verdict(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, _worktree, run_dir, _main, _implementation, *_rest = \
+                self.dual_disposition_fixture(Path(temp))
+            metadata_path = run_dir / "metadata.json"
+            metadata = json.loads(metadata_path.read_text())
+            metadata["claim_run_id"] = "20261030T000001Z-abcdefabcdef"
+            metadata_path.write_text(json.dumps(metadata))
+            final_path = run_dir / "last-message.txt"
+            contradictory = final_path.read_text() + "\nVerdict: findings\n"
+            final_path.write_text(contradictory)
+            events = [json.loads(line) for line in (run_dir / "codex.jsonl").read_text().splitlines()]
+            messages = [event["item"] for event in events if event.get("item", {}).get("type") == "agent_message"]
+            messages[-1]["text"] = runner._redacted_agent_message(contradictory)
+            (run_dir / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": metadata["reviewed_main"]}
+            with (patch.object(runner, "DUAL_DISPOSITION_WORKSTREAM", "review-sample"),
+                  patch.object(runner, "DUAL_DISPOSITION_RUN_ID", run_dir.name),
+                  patch.object(runner, "DUAL_DISPOSITION_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                  patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                  patch.object(runner, "_process_owns_worktree", return_value=[])):
+                with self.assertRaisesRegex(runner.RunnerError, "contradicts"):
+                    runner.plan_dual_disposition_recovery(repo, "review-sample", run_dir.name)
+
+    def test_dual_disposition_continuation_prompt_requires_canonical_artifacts_without_verdict_bias(self):
+        prompt = runner._continuation_prompt(
+            "review-sample", "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md",
+            "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md",
+            run_id="20261030T000000Z-0123456789ab", target_workstream="sample-impl",
+            reviewed_main="b" * 40, implementation_commit="a" * 40,
+            authoring_chat="https://chatgpt.com/g/example", continuation_dir=Path("/tmp/continuation-01"),
+            preserved=[], report_sha256="c" * 64, continuation_number=3,
+        )
+        for required in ("archived/REVIEW_SAMPLE.md", "custodian.review_outcome.v1",
+                         "20261030T000000Z-0123456789ab", "sample-impl", "Finding IDs",
+                         "REVIEW_SAMPLE_CLAUDE_SUMMARY.md", "strict canonical receipt verifier"):
+            with self.subTest(required=required):
+                self.assertIn(required, prompt)
+        self.assertIn("Findings and `human_required`", prompt)
+        self.assertNotIn("Status: `passed`", prompt)
+
+    def test_dual_disposition_continuation_is_pinned_to_one_applied_run(self):
+        with self.assertRaisesRegex(runner.RunnerError, "exact applied plan"):
+            runner.continue_run(
+                Path("/not-a-repository"), "review-sample", "20261030T000000Z-0123456789ab",
+                authorize_fresh_reviewer_context=True, recover_dual_disposition=True,
+                plan_sha256="a" * 64,
+            )
+        with self.assertRaisesRegex(runner.RunnerError, "exact applied plan"):
+            runner.continue_run(
+                Path("/not-a-repository"), runner.DUAL_DISPOSITION_WORKSTREAM,
+                runner.DUAL_DISPOSITION_RUN_ID, recover_dual_disposition=True,
+                plan_sha256="a" * 64,
+            )
+
+    def test_dual_disposition_apply_resumes_journaled_partial_preservation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            repo, worktree, run_dir, _main, _implementation, target, _archive, _summary = \
+                self.dual_disposition_fixture(Path(temp))
+            metadata_path = run_dir / "metadata.json"
+            metadata = json.loads(metadata_path.read_text())
+            metadata["claim_run_id"] = "20261030T000001Z-abcdefabcdef"
+            metadata_path.write_text(json.dumps(metadata))
+            evidence = {"report_sha256": hashlib.sha256((run_dir / "validation.json").read_bytes()).hexdigest(),
+                        "metadata_sha256": hashlib.sha256((run_dir / "coordinator-validation.json").read_bytes()).hexdigest(),
+                        "implementation_commit": metadata["reviewed_main"]}
+            mocks = (patch.object(runner, "DUAL_DISPOSITION_WORKSTREAM", "review-sample"),
+                     patch.object(runner, "DUAL_DISPOSITION_RUN_ID", run_dir.name),
+                     patch.object(runner, "DUAL_DISPOSITION_CLAIM_RUN_ID", "20261030T000001Z-abcdefabcdef"),
+                     patch.object(runner, "_host_evidence_for_continuation", return_value=evidence),
+                     patch.object(runner, "_process_owns_worktree", return_value=[]))
+            with mocks[0], mocks[1], mocks[2], mocks[3], mocks[4]:
+                plan = runner.plan_dual_disposition_recovery(repo, "review-sample", run_dir.name)
+                original_preserve = runner._preserve_file
+                calls = 0
+                def fail_once(source, destination):
+                    nonlocal calls
+                    calls += 1
+                    if calls == 2:
+                        raise OSError("synthetic interruption")
+                    return original_preserve(source, destination)
+                with patch.object(runner, "_preserve_file", side_effect=fail_once):
+                    with self.assertRaisesRegex(OSError, "synthetic interruption"):
+                        runner.apply_dual_disposition_recovery(
+                            repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                self.assertEqual(runner._read_dual_disposition_journal(
+                    runner.common_dir(repo), "review-sample", run_dir.name)["stage"], "preserving")
+                result = runner.apply_dual_disposition_recovery(
+                    repo, "review-sample", run_dir.name, plan["plan_sha256"])
+                self.assertEqual(result["stage"], "target_restored")
+                self.assertEqual((worktree / target).read_bytes(),
+                                 runner._show_at(repo, plan["reviewed_main"], target).encode())
 
     def test_plan_rejects_symlinked_run_and_archived_review_artifacts(self):
         with tempfile.TemporaryDirectory() as temp:
