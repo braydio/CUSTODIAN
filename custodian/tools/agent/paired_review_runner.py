@@ -718,13 +718,20 @@ def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id
     if (common_dir(worktree).resolve() != common or git(worktree, "branch", "--show-current") != branch
             or git(worktree, "rev-parse", "HEAD^{commit}") != CHECKOUT_PROFILE_MISMATCH_MAIN):
         raise RunnerError("held review checkout identity differs from the exact pinned claim")
+    profile_inventory = _checkout_profile_inventory(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, profile)
     verify_checkout_profile_worktree(
         repo, worktree, profile, required_paths, CHECKOUT_PROFILE_MISMATCH_MAIN,
+        inventory=profile_inventory,
     )
+    checkout_head = git(worktree, "rev-parse", "--verify", "HEAD^{commit}")
+    if checkout_head != CHECKOUT_PROFILE_MISMATCH_MAIN:
+        raise RunnerError("held checkout HEAD differs from the exact pinned review base")
     tracked_paths = set(git(repo, "ls-tree", "-r", "--name-only", CHECKOUT_PROFILE_MISMATCH_MAIN).splitlines())
     materialized_required_paths = sorted(required_paths & tracked_paths)
-    if (git(repo, "rev-parse", f"refs/heads/{branch}^{{commit}}") != CHECKOUT_PROFILE_MISMATCH_MAIN
-            or _cached_remote_ref_for_readonly_plan(repo, branch) != CHECKOUT_PROFILE_MISMATCH_MAIN):
+    local_branch_tip = git(repo, "rev-parse", f"refs/heads/{branch}^{{commit}}")
+    remote_branch_tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+    if (local_branch_tip != CHECKOUT_PROFILE_MISMATCH_MAIN
+            or remote_branch_tip != CHECKOUT_PROFILE_MISMATCH_MAIN):
         raise RunnerError("held review branch or authoritative remote tip moved from its pinned base")
     target_path = packet.review_target_packet
     if target_path is None:
@@ -744,6 +751,12 @@ def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id
     if worktree_packet != pinned_content:
         raise RunnerError("held checkout review packet differs from the pinned packet")
     lock_stat = lock_path.stat()
+    inventory_payload = [
+        {"path": item.path, "git_blob": item.oid, "git_size": item.git_size,
+         "lfs_oid": item.lfs_oid, "lfs_size": item.lfs_size, "mode": item.mode}
+        for item in profile_inventory
+    ]
+    sparse_rules = git(worktree, "sparse-checkout", "list").splitlines()
     plan = {
         "schema": "custodian.paired_review_checkout_profile_recovery_plan.v1",
         "mode": "read-only-plan",
@@ -754,11 +767,18 @@ def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id
         "reviewed_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
         "implementation_commit": implementation_commit,
         "branch": branch,
+        "local_branch_tip": local_branch_tip,
+        "remote_branch_tip": remote_branch_tip,
         "worktree": str(worktree),
+        "worktree_head": checkout_head,
         "active_packet": active_path,
         "target_packet": target_path,
         "profile_path": profile.path,
         "profile_sha256": profile.digest,
+        "profile_inventory_sha256": _sha256_bytes(
+            json.dumps(inventory_payload, sort_keys=True, separators=(",", ":")).encode()),
+        "sparse_checkout_rules_sha256": _sha256_bytes(
+            json.dumps(sparse_rules, separators=(",", ":")).encode()),
         "required_path_count": len(required_paths),
         "required_paths_sha256": required_digest,
         "materialized_required_paths": materialized_required_paths,
@@ -768,6 +788,7 @@ def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id
         "run_metadata_sha256": _sha256_bytes(metadata_bytes),
         "claim_receipt_sha256": _sha256_bytes(receipt_bytes),
         "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        "lock_state": "exclusive_nonblocking_lock_acquired_during_plan",
         "active_review_processes": [],
         "apply_boundary": "requires --apply, this exact --plan-sha256, and --authorize-fresh-reviewer-context",
         "apply_actions": ["repeat all plan checks", "run coordinator validation", "only on validation pass launch one fresh reviewer on the same claim"],
