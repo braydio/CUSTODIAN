@@ -53,3 +53,4 @@ Complete `workflow-governance-simplification-v1` first, then claim this separate
 - Authoring chat: `not-recorded`
 - Next action: Prove the narrow owner-decision exception end-to-end, land normal implementation, then independent review.
 - Blockers or open questions: Authentic owner approval source must be verified before implementation; do not fake authority with an agent-entered flag.
+- Current blocker / Recovery handoff: [Godot cache-access review forensic handoff](../RECOVERY_HANDOFF_GODOT_CACHE_ACCESS_REVIEW_20261031.md). This preserves unresolved review truth; it does not satisfy the dependency, release the lock, or authorize an owner exception.
