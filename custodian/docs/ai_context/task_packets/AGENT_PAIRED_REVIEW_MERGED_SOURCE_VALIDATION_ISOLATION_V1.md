@@ -50,5 +50,5 @@
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
 - Refresh instruction: `Do not claim or create the implementation worktree until a fresh disk inventory demonstrates adequate capacity under the repository resource policy and the dispatcher confirms eligibility.`
-- Blockers or open questions: `The exact output of the single read-only planner invocation is unavailable after context compaction. No retry is authorized. Available disk is approximately 19.3 GiB following an earlier ENOSPC event; do not start a claim/worktree while this capacity hold remains.`
+- Blockers or open questions: `The exact output of the single read-only planner invocation is unavailable after context compaction. No retry is authorized. At final dispatcher check, read-only disk inventory reported 30,544,900,096 bytes available (about 28.45 GiB) following an earlier ENOSPC event; the explicit capacity hold remains, so do not start a claim/worktree.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
