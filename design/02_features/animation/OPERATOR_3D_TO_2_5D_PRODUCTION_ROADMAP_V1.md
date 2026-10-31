@@ -9,9 +9,35 @@ Date: 2026-10-30
 
 Build a repeatable offline Operator 3D/FBX -> verified local rig motion -> eight independent 128x128 RGBA views -> candidate package / atlases -> Godot preview -> human review -> established Operator Workbench/Asset Pipeline V2 release process. This does not revive live 3D gameplay or create an alternate runtime selector.
 
+## Current source and tool ownership (2026-10-31)
+
+- The exact experimental ITER005 Blender master and GLB were Git-LFS objects on
+  `agent/operator-3d-master-modeling-proof-v1-iter005` at
+  `6b89c4d503bb2d73d2783443d4280f313c681bfa`. The source/tooling integration
+  workstream has prepared a byte-verified snapshot under
+  `custodian/asset_drop/source_work/operator/operator_3d_master/masters/`;
+  this lineage does not make the model production-approved.
+- Static, unrigged GLB inspection and static eight-direction proofs belong to
+  `custodian/tools/operator/model_to_sprite.py`. The historical static
+  Meshy/GLB pipeline is an inspected source archive; its old README reference
+  to `custodian/tools/iteration/asset_pipeline.py` is stale. The live command is
+  the model-to-sprite entrypoint. Rigged GLBs remain outside this static path.
+- FBX action inspection, retargeting, reusable motion, animated renders, motion
+  QA and animation candidate receipts remain owned by
+  `custodian/tools/operator/animation_compiler/`. The old static renderer is not
+  an animation renderer. Neither path publishes runtime assets or grants art
+  approval.
+- The accepted 128px full-body 2.5D source is the visual-design authority, but
+  its complete animation cohort is not runtime-promoted. The runtime-promotion
+  record still identifies `legacy_96` as live. This distinction does not change
+  runtime selection or timing authority.
+- The Neutral Idle proof and executor review cited below are historical
+  evidence snapshots. The candidate remains artistically unapproved; their old
+  workstream heads and review paths are not current branch-state claims.
+
 ## Already-owned workstreams
 
-- operator-3d-animation-batch-executor-v1 is ACTIVE, branch agent/operator-3d-animation-batch-executor-v1 at 16e6b0b353d00731541721818e98fc8cf343974b. The corrected Neutral Idle at candidate receipt 5c237de902397e1bae1f0de6bc3951334369b95db46c9b9e9064ef38b916853b is previewed in Awakening Zone03, but is artistically unapproved. The human review manifest is /CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T032053Z/REVIEW_MANIFEST.json. Preserve claim, worktree and evidence; resume this SAME workstream after recording the decision.
+- Historical executor snapshot (recorded 2026-10-30): branch `agent/operator-3d-animation-batch-executor-v1` at `16e6b0b353d00731541721818e98fc8cf343974b`; corrected Neutral Idle receipt `5c237de902397e1bae1f0de6bc3951334369b95db46c9b9e9064ef38b916853b`; Awakening preview manifest `/CUSTODIAN/visual_review/operator-3d-animation-batch-executor-v1/20261030T032053Z/REVIEW_MANIFEST.json`. This records that snapshot only. Check the dispatcher and workstream lifecycle for current ownership; the candidate remains artistically unapproved.
 - The existing executor packet already owns Slices B–D: INSPECT, RETARGET, RENDER, QA, PACKAGE, deterministic cache/resume, real multi-FBX first batch and downstream handoff DEFINITION. Do not create duplicate executor/batch packets. Finish and independently review this scope first.
 - Running Task 015 ITER005 remains experimental on agent/operator-3d-master-modeling-proof-v1-iter005; the last evidence commit is 6b89c4d503bb2d73d2783443d4280f313c681bfa. Run cycle: 21 frames / 30fps / 0.70s. Integer-frame penetration was cleared, but subframes retain right -8.82mm and left -6.09mm examples. RUN_MOTION_NEEDS_REPAIR and existing owner preservation remain.
 - The 42-bone ITER005 master and gated legacy .meshy tooling belong to experimental model branches; an exact compatible rig is not itself an approved character model.
@@ -42,4 +68,4 @@ Do not modify original FBX/.blend masters, release claims/locks, delete visual r
 
 ## Next
 
-Resolve the current executor's human visual gate and resume its existing claimed worktree; all three new packets remain deliberately parked until the exact recorded refresh.
+Historical next step recorded 2026-10-30: resolve the executor's human visual gate before resuming that executor. For current source/tooling and model work, use the live dispatcher and the dependency-gated packet states; this roadmap's older branch and claim snapshots do not establish current ownership.
