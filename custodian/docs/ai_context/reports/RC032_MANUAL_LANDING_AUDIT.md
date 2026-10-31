@@ -26,7 +26,7 @@ RC-032 authorized one exact owner-approved fast-forward landing of the corrected
 - Fresh independent read-only review disposition: ACCEPTABLE, no blocking findings. This is not a canonical paired-review PASS.
 - The original workstream.py finish attempt remains a recorded failure in its immutable trace. Manual integration is SUCCESS; it does not rewrite that result or represent a successful normal finish.
 - Post-landing read-only workstream.py preflight reports no blockers against the landed tree. finish was not rerun.
-- The paired review review-agent-paired-review-merged-source-validation-isolation-v1 remains dispatcher-ineligible: dependency/lock blocked because the implementation execution lock is still held. No reviewer was launched.
+- After the RC-034 deferment, dispatcher audit reports the paired review as blocked/manual and not claimable; the implementation dependency remains active. No reviewer was claimed or launched.
 - A read-only transient_worktree_gc.py --repo . preview returned no eligible checkouts. The implementation branch, worktree, diagnostic trace, and claim/lock state remain preserved. No lifecycle retirement or claim release was performed.
 
 ## Protected state
@@ -36,3 +36,13 @@ All five protected historical review runs, worktrees, claims, locks, and evidenc
 ## Remaining administrative blocker
 
 The implementation is integrated and technically validated, but the active implementation execution lock prevents dispatcher eligibility for its paired review. The normal finish result remains historically failed, and no supported retirement action was verified that both releases this lock and preserves that result. Keep the implementation branch, claim state, and worktree intact pending a separately authorized supported lifecycle resolution.
+
+
+## RC-034 Post-Landing Review and Retirement
+
+- Canonical target resolution on main 0c7fee4a2780694921988158bda00ed68c52c77f resolves the archived implementation packet to 8706eeba1436611b9c743fa56fa791d19986edd6. Read-only resolve_validation_source_span failed with: HostValidationError: split landing has missing or ambiguous exact workstream trace provenance. No landing events were synthesized.
+- The existing paired-review packet was deferred as Status: blocked and Dispatch: manual under RC-034. It remains required, unaccepted, and incomplete. Dispatcher audit confirms claim_next_eligible=false; no reviewer claim or launch occurred.
+- Packet deferment was published in c8c5ffc8d77a6df5eb69543ad1478f1d1dd6528f. That publication's generated README was truncated during transport; follow-up commit 336d01cd05d313bc18126dc8b558abe70ff42659 restores the complete managed index with only the deferred review removed. task_packet_index.py and check_packet_categories.py pass on the synchronized checkout.
+- Correction to the earlier preflight statement above: its supplied report SHA-256 65cb102f9ab0e84f6ba1816e4c10e3f1f84206e8eadbf30f61f86fe4d90bc6 predates the final RC-031 two-file correction. It is not accepted as final validation evidence. The final corrected report was not located in the preserved artifacts; no replacement validation was generated.
+- Normal workstream finish was not rerun. Retirement is BLOCKED pending the verified final RC-031 report required for a fresh preflight. The original branch remains at 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b, attached and clean; its claim/lock, diagnostic trace, and worktree remain preserved.
+- All five protected historical reviews, worktrees, claims, locks, and evidence remain unchanged.
