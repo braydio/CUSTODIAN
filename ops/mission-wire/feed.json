@@ -1,9 +1,290 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T07:05:43Z",
-  "source_main_sha": "5c02e0dc6c0ff404625c50bbb7796cb47002bba7",
+  "generated_at": "2026-10-31T09:05:50Z",
+  "source_main_sha": "ad42f092761ed222b8da2fb0d41a61388f70d5fc",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "operator-chassis-seal-5e250a12",
+      "headline": "Operator gains an architectural safety guard, while its original review awaits evidence clearance",
+      "summary": "A new guard now measures and protects the Operator's movement-chassis ownership and code-growth limits. Its implementation is on main, with reported passing tests and repeatable sidearm scenarios. Independent review is held by a source-file declaration mismatch, so the new safeguard is not yet independently accepted.",
+      "body": "The Operator chassis authority seal landed at 82282bd3 and was archived at 5e250a12. It adds a versioned source inventory, ownership/budget checks and validation gates without claiming a gameplay change. The implementation summary reports 17/17 selected checks and two matching sidearm scenario passes, but an earlier inconsistent scenario result remains unexplained. The original review failed host source-scope validation before reviewer launch because test_workstream.py was not listed in the archived work surface. A separate attestation correction is ready, not implemented. No accepted PASS, runtime deployment or canonical teardown has been verified.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "operator",
+      "workstream": "operator-chassis-authority-seal-v1",
+      "occurred_at": "2026-10-31T09:05:50Z",
+      "bullets": [
+        "Guard implementation landed and archived.",
+        "Local validation passes are reported; earlier sidearm inconsistency remains unresolved.",
+        "Original independent review did not launch; exact source-scope correction is ready.",
+        "No runtime deployment or canonical teardown established."
+      ],
+      "links": [
+        {
+          "title": "Operator guard implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/82282bd3b5a05c20cc7ca606f3f674760f428a0d"
+        },
+        {
+          "title": "Implementation closeout archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5e250a1215cea536d3bf2030f7a82327f5a0ad58"
+        },
+        {
+          "title": "Source-scope correction packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's Operator now has a committed architectural guard intended to prevent movement responsibilities and code size from drifting unnoticed. The safeguard does not add a new move or animation, but it helps protect the foundation on which those features depend. Its independent review has hit a narrow evidence problem.",
+        "sections": [
+          {
+            "heading": "A boundary around the movement chassis",
+            "text": "The guard inventories source ownership, checks growth limits and runs as part of the normal validation lifecycle. It keeps the existing Operator movement controller as the authority rather than silently shifting responsibilities elsewhere."
+          },
+          {
+            "heading": "Promising tests, unfinished acceptance",
+            "text": "The implementation summary reports complete selected validation and two repeatable sidearm scenarios. It also preserves an earlier unexplained failure. The independent reviewer never launched because one regression-test file was omitted from the original packet's declared scope."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Architectural progress can be invisible in gameplay",
+            "explanation": "The landing improves the project's ability to detect future movement-system regressions. It is infrastructure for safer gameplay work, not evidence that a new player-facing feature is live."
+          },
+          {
+            "title": "Review evidence is now the gating issue",
+            "explanation": "The review stopped before reviewer judgment. The proposed remedy is a one-file, historically pinned attestation, which itself needs independent acceptance before the original review can resume."
+          }
+        ],
+        "takeaway": "The Operator guard is implemented on main, but neither independently accepted nor proven deployed.",
+        "next_watch": "A validated and independently accepted exact-source attestation, followed by separately authorized recovery of the preserved chassis review."
+      },
+      "details": {
+        "overview": "At main ad42f092761ed222b8da2fb0d41a61388f70d5fc, the chassis seal is landed and archived. The published summary reports 17/17 selected validation checks, 14 guard tests and two matching uninstrumented sidearm scenario passes; it also documents an unresolved earlier failure. Original review run 20261031T074418Z-c57f04948b7c remains held at host validation.",
+        "ledger": [
+          {
+            "stage": "Implementation",
+            "status": "verified landed and archived",
+            "evidence": "82282bd3 implementation; 5e250a12 archive."
+          },
+          {
+            "stage": "Validation",
+            "status": "reported passing with caveat",
+            "evidence": "Closeout summary reports 17/17 checks and repeatable sidearm scenarios; prior failure cause unresolved."
+          },
+          {
+            "stage": "Independent review",
+            "status": "blocked before reviewer launch",
+            "evidence": "Published attestation packet identifies omitted test_workstream.py declaration."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trustworthy current host proof."
+          }
+        ],
+        "notes": [
+          "Guard preserves known legacy debt; it does not claim completed migration."
+        ],
+        "unknowns": [
+          "Live host process, worktree, lock and disk state.",
+          "Cause of the earlier sidearm test discrepancy."
+        ],
+        "actions": [
+          "Existing correction owner: implement exact one-path attestation, then obtain independent review.",
+          "Authorized recovery owner: consider original-review planning only after genuine accepted correction PASS."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed; original independent review blocked",
+        "as_of": "2026-10-31T09:05:50Z",
+        "scope": "Operator chassis seal and its original review",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement architectural guard",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "82282bd3"
+          },
+          {
+            "label": "Publish archive",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5e250a12"
+          },
+          {
+            "label": "Local validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "17/17 selected checks in implementation summary"
+          },
+          {
+            "label": "Resolve review source scope",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Exact one-file attestation not yet implemented"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted original review receipt"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Correction owner must implement and independently clear the exact attestation before authorized original-review recovery."
+      },
+      "related": []
+    },
+    {
+      "id": "operator-chassis-attestation-ad42f092",
+      "headline": "A one-file evidence correction is queued to reopen the Operator chassis review",
+      "summary": "CUSTODIAN published a tightly bounded correction for an Operator review that never reached its reviewer. The original implementation packet omitted one regression-test file from its declared source scope. Both the correction and its independent review are ready, but no repair or protected recovery has been applied.",
+      "body": "Commits 6a74acd, 8dd8991 and ad42f09 published and readied the implementation/review packet pair. The proposed attestation binds the exact historical source span and one omitted test file, and must remain inert until the correction itself receives a genuine independent PASS. The original review run, claim and evidence remain protected. GitHub ready status does not prove active execution. No host teardown or accepted PASS verified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-operator-chassis-seal-source-scope-attestation-v1",
+      "occurred_at": "2026-10-31T09:05:50Z",
+      "bullets": [
+        "Two specifically inspected packets are ready: correction and dependent review.",
+        "Correction is not implemented or independently accepted.",
+        "Original Operator review remains preserved and held.",
+        "Separate authorization required before original-review recovery."
+      ],
+      "links": [
+        {
+          "title": "Correction publication",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6a74acd556487092ecf1ac13d5ea14660622abda"
+        },
+        {
+          "title": "Ready packet state",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
+        },
+        {
+          "title": "Operator archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5e250a1215cea536d3bf2030f7a82327f5a0ad58"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The Operator chassis review has a precise route toward resumption. CUSTODIAN has queued a correction for one regression-test file that was changed during implementation but left out of the original review's declared scope. The remedy is deliberately narrow and remains only a plan.",
+        "sections": [
+          {
+            "heading": "Why a single file can stop a review",
+            "text": "CUSTODIAN authenticates which files belong to a reviewed change before letting an independent reviewer proceed. The missing declaration caused the preserved review to stop before any verdict could be written."
+          },
+          {
+            "heading": "A correction with its own safety gate",
+            "text": "The new packet requires immutable file identities and a separate independent PASS. Until that acceptance exists, the exception must do nothing. Even afterward, recovering the original review requires a new authorization."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The fix must not rewrite history",
+            "explanation": "The proposal adds a post-hoc attestation instead of altering the original archived packet or pretending the reviewer ran. That preserves the audit trail while providing a narrowly checkable recovery path."
+          }
+        ],
+        "takeaway": "The source-scope correction is ready for implementation, not completed; the original review remains blocked.",
+        "next_watch": "Landing and independent acceptance of the attestation, then a fresh read-only plan for the preserved original review."
+      },
+      "details": {
+        "overview": "At ad42f092761ed222b8da2fb0d41a61388f70d5fc, implementation and paired review packets are both ready. Scope is one omitted test_workstream.py path, pinned to original historical Git objects and preserved review run. The correction is inert before its own authenticated accepted PASS.",
+        "ledger": [
+          {
+            "stage": "Correction packet",
+            "status": "verified ready",
+            "evidence": "ad42f092 main packet."
+          },
+          {
+            "stage": "Implementation",
+            "status": "not established",
+            "evidence": "No correction implementation landing inspected."
+          },
+          {
+            "stage": "Independent review",
+            "status": "dependency-gated",
+            "evidence": "Ready review packet depends on implementation."
+          },
+          {
+            "stage": "Original protected review",
+            "status": "held",
+            "evidence": "Original reviewer did not launch."
+          },
+          {
+            "stage": "Teardown",
+            "status": "unknown",
+            "evidence": "No current host proof."
+          }
+        ],
+        "notes": [
+          "Ready is a dispatch state, not proof of a running agent."
+        ],
+        "unknowns": [
+          "Current host ownership and worktree state."
+        ],
+        "actions": [
+          "Existing implementation owner: deliver and validate exact one-path attestation.",
+          "Independent reviewer: authenticate the correction before any original-review recovery decision."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ready for implementation; original review held",
+        "as_of": "2026-10-31T09:05:50Z",
+        "scope": "Exact attestation implementation and paired review only",
+        "metrics": [
+          {
+            "id": "ready_pair",
+            "label": "READY PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Both named packet files on main say Status ready; not a full queue count.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish correction pair",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "6a74acd and ad42f092"
+          },
+          {
+            "label": "Implement attestation",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Implementation packet ready, no landing"
+          },
+          {
+            "label": "Independent correction review",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Depends on implementation"
+          },
+          {
+            "label": "Authorized original review recovery",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires accepted correction PASS and separate control"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Existing correction implementation owner must land and validate the exact one-file attestation."
+      },
+      "related": []
+    },
     {
       "id": "multi-sync-4693df7b-5c02e0dc",
       "headline": "Review system learns to verify repeated code synchronizations, but missing historical evidence still blocks recovery",
@@ -1312,64 +1593,24 @@
         }
       ],
       "images": []
-    },
-    {
-      "id": "baseline-20261030-0da34470d1",
-      "headline": "CUSTODIAN closeout watch: dual-disposition recovery remains next",
-      "summary": "Baseline from the October 30 evening watch: no new main commit identified. Dual-disposition recovery implementation and review packets remain ready; acceptance and host teardown remain unverified.",
-      "body": "The latest completed CUSTODIAN Project Watch reported main at 0da34470d1 with no newly identified landing or PR milestone. The earlier redacted-final-outcome recovery implementation was reported landed/archived; its independent acceptance remains unverified. The next documented dependency is implementing and independently reviewing dual-disposition recovery. Any exact-run recovery requires separate explicit authorization afterward. GitHub cannot establish live local Codex execution, worktree retirement, locks or disk recovery.",
-      "severity": "brief",
-      "verification": "reported",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-dual-disposition-recovery-v1",
-      "occurred_at": "2026-10-31T00:39:35Z",
-      "bullets": [
-        "Stage: ready packets, not a verified executing worker",
-        "Next: implementation owner validates and lands the bounded recovery change",
-        "Then: independent fresh-context review and genuine accepted receipt",
-        "Protected historical run must not be recovered without separate authorization"
-      ],
-      "links": [
-        {
-          "title": "Last observed main commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/0da34470d1d730d202bf9cfdfff7800a1e193738"
-        },
-        {
-          "title": "Recovery PR #81",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/81"
-        },
-        {
-          "title": "Recovery PR #78",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/78"
-        }
-      ],
-      "images": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T07:05:43Z",
-    "source_main_sha": "5c02e0dc6c0ff404625c50bbb7796cb47002bba7",
+    "observed_at": "2026-10-31T09:05:50Z",
+    "source_main_sha": "ad42f092761ed222b8da2fb0d41a61388f70d5fc",
     "coverage": "partial",
-    "scope": "Two specifically inspected new independent-review packets and their archived implementation packets; no full live dispatcher audit.",
+    "scope": "Two named new attestation packets inspected on GitHub main; not a canonical dispatcher audit or total project inventory.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY REVIEW PACKETS (INSPECTED)",
-        "value": 1,
+        "label": "READY PACKETS (INSPECTED PAIR)",
+        "value": 2,
         "verification": "verified",
-        "basis": "Of two inspected named review packets, multi-sync is ready/auto; merged-source is blocked/manual.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_MULTI_SYNC_SOURCE_SPAN_VERIFICATION_V1.md"
-      },
-      {
-        "id": "blocked",
-        "label": "BLOCKED REVIEW PACKETS (INSPECTED)",
-        "value": 1,
-        "verification": "verified",
-        "basis": "Of two inspected named review packets, merged-source is blocked/manual.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/5c02e0dc6c0ff404625c50bbb7796cb47002bba7/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_MERGED_SOURCE_VALIDATION_ISOLATION_V1.md"
+        "basis": "Both exact attestation packet files have Status ready and Dispatch auto; review is dependency-gated.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
       }
     ],
-    "focus": "Resolve the merged-source correction's failed final validation and held lifecycle without compromising protected evidence.",
-    "note": "Eleven commits since prior inspected main; two named review packets counted, not the project queue. RC-035 host facts are documented relay evidence, not live telemetry."
+    "focus": "Implement and independently accept the exact Operator chassis source-scope attestation before any separately authorized original-review recovery.",
+    "note": "Main advanced six commits from prior snapshot; host processes, full queue, CI, worktrees and teardown remain unverified."
   }
 }
