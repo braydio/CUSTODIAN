@@ -1,6 +1,41 @@
 # Operator 3D animation compiler foundation
 
-Task 001 defines a read-only contract and planner for a future Blender skeletal pipeline. It does not import FBX files into Blender, retarget actions, render images, execute jobs, or publish assets. A generated plan is descriptive only; `candidate_unapproved` can never mean art approval.
+## Static model-to-sprite proofs
+
+Static, unrigged GLB inspection and eight-direction proof renders are owned by
+`custodian/tools/operator/model_to_sprite.py` and the package in
+`custodian/tools/operator/model_to_sprite/`. The supported commands are
+`inspect`, `render-static`, `verify`, and `publish-review`. For example:
+
+```bash
+python3 custodian/tools/operator/model_to_sprite.py inspect model.glb
+python3 custodian/tools/operator/model_to_sprite.py render-static model.glb \
+  --output-root /path/to/candidates --name operator-static-check
+python3 custodian/tools/operator/model_to_sprite.py verify \
+  /path/to/candidates/operator-static-check --asset-root /path/to/authorized-assets
+```
+
+This static path rejects skinned GLBs and reports that rigged sources belong to
+the animation compiler below. It independently renders 128px and 512px views;
+it does not resize or alter the input model. The historical Meshy branch
+pipeline is source material, not a second live owner. Its old README command
+`custodian/tools/iteration/asset_pipeline.py` is stale; use the entrypoint above.
+The legacy `.meshy` decoder and vendored Meshopt decoder are not part of the
+live default workflow.
+
+The source-work snapshot
+`custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/`
+records the exact experimental ITER005 `.blend`, GLB, packed texture dependencies,
+42-bone signatures, material/weight identities, camera profile, retarget policy,
+and source branch/commit lineage. It is an experimental source snapshot, not an
+approved character or production registration.
+
+The existing rigged path below remains the sole owner of FBX inspection,
+retargeting, motion artifacts, animated rendering, animation QA and candidate
+receipts. Do not use the static renderer for skinned input or add a second
+animation scheduler here.
+
+The animation compiler's Task 001 foundation defines a read-only contract and planner for a future Blender skeletal pipeline. It does not import FBX files into Blender, retarget actions, render animated images, execute jobs, or publish assets. Static GLB rendering is the separate owner described above. A generated animation plan is descriptive only; `candidate_unapproved` can never mean art approval.
 
 ## Architecture
 

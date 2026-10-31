@@ -1,0 +1,18 @@
+{
+  "schema": "custodian.operator_3d_static_render_profile.v1",
+  "directions": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+  "elevation_degrees": 45,
+  "projection": "orthographic",
+  "pixels_per_meter_at_128": 50,
+  "ortho_scale_meters": 2.56,
+  "root_pixel": [64, 106],
+  "scale_policy": "one_uniform_scale_fitted_from_s_then_fixed_for_all_directions_and_resolutions",
+  "target_s_height_pixels": 85,
+  "resolution_pixels": [128, 512],
+  "transparency": "rgba",
+  "direction_mirroring": false,
+  "view_transform": "Standard",
+  "look": "None",
+  "engine": "BLENDER_EEVEE",
+  "status": "candidate_unapproved"
+}

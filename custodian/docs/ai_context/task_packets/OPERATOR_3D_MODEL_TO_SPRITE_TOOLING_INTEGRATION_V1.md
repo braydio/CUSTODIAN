@@ -68,3 +68,24 @@
 - Refresh reason: The versioned experimental base master and reviewed static source tooling must land before a new visual-fidelity derivative is created.
 - Next action: Claim the dependent visual-fidelity packet only after this workstream and its paired review archive complete.
 - Blockers or open questions: Source review does not grant model/art approval; final model appearance remains human-owned.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `initial static candidate receipts omitted output hashes from the content identity and resolved repository paths to the parent workspace`
+- Root cause / contributing factors: `the first implementation identity covered inputs and render settings but not rendered/review files; the repository root used one extra parent level`
+- Prevention / pipeline improvement: `content-address the full output set and test receipt paths for independence from ephemeral worktree names`
+- Tooling / docs drift discovered: `the archived static-pipeline README referenced a missing custodian/tools/iteration/asset_pipeline.py entrypoint; the live model-to-sprite CLI is now documented`
+- Follow-up: `operator-3d-visual-fidelity-candidate-v2`
+- What worked: `the static and rigged responsibilities now have distinct supported owners, with real source inspection and fixture-only rendering evidence`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `the ITER005 .blend and GLB snapshot manifest verifies every copied byte and records source branch/commit/LFS lineage; the master contract passes schema_findings with no findings; Blender 5.2.3 inspected the actual source files; the focused model-to-sprite suite passed 8 tests and the animation compiler suite passed 23 tests; the Blender cube fixture produced and verified all sixteen independent 128/512 direction renders without changing its source; Python compilation and git diff --check passed. The original ITER005 source paths, runtime assets, geometry, animation policy, and 2D Motion Foundry remain unchanged.`

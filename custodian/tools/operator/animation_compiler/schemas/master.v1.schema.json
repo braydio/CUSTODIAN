@@ -14,7 +14,34 @@
       "required": ["project_path", "project_sha256"],
       "properties": {
         "project_path": {"$ref": "#/$defs/relative_path"},
-        "project_sha256": {"$ref": "#/$defs/sha256"}
+        "project_sha256": {"$ref": "#/$defs/sha256"},
+        "blender_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "glb": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "lfs_oid": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 20}
+      }
+    },
+    "source_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_branch", "source_commit", "blender_source_path", "blender_lfs_oid", "blender_bytes", "glb_source_path", "glb_lfs_oid", "glb_bytes", "hydrated_bytes_verified", "derivation"],
+      "properties": {
+        "source_branch": {"type": "string", "minLength": 1},
+        "source_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+        "blender_source_path": {"$ref": "#/$defs/relative_path"},
+        "blender_lfs_oid": {"$ref": "#/$defs/sha256"},
+        "blender_bytes": {"type": "integer", "minimum": 20},
+        "glb_source_path": {"$ref": "#/$defs/relative_path"},
+        "glb_lfs_oid": {"$ref": "#/$defs/sha256"},
+        "glb_bytes": {"type": "integer", "minimum": 20},
+        "hydrated_bytes_verified": {"const": true},
+        "derivation": {"const": "byte_for_byte_copy_of_source_branch_master"}
       }
     },
     "armature": {
@@ -32,10 +59,11 @@
       "items": {"type": "object", "additionalProperties": false, "required": ["mesh_id", "mesh_sha256", "material_ids"], "properties": {
         "mesh_id": {"type": "string", "minLength": 1},
         "mesh_sha256": {"$ref": "#/$defs/sha256"},
+        "weights_sha256": {"$ref": "#/$defs/sha256"},
         "material_ids": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "sha256"], "properties": {"id": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}}}
       }}
     },
-    "textures": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/relative_path"}, "sha256": {"$ref": "#/$defs/sha256"}}}},
+    "textures": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"$ref": "#/$defs/relative_path"}, "sha256": {"$ref": "#/$defs/sha256"}, "name": {"type": "string", "minLength": 1}, "bytes": {"type": "integer", "minimum": 1}, "format": {"type": "string", "minLength": 1}, "packed_in_blend": {"type": "boolean"}}}},
     "retarget_policy": {"type": "object", "additionalProperties": false, "required": ["policy_id", "version", "config_path", "config_sha256"], "properties": {
       "policy_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
       "version": {"type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+){1,2}$"},
@@ -45,6 +73,7 @@
     "camera_registration": {"type": "object", "additionalProperties": false, "required": ["contract_id", "profile_sha256", "elevation_degrees", "pixels_per_meter", "root_pixel", "scale_policy", "direction_policy"], "properties": {
       "contract_id": {"type": "string", "minLength": 1},
       "profile_sha256": {"$ref": "#/$defs/sha256"},
+      "profile_path": {"$ref": "#/$defs/relative_path"},
       "elevation_degrees": {"const": 45},
       "pixels_per_meter": {"const": 50},
       "root_pixel": {"const": [64, 106]},
