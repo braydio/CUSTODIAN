@@ -1,9 +1,168 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T14:41:19Z",
-  "source_main_sha": "bbc5c580bf4e350ef168b7a1cad1b2712781caec",
+  "generated_at": "2026-10-31T15:17:55Z",
+  "source_main_sha": "23bf33e3d5898e98a4750893300e71832e055d59",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-profile-grammar-blocker-23bf33e3",
+      "headline": "Review checkout fix lands, but a punctuation mismatch blocks its independent test",
+      "summary": "CUSTODIAN landed the paired-review runner's selective-checkout integration and archived its implementation packet. Its own report records passing tests and a sparse checkout, but the independent review remains unaccepted. A newly documented parser mismatch rejects conventional punctuation in packet publication inputs before claim; a corrective implementation and paired review are now ready for dispatch.",
+      "body": "Main 23bf33e3 adds runner profile forwarding, pre-claim dependency closure and tests, and archives the implementation packet. The implementation summary reports 266 runner tests passing and 389 required paths covered, but these are author-reported validation, not independent acceptance. New grammar packets identify a conventional trailing period after a final backtick path as incompatible with the runner's strict parser, plus a circular adapter review prerequisite. The correction packets were set ready/auto; neither correction implementation nor independent PASS was inspected. Host liveness, teardown and full dispatcher counts are unknown.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-runner-publication-input-grammar-v1",
+      "occurred_at": "2026-10-31T15:17:55Z",
+      "bullets": [
+        "Runner selective checkout integration landed and implementation packet archived.",
+        "Reported focused validation does not establish independent acceptance.",
+        "Publication-input grammar and review dependency correction packets are ready/auto, not running.",
+        "Original provisioning review and protected Awakening recovery remain downstream."
+      ],
+      "links": [
+        {
+          "title": "Runner integration landed",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/52c0198480b7520eb335ac173ebe80023eb050ee"
+        },
+        {
+          "title": "Implementation archived",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/96fa884e3122f274a1b0ac325169c170cda31f15"
+        },
+        {
+          "title": "Grammar correction packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3011aae9d6717f4f5d194b9128637bb76b69143a"
+        },
+        {
+          "title": "Automatic packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/23bf33e3d5898e98a4750893300e71832e055d59"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has landed the missing connection that lets independent reviewers request smaller checkouts. But the first handoff exposed a surprisingly small gate: ordinary punctuation at the end of a task packet's file list can cause the review launcher to reject it before starting. A targeted correction is now queued, while the actual independent verdict remains outstanding.",
+        "sections": [
+          {
+            "heading": "The smaller reviewer checkout is now implemented",
+            "text": "The canonical runner now accepts an optional checkout profile, checks the implementation diff and review dependencies before claiming work, and binds the selected profile to its claim receipt. Its implementation packet was archived on main. The author's tests report a complete sparse profile, but an independent reviewer has not yet accepted the change."
+          },
+          {
+            "heading": "A period becomes a blocking input",
+            "text": "The new packets document a mismatch between conventional packet wording and the runner's strict parser: a single period after the last backtick-enclosed path is rejected. The correction will share one safe parser between review launch and packet authoring, while continuing to reject ambiguous or unsafe paths."
+          },
+          {
+            "heading": "The review order also needs untangling",
+            "text": "The active adapter review reportedly requires the older provisioning review to finish, even though the provisioning review is waiting for the adapter. The corrective packet calls for removing that circular prerequisite. Both correction packets are marked ready for automatic handoff, which does not establish that either agent is executing."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A code landing is not a review clearance",
+            "explanation": "The runner's new capability is visible on main, and its implementation reports passing tests. That is materially different from a fresh independent PASS, which is still required before retrying the earlier provisioning review."
+          },
+          {
+            "title": "The bottleneck has shifted from disk to contract compatibility",
+            "explanation": "A smaller checkout addresses storage, but the reviewer still depends on exact packet grammar and a non-circular review order. Both must work before the storage fix can unlock the downstream review chain."
+          }
+        ],
+        "takeaway": "The selective-reviewer implementation has landed; a narrow parser and dependency-order correction is now the next verified gate, not protected Awakening recovery.",
+        "next_watch": "Look for the grammar correction landing, its own independent PASS, then a successful fresh adapter review and the original provisioning review."
+      },
+      "details": {
+        "overview": "Compared previous main bbc5c580 with 23bf33e3: four new commits changed runner code/tests, profile, archived packet, and grammar correction packets. Implementation summary reports claim run 20261031T141754Z-06d667c64286, 266 runner tests, 389 combined required paths without omissions, and a genuinely sparse worktree. These are implementation-reported results, not independently reproduced host measurements.",
+        "ledger": [
+          {
+            "stage": "Runner checkout integration",
+            "status": "verified landed",
+            "evidence": "Commit 52c01984 modifies paired_review_runner.py, tests and tracked profile."
+          },
+          {
+            "stage": "Implementation packet closure",
+            "status": "verified archived; validation reported",
+            "evidence": "Commit 96fa884e archives completion packet with author-reported tests."
+          },
+          {
+            "stage": "Grammar correction",
+            "status": "verified packet ready/auto, implementation not evidenced",
+            "evidence": "Commits 3011aae9 and 23bf33e3 create and hand off grammar correction and review packets."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No fresh accepted PASS receipt inspected for runner integration or grammar correction."
+          },
+          {
+            "stage": "Protected recovery and canonical teardown",
+            "status": "unknown / not authorized by this report",
+            "evidence": "No trusted host audit or separate recovery authorization."
+          }
+        ],
+        "notes": [
+          "Latest inspected main: 23bf33e3d5898e98a4750893300e71832e055d59.",
+          "GitHub inspection is partial; no canonical dispatcher audit was available."
+        ],
+        "unknowns": [
+          "Current CI outcome and full dispatcher packet totals not established.",
+          "Host disk, locks, live processes and worktree teardown not verified."
+        ],
+        "actions": [
+          "Grammar correction implementer: land shared safe parser and remove circular active-review prerequisite with regression tests.",
+          "Independent reviewer: accept or reject grammar correction before retrying adapter review."
+        ]
+      },
+      "scorecard": {
+        "stage": "Runner integration landed; grammar correction queued",
+        "as_of": "2026-10-31T15:17:55Z",
+        "scope": "Runner checkout-profile integration and newly queued grammar correction, not all project workstreams",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Land selective reviewer checkout",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "52c01984 implementation on main."
+          },
+          {
+            "label": "Archive implementation packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "96fa884e completion archive."
+          },
+          {
+            "label": "Correct publication-input parser and review dependency",
+            "status": "current",
+            "verification": "verified",
+            "evidence": "23bf33e3 marks corrective packet ready/auto; implementation not verified."
+          },
+          {
+            "label": "Independently accept grammar correction",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No PASS receipt."
+          },
+          {
+            "label": "Independently accept checkout-profile adapter",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Documented parser and circular-dependency obstacles."
+          },
+          {
+            "label": "Retry provisioning review and consider separately authorized recovery",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Dependent independent verdicts and separate authorization missing."
+          }
+        ],
+        "next_gate": "Correction implementer must land shared grammar parsing and non-circular review acceptance; independent reviewer then verifies it."
+      },
+      "related": [
+        {
+          "title": "Lightweight checkout hits a second bottleneck: the independent reviewer still requests a full worktree",
+          "context": "Previous report identified the full-checkout reviewer bottleneck that the newly landed integration addresses.",
+          "story_id": "paired-review-checkout-blocked-ab738a8c"
+        }
+      ]
+    },
     {
       "id": "paired-review-checkout-blocked-ab738a8c",
       "headline": "Lightweight checkout hits a second bottleneck: the independent reviewer still requests a full worktree",
@@ -1588,153 +1747,15 @@
       "bullets": [],
       "images": [],
       "related": []
-    },
-    {
-      "id": "operator-scope-f23ff1b4-9845e1db",
-      "headline": "Operator sprite review gets an exact-file recovery safeguard",
-      "summary": "An Operator review blocked by twelve omitted source files now has a narrowly authenticated correction on main. The correction packet is archived, but the original review still needs independent acceptance and separately controlled same-run recovery.",
-      "body": "Commits f23ff1b4 and 9845e1db introduce a post-hoc attestation bound to the original Operator model-to-sprite source identities and archive its implementation packet. The published summary reports focused and full test success, with a longer process-local timeout for the full suite. This does not establish independent acceptance, original reviewer verdict, runtime art approval or canonical teardown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-operator-3d-model-to-sprite-source-scope-recovery-v1",
-      "links": [
-        {
-          "title": "Exact source-scope attestation and tests",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f23ff1b42a4ad5eb575abc8939893ffef3f18da1"
-        },
-        {
-          "title": "Implementation packet archived",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/9845e1db24a826a6797d34b8df768c920a03d1c6"
-        }
-      ],
-      "article": {
-        "lead": "The Operator's experimental 3D-to-sprite pipeline has cleared an important paperwork trap. A review could not begin because its archived file list missed twelve source files. CUSTODIAN has now landed a narrowly bound correction that identifies those files without loosening review checks for other work.",
-        "sections": [
-          {
-            "heading": "A repair tied to the original work",
-            "text": "The new attestation records the exact historical source revisions, file identities and archive record. It is deliberately inert until the correction itself receives an authenticated independent PASS. The original review and its evidence remain protected."
-          },
-          {
-            "heading": "What remains unfinished",
-            "text": "The correction implementation is archived, and its summary reports passing tests. That is not independent acceptance, nor does it prove a usable Operator animation or an in-game sprite. The original review must still be recovered through its controlled same-run process."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Specificity protects the review boundary",
-            "explanation": "Binding the exception to exact files and Git identities avoids creating a general loophole for incomplete source declarations."
-          },
-          {
-            "title": "An archived fix is not a finished review",
-            "explanation": "The implementation is on main, but the original review cannot advance until the correction's independent review is accepted and the protected recovery is authorized."
-          }
-        ],
-        "takeaway": "The Operator source-scope repair is landed; independent review and original-run recovery remain open.",
-        "next_watch": "Watch for an authenticated independent PASS on the correction, then an explicitly authorized recovery of the preserved Operator review."
-      },
-      "details": {
-        "overview": "Main fa7789b7ee6fda763ae683ed144117f353655ea9. Source-scope attestation binds the historical Operator model-to-sprite implementation and exactly twelve omitted files. Published test results are implementation-reported, not independent receipt evidence.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "f23ff1b4 added attestation and regression tests."
-          },
-          {
-            "stage": "Packet archive",
-            "status": "verified",
-            "evidence": "9845e1db marks implementation complete."
-          },
-          {
-            "stage": "Technical validation",
-            "status": "reported",
-            "evidence": "Summary reports 5 focused and 247 full tests passed; full changed-file validation needed process-local timeout extension."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No authenticated accepted receipt inspected."
-          },
-          {
-            "stage": "Original review recovery",
-            "status": "blocked",
-            "evidence": "Requires accepted correction review and controlled same-run continuation."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No accessible host proof."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Local execution, locks, worktrees and disk state unavailable."
-        ],
-        "actions": [
-          "Existing independent reviewer: assess the landed correction before any protected original-run recovery."
-        ]
-      },
-      "scorecard": {
-        "stage": "Correction landed; independent acceptance pending",
-        "as_of": "2026-10-31T04:22:00Z",
-        "scope": "Operator source-scope correction and preserved original review",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Land exact-file correction",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "f23ff1b4"
-          },
-          {
-            "label": "Archive implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "9845e1db"
-          },
-          {
-            "label": "Accept independent review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted receipt inspected"
-          },
-          {
-            "label": "Recover preserved original review",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires separate authorization after acceptance"
-          },
-          {
-            "label": "Verify teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host proof unavailable"
-          }
-        ],
-        "next_gate": "Independent reviewer obtains canonical accepted PASS for correction; only then consider authorized original-run recovery."
-      },
-      "occurred_at": "2026-10-31T04:22:00Z",
-      "bullets": [],
-      "images": [],
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T14:41:19Z",
-    "source_main_sha": "bbc5c580bf4e350ef168b7a1cad1b2712781caec",
+    "observed_at": "2026-10-31T15:17:55Z",
+    "source_main_sha": "23bf33e3d5898e98a4750893300e71832e055d59",
     "coverage": "partial",
-    "scope": "Selected provisioning and runner-integration packets and latest GitHub commits only; no canonical full dispatcher audit",
-    "metrics": [
-      {
-        "id": "ready_auto",
-        "label": "READY / AUTO (INSPECTED)",
-        "value": null,
-        "verification": "unknown",
-        "basis": "Packet dispatch states changed across latest commits; no full queue or stable final count verified"
-      }
-    ],
-    "focus": "Land and independently validate runner checkout-profile forwarding before retrying original provisioning review",
-    "note": "Original review attempt reported storage preflight failure; no live host audit or project-wide counts."
+    "scope": "Four main commits since prior report and their selected runner/grammar packets; not a canonical dispatcher queue audit",
+    "metrics": [],
+    "focus": "Land and independently validate publication-input grammar compatibility and non-circular adapter review prerequisite",
+    "note": "Project-wide packet counts and host state unavailable; ready/auto does not establish execution."
   }
 }
