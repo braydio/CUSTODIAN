@@ -1,9 +1,132 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T01:22:11Z",
-  "source_main_sha": "a696aef8d5aff23e9f2a477c85f1f792da6dcd02",
+  "generated_at": "2026-10-31T01:46:00Z",
+  "source_main_sha": "f848228723513d21412aee0fdbd6bec6514db4e8",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "blocker-6064d70-archived-receipt",
+      "headline": "A recorded review PASS hits a missing-receipt barrier, prompting a targeted recovery plan",
+      "summary": "CUSTODIAN published a new recovery pair after its dual-disposition review reportedly produced a canonical PASS but could not close: the archived review packet lacks a matching independent-review receipt. The new packets are ready, not implemented. The original evidence and claim remain protected, and no accepted closeout or teardown is verified.",
+      "body": "At main f848228723513d21412aee0fdbd6bec6514db4e8, commits 6064d70 and f8482287 published and activated the agent-paired-review-archived-receipt-capture-recovery-v1 implementation packet and its independent review. The implementation packet reports that protected review run 20261031T005522Z-c70dd87f67a4 has an identity-bound canonical PASS and validated target receipt, but lacks the archived packet's Independent Review receipt. Coordinator finish rejects the mismatch. This is packet-reported host evidence, not an independently inspected host receipt or accepted review. The proposed implementation would verify exact identity and hashes, plan a coordinator-attributed mirror, and require separate authorization to apply it. The packets explicitly prohibit applying recovery to the protected run during implementation or review. No recovery code landing, independent acceptance, protected-run apply or canonical teardown is verified. GitHub-visible branches do not establish local process, lock, worktree or disk state. Next owner: existing implementation owner, then a separate reviewer; any later protected apply needs explicit authorization.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-archived-receipt-capture-recovery-v1",
+      "occurred_at": "2026-10-31T01:44:30Z",
+      "bullets": [
+        "New recovery implementation and independent-review packets are ready.",
+        "Packet reports a PASS outcome but an absent archived receipt blocking canonical closeout.",
+        "The proposed repair preserves reviewer evidence and requires a separate exact-run apply authorization.",
+        "No accepted independent review or verified teardown is established.",
+        "Existing implementation owner is next; protected host evidence must remain untouched."
+      ],
+      "links": [
+        {
+          "title": "New recovery packet publication",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/6064d70ceb779a3d2709270bc2e46028557ffcf7"
+        },
+        {
+          "title": "Packet handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f848228723513d21412aee0fdbd6bec6514db4e8"
+        },
+        {
+          "title": "Implementation packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/f848228723513d21412aee0fdbd6bec6514db4e8/custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
+        },
+        {
+          "title": "Held dual-disposition review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/f848228723513d21412aee0fdbd6bec6514db4e8/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_DUAL_DISPOSITION_RECOVERY_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's latest review appears to have reached a favorable verdict but not the finish line. A newly published task describes a narrow bookkeeping failure: the reviewer outcome and target receipt are present, while the matching receipt in the archived review packet is missing. Until that gap is reconciled, the system refuses to close the review.",
+        "sections": [
+          {
+            "heading": "Why a PASS is not yet an accepted review",
+            "text": "The task packet reports one completed independent reviewer turn with a canonical PASS. But CUSTODIAN's coordinator checks multiple matching records before accepting a review. Its finalization step stopped on the missing archived receipt. That is a protective refusal, not evidence that the underlying implementation failed."
+          },
+          {
+            "heading": "A recovery that cannot rewrite the verdict",
+            "text": "The proposed change would first verify the exact run, source evidence and receipt hashes. Only a separately authorized operation could mirror the already authenticated receipt into the archive, clearly labeled as coordinator-produced administrative evidence. The original reviewer files and judgment must remain unchanged."
+          },
+          {
+            "heading": "What this means for game development",
+            "text": "This is another closeout-system dependency rather than an Operator, art or gameplay feature. Resolving it could release a stalled review and help the project return attention to substantive development, but neither implementation nor protected recovery has happened yet."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck moved from review judgment to receipt reconciliation",
+            "explanation": "The new packet reports a PASS already recorded, yet canonical acceptance remains blocked by a missing second receipt. That narrows the reported failure mode, but the host evidence has not been independently inspected by this watch."
+          },
+          {
+            "title": "A passing verdict does not authorize cleanup",
+            "explanation": "The review's claim, lock and worktree are explicitly preserved. No cleanup or disk recovery can be inferred until canonical finish and host teardown are proven."
+          }
+        ],
+        "takeaway": "A specific review-closeout discrepancy is documented and a bounded recovery pair is ready. The review is not yet independently accepted, and no protected recovery has been authorized.",
+        "next_watch": "Look for the recovery implementation landing, its own fresh independent review, and an authenticated closeout receipt before any separately authorized operation on the protected run."
+      },
+      "details": {
+        "overview": "Main f848228723513d21412aee0fdbd6bec6514db4e8. New agent-ops packets target a missing archived Independent Review receipt for review-agent-paired-review-dual-disposition-recovery-v1. Protected run 20261031T005522Z-c70dd87f67a4 is described in the packet. Source GitHub commit establishes publication, not host proof.",
+        "ledger": [
+          {
+            "stage": "Packet publication",
+            "status": "Verified ready",
+            "evidence": "6064d70 adds packets; f8482287 performs ready/auto handoff."
+          },
+          {
+            "stage": "Underlying implementation",
+            "status": "Verified landed",
+            "evidence": "a696aef8 landed dual-disposition recovery."
+          },
+          {
+            "stage": "Reviewer PASS",
+            "status": "Reported in packet, not accepted",
+            "evidence": "New packet describes canonical PASS but archived receipt missing; original host receipt inaccessible."
+          },
+          {
+            "stage": "New recovery implementation",
+            "status": "Ready, not landed",
+            "evidence": "New implementation packet is ready; no implementation commit verified."
+          },
+          {
+            "stage": "New independent review",
+            "status": "Ready, not accepted",
+            "evidence": "Paired review packet published; no receipt verified."
+          },
+          {
+            "stage": "Canonical cleanup",
+            "status": "Unknown / not verified",
+            "evidence": "No authoritative host teardown, lock or disk proof available."
+          }
+        ],
+        "notes": [
+          "New recovery requires source-pinned sanitized capture equality, exact hashes, plan digest, and explicit apply.",
+          "The protected run must not be modified during implementation or its review.",
+          "No verified SUPERSEDED classification established."
+        ],
+        "unknowns": [
+          "Arch-local process and lock state, retained/retired worktree counts and disk free/used are unknown.",
+          "The packet's host-local PASS and capture evidence were not independently accessible.",
+          "Current Actions result for newest main commit not established."
+        ],
+        "actions": [
+          "Existing implementation owner: implement and validate bounded recovery using synthetic evidence only.",
+          "Separate reviewer: independently assess the landed recovery before any protected apply.",
+          "User/coordinator: separately authorize an exact-run apply only after accepted independent review and fresh host verification."
+        ]
+      },
+      "related": [
+        {
+          "title": "Dual-disposition recovery lands on main; independent review is next gate",
+          "context": "The earlier implementation landing enabled the review now held at receipt reconciliation.",
+          "story_id": "landing-a696aef8d5af"
+        }
+      ]
+    },
     {
       "id": "landing-a696aef8d5af",
       "headline": "Dual-disposition recovery lands on main; independent review is next gate",
