@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-workstream-lightweight-lfs-provisioning-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
