@@ -1,9 +1,46 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T00:39:35Z",
-  "publisher": "bootstrap from last completed CUSTODIAN Project Watch run (not an automated feed publication)",
-  "source_main_sha": "0da34470d1d730d202bf9cfdfff7800a1e193738",
+  "generated_at": "2026-10-31T01:22:11Z",
+  "source_main_sha": "a696aef8d5aff23e9f2a477c85f1f792da6dcd02",
+  "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "landing-a696aef8d5af",
+      "headline": "Dual-disposition recovery lands on main; independent review is next gate",
+      "summary": "CUSTODIAN landed the exact-run dual-disposition recovery implementation and archived its implementation packet. The change adds digest-bound planning, evidence preservation and gated fresh-review continuation. Its paired independent review remains ready, not accepted. Protected original recovery is still unauthorized.",
+      "body": "Observed main: a696aef8d5aff23e9f2a477c85f1f792da6dcd02. Commit a696aef8 adds an exact-run plan/apply mechanism to paired_review_runner.py, synthetic tests and lifecycle documentation. The implementation packet moved to archived/ with Status: complete. The implementation summary reports 238 paired-runner tests, 69 workstream tests and 6/6 selected validation suites passing; an initial 90-second timeout was followed by two passing runs. These are implementation-reported local validation results, not a canonical independent PASS. The review packet review-agent-paired-review-dual-disposition-recovery-v1 remains ready and dependency-gated, and a GitHub diagnostic branch exists, but neither proves a reviewer is running. No accepted independent review receipt or verified host teardown was established. Protected run 20261030T191402Z-4dd067b9b8e2 has not been recovered; any plan/apply or fresh continuation requires separate explicit authorization after independent acceptance. Closeout ledger: implementation implemented, locally validated as reported, landed and archived; independent review pending; canonical host cleanup unknown. Next owner: existing independent review owner through authorized dispatcher. Blocker: independent accepted review and subsequent explicit authorization. GitHub-visible branch state does not establish Arch-local locks, worktrees or disk. Confirmed host worktree retired/retained counts and disk free/used: unknown; relay counts not freshly available. No verified superseded determination for held reviews.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-dual-disposition-recovery-v1",
+      "occurred_at": "2026-10-31T00:53:47Z",
+      "bullets": [
+        "Implementation landed and archived on main.",
+        "Implementation summary reports 238 + 69 tests and 6/6 selected validation suites passing.",
+        "Independent paired-review packet remains ready; no accepted PASS verified.",
+        "Protected exact-run recovery requires separate authorization after review.",
+        "Host worktree, lock and disk status remain unknown."
+      ],
+      "links": [
+        {
+          "title": "Implementation landing",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/a696aef8d5aff23e9f2a477c85f1f792da6dcd02"
+        },
+        {
+          "title": "Archived implementation packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/a696aef8d5aff23e9f2a477c85f1f792da6dcd02/custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_DUAL_DISPOSITION_RECOVERY_V1.md"
+        },
+        {
+          "title": "Independent review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/a696aef8d5aff23e9f2a477c85f1f792da6dcd02/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_DUAL_DISPOSITION_RECOVERY_V1.md"
+        },
+        {
+          "title": "Implementation validation summary",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/a696aef8d5aff23e9f2a477c85f1f792da6dcd02/AGENT_PAIRED_REVIEW_DUAL_DISPOSITION_RECOVERY_V1_CLAUDE_SUMMARY.md"
+        }
+      ],
+      "images": []
+    },
     {
       "id": "baseline-20261030-0da34470d1",
       "headline": "CUSTODIAN closeout watch: dual-disposition recovery remains next",
