@@ -14,7 +14,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext, redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -5108,19 +5108,22 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         report_bytes = (json.dumps(report) + "\n").encode()
         (self.run_dir / "validation.json").write_bytes(report_bytes)
         recorded_span = json.loads(json.dumps(span))
-        recorded_span["provenance"].pop("scope_attestation")
         code_paths = sorted(host_validation._source_code_paths(paths))
         metadata = {
             "schema": "custodian.paired_review_host_validation.v1",
             "reviewed_main": reviewed_main, "implementation_commit": reviewed_main,
-            "worktree": str(self.root), "implementation_parent": self.base,
+            "worktree": str(self.root), "implementation_parent": self._git("rev-parse", f"{reviewed_main}^1"),
             "exit_code": 4, "source_changed_during_validation": False,
             "report_path": str((self.run_dir / "validation.json").resolve()),
             "report_sha256": hashlib.sha256(report_bytes).hexdigest(), "report_parse_error": None,
             "summary": report["summary"], "selected": report["selected"],
-            "command": ["/usr/bin/python3", str(self.root / "custodian/tools/validation/run_validation.py"),
-                        "--changed", "--base", self.base, "--json"],
+            "command": [sys.executable, str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"],
+                        *[arg for path in paths for arg in ("--changed-path", path)], "--json"],
             "code_paths": code_paths, "implementation_paths": paths, "source_span": recorded_span,
+            "source_span_base": span["base"], "source_span_head": span["head"],
+            "validation_paths": paths, "selected_source_paths": paths,
+            "validation_fixture_overlay": None,
             "source_sha256": {path: hashlib.sha256(subprocess.run(
                 ["git", "show", f"{reviewed_main}:{path}"], cwd=self.root,
                 check=True, capture_output=True,
@@ -5130,13 +5133,233 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         original = {"workstream": "review-sample", "run_id": "20261031T000000Z-123456789abc",
                     "phase": "host_validation_recovery", "reviewed_main": reviewed_main,
                     "implementation_commit": reviewed_main, "recovery_worktree": str(self.root)}
-        with patch.object(host_validation, "_verified_procession_scope_attestation",
-                          return_value=attestation):
+        with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                           return_value=attestation),
+              patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
             result = runner._failed_host_validation_report_pair(
                 self.run_dir, original, original["workstream"], original["run_id"], span,
+                "sample-implementation", "sample.md",
             )
         self.assertIsNotNone(result)
         self.assertEqual(result["kind"], "failed_validation")
+        expected_overlay_path = (Path(tempfile.gettempdir())
+                                 / "custodian-procession-fixture-test"
+                                 / "checkout/custodian/tools/validation/run_validation.py")
+        self.assertTrue(runner._modern_validator_path_matches(
+            str(expected_overlay_path), self.root, {"kind": "exact-pinned-procession-test-fixture-only"},
+        ))
+        self.assertFalse(runner._modern_validator_path_matches(
+            "/unrelated/custodian/tools/validation/run_validation.py", self.root, None,
+        ))
+
+        producer_import_result = {
+            "status": "failed", "exit_code": 3,
+            "warnings": [{"classification": "fatal", "pattern_id": "", "line": "ERROR: fixture import"}],
+            "stdout_tail": [], "stderr_tail": ["ERROR: fixture import"],
+        }
+        producer_test = [{"id": "needs_import", "type": "godot_script", "tier": "unit",
+                          "needs_import": True, "owners": ["**"], "script": "res://fixture.gd"}]
+        producer_command = ["--changed", *[arg for path in paths
+                                             for arg in ("--changed-path", path)], "--json"]
+        producer_stdout = io.StringIO()
+        with (patch.object(run_validation, "load_manifest", return_value=producer_test),
+              patch.object(run_validation, "load_warning_patterns", return_value=[]),
+              patch.object(run_validation, "load_coverage_excludes", return_value=[]),
+              patch.object(run_validation, "manifest_change_selection", return_value=(set(), False)),
+              patch.object(run_validation, "base_manifest_payload", return_value={}),
+              patch.object(run_validation, "load_manifest_payload", return_value={}),
+              patch.object(run_validation, "preflight_detail", return_value=None),
+              patch.object(run_validation, "_run_import", return_value=(False, producer_import_result)),
+              patch.object(run_validation, "GodotProjectLock", return_value=nullcontext()),
+              patch.object(run_validation, "GodotJobBudget", return_value=nullcontext()),
+              redirect_stdout(producer_stdout)):
+            producer_exit = run_validation.main(producer_command)
+        self.assertEqual(producer_exit, 3)
+        import_report = json.loads(producer_stdout.getvalue())
+        self.assertEqual(set(import_report), {"schema", "passed", "infrastructure_failure", "import"})
+        self.assertNotIn("changed_files", import_report)
+        import_bytes = (json.dumps(import_report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(import_bytes)
+        import_metadata = json.loads(json.dumps(metadata))
+        import_metadata.update({
+            "exit_code": 3, "report_sha256": hashlib.sha256(import_bytes).hexdigest(),
+            "summary": None, "selected": None, "source_changed_during_validation": False,
+            "command": [sys.executable,
+                        str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"],
+                        *[arg for path in paths for arg in ("--changed-path", path)], "--json"],
+        })
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(import_metadata))
+        with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                           return_value=attestation),
+              patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+            import_result = runner._failed_host_validation_report_pair(
+                self.run_dir, original, original["workstream"], original["run_id"], span,
+                "sample-implementation", "sample.md",
+            )
+        self.assertIsNotNone(import_result)
+        self.assertEqual(import_result["kind"], "failed_import")
+
+        import_negative_cases = (
+            ("wrong coordinator exit", lambda r, m: m.update(exit_code=4)),
+            ("unexpected changed files", lambda r, m: r.update(changed_files=paths)),
+            ("unexpected summary", lambda r, m: r.update(summary={})),
+            ("missing import output field", lambda r, m: r["import"].pop("stderr_tail")),
+            ("timeout misclassified", lambda r, m: r["import"].update(status="timeout")),
+            ("forged inventory", lambda r, m: m["command"].__setitem__(6, "design/forged.gd")),
+            ("wrong source base", lambda r, m: m["command"].__setitem__(4, "0" * 40)),
+            ("unrelated validator path", lambda r, m: m["command"].__setitem__(
+                1, "/unrelated/custodian/tools/validation/run_validation.py")),
+            ("forged fixture overlay", lambda r, m: m.update(validation_fixture_overlay={"kind": "forged"})),
+            ("legacy downgrade", lambda r, m: m.pop("validation_paths")),
+        )
+        pristine_import = json.loads(json.dumps(import_report))
+        pristine_import_metadata = json.loads(json.dumps(import_metadata))
+        for label, mutate in import_negative_cases:
+            with self.subTest(import_predicate=label):
+                changed_report = json.loads(json.dumps(pristine_import))
+                changed_metadata = json.loads(json.dumps(pristine_import_metadata))
+                mutate(changed_report, changed_metadata)
+                changed_bytes = (json.dumps(changed_report) + "\n").encode()
+                (self.run_dir / "validation.json").write_bytes(changed_bytes)
+                changed_metadata["report_sha256"] = hashlib.sha256(changed_bytes).hexdigest()
+                (self.run_dir / "coordinator-validation.json").write_text(json.dumps(changed_metadata))
+                with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                                   return_value=attestation),
+                      patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+                    self.assertIsNone(runner._failed_host_validation_report_pair(
+                        self.run_dir, original, original["workstream"], original["run_id"], span,
+                        "sample-implementation", "sample.md",
+                    ))
+        (self.run_dir / "validation.json").write_bytes(import_bytes + b" ")
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(import_metadata))
+        with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                           return_value=attestation),
+              patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+            self.assertIsNone(runner._failed_host_validation_report_pair(
+                self.run_dir, original, original["workstream"], original["run_id"], span,
+                "sample-implementation", "sample.md",
+            ))
+        source_path = self.root / code_paths[0]
+        source_bytes = source_path.read_bytes()
+        try:
+            source_path.write_bytes(source_bytes + b"# drift\n")
+            (self.run_dir / "validation.json").write_bytes(import_bytes)
+            (self.run_dir / "coordinator-validation.json").write_text(json.dumps(import_metadata))
+            with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                               return_value=attestation),
+                  patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+                self.assertIsNone(runner._failed_host_validation_report_pair(
+                    self.run_dir, original, original["workstream"], original["run_id"], span,
+                    "sample-implementation", "sample.md",
+                ))
+        finally:
+            source_path.write_bytes(source_bytes)
+        self.assertIsNone(runner._failed_host_validation_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"] + "-wrong", span,
+            "sample-implementation", "sample.md",
+        ))
+
+        pristine_report = json.loads(json.dumps(report))
+        pristine_metadata = json.loads(json.dumps(metadata))
+        for label, mutate in (
+            ("duplicate argument", lambda r, m: m["command"].insert(-1, "--changed-path")),
+            ("omitted path argument", lambda r, m: m["command"].__delitem__(slice(5, 7))),
+            ("reordered path arguments", lambda r, m: m["command"].__setitem__(slice(5, None),
+                [arg for path in reversed(paths) for arg in ("--changed-path", path)] + ["--json"])),
+            ("absolute path argument", lambda r, m: m["command"].__setitem__(6, "/" + paths[0])),
+            ("traversal path argument", lambda r, m: m["command"].__setitem__(6, "../" + paths[0])),
+            ("substituted path argument", lambda r, m: m["command"].__setitem__(6, "design/substitute.gd")),
+            ("mismatched base argument", lambda r, m: m["command"].__setitem__(4, "0" * 40)),
+            ("unrelated validator path", lambda r, m: m["command"].__setitem__(
+                1, "/unrelated/custodian/tools/validation/run_validation.py")),
+            ("extra report path", lambda r, m: r["changed_files"].append("design/extra.gd")),
+            ("reordered inventory", lambda r, m: m["validation_paths"].reverse()),
+            ("forged overlay", lambda r, m: m.update(validation_fixture_overlay={"kind": "forged"})),
+            ("wrong reviewed main", lambda r, m: m.update(reviewed_main="0" * 40)),
+            ("wrong source digest", lambda r, m: m["source_sha256"].update({code_paths[0]: "0" * 64})),
+        ):
+            with self.subTest(predicate=label):
+                changed_report = json.loads(json.dumps(pristine_report))
+                changed_metadata = json.loads(json.dumps(pristine_metadata))
+                mutate(changed_report, changed_metadata)
+                changed_bytes = (json.dumps(changed_report) + "\n").encode()
+                (self.run_dir / "validation.json").write_bytes(changed_bytes)
+                changed_metadata["report_sha256"] = hashlib.sha256(changed_bytes).hexdigest()
+                (self.run_dir / "coordinator-validation.json").write_text(json.dumps(changed_metadata))
+                with (patch.object(host_validation, "_verified_procession_scope_attestation",
+                                   return_value=attestation),
+                      patch.object(host_validation, "resolve_validation_source_span", return_value=span)):
+                    self.assertIsNone(runner._failed_host_validation_report_pair(
+                        self.run_dir, original, original["workstream"], original["run_id"], span,
+                        "sample-implementation", "sample.md",
+                    ))
+
+    def test_exact_inventory_coverage_only_exit_six_is_authenticated_without_legacy_broad_capture(self):
+        unowned = self.root / "design/unowned_coverage_fixture.gd"
+        unowned.parent.mkdir(parents=True, exist_ok=True)
+        unowned.write_text("extends RefCounted\n")
+        source = self.root / self.changed_paths[0]
+        source.write_text("extends RefCounted\n# exact inventory fixture\n")
+        self._commit("add exact but uncovered source inventory")
+        self.implementation = self._git("rev-parse", "HEAD")
+        self.reviewed_main = self.implementation
+        target_workstream = "sample-implementation"
+        target_packet_path = "sample.md"
+        span = host_validation.resolve_validation_source_span(
+            self.root, self.reviewed_main, self.implementation,
+            target_workstream, target_packet_path,
+        )
+        paths = host_validation._expected_validation_paths(span, None)
+        manifest = host_validation._pinned_coverage_manifest(self.root, self.reviewed_main)
+        selected = run_validation.select_changed_tests(manifest["tests"], paths)
+        selected_ids = [item["id"] for item in selected]
+        coverage = run_validation.changed_file_coverage(
+            paths, selected, manifest.get("coverage_excludes", []),
+        )
+        self.assertFalse(coverage["complete"])
+        report = {
+            "schema": "custodian.validation.result.v1", "passed": False,
+            "changed_files": paths, "selected": selected_ids,
+            "tests": [{"id": item, "status": "passed"} for item in selected_ids],
+            "summary": {"selected": len(selected_ids), "passed": len(selected_ids),
+                        "failed": 0, "timed_out": 0, "skipped": 0,
+                        "infrastructure_errors": 0},
+            "coverage": coverage,
+        }
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        code_paths = sorted(host_validation._source_code_paths(span["paths"]))
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": self.reviewed_main, "implementation_commit": self.implementation,
+            "implementation_parent": span["base"], "worktree": str(self.root),
+            "source_span": span, "source_span_base": span["base"],
+            "source_span_head": span["head"], "implementation_paths": span["paths"],
+            "validation_paths": paths, "selected_source_paths": paths,
+            "validation_fixture_overlay": None, "code_paths": code_paths,
+            "source_sha256": {path: hashlib.sha256((self.root / path).read_bytes()).hexdigest()
+                              for path in code_paths},
+            "source_changed_during_validation": False, "exit_code": 6,
+            "report_path": str((self.run_dir / "validation.json").resolve()),
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(), "report_parse_error": None,
+            "summary": report["summary"], "selected": report["selected"],
+            "command": [sys.executable,
+                        str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"],
+                        *[arg for path in paths for arg in ("--changed-path", path)], "--json"],
+        }
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+        original = {"workstream": "review-exact-inventory", "run_id": "20261031T000001Z-123456789abc",
+                    "phase": "host_validation_recovery", "reviewed_main": self.reviewed_main,
+                    "implementation_commit": self.implementation, "recovery_worktree": str(self.root)}
+        evidence = runner._failed_host_validation_report_pair(
+            self.run_dir, original, original["workstream"], original["run_id"], span,
+            target_workstream, target_packet_path,
+        )
+        self.assertIsNotNone(evidence)
+        self.assertEqual(evidence["failure_kind"], "coverage_only_incomplete")
+        self.assertEqual(evidence["exit_code"], 6)
 
     def _completed_host_validation_fixture(self):
         excluded_path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
@@ -5618,7 +5841,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
              patch.object(runner, "resolve_target_implementation_commit",
                           return_value=(self.implementation, None)):
             evidence = runner._failed_host_validation_report_pair(
-                self.run_dir, original, workstream, run_id,
+                self.run_dir, original, workstream, run_id, span,
+                "sample-implementation", target_packet_path,
             )
             self.assertIsNotNone(evidence)
             self.assertEqual(evidence["failure_kind"], "coverage_only_incomplete")
@@ -5645,7 +5869,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         json.dumps(altered_metadata),
                     )
                     self.assertIsNone(runner._failed_host_validation_report_pair(
-                        self.run_dir, original, workstream, run_id,
+                        self.run_dir, original, workstream, run_id, span,
+                        "sample-implementation", target_packet_path,
                     ))
     def test_failed_report_authenticates_canonical_excluded_hashed_json(self):
         path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"

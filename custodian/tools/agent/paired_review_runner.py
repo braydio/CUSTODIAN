@@ -13,6 +13,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -4521,9 +4522,64 @@ def _verify_coverage_only_failed_report_provenance(
         return False
 
 
+def _modern_validator_path_matches(command_path: str, worktree: Path,
+                                  fixture_overlay: dict | None) -> bool:
+    """Bind the validator path to the reviewed checkout or exact fixture clone."""
+    relative = Path("custodian/tools/validation/run_validation.py")
+    candidate = Path(command_path)
+    if not candidate.is_absolute():
+        return False
+    if fixture_overlay is None:
+        return candidate == (worktree / relative)
+    try:
+        temporary_root = Path(tempfile.gettempdir()).resolve()
+        parts = candidate.relative_to(temporary_root).parts
+    except (OSError, ValueError):
+        return False
+    return (
+        len(parts) == 6
+        and parts[0].startswith("custodian-procession-fixture-")
+        and bool(parts[0][len("custodian-procession-fixture-"):])
+        and parts[1:] == ("checkout", *relative.parts)
+    )
+
+
+def _is_minimal_modern_import_failure(report: dict) -> bool:
+    """Match only run_validation.py's exact pre-test import failure payload."""
+    if (set(report) != {"schema", "passed", "infrastructure_failure", "import"}
+            or report.get("schema") != "custodian.validation.result.v1"
+            or report.get("passed") is not False
+            or report.get("infrastructure_failure") != "import"):
+        return False
+    imported = report.get("import")
+    if (not isinstance(imported, dict)
+            or set(imported) != {"status", "exit_code", "warnings", "stdout_tail", "stderr_tail"}
+            or imported.get("status") != "failed"
+            or not isinstance(imported.get("exit_code"), int)
+            or isinstance(imported.get("exit_code"), bool)
+            or not isinstance(imported.get("warnings"), list)
+            or not isinstance(imported.get("stdout_tail"), list)
+            or not isinstance(imported.get("stderr_tail"), list)
+            or any(not isinstance(line, str) for line in imported["stdout_tail"] + imported["stderr_tail"])
+            or any(not isinstance(item, dict)
+                   or set(item) != {"classification", "pattern_id", "line"}
+                   or item.get("classification") not in {
+                       "expected_error", "fatal", "known_warning", "new_warning",
+                   }
+                   or not isinstance(item.get("pattern_id"), str)
+                   or not isinstance(item.get("line"), str)
+                   for item in imported["warnings"])):
+        return False
+    return (imported["exit_code"] != 0
+            or any(item["classification"] == "fatal" for item in imported["warnings"])
+            )
+
+
 def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                                         workstream: str, run_id: str,
-                                        source_span: dict | None = None) -> dict | None:
+                                        source_span: dict | None = None,
+                                        target_workstream: str | None = None,
+                                        target_packet_path: str | None = None) -> dict | None:
     """Authenticate a complete pre-review failed report pair without rewriting it."""
     if (original.get("workstream") != workstream or original.get("run_id") != run_id
             or original.get("phase") not in {"host_validation_recovery", "host_validation_failed"}
@@ -4615,6 +4671,7 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                 and isinstance(command[1], str)
                 and command[1].replace("\\", "/").endswith("/custodian/tools/validation/run_validation.py")):
             command_path = command[1]
+    modern_inventory = isinstance(metadata.get("validation_paths"), list)
     if (not isinstance(code_paths, list) or not code_paths
             or not all(isinstance(path, str) and path and not Path(path).is_absolute()
                        and ".." not in Path(path).parts for path in code_paths)
@@ -4624,13 +4681,98 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or metadata.get("selected") != report.get("selected")
             or not isinstance(parent, str) or not re.fullmatch(r"[0-9a-f]{40,64}", parent)
             or command_path is None
-            or len(command) < 5
-            or command[-4:] != ["--changed", "--base", parent, "--json"]
             or any(not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value)
                    for value in source_hashes.values())
             or source_changed not in (False, True)
             or (source_changed and report.get("infrastructure_failure") != "import")):
         return None
+    if modern_inventory:
+        # Reconstruct both the source span and its one permitted fixture overlay
+        # from pinned repository evidence. Metadata alone never authenticates argv.
+        try:
+            worktree = Path(metadata["worktree"]).resolve()
+            recorded_span = metadata.get("source_span")
+            if not isinstance(source_span, dict):
+                return None
+            trusted_span = host_validation.resolve_validation_source_span(
+                worktree, metadata["reviewed_main"], metadata["implementation_commit"],
+                target_workstream, target_packet_path,
+            )
+            if recorded_span != trusted_span or source_span != trusted_span:
+                return None
+            expected_fixture = host_validation._expected_validation_fixture(
+                worktree, metadata["reviewed_main"], target_workstream, target_packet_path,
+            )
+            expected_paths = host_validation._expected_validation_paths(trusted_span, expected_fixture)
+            expected_args = ["--changed", "--base", trusted_span["base"],
+                             *[arg for path in expected_paths for arg in ("--changed-path", path)],
+                             "--json"]
+            expected_parent = subprocess.run(
+                ["git", "rev-parse", "--verify", f"{metadata['implementation_commit']}^1"],
+                cwd=worktree, text=True, capture_output=True, check=True,
+            ).stdout.strip()
+            expected_code_paths = sorted(host_validation._source_code_paths(trusted_span["paths"]))
+            minimal_import = _is_minimal_modern_import_failure(report)
+            if report.get("infrastructure_failure") == "import" and not minimal_import:
+                return None
+            if minimal_import and (metadata.get("exit_code") != 3 or source_changed is not False):
+                return None
+            pinned_source_hashes = {}
+            checkout_source_hashes = {}
+            for relative in expected_code_paths:
+                pinned_bytes = subprocess.run(
+                    ["git", "show", f"{metadata['reviewed_main']}:{relative}"],
+                    cwd=worktree, capture_output=True, check=True,
+                ).stdout
+                pinned_source_hashes[relative] = _sha256_bytes(pinned_bytes)
+                checkout_path = worktree / relative
+                if checkout_path.is_symlink() or not checkout_path.is_file():
+                    return None
+                checkout_source_hashes[relative] = _sha256_bytes(checkout_path.read_bytes())
+            if minimal_import:
+                checked_head = subprocess.run(
+                    ["git", "rev-parse", "--verify", "HEAD^{commit}"],
+                    cwd=worktree, text=True, capture_output=True, check=True,
+                ).stdout.strip()
+                if checked_head != metadata["reviewed_main"]:
+                    return None
+            if (metadata.get("implementation_parent") != expected_parent
+                    or metadata.get("source_span_base") != trusted_span["base"]
+                    or metadata.get("source_span_head") != trusted_span["head"]
+                    or metadata.get("implementation_paths") != trusted_span["paths"]
+                    or code_paths != expected_code_paths
+                    or source_hashes != pinned_source_hashes
+                    or checkout_source_hashes != pinned_source_hashes
+                    or metadata.get("validation_fixture_overlay") != expected_fixture
+                    or metadata.get("validation_paths") != expected_paths
+                    or metadata.get("selected_source_paths") != expected_paths
+                    or (report.get("changed_files") != expected_paths
+                        and not (minimal_import and metadata.get("exit_code") == 3
+                                 and source_changed is False))
+                    or len(command) != len(expected_args) + 2
+                    or command[0] != sys.executable
+                    or not isinstance(command[1], str)
+                    or not _modern_validator_path_matches(
+                        command[1], worktree, expected_fixture,
+                    )
+                    or command[2:] != expected_args):
+                return None
+        except (HostValidationError, OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError):
+            return None
+    else:
+        # Legacy captures have no exact inventory metadata and must use only the
+        # historical command shape; never relabel an exact-inventory run as legacy.
+        expected_validator = str(
+            Path(metadata["worktree"]).resolve() / "custodian/tools/validation/run_validation.py"
+        )
+        if ("validation_fixture_overlay" in metadata
+                or any(item == "--changed-path" for item in command)
+                or len(command) != 6
+                or not isinstance(command[0], str)
+                or not Path(command[0]).name.startswith("python")
+                or command_path != expected_validator
+                or command[-4:] != ["--changed", "--base", parent, "--json"]):
+            return None
     if complete_suite_failure or coverage_only_failure:
         try:
             manifest = host_validation._pinned_coverage_manifest(
@@ -4655,9 +4797,16 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                 report, set(code_paths), manifest, repo=Path(metadata["worktree"]),
                 reviewed_main=metadata["reviewed_main"], source_span=span,
             )
-        except (HostValidationError, OSError, ValueError):
+        except HostValidationError as exc:
+            # Exit 6 is an authentic incomplete-coverage failure when the
+            # canonical policy agrees exactly but an implementation path lacks
+            # an eligible owner. Preserve that failure as incomplete evidence.
+            if not (modern_inventory and coverage_only_failure
+                    and str(exc) == "host validation coverage omits eligible implementation source/test files"):
+                return None
+        except (OSError, ValueError):
             return None
-    if coverage_only_failure and not _verify_coverage_only_failed_report_provenance(
+    if coverage_only_failure and not modern_inventory and not _verify_coverage_only_failed_report_provenance(
         run_dir, original, workstream, metadata, report,
     ):
         return None
@@ -4726,7 +4875,9 @@ def _failed_host_validation_retry_state(run_dir: Path, worktree: Path, workstrea
         except (OSError, json.JSONDecodeError) as exc:
             raise RunnerError("failed host-validation attempt report or provenance is missing or malformed") from exc
         retry_source_span = None
-        if "custodian/tools/validation/validation_manifest.json" in report.get("changed_files", []):
+        if (isinstance(validation_metadata, dict)
+                and (isinstance(validation_metadata.get("validation_paths"), list)
+                     or "custodian/tools/validation/validation_manifest.json" in report.get("changed_files", []))):
             try:
                 retry_source_span = host_validation.resolve_validation_source_span(
                     worktree, child["reviewed_main"], child["implementation_commit"],
@@ -4736,6 +4887,7 @@ def _failed_host_validation_retry_state(run_dir: Path, worktree: Path, workstrea
                 raise RunnerError("failed retry source-span provenance cannot be independently reconstructed") from exc
         report_evidence = _failed_host_validation_report_pair(
             attempt_dir, child, workstream, run_id, retry_source_span,
+            child.get("target_workstream"), child.get("target_packet_path"),
         )
         if (report_evidence is None
                 or report_evidence.get("source_changed_during_validation") is not False
@@ -4893,6 +5045,7 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
         recovery_source_span = None
     failed_host_validation = _failed_host_validation_report_pair(
         run_dir, original, workstream, run_id, recovery_source_span,
+        packet.review_target_workstream, packet.review_target_packet,
     )
     retry_child = None
     retry_number = 1
