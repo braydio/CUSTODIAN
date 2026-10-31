@@ -5,8 +5,8 @@
 - Category: `agent-ops`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1`
 - Locks: `paired-review-pinned-manifest-continuation-correction`
