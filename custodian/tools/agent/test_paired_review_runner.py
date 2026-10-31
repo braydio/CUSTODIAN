@@ -4749,7 +4749,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             git("commit", "-qm", "unrelated history")
             second_parent = git("rev-parse", "HEAD")
         else:
-            if variant == "overlap":
+            if variant == "overlap" or variant.startswith("multiple-main-sync-overlap"):
                 (repository / source_path).write_text("a\nb\nc\nd\nmain addition\n")
                 git("add", source_path)
             else:
@@ -4793,7 +4793,28 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         "-p", first_parent, "-p", second_parent)
         git("reset", "--hard", merge)
 
-        if variant == "repeated-merge":
+        sync_merges = [(first_parent, second_parent, merge)]
+        if (variant.startswith("multiple-main-sync")
+                or variant.startswith("multiple-checkpoint-resume")):
+            # A second main advance is merged after a bounded implementation
+            # commit. This is the real-Git shape the old single-merge guard
+            # rejected, with distinct lifecycle witnesses for both merges.
+            (repository / source_path).write_text(
+                "local implementation\nb\nc\nd\ne\nbetween merges\n"
+            )
+            git("add", source_path)
+            git("commit", "-qm", "implementation between sync merges")
+            second_first_parent = git("rev-parse", "HEAD")
+            git("checkout", "-qb", "published-main-second", second_parent)
+            (repository / "published-main-second.md").write_text("second published main\n")
+            git("add", "published-main-second.md")
+            git("commit", "-qm", "advance published main again")
+            second_second_parent = git("rev-parse", "HEAD")
+            git("checkout", "workstream")
+            git("merge", "--no-ff", "published-main-second", "-m", "second main synchronization")
+            second_merge = git("rev-parse", "HEAD")
+            sync_merges.append((second_first_parent, second_second_parent, second_merge))
+        elif variant == "repeated-merge":
             git("checkout", "-qb", "published-main-extra", source_base)
             (repository / "extra-main.md").write_text("extra main\n")
             git("add", "extra-main.md")
@@ -4843,27 +4864,43 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             (second_parent, first_parent) if variant == "reordered-parents"
             else (first_parent, second_parent)
         )
-        checkpoint = {"remote_head": trace_first_parent, "branch": branch, "removed": False}
-        if variant == "interior-main-sync-forged-checkpoint":
-            checkpoint["branch"] = "agent/foreign-workstream"
-        emit("checkpoint_completed", checkpoint)
-        if variant == "interior-main-sync-duplicate-checkpoint":
+        multi_sync = (variant.startswith("multiple-main-sync")
+                      or variant.startswith("multiple-checkpoint-resume"))
+        interior_sync = variant.startswith("interior-main-sync") or multi_sync
+        if multi_sync:
+            for index, (merge_first, merge_second, merge_commit) in enumerate(sync_merges):
+                checkpoint = {"remote_head": merge_first, "branch": branch, "removed": False}
+                emit("checkpoint_completed", checkpoint)
+                if variant.startswith("multiple-checkpoint-resume") and index == 0:
+                    emit("worktree_resumed", {"head": merge_commit, "branch": branch,
+                                                "worktree": worktree})
+                else:
+                    emit("main_sync", {"changed": True, "head": merge_commit,
+                                       "main_sha": merge_second})
+            # The last no-op at the final landing tip binds the latest main
+            # head, as specified by the existing lifecycle contract.
+        else:
+            checkpoint = {"remote_head": trace_first_parent, "branch": branch, "removed": False}
+            if variant == "interior-main-sync-forged-checkpoint":
+                checkpoint["branch"] = "agent/foreign-workstream"
             emit("checkpoint_completed", checkpoint)
-        interior_sync = variant.startswith("interior-main-sync")
-        if not interior_sync:
-            emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
-        if interior_sync:
-            if variant != "interior-main-sync-missing-changed":
-                changed = {"changed": True, "head": merge, "main_sha": trace_second_parent}
-                if variant == "interior-main-sync-mismatched-head":
-                    changed["head"] = first_parent
-                emit("main_sync", changed)
-            if variant == "interior-main-sync-duplicate-changed":
-                emit("main_sync", {"changed": True, "head": merge, "main_sha": trace_second_parent})
-        if variant == "interior-main-sync-conflicting-resume":
-            emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
+            if variant == "interior-main-sync-duplicate-checkpoint":
+                emit("checkpoint_completed", checkpoint)
+            if not interior_sync:
+                emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
+            if interior_sync:
+                if variant != "interior-main-sync-missing-changed":
+                    changed = {"changed": True, "head": merge, "main_sha": trace_second_parent}
+                    if variant == "interior-main-sync-mismatched-head":
+                        changed["head"] = first_parent
+                    emit("main_sync", changed)
+                if variant == "interior-main-sync-duplicate-changed":
+                    emit("main_sync", {"changed": True, "head": merge, "main_sha": trace_second_parent})
+            if variant == "interior-main-sync-conflicting-resume":
+                emit("worktree_resumed", {"head": merge, "branch": branch, "worktree": worktree})
         if variant != "interior-main-sync-missing-noop":
-            emit("main_sync", {"changed": False, "head": landing, "main_sha": trace_second_parent})
+            final_second_parent = sync_merges[-1][1] if multi_sync else trace_second_parent
+            emit("main_sync", {"changed": False, "head": landing, "main_sha": final_second_parent})
         if sync_side:
             emit("main_sync", {"changed": True, "head": trace_landing, "main_sha": sync_side})
         emit("landing_started", {"start_sha": trace_landing, "branch": branch, "target": "main"})
@@ -4879,6 +4916,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         git("update-ref", trace_ref, trace_commit)
         return {"repo": repository, "base": reviewed_base, "source_base": source_base,
                 "first_parent": first_parent, "second_parent": second_parent,
+                "sync_merges": sync_merges,
                 "merge": merge, "landing": landing, "trace_landing": trace_landing,
                 "reviewed_main": trace_landing, "workstream": workstream,
                 "archive": archive, "source_path": source_path, "test_path": test_path}
@@ -4897,12 +4935,24 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["paths"], sorted(provenance["owned_paths"]))
         self.assertNotIn("published-main.md", span["paths"])
 
+        no_changed_event = self._build_checkpoint_resume_fixture(
+            variant="interior-main-sync-missing-changed",
+        )
+        no_changed_span = host_validation.resolve_validation_source_span(
+            no_changed_event["repo"], no_changed_event["reviewed_main"],
+            no_changed_event["landing"], no_changed_event["workstream"],
+            no_changed_event["archive"],
+        )
+        self.assertEqual(
+            no_changed_span["provenance"]["source_main_sync_merge"]["witness_kind"],
+            "final-noop-main-sync",
+        )
+
         for variant, expected in (
             ("interior-main-sync-forged-checkpoint", "unique matching checkpoint"),
             ("interior-main-sync-duplicate-checkpoint", "unique matching checkpoint"),
-            ("interior-main-sync-missing-changed", "unique exact lifecycle witness"),
             ("interior-main-sync-duplicate-changed", "unique exact lifecycle witness"),
-            ("interior-main-sync-mismatched-head", "unique exact lifecycle witness"),
+            ("interior-main-sync-mismatched-head", "unmatched or conflicting main-sync events"),
             ("interior-main-sync-missing-noop", "exact no-op main-sync witness"),
             ("interior-main-sync-conflicting-resume", "conflicting in-place sync events"),
         ):
@@ -8186,7 +8236,7 @@ Verify the exact post-hoc attestation.
             ("reordered-parents", "invalid ordered parents|no implementation source"),
             ("octopus-parents", "invalid ordered parents"),
             ("unrelated-second-parent", "second parent is outside published history"),
-            ("repeated-merge", "multiple synchronization merges"),
+            ("repeated-merge", "unique matching checkpoint"),
             ("source-loss", "loses workstream-owned source"),
             ("sync-source-mutation", "main-sync merge changes reviewed source"),
             ("undocumented-source", "paths not documented by its target packet"),
@@ -8210,6 +8260,102 @@ Verify the exact post-hoc attestation.
         self.assertIn(overlap["source_path"], overlap_provenance["overlapping_paths"])
         self.assertIn(overlap["source_path"], overlap_provenance["owned_paths"])
         self.assertIn(overlap["source_path"], overlap_span["paths"])
+
+    def test_two_ordered_main_sync_merges_keep_only_owned_source_paths(self):
+        fixture = self._build_checkpoint_resume_fixture(variant="multiple-main-sync")
+        span = host_validation.resolve_validation_source_span(
+            fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+
+        merges = span["provenance"]["synchronization_merges"]
+        self.assertEqual([item["commit"] for item in merges],
+                         [item[2] for item in fixture["sync_merges"]])
+        self.assertEqual([item["first_parent"] for item in merges],
+                         [item[0] for item in fixture["sync_merges"]])
+        self.assertEqual([item["second_parent"] for item in merges],
+                         [item[1] for item in fixture["sync_merges"]])
+        self.assertEqual([item["merge_tree_proof"] for item in merges],
+                         ["git-merge-tree-write-tree-exact"] * 2)
+        self.assertEqual(span["paths"], sorted({fixture["source_path"], fixture["test_path"]}))
+        self.assertNotIn("published-main.md", span["paths"])
+        self.assertNotIn("published-main-second.md", span["paths"])
+
+        overlap = self._build_checkpoint_resume_fixture(
+            variant="multiple-main-sync-overlap",
+        )
+        overlap_span = host_validation.resolve_validation_source_span(
+            overlap["repo"], overlap["reviewed_main"], overlap["landing"],
+            overlap["workstream"], overlap["archive"],
+        )
+        self.assertIn(overlap["source_path"], overlap_span["paths"])
+        self.assertIn(
+            overlap["source_path"],
+            overlap_span["provenance"]["synchronization_merges"][0]["overlapping_paths"],
+        )
+
+        mixed = self._build_checkpoint_resume_fixture(
+            variant="multiple-checkpoint-resume-mixed",
+        )
+        mixed_span = host_validation.resolve_validation_source_span(
+            mixed["repo"], mixed["reviewed_main"], mixed["landing"],
+            mixed["workstream"], mixed["archive"],
+        )
+        self.assertEqual(
+            [item["witness_kind"] for item in mixed_span["provenance"]["synchronization_merges"]],
+            ["checkpoint-resume", "in-place-main-sync"],
+        )
+
+    def test_multi_merge_source_span_rejects_missing_reused_or_reordered_witnesses(self):
+        for mutation, expected in (
+            ("missing-second-checkpoint", "unique matching checkpoint"),
+            ("missing-first-witness", "unique exact lifecycle witness"),
+            ("duplicate-first-changed", "unique exact lifecycle witness"),
+            ("reuse-first-witness", "unique exact lifecycle witness"),
+            ("reordered-second-changed", "out of order"),
+            ("wrong-second-parent", "unmatched or conflicting main-sync events"),
+        ):
+            with self.subTest(mutation=mutation):
+                fixture = self._build_checkpoint_resume_fixture(variant=f"multiple-main-sync-{mutation}")
+                trace_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
+                             "20261020T120000Z-abcdef123456")
+                raw = subprocess.run(["git", "show", f"{trace_ref}:trace.jsonl"],
+                                     cwd=fixture["repo"], check=True, capture_output=True).stdout
+                events = [json.loads(line) for line in raw.splitlines()]
+                checkpoints = [event for event in events if event["event"] == "checkpoint_completed"]
+                changed = [event for event in events if event["event"] == "main_sync"
+                           and event["data"].get("changed") is True]
+                if mutation == "missing-second-checkpoint":
+                    events.remove(checkpoints[1])
+                elif mutation == "missing-first-witness":
+                    events.remove(changed[0])
+                elif mutation == "duplicate-first-changed":
+                    events.insert(events.index(changed[1]), json.loads(json.dumps(changed[0])))
+                elif mutation == "reuse-first-witness":
+                    changed[1]["data"] = json.loads(json.dumps(changed[0]["data"]))
+                elif mutation == "reordered-second-changed":
+                    events.remove(changed[1])
+                    events.insert(events.index(checkpoints[1]), changed[1])
+                else:
+                    changed[1]["data"]["main_sha"] = "0" * 40
+                trace_blob = subprocess.run(["git", "hash-object", "-w", "--stdin"],
+                                            cwd=fixture["repo"], input=(b"\n".join(
+                                                json.dumps(event, sort_keys=True).encode()
+                                                for event in events) + b"\n"),
+                                            check=True, capture_output=True).stdout.decode().strip()
+                tree = subprocess.run(["git", "mktree"], cwd=fixture["repo"],
+                                      input=f"100644 blob {trace_blob}\ttrace.jsonl\n",
+                                      text=True, check=True, capture_output=True).stdout.strip()
+                trace_commit = subprocess.run(["git", "commit-tree", tree, "-m", "mutated trace"],
+                                              cwd=fixture["repo"], text=True, check=True,
+                                              capture_output=True).stdout.strip()
+                subprocess.run(["git", "update-ref", trace_ref, trace_commit],
+                               cwd=fixture["repo"], check=True)
+                with self.assertRaisesRegex(host_validation.HostValidationError, expected):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
 
     def test_source_bearing_gate_resolves_earlier_failed_claim_without_widening_source_span(self):
         reviewed_main = "9cbbfef899957f2e3fff3306b74accf28cd846dc"
