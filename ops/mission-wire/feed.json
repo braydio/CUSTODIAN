@@ -1,9 +1,281 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T03:25:39Z",
-  "source_main_sha": "6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004",
+  "generated_at": "2026-10-31T04:22:00Z",
+  "source_main_sha": "fa7789b7ee6fda763ae683ed144117f353655ea9",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "review-manifest-4e2e7dcb-fa7789b7",
+      "headline": "Review validation now checks historical test rules consistently",
+      "summary": "A review-recovery correction has landed that authenticates the test manifest at the exact historical revision across validation and closeout. Its implementation packet is archived; the independent review and protected downstream recoveries remain outstanding.",
+      "body": "Commits 4e2e7dcb, b7ff14b7 and fa7789b7 land pinned-manifest coverage validation, synchronized regression fixtures and packet archive. Implementation summary reports 252 runner tests and 3 selected checks passed using a process-local 360-second timeout; shared policy was unchanged. A fresh independent review is required, and protected historical recovery plans were not applied.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1",
+      "links": [
+        {
+          "title": "Manifest validation implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/4e2e7dcb736eb76359981defa514269037f0e8dc"
+        },
+        {
+          "title": "Synchronized validation fixtures",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b7ff14b7379a0ca9a66ad08c78d40f940b0e3676"
+        },
+        {
+          "title": "Correction packet archived",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/fa7789b7ee6fda763ae683ed144117f353655ea9"
+        }
+      ],
+      "article": {
+        "lead": "CUSTODIAN has landed another guardrail for its independent review pipeline. The system now checks test coverage against the rules that actually belonged to the historical change, rather than letting later edits distort the evidence. The correction is committed, but it still needs independent acceptance.",
+        "sections": [
+          {
+            "heading": "Why historical rules matter",
+            "text": "A review of older work must establish which tests and coverage rules were in force at the exact source revision. The correction authenticates a tightly scoped test-definition change and applies the same pinned rules to failed reports, successful reports and final closeout."
+          },
+          {
+            "heading": "A validated implementation, not a released blockage",
+            "text": "The implementation summary reports a successful full runner suite after a local timeout extension. Its packet is archived, but the protected coverage and Procession reviews have not been resumed or formally accepted on this evidence."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Consistency across the whole review lifecycle",
+            "explanation": "Applying the same historical manifest to every validation and closeout path reduces disagreement between a test result and the final review decision."
+          },
+          {
+            "title": "Test runtime is a separate maintenance concern",
+            "explanation": "The reported suite exceeded the default 120-second cap. A process-local extension allowed validation without silently changing the shared policy; that policy mismatch remains a future decision."
+          }
+        ],
+        "takeaway": "The historical-manifest correction is on main, but independent acceptance remains the next gate.",
+        "next_watch": "Look for a canonical independent passing receipt before either preserved review recovery is considered."
+      },
+      "details": {
+        "overview": "Main fa7789b7ee6fda763ae683ed144117f353655ea9. The correction pins source-span and reviewed-main manifests and authenticates narrow test-definition changes. This is a landed code change, not verified deployment or acceptance.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "4e2e7dcb modified validation and runner paths."
+          },
+          {
+            "stage": "Synchronized test fixtures",
+            "status": "verified",
+            "evidence": "b7ff14b7 updated historical fixtures and validation summary."
+          },
+          {
+            "stage": "Technical validation",
+            "status": "reported",
+            "evidence": "252 runner tests and 3 selected checks passed per published summary; process-local 360-second timeout."
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified",
+            "evidence": "fa7789b7 marks correction complete."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No canonical accepted receipt inspected."
+          },
+          {
+            "stage": "Protected recovery and teardown",
+            "status": "unknown",
+            "evidence": "No authorized recovery or host cleanup proof inspected."
+          }
+        ],
+        "notes": [
+          "Default test cap versus full suite runtime is documented drift."
+        ],
+        "unknowns": [
+          "Current host locks, processes, worktrees, and disk state."
+        ],
+        "actions": [
+          "Existing independent reviewer: review the landed manifest correction; preserve protected review runs until accepted."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed and archived; independent review pending",
+        "as_of": "2026-10-31T04:22:00Z",
+        "scope": "Historical manifest validation correction",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Implement pinned manifest checks",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "4e2e7dcb"
+          },
+          {
+            "label": "Synchronize regression fixtures",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "b7ff14b7"
+          },
+          {
+            "label": "Archive implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "fa7789b7"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No canonical receipt inspected"
+          },
+          {
+            "label": "Protected review continuation",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires accepted correction and separate controls"
+          },
+          {
+            "label": "Clean teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host evidence unavailable"
+          }
+        ],
+        "next_gate": "Existing independent reviewer must accept the correction before protected recoveries."
+      },
+      "occurred_at": "2026-10-31T04:22:00Z",
+      "bullets": [],
+      "images": [],
+      "related": []
+    },
+    {
+      "id": "operator-scope-f23ff1b4-9845e1db",
+      "headline": "Operator sprite review gets an exact-file recovery safeguard",
+      "summary": "An Operator review blocked by twelve omitted source files now has a narrowly authenticated correction on main. The correction packet is archived, but the original review still needs independent acceptance and separately controlled same-run recovery.",
+      "body": "Commits f23ff1b4 and 9845e1db introduce a post-hoc attestation bound to the original Operator model-to-sprite source identities and archive its implementation packet. The published summary reports focused and full test success, with a longer process-local timeout for the full suite. This does not establish independent acceptance, original reviewer verdict, runtime art approval or canonical teardown.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-operator-3d-model-to-sprite-source-scope-recovery-v1",
+      "links": [
+        {
+          "title": "Exact source-scope attestation and tests",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f23ff1b42a4ad5eb575abc8939893ffef3f18da1"
+        },
+        {
+          "title": "Implementation packet archived",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/9845e1db24a826a6797d34b8df768c920a03d1c6"
+        }
+      ],
+      "article": {
+        "lead": "The Operator's experimental 3D-to-sprite pipeline has cleared an important paperwork trap. A review could not begin because its archived file list missed twelve source files. CUSTODIAN has now landed a narrowly bound correction that identifies those files without loosening review checks for other work.",
+        "sections": [
+          {
+            "heading": "A repair tied to the original work",
+            "text": "The new attestation records the exact historical source revisions, file identities and archive record. It is deliberately inert until the correction itself receives an authenticated independent PASS. The original review and its evidence remain protected."
+          },
+          {
+            "heading": "What remains unfinished",
+            "text": "The correction implementation is archived, and its summary reports passing tests. That is not independent acceptance, nor does it prove a usable Operator animation or an in-game sprite. The original review must still be recovered through its controlled same-run process."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Specificity protects the review boundary",
+            "explanation": "Binding the exception to exact files and Git identities avoids creating a general loophole for incomplete source declarations."
+          },
+          {
+            "title": "An archived fix is not a finished review",
+            "explanation": "The implementation is on main, but the original review cannot advance until the correction's independent review is accepted and the protected recovery is authorized."
+          }
+        ],
+        "takeaway": "The Operator source-scope repair is landed; independent review and original-run recovery remain open.",
+        "next_watch": "Watch for an authenticated independent PASS on the correction, then an explicitly authorized recovery of the preserved Operator review."
+      },
+      "details": {
+        "overview": "Main fa7789b7ee6fda763ae683ed144117f353655ea9. Source-scope attestation binds the historical Operator model-to-sprite implementation and exactly twelve omitted files. Published test results are implementation-reported, not independent receipt evidence.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "f23ff1b4 added attestation and regression tests."
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified",
+            "evidence": "9845e1db marks implementation complete."
+          },
+          {
+            "stage": "Technical validation",
+            "status": "reported",
+            "evidence": "Summary reports 5 focused and 247 full tests passed; full changed-file validation needed process-local timeout extension."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No authenticated accepted receipt inspected."
+          },
+          {
+            "stage": "Original review recovery",
+            "status": "blocked",
+            "evidence": "Requires accepted correction review and controlled same-run continuation."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No accessible host proof."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Local execution, locks, worktrees and disk state unavailable."
+        ],
+        "actions": [
+          "Existing independent reviewer: assess the landed correction before any protected original-run recovery."
+        ]
+      },
+      "scorecard": {
+        "stage": "Correction landed; independent acceptance pending",
+        "as_of": "2026-10-31T04:22:00Z",
+        "scope": "Operator source-scope correction and preserved original review",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Land exact-file correction",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "f23ff1b4"
+          },
+          {
+            "label": "Archive implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "9845e1db"
+          },
+          {
+            "label": "Accept independent review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted receipt inspected"
+          },
+          {
+            "label": "Recover preserved original review",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires separate authorization after acceptance"
+          },
+          {
+            "label": "Verify teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host proof unavailable"
+          }
+        ],
+        "next_gate": "Independent reviewer obtains canonical accepted PASS for correction; only then consider authorized original-run recovery."
+      },
+      "occurred_at": "2026-10-31T04:22:00Z",
+      "bullets": [],
+      "images": [],
+      "related": []
+    },
     {
       "severity": "important",
       "verification": "verified",
@@ -784,21 +1056,21 @@
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T03:25:39Z",
-    "source_main_sha": "6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004",
+    "observed_at": "2026-10-31T04:22:00Z",
+    "source_main_sha": "fa7789b7ee6fda763ae683ed144117f353655ea9",
     "coverage": "partial",
-    "scope": "Two newly promoted merged-source validation packets on main; selected-packet inventory only, not canonical dispatcher audit.",
+    "scope": "GitHub comparison and the two named correction implementation packets; not the live dispatcher queue",
     "metrics": [
       {
-        "id": "other-new-ready-pair",
-        "label": "NEW READY PAIR PACKETS",
+        "id": "other-archived-corrections",
+        "label": "NEWLY ARCHIVED CORRECTIONS",
         "value": 2,
         "verification": "verified",
-        "basis": "Implementation and dependent review both ready/auto in commit 6baf6a3f; no claim or live execution inferred.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/6baf6a3f8d6bf3bb2af9b72eb983fac4101e9004"
+        "basis": "Two named implementation packets archived in the nine main commits since 6baf6a3f; excludes all other packets.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/fa7789b7ee6fda763ae683ed144117f353655ea9"
       }
     ],
-    "focus": "Validate and independently review merged-source isolation before considering protected review continuation.",
-    "note": "Main advanced 13 commits from previous snapshot. Full dispatcher counts and Arch-local resources unavailable."
+    "focus": "Authenticated independent acceptance of the landed review corrections before protected same-run recovery",
+    "note": "Nine main commits since prior snapshot; no full dispatcher audit or host proof. CI status not independently established."
   }
 }
