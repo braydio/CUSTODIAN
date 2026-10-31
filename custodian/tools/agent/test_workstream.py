@@ -46,6 +46,163 @@ class WorkstreamTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def _source_sync_merge_fixture(self, *, witness=True):
+        workstream_id = "agent-source-sync-witness-fixture"
+        branch = workstream.branch_for(workstream_id)
+        active_packet = f"custodian/docs/ai_context/task_packets/{workstream_id.upper().replace('-', '_')}.md"
+        active_path = self.repo / active_packet
+        active_path.parent.mkdir(parents=True, exist_ok=True)
+        active_path.write_text(
+            f"# Fixture\n- Workstream: `{workstream_id}`\n- Status: `in_progress`\n"
+        )
+        git(self.repo, "add", active_packet)
+        git(self.repo, "commit", "-m", "publish fixture packet")
+        source_base = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", "-b", branch)
+        (self.repo / "source.py").write_text("owned source\n")
+        git(self.repo, "add", "source.py")
+        git(self.repo, "commit", "-m", "add source")
+        merge_first = git(self.repo, "rev-parse", "HEAD")
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-change.txt").write_text("main advance\n")
+        git(self.repo, "add", "main-change.txt")
+        git(self.repo, "commit", "-m", "advance main")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        merge_second = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "origin/main", "-m", "synchronize main")
+        merge_commit = git(self.repo, "rev-parse", "HEAD")
+
+        run_id = "20261031T000000Z-123456abcdef"
+        trace = workstream.RunTrace.start(
+            self.repo, workstream_id, packet=active_packet, agent="codex", run_id=run_id,
+        )
+        trace.record("remote_claim_acquired", remote_ref=f"refs/heads/dispatch-claims/{workstream_id}",
+                     claim_oid=source_base, main_sha=source_base)
+        trace.record("worktree_published", worktree=str(self.repo), branch=branch,
+                     head=source_base, upstream=source_base, clean=True)
+        if witness:
+            trace.record("checkpoint_completed", branch=branch, remote_head=merge_first,
+                         removed=False)
+            trace.record("worktree_resumed", branch=branch, worktree=str(self.repo),
+                         head=merge_commit)
+        return workstream_id, source_base, merge_commit, merge_second, trace
+
+    def test_finish_source_span_rejects_sync_merge_without_lifecycle_witness(self):
+        workstream_id, source_base, merge_commit, _, trace = self._source_sync_merge_fixture(witness=False)
+        error = workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        )
+        self.assertIsNotNone(error)
+        self.assertIn("unique exact lifecycle witness", error)
+
+    def test_finish_source_span_accepts_exact_checkpoint_resume_merge_witness(self):
+        workstream_id, source_base, merge_commit, _, trace = self._source_sync_merge_fixture()
+        error = workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        )
+        self.assertIsNone(error)
+
+    def test_finish_source_span_accepts_exact_changed_main_sync_witness(self):
+        workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
+        trace.record("main_sync", changed=True, head=merge_commit, main_sha=main_sha)
+        error = workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        )
+        self.assertIsNone(error)
+
+    def test_finish_source_span_rejects_tampered_or_reused_lifecycle_witnesses(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture()
+        original = trace.path.read_text()
+        mutations = ("wrong-run", "wrong-packet", "wrong-branch", "wrong-claim-base",
+                     "wrong-resume-head", "wrong-worktree", "duplicate-resume", "reordered")
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                events = [json.loads(line) for line in original.splitlines()]
+                checkpoints = [event for event in events if event["event"] == "checkpoint_completed"]
+                resumes = [event for event in events if event["event"] == "worktree_resumed"]
+                if mutation == "wrong-run":
+                    events[0]["run_id"] = "20261031T000000Z-000000000000"
+                elif mutation == "wrong-packet":
+                    events[0]["packet"] = "custodian/docs/ai_context/task_packets/OTHER.md"
+                elif mutation == "wrong-branch":
+                    checkpoints[0]["data"]["branch"] = "agent/other"
+                elif mutation == "wrong-claim-base":
+                    next(event for event in events if event["event"] == "remote_claim_acquired")["data"]["main_sha"] = "0" * 40
+                elif mutation == "wrong-resume-head":
+                    resumes[0]["data"]["head"] = "0" * 40
+                elif mutation == "wrong-worktree":
+                    resumes[0]["data"]["worktree"] = "/tmp/other-worktree"
+                elif mutation == "duplicate-resume":
+                    events.append(json.loads(json.dumps(resumes[0])))
+                else:
+                    events.remove(resumes[0])
+                    events.insert(events.index(checkpoints[0]), resumes[0])
+                trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+                self.assertIsNotNone(workstream._source_span_sync_merge_witness_error(
+                    workstream_id, self.repo, merge_commit, trace,
+                ))
+        trace.path.write_text(original)
+
+    def test_finish_blocks_unwitnessed_source_merge_before_publishing_branch(self):
+        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture(witness=False)
+        active_rel = trace.packet
+        active = self.repo / active_rel
+        archived = self.repo / workstream.TASK_PACKET_ARCHIVE / active.name
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text().replace("`in_progress`", "`complete`"))
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive fixture packet")
+
+        with mock.patch.object(workstream, "fetch"), \
+             mock.patch.object(workstream, "find_worktree", return_value=self.repo), \
+             mock.patch.object(workstream, "artifact_preflight", return_value=[]), \
+             mock.patch.object(workstream, "_completion_truth_preflight"), \
+             mock.patch.object(workstream, "status_clean", return_value=True), \
+             mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
+             mock.patch.object(workstream, "validation_green", return_value=True), \
+             mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
+            with self.assertRaisesRegex(workstream.WorkstreamError, "unique exact lifecycle witness"):
+                workstream._finish_impl(
+                    workstream_id, self._green_report(), repo=self.repo, trace=trace,
+                )
+
+        self.assertFalse(any(call.args and call.args[0] == "push" for call in git_call.call_args_list))
+        self.assertEqual(git(self.repo, "ls-remote", "--heads", "origin", f"agent/{workstream_id}"), "")
+
+    def test_finish_blocks_landing_when_post_sync_trace_cannot_be_published(self):
+        workstream_id = "finish-trace-publish-block"
+        path = workstream.start(workstream_id, self.repo)
+        self._commit_task_work(path, workstream_id)
+        main_before = git(self.repo, "rev-parse", "origin/main")
+        (self.repo / "main-advance-for-trace").write_text("advance\n")
+        git(self.repo, "add", "main-advance-for-trace")
+        git(self.repo, "commit", "-m", "advance main before finish")
+        git(self.repo, "push", "origin", "main")
+
+        real_run = workstream.subprocess.run
+        landing_calls = []
+        def observe_landing(args, *call_args, **call_kwargs):
+            if args and "land_main.py" in str(args[0]):
+                landing_calls.append(args)
+            return real_run(args, *call_args, **call_kwargs)
+
+        with mock.patch.object(workstream.RunTrace, "publish", return_value=False), \
+             mock.patch.object(workstream.subprocess, "run", side_effect=observe_landing):
+            with self.assertRaisesRegex(workstream.WorkstreamError, "lifecycle trace publication failed"):
+                workstream.finish(
+                    workstream_id, self._green_report("pre-sync.json"),
+                    validation_report_after_sync=self._green_report("post-sync.json"), repo=path,
+                )
+
+        self.assertEqual(landing_calls, [])
+        self.assertTrue(path.exists())
+        self.assertEqual(git(self.repo, "rev-parse", "origin/main"), git(self.repo, "rev-parse", "main"))
+        self.assertNotEqual(main_before, git(self.repo, "rev-parse", "origin/main"))
+        self.assertNotEqual(git(path, "rev-parse", "HEAD"), git(self.repo, "rev-parse", "origin/main"))
+
     def test_finish_runs_operator_authority_guard_before_any_push(self):
         workstream_id = "operator-guard-fixture"
         branch = workstream.branch_for(workstream_id)
@@ -417,7 +574,9 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "commit", "-m", "unrelated followup")
         self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
 
-    def test_archive_guard_accepts_authenticated_post_archive_recovery_chain(self):
+    @mock.patch.object(workstream, "_run_operator_chassis_authority_guard",
+                       return_value={"status": "passed"})
+    def test_archive_guard_accepts_authenticated_post_archive_recovery_chain(self, _guard):
         workstream_id = "agent-paired-review-failed-host-validation-import-recovery-v1"
         self.assertEqual(workstream.FAILED_IMPORT_ARCHIVE_RECOVERY["archive"],
                          "25229d8d3874608f7b8492df98bc3df4385a9d28")
@@ -1239,6 +1398,13 @@ class WorkstreamTests(unittest.TestCase):
         self.assertNotEqual(ref.returncode, 0)
 
     def test_new_start_uses_origin_main_in_external_worktree(self):
+        packet = self.repo / "custodian/docs/ai_context/task_packets/SAMPLE_WORK.md"
+        packet.parent.mkdir(parents=True, exist_ok=True)
+        packet.write_text("- Workstream: `sample-work`\n")
+        git(self.repo, "add", str(packet.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "add sample packet")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
         path = workstream.start("sample-work", self.repo)
         self.assertEqual(git(path, "branch", "--show-current"), "agent/sample-work")
         self.assertNotEqual(path, self.repo)
@@ -1248,6 +1414,10 @@ class WorkstreamTests(unittest.TestCase):
         trace = next((Path(self.repo / ".git/custodian-workflow/traces/sample-work").glob("*.jsonl")))
         first_event = json.loads(trace.read_text().splitlines()[0])
         self.assertEqual(first_event["execution_generation"], "execution-reset-v1-20261020")
+        self.assertEqual(
+            first_event["packet"],
+            "custodian/docs/ai_context/task_packets/SAMPLE_WORK.md",
+        )
 
     def test_dispatch_owned_start_defers_trace_publication(self):
         trace = workstream.RunTrace.start(self.repo, "deferred-start", agent="codex")
@@ -1543,19 +1713,27 @@ class WorkstreamTests(unittest.TestCase):
         self.assertEqual(check.returncode, 0)
 
     def test_main_advancement_during_finish_requires_and_uses_after_sync_validation(self):
+        packet = self.repo / "custodian/docs/ai_context/task_packets/NEEDS_SYNC.md"
+        packet.parent.mkdir(parents=True, exist_ok=True)
+        packet.write_text("- Workstream: `needs-sync`\n- Status: `in_progress`\n")
+        git(self.repo, "add", str(packet.relative_to(self.repo)))
+        git(self.repo, "commit", "-m", "publish needs-sync packet")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
         path = workstream.start("needs-sync", self.repo)
         self._commit_task_work(path, "needs-sync")
         (self.repo / "main-advance").write_text("advance\n")
         git(self.repo, "add", "main-advance")
         git(self.repo, "commit", "-m", "main advances")
         git(self.repo, "push", "origin", "main")
-        with self.assertRaisesRegex(workstream.WorkstreamError, "after-sync"):
-            workstream.finish("needs-sync", self._green_report(), repo=path)
-        self.assertTrue(path.exists())
-        workstream.finish(
-            "needs-sync", self._green_report("validation-2.json"),
-            validation_report_after_sync=self._green_report("after-sync.json"), repo=path,
-        )
+        with mock.patch.object(workstream, "artifact_preflight", return_value=[]):
+            with self.assertRaisesRegex(workstream.WorkstreamError, "after-sync"):
+                workstream.finish("needs-sync", self._green_report(), repo=path)
+            self.assertTrue(path.exists())
+            workstream.finish(
+                "needs-sync", self._green_report("validation-2.json"),
+                validation_report_after_sync=self._green_report("after-sync.json"), repo=path,
+            )
         self.assertFalse(path.exists())
 
     def test_teardown_tolerates_already_deleted_remote_branch(self):

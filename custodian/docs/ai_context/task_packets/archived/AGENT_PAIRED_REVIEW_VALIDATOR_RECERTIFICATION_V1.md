@@ -4,7 +4,7 @@
 - Workstream: `agent-paired-review-validator-recertification-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -47,6 +47,27 @@
 - Task overrides: `none`
 - Deferred: Any same-run recovery of the historical multi-sync review, coverage-correction review, or Procession review. A successful new review does not release or pass those claims; each requires a fresh ownership/dependency audit and its own supported continuation.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `workstream.py finish` now checks every source-span merge before pushing the task branch and checks the finish-generated merge again after its exact lifecycle trace is published. The producer binds a uniquely associated active task packet into direct-start traces. Per-merge proof requires two-parent first-parent continuity, claimed-base and current-main ancestry, Git deterministic merge-tree identity, and either an exact ordered checkpoint/resume witness or exact changed main-sync witness. Full focused workstream tests passed 78/78; paired-review runner tests passed 258/258; canonical changed-file validation passed 6/6 with complete coverage, no uncovered or excluded files, and no timeouts. Python compilation, targeted packet authoring validation, and `git diff --check` passed. Historical R0-01 reviewer files retain their original SHA-256 hashes; no prior review plan was applied.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `An initial full-suite attempt exceeded available /tmp capacity, and a fixture without a source merge exposed that claim identity is only required when a merge needs authentication.`
+- Root cause / contributing factors: `Large unrelated retained /tmp data constrained temporary Git checkouts; legacy no-merge test traces do not carry dispatcher claim and worktree events.`
+- Prevention / pipeline improvement: `The no-merge path remains compatible, while any source span containing a merge still requires complete trace identity. Full tests were rerun serially using a dedicated project-side temporary directory.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `paired independent review remains required; historical R0-01 stays unresolved`
+- What worked: `Exact main_sync evidence covers finish-generated syncs, and checkpoint/resume evidence covers resumed syncs without weakening the source-span validator.`
+
 ## Context Pack
 
 - Repomix: `none`
@@ -54,7 +75,7 @@
 ## Handoff
 
 - Next workstream: `review-agent-paired-review-validator-recertification-v1`
-- Next packet state: `ready`
+- Next packet state: `dependency-gated`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f

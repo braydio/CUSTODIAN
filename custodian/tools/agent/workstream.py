@@ -736,7 +736,176 @@ def _managed_index_is_current(repo: Path) -> bool:
         return False
 
 
-def _archive_transition_tip_error(workstream_id: str, path: Path) -> str | None:
+def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
+                                          source_head: str, trace: RunTrace | None) -> str | None:
+    """Reject pre-archive sync merges that lack the source-span trace proof."""
+    if trace is None or not trace.path.is_file():
+        return "source-span synchronization merge provenance requires the active lifecycle trace"
+    try:
+        events = [json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()]
+    except (OSError, ValueError, TypeError) as exc:
+        return f"cannot read source-span lifecycle trace: {exc}"
+    if not events:
+        return "source-span lifecycle trace is empty"
+    active_packet = trace.packet
+    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("workstream") != workstream_id
+           or event.get("run_id") != trace.run_id for event in events):
+        return "source-span lifecycle trace identity is inconsistent"
+    main = git("rev-parse", "origin/main", cwd=path, check=False)
+    if not main:
+        return "cannot authenticate source-span synchronization parents without origin/main"
+
+    claims = [(i, event) for i, event in enumerate(events)
+              if event.get("event") == "remote_claim_acquired"]
+    publications = [(i, event) for i, event in enumerate(events)
+                    if event.get("event") == "worktree_published"]
+    if len(claims) != 1 or len(publications) != 1:
+        common_base = git("merge-base", source_head, main, cwd=path, check=False)
+        if common_base:
+            fallback_history = subprocess.run(
+                ["git", "rev-list", "--first-parent", "--reverse", f"{common_base}..{source_head}"],
+                cwd=path, text=True, capture_output=True,
+            )
+            if (fallback_history.returncode == 0
+                    and not any(len(git("rev-list", "--parents", "-n", "1", commit,
+                                        cwd=path).split()) > 2
+                                for commit in fallback_history.stdout.splitlines())):
+                return None
+        return "source-span lifecycle trace lacks one exact claim and published-worktree identity"
+    claim_pos, claim_event = claims[0]
+    published_pos, published_event = publications[0]
+    claim = claim_event.get("data")
+    publication = published_event.get("data")
+    branch = branch_for(workstream_id)
+    if (not isinstance(claim, dict) or not isinstance(publication, dict)
+            or claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
+            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("main_sha", "")))
+            or publication.get("branch") != branch
+            or publication.get("head") != claim.get("main_sha")
+            or publication.get("upstream") != claim.get("main_sha")
+            or publication.get("clean") is not True
+            or not isinstance(publication.get("worktree"), str)
+            or not Path(publication["worktree"]).is_absolute()
+            or claim_pos >= published_pos):
+        return "source-span lifecycle claim or published-worktree identity is invalid"
+
+    source_base = claim["main_sha"]
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, source_head],
+                      cwd=path, capture_output=True).returncode:
+        return "source-span claim base is not an ancestor of its archive transition"
+    history = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{source_base}..{source_head}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    if history.returncode:
+        return "cannot enumerate the source-span first-parent history"
+    history_commits = history.stdout.splitlines()
+    merge_commits = [
+        commit for commit in history_commits
+        if len(git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()) > 2
+    ]
+    if not merge_commits:
+        return None
+    if (not isinstance(active_packet, str)
+            or not active_packet.startswith(f"{TASK_PACKET_ROOT}/")
+            or any(event.get("packet") != active_packet for event in events)):
+        return "source-span lifecycle trace does not pin the active task packet"
+
+    checkpoints = [(i, event) for i, event in enumerate(events)
+                   if event.get("event") == "checkpoint_completed"]
+    resumes = [(i, event) for i, event in enumerate(events)
+               if event.get("event") == "worktree_resumed"]
+    syncs = [(i, event) for i, event in enumerate(events)
+             if event.get("event") == "main_sync"]
+    consumed_resumes: set[int] = set()
+    consumed_syncs: set[int] = set()
+    previous = source_base
+    previous_witness = published_pos
+    for commit in history_commits:
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if not parents or parents[0] != previous:
+            return f"source-span commit {commit} breaks first-parent continuity"
+        if len(parents) == 1:
+            previous = commit
+            continue
+        if len(parents) != 2:
+            return f"source-span merge {commit} is not a two-parent synchronization"
+        first_parent, second_parent = parents
+        if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, second_parent],
+                          cwd=path, capture_output=True).returncode:
+            return f"source-span merge {commit} has a second parent outside the claimed history"
+        if subprocess.run(["git", "merge-base", "--is-ancestor", second_parent, main],
+                          cwd=path, capture_output=True).returncode:
+            return f"source-span merge {commit} has a second parent outside origin/main"
+        expected = subprocess.run(
+            ["git", "merge-tree", "--write-tree", first_parent, second_parent],
+            cwd=path, text=True, capture_output=True,
+        )
+        expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+        if (expected.returncode or not expected_tree
+                or git("rev-parse", f"{commit}^{{tree}}", cwd=path) != expected_tree):
+            return f"source-span merge {commit} differs from Git's deterministic merge tree"
+
+        matching_checkpoints = [
+            (i, event) for i, event in checkpoints
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("remote_head") == first_parent
+            and event["data"].get("branch") == branch
+            and event["data"].get("removed") is False
+        ]
+        matching_resumes = [
+            (i, event) for i, event in resumes
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("head") == commit
+            and event["data"].get("branch") == branch
+            and event["data"].get("worktree") == publication["worktree"]
+        ]
+        matching_syncs = [
+            (i, event) for i, event in syncs
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is True
+            and event["data"].get("head") == commit
+            and event["data"].get("main_sha") == second_parent
+        ]
+        if (len(matching_checkpoints) > 1 or len(matching_resumes) > 1
+                or len(matching_syncs) > 1 or (matching_resumes and matching_syncs)):
+            return f"source-span merge {commit} has duplicate or conflicting lifecycle witnesses"
+        if matching_syncs:
+            witness_pos, _ = matching_syncs[0]
+            if witness_pos <= previous_witness:
+                return f"source-span merge {commit} lifecycle witness is missing or out of order"
+            consumed_syncs.add(witness_pos)
+        elif matching_resumes and len(matching_checkpoints) == 1:
+            checkpoint_pos, _ = matching_checkpoints[0]
+            witness_pos, _ = matching_resumes[0]
+            if checkpoint_pos <= previous_witness or witness_pos <= checkpoint_pos:
+                return f"source-span merge {commit} lifecycle witnesses are missing or out of order"
+            consumed_resumes.add(witness_pos)
+        else:
+            return f"source-span merge {commit} lacks its unique exact lifecycle witness"
+        previous_witness = witness_pos
+        previous = commit
+
+    source_merge_heads = {
+        line for line in history.stdout.splitlines()
+        if len(git("rev-list", "--parents", "-n", "1", line, cwd=path).split()) == 3
+    }
+    if any(i not in consumed_resumes for i, event in resumes
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("head") in source_merge_heads):
+        return "source-span lifecycle trace contains an unmatched resume event"
+    if any(i not in consumed_syncs for i, event in syncs
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("changed") is True
+           and event["data"].get("head") in source_merge_heads):
+        return "source-span lifecycle trace contains an unmatched main-sync event"
+    return None
+
+
+def _archive_transition_tip_error(workstream_id: str, path: Path,
+                                  trace: RunTrace | None = None) -> str | None:
     """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
     repo = root_repo(path)
     head = git("rev-parse", "HEAD", cwd=path)
@@ -2286,7 +2455,13 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
             # raced a quarantine publication cannot resume from a stale prelock check.
             assert_not_legacy_quarantined(repo, workstream_id, "start")
             if trace is None:
-                trace = RunTrace.start(repo, workstream_id)
+                active_packets = [
+                    packet for packet in _associated_task_packets(repo, workstream_id)
+                    if packet.parent.resolve() == (repo / TASK_PACKET_ROOT).resolve()
+                ]
+                packet_ref = (active_packets[0].relative_to(repo).as_posix()
+                              if len(active_packets) == 1 else None)
+                trace = RunTrace.start(repo, workstream_id, packet=packet_ref)
             trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
             before = worktree_records(repo)
             trace.record("start_inspection", main_sha=git("rev-parse", "origin/main", cwd=repo, check=False), worktrees=before)
@@ -2722,11 +2897,23 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     closing_summary_committed_for_workstream(workstream_id, path)
     if not validation_green(validation_report):
         raise WorkstreamError("focused validation report is not green")
+    # This exact historical recovery is governed by its separately pinned
+    # continuation verifier, which authenticates its nonstandard evidence chain.
+    # Ordinary workstream source spans must satisfy the current per-merge trace.
+    requires_source_span_witnesses = (
+        workstream_id != FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]
+    )
     if trace:
         import hashlib
         trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
 
-    archive_tip_error = _archive_transition_tip_error(workstream_id, path)
+    if trace and requires_source_span_witnesses:
+        source_span_error = _source_span_sync_merge_witness_error(
+            workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+        )
+        if source_span_error:
+            raise WorkstreamError(source_span_error)
+    archive_tip_error = _archive_transition_tip_error(workstream_id, path, trace=trace)
     if archive_tip_error:
         raise WorkstreamError(archive_tip_error)
 
@@ -2759,6 +2946,21 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
             import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+    if trace:
+        if not trace.publish():
+            raise WorkstreamError(
+                "lifecycle trace publication failed after main synchronization; "
+                "task landing is blocked and the recovery checkout is retained"
+            )
+        if requires_source_span_witnesses:
+            source_span_error = _source_span_sync_merge_witness_error(
+                workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+            )
+            if source_span_error:
+                raise WorkstreamError(source_span_error)
+        archive_tip_error = _archive_transition_tip_error(workstream_id, path, trace=trace)
+        if archive_tip_error:
+            raise WorkstreamError(archive_tip_error)
     operator_guard = _run_operator_chassis_authority_guard(repo, path)
     if operator_guard["status"] == "blocked":
         raise WorkstreamError(
