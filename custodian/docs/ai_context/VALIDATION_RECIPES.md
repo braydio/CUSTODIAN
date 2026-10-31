@@ -68,6 +68,27 @@ python3 -m unittest custodian.tools.agent.test_workflow_control
 python3 custodian/tools/agent/test_task_packet_contract.py
 ```
 
+For deferred-LFS worktree changes, also run the isolated bare-remote/LFS fixture
+and the dispatch pre-claim capacity regression:
+
+```bash
+python3 -m unittest custodian.tools.agent.test_worktree_provisioning custodian.tools.agent.test_workstream_checkout_recovery custodian.tools.agent.test_dispatch custodian.tools.agent.test_workstream
+python3 -m py_compile custodian/tools/agent/worktree_provisioning.py custodian/tools/agent/workstream.py custodian/tools/agent/dispatch.py
+```
+
+The fixture proves full versus profiled byte estimates, sparse omission, exact
+local-cache hydration, missing/corrupt LFS refusal, path validation, and that a
+capacity refusal creates no dispatch claim. Before running a Godot command in a
+profiled checkout, use:
+
+```bash
+python3 custodian/tools/pipelines/godot_import_preflight.py --project-dir <worktree>/custodian
+```
+
+This gate inspects only LFS paths present in the checkout. Hydrated paths must
+match their pinned SHA-256 OID and size; sparse-omitted assets are not import
+inputs for that checkout.
+
 `dispatch.py`, `workstream.py`, `check_ai_context.py`, and `task_packet_index.py`
 all consume one shared packet grammar/validation authority,
 `custodian/tools/agent/task_packet_contract.py`; change packet parsing there,

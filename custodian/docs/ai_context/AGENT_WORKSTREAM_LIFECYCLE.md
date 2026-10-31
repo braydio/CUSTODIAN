@@ -373,6 +373,39 @@ Existing task state requires the explicit recovery command after inspection:
 python3 custodian/tools/agent/workstream.py resume <workstream-id>
 ```
 
+The default dispatcher/start path materializes the full LFS checkout and
+preflights its tracked payload plus a 1 GiB reserve before creating a remote
+claim. It checks capacity again immediately before writing a worktree. For a
+reviewed, tracked path-exact profile, pass `--checkout-profile <profile.json>`
+to `dispatch.py claim`, or `--profile <profile.json>` to
+`workstream.py start` / `resume`. Deferred mode sets `GIT_LFS_SKIP_SMUDGE=1`
+only on the checkout subprocess, applies the profile's exact sparse path set,
+and hydrates only its declared LFS paths from the existing local object cache.
+The dispatcher refuses before claim creation when storage or any required
+local LFS object is missing. It never fetches LFS objects as part of profile
+hydration and does not change global Git configuration. Run
+`custodian/tools/pipelines/godot_import_preflight.py --project-dir <worktree>/custodian`
+before a Godot import; checked-out pointer files block import, while sparse-
+omitted assets remain absent. The Awakening Gate profile is
+`custodian/docs/ai_context/worktree_profiles/awakening_gate_lateral_overlooks_v1.json`.
+
+An interrupted initial checkout can be continued only with a read-only plan
+bound to its original run and profile:
+
+```bash
+python3 custodian/tools/agent/workstream.py recover-initial-checkout <id> \
+  --run-id <failed-run-id> --profile <profile.json> --plan
+```
+
+Apply requires the exact printed `plan_sha256` and rechecks the authenticated
+trace, unchanged original claim and branch, same-host process visibility,
+target path, profile, local LFS object identities, and capacity under both
+assignment and workstream mutexes. It recreates the checkout from the existing
+branch and publishes that branch only if the remote branch is still absent; it
+never creates, replaces, or releases a dispatch claim. Preserve the failed
+trace. Do not apply recovery to a protected claim until its required separate
+independent review has passed.
+
 Before closeout, an attached workstream can preview the locally knowable finish
 gates without changing Git or lifecycle state:
 

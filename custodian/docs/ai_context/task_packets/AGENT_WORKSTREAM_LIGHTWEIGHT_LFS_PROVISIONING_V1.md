@@ -35,6 +35,26 @@
 - Task overrides: `none`
 - Deferred: After this implementation archives complete and its fresh paired review lands an accepted PASS, re-audit the preserved Awakening failed-start identity and call the new same-claim recovery path using its exact published profile. Then continue only the existing `awakening-gate-lateral-overlooks-blockout-v1` claim. Do not treat the infrastructure review as visual approval or completion of Awakening.
 
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Full checkout remains the default and capacity refusal precedes dispatch claim acquisition. Profile SHA-256 `03356bf1ae6d3e06974b85f0f2cccb423118135bdb15aac4f080c19fe6e34487` selects 387 paths including its own tracked profile file (386 paths exist at the reviewed base), hydrates 74 exact local LFS objects (46,349,921 bytes), and covers all 36 statically loaded dependencies reachable from the target scene, project autoloads, and four focused validation scripts. Both production Gate plates are included and hydrated. A disposable clone using the profile and local LFS cache measured 51,097,600 allocated checkout bytes, zero omitted paths materialized, and zero LFS failures; estimated filesystem allocation is 52,245,835 bytes, or 1,125,987,659 bytes including the 1 GiB reserve. The full tracked tree estimates 6,190,134,467 filesystem bytes before reserve. A separate Git/LFS fixture measured 360,448 allocated bytes full and 28,672 sparse. Exact same-claim recovery passed its synthetic positive and adversarial fixtures; no real Awakening claim, branch, trace, or worktree was modified. Focused Python suites passed 182 tests together and the added isolated profile-closure check passed independently; final changed-file validation passed 12/12 selected owners with complete coverage, `py_compile`, and `git diff --check` passed. Fresh paired independent review remains the required next lifecycle step and is not represented as complete here.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Final repository-scale profile measurement exposed that `_batch_blobs` wrote the entire object list to a pipe before reading `git cat-file` output, which can deadlock when both pipes exceed their buffers. Static profile dependency verification also found the project icon was missing.
+- Root cause / contributing factors: The original blob reader was only exercised with small unit fixtures; the repository contains tens of thousands of tracked paths. The initial profile assertions checked primary scenes, tests, and Gate plates but not the complete literal load/preload/autoload closure.
+- Prevention / pipeline improvement: Use `subprocess.run(..., input=..., capture_output=True)` so stdin/stdout are drained concurrently; add a 20,000-entry pipe regression and a static scene/autoload/test dependency closure assertion. Add `custodian/icon.svg` to the pinned profile and retain before-claim capacity, exact local LFS identity, mutation-time rechecks, and import-preflight gates.
+- Tooling / docs drift discovered: The validation recipe initially omitted the new same-claim recovery test; its command now includes both provisioning and recovery fixtures. The project profile itself was not present in the pinned base until this workstream lands, so size inventory was measured against the exact base tree with the staged profile and its digest, and its own not-yet-landed profile blob excluded from the base checkout byte estimate.
+- Follow-up: Start the fresh paired review. Only after its accepted PASS, re-audit the exact preserved Awakening claim and use the profile for same-claim recovery; host process-visibility checks remain fail-closed.
+
 ## Handoff
 - Next workstream: `review-agent-workstream-lightweight-lfs-provisioning-v1`
 - Next action: Start a fresh paired reviewer after implementation archives complete.

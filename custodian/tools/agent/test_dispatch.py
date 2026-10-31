@@ -105,7 +105,9 @@ class DispatchTests(unittest.TestCase):
         lifecycle = self.repo / "custodian/tools/agent/workstream.py"
         lifecycle.parent.mkdir(parents=True)
         shutil.copyfile(SCRIPT.with_name("workstream.py"), lifecycle)
-        git(self.repo, "add", "base", str(lifecycle.relative_to(self.repo))); git(self.repo, "commit", "-m", "base"); git(self.repo, "push", "-u", "origin", "main")
+        provisioning = self.repo / "custodian/tools/agent/worktree_provisioning.py"
+        shutil.copyfile(SCRIPT.with_name("worktree_provisioning.py"), provisioning)
+        git(self.repo, "add", "base", str(lifecycle.relative_to(self.repo)), str(provisioning.relative_to(self.repo))); git(self.repo, "commit", "-m", "base"); git(self.repo, "push", "-u", "origin", "main")
         git(self.repo, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
 
     def tearDown(self):
@@ -140,6 +142,19 @@ class DispatchTests(unittest.TestCase):
     def test_ready_auto_packet_is_eligible(self):
         self.add_packet("auto-task", dispatch_value="auto")
         self.assertIn("auto-task", dispatch.status(self.repo, output=False).split("READY", 1)[1])
+
+    def test_capacity_refusal_happens_before_remote_claim_creation(self):
+        workstream_id = "capacity-blocked"
+        self.add_packet(workstream_id, dispatch_value="auto")
+        with mock.patch.object(dispatch.worktree_provisioning, "preflight_capacity", return_value={
+            "sufficient": False,
+            "required_free_bytes": 2_000_000_000,
+            "available_free_bytes": 100,
+            "local_lfs_failures": [],
+        }):
+            with self.assertRaisesRegex(dispatch.DispatchError, "before remote claim creation by checkout capacity"):
+                dispatch.claim(self.repo, workstream_id, "codex", False)
+        self.assertEqual(git(self.repo, "ls-remote", "origin", f"refs/heads/dispatch-claims/{workstream_id}"), "")
 
     def test_local_only_packet_claim_reports_exact_promotion_sequence(self):
         self.add_packet("local-authoring-only", dispatch_value="auto", push=False)
