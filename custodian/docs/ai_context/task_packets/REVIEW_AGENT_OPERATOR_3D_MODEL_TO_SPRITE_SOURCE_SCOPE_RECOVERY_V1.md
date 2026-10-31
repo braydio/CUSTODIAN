@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-operator-3d-model-to-sprite-source-scope-recovery-v1`
 - Category: `agent-ops`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-operator-3d-model-to-sprite-source-scope-recovery-v1`
 - Locks: `paired-review-operator-3d-model-to-sprite-scope-recovery`
