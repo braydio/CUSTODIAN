@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-merged-source-validation-isolation-v1`
 - Category: `agent-ops`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `agent-paired-review-merged-source-validation-isolation`
@@ -45,10 +45,10 @@
 ## Handoff
 
 - Next workstream: `none`
-- Next packet state: `manual capacity hold`
+- Next packet state: `ready/auto after the authorized promotion; claim only after final live checks`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
-- Refresh instruction: `Do not claim or create the implementation worktree until a fresh disk inventory demonstrates adequate capacity under the repository resource policy and the dispatcher confirms eligibility.`
-- Blockers or open questions: `The exact output of the single read-only planner invocation is unavailable after context compaction. No retry is authorized. At final dispatcher check, read-only disk inventory reported 30,544,900,096 bytes available (about 28.45 GiB) following an earlier ENOSPC event; the explicit capacity hold remains, so do not start a claim/worktree.`
+- Refresh instruction: `Before claim, recheck current main, dispatcher eligibility, no conflicting lock, no equivalent owner, and at least 26 GiB free with no active ENOSPC or rapid decline. After worktree creation require at least 18 GiB free. During implementation stop and preserve the claim if free space falls below 12 GiB or ENOSPC recurs.`
+- Blockers or open questions: `The exact output of the single read-only planner invocation is unavailable after context compaction. No retry is authorized or needed for this correction. RC-027 capacity samples were 30,523,658,240 and 30,517,944,320 bytes free; both exceeded its 26 GiB preclaim threshold, with no recent kernel ENOSPC entries. Recheck at claim time; do not infer future capacity from these measurements.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199

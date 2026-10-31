@@ -4,8 +4,8 @@
 - Workstream: `review-agent-paired-review-merged-source-validation-isolation-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-merged-source-validation-isolation-v1`
 - Locks: `agent-paired-review-merged-source-validation-isolation`
@@ -42,11 +42,11 @@
 ## Next Handoff
 
 - Next workstream: `none`
-- Next packet state: `manual capacity hold`
+- Next packet state: `ready/auto, dependency-gated on implementation completion`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
-- Refresh reason: `No refresh; the implementation and paired review remain non-dispatchable until verified disk capacity is adequate. No claim/worktree may be created while the capacity hold remains.`
-- Next action: `After implementation lands and its review passes, resume only the existing protected review through a separately authorized read-only recovery plan and explicit apply; do not create a new claim for it.`
+- Refresh reason: `No planning refresh. At review claim time, recheck dispatcher eligibility, protected ownership and the RC-027 disk threshold; do not claim if capacity is below threshold or ENOSPC recurs.`
+- Next action: `After this implementation lands and receives its own accepted fresh-context review, resume only the existing protected review through a separately authorized read-only recovery plan and explicit apply; do not create a new claim for it.`
 - Blockers or open questions: `Original planner result is unavailable after context compaction and must not be guessed or retried. Original run files and protected reviewer identity must remain byte-for-byte and identity-stable.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
