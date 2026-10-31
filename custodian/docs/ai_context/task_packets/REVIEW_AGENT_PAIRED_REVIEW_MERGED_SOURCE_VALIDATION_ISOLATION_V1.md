@@ -1,11 +1,18 @@
+====================================
+    braydenchaffee@archdesk
+  🐧 Sat Oct 31 01:55:44 EDT 2026
+====================================
+🕒 Uptime:   14 hours, 43 minutes
+💽 Disk:     807G/916G
+💾 Memory:   26Gi/31Gi
 # Review: Paired Review Merged-Source Validation Isolation
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-merged-source-validation-isolation-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `blocked`
+- Dispatch: `manual`
 - Priority: `P0`
 - Depends on: `agent-paired-review-merged-source-validation-isolation-v1`
 - Locks: `agent-paired-review-merged-source-validation-isolation`
@@ -42,11 +49,21 @@
 ## Next Handoff
 
 - Next workstream: `none`
-- Next packet state: `ready/auto, dependency-gated on implementation completion`
+- Next packet state: `blocked/manual, deferred under RC-034`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
 - Refresh reason: `No planning refresh. At review claim time, recheck dispatcher eligibility, protected ownership and the RC-027 disk threshold; do not claim if capacity is below threshold or ENOSPC recurs.`
-- Next action: `After this implementation lands and receives its own accepted fresh-context review, resume only the existing protected review through a separately authorized read-only recovery plan and explicit apply; do not create a new claim for it.`
+- Next action: `The paired review remains required and unaccepted. Do not claim or launch it until the exact source-span provenance gap is resolved by a separately authorized, supported path and ordinary dispatcher, reviewer-independence, lock, and host-validation gates pass.`
 - Blockers or open questions: `Original planner result is unavailable after context compaction and must not be guessed or retried. Original run files and protected reviewer identity must remain byte-for-byte and identity-stable.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
+
+
+## RC-034 Administrative Deferment
+
+- Dispatch disposition: blocked/manual under RC-034; the review requirement and target remain unchanged. This is not acceptance or completion.
+- Canonical target resolution on main 0c7fee4a2780694921988158bda00ed68c52c77f resolves this workstream to archived implementation commit 8706eeba1436611b9c743fa56fa791d19986edd6.
+- Read-only source-span resolution using resolve_validation_source_span failed exactly: HostValidationError: split landing has missing or ambiguous exact workstream trace provenance. The authenticated original run lacks the landing_started and landing_completed lifecycle events required by the review provenance resolver; no landing events were synthesized.
+- Manual landing audit: custodian/docs/ai_context/reports/RC032_MANUAL_LANDING_AUDIT.md, commit 0c7fee4a2780694921988158bda00ed68c52c77f; exact manually landed implementation commit 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b.
+- The final post-RC-031 canonical validation report was not located during the RC-034 read-only precheck. The known report with SHA-256 65cb102f9ab0e84f6ba1816e4c10e3f1f84206e8eadbf30f61f86fe4d90bc6 predates the final two-file correction and is not substituted.
+- No reviewer was claimed or launched. Original evidence and review requirements remain preserved.
