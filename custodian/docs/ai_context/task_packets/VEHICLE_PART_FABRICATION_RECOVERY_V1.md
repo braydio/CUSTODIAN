@@ -32,6 +32,12 @@
 - Task overrides: `none`
 - Deferred: Production Scout profile migration is the already-authored correction; R3 advanced-fabricator capability; R4 Archive/donor requirements; physical part props; final recipe balance.
 
+## Downstream contract handoff refresh (2026-10-28)
+
+This paragraph records current pre-implementation seams, **not** a replacement for the accepted V2 review or a new readiness gate. At `main@1917c8940d3d980b5ee58a73da8a2e57eec08bf4`, the live `VehicleDefinition` still requires a nonempty raw restoration `cost`; `FabPipeline` still owns ARRN-only recipe locking and has no generic vehicle knowledge gate; `InventoryManager` exposes single-item methods but no atomic multi-component consumption. These are V3 implementation tasks, not defects to fix by altering the already-reviewed wreck-restoration V1 or the separate production Scout correction.
+
+At **V3 claim**, consume the public `VehicleKnowledgeState` requirement-query surface that V2 actually landed and its accepted review verified; do not pin guessed method names or rebuild knowledge tracking in `FabPipeline` or terminal UI. Preserve ARRN and `ResourceLedger` owners, physical item output in `InventoryManager`, and the production Scout profile until V4C. Run new R0/R1/R2 focused fixtures and direct fabrication/InventoryManager regressions before one changed-file closeout. Historical Operator/source-strip administrative fixes and Scout Asset V2 artwork are separate work; they are not dependencies to add to V3.
+
 ## Required implementation shape
 
 ### 1. Recovery-grade schema

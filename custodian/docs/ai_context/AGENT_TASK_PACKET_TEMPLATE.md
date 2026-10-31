@@ -15,6 +15,16 @@ Independent, separately landable work should use separate workstreams.
 New packets use `Packet schema: custodian.task_packet.v2`. Existing packets
 without that field remain valid legacy packets and do not need bulk migration.
 
+New task-packet category contract: before drafting, read the **current**
+`custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json` and select exactly one
+category ID for the primary work surface. Copy that ID into `- Category:`
+(after `Workstream:`). Reviews and corrections inherit their parent category;
+never classify them as agent-ops merely because they are reviews. Run
+`python3 custodian/tools/agent/check_packet_categories.py <new packet paths...>`
+and the existing paired authoring preflight before publication. See
+`TASK_PACKET_CATEGORY_AUTHORING.md`. Existing legacy packets without categories
+remain valid and are shown as Uncategorized by Mission Control.
+
 Before authoring, inspect current `origin/main`, applicable AGENTS, the relevant
 design/runtime authority, current tests, and any existing packet/workstream for
 the same semantic task. Reuse a stable Workstream ID when continuing the same
@@ -30,6 +40,7 @@ Ready/Auto view, never selection authority.
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<lowercase-kebab-id>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Status: `draft`
 - Dispatch: `manual`
 - Priority: `P2`
@@ -42,8 +53,8 @@ Ready/Auto view, never selection authority.
 - Paired review workstream: `review-WORKSTREAM_ID`
 - Review cycle: `0`
 - Max automatic review cycles: `2`
-- Review rationale: `substantial engineering default` or `low-risk exemption: <why paired review adds little value>`
-- Reviewed main: `<short SHA>`
+- Review rationale: `<concise risk/evidence rationale for Review:none, or concrete reason Review:auto materially improves confidence>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Authoring chat: `<exact ChatGPT conversation URL | not-recorded | n/a>`
 - Visual review: `none | conditional | required`
 - Goal:
@@ -52,6 +63,7 @@ Ready/Auto view, never selection authority.
 - Evidence:
 - Task-specific authority:
 - Work surface:
+- Publication inputs: `<comma-separated repository paths already required at claim time | none>`
 - Change:
 - Preserve:
 - Non-goals:
@@ -81,6 +93,23 @@ The command runs in the **claimed worktree** and writes ignored output under
 coordination checkout. Do not use broad patterns such as `custodian/**` when
 the packet can name the actual owners/consumers/tests. The pack is a convenience
 snapshot; exact live files and the current worktree diff remain authority.
+
+### Publication completeness
+
+A packet is executable only when every **existing input it requires at claim**
+is published to `origin/main` atomically with that packet and its paired
+review, including necessary scripts, tests, data contracts, schemas, manifests,
+and working notes. List exact repo-relative paths in `Publication inputs:`;
+use `none` only when no additional claim-time artifacts are needed. Files the
+packet *plans to create* are outputs, not pre-existing publication inputs.
+
+Do not use an exclusively chat-hosted ZIP, sandbox file, screenshot or snippet
+as a required implementation input. Provide an auditable tracked file on
+`origin/main`, and verify those paths exist at the main commit before dispatch.
+Host-private evidence must remain private; if it is indispensable, explicitly
+pin the safe owner-controlled local verification route and fail closed when
+unavailable. Publication does not bypass claim locks, dependency truth or
+independent review. Enforce the same rule when authoring correction packets.
 
 ## Refresh Planning Authority
 
@@ -127,7 +156,7 @@ repository state without reconstructing intent from chat history.
 
 Required quality:
 
-- **Reviewed main** identifies the repository state actually investigated.
+- **Reviewed main** identifies the repository state actually investigated, as the complete 40-character commit SHA; an abbreviated SHA fails the paired-review archived-target identity gate.
 - **Authoring chat** preserves the originating design/planning conversation when the user provides its URL. Use `not-recorded` when no durable URL is available and `n/a` only when no chat authored the packet; never invent one. Every durable implementation/review/correction/recovery/closeout summary and final user-facing handoff must repeat the exact URL as `Authoring chat: <url>`; `workstream.py finish` enforces this on the committed closing summary.
 - **Goal** states the user-visible or architecture outcome, not the implementation
   method.
@@ -273,8 +302,8 @@ Before setting `Status: ready`:
 [ ] `Visual review` is explicitly `none`, `conditional`, or `required`; when not `none`, the packet routes one compact handoff through publish_review_artifacts.py, records the exact authoring chat and `/CUSTODIAN/visual_review/<workstream>/` root, gives the external reviewer specific questions, and defaults reviewed cloud evidence to programmatic deletion unless explicit retention is required.
 [ ] Dependencies and Locks reflect actual ordering/contention.
 [ ] Next Handoff names the immediate same-series successor and marks ChatGPT/user refresh truthfully; ordinary ready/no-refresh successors are intended for autonomous agent continuation, while human-owned refreshes carry the exact Authoring/Refresh chat URL.
-[ ] Review intent is explicit; substantial/risky work defaults to paired `auto` review.
-[ ] `Review: none` carries a concrete `Review rationale: low-risk exemption: ...` rather than convenience/queue avoidance.
+[ ] Review intent is explicit and proportionate to risk, reversibility, evidence quality, and blast radius.
+[ ] `Review: none` has a concise concrete rationale showing how focused checks prove correctness and scope; it does not require special low-risk exemption language.
 [ ] Deferred work is intentional and visible.
 [ ] Repository-default workflow boilerplate is not duplicated.
 [ ] Acceptance actually proves the stated Goal and Completion boundary, not a
@@ -292,48 +321,32 @@ Before setting `Status: ready`:
 These four checks are objective closure facts, not subjective prose scoring:
 each either names a concrete authority/state or it does not.
 
-### Review Policy — Risk-Based Default
+### Review Policy — Three Risk Paths
 
-For newly authored or materially re-derived V2 implementation packets, paired
-post-land review is the default when an independent second pass can materially
-increase confidence. Because narrow low-risk work should usually be patched
-without a packet at all, a packeted engineering slice should normally begin
-with `Review: auto`.
+Select packet and review ceremony according to risk, reversibility, verification
+quality, and blast radius. File count and the label `runtime` do not decide review
+by themselves. These paths apply to newly authored or materially re-derived V2
+implementation packets; they do not rewrite existing packet decisions.
 
-Use `Review: auto` by default for any of the following:
+- **Express:** A narrow, reversible, low-risk, single-session change may skip
+  both packet and paired review. Keep focused validation and Git safety.
+- **Standard:** Ordinary bounded engineering may use a compact packet when scope,
+  acceptance, or deferred work benefits from a durable record. Its ordinary
+  review default is `Review: none` when focused checks directly prove
+  correctness and scope. Add a concise concrete `Review rationale` explaining
+  the risk and evidence; no special low-risk exemption ceremony is required.
+- **Protected:** Use `Review: auto` and fresh independent acceptance when the
+  consequences or uncertainty warrant an adversarial second pass. This includes
+  consequential persistence/save-load, concurrency, irreversible operations,
+  authority cutovers, dispatch/review/validation enforcement, dangerous
+  asset-pipeline writes, or material evidence uncertainty. Also select it when
+  focused checks cannot falsify plausible high-impact failures or the change is
+  hard to reverse. Subjective visual/canon decisions remain human-owned.
 
-- runtime behavior, state machines, streaming, persistence, save/load, lifecycle,
-  concurrency, scheduling, or authority changes;
-- architecture extraction, migration, decomplexification, ownership transfer,
-  compatibility cutover, or removal of an old production path;
-- production asset-pipeline or authoring-tool changes that write, normalize,
-  ingest, publish, or mutate runtime assets;
-- tooling that writes production code/data, dispatch/workstream lifecycle,
-  validation infrastructure, or safety/rollback behavior;
-- performance work whose correctness depends on preserving semantics while
-  changing batching, residency, caching, rendering, or execution order;
-- substantial bug fixes where a green test could still be vacuous, fixture-bound,
-  or narrower than the claimed acceptance;
-- multi-system or hard-to-reverse changes where the implementing agent's own
-  evidence would benefit from an adversarial acceptance check;
-- objective technical presentation work such as registration, layering,
-  clipping, visibility, deterministic state correspondence, batching, or
-  disabled-mode parity. Subjective aesthetic approval remains human-owned.
-
-`Review: none` is an explicit low-risk exemption, not the normal packet
-default. It is appropriate when an independent review is unlikely to add useful
-signal, for example:
-
-- documentation-only truth repair with no behavioral contract change;
-- a tiny mechanical patch with an obvious local effect, narrow blast radius,
-  and direct focused regression;
-- temporary/non-production probes or disposable diagnostics;
-- simple data/text changes whose correctness is directly inspectable and that
-  do not move runtime or pipeline authority.
-
-When using `Review: none`, fill `Review rationale` with
-`low-risk exemption: ...` and name the concrete reason. Do not use
-`Review: none` merely to shorten the queue or avoid writing a paired packet.
+Do not use `Review: none` for convenience or queue avoidance. A Standard change
+may still need `Review: auto` when its actual risk or evidence warrants it; a
+small Protected change remains Protected even if it touches few files. Preserve
+existing review gates and accepted-review dependencies.
 
 Use `Review: manual` only when a review is useful but cannot truthfully be
 auto-completed because it requires a specific external environment, hardware,

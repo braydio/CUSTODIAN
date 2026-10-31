@@ -19,6 +19,10 @@ The Hall review found complementary ideas worth **weaving into future packet *re
 
 **Post-B1 idea status (2026-10-10):** B1 reviewed PASS and introduced **no semantic gameplay systems**. The [B2/C2 implementation-narrowing proposal](../F15_B2_F14_C2_POST_B1_PLANNING_REFRESH.md) assigns Encounter Language, Landmark Hierarchy, Spatial Compression and Mystery Budget **schema/contract** candidates to B2, not playable placement or art; Procedural Ruin Generator is metadata-only. For F14-C2a/b, reserve only identity-compatible report/signal interfaces and defer Faction Knowledge and Line-of-Communication gameplay until their explicit triggers. Do not classify those cards as implemented.
 
+## Specific three-style procedural evidence design retained (2026-10-27)
+
+[Procedural Environmental Storytelling V1](../../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_V1.md) and its [integration roadmap](../../02_features/procgen/PROCEDURAL_ENVIRONMENTAL_STORYTELLING_ROADMAP.md) record the user-endorsed Refused Passage, Borrowed Hearth, and False Seam content/placement proposals. They are **not** implementation of this register's Procedural Ruin Generator, World Autopsy, Mystery Budget or Encounter Language candidates. Their first realization should use existing F02 story/intent/accepted-world owners and may consume F15-B2 data-only site metadata; it must not create a competing geographic authority. Canonical polity dressing depends on FI-001/FI-002 or an explicit migration adapter. All future idea reentry gates and separate review/asset restrictions remain intact. **No implementation packet or new art is authorized here.**
+
 ## Refresh stages and decision prompts
 
 | Existing gate | What to reconsider at the refresh | Decision that belongs in that future packet | Not authorized yet |

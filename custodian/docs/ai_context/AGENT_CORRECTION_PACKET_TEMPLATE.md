@@ -5,10 +5,14 @@ independent post-land review. Pair it with a review packet using
 `AGENT_REVIEW_PACKET_TEMPLATE.md`. Keep the correction narrower than the
 parent implementation slice and cite the exact stable review finding IDs.
 
+Use the exact parent implementation category in `- Category:` after Workstream.
+Read `TASK_PACKET_CATEGORIES.json` and check this header before publication.
+
 # CORRECTION: [PARENT IMPLEMENTATION / REVIEW]
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `<parent-id>-review-corrections-<cycle>`
+- Category: `<choose-id-from-TASK_PACKET_CATEGORIES.json>`
 - Status: `draft`
 - Dispatch: `auto`
 - Priority: `<P0 | P1 | P2 | P3>`
@@ -21,7 +25,7 @@ parent implementation slice and cite the exact stable review finding IDs.
 - Paired review workstream: `review-<parent-id>-review-corrections-<cycle>`
 - Review cycle: `<positive cycle number>`
 - Max automatic review cycles: `<inherited cap>`
-- Reviewed main: `<SHA where this correction contract was verified>`
+- Reviewed main: `<full 40-character immutable main commit SHA>`
 - Parent implementation: `<implementation workstream and canonical archived packet path>`
 - Parent review: `<review workstream and canonical archived packet path>`
 - Findings addressed: `<full IDs, for example R0-02, R0-04>`

@@ -30,6 +30,11 @@
 - Non-goals: New runtime implementation, gameplay feel certification or retroactive art approval.
 - Task overrides: TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.
 
+## Independent Type A Codex review handoff (2026-10-17)
+
+- The Type A blockout landed, but this review still needs a fresh, separately owned decision. Re-run true perimeter sealing, dual-gate/yard/building access, legacy compatibility, negative seal control and real generator smoke. A working gate electronics state machine is deferred to secure-access fixtures, so don't falsely require electronics now.
+- The bunker R1 handoff is `custodian/docs/ai_context/workstream_handoffs/COMPOUND_BUNKER_R1_CODEX_TAKEOVER_20261017.md`; Type A has no acceptance dependency on bunker R1, but both reviews and correction share the `compound-layout` lock. Verify dispatcher ownership before running. For an automated paired review invoke `paired_review_runner.py` directly from a fresh Codex context, not `dispatch claim-next` then runner for the same ID.
+
 ## Handoff
 
 - Next action: On genuine PASS, release review-gated descendants; on defect create one minimal correction and a fresh review.

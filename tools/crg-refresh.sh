@@ -10,6 +10,14 @@ if [ -n "$COMMON_DIR" ]; then
     COORD_ROOT="$(dirname "$COMMON_DIR")"
 fi
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tools/crg-pin.env
+. "$SCRIPT_DIR/crg-pin.env"
+
+crg() {
+    uvx --from "code-review-graph==${CRG_VERSION}" code-review-graph "$@"
+}
+
 if ! command -v uvx >/dev/null 2>&1; then
     echo "[code-review-graph] WARNING: uvx not found; graph not updated." >&2
     exit 0
@@ -25,7 +33,7 @@ if [ -n "$GIT_DIR" ] && [ -n "$COMMON_DIR" ] && [ "$GIT_DIR" != "$COMMON_DIR" ] 
     echo "[code-review-graph] Baseline coordination root: $COORD_ROOT" >&2
     echo "[code-review-graph] Set CRG_HOOK_WORKTREES=1 only when this task needs a local graph." >&2
     if [ "${1:-}" = "--status" ] && [ -d "$COORD_ROOT" ]; then
-        uvx code-review-graph status --repo "$COORD_ROOT" || \
+        crg status --repo "$COORD_ROOT" || \
             echo "[code-review-graph] WARNING: coordination graph status unavailable." >&2
     fi
     exit 0
@@ -34,7 +42,7 @@ fi
 cd "$REPO_ROOT" || exit 0
 echo "[code-review-graph] Updating graph for $REPO_ROOT..."
 
-if uvx code-review-graph update --repo "$REPO_ROOT"; then
+if crg update --repo "$REPO_ROOT"; then
     echo "[code-review-graph] Graph updated."
 else
     echo "[code-review-graph] WARNING: graph update failed." >&2
@@ -43,7 +51,7 @@ fi
 
 if [ "${1:-}" = "--status" ]; then
     echo "[code-review-graph] Status:"
-    uvx code-review-graph status --repo "$REPO_ROOT" || \
+    crg status --repo "$REPO_ROOT" || \
         echo "[code-review-graph] WARNING: status check failed." >&2
 fi
 

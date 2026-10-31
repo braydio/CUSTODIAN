@@ -236,6 +236,10 @@ def _snapshot(profile: str, coordination_root: Path, art_root: Path | None = Non
         requested = coordination_root.resolve()
         root = _top(requested)
         records = _status_records(root)
+        # Untracked, non-ignored files are not inherently destructive to a
+        # fast-forward. They stay visible in status/signatures, while the
+        # incoming-path guard below rejects every actual overwrite collision.
+        tracked_changes = [record for record in records if not record.startswith("??\t")]
         branch = _git(root, "branch", "--show-current")
         attached = _worktrees(root).get(root)
         ahead, behind, remote = _relation(root)
@@ -251,9 +255,9 @@ def _snapshot(profile: str, coordination_root: Path, art_root: Path | None = Non
         elif attached != "main" or root != requested:
             blockers.append("configured coordination checkout is not present in live Git worktree metadata")
             state = "WRONG CHECKOUT"
-        elif records:
-            blockers.append("checkout has local tracked or untracked changes")
-            blockers.extend(_status_paths(records))
+        elif tracked_changes:
+            blockers.append("checkout has local tracked changes")
+            blockers.extend(_status_paths(tracked_changes))
             state = "DIRTY"
         elif ahead is None or behind is None:
             blockers.append("origin/main tracking ref is unavailable")
@@ -365,6 +369,24 @@ def _sync_lock(coordination_root: Path) -> Iterator[None]:
         except BlockingIOError as error:
             raise SyncError("SYNC BUSY: another persistent-checkout synchronization is active") from error
         yield
+
+
+def sync_lock_busy(coordination_root: Path) -> bool:
+    """Read-only probe: True while another process holds the sync lock.
+
+    Takes a shared lock for an instant and releases it. A writer that races that
+    instant would report SYNC BUSY once and succeed on its next attempt.
+    """
+    path = _common_dir(_top(coordination_root)) / SYNC_LOCK
+    if not path.exists():
+        return False
+    with path.open("a+") as handle:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_SH | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return True
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+    return False
 
 
 @contextmanager

@@ -15,8 +15,8 @@
 - Review cycle: 0
 - Max automatic review cycles: 2
 - Review rationale: remote cross-clone claim fencing, dirty-work preservation and reviewer outcome correctness are safety-critical
-- Reviewed main: 316c984cbb62cc067ab7fc8483994f02573d6f8b
-- Authoring chat: not-recorded
+- Reviewed main: 58934945d0e97020f8caffe078e865eb94409ced
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Visual review: none
 - Goal: Automatically release a confirmed dead Codex session's **execution lock**, preserve its unfinished branch/worktree/evidence and make it resumable, without double-claiming, fabricating review acceptance or deleting user work.
 - Completion boundary: One exact-owner fenced `LIVE -> PARKED` transition integrated into the **existing** dispatcher/workstream/reviewer identity; explicit `recover --plan/--apply` and opt-in host-local session-exit/periodic recovery. OR1's independently verified read-only liveness is the prerequisite. Never auto-land incomplete code, accept findings-only reviews, delete unique branches/art, or silently reclaim unobserved/foreign sessions.
@@ -45,6 +45,20 @@
 - Next packet state: ready/auto, dependency-gated
 - Refresh owner: none
 - ChatGPT/user planning refresh required: no
-- Authoring chat: not-recorded
+- Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925
 - Next action: Fresh independent review of exact-lease/fencing/dirty-work/review-truth handling before enabling any user timer.
 - Blockers or open questions: No human timing choice for default-safe opt-in rollout; ambiguous foreign-host and historical uninstrumented sessions remain manual.
+
+## Default cooperative pause/park/resume extension (2026-10-25)
+
+**Required behavior (in this OR2 packet, not a new workstream):** After OR1's independently accepted supervision proof, support voluntary `pause <workstream>` at a safe execution boundary and automatic parking upon **verified** normal supervised agent exit. Explicit pause is a stop-and-preserve request: it does not release locks while the process or any descendant is executing. Use `ACTIVE -> PAUSE_REQUESTED -> RECOVERY_PREPARED -> PARKED` and `PARKED -> RESUME_PREPARED -> ACTIVE`. `PAUSE_REQUESTED`, `RECOVERY_PREPARED`, and `RESUME_PREPARED` are local journal phases; only the existing exact owner-lease authority publishes fenced execution ownership. All transitions are idempotent, journaled, and remotely CAS-fenced against the exact original owner/run token, lease OID and branch SHA, with readback. A timeout, silent live agent, unfinished tool invocation or SIGSTOP is not an exited owner.
+
+A `PARKED` task **retains** the original canonical `agent/<workstream>` branch, exact worktree and local commits, dirty/untracked files, pinned run/validation/review evidence and exclusive same-workstream claim identity. Before releasing only its logical `Locks:`, check the complete process tree, original claim, no competing owner, secure local checksummed inventory/backup when needed and remote lease. A partial snapshot, risky large/ignored/private data, altered file, no disk capacity or network race leaves `NEEDS_REVIEW` with lock held. Do not reset, stash, rewrite, delete or move source assets, art, or Git branches. A local branch with no instrumented owner token keeps branch-derived conservative locking.
+
+Resume uses **the original claimed identity**, not a new dispatcher claim: exact owner/worktree/packet/branch verification, reacquire all declared logical locks via atomic lease CAS, create a new execution epoch under the original workstream and only then restart writing/review. If another workstream currently holds a conflicting lock, remain `PARKED`, report the holder and retry later. Never allow two resumed writers from different clones; if a parked review produced findings, resuming does not make the finding `passed`.
+
+Expose explicit supervised commands (choose exact CLI shape consistent with current agent tools) for `pause`, `status` and `resume`, and hook the same safe park path into clean wrapper exit. A separate opt-in `systemd --user` scan may handle confirmed same-host crashes later; **do not install/enable it by default**. Retain `workstream.py finish` as exclusive completion/landing authority, `dispatch.py` as lock/claim authority and `paired_review_runner.py` as reviewer lifecycle owner. Existing one-off `review_claim_parking.py` is not to be widened or repurposed as parallel generalized ownership authority.
+
+Focused tests must prove: (a) clean pause releases an unrelated shared lock without releasing same-ID claim; (b) dirty/untracked pause preserves exact original bytes and index/commits; (c) active descendant, unverified snapshots, remote outage, foreign host and legacy uninstrumented owner never unlock; (d) 2-clone pause/resume CAS races give one owner; (e) repeated/interrupted transitions converge safely; (f) review nonpassing outcomes and queued dependencies do not become accepted; (g) normal supervised exit parks without a timer while a quiet live agent retains lock. Generate reviewable terminal receipts with the exact original workstream ID, state, held/released locks and protected evidence digest.
+
+**Authoring chat:** https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6adb61f3-35fc-83ea-87ed-ba961c7b5925

@@ -5,10 +5,10 @@ Canonical validation guide for CUSTODIAN agent work.
 ## Forlorn Ritualant Four-Cue Score
 
 Run the focused integration smoke and retain the existing encounter route and
-completion regressions. The smoke verifies the four imported resources, reveal
-and committed combat loops, fresh explicit-pin and final-anchor one-shots,
-violent resolution routing, scoped Ninth Answer duck, single music player,
-restore behavior, and successor-zone ownership:
+completion regressions. The smoke verifies the four imported resources, arrival
+fade and reveal, real overlapping cue decks, dialogue duck during a switch,
+fresh explicit-pin and final-anchor one-shots, terminal quiet, survival, scene
+restore, and successor-zone ownership:
 
 ```bash
 python3 custodian/tools/validation/run_validation.py --test ritualant_four_cue_music --json
@@ -222,6 +222,24 @@ For production requirement registry, CLI, or generated-view changes, run
 `python3 custodian/tools/validation/asset_requirements_smoke.py`,
 `python3 custodian/tools/assets/asset.py needs --check`, and
 `python3 custodian/tools/assets/asset.py doctor`.
+
+## Hub Road Empty Procession
+
+Run the real-Hub-host sequence smoke, then preserve the Hub route, handoff,
+Forum Dais, and campaign-state regressions:
+
+```bash
+python3 custodian/tools/validation/run_validation.py --test hub_road_empty_procession --json
+python3 custodian/tools/validation/run_validation.py --test hub_first_set_blockout --json
+python3 custodian/tools/validation/run_validation.py --test world_transition_handoff --json
+python3 custodian/tools/validation/run_validation.py --test hub_forum_adjudication --json
+godot --headless --path custodian --script res://tools/validation/campaign_outcome_exactly_once_smoke.gd
+```
+
+The focused smoke drives a real Operator across the production H1 route, checks
+ordered lamp/bell beats, resumes from a partial HubState snapshot, and rejects
+replay after restoring a completed snapshot. It also asserts that the Forum
+Dais, Crown Transfer ingress, and Contract prewarm remain untouched.
 
 ## Preferred Agent Entry Point
 
@@ -1725,6 +1743,16 @@ as evidence that rebuild work has been batched yet.
 
 ## Review Validation
 
+The paired review runner executes `run_validation.py --changed --base
+<implementation-parent-sha> --json` from the exact claimed review worktree on
+the trusted coordinator before launching the restricted reviewer. This keeps
+Godot import sockets and the existing project lock/job budget on the host side.
+The reviewer receives the pinned report and independently decides the outcome;
+it must not replace the report or treat green tests as its verdict. The
+coordinator rechecks the report hash, implementation identity, and source
+fingerprint before landing. See `paired_review_runner.py` and
+`paired_review_host_validation.py` for the fail-closed evidence contract.
+
 ## Enemy Hit Spatial Diagnostics
 
 From `custodian/`:
@@ -1895,7 +1923,61 @@ the directly affected Operator input, ranged projectile, Field Patch, and death
 handoff tests selected by the changed-file manifest, then one
 `run_validation.py --changed --json` closeout.
 
-# Operator Runtime Authority Migration Checks (in progress)
+# Operator Chassis Authority Seal (in progress)
+
+The source-aware chassis guard records the current `operator.gd` field/method
+ownership inventory, applies a decrease-only budget, checks foreign-body motor
+ownership, and reuses the existing Operator architecture, runtime-path, and
+animation-authority predicates. Run from the repository root:
+
+```bash
+python3 custodian/tools/validation/operator_chassis_authority_guard.py --json
+python3 -m unittest custodian.tools.validation.test_operator_chassis_authority_guard -v
+python3 -m unittest \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_finish_runs_operator_authority_guard_before_any_push \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_closeout_preflight_reports_operator_authority_guard_failure \
+  custodian.tools.agent.test_workstream.WorkstreamTests.test_operator_authority_guard_leaves_unrelated_workstreams_unaffected -v
+```
+
+`workstream.py preflight` reports the guard result and `workstream.py finish`
+invokes the same guard independently of `run_validation.py --changed` test
+selection. A failure blocks before push and preserves the claimed worktree and
+branch. Non-Operator workstreams that do not touch Operator runtime, guard,
+policy, manifest, or reused audit authorities skip this gate. Exact source
+measurements and the temporary F2 movement exception live in
+`operator_chassis_authority_budget.json`; an extraction must remove its owned
+records and lower applicable limits. Method-token fingerprint changes require
+the packet's named, bounded approval record. Do not raise a budget or add a
+foreign-movement exception to make validation pass.
+
+The budget also pins the existing 23 legacy path-identity lines and 188 legacy
+runtime animation paths by their measured identities. These remain outstanding
+migration debt; the ordinary audits must reject additions while reporting them.
+F2/F3/F5/F6 own domain extraction and debt reduction, and Slice G owns final
+elimination. Passing the ordinary audits does not mean Operator migration is
+complete.
+
+This is an autonomous `workstream.py` lifecycle gate plus ordinary CI coverage.
+It does not prevent arbitrary direct pushes to `main`; do not claim that
+server-side branch protection enforces this local finish check.
+
+Before implementation closeout, run these packet-required canonical checks
+from the repository root (without changing shared timeout policy):
+
+```bash
+python3 custodian/tools/validation/operator_architecture_debt_audit.py --final
+python3 custodian/tools/validation/operator_runtime_path_audit.py
+python3 custodian/tools/validation/operator_runtime_animation_authority_smoke.py
+python3 custodian/tools/validation/run_validation.py --changed --json
+git diff --check
+```
+
+The path and animation `--final` modes remain final Slice G gates and are not
+required to close this pre-extraction seal. Their current known debt counts are
+reported separately; an expected nonzero final result is not a passing
+validation. The architecture `--final` audit remains required here.
+
+## Operator Runtime Authority Migration Checks (in progress)
 
 These checks validate the preservation/selector foundations only; they do not
 certify the still-pending actor, pipeline or Workbench cutover. See

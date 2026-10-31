@@ -21,7 +21,7 @@
 - Visual review: conditional
 - Goal: Repair infrastructure by locally holding the existing Operator repair control and paying finite resources.
 - Completion boundary: Repair infrastructure by locally holding the existing Operator repair control and paying finite resources. All listed acceptance cases must pass on the real runtime.
-- Current measured state: At reviewed baseline, only the original semantic campus is implemented. Archetypes and connected full recovery loop are not shipped; inspect latest main and predecessor review changes before editing.
+- Current measured state: At 934805e71ac4e82c4588365f5e7e1dddea912eaa: Type A and Type B geometry are implemented. The Type A independent review remains active; Type B parent review concluded with R0-01 (unconsumed vertical-entry anchors) and R0-02 (missing collision/navigation/camera proof). The existing `compound-connected-bunker-blockout-review-corrections-1` correction and paired `review-compound-connected-bunker-blockout-review-corrections-1` own both defects, and its `agent/` branch is already published. All later traversal/security/assault/recovery gameplay is unimplemented or unaccepted; do not duplicate that correction or bypass either review.
 - Evidence: design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md; existing system files named under Task-specific authority.
 - Task-specific authority: custodian/game/actors/operator/operator.gd existing Hold-R logic; custodian/game/infrastructure/infrastructure_structure.gd heal(); custodian/game/systems/core/systems/damageable.gd; current ResourceLedger API
 - Work surface: custodian/game/actors/operator/operator.gd existing Hold-R logic; custodian/game/infrastructure/infrastructure_structure.gd heal(); custodian/game/systems/core/systems/damageable.gd; current ResourceLedger API; minimal adjacent validation and authoritative documentation.
@@ -40,3 +40,8 @@ Resolve nearest valid InfrastructureStructure via the existing repair target pat
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.
+
+## Planning refresh (2026-10-17)
+
+- Source snapshot: `934805e71ac4e82c4588365f5e7e1dddea912eaa`. Keep all existing post-land review dependencies; verify newer actual `origin/main` and accepted review receipts before implementation.
+- Only `custodian/docs/ai_context/task_packets/COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` and B correction own cross-layer entrance mechanics. This packet must not introduce a duplicate transit controller or independent structural/power state.

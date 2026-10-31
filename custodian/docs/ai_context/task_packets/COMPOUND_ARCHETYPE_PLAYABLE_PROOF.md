@@ -21,7 +21,7 @@
 - Visual review: conditional
 - Goal: Prove enter/circulate/operate/exit/revisit without blockers for both Type A and Type B.
 - Completion boundary: Prove enter/circulate/operate/exit/revisit without blockers for both Type A and Type B. All listed acceptance cases must pass on the real runtime.
-- Current measured state: At reviewed baseline, only the original semantic campus is implemented. Archetypes and connected full recovery loop are not shipped; inspect latest main and predecessor review changes before editing.
+- Current measured state: At 934805e71ac4e82c4588365f5e7e1dddea912eaa: Type A and Type B geometry are implemented. The Type A independent review remains active; Type B parent review concluded with R0-01 (unconsumed vertical-entry anchors) and R0-02 (missing collision/navigation/camera proof). The existing `compound-connected-bunker-blockout-review-corrections-1` correction and paired `review-compound-connected-bunker-blockout-review-corrections-1` own both defects, and its `agent/` branch is already published. All later traversal/security/assault/recovery gameplay is unimplemented or unaccepted; do not duplicate that correction or bypass either review.
 - Evidence: design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md; existing system files named under Task-specific authority.
 - Task-specific authority: custodian/tools/validation/persistent_compound_layout_smoke.gd; custodian/tools/validation/persistent_compound_runtime_smoke.gd; custodian/game/ui/minimap/minimap_view.gd; NEW focused reproducible dev harness
 - Work surface: custodian/tools/validation/persistent_compound_layout_smoke.gd; custodian/tools/validation/persistent_compound_runtime_smoke.gd; custodian/game/ui/minimap/minimap_view.gd; NEW focused reproducible dev harness; minimal adjacent validation and authoritative documentation.
@@ -40,3 +40,8 @@ Add two explicitly selectable developer scene/presets and test trajectories: wor
 ## Closeout
 
 Return changed files, measured acceptance, focused test evidence, documentation drift corrections and independent review link. New art is optional until the later human visual gate.
+
+## Planning refresh (2026-10-17)
+
+- Source snapshot: `934805e71ac4e82c4588365f5e7e1dddea912eaa`. Keep all existing post-land review dependencies; verify newer actual `origin/main` and accepted review receipts before implementation.
+- Only `custodian/docs/ai_context/task_packets/COMPOUND_INTERIOR_TRAVERSAL_INTEGRATION.md` and B correction own cross-layer entrance mechanics. This packet must not introduce a duplicate transit controller or independent structural/power state.

@@ -48,6 +48,14 @@ const LEVEL_DATA_SCHEMA := [
 	["compound_archetype_id", LEVEL_DATA_MODE_PASS],
 	["compound_layer_id", LEVEL_DATA_MODE_PASS],
 	["compound_archetype_profile_version", LEVEL_DATA_MODE_PASS],
+	["compound_layers", LEVEL_DATA_MODE_DEEP],
+	["compound_surface_housings", LEVEL_DATA_MODE_DEEP],
+	["compound_vertical_entries", LEVEL_DATA_MODE_DEEP],
+	["compound_compartment_thresholds", LEVEL_DATA_MODE_DEEP],
+	["compound_spine_cells", LEVEL_DATA_MODE_SHALLOW],
+	["compound_perimeter", LEVEL_DATA_MODE_DEEP],
+	["compound_gates", LEVEL_DATA_MODE_DEEP],
+	["compound_building_doorways", LEVEL_DATA_MODE_DEEP],
 	["compound_diagnostics", LEVEL_DATA_MODE_DEEP],
 	["main_road_tiles", LEVEL_DATA_MODE_PASS],
 	["ruined_road_tiles", LEVEL_DATA_MODE_PASS],
@@ -95,6 +103,7 @@ const LEVEL_DATA_SCHEMA := [
 	["worldgen_reserved_regions", LEVEL_DATA_MODE_DEEP],
 	["faction_activity_sites", LEVEL_DATA_MODE_DEEP],
 	["story_room_sites", LEVEL_DATA_MODE_DEEP],
+	["story_room_site_skips", LEVEL_DATA_MODE_DEEP],
 	["special_room_sites", LEVEL_DATA_MODE_DEEP],
 	["intent_zones_enabled", LEVEL_DATA_MODE_PASS], # derived
 ]

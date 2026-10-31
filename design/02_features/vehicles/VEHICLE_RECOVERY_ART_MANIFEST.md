@@ -5,6 +5,8 @@
 
 All vehicle recovery art uses Asset Pipeline V2. New/unprocessed files are saved under the exact `asset_drop/source_work/...` or normalized `asset_drop/inbox/<family>/...` paths below. Runtime paths are outputs, never authoring destinations.
 
+Broader initial-fleet generation order, future vehicle families, component inventory, socket overlays, shared motion FX, and camp/salvage assets are governed by `design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`. This document remains the detailed Scout/recovery-family contract.
+
 ## Family A — Custodian Field Scout Buggy Mk I
 
 - schema: `custodian.asset_family.v2`
@@ -20,18 +22,18 @@ All vehicle recovery art uses Asset Pipeline V2. New/unprocessed files are saved
 - registration: stable bottom-center; wheel/ground contact may not bob
 - true alpha; no baked floor shadow
 
-| State | Tier | Frames | FPS | Per-direction sheet |
-|---|---|---:|---:|---:|
-| `parked_01` | required | 1 | n/a | 156×156 |
-| `drive_01` | required | 12 | 12 | 1872×156 |
-| `disabled_01` | required | 1 | n/a | 156×156 |
-| `wreck_01` | required | 1 | n/a | 156×156 |
-| `engine_start_01` | recommended | 7 | 8 | 1092×156 |
-| `engine_idle_01` | recommended | 6 | 6 | 936×156 |
-| `brake_01` | recommended | 4 | 10 | 624×156 |
-| `impact_01` | recommended | 4 | 12 | 624×156 |
-| `destroy_01` | recommended | 8 | 10 | 1248×156 |
-| `restore_01` | strongly recommended | 8 | 8 | 1248×156 |
+| State | Fulfillment | Tier | Frames | FPS | Per-direction sheet |
+|---|---|---|---:|---:|---:|
+| `parked_01` | derived from approved neutral `drive_01` frame | required | 1 | n/a | 156×156 |
+| `drive_01` | authored | required | 12 | 12 | 1872×156 |
+| `disabled_01` | authored | required | 1 | n/a | 156×156 |
+| `wreck_01` | derived from final `destroy_01` frame | required | 1 | n/a | 156×156 |
+| `destroy_01` | authored | required for full-loop proof | 8 | 10 | 1248×156 |
+| `restore_01` | authored | required for full-loop proof | 8 | 8 | 1248×156 |
+
+Do not commission separate full-body raster states for generic engine start, engine idle, brake, or ordinary impact. The active Vehicle Integration System owns those as procedural presentation.
+
+Required Scout socket-overlay states use the same 156×156 family registration, 1 frame per authored direction: `socket_drive_coupler_failed_01`, `socket_control_relay_missing_01`, and `socket_chassis_brace_failed_01`.
 
 Normalized example: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1/wreck_01__e.png`.
 
@@ -95,6 +97,35 @@ The FX should be restrained technical/industrial feedback: diagnostic lines, amb
 
 Normalized example: `custodian/asset_drop/inbox/vehicle_recovery_fx_common/scan_sweep_01__omni.png`.
 
+## Family A2 — Field Scout Directional Destruction FX
+
+- schema: `custodian.asset_family.v2`
+- kind: `effect`
+- family id: `custodian_field_scout_buggy_mk1_destruction_fx`
+- metadata: `custodian/content/metadata/assets/families/custodian_field_scout_buggy_mk1_destruction_fx.asset.json`
+- source work: `custodian/asset_drop/source_work/effects/custodian_field_scout_buggy_mk1_destruction_fx/`
+- normalized inbox: `custodian/asset_drop/inbox/custodian_field_scout_buggy_mk1_destruction_fx/`
+- runtime domain: `sprites/effects/vehicles/destruction`
+- canvas: 256×256 RGBA
+- direction: 8dir; authored n/ne/e/se/s, mirrored nw/w/sw
+- state: `destroy_fx_01`, 8f @ 10 FPS, 2048×256 per authored direction
+- registration: use the paired destruction-body source transform and vehicle root; never independently alpha-center the VFX.
+
+## Family A3 — Shared Vehicle Destruction Tail
+
+- schema: `custodian.asset_family.v2`
+- kind: `effect`
+- family id: `vehicle_destruction_fx_common`
+- metadata: `custodian/content/metadata/assets/families/vehicle_destruction_fx_common.asset.json`
+- source work: `custodian/asset_drop/source_work/effects/vehicle_destruction_fx_common/`
+- normalized inbox: `custodian/asset_drop/inbox/vehicle_destruction_fx_common/`
+- runtime domain: `sprites/effects/vehicles/destruction`
+- canvas: 256×256 RGBA
+- direction: omni
+- state: `post_destroy_smoke_01`, 8f @ 8 FPS, 2048×256, non-looping
+
+Existing source handoff: `/CUSTODIAN/implementation_inputs/custodian_vehicle_post_destroy_smoke_fx_v1_20261017.zip`.
+
 ## Family C — Vehicle Service Component Icons
 
 - schema: `custodian.asset_family.v2`
@@ -107,14 +138,19 @@ Normalized example: `custodian/asset_drop/inbox/vehicle_recovery_fx_common/scan_
 - canvas: 64×64 RGBA
 - omni/static, 1 frame each
 
-Required states:
+Phase-1 minimum states:
 - `field_drive_coupler_mk1`
 - `custodian_control_relay_mk1`
 - `structural_brace_kit_mk1`
 - `component_missing`
+- `component_damaged`
+- `component_ready`
+- `component_compatible`
+- `component_restricted`
 - `pattern_unknown`
 - `knowledge_insufficient`
-- `component_ready`
+
+The complete 32-component initial-fleet icon inventory is authoritative in `VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`; do not create a second icon family for later vehicle classes.
 
 Icons must read at terminal-list scale and should describe mechanical function before decorative detail.
 

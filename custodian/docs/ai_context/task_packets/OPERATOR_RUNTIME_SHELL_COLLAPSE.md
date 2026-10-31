@@ -5,7 +5,7 @@
 - Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
-- Depends on: `operator-dependency-injection-spine, operator-loadout-domain-extraction, operator-melee-domain-extraction, operator-ranged-domain-extraction, operator-dodge-domain-extraction, operator-interaction-domain-extraction, operator-recovery-domain-extraction, operator-guard-parry-composition-polish, operator-ranged-static-weapon-socket-closeout`
+- Depends on: `operator-dependency-injection-spine, operator-loadout-domain-extraction, operator-melee-domain-extraction, operator-ranged-domain-extraction, operator-dodge-domain-extraction, operator-interaction-domain-extraction, operator-recovery-domain-extraction, operator-guard-parry-composition-polish, operator-ranged-static-weapon-socket-closeout, review-operator-chassis-authority-seal-v1`
 - Locks: `operator-runtime`
 - Kind: `implementation`
 - Review: `manual`
@@ -31,6 +31,10 @@
 - Validation: Run all three final audits first after structural edits, then focused facade/delegation smokes for touched domains and visual-anchor/ownership checks. Only one actor-tier broad sweep at closeout after checking resource budget. Moment Forge is unnecessary unless shell edits unexpectedly alter presentation ordering; if so, run only the affected existing scenario in evidence mode.
 - Task overrides: `none`
 - Deferred: `operator-guard-break-presentation` and `operator-modular-directional-coverage-closeout` are optional content/polish follow-ups and do not block architecture closure. Dormant head/cape remain preserved unless a future dedicated art/presentation pass reactivates them.
+
+## Final structural seal gate (2026-10-23)
+
+In addition to the existing three `--final` checks, run the independently reviewed chassis-authority guard in final mode: zero expired F2/F3/F5/F6 exceptions, no unowned mutable actor gameplay state, no foreign motors, ratcheted symbol/size/method budgets and no no-consumer compatibility seams. Do not accept pattern-debt zero alone as proof of a thin chassis. Archive accepted budget evidence and map current extracted owner APIs.
 
 ## Handoff
 

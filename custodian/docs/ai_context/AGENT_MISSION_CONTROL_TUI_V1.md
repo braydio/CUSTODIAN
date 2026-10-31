@@ -82,7 +82,8 @@ This planning effort writes no TUI, no action server, no scheduler, no automatic
 
 ## Current drift watch
 
-- `AGENT_AUTOMATION_BACKLOG.md` and `CURRENT_STATE.md` describe OR1/OR2 as not implemented; preserve that truth until evidence changes.
+- OR1 observer code now exists on main; its fresh independent review remains active/unverified. OR2 remains unimplemented. Do not retain old statements that both are unimplemented, and do not describe OR1 as accepted merely because implementation landed.
+- P0 persistent Codex task administrator design: `design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md`. It supplies a future shared read-only snapshot and reasoning operator, not a replacement for MC1's independently reviewed snapshot or canonical dispatcher.
 - `task_packet_index.py` is a bounded managed README generator; it is not claimability.
 - The uploaded `codex_usage_tracker.py` supplies turn-level telemetry and a self-contained browser dashboard but uses its own packet-header inference; it must not become a second lifecycle authority.
 - MC1 implementation and independent review packets are now authored in active task_packets/ as draft/manual, not ready or claimable. Promote only after exact source/branch refresh, targeted pair preflight and managed index validation.

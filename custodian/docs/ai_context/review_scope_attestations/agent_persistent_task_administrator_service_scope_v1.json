@@ -1,0 +1,42 @@
+{
+  "post_hoc": true,
+  "reason": "The original archived administrator Work surface omitted exactly the service installer.",
+  "schema": "custodian.review_source_scope_attestation.v1",
+  "source_archive_commit": "1ea8acc6a95866c04c4cfd3957e897a1d831a0dc",
+  "source_archive_parent": "dc8488f26cdf614a52ff48de167a4e8bac4dfa21",
+  "source_archive_tree": "4d7d3d4fd2c26096c7a91d1ccf8779ea9b804e19",
+  "source_code_files": [
+    {
+      "blob": "66260ab534caa362c7744f38392f4de806f4b8f9",
+      "mode": "100644",
+      "path": "custodian/tools/agent/task_administrator.py"
+    },
+    {
+      "blob": "326e0b074d0b84dbfe35cde7714de852dbbb91af",
+      "mode": "100644",
+      "path": "custodian/tools/agent/task_administrator_service.py"
+    },
+    {
+      "blob": "905fec71ba3d9225fcfbe9e8743973d289d49a62",
+      "mode": "100644",
+      "path": "custodian/tools/agent/test_task_administrator.py"
+    }
+  ],
+  "source_code_paths": [
+    "custodian/tools/agent/task_administrator.py",
+    "custodian/tools/agent/task_administrator_service.py",
+    "custodian/tools/agent/test_task_administrator.py"
+  ],
+  "source_files": [
+    {
+      "blob": "326e0b074d0b84dbfe35cde7714de852dbbb91af",
+      "mode": "100644",
+      "path": "custodian/tools/agent/task_administrator_service.py"
+    }
+  ],
+  "source_packet_blob": "3387dd7346b12aa41ea4fd496f0b162d245cc8a9",
+  "source_packet_path": "custodian/docs/ai_context/task_packets/archived/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md",
+  "source_span_base": "c1e1739e0bf44fbbc4453d879e1eec089e62c8e9",
+  "source_span_head": "dc8488f26cdf614a52ff48de167a4e8bac4dfa21",
+  "source_workstream": "agent-persistent-task-administrator-v1"
+}

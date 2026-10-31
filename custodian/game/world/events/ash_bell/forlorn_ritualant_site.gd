@@ -343,10 +343,11 @@ func set_stilling_pin() -> void:
 	if not can_set_stilling_pin():
 		return
 
-	# This live interaction edge is distinct from restored SET_STILLING_PIN state.
-	music_cue_requested.emit(&"stilling_release")
 	event_state.set_resolution(AshBellEventState.Resolution.SET_STILLING_PIN)
 	event_state.set_fountain_state(AshBellEventState.FountainState.CRACKED_ANCHORED)
+	# Emit only after the physical pin commit and authored fountain state change.
+	# Restored SET_STILLING_PIN state never traverses this live interaction edge.
+	music_cue_requested.emit(&"stilling_release")
 	request_dialogue.emit(dialogue_id, &"set_stilling_pin_pre")
 	if dialogue_presenter != null: await dialogue_presenter.wait_for_node_end(&"set_stilling_pin_pre")
 	_show_unarrived_apparition()
@@ -468,6 +469,7 @@ func resolve_thread_anchor(anchor_id: StringName) -> void:
 	event_state.add_silence_pressure(-8, &"thread_anchor")
 	_anchor_unlock_epoch = _hostile_attack_epoch + 1
 	if _thread_anchor_stage >= THREAD_ANCHOR_ORDER.size():
+		# The ordered third real anchor is the successful physical commit edge.
 		music_cue_requested.emit(&"stilling_release")
 		stabilize_site()
 

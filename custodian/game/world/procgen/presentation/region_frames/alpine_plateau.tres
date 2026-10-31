@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="ProcgenRegionFrameProfile" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ProcgenRegionFrameProfile" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://game/world/procgen/presentation/procgen_region_frame_profile.gd" id="1"]
 [ext_resource type="Resource" path="res://game/world/procgen/presentation/underlays/alpine_plateau_underlay.tres" id="2"]
+[ext_resource type="Resource" path="res://game/world/procgen/presentation/fascia/alpine_plateau.tres" id="3"]
 
 [resource]
 script = ExtResource("1")
 profile_id = &"alpine_plateau"
 display_name = "Alpine Plateau"
 underlay_profile = ExtResource("2")
+cliff_fascia_profile = ExtResource("3")
 visual_fallback = false
 fallback_reason = ""

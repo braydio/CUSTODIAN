@@ -1,0 +1,92 @@
+{
+  "approval_state": "experimental",
+  "armature": {
+    "identity_sha256": "36ed6d35469faf5e6f03802371df345321147e1624be35d079fd5140de36d597",
+    "object_name": "SmartRigArmature",
+    "rest_pose_sha256": "62b18ce51ea85907f7270855608be0cdc804ec7e1c17fff5d6da97bf543e55eb",
+    "skeleton_signature_sha256": "abcadb2f29bb273b25d8db278b5e33af27597a8a68a1c90550a92e2b7da7bbd2"
+  },
+  "blender": {
+    "blender_version": "5.2.3 LTS",
+    "project_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.blend",
+    "project_sha256": "a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969"
+  },
+  "camera_registration": {
+    "contract_id": "operator_full_body_8dir_128_v1",
+    "direction_policy": "independent_no_mirroring",
+    "elevation_degrees": 45,
+    "pixels_per_meter": 50,
+    "profile_path": "custodian/tools/operator/animation_compiler/contracts/full_body_8dir_128_v1.json",
+    "profile_sha256": "f2b8e10d4f4033f2d24a7ea908f75b68992acd0118266a4bc61e7ebdf06a6fe3",
+    "root_pixel": [
+      64,
+      106
+    ],
+    "scale_policy": "fixed_from_master"
+  },
+  "glb": {
+    "bytes": 47298084,
+    "lfs_oid": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479",
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.glb",
+    "sha256": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479"
+  },
+  "master_id": "experimental_iter005_baseline",
+  "mesh_materials": [
+    {
+      "material_ids": [
+        {
+          "id": "BakedMaterial",
+          "sha256": "4fe94a80f3dcfa4c76c9a2cb6daee31619b6aee5435f79921326c33281f5c1b2"
+        }
+      ],
+      "mesh_id": "output_unwrapped",
+      "mesh_sha256": "70a1ab82a13336ab2d507a35dba7ae5c58a2fc5bec889b5b996678e144868718",
+      "weights_sha256": "24b6bc8810ec8cb66e8dd54d40c8c9f92629c09cecd6f351744cd23f1b9e83a5"
+    }
+  ],
+  "retarget_policy": {
+    "config_path": "custodian/tools/operator/animation_compiler/contracts/retarget_policy_v1.json",
+    "config_sha256": "def6cec3e281926d9b9d84a37c1ddc8c99c007edbefc85ab167e3c61e08f0074",
+    "policy_id": "mixamo_humanoid_conservative",
+    "version": "1.0"
+  },
+  "schema": "custodian.operator_3d_master.v1",
+  "source_provenance": {
+    "blender_bytes": 47225804,
+    "blender_lfs_oid": "a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969",
+    "blender_source_path": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter005/operator_run_mixamo_iter005_contact_ik.blend",
+    "derivation": "byte_for_byte_copy_of_source_branch_master",
+    "glb_bytes": 47298084,
+    "glb_lfs_oid": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479",
+    "glb_source_path": "custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/run_iter005/operator_run_mixamo_iter005_contact_ik.glb",
+    "hydrated_bytes_verified": true,
+    "source_branch": "agent/operator-3d-master-modeling-proof-v1-iter005",
+    "source_commit": "6b89c4d503bb2d73d2783443d4280f313c681bfa"
+  },
+  "textures": [
+    {
+      "bytes": 16163414,
+      "format": "image/png",
+      "name": "normal.png",
+      "packed_in_blend": true,
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/textures/normal.png",
+      "sha256": "99104bf59973815afe271982e7d506dcb0b387a9471b8ed222670ef2a7b88cb6"
+    },
+    {
+      "bytes": 18661874,
+      "format": "image/png",
+      "name": "texture_0.png",
+      "packed_in_blend": true,
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/textures/texture_0.png",
+      "sha256": "817980f1cb24a817248a88b62d1db0f4aab05952f576ea71b16e1e34d52a6a31"
+    },
+    {
+      "bytes": 11441929,
+      "format": "image/png",
+      "name": "texture_0_metallic_roughness.png",
+      "packed_in_blend": true,
+      "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/textures/texture_0_metallic_roughness.png",
+      "sha256": "d0e7094812bfcf4221c2b993a2293fe0cc74b635e705ef4ec003abaaadaded26"
+    }
+  ]
+}

@@ -42,6 +42,8 @@ var compound_ingress: Array[Vector2i] = []
 var compound_buildings: Array[Rect2i] = []
 var compound_rooms: Array[Dictionary] = []
 var compound_connections: Array[Dictionary] = []
+var compound_surface_housings: Array[Dictionary] = []
+var compound_vertical_entries: Array[Dictionary] = []
 var region_tiles: Dictionary = {}
 
 var map_texture: ImageTexture = null
@@ -82,6 +84,8 @@ func set_level_data(data: Dictionary) -> void:
 	compound_buildings = _as_rect2i_array(data.get("compound_buildings", []))
 	compound_rooms = _as_dictionary_array(data.get("compound_rooms", []))
 	compound_connections = _as_dictionary_array(data.get("compound_connections", []))
+	compound_surface_housings = _as_dictionary_array(data.get("compound_surface_housings", []))
+	compound_vertical_entries = _as_dictionary_array(data.get("compound_vertical_entries", []))
 	region_tiles = data.get("region_tiles", {})
 	_mark_map_texture_dirty()
 
@@ -109,6 +113,8 @@ func set_world_bounds(bounds: Rect2) -> void:
 	compound_buildings.clear()
 	compound_rooms.clear()
 	compound_connections.clear()
+	compound_surface_housings.clear()
+	compound_vertical_entries.clear()
 	region_tiles.clear()
 	_mark_map_texture_dirty()
 
@@ -221,12 +227,19 @@ func get_compound_layout_summary() -> Dictionary:
 	var room_types := {}
 	for room in compound_rooms:
 		room_types[String(room.get("type", ""))] = true
+	var layer_room_counts := {}
+	for room in compound_rooms:
+		var layer_id := String(room.get("layer_id", "surface"))
+		layer_room_counts[layer_id] = int(layer_room_counts.get(layer_id, 0)) + 1
 	return {
 		"semantic_layout": not compound_rooms.is_empty(),
 		"room_count": compound_rooms.size(),
 		"connection_count": compound_connections.size(),
 		"unique_room_types": room_types.size(),
 		"legacy_building_count": compound_buildings.size(),
+		"layer_room_counts": layer_room_counts,
+		"surface_housing_count": compound_surface_housings.size(),
+		"vertical_entry_count": compound_vertical_entries.size(),
 	}
 
 
@@ -629,16 +642,33 @@ func _draw_compound_overlay(map_rect: Rect2) -> void:
 			var room_fill := Color(compound_color.r, compound_color.g, compound_color.b, 0.30)
 			if String(room.get("size_class", "standard")) == "major":
 				room_fill = Color(room_color.r, room_color.g, room_color.b, 0.34)
+			if String(room.get("layer_id", "surface")) == "subsurface":
+				# Underground rooms read as a cooler tint so the two layers stay distinguishable.
+				room_fill = Color(room_fill.b, room_fill.g, room_fill.r, room_fill.a)
 			draw_rect(panel_rect, room_fill, true)
 			draw_rect(panel_rect, Color(room_color.r, room_color.g, room_color.b, 0.88), false, 1.0)
 			_draw_compound_room_label(room, panel_rect)
 		for ingress in compound_ingress:
 			if _is_tile_inside(ingress):
 				draw_circle(_tile_to_panel(ingress, map_rect), 2.0, objective_color)
+		_draw_compound_layer_projection(map_rect)
 		return
 	for building in compound_buildings:
 		if building.size.x > 0 and building.size.y > 0:
 			draw_rect(_tile_rect_to_panel(building, map_rect), Color(compound_color.r, compound_color.g, compound_color.b, 0.28), true)
+
+
+func _draw_compound_layer_projection(map_rect: Rect2) -> void:
+	# Surface housings project onto the map with their paired vertical-entry anchors on both layers.
+	for housing in compound_surface_housings:
+		var rect: Rect2i = housing.get("rect", Rect2i())
+		if rect.size.x > 0 and rect.size.y > 0:
+			draw_rect(_tile_rect_to_panel(rect, map_rect), Color(compound_color.r, compound_color.g, compound_color.b, 0.5), false, 1.0)
+	for entry in compound_vertical_entries:
+		for key in ["surface_anchor", "subsurface_anchor"]:
+			var anchor: Vector2i = entry.get(key, Vector2i.ZERO)
+			if _is_tile_inside(anchor):
+				draw_circle(_tile_to_panel(anchor, map_rect), 2.5, objective_color)
 
 
 func _draw_compound_connections(map_rect: Rect2) -> void:

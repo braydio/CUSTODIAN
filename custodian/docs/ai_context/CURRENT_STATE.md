@@ -1,15 +1,156 @@
 # CURRENT STATE — CUSTODIAN
 
+## Operator chassis authority seal (implementation in progress, 2026-10-31)
+
+The existing `operator-chassis-authority-seal-v1` claim is implementing the
+source-aware ownership guard required before F2/F3/F5/F6 extraction. Its
+current source measurement is 14,792 lines, 577 top-level fields (477 mutable,
+100 constants), and 742 top-level functions. The checked inventory classifies
+477 mutable fields across F2 melee (198), F3 ranged (94), F5 interaction (6),
+F6 survivability (57), chassis (75), presentation bridge (36), and delegation
+references (11). Mixed-domain, post-extraction compatibility, and
+`legacy_other_gameplay_authority` methods remain visible migration evidence;
+they are not treated as compliant or as zero debt.
+
+The only measured foreign-body motor exception is
+`enemy.move_and_slide()` in `operator.gd::_apply_melee_hitbox_tick()`; F2 owns
+removing it after the impact/knockback behavior is protected. The claimed
+implementation is still unlanded and awaits the packet's complete validation
+and fresh independent review. The separate existing migration audit baseline
+contains 23 legacy path-identity lines and 188 legacy runtime animation files.
+They remain outstanding: F2/F3/F5/F6 own their domain extractions, and Slice G
+owns final elimination and final zero-debt checks. The ordinary audit passes do
+not mean the Operator migration is complete. See
+`design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md` for the ownership
+inventory and `custodian/docs/ai_context/VALIDATION_RECIPES.md` for its focused
+validation/finish gate. This guard does not assert server-side protection from
+arbitrary direct Git pushes.
+
+## Persistent task administrator bootstrap (2026-10-30)
+
+`custodian/tools/agent/task_administrator.py` provides a read-only observer,
+versioned JSON snapshot, safe-retirement diagnostics, and private evidence event
+ledger. Its user systemd unit template is disabled by default; host smoke passed
+and the temporary installation was removed. Slice A does not dispatch, resume,
+park, release claims, accept reviews, or clean worktrees. See
+`design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md` and the
+paired task packet for implementation evidence and the remaining independent
+review gate.
+
+## Procgen Environmental Evidence ES-1 site identity foundation (2026-10-28)
+
+Intent-enabled story sites now project only from existing F02
+worldgen_reserved_regions[kind=story_room] records. Each exported site binds
+the exact intent-node ID, center, and reserved rectangle; versioned es1:
+SHA-256 identities encode the effective generation seed, region-frame scope,
+node ID, and identity version with length-prefixed inputs. Normalized sites and
+stable optional-site skip reasons are detached through accepted-world export.
+Markers, ruin protection, and foliage clearance consume the same joined site
+records. Floor claiming remains owned by F02 reservations and asserts any
+projected site matches its source reservation.
+
+The legacy cell-sampled metadata_only_v1 path remains available only when
+intent generation is disabled. No verified F15 parent Location is currently
+passed into procgen, so ES-1 records remain F02-region-local; F15-B1/B2 remain
+unchanged data authorities, with no new Location or cross-visit persistence.
+The fixed 160×160 world-shape fixture has one clipped story-room reservation,
+story_room_required_11;
+it exports zero active story sites and a stable clipped_rect skip, with no
+StoryRoom marker. This is an accepted optional-site outcome, not a site quota.
+This is an identity and geometry foundation, not a physical tableau: ES-2
+Refused Passage is the next separately scoped slice; ES-3 Hearth/Seam and ES-4
+art/campaign integration remain planned.
+
+## Initial vehicle fleet asset program locked (2026-10-21)
+
+`design/02_features/vehicles/VEHICLE_INITIAL_FLEET_ASSET_PROGRAM_V1.md`
+is now the active generation-order and Asset Pipeline V2 planning authority for
+the first five production vehicle classes: Field Scout Buggy, Utility Hauler,
+Industrial Crawler, Recovery Rig, and Restricted APC, followed by the reusable
+recovery-expedition prop/salvage kit.
+
+The program explicitly separates authored body states from derived parked/wreck,
+procedural engine/brake/impact presentation, shared recovery/motion/destruction
+FX, component socket overlays, attachment families, 32 unique component icons,
+25 required physical component props, and the Phase-6 camp/salvage families.
+Only the Scout has existing production-source body coverage. Hauler/Crawler/Rig/APC
+IDs, canvas sizes and asset families are newly locked planning authority, not
+claims that runtime classes or source art already exist.
+
+The live component-recovery implementation still treats R1+ requirements as an
+atomic required-component set at restoration completion. Socket art is now
+planned so later staged per-component installation can reuse the same visual
+contract, but staged socket mechanics are not being misreported as live.
+
+Authoring chat:
+https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Broken Warrant 3D material tooling (2026-10-20)
+
+`custodian/tools/art/broken_warrant_3d/` now builds and validates a packed, editable Blender material master and deterministic front/three-quarter/rear 128px proofs from the staged immutable GLB. Objective source, mesh, rig, material, alpha, framing, registration, and packed-reference checks pass. The review sheet is published to `/CUSTODIAN/visual_review/broken-warrant-3d-surface-rebuild/20261020T023328Z/REVIEW_MANIFEST.json`; human identity/material acceptance remains pending. This is source-only tooling, not runtime art or Asset V2 approval.
+
+
+## Grunt candidate raster tooling (2026-10-19)
+
+`custodian/tools/iteration/raster_pipeline/` provides a plan-driven, non-Operator
+review workflow for directional humanoid crops. It verifies pinned source bytes,
+uses the existing crisp/balanced/clustered converter modes, reports registration,
+alpha/silhouette/palette/contact facts, and requires exact reviewed pixel edits
+before producing a cleaned copy. The Grunt plan exports four directions at
+64/72/80px to ignored `.ai/` workspace and the dev-only A/B scene can switch
+converter modes. This is tooling evidence only: it does not approve the raster,
+replace Grunt runtime art, or enter Asset V2. Focused validation is registered as
+`grunt_raster_pipeline`.
+
+## Vehicle Integration System architecture locked (2026-10-18)
+
+`design/04_architecture/VEHICLE_INTEGRATION_SYSTEM_V1.md` is now active
+source-to-runtime vehicle presentation/integration authority. It defines
+visual-kit V2 inheritance, authored/derived/procedural/shared state policy,
+family-level registration, reusable presentation composition, shared-FX fitting,
+deterministic explicit-region derivation, build-time skins/runtime attachments,
+generated presentation/integration receipts, and a guarded
+`vehicle_integrator.py` orchestration path.
+
+This is an architecture and queue milestone, not a claim that the integrator is
+already implemented. Live runtime still uses visual-kit schema v1,
+PilotableVehicle still directly chooses body animation identities, the Scout
+still references hover compatibility frames, and the hover-specific resource
+builder still exists. VI1-VI4 and paired reviews own that migration after the
+reviewed recovery-FX production slice.
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b
+
+
+## Compound archetypes: code landed, review-gated (2026-10-17)
+
+`compound-archetype-profile-contract` and its paired review are archived as passed. `compound-walled-yard-blockout` has shipped surface close-packed perimeter geometry with two declared crossings and yard-facing room doors; its independent review `review-compound-walled-yard-blockout` remains active. `compound-connected-bunker-blockout` has shipped disjoint surface/separator/subsurface geometry and vertical-entry metadata, but its independent parent review is **findings**, not passed: R0-01 lacks a runtime controller that actually uses paired anchors, and R0-02 lacks live collision/navigation/camera proof. The existing `compound-connected-bunker-blockout-review-corrections-1` and paired `review-compound-connected-bunker-blockout-review-corrections-1` are the **only** owners of this bounded repair; at audit time its remote `agent/` claim branch exists. Do not reclaim or duplicate it.
+
+The successor `compound-interior-traversal-integration` stays `ready/auto` but dependency-gated on `review-compound-walled-yard-blockout` and `review-compound-connected-bunker-blockout-review-corrections-1`. It now owns Type A named-room entry/return and cross-world integration using the accepted B transfer controller, not a second Type B teleport/state system. Secure-access fixtures, playable proof, structural damage, assault targeting, Operator field repair, construction and end-to-end proof remain queued behind successive accepted reviews. Source authority: `design/02_features/procgen/COMPOUND_ARCHETYPES_AND_SECURITY_V1.md`; contract/runtime owner: `PersistentCompoundLayoutPlanner` and `ProcGenTilemap`.
+
+## Ritualant score direction and scoped playback (2026-10-17)
+
+The Underground claims scoped music on arrival, fades the previous zone into
+silence, and waits for the chapel reveal before starting exploration. `MusicManager`
+uses two overlapping music decks for cue changes and a duck controller separate
+from transition state. Dialogue and Ninth Answer ducks therefore cannot cancel a
+pending cue. Combat begins on committed hostility; Stilling Pin and the third
+valid ordered anchor trigger the peaceful one-shot; fresh violent resolution
+triggers its one-shot; survival and completed one-shots leave scene music quiet.
+The level fades music on departure and releases that fade during failed-exit
+rollback. Focused state checks do not certify mix balance, intelligibility, or
+loop-boundary listening; those remain human audition items.
+
 ## Compound Archetype Profile Contract (2026-10-16)
 
 `PersistentCompoundLayoutPlanner` now validates optional `legacy`,
 `walled_yard`, and `connected_bunker` IDs from the versioned profile catalog.
-The runtime selector defaults to `legacy`; explicit archetype selection keeps
-the same generated surface layout and adds archetype, layer, and profile-version
-metadata to rooms, connectors, and exported level data. Omitting the planner
-profile argument preserves its prior output dictionary. This is selection and
-metadata support only: physical walled-yard and subsurface bunker layouts
-remain in their dependency-gated follow-up workstreams. Focused checks are in
+At the **2026-10-16 profile-contract milestone**, selection still retained
+legacy surface geometry and added versioned archetype/layer metadata. Omitted
+selection preserved the original planner output dictionary. Physical Type A
+and Type B generation landed after that milestone; see the current 2026-10-17
+compound status above for the accurate runtime/review split. Focused checks are in
 `compound_archetype_profile_smoke.gd`.
 
 ## Procgen Showcase Gallery Shell (2026-10-15)
@@ -53,6 +194,10 @@ The user-approved **future** Highland Station redesign is locked in `design/05_l
 
 
 
+## P0 Persistent Codex Task Administrator campaign (2026-10-30)
+
+The owner approved `agent-persistent-task-administrator-v1` as the top P0 *scheduling campaign* ahead of previously authored P0s at the next safe assignment boundary, not an override of existing claims, locks, review, validation or human gates. Architecture: `design/04_architecture/AGENT_PERSISTENT_TASK_ADMINISTRATOR_V1.md`. PR #101 merged at `38db9d8`, and the first implementation/independent review packet pair passed authoring validation and is **`ready/auto`** at `main@4e3e88d`. A host-local claim/dispatcher decision is not verified, and no persistent administrator is installed through packet publication. Category: `agent-ops`, shared with Quickshell/Mission Control; PR: https://github.com/braydio/CUSTODIAN/pull/101. First slice builds an opt-in read-only persistent evidence/watcher daemon and low-token Codex reasoning operator; later separately reviewed slices handle authorized delegation, historical blocker remediation and the taskbar consumer. Historical worktree/queue counts require fresh host audit before any recovery action. No review PASS, OR2 lock parking, or auto-claim is inferred from this plan.
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae424b0-a48c-83ea-9c8e-68e3c48fa59d
 ## Mission Control TUI-first planning (2026-10-12)
 
 The proposed developer operations console is specified at
@@ -63,8 +208,8 @@ read-only snapshots, tokens, events, TUI, independently verified OR1/OR2
 supervisor integration, validation, attention and guarded workflow actions,
 with paired reviews. **No implementation or ready packets exist from this plan.** The MC1 implementation and independent review packets are now staged as `draft/manual` and must pass targeted authoring preflight before promotion.
 Dispatcher eligibility, actual Git landing, independent review receipts and
-verified OR1 process identity remain separate authorities; before OR1/OR2
-land, unknown execution ownership must not be shown as LIVE. Source Codex
+verified OR1 process identity remain separate authorities; without verified local OR1 evidence, unknown execution ownership must not
+be shown as LIVE. OR2 recovery/lease mutation is still not available. Source Codex
 usage tracker is user-supplied, not the canonical packet/claim parser.
 Authoring chat: `not-recorded` pending exact current conversation URL.
 
@@ -74,9 +219,13 @@ Authoring chat: `not-recorded` pending exact current conversation URL.
 An approved architectural plan now separates execution-liveness from durable
 `agent/<workstream>` branch preservation. Spec:
 `custodian/docs/ai_context/AGENT_ORPHAN_RECOVERY_SUPERVISOR_V1.md`.
-The OR1 `agent-orphan-recovery-observability-v1` and OR2
-`agent-orphan-recovery-fenced-parking-v1` paired Codex packets are
-**authored but not implemented**; both honor the `agent-workflow` lock.
+OR1 `agent-orphan-recovery-observability-v1` has landed additive read-only
+`session_supervisor.py` and `workstream_recovery.py` code; its implementation
+packet is archived complete, but its independent review remains active
+`ready/auto` in the inspected main and has NOT been verified accepted. OR2
+`agent-orphan-recovery-fenced-parking-v1` remains an authored dependency-gated
+packet, not implemented. OR1 uses its narrower observability lock; OR2
+retains the `agent-workflow` lock.
 An OR1 live-process/journal classifier precedes OR2 exact-owner CAS-fenced
 park/resume. The existing dispatcher still treats agent branches as claimed,
 and the existing review runner still preserves `post_exit_recovery` with no

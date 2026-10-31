@@ -1,0 +1,41 @@
+# REVIEW: VEHICLE INTEGRATOR V1
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-vehicle-integrator-v1`
+- Kind: `review`
+- Status: `ready`
+- Dispatch: `auto`
+- Authoring handoff: `auto`
+- Priority: `P1`
+- Depends on: `vehicle-integrator-v1`
+- Locks: `none`
+- Review: `none`
+- Review target workstream: `vehicle-integrator-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/VEHICLE_INTEGRATOR_V1.md`
+- Reviewed main: `ad846c21ef7f3d41cb437a9042555e907c3a2a63`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Visual review: `conditional`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Review modes: `code, architecture, runtime, asset-pipeline, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently prove the end-to-end integrator actually removes duplicate vehicle art/code work rather than hiding a second pipeline.
+- Reviewed implementation acceptance: Verify every Acceptance clause from the archived implementation packet against live main.
+- Review evidence: Durable integration plans/receipts, Scout runtime proof, sibling reuse fixture and focused fresh checks.
+- Correction threshold: Create correction work only for a confirmed acceptance defect or material evidence gap.
+- Focused validation: Re-run integrator check/status, generated-resource determinism, Scout lifecycle/recovery/Asset V2 checks and sibling no-duplicate proof.
+- Review focus: Delegation to existing owners, no hidden source/runtime coupling, real Scout full-loop migration including the three Phase-1 socket overlays and directional destruction/shared recovery FX, deterministic receipts, zero duplicate body art for sibling fixture, and safe retirement of hover-specific generation. Do not require staged per-part installation unless the mechanical owner has landed it.
+- Acceptance: Produce a findings-first independent review with stable IDs/dispositions. Do not patch implementation.
+- Non-goals: Do not author a new production vehicle or redesign recovery mechanics.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+
+## Handoff
+- Next workstream: `none`
+- Next packet state: `none`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ac58690-6728-83e9-ac55-af4abfa0525b`
+- Refresh reason: `none`
+- Next action: V8 may consume the reviewed integrator architecture.
+- Blockers or open questions: `none`

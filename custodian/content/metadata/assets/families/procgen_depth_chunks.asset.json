@@ -85,8 +85,93 @@
       "frame_width": 640,
       "frame_height": 448,
       "frames": 1
+    },
+    "rocky_upland_descending_conifer_ledge": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_descending_conifer_ledge",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576,
+      "frames": 1
+    },
+    "rocky_upland_broken_retaining_drop": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_broken_retaining_drop",
+      "layout": "copy",
+      "frame_width": 896,
+      "frame_height": 576,
+      "frames": 1
+    },
+    "rocky_upland_lower_ledge_mist": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_lower_ledge_mist",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
+    },
+    "rocky_upland_service_ruin_drop": {
+      "required": false,
+      "layer": "body",
+      "action_group": "rocky_upland",
+      "variant": "rocky_upland_service_ruin_drop",
+      "layout": "copy",
+      "frame_width": 640,
+      "frame_height": 448,
+      "frames": 1
     }
   },
   "aliases": {},
-  "consumers": []
+  "consumers": [
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_woodland_overgrown_works_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_wetland_flooded_basin_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_wetland_reed_channels_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_wetland_drowned_service_platform_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_cliff_bowl_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_talus_ravine_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_exposed_ledge_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_descending_conifer_ledge_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_broken_retaining_drop_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_lower_ledge_mist_v1.tres"
+    },
+    {
+      "type": "resource",
+      "path": "res://content/procgen/presentation/depth_chunks/depth_rocky_upland_service_ruin_drop_v1.tres"
+    }
+  ]
 }

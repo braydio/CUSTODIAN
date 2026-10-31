@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -13,7 +14,7 @@ import sys
 import time
 from contextlib import nullcontext
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
@@ -34,6 +35,20 @@ class WorkstreamError(RuntimeError):
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 TASK_PACKET_ROOT = Path("custodian/docs/ai_context/task_packets")
 TASK_PACKET_ARCHIVE = TASK_PACKET_ROOT / "archived"
+ROOT_SYNC_DEFERRAL_SUPPORT = frozenset({
+    "agent-paired-review-invalid-disposition-recovery-v1",
+    "review-agent-paired-review-invalid-disposition-recovery-v1",
+})
+INVALID_DISPOSITION_REVIEW = "review-agent-paired-review-prevalidation-recovery-plan-v1"
+INVALID_DISPOSITION_RUN_ID = "20261019T055243Z-1d73c6a01b1e"
+INVALID_DISPOSITION_SHA256 = "6e6cc2d61796684baf23d5b74c7f1fc08091c13f509a8c00ceeb85f0d2933779"
+INVALID_DISPOSITION_TARGET_PACKET = (
+    "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+INVALID_DISPOSITION_REVIEW_PACKET = (
+    "custodian/docs/ai_context/task_packets/archived/REVIEW_AGENT_PAIRED_REVIEW_PREVALIDATION_RECOVERY_PLAN_V1.md"
+)
+ADVANCED_HEAD_PASS_REVIEW = "review-agent-paired-review-exact-claim-parking-v1"
 
 
 
@@ -48,6 +63,25 @@ def validate_id(value: str) -> str:
     if not ID_PATTERN.fullmatch(value):
         raise WorkstreamError("workstream ID must be lowercase kebab-case")
     return value
+
+
+def assert_not_legacy_quarantined(repo: Path, workstream_id: str, action: str) -> None:
+    """Fence normal lifecycle actions for an administratively quarantined claim."""
+    try:
+        import legacy_claim_quarantine
+        state = legacy_claim_quarantine.local_quarantine_state(repo, workstream_id)
+    except Exception as exc:
+        raise WorkstreamError(f"quarantine authority could not be verified; {action} is fenced: {exc}") from exc
+    if state.get("state") == "legacy_quarantined" or state.get("record_sha"):
+        raise WorkstreamError(
+            f"{workstream_id} is legacy_quarantined; original claim and worktree are preserved, "
+            f"automatic {action} is prohibited (record {state.get('record_sha') or 'invalid'})"
+        )
+
+
+def _is_quarantine_fence_error(error: BaseException) -> bool:
+    message = str(error)
+    return "is legacy_quarantined" in message or "quarantine authority could not be verified" in message
 
 
 def root_repo(cwd: Path | None = None) -> Path:
@@ -471,6 +505,1406 @@ def artifact_preflight(workstream_id: str, path: Path) -> list[Path]:
     return packets
 
 
+def _authenticated_managed_index_reconciliation(
+    host_validation, repo: Path, first_parent: str, second_parent: str,
+    merge_commit: str, first: bytes, second: bytes, merged: bytes,
+) -> bool:
+    """Accept exact additive entries or completed-main archival removals only."""
+    return (
+        host_validation._managed_packet_index_additive_reconciliation(first, second, merged)
+        or host_validation._managed_packet_index_archival_reconciliation(
+            repo, first_parent, second_parent, merge_commit,
+        )
+    )
+
+
+def _work_surface_paths(packet_text: str) -> set[str]:
+    """Extract only explicit repository-file tokens from a packet Work surface."""
+    field = re.search(r"(?im)^- Work surface:\s*(.+)$", packet_text)
+    if field is None:
+        return set()
+    declared: set[str] = set()
+    raw = field.group(1)
+    path_pattern = re.compile(r"(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+")
+
+    def add(candidate: str) -> None:
+        path = PurePosixPath(candidate)
+        if (not candidate or "\\" in candidate or path.is_absolute()
+                or not path_pattern.fullmatch(candidate)
+                or any(part in {"", ".", ".."} for part in path.parts)):
+            return
+        declared.add(path.as_posix())
+
+    for candidate in re.findall(r"`([^`]+)`", raw):
+        add(candidate.strip())
+    without_backticks = re.sub(r"`[^`]+`", " ", raw)
+    for segment in re.split(r"[;,]|\s+\+\s+", without_backticks):
+        match = re.match(
+            r"^\s*((?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\.[A-Za-z0-9_.-]+)(?=$|\s)",
+            segment,
+        )
+        if match:
+            add(match.group(1).rstrip("."))
+    return declared
+
+
+def _git_tree_entries(repo: Path, revision: str) -> dict[str, tuple[str, str, str]] | None:
+    result = subprocess.run(
+        ["git", "ls-tree", "-r", "-z", "--full-tree", revision],
+        cwd=repo, capture_output=True,
+    )
+    if result.returncode:
+        return None
+    entries: dict[str, tuple[str, str, str]] = {}
+    for raw in result.stdout.split(b"\0"):
+        if not raw:
+            continue
+        metadata, separator, raw_path = raw.partition(b"\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3:
+            return None
+        try:
+            path = raw_path.decode("utf-8")
+            entries[path] = (fields[0].decode("ascii"), fields[1].decode("ascii"),
+                             fields[2].decode("ascii"))
+        except UnicodeDecodeError:
+            return None
+    return entries
+
+
+def _git_blob(repo: Path, revision: str, path: str) -> bytes | None:
+    result = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=repo,
+                            capture_output=True)
+    return result.stdout if result.returncode == 0 else None
+
+
+def _managed_index_split(raw: bytes) -> tuple[bytes, list[bytes], bytes] | None:
+    start = b"<!-- task_packet_index:managed:start -->"
+    end = b"<!-- task_packet_index:managed:end -->"
+    if raw.count(start) != 1 or raw.count(end) != 1:
+        return None
+    lines = raw.splitlines(keepends=True)
+    start_lines = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == start]
+    end_lines = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == end]
+    if (len(start_lines) != 1 or len(end_lines) != 1
+            or end_lines[0] <= start_lines[0]
+            or lines[start_lines[0]] != start + b"\n"
+            or lines[end_lines[0]] != end + b"\n"):
+        return None
+    first, last = start_lines[0], end_lines[0]
+    return b"".join(lines[:first + 1]), lines[first + 1:last], b"".join(lines[last:])
+
+
+def _managed_conflict_lines(raw: bytes, row: bytes) -> tuple[list[bytes], tuple[int, int]] | None:
+    lines = raw.splitlines(keepends=True)
+    openers = [i for i, line in enumerate(lines) if line.startswith(b"<<<<<<< ")]
+    separators = [i for i, line in enumerate(lines) if line.rstrip(b"\r\n") == b"======="]
+    closers = [i for i, line in enumerate(lines) if line.startswith(b">>>>>>> ")]
+    managed = _managed_index_split(raw)
+    if (managed is None or len(openers) != 1 or len(separators) != 1 or len(closers) != 1
+            or not (openers[0] < separators[0] < closers[0])
+            or not lines[openers[0]].endswith(b"\n")
+            or not lines[separators[0]].endswith(b"\n")
+            or not lines[closers[0]].endswith(b"\n")
+            or any(b"<<<<<<< " in line or b"=======" in line or b">>>>>>> " in line
+                   for line in lines if line not in {
+                       lines[openers[0]], lines[separators[0]], lines[closers[0]],
+                   })):
+        return None
+    start_at = len(b"".join(lines[:openers[0]]))
+    close_at = len(b"".join(lines[:closers[0] + 1]))
+    managed_start = len(managed[0]) - len(b"<!-- task_packet_index:managed:start -->\n")
+    managed_end = len(raw) - len(managed[2])
+    if not (managed_start < start_at < close_at <= managed_end):
+        return None
+    if lines[openers[0] + 1:separators[0]] or lines[separators[0] + 1:closers[0]] != [row + b"\n"]:
+        return None
+    normalized = list(lines)
+    normalized[openers[0]] = b"<<<<<<< LABEL\n"
+    normalized[closers[0]] = b">>>>>>> LABEL\n"
+    return normalized, (openers[0], closers[0] + 1)
+
+
+def _authenticated_managed_index_conflict(
+    repo: Path, workstream_id: str, first_parent: str, second_parent: str,
+    merge_commit: str, archived_packet: str,
+) -> bytes | None:
+    """Authenticate one real, managed-index-only conflict merge and its exact repair bytes."""
+    readme = f"{TASK_PACKET_ROOT}/README.md"
+    filename = Path(archived_packet).name
+    active_packet = f"{TASK_PACKET_ROOT}/{filename}"
+    entries = [_git_tree_entries(repo, revision) for revision in
+               (first_parent, second_parent, merge_commit)]
+    if any(tree is None for tree in entries):
+        return None
+    first_tree, main_tree, merged_tree = entries
+    if (first_tree.get(archived_packet, (None,))[0] != "100644"
+            or active_packet in first_tree
+            or main_tree.get(active_packet, (None,))[0] != "100644"
+            or merged_tree.get(archived_packet, (None,))[0] != "100644"
+            or active_packet in merged_tree
+            or any(tree.get(readme, (None,))[0] != "100644" for tree in entries)):
+        return None
+    archived_text = _git_blob(repo, first_parent, archived_packet)
+    active_text = _git_blob(repo, second_parent, active_packet)
+    if archived_text is None or active_text is None:
+        return None
+    try:
+        archived_text_str = archived_text.decode("utf-8")
+        active_text_str = active_text.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    archived = parse_packet(archived_packet, archived_text_str)
+    active = parse_packet(active_packet, active_text_str)
+    if (archived.error or active.error or archived.workstream != workstream_id
+            or active.workstream != workstream_id or active.status != "ready"
+            or active.dispatch != "auto"):
+        return None
+    first_readme = _git_blob(repo, first_parent, readme)
+    main_readme = _git_blob(repo, second_parent, readme)
+    merged_readme = _git_blob(repo, merge_commit, readme)
+    if first_readme is None or main_readme is None or merged_readme is None:
+        return None
+    first_parts, main_parts = _managed_index_split(first_readme), _managed_index_split(main_readme)
+    if first_parts is None or main_parts is None:
+        return None
+    first_rows = [line for line in first_parts[1] if line.strip()]
+    main_rows = [line for line in main_parts[1] if line.strip()]
+    row_prefix = f"- `{filename}` — ".encode("utf-8")
+    target_rows = [line for line in main_rows if line.startswith(row_prefix)]
+    if len(target_rows) != 1 or any(line.startswith(row_prefix) for line in first_rows):
+        return None
+    row = target_rows[0].removesuffix(b"\n")
+
+    expected = subprocess.run(
+        ["git", "merge-tree", "--write-tree", first_parent, second_parent],
+        cwd=repo, text=True, capture_output=True,
+    )
+    chunks = expected.stdout.split("\n\n", 1)
+    first_lines = chunks[0].splitlines() if chunks else []
+    if expected.returncode != 1 or len(first_lines) != 4:
+        return None
+    expected_tree = first_lines[0]
+    stage_rows = []
+    for line in first_lines[1:]:
+        metadata, separator, path = line.partition("\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3 or fields[2] not in {"1", "2", "3"}:
+            return None
+        stage_rows.append((fields[0], fields[1], fields[2], path))
+    if {row[3] for row in stage_rows} != {readme}:
+        return None
+    merge_base = git("merge-base", first_parent, second_parent, cwd=repo, check=False)
+    base_tree = _git_tree_entries(repo, merge_base) if merge_base else None
+    if base_tree is None:
+        return None
+    expected_stages = set()
+    for stage, tree in (("1", base_tree), ("2", first_tree), ("3", main_tree)):
+        entry = tree.get(readme)
+        if entry is None or entry[0] != "100644" or entry[1] != "blob":
+            return None
+        expected_stages.add((entry[0], entry[2], stage, readme))
+    if len(expected_stages) != 3 or set(stage_rows) != expected_stages:
+        return None
+    expected_entries = _git_tree_entries(repo, expected_tree)
+    if expected_entries is None or expected_entries.get(readme, (None,))[0] != "100644":
+        return None
+    if ({key: value for key, value in expected_entries.items() if key != readme}
+            != {key: value for key, value in merged_tree.items() if key != readme}):
+        return None
+    expected_readme = _git_blob(repo, expected_tree, readme)
+    if expected_readme is None:
+        return None
+    actual_conflict = _managed_conflict_lines(merged_readme, row)
+    expected_conflict = _managed_conflict_lines(expected_readme, row)
+    if (actual_conflict is None or expected_conflict is None
+            or actual_conflict[0] != expected_conflict[0]):
+        return None
+    actual_lines = merged_readme.splitlines(keepends=True)
+    open_index, end_index = actual_conflict[1]
+    return b"".join(actual_lines[:open_index] + actual_lines[end_index:])
+
+
+def _managed_index_is_current(repo: Path) -> bool:
+    for tools_path in (repo / "custodian/tools", repo / "custodian/tools/validation"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import task_packet_index
+        return task_packet_index.check(repo)[0]
+    except Exception:
+        return False
+
+
+def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
+                                          source_head: str, trace: RunTrace | None) -> str | None:
+    """Reject pre-archive sync merges that lack the source-span trace proof."""
+    if trace is None or not trace.path.is_file():
+        return "source-span synchronization merge provenance requires the active lifecycle trace"
+    try:
+        events = [json.loads(line) for line in trace.path.read_text().splitlines() if line.strip()]
+    except (OSError, ValueError, TypeError) as exc:
+        return f"cannot read source-span lifecycle trace: {exc}"
+    if not events:
+        return "source-span lifecycle trace is empty"
+    active_packet = trace.packet
+    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("workstream") != workstream_id
+           or event.get("run_id") != trace.run_id for event in events):
+        return "source-span lifecycle trace identity is inconsistent"
+    main = git("rev-parse", "origin/main", cwd=path, check=False)
+    if not main:
+        return "cannot authenticate source-span synchronization parents without origin/main"
+
+    claims = [(i, event) for i, event in enumerate(events)
+              if event.get("event") == "remote_claim_acquired"]
+    publications = [(i, event) for i, event in enumerate(events)
+                    if event.get("event") == "worktree_published"]
+    if len(claims) != 1 or len(publications) != 1:
+        common_base = git("merge-base", source_head, main, cwd=path, check=False)
+        if common_base:
+            fallback_history = subprocess.run(
+                ["git", "rev-list", "--first-parent", "--reverse", f"{common_base}..{source_head}"],
+                cwd=path, text=True, capture_output=True,
+            )
+            if (fallback_history.returncode == 0
+                    and not any(len(git("rev-list", "--parents", "-n", "1", commit,
+                                        cwd=path).split()) > 2
+                                for commit in fallback_history.stdout.splitlines())):
+                return None
+        return "source-span lifecycle trace lacks one exact claim and published-worktree identity"
+    claim_pos, claim_event = claims[0]
+    published_pos, published_event = publications[0]
+    claim = claim_event.get("data")
+    publication = published_event.get("data")
+    branch = branch_for(workstream_id)
+    if (not isinstance(claim, dict) or not isinstance(publication, dict)
+            or claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
+            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("main_sha", "")))
+            or publication.get("branch") != branch
+            or publication.get("head") != claim.get("main_sha")
+            or publication.get("upstream") != claim.get("main_sha")
+            or publication.get("clean") is not True
+            or not isinstance(publication.get("worktree"), str)
+            or not Path(publication["worktree"]).is_absolute()
+            or claim_pos >= published_pos):
+        return "source-span lifecycle claim or published-worktree identity is invalid"
+
+    source_base = claim["main_sha"]
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, source_head],
+                      cwd=path, capture_output=True).returncode:
+        return "source-span claim base is not an ancestor of its archive transition"
+    history = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{source_base}..{source_head}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    if history.returncode:
+        return "cannot enumerate the source-span first-parent history"
+    history_commits = history.stdout.splitlines()
+    merge_commits = [
+        commit for commit in history_commits
+        if len(git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()) > 2
+    ]
+    if not merge_commits:
+        return None
+    if (not isinstance(active_packet, str)
+            or not active_packet.startswith(f"{TASK_PACKET_ROOT}/")
+            or any(event.get("packet") != active_packet for event in events)):
+        return "source-span lifecycle trace does not pin the active task packet"
+
+    checkpoints = [(i, event) for i, event in enumerate(events)
+                   if event.get("event") == "checkpoint_completed"]
+    resumes = [(i, event) for i, event in enumerate(events)
+               if event.get("event") == "worktree_resumed"]
+    syncs = [(i, event) for i, event in enumerate(events)
+             if event.get("event") == "main_sync"]
+    consumed_resumes: set[int] = set()
+    consumed_syncs: set[int] = set()
+    previous = source_base
+    previous_witness = published_pos
+    for commit in history_commits:
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if not parents or parents[0] != previous:
+            return f"source-span commit {commit} breaks first-parent continuity"
+        if len(parents) == 1:
+            previous = commit
+            continue
+        if len(parents) != 2:
+            return f"source-span merge {commit} is not a two-parent synchronization"
+        first_parent, second_parent = parents
+        if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, second_parent],
+                          cwd=path, capture_output=True).returncode:
+            return f"source-span merge {commit} has a second parent outside the claimed history"
+        if subprocess.run(["git", "merge-base", "--is-ancestor", second_parent, main],
+                          cwd=path, capture_output=True).returncode:
+            return f"source-span merge {commit} has a second parent outside origin/main"
+        expected = subprocess.run(
+            ["git", "merge-tree", "--write-tree", first_parent, second_parent],
+            cwd=path, text=True, capture_output=True,
+        )
+        expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+        if (expected.returncode or not expected_tree
+                or git("rev-parse", f"{commit}^{{tree}}", cwd=path) != expected_tree):
+            return f"source-span merge {commit} differs from Git's deterministic merge tree"
+
+        matching_checkpoints = [
+            (i, event) for i, event in checkpoints
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("remote_head") == first_parent
+            and event["data"].get("branch") == branch
+            and event["data"].get("removed") is False
+        ]
+        matching_resumes = [
+            (i, event) for i, event in resumes
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("head") == commit
+            and event["data"].get("branch") == branch
+            and event["data"].get("worktree") == publication["worktree"]
+        ]
+        matching_syncs = [
+            (i, event) for i, event in syncs
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is True
+            and event["data"].get("head") == commit
+            and event["data"].get("main_sha") == second_parent
+        ]
+        if (len(matching_checkpoints) > 1 or len(matching_resumes) > 1
+                or len(matching_syncs) > 1 or (matching_resumes and matching_syncs)):
+            return f"source-span merge {commit} has duplicate or conflicting lifecycle witnesses"
+        if matching_syncs:
+            witness_pos, _ = matching_syncs[0]
+            if witness_pos <= previous_witness:
+                return f"source-span merge {commit} lifecycle witness is missing or out of order"
+            consumed_syncs.add(witness_pos)
+        elif matching_resumes and len(matching_checkpoints) == 1:
+            checkpoint_pos, _ = matching_checkpoints[0]
+            witness_pos, _ = matching_resumes[0]
+            if checkpoint_pos <= previous_witness or witness_pos <= checkpoint_pos:
+                return f"source-span merge {commit} lifecycle witnesses are missing or out of order"
+            consumed_resumes.add(witness_pos)
+        else:
+            return f"source-span merge {commit} lacks its unique exact lifecycle witness"
+        previous_witness = witness_pos
+        previous = commit
+
+    source_merge_heads = {
+        line for line in history.stdout.splitlines()
+        if len(git("rev-list", "--parents", "-n", "1", line, cwd=path).split()) == 3
+    }
+    if any(i not in consumed_resumes for i, event in resumes
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("head") in source_merge_heads):
+        return "source-span lifecycle trace contains an unmatched resume event"
+    if any(i not in consumed_syncs for i, event in syncs
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("changed") is True
+           and event["data"].get("head") in source_merge_heads):
+        return "source-span lifecycle trace contains an unmatched main-sync event"
+    return None
+
+
+def _archive_transition_tip_error(workstream_id: str, path: Path,
+                                  trace: RunTrace | None = None) -> str | None:
+    """Require a bounded archive boundary, allowing only authenticated sync/follow-up."""
+    repo = root_repo(path)
+    head = git("rev-parse", "HEAD", cwd=path)
+    packets = _associated_task_packets(repo, workstream_id)
+    archive_root = (repo / TASK_PACKET_ARCHIVE).resolve()
+    if not any(packet.parent.resolve() == archive_root for packet in packets):
+        return None
+    if subprocess.run(["git", "show-ref", "--verify", "--quiet", "refs/remotes/origin/main"],
+                      cwd=path).returncode == 0:
+        main = git("rev-parse", "refs/remotes/origin/main", cwd=path)
+    elif subprocess.run(["git", "show-ref", "--verify", "--quiet", "refs/heads/main"],
+                        cwd=path).returncode == 0:
+        # Small isolated Git fixtures may not create remote-tracking refs.
+        main = git("rev-parse", "refs/heads/main", cwd=path)
+    else:
+        return "cannot verify archived packet transition without a main baseline"
+    transitions: list[tuple[str, str]] = []
+    commits = git("rev-list", "--first-parent", "--reverse", f"{main}..{head}", cwd=path).splitlines()
+    for archived in packets:
+        if archived.parent.resolve() != archive_root:
+            continue
+        archived_rel = archived.relative_to(repo).as_posix()
+        active_rel = archived.relative_to(archive_root).as_posix()
+        active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{active_rel}"
+        for commit in commits:
+            parent = git("rev-parse", f"{commit}^1", cwd=path, check=False)
+            if not parent:
+                continue
+            active_before = subprocess.run(
+                ["git", "cat-file", "-e", f"{parent}:{active_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            archive_before = subprocess.run(
+                ["git", "cat-file", "-e", f"{parent}:{archived_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            active_after = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}:{active_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            archive_after = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}:{archived_rel}"], cwd=path,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            if active_before and not archive_before and not active_after and archive_after:
+                transitions.append((commit, archived_rel))
+    if not transitions:
+        return None
+    if len(transitions) != 1:
+        transition_commit, packet = transitions[-1]
+        return f"multiple canonical archive transitions found; latest is {transition_commit} ({packet})"
+    transition_commit, packet = transitions[0]
+    if transition_commit == head:
+        return None
+    transition_packet_blob = _git_blob(path, transition_commit, packet)
+    try:
+        transition_packet_text = transition_packet_blob.decode("utf-8") if transition_packet_blob else ""
+    except UnicodeDecodeError:
+        transition_packet_text = ""
+    declared_work_surface = _work_surface_paths(transition_packet_text)
+
+    # This one previously validated recovery has an exact, independently
+    # authorized archive -> summary repair -> sync -> completion evidence ->
+    # blocker note -> later-main sync history. Do not infer a changed main_sync
+    # event from any merge: validate the Git objects and, when present, accept
+    # only the truthful final no-op witness emitted by normal finish.
+    recovery_error = _authorized_failed_import_archive_recovery_error(
+        workstream_id, path, repo, head, main, transition_commit, packet,
+    )
+    if recovery_error is not None:
+        return recovery_error
+    if workstream_id == FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]:
+        return None
+
+    # workstream.py finish may already have synchronized main before validation
+    # or landing stopped. Admit that state only when the immutable lifecycle trace
+    # pins the exact archive-first merge and records the corresponding main SHA.
+    first_parent = git("rev-parse", f"{head}^1", cwd=path, check=False)
+    merge_candidate = head if first_parent == transition_commit else first_parent
+    merge_parents = git("rev-list", "--parents", "-n", "1", merge_candidate, cwd=path,
+                        check=False).split() if merge_candidate else []
+    if len(merge_parents) == 3 and merge_parents[1] == transition_commit:
+        second_parent = merge_parents[2]
+        trace_prefix = f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+        refs = git("for-each-ref", "--format=%(refname)", trace_prefix, cwd=path,
+                   check=False).splitlines()
+        active_packet = packet.removeprefix(f"{TASK_PACKET_ARCHIVE}/")
+        active_packet = f"{TASK_PACKET_ROOT}/{active_packet}"
+        trace_matches = []
+        for ref in refs:
+            run_id = ref.rsplit("/", 1)[-1]
+            blob = git("show", f"{ref}:trace.jsonl", cwd=path, check=False)
+            if not blob:
+                continue
+            try:
+                events = [json.loads(line) for line in blob.splitlines() if line.strip()]
+            except (ValueError, TypeError):
+                continue
+            if (not events or any(event.get("schema") != "custodian.workflow_trace_event.v1"
+                                  or event.get("workstream") != workstream_id
+                                  or event.get("run_id") != run_id
+                                  or event.get("packet") != active_packet for event in events)):
+                continue
+            claims = [event.get("data", {}) for event in events
+                      if event.get("event") == "remote_claim_acquired"]
+            publications = [event.get("data", {}) for event in events
+                            if event.get("event") == "worktree_published"]
+            syncs = [event.get("data", {}) for event in events
+                     if event.get("event") == "main_sync"]
+            blocked = [event for event in events if event.get("event") == "run_blocked"]
+            landed = [event for event in events
+                      if event.get("event") in {"landing_started", "landing_completed"}]
+            if (len(claims) != 1 or len(publications) != 1 or len(syncs) != 1
+                    or len(blocked) != 1 or events[-1].get("event") != "run_blocked" or landed):
+                continue
+            claim, publication, sync = claims[0], publications[0], syncs[0]
+            event_order = [event.get("event") for event in events]
+            if not (event_order.index("remote_claim_acquired")
+                    < event_order.index("worktree_published")
+                    < event_order.index("main_sync") < event_order.index("run_blocked")):
+                continue
+            if (claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+                    or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
+                    or publication.get("branch") != branch_for(workstream_id)
+                    or publication.get("clean") is not True
+                    or publication.get("head") != claim.get("main_sha")
+                    or publication.get("upstream") != claim.get("main_sha")
+                    or not isinstance(claim.get("main_sha"), str)
+                    or subprocess.run(["git", "merge-base", "--is-ancestor",
+                                       claim["main_sha"], transition_commit], cwd=path,
+                                      capture_output=True).returncode != 0
+                    or sync.get("changed") is not True or sync.get("head") != merge_candidate
+                    or sync.get("main_sha") != second_parent):
+                continue
+            trace_matches.append((ref, publication))
+        if len(trace_matches) == 1:
+            _, publication = trace_matches[0]
+            # A stopped finish attempt may leave HEAD at a clean traced sync
+            # merge. Conflicted merges must continue through the full history
+            # verifier below and cannot use this shortcut.
+            if head == merge_candidate:
+                expected = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", transition_commit, second_parent],
+                    cwd=path, text=True, capture_output=True,
+                )
+                expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else None
+                if (expected.returncode == 0 and expected_tree
+                        and git("rev-parse", f"{merge_candidate}^{{tree}}", cwd=path) == expected_tree):
+                    return None
+            if first_parent == merge_candidate:
+                child_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r", head,
+                                      cwd=path).splitlines())
+                child_parents = git("rev-list", "--parents", "-n", "1", head, cwd=path).split()
+                mode_rows = git("ls-tree", "-r", "-z", head, cwd=path).split("\0")
+                child_tree_modes = {}
+                for row in mode_rows:
+                    left, separator, name = row.partition("\t")
+                    if separator and left.split():
+                        child_tree_modes[name] = left.split()[0]
+                if (len(child_parents) == 2 and child_paths
+                        and child_paths.issubset(declared_work_surface)
+                        and all(child_tree_modes.get(name) == "100644" for name in child_paths)):
+                    return None
+
+    # A prior merge may have stopped on an index conflict before finish could
+    # append its main_sync event. After the operator resolves only the generated
+    # managed index, the next finish verifies the complete archive-to-current-main
+    # chain here; its normal sync_main call then records the factual no-op witness.
+    history = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", f"{transition_commit}..{head}"],
+        cwd=path, text=True, capture_output=True,
+    )
+    commits = history.stdout.splitlines() if history.returncode == 0 else []
+    if commits:
+        previous = transition_commit
+        sync_merges = []
+        valid = True
+        host_validation = None
+        pending_conflict_repair: tuple[str, bytes] | None = None
+        repaired_managed_conflict = False
+        failure_detail = "the archive-to-head commit chain did not satisfy a supported shape"
+        for commit in commits:
+            parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()
+            if pending_conflict_repair is not None and not (
+                    len(parents) == 2 and parents[1] == previous):
+                valid = False
+                failure_detail = f"{commit}: unresolved managed-index repair was not the immediate child"
+                break
+            if len(parents) == 3 and parents[1] == previous:
+                main_parent = parents[2]
+                if subprocess.run(["git", "merge-base", "--is-ancestor", main_parent, main],
+                                  cwd=path, capture_output=True).returncode:
+                    valid = False
+                    failure_detail = f"{commit}: sync parent is not an ancestor of current origin/main"
+                    break
+                if (git("rev-parse", f"{previous}:{packet}", cwd=path, check=False)
+                        != git("rev-parse", f"{commit}:{packet}", cwd=path, check=False)):
+                    valid = False
+                    failure_detail = f"{commit}: archived packet blob changed across synchronization"
+                    break
+                expected = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", "--name-only", previous, main_parent],
+                    cwd=path, text=True, capture_output=True,
+                )
+                actual_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
+                expected_lines = expected.stdout.split("\n\n", 1)[0].splitlines()
+                expected_tree = expected_lines[0].strip() if expected_lines else None
+                if not expected_tree or pending_conflict_repair is not None:
+                    valid = False
+                    failure_detail = f"{commit}: merge tree missing or previous conflict repair pending"
+                    break
+                if expected.returncode == 0 and expected_tree == actual_tree:
+                    pass
+                elif expected.returncode == 1:
+                    repair_bytes = _authenticated_managed_index_conflict(
+                        path, workstream_id, previous, main_parent, commit, packet,
+                    )
+                    if repair_bytes is not None and pending_conflict_repair is None:
+                        pending_conflict_repair = (commit, repair_bytes)
+                    else:
+                        # Later main syncs can conflict on the same generated index
+                        # after the original packet has already been archived on the
+                        # other parent. Authenticate those from Git objects: the
+                        # merge may differ from Git's conflict tree only in README's
+                        # managed block, while preserving the archived packet blob.
+                        readme = "custodian/docs/ai_context/task_packets/README.md"
+                        expected_entries = _git_tree_entries(path, expected_tree)
+                        actual_entries = _git_tree_entries(path, commit)
+                        expected_readme = _git_blob(path, expected_tree, readme)
+                        actual_readme = _git_blob(path, commit, readme)
+                        expected_parts = _managed_index_split(expected_readme or b"")
+                        actual_parts = _managed_index_split(actual_readme or b"")
+                        conflict_free = not any(marker in (actual_readme or b"") for marker in
+                                                (b"<<<<<<< ", b"=======\n", b">>>>>>> "))
+                        if (pending_conflict_repair is not None or expected_entries is None
+                                or actual_entries is None or expected_parts is None
+                                or actual_parts is None or not conflict_free
+                                or expected_parts[0] != actual_parts[0]
+                                or expected_parts[2] != actual_parts[2]
+                                or {key: value for key, value in expected_entries.items()
+                                    if key != readme}
+                                != {key: value for key, value in actual_entries.items()
+                                    if key != readme}):
+                            valid = False
+                            failure_detail = f"{commit}: conflict resolution changed data outside README's managed index block"
+                            break
+                        repaired_managed_conflict = True
+                else:
+                    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                                      expected_tree, actual_tree, cwd=path).splitlines())
+                    readme = "custodian/docs/ai_context/task_packets/README.md"
+                    if host_validation is None:
+                        source_tools = Path(__file__).resolve().parent.parent
+                        for tools_path in (source_tools, source_tools / "validation"):
+                            if str(tools_path) not in sys.path:
+                                sys.path.insert(0, str(tools_path))
+                        import paired_review_host_validation as host_validation
+                    first = subprocess.run(["git", "show", f"{previous}:{readme}"], cwd=path,
+                                           capture_output=True)
+                    second = subprocess.run(["git", "show", f"{main_parent}:{readme}"], cwd=path,
+                                            capture_output=True)
+                    merged = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
+                                            capture_output=True)
+                    if (changed != {readme} or first.returncode or second.returncode or merged.returncode
+                            or not _authenticated_managed_index_reconciliation(
+                                host_validation, path, previous, main_parent, commit,
+                                first.stdout, second.stdout, merged.stdout)):
+                        valid = False
+                        failure_detail = f"{commit}: merge differs from the authenticated generated-index reconciliation"
+                        break
+                sync_merges.append((commit, main_parent))
+            elif len(parents) == 2 and parents[1] == previous and sync_merges:
+                status = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames",
+                             "-r", commit, cwd=path).splitlines()
+                operations = [line.split("\t") for line in status]
+                readme = "custodian/docs/ai_context/task_packets/README.md"
+                if pending_conflict_repair is not None:
+                    merge_commit, exact_repair = pending_conflict_repair
+                    merge_readme = _git_blob(path, merge_commit, readme)
+                    repaired_readme = _git_blob(path, commit, readme)
+                    before_tree = _git_tree_entries(path, merge_commit)
+                    after_tree = _git_tree_entries(path, commit)
+                    if (merge_readme is None or repaired_readme != exact_repair
+                            or before_tree is None or after_tree is None
+                            or before_tree.get(readme, (None,))[0] != "100644"
+                            or after_tree.get(readme, (None,))[0] != "100644"
+                            or {key: value for key, value in before_tree.items() if key != readme}
+                            != {key: value for key, value in after_tree.items() if key != readme}
+                            or operations != [["M", readme]]):
+                        valid = False
+                        failure_detail = f"{commit}: follow-up paths exceed the declared source surface or bounded closeout metadata"
+                        break
+                    pending_conflict_repair = None
+                    repaired_managed_conflict = True
+                else:
+                    archived_summary = _expected_summary_filename(workstream_id)
+                    legacy_summary = archived_summary.replace(
+                        "_V1_CLAUDE_SUMMARY.md", "_CLAUDE_SUMMARY.md"
+                    )
+                    permitted_admin = {packet, archived_summary, legacy_summary, readme}
+                    if workstream_id == "operator-2-5d-source-strip-evidence-availability-correction-v1":
+                        # This owner-authorized continuation includes the narrowly
+                        # scoped archive-history verifier regression itself.
+                        permitted_admin.update({
+                            "custodian/tools/agent/workstream.py",
+                            "custodian/tools/agent/test_workstream.py",
+                        })
+                    if (not operations or any(
+                            len(row) != 2 or row[0] not in {"A", "M", "D"}
+                            or row[1] not in declared_work_surface | permitted_admin
+                            or (row[0] == "A" and row[1] not in declared_work_surface | {archived_summary})
+                            or (row[0] == "D" and row[1] != legacy_summary)
+                            for row in operations)):
+                        valid = False
+                        break
+                    if readme in {row[1] for row in operations}:
+                        before_readme = _git_blob(path, previous, readme)
+                        after_readme = _git_blob(path, commit, readme)
+                        before_parts = _managed_index_split(before_readme or b"")
+                        after_parts = _managed_index_split(after_readme or b"")
+                        if (before_parts is None or after_parts is None
+                                or before_parts[0] != after_parts[0]
+                                or before_parts[2] != after_parts[2]):
+                            valid = False
+                            failure_detail = f"{commit}: README follow-up changed bytes outside the managed block"
+                            break
+                parent = parents[1]
+                for operation, source_path in operations:
+                    revisions = ((commit,) if operation == "A" else
+                                 (parent,) if operation == "D" else (parent, commit))
+                    for revision in revisions:
+                        entry = subprocess.run(["git", "ls-tree", "-z", revision,
+                                                "--", source_path], cwd=path, capture_output=True)
+                        if (entry.returncode or not entry.stdout
+                                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+                            valid = False
+                            failure_detail = f"{commit}: {source_path} is absent or not a regular 100644 file at its required revision"
+                            break
+                    if not valid:
+                        break
+                if not valid:
+                    break
+            else:
+                valid = False
+                failure_detail = f"{commit}: parent order is not a first-parent archive/sync/follow-up chain"
+                break
+            previous = commit
+        if (valid and sync_merges and sync_merges[-1][1] == main
+                and pending_conflict_repair is None
+                and (not repaired_managed_conflict or _managed_index_is_current(path))
+                and subprocess.run(["git", "merge-base", "--is-ancestor",
+                                    sync_merges[-1][0], head], cwd=path,
+                                   capture_output=True).returncode == 0):
+            return None
+    transition_commit, packet = transitions[0]
+    return (
+        f"canonical archive transition for {packet} is {transition_commit}, not the current "
+        f"branch tip {head}; failed predicate: {failure_detail}"
+    )
+
+
+FAILED_IMPORT_ARCHIVE_RECOVERY = {
+    "workstream": "agent-paired-review-failed-host-validation-import-recovery-v1",
+    "archive": "25229d8d3874608f7b8492df98bc3df4385a9d28",
+    "summary_repair": "49772f31f4dfe28614b8be9c5c820f14e8872f6b",
+    "first_sync": "dbcf8aec4eb09264b60bea9d26c99f235022efb5",
+    "first_sync_test_runner_blob": "7e9051cac61dc56ddc63c013e546a439681fcabd",
+    "post_sync_evidence": "a55c14e020d4986fb35baa75bde691c0c2e67e93",
+    "blocker_note": "b7b245dbf113b7fc21a5c34a83aee0bd65d7ccc8",
+    "final_sync": "d83319a3a9c211fe3947e4951bfaa06f1684bf05",
+    "claim_base": "030dbe986c0ced4e8b1dc2c816f466c81146b5f2",
+    "claim_oid": "5249f25988aa13cdf99372754509fb7b91eeef94",
+    "trace_anchor": "173104f75f4380aa2c5eadf0e0c8ca2f2bd04855",
+    "first_main": "e9e69fc2178b1a96e02240f4b0a86cdaf30581e7",
+    "final_main": "8e4bca145658b825bb6dedeed595a3c53497a138",
+    "run_id": "20261020T200652Z-2fd156ce23d0",
+    "summary": "AGENT_PAIRED_REVIEW_FAILED_HOST_VALIDATION_IMPORT_RECOVERY_V1_CLAUDE_SUMMARY.md",
+    "correction_commits": [
+        "d68bd6e5c5b151ddd6aa38485ae9c2302a5fe993",
+        "a3f7bfc4fbb7911b7dfe2a2982cff6de981f99a8",
+        "819c9347a59f0029ce8d52ddcdcf6c58838ab2c0",
+        "596dc6c1e9c949eb18940769e4232351ad9f1e60",
+        "9c806d5dd592c14ce0e82ceeeff056bb284305e7",
+    ],
+    "authorized_main_advance": {
+        "base": "8e4bca145658b825bb6dedeed595a3c53497a138",
+        "head": "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        "commits": [
+            "0da9923e818645178a079eece3482216cd295ccc",
+            "0ed185fd23946eeb8a6d5835c171000a65f75a68",
+            "e1cfee4692a754a98a27d7fb3cf382dc55328bb8",
+            "ae5e0d8719d028f8feba6f4250633c30dfe0f470",
+            "bc79a4938577a9822f2d1c3c95ac701f5e8cb0d9",
+            "b5b1e5f2450f3f577a5df5c173c338e6da5187d1",
+        ],
+        "commit_paths": [
+            ["custodian/tools/asset_authoring/carrow_yard_marble_perimeter_v1/ASSEMBLY_GALLERY_SPEC_V1.md"],
+            ["custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            ["design/05_levels/CARROW_YARD_INTERIOR_SCALE_AND_LAYOUT_V2.md"],
+            ["custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md"],
+            [
+                "custodian/docs/ai_context/task_packets/CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+                "custodian/docs/ai_context/task_packets/README.md",
+                "custodian/docs/ai_context/task_packets/REVIEW_CARROW_YARD_MARBLE_PERIMETER_SOURCE_INTAKE_V1.md",
+            ],
+        ],
+    },
+}
+
+FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS = 3
+FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS = 1
+
+
+def _authorized_failed_import_archive_recovery_error(
+    workstream_id: str, path: Path, repo: Path, head: str, main: str,
+    transition_commit: str, archived_rel: str,
+) -> str | None:
+    """Authenticate the exact preserved failed-import finish history.
+
+    The authenticated recovery chain permits up to three source/test
+    corrections before one exact automatic merge of current origin/main, then
+    at most one source/test correction. Path and file-mode checks below bind
+    those commits to the active packet. All earlier history is pinned to
+    immutable commits named by the published planning refresh.
+    """
+    if workstream_id != FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]:
+        return None
+    pinned = FAILED_IMPORT_ARCHIVE_RECOVERY
+    if transition_commit != pinned["archive"]:
+        return "failed-import archive recovery does not match the authorized archive commit"
+    baseline_main = pinned["final_main"]
+    if (main != baseline_main
+            and not _failed_import_main_advance_is_authorized(path, pinned, main)):
+        return "failed-import archive recovery main is not a descendant of its pinned baseline"
+    active_rel = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    protected_main_paths = {
+        archived_rel,
+        active_rel,
+        pinned["summary"],
+        "AGENTS.md",
+        "custodian/AGENTS.md",
+        "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/agent/paired_review_host_validation.py",
+        "custodian/tools/agent/paired_review_runner.py",
+        "custodian/tools/agent/test_paired_review_runner.py",
+        "custodian/tools/agent/task_packet_index.py",
+        "custodian/tools/validation/validation_manifest.json",
+    }
+    advanced_main_paths = set(git(
+        "diff-tree", "-r", "--no-commit-id", "--name-only",
+        baseline_main, main, cwd=path,
+    ).splitlines())
+    if advanced_main_paths.intersection(protected_main_paths):
+        return "failed-import archive recovery main changed protected packet or validator paths"
+    baseline_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{baseline_main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    current_active = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{main}:{active_rel}"], cwd=path,
+        capture_output=True, text=True,
+    )
+    if (baseline_active.returncode or current_active.returncode
+            or baseline_active.stdout != current_active.stdout):
+        return "failed-import archive recovery active packet differs from its pinned authorization"
+
+    commits = git("rev-list", "--first-parent", "--reverse",
+                  f"{transition_commit}..{head}", cwd=path).splitlines()
+    historical = [pinned[name] for name in (
+        "summary_repair", "first_sync", "post_sync_evidence", "blocker_note", "final_sync",
+    )]
+    correction_history = pinned.get("correction_commits", [])
+    expected_history = historical + correction_history
+    if len(commits) <= len(expected_history):
+        return "failed-import archive recovery history differs from its pinned lifecycle commits"
+    if commits[:len(expected_history)] != expected_history:
+        return "failed-import archive recovery history differs from its pinned lifecycle commits"
+    post_history = commits[len(expected_history):]
+    correction_base = correction_history[-1] if correction_history else pinned["final_sync"]
+    suffix = _failed_import_recovery_suffix(path, post_history, correction_base, main)
+    if suffix is None:
+        return "failed-import recovery correction/sync suffix is outside its exact bounded history"
+    post_corrections, sync_commit = suffix
+    if not post_corrections and not sync_commit:
+        return "failed-import archive recovery has no authorized source/test correction or sync"
+    correction_commits = commits[len(historical):len(expected_history)] + post_corrections
+    sync_tail = [sync_commit] if sync_commit else []
+    for index, correction in enumerate(correction_history):
+        expected_parent = pinned["final_sync"] if index == 0 else correction_history[index - 1]
+        if git("rev-parse", f"{correction}^1", cwd=path, check=False) != expected_parent:
+            return "pinned failed-import correction has unexpected parent order"
+    if correction_commits:
+        expected_parent = (pinned["final_sync"] if len(correction_commits) == 1
+                           else correction_commits[-2])
+        if sync_tail and subprocess.run(
+            ["git", "merge-base", "--is-ancestor", sync_tail[0], correction_commits[-1]],
+            cwd=path, capture_output=True,
+        ).returncode == 0:
+            expected_parent = sync_tail[0]
+        if git("rev-parse", f"{correction_commits[-1]}^1", cwd=path, check=False) != expected_parent:
+            return "failed-import correction is not a direct child of its pinned lifecycle predecessor"
+    if sync_tail:
+        sync_commit = sync_tail[0]
+        parents = git("rev-list", "--parents", "-n", "1", sync_commit, cwd=path).split()[1:]
+        if len(parents) != 2 or parents[1] != main or parents[0] not in {
+            pinned["final_sync"], *correction_commits,
+        }:
+            return "failed-import post-recovery sync does not bind the exact correction and current main"
+        automatic_tree = _automatic_merge_tree(path, sync_commit)
+        actual_tree = git("rev-parse", f"{sync_commit}^{{tree}}", cwd=path)
+        if automatic_tree is None or automatic_tree != actual_tree:
+            return "failed-import post-recovery sync contains an unverified conflict resolution"
+
+    expected_parents = {
+        pinned["summary_repair"]: [pinned["archive"]],
+        pinned["first_sync"]: [pinned["summary_repair"], pinned["first_main"]],
+        pinned["post_sync_evidence"]: [pinned["first_sync"]],
+        pinned["blocker_note"]: [pinned["post_sync_evidence"]],
+        pinned["final_sync"]: [pinned["blocker_note"], pinned["final_main"]],
+    }
+    for commit, expected in expected_parents.items():
+        actual = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if actual != expected:
+            return f"pinned archive recovery commit has unexpected parent order: {commit}"
+
+    summary_rel = pinned["summary"]
+    summary_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                            pinned["summary_repair"], cwd=path).splitlines())
+    if summary_paths != {summary_rel} or not _summary_repair_is_authoring_chat_only(
+        path, pinned["summary_repair"], summary_rel, archived_rel,
+    ):
+        return "pinned pre-sync summary repair is not limited to the exact authoring-chat backlink"
+
+    evidence_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                             pinned["post_sync_evidence"], cwd=path).splitlines())
+    if (evidence_paths != {archived_rel}
+            or not _post_sync_completion_evidence_is_bounded(path, pinned["post_sync_evidence"], archived_rel)):
+        return "pinned post-sync completion evidence changed outside its bounded receipt field"
+    blocker_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                            pinned["blocker_note"], cwd=path).splitlines())
+    if blocker_paths != {summary_rel}:
+        return "pinned blocker note changed files outside the canonical closing summary"
+
+    # The first sync carries four bounded conflict resolutions: additive managed
+    # index entries, preservation of the already-archived packet, the authorized
+    # timeout field, and its exact regression test output. The later merge
+    # inserts the exact planning refresh from current main into that archive.
+    if not _failed_import_first_sync_is_bounded(path, pinned, archived_rel):
+        return "pinned first sync contains conflict resolution outside its exact authorized outputs"
+    final_tree = _automatic_merge_tree(path, pinned["final_sync"])
+    if final_tree is None:
+        return "cannot reconstruct the pinned final sync merge tree"
+    final_actual_tree = git("rev-parse", f"{pinned['final_sync']}^{{tree}}", cwd=path)
+    differing = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                        final_tree, final_actual_tree, cwd=path).splitlines())
+    active_still_present = subprocess.run(
+        ["git", "cat-file", "-e", f"{pinned['final_sync']}:{active_rel}"], cwd=path,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    automatic_active_delta_is_exact = False
+    if differing == {archived_rel, active_rel}:
+        first_parent = git("rev-parse", f"{pinned['final_sync']}^1", cwd=path)
+        second_parent = git("rev-parse", f"{pinned['final_sync']}^2", cwd=path)
+        first_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{first_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        second_has_active = subprocess.run(
+            ["git", "cat-file", "-e", f"{second_parent}:{active_rel}"], cwd=path,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+        automatic_active = subprocess.run(
+            ["git", "ls-tree", "-z", final_tree, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        second_active = subprocess.run(
+            ["git", "ls-tree", "-z", second_parent, "--", active_rel], cwd=path,
+            capture_output=True,
+        ).stdout
+        automatic_active_delta_is_exact = (
+            not first_has_active and second_has_active
+            and automatic_active == second_active and bool(automatic_active)
+        )
+    if ((differing != {archived_rel} and not automatic_active_delta_is_exact)
+            or active_still_present
+            or not _reconciled_archive_packet_matches(path, pinned["final_sync"],
+                                                      archived_rel, active_rel)):
+        return "pinned final sync conflict is not the exact authorized packet refresh reconciliation"
+
+    allowed = {"custodian/tools/agent/workstream.py", "custodian/tools/agent/test_workstream.py"}
+    correction_coverage: set[str] = set()
+    for correction in correction_commits:
+        correction_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                                   correction, cwd=path).splitlines())
+        if (not correction_paths or not correction_paths.issubset(allowed)
+                or not _commit_paths_are_regular_files(path, correction, correction_paths)):
+            return "post-sync lifecycle correction is outside its two authorized regular source/test paths"
+        correction_coverage.update(correction_paths)
+    if correction_coverage != allowed:
+        return "post-sync lifecycle correction does not cover both authorized source and test paths"
+    active_blob = git("show", f"{main}:{active_rel}", cwd=path, check=False)
+    if not active_blob:
+        return "cannot verify correction authority from the active origin/main packet"
+    work_surface = re.findall(r"(?m)^- Work surface:\s*(.*)$", active_blob)
+    declared = set(re.findall(r"`([^`]+)`", work_surface[0])) if len(work_surface) == 1 else set()
+    if not allowed.issubset(declared):
+        return "active origin/main packet does not authorize the exact lifecycle correction paths"
+
+    trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream_id}/"
+                 f"{pinned['run_id']}")
+    raw_trace = git("show", f"{trace_ref}:trace.jsonl", cwd=path, check=False)
+    try:
+        events = [json.loads(line) for line in raw_trace.splitlines() if line.strip()]
+    except (ValueError, TypeError):
+        events = []
+    trace_commit = git("rev-parse", trace_ref, cwd=path, check=False)
+    if not events or not _failed_import_recovery_trace_is_authentic(
+        events, workstream_id, pinned, active_rel, branch_for(workstream_id),
+        str(path), head, main, trace_ref, trace_commit,
+    ):
+        return "original failed-import lifecycle trace does not authenticate this exact claim and landing history"
+    return None
+
+
+def _failed_import_recovery_suffix(
+    path: Path, suffix: list[str], correction_base: str, main: str,
+) -> tuple[list[str], str | None] | None:
+    """Validate a bounded source/test correction chain and optional exact sync merge."""
+    post_corrections = []
+    sync_commit = None
+    previous = correction_base
+    before_sync_count = 0
+    after_sync_count = 0
+    for commit in suffix:
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+        if len(parents) == 2:
+            if sync_commit or parents != [previous, main]:
+                return None
+            sync_commit = commit
+            automatic_tree = _automatic_merge_tree(path, commit)
+            if automatic_tree is None or automatic_tree != git(
+                "rev-parse", f"{commit}^{{tree}}", cwd=path,
+            ):
+                return None
+        elif parents == [previous]:
+            post_corrections.append(commit)
+            if sync_commit:
+                after_sync_count += 1
+                if after_sync_count > FAILED_IMPORT_MAX_POST_SYNC_CORRECTIONS:
+                    return None
+            else:
+                before_sync_count += 1
+                if before_sync_count > FAILED_IMPORT_MAX_FOLLOWUP_CORRECTIONS:
+                    return None
+        else:
+            return None
+        previous = commit
+
+    return post_corrections, sync_commit
+
+
+def _failed_import_main_advance_is_authorized(
+    repo: Path, pinned: dict[str, object], current_main: str,
+) -> bool:
+    authorization = pinned.get("authorized_main_advance")
+    if (not isinstance(authorization, dict)
+            or authorization.get("base") != pinned.get("final_main")
+            or current_main != authorization.get("head")):
+        return False
+    commits = authorization.get("commits")
+    commit_paths = authorization.get("commit_paths")
+    if (authorization.get("base") != pinned.get("final_main")
+            or not isinstance(commits, list) or not commits
+            or not isinstance(commit_paths, list) or len(commit_paths) != len(commits)):
+        return False
+    actual = git("rev-list", "--first-parent", "--reverse",
+                 f"{pinned['final_main']}..{current_main}", cwd=repo).splitlines()
+    if actual != commits:
+        return False
+    previous = str(pinned["final_main"])
+    for commit, expected_paths in zip(commits, commit_paths):
+        if (not isinstance(commit, str) or not isinstance(expected_paths, list)
+                or not expected_paths or any(not isinstance(path, str) for path in expected_paths)
+                or len(set(expected_paths)) != len(expected_paths)):
+            return False
+        parents = git("rev-list", "--parents", "-n", "1", commit, cwd=repo).split()[1:]
+        actual_paths = set(git("diff-tree", "--no-commit-id", "--name-only", "-r",
+                               commit, cwd=repo).splitlines())
+        mode = subprocess.run(
+            ["git", "ls-tree", "-z", commit, "--", *expected_paths],
+            cwd=repo, capture_output=True,
+        )
+        rows = [row for row in mode.stdout.split(b"\0") if row]
+        regular_files = len(rows) == len(expected_paths) and all(
+            row.split(b"\t", 1)[0].split()[0] == b"100644" for row in rows
+        )
+        if (parents != [previous] or actual_paths != set(expected_paths)
+                or mode.returncode or not regular_files):
+            return False
+        previous = commit
+    return True
+
+
+def _automatic_merge_tree(path: Path, commit: str) -> str | None:
+    parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+    if len(parents) != 2:
+        return None
+    result = subprocess.run(["git", "merge-tree", "--write-tree", *parents], cwd=path,
+                            text=True, capture_output=True)
+    first = result.stdout.splitlines()[0].strip() if result.stdout.splitlines() else ""
+    return first if first and re.fullmatch(r"[0-9a-f]{40,64}", first) else None
+
+
+def _failed_import_first_sync_is_bounded(path: Path, pinned: dict[str, str],
+                                         archived_rel: str) -> bool:
+    commit = pinned["first_sync"]
+    automatic_tree = _automatic_merge_tree(path, commit)
+    merged_tree = git("rev-parse", f"{commit}^{{tree}}", cwd=path)
+    if automatic_tree == merged_tree:
+        return True
+    parents = git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1:]
+    if len(parents) != 2:
+        return False
+    first_parent, second_parent = parents
+    changed = set(git("diff-tree", "-r", "--no-commit-id", "--name-only",
+                      automatic_tree, merged_tree, cwd=path).splitlines())
+    readme = "custodian/docs/ai_context/task_packets/README.md"
+    manifest = "custodian/tools/validation/validation_manifest.json"
+    regression = "custodian/tools/agent/test_paired_review_runner.py"
+    active_packet = f"{TASK_PACKET_ROOT.as_posix()}/{Path(archived_rel).name}"
+    allowed = {readme, archived_rel, manifest, regression}
+    if changed != allowed:
+        return False
+
+    for relative in allowed:
+        entry = subprocess.run(["git", "ls-tree", "-z", commit, "--", relative],
+                               cwd=path, capture_output=True)
+        if (entry.returncode or not entry.stdout
+                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+            return False
+    if subprocess.run(["git", "cat-file", "-e", f"{commit}:{active_packet}"], cwd=path,
+                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        return False
+
+    base_readme = subprocess.run(["git", "show", f"{first_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    main_readme = subprocess.run(["git", "show", f"{second_parent}:{readme}"], cwd=path,
+                                 capture_output=True).stdout
+    merged_readme = subprocess.run(["git", "show", f"{commit}:{readme}"], cwd=path,
+                                   capture_output=True).stdout
+    if not all((base_readme, main_readme, merged_readme)):
+        return False
+    for tools_path in (Path(path) / "custodian/tools", Path(path) / "custodian/tools/agent"):
+        if str(tools_path) not in sys.path:
+            sys.path.insert(0, str(tools_path))
+    try:
+        import paired_review_host_validation as host_validation
+    except ImportError:
+        return False
+    if not host_validation._managed_packet_index_additive_reconciliation(
+        base_readme, main_readme, merged_readme,
+    ):
+        return False
+
+    base_archive = subprocess.run(["git", "show", f"{first_parent}:{archived_rel}"], cwd=path,
+                                  capture_output=True).stdout
+    merged_archive = subprocess.run(["git", "show", f"{commit}:{archived_rel}"], cwd=path,
+                                    capture_output=True).stdout
+    if not base_archive or merged_archive != base_archive:
+        return False
+    if not _manifest_timeout_conflict_is_bounded(path, first_parent, second_parent,
+                                                 commit, manifest):
+        return False
+    merged_regression = git("rev-parse", f"{commit}:{regression}", cwd=path, check=False)
+    return merged_regression == pinned["first_sync_test_runner_blob"]
+
+
+def _manifest_timeout_conflict_is_bounded(path: Path, first_parent: str,
+                                          second_parent: str, merge_commit: str,
+                                          manifest_path: str) -> bool:
+    blobs = [subprocess.run(["git", "show", f"{revision}:{manifest_path}"], cwd=path,
+                            capture_output=True) for revision in (first_parent, second_parent,
+                                                                  merge_commit)]
+    if any(result.returncode for result in blobs):
+        return False
+    branch_bytes, main_bytes, merged_bytes = (result.stdout for result in blobs)
+    try:
+        branch_doc, main_doc, merged_doc = (json.loads(raw) for raw in
+                                            (branch_bytes, main_bytes, merged_bytes))
+    except (ValueError, TypeError):
+        return False
+
+    def pair(document: dict) -> dict | None:
+        matches = [item for item in document.get("tests", [])
+                   if item.get("id") == "paired_review_runner_unit"]
+        return matches[0] if len(matches) == 1 else None
+
+    branch_pair, main_pair, merged_pair = map(pair, (branch_doc, main_doc, merged_doc))
+    if not branch_pair or not main_pair or not merged_pair:
+        return False
+    if (branch_pair.get("timeout_sec") != 90
+            or main_pair.get("timeout_sec") not in {30, 60}
+            or merged_pair != branch_pair):
+        return False
+    branch_without_timeout = json.loads(branch_bytes)
+    main_without_timeout = json.loads(main_bytes)
+    pair(branch_without_timeout).pop("timeout_sec", None)
+    pair(main_without_timeout).pop("timeout_sec", None)
+    if branch_without_timeout != main_without_timeout:
+        return False
+
+    marker = b'"id": "paired_review_runner_unit"'
+    start = main_bytes.find(marker)
+    if start < 0 or main_bytes.find(marker, start + len(marker)) >= 0:
+        return False
+    end = main_bytes.find(b'"needs_import": false', start)
+    if end < 0:
+        return False
+    match = re.search(rb'"timeout_sec": (?:30|60)', main_bytes[start:end])
+    if match is None:
+        return False
+    expected = (main_bytes[:start + match.start()] + b'"timeout_sec": 90'
+                + main_bytes[start + match.end():])
+    return branch_bytes == expected and merged_bytes == branch_bytes
+
+
+def _commit_paths_are_regular_files(path: Path, commit: str, expected: set[str]) -> bool:
+    rows = git("diff-tree", "--no-commit-id", "--name-status", "--no-renames", "-r",
+               commit, cwd=path).splitlines()
+    if {row.split("\t")[-1] for row in rows} != expected or any(
+        row.split("\t", 1)[0] not in {"M", "A"} for row in rows
+    ):
+        return False
+    for rel in expected:
+        for revision in (f"{commit}^1", commit):
+            entry = subprocess.run(["git", "ls-tree", "-z", revision, "--", rel],
+                                   cwd=path, capture_output=True)
+            if (entry.returncode or not entry.stdout
+                    or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+                return False
+    return True
+
+
+def _summary_repair_is_authoring_chat_only(path: Path, commit: str,
+                                           summary_rel: str, archived_rel: str) -> bool:
+    parent = git("rev-parse", f"{commit}^1", cwd=path)
+    archived = git("show", f"{parent}:{archived_rel}", cwd=path, check=False)
+    try:
+        header = parse_packet(str(path / archived_rel), archived)
+    except Exception:
+        return False
+    url = header.authoring_chat
+    if not url or url in {"not-recorded", "n/a"}:
+        return False
+    diff = subprocess.run(["git", "diff", "--no-ext-diff", "--unified=0", parent, commit,
+                           "--", summary_rel], cwd=path, text=True, capture_output=True)
+    additions = [line[1:] for line in diff.stdout.splitlines()
+                 if line.startswith("+") and not line.startswith("+++")]
+    removals = [line[1:] for line in diff.stdout.splitlines()
+                if line.startswith("-") and not line.startswith("---")]
+    return (diff.returncode == 0
+            and additions.count(f"Authoring chat: {url}") == 1
+            and additions.count(f"- Authoring chat: {url}") == 1
+            and additions.count("") == 1 and len(additions) == 3
+            and removals == [f"- Authoring chat: `{url}`"]
+            and _commit_paths_are_regular_files(path, commit, {summary_rel}))
+
+
+def _post_sync_completion_evidence_is_bounded(path: Path, commit: str,
+                                               archived_rel: str) -> bool:
+    parent = git("rev-parse", f"{commit}^1", cwd=path)
+    diff = subprocess.run(["git", "diff", "--no-ext-diff", "--unified=0", parent, commit,
+                           "--", archived_rel], cwd=path, text=True, capture_output=True)
+    additions = [line[1:] for line in diff.stdout.splitlines()
+                 if line.startswith("+") and not line.startswith("+++")]
+    removals = [line[1:] for line in diff.stdout.splitlines()
+                if line.startswith("-") and not line.startswith("---")]
+    removed_evidence = [line for line in removals if line.startswith("- Evidence: `")]
+    added_evidence = [line for line in additions if line.startswith("- Evidence: `")]
+    added_validation = [line for line in additions if line.startswith("- Post-sync validation: ")]
+    if (diff.returncode != 0 or len(removals) != 1 or len(additions) != 2
+            or len(removed_evidence) != 1 or len(added_evidence) != 1
+            or len(added_validation) != 1):
+        return False
+    old_evidence, new_evidence = removed_evidence[0], added_evidence[0]
+    validation = added_validation[0]
+    merge_sha = git("rev-parse", f"{parent}", cwd=path)
+    expected_validation = (
+        f"- Post-sync validation: `After merge `{merge_sha}`, changed-file validation "
+        "passed 43/43 with complete coverage and no timeouts; the manifest retained "
+        "the authorized 90-second bound.`"
+    )
+    evidence_closeout = (
+        (old_evidence.endswith("`.") and new_evidence == old_evidence[:-2] + ".`")
+        or (old_evidence.endswith(".") and new_evidence == old_evidence + "`"))
+    return (evidence_closeout
+            and validation == expected_validation
+            and _commit_paths_are_regular_files(path, commit, {archived_rel}))
+
+
+def _reconciled_archive_packet_matches(path: Path, merge_commit: str,
+                                       archived_rel: str, active_rel: str) -> bool:
+    first_parent = git("rev-parse", f"{merge_commit}^1", cwd=path)
+    second_parent = git("rev-parse", f"{merge_commit}^2", cwd=path)
+    previous = git("show", f"{first_parent}:{archived_rel}", cwd=path, check=False)
+    active = git("show", f"{second_parent}:{active_rel}", cwd=path, check=False)
+    refresh = re.findall(
+        r"(?ms)^## Planning Refresh: Exact archive-transition recovery \(2026-10-21\)\n.*?(?=^## Handoff\s*$)",
+        active,
+    )
+    if len(refresh) != 1 or previous.count("## Next Handoff") != 1:
+        return False
+    handoff = "## Next Handoff"
+    prefix, suffix = previous.split(handoff, 1)
+    expected = prefix.rstrip() + "\n\n" + refresh[0].rstrip() + "\n\n" + handoff + suffix
+    actual = git("show", f"{merge_commit}:{archived_rel}", cwd=path, check=False)
+    entry = subprocess.run(["git", "ls-tree", "-z", merge_commit, "--", archived_rel],
+                           cwd=path, capture_output=True)
+    return (bool(actual) and actual == expected and entry.returncode == 0 and bool(entry.stdout)
+            and entry.stdout.split(b"\t", 1)[0].split()[0] == b"100644")
+
+
+def _failed_import_recovery_trace_is_authentic(
+    events: list[dict], workstream_id: str, pinned: dict[str, str], active_packet: str,
+    branch: str, worktree: str, head: str, main: str, trace_ref: str, trace_commit: str,
+) -> bool:
+    run_id = pinned["run_id"]
+    if (not trace_commit or trace_commit != git("rev-parse", trace_ref, cwd=Path(worktree), check=False)
+            or subprocess.run(["git", "merge-base", "--is-ancestor", pinned["trace_anchor"],
+                               trace_commit], cwd=Path(worktree), capture_output=True).returncode != 0):
+        return False
+    anchor_blob = git("show", f"{pinned['trace_anchor']}:trace.jsonl",
+                      cwd=Path(worktree), check=False)
+    current_blob = git("show", f"{trace_ref}:trace.jsonl", cwd=Path(worktree), check=False)
+    if not anchor_blob or not current_blob.startswith(anchor_blob):
+        return False
+    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+           or event.get("workstream") != workstream_id or event.get("run_id") != run_id
+           or event.get("packet") != active_packet for event in events):
+        return False
+    claims = [e.get("data", {}) for e in events if e.get("event") == "remote_claim_acquired"]
+    published = [e.get("data", {}) for e in events if e.get("event") == "worktree_published"]
+    validations = [e.get("data", {}) for e in events if e.get("event") == "validation_report"]
+    if (len(claims) != 1 or len(published) != 1 or not validations
+            or not any(e.get("passed") is True for e in validations)
+            or any(e.get("event") in {"landing_started", "landing_completed"} for e in events)):
+        return False
+    claim, publication = claims[0], published[0]
+    if (claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
+            or claim.get("claim_oid") != pinned["claim_oid"]
+            or claim.get("main_sha") != pinned["claim_base"]
+            or publication.get("branch") != branch or publication.get("clean") is not True
+            or publication.get("head") != pinned["claim_base"]
+            or publication.get("upstream") != pinned["claim_base"]
+            or publication.get("worktree") != worktree):
+        return False
+    syncs = [e.get("data", {}) for e in events if e.get("event") == "main_sync"]
+    if not syncs:
+        merges = git("rev-list", "--first-parent", "--merges",
+                     f"{pinned['final_sync']}..{head}", cwd=Path(worktree)).splitlines()
+        return not any(
+            len(git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()) == 3
+            and git("rev-list", "--parents", "-n", "1", commit,
+                    cwd=Path(worktree), check=False).split()[2] == main
+            for commit in merges
+        )
+    if len(syncs) == 1 and syncs[0].get("changed") is False:
+        parents = git("rev-list", "--parents", "-n", "1", head,
+                      cwd=Path(worktree), check=False).split()[1:]
+        return (syncs[0].get("head") == head
+                and syncs[0].get("main_sha") in {main, pinned["final_main"]}
+                and not (len(parents) == 2 and parents[1] == main))
+    if len(syncs) not in {1, 2} or syncs[0].get("changed") is not True:
+        return False
+    changed_sync = syncs[0]
+    sync_head = changed_sync.get("head")
+    if (changed_sync.get("main_sha") != main or not sync_head
+            or subprocess.run(["git", "merge-base", "--is-ancestor", sync_head, head],
+                              cwd=Path(worktree), capture_output=True).returncode != 0
+            or git("rev-parse", f"{sync_head}^2", cwd=Path(worktree), check=False) != main):
+        return False
+    if len(syncs) == 2 and (
+        syncs[1].get("changed") is not False
+        or syncs[1].get("head") != head
+        or syncs[1].get("main_sha") != main
+    ):
+        return False
+    after_sync = [e for e in events if e.get("event") == "validation_after_sync"]
+    return (not after_sync or (len(after_sync) == 1
+            and after_sync[0].get("data", {}).get("passed") is True
+            and events.index(after_sync[0]) > max(
+                index for index, event in enumerate(events) if event.get("event") == "main_sync"
+            )))
+
+
 def _summary_backlink_preflight(workstream_id: str, path: Path, packets: list[Path]) -> None:
     """Require the durable closing summary to preserve packet authoring-chat provenance."""
     summary = path / _expected_summary_filename(workstream_id)
@@ -628,6 +2062,57 @@ def _validation_report_status(report: Path | None) -> dict[str, object]:
     return result
 
 
+def _run_operator_chassis_authority_guard(repo: Path, path: Path) -> dict[str, object]:
+    """Run the mandatory structural guard for Operator-touching task branches."""
+    guard_rel = Path("custodian/tools/validation/operator_chassis_authority_guard.py")
+    try:
+        branch = git("branch", "--show-current", cwd=path)
+        changed = set(git("diff", "--no-renames", "--name-only", "origin/main...HEAD", cwd=path).splitlines())
+        changed.update(git("diff", "--no-renames", "--name-only", cwd=path).splitlines())
+        changed.update(git("diff", "--cached", "--no-renames", "--name-only", cwd=path).splitlines())
+        changed.update(git("ls-files", "--others", "--exclude-standard", cwd=path).splitlines())
+    except WorkstreamError as error:
+        return {"status": "blocked", "failures": [f"cannot determine Operator guard scope: {error}"]}
+    operator_prefixes = (
+        "custodian/game/actors/operator/",
+        "custodian/tools/validation/operator_chassis_authority_",
+        "custodian/tools/validation/operator_architecture_debt_audit.py",
+        "custodian/tools/validation/operator_runtime_path_audit.py",
+        "custodian/tools/validation/operator_runtime_animation_authority_smoke.py",
+        "custodian/tools/agent/workstream.py",
+        "custodian/tools/agent/test_workstream.py",
+        "custodian/tools/validation/validation_manifest.json",
+    )
+    scoped = branch.startswith("agent/operator-") or any(
+        item.startswith(operator_prefixes) for item in changed
+    )
+    if not scoped:
+        return {"status": "not_applicable", "failures": []}
+    script = path / guard_rel
+    if not script.is_file():
+        return {"status": "blocked", "failures": [f"mandatory Operator authority guard is missing: {guard_rel}"]}
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script), "--root", str(path), "--against-ref", "origin/main", "--json"],
+            cwd=path, text=True, capture_output=True, timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        return {"status": "blocked", "failures": ["Operator authority guard exceeded its 120-second bound"]}
+    try:
+        report = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return {"status": "blocked", "failures": [
+            f"Operator authority guard emitted invalid JSON (exit {result.returncode}): "
+            f"{(result.stderr or result.stdout).strip()[:500]}"
+        ]}
+    passed = result.returncode == 0 and report.get("passed") is True
+    failures = report.get("failures", [])
+    if not passed and not failures:
+        failures = [f"Operator authority guard failed with exit {result.returncode}"]
+    return {"status": "passed" if passed else "blocked", "failures": failures,
+            "source_sha256": report.get("source_sha256"), "budget_sha256": report.get("budget_sha256")}
+
+
 def closeout_preflight(
     workstream_id: str, path: Path, validation_report: Path | None = None,
 ) -> dict[str, object]:
@@ -704,8 +2189,10 @@ def closeout_preflight(
     main_is_ancestor = bool(main_exists) and subprocess.run(
         ["git", "merge-base", "--is-ancestor", "origin/main", "HEAD"], cwd=path,
     ).returncode == 0
+    archive_transition_error = _archive_transition_tip_error(workstream_id, path)
 
     validation = _validation_report_status(validation_report)
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
     review_blockers = [
         item["path"] for item in packet_reports
         if item["review_receipt"] is not None and not item["review_receipt"]["receipt_present"]
@@ -734,6 +2221,8 @@ def closeout_preflight(
         blockers.append({"gate": "remote_branch", "detail": f"origin/{expected_branch} is not present in cached refs"})
     if behind:
         blockers.append({"gate": "branch_drift", "detail": f"local branch is {behind} commit(s) behind its published branch"})
+    if archive_transition_error:
+        blockers.append({"gate": "archive_transition_tip", "detail": archive_transition_error})
     blockers.extend({"gate": "task_packet", "detail": str(item)} for item in packet_blockers)
     blockers.extend({"gate": "completion_truth", "detail": str(item)} for item in truth_blockers)
     blockers.extend({"gate": "managed_index", "detail": str(item)} for item in stale_index)
@@ -746,10 +2235,13 @@ def closeout_preflight(
                     for item in review_artifact_reports if item["error"])
     if not validation["green"]:
         blockers.append({"gate": "validation", "detail": "report missing, invalid, or non-green"})
+    if operator_guard["status"] == "blocked":
+        blockers.extend({"gate": "operator_chassis_authority_guard", "detail": str(item)}
+                        for item in operator_guard["failures"])
     ready = (
-        branch_ready and not packet_blockers and not truth_blockers and not stale_index
+        branch_ready and not archive_transition_error and not packet_blockers and not truth_blockers and not stale_index
         and not artifact_report and summary_ok and not review_blockers and not review_artifact_blockers
-        and bool(validation["green"])
+        and bool(validation["green"]) and operator_guard["status"] != "blocked"
     )
     return {
         "schema": "custodian.workstream.closeout_preflight.v1",
@@ -770,6 +2262,10 @@ def closeout_preflight(
             "drift": (actual_branch != expected_branch or not clean or not remote_exists or behind != 0),
             "unpublished_commits": ahead,
             "sync_required_against_cached_main": not main_is_ancestor,
+        },
+        "archive_transition": {
+            "status": "blocked" if archive_transition_error else "pass",
+            "error": archive_transition_error,
         },
         "packets": packet_reports,
         "packet_blockers": packet_blockers,
@@ -793,6 +2289,7 @@ def closeout_preflight(
                  or not item["review_receipt"]["provenance_matches_packet"])
         ],
         "validation": validation,
+        "operator_chassis_authority_guard": operator_guard,
         "post_sync": {
             "status": "unknown",
             "reason": "This read-only preflight does not fetch or synchronize; latest-main merge, after-sync validation, and race-safe landing are only knowable during finish.",
@@ -890,6 +2387,19 @@ def fetch(repo: Path) -> None:
     git("worktree", "prune", cwd=repo)
 
 
+def reap_finished_checkouts(repo: Path, *, exclude: set[str] | None = None) -> None:
+    """Best-effort transient checkout maintenance; no claim/branch/ref deletion."""
+    try:
+        from transient_worktree_gc import sweep
+        report = sweep(repo, apply=True, limit=4, exclude=exclude)
+        if report["removed"]:
+            print(f"reclaimed {len(report['removed'])} verified finished transient worktree(s)", file=sys.stderr)
+    except Exception as exc:
+        # Cleanup is never a new admission or finish gate. The helper fails
+        # closed and cannot make an otherwise valid workstream unavailable.
+        print(f"transient worktree cleanup skipped: {exc}", file=sys.stderr)
+
+
 def tracking_branch(repo: Path, branch: str) -> None:
     git("branch", "--set-upstream-to", f"origin/{branch}", branch, cwd=repo)
 
@@ -933,6 +2443,7 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
           agent: str | None = None, _claim: RemoteClaim | None = None, _trace: RunTrace | None = None,
           _lock_held: bool = False, _publish_trace: bool = True) -> Path:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "start")
     branch = branch_for(workstream_id)
     trace = _trace
     lock_started = time.monotonic()
@@ -940,12 +2451,22 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
     claim = _claim
     try:
         with lock_context:
+            # Recheck after acquiring the per-workstream mutex so a start that
+            # raced a quarantine publication cannot resume from a stale prelock check.
+            assert_not_legacy_quarantined(repo, workstream_id, "start")
             if trace is None:
-                trace = RunTrace.start(repo, workstream_id)
+                active_packets = [
+                    packet for packet in _associated_task_packets(repo, workstream_id)
+                    if packet.parent.resolve() == (repo / TASK_PACKET_ROOT).resolve()
+                ]
+                packet_ref = (active_packets[0].relative_to(repo).as_posix()
+                              if len(active_packets) == 1 else None)
+                trace = RunTrace.start(repo, workstream_id, packet=packet_ref)
             trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
             before = worktree_records(repo)
             trace.record("start_inspection", main_sha=git("rev-parse", "origin/main", cwd=repo, check=False), worktrees=before)
             fetch(repo)
+            reap_finished_checkouts(repo, exclude={workstream_id})
             trace.record("remote_fetched", main_sha=git("rev-parse", "origin/main", cwd=repo), branch_ref=branch,
                          remote_branch_present=subprocess.run(["git", "show-ref", "--verify", "--quiet", f"refs/remotes/origin/{branch}"], cwd=repo).returncode == 0)
             records = worktree_records(repo)
@@ -992,6 +2513,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
                 print("CUSTODIAN_DISPATCH_RESULT_JSON:" + json.dumps(receipt, sort_keys=True))
             return path
     except (WorkstreamError, WorkflowControlError) as exc:
+        if _is_quarantine_fence_error(exc):
+            raise
         if trace is None:
             trace = RunTrace.start(repo, workstream_id)
         trace.finish_blocked(str(exc), publish=_publish_trace)
@@ -1001,6 +2524,8 @@ def start(workstream_id: str, repo: Path | None = None, *, report: dict[str, str
 def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, trace: RunTrace) -> Path:
     """Explicitly resume an existing clean canonical workstream checkout."""
     with workstream_mutex(repo, workstream_id, trace=trace):
+        # Quarantine may have landed after the public resume preflight.
+        assert_not_legacy_quarantined(repo, workstream_id, "resume")
         fetch(repo)
         branch = branch_for(workstream_id)
         attached = [r for r in worktree_records(repo) if r.get("branch") == f"refs/heads/{branch}"]
@@ -1033,11 +2558,13 @@ def _resume_impl(workstream_id: str, repo: Path, report: dict[str, str] | None, 
 
 def resume(workstream_id: str, repo: Path | None = None, *, report: dict[str, str] | None = None) -> Path:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "resume")
     trace = RunTrace.resume(repo, workstream_id)
     try:
         return _resume_impl(workstream_id, repo, report, trace)
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
@@ -1104,11 +2631,15 @@ def _checkpoint_impl(workstream_id: str, remove_worktree: bool, repo: Path, trac
 
 def checkpoint(workstream_id: str, remove_worktree: bool = False, repo: Path | None = None) -> None:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "checkpoint")
     trace = RunTrace.resume(repo, workstream_id)
     try:
-        _checkpoint_impl(workstream_id, remove_worktree, repo, trace)
+        with workstream_mutex(repo, workstream_id, trace=trace):
+            assert_not_legacy_quarantined(repo, workstream_id, "checkpoint")
+            _checkpoint_impl(workstream_id, remove_worktree, repo, trace)
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
@@ -1154,7 +2685,98 @@ def task_head_reachable_from_main(path: Path, remote_ref: str = "origin/main") -
     return subprocess.run(["git", "merge-base", "--is-ancestor", "HEAD", remote_ref], cwd=path).returncode == 0
 
 
-def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path, head: str) -> None:
+def _review_run_manifest(run_dir: Path) -> dict[str, str]:
+    result: dict[str, str] = {}
+    continuation = run_dir / "continuation-01"
+    for path in sorted(run_dir.rglob("*")):
+        if path == continuation or continuation in path.parents:
+            continue
+        if path.is_symlink():
+            raise WorkstreamError(f"refusing symlink in protected review run: {path}")
+        if path.is_file():
+            result[str(path.relative_to(run_dir))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return result
+
+
+def _verify_root_sync_deferral(workstream_id: str, repo: Path,
+                               recovery_evidence: Path | None) -> str:
+    """Require packet authorization or the one verified recovered review run."""
+    if workstream_id in ROOT_SYNC_DEFERRAL_SUPPORT:
+        implementation_id = workstream_id.removeprefix("review-")
+        packets = _associated_task_packets(repo, implementation_id)
+        phrase = "Do not synchronize the root checkout; record synchronization pending."
+        authorized = False
+        for path in packets:
+            packet = parse_packet(str(path), path.read_text(encoding="utf-8"))
+            if packet.workstream == implementation_id and packet.task_overrides and phrase in packet.task_overrides:
+                authorized = True
+                break
+        if not authorized:
+            raise WorkstreamError("root synchronization deferral lacks the paired recovery packet authorization")
+        if recovery_evidence is not None:
+            raise WorkstreamError("support workstream root deferral does not accept historical recovery evidence")
+        return "task_packet_authorized"
+
+    if workstream_id != INVALID_DISPOSITION_REVIEW:
+        raise WorkstreamError(f"root synchronization deferral is not authorized for {workstream_id}")
+    if recovery_evidence is None:
+        raise WorkstreamError("the recovered review root-sync deferral requires exact continuation evidence")
+    if recovery_evidence.is_symlink():
+        raise WorkstreamError("root-sync recovery evidence cannot be a symlink")
+    common = Path(git("rev-parse", "--path-format=absolute", "--git-common-dir", cwd=repo)).resolve()
+    expected_root = (common / "custodian-review-runs" / INVALID_DISPOSITION_REVIEW / INVALID_DISPOSITION_RUN_ID).resolve()
+    expected_metadata = expected_root / "continuation-01" / "metadata.json"
+    evidence_path = recovery_evidence.resolve()
+    if evidence_path != expected_metadata or not evidence_path.is_file():
+        raise WorkstreamError("root-sync recovery evidence is not the exact authorized continuation metadata")
+    try:
+        child = json.loads(evidence_path.read_text(encoding="utf-8"))
+        original = json.loads((expected_root / "metadata.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise WorkstreamError("root-sync recovery evidence is missing or malformed") from exc
+    recovery = child.get("invalid_disposition_recovery") if isinstance(child, dict) else None
+    if (not isinstance(child, dict) or not isinstance(original, dict)
+            or child.get("schema") != "custodian.paired_review_continuation.v1"
+            or child.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or child.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or child.get("phase") != "coordinator_closeout"
+            or original.get("schema") != "custodian.paired_review_run.v1"
+            or original.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or original.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or original.get("run_dir") != str(expected_root)
+            or original.get("phase") != "post_exit_recovery"
+            or not isinstance(recovery, dict)
+            or recovery.get("schema") != "custodian.paired_review_invalid_disposition_recovery.v1"
+            or recovery.get("workstream") != INVALID_DISPOSITION_REVIEW
+            or recovery.get("run_id") != INVALID_DISPOSITION_RUN_ID
+            or recovery.get("continuation") != "continuation-01"
+            or recovery.get("original_disposition_sha256") != INVALID_DISPOSITION_SHA256
+            or not re.fullmatch(r"[0-9a-f]{64}", str(recovery.get("repaired_disposition_sha256", "")))
+            or not re.fullmatch(r"[0-9a-f]{64}", str(recovery.get("target_receipt_sha256", "")))
+            or recovery.get("root_sync_pending") is not True
+            or child.get("run_evidence_sha256") != _review_run_manifest(expected_root)):
+        raise WorkstreamError("exact recovered review identity, preservation digest, or evidence manifest failed")
+    worktree = Path(str(child.get("worktree", ""))).resolve()
+    for relative, expected_sha in (
+        (INVALID_DISPOSITION_REVIEW_PACKET, recovery["repaired_disposition_sha256"]),
+        (INVALID_DISPOSITION_TARGET_PACKET, recovery["target_receipt_sha256"]),
+    ):
+        local_path = worktree / relative
+        if local_path.is_file() and not local_path.is_symlink():
+            raw = local_path.read_bytes()
+        else:
+            shown = subprocess.run(["git", "show", f"origin/main:{relative}"], cwd=repo,
+                                   capture_output=True, check=False)
+            if shown.returncode:
+                raise WorkstreamError(f"recovered review artifact is absent from worktree and origin/main: {relative}")
+            raw = shown.stdout
+        if hashlib.sha256(raw).hexdigest() != expected_sha:
+            raise WorkstreamError(f"recovered review artifact digest changed before closeout: {relative}")
+    return "verified_invalid_disposition_recovery"
+
+
+def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path, head: str,
+                         *, defer_root_sync: bool = False) -> None:
     admin_repo = administrative_worktree(repo, path)
     # Tolerate a remote branch already deleted by an earlier, interrupted finish
     # attempt; any other push failure is a real blocker, not idempotence.
@@ -1168,25 +2790,31 @@ def _teardown_workstream(workstream_id: str, branch: str, repo: Path, path: Path
     git("worktree", "prune", cwd=admin_repo)
     git("fetch", "--prune", "origin", cwd=admin_repo)
 
-    # Root checkout sync is subordinate and never alters user state. Resolve
-    # the persistent main identity from live worktree metadata, then use the
-    # shared inspect/apply policy used by OPUI and the user-facing CLI.
+    if defer_root_sync:
+        print("persistent root synchronization pending: explicitly deferred by verified task authorization")
+        print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+        return
+
+    _sync_persistent_main_checkout(admin_repo)
+    print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+
+
+def _sync_persistent_main_checkout(repo: Path) -> None:
+    """Run the safe root synchronization independently of claim teardown."""
     main_root = next(
-        (Path(item["worktree"]).resolve() for item in worktree_records(admin_repo)
+        (Path(item["worktree"]).resolve() for item in worktree_records(repo)
          if item.get("branch") == "refs/heads/main"),
         None,
     )
     if main_root is None:
         print("persistent root synchronization pending: no attached main checkout")
-    else:
-        try:
-            result = apply_profiles([ROOT_PROFILE], main_root)[0]
-            print("persistent main checkout: " + format_result(result))
-        except Exception as error:
-            # Task landing is complete; root sync is best-effort and remains
-            # pending with an actionable reason if the safe helper cannot run.
-            print(f"persistent root synchronization pending: {error}")
-    print(f"finished {branch}; verified {head} reachable from origin/main; remote and local workstream removed")
+        return
+    try:
+        result = apply_profiles([ROOT_PROFILE], main_root)[0]
+        print("persistent main checkout: " + format_result(result))
+    except Exception as error:
+        # Landing is complete; root sync remains pending with a safe, actionable reason.
+        print(f"persistent root synchronization pending: {error}")
 
 
 def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Path, trace: RunTrace | None = None) -> None:
@@ -1221,8 +2849,22 @@ def _finish_without_attached_worktree(workstream_id: str, branch: str, repo: Pat
     )
 
 
-def _finish_impl(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None, trace: RunTrace | None = None) -> None:
+def _finish_impl(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None,
+                 repo: Path | None = None, trace: RunTrace | None = None, *,
+                 defer_root_sync: bool = False, recovery_evidence: Path | None = None,
+                 defer_teardown: bool = False) -> str:
     repo = (repo or root_repo()).resolve()
+    if defer_root_sync:
+        deferral_kind = _verify_root_sync_deferral(workstream_id, repo, recovery_evidence)
+        if trace:
+            trace.record("root_sync_deferred", authorization=deferral_kind,
+                         evidence=str(recovery_evidence) if recovery_evidence else None)
+    elif recovery_evidence is not None:
+        raise WorkstreamError("recovery evidence is only valid with --defer-root-sync")
+    if defer_teardown and workstream_id not in {INVALID_DISPOSITION_REVIEW, ADVANCED_HEAD_PASS_REVIEW}:
+        raise WorkstreamError("deferred teardown is limited to the two exact authorized review recoveries")
+    if defer_teardown and workstream_id == INVALID_DISPOSITION_REVIEW and not defer_root_sync:
+        raise WorkstreamError("invalid-disposition deferred teardown requires its verified root-sync deferral")
     branch = branch_for(workstream_id)
     fetch(repo)
     try:
@@ -1232,6 +2874,17 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         return
     if git("branch", "--show-current", cwd=path) != branch:
         raise WorkstreamError("finish must run for its matching agent/<workstream-id> branch")
+
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
+    if operator_guard["status"] == "blocked":
+        raise WorkstreamError(
+            "Operator chassis authority guard blocked finish: "
+            + "; ".join(map(str, operator_guard["failures"]))
+        )
+    if trace and operator_guard["status"] == "passed":
+        trace.record("operator_chassis_authority_guard", result="passed",
+                     source_sha256=operator_guard.get("source_sha256"),
+                     budget_sha256=operator_guard.get("budget_sha256"))
 
     # PREPARED: artifacts, cleanliness, a durably committed summary, and green
     # validation are required regardless of whether this task already landed.
@@ -1244,9 +2897,25 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     closing_summary_committed_for_workstream(workstream_id, path)
     if not validation_green(validation_report):
         raise WorkstreamError("focused validation report is not green")
+    # This exact historical recovery is governed by its separately pinned
+    # continuation verifier, which authenticates its nonstandard evidence chain.
+    # Ordinary workstream source spans must satisfy the current per-merge trace.
+    requires_source_span_witnesses = (
+        workstream_id != FAILED_IMPORT_ARCHIVE_RECOVERY["workstream"]
+    )
     if trace:
         import hashlib
         trace.record("validation_report", path=validation_report.name, sha256=hashlib.sha256(validation_report.read_bytes()).hexdigest(), passed=True)
+
+    if trace and requires_source_span_witnesses:
+        source_span_error = _source_span_sync_merge_witness_error(
+            workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+        )
+        if source_span_error:
+            raise WorkstreamError(source_span_error)
+    archive_tip_error = _archive_transition_tip_error(workstream_id, path, trace=trace)
+    if archive_tip_error:
+        raise WorkstreamError(archive_tip_error)
 
     git("push", "-u", "origin", branch, cwd=path)
     fetch(path)
@@ -1257,10 +2926,15 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # merged in some other way). Skip sync/land entirely and go straight
         # to verified teardown; do not rewrite or remerge task history.
         head = git("rev-parse", "HEAD", cwd=path)
+        if defer_teardown:
+            _sync_persistent_main_checkout(repo)
+            print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+            if trace: trace.record("teardown_deferred", branch=branch, head=head)
+            return "teardown_pending"
         if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-        _teardown_workstream(workstream_id, branch, repo, path, head)
+        _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
         if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
-        return
+        return "finished"
 
     # SYNC_REQUIRED -> READY_TO_LAND
     changed = sync_main(path)
@@ -1272,6 +2946,27 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
             import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+    if trace:
+        if not trace.publish():
+            raise WorkstreamError(
+                "lifecycle trace publication failed after main synchronization; "
+                "task landing is blocked and the recovery checkout is retained"
+            )
+        if requires_source_span_witnesses:
+            source_span_error = _source_span_sync_merge_witness_error(
+                workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+            )
+            if source_span_error:
+                raise WorkstreamError(source_span_error)
+        archive_tip_error = _archive_transition_tip_error(workstream_id, path, trace=trace)
+        if archive_tip_error:
+            raise WorkstreamError(archive_tip_error)
+    operator_guard = _run_operator_chassis_authority_guard(repo, path)
+    if operator_guard["status"] == "blocked":
+        raise WorkstreamError(
+            "Operator chassis authority guard blocked post-sync finish: "
+            + "; ".join(map(str, operator_guard["failures"]))
+        )
     packets = artifact_preflight(workstream_id, path)
     _completion_truth_preflight(packets)
     if not status_clean(path):
@@ -1282,10 +2977,15 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         # Synchronization itself (a fast-forward merge, or a concurrent landing
         # of this exact history) already made HEAD reachable from main.
         head = git("rev-parse", "HEAD", cwd=path)
+        if defer_teardown:
+            _sync_persistent_main_checkout(repo)
+            print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+            if trace: trace.record("teardown_deferred", branch=branch, head=head)
+            return "teardown_pending"
         if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-        _teardown_workstream(workstream_id, branch, repo, path, head)
+        _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
         if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
-        return
+        return "finished"
 
     # LANDED: hand off to the sole active landing authority. Never duplicate
     # its serialized rebase/push logic here.
@@ -1306,21 +3006,37 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         raise WorkstreamError("landing did not verify as reachable from origin/main; recovery branch retained")
 
     # READY_TO_TEARDOWN -> FINISHED
+    if defer_teardown:
+        _sync_persistent_main_checkout(repo)
+        print(f"verified {head} reachable from origin/main; teardown pending independent receipt verification")
+        if trace: trace.record("teardown_deferred", branch=branch, head=head)
+        return "teardown_pending"
     if trace: trace.record("teardown_started", branch=branch, head=head, worktree=str(path))
-    _teardown_workstream(workstream_id, branch, repo, path, head)
+    _teardown_workstream(workstream_id, branch, repo, path, head, defer_root_sync=defer_root_sync)
     if trace: trace.record("teardown_completed", branch=branch, head=head, worktree_removed=not path.exists())
+    return "finished"
 
 
-def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None, repo: Path | None = None) -> None:
+def finish(workstream_id: str, validation_report: Path, validation_report_after_sync: Path | None = None,
+           repo: Path | None = None, *, defer_root_sync: bool = False,
+           recovery_evidence: Path | None = None, defer_teardown: bool = False) -> None:
     repo = (repo or root_repo()).resolve()
+    assert_not_legacy_quarantined(repo, workstream_id, "finish")
     trace = RunTrace.resume(repo, workstream_id)
-    trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
     try:
-        _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace)
-        trace.record("finish_completed", outcome="finished")
-        trace.complete("finished", clear_active=True)
+        with workstream_mutex(repo, workstream_id, trace=trace):
+            assert_not_legacy_quarantined(repo, workstream_id, "finish")
+            trace.record("finish_started", validation_report=str(validation_report), after_sync_report=str(validation_report_after_sync) if validation_report_after_sync else None)
+            outcome = _finish_impl(workstream_id, validation_report, validation_report_after_sync, repo, trace,
+                                   defer_root_sync=defer_root_sync, recovery_evidence=recovery_evidence,
+                                   defer_teardown=defer_teardown)
+            trace.record("finish_completed", outcome=outcome)
+            trace.complete(outcome, clear_active=True)
+            if outcome == "finished":
+                reap_finished_checkouts(repo, exclude={workstream_id})
     except Exception as exc:
-        trace.finish_blocked(str(exc))
+        if not _is_quarantine_fence_error(exc):
+            trace.finish_blocked(str(exc))
         raise WorkstreamError(f"{exc} [run_id={trace.run_id}; trace_ref={trace.diagnostic_ref}]") from exc
 
 
@@ -1371,9 +3087,13 @@ def status(workstream_id: str | None = None, repo: Path | None = None) -> None:
         print(f"remote {branch}: {'present' if subprocess.run(['git','show-ref','--verify','--quiet',f'refs/remotes/origin/{branch}'],cwd=repo).returncode == 0 else 'absent'}")
 
 
-def gc(repo: Path | None = None) -> None:
+def gc(repo: Path | None = None, *, reap_finished: bool = False) -> None:
     repo = (repo or root_repo()).resolve()
     fetch(repo)
+    if reap_finished:
+        from transient_worktree_gc import sweep
+        print(json.dumps(sweep(repo, apply=True, limit=32), indent=2, sort_keys=True))
+        return
     script = Path(__file__).with_name("branch_hygiene.py")
     subprocess.run([sys.executable, str(script)], cwd=repo, check=True)
 
@@ -1386,15 +3106,26 @@ def main() -> int:
     p = subs.add_parser("status"); p.add_argument("workstream_id", nargs="?")
     p = subs.add_parser("checkpoint"); p.add_argument("workstream_id"); p.add_argument("--remove-worktree", action="store_true")
     p = subs.add_parser("finish"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path, required=True); p.add_argument("--validation-report-after-sync", type=Path)
+    p.add_argument("--defer-root-sync", action="store_true",
+                    help="defer persistent root synchronization when the exact packet/recovery evidence authorizes it")
+    p.add_argument("--defer-root-sync-evidence", type=Path,
+                    help="exact continuation metadata required for the one recovered historical review")
+    p.add_argument("--defer-teardown", action="store_true",
+                    help="leave the exact recovered review claim/worktree intact for independent post-land verification")
     p = subs.add_parser("preflight"); p.add_argument("workstream_id"); p.add_argument("--validation-report", type=Path); p.add_argument("--json", action="store_true")
-    subs.add_parser("gc")
+    p = subs.add_parser("gc"); p.add_argument("--reap-finished", action="store_true",
+                                           help="remove only verified clean, archived, landed transient checkouts")
     args = parser.parse_args()
     try:
         if args.command == "start": start(args.workstream_id, agent=args.agent)
         elif args.command == "resume": print(f"resumed worktree: {resume(args.workstream_id)}")
         elif args.command == "status": status(args.workstream_id)
         elif args.command == "checkpoint": checkpoint(args.workstream_id, args.remove_worktree)
-        elif args.command == "finish": finish(args.workstream_id, args.validation_report, args.validation_report_after_sync)
+        elif args.command == "finish":
+            finish(args.workstream_id, args.validation_report, args.validation_report_after_sync,
+                   defer_root_sync=args.defer_root_sync,
+                   recovery_evidence=args.defer_root_sync_evidence,
+                   defer_teardown=args.defer_teardown)
         elif args.command == "preflight":
             result = preflight(args.workstream_id, args.validation_report)
             if args.json:
@@ -1402,7 +3133,7 @@ def main() -> int:
             else:
                 print(f"closeout preflight: {'READY' if result['ready_before_sync'] else 'BLOCKED'} (before final sync)")
                 print(json.dumps(result, sort_keys=True, indent=2))
-        else: gc()
+        else: gc(reap_finished=args.reap_finished)
         return 0
     except WorkstreamError as error:
         print(f"workstream: BLOCKED: {error}", file=sys.stderr)

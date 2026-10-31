@@ -29,6 +29,15 @@
 - Non-goals: No fabrication implementation, no art direction, no long-run XP rebalance, no scan UI redesign.
 - Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
+## Refreshed review focus (2026-10-28)
+
+At the implementation's claimed/landed SHA, verify the **actual** Operator service-input integration rather than assuming the older packet's `operator.gd` facade shape. On the 2026-10-28 baseline, F3 ranged extraction is landed and F5 interaction extraction is not; no new review dependency is created by this refresh.
+
+- A held `repair` action still services an eligible damaged structure without also granting vehicle scan knowledge. One service-scan press can award once only when the repair intent is otherwise free and target is eligible. Hold across ticks, suppression/UI, and competing targets do not farm XP.
+- Wrecks are discoverable for diagnosis even though `PilotableVehicle` only makes operational vehicles `interactable`. Check `vehicle_scannable` membership or its actual single authoritative equivalent, without mutating pilotability.
+- The real `OperatorInputFrame` → orchestration → scanner path is exercised; no `Input.*` outside `OperatorInputRouter`, no new combat/ranged state owner, no indirect HP/resource/inventory mutation.
+- Review must validate durable fingerprints, data-owned diminishing returns, condition-aware pattern observability, and serialization exactly as already specified. Do not demand presentation polish or source-strip evidence unrelated to vehicle diagnosis.
+
 ## Handoff
 
 - Next workstream: `vehicle-part-fabrication-recovery-v1 if passed`
