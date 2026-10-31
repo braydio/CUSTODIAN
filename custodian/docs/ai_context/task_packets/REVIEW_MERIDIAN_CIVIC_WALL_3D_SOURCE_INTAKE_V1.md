@@ -23,9 +23,9 @@
 - Max automatic review cycles: `2`
 - Goal: Independently verify exact source provenance, safe decoding, GLB structure, LFS-backed publication and archival-only status.
 - Reviewed implementation acceptance: All acceptance claims in the archived implementation packet.
-- Review evidence: Source files and hashes, decoder revision and invocation, canonical/root GLB hashes, GLB chunk and glTF inventory, Git LFS attributes and remote-main reachability.
+- Review evidence: Source files and hashes, decoder revision and invocation, canonical/root GLB hashes, GLB chunk and glTF inventory, the focused `meridian_civic_wall_source_smoke.py`, changed-file selection and manifest self-check results, Git LFS attributes and remote-main reachability.
 - Correction threshold: Any source mismatch, overwritten artifact, malformed GLB, inconsistent copies, untracked/ordinary-Git large binaries, false provenance, or runtime/approval claim unsupported by the task.
-- Focused validation: Independently recompute source and output hashes; inspect GLB header/chunks/JSON; verify source-work preservation, root-copy equality, LFS attributes and landed main paths; check the decoder limitation is stated.
+- Focused validation: Independently recompute source and output hashes; run `meridian_civic_wall_source_smoke.py` and canonical changed-file validation; inspect GLB header/chunks/JSON; verify source-work preservation, root-copy equality, LFS attributes and landed main paths; check the decoder limitation is stated.
 - Review focus: Confirm the existing decoder was reused, source bytes were preserved, canonical and root files match, and no downstream approval or runtime authority was implied.
 - Acceptance: Produce a findings-first fresh independent review with a canonical `passed` receipt or concrete findings. Do not edit implementation artifacts.
 - Non-goals: No decoder modification, re-decoding, runtime integration, Asset V2 approval, or artistic quality assessment.

@@ -2530,6 +2530,24 @@
       "needs_import": false
     },
     {
+      "id": "meridian_civic_wall_source",
+      "type": "python",
+      "script": "custodian/tools/validation/meridian_civic_wall_source_smoke.py",
+      "tier": "unit",
+      "tags": [
+        "assets",
+        "source-intake",
+        "provenance"
+      ],
+      "owners": [
+        "MERIDIAN_CIVIC_WALL_3D_V1.glb",
+        ".gitattributes",
+        "custodian/tools/validation/meridian_civic_wall_source_smoke.py"
+      ],
+      "timeout_sec": 30,
+      "needs_import": false
+    },
+    {
       "id": "pursuit_frame_asset_family",
       "type": "python",
       "script": "custodian/tools/validation/pursuit_frame_asset_family_smoke.py",
