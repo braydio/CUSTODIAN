@@ -1,9 +1,325 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T01:46:00Z",
-  "source_main_sha": "f848228723513d21412aee0fdbd6bec6514db4e8",
+  "generated_at": "2026-10-31T02:55:17Z",
+  "source_main_sha": "d4bd1f126346fb82554dd9a6557aaefb379854e1",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "operator-3d-tooling-f2d5f042",
+      "headline": "Operator's 3D-to-sprite tooling reaches main, but source-scope review catches a gap",
+      "summary": "A versioned Operator 3D master and model-to-sprite tooling landed and the implementation packet was archived. The original independent review is blocked before reviewer launch because its source declaration omitted 12 of 22 changed paths. A separate exact-scope correction pair is ready; neither visual approval nor live gameplay integration is established.",
+      "body": "Commits 5afa6280 and f2d5f042 land the Operator ITER005 master provenance, inspection tools, static model-to-sprite pipeline and tests, and archive the implementation packet. Commit 26956c12 publishes an exact historical source-scope correction for 12 omitted paths among 22 changed paths. The packet says original review run 20261031T022410Z-7204104581e7 stopped at host validation before reviewer launch. Correction and independent-review packets are published, with review ready; correction implementation is not landed. No genuine accepted PASS, visual fidelity approval or in-game deployment is verified. Next owner: existing correction implementation owner, then separate reviewer.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "assets-art",
+      "workstream": "operator-3d-model-to-sprite-tooling-integration-v1",
+      "occurred_at": "2026-10-31T02:49:14Z",
+      "bullets": [
+        "Operator model-to-sprite implementation landed and archived.",
+        "Original independent review blocked by an exact 12-path source declaration mismatch.",
+        "A bounded correction pair was published; independent acceptance remains outstanding.",
+        "Visual quality and runtime integration are not approved."
+      ],
+      "links": [
+        {
+          "title": "Operator tooling implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5afa6280a32de7855bb60fbdf2c839c8b297810c"
+        },
+        {
+          "title": "Operator implementation archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f2d5f04236aeac20f00c3489091cc777ab2a08c4"
+        },
+        {
+          "title": "Exact source-scope correction packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/26956c120a3cc941068aef2e64bd90d1f74609af"
+        },
+        {
+          "title": "Operator production roadmap",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/design/02_features/animation/OPERATOR_3D_TO_2_5D_PRODUCTION_ROADMAP_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN now has a committed foundation for turning the Operator's experimental 3D model into reproducible sprite candidates. The pipeline and source records have landed, but a review safeguard caught an incomplete declaration of the files involved. That prevents the original independent review from starting.",
+        "sections": [
+          {
+            "heading": "A more reproducible character pipeline",
+            "text": "The new tooling preserves a versioned experimental Operator master and provides inspection and static sprite-generation utilities. This is infrastructure for producing and comparing future character visuals, not a claim that a finished animation or playable character has been approved."
+          },
+          {
+            "heading": "Why the reviewer could not begin",
+            "text": "The original review's host validator reconstructed 22 changed source paths, but 12 were absent from the archived packet's declaration. A newly published correction proposes to attest only those exact historical files and identities, without weakening the general check or replacing the original review run."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Source provenance is now a practical art-pipeline gate",
+            "explanation": "The code can land while its independent review remains blocked by mismatched file accounting. For 3D assets, trustworthy source lineage matters alongside render quality."
+          },
+          {
+            "title": "The correction preserves the original review identity",
+            "explanation": "The proposed exception is tied to immutable commits, file blobs and modes, and activates only after its own accepted independent review. It is not a blanket bypass."
+          }
+        ],
+        "takeaway": "Operator 3D-to-sprite tooling is landed, but its original review and visual approval remain pending.",
+        "next_watch": "Look for the exact source-scope correction implementation and independent PASS, then a fresh plan for the preserved original review run."
+      },
+      "details": {
+        "overview": "Main d4bd1f126346fb82554dd9a6557aaefb379854e1. Operator tooling landed at 5afa6280 and archived at f2d5f042. New correction packet 26956c12 describes 12 omitted paths among 22 changed paths in the original implementation source span.",
+        "ledger": [
+          {
+            "stage": "Operator tooling implementation",
+            "status": "Verified landed and archived",
+            "evidence": "5afa6280 and f2d5f042."
+          },
+          {
+            "stage": "Original independent review",
+            "status": "Blocked before reviewer launch, packet-reported host state",
+            "evidence": "26956c12 packet names original run 20261031T022410Z-7204104581e7 and source-scope mismatch."
+          },
+          {
+            "stage": "Exact-scope correction",
+            "status": "Packet published; implementation not verified landed",
+            "evidence": "26956c12 publishes bounded correction."
+          },
+          {
+            "stage": "Correction independent review",
+            "status": "Ready; not accepted",
+            "evidence": "Review packet Status ready on current main."
+          },
+          {
+            "stage": "Visual/runtime acceptance",
+            "status": "Unknown / not verified",
+            "evidence": "No accepted visual proof or live Godot integration evidence."
+          }
+        ],
+        "notes": [
+          "The exact correction must not edit original implementation or review evidence.",
+          "A separate Meridian Civic Wall archival intake pair was also published as draft/manual, not an imported asset."
+        ],
+        "unknowns": [
+          "Original Arch review process, claim lock, worktree and disk state not independently inspected.",
+          "Current main CI conclusion not established."
+        ],
+        "actions": [
+          "Existing correction owner: implement and validate exact historical attestation.",
+          "Separate reviewer: authenticate correction before any original-run re-plan.",
+          "Existing original review owner: re-plan exact preserved run only after correction acceptance."
+        ]
+      },
+      "related": [],
+      "scorecard": {
+        "stage": "Tooling landed; original review blocked at source validation",
+        "as_of": "2026-10-31T02:55:17Z",
+        "scope": "Operator model-to-sprite implementation and its exact historical correction",
+        "metrics": [
+          {
+            "id": "omitted-source-paths",
+            "label": "OMITTED PATHS",
+            "value": 12,
+            "verification": "reported",
+            "basis": "Correction packet reports 12 omitted among 22 changed source paths.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/26956c120a3cc941068aef2e64bd90d1f74609af"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Land Operator tooling",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5afa6280."
+          },
+          {
+            "label": "Archive implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "f2d5f042."
+          },
+          {
+            "label": "Original source-scope validation",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "12 omitted paths reported in correction packet."
+          },
+          {
+            "label": "Implement exact-scope correction",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Packet published, no correction landing verified."
+          },
+          {
+            "label": "Independently accept correction",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Review packet ready."
+          },
+          {
+            "label": "Resume original review",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Requires correction acceptance and exact-run plan."
+          },
+          {
+            "label": "Visual approval and runtime use",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Not established."
+          }
+        ],
+        "next_gate": "Correction implementation owner must land the exact attestation, then separate reviewer must accept it."
+      }
+    },
+    {
+      "id": "landing-1f7c71191dc6-receipt-capture",
+      "headline": "Receipt-recovery safeguard lands, moving a stalled review toward independent scrutiny",
+      "summary": "CUSTODIAN landed the archived-receipt capture recovery implementation and archived its task packet. It can plan a narrowly authenticated administrative receipt mirror, but the protected review has not been recovered or accepted. Its separate independent review remains ready.",
+      "body": "At main d4bd1f126346fb82554dd9a6557aaefb379854e1, commit 1f7c71191dc69ab61a8eed155533def427c41bcf adds source-bound receipt-capture planning and separately authorized apply, journal/replay protections, regression tests and lifecycle clarification. The archived implementation packet is complete; its summary reports 294 tests and 8/8 changed-file checks. Those are implementation-reported results, not an accepted independent review. The paired review packet remains ready. The original dual-disposition review run 20261031T005522Z-c70dd87f67a4 remains protected: no apply, canonical acceptance or host teardown was verified. Next owner: existing independent reviewer. Current CI conclusion and host worktree/lock/disk status are unverified.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-archived-receipt-capture-recovery-v1",
+      "occurred_at": "2026-10-31T02:35:54Z",
+      "bullets": [
+        "Implementation landed and archived on main.",
+        "Implementation summary reports 294 tests and 8/8 selected changed-file checks.",
+        "Independent review is ready, not accepted.",
+        "Protected original review recovery still needs separate authorization."
+      ],
+      "links": [
+        {
+          "title": "Recovery implementation commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/1f7c71191dc69ab61a8eed155533def427c41bcf"
+        },
+        {
+          "title": "Archived implementation packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
+        },
+        {
+          "title": "Pending independent review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has landed a targeted safeguard for a review that reportedly passed but could not close because its archived receipt was missing. The new code can verify the original evidence and prepare a carefully bounded repair. It does not itself accept the review or authorize touching the protected run.",
+        "sections": [
+          {
+            "heading": "What the safeguard actually changes",
+            "text": "The recovery tool checks the original reviewer identity, recorded outcome and matching evidence before proposing an administrative receipt mirror. A separate authorization is required to apply it. The original reviewer-authored files must remain unchanged."
+          },
+          {
+            "heading": "Why the finish line is still ahead",
+            "text": "The implementation is now in the main codebase and its task packet is archived. Its own independent reviewer has not yet delivered an accepted PASS. Passing implementation tests and landing code are distinct from independent acceptance and from running a recovery on the host."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The repair can be reviewed without altering the protected review",
+            "explanation": "The new implementation uses synthetic tests and a separate apply gate. This makes it possible to scrutinize the recovery mechanism before deciding whether the original evidence should be reconciled."
+          },
+          {
+            "title": "Closeout remains the bottleneck",
+            "explanation": "Until the independent review is accepted and the original run is separately authorized for recovery, the downstream administrator review chain remains gated. No clean worktree teardown is established."
+          }
+        ],
+        "takeaway": "The receipt-recovery implementation has landed; its safety and correctness still require an independent accepted review before any protected recovery.",
+        "next_watch": "Watch for an authenticated PASS and canonical closeout of the receipt-recovery review, then a separate authorization decision on the original run."
+      },
+      "details": {
+        "overview": "Current main d4bd1f126346fb82554dd9a6557aaefb379854e1. Archived-receipt recovery code landed at 1f7c7119; packet archived complete. Review packet remains ready. The original protected run is unchanged as far as GitHub evidence establishes.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "Verified landed and archived",
+            "evidence": "1f7c7119 code commit and archived packet at current main."
+          },
+          {
+            "stage": "Implementation validation",
+            "status": "Reported passing",
+            "evidence": "Implementation summary reports 294 tests and 8/8 selected checks; no independent reproduction here."
+          },
+          {
+            "stage": "Independent review",
+            "status": "Ready; acceptance not verified",
+            "evidence": "REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md Status ready."
+          },
+          {
+            "stage": "Protected original review",
+            "status": "Recovery not authorized",
+            "evidence": "Packet explicitly prohibits protected-run apply during implementation and review."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "Unknown",
+            "evidence": "No trustworthy Arch-local worktree, lock or disk proof."
+          }
+        ],
+        "notes": [
+          "Landed is not independently accepted or live.",
+          "Current main CI conclusion not independently established."
+        ],
+        "unknowns": [
+          "Original host evidence and canonical review receipt remain inaccessible.",
+          "Retained/retired worktree counts and disk free/used unknown."
+        ],
+        "actions": [
+          "Existing independent reviewer: assess the landed receipt-recovery implementation.",
+          "User/operator: only after accepted review and fresh host checks, decide whether to authorize exact protected-run recovery."
+        ]
+      },
+      "related": [
+        {
+          "title": "A recorded review PASS hits a missing-receipt barrier, prompting a targeted recovery plan",
+          "context": "The earlier report documented the missing-receipt blocker that this implementation addresses.",
+          "story_id": "blocker-6064d70-archived-receipt"
+        }
+      ],
+      "scorecard": {
+        "stage": "Landed; independent review pending",
+        "as_of": "2026-10-31T02:55:17Z",
+        "scope": "Archived-receipt recovery pair only",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Publish recovery packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "6064d70 and f8482287."
+          },
+          {
+            "label": "Land implementation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "1f7c7119 and archived packet."
+          },
+          {
+            "label": "Validate implementation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Implementation summary reports 294 tests and 8/8 checks."
+          },
+          {
+            "label": "Independent accepted review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Review packet ready; no accepted receipt."
+          },
+          {
+            "label": "Protected run apply",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Separate authorization required."
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host evidence unavailable."
+          }
+        ],
+        "next_gate": "Existing independent reviewer must issue authenticated disposition before any protected apply decision."
+      }
+    },
     {
       "id": "blocker-6064d70-archived-receipt",
       "headline": "A recorded review PASS hits a missing-receipt barrier, prompting a targeted recovery plan",
@@ -196,5 +512,31 @@
       ],
       "images": []
     }
-  ]
+  ],
+  "snapshot": {
+    "observed_at": "2026-10-31T02:55:17Z",
+    "source_main_sha": "d4bd1f126346fb82554dd9a6557aaefb379854e1",
+    "coverage": "partial",
+    "scope": "Four specifically inspected GitHub packet files: archived receipt recovery implementation and review, Operator tooling implementation and source-scope correction review; not the dispatcher queue.",
+    "metrics": [
+      {
+        "id": "other-inspected-complete-implementations",
+        "label": "INSPECTED LANDED PACKETS",
+        "value": 2,
+        "verification": "verified",
+        "basis": "Exactly two of four named inspected packet files have Status complete in archived/; no project-wide extrapolation.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/f2d5f04236aeac20f00c3489091cc777ab2a08c4"
+      },
+      {
+        "id": "other-inspected-ready-reviews",
+        "label": "INSPECTED READY REVIEWS",
+        "value": 2,
+        "verification": "verified",
+        "basis": "Exactly two of four inspected packet files are independent-review packets with Status ready; not a full queue count.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
+      }
+    ],
+    "focus": "Independent review of landed archived-receipt recovery; separately, exact-scope correction for Operator tooling.",
+    "note": "Partial selected-packet inventory only. Full live dispatcher audit and Arch-local counts unavailable. Main advanced 11 commits from previous feed baseline."
+  }
 }
