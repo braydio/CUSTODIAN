@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-runner-checkout-profile-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -34,6 +34,25 @@
 - Validation: Add focused runner tests for default compatibility, explicit profile propagation, packet-derived dependency coverage, exact implementation-diff coverage, unsafe/missing/untracked/incomplete profile refusal before claim, claim receipt identity, and profile/dependency drift. Run `python3 -m unittest custodian.tools.agent.test_paired_review_runner custodian.tools.agent.test_worktree_provisioning custodian.tools.agent.test_dispatch -v`; run focused packet-contract and category checks; run `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` with complete changed-file coverage; run `python3 -m py_compile custodian/tools/agent/paired_review_runner.py custodian/tools/agent/test_paired_review_runner.py`; verify measured full-versus-profiled checkout allocation and `git diff --check`. Do not launch a broad Godot sweep or hydrate unrelated LFS assets. After landing, retry the existing paired review only through the canonical runner using the published profile and do not start recovery of the real Awakening claim before an independent PASS.
 - Task overrides: `none`
 - Deferred: Once this workstream and its independent review are complete, retry `review-agent-workstream-lightweight-lfs-provisioning-v1` through the canonical runner with the published profile. Only after that separate review passes may the preserved Awakening same-claim recovery be considered.
+
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: The canonical runner retains default full-checkout behavior and accepts an explicit tracked profile only after pre-claim identity, packet, implementation-diff, recursive-import, validation-manifest and profile coverage checks. The dispatcher receipt and run metadata bind the profile path and digest. The real sparse checkout passed its workflow and paired-review validation suites; the 342 manifest-declared paths, literal sibling Python dependencies, and recursive imports combine to 389 required paths with zero profile omissions. Changed-file validation passed both selected checks with complete coverage, 266 paired-review runner tests passed, targeted preflight regressions passed, and compilation/diff checks passed. No protected workstream state or reviewer process changed.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial sparse validation runs exposed manifest-declared scripts/scenarios, a literal sibling Python implementation, a root workflow alias and a skill file outside the Python import closure. The first commit attempt also found the sparse worktree lacked the filename-validation hook script.
+- Root cause / contributing factors: The bootstrap profile and its pre-claim dependency calculation did not represent all data-driven validation and workflow-smoke inputs or literal sibling-file loading.
+- Prevention / pipeline improvement: Profile preflight now derives validation-manifest scripts/scenarios, literal `.with_name("*.py")` sibling dependencies, and recursive local imports of every manifest Python script before dispatch; the published profile includes the additional workflow-smoke and hook inputs needed for sparse execution.
+- Tooling / docs drift discovered: The tracked profile had to include validation-manifest paths and the `custodian-next` skill read by the broader workflow smoke.
+- Follow-up: Complete the fresh post-land paired review through the canonical runner, then retry the existing lightweight-LFS provisioning review only after adapter review PASS.
+- What worked: Exact packet/diff checks, recursive import closure, bounded profile validation and a genuinely sparse changed-file run exposed missing inputs without creating any reviewer claim.
 
 ## Handoff
 - Next workstream: `review-agent-paired-review-runner-checkout-profile-v1`

@@ -12,7 +12,7 @@ Status: implementation and changed-file validation complete; canonical finish an
 - Before a profiled claim, the runner verifies the exact published packets, their publication inputs, the target implementation commit and its full diff, recursive local Python imports, and the validation manifest's declared script and scenario paths.
 - Profile coverage is checked before dispatch. The selected profile and digest are passed to the dispatcher, verified against its claim receipt, and recorded in run metadata.
 - Expanded the tracked bootstrap profile to include the runner's review, validation, workflow-smoke, and manifest dependencies, including the required `.agents/skills/custodian-next/SKILL.md` and this closing summary.
-- Added regression coverage for safe manifest dependency parsing, script/scenario path resolution, profile coverage, and refusal before claim when a dependency is omitted.
+- Added regression coverage for safe manifest dependency parsing, script/scenario and literal sibling path resolution, profile coverage, and refusal before claim when a dependency is omitted.
 
 ## Validation
 
@@ -21,7 +21,7 @@ Status: implementation and changed-file validation complete; canonical finish an
 - `agent_workflow_contract`: passed, including its nested workflow checks.
 - Targeted manifest closure and fail-before-claim tests: 3 passed.
 - `py_compile` for the changed Python files and `git diff --check`: passed.
-- The genuinely sparse worktree materialized the full required checkout profile. The validation manifest yielded 342 declared dependency paths with zero profile omissions. The local sparse worktree measured 27,234,304 allocated bytes across 2,324 files before adding this summary and the final skill materialization; the review profile includes both required paths.
+- The genuinely sparse worktree materialized the full required checkout profile. Preflight derives the 342 manifest-declared paths, literal sibling Python dependencies, and recursive local imports for every manifest Python script: 389 combined required paths with zero omissions. The local sparse worktree measured 27,234,304 allocated bytes across 2,324 files before adding this summary and the final skill materialization; the review profile includes both required paths.
 - No protected Awakening, G2, or Procession claim, lock, worktree, or reviewer process was changed or launched.
 
 ## Next handoff

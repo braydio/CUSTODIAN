@@ -129,16 +129,27 @@ class PairedReviewRunnerTests(unittest.TestCase):
         payload = {
             "tests": [
                 {"type": "python", "script": "tools/check_contract.py"},
+                {"type": "python", "script": "custodian/tools/iteration/test_handoff.py"},
                 {"type": "godot_script", "script": "res://tools/smoke.gd"},
                 {"type": "moment", "scenario": "traversal/route"},
             ],
         }
-        with patch.object(runner, "read_git_text", return_value=json.dumps(payload)):
+        manifest = "custodian/tools/validation/validation_manifest.json"
+        script = "custodian/tools/iteration/test_handoff.py"
+        contents = {
+            manifest: json.dumps(payload),
+            "tools/check_contract.py": "# no sibling import\n",
+            script: 'from pathlib import Path\nSCRIPT = Path(__file__).with_name("publish_review_artifacts.py")\n',
+            "custodian/tools/iteration/publish_review_artifacts.py": "# dependency\n",
+        }
+        with patch.object(runner, "read_git_text", side_effect=lambda _repo, _revision, path: contents[path]):
             dependencies = runner._validation_manifest_dependency_paths(Path("."), "a" * 40)
         self.assertEqual(dependencies, {
-            "custodian/tools/validation/validation_manifest.json",
+            manifest,
             "custodian/tools/validation/known_headless_warnings.json",
             "tools/check_contract.py",
+            script,
+            "custodian/tools/iteration/publish_review_artifacts.py",
             "custodian/tools/smoke.gd",
             "custodian/tools/iteration/scenarios/traversal/route.json",
         })
@@ -171,10 +182,12 @@ class PairedReviewRunnerTests(unittest.TestCase):
              patch.object(runner, "resolve_target_implementation_commit", return_value=("c" * 40, None)), \
              patch.object(runner.worktree_provisioning, "load_profile", return_value=complete), \
              patch.object(runner.worktree_provisioning, "inventory", return_value=[]), \
-             patch.object(runner, "_python_import_dependency_paths", return_value=set()), \
+             patch.object(runner, "_python_import_dependency_paths",
+                          return_value={"custodian/tools/validation/imported.py"}) as import_closure, \
              patch.object(runner, "_validation_manifest_dependency_paths", return_value={
                  "custodian/tools/validation/validation_manifest.json",
                  "custodian/tools/validation/known_headless_warnings.json",
+                 "custodian/tools/validation/test_manifest.py",
              }), \
              patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")):
             profile, main, required = runner.validate_checkout_profile(
@@ -184,7 +197,10 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertEqual(required, {"custodian/tools/review.py", "custodian/tools/review_test.py",
                                     "custodian/tools/impl.py", "custodian/docs/manifest.json",
                                     "custodian/tools/validation/validation_manifest.json",
-                                    "custodian/tools/validation/known_headless_warnings.json"})
+                                    "custodian/tools/validation/known_headless_warnings.json",
+                                    "custodian/tools/validation/test_manifest.py",
+                                    "custodian/tools/validation/imported.py"})
+        self.assertIn("custodian/tools/validation/test_manifest.py", import_closure.call_args.args[2])
 
     def test_checkout_profile_fails_before_claim_when_any_dependency_is_omitted(self):
         review_path = "review.md"

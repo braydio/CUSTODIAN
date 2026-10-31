@@ -426,6 +426,7 @@ def _validation_manifest_dependency_paths(repo: Path, revision: str) -> set[str]
             raise RunnerError(f"validation manifest contains an unsafe dependency path: {value!r}")
         return prefix + path.as_posix()
 
+    python_scripts: set[str] = set()
     for test in payload["tests"]:
         if not isinstance(test, dict):
             raise RunnerError("validation manifest contains a malformed test entry")
@@ -433,14 +434,43 @@ def _validation_manifest_dependency_paths(repo: Path, revision: str) -> set[str]
         if kind in {"python", "godot_script"}:
             script = test.get("script")
             if isinstance(script, str) and script.startswith("res://"):
-                dependencies.add(safe_manifest_path(script.removeprefix("res://"), prefix="custodian/"))
+                resolved = safe_manifest_path(script.removeprefix("res://"), prefix="custodian/")
             else:
-                dependencies.add(safe_manifest_path(script))
+                resolved = safe_manifest_path(script)
+            dependencies.add(resolved)
+            if kind == "python":
+                python_scripts.add(resolved)
         elif kind == "moment":
             scenario = safe_manifest_path(test.get("scenario"))
             dependencies.add(f"custodian/tools/iteration/scenarios/{scenario}.json")
         else:
             raise RunnerError(f"validation manifest has an unsupported test type: {kind!r}")
+
+    # Some focused tests load a sibling implementation with Path.with_name()
+    # instead of importing it. Include those executable files in the pre-claim
+    # closure so sparse validation cannot fail only after a reviewer is claimed.
+    for script in sorted(python_scripts):
+        try:
+            tree = ast.parse(read_git_text(repo, revision, script), filename=script)
+        except (OSError, SyntaxError, ValueError, subprocess.CalledProcessError) as exc:
+            raise RunnerError(f"cannot inspect validation script dependency {script}: {exc}") from exc
+        parent = PurePosixPath(script).parent
+        for node in ast.walk(tree):
+            if (not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute)
+                    or node.func.attr != "with_name" or len(node.args) != 1
+                    or not isinstance(node.args[0], ast.Constant)
+                    or not isinstance(node.args[0].value, str)
+                    or not node.args[0].value.endswith(".py")):
+                continue
+            name = safe_manifest_path(node.args[0].value)
+            if len(PurePosixPath(name).parts) != 1:
+                raise RunnerError(f"validation script has an unsafe sibling dependency: {name!r}")
+            sibling = (parent / name).as_posix()
+            try:
+                read_git_text(repo, revision, sibling)
+            except (OSError, ValueError, subprocess.CalledProcessError) as exc:
+                raise RunnerError(f"validation script dependency is absent from {revision}: {sibling}") from exc
+            dependencies.add(sibling)
     return dependencies
 
 
@@ -485,8 +515,10 @@ def validate_checkout_profile(repo: Path, review_path: str, review_content: str,
             "custodian/tools/agent/dispatch.py",
             "custodian/tools/agent/workstream.py",
         })
+        manifest_dependencies = _validation_manifest_dependency_paths(repo, main)
+        required.update(manifest_dependencies)
+        python_entry_points.update(path for path in manifest_dependencies if path.endswith(".py"))
         required.update(_python_import_dependency_paths(repo, main, python_entry_points))
-        required.update(_validation_manifest_dependency_paths(repo, main))
         missing = sorted(path for path in required if not _profile_covers_path(profile, path))
         if missing:
             raise RunnerError("checkout profile omits required review dependencies: " + ", ".join(missing))
