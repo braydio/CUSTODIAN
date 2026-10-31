@@ -4,7 +4,7 @@
 - Workstream: `agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
@@ -47,3 +47,24 @@
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f`
 - Next action: Fresh independent review of the landed correction; only after its canonical acceptance may either preserved recovery plan be generated/applied.
 - Blockers or open questions: No preexisting canonical R-cycle findings exist because the original review recorded a PASS; OWNER-01/OWNER-02 retain the task owner's explicit attribution and must not be represented as historical reviewer findings.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: The validator now compares the manifest at the exact source-span base with the immutable reviewed-main manifest, authenticates the Procession attestation and manifest blob/mode, rejects global policy changes, and applies canonical test selection/coverage in failed-report, successful-report, and closeout paths. After synchronizing with current `origin/main`, the paired-review runner suite passed 252 tests and canonical changed-file validation passed all 3 selected checks with complete coverage. The runner used a process-local 360-second timeout; no shared manifest or validation policy changed. A separate fresh post-land review is required before either preserved recovery plan may be considered.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The repository's default 120-second budget timed out on the 247-test paired-review runner suite. The canonical changed-file validation was rerun with a process-local 360-second timeout; no shared manifest or validation policy was changed.
+- Root cause / contributing factors: The runner suite takes approximately 155 seconds on this host.
+- Prevention / pipeline improvement: Consider revising the paired-review runner test's manifest timeout in a separately scoped validation-manifest change if this duration is expected to persist.
+- Tooling / docs drift discovered: The current runner timeout is shorter than the measured full-suite duration.
+- Follow-up: `review-agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1`; after formal acceptance, resume only the exact preserved same-run review continuations.
+- What worked: Exact Git revision reads, a verified attestation, and report-path regression tests kept the exception narrow and auditable.

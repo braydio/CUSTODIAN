@@ -4522,7 +4522,8 @@ def _verify_coverage_only_failed_report_provenance(
 
 
 def _failed_host_validation_report_pair(run_dir: Path, original: dict,
-                                        workstream: str, run_id: str) -> dict | None:
+                                        workstream: str, run_id: str,
+                                        source_span: dict | None = None) -> dict | None:
     """Authenticate a complete pre-review failed report pair without rewriting it."""
     if (original.get("workstream") != workstream or original.get("run_id") != run_id
             or original.get("phase") not in {"host_validation_recovery", "host_validation_failed"}
@@ -4635,7 +4636,25 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             manifest = host_validation._pinned_coverage_manifest(
                 Path(metadata["worktree"]), metadata["reviewed_main"],
             )
-            host_validation._validate_canonical_coverage(report, set(code_paths), manifest)
+            span = metadata.get("source_span")
+            if "custodian/tools/validation/validation_manifest.json" in report.get("changed_files", []):
+                trusted_span = source_span
+                if (not isinstance(trusted_span, dict) or not isinstance(span, dict)
+                        or any(span.get(key) != trusted_span.get(key)
+                               for key in ("base", "head", "commits", "paths"))
+                        or metadata.get("implementation_paths") != trusted_span.get("paths")):
+                    return None
+                recorded_provenance = dict(span.get("provenance") or {})
+                trusted_provenance = dict(trusted_span.get("provenance") or {})
+                recorded_provenance.pop("scope_attestation", None)
+                trusted_provenance.pop("scope_attestation", None)
+                if recorded_provenance != trusted_provenance:
+                    return None
+                span = trusted_span
+            host_validation._validate_canonical_coverage(
+                report, set(code_paths), manifest, repo=Path(metadata["worktree"]),
+                reviewed_main=metadata["reviewed_main"], source_span=span,
+            )
         except (HostValidationError, OSError, ValueError):
             return None
     if coverage_only_failure and not _verify_coverage_only_failed_report_provenance(
@@ -4706,7 +4725,18 @@ def _failed_host_validation_retry_state(run_dir: Path, worktree: Path, workstrea
             validation_metadata = json.loads((attempt_dir / "coordinator-validation.json").read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
             raise RunnerError("failed host-validation attempt report or provenance is missing or malformed") from exc
-        report_evidence = _failed_host_validation_report_pair(attempt_dir, child, workstream, run_id)
+        retry_source_span = None
+        if "custodian/tools/validation/validation_manifest.json" in report.get("changed_files", []):
+            try:
+                retry_source_span = host_validation.resolve_validation_source_span(
+                    worktree, child["reviewed_main"], child["implementation_commit"],
+                    child["target_workstream"], child["target_packet_path"],
+                )
+            except (KeyError, HostValidationError) as exc:
+                raise RunnerError("failed retry source-span provenance cannot be independently reconstructed") from exc
+        report_evidence = _failed_host_validation_report_pair(
+            attempt_dir, child, workstream, run_id, retry_source_span,
+        )
         if (report_evidence is None
                 or report_evidence.get("source_changed_during_validation") is not False
                 or attempt.get("report_sha256") != validation_metadata.get("report_sha256")
@@ -4853,7 +4883,17 @@ def _host_recovery_plan_unlocked(repo: Path, workstream: str, run_id: str, *,
     if subprocess.run(["git", "merge-base", "--is-ancestor", reviewed_main, origin_main],
                       cwd=repo, capture_output=True).returncode:
         raise RunnerError("pinned reviewed main is not an ancestor of current origin/main")
-    failed_host_validation = _failed_host_validation_report_pair(run_dir, original, workstream, run_id)
+    active_path, active_content, packet = _active_packet_cached(repo, workstream)
+    try:
+        recovery_source_span = host_validation.resolve_validation_source_span(
+            repo, reviewed_main, original["implementation_commit"],
+            packet.review_target_workstream, packet.review_target_packet,
+        )
+    except (KeyError, HostValidationError):
+        recovery_source_span = None
+    failed_host_validation = _failed_host_validation_report_pair(
+        run_dir, original, workstream, run_id, recovery_source_span,
+    )
     retry_child = None
     retry_number = 1
     failed_import_sidecars = []
@@ -5534,7 +5574,8 @@ def _verify_host_validation_at_commit(repo: Path, run_dir: Path, reviewed_main: 
     except HostValidationError:
         coverage_manifest = None
     try:
-        _validate_report(report, expected_span.get("paths") or [], coverage_manifest)
+        _validate_report(report, expected_span.get("paths") or [], coverage_manifest,
+                         repo=repo, reviewed_main=reviewed_main, source_span=expected_span)
     except HostValidationError as exc:
         raise RunnerError(f"completed continuation report is not canonical and green: {exc}") from exc
     source_hashes = metadata.get("source_sha256")
@@ -6026,7 +6067,19 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                                                        "infrastructure_errors": 0}):
                 raise RunnerError("original host-validation reports do not match the authenticated green run")
             try:
-                _validate_report(report_path, coordinator.get("source_span", {}).get("paths", []))
+                coordinator_repo = Path(str(coordinator.get("worktree", "")))
+                coordinator_reviewed_main = coordinator.get("reviewed_main")
+                coordinator_span = coordinator.get("source_span")
+                if (not coordinator_repo.is_dir() or not isinstance(coordinator_reviewed_main, str)
+                        or not isinstance(coordinator_span, dict)):
+                    raise HostValidationError("original host-validation provenance lacks pinned source identity")
+                coordinator_manifest = host_validation._pinned_coverage_manifest(
+                    coordinator_repo, coordinator_reviewed_main,
+                )
+                report = json.loads(report_path.read_text(encoding="utf-8"))
+                _validate_report(report, coordinator_span.get("paths", []), coordinator_manifest,
+                                 repo=coordinator_repo, reviewed_main=coordinator_reviewed_main,
+                                 source_span=coordinator_span)
             except HostValidationError as exc:
                 raise RunnerError("original host-validation report is not complete and green") from exc
             original_review = Path(str(original.get("worktree"))) / str(original.get("packet"))
