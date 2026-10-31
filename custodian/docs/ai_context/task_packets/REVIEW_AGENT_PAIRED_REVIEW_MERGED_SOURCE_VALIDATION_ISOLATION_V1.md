@@ -1,10 +1,3 @@
-====================================
-    braydenchaffee@archdesk
-  🐧 Sat Oct 31 01:55:44 EDT 2026
-====================================
-🕒 Uptime:   14 hours, 43 minutes
-💽 Disk:     807G/916G
-💾 Memory:   26Gi/31Gi
 # Review: Paired Review Merged-Source Validation Isolation
 
 - Packet schema: `custodian.task_packet.v2`
