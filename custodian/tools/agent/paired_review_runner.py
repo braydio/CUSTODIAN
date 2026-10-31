@@ -19,12 +19,14 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from pathlib import PurePosixPath
 
 TOOLS_ROOT = Path(__file__).resolve().parents[1]
 if str(TOOLS_ROOT) not in sys.path:
     sys.path.insert(0, str(TOOLS_ROOT))
 from godot_project_lock import job_budget_root, scratch_root
 import paired_review_host_validation as host_validation
+import worktree_provisioning
 from paired_review_host_validation import (
     HostValidationError,
     _validate_report,
@@ -301,6 +303,223 @@ def validate_eligible_review(repo: Path, workstream: str):
     if identity_error:
         raise RunnerError(f"review target implementation identity is invalid: {identity_error}")
     return path, content, packet
+
+
+def _publication_inputs(content: str, label: str) -> set[str]:
+    """Read the packet's concrete publication inputs without guessing at prose."""
+    lines = [line for line in content.splitlines()
+             if re.match(r"^\s*-\s*Publication inputs\s*:", line, re.IGNORECASE)]
+    if len(lines) != 1:
+        raise RunnerError(f"{label} must declare exactly one Publication inputs field")
+    value = re.sub(r"^\s*-\s*Publication inputs\s*:\s*", "", lines[0], flags=re.IGNORECASE)
+    if value.lower() == "none":
+        return set()
+    paths: set[str] = set()
+    for item in value.split(";"):
+        match = re.fullmatch(r"\s*`([^`]+)`\s*", item)
+        if not match:
+            raise RunnerError(f"{label} has a malformed Publication inputs entry")
+        path = match.group(1)
+        pure = PurePosixPath(path)
+        if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
+                or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
+            raise RunnerError(f"{label} has an unsafe publication input path: {path!r}")
+        if path in paths:
+            raise RunnerError(f"{label} has an ambiguous duplicate publication input: {path}")
+        paths.add(path)
+    if not paths:
+        raise RunnerError(f"{label} Publication inputs must be `none` or concrete tracked paths")
+    return paths
+
+
+def _profile_covers_path(profile: worktree_provisioning.Profile, path: str) -> bool:
+    return any(path == include or path.startswith(include.rstrip("/") + "/")
+               for include in profile.include)
+
+
+def _python_import_dependency_paths(repo: Path, revision: str, entry_points: set[str]) -> set[str]:
+    """Resolve tracked local Python imports recursively from review entry points."""
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", revision).splitlines())
+    roots: list[str] = []
+    for entry in sorted(entry_points):
+        parent = PurePosixPath(entry).parent.as_posix()
+        if parent not in roots:
+            roots.append(parent)
+    for root in ("custodian/tools/agent", "custodian/tools/validation", "custodian/tools/pipelines",
+                 "custodian/tools/iteration", "custodian/tools", ""):
+        if root not in roots:
+            roots.append(root)
+
+    def resolve(module: str) -> str | None:
+        if not module or any(not part.isidentifier() for part in module.split(".")):
+            return None
+        suffix = module.replace(".", "/")
+        for root in roots:
+            candidate = f"{root}/{suffix}.py" if root else f"{suffix}.py"
+            if candidate in tracked:
+                return candidate
+            package = f"{root}/{suffix}/__init__.py" if root else f"{suffix}/__init__.py"
+            if package in tracked:
+                return package
+        return None
+
+    dependencies: set[str] = set()
+    pending = [path for path in sorted(entry_points) if path.endswith(".py")]
+    visited: set[str] = set()
+    while pending:
+        source = pending.pop()
+        if source in visited:
+            continue
+        visited.add(source)
+        if source not in tracked:
+            raise RunnerError(f"review Python dependency is absent from {revision}: {source}")
+        dependencies.add(source)
+        try:
+            tree = ast.parse(read_git_text(repo, revision, source), filename=source)
+        except (SyntaxError, ValueError) as exc:
+            raise RunnerError(f"cannot inspect review Python dependency {source}: {exc}") from exc
+        package_parts = list(PurePosixPath(source).parent.parts)
+        for node in ast.walk(tree):
+            modules: list[str] = []
+            if isinstance(node, ast.Import):
+                modules.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                if node.level:
+                    base = package_parts[:len(package_parts) - node.level + 1]
+                    prefix = ".".join(base)
+                    if node.module:
+                        prefix = f"{prefix}.{node.module}" if prefix else node.module
+                else:
+                    prefix = node.module or ""
+                if prefix:
+                    modules.append(prefix)
+                    for alias in node.names:
+                        child = f"{prefix}.{alias.name}"
+                        if resolve(child):
+                            modules.append(child)
+            for module in modules:
+                dependency = resolve(module)
+                if dependency:
+                    pending.append(dependency)
+                    dependencies.add(dependency)
+    return dependencies
+
+
+def _validation_manifest_dependency_paths(repo: Path, revision: str) -> set[str]:
+    """Resolve every tracked script/scenario the host validation manifest loads."""
+    manifest_path = "custodian/tools/validation/validation_manifest.json"
+    try:
+        payload = json.loads(read_git_text(repo, revision, manifest_path))
+    except (OSError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
+        raise RunnerError(f"cannot read validation manifest at {revision}: {exc}") from exc
+    if not isinstance(payload, dict) or not isinstance(payload.get("tests"), list):
+        raise RunnerError(f"invalid validation manifest at {revision}")
+
+    dependencies = {manifest_path, "custodian/tools/validation/known_headless_warnings.json"}
+
+    def safe_manifest_path(value: object, *, prefix: str = "") -> str:
+        if not isinstance(value, str) or not value or "\\" in value or "\x00" in value:
+            raise RunnerError("validation manifest contains an unsafe dependency path")
+        path = PurePosixPath(value)
+        if (path.is_absolute() or path.as_posix() != value
+                or any(part in {"", ".", ".."} for part in path.parts)):
+            raise RunnerError(f"validation manifest contains an unsafe dependency path: {value!r}")
+        return prefix + path.as_posix()
+
+    for test in payload["tests"]:
+        if not isinstance(test, dict):
+            raise RunnerError("validation manifest contains a malformed test entry")
+        kind = test.get("type")
+        if kind in {"python", "godot_script"}:
+            script = test.get("script")
+            if isinstance(script, str) and script.startswith("res://"):
+                dependencies.add(safe_manifest_path(script.removeprefix("res://"), prefix="custodian/"))
+            else:
+                dependencies.add(safe_manifest_path(script))
+        elif kind == "moment":
+            scenario = safe_manifest_path(test.get("scenario"))
+            dependencies.add(f"custodian/tools/iteration/scenarios/{scenario}.json")
+        else:
+            raise RunnerError(f"validation manifest has an unsupported test type: {kind!r}")
+    return dependencies
+
+
+def validate_checkout_profile(repo: Path, review_path: str, review_content: str, review_packet,
+                              profile_path: str) -> tuple[worktree_provisioning.Profile, str, set[str]]:
+    """Pin a profile to main and prove it covers both packets and the exact target commit."""
+    pure_profile_path = PurePosixPath(profile_path)
+    if (not profile_path or "\\" in profile_path or "\x00" in profile_path
+            or pure_profile_path.is_absolute() or pure_profile_path.as_posix() != profile_path
+            or any(part in {"", ".", ".."} for part in pure_profile_path.parts)):
+        raise RunnerError(f"checkout profile path is unsafe: {profile_path!r}")
+    try:
+        main = git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+        if subprocess.run(["git", "cat-file", "-e", f"{main}:{profile_path}"], cwd=repo,
+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+            raise RunnerError(f"checkout profile is not tracked at origin/main: {profile_path}")
+        profile = worktree_provisioning.load_profile(repo, main, profile_path)
+        if profile is None:
+            raise RunnerError("checkout profile could not be loaded")
+        if read_git_text(repo, main, review_path) != review_content:
+            raise RunnerError("review packet changed at origin/main during checkout-profile validation")
+        target_path = review_packet.review_target_packet
+        target_content = read_git_text(repo, main, target_path)
+        required = _publication_inputs(review_content, review_path)
+        required.update(_publication_inputs(target_content, target_path))
+        implementation_commit, identity_error = resolve_target_implementation_commit(
+            repo, main, target_path, review_packet.review_target_workstream or "", target_content,
+        )
+        if identity_error or not implementation_commit:
+            raise RunnerError("review target implementation identity is invalid: " + (identity_error or "missing commit"))
+        changed = git(repo, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r",
+                      implementation_commit).splitlines()
+        for path in changed:
+            pure = PurePosixPath(path)
+            if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
+                    or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
+                raise RunnerError(f"target implementation diff contains an unsafe path: {path!r}")
+            required.add(path)
+        python_entry_points = {path for path in required if path.endswith(".py")}
+        python_entry_points.update({
+            "custodian/tools/agent/paired_review_runner.py",
+            "custodian/tools/agent/dispatch.py",
+            "custodian/tools/agent/workstream.py",
+        })
+        required.update(_python_import_dependency_paths(repo, main, python_entry_points))
+        required.update(_validation_manifest_dependency_paths(repo, main))
+        missing = sorted(path for path in required if not _profile_covers_path(profile, path))
+        if missing:
+            raise RunnerError("checkout profile omits required review dependencies: " + ", ".join(missing))
+        for path in _publication_inputs(review_content, review_path) | _publication_inputs(target_content, target_path):
+            if subprocess.run(["git", "cat-file", "-e", f"{main}:{path}"], cwd=repo,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+                raise RunnerError(f"published review dependency is absent from origin/main: {path}")
+        worktree_provisioning.inventory(repo, main, profile)
+        return profile, main, required
+    except worktree_provisioning.ProvisioningError as exc:
+        raise RunnerError(f"invalid checkout profile: {exc}") from exc
+
+
+def verify_checkout_profile_receipt(receipt: dict, profile: worktree_provisioning.Profile,
+                                    required_paths: set[str]) -> None:
+    checkout = receipt.get("checkout")
+    if (not isinstance(checkout, dict) or checkout.get("profile") != profile.path
+            or checkout.get("profile_sha256") != profile.digest):
+        raise RunnerError("dispatcher checkout receipt does not match the validated profile and digest")
+    actual_paths = checkout.get("paths")
+    if not isinstance(actual_paths, list) or any(not isinstance(path, str) for path in actual_paths):
+        raise RunnerError("dispatcher checkout receipt omitted its materialized path inventory")
+    missing = sorted(required_paths - set(actual_paths))
+    if missing:
+        raise RunnerError("dispatcher checkout omitted validated review dependencies: " + ", ".join(missing))
+
+
+def dispatcher_claim_command(repo: Path, workstream: str, checkout_profile: str | None = None) -> list[str]:
+    command = [sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "claim", workstream,
+               "--agent", "codex-reviewer"]
+    if checkout_profile is not None:
+        command.extend(("--checkout-profile", checkout_profile))
+    return command
 
 
 def codex_preflight() -> str:
@@ -3669,13 +3888,19 @@ def launch_codex(argv: list[str], worktree: Path, prompt: str, run_dir: Path, ti
         return process.returncode
 
 
-def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: float | None = None) -> int:
+def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: float | None = None,
+        checkout_profile: str | None = None) -> int:
     if not ID_RE.fullmatch(workstream):
         raise RunnerError("review workstream must be lowercase kebab-case")
     if timeout is not None and (timeout <= 0 or not float(timeout) < float("inf")):
         raise RunnerError("timeout must be a positive finite number")
     repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
-    expected_packet_path, _content, packet = validate_eligible_review(repo, workstream)
+    expected_packet_path, review_content, packet = validate_eligible_review(repo, workstream)
+    selected_profile = None
+    if checkout_profile is not None:
+        selected_profile, profile_main, required_paths = validate_checkout_profile(
+            repo, expected_packet_path, review_content, packet, checkout_profile,
+        )
     executable = codex_path or codex_preflight()
     if codex_path:
         help_result = subprocess.run([executable, "exec", "--help"], text=True, capture_output=True)
@@ -3697,6 +3922,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         metadata = {"schema": SCHEMA, "run_id": run_id, "workstream": workstream,
                     "phase": "preflight_complete", "created_utc": datetime.now(timezone.utc).isoformat(),
                     "run_dir": str(run_dir)}
+        if selected_profile is not None:
+            metadata["checkout_profile"] = {
+                "path": selected_profile.path, "sha256": selected_profile.digest,
+                "validated_main": profile_main, "required_path_count": len(required_paths),
+                "required_paths_sha256": hashlib.sha256(
+                    "\n".join(sorted(required_paths)).encode("utf-8")
+                ).hexdigest(),
+            }
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         prior_run = unresolved_prior_run(common, workstream, run_id)
         if prior_run:
@@ -3704,8 +3937,11 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
             _write(run_dir / "RECOVERY.md", f"A prior run for `{workstream}` passed claim and has unresolved state. Recover it before another review claim. Prior evidence: `{prior_run}`. No new dispatcher claim was attempted.\n")
             raise RunnerError(f"prior claimed review needs recovery before retry; inspect {prior_run}; no new claim attempted")
-        claim_cmd = [sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "claim", workstream,
-                     "--agent", "codex-reviewer"]
+        claim_cmd = dispatcher_claim_command(repo, workstream, checkout_profile)
+        if selected_profile is not None:
+            git(repo, "fetch", "origin", "main")
+            if git(repo, "rev-parse", "--verify", "origin/main^{commit}") != profile_main:
+                raise RunnerError("origin/main changed after checkout-profile validation; no claim attempted")
         claimed = subprocess.run(claim_cmd, cwd=repo, text=True, capture_output=True)
         _write(run_dir / "claim.stdout", redact(claimed.stdout))
         _write(run_dir / "claim.stderr", redact(claimed.stderr))
@@ -3722,6 +3958,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             raise
         receipt_bytes = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("utf-8")
         _write_bytes_exclusive(run_dir / "claim-receipt.json", receipt_bytes)
+        if selected_profile is not None:
+            try:
+                verify_checkout_profile_receipt(receipt, selected_profile, required_paths)
+            except RunnerError as exc:
+                metadata.update({"phase": "claim_profile_mismatch", "profile_error": redact(str(exc))})
+                _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+                _write(run_dir / "RECOVERY.md", f"Dispatcher claimed `{workstream}` but its checkout receipt did not match the selected profile `{selected_profile.path}`. Preserve the claim and worktree in the receipt. Run evidence: `{run_dir}`. Do not retry or reclaim.\n")
+                raise
         worktree = Path(receipt["worktree"]).resolve()
         actual_path = receipt["packet"]
         if actual_path != expected_packet_path:
@@ -3735,6 +3979,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         # Pin the baseline from the claimed checkout after dispatch has finished
         # synchronizing it. Keep the SHA and target bytes fixed for the full run.
         reviewed_main = git(worktree, "rev-parse", "--verify", "origin/main^{commit}")
+        if selected_profile is not None and reviewed_main != profile_main:
+            metadata.update({"phase": "claim_profile_main_mismatch", "reviewed_main": reviewed_main})
+            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+            _write(run_dir / "RECOVERY.md", "Dispatcher claimed " + workstream
+                   + " on " + reviewed_main + " after profile validation pinned "
+                   + profile_main + ". Preserve the claim and worktree. Run evidence: "
+                   + str(run_dir) + ". Do not retry or reclaim.\n")
+            raise RunnerError("dispatcher checkout main differs from the profile-validated main; preserve the claim")
         try:
             target_content = read_git_text(worktree, reviewed_main, packet.review_target_packet)
         except ValueError as exc:
@@ -7097,6 +7349,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("review_workstream", help="exact paired review workstream; global-next is unsupported")
     parser.add_argument("--timeout", type=float, default=None)
+    parser.add_argument("--checkout-profile", default=None,
+                        help="tracked path-exact checkout profile validated against the published review dependencies")
     parser.add_argument("--continue-run", default=None,
                         help="continue this exact preserved paired-review run in a new fresh reviewer context")
     parser.add_argument("--authorize-fresh-reviewer-context", action="store_true",
@@ -7124,6 +7378,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="operator attests missing checkout held no unique untracked/ignored evidence")
     args = parser.parse_args(argv)
     try:
+        if args.checkout_profile is not None and (args.continue_run is not None or args.authorize_fresh_reviewer_context
+                or args.recover_host_validation or args.recover_invalid_disposition
+                or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
+                or args.recover_dual_disposition or args.plan or args.apply or args.plan_sha256):
+            raise RunnerError("--checkout-profile applies only to a new canonical paired-review claim")
         if args.recover_dual_disposition:
             if (args.continue_run is None or not args.authorize_fresh_reviewer_context
                     or not args.plan_sha256 or args.recover_host_validation or args.recover_invalid_disposition
@@ -7206,7 +7465,8 @@ def main(argv: list[str] | None = None) -> int:
                 raise RunnerError("continuation requires both --continue-run and --authorize-fresh-reviewer-context")
             return continue_run(Path.cwd(), args.review_workstream, args.continue_run,
                                 authorize_fresh_reviewer_context=True, timeout=args.timeout)
-        return run(Path.cwd(), args.review_workstream, timeout=args.timeout)
+        return run(Path.cwd(), args.review_workstream, timeout=args.timeout,
+                   checkout_profile=args.checkout_profile)
     except (RunnerError, OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
         return 2

@@ -111,6 +111,176 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def test_profile_publication_inputs_are_concrete_and_path_safe(self):
+        self.assertEqual(runner._publication_inputs(
+            "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`\n", "sample"),
+            {"custodian/tools/a.py", "custodian/tests/a.py"})
+        self.assertEqual(runner._publication_inputs("- Publication inputs: none\n", "sample"), set())
+        for malformed in (
+            "- Publication inputs: `../secret`\n",
+            "- Publication inputs: `safe.py`; prose\n",
+            "- Publication inputs: `same.py`; `same.py`\n",
+            "- Publication inputs: `safe.py`\n- Publication inputs: `other.py`\n",
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(runner.RunnerError):
+                runner._publication_inputs(malformed, "sample")
+
+    def test_validation_manifest_dependencies_include_scripts_and_moment_scenarios(self):
+        payload = {
+            "tests": [
+                {"type": "python", "script": "tools/check_contract.py"},
+                {"type": "godot_script", "script": "res://tools/smoke.gd"},
+                {"type": "moment", "scenario": "traversal/route"},
+            ],
+        }
+        with patch.object(runner, "read_git_text", return_value=json.dumps(payload)):
+            dependencies = runner._validation_manifest_dependency_paths(Path("."), "a" * 40)
+        self.assertEqual(dependencies, {
+            "custodian/tools/validation/validation_manifest.json",
+            "custodian/tools/validation/known_headless_warnings.json",
+            "tools/check_contract.py",
+            "custodian/tools/smoke.gd",
+            "custodian/tools/iteration/scenarios/traversal/route.json",
+        })
+        for invalid in ("../escape.py", "/absolute.py", "bad\\path.py"):
+            with self.subTest(invalid=invalid), \
+                 patch.object(runner, "read_git_text", return_value=json.dumps({
+                     "tests": [{"type": "python", "script": invalid}],
+                 })), \
+                 self.assertRaisesRegex(runner.RunnerError, "unsafe dependency path"):
+                runner._validation_manifest_dependency_paths(Path("."), "a" * 40)
+
+    def test_checkout_profile_must_cover_both_packets_and_exact_implementation_diff(self):
+        review_path = "custodian/docs/ai_context/task_packets/REVIEW_SAMPLE.md"
+        target_path = "custodian/docs/ai_context/task_packets/archived/SAMPLE_IMPL.md"
+        review_content = ("- Publication inputs: `custodian/tools/review.py`; "
+                          "`custodian/tools/review_test.py`\n")
+        target_content = ("- Publication inputs: `custodian/tools/impl.py`; "
+                          "`custodian/docs/manifest.json`\n")
+        packet = SimpleNamespace(review_target_packet=target_path, review_target_workstream="sample-impl")
+        profile_path = "custodian/docs/ai_context/worktree_profiles/sample.json"
+        complete = runner.worktree_provisioning.Profile(
+            profile_path, "a" * 64, ("custodian/tools", "custodian/docs"), (),
+        )
+        with patch.object(runner, "git", side_effect=lambda _repo, *args, **_kwargs:
+                          "b" * 40 if args == ("rev-parse", "--verify", "origin/main^{commit}")
+                          else "custodian/tools/impl.py\ncustodian/tools/review_test.py\n"), \
+             patch.object(runner, "read_git_text",
+                          side_effect=lambda _repo, _revision, path:
+                          review_content if path == review_path else target_content), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("c" * 40, None)), \
+             patch.object(runner.worktree_provisioning, "load_profile", return_value=complete), \
+             patch.object(runner.worktree_provisioning, "inventory", return_value=[]), \
+             patch.object(runner, "_python_import_dependency_paths", return_value=set()), \
+             patch.object(runner, "_validation_manifest_dependency_paths", return_value={
+                 "custodian/tools/validation/validation_manifest.json",
+                 "custodian/tools/validation/known_headless_warnings.json",
+             }), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")):
+            profile, main, required = runner.validate_checkout_profile(
+                Path("."), review_path, review_content, packet, profile_path)
+        self.assertEqual(profile, complete)
+        self.assertEqual(main, "b" * 40)
+        self.assertEqual(required, {"custodian/tools/review.py", "custodian/tools/review_test.py",
+                                    "custodian/tools/impl.py", "custodian/docs/manifest.json",
+                                    "custodian/tools/validation/validation_manifest.json",
+                                    "custodian/tools/validation/known_headless_warnings.json"})
+
+    def test_checkout_profile_fails_before_claim_when_any_dependency_is_omitted(self):
+        review_path = "review.md"
+        target_path = "target.md"
+        review_content = "- Publication inputs: `review_test.py`\n"
+        target_content = "- Publication inputs: `impl.py`\n"
+        packet = SimpleNamespace(review_target_packet=target_path, review_target_workstream="sample-impl")
+        profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64,
+                                                       ("review_test.py", "impl.py"), ())
+        with patch.object(runner, "git", side_effect=lambda _repo, *args, **_kwargs:
+                          "b" * 40 if args == ("rev-parse", "--verify", "origin/main^{commit}")
+                          else "omitted_from_profile.py"), \
+             patch.object(runner, "read_git_text",
+                          side_effect=lambda _repo, _revision, path:
+                          review_content if path == review_path else target_content), \
+             patch.object(runner, "resolve_target_implementation_commit", return_value=("c" * 40, None)), \
+             patch.object(runner.worktree_provisioning, "load_profile", return_value=profile), \
+             patch.object(runner, "_python_import_dependency_paths", return_value=set()), \
+             patch.object(runner, "_validation_manifest_dependency_paths",
+                          return_value={"omitted_from_profile.py"}), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")):
+            with self.assertRaisesRegex(runner.RunnerError, "omitted_from_profile.py"):
+                runner.validate_checkout_profile(Path("."), review_path, review_content, packet, "profile.json")
+
+    def test_checkout_profile_rejects_untracked_profile_before_claim(self):
+        with patch.object(runner, "git", return_value="b" * 40), \
+             patch.object(runner.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", "")) as git:
+            with self.assertRaisesRegex(runner.RunnerError, "not tracked at origin/main"):
+                runner.validate_checkout_profile(Path("."), "review.md", "", SimpleNamespace(), "missing.json")
+            git.assert_called_once()
+
+    def test_unsafe_checkout_profile_path_is_rejected_before_git_access(self):
+        with patch.object(runner, "git") as git:
+            with self.assertRaisesRegex(runner.RunnerError, "path is unsafe"):
+                runner.validate_checkout_profile(Path("."), "review.md", "", SimpleNamespace(), "../outside.json")
+            git.assert_not_called()
+
+    def test_profile_dependency_failure_stops_before_dispatch_claim(self):
+        packet_text = review_packet()
+        packet = runner.parse_packet("review.md", packet_text)
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp)
+            with patch.object(runner, "git", return_value=str(repo)), \
+                 patch.object(runner, "validate_eligible_review",
+                              return_value=("review.md", packet_text, packet)), \
+                 patch.object(runner, "validate_checkout_profile",
+                              side_effect=runner.RunnerError("profile omits required dependency")), \
+                 patch.object(runner.subprocess, "run") as dispatch:
+                with self.assertRaisesRegex(runner.RunnerError, "omits required dependency"):
+                    runner.run(repo, "review-sample", checkout_profile="profile.json")
+                dispatch.assert_not_called()
+
+    def test_bootstrap_profile_covers_actual_sparse_runner_and_test_import_closure(self):
+        profile_path = "custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json"
+        raw = (ROOT / profile_path).read_bytes()
+        value = json.loads(raw)
+        profile = runner.worktree_provisioning.Profile(
+            profile_path, hashlib.sha256(raw).hexdigest(), tuple(value["include_paths"]),
+            tuple(value["hydrate_lfs_paths"]),
+        )
+        main = runner.git(ROOT, "rev-parse", "origin/main^{commit}")
+        entry_points = {
+            "custodian/tools/agent/paired_review_runner.py",
+            "custodian/tools/agent/test_paired_review_runner.py",
+            "custodian/tools/agent/dispatch.py",
+            "custodian/tools/agent/workstream.py",
+        }
+        dependencies = runner._python_import_dependency_paths(ROOT, main, entry_points)
+        missing = sorted(path for path in dependencies if not runner._profile_covers_path(profile, path))
+        self.assertEqual(missing, [])
+        self.assertIn("custodian/tools/godot_project_lock.py", dependencies)
+        self.assertIn("custodian/tools/pipelines/godot_import_preflight.py", dependencies)
+        self.assertIn("custodian/tools/iteration/changed_file_router.py", dependencies)
+
+    def test_profile_dispatch_and_claim_receipt_are_bound_to_path_digest_and_dependencies(self):
+        command = runner.dispatcher_claim_command(Path("repo"), "review-sample")
+        self.assertNotIn("--checkout-profile", command)
+        profiled = runner.dispatcher_claim_command(Path("repo"), "review-sample", "profile.json")
+        self.assertEqual(profiled[-2:], ["--checkout-profile", "profile.json"])
+        profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
+        receipt = {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
+                                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"]}}
+        runner.verify_checkout_profile_receipt(receipt, profile,
+                                              {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+        for invalid in (
+            {"checkout": {"profile": "other.json", "profile_sha256": "d" * 64,
+                           "paths": ["custodian/tools/a.py"]}},
+            {"checkout": {"profile": "profile.json", "profile_sha256": "e" * 64,
+                           "paths": ["custodian/tools/a.py"]}},
+            {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
+                           "paths": ["custodian/tools/a.py"]}},
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(runner.RunnerError):
+                runner.verify_checkout_profile_receipt(
+                    invalid, profile, {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+
     def test_finish_index_recovery_authenticates_original_five_message_pass(self):
         messages = ["progress: reconstructing", "progress: checking evidence",
                     "progress: running focused tests", "progress: findings-first review"]
@@ -3423,14 +3593,24 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             cache_root = base / "review-cache" / "custodian"
             cache_root.mkdir(parents=True)
 
+            profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64,
+                                                           ("custodian/tools/agent",), ())
+            required_paths = {"custodian/tools/agent/paired_review_runner.py"}
             receipt = {"result": "claimed", "workstream": "review-sample", "verified": True,
-                       "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path}
+                       "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path,
+                       "checkout": {"profile": profile.path, "profile_sha256": profile.digest,
+                                    "paths": sorted(required_paths)}}
             completed = subprocess.CompletedProcess([], 0, "CLAIMED\n" + runner.CLAIM_SENTINEL + json.dumps(receipt), "")
             original_run = subprocess.run
             def run_side_effect(argv, *args, **kwargs):
                 if argv and len(argv) > 1 and str(argv[1]).endswith("dispatch.py"):
                     self.assertEqual(argv[2:5], ["claim", "review-sample", "--agent"])
                     self.assertEqual(argv[5], "codex-reviewer")
+                    if len(dispatch_commands) == 0:
+                        self.assertEqual(argv[-2:], ["--checkout-profile", profile.path])
+                    else:
+                        self.assertNotIn("--checkout-profile", argv)
+                    dispatch_commands.append(argv)
                     return completed
                 if argv and argv[:2] == ["git", "show"]:
                     requested = argv[2]
@@ -3443,6 +3623,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                 return original_run(argv, *args, **kwargs)
 
             summary_path = "REVIEW_SAMPLE_CLAUDE_SUMMARY.md"
+            dispatch_commands = []
             summary = "## Findings\nPass.\n\n## Next Handoff\n- Next workstream: none\n- Next action: done\n"
             summary_available = {"value": True}
             def git_side_effect(_repo, *args, check=True):
@@ -3521,6 +3702,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                         "metadata_sha256": "def456", "summary": {"passed": 1}, "selected": ["focused"]}
 
             with patch.object(runner, "validate_eligible_review", return_value=(packet_path, review_packet(), runner.parse_packet(packet_path, review_packet()))), \
+                 patch.object(runner, "validate_checkout_profile", return_value=(profile, "a" * 40, required_paths)), \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
                  patch.object(runner, "run_coordinator_validation", side_effect=fake_host_validation), \
                  patch.object(runner, "verify_coordinator_validation"), \
@@ -3534,7 +3716,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                      "complete": summary_available["value"], "summary_path": summary_path,
                      "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \
                  patch.object(runner, "common_dir", return_value=repo / ".git"):
-                self.assertEqual(runner.run(repo, "review-sample"), 0)
+                self.assertEqual(runner.run(repo, "review-sample", checkout_profile=profile.path), 0)
                 summary_available["value"] = False
                 with self.assertRaisesRegex(runner.RunnerError, "without durable review state"):
                     runner.run(repo, "review-sample")
@@ -3546,6 +3728,8 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             self.assertNotIn("should-not-persist", log_text)
             metadata = json.loads((successful_run / "metadata.json").read_text())
             self.assertEqual(metadata["phase"], "complete")
+            self.assertEqual(metadata["checkout_profile"]["path"], profile.path)
+            self.assertEqual(metadata["checkout_profile"]["sha256"], profile.digest)
             self.assertEqual(metadata["next_handoff"].splitlines()[0], "- Next workstream: none")
             failed_run = next(path for path in run_dirs if json.loads((path / "metadata.json").read_text())["phase"] == "failed_missing_durable_review_state")
             self.assertTrue((failed_run / "RECOVERY.md").is_file())
