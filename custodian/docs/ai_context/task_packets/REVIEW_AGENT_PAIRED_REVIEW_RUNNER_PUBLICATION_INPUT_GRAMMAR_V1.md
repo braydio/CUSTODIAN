@@ -1,0 +1,38 @@
+# REVIEW: Paired-review runner publication-input grammar compatibility
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `review-agent-paired-review-runner-publication-input-grammar-v1`
+- Category: `agent-ops`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P0`
+- Depends on: `agent-paired-review-runner-publication-input-grammar-v1`
+- Locks: `paired-review-runner-checkout-profile`
+- Kind: `review`
+- Review: `none`
+- Review target workstream: `agent-paired-review-runner-publication-input-grammar-v1`
+- Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md`
+- Reviewed main: `96fa884e3122f274a1b0ac325169c170cda31f15`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae5d404-c86c-83ea-aec4-6cd3d75af933`
+- Visual review: `none`
+- Reviewer context: `fresh`
+- Reviewer provenance: `same-agent-fresh-context`
+- Review modes: `code, workflow`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Goal: Independently verify the shared publication-input grammar correction and the active adapter review's non-circular acceptance contract.
+- Completion boundary: Review the exact landed implementation, regression tests, original archived packet preservation, and active adapter review packet change. Record a fresh independent PASS or concrete findings.
+- Current measured state: The canonical runner rejects conventional terminal punctuation in both affected packets before claim. The archived parent packet is immutable evidence. The active adapter review is eligible but unclaimed and currently circular with the provisioning review handoff.
+- Evidence: Exact landed diff; original and current archived packet blob identity; shared parser positive/adversarial tests; runner and authoring-preflight integration tests; active review packet diff; dispatcher audit proving protected reviews remained unclaimed before correction review.
+- Task-specific authority: The implementation packet and archived target; `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/validate_task_packet_authoring.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`.
+- Work surface: Read-only inspection of the exact landed grammar/parser, its tests, active adapter review packet and archived parent implementation packet. Only the canonical review receipt, this review packet lifecycle/archive metadata, its required summary, and bounded correction/re-review packets may be written.
+- Publication inputs: `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/test_task_packet_contract.py`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/validate_task_packet_authoring.py`; `custodian/tools/agent/test_validate_task_packet_authoring.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md`; `custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md`
+- Correction threshold: Any unsafe path accepted, malformed suffix accepted, runner/preflight grammar divergence, archive mutation, circular review prerequisite, claim before correction PASS, or alteration of protected review identities/evidence is blocking. Do not repair implementation code in this review workstream.
+- Focused validation: Independently run the shared grammar, runner, and packet-authoring tests; inspect the exact immutable archived packet identity and active review change; verify changed-file coverage and `git diff --check`; confirm correction PASS precedes adapter review launch.
+- Review focus: (1) Exact semicolon/backtick parser contract and terminal-period allowance. (2) Adversarial malformed/unsafe/duplicate cases. (3) One shared parser implementation used by runner and authoring preflight. (4) Archived implementation packet preserved byte-for-byte. (5) Active adapter review can pass independently while the provisioning review remains downstream. (6) No protected claim, lock, review evidence, or reviewer verdict was changed.
+- Acceptance: PASS only when the landed implementation satisfies every implementation acceptance claim with independent evidence, all declared publication inputs are present, the archived packet blob is unchanged, and the active adapter review contract is no longer circular. Otherwise record concrete findings with stable cycle-scoped IDs. Do not launch either protected review from this correction review.
+- Non-goals: Review the adapter implementation's product correctness; accept the adapter or provisioning review; launch/recover Awakening; modify reviewed implementation or protected evidence.
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
+- Summary backlink: Include the exact Authoring chat URL in every durable summary and final Next Handoff.
+- Handoff: After correction PASS, re-check the active adapter review eligibility and run it through the canonical sparse-profile runner. The original provisioning review remains downstream of adapter PASS.

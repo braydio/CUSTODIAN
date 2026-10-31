@@ -1,0 +1,38 @@
+# Paired-review runner publication-input grammar compatibility
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-paired-review-runner-publication-input-grammar-v1`
+- Category: `agent-ops`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P0`
+- Depends on: `agent-paired-review-runner-checkout-profile-v1`
+- Locks: `paired-review-runner-checkout-profile`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, workflow`
+- Paired review workstream: `review-agent-paired-review-runner-publication-input-grammar-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Reviewed main: `96fa884e3122f274a1b0ac325169c170cda31f15`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae5d404-c86c-83ea-aec4-6cd3d75af933`
+- Visual review: `none`
+- Goal: Make published task-packet publication-input parsing consistently accept the repository's conventional single terminal period without weakening path validation, and remove the adapter review's circular downstream prerequisite.
+- Completion boundary: Add one shared, strict publication-input parser used by the paired-review runner and packet-authoring preflight; update the active adapter review contract so it can independently assess the adapter before the original provisioning review runs; add focused positive and adversarial tests.
+- Current measured state: At `96fa884e3122f274a1b0ac325169c170cda31f15`, both the active adapter review packet and its archived implementation packet end their final backtick path with a sentence period outside the backtick. The runner rejects this conventional form before dispatch claim. The active review acceptance/procedure also require the provisioning review to complete while its handoff says to launch provisioning only after adapter PASS.
+- Evidence: RC-078/RC-079 coordination directives in the Authoring chat; `paired_review_runner.py:_publication_inputs`; both exact packet fields; `workstream.py` archived-packet blob immutability check.
+- Task-specific authority: `custodian/AGENTS.md`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; the archived parent implementation packet and the active paired-review packet named below.
+- Work surface: Shared publication-input grammar in `custodian/tools/agent/task_packet_contract.py`; runner integration and tests in `custodian/tools/agent/paired_review_runner.py` and `test_paired_review_runner.py`; authoring-preflight integration and tests in `validate_task_packet_authoring.py` and `test_validate_task_packet_authoring.py`; shared-contract tests in `test_task_packet_contract.py`; the active adapter review packet `custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md`.
+- Publication inputs: `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/test_task_packet_contract.py`; `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/validate_task_packet_authoring.py`; `custodian/tools/agent/test_validate_task_packet_authoring.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json`; `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md`
+- Change: Add one shared parser for the exact backtick-path, semicolon-separated field. Permit one trailing period only after the final path's closing backtick. Continue rejecting punctuation elsewhere, prose, duplicates, unsafe/traversal paths, empty values, and untracked required paths. Use this parser from both the canonical review runner and task-packet authoring preflight. Amend only the active adapter review packet through its authorized lifecycle so adapter acceptance is decided independently; leave the original provisioning review as the downstream successor after adapter PASS. Preserve archived packet bytes.
+- Preserve: The archived implementation packet byte-for-byte; exact packet and claim identities; path-safety and tracked-path checks; full-checkout and sparse-profile behavior; canonical dispatcher, reviewer, verdict, lock, and evidence gates; the provisioning review claim and all protected work.
+- Non-goals: Launch either review in this implementation workstream; edit archived packets or reviewer evidence; change dispatcher eligibility or the original implementation acceptance; claim/recover Awakening; alter unrelated packet-authoring behavior.
+- Acceptance: (A1) The shared parser accepts backtick paths separated by semicolons with no suffix and with exactly one period after the final backtick. (A2) It rejects a period after a non-final path, extra punctuation/prose, duplicate paths, unsafe/traversal paths, malformed delimiters, and empty fields. (A3) Runner and authoring preflight call the same parser and fail closed on identical malformed forms. (A4) Regression tests prove the actual active and archived packet publication-input fields parse while the archived packet blob is unchanged. (A5) The active adapter review acceptance/procedure no longer requires the provisioning review to finish first; it verifies the adapter independently and leaves the original provisioning review as the downstream action after PASS. (A6) The canonical adapter review remains unclaimed until this implementation and its independent paired review land complete; no protected claim, lock, or review evidence is changed.
+- Validation: Run focused shared-contract, paired-review-runner, and packet-authoring-preflight tests; targeted authoring validation for this packet pair and the active adapter review packet; category validation; managed packet-index verification; `py_compile` on changed Python files; full changed-file validation; and `git diff --check`. Then complete the fresh-context paired review through the canonical runner. Do not launch the adapter or provisioning review until this correction's independent review passes.
+- Task overrides: `none`
+- Deferred: A future broader packet schema or grammar redesign; the original provisioning review and any Awakening recovery remain downstream of accepted adapter review.
+- Summary backlink: Include the exact Authoring chat URL in every durable summary and final Next Handoff.
+- Completion Truth: `custodian.task_completion.v1` — record Goal, Completion boundary, and Acceptance truth with concrete evidence before finish.
+- Execution Feedback: `custodian.task_feedback.v1` — record validation/tooling feedback before finish.
