@@ -4,7 +4,7 @@
 - Workstream: `agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
