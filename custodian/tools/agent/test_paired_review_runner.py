@@ -4000,8 +4000,10 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_operator_3d_scope_approval_history(self, *, review_outcome="passed"):
         """Build a disposable Git history with the exact source span and a synthetic correction review."""
         repository = Path(self.temp.name) / f"operator-3d-scope-{len(list(Path(self.temp.name).glob('operator-3d-scope-*')))}"
+        # The real correction is now archived on origin/main. Base the synthetic
+        # approval on its immutable parent, where both source packets were active.
         base_main = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+            ["git", "-C", str(ROOT), "rev-parse", "9845e1db2^"],
             check=True, text=True, capture_output=True,
         ).stdout.strip()
         subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT), str(repository)], check=True)

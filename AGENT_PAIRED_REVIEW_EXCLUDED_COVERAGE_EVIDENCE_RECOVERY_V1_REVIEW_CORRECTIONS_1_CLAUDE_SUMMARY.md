@@ -16,10 +16,12 @@ Implementation and technical validation are complete; fresh paired review is pen
 ## Validation so far
 
 - Focused attested-manifest tests: PASS.
-- Canonical changed-file validation after synchronizing with `origin/main`: PASS, 3 selected checks, 3 passed, 0 failed/timed out, with complete coverage. `paired_review_runner_unit` passed all 247 tests in 144.414 seconds using a process-local 360-second timeout; no manifest or shared policy was changed. Report: `/tmp/custodian-procession-correction-after-sync.json`.
+- Canonical changed-file validation after synchronizing with current `origin/main`: PASS, 3 selected checks, 3 passed, 0 failed/timed out, with complete coverage. `paired_review_runner_unit` passed all 252 tests in 169.322 seconds using a process-local 360-second timeout; no manifest or shared policy was changed. Report: `/tmp/custodian-procession-correction-final.json`.
 - Packet authoring preflight: PASS.
 - Review pairing validation: PASS (149 review packets).
 - `py_compile` and `git diff --check`: PASS.
+
+The latest `origin/main` sync added active Operator 3D attestation fixture tests. Their helper assumed the setup packets were still active on current main. The fixture now starts at the immutable pre-archive parent for that specific attestation workstream; the focused regressions and full suite pass against the current main history.
 
 ## Safety boundary
 

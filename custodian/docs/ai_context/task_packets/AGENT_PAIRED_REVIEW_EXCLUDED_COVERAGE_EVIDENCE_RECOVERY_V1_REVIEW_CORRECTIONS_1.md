@@ -55,7 +55,7 @@
 - Completion boundary satisfied: `yes`
 - Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: The validator now compares the manifest at the exact source-span base with the immutable reviewed-main manifest, authenticates the Procession attestation and manifest blob/mode, rejects global policy changes, and applies canonical test selection/coverage in failed-report, successful-report, and closeout paths. The paired-review runner suite passed 247 tests; canonical changed-file validation passed both selected checks with complete coverage. A separate fresh post-land review is required before either preserved recovery plan may be considered.
+- Evidence: The validator now compares the manifest at the exact source-span base with the immutable reviewed-main manifest, authenticates the Procession attestation and manifest blob/mode, rejects global policy changes, and applies canonical test selection/coverage in failed-report, successful-report, and closeout paths. After synchronizing with current `origin/main`, the paired-review runner suite passed 252 tests and canonical changed-file validation passed all 3 selected checks with complete coverage. The runner used a process-local 360-second timeout; no shared manifest or validation policy changed. A separate fresh post-land review is required before either preserved recovery plan may be considered.
 
 ## Execution Feedback
 
