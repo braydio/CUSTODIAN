@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 import subprocess
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 PACKET_ROOT = "custodian/docs/ai_context/task_packets"
 FIELDS = (
@@ -73,6 +73,58 @@ _DISPOSITIONS = {"removed", "intentionally-preserved", "n/a"}
 
 class TaskPacketContractError(RuntimeError):
     pass
+
+
+def parse_publication_inputs(
+    text: str, label: str, *, allow_missing: bool = False,
+) -> set[str]:
+    """Parse exact backtick paths, permitting one sentence period at the end."""
+    lines = [line for line in text.splitlines()
+             if re.match(r"^\s*-\s*Publication inputs\s*:", line, re.IGNORECASE)]
+    if not lines and allow_missing:
+        return set()
+    if len(lines) != 1:
+        raise TaskPacketContractError(
+            f"{label} must declare exactly one Publication inputs field"
+        )
+
+    value = re.sub(
+        r"^\s*-\s*Publication inputs\s*:\s*", "", lines[0], flags=re.IGNORECASE
+    )
+    if value.lower() == "none":
+        return set()
+
+    # Only a period immediately following the final closing backtick is
+    # conventional sentence punctuation. Keep all other punctuation visible
+    # to the strict item parser below.
+    terminal = value.rstrip()
+    if terminal.endswith("`."):
+        value = terminal[:-1]
+
+    paths: set[str] = set()
+    for item in value.split(";"):
+        match = re.fullmatch(r"\s*`([^`]+)`\s*", item)
+        if not match:
+            raise TaskPacketContractError(
+                f"{label} has a malformed Publication inputs entry"
+            )
+        path = match.group(1)
+        pure = PurePosixPath(path)
+        if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
+                or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
+            raise TaskPacketContractError(
+                f"{label} has an unsafe publication input path: {path!r}"
+            )
+        if path in paths:
+            raise TaskPacketContractError(
+                f"{label} has an ambiguous duplicate publication input: {path}"
+            )
+        paths.add(path)
+    if not paths:
+        raise TaskPacketContractError(
+            f"{label} Publication inputs must be `none` or concrete tracked paths"
+        )
+    return paths
 
 
 @dataclass(frozen=True)

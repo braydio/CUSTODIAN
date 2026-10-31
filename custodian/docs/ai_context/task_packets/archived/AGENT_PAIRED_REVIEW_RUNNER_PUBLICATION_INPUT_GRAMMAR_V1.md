@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-runner-publication-input-grammar-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -34,5 +34,19 @@
 - Task overrides: `none`
 - Deferred: A future broader packet schema or grammar redesign; the original provisioning review and any Awakening recovery remain downstream of accepted adapter review.
 - Summary backlink: Include the exact Authoring chat URL in every durable summary and final Next Handoff.
-- Completion Truth: `custodian.task_completion.v1` — record Goal, Completion boundary, and Acceptance truth with concrete evidence before finish.
-- Execution Feedback: `custodian.task_feedback.v1` — record validation/tooling feedback before finish.
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: Shared parser, runner and authoring-preflight integration landed in this task tree; strict positive and adversarial parser cases pass; actual active and archived packet publication-input fields parse; active adapter review prerequisite is no longer circular; archived implementation packet blob is unchanged. Full paired-review-runner suite passed under a 10-minute bound. Changed-file validation passed all 8 selected tests with complete coverage, zero failures, timeouts or infrastructure errors. Targeted authoring preflight, category/index checks, py_compile and git diff --check passed. The adapter review remains unclaimed until this implementation and its independent paired review are complete.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: Initial short observations ended before CPU-bound Git fixtures completed; a bounded verbose run showed progress and the full suite passed. No harness defect was found.
+- Tooling/docs drift discovered: none
+- Follow-up: After this implementation lands, run its fresh-context paired review; only after that passes may the active adapter review proceed.
+- What worked: A bounded verbose reproduction isolated the slow fixture path; the 2.5-second isolated test passed, then full suites completed with explicit bounds and complete coverage.

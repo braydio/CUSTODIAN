@@ -35,7 +35,10 @@ from paired_review_host_validation import (
 )
 
 import review_outcome
-from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
+from task_packet_contract import (
+    ID_RE, PACKET_ROOT, TaskPacketContractError, parse_packet,
+    parse_publication_inputs,
+)
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -307,29 +310,10 @@ def validate_eligible_review(repo: Path, workstream: str):
 
 def _publication_inputs(content: str, label: str) -> set[str]:
     """Read the packet's concrete publication inputs without guessing at prose."""
-    lines = [line for line in content.splitlines()
-             if re.match(r"^\s*-\s*Publication inputs\s*:", line, re.IGNORECASE)]
-    if len(lines) != 1:
-        raise RunnerError(f"{label} must declare exactly one Publication inputs field")
-    value = re.sub(r"^\s*-\s*Publication inputs\s*:\s*", "", lines[0], flags=re.IGNORECASE)
-    if value.lower() == "none":
-        return set()
-    paths: set[str] = set()
-    for item in value.split(";"):
-        match = re.fullmatch(r"\s*`([^`]+)`\s*", item)
-        if not match:
-            raise RunnerError(f"{label} has a malformed Publication inputs entry")
-        path = match.group(1)
-        pure = PurePosixPath(path)
-        if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
-                or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
-            raise RunnerError(f"{label} has an unsafe publication input path: {path!r}")
-        if path in paths:
-            raise RunnerError(f"{label} has an ambiguous duplicate publication input: {path}")
-        paths.add(path)
-    if not paths:
-        raise RunnerError(f"{label} Publication inputs must be `none` or concrete tracked paths")
-    return paths
+    try:
+        return parse_publication_inputs(content, label)
+    except TaskPacketContractError as error:
+        raise RunnerError(str(error)) from error
 
 
 def _profile_covers_path(profile: worktree_provisioning.Profile, path: str) -> bool:

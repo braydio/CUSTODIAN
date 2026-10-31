@@ -25,9 +25,11 @@ from task_packet_contract import (
     V2_CORRECTION_REQUIRED_FIELDS,
     V2_REVIEW_REQUIRED_FIELDS,
     V2_REQUIRED_FIELDS,
+    TaskPacketContractError,
     is_v2_packet,
     header_field,
     parse_packet,
+    parse_publication_inputs,
     validate_review_pairing,
 )
 
@@ -122,6 +124,10 @@ def validate_authoring_paths(repo: Path, packet_paths: list[str | Path]) -> list
 
         text = path.read_text()
         packet = parse_packet(rel, text)
+        try:
+            parse_publication_inputs(text, rel, allow_missing=True)
+        except TaskPacketContractError as error:
+            findings.append(f"{rel}: {error}")
         # Overlay the exact working-tree candidate so callers can run this before commit.
         by_path[rel] = packet
         active_packets = [p for p in active_packets if p.path != rel] + [packet]

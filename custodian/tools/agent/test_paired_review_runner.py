@@ -115,15 +115,32 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertEqual(runner._publication_inputs(
             "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`\n", "sample"),
             {"custodian/tools/a.py", "custodian/tests/a.py"})
+        self.assertEqual(runner._publication_inputs(
+            "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`.\n", "sample"),
+            {"custodian/tools/a.py", "custodian/tests/a.py"})
         self.assertEqual(runner._publication_inputs("- Publication inputs: none\n", "sample"), set())
         for malformed in (
             "- Publication inputs: `../secret`\n",
             "- Publication inputs: `safe.py`; prose\n",
+            "- Publication inputs: `safe.py`.; `other.py`\n",
+            "- Publication inputs: `safe.py`; `other.py`. extra\n",
+            "- Publication inputs: `safe.py`..\n",
+            "- Publication inputs: none.\n",
             "- Publication inputs: `same.py`; `same.py`\n",
             "- Publication inputs: `safe.py`\n- Publication inputs: `other.py`\n",
         ):
             with self.subTest(malformed=malformed), self.assertRaises(runner.RunnerError):
                 runner._publication_inputs(malformed, "sample")
+
+    def test_profile_publication_inputs_accepts_both_historical_packet_fields(self):
+        packets = (
+            ROOT / "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
+            ROOT / "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md",
+        )
+        for packet_path in packets:
+            with self.subTest(packet=packet_path.name):
+                inputs = runner._publication_inputs(packet_path.read_text(), str(packet_path))
+                self.assertTrue(inputs)
 
     def test_validation_manifest_dependencies_include_scripts_and_moment_scenarios(self):
         payload = {
