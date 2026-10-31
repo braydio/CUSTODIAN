@@ -1,0 +1,11 @@
+{
+  "schema": "custodian.worktree_checkout_profile.v1",
+  "include_paths": [
+    "AGENTS.md",
+    "custodian/AGENTS.md",
+    "custodian/docs/ai_context",
+    "custodian/tools/agent",
+    "custodian/tools/validation"
+  ],
+  "hydrate_lfs_paths": []
+}

@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `review-agent-paired-review-runner-checkout-profile-v1`
 - Category: `agent-ops`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `draft`
+- Dispatch: `manual`
 - Authoring handoff: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-runner-checkout-profile-v1`
@@ -27,7 +27,7 @@
 - Evidence: Exact landed implementation diff and archived implementation packet; the reviewer profile and its computed dependency closure; tests proving path completeness and fail-before-claim behavior; canonical changed-file validation report; retry receipt for the original provisioning review.
 - Task-specific authority: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; archived implementation packet.
 - Work surface: Read-only inspection of the landed runner/profile implementation, tests, profile allocation evidence, original provisioning implementation/review packets and validation report. Only canonical review receipt, this review packet lifecycle/archive metadata and the required closing summary may be written.
-- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/test_dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/workstream.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; `custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`.
+- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/test_dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/workstream.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; `custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json`; `custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`.
 - Review evidence: Full exact implementation diff, archived packet, all positive and negative profile tests, target-diff and packet-publication dependency coverage, dispatcher claim receipt, run metadata, allocated checkout measurement and complete changed-file validation report. Reconstruct source and claim behavior independently; do not trust implementation-authored summaries as proof.
 - Correction threshold: Any profile omission, dependency list derived only from profile contents, unsafe/untracked profile, profile/digest mismatch, claim before dependency validation, silent fallback to full mode after an explicit profile error, second claim, or change to host validation/reviewer verdict semantics is blocking. Report specific findings; do not repair the implementation.
 - Focused validation: Independently run the focused paired-review runner, provisioning and dispatcher tests; inspect new negatives and the exact profile closure; verify the real retry uses the canonical runner and records the same profile path/digest; inspect changed-file coverage and `git diff --check`. Never invoke same-claim recovery against the real Awakening identity.
