@@ -33,7 +33,7 @@
 - Focused validation: Run the focused exact-attestation Git tests and existing source-scope adversarial suite, plus `paired_review_runner_unit`. Independently inspect the canonical receipt and accepted review evidence. Confirm original review run/claim/worktree/evidence remain untouched and that no reviewer was launched for it.
 - Acceptance: Record a genuine independent PASS or structured findings. A PASS only activates the exact attestation path for a later read-only original-review recovery plan; it does not issue a verdict on the preserved chassis implementation and does not authorize recovery apply.
 - Non-goals: No Operator runtime/assets review, original review launch/reclaim, recovery apply, verdict fabrication, or modification of any implementation or original review files.
-- Task overrides: `TASK OVERRIDE: This paired review may commit only its genuine review receipt, bounded review packet lifecycle/archive metadata, required closing summary, and any scoped review correction packet. Do not edit the reviewed implementation or original review claim/evidence.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Handoff
 - Next action: If accepted, allow a fresh read-only recovery plan for the exact preserved original review; stop before apply and request a new control.
