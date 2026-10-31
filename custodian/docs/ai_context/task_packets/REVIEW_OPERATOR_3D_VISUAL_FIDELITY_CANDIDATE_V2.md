@@ -4,8 +4,8 @@
 - Workstream: `review-operator-3d-visual-fidelity-candidate-v2`
 - Category: `operator-actors`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `operator-3d-visual-fidelity-candidate-v2`

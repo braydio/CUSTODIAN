@@ -3,8 +3,8 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `operator-3d-visual-fidelity-candidate-v2`
 - Category: `operator-actors`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
 - Depends on: `review-operator-3d-model-to-sprite-tooling-integration-v1`
