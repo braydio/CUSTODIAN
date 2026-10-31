@@ -26,6 +26,16 @@ from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
     GodotJobBudget, godot_home, job_budget_root,
 )
+
+
+def _mock_no_active_review_processes(test_case: unittest.TestCase) -> None:
+    """Keep recovery fixtures independent of the host's restricted /proc view."""
+    for name in ("_process_owns_worktree", "_processes_owning_review_checkout"):
+        owner_probe = patch.object(runner, name, return_value=[])
+        owner_probe.start()
+        test_case.addCleanup(owner_probe.stop)
+
+
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -36,6 +46,32 @@ from review_receipt_delta import (
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
+
+
+def _historical_git_fixture_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env["GIT_LFS_SKIP_SMUDGE"] = "1"
+    return env
+
+
+def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
+    """Check out historical source without hydrating unrelated LFS assets."""
+    env = _historical_git_fixture_env()
+    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
+                    str(repository)], check=True, env=env)
+    subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", revision],
+                   check=True, env=env)
+
+
+class HistoricalGitFixtureTests(unittest.TestCase):
+    def test_historical_fixture_clone_and_checkout_skip_lfs_smudge(self):
+        repository = Path("/tmp/historical-fixture")
+        with patch("subprocess.run") as run:
+            _prepare_historical_git_fixture(repository, "a" * 40)
+
+        self.assertEqual(run.call_count, 2)
+        for call in run.call_args_list:
+            self.assertEqual(call.kwargs["env"]["GIT_LFS_SKIP_SMUDGE"], "1")
 
 
 def review_packet(*, visual="none", refresh="no"):
@@ -111,6 +147,9 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
     def test_profile_publication_inputs_are_concrete_and_path_safe(self):
         self.assertEqual(runner._publication_inputs(
             "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`\n", "sample"),
@@ -298,21 +337,115 @@ class PairedReviewRunnerTests(unittest.TestCase):
         profiled = runner.dispatcher_claim_command(Path("repo"), "review-sample", "profile.json")
         self.assertEqual(profiled[-2:], ["--checkout-profile", "profile.json"])
         profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
-        receipt = {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
-                                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"]}}
+        receipt = {"checkout": "created", "checkout_profile": {
+            "profile": "profile.json", "profile_sha256": "d" * 64,
+            "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+            "hydrated_lfs_paths": [], "hydrated_lfs": [],
+        }}
         runner.verify_checkout_profile_receipt(receipt, profile,
                                               {"custodian/tools/a.py", "custodian/tools/test_a.py"})
         for invalid in (
-            {"checkout": {"profile": "other.json", "profile_sha256": "d" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
-            {"checkout": {"profile": "profile.json", "profile_sha256": "e" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
-            {"checkout": {"profile": "profile.json", "profile_sha256": "d" * 64,
-                           "paths": ["custodian/tools/a.py"]}},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "other.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "e" * 64,
+                "paths": ["custodian/tools/a.py", "custodian/tools/test_a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
+            {"checkout": "created", "checkout_profile": {
+                "profile": "profile.json", "profile_sha256": "d" * 64,
+                "paths": ["custodian/tools/a.py"],
+                "hydrated_lfs_paths": [], "hydrated_lfs": [],
+            }},
         ):
             with self.subTest(invalid=invalid), self.assertRaises(runner.RunnerError):
                 runner.verify_checkout_profile_receipt(
                     invalid, profile, {"custodian/tools/a.py", "custodian/tools/test_a.py"})
+
+    def test_profile_receipt_keeps_legacy_disposition_and_requires_separate_profile_evidence(self):
+        profile = runner.worktree_provisioning.Profile("profile.json", "d" * 64, ("custodian/tools",), ())
+        with self.assertRaisesRegex(runner.RunnerError, "checkout_profile"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": "created"}, profile, {"custodian/tools/a.py"},
+            )
+        with self.assertRaisesRegex(runner.RunnerError, "disposition"):
+            runner.verify_checkout_profile_receipt(
+                {"checkout": {"profile": "profile.json"}, "checkout_profile": {
+                    "profile": "profile.json", "profile_sha256": "d" * 64,
+                    "paths": ["custodian/tools/a.py"],
+                    "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                }}, profile, {"custodian/tools/a.py"},
+            )
+
+    def test_profiled_worktree_is_verified_against_sparse_rules_and_git_blobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q", str(repo)], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.name", "Test"], check=True)
+            subprocess.run(["git", "-C", str(repo), "config", "user.email", "test@example.invalid"], check=True)
+            (repo / "review.py").write_text("print('ok')\n")
+            subprocess.run(["git", "-C", str(repo), "add", "review.py"], check=True)
+            subprocess.run(["git", "-C", str(repo), "commit", "-qm", "fixture"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "init", "--no-cone"], check=True)
+            subprocess.run(["git", "-C", str(repo), "sparse-checkout", "set", "--no-cone", "--stdin"],
+                           input="/review.py\n", text=True, check=True)
+            main = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                                  text=True, capture_output=True, check=True).stdout.strip()
+            profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64, ("review.py",), ())
+            # The reviewed implementation history may name files deleted from
+            # the pinned tree; they remain review evidence but cannot be
+            # materialized into the current sparse checkout.
+            runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py", "removed.py"}, main)
+            (repo / "review.py").write_text("tampered\n")
+            with self.assertRaisesRegex(runner.RunnerError, "dirty"):
+                runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
+
+    def test_checkout_profile_mismatch_recovery_requires_plan_then_separately_authorized_apply(self):
+        plan = {"plan_sha256": "a" * 64}
+        with patch.object(runner, "plan_checkout_profile_mismatch_recovery", return_value=plan) as planner:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+            ]), 0)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+                "--authorize-fresh-reviewer-context",
+            ]), 2)
+        planner.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+        )
+        with patch.object(runner, "continue_run", return_value=0) as continuation:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--plan-sha256", "a" * 64,
+            ]), 2)
+            self.assertEqual(runner.main([
+                "review-other", "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
+            ]), 2)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
+            ]), 0)
+        continuation.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+            authorize_fresh_reviewer_context=True,
+            recover_checkout_profile_mismatch=True, plan_sha256="a" * 64, timeout=None,
+        )
 
     def test_finish_index_recovery_authenticates_original_five_message_pass(self):
         messages = ["progress: reconstructing", "progress: checking evidence",
@@ -3631,8 +3764,11 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
             required_paths = {"custodian/tools/agent/paired_review_runner.py"}
             receipt = {"result": "claimed", "workstream": "review-sample", "verified": True,
                        "worktree": str(worktree), "branch": "agent/review-sample", "packet": packet_path,
-                       "checkout": {"profile": profile.path, "profile_sha256": profile.digest,
-                                    "paths": sorted(required_paths)}}
+                       "checkout": "created", "checkout_profile": {
+                           "profile": profile.path, "profile_sha256": profile.digest,
+                           "paths": sorted(required_paths),
+                           "hydrated_lfs_paths": [], "hydrated_lfs": [],
+                       }}
             completed = subprocess.CompletedProcess([], 0, "CLAIMED\n" + runner.CLAIM_SENTINEL + json.dumps(receipt), "")
             original_run = subprocess.run
             def run_side_effect(argv, *args, **kwargs):
@@ -3736,6 +3872,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
 
             with patch.object(runner, "validate_eligible_review", return_value=(packet_path, review_packet(), runner.parse_packet(packet_path, review_packet()))), \
                  patch.object(runner, "validate_checkout_profile", return_value=(profile, "a" * 40, required_paths)), \
+                 patch.object(runner, "verify_checkout_profile_receipt") as verify_profile_receipt, \
                  patch.object(runner, "codex_preflight", return_value="/fake/codex"), \
                  patch.object(runner, "run_coordinator_validation", side_effect=fake_host_validation), \
                  patch.object(runner, "verify_coordinator_validation"), \
@@ -3750,6 +3887,7 @@ print(json.dumps({{"type": "done", "api_key": "fixture-secret"}}))
                      "reasons": [] if summary_available["value"] else ["missing exact summary"]}), \
                  patch.object(runner, "common_dir", return_value=repo / ".git"):
                 self.assertEqual(runner.run(repo, "review-sample", checkout_profile=profile.path), 0)
+                verify_profile_receipt.assert_called_once()
                 summary_available["value"] = False
                 with self.assertRaisesRegex(runner.RunnerError, "without durable review state"):
                     runner.run(repo, "review-sample")
@@ -4007,6 +4145,7 @@ class AdvancedHeadPassRecoveryTests(unittest.TestCase):
 
 class PairedReviewHostValidationTests(unittest.TestCase):
     def setUp(self):
+        _mock_no_active_review_processes(self)
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name) / "repo"
         self.root.mkdir()
@@ -4050,14 +4189,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_admin_scope_approval_history(self, *, outcome="passed"):
         """Build a disposable, accepted one-path approval on top of the real pinned history."""
         repository = Path(self.temp.name) / "admin-approval"
-        subprocess.run(["git", "clone", "--shared", "--no-checkout", str(ROOT), str(repository)],
-                       check=True, capture_output=True)
+        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+                                   check=True, text=True, capture_output=True).stdout.strip()
+        _prepare_historical_git_fixture(repository, base_main)
         run = lambda *args, check=True: subprocess.run(
             ["git", *args], cwd=repository, check=check, text=True, capture_output=True,
         )
-        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-                                   check=True, text=True, capture_output=True).stdout.strip()
-        run("checkout", "--detach", base_main)
         run("update-ref", "refs/remotes/origin/main", base_main)
         run("config", "user.name", "test")
         run("config", "user.email", "test@example.invalid")
@@ -4224,8 +4361,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             ["git", "-C", str(ROOT), "rev-parse", "9845e1db2^"],
             check=True, text=True, capture_output=True,
         ).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT), str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
@@ -7675,9 +7811,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         """Create disposable Git history for exact Procession scope approval checks."""
         repository = Path(self.temp.name) / f"procession-scope-{len(list(Path(self.temp.name).glob('procession-scope-*')))}"
         base_main = "49a93aa726e26bd40220d3bdb658079ea9da3440"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main], check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email", "test@example.invalid"], check=True)
         trace_prefix = ("refs/remotes/origin/agent-diagnostics/"
@@ -7922,10 +8056,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         repository = Path(self.temp.name) / "grunt-attestation"
         base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
                                    check=True, text=True, capture_output=True).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main],
-                       check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "test@example.invalid"], check=True)
@@ -8315,10 +8446,7 @@ Verify the exact post-hoc attestation.
                    "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
         exact_attested_paths = set(host_validation._GRUNT_SCOPE_FILES)
         repository = Path(self.temp.name) / "historical-grunt"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         prefix = f"refs/remotes/origin/agent-diagnostics/{workstream}/"
         for record in subprocess.run(
             ["git", "for-each-ref", "--format=%(refname) %(objectname)", prefix],
@@ -9079,14 +9207,13 @@ Verify the exact post-hoc attestation.
                        "AGENT_PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
         parent = "e05c5376b570277d19dffdbca3968e194b473016"
         repository = Path(self.temp.name) / "forged-review-metadata"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", parent], check=True)
+        _prepare_historical_git_fixture(repository, parent)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "Fixture"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "fixture@example.invalid"], check=True)
         subprocess.run(["git", "-C", str(repository), "read-tree", "2e898dddc82a596b0a2bd15c150b1645cf61f29c"], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"],
+                       check=True, env=_historical_git_fixture_env())
         changed_file = repository / review_path
         changed_file.write_bytes(changed_file.read_bytes() + b"\nUnexpected Field: forged\n")
         subprocess.run(["git", "-C", str(repository), "add", review_path], check=True)
@@ -9116,10 +9243,7 @@ Verify the exact post-hoc attestation.
         trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream}/"
                      "20261022T172255Z-7f774d406013")
         repository = Path(self.temp.name) / "historical-resume-coordinator"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         trace_commit = subprocess.run(["git", "rev-parse", trace_ref], cwd=ROOT,
                                       check=True, text=True, capture_output=True).stdout.strip()
         subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, trace_commit], check=True)
@@ -9175,9 +9299,7 @@ Verify the exact post-hoc attestation.
         ))
 
         repository = Path(self.temp.name) / "forged-index-merge"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", merge], check=True)
+        _prepare_historical_git_fixture(repository, merge)
         for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
             subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
         readme_path = f"{runner.PACKET_ROOT}/README.md"
@@ -9377,6 +9499,9 @@ Verify the exact post-hoc attestation.
 
 
 class RedactedFinalCaptureTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
     def pass_fixture(self, root: Path):
         def git(cwd, *args):
             result = subprocess.run(["git", "-C", str(cwd), *args], text=True, capture_output=True)
