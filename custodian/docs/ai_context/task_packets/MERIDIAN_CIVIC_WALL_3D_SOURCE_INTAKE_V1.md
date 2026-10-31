@@ -17,7 +17,7 @@
 - Review cycle: `0`
 - Max automatic review cycles: `2`
 - Review rationale: `Preserve exact source provenance and publish a decoder-derived archival GLB without implying runtime or visual approval.`
-- Reviewed main: `33b4f73468d221034f4df2edd62c548a33effce3`
+- Reviewed main: `ec12bbe2365122042096087f7367eb346f1fd46e`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f`
 - Visual review: `none`
 - Goal: Preserve the user's Meridian Civic Wall source and a reproducible archival GLB on `origin/main`.

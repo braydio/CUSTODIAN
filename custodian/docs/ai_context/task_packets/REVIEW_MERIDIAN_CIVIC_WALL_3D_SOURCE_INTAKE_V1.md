@@ -5,15 +5,15 @@
 - Category: `assets-art`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `ready`
-- Dispatch: `auto`
+- Status: `draft`
+- Dispatch: `manual`
 - Priority: `P2`
 - Depends on: `meridian-civic-wall-3d-source-intake-v1`
 - Locks: `meridian-civic-wall-source-intake`
 - Review: `none`
 - Review target workstream: `meridian-civic-wall-3d-source-intake-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/MERIDIAN_CIVIC_WALL_3D_SOURCE_INTAKE_V1.md`
-- Reviewed main: `33b4f73468d221034f4df2edd62c548a33effce3`
+- Reviewed main: `ec12bbe2365122042096087f7367eb346f1fd46e`
 - Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f`
 - Visual review: `none`
 - Reviewer context: `fresh`
