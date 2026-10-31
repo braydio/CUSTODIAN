@@ -1,0 +1,38 @@
+{
+  "schema": "custodian.operator_3d_visual_fidelity_snapshot.v1",
+  "candidate_state": "candidate_unapproved",
+  "master_id": "operator_3d_iter005_visual_fidelity_candidate_v002",
+  "approval_state": "experimental",
+  "files": [
+    {
+      "path": "correction_report.v1.json",
+      "bytes": 11231,
+      "sha256": "63e5a202be7fa06cd95d9d3b127f68cc3831ddc3fe2be7e1bd4e2aa902d7100b"
+    },
+    {
+      "path": "master.v1.json",
+      "bytes": 2948,
+      "sha256": "ce5e7a740715b5fc572b053207a11591a37415436a3bf4e083fee6f690be5988"
+    },
+    {
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+      "bytes": 94267409,
+      "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23"
+    },
+    {
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002_material.blend",
+      "bytes": 47229386,
+      "sha256": "33c12ba593b01861bfa5f137813af0c650f779ccfc4e462876c893221ebcc3ef"
+    },
+    {
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v002_pose.blend",
+      "bytes": 94261897,
+      "sha256": "7ec75e6f59495ce7fbe9d5d5062d95a9fc1605e79a7002c10427be0b1ce80d56"
+    },
+    {
+      "path": "source_lineage.v1.json",
+      "bytes": 4607,
+      "sha256": "7a4793a128e60d5cce1e418bdd9831ad7fc0d9aaeefa52c07c6324c71dcf0f45"
+    }
+  ]
+}

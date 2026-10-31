@@ -1,0 +1,313 @@
+{
+  "schema": "custodian.operator_3d_visual_fidelity_correction_report.v1",
+  "candidate_state": "candidate_unapproved",
+  "candidate_sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23",
+  "evaluated_directions": [
+    "S",
+    "SE",
+    "SW",
+    "E"
+  ],
+  "evaluated_frames": [
+    1,
+    132,
+    263
+  ],
+  "corrections": [
+    {
+      "priority": 1,
+      "component": "legs_and_stance",
+      "status": "implemented_for_neutral_idle_pose_overlay",
+      "objects": [
+        "SmartRigArmature / V002 Neutral Idle Pose Candidate",
+        "output_unwrapped"
+      ],
+      "measurements": {
+        "baseline_ankle_separation_m": {
+          "frame_1": 0.359185,
+          "frame_132": 0.361026,
+          "frame_263": 0.359198
+        },
+        "v002_ankle_separation_m": {
+          "1": 0.32,
+          "132": 0.319507,
+          "263": 0.319993
+        },
+        "target_pelvis_relative_ankles_m": {
+          "Left": [
+            0.16,
+            -0.159713,
+            -0.794075
+          ],
+          "Right": [
+            -0.16,
+            -0.159713,
+            -0.794075
+          ]
+        },
+        "timing": "1-264 preserved",
+        "rest_pose_changed": false,
+        "arms_retarget_changed": false
+      },
+      "limitations": "Pose/ankle proxy positions meet the scoped targets; ground contact is assessed in the rendered comparison and still needs human review."
+    },
+    {
+      "priority": 2,
+      "component": "torso_and_proportions",
+      "status": "partially_implemented",
+      "objects": [
+        "output_unwrapped",
+        "SmartRigArmature / Spine, Spine1, Spine2, Neck, Head"
+      ],
+      "measurements": {
+        "modified_torso_vertices": 602,
+        "waist_width_factor": 0.97,
+        "upper_torso_width_factor": 1.03,
+        "local_pitch_offsets_degrees": {
+          "Spine": -1,
+          "Spine1": -1,
+          "Spine2": -1,
+          "Neck": 1.5,
+          "Head": 1.5
+        },
+        "lower_leg_width_factor": 1.04,
+        "boot_width_factor": 1.03,
+        "rest_pose_changed": false
+      },
+      "limitations": "The 128px views remain visibly hunched; anatomical relationship needs additional specific correction."
+    },
+    {
+      "priority": 3,
+      "component": "cloak_silhouette",
+      "status": "partially_implemented",
+      "objects": [
+        "output_unwrapped / Bone_013, Bone_005, Bone_004, Bone_007, Bone_006, Bone_012, Bone_011 weighted vertices"
+      ],
+      "measurements": {
+        "modified_vertices": 3254,
+        "lower_panel_x_flare_factor": 1.16
+      },
+      "limitations": "Distinct panel separation and temporal self-intersection have not been established; human review required."
+    },
+    {
+      "priority": 4,
+      "component": "shoulder_pauldrons",
+      "status": "partially_implemented_clearance_blocked",
+      "objects": [
+        "output_unwrapped / PAULDRON_Left_V002 and PAULDRON_Right_V002 groups",
+        "mixamorig:LeftShoulder",
+        "mixamorig:RightShoulder"
+      ],
+      "measurements": {
+        "donor_vertices_each": 434,
+        "projection_delta_m": 0.04,
+        "top_ridge_lift_m": 0.015,
+        "rest_overlap_triangle_pairs": {
+          "PAULDRON_Left_V002": 145,
+          "PAULDRON_Right_V002": 163
+        },
+        "temporal_overlap_triangle_pairs": {
+          "PAULDRON_Left_V002": {
+            "1": 101,
+            "13": 86,
+            "16": 110,
+            "22": 101,
+            "6": 103
+          },
+          "PAULDRON_Right_V002": {
+            "1": 128,
+            "13": 132,
+            "16": 134,
+            "22": 128,
+            "6": 134
+          }
+        },
+        "shoulder_weights": "1.0 to corresponding shoulder bone in donor",
+        "skeleton_changed": false
+      },
+      "limitations": "Task 017 geometry was preserved and integrated, but visible body-shell intersections remain. Destructive boolean clearance was excluded after it changed body topology from 17,578 to 5,490 vertices in a test. This component is not complete."
+    },
+    {
+      "priority": 5,
+      "component": "hood_and_visor",
+      "status": "partially_implemented",
+      "objects": [
+        "output_unwrapped / V002_Amber_Visor_Core and V002_Amber_Visor_Local_Glow material assignments"
+      ],
+      "measurements": {
+        "core_faces": 3,
+        "local_glow_faces": 18,
+        "core_emission_strength": 0.85,
+        "core_base_color_rgba": [
+          0.9,
+          0.2,
+          0.025,
+          1.0
+        ],
+        "local_glow_emission_strength": 0.06,
+        "local_glow_radius_m": 0.025,
+        "global_bloom": false
+      },
+      "limitations": "Directional pixels are generated from front-facing source surfaces. Apparent 1-2px glow and not illuminating the face cavity have not been objectively established."
+    },
+    {
+      "priority": 6,
+      "component": "materials_and_lighting",
+      "status": "partially_implemented",
+      "objects": [
+        "output_unwrapped / V002_Graphite_Gold_Cloth_PBR"
+      ],
+      "measurements": {
+        "albedo_contrast": 0.16,
+        "metallic_roughness_maps_preserved": true,
+        "render_environment": "same EEVEE/camera/key-light settings across stages"
+      },
+      "limitations": "Source provides one baked body material; armor/cloth/gold are not separated into independent PBR responses."
+    },
+    {
+      "priority": 7,
+      "component": "pixel_sharpness",
+      "status": "partially_implemented",
+      "objects": [
+        "final_128 and final_512_reduced render outputs"
+      ],
+      "measurements": {
+        "native_128_samples": 12,
+        "native_512_samples": 12,
+        "reduced_512_samples": 12,
+        "reduction": "pixelart --choose 1; 512 canvas; nearest preparation; integer root-registration translation only",
+        "camera_root_128": [
+          64,
+          106
+        ],
+        "comparison_metrics": {
+          "method": "Independent native 512 Blender render reduced once by tools/custodian_aliases.sh pixelart --size 128 --choose 1 --pixel-source",
+          "samples": [
+            {
+              "direction": "S",
+              "frame": 1,
+              "mean_absolute_channel_error": 3.60635,
+              "different_channel_fraction": 0.504089,
+              "native_alpha_nonzero_pixels": 2869,
+              "reduced_alpha_nonzero_pixels": 2632,
+              "native_partial_alpha_pixels": 870,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SE",
+              "frame": 1,
+              "mean_absolute_channel_error": 3.98999,
+              "different_channel_fraction": 0.502899,
+              "native_alpha_nonzero_pixels": 2724,
+              "reduced_alpha_nonzero_pixels": 2525,
+              "native_partial_alpha_pixels": 775,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SW",
+              "frame": 1,
+              "mean_absolute_channel_error": 2.0587,
+              "different_channel_fraction": 0.488342,
+              "native_alpha_nonzero_pixels": 2350,
+              "reduced_alpha_nonzero_pixels": 2081,
+              "native_partial_alpha_pixels": 601,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "E",
+              "frame": 1,
+              "mean_absolute_channel_error": 2.78046,
+              "different_channel_fraction": 0.485352,
+              "native_alpha_nonzero_pixels": 1926,
+              "reduced_alpha_nonzero_pixels": 1787,
+              "native_partial_alpha_pixels": 530,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "S",
+              "frame": 132,
+              "mean_absolute_channel_error": 4.74426,
+              "different_channel_fraction": 0.510101,
+              "native_alpha_nonzero_pixels": 2865,
+              "reduced_alpha_nonzero_pixels": 2704,
+              "native_partial_alpha_pixels": 870,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SE",
+              "frame": 132,
+              "mean_absolute_channel_error": 4.08278,
+              "different_channel_fraction": 0.503464,
+              "native_alpha_nonzero_pixels": 2742,
+              "reduced_alpha_nonzero_pixels": 2538,
+              "native_partial_alpha_pixels": 811,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SW",
+              "frame": 132,
+              "mean_absolute_channel_error": 1.97008,
+              "different_channel_fraction": 0.488251,
+              "native_alpha_nonzero_pixels": 2363,
+              "reduced_alpha_nonzero_pixels": 2088,
+              "native_partial_alpha_pixels": 613,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "E",
+              "frame": 132,
+              "mean_absolute_channel_error": 2.70728,
+              "different_channel_fraction": 0.485718,
+              "native_alpha_nonzero_pixels": 1973,
+              "reduced_alpha_nonzero_pixels": 1856,
+              "native_partial_alpha_pixels": 532,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "S",
+              "frame": 263,
+              "mean_absolute_channel_error": 3.60231,
+              "different_channel_fraction": 0.504227,
+              "native_alpha_nonzero_pixels": 2872,
+              "reduced_alpha_nonzero_pixels": 2632,
+              "native_partial_alpha_pixels": 873,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SE",
+              "frame": 263,
+              "mean_absolute_channel_error": 3.99153,
+              "different_channel_fraction": 0.502899,
+              "native_alpha_nonzero_pixels": 2725,
+              "reduced_alpha_nonzero_pixels": 2524,
+              "native_partial_alpha_pixels": 772,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "SW",
+              "frame": 263,
+              "mean_absolute_channel_error": 2.06459,
+              "different_channel_fraction": 0.488205,
+              "native_alpha_nonzero_pixels": 2348,
+              "reduced_alpha_nonzero_pixels": 2080,
+              "native_partial_alpha_pixels": 599,
+              "reduced_partial_alpha_pixels": 0
+            },
+            {
+              "direction": "E",
+              "frame": 263,
+              "mean_absolute_channel_error": 2.77805,
+              "different_channel_fraction": 0.485275,
+              "native_alpha_nonzero_pixels": 1927,
+              "reduced_alpha_nonzero_pixels": 1787,
+              "native_partial_alpha_pixels": 533,
+              "reduced_partial_alpha_pixels": 0
+            }
+          ]
+        }
+      },
+      "limitations": "Converter content-fit needed a 72px preparation margin and root restoration to match fixed registration; pixel differences and final appearance remain for human review."
+    }
+  ],
+  "source_integrity": "Original ITER005 .blend/GLB, pinned FBX, source motion receipts and Task 017 donor hashes are recorded in source_lineage.v1.json."
+}
