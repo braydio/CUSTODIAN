@@ -1,9 +1,154 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T09:38:39Z",
-  "source_main_sha": "24af92820954e9cacea4b0a6dac18b6740478190",
+  "generated_at": "2026-10-31T10:19:37Z",
+  "source_main_sha": "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "validator-finish-guard-landed-0de885c5",
+      "headline": "CUSTODIAN lands a safeguard against unverifiable code merges; independent review is next",
+      "summary": "The finish workflow now rejects synchronization merges without authenticated lifecycle evidence before publishing changes. The implementation is on main and its closeout reports passing focused and changed-file tests. Its separate independent review remains ready, not accepted; older blocked reviews are not cleared.",
+      "body": "The implementation at 0de885c5 adds a source-span merge witness gate to workstream.py and regression coverage, and is ancestral to observed main b41c4d86. The closeout reports 78 workstream tests, 258 paired-runner tests and 6/6 changed-file validation checks passing. These are author-reported validation results, not independent acceptance. The paired review packet remains ready/auto at the inspected main revision. Historical R0-01 and protected recovery cases remain unresolved. Host liveness, canonical teardown and full dispatcher counts were not inspected.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-validator-recertification-v1",
+      "occurred_at": "2026-10-31T09:46:38Z",
+      "bullets": [
+        "Implementation is on inspected main.",
+        "Author closeout reports passing focused and changed-file tests.",
+        "Paired independent review is ready, not accepted.",
+        "Historical protected reviews and host teardown remain unresolved."
+      ],
+      "links": [
+        {
+          "title": "Guard implementation and validation summary",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0de885c5c6c482381cbcee0bbfa125fcaf26af7c"
+        },
+        {
+          "title": "Current main integration",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has moved an important review safeguard from a queued plan into the code on main. Before a workstream publishes changes, its finish workflow now checks whether synchronization merges have authentic lifecycle evidence. That closes a route by which a change could land only to fail later provenance review.",
+        "sections": [
+          {
+            "heading": "A checkpoint before publication",
+            "text": "The new guard examines merges along a workstream's source history, checking their ancestry, reconstructed tree and matching lifecycle records. Missing or inconsistent witnesses now block publication. Ordinary histories without synchronization merges remain compatible."
+          },
+          {
+            "heading": "Tests passed, but the reviewer has not signed off",
+            "text": "The implementation closeout reports 78 workstream tests, 258 paired-review runner tests and six changed-file validation checks passing. These results support the implementation, but a fresh independent review is still required. Existing protected historical reviews are not automatically forgiven by the new guard."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The evidence check moved upstream",
+            "explanation": "Rejecting an unauthenticated merge before publication is more useful than discovering its missing history after a review is already stranded. This is a workflow reliability improvement, not a gameplay feature."
+          },
+          {
+            "title": "The next bottleneck is independent acceptance",
+            "explanation": "The implementation is landed and archived, while its dependent review packet remains ready. Only an authentic independent disposition can establish acceptance, and host cleanup remains a separate proof obligation."
+          }
+        ],
+        "takeaway": "The provenance guard is landed, with reported passing validation; independent acceptance and canonical teardown are still unverified.",
+        "next_watch": "The paired reviewer’s authentic disposition and any follow-on recovery decisions supported by fresh host evidence."
+      },
+      "details": {
+        "overview": "Main b41c4d86 contains 0de885c5. The implementation summary describes a fail-closed first-parent merge witness gate in workstream.py, exact claim/packet binding and regression tests. The separate review packet remains ready/auto. Combined commit-status API returned no statuses, which is not a CI PASS or FAIL.",
+        "ledger": [
+          {
+            "stage": "Implementation and landing",
+            "status": "verified on main",
+            "evidence": "0de885c5 ancestor of main b41c4d86; archived implementation packet."
+          },
+          {
+            "stage": "Validation",
+            "status": "author-reported passing",
+            "evidence": "Closeout summary: 78 workstream tests, 258 paired runner tests, 6/6 changed-file checks."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not accepted",
+            "evidence": "Dependent review packet inspected as ready/auto; no accepted receipt."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No fresh host worktree, lock, process or disk proof."
+          }
+        ],
+        "notes": [
+          "Original historical multi-sync finding remains unresolved.",
+          "No CI conclusion follows from an empty combined-status result."
+        ],
+        "unknowns": [
+          "Full dispatcher queue and unique outstanding workstreams.",
+          "Current host claims, worktrees, locks and disk usage."
+        ],
+        "actions": [
+          "Existing paired reviewer: independently inspect complete validator and produce authentic review disposition after implementation landing.",
+          "Authorized recovery owner: separately audit protected historical reviews before any recovery."
+        ]
+      },
+      "scorecard": {
+        "stage": "Landed, awaiting independent review",
+        "as_of": "2026-10-31T10:19:37Z",
+        "scope": "Validator recertification implementation and its dependent review packet only",
+        "metrics": [
+          {
+            "id": "ready_review",
+            "label": "READY REVIEW PACKET",
+            "value": 1,
+            "verification": "verified",
+            "basis": "One specifically inspected dependent review packet has Status ready and Dispatch auto on main; excludes other packets.",
+            "url": "https://github.com/braydio/CUSTODIAN/blob/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_VALIDATOR_RECERTIFICATION_V1.md"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish implementation packet",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "3c3acc05 and 72096cb4"
+          },
+          {
+            "label": "Implement and land guard",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "0de885c5 present on main b41c4d86"
+          },
+          {
+            "label": "Run author validation",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Closeout reports 78, 258 and 6/6 passing checks"
+          },
+          {
+            "label": "Independent review acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Review packet ready; no accepted receipt"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No current host proof"
+          }
+        ],
+        "next_gate": "Existing paired-review owner must independently inspect the landed validator and produce a canonical disposition."
+      },
+      "related": [
+        {
+          "title": "A new review-safety gate is queued to stop unverifiable code histories before landing",
+          "context": "The earlier article documented the ready implementation/review pair now advanced by this landing.",
+          "story_id": "validator-recertification-ready-72096cb4"
+        }
+      ]
+    },
     {
       "id": "godot-cache-review-handoff-24af9282",
       "headline": "Godot cache-access review remains held after a forensic handoff",
@@ -1550,169 +1695,24 @@
         ],
         "next_gate": "Correction implementation owner must land the exact attestation, then separate reviewer must accept it."
       }
-    },
-    {
-      "id": "landing-1f7c71191dc6-receipt-capture",
-      "headline": "Receipt-recovery safeguard lands, moving a stalled review toward independent scrutiny",
-      "summary": "CUSTODIAN landed the archived-receipt capture recovery implementation and archived its task packet. It can plan a narrowly authenticated administrative receipt mirror, but the protected review has not been recovered or accepted. Its separate independent review remains ready.",
-      "body": "At main d4bd1f126346fb82554dd9a6557aaefb379854e1, commit 1f7c71191dc69ab61a8eed155533def427c41bcf adds source-bound receipt-capture planning and separately authorized apply, journal/replay protections, regression tests and lifecycle clarification. The archived implementation packet is complete; its summary reports 294 tests and 8/8 changed-file checks. Those are implementation-reported results, not an accepted independent review. The paired review packet remains ready. The original dual-disposition review run 20261031T005522Z-c70dd87f67a4 remains protected: no apply, canonical acceptance or host teardown was verified. Next owner: existing independent reviewer. Current CI conclusion and host worktree/lock/disk status are unverified.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-archived-receipt-capture-recovery-v1",
-      "occurred_at": "2026-10-31T02:35:54Z",
-      "bullets": [
-        "Implementation landed and archived on main.",
-        "Implementation summary reports 294 tests and 8/8 selected changed-file checks.",
-        "Independent review is ready, not accepted.",
-        "Protected original review recovery still needs separate authorization."
-      ],
-      "links": [
-        {
-          "title": "Recovery implementation commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/1f7c71191dc69ab61a8eed155533def427c41bcf"
-        },
-        {
-          "title": "Archived implementation packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
-        },
-        {
-          "title": "Pending independent review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/d4bd1f126346fb82554dd9a6557aaefb379854e1/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has landed a targeted safeguard for a review that reportedly passed but could not close because its archived receipt was missing. The new code can verify the original evidence and prepare a carefully bounded repair. It does not itself accept the review or authorize touching the protected run.",
-        "sections": [
-          {
-            "heading": "What the safeguard actually changes",
-            "text": "The recovery tool checks the original reviewer identity, recorded outcome and matching evidence before proposing an administrative receipt mirror. A separate authorization is required to apply it. The original reviewer-authored files must remain unchanged."
-          },
-          {
-            "heading": "Why the finish line is still ahead",
-            "text": "The implementation is now in the main codebase and its task packet is archived. Its own independent reviewer has not yet delivered an accepted PASS. Passing implementation tests and landing code are distinct from independent acceptance and from running a recovery on the host."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The repair can be reviewed without altering the protected review",
-            "explanation": "The new implementation uses synthetic tests and a separate apply gate. This makes it possible to scrutinize the recovery mechanism before deciding whether the original evidence should be reconciled."
-          },
-          {
-            "title": "Closeout remains the bottleneck",
-            "explanation": "Until the independent review is accepted and the original run is separately authorized for recovery, the downstream administrator review chain remains gated. No clean worktree teardown is established."
-          }
-        ],
-        "takeaway": "The receipt-recovery implementation has landed; its safety and correctness still require an independent accepted review before any protected recovery.",
-        "next_watch": "Watch for an authenticated PASS and canonical closeout of the receipt-recovery review, then a separate authorization decision on the original run."
-      },
-      "details": {
-        "overview": "Current main d4bd1f126346fb82554dd9a6557aaefb379854e1. Archived-receipt recovery code landed at 1f7c7119; packet archived complete. Review packet remains ready. The original protected run is unchanged as far as GitHub evidence establishes.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "Verified landed and archived",
-            "evidence": "1f7c7119 code commit and archived packet at current main."
-          },
-          {
-            "stage": "Implementation validation",
-            "status": "Reported passing",
-            "evidence": "Implementation summary reports 294 tests and 8/8 selected checks; no independent reproduction here."
-          },
-          {
-            "stage": "Independent review",
-            "status": "Ready; acceptance not verified",
-            "evidence": "REVIEW_AGENT_PAIRED_REVIEW_ARCHIVED_RECEIPT_CAPTURE_RECOVERY_V1.md Status ready."
-          },
-          {
-            "stage": "Protected original review",
-            "status": "Recovery not authorized",
-            "evidence": "Packet explicitly prohibits protected-run apply during implementation and review."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "Unknown",
-            "evidence": "No trustworthy Arch-local worktree, lock or disk proof."
-          }
-        ],
-        "notes": [
-          "Landed is not independently accepted or live.",
-          "Current main CI conclusion not independently established."
-        ],
-        "unknowns": [
-          "Original host evidence and canonical review receipt remain inaccessible.",
-          "Retained/retired worktree counts and disk free/used unknown."
-        ],
-        "actions": [
-          "Existing independent reviewer: assess the landed receipt-recovery implementation.",
-          "User/operator: only after accepted review and fresh host checks, decide whether to authorize exact protected-run recovery."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "Landed; independent review pending",
-        "as_of": "2026-10-31T02:55:17Z",
-        "scope": "Archived-receipt recovery pair only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Publish recovery packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "6064d70 and f8482287."
-          },
-          {
-            "label": "Land implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "1f7c7119 and archived packet."
-          },
-          {
-            "label": "Validate implementation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Implementation summary reports 294 tests and 8/8 checks."
-          },
-          {
-            "label": "Independent accepted review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Review packet ready; no accepted receipt."
-          },
-          {
-            "label": "Protected run apply",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Separate authorization required."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host evidence unavailable."
-          }
-        ],
-        "next_gate": "Existing independent reviewer must issue authenticated disposition before any protected apply decision."
-      }
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T09:38:39Z",
-    "source_main_sha": "24af92820954e9cacea4b0a6dac18b6740478190",
+    "observed_at": "2026-10-31T10:19:37Z",
+    "source_main_sha": "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f",
     "coverage": "partial",
-    "scope": "Only two newly readied recertification packets and one historical Godot review handoff inspected on GitHub; not a canonical dispatcher audit.",
+    "scope": "Only the validator implementation and its named dependent review packet inspected on GitHub; no canonical full dispatcher audit.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY PACKETS (INSPECTED PAIR)",
-        "value": 2,
+        "label": "READY REVIEW (INSPECTED)",
+        "value": 1,
         "verification": "verified",
-        "basis": "Two recertification packet files are ready/auto at 72096cb4; other packets excluded.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/72096cb4bac9a3c21226aa18c559d90453f09308"
+        "basis": "One named validator recertification review packet is ready/auto; not a queue-wide count.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f/custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_VALIDATOR_RECERTIFICATION_V1.md"
       }
     ],
-    "focus": "Land and independently review the fail-closed finish-time synchronization provenance guard.",
-    "note": "Godot review handoff newly documented but unresolved. Full queue, CI, process, worktree and disk status unknown."
+    "focus": "Obtain authentic independent review of the landed provenance guard.",
+    "note": "Implementation landed; reported validation is not independent acceptance. Full queue, host and CI conclusions unavailable."
   }
 }
