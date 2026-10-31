@@ -1,8 +1,40 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T00:00:00Z",
-  "publisher": "bootstrap",
-  "source_main_sha": null,
-  "stories": [],
-  "note": "Initial empty public feed. Future watch reports may publish evidence-linked stories; no story is implied by this bootstrap."
+  "generated_at": "2026-10-31T00:39:35Z",
+  "publisher": "bootstrap from last completed CUSTODIAN Project Watch run (not an automated feed publication)",
+  "source_main_sha": "0da34470d1d730d202bf9cfdfff7800a1e193738",
+  "stories": [
+    {
+      "id": "baseline-20261030-0da34470d1",
+      "headline": "CUSTODIAN closeout watch: dual-disposition recovery remains next",
+      "summary": "Baseline from the October 30 evening watch: no new main commit identified. Dual-disposition recovery implementation and review packets remain ready; acceptance and host teardown remain unverified.",
+      "body": "The latest completed CUSTODIAN Project Watch reported main at 0da34470d1 with no newly identified landing or PR milestone. The earlier redacted-final-outcome recovery implementation was reported landed/archived; its independent acceptance remains unverified. The next documented dependency is implementing and independently reviewing dual-disposition recovery. Any exact-run recovery requires separate explicit authorization afterward. GitHub cannot establish live local Codex execution, worktree retirement, locks or disk recovery.",
+      "severity": "brief",
+      "verification": "reported",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-dual-disposition-recovery-v1",
+      "occurred_at": "2026-10-31T00:39:35Z",
+      "bullets": [
+        "Stage: ready packets, not a verified executing worker",
+        "Next: implementation owner validates and lands the bounded recovery change",
+        "Then: independent fresh-context review and genuine accepted receipt",
+        "Protected historical run must not be recovered without separate authorization"
+      ],
+      "links": [
+        {
+          "title": "Last observed main commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0da34470d1d730d202bf9cfdfff7800a1e193738"
+        },
+        {
+          "title": "Recovery PR #81",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/81"
+        },
+        {
+          "title": "Recovery PR #78",
+          "url": "https://github.com/braydio/CUSTODIAN/pull/78"
+        }
+      ],
+      "images": []
+    }
+  ]
 }
