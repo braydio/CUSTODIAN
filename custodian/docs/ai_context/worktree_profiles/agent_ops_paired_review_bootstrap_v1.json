@@ -47,7 +47,9 @@
     "tools/custodian_aliases.sh",
     "tools/check_crg_config.py",
     ".agents/skills/custodian-next/SKILL.md",
-    "AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1_CLAUDE_SUMMARY.md"
+    "AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1_CLAUDE_SUMMARY.md",
+    "AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1_CLAUDE_SUMMARY.md",
+    "AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1_CLAUDE_SUMMARY.md"
   ],
   "hydrate_lfs_paths": []
 }

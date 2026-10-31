@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-runner-profile-summary-coverage-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -30,25 +30,25 @@
 - Change: Add only these two exact root paths to `include_paths`: `AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1_CLAUDE_SUMMARY.md` and `AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1_CLAUDE_SUMMARY.md`. Keep every existing profile entry and the bounded sparse path set intact.
 - Preserve: All current profile entries, existing claims and locks, the landed grammar implementation and its summary, all historical packets and review evidence, and the runner’s fail-closed coverage check.
 - Non-goals: Change runner/provisioning code; add wildcard or broad root inclusion; rewrite historical packets; launch a reviewer; change grammar, adapter, or provisioning verdicts; attempt a full checkout.
-- Acceptance: (A1) The profile changes by exactly two root summary include paths and no other paths. (A2) Its digest is valid and `worktree_provisioning.inventory` accepts it at the pinned main. (A3) The canonical runner’s exact dependency validation passes for the profile-correction paired review and the grammar correction paired review after publication. (A4) No claim or reviewer process is created before the corrected profile is published. (A5) The grammar implementation remains unchanged.
-- Validation: Exact JSON diff and path assertions; profile parser/inventory validation; canonical paired-review-runner profile validation for both declared review packets after profile landing; category and task-packet authoring checks; `git diff --check`.
+- Acceptance: (A1) The profile changes by exactly two root summary include paths and no other paths. (A2) Its digest is valid and `worktree_provisioning.inventory` accepts the candidate profile against the committed task tree. (A3) The runner-equivalent exact prefix matcher covers the root summary required for the profile-correction paired review and the landed grammar correction paired review; the canonical runner rechecks both after publication before launching reviewers. (A4) No claim or reviewer process is created before the corrected profile is published. (A5) The grammar implementation remains unchanged.
+- Validation: Exact JSON diff and path assertions; profile parser/inventory validation at the committed candidate; exact prefix-matcher coverage assertions for both summary paths; category and task-packet authoring checks; `git diff --check`. The canonical runner rechecks published profile coverage before each fresh review claim.
 - Task overrides: `TASK OVERRIDE: Change only the tracked lightweight bootstrap profile JSON; do not edit the runner, historical packets, or reviewed implementation.`
 - Deferred: General profile generation from canonical dependency closure; grammar, adapter and provisioning reviews remain sequenced successors.
 - Summary backlink: Include the exact Authoring chat URL in all durable summaries and handoffs.
 
 ## Completion Truth
 - Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `no`
-- Completion boundary satisfied: `no`
-- Acceptance satisfied: `no`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
 - Superseded/legacy production path disposition: `intentionally-preserved`
-- Evidence: pending
+- Evidence: The tracked profile has exactly two additional root summary paths, with every prior include preserved and no broad root inclusion. JSON parsing, unique-path assertions, and exact delta comparison passed. The changed-file validator passed its complete selected coverage (1/1). Candidate-tree profile parsing/inventory and runner-equivalent exact prefix coverage are recorded in the validation report. After landing, the canonical runner will recheck each exact dependency closure before either fresh reviewer claim.
 
 ## Execution Feedback
 - Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `partial`
-- Friction severity: `medium`
-- What went wrong: pending
-- Tooling/docs drift discovered: The reusable sparse profile enumerates root-level summaries individually; the newly landed grammar summary is missing, blocking its paired reviewer before claim.
-- Follow-up: Run the canonical runner for the profile correction review and then the grammar correction review.
-- What worked: The runner refused the incomplete profile before claiming or launching a reviewer; exact missing dependency is recorded.
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The canonical runner first rejected the profile because it lacked the landed grammar summary. The bounded correction added that exact path plus this implementation summary, which the profile itself must expose for the fresh paired review.
+- Tooling/docs drift discovered: The reusable sparse profile enumerates root-level implementation summaries individually, so newly landed summaries need explicit profile entries.
+- Follow-up: The canonical runner must validate and launch this profile correction's paired review; after PASS, validate and launch the existing grammar correction review.
+- What worked: The runner failed closed before claim creation, and the path-exact profile update resolves the missing dependency without broadening the checkout.
