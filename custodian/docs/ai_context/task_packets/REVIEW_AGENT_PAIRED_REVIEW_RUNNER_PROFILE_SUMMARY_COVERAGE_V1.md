@@ -33,7 +33,7 @@
 - Non-goals: Edit the profile or implementation; launch the grammar/adapter/provisioning review chain; attempt full checkout.
 - Acceptance: PASS only if every implementation acceptance claim is evidenced, all declared inputs are present, exact profile validation passes for both future review packets, and no extra paths or claims were added. Otherwise record concrete cycle-scoped findings.
 - Validation: Exact landed profile diff and digest; profile inventory check; canonical runner validation for both named review workstreams; dispatcher audit proving no unintended claim/lock; `git diff --check`.
-- Task overrides: `TASK OVERRIDE: Paired review may commit only its durable review receipt, this review packet lifecycle/archive metadata, its required summary, and bounded correction/re-review packets; do not edit the profile or unrelated files.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 - Deferred: General profile generation from canonical dependency closure; grammar review, adapter review, then provisioning review remain sequenced successors.
 - Summary backlink: Include the exact Authoring chat URL in every durable summary and final Next Handoff.
 
