@@ -48,10 +48,15 @@ sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
 
 
-def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
-    """Check out historical source without hydrating unrelated LFS assets."""
+def _historical_git_fixture_env() -> dict[str, str]:
     env = os.environ.copy()
     env["GIT_LFS_SKIP_SMUDGE"] = "1"
+    return env
+
+
+def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
+    """Check out historical source without hydrating unrelated LFS assets."""
+    env = _historical_git_fixture_env()
     subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
                     str(repository)], check=True, env=env)
     subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", revision],
@@ -4184,14 +4189,12 @@ class PairedReviewHostValidationTests(unittest.TestCase):
     def _build_admin_scope_approval_history(self, *, outcome="passed"):
         """Build a disposable, accepted one-path approval on top of the real pinned history."""
         repository = Path(self.temp.name) / "admin-approval"
-        subprocess.run(["git", "clone", "--shared", "--no-checkout", str(ROOT), str(repository)],
-                       check=True, capture_output=True)
+        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
+                                   check=True, text=True, capture_output=True).stdout.strip()
+        _prepare_historical_git_fixture(repository, base_main)
         run = lambda *args, check=True: subprocess.run(
             ["git", *args], cwd=repository, check=check, text=True, capture_output=True,
         )
-        base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
-                                   check=True, text=True, capture_output=True).stdout.strip()
-        run("checkout", "--detach", base_main)
         run("update-ref", "refs/remotes/origin/main", base_main)
         run("config", "user.name", "test")
         run("config", "user.email", "test@example.invalid")
@@ -8053,10 +8056,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         repository = Path(self.temp.name) / "grunt-attestation"
         base_main = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main^{commit}"],
                                    check=True, text=True, capture_output=True).stdout.strip()
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", base_main],
-                       check=True)
+        _prepare_historical_git_fixture(repository, base_main)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "test"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "test@example.invalid"], check=True)
@@ -8446,10 +8446,7 @@ Verify the exact post-hoc attestation.
                    "AGENT_GRUNT_RASTER_REVIEW_SCOPE_ATTESTATION_V1.md")
         exact_attested_paths = set(host_validation._GRUNT_SCOPE_FILES)
         repository = Path(self.temp.name) / "historical-grunt"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         prefix = f"refs/remotes/origin/agent-diagnostics/{workstream}/"
         for record in subprocess.run(
             ["git", "for-each-ref", "--format=%(refname) %(objectname)", prefix],
@@ -9210,14 +9207,13 @@ Verify the exact post-hoc attestation.
                        "AGENT_PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
         parent = "e05c5376b570277d19dffdbca3968e194b473016"
         repository = Path(self.temp.name) / "forged-review-metadata"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", parent], check=True)
+        _prepare_historical_git_fixture(repository, parent)
         subprocess.run(["git", "-C", str(repository), "config", "user.name", "Fixture"], check=True)
         subprocess.run(["git", "-C", str(repository), "config", "user.email",
                         "fixture@example.invalid"], check=True)
         subprocess.run(["git", "-C", str(repository), "read-tree", "2e898dddc82a596b0a2bd15c150b1645cf61f29c"], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"], check=True)
+        subprocess.run(["git", "-C", str(repository), "checkout-index", "-a", "-f"],
+                       check=True, env=_historical_git_fixture_env())
         changed_file = repository / review_path
         changed_file.write_bytes(changed_file.read_bytes() + b"\nUnexpected Field: forged\n")
         subprocess.run(["git", "-C", str(repository), "add", review_path], check=True)
@@ -9247,10 +9243,7 @@ Verify the exact post-hoc attestation.
         trace_ref = (f"refs/remotes/origin/agent-diagnostics/{workstream}/"
                      "20261022T172255Z-7f774d406013")
         repository = Path(self.temp.name) / "historical-resume-coordinator"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach",
-                        reviewed_main], check=True)
+        _prepare_historical_git_fixture(repository, reviewed_main)
         trace_commit = subprocess.run(["git", "rev-parse", trace_ref], cwd=ROOT,
                                       check=True, text=True, capture_output=True).stdout.strip()
         subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, trace_commit], check=True)
@@ -9306,9 +9299,7 @@ Verify the exact post-hoc attestation.
         ))
 
         repository = Path(self.temp.name) / "forged-index-merge"
-        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
-                        str(repository)], check=True)
-        subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", merge], check=True)
+        _prepare_historical_git_fixture(repository, merge)
         for key, value in (("user.name", "test"), ("user.email", "test@example.invalid")):
             subprocess.run(["git", "-C", str(repository), "config", key, value], check=True)
         readme_path = f"{runner.PACKET_ROOT}/README.md"
