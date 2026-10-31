@@ -1,4 +1,4 @@
-# G2 Historical Source-Scope Attestation
+# IMPLEMENTATION: G2 Historical Source-Scope Attestation
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-g2-source-scope-attestation-v1`
@@ -9,7 +9,7 @@
 - Priority: `P0`
 - Depends on: `hub-sepulcher-grave-resolution-v1`
 - Locks: `paired-review-source-provenance`
-- Kind: `correction`
+- Kind: `implementation`
 - Review: `auto`
 - Review stage: `post-land`
 - Review modes: `code, architecture, workflow`
