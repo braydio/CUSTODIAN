@@ -35,19 +35,40 @@ against Git blobs and sparse-checkout rules. It runs coordinator validation into
 the new continuation evidence directory before launching the fresh reviewer.
 No earlier reviewer verdict exists or is inferred.
 
-After this PR is independently approved and merged, resume only the original
-held run with:
+After this PR is independently approved and merged, first create the read-only
+plan from a clean coordinator checkout at the exact pinned main:
 
 ```bash
 python3 custodian/tools/agent/paired_review_runner.py \
   review-agent-paired-review-runner-profile-summary-coverage-v1 \
   --continue-run 20261031T154752Z-1243f08594ef \
-  --recover-checkout-profile-mismatch \
+  --recover-checkout-profile-mismatch --plan
+```
+
+The emitted plan binds the original run manifest, claim receipt, pinned base,
+profile dependency set, branch/worktree identity, and lock inode. Review that
+plan, then provide separate explicit authorization by using its exact
+`plan_sha256` in:
+
+The plan reports all 399 reconstructed review dependencies and distinguishes
+paths still tracked/materialized at the pinned tree from historical paths that
+were deleted before that baseline. The current exact-run plan records one such
+historical path; the deleted path remains reviewable through Git history but is
+not claimed as a checked-out file.
+
+```bash
+python3 custodian/tools/agent/paired_review_runner.py \
+  review-agent-paired-review-runner-profile-summary-coverage-v1 \
+  --continue-run 20261031T154752Z-1243f08594ef \
+  --recover-checkout-profile-mismatch --apply \
+  --plan-sha256 <exact-plan-sha256> \
   --authorize-fresh-reviewer-context
 ```
 
-This command may create the first reviewer session for that original claim. It
-does not accept a different workstream/run pair, dispatch another claim, or
+The apply recomputes and compares the plan before any recovery write, repeats
+plan checks immediately before continuation creation, and performs coordinator
+validation before it can launch the first reviewer session for the original
+claim. It does not accept another workstream/run pair, dispatch a new claim, or
 certify a review outcome. The usual independent reviewer disposition and
 coordinator closeout remain required.
 

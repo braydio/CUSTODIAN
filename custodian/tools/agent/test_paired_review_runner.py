@@ -357,32 +357,55 @@ class PairedReviewRunnerTests(unittest.TestCase):
             main = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
                                   text=True, capture_output=True, check=True).stdout.strip()
             profile = runner.worktree_provisioning.Profile("profile.json", "a" * 64, ("review.py",), ())
-            runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
+            # The reviewed implementation history may name files deleted from
+            # the pinned tree; they remain review evidence but cannot be
+            # materialized into the current sparse checkout.
+            runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py", "removed.py"}, main)
             (repo / "review.py").write_text("tampered\n")
             with self.assertRaisesRegex(runner.RunnerError, "dirty"):
                 runner.verify_checkout_profile_worktree(repo, repo, profile, {"review.py"}, main)
 
-    def test_checkout_profile_mismatch_recovery_cli_is_exact_and_requires_fresh_context(self):
+    def test_checkout_profile_mismatch_recovery_requires_plan_then_separately_authorized_apply(self):
+        plan = {"plan_sha256": "a" * 64}
+        with patch.object(runner, "plan_checkout_profile_mismatch_recovery", return_value=plan) as planner:
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+            ]), 0)
+            self.assertEqual(runner.main([
+                runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+                "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+                "--recover-checkout-profile-mismatch", "--plan",
+                "--authorize-fresh-reviewer-context",
+            ]), 2)
+        planner.assert_called_once_with(
+            Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
+            runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
+        )
         with patch.object(runner, "continue_run", return_value=0) as continuation:
             self.assertEqual(runner.main([
                 runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
                 "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
-                "--recover-checkout-profile-mismatch",
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--plan-sha256", "a" * 64,
             ]), 2)
             self.assertEqual(runner.main([
                 "review-other", "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
-                "--recover-checkout-profile-mismatch", "--authorize-fresh-reviewer-context",
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
             ]), 2)
             self.assertEqual(runner.main([
                 runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
                 "--continue-run", runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
-                "--recover-checkout-profile-mismatch", "--authorize-fresh-reviewer-context",
+                "--recover-checkout-profile-mismatch", "--apply",
+                "--authorize-fresh-reviewer-context", "--plan-sha256", "a" * 64,
             ]), 0)
         continuation.assert_called_once_with(
             Path.cwd(), runner.CHECKOUT_PROFILE_MISMATCH_WORKSTREAM,
             runner.CHECKOUT_PROFILE_MISMATCH_RUN_ID,
             authorize_fresh_reviewer_context=True,
-            recover_checkout_profile_mismatch=True, timeout=None,
+            recover_checkout_profile_mismatch=True, plan_sha256="a" * 64, timeout=None,
         )
 
     def test_finish_index_recovery_authenticates_original_five_message_pass(self):

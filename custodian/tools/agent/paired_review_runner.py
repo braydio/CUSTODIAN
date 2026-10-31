@@ -562,7 +562,11 @@ def verify_checkout_profile_receipt(receipt: dict, profile: worktree_provisionin
     actual_paths = checkout.get("paths")
     if not isinstance(actual_paths, list) or any(not isinstance(path, str) for path in actual_paths):
         raise RunnerError("dispatcher checkout_profile evidence omitted its materialized path inventory")
-    missing = sorted(required_paths - set(actual_paths))
+    required_to_materialize = required_paths
+    if repo is not None and reviewed_main is not None:
+        tracked = set(git(repo, "ls-tree", "-r", "--name-only", reviewed_main).splitlines())
+        required_to_materialize = required_paths & tracked
+    missing = sorted(required_to_materialize - set(actual_paths))
     if missing:
         raise RunnerError("dispatcher checkout omitted validated review dependencies: " + ", ".join(missing))
     if repo is None or reviewed_main is None:
@@ -600,7 +604,8 @@ def verify_checkout_profile_worktree(repo: Path, worktree: Path,
     """Reconcile the declared profile with the pinned tree and physical sparse checkout."""
     inventory = inventory if inventory is not None else _checkout_profile_inventory(repo, reviewed_main, profile)
     expected_paths = [item.path for item in inventory]
-    missing_required = sorted(required_paths - set(expected_paths))
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", reviewed_main).splitlines())
+    missing_required = sorted((required_paths & tracked) - set(expected_paths))
     if missing_required:
         raise RunnerError("pinned checkout profile omits validated review dependencies: " + ", ".join(missing_required))
     if not worktree.is_dir():
@@ -637,6 +642,165 @@ def verify_checkout_profile_worktree(repo: Path, worktree: Path,
         actual_oids = result.stdout.decode("ascii", "strict").splitlines()
         if actual_oids != [item.oid for item in non_hydrated]:
             raise RunnerError("dispatcher materialized content differs from the pinned Git tree")
+
+
+def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+    """Build a read-only, exact-evidence plan for the sole held profile-mismatch run."""
+    if (workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
+            or run_id != CHECKOUT_PROFILE_MISMATCH_RUN_ID):
+        raise RunnerError("checkout-profile recovery plan accepts only its exact held run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    coordinator_main = _coordinator_checkout_sha(repo)
+    common = common_dir(repo).resolve()
+    run_dir = common / "custodian-review-runs" / workstream / run_id
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file() or lock_path.is_symlink():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    if not run_dir.is_dir() or run_dir.is_symlink():
+        raise RunnerError("exact original review run directory is absent or unsafe")
+    try:
+        metadata_bytes = (run_dir / "metadata.json").read_bytes()
+        metadata = json.loads(metadata_bytes)
+        receipt_bytes = (run_dir / "claim-receipt.json").read_bytes()
+        receipt_value = json.loads(receipt_bytes)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("exact run metadata or structured claim receipt is missing or malformed") from exc
+    if (not isinstance(metadata, dict) or metadata.get("schema") != SCHEMA
+            or metadata.get("run_id") != run_id or metadata.get("workstream") != workstream
+            or metadata.get("run_dir") != str(run_dir)
+            or metadata.get("phase") != "claim_profile_mismatch"):
+        raise RunnerError("original run metadata is not the exact eligible claim-profile mismatch")
+    manifest = _file_manifest(run_dir)
+    if manifest != CHECKOUT_PROFILE_MISMATCH_RUN_MANIFEST:
+        raise RunnerError("exact held run evidence changed or already has continuation evidence")
+    expected_profile_meta = {
+        "path": CHECKOUT_PROFILE_MISMATCH_PROFILE,
+        "sha256": CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256,
+        "validated_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
+        "required_path_count": 399,
+        "required_paths_sha256": "475c2e734afc2a70449af4abcf9c67822c0aab0644328aa81a0ef6f03d90fe26",
+    }
+    if (metadata.get("checkout_profile") != expected_profile_meta
+            or not isinstance(metadata.get("profile_error"), str)):
+        raise RunnerError("held run profile metadata differs from the authorized claim-profile mismatch")
+    active_path, active_content, packet = validate_eligible_review(repo, workstream)
+    pinned_content = read_git_text(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, active_path)
+    pinned_packet = parse_packet(active_path, pinned_content)
+    if (pinned_content != active_content or pinned_packet.error
+            or pinned_packet.workstream != workstream
+            or pinned_packet.review_target_workstream != packet.review_target_workstream
+            or pinned_packet.review_target_packet != packet.review_target_packet
+            or pinned_packet.authoring_chat != packet.authoring_chat
+            or pinned_packet.review_cycle != packet.review_cycle):
+        raise RunnerError("active review packet differs from the exact held run's pinned packet")
+    profile, profile_main, required_paths = validate_checkout_profile(
+        repo, active_path, pinned_content, pinned_packet, CHECKOUT_PROFILE_MISMATCH_PROFILE,
+        main_ref=CHECKOUT_PROFILE_MISMATCH_MAIN,
+    )
+    required_digest = hashlib.sha256("\n".join(sorted(required_paths)).encode("utf-8")).hexdigest()
+    if (profile_main != CHECKOUT_PROFILE_MISMATCH_MAIN
+            or profile.digest != CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256
+            or len(required_paths) != expected_profile_meta["required_path_count"]
+            or required_digest != expected_profile_meta["required_paths_sha256"]):
+        raise RunnerError("reconstructed checkout-profile dependencies differ from the held run metadata")
+    receipt = parse_claim_receipt(
+        CLAIM_SENTINEL + json.dumps(receipt_value, sort_keys=True), workstream, repo,
+    )
+    worktree = Path(receipt["worktree"]).resolve()
+    branch = f"agent/{workstream}"
+    if (receipt.get("run_id") != CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID
+            or receipt.get("checkout") != "created"
+            or "checkout_profile" in receipt
+            or worktree != Path(CHECKOUT_PROFILE_MISMATCH_WORKTREE).resolve()
+            or receipt.get("branch") != branch or receipt.get("packet") != active_path
+            or _process_owns_worktree(worktree)):
+        raise RunnerError("exact held claim identity or reviewer-process state failed verification")
+    if (common_dir(worktree).resolve() != common or git(worktree, "branch", "--show-current") != branch
+            or git(worktree, "rev-parse", "HEAD^{commit}") != CHECKOUT_PROFILE_MISMATCH_MAIN):
+        raise RunnerError("held review checkout identity differs from the exact pinned claim")
+    verify_checkout_profile_worktree(
+        repo, worktree, profile, required_paths, CHECKOUT_PROFILE_MISMATCH_MAIN,
+    )
+    tracked_paths = set(git(repo, "ls-tree", "-r", "--name-only", CHECKOUT_PROFILE_MISMATCH_MAIN).splitlines())
+    materialized_required_paths = sorted(required_paths & tracked_paths)
+    if (git(repo, "rev-parse", f"refs/heads/{branch}^{{commit}}") != CHECKOUT_PROFILE_MISMATCH_MAIN
+            or _cached_remote_ref_for_readonly_plan(repo, branch) != CHECKOUT_PROFILE_MISMATCH_MAIN):
+        raise RunnerError("held review branch or authoritative remote tip moved from its pinned base")
+    target_path = packet.review_target_packet
+    if target_path is None:
+        raise RunnerError("active review packet omits its exact archived target")
+    target_content = read_git_text(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, target_path)
+    target = parse_packet(target_path, target_content)
+    if (target.error or target.workstream != packet.review_target_workstream
+            or target.kind not in {"implementation", "correction"} or target.status != "complete"
+            or target_path != f"{PACKET_ROOT}/archived/{Path(target_path).name}"):
+        raise RunnerError("pinned archived implementation target is invalid or incomplete")
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, CHECKOUT_PROFILE_MISMATCH_MAIN, target_path, packet.review_target_workstream, target_content,
+    )
+    if identity_error:
+        raise RunnerError("pinned implementation identity failed verification: " + identity_error)
+    worktree_packet = (worktree / active_path).read_text(encoding="utf-8")
+    if worktree_packet != pinned_content:
+        raise RunnerError("held checkout review packet differs from the pinned packet")
+    lock_stat = lock_path.stat()
+    plan = {
+        "schema": "custodian.paired_review_checkout_profile_recovery_plan.v1",
+        "mode": "read-only-plan",
+        "workstream": workstream,
+        "run_id": run_id,
+        "claim_run_id": CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID,
+        "coordinator_main": coordinator_main,
+        "reviewed_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
+        "implementation_commit": implementation_commit,
+        "branch": branch,
+        "worktree": str(worktree),
+        "active_packet": active_path,
+        "target_packet": target_path,
+        "profile_path": profile.path,
+        "profile_sha256": profile.digest,
+        "required_path_count": len(required_paths),
+        "required_paths_sha256": required_digest,
+        "materialized_required_paths": materialized_required_paths,
+        "historical_required_paths_absent_from_pinned_tree": sorted(required_paths - tracked_paths),
+        "run_evidence_manifest": manifest,
+        "run_evidence_manifest_sha256": _manifest_digest(manifest),
+        "run_metadata_sha256": _sha256_bytes(metadata_bytes),
+        "claim_receipt_sha256": _sha256_bytes(receipt_bytes),
+        "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        "active_review_processes": [],
+        "apply_boundary": "requires --apply, this exact --plan-sha256, and --authorize-fresh-reviewer-context",
+        "apply_actions": ["repeat all plan checks", "run coordinator validation", "only on validation pass launch one fresh reviewer on the same claim"],
+    }
+    plan["plan_sha256"] = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
+    return plan
+
+
+def plan_checkout_profile_mismatch_recovery(repo: Path, workstream: str, run_id: str) -> dict:
+    """Authenticate and print the read-only plan while holding the preserved review lock."""
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file() or lock_path.is_symlink():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError(f"another local process is supervising {workstream}; plan refused") from exc
+        return _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+
+
+def _readonly_checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+    previous = os.environ.get("GIT_OPTIONAL_LOCKS")
+    os.environ["GIT_OPTIONAL_LOCKS"] = "0"
+    try:
+        return _checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+    finally:
+        if previous is None:
+            os.environ.pop("GIT_OPTIONAL_LOCKS", None)
+        else:
+            os.environ["GIT_OPTIONAL_LOCKS"] = previous
 
 
 def dispatcher_claim_command(repo: Path, workstream: str, checkout_profile: str | None = None) -> list[str]:
@@ -6484,11 +6648,12 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
     if recover_checkout_profile_mismatch:
         if (not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
                 or recover_missing_archived_disposition or recover_codex_exited_findings
-                or recover_dual_disposition or plan_sha256 or attest_no_active_owner
+                or recover_dual_disposition or not isinstance(plan_sha256, str)
+                or not re.fullmatch(r"[0-9a-f]{64}", plan_sha256) or attest_no_active_owner
                 or attest_no_unique_evidence or codex_path is not None
                 or workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
                 or run_id != CHECKOUT_PROFILE_MISMATCH_RUN_ID):
-            raise RunnerError("checkout-profile recovery accepts only its exact held run with a fresh reviewer context")
+            raise RunnerError("checkout-profile recovery apply accepts only its exact held run with a fresh reviewer context and plan digest")
     if recover_codex_exited_findings:
         if (not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
                 or recover_missing_archived_disposition or plan_sha256
@@ -6564,6 +6729,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                 or original.get("run_dir") != str(run_dir)
                 or original.get("phase") != expected_phase):
             raise RunnerError(f"original run metadata is not the exact eligible {expected_phase_label}")
+        if recover_checkout_profile_mismatch:
+            fresh_plan = _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+            if fresh_plan.get("plan_sha256") != plan_sha256:
+                raise RunnerError("checkout-profile recovery evidence changed; obtain a fresh read-only plan")
         if recover_checkout_profile_mismatch:
             if (_file_manifest(run_dir) != CHECKOUT_PROFILE_MISMATCH_RUN_MANIFEST
                     or any(path.name.startswith("continuation-") for path in run_dir.iterdir())):
@@ -7080,8 +7249,12 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("original review checkout head differs from its pinned reviewed-main SHA")
         if git(worktree, "rev-parse", "--verify", f"refs/heads/{branch}^{{commit}}") != reviewed_main:
             raise RunnerError("original local review branch moved away from its pinned reviewed main")
-        git(repo, "fetch", "origin", branch)
-        if git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{branch}^{{commit}}") != reviewed_main:
+        if recover_checkout_profile_mismatch:
+            remote_branch_tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+        else:
+            git(repo, "fetch", "origin", branch)
+            remote_branch_tip = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{branch}^{{commit}}")
+        if remote_branch_tip != reviewed_main:
             raise RunnerError("published review branch moved away from its pinned reviewed main")
         try:
             original_packet_text = (worktree / active_path).read_text(encoding="utf-8")
@@ -7141,6 +7314,10 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
         )
         original_run_manifest = (_file_manifest(run_dir, omit=continuation_dir)
                                  if retry_host_validation or missing_checkout_reconstruction else _file_manifest(run_dir))
+        if recover_checkout_profile_mismatch:
+            fresh_plan = _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+            if fresh_plan.get("plan_sha256") != plan_sha256:
+                raise RunnerError("checkout-profile recovery evidence changed before apply; obtain a fresh read-only plan")
         if recover_missing_archived_disposition:
             if (parent_continuation_manifest is None
                     or _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT) != parent_continuation_manifest):
@@ -7632,7 +7809,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--recover-invalid-disposition", action="store_true",
                         help="repair and close only the exact preserved invalid-disposition run; never launches a reviewer")
     parser.add_argument("--recover-checkout-profile-mismatch", action="store_true",
-                        help="continue only the exact preserved profile-mismatch claim after pinned checkout revalidation")
+                        help="plan/apply authenticated continuation of only the exact preserved profile-mismatch claim")
     parser.add_argument("--recover-missing-archived-disposition", action="store_true",
                         help="launch the one explicitly authorized continuation-02 for the exact held missing-archive run")
     parser.add_argument("--recover-codex-exited-findings", action="store_true",
@@ -7674,16 +7851,26 @@ def main(argv: list[str] | None = None) -> int:
         if args.recover_checkout_profile_mismatch:
             if (args.continue_run != CHECKOUT_PROFILE_MISMATCH_RUN_ID
                     or args.review_workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
-                    or not args.authorize_fresh_reviewer_context
                     or args.recover_host_validation or args.recover_invalid_disposition
                     or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
-                    or args.recover_dual_disposition or args.plan or args.apply or args.plan_sha256
+                    or args.recover_dual_disposition
                     or args.attest_no_active_review_owner or args.attest_no_unique_worktree_evidence):
-                raise RunnerError("checkout-profile recovery requires only its exact run and fresh reviewer authorization")
+                raise RunnerError("checkout-profile recovery requires only its exact workstream and run")
+            if args.plan:
+                if args.authorize_fresh_reviewer_context or args.plan_sha256:
+                    raise RunnerError("read-only checkout-profile plan cannot include apply authorization or a plan digest")
+                plan = plan_checkout_profile_mismatch_recovery(
+                    Path.cwd(), args.review_workstream, args.continue_run,
+                )
+                print(json.dumps(plan, indent=2, sort_keys=True))
+                return 0
+            if (not args.apply or not args.authorize_fresh_reviewer_context or not args.plan_sha256):
+                raise RunnerError("checkout-profile recovery apply requires --apply, --authorize-fresh-reviewer-context, and --plan-sha256")
             return continue_run(
                 Path.cwd(), args.review_workstream, args.continue_run,
                 authorize_fresh_reviewer_context=True,
-                recover_checkout_profile_mismatch=True, timeout=args.timeout,
+                recover_checkout_profile_mismatch=True,
+                plan_sha256=args.plan_sha256, timeout=args.timeout,
             )
         if args.recover_invalid_disposition:
             if (args.continue_run is None or args.review_workstream != INVALID_DISPOSITION_WORKSTREAM
