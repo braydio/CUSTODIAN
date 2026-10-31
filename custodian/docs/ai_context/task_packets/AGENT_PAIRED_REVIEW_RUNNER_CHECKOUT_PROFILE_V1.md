@@ -1,0 +1,47 @@
+# Paired-review runner checkout-profile integration
+
+- Packet schema: `custodian.task_packet.v2`
+- Workstream: `agent-paired-review-runner-checkout-profile-v1`
+- Category: `agent-ops`
+- Status: `draft`
+- Dispatch: `manual`
+- Authoring handoff: `auto`
+- Priority: `P0`
+- Depends on: `agent-workstream-lightweight-lfs-provisioning-v1`
+- Locks: `paired-review-runner-checkout-profile`
+- Kind: `implementation`
+- Review: `auto`
+- Review stage: `post-land`
+- Review modes: `code, architecture, workflow`
+- Paired review workstream: `review-agent-paired-review-runner-checkout-profile-v1`
+- Review cycle: `0`
+- Max automatic review cycles: `2`
+- Review rationale: The runner creates independent-review claims and must bind a smaller checkout to all actual review dependencies without weakening evidence or acceptance.
+- Reviewed main: `f4c6c1fb388e49e11db5ae14d6fd7ec757233636`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae5d404-c86c-83ea-aec4-6cd3d75af933`
+- Visual review: `none`
+- Goal: Allow the canonical paired-review runner to claim a genuinely lightweight reviewer worktree while preserving complete, independently verifiable review evidence and the existing review validation contract.
+- Completion boundary: Add explicit checkout-profile selection and dependency coverage validation to the existing paired-review runner, add a tracked minimal profile for the provisioning review pair, and prove the fresh review can proceed through the normal dispatcher and runner lifecycle. Full checkout remains the default when no profile is requested.
+- Current measured state: `dispatch.py claim` accepts `--checkout-profile`. `paired_review_runner.py` invokes the dispatcher without it, so the provisioning review claim was rejected before claim creation: 7,264,018,781 bytes required including reserve versus 2,279,641,088 available. The already-landed provisioning implementation demonstrated a 51,097,600-byte allocated sparse checkout with local LFS verification. The original review claim was not acquired and no reviewer process launched.
+- Evidence: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/test_dispatch.py`; `custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`; claim-failed record `20261031T140744Z-6260ae2c2aca`.
+- Task-specific authority: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`.
+- Work surface: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; new `custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`.
+- Publication inputs: `custodian/tools/agent/paired_review_runner.py`; `custodian/tools/agent/test_paired_review_runner.py`; `custodian/tools/agent/dispatch.py`; `custodian/tools/agent/test_dispatch.py`; `custodian/tools/agent/worktree_provisioning.py`; `custodian/tools/agent/task_packet_contract.py`; `custodian/tools/agent/workstream.py`; `custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md`; `custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md`; `custodian/docs/ai_context/VALIDATION_RECIPES.md`; `custodian/docs/ai_context/TASK_PACKET_CATEGORIES.json`; `custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`; `custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md`.
+- Change: Add optional `--checkout-profile <tracked-path>` support to `paired_review_runner.py`; omission preserves the current full-checkout behavior. Before calling the dispatcher, read the selected profile and both exact review/implementation packets at fetched `origin/main`. Derive the required tracked-path set from the packets' `Publication inputs:` fields plus all tracked paths changed by the exact target implementation commit. Require every dependency to be covered by the profile's exact paths or directory prefixes, require the profile itself to be tracked and valid at `origin/main`, and refuse before any claim if a path is missing, ambiguous, unsafe, or absent from the selected profile. Pass the validated path through to the canonical `dispatch.py claim --checkout-profile` call. Record the selected profile path and digest in the run metadata and verify the claimed checkout receipt matches it. Add a focused path-exact, no-LFS profile for this infrastructure review pair. Keep normal reviewer host validation and independent judgment unchanged.
+- Preserve: Full checkout as the default; dispatcher as sole claim/worktree authority; fresh isolated reviewer context; reviewer-authored verdict and receipt; complete original evidence and host validation; all protected claims, locks, runs and reviewer artifacts; default LFS and global Git settings.
+- Non-goals: No manual claim, storage cleanup, LFS deletion/refetch, alternative review launcher, claim/lock release or repair, changes to review verdict semantics, generic acceptance of incomplete profiles, mutation of the preserved Awakening claim, or weakening of review validation.
+- Acceptance: (A1) Existing invocations without a profile pass no profile argument to dispatch and retain full-checkout behavior. (A2) A supplied profile is read from tracked `origin/main`, is path-safe and bounded, and covers every required path derived from both published packets and the exact implementation diff before a claim can be attempted. (A3) Missing, forged, untracked, unsafe, changed, or incomplete profiles fail closed without creating a dispatch claim; tests prove omissions in both publication inputs and target-diff paths are rejected. (A4) The validated profile path and digest are passed to dispatcher and verified against the claimed checkout receipt/run metadata. (A5) Host validation, review prompt/evidence, verdict and receipt checks are byte-for-byte behaviorally unchanged for full and profiled modes. (A6) The new minimal infrastructure profile supports the required review evidence with no unnecessary LFS hydration and a materially lower measured checkout allocation than full mode. (A7) The original provisioning paired review launches only through the canonical `paired_review_runner.py` after this change lands; its ordinary independent review acceptance remains unchanged. (A8) Focused regression tests, changed-file coverage, compile and diff checks pass; implementation lands through canonical workstream finish and is accepted only after its fresh paired review.
+- Validation: Add focused runner tests for default compatibility, explicit profile propagation, packet-derived dependency coverage, exact implementation-diff coverage, unsafe/missing/untracked/incomplete profile refusal before claim, claim receipt identity, and profile/dependency drift. Run `python3 -m unittest custodian.tools.agent.test_paired_review_runner custodian.tools.agent.test_worktree_provisioning custodian.tools.agent.test_dispatch -v`; run focused packet-contract and category checks; run `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` with complete changed-file coverage; run `python3 -m py_compile custodian/tools/agent/paired_review_runner.py custodian/tools/agent/test_paired_review_runner.py`; verify measured full-versus-profiled checkout allocation and `git diff --check`. Do not launch a broad Godot sweep or hydrate unrelated LFS assets. After landing, retry the existing paired review only through the canonical runner using the published profile and do not start recovery of the real Awakening claim before an independent PASS.
+- Task overrides: `none`
+- Deferred: Once this workstream and its independent review are complete, retry `review-agent-workstream-lightweight-lfs-provisioning-v1` through the canonical runner with the published profile. Only after that separate review passes may the preserved Awakening same-claim recovery be considered.
+
+## Handoff
+- Next workstream: `review-agent-paired-review-runner-checkout-profile-v1`
+- Next packet state: `dependency-gated`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae5d404-c86c-83ea-aec4-6cd3d75af933`
+- Summary backlink: Include the exact Authoring chat URL in every durable summary and final Next Handoff.
+- Refresh reason: `none`
+- Next action: Land the bounded paired-review runner adapter and launch its fresh independent paired review through the validated profile.
+- Blockers or open questions: The selected profile must cover the actual published review dependencies and exact implementation diff; no profile may weaken the reviewer acceptance contract.
