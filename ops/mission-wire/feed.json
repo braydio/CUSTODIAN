@@ -1,9 +1,179 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-10-31T15:17:55Z",
-  "source_main_sha": "23bf33e3d5898e98a4750893300e71832e055d59",
+  "generated_at": "2026-10-31T16:25:07Z",
+  "source_main_sha": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-profile-summary-coverage-e1bff4eb",
+      "headline": "Review parser fix lands, then a missing evidence file stalls the next checkout",
+      "summary": "The publication-input grammar correction has landed, removing a punctuation mismatch and circular review prerequisite. Its independent review then hit a new fail-before-claim check: the lightweight checkout profile omitted the implementation summary it needed to inspect. A two-path profile correction is now landed and awaits its own independent review. No accepted PASS or host teardown is established.",
+      "body": "Main e1bff4eb includes the landed grammar parser correction (57f79604), a new profile-summary-coverage packet pair (ec5b1350), automatic handoff (03391a69), and a narrowly scoped two-path profile fix (e1bff4eb). Grammar implementation reports 8/8 selected changed-file validation checks passing, but that is not an independent verdict. The profile fix reports exactly 49 included paths, two more than its previous 47, with no broad root inclusion. Its implementation packet is marked complete, but its paired review remains outstanding. A reported preclaim check failed safely because the grammar summary was absent; no reviewer claim was created for that attempt. No canonical live dispatcher audit or host telemetry was inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-runner-profile-summary-coverage-v1",
+      "occurred_at": "2026-10-31T16:25:07Z",
+      "bullets": [
+        "Grammar implementation landed; independent acceptance still outstanding.",
+        "Missing summary triggered a reported safe preclaim rejection.",
+        "Profile now explicitly includes the two required root summaries.",
+        "Fresh independent profile review is next, then grammar, adapter and provisioning reviews."
+      ],
+      "links": [
+        {
+          "title": "Grammar parser implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/57f796040cc3e3a51a213b529a2baeeef6fa9627"
+        },
+        {
+          "title": "Profile correction packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ec5b13504f3e772ea33dfd1bf7f14e3ec5abe159"
+        },
+        {
+          "title": "Automatic handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/03391a69611593c29a0df132bb50e4f277f755b9"
+        },
+        {
+          "title": "Profile correction landed",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN fixed the review launcher's punctuation mismatch, but the next independent check uncovered a different missing piece: the lightweight reviewer checkout did not include the very implementation summary the reviewer needed. The safety check refused to start an incomplete review. A narrowly targeted profile update has now landed, leaving the independent verdict as the next gate.",
+        "sections": [
+          {
+            "heading": "The parser correction is on main",
+            "text": "The shared publication-input parser now accepts a conventional final period after the last file path while keeping strict checks against unsafe and malformed paths. The implementation also removes a circular prerequisite that had made the adapter review depend on a later provisioning review. Its author reports passing focused tests and changed-file validation, not an independent PASS."
+          },
+          {
+            "heading": "A smaller checkout still needs the right evidence",
+            "text": "The new sparse checkout profile was missing the grammar implementation's root-level summary. The canonical runner reportedly caught that omission before claiming a reviewer. Rather than widen the checkout indiscriminately, the follow-up adds exactly two named summaries, one for the grammar fix and one for the profile correction itself."
+          },
+          {
+            "heading": "Acceptance remains a sequence, not a single green test",
+            "text": "The profile correction is now on main with its implementation packet marked complete. Its own fresh independent review must pass before the grammar review can resume. The adapter and original provisioning reviews follow in order; protected recovery still requires separate authorization."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The safety gate is finding real evidence gaps",
+            "explanation": "The failed preclaim check shows why smaller worktrees need explicit dependency coverage. A reviewer cannot fairly approve a change if its checkout silently omits a required implementation summary."
+          },
+          {
+            "title": "The fix is deliberately narrower than the problem",
+            "explanation": "The reported profile expands from 47 to 49 exact paths rather than adding a broad root directory. That preserves the storage benefit while exposing a maintenance cost: new review summaries must be explicitly included."
+          }
+        ],
+        "takeaway": "Two implementation fixes have landed, but neither substitutes for independent acceptance. The next useful evidence is a fresh PASS for the bounded profile correction.",
+        "next_watch": "Watch for the profile-correction review receipt, followed by grammar, adapter and provisioning reviews in that order."
+      },
+      "details": {
+        "overview": "Inspected five commits after prior main 23bf33e3. Grammar correction 57f79604 reports 8/8 changed-file validation checks passing. Profile packet ec5b1350 records failed preclaim 20261031T153657Z-fc9d201d733a, with 2,651,750,400 bytes available versus 7,264,125,076 required for full checkout at that historical attempt. Profile correction e1bff4eb reports 49 exact paths, prior 47 plus two summaries, and selected validation 1/1. All host measurements and validation results are author-reported, not independently remeasured.",
+        "ledger": [
+          {
+            "stage": "Grammar implementation",
+            "status": "verified landed; validation reported",
+            "evidence": "57f79604 code and summary; author reports 8/8 checks."
+          },
+          {
+            "stage": "Grammar independent review",
+            "status": "not accepted",
+            "evidence": "Missing profile summary blocked reported preclaim attempt; no PASS inspected."
+          },
+          {
+            "stage": "Profile summary correction",
+            "status": "verified landed; validation reported",
+            "evidence": "e1bff4eb adds exactly two summary paths; packet marked complete."
+          },
+          {
+            "stage": "Profile independent review",
+            "status": "outstanding",
+            "evidence": "Review packet exists; no independent PASS inspected."
+          },
+          {
+            "stage": "Adapter and provisioning reviews",
+            "status": "downstream, not verified accepted",
+            "evidence": "Packet dependencies require sequential fresh review."
+          },
+          {
+            "stage": "Protected recovery and teardown",
+            "status": "unknown / not authorized",
+            "evidence": "No canonical host evidence or separate authorization."
+          }
+        ],
+        "notes": [
+          "Main inspected at e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f.",
+          "Combined commit status API returned no statuses; this is not evidence of green CI."
+        ],
+        "unknowns": [
+          "Full canonical dispatcher counts, live claims and running processes unavailable.",
+          "Host disk, locks, worktrees and teardown unverified."
+        ],
+        "actions": [
+          "Independent reviewer: validate exact two-path profile delta and canonical runner dependency closure; record genuine verdict.",
+          "Only after profile PASS, independent reviewer: retry grammar correction review; then adapter and provisioning in order."
+        ]
+      },
+      "scorecard": {
+        "stage": "Profile correction landed; independent review outstanding",
+        "as_of": "2026-10-31T16:25:07Z",
+        "scope": "Grammar parser and bootstrap profile corrections, not full project queue",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Land publication-input grammar fix",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "57f79604 landed."
+          },
+          {
+            "label": "Identify missing reviewer evidence",
+            "status": "done",
+            "verification": "reported",
+            "evidence": "Preclaim failure described in ec5b1350 packet."
+          },
+          {
+            "label": "Land exact profile summary additions",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "e1bff4eb adds two named paths."
+          },
+          {
+            "label": "Accept profile correction independently",
+            "status": "current",
+            "verification": "unknown",
+            "evidence": "No accepted PASS inspected."
+          },
+          {
+            "label": "Accept grammar correction independently",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Blocked until profile review succeeds."
+          },
+          {
+            "label": "Accept adapter and provisioning reviews",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Dependent reviews still outstanding."
+          },
+          {
+            "label": "Authorize recovery and verify teardown",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Separate authorization and host proof required."
+          }
+        ],
+        "next_gate": "Fresh independent reviewer must verify the landed profile correction with canonical runner evidence and record an authentic PASS."
+      },
+      "related": [
+        {
+          "title": "Review checkout fix lands, but a punctuation mismatch blocks its independent test",
+          "context": "Previous report identified the grammar incompatibility; this update covers its landing and the newly exposed checkout evidence gap.",
+          "story_id": "paired-review-profile-grammar-blocker-23bf33e3"
+        }
+      ]
+    },
     {
       "id": "paired-review-profile-grammar-blocker-23bf33e3",
       "headline": "Review checkout fix lands, but a punctuation mismatch blocks its independent test",
@@ -1605,157 +1775,15 @@
         "next_gate": "Existing lifecycle owner needs a supported authorized resolution and passing validation before the paired reviewer may claim."
       },
       "related": []
-    },
-    {
-      "id": "review-manifest-4e2e7dcb-fa7789b7",
-      "headline": "Review validation now checks historical test rules consistently",
-      "summary": "A review-recovery correction has landed that authenticates the test manifest at the exact historical revision across validation and closeout. Its implementation packet is archived; the independent review and protected downstream recoveries remain outstanding.",
-      "body": "Commits 4e2e7dcb, b7ff14b7 and fa7789b7 land pinned-manifest coverage validation, synchronized regression fixtures and packet archive. Implementation summary reports 252 runner tests and 3 selected checks passed using a process-local 360-second timeout; shared policy was unchanged. A fresh independent review is required, and protected historical recovery plans were not applied.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-excluded-coverage-evidence-recovery-v1-review-corrections-1",
-      "links": [
-        {
-          "title": "Manifest validation implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/4e2e7dcb736eb76359981defa514269037f0e8dc"
-        },
-        {
-          "title": "Synchronized validation fixtures",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/b7ff14b7379a0ca9a66ad08c78d40f940b0e3676"
-        },
-        {
-          "title": "Correction packet archived",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/fa7789b7ee6fda763ae683ed144117f353655ea9"
-        }
-      ],
-      "article": {
-        "lead": "CUSTODIAN has landed another guardrail for its independent review pipeline. The system now checks test coverage against the rules that actually belonged to the historical change, rather than letting later edits distort the evidence. The correction is committed, but it still needs independent acceptance.",
-        "sections": [
-          {
-            "heading": "Why historical rules matter",
-            "text": "A review of older work must establish which tests and coverage rules were in force at the exact source revision. The correction authenticates a tightly scoped test-definition change and applies the same pinned rules to failed reports, successful reports and final closeout."
-          },
-          {
-            "heading": "A validated implementation, not a released blockage",
-            "text": "The implementation summary reports a successful full runner suite after a local timeout extension. Its packet is archived, but the protected coverage and Procession reviews have not been resumed or formally accepted on this evidence."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Consistency across the whole review lifecycle",
-            "explanation": "Applying the same historical manifest to every validation and closeout path reduces disagreement between a test result and the final review decision."
-          },
-          {
-            "title": "Test runtime is a separate maintenance concern",
-            "explanation": "The reported suite exceeded the default 120-second cap. A process-local extension allowed validation without silently changing the shared policy; that policy mismatch remains a future decision."
-          }
-        ],
-        "takeaway": "The historical-manifest correction is on main, but independent acceptance remains the next gate.",
-        "next_watch": "Look for a canonical independent passing receipt before either preserved review recovery is considered."
-      },
-      "details": {
-        "overview": "Main fa7789b7ee6fda763ae683ed144117f353655ea9. The correction pins source-span and reviewed-main manifests and authenticates narrow test-definition changes. This is a landed code change, not verified deployment or acceptance.",
-        "ledger": [
-          {
-            "stage": "Implementation landing",
-            "status": "verified",
-            "evidence": "4e2e7dcb modified validation and runner paths."
-          },
-          {
-            "stage": "Synchronized test fixtures",
-            "status": "verified",
-            "evidence": "b7ff14b7 updated historical fixtures and validation summary."
-          },
-          {
-            "stage": "Technical validation",
-            "status": "reported",
-            "evidence": "252 runner tests and 3 selected checks passed per published summary; process-local 360-second timeout."
-          },
-          {
-            "stage": "Packet archive",
-            "status": "verified",
-            "evidence": "fa7789b7 marks correction complete."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No canonical accepted receipt inspected."
-          },
-          {
-            "stage": "Protected recovery and teardown",
-            "status": "unknown",
-            "evidence": "No authorized recovery or host cleanup proof inspected."
-          }
-        ],
-        "notes": [
-          "Default test cap versus full suite runtime is documented drift."
-        ],
-        "unknowns": [
-          "Current host locks, processes, worktrees, and disk state."
-        ],
-        "actions": [
-          "Existing independent reviewer: review the landed manifest correction; preserve protected review runs until accepted."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed and archived; independent review pending",
-        "as_of": "2026-10-31T04:22:00Z",
-        "scope": "Historical manifest validation correction",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement pinned manifest checks",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "4e2e7dcb"
-          },
-          {
-            "label": "Synchronize regression fixtures",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "b7ff14b7"
-          },
-          {
-            "label": "Archive implementation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "fa7789b7"
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No canonical receipt inspected"
-          },
-          {
-            "label": "Protected review continuation",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires accepted correction and separate controls"
-          },
-          {
-            "label": "Clean teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host evidence unavailable"
-          }
-        ],
-        "next_gate": "Existing independent reviewer must accept the correction before protected recoveries."
-      },
-      "occurred_at": "2026-10-31T04:22:00Z",
-      "bullets": [],
-      "images": [],
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-10-31T15:17:55Z",
-    "source_main_sha": "23bf33e3d5898e98a4750893300e71832e055d59",
+    "observed_at": "2026-10-31T16:25:07Z",
+    "source_main_sha": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
     "coverage": "partial",
-    "scope": "Four main commits since prior report and their selected runner/grammar packets; not a canonical dispatcher queue audit",
+    "scope": "Five inspected main commits and named review packet changes since 23bf33e3; no full canonical dispatcher audit",
     "metrics": [],
-    "focus": "Land and independently validate publication-input grammar compatibility and non-circular adapter review prerequisite",
-    "note": "Project-wide packet counts and host state unavailable; ready/auto does not establish execution."
+    "focus": "Obtain independent PASS for the two-path reviewer bootstrap profile correction",
+    "note": "No verified project-wide queue totals or host state. Reported validation is not independent acceptance."
   }
 }
