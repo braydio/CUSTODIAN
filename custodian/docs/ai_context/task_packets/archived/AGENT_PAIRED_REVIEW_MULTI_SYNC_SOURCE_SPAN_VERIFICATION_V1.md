@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-paired-review-multi-sync-source-span-verification-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P0`
@@ -54,9 +54,30 @@
 ## Handoff
 
 - Next workstream: `review-agent-paired-review-multi-sync-source-span-verification-v1`
-- Next packet state: `dependency-gated`
+- Next packet state: `ready`
 - Refresh owner: `none`
 - ChatGPT/user planning refresh required: `no`
 - Refresh planning chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f
 - Refresh instruction: `Use the exact landed correction and durable test evidence; independently inspect the per-merge lifecycle bindings and adversarial coverage.`
 - Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ad3b05a-6b30-83e9-ae0a-97f0a88a751f
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `_split_landing_source_span` now verifies ordered per-merge parents, ancestry, deterministic merge trees, exact lifecycle witness identity/order, and owned/inherited/overlapping source paths; 258 paired-review runner tests passed; canonical changed-file validation passed with both changed paths fully covered; targeted packet and category checks passed. The preserved historical correction trace still lacks a checkpoint witness for its first sync merge and therefore remains fail-closed pending authentic evidence; no historical review plan was applied.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `The prior resolver rejected all multi-merge source spans. The preserved correction run also lacks a unique checkpoint witness for the first merge, so its history remains unverifiable even after generic multi-merge support.`
+- Root cause / contributing factors: `The resolver encoded a single-merge assumption; the preserved run's immutable lifecycle trace does not contain the required checkpoint event.`
+- Prevention / pipeline improvement: `Keep lifecycle checkpoint/resume and main-sync witnesses in the authenticated run trace for every synchronization merge; never infer or reconstruct missing events from Git topology alone.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `manual-follow-up`
+- What worked: `Disposable real-Git fixtures covered sequential, mixed-witness and adversarial multi-merge histories.`
