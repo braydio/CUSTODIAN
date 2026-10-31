@@ -1,0 +1,38 @@
+# RC-032 Manual Landing Audit
+
+Authoring chat: https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ea54-f98c-83ea-8582-3ef5bd595199
+
+## Scope and authority
+
+RC-032 authorized one exact owner-approved fast-forward landing of the corrected implementation commit below, overriding the ordinary workstream.py finish landing path for this commit and claim only. RC-033 corrected the preflight claim-ref predicate: the temporary dispatcher claim is normally released after the verified implementation branch is published. The original immutable trace, published branch, and current dispatcher claimed-state are the assignment evidence. No temporary claim was recreated.
+
+## Landing record
+
+- Workstream: agent-paired-review-merged-source-validation-isolation-v1
+- Original claim run: 20261031T031811Z-4f16acc95117
+- Original claim token: 808ad1f2feea347ca0a3433865a6023865170d49
+- Exact landing commit: 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b
+- Exact tree: 8cc7b5976cf716a4243f40d26e6038ef5963f9de
+- Expected prior main: fa7789b7ee6fda763ae683ed144117f353655ea9
+- Landing method: GitHub ref update with expected-SHA compare-and-swap and fast-forward enforcement (force=false)
+- Result: origin/main now equals 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b; the root checkout was clean at the expected prior main and fast-forward synchronized to the landed commit.
+- The landed follow-up changes only custodian/tools/agent/paired_review_runner.py and custodian/tools/agent/test_paired_review_runner.py. The original merge c06edc89cf8928711a7e82d06d7ee430717b8d65 and archived commit 8706eeba1436611b9c743fa56fa791d19986edd6 retain their original identities and history.
+
+## Evidence and disposition
+
+- The published diagnostic trace records the original claim acquisition and token, worktree publication/start, normal release of the temporary claim ref, and checkpoint of the exact correction commit.
+- The dispatcher audit recognizes the implementation as claimed through its published agent branch, with its execution lock held. The temporary dispatch-claims ref is absent as expected after normal release.
+- Canonical post-sync validation remains PASS: 9/9 selected checks, complete coverage, zero failures/timeouts. Report SHA-256: 65cb102f9ab0e84f6ba1816e4c10e3f4f1f84206e8eadbf30f61f86fe4d90bc6.
+- Fresh independent read-only review disposition: ACCEPTABLE, no blocking findings. This is not a canonical paired-review PASS.
+- The original workstream.py finish attempt remains a recorded failure in its immutable trace. Manual integration is SUCCESS; it does not rewrite that result or represent a successful normal finish.
+- Post-landing read-only workstream.py preflight reports no blockers against the landed tree. finish was not rerun.
+- The paired review review-agent-paired-review-merged-source-validation-isolation-v1 remains dispatcher-ineligible: dependency/lock blocked because the implementation execution lock is still held. No reviewer was launched.
+- A read-only transient_worktree_gc.py --repo . preview returned no eligible checkouts. The implementation branch, worktree, diagnostic trace, and claim/lock state remain preserved. No lifecycle retirement or claim release was performed.
+
+## Protected state
+
+All five protected historical review runs, worktrees, claims, locks, and evidence remain unchanged. No historical recovery was applied; no claim or evidence was rewritten; no new packet or reviewer run was created.
+
+## Remaining administrative blocker
+
+The implementation is integrated and technically validated, but the active implementation execution lock prevents dispatcher eligibility for its paired review. The normal finish result remains historically failed, and no supported retirement action was verified that both releases this lock and preserves that result. Keep the implementation branch, claim state, and worktree intact pending a separately authorized supported lifecycle resolution.
