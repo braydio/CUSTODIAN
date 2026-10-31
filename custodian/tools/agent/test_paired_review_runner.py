@@ -26,6 +26,14 @@ from godot_project_lock import (
     BUDGET_FD_ENV, BUDGET_REENTRANCY_ENV, MAX_JOBS_ENV,
     GodotJobBudget, godot_home, job_budget_root,
 )
+
+
+def _mock_no_active_review_processes(test_case: unittest.TestCase) -> None:
+    """Keep recovery fixtures independent of the host's restricted /proc view."""
+    for name in ("_process_owns_worktree", "_processes_owning_review_checkout"):
+        owner_probe = patch.object(runner, name, return_value=[])
+        owner_probe.start()
+        test_case.addCleanup(owner_probe.stop)
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -111,6 +119,9 @@ def append_receipt(target, *, review_workstream, target_workstream, reviewed_mai
 
 
 class PairedReviewRunnerTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
     def test_profile_publication_inputs_are_concrete_and_path_safe(self):
         self.assertEqual(runner._publication_inputs(
             "- Publication inputs: `custodian/tools/a.py`; `custodian/tests/a.py`\n", "sample"),
@@ -4106,6 +4117,7 @@ class AdvancedHeadPassRecoveryTests(unittest.TestCase):
 
 class PairedReviewHostValidationTests(unittest.TestCase):
     def setUp(self):
+        _mock_no_active_review_processes(self)
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name) / "repo"
         self.root.mkdir()
@@ -9476,6 +9488,9 @@ Verify the exact post-hoc attestation.
 
 
 class RedactedFinalCaptureTests(unittest.TestCase):
+    def setUp(self):
+        _mock_no_active_review_processes(self)
+
     def pass_fixture(self, root: Path):
         def git(cwd, *args):
             result = subprocess.run(["git", "-C", str(cwd), *args], text=True, capture_output=True)
