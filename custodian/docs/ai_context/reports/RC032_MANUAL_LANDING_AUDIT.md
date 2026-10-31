@@ -46,3 +46,10 @@ The implementation is integrated and technically validated, but the active imple
 - Correction to the earlier preflight statement above: its supplied report SHA-256 65cb102f9ab0e84f6ba1816e4c10e3f1f84206e8eadbf30f61f86fe4d90bc6 predates the final RC-031 two-file correction. It is not accepted as final validation evidence. The final corrected report was not located in the preserved artifacts; no replacement validation was generated.
 - Normal workstream finish was not rerun. Retirement is BLOCKED pending the verified final RC-031 report required for a fresh preflight. The original branch remains at 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b, attached and clean; its claim/lock, diagnostic trace, and worktree remain preserved.
 - All five protected historical reviews, worktrees, claims, locks, and evidence remain unchanged.
+
+
+## RC-035 Final Validation Attempt
+
+- One newly authorized canonical validation was run from exact implementation commit 3ff5e6379cb7193f9fb40b1730c2e4a31647c06b using the exact seven-path inventory and unchanged manifest timeouts. It exited 5: 9 selected, 8 passed, 0 failed, 1 timed out, 0 skipped, and 0 infrastructure errors. The timed-out check was paired_review_runner_unit.
+- The report is preserved at /home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-workflow/validation/agent-paired-review-merged-source-validation-isolation-v1/rc035-final-3ff5e637.json; SHA-256: 9aa7b28c559202d8124797e72013ff5f6b8c463a4bccab69fece654649c22ff1. Coverage is complete, with no uncovered files, and the changed path inventory is exactly the seven authorized paths.
+- Because the validation failed, fresh preflight and workstream finish were not run. No retry or timeout change was authorized. Implementation retirement remains blocked; the implementation branch/worktree, trace, claim and lock are preserved. The paired review remains blocked/manual, unaccepted and unlaunched. All five protected historical reviews remain untouched.
