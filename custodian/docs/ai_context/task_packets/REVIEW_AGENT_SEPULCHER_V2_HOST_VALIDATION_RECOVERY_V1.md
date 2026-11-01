@@ -29,7 +29,7 @@
 - Review focus: `Separate valid failed host-report authentication from a successful reviewer verdict; distinguish corrected test source in a new landed commit from prior immutable original review's pinned source. Technical independent acceptance is separate from human visual/art acceptance.`
 - Acceptance: `Fresh findings-first R0-NN report and canonical independent PASS only if smoke correctness and provenance fail-closed controls hold. Only then may the coordination owner plan authorized original-run disposition and a new independent V2 review against corrected source. No original review auto-PASS.`
 - Non-goals: `No original run recovery apply, no modifying an old claim, no review approval for production 128px Operator or floor, no artwork regeneration or duplicate scene.`
-- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only durable review receipt, its own packet lifecycle/archive metadata and required closing summary, plus bounded correction/re-review packets; do not edit implementation or unrelated work.`
+- Task overrides: `TASK OVERRIDE: paired post-land review may stage, commit, and push only the durable review receipt, this review packet's lifecycle/archive metadata, its required closing summary, and bounded correction/re-review packets; do not edit the reviewed implementation or unrelated work.`
 
 ## Next Handoff
 
