@@ -4,7 +4,7 @@
 - Authoring handoff: auto
 - Workstream: agent-workstream-inherited-main-resume-provenance-v1
 - Category: agent-ops
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P0
 - Depends on: none
@@ -55,6 +55,14 @@
   - git diff --check
 - Task overrides: none
 - Deferred: Retiring the protected original summary-rename checkout, re-running its finish, repairing historical W1 or the procfs GC limitation, and any additional implementation/review pair all require their own existing authority or new explicit approval.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: implementation source `acc88b8585361c2a075f4f63499629bf0f22b168` passed 89 producer tests and 274 independent-consumer tests; changed-file validation passed 9/9 with complete coverage and zero failures, skips, timeouts, or infrastructure errors. Exact report SHA-256: `c2002492ffb251e413c1705803a55845dcce859410d3661ca4042a16bb7cacf2`.
 
 ## Handoff
 
