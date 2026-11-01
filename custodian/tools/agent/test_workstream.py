@@ -444,6 +444,140 @@ class WorkstreamTests(unittest.TestCase):
         self.assertTrue(any(blocker["gate"] == "archive_transition_tip"
                             for blocker in preflight["blockers"]))
 
+    def test_archive_guard_accepts_only_exact_rc119_metadata_correction(self):
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive"],
+                         "704a1fbb3df6deae64e06291769eabd1d48f7eb2")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["correction"],
+                         "81fb8ca935bb2d5f9f00f18d547c185035e7b8dd")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_tree"],
+                         "14574039da27513ecaad7b02aeb08f75d2a11ae4")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["correction_tree"],
+                         "58e639a24470c27a1999a796fd0ae53d5ed778a5")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_parent"],
+                         "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_packet_blob"],
+                         "01398f7950b9cbf617d97204e03e041cb6df99983ac187e8b66a3f56073c8764")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["corrected_packet_blob"],
+                         "b42d92e3d40815a37ec17fa5a776e480950d99520a253f1e0500b859af5315d8")
+        workstream_id = "review-agent-paired-review-runner-profile-summary-coverage-v1"
+        branch = workstream.branch_for(workstream_id)
+        active_rel = (
+            "custodian/docs/ai_context/task_packets/"
+            "REVIEW_AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md"
+        )
+        archived_rel = f"custodian/docs/ai_context/task_packets/archived/{Path(active_rel).name}"
+        active = self.repo / active_rel
+        archived = self.repo / archived_rel
+        git(self.repo, "checkout", "-b", branch)
+        active.parent.mkdir(parents=True, exist_ok=True)
+        active.write_text(
+            "# Protected review fixture\n"
+            f"- Workstream: `{workstream_id}`\n"
+            "- Kind: `review`\n- Review: `passed`\n"
+            "- Review target workstream: `agent-paired-review-runner-profile-summary-coverage-v1`\n"
+            "- Review target packet: `custodian/docs/ai_context/task_packets/archived/"
+            "AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md`\n"
+        )
+        git(self.repo, "add", active_rel)
+        git(self.repo, "commit", "-m", "publish review fixture")
+        archived.parent.mkdir(parents=True, exist_ok=True)
+        archived.write_text(active.read_text())
+        active.unlink()
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-m", "archive review fixture")
+        archive = git(self.repo, "rev-parse", "HEAD")
+        archive_parent = git(self.repo, "rev-parse", "HEAD^1")
+        archive_tree = git(self.repo, "rev-parse", "HEAD^{tree}")
+        archive_packet_blob = git(self.repo, "rev-parse", f"HEAD:{archived_rel}")
+
+        archived.write_text(archived.read_text().replace(
+            "- Review: `passed`", "- Review: `none`", 1,
+        ))
+        git(self.repo, "add", archived_rel)
+        git(self.repo, "commit", "-m", "correct administrative review metadata")
+        correction = git(self.repo, "rev-parse", "HEAD")
+        pin = {
+            "workstream": workstream_id,
+            "archive": archive,
+            "archive_parent": archive_parent,
+            "archive_tree": archive_tree,
+            "archive_packet_blob": archive_packet_blob,
+            "correction": correction,
+            "correction_tree": git(self.repo, "rev-parse", "HEAD^{tree}"),
+            "corrected_packet_blob": git(self.repo, "rev-parse", f"HEAD:{archived_rel}"),
+            "packet": archived_rel,
+        }
+        with mock.patch.dict(workstream.ARCHIVE_METADATA_FOLLOWUP, pin):
+            self.assertTrue(workstream._is_authorized_archive_metadata_followup(
+                workstream_id, self.repo, archive, archived_rel, correction,
+            ))
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+            # Normal finish's archive-first main sync remains accepted after
+            # the exact correction; the merge is independently tree-verified.
+            git(self.repo, "checkout", "main")
+            (self.repo / "main-advance.txt").write_text("unrelated main change\n")
+            git(self.repo, "add", "main-advance.txt")
+            git(self.repo, "commit", "-m", "advance main")
+            git(self.repo, "push", "origin", "main")
+            git(self.repo, "fetch", "origin")
+            git(self.repo, "checkout", branch)
+            git(self.repo, "merge", "--no-ff", "origin/main", "-m", "sync main")
+            self.assertIsNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+            # A new post-sync edit to the protected review packet is outside
+            # the one correction pinned above.
+            archived.write_text(archived.read_text() + "- Extra: unauthorized\n")
+            git(self.repo, "add", archived_rel)
+            git(self.repo, "commit", "-m", "edit archived review again")
+            self.assertIsNotNone(workstream._archive_transition_tip_error(workstream_id, self.repo))
+
+        # Near-miss pre-sync histories cannot borrow the pinned correction:
+        # extra bytes, another path, or a changed reviewer target all hash to
+        # different commits and remain blocked.
+        for mutation in ("extra-bytes", "extra-path", "changed-target", "wrong-parent",
+                         "changed-summary"):
+            with self.subTest(mutation=mutation):
+                git(self.repo, "checkout", "-B", branch, archive)
+                if mutation == "extra-path":
+                    (self.repo / "outside.txt").write_text("unapproved\n")
+                    git(self.repo, "add", "outside.txt")
+                elif mutation == "wrong-parent":
+                    (self.repo / "outside.txt").write_text("unexpected parent\n")
+                    git(self.repo, "add", "outside.txt")
+                    git(self.repo, "commit", "-m", "insert unauthorized parent")
+                    archived.write_text(archived.read_text().replace(
+                        "- Review: `passed`", "- Review: `none`", 1,
+                    ))
+                    git(self.repo, "add", archived_rel)
+                elif mutation == "changed-summary":
+                    archived.write_text(archived.read_text().replace(
+                        "- Review: `passed`", "- Review: `none`", 1,
+                    ))
+                    (self.repo / "summary.md").write_text("unauthorized summary edit\n")
+                    git(self.repo, "add", archived_rel, "summary.md")
+                else:
+                    text = archived.read_text()
+                    text = text.replace("- Review: `passed`", "- Review: `none`", 1)
+                    if mutation == "extra-bytes":
+                        text += "- Extra: unapproved\n"
+                    else:
+                        text = text.replace(
+                            "- Review target workstream: `agent-paired-review-runner-profile-summary-coverage-v1`",
+                            "- Review target workstream: `forged-target`",
+                        )
+                    archived.write_text(text)
+                    git(self.repo, "add", archived_rel)
+                git(self.repo, "commit", "-m", f"attempt {mutation}")
+                candidate = git(self.repo, "rev-parse", "HEAD")
+                with mock.patch.dict(workstream.ARCHIVE_METADATA_FOLLOWUP, pin):
+                    self.assertFalse(workstream._is_authorized_archive_metadata_followup(
+                        workstream_id, self.repo, archive, archived_rel, candidate,
+                    ))
+                    self.assertIsNotNone(workstream._archive_transition_tip_error(
+                        workstream_id, self.repo,
+                    ))
+
     def test_finish_rejects_unbound_archive_followup_before_push(self):
         workstream_id = "agent-test-archive-tip"
         branch = workstream.branch_for(workstream_id)
