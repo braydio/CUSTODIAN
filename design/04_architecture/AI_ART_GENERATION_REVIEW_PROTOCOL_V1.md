@@ -26,6 +26,12 @@ These are **operating defaults, not an override of an active source manifest or 
 
 **Variants versus states:** You may compare two distinct candidate variants **of the same named state** when useful. Preserve both source identities as candidates until a human selects one. Do not count variants as fulfilled separate manifest states. A contact sheet is review presentation only, never a normalized source master. Do not slice a newly generated ten-asset collage into individually approved Asset V2 sources.
 
+## Floor-first source generation (2026-11-01)
+
+For authored environments, FIRST lock the live playable footprint, collision, connector and interaction coordinates. Generate a strict overhead orthographic **walkable ground-only underlay** without walls, stairs, raised terraces or depth props. THEN generate separate independently registered **true RGBA architectural presentation**, **scenic depth**, and only when needed **foreground occlusion**. Keep one 1:1 world/pixel origin, scale and orientation; no per-layer camera fitting. Each independently consumed layer needs its own manifest state, source/inbox path, prompt and human source approval. Artwork NEVER grants collision authority. If solids would visibly obstruct currently walkable cells, the architecture layer is BLOCKED until an approved spatial/solid footprint update authorizes it.
+
+The Sepulcher Gardens live rectangle is entirely walkable (1152x1408). `CAL-01` now produces only continuous ground. The new required `CAL-02` `hub_first_set_sepulcher_gardens_environment/structural_presentation` is a separate 1152x1408 RGBA architectural layer, **blocked** pending layout/collision footprint review. Original CAL-01 composite painting is an unapproved style reference only. Other first-set Hub regions require a floor/solid audit before their first full-scene underlay. Dust Lung V2 already separates traversal, hard void and scenic-depth doctrine, but its existing eight-state source prompts still mix art passes: reconcile in separate DL0 authority, not by silently editing that manifest here.
+
 ## Named command: "generate the next set"
 
 **This is an executable shorthand, not a request to discuss the next images.** When the user says **"generate the next set"**, **"next art set"**, or **"next image set"** within CUSTODIAN without specifying another named art program, use the active default `hub-sepulcher-awakening-art-v1` and its JSON at `design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json`. A user may instead explicitly name a different program; do not silently apply this program's asset queue to it.
@@ -36,28 +42,29 @@ The JSON has `generation_sets_contract` plus a complete ordered `generation_sets
 
 1. Read current GitHub `main`, this protocol, the JSON, and any more recent genuine source/approval receipts. Reconcile actual saved source hashes, verified Dropbox revisions, current active workstream claims and Asset V2 status. Never infer absence solely from an empty original JSON checkpoint.
 2. In `generation_sets` ascending `order`, choose the earliest set **not completely individually human-approved**. For generated but unreviewed candidates, bring the *existing* images to user review (if recoverable) rather than proceeding to a new set or gratuitously regenerating them. For partially approved sets, select only remaining missing states. Do not choose a different set to avoid a blocker.
-3. Enforce that set's `release_gate`, any human-reviewed family reference images and exact upstream scene contracts. If genuinely unavailable, state the specific blocker and stop without claiming generation success. The five CAL-A sets are absolutely one image each; subsequent sets have predefined 1- or 2-image cardinalities, allowing compatible paired props only after appropriate style approval.
+3. Enforce that set's `release_gate`, any human-reviewed family reference images and exact upstream scene contracts. If genuinely unavailable, state the specific blocker and stop without claiming generation success. The six CAL-A sets are absolutely one image each; subsequent sets have predefined 1- or 2-image cardinalities, allowing compatible paired props only after appropriate style approval.
 4. For each eligible missing candidate **invoke the image generator immediately**, using that state entry's **complete** `image_generation_prompt` and format/anchor/alpha/frame constraints. Use approved reference imagery if accessible, but never claim image conditioning if the reference could not actually be supplied. Multi-state sets require **two independent outputs**, ideally separate per-state tool calls: `n=2` of a single prompt is *not* two different state images. Never substitute a labeled 2-up or ten-up atlas.
 5. Present actual image(s) for human review, identify their manifest IDs and report objective issues or required corrections. **Generation does not advance approval automatically.** Record the decision and real source hashes/receipts through the existing workflow. On a follow-up "generate the next set" without approval of an outstanding generated image, return to its review gate; do not skip it.
-6. After every image of the current set is explicitly human-approved, the next identical shorthand selects the next set. Source/Dropbox staging may then be batched separately as previously defined. If all 71 core states are complete, say so; the 12 conditional/optional states require separate explicit authorization and never appear automatically.
+6. After every image of the current set is explicitly human-approved, the next identical shorthand selects the next set. Source/Dropbox staging may then be batched separately as previously defined. If all 72 core states are complete, say so; the 12 conditional/optional states require separate explicit authorization and never appear automatically.
 
 ### Initial deterministic answer
 
-From the initially published zero-approval baseline, **the next set is `CAL-01`**, exactly **one image**: `hub_first_set_sepulcher_gardens_environment/underlay`, target **1152×1408**, one static frame, registered to the existing Gardens footprint. After user approval its successor is `CAL-02`, exactly **one image**: `hub_sepulcher_grave_evidence_art/memorial_slab`, **160×96**, one static frame. Do not assume these remain next after later receipts.
+From the initially published zero-approval baseline, **the next set is `CAL-01`**, exactly **one image**: `hub_first_set_sepulcher_gardens_environment/underlay`, target **1152×1408**, one static frame, registered to the existing Gardens footprint. After CAL-01 approval the successor is `CAL-02`: one separate RGBA `structural_presentation` source, BLOCKED pending approved structural/collision footprint. Memorial slab follows as `CAL-03`. Do not assume these remain next after later receipts.
 
 **Do not conflate**: a *planning queue* may hold 5–10 forthcoming states; a *generation set* is the fixed next 1- or 2-image execution group; a *handoff batch* can consolidate multiple already-approved sources. These separate units eliminate ambiguity in ordinary conversational commands.
 
-## First five: mandatory one-image calibration gate for this program
+## First six: mandatory one-image calibration gate for this program
 
 The Hub/Sepulcher/Awakening manifest's CAL-A queue must be handled one at a time, with corrections and explicit human approval before proceeding:
 
-1. `hub_first_set_sepulcher_gardens_environment/underlay` — establish monumental burial district, true 1152×1408 target registration and open twin connectors.
-2. `hub_sepulcher_grave_evidence_art/memorial_slab` — lock the event's hero object and the physical scale relative to approved Gardens.
-3. `awakening_creche_perimeter_support/structural_support` — verify industrial interior family, seamless outer edges and existing Crèche plate.
-4. `awakening_gate_of_dust_perimeter_support/distant_structures` — verify ruined exterior silhouette, the real east/west stair mouths and true alpha.
-5. `awakening_road_south_reach_perimeter_support/edge_transition` — verify the South Reach existing five-module Road handoff, nonplayable edge and true alpha.
+1. `hub_first_set_sepulcher_gardens_environment/underlay` — flat walkable-ground-only base at 1152x1408, no walls.
+2. `hub_first_set_sepulcher_gardens_environment/structural_presentation` — separately aligned RGBA architecture; blocked pending structural/collision plan.
+3. `hub_sepulcher_grave_evidence_art/memorial_slab` — lock the event's hero object and the physical scale relative to approved Gardens.
+4. `awakening_creche_perimeter_support/structural_support` — verify industrial interior family, seamless outer edges and existing Crèche plate.
+5. `awakening_gate_of_dust_perimeter_support/distant_structures` — verify ruined exterior silhouette, the real east/west stair mouths and true alpha.
+6. `awakening_road_south_reach_perimeter_support/edge_transition` — verify the South Reach existing five-module Road handoff, nonplayable edge and true alpha.
 
-The CAL-A assets are already members of the 71 required core states, **not five additional images**. After the five approvals, promote a **reference lock** for each relevant architectural language (Sepulcher burial, established Hub civic, Awakening institutional interiors, Awakening exteriors). A single Garden image must not overrule a distinct Crèche or Gate plate. For each source request, show/attach the approved neighboring source/master where supported, plus exact prompt and occupancy/clearance notes. If the reference cannot be supplied to the generator, record that limitation and increase review scrutiny; do not claim it was image-conditioned.
+The six CAL-A assets are already members of the 71 required core states, **not five additional images**. After the six approvals, promote a **reference lock** for each relevant architectural language (Sepulcher burial, established Hub civic, Awakening institutional interiors, Awakening exteriors). A single Garden image must not overrule a distinct Crèche or Gate plate. For each source request, show/attach the approved neighboring source/master where supported, plus exact prompt and occupancy/clearance notes. If the reference cannot be supplied to the generator, record that limitation and increase review scrutiny; do not claim it was image-conditioned.
 
 ## Reusable production cycle
 

@@ -9,7 +9,8 @@
     "authoring_chat_url": null,
     "authoring_chat_url_status": "awaiting exact user-supplied chat URL",
     "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged.",
-    "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates."
+    "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates.",
+    "floor_first_revision_2026_11_01": "Sepulcher floor first, separate structural alpha source added (72 core, 12 optional, 84 prompts and 67 sets). Original mixed CAL-01 candidate remains unapproved."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -26,10 +27,10 @@
     ]
   },
   "counts": {
-    "core": 71,
+    "core": 72,
     "optional": 12,
-    "all_prompts": 83,
-    "hub_core": 36,
+    "all_prompts": 84,
+    "hub_core": 37,
     "existing_awakening_perimeter_core": 27,
     "separate_dust_lung_v2_core": 8,
     "registered_awakening_families": 9,
@@ -267,18 +268,20 @@
       "title": "Five individually validated style-calibration images",
       "ids": [
         "hub_first_set_sepulcher_gardens_environment/underlay",
+        "hub_first_set_sepulcher_gardens_environment/structural_presentation",
         "hub_sepulcher_grave_evidence_art/memorial_slab",
         "awakening_creche_perimeter_support/structural_support",
         "awakening_gate_of_dust_perimeter_support/distant_structures",
         "awakening_road_south_reach_perimeter_support/edge_transition"
       ],
-      "criterion": "Each is generated, inspected, corrected, and individually human-approved before any wider batch. No atlas crop or automated approval."
+      "criterion": "6 individually reviewed images: CAL-01 flat walkable floor ONLY, CAL-02 separately generated structural architecture RGBA BLOCKED on approved solid/collision footprint and floor source; remaining four calibration images unchanged."
     },
     {
       "code": "HUB-B1",
       "title": "Sepulcher complete district",
       "ids": [
         "hub_first_set_sepulcher_gardens_environment/underlay",
+        "hub_first_set_sepulcher_gardens_environment/structural_presentation",
         "hub_first_set_connector_environment/garden_north_transition",
         "hub_first_set_connector_environment/garden_south_transition",
         "hub_sepulcher_grave_evidence_art/memorial_slab",
@@ -294,7 +297,7 @@
         "hub_first_set_sepulcher_gardens_dressing/root_intrusion",
         "hub_first_set_sepulcher_gardens_dressing/pale_flower_cluster"
       ],
-      "criterion": "One open north and one open south connector; original three inspection points and later-visit sprig unchanged; coordinate with active grave review."
+      "criterion": "One open north and one open south connector; original three inspection points and later-visit sprig unchanged; coordinate with active grave review. Separate floor and structural presentation states; no painted solid walls on live walkable ground."
     },
     {
       "code": "HUB-B2",
@@ -488,12 +491,12 @@
       "loop": false,
       "direction": "omni",
       "auto_mirror": false,
-      "layer": "background",
-      "alpha": "May be opaque inside exact approved playable footprint, no hard painted exterior rectangle or vignette",
+      "layer": "walkable_ground_only",
+      "alpha": "Opaque 1152x1408 flat traversable civic floor, no structural or scenic objects",
       "anchor": "HubFirstSetLayout.ENVELOPES.sepulcher_gardens, 1px/world-unit candidate",
-      "placement_rule": "must not own navigation or collision; verify registered canvas and adjacent Road/contact boundaries",
-      "image_generation_prompt": "Create one professional CUSTODIAN top-down 2D game art image, overhead orthographic, world north at image top, 32px construction rhythm, near-black civic basalt, pale weathered limestone, charcoal, aged brass, ash and restrained cold environmental light. Match existing Road of Witnesses, Hub and Awakening production-camera scale. Architecture must be physically plausible with consistent light and material logic. No people, loot, monsters, UI, legible lettering, watermarks, new entrances, fake navigation, baked global lighting, rectangular background matte, checkerboard or AI-mirrored pseudo-architecture. Target 1152×1408 pixels as a one-frame image. Burial terraces, weathered retaining walls, a damaged cloister court and very sparse pale flowers. Preserve both independent eastern Forum passages; keep grave center (-1984,-3200) unpainted for standalone hero slab and inspection positions offset (-320,0), (448,0), (448,512), with resolutions near y+112. No baked hero grave or magical life. May be opaque inside exact approved playable footprint, no hard painted exterior rectangle or vignette.",
-      "prompt_authority": "new Hub V1 proposal under owner-approved art program",
+      "placement_rule": "Whole live Gardens envelope walkable. Strict unblocked flat ground; all event footprints and the two eastern passage bands stay open.",
+      "image_generation_prompt": "Create exactly one 1152x1408 strict 90-degree orthographic top-down static WALKABLE-GROUND-ONLY Sepulcher Gardens image, north up and registered 1 pixel per world unit on the 32px CUSTODIAN Hub grid. All 1152x1408 pixels in the existing Gardens envelope are currently walkable: depict only FLAT continuous aged civic paving, fractured chalk-limestone and charcoal basalt, restrained oxidized bronze floor indexing, cracks and dust. Grave local center (576,704), inspection locations (256,704),(1024,704),(1024,1216), and choice locations (484,816),(668,816) MUST all remain accessible and clear. The two east edge connectors MUST be level open paving over x1024..1152, y576..832 and x1024..1152, y1120..1376. Absolutely NO columns, walls, arches, tomb slabs, steps, raised terraces, vegetation blocking ground, scenic depth, fake voids, architectural shadows, foreground, characters, text, UI, lighting vignette, perspective tilt or isometric camera. Other architecture and inaccessible scenic depth are separate asset layers. One continuous exact-aspect overhead ground plate; generator output needs review before normalization and acceptance.",
+      "prompt_authority": "AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md floor-first process and HubFirstSetLayout",
       "source_sha256": null,
       "normalized_sha256": null,
       "dropbox_path": null,
@@ -514,6 +517,49 @@
         "source_persisted_to_dropbox": false,
         "reviewed_2026_11_01": true
       }
+    },
+    {
+      "id": "hub_first_set_sepulcher_gardens_environment/structural_presentation",
+      "family_id": "hub_first_set_sepulcher_gardens_environment",
+      "state_id": "structural_presentation",
+      "area": "hub/first_set/sepulcher_gardens",
+      "kind": "backdrop",
+      "priority": "P0",
+      "required": true,
+      "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_environment/structural_presentation_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_environment/structural_presentation.png",
+      "family_contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_environment.asset.json",
+      "consumer": "res://game/world/hub/first_set/hub_first_set_map.tscn:DistrictPresentation",
+      "registration_status": "proposed_not_registered",
+      "normalized_canvas": {
+        "width": 1152,
+        "height": 1408
+      },
+      "frame_size": {
+        "width": 1152,
+        "height": 1408
+      },
+      "frames": 1,
+      "layout": "copy",
+      "fps": 0,
+      "loop": false,
+      "direction": "omni",
+      "auto_mirror": false,
+      "layer": "structural_presentation",
+      "alpha": "True RGBA isolated architectural silhouettes, no floor matte",
+      "anchor": "Same 1152x1408 1:1 world/pixel origin, no per-layer transforms",
+      "placement_rule": "BLOCKED pending approved structure/collision footprint; must match live walkability and operator clearance",
+      "image_generation_prompt": "Create one separately generated 1152x1408 TRUE RGBA transparent architectural presentation source for CUSTODIAN Sepulcher Gardens, exactly pixel-registered 1:1 over an approved flat floor, strict 90-degree orthographic north-up camera. Ruined institutional burial architecture: damaged cloister arches, retaining masonry, broken column bases, pale limestone and black basalt plinths, restrained bronze. NO ground texture or fully opaque scene. CRITICAL PRECONDITION: the current full Gardens envelope is walkable in HubFirstSetLayout. DO NOT place walls, tomb terraces or any other apparent blocking solids inside the playable floor unless a separately human-reviewed, approved geometry/collision and solid footprint map assigns their nonwalkable space. Preserve grave center (576,704), reading offsets (256,704),(1024,704),(1024,1216), choices (484,816),(668,816), east connector bands x1024..1152 at y576..832 and y1120..1376. Keep alpha truly transparent outside authorized architectural silhouettes. No camera tilt, art-only collision invention, readable inscriptions, UI, characters, fictional entrances or extra playable-looking corridors. If approved structural footprint is absent this requested source is BLOCKED and must not be generated.",
+      "prompt_authority": "AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md; added required source state, family schema not registered",
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_path": null,
+      "dropbox_file_id": null,
+      "dropbox_revision": null,
+      "asset_v2_job": null,
+      "live_status": "not_checked_at_publication",
+      "human_image_approval": "pending",
+      "handoff_review_status": null
     },
     {
       "id": "hub_first_set_archive_rise_environment/underlay",
@@ -3969,7 +4015,7 @@
     "dropbox_receipts": [],
     "asset_v2_job_receipts": [],
     "last_verified_runtime": null,
-    "disposition": "CAL-01 source candidate generated and reviewed; objective geometry and registration corrections required; NOT human-approved, NOT in Dropbox or Asset V2. Continue CAL-01 corrective generation/review, not CAL-02.",
+    "disposition": "Regenerate CAL-01 as flat walkable-only ground; unapproved old mixed architectural candidate is material reference only. CAL-02 transparent structure blocked pending geometry authority and floor approval.",
     "next_generation_set_id": "CAL-01",
     "last_generation_set_receipt": {
       "set_id": "CAL-01",
@@ -4077,7 +4123,7 @@
     "initial_next_asset_ids": [
       "hub_first_set_sepulcher_gardens_environment/underlay"
     ],
-    "completion_predicate": "Every asset in a set has a human-approved individual source image with verified state identity and immutable content hash. Delivery and runtime integration are tracked separately; not implied by generation.",
+    "completion_predicate": "All 72 distinct core states individually human-approved. Never bypass floor or geometry gates.",
     "pending_review_rule": "If an image of the current set exists but is pending human approval/correction, return to that image and its outstanding review rather than silently generating another set, skipping it or regenerating duplicate images.",
     "partial_set_rule": "If some images of a multi-state set are already approved, generate only the ungenerated remainder; if any generated image is unreviewed, review it first. Keep set order and identities stable.",
     "blocked_set_rule": "If a phase, scene, workstream, style-reference or review gate is unmet, identify exact blocked set and unmet condition, do not skip ahead or pretend an unavailable reference exists.",
@@ -4100,7 +4146,8 @@
       "asset_v2_job_and_runtime_evidence"
     ],
     "checkpoint_authority": "Current main plus verified receipts and actual Dropbox/pipeline status; generation_sets is the immutable planned dispatch order, not proof of any generated output.",
-    "current_initial_status": "CAL-01 is selected, no image approved by this publication; user still needs to request first generation."
+    "current_initial_status": "CAL-01 is selected, no image approved by this publication; user still needs to request first generation.",
+    "floor_first_rule": "For large authored region art: lock actual walkability -> strict orthographic ground-only underlay -> independently generated transparent structural layer after geometry clearance -> separate scenic depth -> optional foreground occlusion; all with one world/pixel transform. CAL-01 floor only, new CAL-02 structure blocked; separate Dust Lung DL0 manifest not silently rewritten."
   },
   "generation_sets": [
     {
@@ -4121,6 +4168,20 @@
       "set_id": "CAL-02",
       "phase": "CAL-A",
       "order": 2,
+      "title": "Gardens architecture RGBA, geometry-gated",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_environment/structural_presentation"
+      ],
+      "generation_mode": "single",
+      "request_rule": "1 independently generated alpha-only structural image after approved floor and spatial lock",
+      "release_gate": "BLOCKED: whole district walkable until approved separate solid/collision footprint, reference floor and consumer registration",
+      "approval_rule": "Explicit human image decision before advancing",
+      "source_handoff_rule": "No Dropbox or ingest until reviewed"
+    },
+    {
+      "set_id": "CAL-03",
+      "phase": "CAL-A",
+      "order": 3,
       "title": "Grave hero slab style lock",
       "asset_ids": [
         "hub_sepulcher_grave_evidence_art/memorial_slab"
@@ -4132,9 +4193,9 @@
       "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
     },
     {
-      "set_id": "CAL-03",
+      "set_id": "CAL-04",
       "phase": "CAL-A",
-      "order": 3,
+      "order": 4,
       "title": "Crèche interior seam calibration",
       "asset_ids": [
         "awakening_creche_perimeter_support/structural_support"
@@ -4146,9 +4207,9 @@
       "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
     },
     {
-      "set_id": "CAL-04",
+      "set_id": "CAL-05",
       "phase": "CAL-A",
-      "order": 4,
+      "order": 5,
       "title": "Gate exterior transparent architecture",
       "asset_ids": [
         "awakening_gate_of_dust_perimeter_support/distant_structures"
@@ -4160,9 +4221,9 @@
       "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
     },
     {
-      "set_id": "CAL-05",
+      "set_id": "CAL-06",
       "phase": "CAL-A",
-      "order": 5,
+      "order": 6,
       "title": "South Reach transition calibration",
       "asset_ids": [
         "awakening_road_south_reach_perimeter_support/edge_transition"
@@ -4176,7 +4237,7 @@
     {
       "set_id": "B1-01",
       "phase": "HUB-B1",
-      "order": 6,
+      "order": 7,
       "title": "North Gardens-to-Forum seam",
       "asset_ids": [
         "hub_first_set_connector_environment/garden_north_transition"
@@ -4190,7 +4251,7 @@
     {
       "set_id": "B1-02",
       "phase": "HUB-B1",
-      "order": 7,
+      "order": 8,
       "title": "South Gardens-to-Forum seam",
       "asset_ids": [
         "hub_first_set_connector_environment/garden_south_transition"
@@ -4204,7 +4265,7 @@
     {
       "set_id": "B1-03",
       "phase": "HUB-B1",
-      "order": 8,
+      "order": 9,
       "title": "Paired inspection/attestation marker props",
       "asset_ids": [
         "hub_sepulcher_grave_evidence_art/inspection_stone",
@@ -4219,7 +4280,7 @@
     {
       "set_id": "B1-04",
       "phase": "HUB-B1",
-      "order": 9,
+      "order": 10,
       "title": "Return-only grave growth cue",
       "asset_ids": [
         "hub_sepulcher_grave_evidence_art/return_pale_growth"
@@ -4233,7 +4294,7 @@
     {
       "set_id": "B1-05",
       "phase": "HUB-B1",
-      "order": 10,
+      "order": 11,
       "title": "Two distinctive memorial markers",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_dressing/grave_upright",
@@ -4248,7 +4309,7 @@
     {
       "set_id": "B1-06",
       "phase": "HUB-B1",
-      "order": 11,
+      "order": 12,
       "title": "Burial terrace sarcophagus and plinth",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_dressing/terraced_sarcophagus",
@@ -4263,7 +4324,7 @@
     {
       "set_id": "B1-07",
       "phase": "HUB-B1",
-      "order": 12,
+      "order": 13,
       "title": "Cloister arch obstruction",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_dressing/cloister_arch_ruin"
@@ -4277,7 +4338,7 @@
     {
       "set_id": "B1-08",
       "phase": "HUB-B1",
-      "order": 13,
+      "order": 14,
       "title": "Burial terrace retaining wall",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment"
@@ -4291,7 +4352,7 @@
     {
       "set_id": "B1-09",
       "phase": "HUB-B1",
-      "order": 14,
+      "order": 15,
       "title": "Minor pale-life garden decals",
       "asset_ids": [
         "hub_first_set_sepulcher_gardens_dressing/root_intrusion",
@@ -4306,7 +4367,7 @@
     {
       "set_id": "B2-01",
       "phase": "HUB-B2",
-      "order": 15,
+      "order": 16,
       "title": "Hub district full underlay: hub_first_set_north_processional_environment/underlay",
       "asset_ids": [
         "hub_first_set_north_processional_environment/underlay"
@@ -4320,7 +4381,7 @@
     {
       "set_id": "B2-02",
       "phase": "HUB-B2",
-      "order": 16,
+      "order": 17,
       "title": "Hub district full underlay: hub_first_set_ashen_forum_environment/underlay",
       "asset_ids": [
         "hub_first_set_ashen_forum_environment/underlay"
@@ -4334,7 +4395,7 @@
     {
       "set_id": "B2-03",
       "phase": "HUB-B2",
-      "order": 17,
+      "order": 18,
       "title": "Hub district full underlay: hub_first_set_archive_rise_environment/underlay",
       "asset_ids": [
         "hub_first_set_archive_rise_environment/underlay"
@@ -4348,7 +4409,7 @@
     {
       "set_id": "B2-04",
       "phase": "HUB-B2",
-      "order": 18,
+      "order": 19,
       "title": "Hub district full underlay: hub_first_set_crown_transfer_environment/underlay",
       "asset_ids": [
         "hub_first_set_crown_transfer_environment/underlay"
@@ -4362,7 +4423,7 @@
     {
       "set_id": "B2-05",
       "phase": "HUB-B2",
-      "order": 19,
+      "order": 20,
       "title": "Hub district full underlay: hub_first_set_muster_court_environment/underlay",
       "asset_ids": [
         "hub_first_set_muster_court_environment/underlay"
@@ -4376,7 +4437,7 @@
     {
       "set_id": "B2-06",
       "phase": "HUB-B2",
-      "order": 20,
+      "order": 21,
       "title": "Hub district full underlay: hub_first_set_continuity_port_environment/underlay",
       "asset_ids": [
         "hub_first_set_continuity_port_environment/underlay"
@@ -4390,7 +4451,7 @@
     {
       "set_id": "B2-07",
       "phase": "HUB-B2",
-      "order": 21,
+      "order": 22,
       "title": "Hub exact connector: hub_first_set_connector_environment/road_north_transition",
       "asset_ids": [
         "hub_first_set_connector_environment/road_north_transition"
@@ -4404,7 +4465,7 @@
     {
       "set_id": "B2-08",
       "phase": "HUB-B2",
-      "order": 22,
+      "order": 23,
       "title": "Hub exact connector: hub_first_set_connector_environment/muster_transition",
       "asset_ids": [
         "hub_first_set_connector_environment/muster_transition"
@@ -4418,7 +4479,7 @@
     {
       "set_id": "B2-09",
       "phase": "HUB-B2",
-      "order": 23,
+      "order": 24,
       "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/western_burial_depth",
       "asset_ids": [
         "hub_first_set_perimeter_support/western_burial_depth"
@@ -4432,7 +4493,7 @@
     {
       "set_id": "B2-10",
       "phase": "HUB-B2",
-      "order": 24,
+      "order": 25,
       "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/eastern_civic_depth",
       "asset_ids": [
         "hub_first_set_perimeter_support/eastern_civic_depth"
@@ -4446,7 +4507,7 @@
     {
       "set_id": "B2-11",
       "phase": "HUB-B2",
-      "order": 25,
+      "order": 26,
       "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/north_archive_horizon",
       "asset_ids": [
         "hub_first_set_perimeter_support/north_archive_horizon"
@@ -4460,7 +4521,7 @@
     {
       "set_id": "B2-12",
       "phase": "HUB-B2",
-      "order": 26,
+      "order": 27,
       "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/south_processional_falloff",
       "asset_ids": [
         "hub_first_set_perimeter_support/south_processional_falloff"
@@ -4474,7 +4535,7 @@
     {
       "set_id": "B2-13",
       "phase": "HUB-B2",
-      "order": 27,
+      "order": 28,
       "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/outer_court_fragments",
       "asset_ids": [
         "hub_first_set_perimeter_support/outer_court_fragments"
@@ -4488,7 +4549,7 @@
     {
       "set_id": "B2-14",
       "phase": "HUB-B2",
-      "order": 28,
+      "order": 29,
       "title": "Processional oath and law statue bases",
       "asset_ids": [
         "hub_first_set_processional_fixtures/oath_statue_base",
@@ -4503,7 +4564,7 @@
     {
       "set_id": "B2-15",
       "phase": "HUB-B2",
-      "order": 29,
+      "order": 30,
       "title": "Distinct civic art: hub_first_set_forum_fixtures/fractured_star_map_inlay",
       "asset_ids": [
         "hub_first_set_forum_fixtures/fractured_star_map_inlay"
@@ -4517,7 +4578,7 @@
     {
       "set_id": "B2-16",
       "phase": "HUB-B2",
-      "order": 30,
+      "order": 31,
       "title": "Distinct civic art: hub_first_set_forum_fixtures/dais_dressing",
       "asset_ids": [
         "hub_first_set_forum_fixtures/dais_dressing"
@@ -4531,7 +4592,7 @@
     {
       "set_id": "B2-17",
       "phase": "HUB-B2",
-      "order": 31,
+      "order": 32,
       "title": "Distinct civic art: hub_first_set_archive_fixtures/collapsed_registry_arcade",
       "asset_ids": [
         "hub_first_set_archive_fixtures/collapsed_registry_arcade"
@@ -4545,7 +4606,7 @@
     {
       "set_id": "B2-18",
       "phase": "HUB-B2",
-      "order": 32,
+      "order": 33,
       "title": "Distinct civic art: hub_first_set_crown_transfer_fixtures/route_anchor_shroud",
       "asset_ids": [
         "hub_first_set_crown_transfer_fixtures/route_anchor_shroud"
@@ -4559,7 +4620,7 @@
     {
       "set_id": "B2-19",
       "phase": "HUB-B2",
-      "order": 33,
+      "order": 34,
       "title": "Distinct civic art: hub_first_set_muster_fixtures/muster_rollcall_plinth",
       "asset_ids": [
         "hub_first_set_muster_fixtures/muster_rollcall_plinth"
@@ -4573,7 +4634,7 @@
     {
       "set_id": "B2-20",
       "phase": "HUB-B2",
-      "order": 34,
+      "order": 35,
       "title": "Distinct civic art: hub_first_set_continuity_port_fixtures/port_frame_fascia",
       "asset_ids": [
         "hub_first_set_continuity_port_fixtures/port_frame_fascia"
@@ -4587,7 +4648,7 @@
     {
       "set_id": "AP-01",
       "phase": "AP1–AP4",
-      "order": 35,
+      "order": 36,
       "title": "Awakening registered perimeter: awakening_creche_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_creche_perimeter_support/distant_structures"
@@ -4601,7 +4662,7 @@
     {
       "set_id": "AP-02",
       "phase": "AP1–AP4",
-      "order": 36,
+      "order": 37,
       "title": "Awakening registered perimeter: awakening_creche_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_creche_perimeter_support/edge_transition"
@@ -4615,7 +4676,7 @@
     {
       "set_id": "AP-03",
       "phase": "AP1–AP4",
-      "order": 37,
+      "order": 38,
       "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_ambulatory_perimeter_support/structural_support"
@@ -4629,7 +4690,7 @@
     {
       "set_id": "AP-04",
       "phase": "AP1–AP4",
-      "order": 38,
+      "order": 39,
       "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_ambulatory_perimeter_support/distant_structures"
@@ -4643,7 +4704,7 @@
     {
       "set_id": "AP-05",
       "phase": "AP1–AP4",
-      "order": 39,
+      "order": 40,
       "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_ambulatory_perimeter_support/edge_transition"
@@ -4657,7 +4718,7 @@
     {
       "set_id": "AP-06",
       "phase": "AP1–AP4",
-      "order": 40,
+      "order": 41,
       "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_attestation_perimeter_support/structural_support"
@@ -4671,7 +4732,7 @@
     {
       "set_id": "AP-07",
       "phase": "AP1–AP4",
-      "order": 41,
+      "order": 42,
       "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_attestation_perimeter_support/distant_structures"
@@ -4685,7 +4746,7 @@
     {
       "set_id": "AP-08",
       "phase": "AP1–AP4",
-      "order": 42,
+      "order": 43,
       "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_attestation_perimeter_support/edge_transition"
@@ -4699,7 +4760,7 @@
     {
       "set_id": "AP-09",
       "phase": "AP1–AP4",
-      "order": 43,
+      "order": 44,
       "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_locker_reliquary_perimeter_support/structural_support"
@@ -4713,7 +4774,7 @@
     {
       "set_id": "AP-10",
       "phase": "AP1–AP4",
-      "order": 44,
+      "order": 45,
       "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_locker_reliquary_perimeter_support/distant_structures"
@@ -4727,7 +4788,7 @@
     {
       "set_id": "AP-11",
       "phase": "AP1–AP4",
-      "order": 45,
+      "order": 46,
       "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_locker_reliquary_perimeter_support/edge_transition"
@@ -4741,7 +4802,7 @@
     {
       "set_id": "AP-12",
       "phase": "AP1–AP4",
-      "order": 46,
+      "order": 47,
       "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_undergate_perimeter_support/structural_support"
@@ -4755,7 +4816,7 @@
     {
       "set_id": "AP-13",
       "phase": "AP1–AP4",
-      "order": 47,
+      "order": 48,
       "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_undergate_perimeter_support/distant_structures"
@@ -4769,7 +4830,7 @@
     {
       "set_id": "AP-14",
       "phase": "AP1–AP4",
-      "order": 48,
+      "order": 49,
       "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_undergate_perimeter_support/edge_transition"
@@ -4783,7 +4844,7 @@
     {
       "set_id": "AP-15",
       "phase": "AP1–AP4",
-      "order": 49,
+      "order": 50,
       "title": "Awakening registered perimeter: awakening_gate_of_dust_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_gate_of_dust_perimeter_support/structural_support"
@@ -4797,7 +4858,7 @@
     {
       "set_id": "AP-16",
       "phase": "AP1–AP4",
-      "order": 50,
+      "order": 51,
       "title": "Awakening registered perimeter: awakening_gate_of_dust_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_gate_of_dust_perimeter_support/edge_transition"
@@ -4811,7 +4872,7 @@
     {
       "set_id": "AP-17",
       "phase": "AP1–AP4",
-      "order": 51,
+      "order": 52,
       "title": "Awakening registered perimeter: awakening_approach_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_approach_perimeter_support/structural_support"
@@ -4825,7 +4886,7 @@
     {
       "set_id": "AP-18",
       "phase": "AP1–AP4",
-      "order": 52,
+      "order": 53,
       "title": "Awakening registered perimeter: awakening_approach_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_approach_perimeter_support/distant_structures"
@@ -4839,7 +4900,7 @@
     {
       "set_id": "AP-19",
       "phase": "AP1–AP4",
-      "order": 53,
+      "order": 54,
       "title": "Awakening registered perimeter: awakening_approach_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_approach_perimeter_support/edge_transition"
@@ -4853,7 +4914,7 @@
     {
       "set_id": "AP-20",
       "phase": "AP1–AP4",
-      "order": 54,
+      "order": 55,
       "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_late_service_perimeter_support/structural_support"
@@ -4867,7 +4928,7 @@
     {
       "set_id": "AP-21",
       "phase": "AP1–AP4",
-      "order": 55,
+      "order": 56,
       "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_late_service_perimeter_support/distant_structures"
@@ -4881,7 +4942,7 @@
     {
       "set_id": "AP-22",
       "phase": "AP1–AP4",
-      "order": 56,
+      "order": 57,
       "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/edge_transition",
       "asset_ids": [
         "awakening_late_service_perimeter_support/edge_transition"
@@ -4895,7 +4956,7 @@
     {
       "set_id": "AP-23",
       "phase": "AP1–AP4",
-      "order": 57,
+      "order": 58,
       "title": "Awakening registered perimeter: awakening_road_south_reach_perimeter_support/structural_support",
       "asset_ids": [
         "awakening_road_south_reach_perimeter_support/structural_support"
@@ -4909,7 +4970,7 @@
     {
       "set_id": "AP-24",
       "phase": "AP1–AP4",
-      "order": 58,
+      "order": 59,
       "title": "Awakening registered perimeter: awakening_road_south_reach_perimeter_support/distant_structures",
       "asset_ids": [
         "awakening_road_south_reach_perimeter_support/distant_structures"
@@ -4923,7 +4984,7 @@
     {
       "set_id": "DL-01",
       "phase": "DL0",
-      "order": 59,
+      "order": 60,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/north_upper_works",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/north_upper_works"
@@ -4937,7 +4998,7 @@
     {
       "set_id": "DL-02",
       "phase": "DL0",
-      "order": 60,
+      "order": 61,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/central_broken_service_spine",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/central_broken_service_spine"
@@ -4951,7 +5012,7 @@
     {
       "set_id": "DL-03",
       "phase": "DL0",
-      "order": 61,
+      "order": 62,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/western_lift_spine",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/western_lift_spine"
@@ -4965,7 +5026,7 @@
     {
       "set_id": "DL-04",
       "phase": "DL0",
-      "order": 62,
+      "order": 63,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/cistern_core",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/cistern_core"
@@ -4979,7 +5040,7 @@
     {
       "set_id": "DL-05",
       "phase": "DL0",
-      "order": 63,
+      "order": 64,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/deep_cistern_field",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/deep_cistern_field"
@@ -4993,7 +5054,7 @@
     {
       "set_id": "DL-06",
       "phase": "DL0",
-      "order": 64,
+      "order": 65,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/south_ingress_transition",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/south_ingress_transition"
@@ -5007,7 +5068,7 @@
     {
       "set_id": "DL-07",
       "phase": "DL0",
-      "order": 65,
+      "order": 66,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/service_route_splice_lower",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/service_route_splice_lower"
@@ -5021,7 +5082,7 @@
     {
       "set_id": "DL-08",
       "phase": "DL0",
-      "order": 66,
+      "order": 67,
       "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/lift_station_transition_upper",
       "asset_ids": [
         "awakening_dust_lung_environment_v2/lift_station_transition_upper"
@@ -5032,5 +5093,8 @@
       "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
       "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
     }
-  ]
+  ],
+  "documentation_drift": {
+    "dust_lung_layer_pass": "Dust Lung V2 separates traversal/void/depth/occlusion in design yet its 8-item source manifest still mixes floor and structures; reconcile under independent DL0 owner before changing those assets."
+  }
 }

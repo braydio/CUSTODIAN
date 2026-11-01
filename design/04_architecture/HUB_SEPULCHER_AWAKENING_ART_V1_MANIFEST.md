@@ -8,9 +8,9 @@
 
 ## Recorded user decision
 
-Approve the proposed **71 core V1 images** and **12 optional/conditional images** as a staged production queue. Authorize **one image per generation/review cycle during the five CAL-A calibrations**, then at most small compatible groups under the shared [AI Artwork Generation and Review Protocol V1](AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md): keep environment plates, connectors and animation clips isolated; use independently identifiable 2–3-prop or 3–4-minor-decal groups only once their specific style references are human-approved. Inspect and correct each actual source separately against its state prompt and live runtime; obtain explicit user aesthetic approval **per image** before preserving reviewed immutable sources and normalized candidates in a connected Dropbox handoff with implementation instructions. A 5–10-state planning queue is **not** a ten-image generation call or bulk approval. The decision authorizes the *art program*, **not acceptance of ungenerated art** or automatic Asset V2 ingestion. No files were generated or uploaded by this documentation-only publication.
+Approve the proposed **72 core V1 images** and **12 optional/conditional images** as a staged production queue. Authorize **one image per generation/review cycle during the five CAL-A calibrations**, then at most small compatible groups under the shared [AI Artwork Generation and Review Protocol V1](AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md): keep environment plates, connectors and animation clips isolated; use independently identifiable 2–3-prop or 3–4-minor-decal groups only once their specific style references are human-approved. Inspect and correct each actual source separately against its state prompt and live runtime; obtain explicit user aesthetic approval **per image** before preserving reviewed immutable sources and normalized candidates in a connected Dropbox handoff with implementation instructions. A 5–10-state planning queue is **not** a ten-image generation call or bulk approval. The decision authorizes the *art program*, **not acceptance of ungenerated art** or automatic Asset V2 ingestion. No files were generated or uploaded by this documentation-only publication.
 
-**Counts:** 36 Hub/Sepulcher core (7 full district underlays + 4 connectors + 5 off-route support + 4 grave-event props + 8 burial-garden dressing + 8 civic fixtures); 27 previously registered Awakening perimeter support states across 9 families; 8 separately planned Dust Lung V2 required sources. Optional: 7 Hub conditional foregrounds, 2 4-frame Sepulcher wildlife loops and 3 Dust Lung V2 recommended overlays. All **83** have complete independent image-generation prompts in this document and JSON.
+**Counts:** 37 Hub/Sepulcher core (7 full district underlays + 4 connectors + 5 off-route support + 4 grave-event props + 8 burial-garden dressing + 8 civic fixtures); 27 previously registered Awakening perimeter support states across 9 families; 8 separately planned Dust Lung V2 required sources. Optional: 7 Hub conditional foregrounds, 2 4-frame Sepulcher wildlife loops and 3 Dust Lung V2 recommended overlays. All **84** have complete independent image-generation prompts in this document and JSON.
 
 ## Visual doctrine
 
@@ -22,11 +22,15 @@ A first ChatGPT image-generator candidate was produced for `hub_first_set_sepulc
 
 **Status: candidate requires regeneration or major corrective edit; human visual acceptance pending; no image was uploaded to Dropbox or ingested.** The screenshot/candidate exists only as an authoring-chat artifact, not guaranteed retrievable after interruption. The JSON's CAL-01 receipt stores the exact candidate hash, metadata, geometry failures and next action. Continue **CAL-01** rather than advance to `CAL-02`. Reproduce and re-review a corrected image with those exact spatial constraints. Never mark a generated file `RUNTIME_READY` solely due to this technical review.
 
+## Floor-first CAL-01 correction
+
+The approved art process now separates **flat walkable ground first** from architectural presentation, inaccessible scenic depth and conditional foreground occlusion. Live Sepulcher Gardens is a full 1152x1408 walkable envelope; the original architectural CAL-01 painting is NOT a valid floor source. Revised `CAL-01` is strict top-down ground-only, and new `CAL-02` is a separately prompted 1152x1408 transparent structural source, **blocked until its real solid/collision footprint is approved**. Preserve all event coordinates and both east connector bands. This adds one required image: **72 core, 12 optional, 84 independent prompts and 67 sets**. Dust Lung's eight-state source manifest needs separate DL0 layer-pass reconciliation.
+
 ## Named next-set generation command
 
 When the user says **"generate the next set"** (or **"next art set"**) without naming another program, select the earliest eligible unfinished set in the companion JSON's **`generation_sets`** (see [standing protocol](AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md#named-command-generate-the-next-set)). Its `asset_ids` are **the exact images to generate** and its length is the generation group size; no manual image selection or repeated clarification is needed. **Do the image generation**, not a list of prompts, unless a real review/approval/dependency blocker exists.
 
-The ordered 71-core-state set schedule deduplicates the five CAL-A images from their later phase appearances. On the initial zero-approval baseline the next invocation yields **`CAL-01`**, one `hub_first_set_sepulcher_gardens_environment/underlay` source candidate at 1152×1408 target. Later invocations derive their next set from real human-approved source receipts and the current manifest, not an assumed conversation cursor. If an image awaits review, stop at that existing image; optional states are excluded until explicitly authorized. Generation never implies automatic artistic approval or Dropbox upload.
+The ordered 72-core-state set schedule deduplicates the six CAL-A images from their later phase appearances. On the initial zero-approval baseline the next invocation yields **`CAL-01`**, one **ground-only** `hub_first_set_sepulcher_gardens_environment/underlay` source candidate at 1152×1408 target. Later invocations derive their next set from real human-approved source receipts and the current manifest, not an assumed conversation cursor. If an image awaits review, stop at that existing image; optional states are excluded until explicitly authorized. Generation never implies automatic artistic approval or Dropbox upload.
 
 ## Operational art generation protocol
 
@@ -34,35 +38,37 @@ The ordered 71-core-state set schedule deduplicates the five CAL-A images from t
 
 ## Exact generation / implementation order
 
-### CAL-A: Five individually validated style-calibration images
+### CAL-A: Six individually validated source calibrations, floor then architecture
 
-**5 image states. Gate:** Each is generated, inspected, corrected, and individually human-approved before any wider batch. No atlas crop or automated approval.
+**6 image states. Gate:** floor-only CAL-01; separate architecture CAL-02 blocked on geometry; each individually reviewed.
 
 1. `hub_first_set_sepulcher_gardens_environment/underlay`
-2. `hub_sepulcher_grave_evidence_art/memorial_slab`
-3. `awakening_creche_perimeter_support/structural_support`
-4. `awakening_gate_of_dust_perimeter_support/distant_structures`
-5. `awakening_road_south_reach_perimeter_support/edge_transition`
+2. `hub_first_set_sepulcher_gardens_environment/structural_presentation` (blocked on solid footprint)
+3. `hub_sepulcher_grave_evidence_art/memorial_slab`
+4. `awakening_creche_perimeter_support/structural_support`
+5. `awakening_gate_of_dust_perimeter_support/distant_structures`
+6. `awakening_road_south_reach_perimeter_support/edge_transition`
 
 ### HUB-B1: Sepulcher complete district
 
-**15 image states. Gate:** One open north and one open south connector; original three inspection points and later-visit sprig unchanged; coordinate with active grave review.
+**16 image states. Gate:** One open north and one open south connector; original three inspection points and later-visit sprig unchanged; coordinate with active grave review.
 
 1. `hub_first_set_sepulcher_gardens_environment/underlay`
-2. `hub_first_set_connector_environment/garden_north_transition`
-3. `hub_first_set_connector_environment/garden_south_transition`
-4. `hub_sepulcher_grave_evidence_art/memorial_slab`
-5. `hub_sepulcher_grave_evidence_art/inspection_stone`
-6. `hub_sepulcher_grave_evidence_art/resolution_stone`
-7. `hub_sepulcher_grave_evidence_art/return_pale_growth`
-8. `hub_first_set_sepulcher_gardens_dressing/grave_upright`
-9. `hub_first_set_sepulcher_gardens_dressing/grave_fractured`
-10. `hub_first_set_sepulcher_gardens_dressing/terraced_sarcophagus`
-11. `hub_first_set_sepulcher_gardens_dressing/memorial_plinth`
-12. `hub_first_set_sepulcher_gardens_dressing/cloister_arch_ruin`
-13. `hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment`
-14. `hub_first_set_sepulcher_gardens_dressing/root_intrusion`
-15. `hub_first_set_sepulcher_gardens_dressing/pale_flower_cluster`
+2. `hub_first_set_sepulcher_gardens_environment/structural_presentation`
+3. `hub_first_set_connector_environment/garden_north_transition`
+4. `hub_first_set_connector_environment/garden_south_transition`
+5. `hub_sepulcher_grave_evidence_art/memorial_slab`
+6. `hub_sepulcher_grave_evidence_art/inspection_stone`
+7. `hub_sepulcher_grave_evidence_art/resolution_stone`
+8. `hub_sepulcher_grave_evidence_art/return_pale_growth`
+9. `hub_first_set_sepulcher_gardens_dressing/grave_upright`
+10. `hub_first_set_sepulcher_gardens_dressing/grave_fractured`
+11. `hub_first_set_sepulcher_gardens_dressing/terraced_sarcophagus`
+12. `hub_first_set_sepulcher_gardens_dressing/memorial_plinth`
+13. `hub_first_set_sepulcher_gardens_dressing/cloister_arch_ruin`
+14. `hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment`
+15. `hub_first_set_sepulcher_gardens_dressing/root_intrusion`
+16. `hub_first_set_sepulcher_gardens_dressing/pale_flower_cluster`
 
 ### HUB-B2: Other first-set districts and off-route scenery
 
@@ -187,13 +193,25 @@ Each prompt here is independently usable. `Source` and `Inbox` are repository-re
 
 **Target:** 1152×1408px total, 1 frame(s) at 1152×1408px, copy. **Core required**; family proposed_not_registered; layer background.
 
-**Generation prompt:** Create one professional CUSTODIAN top-down 2D game art image, overhead orthographic, world north at image top, 32px construction rhythm, near-black civic basalt, pale weathered limestone, charcoal, aged brass, ash and restrained cold environmental light. Match existing Road of Witnesses, Hub and Awakening production-camera scale. Architecture must be physically plausible with consistent light and material logic. No people, loot, monsters, UI, legible lettering, watermarks, new entrances, fake navigation, baked global lighting, rectangular background matte, checkerboard or AI-mirrored pseudo-architecture. Target 1152×1408 pixels as a one-frame image. Burial terraces, weathered retaining walls, a damaged cloister court and very sparse pale flowers. Preserve both independent eastern Forum passages; keep grave center (-1984,-3200) unpainted for standalone hero slab and inspection positions offset (-320,0), (448,0), (448,512), with resolutions near y+112. No baked hero grave or magical life. May be opaque inside exact approved playable footprint, no hard painted exterior rectangle or vignette.
+**Generation prompt:** Create exactly one 1152x1408 strict 90-degree orthographic top-down static WALKABLE-GROUND-ONLY Sepulcher Gardens image, north up and registered 1 pixel per world unit on the 32px CUSTODIAN Hub grid. All 1152x1408 pixels in the existing Gardens envelope are currently walkable: depict only FLAT continuous aged civic paving, fractured chalk-limestone and charcoal basalt, restrained oxidized bronze floor indexing, cracks and dust. Grave local center (576,704), inspection locations (256,704),(1024,704),(1024,1216), and choice locations (484,816),(668,816) MUST all remain accessible and clear. The two east edge connectors MUST be level open paving over x1024..1152, y576..832 and x1024..1152, y1120..1376. Absolutely NO columns, walls, arches, tomb slabs, steps, raised terraces, vegetation blocking ground, scenic depth, fake voids, architectural shadows, foreground, characters, text, UI, lighting vignette, perspective tilt or isometric camera. Other architecture and inaccessible scenic depth are separate asset layers. One continuous exact-aspect overhead ground plate; generator output needs review before normalization and acceptance.
 
 **Source:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_environment/underlay_source.png`  
 **Inbox:** `custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_environment/underlay.png`  
 **Family schema:** `custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_environment.asset.json`  
 **Anchor/constraints:** HubFirstSetLayout.ENVELOPES.sepulcher_gardens, 1px/world-unit candidate; must not own navigation or collision; verify registered canvas and adjacent Road/contact boundaries  
 **Prompt owner:** new Hub V1 proposal under owner-approved art program
+
+#### `hub_first_set_sepulcher_gardens_environment/structural_presentation`
+
+**Target:** 1152x1408px, single true-RGBA static image; core required, proposed additional family state, **blocked until spatial/collision footprint approval**.
+
+**Generation prompt:** Create one separately generated 1152x1408 TRUE RGBA transparent architectural presentation source for CUSTODIAN Sepulcher Gardens, exactly pixel-registered 1:1 over an approved flat floor, strict 90-degree orthographic north-up camera. Ruined institutional burial architecture: damaged cloister arches, retaining masonry, broken column bases, pale limestone and black basalt plinths, restrained bronze. NO ground texture or fully opaque scene. CRITICAL PRECONDITION: the current full Gardens envelope is walkable in HubFirstSetLayout. DO NOT place walls, tomb terraces or any other apparent blocking solids inside the playable floor unless a separately human-reviewed, approved geometry/collision and solid footprint map assigns their nonwalkable space. Preserve grave center (576,704), reading offsets (256,704),(1024,704),(1024,1216), choices (484,816),(668,816), east connector bands x1024..1152 at y576..832 and y1120..1376. Keep alpha truly transparent outside authorized architectural silhouettes. No camera tilt, art-only collision invention, readable inscriptions, UI, characters, fictional entrances or extra playable-looking corridors. If approved structural footprint is absent this requested source is BLOCKED and must not be generated.
+
+**Source:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_environment/structural_presentation_source.png`  
+**Inbox:** `custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_environment/structural_presentation.png`  
+**Family schema:** `custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_environment.asset.json`  
+**Anchor/constraints:** Same 1152x1408 1:1 world/pixel origin, no per-layer transforms; BLOCKED pending approved structure/collision footprint; must match live walkability and operator clearance
+
 
 #### `hub_first_set_archive_rise_environment/underlay`
 
