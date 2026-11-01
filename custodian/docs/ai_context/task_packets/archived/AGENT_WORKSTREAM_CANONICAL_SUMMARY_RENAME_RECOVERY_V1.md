@@ -4,7 +4,7 @@
 - Authoring handoff: auto
 - Workstream: agent-workstream-canonical-summary-rename-recovery-v1
 - Category: agent-ops
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: P0
 - Depends on: none
@@ -48,6 +48,27 @@
   - Run `python3 custodian/tools/agent/check_ai_context.py --json`, targeted authoring and pairing checks, `python3 custodian/tools/agent/task_packet_index.py`, and `git diff --check`.
 - Task overrides: none
 - Deferred: The blocked timeout workstream remains at `a5603fe9ddbe497cc1d18dce68ea3f48960fcf62`; resume it only after this recovery lands and receives independent review, then use its original claim and a fresh canonical source-bound validation. The P0 implementation and its own review remain later gates.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `Implementation commit 7e6e131a6f85b3a04d77946a6b1c2ff3b4edea9e adds the narrowly authenticated producer/consumer archive-summary rename gate, real-Git adversarial regressions, and lifecycle documentation. Producer suite test_workstream passed 89/89; independent consumer suite test_paired_review_runner passed 279/279. Canonical changed-file validation report /tmp/custodian-summary-rename-validation-7e6e131a.json (SHA-256 c423f4a56541bb25861e8cdcaf5b499d57c56a08585f252abaab0f2b888ce8e9) is green for source commit 7e6e131a6f85b3a04d77946a6b1c2ff3b4edea9e, tree 5d021e6c940a6aad16c0ae375c8337d54524a2cb, clean status, and baseline origin/main 8bc0fe40184dec741ccc5a92997052f96e0deb43; 9/9 selected checks passed, coverage is complete, with zero uncovered files, failures, skips, timeouts, or infrastructure errors. Canonical landing and teardown are performed by the authorized normal workstream finish. The required independent paired review is a separate post-land gate and remains pending; no independent PASS is claimed.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `The first validation command streamed its JSON report to the Codex tool output rather than a file; the exact output was recovered from the local session record, and a later run preserved it to /tmp.`
+- Root cause / contributing factors: `The validation command was not initially piped to a report path.`
+- Prevention / pipeline improvement: `Capture --json stdout to a task-specific report file on the first run.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `fixed-in-scope`
+- What worked: `Independent real-Git producer and consumer tests checked commit parents, paths, modes, blobs, and bytes rather than trusting generated proof.`
 
 ## Handoff
 
