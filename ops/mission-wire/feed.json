@@ -1,9 +1,330 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T11:39:26Z",
-  "source_main_sha": "7a6dfdf27cc4c0025e3dff8124b9728f66369a92",
+  "generated_at": "2026-11-01T14:49:13Z",
+  "source_main_sha": "f070b4ee7f46c16890469889886bc13126705387",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "paired-review-runner-time-budget-ready-f070b4ee",
+      "headline": "A five-minute test limit is obstructing validator acceptance; a bounded timeout fix enters the queue",
+      "summary": "A new P0 implementation/review pair was declared ready/auto to increase the canonical paired-review runner test timeout from 300 to 480 seconds. The packet cites a 317.595-second suite runtime, longer than the existing limit. This is a validation-infrastructure correction, not a passing test or accepted security fix.",
+      "body": "Commit aa7fb473 authored a P0 timeout correction and independent review. Commit f070b4ee changed both headers to ready/auto. The implementation is restricted to the paired_review_runner_unit timeout, leaving the test command and other limits unchanged. The 317.595-second runtime is reported in the packet, not independently reproduced in this monitoring run. Latest checked CI runs for aa7fb473 passed repository validation and automatic handoff; they do not demonstrate that the long runner suite passed. Implementation, independent PASS, executor liveness and teardown remain unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "validation-paired-review-runner-time-budget-v1",
+      "occurred_at": "2026-11-01T14:36:05Z",
+      "bullets": [
+        "Two named packet headers now declare ready/auto; the review remains dependency-gated.",
+        "Packet reports a 317.595-second test against a 300-second limit.",
+        "Correction is limited to one timeout value, 300 to 480 seconds.",
+        "Verify real suite completion and independent PASS before accepting the fix."
+      ],
+      "links": [
+        {
+          "title": "Timeout correction packet pair",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/aa7fb473981334ab203441a277a01727a848bc33"
+        },
+        {
+          "title": "Ready/auto handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/f070b4ee7f46c16890469889886bc13126705387"
+        },
+        {
+          "title": "Repository validation success",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41316964637"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A test that takes longer than its permitted runtime cannot produce the green evidence needed to accept a security-sensitive repair. CUSTODIAN has now prepared a narrow correction: give one canonical paired-review suite more time without changing what it tests.",
+        "sections": [
+          {
+            "heading": "The bottleneck is the clock",
+            "text": "The new packet reports that the paired-review runner suite took 317.595 seconds while its validation manifest allows 300. That mismatch can terminate a genuine run before it can produce an acceptable report. The number comes from the packet, not a fresh host measurement."
+          },
+          {
+            "heading": "A narrow fix, still awaiting execution",
+            "text": "The proposed change raises only paired_review_runner_unit's limit to 480 seconds. Both implementation and independent-review packets are now declared ready/auto, but the review cannot proceed until the implementation lands and passes validation."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A timeout failure is not a product failure",
+            "explanation": "A run cut short by its budget does not establish whether the validator is correct. Fixing the budget restores the opportunity to obtain trustworthy evidence; it does not itself prove the validator safe."
+          },
+          {
+            "title": "Green repository CI is not the missing test",
+            "explanation": "Repository validation passed for the authoring commit, but that is distinct from an authenticated completed run of the long paired-review suite."
+          }
+        ],
+        "takeaway": "The next useful milestone is a completed canonical runner report against the unchanged test command, followed by independent review.",
+        "next_watch": "Watch for a landed single-value timeout change, a completed suite report, and an independent PASS; none is established yet."
+      },
+      "details": {
+        "overview": "The P0 pair was authored on main aa7fb473 and declared ready/auto at f070b4ee. The reported 317.595s test runtime exceeds the existing 300s manifest budget. The proposal changes only this suite's timeout to 480s.",
+        "ledger": [
+          {
+            "stage": "Specification",
+            "status": "verified authored",
+            "evidence": "aa7fb473 adds two task packets."
+          },
+          {
+            "stage": "Dispatch declaration",
+            "status": "verified ready/auto headers",
+            "evidence": "f070b4ee updates both packet headers; this does not prove dispatcher eligibility or a running process."
+          },
+          {
+            "stage": "Implementation and suite",
+            "status": "unknown",
+            "evidence": "No landed correction or completed canonical suite report inspected."
+          },
+          {
+            "stage": "Independent acceptance",
+            "status": "unknown",
+            "evidence": "No passing independent receipt inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host inventory or lock/process disposition."
+          }
+        ],
+        "notes": [
+          "The packet-reported 317.595-second runtime is not independently measured here."
+        ],
+        "unknowns": [
+          "Host dispatcher eligibility and process state.",
+          "Canonical suite completion and independent PASS."
+        ],
+        "actions": [
+          "Executor owner: validate prerequisites and implement the bounded timeout adjustment; independent reviewer only after landing."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ready for implementation; independent review gated",
+        "as_of": "2026-11-01T14:49:13Z",
+        "scope": "The named timeout correction implementation and paired review only",
+        "metrics": [
+          {
+            "id": "ready_auto",
+            "label": "Declared ready/auto",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Two packet headers changed at f070b4ee; review depends on implementation.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/f070b4ee7f46c16890469889886bc13126705387"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Bounded timeout correction authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "aa7fb473"
+          },
+          {
+            "label": "Packet pair declared ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "f070b4ee; not proof of live eligibility"
+          },
+          {
+            "label": "Single-value implementation and full suite",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landed correction or completed suite receipt inspected"
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Dependency-gated; no PASS receipt"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host proof"
+          }
+        ],
+        "next_gate": "Executor owner: verify dispatch eligibility and complete the unchanged canonical runner suite after the bounded timeout implementation lands."
+      },
+      "related": [
+        {
+          "title": "New safeguard targets the validation loophole left by cycle 2",
+          "context": "The after-sync enforcement workstream depends on trustworthy paired-review validation evidence.",
+          "story_id": "after-sync-consumer-enforcement-ready-7a6dfdf2"
+        }
+      ]
+    },
+    {
+      "id": "sepulcher-operator-v2-preview-landed-ba76204b",
+      "headline": "Sepulcher now pairs the canonical Operator with a quieter modular floor in a playable scene",
+      "summary": "A new standalone Godot preview puts the approved 128px Operator idle on the real moving actor and adds a quieter 48-cell modular floor, alongside courtyard and repetition comparisons. The implementation landed and its packet was archived, but technical review and art approval are separate and remain unverified.",
+      "body": "Commit ba76204b adds the Sepulcher Material Operator V2 development scene, preview controls, a byte-preserving 128px idle staging helper, and a targeted smoke test. The scene offers neutral, original courtyard, repeat diagnostic, and quiet modular floor modes. The approved 128px sheet is previewed as idle-only, not approved 128px locomotion/combat. Commit 58f52ac2 archives the implementation packet. A later recovery packet c29acaf4 describes a held independent review and a spawn/reset validation regression, plus reported failed-report authentication trouble. No accepted PASS, production Asset V2 intake, subjective art approval, or host teardown is established.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-canonical-operator-floor-v2-preview-v1",
+      "occurred_at": "2026-11-01T13:52:58Z",
+      "bullets": [
+        "Playable scene combines real Operator/controller/camera with canonical 128px idle-only visual.",
+        "Four floor modes include a quiet 48-cell modular layout and a deliberate repetition diagnostic.",
+        "Implementation archived; technical independent review is held.",
+        "A separate validation recovery is proposed, not accepted.",
+        "No production art approval or teardown is established."
+      ],
+      "links": [
+        {
+          "title": "Playable V2 scene implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/ba76204b8ef95224bd49ba0372b3c43000eb59b4"
+        },
+        {
+          "title": "Implementation packet archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/58f52ac2b8f7e5ea60b48a00a3af57f55ee32c79"
+        },
+        {
+          "title": "Held-review recovery proposal",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c29acaf4aee8a700259ad0f5a6b4ea708774793f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher's next art decision can now be made inside a playable scene. The preview brings the approved 128-pixel Operator idle together with a calmer modular stone floor, using the actual game controller and camera rather than a static mockup.",
+        "sections": [
+          {
+            "heading": "One scene, four floor treatments",
+            "text": "The new preview switches among neutral blockout, the original courtyard, an intentionally repetitive crop, and a quieter modular floor assembled from 48 native-resolution cells. The same player and camera stay in place, making the visual comparison more meaningful."
+          },
+          {
+            "heading": "The Operator is real; the new animation set is not",
+            "text": "The moving actor is the real Operator, but its canonical 128px artwork is only an illustrative eight-direction idle preview. New movement and combat animation has not been approved or authored by this change."
+          },
+          {
+            "heading": "Technical review is still held",
+            "text": "The implementation was archived after landing. A separate recovery proposal identifies a spawn/reset smoke-test regression and a reported host validation-authentication issue. That proposal is not proof of a repaired test or accepted review."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A controlled comparison reduces aesthetic guesswork",
+            "explanation": "Holding the gameplay camera, collision and scene geometry constant helps isolate whether the quieter floor and canonical Operator improve readability together."
+          },
+          {
+            "title": "Playable is not production-approved",
+            "explanation": "The scene is a development experiment. It has not conferred Asset V2 intake, art approval or independent technical acceptance."
+          }
+        ],
+        "takeaway": "The V2 preview is a concrete gameplay-facing milestone, but its technical validation and subjective art approval remain distinct gates.",
+        "next_watch": "Watch for independently accepted validation recovery, then a new V2 review and an explicit human art decision."
+      },
+      "details": {
+        "overview": "The V2 scene landed at ba76204b and implementation packet was archived at 58f52ac2. It contains a real actor/controller/HUD/camera, a 128px idle-only preview and four floor modes. c29acaf4 documents a separate held-review validation recovery proposal.",
+        "ledger": [
+          {
+            "stage": "Implementation landing",
+            "status": "verified",
+            "evidence": "ba76204b contains scene and test sources."
+          },
+          {
+            "stage": "Packet archive",
+            "status": "verified",
+            "evidence": "58f52ac2 archives implementation packet; archive is not acceptance."
+          },
+          {
+            "stage": "Technical validation",
+            "status": "blocked/reported",
+            "evidence": "c29acaf4 documents smoke spawn/reset regression and reported failed-report authentication concern."
+          },
+          {
+            "stage": "Independent review",
+            "status": "held, not accepted",
+            "evidence": "Recovery proposal requires separate independent acceptance before original-run disposition."
+          },
+          {
+            "stage": "Art approval",
+            "status": "unknown",
+            "evidence": "No explicit human Asset V2/Operator animation approval inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No host proof."
+          }
+        ],
+        "notes": [
+          "128px sheet is preview-only and idle-only.",
+          "The quiet floor uses existing V1 native crops; no new generated art approved."
+        ],
+        "unknowns": [
+          "Independent recovery eligibility and accepted PASS.",
+          "Actual host cleanup and art approval."
+        ],
+        "actions": [
+          "Recovery implementation owner: correct smoke and provenance checks without mutating held review; independent reviewer then reassesses."
+        ]
+      },
+      "scorecard": {
+        "stage": "Playable preview landed; independent review held",
+        "as_of": "2026-11-01T14:49:13Z",
+        "scope": "Named Sepulcher Operator/Material V2 preview and its held technical review",
+        "metrics": [
+          {
+            "id": "other-floor-modes",
+            "label": "Preview floor modes",
+            "value": 4,
+            "verification": "verified",
+            "basis": "V2 README and scene controls at ba76204b.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/ba76204b8ef95224bd49ba0372b3c43000eb59b4"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Playable V2 implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "ba76204b"
+          },
+          {
+            "label": "Implementation packet archived",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "58f52ac2"
+          },
+          {
+            "label": "Smoke/host validation recovery",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "c29acaf4 describes held review and separate recovery proposal"
+          },
+          {
+            "label": "Independent technical acceptance",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Held review; no PASS receipt"
+          },
+          {
+            "label": "Human art approval and Asset V2 intake",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No approval evidence"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host evidence unavailable"
+          }
+        ],
+        "next_gate": "Recovery owner: correct V2 smoke and provenance validation under a separately accepted review before authorized original-review disposition."
+      },
+      "related": [
+        {
+          "title": "Sepulcher's paving preview lands, but its independent review hits a source-evidence gate",
+          "context": "The earlier native paving comparison is the predecessor to the combined Operator/material V2 preview.",
+          "story_id": "sepulcher-native-quad-landed-review-gate-82d97438"
+        }
+      ]
+    },
     {
       "id": "after-sync-consumer-enforcement-ready-7a6dfdf2",
       "headline": "New safeguard targets the validation loophole left by cycle 2",
@@ -1201,326 +1522,25 @@
         ],
         "next_gate": "Art owner reviews and explicitly authorizes the four-source pilot before generation."
       },
-      "related": [
-        {
-          "title": "Environment art gains a precise 'next set' command, starting with Sepulcher Gardens",
-          "context": "The existing whole-environment art sequence is the alternative this bounded modular experiment would evaluate.",
-          "story_id": "art-next-set-dispatch-5ee4a63d"
-        }
-      ]
-    },
-    {
-      "id": "review-closeout-guard-supersession-7eaf776d",
-      "headline": "Review closeout gains a stronger safety guard as a stranded-review recovery packet becomes ready",
-      "summary": "A new main-branch runner guard authenticates the original reviewer session before allowing a committed PASS to close. A separate P0 supersession implementation and its paired review were marked ready for automatic dispatch. Neither change proves the protected review was accepted or that an executor started.",
-      "body": "Commit 7e965f88 landed a fail-closed review closeout guard with a reported 274 runner tests passing. Its attached summary explicitly preserves the protected original review in HOLD after a required profile dependency failure; the local status in that summary is historical, not freshly verified host state. Commit 7eaf776d changes the new unaccepted-supersession implementation and paired review packets from draft/manual to ready/auto. Their dependencies still apply; ready is not claimed or running. Full canonical dispatcher audit and independent review acceptance were not inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-unaccepted-supersession-v1",
-      "occurred_at": "2026-11-01T05:39:45Z",
-      "bullets": [
-        "Dispatcher owner: verify prerequisite review-agent-legacy-claim-scoped-snapshot-v1 before any claim.",
-        "Review owner: independently assess the landed closeout guard and preserve the original protected HOLD."
-      ],
-      "links": [
-        {
-          "title": "Closeout guard landing",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7e965f8834dbcd5aa10793f5a0e678dacc18da58"
-        },
-        {
-          "title": "Ready packet transition",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's review machinery has acquired another safeguard against prematurely closing a stranded review. A new guard checks the original reviewer evidence before treating a recorded PASS as authentic. Meanwhile, a separate recovery workstream has moved from draft to dispatch-ready, though neither step resolves the protected review on its own.",
-        "sections": [
-          {
-            "heading": "The PASS must belong to the actual review",
-            "text": "The landed guard ties a review outcome to its original session, continuation, evidence digests and claim identity. A contradictory verdict or unresolved required dependency must hold closeout rather than being treated as a successful review."
-          },
-          {
-            "heading": "A recovery route is queued, not running",
-            "text": "The new P0 unaccepted-supersession implementation and paired review now say ready/auto. The implementation still depends on a separate legacy-claim snapshot review, and the paired review depends on the implementation. Those declarations are dispatch eligibility inputs, not proof that either job has started."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A recorded PASS is not the same as an accepted PASS",
-            "explanation": "The guard addresses a subtle failure mode: authentic-looking archived output can coexist with missing dependencies or mismatched session evidence. Closing such a review would incorrectly unlock downstream work."
-          },
-          {
-            "title": "Recovery can preserve history instead of rewriting it",
-            "explanation": "The new packet describes a supersession lifecycle for reviews that cannot be accepted. Its intended distinction is between retaining the old evidence and creating a separately reviewable path forward."
-          }
-        ],
-        "takeaway": "The safety guard is landed and a recovery implementation is ready, but independent acceptance and protected-run recovery remain unverified.",
-        "next_watch": "Verify the prerequisite snapshot review and watch for an actual dispatcher claim, implementation landing and independent review receipt."
-      },
-      "details": {
-        "overview": "Main 7e965f88 changes paired_review_runner.py and tests; its committed summary reports 274 passing tests and a protected original review HOLD. Main 7eaf776d marks two packet documents ready/auto. No full canonical audit or live host evidence was inspected.",
-        "ledger": [
-          {
-            "stage": "Closeout guard implementation",
-            "status": "verified landed",
-            "evidence": "Main commit 7e965f88."
-          },
-          {
-            "stage": "Runner tests",
-            "status": "reported passed",
-            "evidence": "Committed implementation summary reports 274 tests; no independent rerun in this watch."
-          },
-          {
-            "stage": "Supersession packet eligibility",
-            "status": "verified ready declaration",
-            "evidence": "Main commit 7eaf776d; prerequisite review still declared."
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown",
-            "evidence": "No exact independent accepted PASS receipt inspected."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host proof inspected."
-          }
-        ],
-        "notes": [
-          "A ready packet is not evidence of a live worker."
-        ],
-        "unknowns": [
-          "Full dispatcher totals, claims and host worktree/disk state unavailable.",
-          "Protected original review remains HOLD according to the committed summary; current host state not refreshed."
-        ],
-        "actions": [
-          "Dispatcher owner: verify the named prerequisite through canonical audit before claiming the new implementation."
-        ]
-      },
-      "scorecard": {
-        "stage": "Guard landed; supersession ready, prerequisite unresolved",
-        "as_of": "2026-11-01T06:03:31Z",
-        "scope": "Two named supersession packets and one closeout-guard landing, not full dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-ready-named-packets",
-            "label": "READY NAMED PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Exactly two named packet files changed from draft/manual to ready/auto in commit 7eaf776d; not a global ready count",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Land closeout authentication guard",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main 7e965f88."
-          },
-          {
-            "label": "Publish supersession packets",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main c6bf1544."
-          },
-          {
-            "label": "Mark named packets dispatch-ready",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main 7eaf776d."
-          },
-          {
-            "label": "Verify prerequisite snapshot review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No canonical acceptance receipt inspected."
-          },
-          {
-            "label": "Implement supersession lifecycle",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing inspected."
-          },
-          {
-            "label": "Independent supersession review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt inspected."
-          },
-          {
-            "label": "Protected recovery and teardown",
-            "status": "blocked",
-            "verification": "reported",
-            "evidence": "Requires separately supported recovery; committed summary retains HOLD."
-          }
-        ],
-        "next_gate": "Dispatcher owner verifies acceptance of review-agent-legacy-claim-scoped-snapshot-v1 before claiming the ready supersession implementation."
-      },
       "related": []
-    },
-    {
-      "id": "art-next-set-dispatch-5ee4a63d",
-      "headline": "Environment art gains a precise 'next set' command, starting with Sepulcher Gardens",
-      "summary": "A new main-branch manifest sequence makes 'generate the next set' select the earliest unfinished, individually approved art set. The initial CAL-01 target is one Sepulcher Gardens underlay, not a bulk batch. No image was generated or approved by this commit.",
-      "body": "Main commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 adds ordered generation_sets and a command contract to the existing Hub/Sepulcher/Awakening manifest. The first initial set CAL-01 is one 1152×1408 Gardens underlay; CAL-02 is a separate 160×96 memorial slab only after CAL-01 human approval. The sequence must reconcile real approval and source receipts rather than trusting the JSON checkpoint. This is planning/dispatch documentation, not image generation, human acceptance, Dropbox delivery or Asset V2 integration. No canonical dispatcher audit or host state inspected.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-01T04:30:32Z",
-      "bullets": [
-        "Art owner: reconcile existing approved source receipts, then generate or present CAL-01 for individual review."
-      ],
-      "links": [
-        {
-          "title": "Deterministic art set contract commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's environment art plan now answers a practical question: what exactly should happen when someone says 'generate the next set'? A new ordered manifest chooses the first unfinished image set and requires real source and approval evidence before moving forward. The change is on main, but it has not produced a new image.",
-        "sections": [
-          {
-            "heading": "One command, one unambiguous next target",
-            "text": "At the documented initial baseline, CAL-01 calls for a single 1152×1408 Sepulcher Gardens environment underlay. Its successor, CAL-02, is a 160×96 memorial slab, but only after the first source is individually approved. Later sets can contain two distinct images where style and geometry permit."
-          },
-          {
-            "heading": "The queue cannot outrun review",
-            "text": "The selection rule checks real approved-source hashes, review receipts and asset intake before relying on a stored checkpoint. If an image is already generated but awaits approval, the next command returns to that review instead of skipping ahead or generating a duplicate."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A conversational instruction becomes deterministic production",
-            "explanation": "The manifest now binds a common request to exact image identities, sizes and prompts, reducing ambiguity between a planning batch and an actual generation action."
-          },
-          {
-            "title": "The approval gate is the real cursor",
-            "explanation": "Progress depends on individually verified human decisions, not on whether a manifest field says 'next'. This protects against duplicate generation and falsely completed art states."
-          }
-        ],
-        "takeaway": "The next-art command is specified and ordered, but source generation, approval and runtime integration remain separate unverified milestones.",
-        "next_watch": "Watch for a recoverable CAL-01 candidate and explicit individual human approval, with a source hash or receipt."
-      },
-      "details": {
-        "overview": "Commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 modifies only three design/manifest documents. Its ordered generation_sets excludes duplicate calibration states and optional states from automatic dispatch. No generated source or approval evidence was provided by this commit.",
-        "ledger": [
-          {
-            "stage": "Ordered generation-set manifest",
-            "status": "verified landed",
-            "evidence": "Commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 adds generation_sets and selection contract."
-          },
-          {
-            "stage": "CAL-01 source generation",
-            "status": "unknown",
-            "evidence": "No source image or receipt inspected."
-          },
-          {
-            "stage": "Human source approval",
-            "status": "unknown",
-            "evidence": "No independent individual approval inspected."
-          },
-          {
-            "stage": "Asset V2 ingestion",
-            "status": "unknown",
-            "evidence": "No runtime job or scene evidence inspected."
-          }
-        ],
-        "notes": [
-          "The first five calibration states are single-image sets.",
-          "The 12 optional states require separate authorization."
-        ],
-        "unknowns": [
-          "Live Dropbox and host-side receipts unavailable.",
-          "Canonical dispatcher audit unavailable; packet totals cannot be established."
-        ],
-        "actions": [
-          "Art owner: reconcile source receipts, then produce or present CAL-01 for review."
-        ]
-      },
-      "scorecard": {
-        "stage": "Ordered art dispatch documented; first source review next",
-        "as_of": "2026-11-01T04:30:32Z",
-        "scope": "Hub/Sepulcher/Awakening generation-set plan only, not active dispatcher queue",
-        "metrics": [
-          {
-            "id": "other-planned-core-states",
-            "label": "PLANNED CORE STATES",
-            "value": 71,
-            "verification": "verified",
-            "basis": "Manifest inventory, not generated or approved count",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish art manifest",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 2d5240f0."
-          },
-          {
-            "label": "Publish generation protocol",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 91f44c89."
-          },
-          {
-            "label": "Define ordered next-set dispatch",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5."
-          },
-          {
-            "label": "Generate or recover CAL-01",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No image receipt inspected."
-          },
-          {
-            "label": "Individually approve CAL-01",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Human decision not inspected."
-          },
-          {
-            "label": "Continue calibration and intake",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Dependent on source approvals."
-          }
-        ],
-        "next_gate": "Art owner reconciles any existing CAL-01 source, then presents it or generates one for individual approval."
-      },
-      "related": [
-        {
-          "title": "CUSTODIAN sets image-by-image approval rules before its large environment art push",
-          "context": "The new deterministic command implements the earlier individual-approval production protocol.",
-          "story_id": "art-generation-protocol-91f44c89"
-        }
-      ]
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T11:39:26Z",
-    "source_main_sha": "7a6dfdf27cc4c0025e3dff8124b9728f66369a92",
+    "observed_at": "2026-11-01T14:49:13Z",
+    "source_main_sha": "f070b4ee7f46c16890469889886bc13126705387",
     "coverage": "partial",
-    "scope": "Only the two named after-sync consumer enforcement packets in commit 7a6dfdf; not a dispatcher-wide inventory.",
+    "scope": "Two named new ready/auto timeout-correction packets, plus inspected Sepulcher V2 implementation/archive and held-review proposal; not a canonical dispatcher queue audit.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY/AUTO IN NAMED PAIR",
+        "label": "READY/AUTO IN TIMEOUT PAIR",
         "value": 2,
         "verification": "verified",
-        "basis": "Both implementation and paired review packet headers changed from draft/manual to ready/auto in commit 7a6dfdf; two named packets only; review depends on implementation.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/7a6dfdf27cc4c0025e3dff8124b9728f66369a92"
+        "basis": "Both named timeout correction packet headers declared ready/auto in f070b4ee; implementation/review pair only, with dependency-gated review.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/f070b4ee7f46c16890469889886bc13126705387"
       }
     ],
-    "focus": "Verify dispatch eligibility and failing-first reproduction for after-sync consumer enforcement.",
-    "note": "GitHub declarations do not prove live claims, execution, acceptance or teardown. Full canonical dispatcher audit unavailable."
+    "focus": "Verify actual eligibility and canonical full-suite completion for the P0 paired-review runner timeout correction; then obtain independent PASS.",
+    "note": "Sepulcher V2 preview landed and was archived, but technical review is held. Earlier handoff failures were followed by successful runs for later authoring commits; this does not prove the earlier failure was fixed. Full live dispatcher audit, host processes, locks, disk and teardown remain unknown."
   }
 }
