@@ -5,8 +5,8 @@
 - Workstream: review-agent-workstream-canonical-summary-rename-recovery-v1
 - Category: agent-ops
 - Kind: review
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P0
 - Depends on: agent-workstream-canonical-summary-rename-recovery-v1
 - Locks: workstream-canonical-summary-rename-recovery
