@@ -1,0 +1,135 @@
+{
+  "approval_state": "experimental",
+  "approved_design_lock": {
+    "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png",
+    "sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b"
+  },
+  "approved_visual_reference": {
+    "dimensions": [
+      1920,
+      1024
+    ],
+    "directions": [
+      "N",
+      "NE",
+      "E",
+      "SE",
+      "S",
+      "SW",
+      "W",
+      "NW"
+    ],
+    "fps": "unknown",
+    "frame_size": [
+      128,
+      128
+    ],
+    "frames_per_direction": 15,
+    "path": "custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
+    "registration_root": [
+      64,
+      106
+    ],
+    "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+  },
+  "candidate_blend": {
+    "bytes": 94257829,
+    "master_contract_path": "master.v1.json",
+    "master_contract_sha256": "2c2412957fc7ff105d6eb98ef3378b8845e51e89fa637e651c7edf609fce64a8",
+    "path": "operator_3d_iter005_visual_fidelity_candidate_v003.blend",
+    "sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+  },
+  "candidate_state": "candidate_unapproved",
+  "created_utc": "2026-11-01T05:29:01+00:00",
+  "derivation": "Immutable V003 derivative from the pinned V002 candidate; preserve its neutral stance/lower half, remove only the V002 donor pauldron mesh islands, reconstruct fitted angular shoulder patches, and add a pose-space chest opening. V002, Task 017, ITER005 master, GLB, FBX, runtime, and original motion receipts remain read-only.",
+  "motion_inputs": [
+    {
+      "motion_sha256": "548dc02a458fe8858143fb363e143071b07b3c05749d842fe80b04674d0c72e6",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/retarget_fix_v1/motion/neutral_idle_motion.v2_rest_frame.json",
+      "sha256": "6915baf7cf56c7606d328d5de497bf8e768f2c48c9b7f8b6d0eff1d39cce0bb5"
+    },
+    {
+      "motion_sha256": "50c65dc41fec100cf374d09a8fe1cccc5615ee431fadefcf7629e31f54ee91b4",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/neutral-idle/diagnostics/candidates/neutral_idle_motion.v2_calibrated_candidate.json",
+      "sha256": "550bc67a5cb7b893202ddb6c1c72b05e2088225b2a1f5f106065d52fa93220ef"
+    },
+    {
+      "derived_from": "V002 pose overlay motion; spine only additional local pitch; timing/source frame IDs retained",
+      "motion_sha256": "f2d6e2c6fca056cf14a973e2c460eb89103d5ebc4be8737e79a94e3fc955641e",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/v003_neutral_idle.motion.v1.json",
+      "sha256": "59cf9f3b29375f20390a0cb0672f42bbea82e8d68a717b74f9151060b1c3104f"
+    }
+  ],
+  "proof": {
+    "approval_state": "candidate_unapproved",
+    "comparison_manifest": "human_review_handoff/comparison_manifest.v1.json",
+    "external_root": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3",
+    "full_animation_cohort_rendered": false
+  },
+  "rig_invariants": {
+    "bone_count": 42,
+    "candidate_neutral_idle_frame_range": [
+      1,
+      264
+    ],
+    "identity_sha256": "36ed6d35469faf5e6f03802371df345321147e1624be35d079fd5140de36d597",
+    "rest_pose_changed": false,
+    "rest_pose_sha256": "62b18ce51ea85907f7270855608be0cdc804ec7e1c17fff5d6da97bf543e55eb",
+    "skeleton_signature_sha256": "abcadb2f29bb273b25d8db278b5e33af27597a8a68a1c90550a92e2b7da7bbd2",
+    "source_run_action_preserved": true
+  },
+  "schema": "custodian.operator_3d_visual_fidelity_lineage.v1",
+  "source_candidate_v002": {
+    "master_contract_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v002/master.v1.json",
+    "master_contract_sha256": "ce5e7a740715b5fc572b053207a11591a37415436a3bf4e083fee6f690be5988",
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v002/operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+    "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23",
+    "source_branch": "manual/operator-3d-visual-fidelity-candidate-v2",
+    "source_commit": "e4a01db6bf1d59d41929cf3559dff1ff9e7083ad"
+  },
+  "source_changes": {
+    "iter005_master_modified": false,
+    "runtime_sprites_modified": false,
+    "source_fbx_modified": false,
+    "source_glb_modified": false,
+    "source_motion_receipts_modified": false,
+    "task017_source_modified": false,
+    "v002_candidate_modified": false
+  },
+  "source_fbx": {
+    "path": "/home/braydenchaffee/Downloads/Neutral Idle.fbx",
+    "sha256": "40fda03b9e87092978f31c0721a3de2ad686a35983d73386769a17029684e1a3"
+  },
+  "source_master": {
+    "bytes": 47225804,
+    "glb_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.glb",
+    "glb_sha256": "3968f0bbb47b9f0a9775537b669e7b69c972ad948da0ff121b216f26e5021479",
+    "master_contract_sha256": "e7e49c41fcf5c0a5e1835d0afda9f0358b832faf8ebc50f960640f5ece17e672",
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/experimental_iter005_baseline_a0bdf6c1/operator_run_mixamo_iter005_contact_ik.blend",
+    "sha256": "a0bdf6c1143d23386721299c42d2e76178c0dff841a7e54bd9d9df1bf17dd969",
+    "source_branch": "agent/operator-3d-master-modeling-proof-v1-iter005",
+    "source_commit": "6b89c4d503bb2d73d2783443d4280f313c681bfa"
+  },
+  "source_v002": {
+    "master_contract_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v002/master.v1.json",
+    "master_contract_sha256": "ce5e7a740715b5fc572b053207a11591a37415436a3bf4e083fee6f690be5988",
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v002/operator_3d_iter005_visual_fidelity_candidate_v002.blend",
+    "sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23",
+    "source_branch": "manual/operator-3d-visual-fidelity-candidate-v2",
+    "source_commit": "e4a01db6bf1d59d41929cf3559dff1ff9e7083ad"
+  },
+  "task017_pauldron_donor": {
+    "owner_branch": "agent/operator-shoulder-symmetry-and-rigging-v1-task017",
+    "ownership": "host-local source in existing dirty Task 017 worktree; read-only; not copied into or modified by this candidate build",
+    "path": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-shoulder-task017-20261028/custodian/asset_drop/source_work/operator/operator_3d_master/rig_diagnostics/meshy-004_rigged/task017_clean_pauldrons/operator_iter005_clean_pauldrons_task017.blend",
+    "sha256": "cb34e495bcece5e76a50efa14abc02dab64170af988304135123a8182773f1b5"
+  },
+  "variants": [
+    {
+      "bytes": 94257829,
+      "id": "final_combined_v003",
+      "path": "operator_3d_iter005_visual_fidelity_candidate_v003.blend",
+      "sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+    }
+  ]
+}

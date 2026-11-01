@@ -1,0 +1,274 @@
+{
+  "candidate_blend_sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0",
+  "candidate_state": "candidate_unapproved",
+  "corrections": [
+    {
+      "component": "legs_and_stance",
+      "evidence": "V002 correction report verified ankle targets; V003 edits only the chest pose quaternions and shoulder mesh islands.",
+      "measurements": {
+        "ankle_spacing_m": {
+          "frame_1": 0.32,
+          "frame_132": 0.319507,
+          "frame_263": 0.319993
+        },
+        "rest_pose_changed": false,
+        "source_frame_range": [
+          1,
+          264
+        ],
+        "v003_change": "none; V002 pose/leg curves preserved"
+      },
+      "objects": [
+        "output_unwrapped",
+        "SmartRigArmature / V002 Neutral Idle Pose Candidate data carried into V003 Neutral Idle Upper Body Candidate"
+      ],
+      "priority": 1,
+      "status": "implemented_preserved_from_v002"
+    },
+    {
+      "component": "torso_and_anatomical_proportions",
+      "limitation": "Pose-space chest opening is measurable and preserves the retargeted rest pose; final visual adequacy remains for human review.",
+      "measurements": {
+        "additional_local_x_pitch_degrees_per_spine_bone": -2.0,
+        "body_topology_changed_outside_pauldron_addition": false,
+        "frames": [
+          1,
+          264
+        ],
+        "net_pitch_offsets_from_unmodified_source_degrees": {
+          "Spine": -3.0,
+          "Spine1": -3.0,
+          "Spine2": -3.0
+        },
+        "rest_pose_changed": false
+      },
+      "objects": [
+        "SmartRigArmature / V003 Neutral Idle Upper Body Candidate",
+        "mixamorig:Spine",
+        "mixamorig:Spine1",
+        "mixamorig:Spine2"
+      ],
+      "priority": 2,
+      "status": "partially_implemented"
+    },
+    {
+      "component": "shoulder_pauldrons",
+      "limitation": "Right fitted shell retains two BVH triangle overlap pairs in rest and neutral-idle samples; running-action samples are zero. Clearance requirement is not fully met.",
+      "measurements": {
+        "front_offset_m": 0.04,
+        "lift_m": 0.018,
+        "new_shell_faces": {
+          "V003_Pauldron_Left_Fitted_Angular": 71,
+          "V003_Pauldron_Right_Fitted_Angular": 78
+        },
+        "new_shell_vertices": {
+          "V003_Pauldron_Left_Fitted_Angular": 122,
+          "V003_Pauldron_Right_Fitted_Angular": 139
+        },
+        "outward_offset_m": 0.058,
+        "preserved_underlying_body_polygons": 10367,
+        "preserved_underlying_body_vertices": 17578,
+        "removed_v002_donor_faces": 912,
+        "removed_v002_donor_vertices": 868,
+        "shoulder_to_arm_weight_transfer_percent": [
+          10,
+          32
+        ],
+        "v002_rest_overlap_pairs": {
+          "Left": 145,
+          "Right": 163
+        },
+        "v003_neutral_idle_overlap_pairs": {
+          "V003_Pauldron_Left_Fitted_Angular": {
+            "neutral_idle:1": 0,
+            "neutral_idle:132": 0,
+            "neutral_idle:263": 0
+          },
+          "V003_Pauldron_Right_Fitted_Angular": {
+            "neutral_idle:1": 2,
+            "neutral_idle:132": 2,
+            "neutral_idle:263": 2
+          }
+        },
+        "v003_rest_overlap_pairs": {
+          "V003_Pauldron_Left_Fitted_Angular": 0,
+          "V003_Pauldron_Right_Fitted_Angular": 2
+        },
+        "v003_running_action_overlap_pairs": {
+          "V003_Pauldron_Left_Fitted_Angular": {
+            "running:1": 0,
+            "running:13": 0,
+            "running:16": 0,
+            "running:22": 0,
+            "running:6": 0
+          },
+          "V003_Pauldron_Right_Fitted_Angular": {
+            "running:1": 2,
+            "running:13": 0,
+            "running:16": 2,
+            "running:22": 2,
+            "running:6": 2
+          }
+        }
+      },
+      "objects": [
+        "output_unwrapped / PAULDRON_Left_V003",
+        "output_unwrapped / PAULDRON_Right_V003",
+        "SmartRigArmature / mixamorig:LeftShoulder, LeftArm, RightShoulder, RightArm"
+      ],
+      "priority": 3,
+      "status": "partially_implemented_residual_right_intersection"
+    },
+    {
+      "component": "hood_and_visor",
+      "measurements": {
+        "core_emission_strength": 0.85,
+        "directional_source_surfaces_preserved": true,
+        "hood_dimensions_changed": false,
+        "local_glow_emission_strength": 0.06,
+        "local_glow_radius_m": 0.025
+      },
+      "objects": [
+        "output_unwrapped / V002_Amber_Visor_Core",
+        "output_unwrapped / V002_Amber_Visor_Local_Glow",
+        "hood source geometry/material regions"
+      ],
+      "priority": 4,
+      "status": "preserved_from_v002"
+    },
+    {
+      "component": "materials_and_lighting",
+      "limitation": "Dedicated PBR response is added only to shoulder armor; baked chest/cloth material response remains V002.",
+      "measurements": {
+        "existing_body_materials_changed": false,
+        "graphite_base_color": [
+          0.035,
+          0.041,
+          0.049,
+          1.0
+        ],
+        "graphite_metallic": 0.48,
+        "graphite_roughness": 0.37,
+        "lighting_camera_floor_unchanged": true,
+        "muted_gold_base_color": [
+          0.34,
+          0.205,
+          0.075,
+          1.0
+        ],
+        "muted_gold_metallic": 0.72,
+        "muted_gold_roughness": 0.34
+      },
+      "objects": [
+        "output_unwrapped / V003_Left_Graphite_Pauldron",
+        "V003_Left_Muted_Gold_Edge",
+        "V003_Right_Graphite_Pauldron",
+        "V003_Right_Muted_Gold_Edge"
+      ],
+      "priority": 5,
+      "status": "partially_implemented_scoped_shoulders"
+    },
+    {
+      "component": "render_quality_and_pixel_sharpness",
+      "limitation": "Reduction path has binary alpha prep; its partial-alpha/detail tradeoff remains visible in QA and requires human choice.",
+      "measurements": {
+        "camera_scale": 2.56,
+        "filter_changes": false,
+        "independent_512_rgba_samples": 12,
+        "native_rgba_samples": 24,
+        "pixels_per_meter": 50,
+        "reduced_512_samples": 12,
+        "reduction": "pixelart --size 128 --pixel-source --choose 1, one invocation per independent 512 render",
+        "registration_root": [
+          64,
+          106
+        ],
+        "resolution": [
+          128,
+          128
+        ]
+      },
+      "objects": [
+        "native128/",
+        "native512/",
+        "reduced512/"
+      ],
+      "priority": 6,
+      "status": "implemented_both_paths_for_bounded_samples"
+    },
+    {
+      "component": "permanent_reference_comparison",
+      "measurements": {
+        "adjacent_neutral_frames": [
+          131,
+          132,
+          133
+        ],
+        "adjacent_running_frames": [
+          5,
+          6,
+          7,
+          15,
+          16,
+          17
+        ],
+        "approved_idle_dimensions": [
+          1920,
+          1024
+        ],
+        "approved_idle_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+        "experimental_pose_samples": [
+          1,
+          132,
+          263
+        ],
+        "full_2_5d_to_3d_timing_correspondence": "none established",
+        "runtime_authored_directions": [
+          "E",
+          "W"
+        ],
+        "runtime_posture_layers": [
+          "lower_body",
+          "upper_body"
+        ],
+        "runtime_projected_request_directions": 6,
+        "sample_directions": [
+          "S",
+          "SE",
+          "SW",
+          "E"
+        ]
+      },
+      "objects": [
+        "custodian/tools/operator/animation_compiler/iteration_reference_contact_sheet.py"
+      ],
+      "priority": 7,
+      "status": "implemented_reusable_helper"
+    }
+  ],
+  "geometry": {
+    "removed_old_donor_vertices": 868,
+    "v002_input_polygons": 11279,
+    "v002_input_vertices": 18446,
+    "v003_body_surface_polygons": 10367,
+    "v003_body_surface_vertices": 17578,
+    "v003_combined_polygons": 10516,
+    "v003_combined_triangles": 10516,
+    "v003_combined_vertices": 17839
+  },
+  "human_visual_approval": "required; no aesthetic approval inferred",
+  "rig": {
+    "bone_count": 42,
+    "identity_sha256": "36ed6d35469faf5e6f03802371df345321147e1624be35d079fd5140de36d597",
+    "neutral_idle_action_frames": [
+      1,
+      264
+    ],
+    "rest_pose_changed": false,
+    "rest_pose_sha256": "62b18ce51ea85907f7270855608be0cdc804ec7e1c17fff5d6da97bf543e55eb",
+    "skeleton_signature_sha256": "abcadb2f29bb273b25d8db278b5e33af27597a8a68a1c90550a92e2b7da7bbd2",
+    "source_run_action_preserved": true
+  },
+  "schema": "custodian.operator_3d_visual_fidelity_candidate_v003_correction_report.v1",
+  "source_v002_sha256": "2c4c097039b25727c0ce51f22251d33462b6f020ad4f8863d23913b4efe7dc23"
+}
