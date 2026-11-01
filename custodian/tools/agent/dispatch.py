@@ -274,13 +274,13 @@ def _attached_local_worktree(repo: Path, branch: str) -> str | None:
 
 
 def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None,
-                     checkout_profile: str | None = None) -> tuple[Path, str | None]:
+                     checkout_profile: str | None = None) -> tuple[Path, str | None, dict | None]:
     """Call workstream.start(), passing a disposition side-channel only if supported.
 
     Test doubles that mock module.start with a plain (work_id, repo) callable must
     keep working unmodified, so the receiver capability is probed rather than assumed.
     """
-    report: dict[str, str] = {}
+    report: dict[str, object] = {}
     try:
         parameters = inspect.signature(module.start).parameters
         accepts_report = "report" in parameters
@@ -300,7 +300,8 @@ def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=
         worktree = module.start(workstream_id, repo, **kwargs)
     else:
         worktree = module.start(workstream_id, repo)
-    return Path(worktree), report.get("checkout")
+    profile_evidence = report.get("checkout_profile")
+    return Path(worktree), report.get("checkout"), profile_evidence if isinstance(profile_evidence, dict) else None
 
 
 def _load_workstream(repo: Path):
@@ -773,7 +774,7 @@ def claim(
                     remote_claim = acquire_remote_claim(repo, selected.workstream, agent, trace.run_id, trace=trace)
                     try:
                         with contextlib.redirect_stdout(io.StringIO()):
-                            worktree, checkout = _start_workstream(
+                            worktree, checkout, checkout_profile_evidence = _start_workstream(
                                 module, selected.workstream, repo, remote_claim, trace, checkout_profile,
                             )
                     except module.WorkstreamError as error:
@@ -821,7 +822,8 @@ def claim(
                     "schema": "custodian.dispatch.claim.v1", "result": "claimed",
                     "workstream": selected.workstream, "prior_status": selected.status,
                     "branch": expected_branch, "worktree": str(worktree), "packet": selected.path,
-                    "checkout": checkout, "verified": True, "agent": agent,
+                    "checkout": checkout, "checkout_profile": checkout_profile_evidence,
+                    "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
                     "authoring_chat": authoring_chat,
                     "visual_review": selected.visual_review,

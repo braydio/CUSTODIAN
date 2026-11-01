@@ -1173,11 +1173,29 @@ class DispatchTests(unittest.TestCase):
         self.assertIn("schema-task-", receipt["worktree"])
         self.assertEqual(receipt["packet"], f"{dispatch.PACKET_ROOT}/SCHEMA_TASK.md")
         self.assertEqual(receipt["checkout"], "created")
+        self.assertIsNone(receipt["checkout_profile"])
         self.assertTrue(receipt["verified"])
         self.assertEqual(receipt["agent"], "codex")
         self.assertIn(f"workstream: {receipt['workstream']}", rendered)
         self.assertIn(f"branch: {receipt['branch']}", rendered)
         self.assertIn(f"packet: {receipt['packet']}", rendered)
+
+    def test_start_workstream_carries_profile_provenance_separately_from_disposition(self):
+        evidence = {"profile": "profile.json", "profile_sha256": "a" * 64, "paths": ["a.py"]}
+
+        class FakeWorkstream:
+            @staticmethod
+            def start(_workstream, repo, *, report, profile_path):
+                report["checkout"] = "created"
+                report["checkout_profile"] = evidence
+                return Path(repo) / "worktree"
+
+        worktree, disposition, profile = dispatch._start_workstream(
+            FakeWorkstream, "sample", self.repo, checkout_profile="profile.json",
+        )
+        self.assertEqual(disposition, "created")
+        self.assertEqual(worktree, self.repo / "worktree")
+        self.assertEqual(profile, evidence)
 
     def test_dispatch_does_not_silently_adopt_clean_local_only_worktree(self):
         self.add_packet("resumed-task", dispatch_value="auto")
