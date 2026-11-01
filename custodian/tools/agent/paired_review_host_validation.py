@@ -1301,11 +1301,56 @@ def _verify_reset_archive_merge_followup(
     }
 
 
+def _verify_archive_summary_rename(
+    repo: Path, target_workstream: str, target_packet_path: str,
+    archive_commit: str, candidate: str,
+) -> dict | None:
+    """Authenticate the one documented byte-identical summary rename after archive."""
+    canonical = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
+    parents = _git(repo, "rev-list", "--parents", "-n", "1", candidate).split()
+    if parents != [candidate, archive_commit]:
+        return None
+    operations = subprocess.run(
+        ["git", "diff", "--name-status", "--no-renames", archive_commit, candidate],
+        cwd=repo, text=True, capture_output=True,
+    )
+    changed = operations.stdout.splitlines()
+    deleted = [line[2:] for line in changed if line.startswith("D\t")]
+    if (operations.returncode or len(changed) != 2 or len(deleted) != 1
+            or set(changed) != {f"A\t{canonical}", f"D\t{deleted[0]}"}
+            or not re.fullmatch(r"[A-Z0-9]+(?:_[A-Z0-9]+)*_CLAUDE_SUMMARY\.md", deleted[0])
+            or deleted[0] == canonical):
+        return None
+    legacy = deleted[0]
+    packet_before = _git_tree_entry(repo, archive_commit, target_packet_path)
+    packet_after = _git_tree_entry(repo, candidate, target_packet_path)
+    old_entry = _git_tree_entry(repo, archive_commit, legacy)
+    new_entry = _git_tree_entry(repo, candidate, canonical)
+    if (packet_before is None or packet_after != packet_before
+            or old_entry is None or new_entry is None
+            or old_entry[0] != "100644" or new_entry[0] != "100644"
+            or old_entry[1] != new_entry[1]):
+        return None
+    old_bytes = subprocess.run(["git", "show", f"{archive_commit}:{legacy}"],
+                               cwd=repo, capture_output=True)
+    new_bytes = subprocess.run(["git", "show", f"{candidate}:{canonical}"],
+                               cwd=repo, capture_output=True)
+    if (old_bytes.returncode or new_bytes.returncode
+            or old_bytes.stdout != new_bytes.stdout):
+        return None
+    return {
+        "commit": candidate, "legacy_path": legacy, "canonical_path": canonical,
+        "blob": old_entry[1], "sha256": _sha256(old_bytes.stdout),
+        "packet_blob": packet_before[1],
+    }
+
+
 def _verify_archive_sync_followup(
     repo: Path, target_workstream: str, target_packet_text: str,
-    landing_commit: str, trace_landing: str, reviewed_main: str, events: list[dict], trace_ref: str,
+    target_packet_path: str, landing_commit: str, trace_landing: str,
+    reviewed_main: str, events: list[dict], trace_ref: str,
 ) -> dict:
-    """Prove archive-first sync merges and one declared follow-up across retry races."""
+    """Prove archive-first sync merges and one bounded follow-up across retry races."""
     chain = subprocess.run(
         ["git", "rev-list", "--first-parent", "--reverse", f"{landing_commit}..{trace_landing}"],
         cwd=repo, text=True, capture_output=True,
@@ -1315,18 +1360,29 @@ def _verify_archive_sync_followup(
     commits = chain.stdout.splitlines()
     merges: list[dict[str, str]] = []
     followup_commits: list[str] = []
+    summary_rename_commits: list[tuple[str, dict]] = []
     previous = landing_commit
     for commit in commits:
         parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()
         if len(parents) == 3 and parents[1] == previous:
             merges.append({"commit": commit, "first_parent": parents[1], "main_sha": parents[2]})
         elif len(parents) == 2 and parents[1] == previous:
+            summary_rename = _verify_archive_summary_rename(
+                repo, target_workstream, target_packet_path, landing_commit, commit,
+            )
+            if summary_rename is not None:
+                summary_rename_commits.append((commit, summary_rename))
             followup_commits.append(commit)
         else:
             raise HostValidationError("post-merge source span has an unbound commit or merge topology")
         previous = commit
     if not followup_commits:
         raise HostValidationError("post-merge source span needs a declared source follow-up")
+    if summary_rename_commits and (
+        len(summary_rename_commits) != 1 or len(followup_commits) != 1
+        or commits[0] != summary_rename_commits[0][0]
+    ):
+        raise HostValidationError("archive summary rename must be the sole direct child before synchronization")
 
     conflict_witnesses = _verify_host_import_conflict_merges(
         repo, target_workstream, target_packet_text, landing_commit, trace_landing,
@@ -1351,6 +1407,22 @@ def _verify_archive_sync_followup(
         witness = direct_tail_witnesses[0][0]
         if any(index >= landing_started[0] for index, _ in sync_events):
             raise HostValidationError("post-archive source trace records sync after landing started")
+        if summary_rename_commits:
+            rename_commit, rename_proof = summary_rename_commits[0]
+            archive_parent = _git(repo, "rev-parse", f"{landing_commit}^1")
+            archive_paths = _changed_paths(repo, f"{archive_parent}..{landing_commit}")
+            archive_source_head = (landing_commit if _source_code_paths(archive_paths)
+                                   else archive_parent)
+            return {
+                "canonical_archive_commit": landing_commit, "sync_merges": [],
+                "sync_merge_commit": None, "sync_merge_main_parent": None,
+                "post_merge_followup_commit": rename_commit,
+                "post_merge_followup_commits": [], "source_head": archive_source_head,
+                "followup_paths": [], "summary_rename": rename_proof,
+                "main_sync_event_index": direct_tail_witnesses[0][0],
+                "main_sync_sha": reviewed_main,
+                "merge_tree_proof": "exact-archive-summary-rename-and-noop-sync-witness",
+            }
         return _verify_declared_source_tail(
             repo, target_workstream, target_packet_text, landing_commit, trace_landing,
             followup_commits, reviewed_main, witness,
@@ -1459,6 +1531,26 @@ def _verify_archive_sync_followup(
                     "post-merge sync differs from deterministic merge beyond additive managed-index "
                     f"reconciliation: {merge['commit']}"
                 )
+
+    if summary_rename_commits:
+        rename_commit, rename_proof = summary_rename_commits[0]
+        archive_parent = _git(repo, "rev-parse", f"{landing_commit}^1")
+        archive_paths = _changed_paths(repo, f"{archive_parent}..{landing_commit}")
+        archive_source_head = (landing_commit if _source_code_paths(archive_paths)
+                               else archive_parent)
+        return {
+            "canonical_archive_commit": landing_commit, "sync_merges": merges,
+            "sync_merge_commit": merges[0]["commit"],
+            "sync_merge_main_parent": merges[0]["main_sha"],
+            "post_merge_followup_commit": rename_commit,
+            "post_merge_followup_commits": [], "source_head": archive_source_head,
+            "followup_paths": [], "summary_rename": rename_proof,
+            "authenticated_followup_paths": [],
+            "authenticated_merge_paths": (
+                conflict_witnesses["merge_delta_paths"] if conflict_witnesses is not None else {}
+            ),
+            "merge_tree_proof": "exact-archive-summary-rename-and-authenticated-sync",
+        }
 
     packet_header = target_packet_text.split("\n## ", 1)[0].splitlines()
     work_surface_lines = []
@@ -3387,7 +3479,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             )
             if has_followup_chain:
                 archive_sync_followup = _verify_archive_sync_followup(
-                    repo, target_workstream, target_packet_text, landing_commit, trace_landing,
+                    repo, target_workstream, target_packet_text, target_packet_path,
+                    landing_commit, trace_landing,
                     reviewed_main, events, landing_record["ref"],
                 )
                 if archive_sync_followup["sync_merges"]:
@@ -3442,6 +3535,11 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     summary_path = f"{target_workstream.upper().replace('-', '_')}_CLAUDE_SUMMARY.md"
     allowed_archive_paths = {active_packet, target_packet_path, summary_path,
                              f"{PACKET_ROOT}/README.md"}
+    rename_proof = (archive_sync_followup or {}).get("summary_rename")
+    if isinstance(rename_proof, dict):
+        legacy_summary_path = rename_proof.get("legacy_path")
+        if isinstance(legacy_summary_path, str) and legacy_summary_path in archive_paths:
+            allowed_archive_paths.add(legacy_summary_path)
     if not {active_packet, target_packet_path}.issubset(archive_paths):
         raise HostValidationError("archive landing is missing its active or archived packet closeout")
 

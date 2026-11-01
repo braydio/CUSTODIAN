@@ -7307,6 +7307,11 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                                  mentioned_elsewhere_text=None,
                                  code_paths=None,
                                  work_surface=None,
+                                 legacy_summary_name=None,
+                                 summary_rename=False,
+                                 summary_file=True,
+                                 summary_destination_preexists=False,
+                                 summary_rename_merge=False,
                                  archive_uid_path=None,
                                  archive_uid_text="uid://do0pqluwda6jl\n"):
         workstream = "sample-main-sync"
@@ -7314,6 +7319,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         archive = f"{runner.PACKET_ROOT}/archived/SAMPLE_MAIN_SYNC.md"
         index = f"{runner.PACKET_ROOT}/README.md"
         summary = "SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md"
+        legacy_summary = legacy_summary_name or "SAMPLE_MAIN_SYNC_LEGACY_CLAUDE_SUMMARY.md"
         reviewed_main = self._git("rev-parse", "HEAD")
         work_surface = list(work_surface) if work_surface is not None else [
             "- `custodian/game/world/transfer.gd`",
@@ -7348,7 +7354,11 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         (self.root / archive).parent.mkdir(parents=True, exist_ok=True)
         (self.root / archive).write_text(packet.replace("`in_progress`", "`complete`"))
         (self.root / active).unlink()
-        (self.root / summary).write_text("completion summary\n")
+        archive_summary = legacy_summary if summary_rename else summary
+        if summary_file:
+            (self.root / archive_summary).write_text("completion summary\n")
+        if summary_rename and summary_destination_preexists:
+            (self.root / summary).write_text("completion summary\n")
         (self.root / index).write_text("archived index\n")
         if source_bearing_archive:
             for path in code_paths:
@@ -7374,6 +7384,29 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         subprocess.run(["git", "add", "-A"], cwd=self.root, check=True)
         self._commit("archive packet")
         archive_landing = self._git("rev-parse", "HEAD")
+        summary_rename_commit = None
+        if summary_rename:
+            original_branch = self._git("branch", "--show-current")
+            if summary_rename_merge:
+                side_branch = "summary-rename-side-branch"
+                self._git("checkout", "-qb", side_branch, archive_landing)
+            if not summary_destination_preexists:
+                (self.root / legacy_summary).unlink()
+                (self.root / summary).write_text("completion summary\n")
+                self._git("add", "-A")
+                self._commit("correct canonical summary filename")
+                summary_rename_commit = self._git("rev-parse", "HEAD")
+            else:
+                (self.root / legacy_summary).unlink()
+                self._git("add", "-A")
+                self._commit("delete legacy while canonical already exists")
+                summary_rename_commit = self._git("rev-parse", "HEAD")
+            if summary_rename_merge:
+                self._git("checkout", "-q", "-B", original_branch, archive_landing)
+                subprocess.run(["git", "merge", "--no-ff", side_branch,
+                                "-m", "merge summary rename"],
+                               cwd=self.root, check=True, capture_output=True)
+                summary_rename_commit = self._git("rev-parse", "HEAD")
 
         # A prior-main commit diverges from the workstream branch and contributes
         # only unrelated documentation, as happens during a safe main sync.
@@ -7395,6 +7428,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         return {"workstream": workstream, "active": active, "archive": archive,
                 "index": index, "summary": summary, "source_base": source_base,
                 "source_head": source_head, "archive_landing": archive_landing,
+                "legacy_summary": legacy_summary,
+                "summary_rename_commit": summary_rename_commit,
                 "prior_main": prior_main, "merge": merge, "code_paths": code_paths,
                 "initial_reviewed_main": reviewed_main, "reviewed_main": self.reviewed_main}
 
@@ -7976,6 +8011,126 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(span["provenance"]["trace_landing_commit"], fixture["merge"])
         self.assertEqual(span["provenance"]["trace_main_sync_sha"], fixture["prior_main"])
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
+
+    def test_split_landing_accepts_exact_archive_summary_rename_then_sync(self):
+        fixture = self._build_main_sync_landing(
+            summary_rename=True,
+            legacy_summary_name="LEGACY_SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md",
+        )
+        span = host_validation.resolve_validation_source_span(
+            self.root, fixture["reviewed_main"], fixture["archive_landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        proof = span["provenance"]["post_merge_followup"]["summary_rename"]
+        self.assertEqual(proof["commit"], fixture["summary_rename_commit"])
+        self.assertEqual(proof["legacy_path"], fixture["legacy_summary"])
+        self.assertEqual(proof["canonical_path"], fixture["summary"])
+        self.assertEqual(proof["blob"], self._git("rev-parse", f"{proof['commit']}:{fixture['summary']}"))
+        self.assertEqual(span["head"], fixture["source_head"])
+        self.assertEqual(span["provenance"]["trace_landing_commit"], fixture["merge"])
+        self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge-followup")
+        self.assertTrue(set(fixture["code_paths"]).issubset(span["paths"]))
+        self.assertNotIn(fixture["summary_rename_commit"], span["commits"])
+        self.assertNotIn(fixture["summary"], span["paths"])
+
+    def test_split_landing_rejects_archive_summary_rename_near_misses(self):
+        fixture = self._build_main_sync_landing(
+            summary_rename=True,
+            legacy_summary_name="LEGACY_SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md",
+        )
+        branch = f"agent/{fixture['workstream']}"
+        mutations = ("changed-bytes", "wrong-destination", "copy", "extra-path",
+                     "executable", "symlink", "changed-packet", "wrong-parent",
+                     "source-edit", "second-rename")
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                self._git("checkout", "-q", "-B", branch, fixture["archive_landing"])
+                legacy = self.root / fixture["legacy_summary"]
+                canonical = self.root / fixture["summary"]
+                if mutation == "wrong-parent":
+                    self._git("commit", "--allow-empty", "-qm", "insert intervening commit")
+                if mutation != "copy":
+                    legacy.unlink()
+                destination = (self.root / "WRONG_SAMPLE_CLAUDE_SUMMARY.md"
+                               if mutation == "wrong-destination" else canonical)
+                if mutation == "symlink":
+                    destination.symlink_to("README.md")
+                else:
+                    destination.write_text(
+                        "altered summary\n" if mutation == "changed-bytes"
+                        else "completion summary\n"
+                    )
+                    if mutation == "executable":
+                        destination.chmod(0o755)
+                if mutation == "copy":
+                    legacy.write_text("completion summary\n")
+                if mutation == "extra-path":
+                    (self.root / "unrelated.txt").write_text("extra path\n")
+                if mutation == "changed-packet":
+                    archived = self.root / fixture["archive"]
+                    archived.write_text(archived.read_text() + "- Changed: true\n")
+                if mutation == "source-edit":
+                    source = self.root / fixture["code_paths"][0]
+                    source.write_text(source.read_text() + "post-archive source edit\n")
+                self._git("add", "-A")
+                self._git("commit", "-qm", f"invalid summary rename {mutation}")
+                if mutation == "second-rename":
+                    canonical.unlink()
+                    (self.root / "SECOND_SAMPLE_CLAUDE_SUMMARY.md").write_text(
+                        "completion summary\n"
+                    )
+                    self._git("add", "-A")
+                    self._git("commit", "-qm", "second summary path correction")
+                subprocess.run(["git", "merge", "--no-ff", fixture["prior_main"],
+                                "-m", "sync invalid archive follow-up"],
+                               cwd=self.root, check=True, capture_output=True)
+                landing = self._git("rev-parse", "HEAD")
+                self._replace_trace_landing(fixture, landing, main_sha=fixture["prior_main"])
+                with self.assertRaises(host_validation.HostValidationError):
+                    host_validation.resolve_validation_source_span(
+                        self.root, landing, fixture["archive_landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_split_landing_rejects_summary_creation_without_legacy_source(self):
+        fixture = self._build_main_sync_landing(summary_file=False)
+        branch = f"agent/{fixture['workstream']}"
+        self._git("checkout", "-q", "-B", branch, fixture["archive_landing"])
+        (self.root / fixture["summary"]).write_text("new summary without a legacy source\n")
+        self._git("add", fixture["summary"])
+        self._git("commit", "-qm", "create summary after archive")
+        subprocess.run(["git", "merge", "--no-ff", fixture["prior_main"],
+                        "-m", "sync summary creation"], cwd=self.root,
+                       check=True, capture_output=True)
+        landing = self._git("rev-parse", "HEAD")
+        self._replace_trace_landing(fixture, landing, main_sha=fixture["prior_main"])
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation.resolve_validation_source_span(
+                self.root, landing, fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_legacy_delete_when_canonical_already_existed(self):
+        fixture = self._build_main_sync_landing(
+            summary_rename=True, summary_destination_preexists=True,
+            legacy_summary_name="LEGACY_SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md",
+        )
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_rejects_merge_commit_used_for_summary_rename(self):
+        fixture = self._build_main_sync_landing(
+            summary_rename=True, summary_rename_merge=True,
+            legacy_summary_name="LEGACY_SAMPLE_MAIN_SYNC_CLAUDE_SUMMARY.md",
+        )
+        with self.assertRaises(host_validation.HostValidationError):
+            host_validation.resolve_validation_source_span(
+                self.root, fixture["reviewed_main"], fixture["archive_landing"],
+                fixture["workstream"], fixture["archive"],
+            )
 
     def test_split_landing_accepts_declared_archive_sync_followup(self):
         fixture = self._build_main_sync_landing()
