@@ -26,6 +26,27 @@ These are **operating defaults, not an override of an active source manifest or 
 
 **Variants versus states:** You may compare two distinct candidate variants **of the same named state** when useful. Preserve both source identities as candidates until a human selects one. Do not count variants as fulfilled separate manifest states. A contact sheet is review presentation only, never a normalized source master. Do not slice a newly generated ten-asset collage into individually approved Asset V2 sources.
 
+## Named command: "generate the next set"
+
+**This is an executable shorthand, not a request to discuss the next images.** When the user says **"generate the next set"**, **"next art set"**, or **"next image set"** within CUSTODIAN without specifying another named art program, use the active default `hub-sepulcher-awakening-art-v1` and its JSON at `design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json`. A user may instead explicitly name a different program; do not silently apply this program's asset queue to it.
+
+The JSON has `generation_sets_contract` plus a complete ordered `generation_sets` list. **Each set specifies its exact image IDs and cardinality.** It already excludes the five CAL-A states when they recur in downstream stage lists. The `checkpoint.next_generation_set_id` is a convenience hint, not the sole authority.
+
+### Deterministic dispatch steps
+
+1. Read current GitHub `main`, this protocol, the JSON, and any more recent genuine source/approval receipts. Reconcile actual saved source hashes, verified Dropbox revisions, current active workstream claims and Asset V2 status. Never infer absence solely from an empty original JSON checkpoint.
+2. In `generation_sets` ascending `order`, choose the earliest set **not completely individually human-approved**. For generated but unreviewed candidates, bring the *existing* images to user review (if recoverable) rather than proceeding to a new set or gratuitously regenerating them. For partially approved sets, select only remaining missing states. Do not choose a different set to avoid a blocker.
+3. Enforce that set's `release_gate`, any human-reviewed family reference images and exact upstream scene contracts. If genuinely unavailable, state the specific blocker and stop without claiming generation success. The five CAL-A sets are absolutely one image each; subsequent sets have predefined 1- or 2-image cardinalities, allowing compatible paired props only after appropriate style approval.
+4. For each eligible missing candidate **invoke the image generator immediately**, using that state entry's **complete** `image_generation_prompt` and format/anchor/alpha/frame constraints. Use approved reference imagery if accessible, but never claim image conditioning if the reference could not actually be supplied. Multi-state sets require **two independent outputs**, ideally separate per-state tool calls: `n=2` of a single prompt is *not* two different state images. Never substitute a labeled 2-up or ten-up atlas.
+5. Present actual image(s) for human review, identify their manifest IDs and report objective issues or required corrections. **Generation does not advance approval automatically.** Record the decision and real source hashes/receipts through the existing workflow. On a follow-up "generate the next set" without approval of an outstanding generated image, return to its review gate; do not skip it.
+6. After every image of the current set is explicitly human-approved, the next identical shorthand selects the next set. Source/Dropbox staging may then be batched separately as previously defined. If all 71 core states are complete, say so; the 12 conditional/optional states require separate explicit authorization and never appear automatically.
+
+### Initial deterministic answer
+
+From the initially published zero-approval baseline, **the next set is `CAL-01`**, exactly **one image**: `hub_first_set_sepulcher_gardens_environment/underlay`, target **1152×1408**, one static frame, registered to the existing Gardens footprint. After user approval its successor is `CAL-02`, exactly **one image**: `hub_sepulcher_grave_evidence_art/memorial_slab`, **160×96**, one static frame. Do not assume these remain next after later receipts.
+
+**Do not conflate**: a *planning queue* may hold 5–10 forthcoming states; a *generation set* is the fixed next 1- or 2-image execution group; a *handoff batch* can consolidate multiple already-approved sources. These separate units eliminate ambiguity in ordinary conversational commands.
+
 ## First five: mandatory one-image calibration gate for this program
 
 The Hub/Sepulcher/Awakening manifest's CAL-A queue must be handled one at a time, with corrections and explicit human approval before proceeding:

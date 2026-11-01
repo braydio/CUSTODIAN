@@ -8,7 +8,8 @@
     "individual_source_art_approval": "NOT_APPROVED_AS_PART_OF_THIS_DECISION",
     "authoring_chat_url": null,
     "authoring_chat_url_status": "awaiting exact user-supplied chat URL",
-    "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged."
+    "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged.",
+    "command_amendment_2026_11_01": "The phrase 'generate the next set' now explicitly authorizes generation of the earliest eligible unfinished set under generation_sets. Its cardinality and exact image IDs are fixed; no bulk art approval. This does not replace individual review, Dropbox handoff or Asset V2 gates."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -3955,7 +3956,10 @@
     "dropbox_receipts": [],
     "asset_v2_job_receipts": [],
     "last_verified_runtime": null,
-    "disposition": "PROGRAM APPROVED; NO ART GENERATED, INGESTED OR APPROVED BY THIS PUBLICATION; prior independent sources require live recheck"
+    "disposition": "PROGRAM APPROVED; NO ART GENERATED, INGESTED OR APPROVED BY THIS PUBLICATION; prior independent sources require live recheck",
+    "next_generation_set_id": "CAL-01",
+    "last_generation_set_receipt": null,
+    "generation_set_receipts": []
   },
   "gates": {
     "user_image_review_before_dropbox": true,
@@ -4002,5 +4006,977 @@
     ],
     "correction_policy": "correct or regenerate the same state without marking accepted; preserve rejected candidate identity; no guess-filled receipts",
     "restart_authority": "read current GitHub planning ledger and reconcile actual Dropbox receipts and Asset V2 records; never trust a stale empty checkpoint as proof of absence"
-  }
+  },
+  "generation_sets_contract": {
+    "version": 1,
+    "trigger_phrases": [
+      "generate the next set",
+      "generate next set",
+      "next art set",
+      "next image set"
+    ],
+    "default_program_id": "hub-sepulcher-awakening-art-v1",
+    "default_manifest_path": "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json",
+    "selection": "first incomplete set in generation_sets by order; reconcile actual live receipts, approved source hashes, Dropbox and Asset V2 state; never trust checkpoint alone; never count duplicate calibration appearances twice",
+    "generation_action": "Generate only actual missing candidate image(s) in that set, each with its own stored prompt and independent image output. Do not merely propose what to draw; when image generator is available, invoke it. For multi-image sets use separate per-state calls, not n=2 same prompt or contact-sheet slicing.",
+    "initial_next_set_id": "CAL-01",
+    "initial_next_asset_ids": [
+      "hub_first_set_sepulcher_gardens_environment/underlay"
+    ],
+    "completion_predicate": "Every asset in a set has a human-approved individual source image with verified state identity and immutable content hash. Delivery and runtime integration are tracked separately; not implied by generation.",
+    "pending_review_rule": "If an image of the current set exists but is pending human approval/correction, return to that image and its outstanding review rather than silently generating another set, skipping it or regenerating duplicate images.",
+    "partial_set_rule": "If some images of a multi-state set are already approved, generate only the ungenerated remainder; if any generated image is unreviewed, review it first. Keep set order and identities stable.",
+    "blocked_set_rule": "If a phase, scene, workstream, style-reference or review gate is unmet, identify exact blocked set and unmet condition, do not skip ahead or pretend an unavailable reference exists.",
+    "approval_rule": "One explicit human decision for every produced asset source. Program or set authorizations are not art approvals.",
+    "tool_output_rule": "For a grouped set of 2 states, generate two distinguishable independent source images in separate calls unless a tool can return independently identified per-prompt files; do not generate one composite grid. Reuse verified approved reference imagery if technically accessible; otherwise acknowledge limitation.",
+    "optional_policy": "All 12 optional states excluded from automatic next-set queue. Require explicit user opt-in and a separately sequenced optional dispatch amendment.",
+    "when_all_complete": "Report that core image-generation set queue is complete; do not automatically create additional tasks or consume optional states.",
+    "prompt_source": "assets[*].image_generation_prompt and state target/frame/alpha/anchor/consumer attributes; never substitute a generic scene prompt.",
+    "receipt_fields": [
+      "set_id",
+      "asset_id",
+      "candidate_source_sha256",
+      "actual_source_dimensions_px",
+      "reference_art_ids",
+      "objective_validation",
+      "human_review_decision",
+      "approved_source_sha256",
+      "normalized_sha256",
+      "dropbox_file_id_and_revision",
+      "asset_v2_job_and_runtime_evidence"
+    ],
+    "checkpoint_authority": "Current main plus verified receipts and actual Dropbox/pipeline status; generation_sets is the immutable planned dispatch order, not proof of any generated output.",
+    "current_initial_status": "CAL-01 is selected, no image approved by this publication; user still needs to request first generation."
+  },
+  "generation_sets": [
+    {
+      "set_id": "CAL-01",
+      "phase": "CAL-A",
+      "order": 1,
+      "title": "Sepulcher environment style lock",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "calibration_one_at_a_time",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "CAL-02",
+      "phase": "CAL-A",
+      "order": 2,
+      "title": "Grave hero slab style lock",
+      "asset_ids": [
+        "hub_sepulcher_grave_evidence_art/memorial_slab"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "calibration_one_at_a_time",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "CAL-03",
+      "phase": "CAL-A",
+      "order": 3,
+      "title": "Crèche interior seam calibration",
+      "asset_ids": [
+        "awakening_creche_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "calibration_one_at_a_time",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "CAL-04",
+      "phase": "CAL-A",
+      "order": 4,
+      "title": "Gate exterior transparent architecture",
+      "asset_ids": [
+        "awakening_gate_of_dust_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "calibration_one_at_a_time",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "CAL-05",
+      "phase": "CAL-A",
+      "order": 5,
+      "title": "South Reach transition calibration",
+      "asset_ids": [
+        "awakening_road_south_reach_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "calibration_one_at_a_time",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-01",
+      "phase": "HUB-B1",
+      "order": 6,
+      "title": "North Gardens-to-Forum seam",
+      "asset_ids": [
+        "hub_first_set_connector_environment/garden_north_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "accepted_calibration_refs_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-02",
+      "phase": "HUB-B1",
+      "order": 7,
+      "title": "South Gardens-to-Forum seam",
+      "asset_ids": [
+        "hub_first_set_connector_environment/garden_south_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "accepted_calibration_refs_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-03",
+      "phase": "HUB-B1",
+      "order": 8,
+      "title": "Paired inspection/attestation marker props",
+      "asset_ids": [
+        "hub_sepulcher_grave_evidence_art/inspection_stone",
+        "hub_sepulcher_grave_evidence_art/resolution_stone"
+      ],
+      "generation_mode": "paired_props",
+      "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
+      "release_gate": "CAL-A five images approved, grave slab reference and verified event offsets",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-04",
+      "phase": "HUB-B1",
+      "order": 9,
+      "title": "Return-only grave growth cue",
+      "asset_ids": [
+        "hub_sepulcher_grave_evidence_art/return_pale_growth"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "accepted_calibration_refs_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-05",
+      "phase": "HUB-B1",
+      "order": 10,
+      "title": "Two distinctive memorial markers",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_dressing/grave_upright",
+        "hub_first_set_sepulcher_gardens_dressing/grave_fractured"
+      ],
+      "generation_mode": "paired_props",
+      "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
+      "release_gate": "Gardens and grave reference approvals complete; independent transparent props",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-06",
+      "phase": "HUB-B1",
+      "order": 11,
+      "title": "Burial terrace sarcophagus and plinth",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_dressing/terraced_sarcophagus",
+        "hub_first_set_sepulcher_gardens_dressing/memorial_plinth"
+      ],
+      "generation_mode": "paired_props",
+      "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
+      "release_gate": "Gardens style approval and each independent source review",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-07",
+      "phase": "HUB-B1",
+      "order": 12,
+      "title": "Cloister arch obstruction",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_dressing/cloister_arch_ruin"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "accepted_calibration_refs_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-08",
+      "phase": "HUB-B1",
+      "order": 13,
+      "title": "Burial terrace retaining wall",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "accepted_calibration_refs_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B1-09",
+      "phase": "HUB-B1",
+      "order": 14,
+      "title": "Minor pale-life garden decals",
+      "asset_ids": [
+        "hub_first_set_sepulcher_gardens_dressing/root_intrusion",
+        "hub_first_set_sepulcher_gardens_dressing/pale_flower_cluster"
+      ],
+      "generation_mode": "paired_props",
+      "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
+      "release_gate": "Gardens style approval; each state retains own source RGBA and identity",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-01",
+      "phase": "HUB-B2",
+      "order": 15,
+      "title": "Hub district full underlay: hub_first_set_north_processional_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_north_processional_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-02",
+      "phase": "HUB-B2",
+      "order": 16,
+      "title": "Hub district full underlay: hub_first_set_ashen_forum_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_ashen_forum_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-03",
+      "phase": "HUB-B2",
+      "order": 17,
+      "title": "Hub district full underlay: hub_first_set_archive_rise_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_archive_rise_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-04",
+      "phase": "HUB-B2",
+      "order": 18,
+      "title": "Hub district full underlay: hub_first_set_crown_transfer_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_crown_transfer_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-05",
+      "phase": "HUB-B2",
+      "order": 19,
+      "title": "Hub district full underlay: hub_first_set_muster_court_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_muster_court_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-06",
+      "phase": "HUB-B2",
+      "order": 20,
+      "title": "Hub district full underlay: hub_first_set_continuity_port_environment/underlay",
+      "asset_ids": [
+        "hub_first_set_continuity_port_environment/underlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-07",
+      "phase": "HUB-B2",
+      "order": 21,
+      "title": "Hub exact connector: hub_first_set_connector_environment/road_north_transition",
+      "asset_ids": [
+        "hub_first_set_connector_environment/road_north_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-08",
+      "phase": "HUB-B2",
+      "order": 22,
+      "title": "Hub exact connector: hub_first_set_connector_environment/muster_transition",
+      "asset_ids": [
+        "hub_first_set_connector_environment/muster_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-09",
+      "phase": "HUB-B2",
+      "order": 23,
+      "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/western_burial_depth",
+      "asset_ids": [
+        "hub_first_set_perimeter_support/western_burial_depth"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-10",
+      "phase": "HUB-B2",
+      "order": 24,
+      "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/eastern_civic_depth",
+      "asset_ids": [
+        "hub_first_set_perimeter_support/eastern_civic_depth"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-11",
+      "phase": "HUB-B2",
+      "order": 25,
+      "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/north_archive_horizon",
+      "asset_ids": [
+        "hub_first_set_perimeter_support/north_archive_horizon"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-12",
+      "phase": "HUB-B2",
+      "order": 26,
+      "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/south_processional_falloff",
+      "asset_ids": [
+        "hub_first_set_perimeter_support/south_processional_falloff"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-13",
+      "phase": "HUB-B2",
+      "order": 27,
+      "title": "Hub off-route scenic depth: hub_first_set_perimeter_support/outer_court_fragments",
+      "asset_ids": [
+        "hub_first_set_perimeter_support/outer_court_fragments"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-14",
+      "phase": "HUB-B2",
+      "order": 28,
+      "title": "Processional oath and law statue bases",
+      "asset_ids": [
+        "hub_first_set_processional_fixtures/oath_statue_base",
+        "hub_first_set_processional_fixtures/law_statue_base"
+      ],
+      "generation_mode": "paired_props",
+      "request_rule": "Generate EACH named state as a distinct source image with its OWN full prompt, not one contact-sheet collage. Calls may run sequentially; images receive individual reviews.",
+      "release_gate": "Accepted North Processional environment underlay as visual reference; distinct hero silhouettes",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-15",
+      "phase": "HUB-B2",
+      "order": 29,
+      "title": "Distinct civic art: hub_first_set_forum_fixtures/fractured_star_map_inlay",
+      "asset_ids": [
+        "hub_first_set_forum_fixtures/fractured_star_map_inlay"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-16",
+      "phase": "HUB-B2",
+      "order": 30,
+      "title": "Distinct civic art: hub_first_set_forum_fixtures/dais_dressing",
+      "asset_ids": [
+        "hub_first_set_forum_fixtures/dais_dressing"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-17",
+      "phase": "HUB-B2",
+      "order": 31,
+      "title": "Distinct civic art: hub_first_set_archive_fixtures/collapsed_registry_arcade",
+      "asset_ids": [
+        "hub_first_set_archive_fixtures/collapsed_registry_arcade"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-18",
+      "phase": "HUB-B2",
+      "order": 32,
+      "title": "Distinct civic art: hub_first_set_crown_transfer_fixtures/route_anchor_shroud",
+      "asset_ids": [
+        "hub_first_set_crown_transfer_fixtures/route_anchor_shroud"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-19",
+      "phase": "HUB-B2",
+      "order": 33,
+      "title": "Distinct civic art: hub_first_set_muster_fixtures/muster_rollcall_plinth",
+      "asset_ids": [
+        "hub_first_set_muster_fixtures/muster_rollcall_plinth"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "B2-20",
+      "phase": "HUB-B2",
+      "order": 34,
+      "title": "Distinct civic art: hub_first_set_continuity_port_fixtures/port_frame_fascia",
+      "asset_ids": [
+        "hub_first_set_continuity_port_fixtures/port_frame_fascia"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "prior_hub_b1_source_review_and_registered_layout_required",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-01",
+      "phase": "AP1–AP4",
+      "order": 35,
+      "title": "Awakening registered perimeter: awakening_creche_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_creche_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-02",
+      "phase": "AP1–AP4",
+      "order": 36,
+      "title": "Awakening registered perimeter: awakening_creche_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_creche_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-03",
+      "phase": "AP1–AP4",
+      "order": 37,
+      "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_ambulatory_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-04",
+      "phase": "AP1–AP4",
+      "order": 38,
+      "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_ambulatory_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-05",
+      "phase": "AP1–AP4",
+      "order": 39,
+      "title": "Awakening registered perimeter: awakening_ambulatory_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_ambulatory_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-06",
+      "phase": "AP1–AP4",
+      "order": 40,
+      "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_attestation_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-07",
+      "phase": "AP1–AP4",
+      "order": 41,
+      "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_attestation_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-08",
+      "phase": "AP1–AP4",
+      "order": 42,
+      "title": "Awakening registered perimeter: awakening_attestation_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_attestation_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-09",
+      "phase": "AP1–AP4",
+      "order": 43,
+      "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_locker_reliquary_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-10",
+      "phase": "AP1–AP4",
+      "order": 44,
+      "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_locker_reliquary_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-11",
+      "phase": "AP1–AP4",
+      "order": 45,
+      "title": "Awakening registered perimeter: awakening_locker_reliquary_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_locker_reliquary_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-12",
+      "phase": "AP1–AP4",
+      "order": 46,
+      "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_undergate_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-13",
+      "phase": "AP1–AP4",
+      "order": 47,
+      "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_undergate_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-14",
+      "phase": "AP1–AP4",
+      "order": 48,
+      "title": "Awakening registered perimeter: awakening_undergate_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_undergate_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-15",
+      "phase": "AP1–AP4",
+      "order": 49,
+      "title": "Awakening registered perimeter: awakening_gate_of_dust_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_gate_of_dust_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-16",
+      "phase": "AP1–AP4",
+      "order": 50,
+      "title": "Awakening registered perimeter: awakening_gate_of_dust_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_gate_of_dust_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-17",
+      "phase": "AP1–AP4",
+      "order": 51,
+      "title": "Awakening registered perimeter: awakening_approach_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_approach_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-18",
+      "phase": "AP1–AP4",
+      "order": 52,
+      "title": "Awakening registered perimeter: awakening_approach_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_approach_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-19",
+      "phase": "AP1–AP4",
+      "order": 53,
+      "title": "Awakening registered perimeter: awakening_approach_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_approach_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-20",
+      "phase": "AP1–AP4",
+      "order": 54,
+      "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_late_service_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-21",
+      "phase": "AP1–AP4",
+      "order": 55,
+      "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_late_service_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-22",
+      "phase": "AP1–AP4",
+      "order": 56,
+      "title": "Awakening registered perimeter: awakening_late_service_perimeter_support/edge_transition",
+      "asset_ids": [
+        "awakening_late_service_perimeter_support/edge_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-23",
+      "phase": "AP1–AP4",
+      "order": 57,
+      "title": "Awakening registered perimeter: awakening_road_south_reach_perimeter_support/structural_support",
+      "asset_ids": [
+        "awakening_road_south_reach_perimeter_support/structural_support"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "AP-24",
+      "phase": "AP1–AP4",
+      "order": 58,
+      "title": "Awakening registered perimeter: awakening_road_south_reach_perimeter_support/distant_structures",
+      "asset_ids": [
+        "awakening_road_south_reach_perimeter_support/distant_structures"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "respect_existing_awakening_AP_owner_and_adopted_perimeter_schema",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-01",
+      "phase": "DL0",
+      "order": 59,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/north_upper_works",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/north_upper_works"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-02",
+      "phase": "DL0",
+      "order": 60,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/central_broken_service_spine",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/central_broken_service_spine"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-03",
+      "phase": "DL0",
+      "order": 61,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/western_lift_spine",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/western_lift_spine"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-04",
+      "phase": "DL0",
+      "order": 62,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/cistern_core",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/cistern_core"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-05",
+      "phase": "DL0",
+      "order": 63,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/deep_cistern_field",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/deep_cistern_field"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-06",
+      "phase": "DL0",
+      "order": 64,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/south_ingress_transition",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/south_ingress_transition"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-07",
+      "phase": "DL0",
+      "order": 65,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/service_route_splice_lower",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/service_route_splice_lower"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    },
+    {
+      "set_id": "DL-08",
+      "phase": "DL0",
+      "order": 66,
+      "title": "Dust Lung V2 separately gated: awakening_dust_lung_environment_v2/lift_station_transition_upper",
+      "asset_ids": [
+        "awakening_dust_lung_environment_v2/lift_station_transition_upper"
+      ],
+      "generation_mode": "single",
+      "request_rule": "One independent asset image; for animations one independent complete animation strip",
+      "release_gate": "separate_dust_lung_v2_design_source_review_and_DL0_owner",
+      "approval_rule": "Explicit approval on each actual state image, distinct from approval of the set or program",
+      "source_handoff_rule": "No Dropbox source publication before every delivered image has its own approval, exact bytes, dimensions and hash."
+    }
+  ]
 }
