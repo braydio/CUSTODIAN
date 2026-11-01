@@ -10,7 +10,7 @@
 - Depends on: `agent-paired-review-runner-profile-summary-coverage-v1`
 - Locks: `paired-review-runner-checkout-profile`
 - Kind: `review`
-- Review: `passed`
+- Review: `none`
 - Review target workstream: `agent-paired-review-runner-profile-summary-coverage-v1`
 - Review target packet: `custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md`
 - Reviewed main: `57f796040cc3e3a51a213b529a2baeeef6fa9627`
