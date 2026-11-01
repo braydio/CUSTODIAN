@@ -4,7 +4,7 @@
 - Workstream: `agent-sepulcher-v2-host-validation-recovery-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `complete`
+- Status: `ready`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-canonical-operator-floor-v2-preview-v1`
@@ -52,27 +52,5 @@
 - Authoring chat: `not-recorded`
 - Summary backlink: `not-recorded`
 - Refresh reason: `none; source/test and failure report provenance require independent technical scrutiny`
-- Next action: `After this workstream lands and paired review passes, surface read-only original-claim disposition options and launch a *fresh, authorized* V2 technical review against corrected source for final independent acceptance.`
-- Blockers or open questions: `No implementation blocker. The paired independent review remains dependency-gated until this implementation finishes; the original V2 review remains a no-verdict held failure pending separately authorized disposition.`
-
-
-## Completion Truth
-
-- Completion schema: `custodian.task_completion.v1`
-- Goal satisfied: `yes`
-- Completion boundary satisfied: `yes`
-- Acceptance satisfied: `yes`
-- Superseded/legacy production path disposition: `n/a`
-- Evidence: `A1: original run 20261101T135711Z-571d69329b77 identities and report hashes authenticated and preserved; exact failure and recovery-verifier root cause reproduced. A2: three independent cold-cache V2 import-and-smoke runs passed on final smoke; four explicit injected failure cases (spawn, residual motion, camera, visual) each failed at its matching assertion. A3: controller and Operator physics are disabled before fixed-position restoration; genuine movement and bootstrap checks remain. A4: archive-only failed report coverage is authenticated only as failed evidence; positive/negative runner regression coverage passes and no PASS is synthesized. A5: changed-file validation, full paired-review runner unit suite, neighboring V1 smoke, and source checks pass. A6: correction is committed; the paired fresh-context review packet is Ready/Auto and will become claimable immediately after this lifecycle finish. The original V2 reviewer remains preserved without verdict; follow-on V2 review targets the corrected commit.`
-
-## Execution Feedback
-
-- Feedback schema: `custodian.task_feedback.v1`
-- Outcome: `success`
-- Friction severity: `medium`
-- What went wrong: `Two clean-cache Godot import attempts failed intermittently with TLS handshake error -27648 before gameplay.`
-- Root cause / contributing factors: `The editor import path reaches an unavailable or unstable TLS endpoint; subsequent clean imports succeeded without source changes.`
-- Prevention / pipeline improvement: `Keep import infrastructure failures classified separately from gameplay results; retry only serially and require three clean cold runs before claiming smoke stability.`
-- Tooling / docs drift discovered: `The failed-report verifier routed a trusted archive-only manifest delta through a post-hoc scope-attestation requirement.`
-- Follow-up: `fixed-in-scope`
-- What worked: `Exact archived source-span validation preserved fail-closed provenance while allowing authentic failed evidence to remain failed.`
+- Next action: `After the source-span checkpoint witness blocker is resolved through an authorized lifecycle path, finish/land this workstream, start the dependency-gated fresh recovery review, then surface read-only original-claim disposition options and launch a fresh V2 technical review against corrected source.`
+- Blockers or open questions: `The correction is implemented and validated on the claimed branch, but finish is blocked: synchronized merge `bfc7ad394818eae9b48598085dd56dba3ea6981c` lacks the required exact checkpoint witness. The branch is preserved at `origin/agent/agent-sepulcher-v2-host-validation-recovery-v1`; no independent recovery review claim was started. The original V2 review remains a no-verdict held failure pending separately authorized disposition.`
