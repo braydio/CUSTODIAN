@@ -1,0 +1,17 @@
+{
+  "authoring_chat": "https://chatgpt.com/g/g-p-6980439e55688191bcf65f31f1c02d06-custodian/c/6ae4ca33-99cc-83ea-b344-8d13b65268d1",
+  "candidate_state": "candidate_unapproved",
+  "cleanup_command": "python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v4/20261101T180158Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user",
+  "dropbox_manifest_path": "/CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v4/20261101T180158Z/REVIEW_MANIFEST.json",
+  "questions": [
+    "Does the localized right-pauldron underside correction preserve the intended silhouette and layer boundary?",
+    "Do the shoulder/body surfaces appear clean in the idle and running contact samples?"
+  ],
+  "retention_policy": "delete-after-review",
+  "run_id": "20261101T180158Z",
+  "schema": "custodian.operator_v004_visual_review_receipt.v1",
+  "status": "uploaded",
+  "supersedes": "/CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v4/20261101T175916Z/REVIEW_MANIFEST.json",
+  "supersedes_reason": "The original upload preceded inclusion of the explicit world-space collision reconciliation rows; use the 20261101T180158Z bundle for review.",
+  "workstream": "manual/operator-3d-visual-fidelity-candidate-v4"
+}

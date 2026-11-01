@@ -1,0 +1,2686 @@
+{
+  "adjacent_motion_records": [
+    {
+      "direction": "S",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/S/0131.png",
+      "sample_index": 131,
+      "sha256": "b6a565e9b5614e197668d3ed87f3a08d3f2b58c0216ea14617373e9d6529ea92",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "S",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/S/0132.png",
+      "sample_index": 132,
+      "sha256": "5f329c1a81b4a433afb9e982f94f05a81d70e55483e69a1059b5a5d3e44531fd",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "S",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/S/0133.png",
+      "sample_index": 133,
+      "sha256": "5970408b4024a8cc6d04c2799be749606f4200d9c28ba3c26d95bcae8c8fba6e",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "E",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/E/0131.png",
+      "sample_index": 131,
+      "sha256": "de0c2140b2588ab5177022e6e15325be7c4e6cdb697731dd73c4a429e0ea279f",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "E",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/E/0132.png",
+      "sample_index": 132,
+      "sha256": "fd79693c96afccd8b3cd557f267f903cce26752b3038fd85283b3a2360538ec3",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "E",
+      "family": "neutral_idle",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/neutral_idle/E/0133.png",
+      "sample_index": 133,
+      "sha256": "ba238afab064347a64b3f8637e103278852cd38edc05b2bc180cadbc74822e14",
+      "source_action_label": "pose overlay"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0005.png",
+      "sample_index": 5,
+      "sha256": "3d302d3c88e9641b98f396f4ad77bacdbde54b437173c9d36ac758a24b7f9fd7",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0006.png",
+      "sample_index": 6,
+      "sha256": "f5e4d405d6e2691f3ae6d3af41d5e484d67e28a61cff4d68ab590de8ac29902a",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0007.png",
+      "sample_index": 7,
+      "sha256": "aeefa9e65c531751300b3cc2258c799c9c69c8bcbbc418b507f660b31d18e302",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0005.png",
+      "sample_index": 5,
+      "sha256": "48764a7e1655256c5ae87ad5310aefc7b76e435e8b68f4fc29c53de9adeceaf2",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0006.png",
+      "sample_index": 6,
+      "sha256": "200f041be89b78616da7cde0876c89596ccd177ebc5d2f6048c0b3c27391adc8",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0007.png",
+      "sample_index": 7,
+      "sha256": "a88e5eabe4a5490717ad962fc1d9ace5c7fcf527b121023605720ae808efa9cb",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0015.png",
+      "sample_index": 15,
+      "sha256": "84282b620f330130a1ff5ab86ba3ff27dfceb75cf6c037deeb440f67569e0ded",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0016.png",
+      "sample_index": 16,
+      "sha256": "731262ae465a32a4d4bf18e14eef029b505f2cc1cb9e6fb70c2d877929887667",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "S",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/S/0017.png",
+      "sample_index": 17,
+      "sha256": "e47e2347c0d3cc5aee2272dd9559fa367c379fcf737e2419f52fbed65f780439",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0015.png",
+      "sample_index": 15,
+      "sha256": "7c12d831f40bdd162bc49dac24901d5fc22b05a01e00aa60d8cf0eaa6b086337",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0016.png",
+      "sample_index": 16,
+      "sha256": "e80042fe53e6565a1ef82fa02b1c33104195d3ecca609b94b01ad6356e695c79",
+      "source_action_label": "source running action"
+    },
+    {
+      "direction": "E",
+      "family": "running",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v3/adjacent/running/E/0017.png",
+      "sample_index": 17,
+      "sha256": "233868e2364b28a865a3cb5ef4c9faa5e653596c9939d55e5129d5747559a871",
+      "source_action_label": "source running action"
+    }
+  ],
+  "candidate_state": "candidate_unapproved",
+  "candidate_versions": {
+    "candidate_blend_sha256": "654b8b819f3e703d1fec10a69b3aa522e4e35b39a2e4c6d40929bf0f5106877d",
+    "candidate_label": "V004",
+    "previous_blend_sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0",
+    "previous_label": "V003"
+  },
+  "generated_outputs": {
+    "approved_128_idle_8dir_15f_contact_sheet.png": {
+      "bytes": 541981,
+      "dimensions": [
+        1920,
+        1024
+      ],
+      "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+    },
+    "approved_design_lock_reference.png": {
+      "bytes": 312707,
+      "dimensions": [
+        2048,
+        256
+      ],
+      "sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b"
+    },
+    "operator_v003_8dir_reference_comparison.png": {
+      "bytes": 212193,
+      "dimensions": [
+        1084,
+        1572
+      ],
+      "sha256": "bc00b1db7d20d039a23dabca150d6875379b778600887df64f562c586e086cda"
+    },
+    "operator_v003_adjacent_motion_qa.png": {
+      "bytes": 126550,
+      "dimensions": [
+        980,
+        1152
+      ],
+      "sha256": "074b5c1a2d7826100119882dc76d9a67605c441e07e83817384fb5ec5f3ebb36"
+    },
+    "operator_v003_native128_vs_reduced512.png": {
+      "bytes": 241873,
+      "dimensions": [
+        860,
+        2010
+      ],
+      "sha256": "dacc574b4314deb450b2c422b82e2ca911fbbbb3f77db04ff6242343c9b7b0c5"
+    },
+    "operator_v003_pose_comparison.png": {
+      "bytes": 110343,
+      "dimensions": [
+        560,
+        1914
+      ],
+      "sha256": "03906f949a47edb9a3d4dd6834bad1e186aa5c2301f187934a346b13032a2c0c"
+    },
+    "operator_v003_upper_body_detail.png": {
+      "bytes": 21450,
+      "dimensions": [
+        1000,
+        615
+      ],
+      "sha256": "49a42fb34051b549a63ac80224888033f72235053a37421f66ecd80283fa91c2"
+    },
+    "runtime_idle_actual_contact_sheet.png": {
+      "bytes": 350581,
+      "dimensions": [
+        1254,
+        2682
+      ],
+      "sha256": "07dba4fd4fab49b08bb23fa5f7748d74c81d70ed2d7a50d5ca79e1bafc8c7a61"
+    }
+  },
+  "pose_comparison_records": [
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/S/0001.png",
+      "sample_index": 1,
+      "sha256": "b07c48e262c2a8aa43f969eb75b3cc608415bd5ec0b1fe924a0edc18aea7bd0a",
+      "variant": "V003"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0001.png",
+      "sample_index": 1,
+      "sha256": "6db6bd08c76bb60175c8dc5111036ccc1ef899a98f3a6eb3860ab1fbc74cc6a8",
+      "variant": "V004"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/S/0132.png",
+      "sample_index": 132,
+      "sha256": "cccb03d550e9d7c0f479d9ce03fe24d72de795b7475141912d65a6a62b2c4486",
+      "variant": "V003"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0132.png",
+      "sample_index": 132,
+      "sha256": "d4f2a52376de42ad46bfed052df2ae587c5030eea1e29fc4fd241577566c3111",
+      "variant": "V004"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/S/0263.png",
+      "sample_index": 263,
+      "sha256": "3ad5cfe1b21ab64b275fbb4f248f51c501bd6b4e82f52659fa9b8381702711ec",
+      "variant": "V003"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0263.png",
+      "sample_index": 263,
+      "sha256": "db2ba4ac0a07555ec92755c095511049e149c3fc6a41ed3c7007d07559f75e1f",
+      "variant": "V004"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SE/0001.png",
+      "sample_index": 1,
+      "sha256": "b1b3d5f7723324a6bfdff1fe7a1f74a9f7dabb739c144dca6e6cba8f3dd9eaac",
+      "variant": "V003"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0001.png",
+      "sample_index": 1,
+      "sha256": "c2119b1c3724a98ea8684ce1b88ad50d82737c8e01c790b0d215409b85da7bfe",
+      "variant": "V004"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SE/0132.png",
+      "sample_index": 132,
+      "sha256": "a2889bc88fcf972b495a2f4de60f72c5a82ef12ef9eb56f0f310116d35c722da",
+      "variant": "V003"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0132.png",
+      "sample_index": 132,
+      "sha256": "e25734573557d6a3c9a0df8a7c514b6dbd0dee900117f1c40c33bb943eaa0536",
+      "variant": "V004"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SE/0263.png",
+      "sample_index": 263,
+      "sha256": "3baf9d24951b1585283d8e717dcf465e323819c40afd5f239b03a79d36e49a73",
+      "variant": "V003"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0263.png",
+      "sample_index": 263,
+      "sha256": "0b88669cfe37e9050a1a23e4cc6eaa9fb05a012908a0a4968453ab3fd9f92346",
+      "variant": "V004"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SW/0001.png",
+      "sample_index": 1,
+      "sha256": "8b3484a3accbe86e3f6183e768c930ecd4c1ff8848f6b9e9b7b60fc731eec9c8",
+      "variant": "V003"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0001.png",
+      "sample_index": 1,
+      "sha256": "ffceb1fe9bbda9311985f81dd4495944acd2cd7940e316020dbed75aafef8634",
+      "variant": "V004"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SW/0132.png",
+      "sample_index": 132,
+      "sha256": "6657f935a2a70318a4a1355d4548c819eea6b79580fb6a6e8cedf5c6980e12f2",
+      "variant": "V003"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0132.png",
+      "sample_index": 132,
+      "sha256": "c3cc875c009376b93dddca2b1b41039f831d4d0f5fa5561465864717a0138288",
+      "variant": "V004"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/SW/0263.png",
+      "sample_index": 263,
+      "sha256": "776029982ddabcef12ae4bcd122d346a7f087db1316392a98a5bc84dcf3bc850",
+      "variant": "V003"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0263.png",
+      "sample_index": 263,
+      "sha256": "fd34f32d1cb50e74b2e1c6c21ec7431027323d6a99c7def550188bd07da5c3a8",
+      "variant": "V004"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/E/0001.png",
+      "sample_index": 1,
+      "sha256": "fda366f43083c577e274bfce0a8d134459f39b21062f0c2e1ae53788c770410f",
+      "variant": "V003"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0001.png",
+      "sample_index": 1,
+      "sha256": "acf06ecfc0653cefdc6251142aa9c03a94e74a7abe0081e801fb5c1318f96801",
+      "variant": "V004"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/E/0132.png",
+      "sample_index": 132,
+      "sha256": "1b3e32569aed52dbae2ae31d5129a70a4d3fa34658df5779bfce1a28eab8bde6",
+      "variant": "V003"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0132.png",
+      "sample_index": 132,
+      "sha256": "334f968dced7526d18390e0621407274632281e16e26b32a10c95e286bc6d010",
+      "variant": "V004"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/v3_adapter/final_128/E/0263.png",
+      "sample_index": 263,
+      "sha256": "d0688f55069d059e50f398689c021c79d34e3b19df5fa0e1524bd7e717ea5837",
+      "variant": "V003"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0263.png",
+      "sample_index": 263,
+      "sha256": "d0c25945e390127db1a2fd536a3d003ac5e83256847b573a9af3d24b52a00322",
+      "variant": "V004"
+    }
+  ],
+  "reference_sources": {
+    "approved_128_idle": {
+      "cell_px": [
+        128,
+        128
+      ],
+      "dimensions": [
+        1920,
+        1024
+      ],
+      "directions": [
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ],
+      "fps": "unknown; no timing invented",
+      "frames_per_direction": 15,
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
+      "root_px": [
+        64,
+        106
+      ],
+      "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+    },
+    "approved_design_lock": {
+      "dimensions": [
+        2048,
+        256
+      ],
+      "path": "custodian/asset_drop/source_work/operator/operator_2_5d_design_reference/operator_2_5d_design_lock_v1_source.png",
+      "sha256": "41782240f4b595fc3dffead7709b8493746f9f2d502c25cab69e432fb50d725b"
+    },
+    "runtime_manifest": {
+      "path": "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json",
+      "repo_generation_commit": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
+      "schema": "custodian.operator_runtime_manifest.v1",
+      "sha256": "df50edf28baf00381828b766329364edb49d15d394046f409d94503e29490d0f"
+    },
+    "runtime_selector_sources": [
+      {
+        "path": "custodian/game/actors/operator/animations/operator_animation_selector.gd",
+        "sha256": "0c341d93b68153f3f8f6023986e29607097f19b0a198a98a55b6d21315422f75"
+      },
+      {
+        "path": "custodian/game/actors/operator/presentation/unarmed_posture_presentation.gd",
+        "sha256": "9047d72129ec9985cc372357820eaeb8cee47ff9f7ff9c250c5348fc04ac9488"
+      },
+      {
+        "path": "custodian/game/actors/operator/operator.gd",
+        "sha256": "fe3f8ac4eb15641faea54d076e5a5491d5fdc13e423042e2583ac4fb8fdd26a9"
+      }
+    ]
+  },
+  "render_settings": {
+    "camera": {
+      "elevation_degrees": 45,
+      "fixed_scale": 1.2287417600294088,
+      "independent_no_mirroring": true,
+      "orthographic_scale": 2.56,
+      "pixels_per_meter": 50,
+      "resolution": [
+        128,
+        128
+      ],
+      "root_pixel": [
+        64,
+        106
+      ]
+    },
+    "directions": [
+      "N",
+      "NE",
+      "E",
+      "SE",
+      "S",
+      "SW",
+      "W",
+      "NW"
+    ],
+    "display_enlargement": "nearest-neighbor; does not alter source pixels",
+    "native_sizes": [
+      128,
+      512
+    ],
+    "reduction": "tools/custodian_aliases.sh pixelart --pixel-source --size 128 --choose 1; one conversion invocation per 512 render",
+    "renderer": "Blender animation compiler blender_neutral_idle_proof.py"
+  },
+  "runtime_actual_idle": {
+    "current_runtime_source_generation": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
+    "frames_per_layer": 5,
+    "presentation_layers_back_to_front": [
+      "lower_body",
+      "upper_body"
+    ],
+    "projection_policy_source": "unarmed_posture_presentation.gd::authored_sector",
+    "records": {
+      "selected_posture_idle": [
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/e",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2a6c566dcaf640abbe52f906962ffbe0984f35a8bc0161ab36263982f1e59e37",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__e__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "678bde9bdf76c741c10ae197fae0265bdf7039f140788057e9aa067e4513b419",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/e"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": false,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 0,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 0,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 1,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 1,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 3,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 3,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fallback": true,
+          "fps": 8.0,
+          "frame_index_zero_based": 4,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/posture/idle_relaxed_01/w",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__lower_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "4e27c1392eed68ca7bdb86dffeb4e5d151ab437c7d0587d9110d3162e024d9d7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/posture/idle_relaxed_01/operator__upper_body__unarmed__posture__idle_relaxed_01__w__5f__96.png",
+              "selected_frame_zero_based": 4,
+              "sha256": "2883465d4bfe0eab21e11bf499158399e75c8bc1d5dec104f530854caa85280b",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_identity": "unarmed/posture/idle_relaxed_01/w"
+        }
+      ],
+      "separate_locomotion_idle_family": [
+        {
+          "authored_direction": "n",
+          "composition_order_back_to_front": [
+            "full_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            10
+          ],
+          "identity": "unarmed/locomotion/idle_01/n",
+          "layers": [
+            {
+              "frames": 10,
+              "layer": "full_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__n__10f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "a42fea47e8c2a27ede853418e8a243c3591a2a0caf50726b1be7bd8aff4e43b7",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "N",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "ne",
+          "composition_order_back_to_front": [
+            "lower_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            6
+          ],
+          "identity": "unarmed/locomotion/idle_01/ne",
+          "layers": [
+            {
+              "frames": 6,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__ne__6f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "f60faab774ccacd1dadcc986ddf57bb392388f7c6441d64ebe7aa84e15b946b3",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NE",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "e",
+          "composition_order_back_to_front": [
+            "full_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            6
+          ],
+          "identity": "unarmed/locomotion/idle_01/e",
+          "layers": [
+            {
+              "frames": 6,
+              "layer": "full_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__e__6f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "98d7b37ab2f2c31cfe719ee09b9bb6ba03701b526ffec8dd56d923b5620a5864",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "E",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "se",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/locomotion/idle_01/se",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__se__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "0ff944f97d08b2da97f87b7e2edbd73b52c125ab530b6a77175eda645e5ca578",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__se__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "dedcc7242b6a66cb8fe42b8f55648e31d9bd5fd666bb22e3ec43dfa4d6363edd",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SE",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "s",
+          "composition_order_back_to_front": [
+            "full_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            8
+          ],
+          "identity": "unarmed/locomotion/idle_01/s",
+          "layers": [
+            {
+              "frames": 8,
+              "layer": "full_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__s__8f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "4354608cf224a5c82b73c0362dc7d26e4bcc38a5a63414cdb1398bd1c25c5d67",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "S",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "sw",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/locomotion/idle_01/sw",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__sw__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "fbe5ea9de1e89851520bda329da7192cde7a6b18f2b633c24af76b92552141d0",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__sw__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "0650d52abcc31b6fc8435111aacb99fbc7fa3c2e3616529505e96f3389ac8bd1",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "SW",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "w",
+          "composition_order_back_to_front": [
+            "full_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            6
+          ],
+          "identity": "unarmed/locomotion/idle_01/w",
+          "layers": [
+            {
+              "frames": 6,
+              "layer": "full_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__full_body__unarmed__locomotion__idle_01__w__6f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "78a2aa6e7bed462e9caaf5c28c9093bc6749a19118f7ef5b9146bf638e65a55f",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "W",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        },
+        {
+          "authored_direction": "nw",
+          "composition_order_back_to_front": [
+            "lower_body",
+            "upper_body"
+          ],
+          "direction_status": "authored",
+          "fps": 8.0,
+          "frame_index_zero_based": 2,
+          "frames_per_layer": [
+            5,
+            5
+          ],
+          "identity": "unarmed/locomotion/idle_01/nw",
+          "layers": [
+            {
+              "frames": 5,
+              "layer": "lower_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__lower_body__unarmed__locomotion__idle_01__nw__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "d3351cff5b2bee97c7fb73c04795cf876dcbb201f74c85d07d076ac5defea892",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            },
+            {
+              "frames": 5,
+              "layer": "upper_body",
+              "path": "custodian/content/sprites/operator/runtime/animations/unarmed/locomotion/idle_01/operator__upper_body__unarmed__locomotion__idle_01__nw__5f__96.png",
+              "selected_frame_zero_based": 2,
+              "sha256": "3694296770a2fa35be1e7d696123e66b7bec495aa22d2a63b8dfb1ceccf3f936",
+              "source_frame_size": [
+                96,
+                96
+              ]
+            }
+          ],
+          "loop": true,
+          "requested_direction": "NW",
+          "selected_alternative_family": "unarmed/locomotion/idle_01"
+        }
+      ]
+    },
+    "requested_to_authored_direction": {
+      "E": "e",
+      "N": "e",
+      "NE": "e",
+      "NW": "w",
+      "S": "e",
+      "SE": "e",
+      "SW": "w",
+      "W": "w"
+    },
+    "selected_semantic": "unarmed/posture/idle_relaxed_01",
+    "separate_locomotion_family": "unarmed/locomotion/idle_01; shown in distinct labeled section",
+    "source_fps": 8
+  },
+  "samples": {
+    "experimental_neutral_idle_indices": [
+      1,
+      132,
+      263
+    ],
+    "sample_names": [
+      "beginning",
+      "middle",
+      "end"
+    ],
+    "timing_correspondence_to_approved_15f_idle": "none established"
+  },
+  "schema": "custodian.operator_3d_iteration_reference_comparison.v1",
+  "sharpness_comparison_records": [
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0001.png",
+      "sample_index": 1,
+      "sha256": "6db6bd08c76bb60175c8dc5111036ccc1ef899a98f3a6eb3860ab1fbc74cc6a8",
+      "variant": "native128"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/S/0001.png",
+      "sample_index": 1,
+      "sha256": "3e29154e0380e485de027b422e6ee5c5f0123e8014b7e440ea90ca0af3f376b6",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0132.png",
+      "sample_index": 132,
+      "sha256": "d4f2a52376de42ad46bfed052df2ae587c5030eea1e29fc4fd241577566c3111",
+      "variant": "native128"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/S/0132.png",
+      "sample_index": 132,
+      "sha256": "41bf476b11cc3b68abc94b9110d5194097b67e3fd0c731390a7a114cc3ed8485",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/S/0263.png",
+      "sample_index": 263,
+      "sha256": "db2ba4ac0a07555ec92755c095511049e149c3fc6a41ed3c7007d07559f75e1f",
+      "variant": "native128"
+    },
+    {
+      "direction": "S",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/S/0263.png",
+      "sample_index": 263,
+      "sha256": "15e5e462d3b4a1694a2b7efa52742fa9d714999620789366315029bb19465b26",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0001.png",
+      "sample_index": 1,
+      "sha256": "c2119b1c3724a98ea8684ce1b88ad50d82737c8e01c790b0d215409b85da7bfe",
+      "variant": "native128"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SE/0001.png",
+      "sample_index": 1,
+      "sha256": "6aa5b757a9042ce310c2cdf094aacd20eb301734b69ff333a43bf48d78df03aa",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0132.png",
+      "sample_index": 132,
+      "sha256": "e25734573557d6a3c9a0df8a7c514b6dbd0dee900117f1c40c33bb943eaa0536",
+      "variant": "native128"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SE/0132.png",
+      "sample_index": 132,
+      "sha256": "586bbc1508f958f8679643ac9893fa4bad034725325811f2439d5dab01fc38c1",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SE/0263.png",
+      "sample_index": 263,
+      "sha256": "0b88669cfe37e9050a1a23e4cc6eaa9fb05a012908a0a4968453ab3fd9f92346",
+      "variant": "native128"
+    },
+    {
+      "direction": "SE",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SE/0263.png",
+      "sample_index": 263,
+      "sha256": "730cc9a697e27b52645df02776dea0eac420d17c3ea3846150acfdbd57a3b9cd",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0001.png",
+      "sample_index": 1,
+      "sha256": "ffceb1fe9bbda9311985f81dd4495944acd2cd7940e316020dbed75aafef8634",
+      "variant": "native128"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SW/0001.png",
+      "sample_index": 1,
+      "sha256": "f23ef5b738ebbd17d16f5cbe95558b5c9a0cf3751d3a68f550f6f8c7038b6651",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0132.png",
+      "sample_index": 132,
+      "sha256": "c3cc875c009376b93dddca2b1b41039f831d4d0f5fa5561465864717a0138288",
+      "variant": "native128"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SW/0132.png",
+      "sample_index": 132,
+      "sha256": "884fe6f558f8738e942ca043fb1680968c1b4a70d2d6be3e4642986ff2d126f5",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/SW/0263.png",
+      "sample_index": 263,
+      "sha256": "fd34f32d1cb50e74b2e1c6c21ec7431027323d6a99c7def550188bd07da5c3a8",
+      "variant": "native128"
+    },
+    {
+      "direction": "SW",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/SW/0263.png",
+      "sample_index": 263,
+      "sha256": "3849bba6e440b0f36e0e4afd18b66e02a1053f0fd62f6dec3a7cd7f9a7d1a212",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0001.png",
+      "sample_index": 1,
+      "sha256": "acf06ecfc0653cefdc6251142aa9c03a94e74a7abe0081e801fb5c1318f96801",
+      "variant": "native128"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/E/0001.png",
+      "sample_index": 1,
+      "sha256": "41ee9b3db5d7270b29906295d33378cb8e909431b97163421aac2d720fe31c90",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0132.png",
+      "sample_index": 132,
+      "sha256": "334f968dced7526d18390e0621407274632281e16e26b32a10c95e286bc6d010",
+      "variant": "native128"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/E/0132.png",
+      "sample_index": 132,
+      "sha256": "c1a8cf280c1676ac66f473a80a3137d08a7f86abd484e88e1e27f19faed13430",
+      "variant": "reduced512_choose1"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/native128/E/0263.png",
+      "sample_index": 263,
+      "sha256": "d0c25945e390127db1a2fd536a3d003ac5e83256847b573a9af3d24b52a00322",
+      "variant": "native128"
+    },
+    {
+      "direction": "E",
+      "path": "/home/braydenchaffee/Projects/.operator-3d-animation-proof/operator_3d_visual_fidelity_v004/reduced512/E/0263.png",
+      "sample_index": 263,
+      "sha256": "a9207b3a3ed6675dca0d6fa199c4c6959e6a6660868e083aa1088c1fbcd0e3bb",
+      "variant": "reduced512_choose1"
+    }
+  ]
+}

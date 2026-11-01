@@ -1,0 +1,169 @@
+{
+  "approval": {
+    "asset_pipeline_promotion": false,
+    "human_visual_review_required": true,
+    "production_integration": false,
+    "status": "candidate_unapproved"
+  },
+  "candidate": {
+    "actions": {
+      "idle": {
+        "frames": [
+          1,
+          264
+        ],
+        "name": "V003 Neutral Idle Upper Body Candidate"
+      },
+      "running": {
+        "frames": [
+          1,
+          22
+        ],
+        "name": "operator_run_mixamo_iter005_contact_ik.001"
+      }
+    },
+    "armature": "SmartRigArmature",
+    "blender": "5.2.3 LTS",
+    "bone_count": 42,
+    "bytes": 47972412,
+    "mesh_objects": [
+      "output_unwrapped",
+      "Operator_Pauldron_Left_V003",
+      "Operator_Pauldron_Right_V003"
+    ],
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v004/operator_3d_iter005_visual_fidelity_candidate_v004.blend",
+    "sha256": "654b8b819f3e703d1fec10a69b3aa522e4e35b39a2e4c6d40929bf0f5106877d",
+    "source_motion_sha256": "f2d6e2c6fca056cf14a973e2c460eb89103d5ebc4be8737e79a94e3fc955641e"
+  },
+  "candidate_state": "candidate_unapproved",
+  "correction": {
+    "body_face_normal_local": [
+      -0.532162786,
+      0.100052811,
+      0.840709388
+    ],
+    "body_geometry_changed": false,
+    "displacement_mm": 6.0,
+    "left_pauldron_changed": false,
+    "local_vertex_delta_m": [
+      0.003192977,
+      -0.000600317,
+      -0.005044256
+    ],
+    "method": "local inward underside fit along the source body-face normal",
+    "neighboring_faces_affected_by_shared_vertices": [
+      31,
+      44
+    ],
+    "right_pauldron_vertices": [
+      134,
+      135,
+      136
+    ],
+    "source_body_polygon": 1455,
+    "source_right_pauldron_polygon": 31,
+    "weights_changed": false
+  },
+  "historical_v003_reference": {
+    "integrated_blend_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v003/operator_3d_iter005_visual_fidelity_candidate_v003.blend",
+    "original_build_report_sha256": "d3e9fdf94e8b8cbc42f7df23612801736dbd3e82910d8a4ec0635bb1ea959e76",
+    "sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+  },
+  "schema": "custodian.operator_3d_v004_source_lineage.v1",
+  "source": {
+    "blend_path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split/operator_3d_iter005_visual_fidelity_candidate_v003_mesh_split.blend",
+    "branch": "manual/operator-3d-visual-fidelity-candidate-v3-mesh-separation",
+    "commit": "c10a3415a9a788cf56619505ceebe780331b0eb6",
+    "sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+  },
+  "validation": {
+    "comparison_manifest": "comparison_manifest.v1.json",
+    "comparison_manifest_sha256": "0de9b1a3fed95324d55bb73efe34719e1d2fe25d94628f228f5b350ad245db58",
+    "geometry_report": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v004/geometry_correction_report.v1.json",
+    "geometry_report_sha256": "f82e560b4dc77c852b0feed3ca5e7703f40cdfd288c34003b4d1d107a09fbf17",
+    "independent_reference_helper_manifest": "iteration_reference_helper_manifest.v1.json",
+    "normalized_shell_bone_weights": true,
+    "reference_helper_manifest_sha256": "e5d17c51c27a1e8823c18a0e660714ab0a7e7d425d13e9ae07f32e77b0b3a430",
+    "reopen_validation": {
+      "actions_match_source": true,
+      "body_signature_matches_source": true,
+      "candidate_sha256": "654b8b819f3e703d1fec10a69b3aa522e4e35b39a2e4c6d40929bf0f5106877d",
+      "changed_mesh_vertex_indices": [
+        134,
+        135,
+        136
+      ],
+      "changed_vertex_set_expected": true,
+      "exact_local_vertex_deltas_m": {
+        "134": [
+          0.003192976,
+          -0.000600316,
+          -0.005044222
+        ],
+        "135": [
+          0.003192976,
+          -0.000600316,
+          -0.005044222
+        ],
+        "136": [
+          0.003192976,
+          -0.000600316,
+          -0.005044222
+        ]
+      },
+      "left_pauldron_signature_matches_source": true,
+      "reopened_all_264_idle_and_targeted_running_clear": true,
+      "reopened_blender_version": "5.2.3 LTS",
+      "reopened_bvh_pair_total": 0,
+      "reopened_candidate_path": "/home/braydenchaffee/Projects/.custodian-worktrees/operator-3d-visual-fidelity-candidate-v3-mesh-separation/custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v004/operator_3d_iter005_visual_fidelity_candidate_v004.blend",
+      "reopened_confirmed_crossing_total": 0,
+      "reopened_minimum_sampled_vertex_clearance": {
+        "by_pauldron": {
+          "Operator_Pauldron_Left_V003": {
+            "animation": "running",
+            "body_polygon_index": 8370,
+            "body_triangle_index": 8370,
+            "distance_mm": 14.845016,
+            "frame": 16,
+            "nearest_body_point_world": [
+              0.222538903,
+              -0.199280322,
+              1.358489394
+            ],
+            "shell_vertex_index": 116,
+            "shell_vertex_world": [
+              0.234833524,
+              -0.205783814,
+              1.363677979
+            ]
+          },
+          "Operator_Pauldron_Right_V003": {
+            "animation": "neutral_idle",
+            "body_polygon_index": 1244,
+            "body_triangle_index": 1244,
+            "distance_mm": 0.487816,
+            "frame": 96,
+            "nearest_body_point_world": [
+              -0.214554086,
+              0.080723986,
+              1.388866782
+            ],
+            "shell_vertex_index": 135,
+            "shell_vertex_world": [
+              -0.214298442,
+              0.080642812,
+              1.388459325
+            ]
+          }
+        },
+        "method": "minimum evaluated shell-vertex to evaluated body-triangle-surface Euclidean distance; sampled all 264 idle frames plus five running frames; this is not a signed volume depth or a full continuous surface minimum"
+      },
+      "rig_rest_matches_source": true,
+      "right_pauldron_non_coordinate_signature_matches_source": true,
+      "source_and_candidate_object_inventory_equal": true,
+      "source_sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+    },
+    "weight_changes": false,
+    "zero_unweighted_shell_vertices": true
+  }
+}

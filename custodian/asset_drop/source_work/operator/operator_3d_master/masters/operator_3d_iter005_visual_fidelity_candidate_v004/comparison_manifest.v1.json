@@ -1,0 +1,1100 @@
+{
+  "candidate": {
+    "path": "custodian/asset_drop/source_work/operator/operator_3d_master/masters/operator_3d_iter005_visual_fidelity_candidate_v004/operator_3d_iter005_visual_fidelity_candidate_v004.blend",
+    "sha256": "654b8b819f3e703d1fec10a69b3aa522e4e35b39a2e4c6d40929bf0f5106877d",
+    "source_v3_sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+  },
+  "candidate_state": "candidate_unapproved",
+  "outputs": {
+    "operator_v004_approved_idle_comparison.png": {
+      "bytes": 212193,
+      "dimensions": [
+        1084,
+        1572
+      ],
+      "sha256": "bc00b1db7d20d039a23dabca150d6875379b778600887df64f562c586e086cda"
+    },
+    "operator_v004_approved_reference_sheet.png": {
+      "bytes": 541981,
+      "dimensions": [
+        1920,
+        1024
+      ],
+      "sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3"
+    },
+    "operator_v004_native128_vs_reduced512.png": {
+      "bytes": 241873,
+      "dimensions": [
+        860,
+        2010
+      ],
+      "sha256": "dacc574b4314deb450b2c422b82e2ca911fbbbb3f77db04ff6242343c9b7b0c5"
+    },
+    "operator_v004_runtime_idle_comparison.png": {
+      "bytes": 350581,
+      "dimensions": [
+        1254,
+        2682
+      ],
+      "sha256": "07dba4fd4fab49b08bb23fa5f7748d74c81d70ed2d7a50d5ca79e1bafc8c7a61"
+    },
+    "operator_v004_shoulder_detail.png": {
+      "bytes": 823125,
+      "dimensions": [
+        2262,
+        1632
+      ],
+      "sha256": "23f60753cf4a8bf34dc98eb99d2a24557a6a01443df1b1a7d0273b2f778491cc"
+    },
+    "operator_v004_shoulder_motion_contact_sheet.png": {
+      "bytes": 108246,
+      "dimensions": [
+        1168,
+        506
+      ],
+      "sha256": "9cca7d8b31457f133c31dcc2f2e7c1c3c0ac6c7f55a3bbe2ea06ba32a51e83ac"
+    },
+    "operator_v004_v003_before_after.png": {
+      "bytes": 86406,
+      "dimensions": [
+        580,
+        2462
+      ],
+      "sha256": "6e5ce76ce56859c32b732a1bce30e647fcdfbab22f59327387d75ce849cd0a6f"
+    }
+  },
+  "pixel_bounds": {
+    "native128/E/0001.png": {
+      "alpha_bbox": [
+        48,
+        29,
+        84,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/E/0132.png": {
+      "alpha_bbox": [
+        48,
+        29,
+        84,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/E/0263.png": {
+      "alpha_bbox": [
+        48,
+        29,
+        84,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/N/0001.png": {
+      "alpha_bbox": [
+        40,
+        28,
+        88,
+        110
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 18
+    },
+    "native128/N/0132.png": {
+      "alpha_bbox": [
+        40,
+        29,
+        89,
+        110
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 18
+    },
+    "native128/N/0263.png": {
+      "alpha_bbox": [
+        40,
+        28,
+        88,
+        110
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 18
+    },
+    "native128/NE/0001.png": {
+      "alpha_bbox": [
+        47,
+        29,
+        85,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/NE/0132.png": {
+      "alpha_bbox": [
+        45,
+        30,
+        85,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/NE/0263.png": {
+      "alpha_bbox": [
+        47,
+        29,
+        85,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/NW/0001.png": {
+      "alpha_bbox": [
+        39,
+        30,
+        85,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/NW/0132.png": {
+      "alpha_bbox": [
+        39,
+        31,
+        87,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/NW/0263.png": {
+      "alpha_bbox": [
+        39,
+        30,
+        85,
+        113
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 15
+    },
+    "native128/S/0001.png": {
+      "alpha_bbox": [
+        40,
+        27,
+        88,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/S/0132.png": {
+      "alpha_bbox": [
+        39,
+        28,
+        88,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/S/0263.png": {
+      "alpha_bbox": [
+        40,
+        27,
+        88,
+        119
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 9
+    },
+    "native128/SE/0001.png": {
+      "alpha_bbox": [
+        43,
+        28,
+        89,
+        120
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 8
+    },
+    "native128/SE/0132.png": {
+      "alpha_bbox": [
+        41,
+        28,
+        89,
+        120
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 8
+    },
+    "native128/SE/0263.png": {
+      "alpha_bbox": [
+        43,
+        28,
+        89,
+        120
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 8
+    },
+    "native128/SW/0001.png": {
+      "alpha_bbox": [
+        43,
+        28,
+        81,
+        122
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 6
+    },
+    "native128/SW/0132.png": {
+      "alpha_bbox": [
+        43,
+        29,
+        83,
+        122
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 6
+    },
+    "native128/SW/0263.png": {
+      "alpha_bbox": [
+        43,
+        28,
+        81,
+        122
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 6
+    },
+    "native128/W/0001.png": {
+      "alpha_bbox": [
+        44,
+        30,
+        80,
+        118
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 10
+    },
+    "native128/W/0132.png": {
+      "alpha_bbox": [
+        44,
+        31,
+        80,
+        118
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 10
+    },
+    "native128/W/0263.png": {
+      "alpha_bbox": [
+        44,
+        30,
+        80,
+        118
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "transparent_margin_min_px": 10
+    },
+    "native512/E/0001.png": {
+      "alpha_bbox": [
+        194,
+        121,
+        334,
+        471
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 41
+    },
+    "native512/E/0006.png": {
+      "alpha_bbox": [
+        194,
+        121,
+        333,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/E/0013.png": {
+      "alpha_bbox": [
+        195,
+        121,
+        333,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/E/0016.png": {
+      "alpha_bbox": [
+        195,
+        122,
+        333,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/E/0022.png": {
+      "alpha_bbox": [
+        196,
+        122,
+        332,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/E/0132.png": {
+      "alpha_bbox": [
+        194,
+        121,
+        333,
+        473
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 39
+    },
+    "native512/E/0263.png": {
+      "alpha_bbox": [
+        194,
+        121,
+        334,
+        471
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 41
+    },
+    "native512/S/0001.png": {
+      "alpha_bbox": [
+        164,
+        110,
+        348,
+        473
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 39
+    },
+    "native512/S/0006.png": {
+      "alpha_bbox": [
+        166,
+        110,
+        348,
+        473
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 39
+    },
+    "native512/S/0013.png": {
+      "alpha_bbox": [
+        165,
+        112,
+        348,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/S/0016.png": {
+      "alpha_bbox": [
+        163,
+        113,
+        348,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/S/0022.png": {
+      "alpha_bbox": [
+        162,
+        113,
+        350,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/S/0132.png": {
+      "alpha_bbox": [
+        158,
+        114,
+        349,
+        472
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 40
+    },
+    "native512/S/0263.png": {
+      "alpha_bbox": [
+        164,
+        110,
+        348,
+        473
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 39
+    },
+    "native512/SE/0001.png": {
+      "alpha_bbox": [
+        175,
+        114,
+        351,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SE/0006.png": {
+      "alpha_bbox": [
+        176,
+        114,
+        351,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SE/0013.png": {
+      "alpha_bbox": [
+        174,
+        115,
+        351,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SE/0016.png": {
+      "alpha_bbox": [
+        173,
+        115,
+        350,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SE/0022.png": {
+      "alpha_bbox": [
+        171,
+        116,
+        350,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SE/0132.png": {
+      "alpha_bbox": [
+        169,
+        115,
+        353,
+        476
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 36
+    },
+    "native512/SE/0263.png": {
+      "alpha_bbox": [
+        175,
+        114,
+        351,
+        475
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 37
+    },
+    "native512/SW/0001.png": {
+      "alpha_bbox": [
+        175,
+        116,
+        322,
+        486
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 26
+    },
+    "native512/SW/0006.png": {
+      "alpha_bbox": [
+        175,
+        116,
+        322,
+        486
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 26
+    },
+    "native512/SW/0013.png": {
+      "alpha_bbox": [
+        176,
+        117,
+        323,
+        486
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 26
+    },
+    "native512/SW/0016.png": {
+      "alpha_bbox": [
+        176,
+        117,
+        323,
+        485
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 27
+    },
+    "native512/SW/0022.png": {
+      "alpha_bbox": [
+        176,
+        117,
+        325,
+        485
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 27
+    },
+    "native512/SW/0132.png": {
+      "alpha_bbox": [
+        176,
+        119,
+        327,
+        485
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 27
+    },
+    "native512/SW/0263.png": {
+      "alpha_bbox": [
+        175,
+        116,
+        322,
+        486
+      ],
+      "size": [
+        512,
+        512
+      ],
+      "transparent_margin_min_px": 26
+    }
+  },
+  "rendering": {
+    "blender": "5.2.3 LTS",
+    "camera": {
+      "directions": [
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ],
+      "elevation_degrees": 45,
+      "mirroring": false,
+      "pixels_per_meter": 50,
+      "root_pixel_128": [
+        64,
+        106
+      ],
+      "scale": 1.2287417600294088
+    },
+    "native128_frames": [
+      1,
+      132,
+      263
+    ],
+    "native512_contact_frames": [
+      1,
+      6,
+      13,
+      16,
+      22,
+      132,
+      263
+    ],
+    "native512_directions": [
+      "S",
+      "SE",
+      "SW",
+      "E"
+    ],
+    "reduction": "tools/custodian_aliases.sh pixelart --pixel-source --size 128 --choose 1; invoked independently for each V4 512px sample",
+    "render_only_mesh_join": "V004 body and two pauldron mesh objects joined in a temporary render-only copy; combined vertex/face counts match split candidate totals; shipped V004 remains three identifiable mesh objects",
+    "running_directions": [
+      "S",
+      "SE"
+    ],
+    "running_frames": [
+      6,
+      16
+    ]
+  },
+  "review_inputs": {
+    "approved_art_path": "custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png",
+    "approved_art_sha256": "d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3",
+    "runtime_manifest": "custodian/content/sprites/operator/runtime/operator_runtime_manifest.generated.json",
+    "runtime_resolution": "live legacy_96 selector/presenter, as composed by iteration_reference_contact_sheet.py",
+    "v3_blend_sha256": "b0686b23acb583d3eb8ae50d82a8cc713d8449627727927f7c42cd76ba42a6a0"
+  },
+  "schema": "custodian.operator_v004_comparison_manifest.v1",
+  "source": {
+    "branch": "manual/operator-3d-visual-fidelity-candidate-v3-mesh-separation",
+    "commit": "c10a3415a9a788cf56619505ceebe780331b0eb6",
+    "sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+  },
+  "v3_vs_v4_native128_pixel_diff": [
+    {
+      "bounds": [
+        40,
+        49,
+        83,
+        74
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 12,
+      "direction": "N",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        47,
+        49,
+        78,
+        104
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 15,
+      "direction": "N",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        58,
+        49,
+        85,
+        108
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 7,
+      "direction": "N",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        56,
+        52,
+        78,
+        113
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 7,
+      "direction": "NE",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        49,
+        45,
+        78,
+        94
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 7,
+      "direction": "NE",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        48,
+        38,
+        72,
+        57
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 7,
+      "direction": "NE",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        56,
+        31,
+        73,
+        78
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 8,
+      "direction": "E",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        56,
+        53,
+        63,
+        95
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 5,
+      "direction": "E",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        54,
+        39,
+        72,
+        95
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 6,
+      "direction": "E",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        60,
+        32,
+        77,
+        85
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 6,
+      "direction": "SE",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        44,
+        37,
+        60,
+        80
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 11,
+      "direction": "SE",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        55,
+        39,
+        69,
+        69
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 9,
+      "direction": "SE",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        51,
+        32,
+        81,
+        105
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 8,
+      "direction": "S",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        40,
+        49,
+        79,
+        93
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 6,
+      "direction": "S",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        51,
+        104,
+        75,
+        108
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 3,
+      "direction": "S",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        56,
+        41,
+        71,
+        44
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 3,
+      "direction": "SW",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        51,
+        36,
+        74,
+        92
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 8,
+      "direction": "SW",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        55,
+        55,
+        76,
+        119
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 7,
+      "direction": "SW",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        54,
+        32,
+        72,
+        89
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 5,
+      "direction": "W",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        58,
+        86,
+        63,
+        114
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 3,
+      "direction": "W",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        46,
+        42,
+        74,
+        113
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 6,
+      "direction": "W",
+      "frame": 263
+    },
+    {
+      "bounds": [
+        50,
+        37,
+        84,
+        93
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 11,
+      "direction": "NW",
+      "frame": 1
+    },
+    {
+      "bounds": [
+        48,
+        41,
+        79,
+        110
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 14,
+      "direction": "NW",
+      "frame": 132
+    },
+    {
+      "bounds": [
+        40,
+        37,
+        84,
+        107
+      ],
+      "compared_pixels": 16384,
+      "different_pixels": 15,
+      "direction": "NW",
+      "frame": 263
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "animation_actions_unchanged": true,
+  "approval": {
+    "human_visual_review_required": true,
+    "status": "candidate_unapproved"
+  },
+  "blend_path": "operator_3d_iter005_visual_fidelity_candidate_v004.blend",
+  "blend_sha256": "654b8b819f3e703d1fec10a69b3aa522e4e35b39a2e4c6d40929bf0f5106877d",
+  "candidate_id": "operator_3d_iter005_visual_fidelity_candidate_v004",
+  "candidate_state": "candidate_unapproved",
+  "correction": {
+    "body_geometry_changed": false,
+    "displacement_mm": 6.0,
+    "right_pauldron_vertices": [
+      134,
+      135,
+      136
+    ],
+    "weights_changed": false
+  },
+  "materials_unchanged_for_all_mesh_objects": true,
+  "objects": {
+    "body": {
+      "name": "output_unwrapped",
+      "polygons": 10367,
+      "vertices": 17578
+    },
+    "left_pauldron": {
+      "name": "Operator_Pauldron_Left_V003",
+      "polygons": 71,
+      "vertices": 122
+    },
+    "right_pauldron": {
+      "name": "Operator_Pauldron_Right_V003",
+      "polygons": 78,
+      "vertices": 139
+    }
+  },
+  "rig": {
+    "bones": 42,
+    "object": "SmartRigArmature",
+    "rest_pose_changed": false
+  },
+  "schema": "custodian.operator_3d_visual_fidelity_candidate.v1",
+  "source_sha256": "17c3cc57ce58aff1e400636d8b5f1db5bc97058d7028d6de587803514a131589"
+}
