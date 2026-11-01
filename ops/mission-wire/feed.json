@@ -1,9 +1,152 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T04:09:12Z",
-  "source_main_sha": "91f44c89e9a5bf9b269619d513777a403cc6530e",
+  "generated_at": "2026-11-01T04:30:32Z",
+  "source_main_sha": "5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "art-next-set-dispatch-5ee4a63d",
+      "headline": "Environment art gains a precise 'next set' command, starting with Sepulcher Gardens",
+      "summary": "A new main-branch manifest sequence makes 'generate the next set' select the earliest unfinished, individually approved art set. The initial CAL-01 target is one Sepulcher Gardens underlay, not a bulk batch. No image was generated or approved by this commit.",
+      "body": "Main commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 adds ordered generation_sets and a command contract to the existing Hub/Sepulcher/Awakening manifest. The first initial set CAL-01 is one 1152×1408 Gardens underlay; CAL-02 is a separate 160×96 memorial slab only after CAL-01 human approval. The sequence must reconcile real approval and source receipts rather than trusting the JSON checkpoint. This is planning/dispatch documentation, not image generation, human acceptance, Dropbox delivery or Asset V2 integration. No canonical dispatcher audit or host state inspected.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-01T04:30:32Z",
+      "bullets": [
+        "Art owner: reconcile existing approved source receipts, then generate or present CAL-01 for individual review."
+      ],
+      "links": [
+        {
+          "title": "Deterministic art set contract commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's environment art plan now answers a practical question: what exactly should happen when someone says 'generate the next set'? A new ordered manifest chooses the first unfinished image set and requires real source and approval evidence before moving forward. The change is on main, but it has not produced a new image.",
+        "sections": [
+          {
+            "heading": "One command, one unambiguous next target",
+            "text": "At the documented initial baseline, CAL-01 calls for a single 1152×1408 Sepulcher Gardens environment underlay. Its successor, CAL-02, is a 160×96 memorial slab, but only after the first source is individually approved. Later sets can contain two distinct images where style and geometry permit."
+          },
+          {
+            "heading": "The queue cannot outrun review",
+            "text": "The selection rule checks real approved-source hashes, review receipts and asset intake before relying on a stored checkpoint. If an image is already generated but awaits approval, the next command returns to that review instead of skipping ahead or generating a duplicate."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A conversational instruction becomes deterministic production",
+            "explanation": "The manifest now binds a common request to exact image identities, sizes and prompts, reducing ambiguity between a planning batch and an actual generation action."
+          },
+          {
+            "title": "The approval gate is the real cursor",
+            "explanation": "Progress depends on individually verified human decisions, not on whether a manifest field says 'next'. This protects against duplicate generation and falsely completed art states."
+          }
+        ],
+        "takeaway": "The next-art command is specified and ordered, but source generation, approval and runtime integration remain separate unverified milestones.",
+        "next_watch": "Watch for a recoverable CAL-01 candidate and explicit individual human approval, with a source hash or receipt."
+      },
+      "details": {
+        "overview": "Commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 modifies only three design/manifest documents. Its ordered generation_sets excludes duplicate calibration states and optional states from automatic dispatch. No generated source or approval evidence was provided by this commit.",
+        "ledger": [
+          {
+            "stage": "Ordered generation-set manifest",
+            "status": "verified landed",
+            "evidence": "Commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5 adds generation_sets and selection contract."
+          },
+          {
+            "stage": "CAL-01 source generation",
+            "status": "unknown",
+            "evidence": "No source image or receipt inspected."
+          },
+          {
+            "stage": "Human source approval",
+            "status": "unknown",
+            "evidence": "No independent individual approval inspected."
+          },
+          {
+            "stage": "Asset V2 ingestion",
+            "status": "unknown",
+            "evidence": "No runtime job or scene evidence inspected."
+          }
+        ],
+        "notes": [
+          "The first five calibration states are single-image sets.",
+          "The 12 optional states require separate authorization."
+        ],
+        "unknowns": [
+          "Live Dropbox and host-side receipts unavailable.",
+          "Canonical dispatcher audit unavailable; packet totals cannot be established."
+        ],
+        "actions": [
+          "Art owner: reconcile source receipts, then produce or present CAL-01 for review."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ordered art dispatch documented; first source review next",
+        "as_of": "2026-11-01T04:30:32Z",
+        "scope": "Hub/Sepulcher/Awakening generation-set plan only, not active dispatcher queue",
+        "metrics": [
+          {
+            "id": "other-planned-core-states",
+            "label": "PLANNED CORE STATES",
+            "value": 71,
+            "verification": "verified",
+            "basis": "Manifest inventory, not generated or approved count",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish art manifest",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 2d5240f0."
+          },
+          {
+            "label": "Publish generation protocol",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 91f44c89."
+          },
+          {
+            "label": "Define ordered next-set dispatch",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5."
+          },
+          {
+            "label": "Generate or recover CAL-01",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No image receipt inspected."
+          },
+          {
+            "label": "Individually approve CAL-01",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Human decision not inspected."
+          },
+          {
+            "label": "Continue calibration and intake",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Dependent on source approvals."
+          }
+        ],
+        "next_gate": "Art owner reconciles any existing CAL-01 source, then presents it or generates one for individual approval."
+      },
+      "related": [
+        {
+          "title": "CUSTODIAN sets image-by-image approval rules before its large environment art push",
+          "context": "The new deterministic command implements the earlier individual-approval production protocol.",
+          "story_id": "art-generation-protocol-91f44c89"
+        }
+      ]
+    },
     {
       "id": "art-generation-protocol-91f44c89",
       "headline": "CUSTODIAN sets image-by-image approval rules before its large environment art push",
@@ -1643,137 +1786,24 @@
         "next_gate": "Existing paired-review owner must independently inspect the landed validator and produce a canonical disposition."
       },
       "related": []
-    },
-    {
-      "id": "godot-cache-review-handoff-24af9282",
-      "headline": "Godot cache-access review remains held after a forensic handoff",
-      "summary": "A new handoff preserves the exact identity and unresolved state of an older Godot cache-access review. It records that the historical claim process was absent during a local check, but does not establish safe recovery, accepted review, lock release or teardown.",
-      "body": "Commit 24af9282 adds a forensic handoff for review-agent-paired-review-godot-cache-access-v1 and links it from the owner-review exception packet. The document preserves review run 20261017T013413Z-37dda1696980, claim run 20261017T013417Z-606d463e77a1 and branch identity. Its explicit status is unresolved post_exit_recovery. Historical host observations do not prove present host state; no recovery was authorized or performed.",
-      "severity": "brief",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-paired-review-godot-cache-access-v1",
-      "occurred_at": "2026-10-31T09:38:39Z",
-      "bullets": [
-        "Forensic handoff landed on main.",
-        "Preserved review remains unresolved in post-exit recovery.",
-        "No independent acceptance, lock release or teardown is established."
-      ],
-      "links": [
-        {
-          "title": "Forensic recovery handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/24af92820954e9cacea4b0a6dac18b6740478190"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "An older Godot cache-access review now has a durable forensic handoff, but no resolution. The new record preserves which review and claim must be investigated without treating a missing process as permission to release ownership or accept the work.",
-        "sections": [
-          {
-            "heading": "What the handoff actually changes",
-            "text": "It records the original review identity, preserved branch and historical claim trace. The document explicitly says the review remains in post-exit recovery and that future action must recheck current references, claims and host state."
-          },
-          {
-            "heading": "Why that distinction matters",
-            "text": "A process being absent during one host check does not prove that a review passed, a lock is safe to release or a worktree has been cleaned up. The handoff keeps those decisions separate from the historical evidence."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Preserving identity prevents accidental recovery of the wrong run",
-            "explanation": "Exact historical run and branch identifiers narrow future forensic work without authorizing it."
-          }
-        ],
-        "takeaway": "The record is better documented, but the review is still unresolved.",
-        "next_watch": "A separately authorized, evidence-backed recovery decision after fresh host and claim inspection."
-      },
-      "details": {
-        "overview": "Commit 24af9282 adds RECOVERY_HANDOFF_GODOT_CACHE_ACCESS_REVIEW_20261031.md and references it from OWNER_REVIEW_EXCEPTION_LANE_V1.md. The handoff explicitly preserves unresolved post_exit_recovery.",
-        "ledger": [
-          {
-            "stage": "Forensic handoff",
-            "status": "verified landed",
-            "evidence": "24af9282"
-          },
-          {
-            "stage": "Independent acceptance",
-            "status": "unknown/unresolved",
-            "evidence": "Handoff does not include accepted PASS"
-          },
-          {
-            "stage": "Recovery and teardown",
-            "status": "not established",
-            "evidence": "Handoff explicitly does not release lock or complete review"
-          }
-        ],
-        "notes": [
-          "Historical process absence is not current liveness proof."
-        ],
-        "unknowns": [
-          "Current host claim, lock, process, worktree and disk state."
-        ],
-        "actions": [
-          "Authorized recovery owner: refresh host and claim evidence before deciding whether recovery is safe."
-        ]
-      },
-      "scorecard": {
-        "stage": "Preserved review unresolved",
-        "as_of": "2026-10-31T09:38:39Z",
-        "scope": "Godot cache-access review handoff only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Record immutable review identity",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "24af9282 handoff"
-          },
-          {
-            "label": "Refresh live claim and host evidence",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Historical checks cannot establish current state"
-          },
-          {
-            "label": "Authorized recovery decision",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Requires fresh evidence and authorization"
-          },
-          {
-            "label": "Independent review disposition",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No accepted PASS"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No trustworthy current proof"
-          }
-        ],
-        "next_gate": "Authorized recovery owner must inspect fresh host and claim evidence before acting."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T04:09:12Z",
-    "source_main_sha": "91f44c89e9a5bf9b269619d513777a403cc6530e",
+    "observed_at": "2026-11-01T04:30:32Z",
+    "source_main_sha": "5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5",
     "coverage": "partial",
-    "scope": "Four main commits since prior feed, named archive correction and art protocol; no canonical live dispatcher audit.",
+    "scope": "One inspected new main commit and its three changed design files; no canonical dispatcher audit",
     "metrics": [
       {
         "id": "other-art-core-states",
-        "label": "PLANNED CORE ART STATES",
+        "label": "PLANNED CORE STATES",
         "value": 71,
         "verification": "verified",
-        "basis": "Committed V1 art manifest; planned states only, not generated assets.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
+        "basis": "Committed Hub/Sepulcher/Awakening manifest inventory, not completed images or active packets",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/5ee4a63d1bfcabdd53d27ba2f1ad3f4f231663a5"
       }
     ],
-    "focus": "Independent review of corrected RC-119 maintenance head; separately, first art calibration approval.",
-    "note": "No verified project-wide queue counts or host telemetry; protected review acceptance and teardown unknown."
+    "focus": "Verify or generate CAL-01 source and obtain individual human approval",
+    "note": "No dispatcher, host, Dropbox or runtime state verified; no project-wide packet totals."
   }
 }
