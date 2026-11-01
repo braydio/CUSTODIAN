@@ -5,8 +5,8 @@
 - Category: `agent-ops`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `agent-sepulcher-v2-host-validation-recovery-v1`
 - Locks: `sepulcher-v2-host-validation-recovery`

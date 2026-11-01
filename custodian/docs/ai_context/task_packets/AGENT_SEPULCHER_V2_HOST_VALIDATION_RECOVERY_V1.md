@@ -4,8 +4,8 @@
 - Workstream: `agent-sepulcher-v2-host-validation-recovery-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-canonical-operator-floor-v2-preview-v1`
 - Locks: `sepulcher-v2-host-validation-recovery`
