@@ -51,7 +51,7 @@ Review that emitted plan and its hashes before any separately authorized apply. 
 ## Closeout Status
 
 - Correction implementation commit: `de43568f51125fe49bc5ca3915b3f348ad3d35a3` (source); final smoke fault and packet updates are in later branch commits.
-- Latest branch checkpoint: `bfc7ad394818eae9b48598085dd56dba3ea6981c`, verified at `origin/agent/agent-sepulcher-v2-host-validation-recovery-v1`.
+- Latest branch checkpoint: `287be4a8356fe487915537e17a19d3b658b997b3`, verified at `origin/agent/agent-sepulcher-v2-host-validation-recovery-v1`.
 - Main landing: blocked. `workstream.py finish` rejected the synchronized merge because it lacks a unique exact pre-sync checkpoint witness. No branch rewriting, fabricated trace event, or manual landing was attempted.
 - Independent recovery review: dependency-gated and not claimed.
 - Next supported action: resolve the missing lifecycle witness through a separately authorized repository workflow correction or recovery; then finish this same workstream, claim `review-agent-sepulcher-v2-host-validation-recovery-v1` in its fresh context, and only afterward plan the preserved original V2 run disposition.
