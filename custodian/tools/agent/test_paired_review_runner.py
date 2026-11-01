@@ -5959,6 +5959,17 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                            "host": "test-host",
                            "run_id": run_id, "workstream": workstream, "packet": active,
                            "event": name, "data": data})
+        def emit_after_sync_validation(sync_head, sync_main_sha):
+            emit("validation_after_sync", {
+                "path": "validation.json",
+                "sha256": hashlib.sha256(f"green-report:{sync_head}".encode()).hexdigest(),
+                "passed": True,
+                "sync_head": sync_head,
+                "sync_main_sha": sync_main_sha,
+                "source_commit": sync_head,
+                "source_tree": git("rev-parse", f"{sync_head}^{{tree}}"),
+                "source_status_sha256": hashlib.sha256(b"").hexdigest(),
+            })
         emit("remote_claim_acquired", {"claim_oid": claim_oid, "main_sha": source_base,
              "local_ref": f"refs/custodian/claims/{workstream}/{run_id}",
              "remote_ref": f"refs/heads/dispatch-claims/{workstream}"})
@@ -5982,6 +5993,9 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 else:
                     emit("main_sync", {"changed": True, "head": merge_commit,
                                        "main_sha": merge_second})
+                    if not (variant.endswith("missing-first-after-sync") and index == 0
+                            or variant.endswith("missing-second-after-sync") and index == 1):
+                        emit_after_sync_validation(merge_commit, merge_second)
             # The last no-op at the final landing tip binds the latest main
             # head, as specified by the existing lifecycle contract.
         else:
@@ -5999,6 +6013,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                     if variant == "interior-main-sync-mismatched-head":
                         changed["head"] = first_parent
                     emit("main_sync", changed)
+                    emit_after_sync_validation(merge, trace_second_parent)
                 if variant == "interior-main-sync-duplicate-changed":
                     emit("main_sync", {"changed": True, "head": merge, "main_sha": trace_second_parent})
             if variant == "interior-main-sync-conflicting-resume":
@@ -7437,6 +7452,21 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             extra_events=rendered,
         )
 
+    def _replace_checkpoint_trace_events(self, fixture, events):
+        repository = fixture["repo"]
+        trace_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
+                     "20261020T120000Z-abcdef123456")
+        raw = ("\n".join(json.dumps(event, sort_keys=True) for event in events) + "\n").encode()
+        blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repository,
+                              input=raw, check=True, capture_output=True).stdout.decode().strip()
+        tree = subprocess.run(["git", "mktree"], cwd=repository,
+                              input=f"100644 blob {blob}\ttrace.jsonl\n", text=True,
+                              check=True, capture_output=True).stdout.strip()
+        commit = subprocess.run(["git", "commit-tree", tree, "-m", "mutated trace"],
+                                cwd=repository, text=True, check=True,
+                                capture_output=True).stdout.strip()
+        subprocess.run(["git", "update-ref", trace_ref, commit], cwd=repository, check=True)
+
     def _managed_readme(self, prefix, entries, suffix):
         return (prefix + host_validation.MANAGED_BLOCK_START.encode() + b"\n"
                 + b"\n".join(entries) + b"\n"
@@ -7964,6 +7994,112 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(provenance["trace_landing_commit"], reviewed_main)
         self.assertEqual(provenance["trace_main_sync_sha"],
                          "623dd45ddf35f9c88460386ac047db3e9c1f8d52")
+
+    def test_split_landing_rejects_changed_sync_merge_without_after_sync_validation_witness(self):
+        fixture = self._build_checkpoint_resume_fixture(
+            variant="multiple-main-sync-missing-first-after-sync",
+        )
+
+        with self.assertRaisesRegex(
+            host_validation.HostValidationError, "after-sync validation witness",
+        ):
+            host_validation.resolve_validation_source_span(
+                fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                fixture["workstream"], fixture["archive"],
+            )
+
+    def test_split_landing_accepts_unique_green_after_sync_witnesses_for_each_changed_merge(self):
+        fixture = self._build_checkpoint_resume_fixture(variant="multiple-main-sync")
+        span = host_validation.resolve_validation_source_span(
+            fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+            fixture["workstream"], fixture["archive"],
+        )
+        merges = span["provenance"]["synchronization_merges"]
+        self.assertEqual(len(merges), 2)
+        for merge in merges:
+            evidence = merge["after_sync_validation"]
+            self.assertEqual(evidence["sync_head"], merge["commit"])
+            self.assertEqual(evidence["source_tree"], merge["tree"])
+            self.assertEqual(evidence["report_content_verified"], False)
+            self.assertEqual(evidence["report_digest_provenance"],
+                             "immutable-lifecycle-trace-only")
+            self.assertRegex(evidence["report_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_split_landing_rejects_adversarial_after_sync_validation_witnesses(self):
+        mutations = (
+            ("duplicate", "unique after-sync validation witness",
+             lambda events, witness_indices, sync_indices: events.insert(
+                 witness_indices[0] + 1, copy.deepcopy(events[witness_indices[0]]))),
+            ("stale-sync-head", "unique after-sync validation witness",
+             lambda events, witness_indices, sync_indices: events[witness_indices[1]]["data"].update(
+                 sync_head="f" * 40)),
+            ("malformed-report-digest", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 sha256="not-a-digest")),
+            ("malformed-report-path", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 path="../validation.json")),
+            ("false-result", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 passed=False)),
+            ("wrong-source-commit", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 source_commit="f" * 40)),
+            ("wrong-source-tree", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 source_tree="f" * 40)),
+            ("wrong-source-status", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 source_status_sha256="f" * 64)),
+            ("wrong-main-parent", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events[witness_indices[0]]["data"].update(
+                 sync_main_sha="f" * 40)),
+            ("misordered", "invalid or misordered after-sync",
+             lambda events, witness_indices, sync_indices: events.insert(
+                 sync_indices[1], events.pop(witness_indices[1]))),
+            ("reused", "unique after-sync validation witness",
+             lambda events, witness_indices, sync_indices: events[witness_indices[1]]["data"].update(
+                 sync_head=events[witness_indices[0]]["data"]["sync_head"])),
+        )
+        for label, error, mutate in mutations:
+            with self.subTest(witness=label):
+                fixture = self._build_checkpoint_resume_fixture(
+                    variant=f"multiple-main-sync-adversarial-{label}",
+                )
+                trace_ref = (f"refs/remotes/origin/agent-diagnostics/{fixture['workstream']}/"
+                             "20261020T120000Z-abcdef123456")
+                raw = subprocess.run(["git", "show", f"{trace_ref}:trace.jsonl"],
+                                     cwd=fixture["repo"], check=True,
+                                     capture_output=True).stdout
+                events = [json.loads(line) for line in raw.splitlines()]
+                witness_indices = [index for index, event in enumerate(events)
+                                   if event["event"] == "validation_after_sync"]
+                sync_indices = [index for index, event in enumerate(events)
+                                if event["event"] == "main_sync"
+                                and event["data"].get("changed") is True]
+                self.assertEqual(len(witness_indices), 2)
+                self.assertEqual(len(sync_indices), 2)
+                mutate(events, witness_indices, sync_indices)
+                self._replace_checkpoint_trace_events(fixture, events)
+                with self.assertRaisesRegex(host_validation.HostValidationError, error):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
+
+    def test_multi_main_sync_requires_a_distinct_witness_for_each_advancement(self):
+        for missing in ("first", "second"):
+            with self.subTest(missing=missing):
+                fixture = self._build_checkpoint_resume_fixture(
+                    variant=f"multiple-main-sync-missing-{missing}-after-sync",
+                )
+                with self.assertRaisesRegex(
+                    host_validation.HostValidationError, "unique after-sync validation witness",
+                ):
+                    host_validation.resolve_validation_source_span(
+                        fixture["repo"], fixture["reviewed_main"], fixture["landing"],
+                        fixture["workstream"], fixture["archive"],
+                    )
 
     def test_split_landing_accepts_only_verified_main_sync_merge(self):
         fixture = self._build_main_sync_landing()
