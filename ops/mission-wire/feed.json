@@ -1,9 +1,204 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T18:53:24Z",
-  "source_main_sha": "8bc0fe40184dec741ccc5a92997052f96e0deb43",
+  "generated_at": "2026-11-01T19:20:04Z",
+  "source_main_sha": "0e5da248e93f0395f084f0abb7feba8285132bc0",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "wire-review-source-attestation-pair-ready-0e5da248",
+      "headline": "WIRE review recovery gets an exact attestation workstream, but queue validation fails",
+      "summary": "A narrowly scoped implementation and independent-review pair now exists to authenticate WIRE exporter's preserved review source. Automatic handoff promoted both packets, but repository queue-authority validation and a subsequent handoff run failed. No attestation implementation, independent PASS, or transport delivery is established.",
+      "body": "A new exact-source-attestation implementation/review pair was authored at 834341ab and promoted at 0e5da248. It targets the preserved exporter-review host-validation refusal, binding the proposed exception to specific source and manifest blobs, archived packet identity, reviewed main, and review run. The correction must remain inert until its own independent review is accepted.\n\nGitHub Actions show Automatic Packet Authoring Handoff succeeded for the authored pair, but Validate Repository failed at the queue-authority gate. A subsequent handoff run on the promotion commit also failed its 'Validate and publish explicitly authorized pairs' step. These are separate failures and cannot be assumed to have the same cause. Promotion on main is not proof that the live dispatcher considers either packet claimable.\n\nThe original exporter remains landed and its preserved review is not accepted. The transport implementation/review pair remains dependency-gated; no private Dropbox observation or ChatGPT consumer readback is verified. Host worktree, lock, process and disk status were not freshly inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-wire-export-review-source-attestation-v1",
+      "occurred_at": "2026-11-01T19:07:30Z",
+      "bullets": [
+        "Exact-source-attestation implementation/review pair authored and promoted on main.",
+        "New correction is designed to remain inert until its own genuine independent PASS.",
+        "Repository queue-authority validation failed on authoring commit.",
+        "Subsequent automatic handoff failed on promotion commit; eligibility is not established.",
+        "Exporter review and dependent private transport remain blocked."
+      ],
+      "links": [
+        {
+          "title": "Attestation pair authored",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/834341ab84edbc9dc397e2e35164cb0131e0c538"
+        },
+        {
+          "title": "Attestation pair promoted",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
+        },
+        {
+          "title": "Repository validation failed",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41340067654"
+        },
+        {
+          "title": "Later automatic handoff failed",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41340432927"
+        },
+        {
+          "title": "Attestation implementation packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/0e5da248e93f0395f084f0abb7feba8285132bc0/custodian/docs/ai_context/task_packets/AGENT_WIRE_EXPORT_REVIEW_SOURCE_ATTESTATION_V1.md"
+        },
+        {
+          "title": "Attestation review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/0e5da248e93f0395f084f0abb7feba8285132bc0/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WIRE_EXPORT_REVIEW_SOURCE_ATTESTATION_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has published a targeted recovery path for WIRE's stalled independent review. The new workstream aims to prove exactly which exporter source and validation-manifest change the reviewer may trust. Its packet handoff advanced, but two CI checks failed, so this is authorization groundwork, not a recovered review.",
+        "sections": [
+          {
+            "heading": "A recovery bound to one source",
+            "text": "The new packet specifies exact implementation, archive, merge, manifest and preserved-review identities. Its proposed attestation cannot activate merely because code lands: it must pass its own independent review. That narrow scope is intended to unblock the original exporter review without weakening unrelated review safeguards."
+          },
+          {
+            "heading": "Promotion does not erase failed checks",
+            "text": "The authoring handoff succeeded and promoted both packets to ready/auto in repository text. However, repository validation failed the queue-authority step, and a later automatic handoff failed on the promoted commit. Their precise causes require investigation; neither failure proves the attestation logic itself is defective."
+          },
+          {
+            "heading": "The operational WIRE remains offline",
+            "text": "The exporter is landed, but its independent review has no accepted verdict. The private transport is still dependency-gated. Until review acceptance, transport implementation, and verified private retrieval occur, WIRE cannot present live dispatcher measurements."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The missing evidence now has an explicit owner",
+            "explanation": "Rather than bypassing the host gate or rewriting the exporter, the new workstream makes the exact source-attestation exception independently testable and reviewable. This is a more controlled route to releasing the existing preserved review."
+          },
+          {
+            "title": "Queue authority is a separate gate",
+            "explanation": "A packet can appear as ready/auto in GitHub while CI rejects its queue authority. The failed validation and subsequent handoff must be reconciled before interpreting the pair as executable."
+          }
+        ],
+        "takeaway": "A concrete recovery pair is published, but the original exporter review remains blocked and the new pair's queue validity is not established.",
+        "next_watch": "Watch for the queue-authority and handoff failures to be resolved, followed by an actual attestation implementation and independently accepted PASS."
+      },
+      "scorecard": {
+        "stage": "Attestation recovery packets promoted; queue validation failing",
+        "as_of": "2026-11-01T19:20:04Z",
+        "scope": "The named WIRE exporter-review attestation pair and its immediate dependencies, not the full dispatcher",
+        "metrics": [
+          {
+            "id": "other-attestation-packets",
+            "label": "ATTESTATION PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly the implementation and paired-review packet files in promotion commit 0e5da248; not a project-wide count.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Exporter implementation landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5013c8404 implementation; 38545e4c landing."
+          },
+          {
+            "label": "Attestation packet pair authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "834341ab added implementation and review packets."
+          },
+          {
+            "label": "Packet promotion recorded",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "0e5da248 changes both to ready/auto in repository."
+          },
+          {
+            "label": "Queue authority verified",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Validate Repository 41340067654 failed queue-authority; handoff 41340432927 subsequently failed."
+          },
+          {
+            "label": "Attestation implementation and independent PASS",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landed correction or accepted independent review established."
+          },
+          {
+            "label": "Original exporter independent review",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Preserved host-validation refusal; no reviewer verdict."
+          },
+          {
+            "label": "Transport implementation and acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Dependent on exporter independent acceptance; no delivery evidence."
+          }
+        ],
+        "next_gate": "Authorized packet/CI owner must reconcile the exact queue-authority and handoff failures before dispatcher-confirmed attestation claim."
+      },
+      "details": {
+        "overview": "The attestation packet explicitly binds the exporter source commit, archive, reviewed main, manifest before/after blobs, and preserved review identity. GitHub verifies the packet publication and CI outcomes, not host claim eligibility or reviewer activity.",
+        "ledger": [
+          {
+            "stage": "Exporter implementation",
+            "status": "verified landed",
+            "evidence": "5013c8404 source; 38545e4c landing."
+          },
+          {
+            "stage": "Original exporter independent review",
+            "status": "reported blocked",
+            "evidence": "Preserved run 20261101T181049Z-ec613c8a7c18, no accepted verdict."
+          },
+          {
+            "stage": "Attestation authoring",
+            "status": "verified",
+            "evidence": "834341ab authored two draft packets."
+          },
+          {
+            "stage": "Attestation promotion",
+            "status": "verified repository state",
+            "evidence": "0e5da248 marks both ready/auto; no host claim verified."
+          },
+          {
+            "stage": "Repository validation",
+            "status": "verified failure",
+            "evidence": "41340067654 failed Validate task packet queue authority."
+          },
+          {
+            "stage": "Automatic handoff",
+            "status": "verified failure",
+            "evidence": "41340432927 failed Validate and publish explicitly authorized pairs."
+          },
+          {
+            "stage": "Transport",
+            "status": "verified dependency pending",
+            "evidence": "Previously published transport pair depends on original exporter review acceptance."
+          }
+        ],
+        "notes": [
+          "No open pull requests returned by the current GitHub API query.",
+          "Earlier Godot Level Pipeline failure at exporter landing SHA is separate and not shown to be caused by WIRE."
+        ],
+        "unknowns": [
+          "Exact root cause of each CI failure; job-step conclusions alone do not expose detailed logs.",
+          "Live canonical dispatcher eligibility and current host claim/worktree/lock/disk status.",
+          "Independent PASS and private observation delivery remain absent."
+        ],
+        "actions": [
+          "Packet/CI owner: inspect both failed workflow logs and reconcile queue authority without bypass.",
+          "Authorized executor: claim correction only after dispatcher confirms eligibility.",
+          "Independent reviewer: accept correction only on genuine evidence before original review recovery."
+        ]
+      },
+      "related": [
+        {
+          "title": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
+          "context": "The new attestation pair directly addresses the preserved review blocker described in this earlier report.",
+          "story_id": "wire-exporter-landed-review-attestation-blocked-38545e4c"
+        }
+      ]
+    },
     {
       "id": "wire-exporter-landed-review-attestation-blocked-38545e4c",
       "headline": "WIRE's observation exporter lands; independent review stalls at an attestation gate",
@@ -1363,13 +1558,7 @@
           "Dispatcher owner: verify prerequisite and dispatch correction when eligible; independent reviewer: assess after implementation landing."
         ]
       },
-      "related": [
-        {
-          "title": "Independent review finds a provenance loophole",
-          "context": "Earlier R0-01 review led to the first correction; this is its subsequent review finding.",
-          "story_id": "validator-recertification-findings-correction-ca0d2895"
-        }
-      ]
+      "related": []
     },
     {
       "id": "sepulcher-dropbox-preview-handoff-e4781dbe",
@@ -1498,119 +1687,24 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "worktree-turn-retirement-policy-be250ef7",
-      "headline": "CUSTODIAN adopts a safer end-of-turn rule for temporary developer checkouts",
-      "summary": "A new repository policy requires every Codex turn to inventory its worktrees and either safely retire a disposable checkout or record why it must remain. It explicitly protects ignored files, live claims, private proof and uncertain owners. This is a policy landing, not evidence that any worktrees were removed.",
-      "body": "The new AGENTS and lifecycle documentation require branch SHA verification, tracked/untracked/ignored inventory, and use of supported finish or checkpoint commands when safe. The rule seeks to reduce accumulating temporary checkouts without sacrificing unique evidence or protected reviews. No current host worktree counts, disk measurements, or actual cleanup were inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "",
-      "occurred_at": "2026-11-01T10:04:59Z",
-      "bullets": [
-        "Turn-end worktree retention must now be justified by inspected evidence.",
-        "No actual checkout retirement or disk recovery is established by the policy commit."
-      ],
-      "links": [
-        {
-          "title": "Turn-end worktree preservation policy",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/be250ef78f97524577796d2bdd1af44e376b93c2"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN has changed the default treatment of temporary development checkouts. Instead of letting each Codex session leave a worktree behind indefinitely, the new rule requires a safe retirement decision at every handoff.",
-        "sections": [
-          {
-            "heading": "Cleanup must not destroy evidence",
-            "text": "A remote Git branch preserves committed tracked files, not ignored artwork, local caches, private captures or untracked proof. The new instructions require an inventory and exact remote SHA verification before a checkout can be removed."
-          },
-          {
-            "heading": "A policy is not a cleanup report",
-            "text": "Finished work should use the canonical finish lifecycle; safely parked work can use checkpoint-and-remove. Protected reviews, unknown owners, dirty files and manual experiments must be retained when their safety cannot be proven. No host-level cleanup is verified by this documentation change."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck is safe retirement, not deletion",
-            "explanation": "The policy addresses storage growth without treating missing branches or absent worktrees as proof of successful closeout. Durable evidence and lifecycle state remain separate."
-          }
-        ],
-        "takeaway": "A safer checkout-retirement rule is now documented, but actual worktree counts and disk recovery still require host evidence.",
-        "next_watch": "Look for an exact host inventory showing created, retired, retained and total worktrees with verified remote SHAs."
-      },
-      "scorecard": {
-        "stage": "Policy landed; operational effect unknown",
-        "as_of": "2026-11-01T10:23:33.224Z",
-        "scope": "Repository turn-end worktree policy, not host inventory",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Retirement and preservation policy committed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "be250ef7"
-          },
-          {
-            "label": "Live host inventory collected",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host unavailable"
-          },
-          {
-            "label": "Eligible checkouts safely retired",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No canonical teardown evidence"
-          }
-        ],
-        "next_gate": "Host executor applies the new inventory and checkpoint/finish checks on its next authorized turn."
-      },
-      "details": {
-        "overview": "This is documentation-only policy affecting AGENTS.md and lifecycle guidance, not proof of a running reaper or executed cleanup.",
-        "ledger": [
-          {
-            "stage": "Policy landing",
-            "status": "verified",
-            "evidence": "be250ef7"
-          },
-          {
-            "stage": "Host execution",
-            "status": "unknown",
-            "evidence": "No worktree/disk audit"
-          }
-        ],
-        "notes": [
-          "Manual branches and protected reviews are excluded from automatic cleanup."
-        ],
-        "unknowns": [
-          "Retained/retired worktree counts, disk savings, live ownership"
-        ],
-        "actions": [
-          "Next authorized host executor: report inventory and safe retention/retirement decisions."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T18:53:24Z",
-    "source_main_sha": "8bc0fe40184dec741ccc5a92997052f96e0deb43",
+    "observed_at": "2026-11-01T19:20:04Z",
+    "source_main_sha": "0e5da248e93f0395f084f0abb7feba8285132bc0",
     "coverage": "partial",
-    "scope": "Current main and selected named WIRE exporter/review/transport packets, recent main commits and GitHub Actions; no live canonical full dispatcher audit or host inspection.",
+    "scope": "Named WIRE exporter/review, attestation and transport packets on GitHub main plus recent GitHub Actions; no canonical full dispatcher audit or current host inspection.",
     "metrics": [
       {
-        "id": "other-wire-transport-packets",
-        "label": "TRANSPORT PAIR PROMOTED",
+        "id": "other-attestation-packets",
+        "label": "ATTESTATION PAIR",
         "value": 2,
         "verification": "verified",
-        "basis": "Named transport implementation and review packet pair on main at 8bc0fe401; not a project-wide ready or eligible total.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/8bc0fe40184dec741ccc5a92997052f96e0deb43"
+        "basis": "Two named packet files promoted in 0e5da248; not a project-wide queue or claimability count.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
       }
     ],
-    "focus": "Resolve the exporter independent-review source-attestation blocker through an authorized supported recovery path.",
-    "note": "Exporter landed; review blocked before reviewer launch. Transport is dependency-gated. Host counts are relay-reported, not current. Repository queue-authority CI failed on transport authoring commit."
+    "focus": "Reconcile the new attestation pair's failed queue-authority validation and automatic handoff before a canonical claim.",
+    "note": "Original exporter landed, review blocked. Attestation pair promoted in repository but CI failed. Transport remains dependency-gated; host telemetry unavailable."
   }
 }
