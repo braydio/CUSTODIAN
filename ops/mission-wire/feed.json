@@ -1,9 +1,164 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T16:59:29Z",
-  "source_main_sha": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
+  "generated_at": "2026-11-01T18:02:46Z",
+  "source_main_sha": "1784cbe67eeb06d49d9202e66969e46ca98c15cd",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-v2-host-validation-recovery-withdrawn-1784cbe6",
+      "headline": "Sepulcher's second recovery queue is withdrawn, leaving its held review unresolved",
+      "summary": "A second Sepulcher V2 recovery packet pair has been removed from main after its owner withdrew it. The branch's original source and historical corrections were preserved in the archive record. Repository validation passed, but the original independent review remains unresolved and host-local cleanup is unverified.",
+      "body": "A separate Sepulcher V2 host-validation recovery proposal was administratively withdrawn on November 1. The change removes its implementation and paired-review packets from the active queue and reconciles the indexes, while preserving the original branch head and correction evidence in the branch archive. This is distinct from the earlier source-salvage packet rollback. It does not fix the reported spawn/reset smoke failure or authenticate the original held review. The repository validation for this commit passed. Next, the responsible owner should reconcile the preserved held-review evidence and select a bounded authorized recovery path; host-local worktree and lock disposition remain unknown.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-sepulcher-v2-host-validation-recovery-v1",
+      "occurred_at": "2026-11-01T17:47:32Z",
+      "bullets": [
+        "A separate Sepulcher V2 host-validation implementation/review pair was removed from the active packet queue.",
+        "Original branch and correction evidence remain documented in the archive.",
+        "No independent review PASS or host teardown is established.",
+        "Next: owner must reconcile held-review evidence before authorizing replacement recovery."
+      ],
+      "links": [
+        {
+          "title": "Withdrawal and archive evidence",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/1784cbe67eeb06d49d9202e66969e46ca98c15cd"
+        },
+        {
+          "title": "Passing repository validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41333688165"
+        },
+        {
+          "title": "Previous salvage withdrawal",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher's attempt to repair a blocked validation and review path has lost another proposed recovery queue. The owner withdrew the host-validation implementation and review packets, but preserved their historical branch evidence. That keeps the evidence intact while leaving the original review unresolved.",
+        "sections": [
+          {
+            "heading": "A second withdrawal, not a gameplay rollback",
+            "text": "The latest commit removes a different recovery pair from the source-salvage proposal withdrawn earlier. This one targeted a reported spawn/reset test regression and a possible failed-report authentication issue. The commit changes task packets, indexes and the branch archive, not the playable scene."
+          },
+          {
+            "heading": "Evidence preserved; acceptance still open",
+            "text": "The branch archive records the original recovery head and historical corrections. It explicitly does not assert an independent review PASS. The latest repository validation passed, but that checks the withdrawal commit, not the unresolved gameplay smoke or held-review acceptance."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Removing a queue item does not close its underlying obligation",
+            "explanation": "The packet removal reduces the active administrative surface without demonstrating that the failed validation or held-review evidence was resolved. Any future recovery must begin from the preserved evidence rather than interpreting the clean queue as a clean review."
+          },
+          {
+            "title": "The archive is now the continuity point",
+            "explanation": "By preserving the branch head and historical corrections, the project retains a bounded reference for a future recovery decision. Local worktree and lock cleanup still require host evidence."
+          }
+        ],
+        "takeaway": "The second Sepulcher recovery proposal is withdrawn, with source history preserved but the original review still unresolved.",
+        "next_watch": "Look for a documented owner decision on the held review, a targeted verified correction, and independently evidenced acceptance or teardown."
+      },
+      "details": {
+        "overview": "Commit 1784cbe removes AGENT_SEPULCHER_V2_HOST_VALIDATION_RECOVERY_V1.md and its paired review, updates packet README and file index, and adds a branch archive row. This is separate from b245bfb's earlier source-salvage withdrawal. No gameplay source files were changed in this commit.",
+        "ledger": [
+          {
+            "stage": "Host-validation recovery packet publication",
+            "status": "verified previously present; now withdrawn",
+            "evidence": "Commit 1784cbe removes both active packet files and reconciles indexes."
+          },
+          {
+            "stage": "Original branch evidence",
+            "status": "verified archive entry",
+            "evidence": "BRANCH_ARCHIVE.md records head f48fe5f62e6f0b4c99c2437f459311c81c30ff3d and historical correction 332ecf8bd7fdb4a46bc931dc49071911213d3d04."
+          },
+          {
+            "stage": "Withdrawal repository validation",
+            "status": "verified passed",
+            "evidence": "GitHub Actions 41333688165 succeeded on 1784cbe."
+          },
+          {
+            "stage": "Independent review acceptance",
+            "status": "not verified",
+            "evidence": "Withdrawal explicitly does not assert original lifecycle PASS or independent acceptance."
+          },
+          {
+            "stage": "Canonical host cleanup",
+            "status": "unknown",
+            "evidence": "No direct host worktree, process, or lock evidence inspected."
+          }
+        ],
+        "notes": [
+          "Earlier b245bfb withdrew a different Sepulcher V2 source-salvage proposal.",
+          "The WIRE exporter implementation and review packet headers remain ready/auto on inspected main, but no exporter implementation landing was found."
+        ],
+        "unknowns": [
+          "Whether the original held review can be resumed without a new correction.",
+          "Current host-local worktree, process and lock disposition.",
+          "Project-wide dispatcher queue counts; no full live audit accessible."
+        ],
+        "actions": [
+          "Sepulcher recovery owner: reconcile preserved evidence and identify the narrowest authorized next gate.",
+          "Exporter executor: independently verify claim eligibility before any implementation claim."
+        ]
+      },
+      "related": [
+        {
+          "title": "Sepulcher recovery proposal withdrawn after authoring handoff fails",
+          "context": "Earlier withdrawal affected the separate source-salvage packet pair, not this host-validation recovery.",
+          "story_id": "sepulcher-v2-salvage-pair-withdrawn-b245bfb0"
+        }
+      ],
+      "scorecard": {
+        "stage": "Host-validation recovery proposal withdrawn; original held review unresolved",
+        "as_of": "2026-11-01T18:02:46Z",
+        "scope": "Only the named Sepulcher V2 host-validation recovery and its preserved review obligation, not the full project queue",
+        "metrics": [
+          {
+            "id": "other-withdrawn-pair-packets",
+            "label": "WITHDRAWN PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly the implementation and paired review files deleted in commit 1784cbe.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/1784cbe67eeb06d49d9202e66969e46ca98c15cd"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Recovery packet pair previously published",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Both files existed before 1784cbe and are shown in its deletion diff."
+          },
+          {
+            "label": "Owner withdrawal and index reconciliation",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "1784cbe deletes both packets and updates the indexes."
+          },
+          {
+            "label": "Original evidence preserved in archive",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "BRANCH_ARCHIVE.md entry in 1784cbe."
+          },
+          {
+            "label": "Original review acceptance",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Archive explicitly disclaims independent PASS; unresolved validation/review evidence."
+          },
+          {
+            "label": "Host-local teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No host-local worktree/lock evidence accessible."
+          }
+        ],
+        "next_gate": "Sepulcher recovery owner must reconcile the original held review and authorize a bounded recovery or disposition based on preserved evidence."
+      }
+    },
     {
       "id": "sepulcher-v2-salvage-pair-withdrawn-b245bfb0",
       "headline": "Sepulcher recovery proposal withdrawn after authoring handoff fails",
@@ -1142,13 +1297,7 @@
           "Executor: retrieve and hash-check source; artist/user: evaluate actual preview."
         ]
       },
-      "related": [
-        {
-          "title": "Sepulcher paving gets a native-resolution playable preview plan",
-          "context": "This publication supplies the missing source handoff for that previously documented plan.",
-          "story_id": "sepulcher-native-paving-quad-543bc5e2"
-        }
-      ]
+      "related": []
     },
     {
       "id": "worktree-turn-retirement-policy-be250ef7",
@@ -1378,139 +1527,24 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "sepulcher-native-paving-quad-543bc5e2",
-      "headline": "Sepulcher paving gets a native-resolution playable preview plan, but the source has not reached Codex",
-      "summary": "The Sepulcher pilot now specifies four exact 512-pixel crops from its 1254-pixel source and a three-mode comparison using the real Operator and camera. The document explicitly says the source master is not known to be on the Codex host, so this is an implementation brief, not a completed playable preview or approved art.",
-      "body": "The new brief pins the original source hash and exact crop coordinates, forbids substitution, and defines a neutral-versus-native-quad-versus-repeated-tile diagnostic. It remains blocked on staging verified original bytes. The existing paving source is unapproved and the preview does not demonstrate seamless repetition.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "sepulcher-paving-native-quad-playtest-v1",
-      "occurred_at": "2026-11-01T09:10:31Z",
-      "bullets": [
-        "The preview design is specified, but the source transfer, playable build and art approval remain outstanding.",
-        "Watch for hash-verified source staging, a real Operator scene capture and an explicit source approval decision."
-      ],
-      "links": [
-        {
-          "title": "Native quad preview brief",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/543bc5e23cfb969045ada655220917b0c6d50a1f"
-        },
-        {
-          "title": "Prior paving repeatability review",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher Gardens has a more exact way to test its first paving image in-game. The new brief replaces arbitrary resizing with four fixed native-resolution crops and asks for a comparison inside a scene using the actual Operator and camera.",
-        "sections": [
-          {
-            "heading": "A test designed to expose, not conceal, repetition",
-            "text": "The proposed three views distinguish a neutral blockout, a native four-crop mosaic, and a repeated northwest crop. That should reveal how the original texture reads at gameplay scale without claiming it already tiles seamlessly."
-          },
-          {
-            "heading": "The missing physical handoff",
-            "text": "The source exists as an authoring artifact, but its presence on the Codex host or in Dropbox is not established. The brief requires matching its SHA-256 before work starts and forbids replacing it with a lookalike."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Exact pixels make comparisons reproducible",
-            "explanation": "Pinned crops and a hash remove artistic discretion from the preview build, making any observed difference attributable to the chosen image arrangement rather than resampling."
-          },
-          {
-            "title": "A playable preview is not an art approval",
-            "explanation": "The scene can inform the decision while the original paving still fails its seamless-repeat gate. Asset V2 intake remains separate."
-          }
-        ],
-        "takeaway": "The preview design is specified, but the source transfer, playable build and art approval remain outstanding.",
-        "next_watch": "Watch for hash-verified source staging, a real Operator scene capture and an explicit source approval decision."
-      },
-      "scorecard": {
-        "stage": "Preview brief landed; source transfer unverified",
-        "as_of": "2026-11-01T09:17:29.453Z",
-        "scope": "One named Sepulcher paving preview, not full environment-art pipeline",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "First paving candidate reviewed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "44c07109 documents failed repeatability gate"
-          },
-          {
-            "label": "Exact crop and scene brief landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "543bc5e2"
-          },
-          {
-            "label": "Original source staged and hash verified",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Brief says source not known to be on Codex host; no transfer proof"
-          },
-          {
-            "label": "Playable preview captured",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No build or capture proof"
-          },
-          {
-            "label": "Art approved for production",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Existing candidate remains unapproved"
-          }
-        ],
-        "next_gate": "Source owner stages the original hash-matched master on the Codex host before executor work."
-      },
-      "details": {
-        "overview": "The native quad preview brief is documentation only. It prescribes original-pixel crops and three scene modes, without asserting host staging, runtime completion or Asset V2 approval.",
-        "ledger": [
-          {
-            "stage": "Preview specification",
-            "status": "verified landed",
-            "evidence": "543bc5e2"
-          },
-          {
-            "stage": "Source staging",
-            "status": "unknown",
-            "evidence": "Brief explicitly states host/Dropbox transfer unverified"
-          }
-        ],
-        "notes": [
-          "The native quad is not a seamless-repeat proof."
-        ],
-        "unknowns": [
-          "Host source presence and runnable scene evidence"
-        ],
-        "actions": [
-          "Source owner: stage and verify original bytes; executor: build preview only after hash match."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T16:59:29Z",
-    "source_main_sha": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
+    "observed_at": "2026-11-01T18:02:46Z",
+    "source_main_sha": "1784cbe67eeb06d49d9202e66969e46ca98c15cd",
     "coverage": "partial",
-    "scope": "Two named WIRE observation exporter packet headers, latest 18 main commits, latest 12 workflow runs, and open pull requests; no canonical dispatcher full audit or host inspection.",
+    "scope": "Current main commit and changed files, two named WIRE packet headers, recent main commits and GitHub Actions; no full canonical dispatcher audit or host access.",
     "metrics": [
       {
         "id": "ready_auto",
         "label": "WIRE PAIR READY/AUTO",
         "value": 2,
         "verification": "verified",
-        "basis": "Only the two named WIRE exporter implementation and review packets inspected on current main. Review depends on implementation; not a full-queue count.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/f38d7f405014960072e10feeb93f339e1ba7067e"
+        "basis": "Two specifically inspected WIRE exporter implementation and review packet headers on main; review is dependency-gated, not two eligible execution claims.",
+        "url": "https://github.com/braydio/CUSTODIAN/blob/1784cbe67eeb06d49d9202e66969e46ca98c15cd/custodian/docs/ai_context/task_packets/AGENT_WIRE_OBSERVATION_EXPORT_V1.md"
       }
     ],
-    "focus": "Obtain a canonical eligible implementation claim for the WIRE observation exporter; separately diagnose the failed Sepulcher V2 authoring handoff.",
-    "note": "GitHub-only partial scope. Main changed since prior snapshot; new Sepulcher salvage pair was withdrawn. Host claim, process, locks, worktrees, disk, and full packet counts remain unknown."
+    "focus": "Reconcile the preserved Sepulcher V2 held review before further recovery; separately verify exporter dispatcher eligibility.",
+    "note": "New Sepulcher host-validation recovery pair withdrawn; distinct from prior salvage withdrawal. Partial GitHub-only coverage; full queue, host ownership, worktrees, locks and disk unknown."
   }
 }
