@@ -1,9 +1,172 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T06:13:18Z",
-  "source_main_sha": "7eaf776dfe57b971069262925275331bb78c7dbc",
+  "generated_at": "2026-11-01T08:30:25.666Z",
+  "source_main_sha": "44c07109a34e2a3935265a5127e2f1962a310031",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-paving-candidate-review-44c07109",
+      "headline": "Sepulcher Gardens' first modular paving candidate looks promising, but fails its repeatability gate",
+      "summary": "The first paving image in CUSTODIAN's four-source environment-art experiment has received a technical review. Its stonework and weathering are promising, but visible repeated motifs and unproven seamless edges prevent approval. The source remains outside the production asset pipeline while a targeted correction is considered.",
+      "body": "A new main-branch art-review record documents one generated paving candidate for the Sepulcher Gardens modular pilot. The image is 1254×1254 rather than the planned 512×512 source, and its repeated 3×3 preview exposes recognizable dark-block and bronze L-shaped patterns. Diagnostic boundary measurements do not establish seamlessness. The review explicitly records technical correction needed and human approval pending. No Dropbox upload, Asset V2 ingest, or second pilot asset is documented. The original is a conversation artifact, not a public image; no screenshot is included. Main source: 44c07109a34e2a3935265a5127e2f1962a310031. Repository validation passed for this commit; this is not an art acceptance or gameplay integration.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-modular-material-playtest-v1",
+      "occurred_at": "2026-11-01T08:14:22Z",
+      "bullets": [
+        "One paving candidate generated; zero approved sources within the four-source pilot manifest.",
+        "Visible 3×3 repetition and edge continuity remain unresolved.",
+        "Preserve detailed source; correct seams or simplify repeating base without flattening texture.",
+        "Human art approval required before asset 2 or production ingest."
+      ],
+      "links": [
+        {
+          "title": "Art review commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+        },
+        {
+          "title": "Pilot manifest",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/44c07109a34e2a3935265a5127e2f1962a310031/design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json"
+        },
+        {
+          "title": "Repository validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41288012036"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens has its first candidate for a more flexible, modular floor-art approach. The stonework holds up as a visual direction, but the image cannot yet become a game-ready repeating surface: recognizable patterns repeat too conspicuously, and its edges have not passed a seamlessness check.",
+        "sections": [
+          {
+            "heading": "A promising material, not yet a usable tile",
+            "text": "The proposed paving combines weathered limestone, dark basalt and restrained bronze accents. A technical review found the detailed texture compelling, but a 3×3 preview at the intended 512-pixel size exposed recurring dark blocks and L-shaped bronze marks. The generated original is 1254 pixels square, so the target-size version still needs proper treatment."
+          },
+          {
+            "heading": "Why repetition matters in play",
+            "text": "A single attractive image can become a visible stamp when laid across a walkable floor. That would make Sepulcher Gardens feel patterned by its asset boundaries rather than by the environment. The review recommends fixing the repeat seam and reserving bold bronze geometry for a separate overlay, instead of discarding the useful texture detail."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The first bottleneck is repetition, not artistic direction",
+            "explanation": "The review praises the stonework while identifying specific tiling faults. That narrows the next experiment to a technical correction rather than an indiscriminate redraw."
+          },
+          {
+            "title": "Approval remains a separate gate",
+            "explanation": "The manifest records one generated candidate and no approved sources. Neither the source image nor the diagnostic preview has entered the production asset pipeline, so the four-source pilot has not advanced to its second asset."
+          }
+        ],
+        "takeaway": "The modular-art experiment has produced a reviewable first candidate, but not an approved floor asset. Its next useful result is a corrected repeat test and an explicit human decision.",
+        "next_watch": "Look for a true 512-pixel 3×3 seam/repetition check and individual art approval before any overlay generation or Asset V2 handoff."
+      },
+      "details": {
+        "overview": "Main commit 44c07109a34e2a3935265a5127e2f1962a310031 updates the pilot manifest and design notes with a technical evaluation of the first paving candidate. It documents diagnostic RGB boundary comparisons, a 3×3 repeated preview, and the explicit no-ingest decision. The underlying image is conversation-local and not publicly inspectable from GitHub.",
+        "ledger": [
+          {
+            "stage": "Candidate generation",
+            "status": "verified in committed review record",
+            "evidence": "Manifest records one 1254×1254 candidate with SHA-256 and generation ID; source itself is not public."
+          },
+          {
+            "stage": "Technical repeatability review",
+            "status": "reported correction required",
+            "evidence": "3×3 preview shows repeated dark blocks/bronze L-motifs; boundary MAE L/R 14.56 vs internal 10.44 and T/B 12.45 vs internal 11.73. Diagnostic, not a calibrated threshold."
+          },
+          {
+            "stage": "Human approval",
+            "status": "pending",
+            "evidence": "approved_source_count=0 in manifest."
+          },
+          {
+            "stage": "Production handoff",
+            "status": "not performed",
+            "evidence": "Manifest records no Dropbox upload, staging, or Asset V2 ingest."
+          }
+        ],
+        "notes": [
+          "Repository validation passed for the reviewed main commit.",
+          "The source image and repeated preview remain conversation artifacts, not verified public screenshots."
+        ],
+        "unknowns": [
+          "Whether a corrected source will satisfy visual repetition and human approval.",
+          "Whether the conversation-local original will remain accessible."
+        ],
+        "actions": [
+          "Art owner: preserve original detail and produce a corrected 512px repeat test.",
+          "Human reviewer: approve or reject the specific corrected source before pilot asset 2."
+        ]
+      },
+      "related": [
+        {
+          "title": "Sepulcher Gardens gets a four-asset experiment to test a more flexible environment art style",
+          "context": "Introduced the bounded four-source experiment that this first candidate now tests.",
+          "story_id": "sepulcher-modular-pilot-plan-796c32b0"
+        }
+      ],
+      "scorecard": {
+        "stage": "First paving candidate technically reviewed; correction and human approval pending",
+        "as_of": "2026-11-01T08:30:25.666Z",
+        "scope": "First source in Sepulcher Gardens' four-source modular pilot; not the wider environment art queue",
+        "metrics": [
+          {
+            "id": "pilot-candidates",
+            "label": "CANDIDATES",
+            "value": 1,
+            "verification": "verified",
+            "basis": "Pilot manifest generated_candidate_count; scoped to this four-source pilot",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+          },
+          {
+            "id": "pilot-approved",
+            "label": "APPROVED SOURCES",
+            "value": 0,
+            "verification": "verified",
+            "basis": "Pilot manifest approved_source_count=0, exhaustive for this named pilot",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Define bounded four-source pilot",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Pilot manifest and plan on main."
+          },
+          {
+            "label": "Generate first paving candidate",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Generation recorded in main-branch manifest; image itself not publicly accessible."
+          },
+          {
+            "label": "Review 512px repetition and seams",
+            "status": "current",
+            "verification": "verified",
+            "evidence": "Initial technical review finds conspicuous repeats and unproven edge continuity."
+          },
+          {
+            "label": "Obtain explicit human art approval",
+            "status": "next",
+            "verification": "verified",
+            "evidence": "Manifest states pending; no approved sources."
+          },
+          {
+            "label": "Proceed to overlay and other pilot sources",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Review says do not advance to asset 2 before first source approval."
+          },
+          {
+            "label": "Ingest and playtest with Operator",
+            "status": "next",
+            "verification": "reported",
+            "evidence": "Planned downstream gate; no Asset V2 ingest or runtime test evidenced."
+          }
+        ],
+        "next_gate": "Art owner corrects first paving tile and demonstrates 512px 3×3 repetition; human reviewer decides on that specific source."
+      }
+    },
     {
       "id": "sepulcher-modular-pilot-plan-796c32b0",
       "headline": "Sepulcher Gardens gets a four-asset experiment to test a more flexible environment art style",
@@ -1653,177 +1816,32 @@
           "story_id": "lightweight-lfs-provisioning-f4c6c1fb"
         }
       ]
-    },
-    {
-      "id": "lightweight-lfs-provisioning-f4c6c1fb",
-      "headline": "CUSTODIAN lands smaller worktree checkouts to reopen storage-blocked Awakening development",
-      "summary": "A new opt-in checkout profile avoids downloading the entire Git LFS asset collection into each worktree. Capacity checks now happen before a dispatch claim, and interrupted initial checkouts have a guarded same-claim recovery path. The implementation is archived on main; independent review and authorization are still required before the protected Awakening claim can resume.",
-      "body": "The lightweight worktree implementation is landed and archived on main. The opt-in Awakening profile hydrates only named local Git LFS objects and verifies pointer identities; ordinary full checkout remains the default. The archived packet reports isolated fixture and validation results. The paired independent review is ready/auto, not accepted. The protected Awakening claim has not been recovered by this publication. Host disk, process and worktree state are not independently observable from GitHub.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-workstream-lightweight-lfs-provisioning-v1",
-      "occurred_at": "2026-10-31T14:05:33Z",
-      "bullets": [
-        "Implementation landed and packet archived on main.",
-        "Review packet ready/auto, independent PASS not evidenced.",
-        "Do not resume protected Awakening claim before accepted review and explicit authorization."
-      ],
-      "links": [
-        {
-          "title": "Implementation source and tests",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/7e5d5fa3f57f58246c664c6654f1ae86827a32a5"
-        },
-        {
-          "title": "Archived completion packet",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/f4c6c1fb388e49e11db5ae14d6fd7ec757233636"
-        },
-        {
-          "title": "Paired independent review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/f4c6c1fb388e49e11db5ae14d6fd7ec757233636/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A storage bottleneck that stranded Awakening development now has a code-level remedy. CUSTODIAN has landed an optional lightweight checkout that prepares only the assets a task needs, while preserving its ordinary full-checkout behavior. The fix is not yet clearance to restart the interrupted work: independent review remains outstanding.",
-        "sections": [
-          {
-            "heading": "Why the old checkout stalled",
-            "text": "CUSTODIAN's art-heavy repository uses Git Large File Storage (LFS). Preparing a new worktree could require several gigabytes of assets before the agent could begin. The archived task records an Awakening checkout that failed when storage ran out after its claim was already acquired."
-          },
-          {
-            "heading": "A smaller, verifiable path",
-            "text": "The new profile lists exact required files and hydrates them from existing local LFS objects, checking expected sizes and hashes. Capacity is checked before acquiring a claim and again before checkout writes. The original full checkout remains the default, while a guarded recovery path targets the exact interrupted claim rather than creating another one."
-          },
-          {
-            "heading": "A gate remains before gameplay resumes",
-            "text": "The implementation and its completion packet are on main, but the paired independent review is still marked ready. The review must challenge ownership, identity, storage, asset integrity and interrupted-checkout safeguards. Neither landing nor reported tests constitute accepted review or proof of clean host teardown."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Storage pressure is now addressed before ownership changes",
-            "explanation": "The new preflight is intended to reject predictable capacity failures before creating a remote dispatch claim. That directly targets the failure mode that stranded the Awakening workstream, rather than merely shrinking asset downloads."
-          },
-          {
-            "title": "The smaller checkout remains reproducible",
-            "explanation": "The published profile names exact files and LFS objects, and its local-only hydration checks identities. This makes a selective checkout auditable instead of treating missing art assets as an acceptable shortcut."
-          }
-        ],
-        "takeaway": "The storage remedy has landed, but its safety claims still need independent acceptance before the protected Awakening recovery can proceed.",
-        "next_watch": "Watch for a genuine independent PASS on the lightweight provisioning review, followed by separately authorized exact-claim recovery with trustworthy host evidence."
-      },
-      "details": {
-        "overview": "Main includes the implementation, isolated test fixtures, an Awakening profile, lifecycle documentation and an archived completion packet. The packet reports a 52,245,835-byte profiled checkout estimate, plus a 1 GiB reserve, compared with a 6,190,134,467-byte full-checkout estimate before reserve. These are documented estimates at the pinned base, not observed current free space.",
-        "ledger": [
-          {
-            "stage": "Implementation",
-            "status": "verified landed",
-            "evidence": "Implementation commit 7e5d5fa3 contains provisioning code, tests and profile."
-          },
-          {
-            "stage": "Packet completion",
-            "status": "verified archived",
-            "evidence": "Main commit f4c6c1fb archives the complete implementation packet."
-          },
-          {
-            "stage": "Focused validation",
-            "status": "reported by implementation",
-            "evidence": "Archived completion packet describes fixture and validation results; independent reproduction not inspected."
-          },
-          {
-            "stage": "Independent review",
-            "status": "verified ready, not accepted",
-            "evidence": "Paired review packet says Status: ready and Dispatch: auto; no accepted PASS receipt inspected."
-          },
-          {
-            "stage": "Protected Awakening recovery",
-            "status": "not verified",
-            "evidence": "Packet explicitly defers recovery until accepted review and further authorization."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No trusted live host process, lock, worktree or disk audit available."
-          }
-        ],
-        "notes": [
-          "Profile estimates and asset counts are bounded to the archived packet's reviewed base.",
-          "A ready review packet is not proof of an active reviewer process."
-        ],
-        "unknowns": [
-          "Independent review outcome and any host-side recovery/teardown state remain unknown.",
-          "Project-wide dispatcher queue and current disk capacity were not inspected."
-        ],
-        "actions": [
-          "Independent reviewer: falsify the landed provisioning and same-claim recovery contract.",
-          "After accepted PASS and separate authorization, host operator: verify the exact protected Awakening claim and recover only that claim."
-        ]
-      },
-      "scorecard": {
-        "stage": "Implementation landed; independent review ready",
-        "as_of": "2026-10-31T14:05:33Z",
-        "scope": "Lightweight provisioning implementation and its paired review only",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement selective checkout and capacity checks",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Implementation commit 7e5d5fa3."
-          },
-          {
-            "label": "Archive completed implementation packet",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit f4c6c1fb."
-          },
-          {
-            "label": "Reproduce focused validation independently",
-            "status": "current",
-            "verification": "unknown",
-            "evidence": "Implementation reports passing tests; independent reproduction not evidenced."
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Review packet ready/auto; no accepted PASS."
-          },
-          {
-            "label": "Authorize and recover exact Awakening claim",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Archived packet requires accepted review and separate authorization."
-          },
-          {
-            "label": "Verify canonical host teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host audit accessible."
-          }
-        ],
-        "next_gate": "Independent reviewer must produce an authentic accepted PASS for the landed implementation before any protected claim recovery."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T06:03:31Z",
-    "source_main_sha": "7eaf776dfe57b971069262925275331bb78c7dbc",
+    "observed_at": "2026-11-01T08:30:25.666Z",
+    "source_main_sha": "44c07109a34e2a3935265a5127e2f1962a310031",
     "coverage": "partial",
-    "scope": "Two named supersession packet declarations and selected main commits; no canonical full dispatcher audit",
+    "scope": "One named four-source Sepulcher Gardens pilot manifest and selected GitHub commits; no canonical full dispatcher audit",
     "metrics": [
       {
-        "id": "other-ready-named-packets",
-        "label": "READY IN INSPECTED PAIR",
-        "value": 2,
+        "id": "other-pilot-candidates",
+        "label": "PILOT CANDIDATES",
+        "value": 1,
         "verification": "verified",
-        "basis": "Two explicitly inspected packet declarations are ready/auto; excludes all other packets",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/7eaf776dfe57b971069262925275331bb78c7dbc"
+        "basis": "Generated candidate count in this specific four-source pilot only; not a project-wide count",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+      },
+      {
+        "id": "other-pilot-approved",
+        "label": "PILOT APPROVED",
+        "value": 0,
+        "verification": "verified",
+        "basis": "Explicit approved_source_count=0 in exhaustive pilot manifest; not project-wide",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
       }
     ],
-    "focus": "Verify prerequisite legacy-claim snapshot review before supersession dispatch",
-    "note": "This is not a project-wide ready count or proof of execution."
+    "focus": "Correct first paving candidate's repetition and obtain individual human approval",
+    "note": "Prior partial supersession count remains historical; no full dispatcher audit or live host status available."
   }
 }
