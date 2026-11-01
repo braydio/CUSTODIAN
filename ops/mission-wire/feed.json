@@ -1,9 +1,106 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T15:18:18Z",
-  "source_main_sha": "f38d7f405014960072e10feeb93f339e1ba7067e",
+  "generated_at": "2026-11-01T16:59:29Z",
+  "source_main_sha": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-v2-salvage-pair-withdrawn-b245bfb0",
+      "headline": "Sepulcher recovery proposal withdrawn after authoring handoff fails",
+      "summary": "A proposed Sepulcher V2 source-salvage implementation/review pair failed automatic packet publication and was reverted from main. The rollback preserves the original correction branch and reviewer evidence, but leaves the recovery path unresolved. Repository validation passed on the rollback; no implementation or review acceptance is established.",
+      "body": "A new Sepulcher V2 source-salvage packet pair appeared on main at 15:56 UTC, but the automatic packet-authoring handoff failed. At 16:06 UTC, a revert removed both unclaimed packets and restored the prior file index. The rollback's repository validation and authoring workflow succeeded. This is a correction to task authoring, not a gameplay fix, a recovered validation run, or a completed independent review. The next owner should examine the failed handoff and existing recovery authority before proposing a replacement; the original correction branch and reviewer evidence were preserved according to the revert commit. WIRE exporter packets remain ready/auto, but neither their implementation nor transport is verified as landed.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-sepulcher-v2-recovery-source-salvage-v1",
+      "occurred_at": "2026-11-01T16:06:30Z",
+      "bullets": [
+        "Proposed implementation/review pair removed from main after failed handoff.",
+        "Rollback preserved the preexisting recovery branch and review evidence according to its commit.",
+        "The next gate is diagnosing the failed handoff and determining an authorized recovery path."
+      ],
+      "links": [
+        {
+          "title": "Withdrawal commit and exact changed files",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585"
+        },
+        {
+          "title": "Failed automatic handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41323756922"
+        },
+        {
+          "title": "Original proposal",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/0aee8bf0450dcb7368196201f731f45b0f4cd3d9"
+        },
+        {
+          "title": "Successful rollback validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41324599187"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A proposed recovery route for Sepulcher's V2 scene was withdrawn just ten minutes after it reached main. Its automatic packet handoff failed, and the repository reverted the unclaimed implementation and review pair. The underlying scene-recovery question remains open.",
+        "sections": [
+          {
+            "heading": "Why the recovery proposal disappeared",
+            "text": "The proposal sought a bounded way to salvage source evidence for an existing Sepulcher V2 validation problem. The automatic handoff did not accept the pair. A follow-up commit removed both packets and restored the previous file index, rather than leaving an unusable new workstream in the queue."
+          },
+          {
+            "heading": "What the rollback does, and doesn't, establish",
+            "text": "The rollback passed repository validation and the automatic handoff workflow. Its commit says the original correction branch and reviewer evidence were preserved. That is evidence of a clean repository-level withdrawal, not proof that the underlying scene validation passed or that any host worktree was retired."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A failed authoring gate is not a failed game build",
+            "explanation": "The failure occurred while promoting proposed task packets, before they could authorize implementation. Sepulcher's runtime outcome cannot be inferred from this workflow failure."
+          },
+          {
+            "title": "Recovery evidence remains the useful starting point",
+            "explanation": "Because the revert explicitly preserves the earlier correction branch and reviewer evidence, the next attempt should reconcile those existing materials before creating a replacement packet."
+          }
+        ],
+        "takeaway": "The unclaimed salvage proposal was removed from main; Sepulcher V2 recovery still needs an authorized, evidence-backed path.",
+        "next_watch": "A diagnosis of the failed handoff and a valid replacement or continuation of the existing recovery workstream."
+      },
+      "details": {
+        "overview": "Main b245bfb0 reverted the immediately preceding Sepulcher V2 source-salvage packet authoring commit 0aee8bf0. The failed handoff was GitHub Actions run 41323756922. Main rollback validation succeeded in run 41324599187; automatic handoff also succeeded in run 41324599208. Neither result is an independent implementation acceptance receipt.",
+        "ledger": [
+          {
+            "stage": "Source-salvage packet authoring",
+            "status": "Verified: published proposal, then handoff failure",
+            "evidence": "0aee8bf0 added the pair; GitHub Actions 41323756922 failed its Validate and publish explicitly authorized pairs step."
+          },
+          {
+            "stage": "Withdrawal from main",
+            "status": "Verified: reverted",
+            "evidence": "b245bfb0 removed both packet files and restored FILE_INDEX."
+          },
+          {
+            "stage": "Repository validation after revert",
+            "status": "Verified: passed",
+            "evidence": "GitHub Actions 41324599187 passed on b245bfb0."
+          },
+          {
+            "stage": "Implementation, independent acceptance, canonical host teardown",
+            "status": "Unknown/not established",
+            "evidence": "No implementation, PASS receipt, or host cleanup evidence was inspected for this withdrawn proposal."
+          }
+        ],
+        "notes": [
+          "The revert commit states the original correction branch and reviewer evidence were preserved.",
+          "The separate WIRE observation exporter pair remains ready/auto in the two inspected packet headers."
+        ],
+        "unknowns": [
+          "The precise failing authoring validator message was not inspected beyond the failed job step.",
+          "No current full dispatcher audit or host-state evidence was available."
+        ],
+        "actions": [
+          "Recovery owner: inspect failed authoring run and existing correction evidence before choosing an authorized replacement or continuation."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "wire-observation-export-packets-ready-f38d7f40",
       "headline": "WIRE telemetry gets an authorized path: exporter and independent-review packets enter the queue",
@@ -1396,181 +1493,24 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "sepulcher-paving-candidate-review-44c07109",
-      "headline": "Sepulcher Gardens' first modular paving candidate looks promising, but fails its repeatability gate",
-      "summary": "The first paving image in CUSTODIAN's four-source environment-art experiment has received a technical review. Its stonework and weathering are promising, but visible repeated motifs and unproven seamless edges prevent approval. The source remains outside the production asset pipeline while a targeted correction is considered.",
-      "body": "A new main-branch art-review record documents one generated paving candidate for the Sepulcher Gardens modular pilot. The image is 1254×1254 rather than the planned 512×512 source, and its repeated 3×3 preview exposes recognizable dark-block and bronze L-shaped patterns. Diagnostic boundary measurements do not establish seamlessness. The review explicitly records technical correction needed and human approval pending. No Dropbox upload, Asset V2 ingest, or second pilot asset is documented. The original is a conversation artifact, not a public image; no screenshot is included. Main source: 44c07109a34e2a3935265a5127e2f1962a310031. Repository validation passed for this commit; this is not an art acceptance or gameplay integration.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "sepulcher-modular-material-playtest-v1",
-      "occurred_at": "2026-11-01T08:14:22Z",
-      "bullets": [
-        "One paving candidate generated; zero approved sources within the four-source pilot manifest.",
-        "Visible 3×3 repetition and edge continuity remain unresolved.",
-        "Preserve detailed source; correct seams or simplify repeating base without flattening texture.",
-        "Human art approval required before asset 2 or production ingest."
-      ],
-      "links": [
-        {
-          "title": "Art review commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
-        },
-        {
-          "title": "Pilot manifest",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/44c07109a34e2a3935265a5127e2f1962a310031/design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json"
-        },
-        {
-          "title": "Repository validation",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41288012036"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher Gardens has its first candidate for a more flexible, modular floor-art approach. The stonework holds up as a visual direction, but the image cannot yet become a game-ready repeating surface: recognizable patterns repeat too conspicuously, and its edges have not passed a seamlessness check.",
-        "sections": [
-          {
-            "heading": "A promising material, not yet a usable tile",
-            "text": "The proposed paving combines weathered limestone, dark basalt and restrained bronze accents. A technical review found the detailed texture compelling, but a 3×3 preview at the intended 512-pixel size exposed recurring dark blocks and L-shaped bronze marks. The generated original is 1254 pixels square, so the target-size version still needs proper treatment."
-          },
-          {
-            "heading": "Why repetition matters in play",
-            "text": "A single attractive image can become a visible stamp when laid across a walkable floor. That would make Sepulcher Gardens feel patterned by its asset boundaries rather than by the environment. The review recommends fixing the repeat seam and reserving bold bronze geometry for a separate overlay, instead of discarding the useful texture detail."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The first bottleneck is repetition, not artistic direction",
-            "explanation": "The review praises the stonework while identifying specific tiling faults. That narrows the next experiment to a technical correction rather than an indiscriminate redraw."
-          },
-          {
-            "title": "Approval remains a separate gate",
-            "explanation": "The manifest records one generated candidate and no approved sources. Neither the source image nor the diagnostic preview has entered the production asset pipeline, so the four-source pilot has not advanced to its second asset."
-          }
-        ],
-        "takeaway": "The modular-art experiment has produced a reviewable first candidate, but not an approved floor asset. Its next useful result is a corrected repeat test and an explicit human decision.",
-        "next_watch": "Look for a true 512-pixel 3×3 seam/repetition check and individual art approval before any overlay generation or Asset V2 handoff."
-      },
-      "details": {
-        "overview": "Main commit 44c07109a34e2a3935265a5127e2f1962a310031 updates the pilot manifest and design notes with a technical evaluation of the first paving candidate. It documents diagnostic RGB boundary comparisons, a 3×3 repeated preview, and the explicit no-ingest decision. The underlying image is conversation-local and not publicly inspectable from GitHub.",
-        "ledger": [
-          {
-            "stage": "Candidate generation",
-            "status": "verified in committed review record",
-            "evidence": "Manifest records one 1254×1254 candidate with SHA-256 and generation ID; source itself is not public."
-          },
-          {
-            "stage": "Technical repeatability review",
-            "status": "reported correction required",
-            "evidence": "3×3 preview shows repeated dark blocks/bronze L-motifs; boundary MAE L/R 14.56 vs internal 10.44 and T/B 12.45 vs internal 11.73. Diagnostic, not a calibrated threshold."
-          },
-          {
-            "stage": "Human approval",
-            "status": "pending",
-            "evidence": "approved_source_count=0 in manifest."
-          },
-          {
-            "stage": "Production handoff",
-            "status": "not performed",
-            "evidence": "Manifest records no Dropbox upload, staging, or Asset V2 ingest."
-          }
-        ],
-        "notes": [
-          "Repository validation passed for the reviewed main commit.",
-          "The source image and repeated preview remain conversation artifacts, not verified public screenshots."
-        ],
-        "unknowns": [
-          "Whether a corrected source will satisfy visual repetition and human approval.",
-          "Whether the conversation-local original will remain accessible."
-        ],
-        "actions": [
-          "Art owner: preserve original detail and produce a corrected 512px repeat test.",
-          "Human reviewer: approve or reject the specific corrected source before pilot asset 2."
-        ]
-      },
-      "related": [],
-      "scorecard": {
-        "stage": "First paving candidate technically reviewed; correction and human approval pending",
-        "as_of": "2026-11-01T08:30:25.666Z",
-        "scope": "First source in Sepulcher Gardens' four-source modular pilot; not the wider environment art queue",
-        "metrics": [
-          {
-            "id": "pilot-candidates",
-            "label": "CANDIDATES",
-            "value": 1,
-            "verification": "verified",
-            "basis": "Pilot manifest generated_candidate_count; scoped to this four-source pilot",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
-          },
-          {
-            "id": "pilot-approved",
-            "label": "APPROVED SOURCES",
-            "value": 0,
-            "verification": "verified",
-            "basis": "Pilot manifest approved_source_count=0, exhaustive for this named pilot",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Define bounded four-source pilot",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Pilot manifest and plan on main."
-          },
-          {
-            "label": "Generate first paving candidate",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Generation recorded in main-branch manifest; image itself not publicly accessible."
-          },
-          {
-            "label": "Review 512px repetition and seams",
-            "status": "current",
-            "verification": "verified",
-            "evidence": "Initial technical review finds conspicuous repeats and unproven edge continuity."
-          },
-          {
-            "label": "Obtain explicit human art approval",
-            "status": "next",
-            "verification": "verified",
-            "evidence": "Manifest states pending; no approved sources."
-          },
-          {
-            "label": "Proceed to overlay and other pilot sources",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Review says do not advance to asset 2 before first source approval."
-          },
-          {
-            "label": "Ingest and playtest with Operator",
-            "status": "next",
-            "verification": "reported",
-            "evidence": "Planned downstream gate; no Asset V2 ingest or runtime test evidenced."
-          }
-        ],
-        "next_gate": "Art owner corrects first paving tile and demonstrates 512px 3×3 repetition; human reviewer decides on that specific source."
-      }
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T15:18:18Z",
-    "source_main_sha": "f38d7f405014960072e10feeb93f339e1ba7067e",
+    "observed_at": "2026-11-01T16:59:29Z",
+    "source_main_sha": "b245bfb0ef1ef13b60ccc1165ad9ce0a5d052585",
     "coverage": "partial",
-    "scope": "Two named WIRE observation-export packets on main, plus inspected recent commits, open PR list and recent GitHub Actions; no canonical live dispatcher audit.",
+    "scope": "Two named WIRE observation exporter packet headers, latest 18 main commits, latest 12 workflow runs, and open pull requests; no canonical dispatcher full audit or host inspection.",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "READY/AUTO IN WIRE PAIR",
+        "label": "WIRE PAIR READY/AUTO",
         "value": 2,
         "verification": "verified",
-        "basis": "The two named promoted packet headers at f38d7f40; review is implementation-dependency-gated. Not a full-queue total.",
+        "basis": "Only the two named WIRE exporter implementation and review packets inspected on current main. Review depends on implementation; not a full-queue count.",
         "url": "https://github.com/braydio/CUSTODIAN/commit/f38d7f405014960072e10feeb93f339e1ba7067e"
       }
     ],
-    "focus": "Fresh dispatcher eligibility and an authorized claim for agent-wire-observation-export-v1.",
-    "note": "Full live dispatcher totals, claims, worktrees, locks and disk were not inspected. The last host relay's 481 active Markdown / 420 managed packets are historical, not current. Recent authoring and repository validation passed for the packet pair."
+    "focus": "Obtain a canonical eligible implementation claim for the WIRE observation exporter; separately diagnose the failed Sepulcher V2 authoring handoff.",
+    "note": "GitHub-only partial scope. Main changed since prior snapshot; new Sepulcher salvage pair was withdrawn. Host claim, process, locks, worktrees, disk, and full packet counts remain unknown."
   }
 }
