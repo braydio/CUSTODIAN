@@ -5,7 +5,7 @@
 - Category: `agent-ops`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-validator-recertification-v1-review-corrections-1`
@@ -52,3 +52,40 @@
 - Refresh reason: `none`
 - Next action: `After review, follow the correction-cycle receipt and dispatcher-confirmed handoff; do not infer acceptance or release unrelated claims.`
 - Blockers or open questions: `Correction implementation must land first; the parent R0-01 remains unaccepted until this independent review concludes.`
+
+## Independent Review
+
+Finding `R1-01` — blocking acceptance flaw: retry accepts a false after-sync report.
+
+- Class: `blocking_defect`
+- Domain: `implementation`
+- Affected acceptance: correction acceptance 2, 3, 4 and 5; review acceptance requiring authenticated after-sync validation and landing only after validation of the synchronized tree.
+- Evidence: In implementation `7cfe06eda5367f51915e940c1e3dbf9d78424cac`, `custodian/tools/agent/workstream.py::_finish_impl` (around lines 3535–3548) checks and records `validation_report_after_sync` only inside `if changed:`. On a retry after the first attempt has already merged origin/main, `sync_main()` returns `False`; a supplied after-sync report is not parsed, authenticated, or recorded. `_source_span_sync_merge_witness_error` (around lines 2110–2114) explicitly allows zero `validation_after_sync` events even when a changed sync is present. The paired runner retries with the supplied report at `custodian/tools/agent/paired_review_runner.py` around lines 1727–1738.
+- Reproduction: Using the repository's disposable real-Git fixture pattern in `custodian/tools/agent/test_workstream.py` (`test_main_advancement_during_finish_requires_and_uses_after_sync_validation`, around lines 2070–2125), I advanced main, observed the first finish stop after a changed merge requesting a green after-sync report, then called the retry with a report whose JSON had `passed:false`. The retry returned `finished`, landed the workstream, emitted `main_sync` changed values `[true, false]`, and emitted no `validation_after_sync` event. This independently falsifies the claimed validation gate; the false report is accepted by omission.
+- Run evidence: The immutable correction lifecycle trace is `refs/remotes/origin/agent-diagnostics/agent-paired-review-validator-recertification-v1-review-corrections-1/20261101T090208Z-3b6a3216b30f/trace.jsonl`, trace commit `40a7a43e0a683354965b251f7612c981dbc69d01` (SHA-256 `398e6c3ad55a146006946429cd743451d3bb63a1f8f6012250255794428f864f`). It records the first `finish_started` with no after-sync report, a changed sync at event 29, a retry `finish_started` naming `/tmp/custodian-validator-recertification-correction-after-sync.json`, and a final no-op sync at event 41. No `validation_after_sync` event exists. The report is 11,434 bytes, SHA-256 `42c7ea66419b120d9207778f30d08507475a05b4eaf20a2c8e6374a3686bcad7`; it reports passed with complete coverage over `custodian/tools/agent/workstream.py` and `custodian/tools/agent/test_workstream.py`, excluding three documentation paths. Its green status does not cure the retry gate because the finish code does not consume/authenticate it on `changed=False`.
+- Host validation: Inspected, without modifying, coordinator report `/home/braydenchaffee/Projects/CUSTODIAN/.git/custodian-review-runs/review-agent-paired-review-validator-recertification-v1-review-corrections-1/20261101T094433Z-e6af1f0156bf/validation.json`, SHA-256 `42c745a782cdca66022198eef136d4b9524f55c9bd94e970d179f8ae13e6d48a`. It is green and reports 7 selected checks passed, complete source/test coverage, zero failures, timeouts, skips, or infrastructure errors. It does not cover the false-report retry scenario, so it does not rebut R1-01.
+- R0-01 disposition: The original missing-checkpoint/malformed lifecycle witness defect appears fixed in the reviewed producer guard: the changed-sync merge path now requires a unique preceding checkpoint, validates shape and identity, and checks merge structure. The new R1-01 means the correction acceptance as a whole is not satisfied; do not accept R0-01 as closed until the retry validation gate is fixed and independently reviewed.
+- Disposition: `correction`
+- Rationale: A caller can provide a false, stale, or unrelated after-sync report on retry and still land without validating the synchronized tree. This is an acceptance flaw, not merely missing provenance.
+
+## Evidence reviewed
+
+- Reviewed exact baseline `e4781dbef8e64fc86d53a3c0f27502a1d9f1caae`, source span `ca0d28956579680ce1ed84e575fc7a1f318ebdab`..`7cfe06eda5367f51915e940c1e3dbf9d78424cac`, and archive landing `8e6a93d4bbdd48462eb89e52b8eec97d67a9f8fa`. The source span is the single implementation commit `7cfe06eda5367f51915e940c1e3dbf9d78424cac`; the archive landing merges unrelated main documentation while retaining the correction commit as first-parent source history.
+- Inspected the archived correction packet, parent review and finding R0-01, active paired review packet, correction summary, current implementation and relevant tests. The summary is treated as a claim; the false-report behavior was independently reproduced.
+- Inspected the exact after-sync report and immutable correction trace; report bytes and hash are recorded above.
+- Inspected coordinator validation report and verified its supplied SHA-256. It remains untouched.
+- No reviewed implementation code, runtime code, or implementation summary was edited. The target implementation packet remains at its pinned baseline and receives no passing receipt.
+
+## Review Outcome
+
+- Schema: `custodian.review_outcome.v1`
+- Outcome: `findings`
+- Review workstream: `review-agent-paired-review-validator-recertification-v1-review-corrections-1`
+- Review target workstream: `agent-paired-review-validator-recertification-v1-review-corrections-1`
+- Reviewed main: `e4781dbef8e64fc86d53a3c0f27502a1d9f1caae`
+- Reviewed implementation commit: `7cfe06eda5367f51915e940c1e3dbf9d78424cac`
+- Reviewer context: `fresh`
+- Reviewer provenance: `different-agent`
+- Run ID: `20261101T094433Z-e6af1f0156bf`
+- Review cycle: `1`
+- Finding IDs: `R1-01`
