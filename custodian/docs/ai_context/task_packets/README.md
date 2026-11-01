@@ -351,6 +351,7 @@ packet and its paired review, not as chat-only downloads.
 - `WORKTREE_BACKLOG_ARCHIVED_AND_DETACHED_RECONCILIATION_V1.md` — Safely reconcile archived-complete checkout leftovers and detached capture/support worktrees, without destroying unique history, media or user changes.
 - `WORKTREE_BACKLOG_OWNED_WORK_RECOVERY_V1.md` — For all unfinished attached packet worktrees, determine and execute only the original-owner-supported continuation, finishing or bounded correction path, wit...
 - `WORKTREE_BACKLOG_QUEUE_INVALID_CLAIM_TRIAGE_V1.md` — Separate genuine queue/schema/review-provenance defects from 65 reported invalid-recovery classifications and two claim-only interrupted dispatch refs, witho...
+- `AGENT_WIRE_OBSERVATION_EXPORT_V1.md` — Provide a safe local JSON observation of CUSTODIAN task and workstream state for downstream WIRE editorial use.
 - `CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Station containment choice + completion; deliver one playable, bounded event slice.
 - `CAMPAIGN_ABANDONED_STATION_SITE_V1.md` — Alpine station generated site + relays; deliver one playable, bounded event slice.
 - `CAMPAIGN_ABANDONED_STATION_STABILITY_V1.md` — Station services + local 90s stability; deliver one playable, bounded event slice.
@@ -369,6 +370,7 @@ packet and its paired review, not as chat-only downloads.
 - `HUB_ROAD_PROCESSION_TESTIMONY_V1.md` — Road witness testimony + revisit; deliver one playable, bounded event slice.
 - `OPERATOR_GUARD_BREAK_PRESENTATION.md` — Give guard break its own committed, readable whole-body failure presentation, distinct from ordinary non-breaking recoil, without weakening the existing move...
 - `OPERATOR_UNARMED_DEFENSE_SOURCE_PROMOTION.md` — Turn the newly generated unarmed-defense source-work set into reviewed, registration-correct 96×96 Operator production assets through Source Session + Asset...
+- `REVIEW_AGENT_WIRE_OBSERVATION_EXPORT_V1.md` — Independently verify that the landed WIRE observation exporter reports only complete, supported, sanitized evidence and cannot change canonical project state.
 - `REVIEW_BRIDGED_FALLS_BRIDGE_GRAMMAR_AND_ASSET_V2.md` — Independently verify Asset V2 correctness, geometry registration and generated-seed bridge readability against the user-approved art lock.
 - `REVIEW_BRIDGED_FALLS_VISTA_AND_WATERFALL_PRESENTATION.md` — Independently verify the technical presentation and preserve the recorded human visual decision for the Bridged Falls atmosphere.
 - `REVIEW_CAMPAIGN_ABANDONED_STATION_CONTAINMENT_V1.md` — Independently falsify the implementation packet's acceptance against landed main, not just its claimed unit tests.
