@@ -4,7 +4,7 @@
 - Workstream: `agent-sepulcher-v2-host-validation-recovery-v1`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-canonical-operator-floor-v2-preview-v1`
@@ -22,8 +22,8 @@
 - Visual review: `none`
 - Goal: `Repair the V2 spawn/reset validation regression and determine/fix the reported recovery planner's passing-only validation of an authentic failed suite report, without manipulating the immutable held review or declaring a result it never produced.`
 - Completion boundary: `One small source/test correction to the V2 focused smoke, plus only a reproduced narrow failed-report authentication fix if needed; robust negative/positive regression tests; new correction implementation and independent review. No V2 scene/art changes. Deliver a read-only and provenance-safe next-review path; do not execute, clear, re-claim, or release the preserved original review here.`
-- Current measured state: `V2 scene landed on main at 58f52ac2b8f7e5ea60b48a00a3af57f55ee32c79. The implementation V2 smoke passed, but the fresh independent review host gate reported authored spawn preservation and inability to restore the same preview position. In custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd, lines 109-115 zero velocity, teleport to (512,520), await two process frames and assert exact equality, while disabling Operator physics only at line 123; thus the test permits real physics/controller movement during its own reset. The reviewer runner's exact recovery plan reportedly rejects the failed report pair due to a passing-report validator; the exact host run metadata/error was not available in GitHub and MUST be reproduced read-only before root-cause attribution or code change. Original review claim and checkout are preserved, no reviewer verdict. Four matched-camera screenshots exist at /CUSTODIAN/visual_review/sepulcher-canonical-operator-floor-v2-preview-v1/20261101T135136Z/REVIEW_MANIFEST.json; retention delete-after-review.`
-- Evidence: `Current custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd blob a6d58798de13475931b56e0b4305e491945f3a38; current custodian/tools/agent/paired_review_runner.py blob bc22136b7692f57aeaf01c6f2863ed9b2b140f7c; custodian/tools/agent/paired_review_host_validation.py; V2 archived implementation packet; original live review packet; reported held checkout /home/braydenchaffee/Projects/.custodian-worktrees/review-sepulcher-canonical-operator-floor-v2-preview-v1-20261101T135759Z-7959283e428f. Full original report path and run ID are host-local and must not be invented.`
+- Current measured state: `The original V2 review run 20261101T135711Z-571d69329b77 and all three report hashes were authenticated read-only. Its spawn/reset failures are genuine failed smoke evidence; the recovery planner rejection was reproduced at _validate_canonical_coverage because an exact archive-only manifest change had no post-hoc attestation. The smoke reset ordering and failed-report coverage verifier are corrected and adversarially tested. Three cold import-and-smoke runs passed on the final smoke; injected spawn, residual-motion, camera and visual faults each failed at the intended assertion. A separate cold Godot import intermittently failed with TLS handshake error -27648 and remains recorded as infrastructure failure. Original review claim/worktree/run remain preserved with no verdict. Four matched-camera screenshots exist at /CUSTODIAN/visual_review/sepulcher-canonical-operator-floor-v2-preview-v1/20261101T135136Z/REVIEW_MANIFEST.json; retention delete-after-review.`
+- Evidence: `Current custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd blob a6d58798de13475931b56e0b4305e491945f3a38; current custodian/tools/agent/paired_review_runner.py blob bc22136b7692f57aeaf01c6f2863ed9b2b140f7c; custodian/tools/agent/paired_review_host_validation.py; V2 archived implementation packet; original live review packet; reported held checkout /home/braydenchaffee/Projects/.custodian-worktrees/review-sepulcher-canonical-operator-floor-v2-preview-v1-20261101T135759Z-7959283e428f. Original run ID and report hashes are recorded in the committed recovery summary.`
 - Task-specific authority: `custodian/AGENTS.md; custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md; custodian/tools/agent/paired_review_runner.py; custodian/tools/agent/paired_review_host_validation.py; test manifest/runner and source-binding contracts; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2.tscn; custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd; existing V1 Sepulcher smoke, original V2 archived packet and review claim.`
 - Work surface: `custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd; custodian/tools/agent/paired_review_runner.py; custodian/tools/agent/test_paired_review_runner.py; a narrowly necessary new fixture under custodian/tools/agent/ only if required by a reproduced defect. Source-level V2 scene and other runtime assets are READ-ONLY. No edits to original V2 archived packet, original active review packet, preservation locks/claim/branch/worktree, or V1 files.`
 - Publication inputs: `custodian/AGENTS.md, custodian/docs/ai_context/AGENT_TASK_PACKET_TEMPLATE.md, custodian/docs/ai_context/AGENT_REVIEW_PACKET_TEMPLATE.md, custodian/docs/ai_context/task_packets/archived/SEPULCHER_CANONICAL_OPERATOR_FLOOR_V2_PREVIEW_V1.md, custodian/docs/ai_context/task_packets/REVIEW_SEPULCHER_CANONICAL_OPERATOR_FLOOR_V2_PREVIEW_V1.md, custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2.tscn, custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd, custodian/tools/validation/levels/sepulcher_modular_material_pilot_smoke.gd, custodian/tools/validation/validation_manifest.json, custodian/tools/agent/paired_review_runner.py, custodian/tools/agent/test_paired_review_runner.py, custodian/tools/agent/paired_review_host_validation.py, custodian/tools/agent/dispatch.py, custodian/tools/agent/validate_task_packet_authoring.py`
@@ -53,4 +53,26 @@
 - Summary backlink: `not-recorded`
 - Refresh reason: `none; source/test and failure report provenance require independent technical scrutiny`
 - Next action: `After this workstream lands and paired review passes, surface read-only original-claim disposition options and launch a *fresh, authorized* V2 technical review against corrected source for final independent acceptance.`
-- Blockers or open questions: `Host-local run ID, actual failed-report verifier traceback and potential competing recovery/provenance lock must be read from host. No reviewer verdict exists.`
+- Blockers or open questions: `No implementation blocker. The paired independent review remains dependency-gated until this implementation finishes; the original V2 review remains a no-verdict held failure pending separately authorized disposition.`
+
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: `A1: original run 20261101T135711Z-571d69329b77 identities and report hashes authenticated and preserved; exact failure and recovery-verifier root cause reproduced. A2: three independent cold-cache V2 import-and-smoke runs passed on final smoke; four explicit injected failure cases (spawn, residual motion, camera, visual) each failed at its matching assertion. A3: controller and Operator physics are disabled before fixed-position restoration; genuine movement and bootstrap checks remain. A4: archive-only failed report coverage is authenticated only as failed evidence; positive/negative runner regression coverage passes and no PASS is synthesized. A5: changed-file validation, full paired-review runner unit suite, neighboring V1 smoke, and source checks pass. A6: correction is committed; the paired fresh-context review packet is Ready/Auto and will become claimable immediately after this lifecycle finish. The original V2 reviewer remains preserved without verdict; follow-on V2 review targets the corrected commit.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `medium`
+- What went wrong: `Two clean-cache Godot import attempts failed intermittently with TLS handshake error -27648 before gameplay.`
+- Root cause / contributing factors: `The editor import path reaches an unavailable or unstable TLS endpoint; subsequent clean imports succeeded without source changes.`
+- Prevention / pipeline improvement: `Keep import infrastructure failures classified separately from gameplay results; retry only serially and require three clean cold runs before claiming smoke stability.`
+- Tooling / docs drift discovered: `The failed-report verifier routed a trusted archive-only manifest delta through a post-hoc scope-attestation requirement.`
+- Follow-up: `fixed-in-scope`
+- What worked: `Exact archived source-span validation preserved fail-closed provenance while allowing authentic failed evidence to remain failed.`

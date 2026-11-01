@@ -40,8 +40,11 @@ func _run() -> void:
 	var camera := game_root.get_node("World/Camera2D") as Camera2D
 	var bootstrap := game_root.get_node("World/LevelPlaytestBootstrap")
 	var preview := operator.get_node("CanonicalOperatorPresentation")
+	var injected_fault := OS.get_environment("CUSTODIAN_V2_SMOKE_FAULT")
 	var authored_spawn := Vector2(512, 520)
 	var spawn_marker: Vector2 = level.call("get_spawn_position", &"Spawn_Main")
+	if injected_fault == "spawn":
+		operator.global_position += Vector2(1, 0)
 	if spawn_marker.distance_to(authored_spawn) > 0.01:
 		_fail("authored Operator spawn marker moved from its declared coordinates")
 	if bootstrap.get_meta("playtest_profile", "") != "full":
@@ -58,6 +61,8 @@ func _run() -> void:
 		_fail("sandbox camera/gameplay bounds changed")
 	if not camera.has_presentation_framing() or camera.get_presentation_bounds_override() != Rect2(0, 0, 1024, 768):
 		_fail("dev-only camera framing/bounds were not scoped to this sandbox")
+	if injected_fault == "camera":
+		camera.zoom = Vector2(1.5, 1.5)
 	if not is_equal_approx(camera.zoom.x, 1.25) or not is_equal_approx(camera.zoom.y, 1.25):
 		_fail("camera effective zoom must be 1.25 in both axes")
 	if operator.scale != Vector2.ONE:
@@ -69,6 +74,9 @@ func _run() -> void:
 	var courtyard := level.get_node("NativeCourtyardPresentation") as Node2D
 	var repeat := level.get_node("RepeatDiagnosticPresentation") as Node2D
 	var quiet := level.get_node("QuietModularPresentation") as Node2D
+	if injected_fault == "visual":
+		preview.call("set_canonical_enabled", false)
+		quiet.visible = false
 	var cells := quiet.get_node("MaterialCells") as Node2D
 	var grout := quiet.get_node("CharcoalGrout") as Node2D
 	var routes := quiet.get_node("BronzeInlayRoutes") as Node2D
@@ -121,6 +129,8 @@ func _run() -> void:
 		_fail("test could not restore the fixed preview player position")
 	for _frame in 2:
 		await physics_frame
+	if injected_fault == "residual_motion":
+		operator.global_position += Vector2(1, 0)
 	if operator.global_position.distance_to(authored_spawn) > 0.01:
 		_fail("Operator moved after test physics and controller motion were disabled")
 

@@ -22,6 +22,16 @@
 - V2 focused gameplay smoke: three consecutive cached gameplay runs passed after import. The initial cold import failed as infrastructure with Godot TLS handshake error `-27648`; no gameplay test was counted for that import failure.
 - Neighboring V1 Sepulcher smoke: passed.
 - `git diff --check`: passed.
+- `## Process Feedback`: medium-friction TLS import failures were retained as infrastructure evidence; retry was serial and three independent cold runs ultimately passed.
+
+## Process Feedback
+
+- Outcome: success; friction severity: medium.
+- What went wrong: clean-cache Godot imports intermittently failed with TLS handshake error `-27648` before gameplay.
+- Root cause / contributing factors: editor import intermittently reached an unavailable TLS endpoint; later clean imports succeeded without source changes.
+- Prevention / pipeline improvement: distinguish import infrastructure failures from gameplay, retry serially, and require three cold passing runs.
+- Tooling / docs drift: failed-report authentication incorrectly required post-hoc attestation for an exact archive-only manifest span.
+- Follow-up: fixed in scope; exact archive-trace validation and regressions were added.
 
 ## Review and held-run boundary
 
