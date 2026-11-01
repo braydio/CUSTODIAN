@@ -1,9 +1,167 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T06:03:31Z",
+  "generated_at": "2026-11-01T06:13:18Z",
   "source_main_sha": "7eaf776dfe57b971069262925275331bb78c7dbc",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-modular-pilot-plan-796c32b0",
+      "headline": "Sepulcher Gardens gets a four-asset experiment to test a more flexible environment art style",
+      "summary": "A new reversible design proposes testing a tiled floor, damage overlay, civic inlay and wall module with the real Operator in a sandbox. The plan could reduce reliance on single large AI-painted maps, but no images, playable test or approval are delivered.",
+      "body": "Main commit 796c32b0 adds a proposed four-source modular Sepulcher pilot, including a 1024×768 sandbox, 32px walkability grid, exact image prompts and proposed Asset V2 identities. The experiment compares a composed modular environment with the existing approach using the real Operator. It is explicitly planning only: not art generation authorization, registered assets, a runnable Godot scene, independent review or production cutover. Main at inspection: 7eaf776dfe57b971069262925275331bb78c7dbc. Full dispatcher audit and host state were not available.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-modular-material-playtest-v1",
+      "occurred_at": "2026-11-01T04:57:58Z",
+      "bullets": [
+        "Art owner: review the four-source experiment before authorizing image generation.",
+        "Gameplay owner: only after individual art approval, create an isolated Operator A/B sandbox without changing production scenes."
+      ],
+      "links": [
+        {
+          "title": "Four-asset pilot design",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/796c32b0d42ff254d93a84d82dc850244d5e558f"
+        },
+        {
+          "title": "Earlier floor/structure separation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/1fb718fe908d3f4c8bd293c79000eda165ec55bf"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens may not need to be painted as one enormous image. A newly landed experiment proposes building a small playable scene from four independently reviewable art sources, then comparing the result with the existing full-environment approach. The proposal is concrete, but it has not yet produced art or gameplay.",
+        "sections": [
+          {
+            "heading": "Four pieces, one test scene",
+            "text": "The proposed ingredients are repeatable paving, a sparse damage overlay, a distinctive civic inlay and a separate wall module. They would be composed on a 1024×768 sandbox using a 32px grid and the real Operator, with movement and collision authored separately from the images."
+          },
+          {
+            "heading": "A reversible test, not a redesign",
+            "text": "The experiment deliberately leaves the existing Gardens map, grave-event logic and production art queue untouched. Its acceptance gates require individual source review, seam and scale checks, and a side-by-side playable comparison before anyone considers a wider change."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Separating art from geometry could make iteration cheaper",
+            "explanation": "If a floor texture can repeat cleanly while walls and walkability remain independent, adjusting a room may no longer require repainting an entire environment. The pilot is designed to test that possibility, not assume it."
+          },
+          {
+            "title": "A real Operator comparison is the decisive gate",
+            "explanation": "A beautiful isolated tile is not enough. The proposed sandbox tests visual scale, readability, navigation and composition in the actual gameplay camera, where an art approach must ultimately succeed."
+          }
+        ],
+        "takeaway": "A bounded modular-art experiment is documented on main; generation, approval, implementation and A/B results remain outstanding.",
+        "next_watch": "Watch for explicit authorization and independently reviewed source images, followed by a real Operator sandbox comparison."
+      },
+      "details": {
+        "overview": "Commit 796c32b0 adds SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.md/.json and index entry. Manifest explicitly identifies planning-only scope: four proposed image sources, no registered assets, no changed production queue. This watch inspected GitHub commit evidence, not host or dispatcher state.",
+        "ledger": [
+          {
+            "stage": "Pilot specification",
+            "status": "verified landed",
+            "evidence": "Main commit 796c32b0 adds design and JSON."
+          },
+          {
+            "stage": "Art generation authorization",
+            "status": "unknown/not established",
+            "evidence": "Proposal explicitly does not authorize generation."
+          },
+          {
+            "stage": "Individual source approvals",
+            "status": "unknown",
+            "evidence": "No approved image receipts inspected."
+          },
+          {
+            "stage": "Operator sandbox implementation",
+            "status": "not verified",
+            "evidence": "No playable scene delivered in this commit."
+          },
+          {
+            "stage": "Independent A/B evaluation",
+            "status": "not verified",
+            "evidence": "No side-by-side result inspected."
+          },
+          {
+            "stage": "Production cutover and teardown",
+            "status": "not verified",
+            "evidence": "Production remains untouched by design; host teardown not inspected."
+          }
+        ],
+        "notes": [
+          "Pilot is separate from the previously documented core art sequence."
+        ],
+        "unknowns": [
+          "No canonical full dispatcher audit or live host worktree/disk telemetry.",
+          "No generated source image, asset intake or gameplay evidence inspected."
+        ],
+        "actions": [
+          "Art owner: review and authorize pilot sources before generation.",
+          "Gameplay owner: after source approval, implement reversible sandbox and capture A/B evidence."
+        ]
+      },
+      "scorecard": {
+        "stage": "Reversible experiment specified; source approval pending",
+        "as_of": "2026-11-01T06:13:18Z",
+        "scope": "One proposed four-source Sepulcher pilot, not project-wide art or packet totals",
+        "metrics": [
+          {
+            "id": "other-planned-pilot-sources",
+            "label": "PROPOSED SOURCES",
+            "value": 4,
+            "verification": "verified",
+            "basis": "Four distinct proposed image source identities in pilot manifest; none counted as approved or generated",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/796c32b0d42ff254d93a84d82dc850244d5e558f"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Document bounded pilot",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main 796c32b0."
+          },
+          {
+            "label": "Authorize source generation",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Planning document expressly withholds authorization."
+          },
+          {
+            "label": "Generate and approve sources",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No approved source receipts."
+          },
+          {
+            "label": "Build isolated Operator sandbox",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No runtime scene evidence."
+          },
+          {
+            "label": "Independently compare A/B playtests",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No review receipt."
+          },
+          {
+            "label": "Decide on production adoption",
+            "status": "blocked",
+            "verification": "verified",
+            "evidence": "Requires source and playtest gates; no cutover authorized."
+          }
+        ],
+        "next_gate": "Art owner reviews and explicitly authorizes the four-source pilot before generation."
+      },
+      "related": [
+        {
+          "title": "Environment art gains a precise 'next set' command, starting with Sepulcher Gardens",
+          "context": "The existing whole-environment art sequence is the alternative this bounded modular experiment would evaluate.",
+          "story_id": "art-next-set-dispatch-5ee4a63d"
+        }
+      ]
+    },
     {
       "id": "review-closeout-guard-supersession-7eaf776d",
       "headline": "Review closeout gains a stronger safety guard as a stranded-review recovery packet becomes ready",
@@ -1646,157 +1804,6 @@
           }
         ],
         "next_gate": "Independent reviewer must produce an authentic accepted PASS for the landed implementation before any protected claim recovery."
-      },
-      "related": []
-    },
-    {
-      "id": "hub-sepulcher-grave-resolution-c8e39576",
-      "headline": "The Sepulcher grave now lets the Operator choose what the evidence means",
-      "summary": "CUSTODIAN landed a playable resolution to the Hub's three-part grave mystery. After reading all three inscriptions, the Operator can attest a provenance conflict or leave it unresolved. Either choice persists, the inscriptions remain readable, and a pale growth appears on later visits. Implementation validation is reported passing; independent review remains ready, not accepted.",
-      "body": "Commit c8e39576 adds two physical resolution interactions to the existing Sepulcher grave controller and persists one finding in HubState. The implementation archive reports focused grave resolution, predecessor evidence, Hub traversal and 9/9 changed-file checks passing. The separate review-hub-sepulcher-grave-resolution-v1 packet is ready/auto; this is not proof of execution or accepted PASS. The implementation also records an unrelated F14-C2a dependency mismatch: its declared original review has findings, while a later correction review passed against a different target. No claim was released. Host process, lock, worktree, disk and teardown status remain unknown.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-grave-resolution-v1",
-      "occurred_at": "2026-10-31T12:34:26Z",
-      "bullets": [
-        "Two mutually exclusive findings become physically selectable after three readings.",
-        "Either outcome persists once; all inscriptions remain available for rereading.",
-        "Later visits show a subtle non-colliding growth cue.",
-        "Author reports focused runtime smokes and 9/9 changed-file checks passing.",
-        "Paired independent review is ready, not accepted.",
-        "F14-C2a exact dependency mismatch remains for its authoring owner."
-      ],
-      "links": [
-        {
-          "title": "Implementation and closeout",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/c8e3957628e5d453a7ca10d49517ee71b78fd2bf"
-        },
-        {
-          "title": "Independent review packet",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A small mystery in CUSTODIAN's Hub can now end with a deliberate choice. Once the Operator has examined all three inscriptions at the Sepulcher grave, two physical interactions become available: attest that the records conflict, or leave the matter unresolved. The choice is remembered, without rewriting the evidence.",
-        "sections": [
-          {
-            "heading": "A choice that respects the mystery",
-            "text": "Both outcomes are persistent and mutually exclusive. The original three readings stay available, so the player can revisit the clues without changing the record. The design avoids turning a disputed history into a forced revelation."
-          },
-          {
-            "heading": "The world remembers quietly",
-            "text": "On a later visit, a pale growth appears beside the slab. It is a small environmental response rather than a new obstacle: the implementation adds no collision owner and leaves Contract preparation unchanged."
-          },
-          {
-            "heading": "Landed code still needs independent eyes",
-            "text": "The implementation reports passing focused runtime checks and nine changed-file validations. Its separate reviewer is ready, but there is no accepted independent verdict yet. A distinct campaign dependency mismatch was documented, not fixed, during the work."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Persistence creates consequence without locking away evidence",
-            "explanation": "The player commits to an interpretation while retaining access to every inscription. That keeps the event replayable as investigation, not as a repeatable reward or choice."
-          },
-          {
-            "title": "A separate dependency remains blocked by exact review identity",
-            "explanation": "The closeout found that F14-C2a names an original review with findings, even though a later correction review passed. Those are not interchangeable receipts; its authoring owner must reconcile the dependency."
-          }
-        ],
-        "takeaway": "The playable grave resolution has landed with author-reported passing checks, while independent acceptance and host cleanup remain unverified.",
-        "next_watch": "A fresh independent review disposition for the grave resolution, followed by a separately authorized correction of the F14-C2a dependency if warranted."
-      },
-      "details": {
-        "overview": "Inspected commit c8e39576, the archived implementation packet and the ready independent review packet. The code extends SepulcherGraveEvidence and HubState, updates the G1 reread regression and adds a dedicated G2 smoke. The closeout reports focused smokes and 9/9 changed-file validation; no independent receipt was observed. GitHub combined status returned an empty statuses list, not a CI PASS.",
-        "ledger": [
-          {
-            "stage": "Implementation and landing",
-            "status": "verified in inspected commit and main-path archive",
-            "evidence": "c8e3957628e5d453a7ca10d49517ee71b78fd2bf and archived packet status complete"
-          },
-          {
-            "stage": "Validation",
-            "status": "author-reported passing",
-            "evidence": "Focused G2, G1 and first-set smokes; changed-file 9/9 and diff check"
-          },
-          {
-            "stage": "Independent review",
-            "status": "ready, not accepted",
-            "evidence": "review-hub-sepulcher-grave-resolution-v1 packet status ready / dispatch auto"
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No current host worktree, lock or process evidence"
-          },
-          {
-            "stage": "F14-C2a dependency",
-            "status": "reported mismatch, not corrected",
-            "evidence": "Closeout notes original review findings versus correction review passed for different target"
-          }
-        ],
-        "notes": [
-          "No new raster art or generalized event framework.",
-          "No full canonical dispatcher audit was available."
-        ],
-        "unknowns": [
-          "Current host liveness, worktrees, locks, disk and teardown.",
-          "Independent review outcome and complete CI workflow health.",
-          "Full project packet and workstream totals."
-        ],
-        "actions": [
-          "Existing paired reviewer: inspect landed grave behavior and produce canonical findings-first disposition.",
-          "F14-C2a authoring owner: reconcile exact dependency after examining review targets; do not release claims based on this report."
-        ]
-      },
-      "scorecard": {
-        "stage": "Implementation landed; independent review ready",
-        "as_of": "2026-10-31T12:41:00Z",
-        "scope": "Only the named Sepulcher grave implementation and paired review",
-        "metrics": [
-          {
-            "id": "ready_review",
-            "label": "READY REVIEW PACKET",
-            "value": 1,
-            "verification": "verified",
-            "basis": "One inspected paired review packet is status ready / dispatch auto; excludes all other packets.",
-            "url": "https://github.com/braydio/CUSTODIAN/blob/c8e3957628e5d453a7ca10d49517ee71b78fd2bf/custodian/docs/ai_context/task_packets/REVIEW_HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Implement physical grave choices",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "c8e39576 production controller diff"
-          },
-          {
-            "label": "Persist finding and restore visit cue",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "c8e39576 HubState controller changes"
-          },
-          {
-            "label": "Run author runtime validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Archive reports focused smoke PASS and changed-file 9/9"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Paired packet ready; no accepted receipt inspected"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host state unavailable"
-          }
-        ],
-        "next_gate": "Existing paired reviewer must independently validate the landed grave implementation and record a canonical disposition."
       },
       "related": []
     }
