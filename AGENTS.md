@@ -96,6 +96,18 @@ checks are insufficient and minimize the capture budget. More than two full-fram
 stills, any repeated full-frame pass, or full-motion capture needs explicit
 task-specific justification.
 
+## Generated Non-Operator Artwork: Authoring and Review
+
+Before using an image generator for production environment, connector, prop,
+decal or ambient art, read
+`design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md`.
+Plan 5–10 manifest states at a time, but generate complex assets individually;
+after human-approved style calibration, small compatible prop/decal groups are
+permitted. Never treat a ten-image collage as ten approved Asset V2 sources.
+Human approval remains per image; the production manifest identifies exact
+prompts and source/inbox paths. See Asset Pipeline V2 for the *separate* intake
+and runtime authority. Specialized Operator art remains under its own tooling.
+
 ## Operator Main-Character Pixel-Art Resizing
 
 For any pixel-art conversion or resizing of the Operator main character's

@@ -7,7 +7,8 @@
     "image_generation_authorized_after_publication": true,
     "individual_source_art_approval": "NOT_APPROVED_AS_PART_OF_THIS_DECISION",
     "authoring_chat_url": null,
-    "authoring_chat_url_status": "awaiting exact user-supplied chat URL"
+    "authoring_chat_url_status": "awaiting exact user-supplied chat URL",
+    "process_amendment_2026_11_01": "CAL-A strictly one image at a time; after calibration, independent low-risk same-style props or decals may be generated in small groups without reducing per-image review, according to AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md. The 71-core/12-optional scope is unchanged."
   },
   "repo": {
     "repository": "braydio/CUSTODIAN",
@@ -3970,5 +3971,36 @@
     "hub": "Seven Hub family names in the blockout are suggestions, NOT registered contracts.",
     "dust_lung": "Dust Lung V2 family is design-only, not yet registered.",
     "review": "Sepulcher grave independent review was ready/auto with active branch during audit. Reinspect before editing controller."
+  },
+  "generation_protocol": {
+    "authority_document": "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
+    "status": "active_guidance__does_not_change_per_image_approval",
+    "queue_size": {
+      "min": 5,
+      "max": 10,
+      "meaning": "manifest state planning queue, not an image-generation tool call"
+    },
+    "mandatory_calibration_stage": "CAL-A",
+    "mandatory_calibration_generation_size": 1,
+    "post_calibration_recommended_generation": {
+      "district_underlays": 1,
+      "connectors_and_seams": 1,
+      "unique_hero_props": "1-2",
+      "minor_props": "2-3",
+      "small_decals": "3-4",
+      "animation_clips": 1,
+      "only_after": "approved style anchor for that architectural/material family; independent image source bytes and identity",
+      "source_policy": "never crop a multi-asset contact sheet into distinct approved states"
+    },
+    "release_checks": [
+      "objective pixel/alpha/frame/seam/layout validation",
+      "individual explicit human artistic approval",
+      "accepted source and normalized SHA256 with actual dimensions",
+      "immutable source/inbox path identity",
+      "Dropbox handoff bundle and per-asset file ID/revision/checksum receipts",
+      "separate Asset V2 registration/plan/status/doctor/ingest and runtime review"
+    ],
+    "correction_policy": "correct or regenerate the same state without marking accepted; preserve rejected candidate identity; no guess-filled receipts",
+    "restart_authority": "read current GitHub planning ledger and reconcile actual Dropbox receipts and Asset V2 records; never trust a stale empty checkpoint as proof of absence"
   }
 }
