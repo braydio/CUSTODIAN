@@ -1,0 +1,238 @@
+{
+  "conflicted_readme": {
+    "index_stages": [
+      {
+        "blob": "f6207602d405a0464b43bdadb2fc50d27e1eb595",
+        "mode": "100644",
+        "stage": 1
+      },
+      {
+        "blob": "14b407f4cdd2e3a145f9b8628bb0fd782c42996c",
+        "mode": "100644",
+        "stage": 2
+      },
+      {
+        "blob": "bd5eeb98f8b55eb4ab88980a714afc275483004d",
+        "mode": "100644",
+        "stage": 3
+      }
+    ],
+    "path": "custodian/docs/ai_context/task_packets/README.md",
+    "stage_1_is_merge_base_tree": true,
+    "stage_2_is_HEAD_tree": true,
+    "stage_3_is_MERGE_HEAD_tree": true,
+    "working_bytes": 129645,
+    "working_sha256": "406c87b04be09c0246086cf7814c14e8ec010b71cb46b800cd2903ae186e34f1"
+  },
+  "ignored_files": [
+    {
+      "bytes": 22194,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/__pycache__/godot_project_lock.cpython-314.pyc",
+      "sha256": "785a522277448e916c0496f408362d7b003e5ae2fa7cabe170b16ac717a185a7"
+    },
+    {
+      "bytes": 66471,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/dispatch.cpython-314.pyc",
+      "sha256": "efb0b170651fd62c1d2ee59dd8822c1f587ce22b377aa706518b794c229dda62"
+    },
+    {
+      "bytes": 84178,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/legacy_claim_quarantine.cpython-314.pyc",
+      "sha256": "dc9ff69c4c6eb914b0a8964145050750cc72c6b8e2fe53dc9da0c049e7714e43"
+    },
+    {
+      "bytes": 23600,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/next_execution_boundary.cpython-314.pyc",
+      "sha256": "07504eda6d07a05f1b019282ec0ce846b251ab469d004b999849123126bde72d"
+    },
+    {
+      "bytes": 39239,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/persistent_checkout_sync.cpython-314.pyc",
+      "sha256": "665e2f28043a02a028701f749de22740e01b48a7b7ff4c36bc1a30fd93384209"
+    },
+    {
+      "bytes": 56820,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/review_claim_parking.cpython-314.pyc",
+      "sha256": "06c4850a087dccdcc1861b0cf999331a2e650333587f8347e2ecbeb5b2c4fbf9"
+    },
+    {
+      "bytes": 4119,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/review_contract.cpython-314.pyc",
+      "sha256": "791069bcffacc4b983271036f1160fe323d50622f1a6555238f77de613411e89"
+    },
+    {
+      "bytes": 23640,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/review_outcome.cpython-314.pyc",
+      "sha256": "823f73c98ac7a68a99a3bbee3064ec0d305dd7247e197f679c896b5bcccb2028"
+    },
+    {
+      "bytes": 37339,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/task_packet_contract.cpython-314.pyc",
+      "sha256": "7d8ce37710560ef01fcd1738a753089bc8d6e3f7d91805616ba6f14f2dfda27f"
+    },
+    {
+      "bytes": 15684,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/validate_task_packet_authoring.cpython-314.pyc",
+      "sha256": "61e8f165893e05ffbd71d3e4a3ae011b9ff78c08dab9540848d1262ef9e795ad"
+    },
+    {
+      "bytes": 32252,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/workflow_control.cpython-314.pyc",
+      "sha256": "c6e19d7aeb46e00db0a1a31792a66cfea82653579333495e04d3ecacef22e39a"
+    },
+    {
+      "bytes": 221115,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/workstream.cpython-314.pyc",
+      "sha256": "3658c7f75a5bf652eb97c424f30fe69fb140f559aea475760c0eca7f2b4f105d"
+    },
+    {
+      "bytes": 35435,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/agent/__pycache__/worktree_backlog_census.cpython-314.pyc",
+      "sha256": "9afe1276cd5a0b32ad043c61dc685b7f5773077d581029d39c1a1649ca97ddb4"
+    },
+    {
+      "bytes": 9880,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/iteration/__pycache__/changed_file_router.cpython-314.pyc",
+      "sha256": "e041da68b4093356702fba6a9294b91b3bb4d7d50368245b563ad6ba918a5267"
+    },
+    {
+      "bytes": 6208,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/iteration/__pycache__/dropbox_transport.cpython-314.pyc",
+      "sha256": "464c7ef39d1cdfdf388477db446de1470407862e919c9f10f4543a1314841971"
+    },
+    {
+      "bytes": 32671,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/iteration/__pycache__/publish_review_artifacts.cpython-314.pyc",
+      "sha256": "389ddaf239b365bc6691cab8fa9f261c78c3d191fdde26a54318bb36c7529e18"
+    },
+    {
+      "bytes": 16233,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/pipelines/__pycache__/godot_import_preflight.cpython-314.pyc",
+      "sha256": "d27f20fdbf34ac070086d50bf770dccef78f0b2ede6ee769f4d1da76cc08bda5"
+    },
+    {
+      "bytes": 62117,
+      "classification": "generated Python bytecode cache; reproducible from tracked source",
+      "path": "custodian/tools/validation/__pycache__/operator_chassis_authority_guard.cpython-314.pyc",
+      "sha256": "45daddb5c59c695f9ecb78e08e69f4b423808bd90ee6fd6f8dbd2ffe4d8d04b4"
+    }
+  ],
+  "inventory": {
+    "AGENTS.md": "ac4e80011178ec2e42a9aa81e7ccfae2c7022db064b8dcf332014fac01331da9",
+    "AGENT_ARCHIVE_TRANSITION_ADMISSION_MAINTENANCE_V1_CLAUDE_SUMMARY.md": "3bed41bbedd6bc137cf8ab089f027bceaf7240a0b4c2f460469e4d4755a3b5e3",
+    "AGENT_PAIRED_REVIEW_COMMITTED_PASS_CLOSEOUT_CORRECTION_V1_CLAUDE_SUMMARY.md": "bfb93dcba46c3b16bb38ffef4a8d7b6dbbbdc73d7d0e0553068e66a45c9132d5",
+    "AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1_CLAUDE_SUMMARY.md": "a9f6d51ed45d87cbf874dc338b4c66e593b7a7e2754ea33bfb79a1cb690d7702",
+    "AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1_CLAUDE_SUMMARY.md": "d90e4b0461fd561006f4d9ebd922eaff47b707503d6ffce7ccfc34edf5a025d7",
+    "AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1_CLAUDE_SUMMARY.md": "3af1a5d380b6518eb1ed07f664626cf197a9cecf134bd0ebb8160c21bbf44fca",
+    "AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1_CLAUDE_SUMMARY.md": "c01a1d15e2258ff057c28ebf8f38b2befa2c0fb194367a3a1ae3d5842aeaacfc",
+    "HUB_SEPULCHER_GRAVE_RESOLUTION_V1_CLAUDE_SUMMARY.md": "b81f012b5bf42a24573b8940cd992fb6895a34b01df512102135e283e5fd2d18",
+    "custodian/AGENTS.md": "e8485c912f71e168af500bb0288983b72a6409ffbb09036a4a21fcb4d72cd2b8",
+    "custodian/docs/ai_context/AGENT_WORKSTREAM_LIFECYCLE.md": "000f94be735113c876b506898d28ae3920dd97625af2d45cf52c8000ecab9d99",
+    "custodian/docs/ai_context/FILE_INDEX.md": "6daf81a4ae958304edbf0a4a41286447b6a23483101df82200187e5a8a0a1f3b",
+    "custodian/docs/ai_context/PAIRED_REVIEW_CHECKOUT_PROFILE_EMERGENCY_RECOVERY_20261031.md": "bf986e1d835aa16e2f3cad6676d2b273114b6362a9292bafc1143b8697ac7c71",
+    "custodian/docs/ai_context/VALIDATION_RECIPES.md": "30e980880121ad87e17c47c6f8e516d5c17ea1064b91e618507ed2d1704ee517",
+    "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md": "3cdd2efbbf196259e84c7002b99c488cd9053892f8eeb94451cf17efd7504199",
+    "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_UNACCEPTED_SUPERSESSION_V1.md": "499688b8e572c841923a0c9a23f3c25e331df43c807ea1cb7782fb6d704e7af3",
+    "custodian/docs/ai_context/task_packets/README.md": "406c87b04be09c0246086cf7814c14e8ec010b71cb46b800cd2903ae186e34f1",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_G2_SOURCE_SCOPE_ATTESTATION_V1.md": "b97162a995528e8b0bea22e93aeb103d29eed88812a9ca26f0359edc9e1bf8d8",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md": "b899eed31ad60761118415c909041a3919cfe05b34b0686f59fb33023a676017",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md": "e1b2c380b79517704b344b2e57b445846a6c8f64ac4da85b04ff26dddbf9a10f",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md": "7af7d5a663403b9158ec84ddfe6e31d21f9dfa5d91c2627711673a5b7d812e82",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_PAIRED_REVIEW_UNACCEPTED_SUPERSESSION_V1.md": "3f6c83386ecfc9022d19b89a9274a63ac1b152096f7f8ea05d5eeb7e1d996e8f",
+    "custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md": "1070a46438c86c5aafbb88de6fa525c00a1592db6d70ee8548d3edd910c01ff6",
+    "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_CHECKOUT_PROFILE_V1.md": "e00cc8033a2534fa2a294702f609777277cc7d15bf69780f96ca07864dcb766d",
+    "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md": "87e12010d96e0104913034398232e39491a4453686da70571c3f209226e91077",
+    "custodian/docs/ai_context/task_packets/archived/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md": "8b4711579df6aa06743fc5f1570578430cd4a2f2d0e4acb72ba322a02fb46160",
+    "custodian/docs/ai_context/task_packets/archived/AGENT_WORKSTREAM_LIGHTWEIGHT_LFS_PROVISIONING_V1.md": "feb05bbaeee20ced14d47042f9ec05315e2c9de98ae113004778cf5facdaf4db",
+    "custodian/docs/ai_context/task_packets/archived/HUB_SEPULCHER_GRAVE_RESOLUTION_V1.md": "7416f1620ff4f4ab4dc34ac906ef6e94b8e6f93b5390c9e75d92d5c749369c7b",
+    "custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json": "fc632cc325cb3cfc5fb4567be2de91ae46a103c378ca5405165b2589fd6428f6",
+    "custodian/docs/ai_context/worktree_profiles/awakening_gate_lateral_overlooks_v1.json": "03356bf1ae6d3e06974b85f0f2cccb423118135bdb15aac4f080c19fe6e34487",
+    "custodian/game/world/hub/events/sepulcher_grave/sepulcher_grave_evidence.gd": "7575ab6957580381f693d37cc70fea708437a3ba081dfb1cbcb45ec5731f2d75",
+    "custodian/tools/agent/dispatch.py": "9214d963cfa70c8fea498883d9b20db67150d81e350ffb18d7843c71bbed33a7",
+    "custodian/tools/agent/paired_review_runner.py": "e47bcf2c9771d10449bd623a9b35c3160dc66c8943cd203ea2a61174695a36a7",
+    "custodian/tools/agent/task_packet_contract.py": "35fabcfd4064d5e3a9fc15048b0b72ade7b119a5bfadc7158a962c4a7cb9a843",
+    "custodian/tools/agent/test_dispatch.py": "17b5c18781e3840833735e2bc1c4ba5f6089507475fedc8b7ab7dce2017e94ca",
+    "custodian/tools/agent/test_paired_review_runner.py": "d0d28aae6b8aaf7fc08a57e8c6b1d4b2b509741b6a2aae75ac6fe252c150db38",
+    "custodian/tools/agent/test_task_packet_contract.py": "b8040186b0480691ab98d4c016db7a0e7cb3182543737817f680f7e75d297b33",
+    "custodian/tools/agent/test_validate_task_packet_authoring.py": "8031318f47ef14563bd71781e7d42fa7238f657d0cbbc808072850c1de1019c3",
+    "custodian/tools/agent/test_workstream.py": "276283941cb02ec1a45f9f3dc5ec653f8614992e7e06a2df3d74d0f2fe51cb2c",
+    "custodian/tools/agent/test_workstream_checkout_recovery.py": "1e5f5684d3dbb71d72d1343221c5a7fa8b8ccacdc6c3a177be212737ef1586e8",
+    "custodian/tools/agent/test_worktree_provisioning.py": "3451cba5549491b7a8b1df7d50528258f74fcf21af362f62b40935e6fbd5311a",
+    "custodian/tools/agent/validate_task_packet_authoring.py": "d9bf76217e92843cad0c65583d825fc209616e082db5c2d283c90a08a3dfd5b2",
+    "custodian/tools/agent/workstream.py": "acfd57002a1432fa7dd9cad4f4711855670d00e2f8bca66df19a32aae1eaff70",
+    "custodian/tools/agent/worktree_provisioning.py": "50b0085dab936f1aa61f6842851378644cd82e9c64a3e5811145a4f9e8b26a69",
+    "custodian/tools/validation/hub_sepulcher_grave_evidence_smoke.gd": "ec55b3c44e5a157ad972c6c18912261469386a8303e4554186db087bc4a2bdd6",
+    "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd": "4f91e4be7ea1231d62aabb321bb81d479ebcac9068ae7f6add37365f0ef2f5a2",
+    "custodian/tools/validation/hub_sepulcher_grave_resolution_smoke.gd.uid": "bb0bfcd8736016d2ccd6b1eddd604aa603ca980d8aa24e33a571051868a4bf8b",
+    "custodian/tools/validation/validation_manifest.json": "3a5a7e2d1e7c26d52d810078fc3834bf8ea3b421b727aa2ff2cbb5742a5391fa",
+    "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md": "5ef83de54f7f5a4cba755ceb69a9b313bfc0a0cd39f3f3285a92713b60633c59",
+    "design/04_architecture/ASSET_PIPELINE_V2.md": "bd687540779ebc3587e871f228a936452fe9ebfb65d5d3f7be80c0a8474424cf",
+    "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.json": "89046decb4a3446507fcc34a12857d4a1167442e07eb013e4127a0ea12e6035c",
+    "design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md": "2446baebb1203658a3248b40c30d87156a9a2d8e99cbf44bcc89c6ed6b206fc7",
+    "design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.json": "10c66b7176c8060e633c89a236f67214a20543393d126c1e5fd02532b8fcb5e3",
+    "design/04_architecture/SEPULCHER_MODULAR_PLAYTEST_ASSET_PILOT_V1.md": "0adbf406c7d2907f253a3a6cb9181f0d58678f7396621457f36156ec5d648589"
+  },
+  "journal_sha256": "099d53dd82f54edde290720e947b798ec1668120b8ab92d9369623db8c3c6ded",
+  "lfs": {
+    "path": "archive/animation_review/operator_preview__unarmed__fast_windup_01_fast_strike_01_fast_recovery_01__sw.png",
+    "remote_fetch_refetch_succeeded": true,
+    "sha256": "6d4f1fa49657909b40c4e0370b3ca7b9992d22728d7bb04ab26b8c6c36418131"
+  },
+  "original": {
+    "branch": "agent/review-agent-paired-review-validator-recertification-v1",
+    "claim_released": true,
+    "finding_ids": [
+      "R0-01"
+    ],
+    "head": "52dad5e3dd07ee707d0eba29e70a1752355fe261",
+    "merge_base": "b41c4d86b5bc40ec504b1e30fa3aadffd301cc9f",
+    "merge_head": "44c07109a34e2a3935265a5127e2f1962a310031",
+    "original_worktree_untouched": true,
+    "recovery_landing": "fc07bc2d8013737dbc59a9115065ead4156a4535",
+    "run_id": "20261031T095210Z-2a66bdc76153",
+    "workstream": "review-agent-paired-review-validator-recertification-v1",
+    "worktree": "/home/braydenchaffee/Projects/.custodian-worktrees/review-agent-paired-review-validator-recertification-v1-20261031T095252Z-46b016235fce"
+  },
+  "pinned_remote_main": "e4781dbef8e64fc86d53a3c0f27502a1d9f1caae",
+  "published_review_artifacts": {
+    "archived_findings_packet_sha256": "9b6c9ed5faedfebb83cf60642a53d4aaba9bedee2ad15afabb31ba05163e66df",
+    "summary_sha256": "492dd43f81e1a48dec21f3ac36b17141956ecf0c6fa0b17549bc2898106702a9"
+  },
+  "purpose": "Coordinator-authorized evidence preservation before sequential retirement; does not change original verdict, journal, claim disposition, or main.",
+  "restore": {
+    "method": "fetch this evidence ref, restore the README evidence file at the specified original worktree path if reconstruction is explicitly needed, then reconstruct index stages from the three recorded parent trees; original journal remains unchanged in the coordination checkout."
+  },
+  "run_evidence": {
+    "RECOVERY.md": "fc86e591cbc3e5b6a066aea741e64bc93b01380f9cc6ad397ee0f1252c8195b3",
+    "claim-receipt.json": "852aba9308cd6aefab2b2ec7f2de6c94e7e86d175f4e83692897ff3d33e22e2d",
+    "claim.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "claim.stdout": "22b840d7f3be5ebefb636c0bc094a1fe3465b270d6dd580d24ac1b963eccb851",
+    "closeout-integrity.json": "ef386f72890d743d11097a4c6c308dfc3722bf7a93e3804fd98e484fc0d88ae8",
+    "closeout-journal.json": "099d53dd82f54edde290720e947b798ec1668120b8ab92d9369623db8c3c6ded",
+    "codex.jsonl": "41c6892c505885e69c087e98d34ae18ab4b2d335bd6fc402395e11a79f5bb23d",
+    "codex.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "coordinator-validation.json": "be5c8b7dea9c5d02262096911341fa8d1fcb85aa1a1997144abab218d37672a8",
+    "last-message.txt": "fc325a1f38c4491a19cfe40967e56344fc34e66a3177d6a215caffbb247d1f72",
+    "metadata.json": "ce00f51fc602f8a1d30d52f6fd5b51b5fb5115f7d97939999e942a90cb01f833",
+    "reviewer-authored-archive.before-status-normalization.md": "ee6d09ea3bd5c0fa70fe41e9460aa6c7f2efc64d7a83f8413ff3015954ee4773",
+    "validation.json": "b5090de69c98328055cea83a61bcff0a3c37203739b4d50b262f488cb39ac317"
+  },
+  "schema": "custodian.retired_conflicted_review_checkout_reconstruction.v1"
+}
