@@ -1,9 +1,173 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T10:23:33.224Z",
-  "source_main_sha": "c258c91144822fd680a62de480c340c3a8999f72",
+  "generated_at": "2026-11-01T11:26:22Z",
+  "source_main_sha": "1260f542674a94b1d127b6d3d3b55f51eb1a0060",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "sepulcher-native-quad-landed-review-gate-82d97438",
+      "headline": "Sepulcher's paving preview lands, but its independent review hits a source-evidence gate",
+      "summary": "A playable Godot preview now includes four native-resolution paving crops, the real Operator and camera, and three comparison modes. The implementation was landed and archived, but its independent review has no verdict: a source-scope host check rejected four paths. A narrowly pinned recovery proposal is drafted, not approved or dispatched.",
+      "body": "The Sepulcher paving experiment advanced from instructions to a committed, playable comparison scene. The scene uses four 512-pixel crops, the real Operator and camera, and neutral, full-crop and deliberate repeat presentations. The implementation closeout reports Godot, crop, LFS and capture checks passed, and the task packet was archived. That is implementation progress, not independent review acceptance or production-art approval. The preserved independent review received no verdict after its pre-review host source-scope check rejected four paths missing from the historical task's explicit source list. A new source-scope attestation implementation/review pair is drafted/manual. It proposes an exact four-path exception that cannot activate before its own independently accepted PASS, then separate recovery of the original preserved review run. Host worktree and liveness status are not independently verified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "sepulcher-paving-native-quad-playtest-v1",
+      "occurred_at": "2026-11-01T11:25:48Z",
+      "bullets": [
+        "Playable native-quad scene and capture harness committed to main.",
+        "Implementation archived; independent technical review has no verdict.",
+        "Four-path source-scope attestation packets are draft/manual, not ready/auto.",
+        "Human approval for production art remains outstanding."
+      ],
+      "links": [
+        {
+          "title": "Playable scene implementation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/1881a21ab1aa193e414d738a68dc37f7fbb0de9e"
+        },
+        {
+          "title": "Implementation archive",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/3ac23cda031d80fdaf283b5d9a8b5a88db2782e8"
+        },
+        {
+          "title": "Source-scope recovery packet",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/82d9743865813130d0d4cb65525c4cd1b5095c9d"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens now has a committed playable paving comparison, bringing its first experimental floor material into a real Operator-camera scene. But the technical review has stopped before a verdict because the historical task did not explicitly name four source paths.",
+        "sections": [
+          {
+            "heading": "From artwork to a playable comparison",
+            "text": "The new Godot scene places four native 512-pixel crops alongside a neutral floor and a deliberately repeated tile. Switching modes lets reviewers distinguish the quality of the original composition from visible repetition in gameplay."
+          },
+          {
+            "heading": "Why the review stopped",
+            "text": "The implementation was landed and archived, with tests reported in its closeout. Its separate independent review was preserved without a verdict when a host check rejected four source-bearing paths outside the original packet's explicit scope. No PASS or art approval follows from the implementation landing."
+          },
+          {
+            "heading": "A narrow recovery, not a shortcut",
+            "text": "A new draft/manual attestation pair proposes pinning exactly those four historical paths. Its exception would remain inactive until its own independent review earns canonical acceptance. Only then could the original preserved review be recovered separately."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A playable scene is not an accepted asset",
+            "explanation": "The preview now exists in code, but neither its independent technical review nor the human visual approval has been completed. That separation protects the production asset pipeline."
+          },
+          {
+            "title": "Review provenance is the new bottleneck",
+            "explanation": "The blocker is not a missing texture or game scene. It is the review system's inability to authenticate four historically omitted source paths without weakening its broader protections."
+          }
+        ],
+        "takeaway": "Sepulcher's preview implementation landed; independent technical acceptance and production-art approval remain outstanding.",
+        "next_watch": "Look for a properly authorized, independently accepted four-path attestation and then recovery of the original preserved review."
+      },
+      "details": {
+        "overview": "Main contains the playable scene implementation, task closeout, and archive. A subsequent main commit documents a no-verdict review preflight and draft/manual recovery pair. Local review process, worktree retention and disk state are not independently observed.",
+        "ledger": [
+          {
+            "stage": "Playable preview implementation",
+            "status": "verified landed",
+            "evidence": "Commit 1881a21 adds the Godot scene, four LFS crop pointers and capture harness."
+          },
+          {
+            "stage": "Implementation closeout",
+            "status": "reported validation and verified archive",
+            "evidence": "Commits 0944e669 and 3ac23cda; closeout reports Godot/crop/LFS/capture checks."
+          },
+          {
+            "stage": "Independent technical review",
+            "status": "blocked; no verdict",
+            "evidence": "Commit 82d974 documents four source-scope host-gate rejects and preserved review; no independent PASS."
+          },
+          {
+            "stage": "Attestation recovery",
+            "status": "draft/manual",
+            "evidence": "Commit 82d974 adds implementation and review packets, both draft/manual."
+          }
+        ],
+        "notes": [
+          "This is a preview-only scene, not Asset V2 ingest."
+        ],
+        "unknowns": [
+          "Original review host liveness and canonical teardown not verified.",
+          "Human art approval not established."
+        ],
+        "actions": [
+          "Responsible project owner: verify preserved review identity and authorize any source-scope correction before dispatch."
+        ]
+      },
+      "related": []
+    },
+    {
+      "id": "validator-cycle2-nonpassing-closeout-8c15235e",
+      "headline": "Validator's second correction closes without a passing independent review",
+      "summary": "CUSTODIAN's cycle-2 paired-review validator correction was archived with a nonpassing review outcome. This is a documented closeout, not acceptance of the validator fix. Further remediation requires an explicit decision rather than treating the completed packet as a PASS.",
+      "body": "A new main-branch closeout commit records a nonpassing independent review for the second validator correction and archives the correction packet. The distinction matters: completing or archiving an implementation does not mean the independent reviewer accepted its safety behavior. The previous review had identified a retry path that could bypass validation evidence. The latest closeout does not establish that the flaw is resolved or the review accepted. The next action is to inspect the exact findings and decide on bounded human-directed remediation; no automatic third correction is implied.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-validator-recertification-v1-review-corrections-2",
+      "occurred_at": "2026-11-01T11:20:17Z",
+      "bullets": [
+        "Cycle-2 correction archived with nonpassing review outcome.",
+        "No independent accepted PASS established.",
+        "Review findings must determine any subsequent authorized remediation."
+      ],
+      "links": [
+        {
+          "title": "Nonpassing closeout commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/8c15235e2c897b0990a1b110a82435a86ec403f3"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's second attempt to repair a validator loophole has reached closeout, but not acceptance. The latest record explicitly calls the independent review nonpassing, keeping the safety gate unresolved.",
+        "sections": [
+          {
+            "heading": "Closeout does not mean approval",
+            "text": "The correction packet has been archived. The paired independent review did not produce an accepted PASS, so the archive cannot be interpreted as evidence that the retry-path defect is fixed."
+          },
+          {
+            "heading": "The decision moves back to the findings",
+            "text": "The prior review showed that retrying after synchronization could bypass required validation evidence. The exact latest findings must be inspected before choosing another bounded repair; a third automatic correction should not be assumed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The review boundary held",
+            "explanation": "A completed implementation did not silently become an accepted fix. The independent review's nonpassing disposition remains visible and consequential."
+          }
+        ],
+        "takeaway": "Cycle-2 correction closeout is verified; independent acceptance is not.",
+        "next_watch": "A findings-backed, explicitly authorized remediation decision or a new accepted independent review receipt."
+      },
+      "details": {
+        "overview": "Commit 8c15235 records nonpassing paired-review closeout and correction-2 archival. The underlying complete reviewer findings were not independently reproduced in this run.",
+        "ledger": [
+          {
+            "stage": "Cycle-2 correction closeout",
+            "status": "verified archived",
+            "evidence": "Commit 8c15235."
+          },
+          {
+            "stage": "Independent review",
+            "status": "nonpassing",
+            "evidence": "Commit 8c15235 explicitly records nonpassing closeout; no accepted PASS."
+          }
+        ],
+        "notes": [],
+        "unknowns": [
+          "Precise cycle-2 reviewer findings and host teardown are not independently verified."
+        ],
+        "actions": [
+          "Owner: inspect canonical review findings before authorizing any further remediation."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "validator-r1-01-cycle2-ready-c258c911",
       "headline": "A second review catches a retry loophole in CUSTODIAN's safety gate",
@@ -1382,288 +1546,32 @@
           "story_id": "hub-sepulcher-art-manifest-2d5240f0"
         }
       ]
-    },
-    {
-      "id": "archive-transition-rc119-correction-534bf45a",
-      "headline": "A protected review gets a narrowly scoped archive correction, not a blanket release",
-      "summary": "Main now contains an exact-commit exception for one archived review metadata correction. The first implementation confused Git blob IDs with SHA-256 digests; the follow-up separates both checks. Independent approval, PR #103 disposition and host cleanup remain unverified.",
-      "body": "Commits ef62a86b, e98d91d and 534bf45a add and correct a guarded archive-transition exception for review-agent-paired-review-runner-profile-summary-coverage-v1. The rule pins the archive and one administrative correction, validates parents, trees, paths, regular-file modes and both Git blob IDs and content SHA-256 digests. The committed maintenance summary reports 81 local tests and an unmocked preserved-commit canary; those are author-reported results, not independent review acceptance. The summary identifies draft PR #103 and pending independent review and CI rerun. No proof of live host state, release, recovery apply or teardown. Main 91f44c89e9a5bf9b269619d513777a403cc6530e.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-paired-review-runner-profile-summary-coverage-v1",
-      "occurred_at": "2026-11-01T03:49:57Z",
-      "bullets": [
-        "Independent reviewer: inspect corrected RC-119 head and PR CI before any merge or lifecycle action."
-      ],
-      "links": [
-        {
-          "title": "Archive guard correction commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/534bf45a7bfd3a141f09ba754e0834267b5b1311"
-        },
-        {
-          "title": "Digest identifier fix",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e98d91d211b2edb3b58c987ddb54a801a06dfc01"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A previously archived paired review now has a carefully limited route through a lifecycle guard that had rejected its administrative correction. The new code recognizes one exact historical correction rather than opening a general escape hatch. A flaw in the first version was caught and corrected, but the protected review is not thereby accepted or released.",
-        "sections": [
-          {
-            "heading": "Why the exception matters",
-            "text": "The archive guard normally rejects edits after a review packet is archived. This case involves a specific one-line metadata correction. The new rule checks the original commits, parentage, file identity and content so unrelated edits cannot borrow the exception."
-          },
-          {
-            "heading": "A subtle identity bug was caught",
-            "text": "The first version compared a Git blob identifier with a SHA-256 digest, two different kinds of fingerprint. The follow-up verifies each separately. The committed handoff reports local regression coverage, but independent review and the maintenance PR's final outcome remain outstanding."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A surgical fix preserves the wider safety boundary",
-            "explanation": "The code permits only a pinned archive/correction history, including its ordinary main-sync form, rather than weakening archive checks for other reviews."
-          },
-          {
-            "title": "Test success is not reviewer acceptance",
-            "explanation": "The maintenance summary reports passing local tests and a preserved-history canary. Those results do not prove a fresh independent approval, host recovery or canonical teardown."
-          }
-        ],
-        "takeaway": "The exact archive correction is handled in main-branch code, while review acceptance and operational recovery remain separate gates.",
-        "next_watch": "Look for independent review of the corrected maintenance head, CI evidence and an explicit disposition of PR #103."
-      },
-      "details": {
-        "overview": "Main includes RC-119 archive-transition admission code and its follow-up digest correction. Commit 534bf45a carries a maintenance summary reporting 81 local tests and an unmocked canary. This run did not independently execute them or verify PR #103 status.",
-        "ledger": [
-          {
-            "stage": "Exact correction admission implementation",
-            "status": "verified landed on main",
-            "evidence": "Main ancestry and commit 534bf45a."
-          },
-          {
-            "stage": "Local validation",
-            "status": "reported passing",
-            "evidence": "Maintenance summary reports 81 tests and preserved-commit canary; not independently executed."
-          },
-          {
-            "stage": "Independent review and PR CI",
-            "status": "unknown / pending in handoff",
-            "evidence": "Summary calls PR #103 draft and requests fresh review and rerun."
-          },
-          {
-            "stage": "Protected review acceptance",
-            "status": "unknown",
-            "evidence": "No independent PASS receipt inspected."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No trustworthy host evidence."
-          }
-        ],
-        "notes": [
-          "The earlier implementation compared Git SHA-1 blob IDs to SHA-256 content digests; follow-up checks both."
-        ],
-        "unknowns": [
-          "PR #103 live status and CI outcome not independently fetched.",
-          "Host locks, worktrees, disk and review process state unavailable."
-        ],
-        "actions": [
-          "Independent reviewer: assess corrected maintenance PR and CI before any lifecycle action."
-        ]
-      },
-      "scorecard": {
-        "stage": "Guard implementation landed; independent review outstanding",
-        "as_of": "2026-11-01T04:09:12Z",
-        "scope": "RC-119 exact archived review correction; not full dispatcher",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Pin original archive and correction",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Main commit 534bf45a."
-          },
-          {
-            "label": "Correct digest comparison",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "e98d91d and 534bf45a."
-          },
-          {
-            "label": "Run local regression and canary",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "Author maintenance summary reports passes."
-          },
-          {
-            "label": "Independent maintenance review",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted review receipt inspected."
-          },
-          {
-            "label": "Protected review disposition",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Separate independent outcome required."
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host receipt."
-          }
-        ],
-        "next_gate": "Independent reviewer verifies corrected RC-119 head and PR CI."
-      },
-      "related": []
-    },
-    {
-      "id": "hub-sepulcher-art-manifest-2d5240f0",
-      "headline": "Hub and Awakening art gains a detailed production blueprint, but no images are approved",
-      "summary": "A new main-branch manifest establishes 71 core image states, 12 conditional states and 83 generation prompts for Hub, Sepulcher, Awakening and Dust Lung. It is an authorized production plan, not delivered art.",
-      "body": "Commit 2d5240f0 adds Markdown and JSON art manifests. The bounded document inventory contains 71 core states (36 Hub, 27 Awakening, 8 Dust Lung), 12 conditional states, and 83 prompts. A five-image individual calibration and approval gate precedes wider production. No images were generated, approved, uploaded or ingested by this commit. Main SHA 2d5240f002a9cd8d95e89cc6ff93124fac30878e. CI status for this commit is not established.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-01T03:05:27Z",
-      "bullets": [
-        "Art owner: generate and present the first calibration image for explicit approval."
-      ],
-      "links": [
-        {
-          "title": "Art manifest commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
-        },
-        {
-          "title": "Production manifest",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/2d5240f002a9cd8d95e89cc6ff93124fac30878e/design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN now has a concrete art production map for its first Hub, the Sepulcher and the Awakening approach. Rather than generating scenery in a large unreviewed batch, the new plan specifies individual image states and begins with five carefully inspected calibration images. The plan has landed; the artwork has not.",
-        "sections": [
-          {
-            "heading": "A unified visual language",
-            "text": "The blueprint connects the ruined civic spaces of the Hub with Sepulcher's burial terraces and the Awakening perimeter. It preserves established gameplay routes, collision and scene ownership while specifying materials, camera alignment and exact image-state targets."
-          },
-          {
-            "heading": "Approval comes before volume",
-            "text": "The first five images span a garden underlay, a memorial slab and three Awakening support views. Each must be generated, checked against the real scene and individually approved before wider production begins. No source images were published with the manifest."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The bottleneck moves from planning to visual calibration",
-            "explanation": "The manifest defines 83 individual prompts, but a small human-approved calibration gate controls whether those specifications become usable production assets."
-          },
-          {
-            "title": "Scenery cannot silently rewrite gameplay",
-            "explanation": "The plan explicitly protects existing routes, inspection points and collision ownership, keeping visual production separate from gameplay authority."
-          }
-        ],
-        "takeaway": "The art program is specified and committed, not produced or accepted.",
-        "next_watch": "Look for the first five individually approved calibration images and verifiable source receipts."
-      },
-      "details": {
-        "overview": "Commit 2d5240f0 adds Markdown and JSON art manifests. The bounded document inventory contains 71 core states (36 Hub, 27 Awakening, 8 Dust Lung), 12 conditional states, and 83 prompts. A five-image individual calibration and approval gate precedes wider production. No images were generated, approved, uploaded or ingested by this commit. Main SHA 2d5240f002a9cd8d95e89cc6ff93124fac30878e. CI status for this commit is not established.",
-        "ledger": [
-          {
-            "stage": "Production specification",
-            "status": "verified landed",
-            "evidence": "2d5240f0 includes manifest files."
-          },
-          {
-            "stage": "Art generation and acceptance",
-            "status": "not established",
-            "evidence": "Manifest explicitly says no images generated or approved."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Actual visual output, Dropbox receipts, scene validation and CI not observed."
-        ],
-        "actions": [
-          "Art owner: generate and present the first calibration image for explicit approval."
-        ]
-      },
-      "scorecard": {
-        "stage": "A new main-branch manifest establishes 71 core image states, 12 conditional states and 83 generation prompts f",
-        "as_of": "2026-11-01T03:07:00Z",
-        "scope": "Named workstream and cited GitHub evidence only; no canonical live dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Publish art manifest",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Commit 2d5240f0 adds Markdown and JSON manifests."
-          },
-          {
-            "label": "Generate five calibration images",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No image generation evidence in inspected commit."
-          },
-          {
-            "label": "Individual aesthetic approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Explicit approval required per image."
-          },
-          {
-            "label": "Produce remaining states",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Dependent on calibration."
-          },
-          {
-            "label": "Ingest and validate in game",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No ingestion receipt inspected."
-          }
-        ],
-        "next_gate": "Art owner: generate and present the first calibration image for explicit approval."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T10:23:33.224Z",
-    "source_main_sha": "c258c91144822fd680a62de480c340c3a8999f72",
+    "observed_at": "2026-11-01T11:26:22Z",
+    "source_main_sha": "1260f542674a94b1d127b6d3d3b55f51eb1a0060",
     "coverage": "partial",
-    "scope": "GitHub main inspection of exactly two named cycle-2 validator correction/review packets and the Sepulcher four-source pilot manifest; no full dispatcher audit",
+    "scope": "GitHub main commits and two named workstreams: Sepulcher native-quad implementation/review and validator correction cycle-2; not canonical dispatcher queue",
     "metrics": [
       {
-        "id": "ready_auto",
-        "label": "READY/AUTO (CYCLE-2 PAIR)",
-        "value": 2,
-        "verification": "verified",
-        "basis": "Exactly the two named cycle-2 packets declare Status ready and Dispatch auto; not a project-wide count",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/c258c91144822fd680a62de480c340c3a8999f72"
-      },
-      {
-        "id": "other-pilot-candidates",
-        "label": "SEPULCHER PILOT CANDIDATES",
+        "id": "other-sepulcher-preview-implementation",
+        "label": "SEPULCHER PREVIEW LANDED",
         "value": 1,
         "verification": "verified",
-        "basis": "Generated candidate count within four planned Sepulcher pilot sources; not task packets",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
+        "basis": "Exactly one named native-quad playable implementation landed and archived; not an approved art source or a project-wide count",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/3ac23cda031d80fdaf283b5d9a8b5a88db2782e8"
       },
       {
-        "id": "other-pilot-approved",
-        "label": "SEPULCHER APPROVED",
-        "value": 0,
+        "id": "other-sepulcher-attestation-drafts",
+        "label": "SOURCE-SCOPE DRAFT PACKETS",
+        "value": 2,
         "verification": "verified",
-        "basis": "Approved source count within four planned Sepulcher pilot sources; not project-wide",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
+        "basis": "Exactly two named draft/manual attestation implementation and review packets, not ready or project-wide",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/82d9743865813130d0d4cb65525c4cd1b5095c9d"
       }
     ],
-    "focus": "Verify the cycle-1 independent review prerequisite and dispatch eligibility for the cycle-2 validator correction.",
-    "note": "Full canonical dispatcher audit and host evidence unavailable; claimed/running, total open, review queue, worktree counts, and CI health unknown."
+    "focus": "Resolve Sepulcher's preserved independent-review source-scope gate through exact evidence and separately authorized, independently reviewed attestation.",
+    "note": "No canonical dispatcher audit or local host proof. Validator correction-2 review is nonpassing. No project-wide totals, current running/claimed status, teardown or CI classification."
   }
 }
