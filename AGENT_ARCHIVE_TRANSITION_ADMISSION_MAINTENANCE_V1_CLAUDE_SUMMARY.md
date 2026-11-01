@@ -15,6 +15,12 @@ It accepts the correction as the clean pre-sync tip and as the first-parent
 correction immediately before the normal archive-first main sync. Further edits
 to the protected archived review packet remain rejected.
 
+Independent review of the first PR head found that the packet byte SHA-256
+digests had been compared directly to Git SHA-1 blob IDs. The follow-up now
+pins and checks both identifiers separately, and an unmocked local canary
+authenticates the real preserved archive/correction commits and protected
+worktree preflight.
+
 `test_workstream.py` covers the pre-sync and verified sync paths plus extra
 bytes, extra paths, changed review target, wrong parent, changed summary, and a
 second post-sync edit. The existing unbound archive-follow-up rejection remains
@@ -24,12 +30,13 @@ covered.
 
 - `python3 -m py_compile workstream.py test_workstream.py` — passed.
 - Focused RC-119 regression — passed.
-- `python3 -m unittest -q test_workstream` — 80 tests passed.
+- `python3 -m unittest -q test_workstream` — 81 tests passed.
+- Unmocked RC-119 preserved-commit canary — passed.
 - `git diff --check` — passed.
 
 ## Handoff
 
-The change is prepared for a narrow, unmerged maintenance PR and independent
-fresh-context review. It does not accept the protected review, alter original
-review evidence, release its claim/lock, launch a reviewer for that run, or
-authorize merging this maintenance PR.
+The change is in draft PR #103. Independent review of the corrected head and
+the PR CI rerun are pending. The change does not accept the protected review,
+alter original review evidence, release its claim/lock, launch a reviewer for
+that run, or authorize merging this maintenance PR.

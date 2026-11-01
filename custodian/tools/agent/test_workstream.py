@@ -455,9 +455,13 @@ class WorkstreamTests(unittest.TestCase):
                          "58e639a24470c27a1999a796fd0ae53d5ed778a5")
         self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_parent"],
                          "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f")
-        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_packet_blob"],
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_packet_blob_oid"],
+                         "16307c7f771abe5587ccd95baa6f69e239544e59")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["archive_packet_sha256"],
                          "01398f7950b9cbf617d97204e03e041cb6df99983ac187e8b66a3f56073c8764")
-        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["corrected_packet_blob"],
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["corrected_packet_blob_oid"],
+                         "b3d842692d5b31871f86b03b6a830dee1734be1a")
+        self.assertEqual(workstream.ARCHIVE_METADATA_FOLLOWUP["corrected_packet_sha256"],
                          "b42d92e3d40815a37ec17fa5a776e480950d99520a253f1e0500b859af5315d8")
         workstream_id = "review-agent-paired-review-runner-profile-summary-coverage-v1"
         branch = workstream.branch_for(workstream_id)
@@ -489,6 +493,7 @@ class WorkstreamTests(unittest.TestCase):
         archive_parent = git(self.repo, "rev-parse", "HEAD^1")
         archive_tree = git(self.repo, "rev-parse", "HEAD^{tree}")
         archive_packet_blob = git(self.repo, "rev-parse", f"HEAD:{archived_rel}")
+        archive_packet_sha256 = hashlib.sha256(archived.read_bytes()).hexdigest()
 
         archived.write_text(archived.read_text().replace(
             "- Review: `passed`", "- Review: `none`", 1,
@@ -501,10 +506,12 @@ class WorkstreamTests(unittest.TestCase):
             "archive": archive,
             "archive_parent": archive_parent,
             "archive_tree": archive_tree,
-            "archive_packet_blob": archive_packet_blob,
+            "archive_packet_blob_oid": archive_packet_blob,
+            "archive_packet_sha256": archive_packet_sha256,
             "correction": correction,
             "correction_tree": git(self.repo, "rev-parse", "HEAD^{tree}"),
-            "corrected_packet_blob": git(self.repo, "rev-parse", f"HEAD:{archived_rel}"),
+            "corrected_packet_blob_oid": git(self.repo, "rev-parse", f"HEAD:{archived_rel}"),
+            "corrected_packet_sha256": hashlib.sha256(archived.read_bytes()).hexdigest(),
             "packet": archived_rel,
         }
         with mock.patch.dict(workstream.ARCHIVE_METADATA_FOLLOWUP, pin):
@@ -577,6 +584,31 @@ class WorkstreamTests(unittest.TestCase):
                     self.assertIsNotNone(workstream._archive_transition_tip_error(
                         workstream_id, self.repo,
                     ))
+
+    def test_rc119_production_pin_authenticates_preserved_commits_without_mocking(self):
+        pinned = workstream.ARCHIVE_METADATA_FOLLOWUP
+        repo = Path(__file__).resolve().parents[3]
+        for commit in (pinned["archive"], pinned["correction"]):
+            available = subprocess.run(
+                ["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            ).returncode == 0
+            if not available:
+                self.skipTest("preserved RC-119 commits are not present in this checkout's object database")
+        self.assertTrue(workstream._is_authorized_archive_metadata_followup(
+            pinned["workstream"], repo, pinned["archive"], pinned["packet"],
+            pinned["correction"],
+        ))
+
+        protected = repo.parent / (
+            "review-agent-paired-review-runner-profile-summary-coverage-v1-"
+            "20261031T154805Z-601d4382c346"
+        )
+        if protected.is_dir():
+            self.assertEqual(git(protected, "rev-parse", "HEAD"), pinned["correction"])
+            self.assertIsNone(workstream._archive_transition_tip_error(
+                pinned["workstream"], protected,
+            ))
 
     def test_finish_rejects_unbound_archive_followup_before_push(self):
         workstream_id = "agent-test-archive-tip"

@@ -61,10 +61,12 @@ ARCHIVE_METADATA_FOLLOWUP = {
     "archive": "704a1fbb3df6deae64e06291769eabd1d48f7eb2",
     "archive_parent": "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f",
     "archive_tree": "14574039da27513ecaad7b02aeb08f75d2a11ae4",
-    "archive_packet_blob": "01398f7950b9cbf617d97204e03e041cb6df99983ac187e8b66a3f56073c8764",
+    "archive_packet_blob_oid": "16307c7f771abe5587ccd95baa6f69e239544e59",
+    "archive_packet_sha256": "01398f7950b9cbf617d97204e03e041cb6df99983ac187e8b66a3f56073c8764",
     "correction": "81fb8ca935bb2d5f9f00f18d547c185035e7b8dd",
     "correction_tree": "58e639a24470c27a1999a796fd0ae53d5ed778a5",
-    "corrected_packet_blob": "b42d92e3d40815a37ec17fa5a776e480950d99520a253f1e0500b859af5315d8",
+    "corrected_packet_blob_oid": "b3d842692d5b31871f86b03b6a830dee1734be1a",
+    "corrected_packet_sha256": "b42d92e3d40815a37ec17fa5a776e480950d99520a253f1e0500b859af5315d8",
     "packet": (
         "custodian/docs/ai_context/task_packets/archived/"
         "REVIEW_AGENT_PAIRED_REVIEW_RUNNER_PROFILE_SUMMARY_COVERAGE_V1.md"
@@ -940,10 +942,10 @@ def _is_authorized_archive_metadata_followup(
     expected_objects = (
         (f"{transition_commit}^1", pinned["archive_parent"]),
         (f"{transition_commit}^{{tree}}", pinned["archive_tree"]),
-        (f"{transition_commit}:{archived_packet}", pinned["archive_packet_blob"]),
+        (f"{transition_commit}:{archived_packet}", pinned["archive_packet_blob_oid"]),
         (f"{candidate}^1", transition_commit),
         (f"{candidate}^{{tree}}", pinned["correction_tree"]),
-        (f"{candidate}:{archived_packet}", pinned["corrected_packet_blob"]),
+        (f"{candidate}:{archived_packet}", pinned["corrected_packet_blob_oid"]),
     )
     if any(git("rev-parse", "--verify", rev, cwd=path, check=False) != oid
            for rev, oid in expected_objects):
@@ -952,13 +954,18 @@ def _is_authorized_archive_metadata_followup(
                   "-r", candidate, cwd=path).splitlines()
     if changed != [f"M\t{archived_packet}"]:
         return False
-    for rev in (transition_commit, candidate):
-        entry = subprocess.run(
-            ["git", "ls-tree", "-z", rev, "--", archived_packet],
-            cwd=path, capture_output=True,
-        )
+    for rev, expected_sha256 in (
+        (transition_commit, pinned["archive_packet_sha256"]),
+        (candidate, pinned["corrected_packet_sha256"]),
+    ):
+        entry = subprocess.run(["git", "ls-tree", "-z", rev, "--", archived_packet],
+                              cwd=path, capture_output=True)
+        content = subprocess.run(["git", "show", f"{rev}:{archived_packet}"],
+                                 cwd=path, capture_output=True)
         if (entry.returncode or not entry.stdout
-                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"):
+                or entry.stdout.split(b"\t", 1)[0].split()[0] != b"100644"
+                or content.returncode
+                or hashlib.sha256(content.stdout).hexdigest() != expected_sha256):
             return False
     return True
 
