@@ -260,6 +260,49 @@ class ReviewPairingTests(unittest.TestCase):
         self.assertIn("TASK OVERRIDE", errors["review-bad"])
 
 
+class PublicationInputTests(unittest.TestCase):
+    def test_paths_allow_one_period_after_only_the_final_backtick(self):
+        self.assertEqual(
+            tpc.parse_publication_inputs(
+                "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`.\n",
+                "sample",
+            ),
+            {"custodian/tools/a.py", "custodian/tools/b.py"},
+        )
+        self.assertEqual(
+            tpc.parse_publication_inputs(
+                "- Publication inputs: `custodian/tools/a.py`; `custodian/tools/b.py`\n",
+                "sample",
+            ),
+            {"custodian/tools/a.py", "custodian/tools/b.py"},
+        )
+
+    def test_none_is_valid_but_none_with_period_is_not(self):
+        self.assertEqual(tpc.parse_publication_inputs("- Publication inputs: none\n", "sample"), set())
+        with self.assertRaises(tpc.TaskPacketContractError):
+            tpc.parse_publication_inputs("- Publication inputs: none.\n", "sample")
+
+    def test_missing_inputs_can_be_allowed_only_for_legacy_authoring(self):
+        self.assertEqual(
+            tpc.parse_publication_inputs("- Goal: old packet\n", "sample", allow_missing=True), set()
+        )
+        with self.assertRaises(tpc.TaskPacketContractError):
+            tpc.parse_publication_inputs("- Goal: old packet\n", "sample")
+
+    def test_paths_reject_period_elsewhere_prose_duplicates_and_traversal(self):
+        for malformed in (
+            "- Publication inputs: `a.py`.; `b.py`\n",
+            "- Publication inputs: `a.py`; prose\n",
+            "- Publication inputs: `a.py`; `b.py`. extra\n",
+            "- Publication inputs: `a.py`..\n",
+            "- Publication inputs: `a.py`; `a.py`\n",
+            "- Publication inputs: `../secret`\n",
+            "- Publication inputs: `safe.py`\n- Publication inputs: `other.py`\n",
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(tpc.TaskPacketContractError):
+                tpc.parse_publication_inputs(malformed, "sample")
+
+
 class ReviewCycleTests(unittest.TestCase):
     def test_review_cycle_exhausted_at_cap(self):
         packet = tpc.parse_packet("p.md", legacy_packet("cycled") + "- Review cycle: `2`\n- Max automatic review cycles: `2`\n")

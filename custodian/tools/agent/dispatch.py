@@ -17,6 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import review_outcome
+import worktree_provisioning
 from workflow_control import (
     RunTrace, WorkflowControlError, acquire_remote_claim, common_mutex,
     release_remote_claim, resolve_agent_id, workstream_mutex,
@@ -272,13 +273,14 @@ def _attached_local_worktree(repo: Path, branch: str) -> str | None:
     return None
 
 
-def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None) -> tuple[Path, str | None]:
+def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=None,
+                     checkout_profile: str | None = None) -> tuple[Path, str | None, dict | None]:
     """Call workstream.start(), passing a disposition side-channel only if supported.
 
     Test doubles that mock module.start with a plain (work_id, repo) callable must
     keep working unmodified, so the receiver capability is probed rather than assumed.
     """
-    report: dict[str, str] = {}
+    report: dict[str, object] = {}
     try:
         parameters = inspect.signature(module.start).parameters
         accepts_report = "report" in parameters
@@ -292,11 +294,14 @@ def _start_workstream(module, workstream_id: str, repo: Path, claim=None, trace=
         kwargs.update(_claim=claim, _trace=trace, _lock_held=True)
         if "_publish_trace" in parameters:
             kwargs["_publish_trace"] = False
+    if "profile_path" in parameters:
+        kwargs["profile_path"] = checkout_profile
     if kwargs:
         worktree = module.start(workstream_id, repo, **kwargs)
     else:
         worktree = module.start(workstream_id, repo)
-    return Path(worktree), report.get("checkout")
+    profile_evidence = report.get("checkout_profile")
+    return Path(worktree), report.get("checkout"), profile_evidence if isinstance(profile_evidence, dict) else None
 
 
 def _load_workstream(repo: Path):
@@ -662,6 +667,7 @@ def claim(
     auto_only: bool,
     *,
     lock_wait_seconds: float = 0.0,
+    checkout_profile: str | None = None,
 ) -> int:
     # Serialize assignment authority and canonical publication, but never the
     # best-effort diagnostic network push.
@@ -738,16 +744,39 @@ def claim(
                         f"claimant explicitly remove it with git push origin :{claim_ref}"
                     )
 
+                capacity = worktree_provisioning.preflight_capacity(
+                    repo, profile_path=checkout_profile, ref="origin/main",
+                    target=repo.parent / ".custodian-worktrees",
+                )
+                lfs_failures = capacity.get("local_lfs_failures", [])
+                if lfs_failures:
+                    details = ", ".join(
+                        f"{item['path']} (oid={item['oid']}, size={item['size']})"
+                        for item in lfs_failures
+                    )
+                    raise DispatchError(
+                        "claim blocked before remote claim creation by missing/corrupt local LFS objects: "
+                        + details
+                    )
+                if not capacity["sufficient"]:
+                    raise DispatchError(
+                        "claim blocked before remote claim creation by checkout capacity: "
+                        f"need {capacity['required_free_bytes']} bytes including reserve, "
+                        f"have {capacity['available_free_bytes']}"
+                    )
+
+                module = _load_workstream(repo)
                 lock_started = time.monotonic()
                 with workstream_mutex(repo, selected.workstream):
                     trace = RunTrace.start(repo, selected.workstream, packet=selected.path, agent=agent)
                     trace.record("mutex_acquired", scope="workstream", wait_ms=round((time.monotonic() - lock_started) * 1000))
                     _fetch(repo)
                     remote_claim = acquire_remote_claim(repo, selected.workstream, agent, trace.run_id, trace=trace)
-                    module = _load_workstream(repo)
                     try:
                         with contextlib.redirect_stdout(io.StringIO()):
-                            worktree, checkout = _start_workstream(module, selected.workstream, repo, remote_claim, trace)
+                            worktree, checkout, checkout_profile_evidence = _start_workstream(
+                                module, selected.workstream, repo, remote_claim, trace, checkout_profile,
+                            )
                     except module.WorkstreamError as error:
                         raise DispatchError(f"workstream start blocked: {error}") from error
 
@@ -793,7 +822,8 @@ def claim(
                     "schema": "custodian.dispatch.claim.v1", "result": "claimed",
                     "workstream": selected.workstream, "prior_status": selected.status,
                     "branch": expected_branch, "worktree": str(worktree), "packet": selected.path,
-                    "checkout": checkout, "verified": True, "agent": agent,
+                    "checkout": checkout, "checkout_profile": checkout_profile_evidence,
+                    "verified": True, "agent": agent,
                     "run_id": trace.run_id, "trace_ref": trace.diagnostic_ref,
                     "authoring_chat": authoring_chat,
                     "visual_review": selected.visual_review,
@@ -901,7 +931,7 @@ def main(argv: list[str] | None = None) -> int:
     p = subs.add_parser("audit"); p.add_argument("--json", action="store_true", dest="as_json")
     p = subs.add_parser("repair"); repair_mode = p.add_mutually_exclusive_group(required=True); repair_mode.add_argument("--plan", action="store_true"); repair_mode.add_argument("--apply", action="store_true"); p.add_argument("--archive-completed", action="store_true", help="also preview/apply legacy complete records with explicit non-empty Completed evidence"); p.add_argument("--json", action="store_true", dest="as_json")
     p = subs.add_parser("claim-next"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
-    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)")
+    p = subs.add_parser("claim"); p.add_argument("workstream_id"); p.add_argument("--agent", default=None); p.add_argument("--lock-wait-seconds", type=float, default=0.0, help="bounded wait for the local assignment mutex (default: fail fast)"); p.add_argument("--checkout-profile", default=None, help="tracked path-exact deferred-LFS checkout profile")
     p = subs.add_parser("last-claim"); p.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args(argv)
     try:
@@ -935,6 +965,7 @@ def main(argv: list[str] | None = None) -> int:
         return claim(
             repo, getattr(args, "workstream_id", None), agent, args.command == "claim-next",
             lock_wait_seconds=args.lock_wait_seconds,
+            checkout_profile=getattr(args, "checkout_profile", None),
         )
     except (DispatchError, WorkflowControlError) as error:
         print(f"dispatch: BLOCKED: {error}", file=sys.stderr)

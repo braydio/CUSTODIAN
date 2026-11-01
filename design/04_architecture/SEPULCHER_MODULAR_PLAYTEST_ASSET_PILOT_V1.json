@@ -1,0 +1,256 @@
+{
+  "type": "planning_manifest_only_not_custodian_asset_family_v2",
+  "pilot_id": "sepulcher-modular-material-playtest-v1",
+  "status": "first_image_candidate_generated__technical_tune_needed__pilot_sources_unapproved",
+  "authoring_chat_url": null,
+  "authoring_chat_url_status": "awaiting exact current chat URL",
+  "basis_main_commit": "1fb718fe908d3f4c8bd293c79000eda165ec55bf",
+  "design_authorities": [
+    "design/04_architecture/HUB_FIRST_SET_BLOCKOUT.md",
+    "custodian/game/world/hub/first_set/hub_first_set_layout.gd",
+    "design/04_architecture/HUB_SPATIAL_LAYOUT.md",
+    "design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md",
+    "design/04_architecture/ASSET_PIPELINE_V2.md"
+  ],
+  "scope": {
+    "image_source_count": 4,
+    "proposed_new_family_count": 1,
+    "reuse_existing_proposed_family_count": 1,
+    "generated_sources": 0,
+    "assets_registered": 0,
+    "production_queue_changed": false,
+    "existing_sepulcher_grave_review_untouched": true,
+    "original_72_core_images_unmodified": true,
+    "generated_candidate_count": 1,
+    "approved_source_count": 0
+  },
+  "assets": [
+    {
+      "id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+      "family_id": "hub_first_set_sepulcher_gardens_floor_materials",
+      "state_id": "paving_base",
+      "kind": "tile",
+      "layer": "background",
+      "width": 512,
+      "height": 512,
+      "frames": 1,
+      "alpha": "opaque",
+      "seam": "repeatable all four sides and corners, pixel-level 1:1 test",
+      "priority": 1,
+      "role": "primary repeated walkable paving",
+      "prompt": "Produce one independent 512×512 pixel top-down overhead orthographic CUSTODIAN Sepulcher Gardens floor MATERIAL source. This is a uniformly traversable, seamless, tileable 16×16-cell area of 32px-scale paving, not an illustrated map. Detailed but restrained institutional basalt and chalk-limestone flagstones; 32px structural rhythm with larger coherent stone slabs, worn chipped mortar edges, ash dust, hairline cracks, subtle old bronze registration flecks, natural texture variance and nonuniform but consistent lighting. Rich fine masonry texture must remain legible when an Operator roughly 128px tall moves over it. EXACTLY seamless left/right and top/bottom, including corners; no special middle motif, no border, no vignette, no wall shadow, no debris pile, no raised stones, no false void, no tombs, no objects, no portals, no lettering, no characters. Production-facing 90-degree camera and a flat uniform walkable ground plane, not an isometric diorama. This is a single standalone texture, not a swatch chart or map.",
+      "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_floor_materials/paving_base_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_floor_materials/paving_base.png",
+      "contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_floor_materials.asset.json",
+      "canvas_px": {
+        "width": 512,
+        "height": 512
+      },
+      "frame_px": {
+        "width": 512,
+        "height": 512
+      },
+      "direction": "omni",
+      "layout": "copy",
+      "fps": 0,
+      "auto_mirror": false,
+      "source_approved": false,
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_receipt": null,
+      "asset_v2_job": null,
+      "candidate_review": {
+        "date": "2026-11-01",
+        "id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+        "generated_candidate": {
+          "generation_id": "f9e5b7c9-02a1-425b-a08c-1f1bbc84f988",
+          "source_filename": "worn_limestone_and_basalt_garden_paving.png",
+          "real_source_pixels": [
+            1254,
+            1254
+          ],
+          "color_mode": "RGB",
+          "byte_size": 3783377,
+          "sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+          "storage": "ChatGPT conversation artifact; neither published to Git nor uploaded to Dropbox; availability after interruption unverified"
+        },
+        "planning_target": {
+          "width": 512,
+          "height": 512,
+          "frames": 1,
+          "opaque": true,
+          "edge_repeat_requirement": "all 4 edges/corners continuous at 1:1 runtime scale"
+        },
+        "evaluation": {
+          "technical_status": "NEEDS_CORRECTION__NO_INGEST",
+          "human_art_approval": "PENDING",
+          "strong_points": [
+            "Detailed limestone and charcoal basalt masonry",
+            "Restrained aged-bronze inlays and high-quality wear",
+            "Strict top-down viewpoint, all-walkable floor"
+          ],
+          "issues": [
+            "1254x1254 generated source, not exact 512x512 target; normalization/resampling requires review",
+            "512x512 3x3 repeated preview shows conspicuous repeated dark blocks and L-shaped bronze inlays; repeated geometry dominates",
+            "Source left/right border RGB MAE 14.56 vs mean adjacent horizontal neighbor RGB MAE 10.44; top/bottom MAE 12.45 vs mean vertical neighbor 11.73, so true seamless edge continuity not established",
+            "Further generation attempts to simplify game appearance risk losing valuable texture detail; preserve original as candidate"
+          ],
+          "measure_method": "Pillow/numpy: mean absolute per-channel adjacent RGB differences at original 1254px source boundaries, vs all internal adjacent pixel pairs; measurements are diagnostic, not a calibrated pass/fail threshold",
+          "repeat_test": "Resize 1254 source to 512x512 using Lanczos; repeat identical reduced image 3x3; preview saved in authoring conversation only. Diagnostic resampled file is NOT accepted normalized production source."
+        },
+        "next_action": "Keep candidate as source/style reference pending review. Do not mark approved or move to pilot asset 2. Prefer deterministic seam correction and/or a new neutral repeated base without distinctive bronze L-motifs; reserve strong metallic floor geometry for independent overlay state. Recheck seam at true 512 size and 3x3 repeat, preserve original detail, then request individual human art decision. Do not automatically simplify/redraw entire image.",
+        "delivery": {
+          "dropbox_uploaded": false,
+          "source_work_staged": false,
+          "inbox_staged": false,
+          "asset_v2_ingested": false
+        }
+      }
+    },
+    {
+      "id": "hub_first_set_sepulcher_gardens_floor_materials/paving_damage_overlay",
+      "family_id": "hub_first_set_sepulcher_gardens_floor_materials",
+      "state_id": "paving_damage_overlay",
+      "kind": "tile",
+      "layer": "overlay",
+      "width": 512,
+      "height": 512,
+      "frames": 1,
+      "alpha": "true RGBA",
+      "seam": "nonrepeating transparent detail layer; edges must be mostly transparent; at least 70% canvas unobscured",
+      "priority": 2,
+      "role": "sparse variation over same base, no full-floor redraw",
+      "prompt": "Produce one independent 512×512 pixel TRUE TRANSPARENT RGBA CUSTODIAN Sepulcher Gardens floor-wear OVERLAY. Create small irregular groups of surface-only hairline cracks, pale mineral abrasion, soot/dust deposits, chipped mortar tracery and extremely sparse bronze dust flecks, isolated on genuine alpha. All details must lie flat in a 90-degree overhead ground plane. The overlay is intended to be placed in different parts of an existing seamless basalt-limestone paving texture to break repetition, not a new paving surface. Leave at least 70 percent of the canvas completely transparent, keep edges nearly empty so placement can be varied, maintain highly detailed but low-contrast subtle wear at 1px-to-1-world-unit scale. No rectangles or opaque patches, no full tiles, no painted checkerboard, no cast shadows, no debris with height, no vegetation, no large circles, no UI, text, objects or architecture. Preserve texture fidelity rather than making it cartoony or simplified. One isolated PNG layer, no multiple-assets collage.",
+      "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_floor_materials/paving_damage_overlay_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_floor_materials/paving_damage_overlay.png",
+      "contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_floor_materials.asset.json",
+      "canvas_px": {
+        "width": 512,
+        "height": 512
+      },
+      "frame_px": {
+        "width": 512,
+        "height": 512
+      },
+      "direction": "omni",
+      "layout": "copy",
+      "fps": 0,
+      "auto_mirror": false,
+      "source_approved": false,
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_receipt": null,
+      "asset_v2_job": null
+    },
+    {
+      "id": "hub_first_set_sepulcher_gardens_floor_materials/witness_ring_inlay",
+      "family_id": "hub_first_set_sepulcher_gardens_floor_materials",
+      "state_id": "witness_ring_inlay",
+      "kind": "tile",
+      "layer": "overlay",
+      "width": 512,
+      "height": 512,
+      "frames": 1,
+      "alpha": "true RGBA",
+      "seam": "isolated inset work; transparent background",
+      "priority": 3,
+      "role": "single deliberate focal detail, tests material integration and aliasing",
+      "prompt": "Generate one single 512×512 TRUE TRANSPARENT RGBA overhead floor INLAY for the Sepulcher Gardens CUSTODIAN playable scene. An understated institutional witness registration motif, old concentric interrupted circular/rectilinear bronze grooves set flush into stone, fragmented by centuries of abrasion. This is a modest carefully drafted architectural floor motif, not a grand magic ritual arena, glowing portal, symbol with legible text, compass UI, tombstone or raised object. Accurate 90-degree overhead plane, uniform 32px civic architectural registration, isolated subtle bronze/limestone engraving marks, precise delicate stroke craft and high-detail patina. Everything outside the inlaid strokes is genuine transparent alpha, especially the outer canvas; no paving base beneath, no image-wide vignette, no shadows, no perspective tilt, no characters, no UI. Intended to compose over a separate detailed paving texture at world scale. Single independent image.",
+      "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_floor_materials/witness_ring_inlay_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_floor_materials/witness_ring_inlay.png",
+      "contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_floor_materials.asset.json",
+      "canvas_px": {
+        "width": 512,
+        "height": 512
+      },
+      "frame_px": {
+        "width": 512,
+        "height": 512
+      },
+      "direction": "omni",
+      "layout": "copy",
+      "fps": 0,
+      "auto_mirror": false,
+      "source_approved": false,
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_receipt": null,
+      "asset_v2_job": null
+    },
+    {
+      "id": "hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment",
+      "family_id": "hub_first_set_sepulcher_gardens_dressing",
+      "state_id": "retaining_wall_segment",
+      "kind": "world_prop",
+      "layer": "architectural_visual",
+      "width": 256,
+      "height": 128,
+      "frames": 1,
+      "alpha": "true RGBA",
+      "seam": "horizontal 256px module with crisp left/right endpoints; contact baseline documented",
+      "priority": 4,
+      "role": "wall for architecture projection/contact/collision comparison, placed only on sandbox nonwalkable edge",
+      "prompt": "Create one independent 256×128 TRUE TRANSPARENT RGBA ruined civic Sepulcher Gardens RETAINING WALL module for CUSTODIAN. One 256px-wide piece of weathered basalt and pale limestone burial-terrace masonry, physically coherent 32px construction rhythm, dark recessed joints, fractured capstones, controlled thin bronze institutional trim, subtle vertical face shading and visible structural thickness. Camera design: plan/top surface must register to strict overhead floor; a modest controlled downward-facing wall elevation may be shown ONLY as a separate vertical facade belonging to this object, anchored on an explicitly documented ground-contact baseline at the bottom of the sprite. No camera tilt of the pavement or oblique scene perspective. Symmetrical light direction and consistent nonmirrored construction, clean horizontal endpoints that can join two copies without obvious doubled pillars, no unrelated floor tile, no corridor, arch, prop cluster, people, text or UI. Transparent everywhere beyond structure, with no dark rectangular background or cast scene-wide shadow. This wall will be placed at the NONWALKABLE NORTH TEST BOUNDARY with authored collision, never over a current live Gardens route.",
+      "source_work_path": "custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment_source.png",
+      "inbox_path": "custodian/asset_drop/inbox/hub_first_set_sepulcher_gardens_dressing/retaining_wall_segment.png",
+      "contract_path": "custodian/content/metadata/assets/families/hub_first_set_sepulcher_gardens_dressing.asset.json",
+      "canvas_px": {
+        "width": 256,
+        "height": 128
+      },
+      "frame_px": {
+        "width": 256,
+        "height": 128
+      },
+      "direction": "omni",
+      "layout": "copy",
+      "fps": 0,
+      "auto_mirror": false,
+      "source_approved": false,
+      "source_sha256": null,
+      "normalized_sha256": null,
+      "dropbox_receipt": null,
+      "asset_v2_job": null
+    }
+  ],
+  "playtest": {
+    "path": "res://game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot.tscn",
+    "root_scene_repo_path": "custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot.tscn",
+    "sample_area_px": {
+      "width": 1024,
+      "height": 768
+    },
+    "sample_area_grid": {
+      "width": 32,
+      "height": 24,
+      "cell_size": 32
+    },
+    "baseline": "same geometry/Operator/camera with existing registered neutral/blockout visuals",
+    "comparison_mode": "1=neutral baseline,2=modular art,Tab=toggle",
+    "operator": "real operator.tscn + level_playtest_bootstrap/camera existing standalone pattern",
+    "topology": "one 128px or wider walkable path looping through open floor; one 256px retaining-wall prop along nonwalkable north test boundary; no real Hub transition, no grave controller",
+    "asset_placement": "tile paving_base at world 1px/unit repeated over 1024x768, sparse decal overlay authored seeded deterministic positions, one witness inlay at safe paving zone, one or two wall modules at boundary with fixed contact baseline; geometry owned by test-level map",
+    "validation": [
+      "All placeholder assets allow stand-alone launch before art arrival",
+      "Same camera and Operator identity when toggling baseline versus modular",
+      "Tile seamless in 2x2 and repeated 3x3 proof without visual seam",
+      "Floor texture detail and variation hold at gameplay and still screenshot scales",
+      "Overlay has real alpha and non-destructive blending",
+      "Wall ground contact, Operator overlap and collision match explicitly authored test footprint",
+      "No gameplay scene or current main Hub nav/collision modifications",
+      "Human A/B visual opinion recorded separately from objective tech checks"
+    ]
+  },
+  "go_no_go": {
+    "pass": "Human prefers/accepts modular scene detail, readability, projection and repetition at real Operator scale, and objective checks pass",
+    "fail": "If tiling, detail loss or wall projection fails, correct only the culpable individual source or presentation composition; never regenerate the whole level",
+    "post_pass": "Only then revise the 72-core V1 inventory and deterministic generation sets to replace large plate strategy, without silently changing Dust Lung DL0"
+  },
+  "review_checkpoint": {
+    "active_asset_id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+    "phase": "technical_review_complete__human_approval_pending",
+    "candidate_sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+    "next_step": "Resolve seamless repetition/edge issues on first paving candidate before attempting the overlay; original source/preview currently only in conversation artifacts.",
+    "last_verified_main": "7eaf776dfe57b971069262925275331bb78c7dbc"
+  }
+}

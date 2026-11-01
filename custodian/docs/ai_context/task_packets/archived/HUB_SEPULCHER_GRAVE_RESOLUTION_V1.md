@@ -2,7 +2,7 @@
 
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `hub-sepulcher-grave-resolution-v1`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P1`
@@ -43,6 +43,33 @@ Assume predecessor `review-hub-sepulcher-grave-evidence-v1` passed its post-land
 - Refresh planning chat: `not-recorded`
 - Refresh instruction: Read latest origin/main and predecessor review; reconcile exact runtime owners/paths without expanding user-approved scope or starting new design research.
 
+## Completion Truth
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: The production `SepulcherGraveEvidence` controller exposes exactly two physical choices after the three readings, persists either exact finding once in the existing HubState event record, suppresses both choices after resolution, and keeps all three readings inspectable without changing evidence. On restored later visits, either finding shows the restrained pale growth; the controller and choice presentation add no collision owner. The focused production-host smoke, predecessor grave evidence/persistence smoke, Hub first-set traversal smoke, 9/9 changed-file validation, JSON manifest parse, and `git diff --check` passed. Contract prewarm count remained unchanged.
+- Deferred work: Production raster growth art remains deferred; no new art family or generalized event framework was added.
+
+## Execution Feedback
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: The predecessor G1 smoke expected completed readings to become unavailable, conflicting with G2's accepted reread requirement. Its assertion was updated to verify all three readings remain inspectable and that rereading leaves the record unchanged.
+- Root cause / contributing factors: G1's original no-replay assertion predated the G2 contract to retain access to the physical evidence.
+- Prevention / pipeline improvement: Keep predecessor regression assertions aligned when a declared successor extends behavior while preserving the underlying evidence state.
+- Tooling / docs drift discovered: none.
+- Follow-up: `fixed-in-scope`.
+- What worked: Existing physical interaction and HubState snapshot/restore seams supported both findings and the later-visit cue without adding a state manager or collision authority.
+
 ## Handoff
-- Next action: Complete the focused implementation, land, then run `review-hub-sepulcher-grave-resolution-v1`.
-- Blockers or open questions: No authoring-side design blockers; ordinary dispatcher dependencies and live claim locks apply.
+- Next workstream: `review-hub-sepulcher-grave-resolution-v1`
+- Next packet state: `ready`
+- Refresh owner: `none`
+- ChatGPT/user planning refresh required: `no`
+- Authoring chat: `not-recorded`
+- Summary backlink: `n/a`
+- Refresh reason: `none`
+- Next action: Run the paired review from a fresh context after this implementation lands and archives.
+- Blockers or open questions: `none`

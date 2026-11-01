@@ -19,12 +19,14 @@ import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from pathlib import PurePosixPath
 
 TOOLS_ROOT = Path(__file__).resolve().parents[1]
 if str(TOOLS_ROOT) not in sys.path:
     sys.path.insert(0, str(TOOLS_ROOT))
 from godot_project_lock import job_budget_root, scratch_root
 import paired_review_host_validation as host_validation
+import worktree_provisioning
 from paired_review_host_validation import (
     HostValidationError,
     _validate_report,
@@ -33,7 +35,10 @@ from paired_review_host_validation import (
 )
 
 import review_outcome
-from task_packet_contract import ID_RE, PACKET_ROOT, parse_packet
+from task_packet_contract import (
+    ID_RE, PACKET_ROOT, TaskPacketContractError, parse_packet,
+    parse_publication_inputs,
+)
 from review_receipt_delta import (
     read_git_text,
     render_review_receipt,
@@ -57,6 +62,34 @@ ARCHIVED_RECEIPT_CAPTURE_CLAIM_RUN_ID = "20261031T005536Z-066de2554c75"
 ARCHIVED_RECEIPT_CAPTURE_REVIEWED_MAIN = "a696aef8d5aff23e9f2a477c85f1f792da6dcd02"
 ARCHIVED_RECEIPT_CAPTURE_TARGET = "agent-paired-review-dual-disposition-recovery-v1"
 ARCHIVED_RECEIPT_CAPTURE_SCHEMA = "custodian.paired_review_archived_receipt_capture_recovery.v1"
+
+# One emergency continuation is pinned to the review whose first claim created a
+# profiled checkout but whose original dispatcher receipt exposed only the
+# legacy disposition string. The immutable run manifest makes this exception
+# unusable for any other review or altered evidence.
+CHECKOUT_PROFILE_MISMATCH_WORKSTREAM = (
+    "review-agent-paired-review-runner-profile-summary-coverage-v1"
+)
+CHECKOUT_PROFILE_MISMATCH_RUN_ID = "20261031T154752Z-1243f08594ef"
+CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID = "20261031T154805Z-601d4382c346"
+CHECKOUT_PROFILE_MISMATCH_MAIN = "e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f"
+CHECKOUT_PROFILE_MISMATCH_WORKTREE = (
+    "/home/braydenchaffee/Projects/.custodian-worktrees/"
+    "review-agent-paired-review-runner-profile-summary-coverage-v1-20261031T154805Z-601d4382c346"
+)
+CHECKOUT_PROFILE_MISMATCH_PROFILE = (
+    "custodian/docs/ai_context/worktree_profiles/agent_ops_paired_review_bootstrap_v1.json"
+)
+CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256 = (
+    "fc632cc325cb3cfc5fb4567be2de91ae46a103c378ca5405165b2589fd6428f6"
+)
+CHECKOUT_PROFILE_MISMATCH_RUN_MANIFEST = {
+    "RECOVERY.md": "aaa51305f67dcb2c0b3d5a2c7496e1d4e387b135c48ef5c4708c9c1a3acf72b0",
+    "claim-receipt.json": "c7dc2de6705769534c7b974e86b07d9328581e61453754f92423cc86e052430c",
+    "claim.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "claim.stdout": "92f6a84098fa4ecd39b64d59fd582a3b5f09c1568258f0697cfcadb7d511a168",
+    "metadata.json": "1e9d767fc52476261284b91e78bc508d3fdae6ab4ea34bc64e6dffe0282dd573",
+}
 
 # This recovery exists for one independently reviewed, already-held run. It is
 # intentionally not an alternate parser or a general invalid-disposition retry.
@@ -303,6 +336,502 @@ def validate_eligible_review(repo: Path, workstream: str):
     return path, content, packet
 
 
+def _publication_inputs(content: str, label: str) -> set[str]:
+    """Read the packet's concrete publication inputs without guessing at prose."""
+    try:
+        return parse_publication_inputs(content, label)
+    except TaskPacketContractError as error:
+        raise RunnerError(str(error)) from error
+
+
+def _profile_covers_path(profile: worktree_provisioning.Profile, path: str) -> bool:
+    return any(path == include or path.startswith(include.rstrip("/") + "/")
+               for include in profile.include)
+
+
+def _python_import_dependency_paths(repo: Path, revision: str, entry_points: set[str]) -> set[str]:
+    """Resolve tracked local Python imports recursively from review entry points."""
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", revision).splitlines())
+    roots: list[str] = []
+    for entry in sorted(entry_points):
+        parent = PurePosixPath(entry).parent.as_posix()
+        if parent not in roots:
+            roots.append(parent)
+    for root in ("custodian/tools/agent", "custodian/tools/validation", "custodian/tools/pipelines",
+                 "custodian/tools/iteration", "custodian/tools", ""):
+        if root not in roots:
+            roots.append(root)
+
+    def resolve(module: str) -> str | None:
+        if not module or any(not part.isidentifier() for part in module.split(".")):
+            return None
+        suffix = module.replace(".", "/")
+        for root in roots:
+            candidate = f"{root}/{suffix}.py" if root else f"{suffix}.py"
+            if candidate in tracked:
+                return candidate
+            package = f"{root}/{suffix}/__init__.py" if root else f"{suffix}/__init__.py"
+            if package in tracked:
+                return package
+        return None
+
+    dependencies: set[str] = set()
+    pending = [path for path in sorted(entry_points) if path.endswith(".py")]
+    visited: set[str] = set()
+    while pending:
+        source = pending.pop()
+        if source in visited:
+            continue
+        visited.add(source)
+        if source not in tracked:
+            raise RunnerError(f"review Python dependency is absent from {revision}: {source}")
+        dependencies.add(source)
+        try:
+            tree = ast.parse(read_git_text(repo, revision, source), filename=source)
+        except (SyntaxError, ValueError) as exc:
+            raise RunnerError(f"cannot inspect review Python dependency {source}: {exc}") from exc
+        package_parts = list(PurePosixPath(source).parent.parts)
+        for node in ast.walk(tree):
+            modules: list[str] = []
+            if isinstance(node, ast.Import):
+                modules.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                if node.level:
+                    base = package_parts[:len(package_parts) - node.level + 1]
+                    prefix = ".".join(base)
+                    if node.module:
+                        prefix = f"{prefix}.{node.module}" if prefix else node.module
+                else:
+                    prefix = node.module or ""
+                if prefix:
+                    modules.append(prefix)
+                    for alias in node.names:
+                        child = f"{prefix}.{alias.name}"
+                        if resolve(child):
+                            modules.append(child)
+            for module in modules:
+                dependency = resolve(module)
+                if dependency:
+                    pending.append(dependency)
+                    dependencies.add(dependency)
+    return dependencies
+
+
+def _validation_manifest_dependency_paths(repo: Path, revision: str) -> set[str]:
+    """Resolve every tracked script/scenario the host validation manifest loads."""
+    manifest_path = "custodian/tools/validation/validation_manifest.json"
+    try:
+        payload = json.loads(read_git_text(repo, revision, manifest_path))
+    except (OSError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
+        raise RunnerError(f"cannot read validation manifest at {revision}: {exc}") from exc
+    if not isinstance(payload, dict) or not isinstance(payload.get("tests"), list):
+        raise RunnerError(f"invalid validation manifest at {revision}")
+
+    dependencies = {manifest_path, "custodian/tools/validation/known_headless_warnings.json"}
+
+    def safe_manifest_path(value: object, *, prefix: str = "") -> str:
+        if not isinstance(value, str) or not value or "\\" in value or "\x00" in value:
+            raise RunnerError("validation manifest contains an unsafe dependency path")
+        path = PurePosixPath(value)
+        if (path.is_absolute() or path.as_posix() != value
+                or any(part in {"", ".", ".."} for part in path.parts)):
+            raise RunnerError(f"validation manifest contains an unsafe dependency path: {value!r}")
+        return prefix + path.as_posix()
+
+    python_scripts: set[str] = set()
+    for test in payload["tests"]:
+        if not isinstance(test, dict):
+            raise RunnerError("validation manifest contains a malformed test entry")
+        kind = test.get("type")
+        if kind in {"python", "godot_script"}:
+            script = test.get("script")
+            if isinstance(script, str) and script.startswith("res://"):
+                resolved = safe_manifest_path(script.removeprefix("res://"), prefix="custodian/")
+            else:
+                resolved = safe_manifest_path(script)
+            dependencies.add(resolved)
+            if kind == "python":
+                python_scripts.add(resolved)
+        elif kind == "moment":
+            scenario = safe_manifest_path(test.get("scenario"))
+            dependencies.add(f"custodian/tools/iteration/scenarios/{scenario}.json")
+        else:
+            raise RunnerError(f"validation manifest has an unsupported test type: {kind!r}")
+
+    # Some focused tests load a sibling implementation with Path.with_name()
+    # instead of importing it. Include those executable files in the pre-claim
+    # closure so sparse validation cannot fail only after a reviewer is claimed.
+    for script in sorted(python_scripts):
+        try:
+            tree = ast.parse(read_git_text(repo, revision, script), filename=script)
+        except (OSError, SyntaxError, ValueError, subprocess.CalledProcessError) as exc:
+            raise RunnerError(f"cannot inspect validation script dependency {script}: {exc}") from exc
+        parent = PurePosixPath(script).parent
+        for node in ast.walk(tree):
+            if (not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute)
+                    or node.func.attr != "with_name" or len(node.args) != 1
+                    or not isinstance(node.args[0], ast.Constant)
+                    or not isinstance(node.args[0].value, str)
+                    or not node.args[0].value.endswith(".py")):
+                continue
+            name = safe_manifest_path(node.args[0].value)
+            if len(PurePosixPath(name).parts) != 1:
+                raise RunnerError(f"validation script has an unsafe sibling dependency: {name!r}")
+            sibling = (parent / name).as_posix()
+            try:
+                read_git_text(repo, revision, sibling)
+            except (OSError, ValueError, subprocess.CalledProcessError) as exc:
+                raise RunnerError(f"validation script dependency is absent from {revision}: {sibling}") from exc
+            dependencies.add(sibling)
+    return dependencies
+
+
+def validate_checkout_profile(repo: Path, review_path: str, review_content: str, review_packet,
+                              profile_path: str, *, main_ref: str | None = None
+                              ) -> tuple[worktree_provisioning.Profile, str, set[str]]:
+    """Pin a profile to main and prove it covers both packets and the exact target commit."""
+    pure_profile_path = PurePosixPath(profile_path)
+    if (not profile_path or "\\" in profile_path or "\x00" in profile_path
+            or pure_profile_path.is_absolute() or pure_profile_path.as_posix() != profile_path
+            or any(part in {"", ".", ".."} for part in pure_profile_path.parts)):
+        raise RunnerError(f"checkout profile path is unsafe: {profile_path!r}")
+    try:
+        main = (git(repo, "rev-parse", "--verify", "origin/main^{commit}")
+                if main_ref is None else git(repo, "rev-parse", "--verify", f"{main_ref}^{{commit}}"))
+        if subprocess.run(["git", "cat-file", "-e", f"{main}:{profile_path}"], cwd=repo,
+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+            raise RunnerError(f"checkout profile is not tracked at origin/main or pinned main {main}: {profile_path}")
+        profile = worktree_provisioning.load_profile(repo, main, profile_path)
+        if profile is None:
+            raise RunnerError("checkout profile could not be loaded")
+        if read_git_text(repo, main, review_path) != review_content:
+            raise RunnerError("review packet differs from the selected pinned main during checkout-profile validation")
+        target_path = review_packet.review_target_packet
+        target_content = read_git_text(repo, main, target_path)
+        required = _publication_inputs(review_content, review_path)
+        required.update(_publication_inputs(target_content, target_path))
+        implementation_commit, identity_error = resolve_target_implementation_commit(
+            repo, main, target_path, review_packet.review_target_workstream or "", target_content,
+        )
+        if identity_error or not implementation_commit:
+            raise RunnerError("review target implementation identity is invalid: " + (identity_error or "missing commit"))
+        changed = git(repo, "diff-tree", "--root", "--no-commit-id", "--name-only", "-r",
+                      implementation_commit).splitlines()
+        for path in changed:
+            pure = PurePosixPath(path)
+            if (not path or "\\" in path or "\x00" in path or pure.is_absolute()
+                    or pure.as_posix() != path or any(part in {"", ".", ".."} for part in pure.parts)):
+                raise RunnerError(f"target implementation diff contains an unsafe path: {path!r}")
+            required.add(path)
+        python_entry_points = {path for path in required if path.endswith(".py")}
+        python_entry_points.update({
+            "custodian/tools/agent/paired_review_runner.py",
+            "custodian/tools/agent/dispatch.py",
+            "custodian/tools/agent/workstream.py",
+        })
+        manifest_dependencies = _validation_manifest_dependency_paths(repo, main)
+        required.update(manifest_dependencies)
+        python_entry_points.update(path for path in manifest_dependencies if path.endswith(".py"))
+        required.update(_python_import_dependency_paths(repo, main, python_entry_points))
+        missing = sorted(path for path in required if not _profile_covers_path(profile, path))
+        if missing:
+            raise RunnerError("checkout profile omits required review dependencies: " + ", ".join(missing))
+        for path in _publication_inputs(review_content, review_path) | _publication_inputs(target_content, target_path):
+            if subprocess.run(["git", "cat-file", "-e", f"{main}:{path}"], cwd=repo,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+                raise RunnerError(f"published review dependency is absent from origin/main: {path}")
+        worktree_provisioning.inventory(repo, main, profile)
+        return profile, main, required
+    except worktree_provisioning.ProvisioningError as exc:
+        raise RunnerError(f"invalid checkout profile: {exc}") from exc
+
+
+def verify_checkout_profile_receipt(receipt: dict, profile: worktree_provisioning.Profile,
+                                    required_paths: set[str], *, repo: Path | None = None,
+                                    reviewed_main: str | None = None) -> None:
+    # `checkout` remains the historical creation/resume disposition string.
+    # Profile provenance has its own structured field to avoid type aliasing.
+    disposition = receipt.get("checkout")
+    if not isinstance(disposition, str) or disposition not in {"created", "resumed"}:
+        raise RunnerError("dispatcher checkout disposition is missing or malformed")
+    checkout = receipt.get("checkout_profile")
+    if (not isinstance(checkout, dict) or checkout.get("profile") != profile.path
+            or checkout.get("profile_sha256") != profile.digest
+            or set(checkout) != {"profile", "profile_sha256", "paths", "hydrated_lfs_paths", "hydrated_lfs"}):
+        raise RunnerError("dispatcher checkout_profile evidence does not match the validated profile and digest")
+    actual_paths = checkout.get("paths")
+    if not isinstance(actual_paths, list) or any(not isinstance(path, str) for path in actual_paths):
+        raise RunnerError("dispatcher checkout_profile evidence omitted its materialized path inventory")
+    required_to_materialize = required_paths
+    if repo is not None and reviewed_main is not None:
+        tracked = set(git(repo, "ls-tree", "-r", "--name-only", reviewed_main).splitlines())
+        required_to_materialize = required_paths & tracked
+    missing = sorted(required_to_materialize - set(actual_paths))
+    if missing:
+        raise RunnerError("dispatcher checkout omitted validated review dependencies: " + ", ".join(missing))
+    if repo is None or reviewed_main is None:
+        return
+    inventory = _checkout_profile_inventory(repo, reviewed_main, profile)
+    expected_paths = [item.path for item in inventory]
+    if actual_paths != expected_paths:
+        raise RunnerError("dispatcher checkout_profile path inventory differs from the pinned Git tree")
+    expected_hydrated_paths = list(profile.hydrate_lfs)
+    expected_hydrated = [
+        {"path": item.path, "oid": item.lfs_oid, "size": item.lfs_size}
+        for item in inventory if item.path in profile.hydrate_lfs
+    ]
+    if (checkout.get("hydrated_lfs_paths") != expected_hydrated_paths
+            or checkout.get("hydrated_lfs") != expected_hydrated):
+        raise RunnerError("dispatcher checkout_profile LFS evidence differs from the pinned profile inventory")
+    worktree = Path(str(receipt.get("worktree", ""))).resolve()
+    verify_checkout_profile_worktree(
+        repo, worktree, profile, required_paths, reviewed_main, inventory=inventory,
+    )
+
+
+def _checkout_profile_inventory(repo: Path, reviewed_main: str,
+                                profile: worktree_provisioning.Profile) -> list:
+    try:
+        return worktree_provisioning.inventory(repo, reviewed_main, profile)
+    except worktree_provisioning.ProvisioningError as exc:
+        raise RunnerError(f"cannot independently reconstruct checkout profile inventory: {exc}") from exc
+
+
+def verify_checkout_profile_worktree(repo: Path, worktree: Path,
+                                     profile: worktree_provisioning.Profile,
+                                     required_paths: set[str], reviewed_main: str,
+                                     *, inventory: list | None = None) -> None:
+    """Reconcile the declared profile with the pinned tree and physical sparse checkout."""
+    inventory = inventory if inventory is not None else _checkout_profile_inventory(repo, reviewed_main, profile)
+    expected_paths = [item.path for item in inventory]
+    tracked = set(git(repo, "ls-tree", "-r", "--name-only", reviewed_main).splitlines())
+    missing_required = sorted((required_paths & tracked) - set(expected_paths))
+    if missing_required:
+        raise RunnerError("pinned checkout profile omits validated review dependencies: " + ", ".join(missing_required))
+    if not worktree.is_dir():
+        raise RunnerError("dispatcher profiled worktree is missing")
+    expected_patterns = [worktree_provisioning._sparse_pattern(path) for path in expected_paths]
+    try:
+        sparse_patterns = git(worktree, "sparse-checkout", "list").splitlines()
+    except (RunnerError, subprocess.SubprocessError) as exc:
+        raise RunnerError("dispatcher profiled worktree has no verifiable sparse-checkout definition") from exc
+    if sparse_patterns != expected_patterns:
+        raise RunnerError("dispatcher worktree sparse-checkout rules differ from the pinned profile")
+    if git(worktree, "status", "--porcelain=v1", "--untracked-files=all"):
+        raise RunnerError("dispatcher profiled worktree is dirty during profile verification")
+    hydrated = set(profile.hydrate_lfs)
+    non_hydrated = []
+    for item in inventory:
+        path = worktree / item.path
+        if path.is_symlink() or not path.is_file():
+            raise RunnerError(f"dispatcher profiled worktree omitted or linked tracked path: {item.path}")
+        if item.path in hydrated:
+            raw = path.read_bytes()
+            if (item.lfs_oid is None or item.lfs_size is None or len(raw) != item.lfs_size
+                    or hashlib.sha256(raw).hexdigest() != item.lfs_oid):
+                raise RunnerError(f"dispatcher hydrated LFS content failed its pinned oid: {item.path}")
+        else:
+            non_hydrated.append(item)
+    if non_hydrated:
+        result = subprocess.run(
+            ["git", "hash-object", "--", *(item.path for item in non_hydrated)],
+            cwd=worktree, capture_output=True, check=False,
+        )
+        if result.returncode:
+            raise RunnerError("could not hash materialized checkout profile paths")
+        actual_oids = result.stdout.decode("ascii", "strict").splitlines()
+        if actual_oids != [item.oid for item in non_hydrated]:
+            raise RunnerError("dispatcher materialized content differs from the pinned Git tree")
+
+
+def _checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+    """Build a read-only, exact-evidence plan for the sole held profile-mismatch run."""
+    if (workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
+            or run_id != CHECKOUT_PROFILE_MISMATCH_RUN_ID):
+        raise RunnerError("checkout-profile recovery plan accepts only its exact held run")
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    coordinator_main = _coordinator_checkout_sha(repo)
+    common = common_dir(repo).resolve()
+    run_dir = common / "custodian-review-runs" / workstream / run_id
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file() or lock_path.is_symlink():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    if not run_dir.is_dir() or run_dir.is_symlink():
+        raise RunnerError("exact original review run directory is absent or unsafe")
+    try:
+        metadata_bytes = (run_dir / "metadata.json").read_bytes()
+        metadata = json.loads(metadata_bytes)
+        receipt_bytes = (run_dir / "claim-receipt.json").read_bytes()
+        receipt_value = json.loads(receipt_bytes)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("exact run metadata or structured claim receipt is missing or malformed") from exc
+    if (not isinstance(metadata, dict) or metadata.get("schema") != SCHEMA
+            or metadata.get("run_id") != run_id or metadata.get("workstream") != workstream
+            or metadata.get("run_dir") != str(run_dir)
+            or metadata.get("phase") != "claim_profile_mismatch"):
+        raise RunnerError("original run metadata is not the exact eligible claim-profile mismatch")
+    manifest = _file_manifest(run_dir)
+    if manifest != CHECKOUT_PROFILE_MISMATCH_RUN_MANIFEST:
+        raise RunnerError("exact held run evidence changed or already has continuation evidence")
+    expected_profile_meta = {
+        "path": CHECKOUT_PROFILE_MISMATCH_PROFILE,
+        "sha256": CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256,
+        "validated_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
+        "required_path_count": 399,
+        "required_paths_sha256": "475c2e734afc2a70449af4abcf9c67822c0aab0644328aa81a0ef6f03d90fe26",
+    }
+    if (metadata.get("checkout_profile") != expected_profile_meta
+            or not isinstance(metadata.get("profile_error"), str)):
+        raise RunnerError("held run profile metadata differs from the authorized claim-profile mismatch")
+    active_path, active_content, packet = validate_eligible_review(repo, workstream)
+    pinned_content = read_git_text(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, active_path)
+    pinned_packet = parse_packet(active_path, pinned_content)
+    if (pinned_content != active_content or pinned_packet.error
+            or pinned_packet.workstream != workstream
+            or pinned_packet.review_target_workstream != packet.review_target_workstream
+            or pinned_packet.review_target_packet != packet.review_target_packet
+            or pinned_packet.authoring_chat != packet.authoring_chat
+            or pinned_packet.review_cycle != packet.review_cycle):
+        raise RunnerError("active review packet differs from the exact held run's pinned packet")
+    profile, profile_main, required_paths = validate_checkout_profile(
+        repo, active_path, pinned_content, pinned_packet, CHECKOUT_PROFILE_MISMATCH_PROFILE,
+        main_ref=CHECKOUT_PROFILE_MISMATCH_MAIN,
+    )
+    required_digest = hashlib.sha256("\n".join(sorted(required_paths)).encode("utf-8")).hexdigest()
+    if (profile_main != CHECKOUT_PROFILE_MISMATCH_MAIN
+            or profile.digest != CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256
+            or len(required_paths) != expected_profile_meta["required_path_count"]
+            or required_digest != expected_profile_meta["required_paths_sha256"]):
+        raise RunnerError("reconstructed checkout-profile dependencies differ from the held run metadata")
+    receipt = parse_claim_receipt(
+        CLAIM_SENTINEL + json.dumps(receipt_value, sort_keys=True), workstream, repo,
+    )
+    worktree = Path(receipt["worktree"]).resolve()
+    branch = f"agent/{workstream}"
+    if (receipt.get("run_id") != CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID
+            or receipt.get("checkout") != "created"
+            or "checkout_profile" in receipt
+            or worktree != Path(CHECKOUT_PROFILE_MISMATCH_WORKTREE).resolve()
+            or receipt.get("branch") != branch or receipt.get("packet") != active_path
+            or _process_owns_worktree(worktree)):
+        raise RunnerError("exact held claim identity or reviewer-process state failed verification")
+    if (common_dir(worktree).resolve() != common or git(worktree, "branch", "--show-current") != branch
+            or git(worktree, "rev-parse", "HEAD^{commit}") != CHECKOUT_PROFILE_MISMATCH_MAIN):
+        raise RunnerError("held review checkout identity differs from the exact pinned claim")
+    profile_inventory = _checkout_profile_inventory(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, profile)
+    verify_checkout_profile_worktree(
+        repo, worktree, profile, required_paths, CHECKOUT_PROFILE_MISMATCH_MAIN,
+        inventory=profile_inventory,
+    )
+    checkout_head = git(worktree, "rev-parse", "--verify", "HEAD^{commit}")
+    if checkout_head != CHECKOUT_PROFILE_MISMATCH_MAIN:
+        raise RunnerError("held checkout HEAD differs from the exact pinned review base")
+    tracked_paths = set(git(repo, "ls-tree", "-r", "--name-only", CHECKOUT_PROFILE_MISMATCH_MAIN).splitlines())
+    materialized_required_paths = sorted(required_paths & tracked_paths)
+    local_branch_tip = git(repo, "rev-parse", f"refs/heads/{branch}^{{commit}}")
+    remote_branch_tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+    if (local_branch_tip != CHECKOUT_PROFILE_MISMATCH_MAIN
+            or remote_branch_tip != CHECKOUT_PROFILE_MISMATCH_MAIN):
+        raise RunnerError("held review branch or authoritative remote tip moved from its pinned base")
+    target_path = packet.review_target_packet
+    if target_path is None:
+        raise RunnerError("active review packet omits its exact archived target")
+    target_content = read_git_text(repo, CHECKOUT_PROFILE_MISMATCH_MAIN, target_path)
+    target = parse_packet(target_path, target_content)
+    if (target.error or target.workstream != packet.review_target_workstream
+            or target.kind not in {"implementation", "correction"} or target.status != "complete"
+            or target_path != f"{PACKET_ROOT}/archived/{Path(target_path).name}"):
+        raise RunnerError("pinned archived implementation target is invalid or incomplete")
+    implementation_commit, identity_error = resolve_target_implementation_commit(
+        repo, CHECKOUT_PROFILE_MISMATCH_MAIN, target_path, packet.review_target_workstream, target_content,
+    )
+    if identity_error:
+        raise RunnerError("pinned implementation identity failed verification: " + identity_error)
+    worktree_packet = (worktree / active_path).read_text(encoding="utf-8")
+    if worktree_packet != pinned_content:
+        raise RunnerError("held checkout review packet differs from the pinned packet")
+    lock_stat = lock_path.stat()
+    inventory_payload = [
+        {"path": item.path, "git_blob": item.oid, "git_size": item.git_size,
+         "lfs_oid": item.lfs_oid, "lfs_size": item.lfs_size, "mode": item.mode}
+        for item in profile_inventory
+    ]
+    sparse_rules = git(worktree, "sparse-checkout", "list").splitlines()
+    plan = {
+        "schema": "custodian.paired_review_checkout_profile_recovery_plan.v1",
+        "mode": "read-only-plan",
+        "workstream": workstream,
+        "run_id": run_id,
+        "claim_run_id": CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID,
+        "coordinator_main": coordinator_main,
+        "reviewed_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
+        "implementation_commit": implementation_commit,
+        "branch": branch,
+        "local_branch_tip": local_branch_tip,
+        "remote_branch_tip": remote_branch_tip,
+        "worktree": str(worktree),
+        "worktree_head": checkout_head,
+        "active_packet": active_path,
+        "target_packet": target_path,
+        "profile_path": profile.path,
+        "profile_sha256": profile.digest,
+        "profile_inventory_sha256": _sha256_bytes(
+            json.dumps(inventory_payload, sort_keys=True, separators=(",", ":")).encode()),
+        "sparse_checkout_rules_sha256": _sha256_bytes(
+            json.dumps(sparse_rules, separators=(",", ":")).encode()),
+        "required_path_count": len(required_paths),
+        "required_paths_sha256": required_digest,
+        "materialized_required_paths": materialized_required_paths,
+        "historical_required_paths_absent_from_pinned_tree": sorted(required_paths - tracked_paths),
+        "run_evidence_manifest": manifest,
+        "run_evidence_manifest_sha256": _manifest_digest(manifest),
+        "run_metadata_sha256": _sha256_bytes(metadata_bytes),
+        "claim_receipt_sha256": _sha256_bytes(receipt_bytes),
+        "lock_identity": {"device": lock_stat.st_dev, "inode": lock_stat.st_ino},
+        "lock_state": "exclusive_nonblocking_lock_acquired_during_plan",
+        "active_review_processes": [],
+        "apply_boundary": "requires --apply, this exact --plan-sha256, and --authorize-fresh-reviewer-context",
+        "apply_actions": ["repeat all plan checks", "run coordinator validation", "only on validation pass launch one fresh reviewer on the same claim"],
+    }
+    plan["plan_sha256"] = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
+    return plan
+
+
+def plan_checkout_profile_mismatch_recovery(repo: Path, workstream: str, run_id: str) -> dict:
+    """Authenticate and print the read-only plan while holding the preserved review lock."""
+    repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
+    common = common_dir(repo).resolve()
+    lock_path = common / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    if not lock_path.is_file() or lock_path.is_symlink():
+        raise RunnerError("original paired-review supervisor lock is missing or unsafe")
+    with lock_path.open("rb") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RunnerError(f"another local process is supervising {workstream}; plan refused") from exc
+        return _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+
+
+def _readonly_checkout_profile_mismatch_plan_unlocked(repo: Path, workstream: str, run_id: str) -> dict:
+    previous = os.environ.get("GIT_OPTIONAL_LOCKS")
+    os.environ["GIT_OPTIONAL_LOCKS"] = "0"
+    try:
+        return _checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+    finally:
+        if previous is None:
+            os.environ.pop("GIT_OPTIONAL_LOCKS", None)
+        else:
+            os.environ["GIT_OPTIONAL_LOCKS"] = previous
+
+
+def dispatcher_claim_command(repo: Path, workstream: str, checkout_profile: str | None = None) -> list[str]:
+    command = [sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "claim", workstream,
+               "--agent", "codex-reviewer"]
+    if checkout_profile is not None:
+        command.extend(("--checkout-profile", checkout_profile))
+    return command
+
+
 def codex_preflight() -> str:
     executable = shutil.which("codex")
     if not executable:
@@ -411,25 +940,55 @@ def _changed_paths(repo: Path, *args: str) -> list[str]:
 
 def _verified_reviewer_pass(repo: Path, archived_text: str, metadata: dict, worktree: Path,
                             workstream: str, target_workstream: str, reviewed_main: str,
-                            implementation_commit: str) -> dict[str, str]:
+                            implementation_commit: str, *,
+                            expected_session: dict[str, str] | None = None) -> dict[str, str]:
     """Authenticate a canonical archived PASS against its fresh reviewer session and pinned run."""
     run_id = metadata.get("run_id")
     session_dir = Path(str(metadata.get("run_dir", ""))).resolve()
     if metadata.get("schema") == CONTINUATION_SCHEMA:
         session_dir = Path(str(metadata.get("last_message", ""))).resolve().parent
+    continuation_session = metadata.get("schema") == CONTINUATION_SCHEMA
     if (not isinstance(run_id, str) or not _RUN_ID_RE.fullmatch(run_id)
             or metadata.get("workstream") != workstream
-            or metadata.get("fresh") is not True or metadata.get("exit_code") != 0
+            or (not continuation_session and metadata.get("fresh") is not True)
+            or metadata.get("exit_code") != 0
             or metadata.get("reviewed_main") != reviewed_main
             or metadata.get("implementation_commit") != implementation_commit
             or not session_dir.is_dir()):
         raise RunnerError("reviewer session metadata does not authenticate the pinned PASS")
-    try:
-        final = (session_dir / "last-message.txt").read_text(encoding="utf-8")
-        events = (session_dir / "codex.jsonl").read_text(encoding="utf-8").splitlines()
-        outcome, outcome_error = review_outcome.parse_review_outcome(archived_text)
-    except OSError as exc:
-        raise RunnerError("fresh reviewer session evidence is missing") from exc
+    if continuation_session:
+        runner_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/paired_review_runner.py")
+        control_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/workflow_control.py")
+        final, session = _parse_redacted_final_session(session_dir, metadata, runner_source, control_source)
+        capture_pin = ({key: session.get(key) for key in expected_session}
+                       if expected_session is not None else None)
+        if expected_session is not None and capture_pin != expected_session:
+            raise RunnerError("reviewer session does not match the recovery plan's original capture digests")
+    else:
+        if expected_session is not None:
+            raise RunnerError("ordinary reviewer runs cannot use continuation capture digests")
+        try:
+            final = (session_dir / "last-message.txt").read_text(encoding="utf-8")
+            events = (session_dir / "codex.jsonl").read_text(encoding="utf-8").splitlines()
+        except OSError as exc:
+            raise RunnerError("fresh reviewer session evidence is missing") from exc
+        agent_messages: list[str] = []
+        completed_turns = 0
+        for line in events:
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise RunnerError("reviewer session contains malformed JSON") from exc
+            item = event.get("item") if isinstance(event, dict) else None
+            if isinstance(item, dict) and item.get("type") == "agent_message":
+                if not isinstance(item.get("text"), str):
+                    raise RunnerError("reviewer session contains a malformed agent message")
+                agent_messages.append(item["text"])
+            if isinstance(event, dict) and event.get("type") == "turn.completed":
+                completed_turns += 1
+        if completed_turns != 1 or len(agent_messages) != 1 or agent_messages[0].strip() != final.strip():
+            raise RunnerError("reviewer final output does not uniquely match its raw fresh session")
+    outcome, outcome_error = review_outcome.parse_review_outcome(archived_text)
     if outcome_error or outcome is None or outcome.get("Outcome") != "passed":
         raise RunnerError("archived packet does not contain one canonical PASS outcome")
     identity_error = review_outcome.outcome_identity_error(
@@ -443,24 +1002,11 @@ def _verified_reviewer_pass(repo: Path, archived_text: str, metadata: dict, work
     expected_receipt = render_review_receipt(outcome)
     if receipt is None or archived_text.count(expected_receipt) != 1:
         raise RunnerError("archived independent-review receipt differs from its canonical PASS outcome")
-    agent_messages: list[str] = []
-    completed_turns = 0
-    for line in events:
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError as exc:
-            raise RunnerError("reviewer session contains malformed JSON") from exc
-        item = event.get("item") if isinstance(event, dict) else None
-        if isinstance(item, dict) and item.get("type") == "agent_message":
-            if not isinstance(item.get("text"), str):
-                raise RunnerError("reviewer session contains a malformed agent message")
-            agent_messages.append(item["text"])
-        if isinstance(event, dict) and event.get("type") == "turn.completed":
-            completed_turns += 1
-    if completed_turns != 1 or len(agent_messages) != 1 or agent_messages[0].strip() != final.strip():
-        raise RunnerError("reviewer final output does not uniquely match its raw fresh session")
-    if (not re.search(r"(?i)(?:verdict|review outcome):?\s*`?passed\b", final)
-            or workstream not in final):
+    verdicts = re.findall(
+        r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome)\s*:\s*`?([a-z_]+)",
+        final,
+    )
+    if not verdicts or any(value.lower() != "passed" for value in verdicts) or workstream not in final:
         raise RunnerError("reviewer-authored final output does not support this exact PASS identity")
     summary_path = worktree / expected_summary_path(workstream)
     try:
@@ -849,6 +1395,156 @@ def apply_procession_pass_closeout(repo: Path, plan_sha256: str) -> dict:
             raise
 
 
+def _committed_pass_continuation_identity(repo: Path, workstream: str, worktree: Path,
+                                          active_packet_path: str, target_workstream: str,
+                                          target_packet_path: str, reviewed_main: str,
+                                          archived_text: str, run_dir: Path,
+                                          host_evidence: dict) -> tuple[str, int, dict]:
+    """Authenticate the original reviewer session and continuation before retrying a PASS."""
+    supplied = host_evidence.get("continuation_dir", run_dir)
+    continuation_dir = Path(supplied)
+    if (continuation_dir.is_symlink() or continuation_dir.name != "continuation-01"
+            or not continuation_dir.is_dir() or continuation_dir.resolve() != continuation_dir):
+        raise RunnerError("committed PASS requires the exact regular continuation-01 directory")
+    if Path(run_dir).resolve() != continuation_dir.resolve():
+        raise RunnerError("committed PASS run directory differs from its authenticated continuation")
+    original_dir = continuation_dir.parent
+    if original_dir.is_symlink() or not original_dir.is_dir() or original_dir.resolve() != original_dir:
+        raise RunnerError("committed PASS continuation has an unsafe original run directory")
+    expected_run_dir = common_dir(repo).resolve() / "custodian-review-runs" / workstream / original_dir.name
+    if original_dir != expected_run_dir or not _RUN_ID_RE.fullmatch(original_dir.name):
+        raise RunnerError("committed PASS continuation is outside its exact workstream run")
+
+    try:
+        original = json.loads((original_dir / "metadata.json").read_text(encoding="utf-8"))
+        child = json.loads((continuation_dir / "metadata.json").read_text(encoding="utf-8"))
+        journal = json.loads((continuation_dir / "rc116-recovery-journal.json").read_text(encoding="utf-8"))
+        claim_file = json.loads((original_dir / "claim-receipt.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RunnerError("committed PASS continuation identity evidence is missing or malformed") from exc
+    if not all(isinstance(value, dict) for value in (original, child, journal, claim_file)):
+        raise RunnerError("committed PASS continuation identity evidence must be JSON objects")
+    run_id = original_dir.name
+    if (original.get("schema") != SCHEMA or original.get("workstream") != workstream
+            or original.get("run_id") != run_id or original.get("run_dir") != str(original_dir)
+            or original.get("phase") not in {"claim_profile_mismatch", "post_exit_recovery"}):
+        raise RunnerError("original paired-review run identity or phase contradicts the continuation")
+    if (child.get("schema") != CONTINUATION_SCHEMA or child.get("workstream") != workstream
+            or child.get("run_id") != run_id or child.get("phase") != "coordinator_closeout"
+            or type(child.get("continuation_number")) is not int or child.get("continuation_number") != 1
+            or type(child.get("reviewer_launch_count")) is not int or child.get("reviewer_launch_count") != 1
+            or type(child.get("exit_code")) is not int or child.get("exit_code") != 0
+            or child.get("original_run_dir") != str(original_dir)):
+        raise RunnerError("continuation is not the one completed reviewer turn awaiting coordinator closeout")
+    try:
+        claim, claim_source = _host_validation_claim_receipt(
+            original_dir, workstream, repo,
+            {**original, "recovery_worktree": child.get("worktree")},
+            str(child.get("active_packet_path", "")),
+        )
+    except RunnerError as exc:
+        raise RunnerError("original dispatcher claim could not be authenticated: " + str(exc)) from exc
+    if claim_file != claim or claim_source != "claim-receipt.json":
+        raise RunnerError("original claim receipt file disagrees with the dispatcher output")
+    if (not _RUN_ID_RE.fullmatch(str(claim.get("run_id", "")))
+            or child.get("branch") != claim.get("branch")
+            or child.get("worktree") != claim.get("worktree")
+            or child.get("active_packet_path") != claim.get("packet")
+            or (claim.get("authoring_chat") is not None
+                and child.get("authoring_chat") != claim.get("authoring_chat"))
+            or Path(claim["worktree"]).resolve() != Path(worktree).resolve()
+            or git(worktree, "branch", "--show-current") != claim["branch"]):
+        raise RunnerError("continuation branch, worktree, or packet differs from the original verified claim")
+    recovery_claim = child.get("checkout_profile_recovery")
+    if isinstance(recovery_claim, dict) and recovery_claim.get("claim_run_id") != claim["run_id"]:
+        raise RunnerError("continuation recovery claim provenance differs from the original dispatcher claim")
+
+    if (child.get("active_packet_path") != active_packet_path
+            or child.get("target_workstream") != target_workstream
+            or child.get("target_packet_path") != target_packet_path
+            or child.get("reviewed_main") != reviewed_main
+            or child.get("implementation_commit") != host_evidence.get("implementation_commit")
+            or not isinstance(child.get("review_cycle"), int)
+            or isinstance(child.get("review_cycle"), bool)):
+        raise RunnerError("continuation target, reviewed main, implementation, or cycle identity is inconsistent")
+    run_id_from_metadata, review_cycle = run_id, child["review_cycle"]
+    if ("run_id" in host_evidence and host_evidence["run_id"] != run_id_from_metadata
+            or "review_cycle" in host_evidence and host_evidence["review_cycle"] != review_cycle):
+        raise RunnerError("optional host-evidence identity contradicts authenticated continuation metadata")
+
+    if (journal.get("schema") != "custodian.rc116.review_receipt_recovery.v1"
+            or journal.get("workstream") != workstream or journal.get("run_id") != run_id
+            or journal.get("stage") != "closeout_blocked" or not isinstance(journal.get("plan"), dict)):
+        raise RunnerError("continuation recovery journal does not identify the held closeout")
+    plan = dict(journal["plan"])
+    plan_sha256 = plan.pop("plan_sha256", None)
+    calculated_plan_sha256 = _sha256_bytes(json.dumps(plan, sort_keys=True, separators=(",", ":")).encode())
+    if (not isinstance(plan_sha256, str) or plan_sha256 != calculated_plan_sha256
+            or journal.get("plan_sha256") != plan_sha256):
+        raise RunnerError("continuation recovery journal plan digest is invalid")
+    if (plan.get("schema") != journal.get("schema") or plan.get("workstream") != workstream
+            or plan.get("run_id") != run_id or plan.get("claim_run_id") != claim.get("run_id")
+            or plan.get("reviewed_main") != reviewed_main
+            or plan.get("implementation_commit") != host_evidence.get("implementation_commit")
+            or plan.get("branch") != claim["branch"] or plan.get("worktree") != claim["worktree"]
+            or plan.get("active_packet") != active_packet_path
+            or plan.get("target_workstream") != target_workstream
+            or plan.get("target_packet") != target_packet_path):
+        raise RunnerError("continuation recovery plan disagrees with the verified claim or target")
+    planned_outcome = plan.get("outcome")
+    if (not isinstance(planned_outcome, dict) or planned_outcome.get("Outcome") != "passed"
+            or planned_outcome.get("Finding IDs") != "none"
+            or planned_outcome.get("Run ID") != run_id
+            or planned_outcome.get("Review cycle") != str(review_cycle)):
+        raise RunnerError("continuation recovery plan does not bind one exact passing reviewer outcome")
+    planned_outcome_error = review_outcome.outcome_identity_error(
+        planned_outcome, review_workstream=workstream, target_workstream=target_workstream,
+        reviewed_main=reviewed_main, implementation_commit=host_evidence.get("implementation_commit"),
+        run_id=run_id, review_cycle=review_cycle,
+    )
+    if planned_outcome_error:
+        raise RunnerError("continuation recovery plan PASS identity failed verification: "
+                          + planned_outcome_error)
+    capture_sources = (
+        ("runner_source_sha256", "custodian/tools/agent/paired_review_runner.py"),
+        ("workflow_control_source_sha256", "custodian/tools/agent/workflow_control.py"),
+    )
+    for digest_key, source_path in capture_sources:
+        pinned_source = read_git_text(repo, reviewed_main, source_path)
+        if plan.get(digest_key) != _sha256_bytes(pinned_source.encode("utf-8")):
+            raise RunnerError("continuation recovery plan does not match the source-pinned reviewer capture pipeline")
+    session_pin = plan.get("session")
+    if (not isinstance(session_pin, dict)
+            or set(session_pin) != {"thread_id", "codex_jsonl_sha256", "last_message_sha256"}
+            or not all(isinstance(value, str) and value for value in session_pin.values())):
+        raise RunnerError("continuation recovery plan omits the exact original reviewer session identity")
+    manifest = _file_manifest(original_dir, omit=continuation_dir)
+    if (child.get("run_evidence_sha256") != manifest
+            or child.get("original_run_manifest_sha256") != _manifest_digest(manifest)):
+        raise RunnerError("original paired-review evidence changed after the continuation was recorded")
+    lock_path = common_dir(repo).resolve() / "custodian-review-runs" / "locks" / f"{workstream}.lock"
+    try:
+        if any(path.is_symlink() or not path.is_dir() for path in (lock_path.parent.parent, lock_path.parent)):
+            raise RunnerError("original paired-review lock directory is unsafe")
+        lock_stat = lock_path.lstat()
+    except RunnerError:
+        raise
+    except OSError as exc:
+        raise RunnerError("original paired-review supervisor lock is missing") from exc
+    lock_identity = plan.get("lock_identity")
+    if (not stat.S_ISREG(lock_stat.st_mode) or lock_path.is_symlink()
+            or not isinstance(lock_identity, dict)
+            or lock_identity != {"device": lock_stat.st_dev, "inode": lock_stat.st_ino}):
+        raise RunnerError("original paired-review supervisor lock provenance changed")
+    outcome = _verified_reviewer_pass(
+        repo, archived_text, child, worktree, workstream, target_workstream,
+        reviewed_main, host_evidence["implementation_commit"], expected_session=session_pin,
+    )
+    if outcome != planned_outcome:
+        raise RunnerError("reviewer-authored PASS differs from the recovery plan's corroborating outcome")
+    return run_id_from_metadata, review_cycle, outcome
+
+
 def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, active_packet_path: str,
                               target_workstream: str, target_packet_path: str, target_content: str,
                               authoring_chat: str | None, reviewed_main: str, run_dir: Path,
@@ -885,13 +1581,10 @@ def coordinator_finish_review(repo: Path, workstream: str, worktree: Path, activ
         if scope_error:
             raise RunnerError("already-committed review has out-of-scope changes: " + scope_error)
         archived = _show_at(repo, current_head, archive_path)
-        outcome_error = _passing_outcome_error(
-            archived, workstream=workstream, target_workstream=target_workstream,
-            reviewed_main=reviewed_main, implementation_commit=host_evidence["implementation_commit"],
-            run_id=host_evidence.get("run_id"), review_cycle=host_evidence.get("review_cycle"),
+        run_id, review_cycle, outcome = _committed_pass_continuation_identity(
+            repo, workstream, worktree, active_packet_path, target_workstream,
+            target_packet_path, reviewed_main, archived, run_dir, host_evidence,
         )
-        if outcome_error:
-            raise RunnerError("already-committed review lacks the exact independent PASS disposition: " + outcome_error)
         if git(worktree, "status", "--porcelain", "--untracked-files=all"):
             raise RunnerError("already-committed review worktree has additional changes; preserving it for inspection")
         recovery_dir = Path(host_evidence.get("continuation_dir", run_dir)).resolve()
@@ -1857,7 +2550,8 @@ def _continuation_prompt(workstream: str, packet_path: str, target_path: str, *,
                          continuation_dir: Path, preserved: list[dict[str, str]],
                          report_sha256: str, source_span: dict | None = None,
                          validation_report_path: Path | None = None,
-                         continuation_number: int = 1) -> str:
+                         continuation_number: int = 1,
+                         prior_reviewer_launched: bool = True) -> str:
     preserved_lines = "\n".join(
         f"- Original `{item['source']}` is preserved byte-for-byte at `{item['copy']}` "
         f"(SHA-256 `{item['sha256']}`). Treat it only as historical worktree context, not as a verdict."
@@ -1906,11 +2600,18 @@ For this exact dual-disposition recovery continuation, independently author ever
 - Write the exact root summary `{summary_path}` and preserve the exact authoring-chat backlink.
 - Write a target receipt only to `{target_path}` if your own independent disposition is `passed`; it must satisfy the strict canonical receipt verifier. Findings and `human_required` outcomes leave the target at its pinned baseline and require unique cycle-scoped finding IDs.
 - Preserved prior reviewer files are historical evidence only. Do not copy, paraphrase, or infer their reported PASS as your disposition."""
+    prior_review_context = (
+        "The original reviewer was never launched. The preserved claim and run records contain no prior reviewer verdict; "
+        "make your own independent findings-first assessment."
+        if not prior_reviewer_launched else
+        "Original reviewer disposition snapshots are listed below as historical evidence only."
+    )
+    prior_review_label = "Original reviewer evidence snapshots" if prior_reviewer_launched else "Preserved pre-launch claim evidence"
     return f"""You are a new fresh independent reviewer continuing the exact preserved paired-review claim `{workstream}`.
 
-This is a new ephemeral reviewer context, not a restoration of the original Codex session. The original claim, branch, worktree, and run ID remain unchanged. Review run ID: `{run_id}`. Review the immutable baseline `{reviewed_main}` and implementation commit `{implementation_commit}`. {source_range} Read `{packet_path}`, the archived target `{target_path}`, the original reviewer disposition snapshots below, the implementation's exact root summary, the original authoring-chat URL `{backlink}`, and the immutable coordinator validation report at `{report_path}` (SHA-256 `{report_sha256}`). Independently inspect the exact archived implementation diff and all applicable acceptance claims. A green coordinator report proves execution coverage only; it is not a review verdict.
+This is a new ephemeral reviewer context, not a restoration of the original Codex session. The original claim, branch, worktree, and run ID remain unchanged. Review run ID: `{run_id}`. Review the immutable baseline `{reviewed_main}` and implementation commit `{implementation_commit}`. {source_range} {prior_review_context} Read `{packet_path}`, the archived target `{target_path}`, the implementation's exact root summary, the original authoring-chat URL `{backlink}`, and the immutable coordinator validation report at `{report_path}` (SHA-256 `{report_sha256}`). Independently inspect the exact archived implementation diff and all applicable acceptance claims. A green coordinator report proves execution coverage only; it is not a review verdict.
 
-Original reviewer evidence snapshots:
+{prior_review_label}:
 {preserved_lines}
 
 Write your own findings-first disposition. Retain the old notes as historical evidence and clearly distinguish your independent conclusions. Do not infer or request the original implementation-session transcript. Do not edit implementation/runtime code or the target implementation summary. Author the canonical review receipt, complete archived review packet, and exact root `{summary_path}`. Record `Reviewer context: fresh`, truthful provenance, exact pinned SHAs, and exact authoring-chat backlink. Include one canonical `## Review Outcome` with schema `custodian.review_outcome.v1`, this exact run ID `{run_id}`, the target workstream, review cycle, and `Finding IDs: none` only for `passed`; findings and human-required outcomes need unique stable cycle-scoped finding IDs. If evidence supports findings, `human_required`, or a blocker, record that outcome and leave the claim recoverable; do not manufacture PASS.{receipt_instruction}
@@ -2046,17 +2747,43 @@ def _verify_redacted_final_capture(final_message: str, logged_message: str,
 def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: str,
                                   control_source: str) -> tuple[str, dict[str, str]]:
     """Authenticate one completed reviewer turn under the pinned JSONL sanitizer."""
-    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt")
+    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt", run_dir / "codex.stderr")
     if any(path.is_symlink() or not path.is_file() for path in paths):
         raise RunnerError("reviewer JSONL or saved final message is missing or unsafe")
-    if metadata.get("fresh") is not True or metadata.get("exit_code") != 0:
+    fresh_session = metadata.get("fresh") is True
+    if metadata.get("schema") == CONTINUATION_SCHEMA:
+        invocation = metadata.get("invocation")
+        invocation = invocation if isinstance(invocation, list) and all(
+            isinstance(item, str) for item in invocation) else []
+        output_index = invocation.index("--output-last-message") if invocation.count("--output-last-message") == 1 else -1
+        cd_index = invocation.index("--cd") if invocation.count("--cd") == 1 else -1
+        fresh_session = (
+            type(metadata.get("continuation_number")) is int and metadata.get("continuation_number") == 1
+            and type(metadata.get("reviewer_launch_count")) is int and metadata.get("reviewer_launch_count") == 1
+            and metadata.get("phase") in {"coordinator_closeout", "landed_verification_failed"}
+            and isinstance(metadata.get("original_run_dir"), str)
+            and Path(metadata["original_run_dir"]).resolve() == run_dir.resolve().parent
+            and metadata.get("last_message") == str(paths[1].resolve())
+            and invocation[:3] == ["codex", "exec", "--ephemeral"]
+            and "--json" in invocation and "--resume" not in invocation and "--continue" not in invocation
+            and cd_index >= 0 and cd_index + 1 < len(invocation)
+            and isinstance(metadata.get("worktree"), str)
+            and invocation[cd_index + 1] == metadata["worktree"]
+            and output_index >= 0 and output_index + 1 < len(invocation)
+            and invocation[output_index + 1:output_index + 2]
+            == ["<continuation-dir>/last-message.txt"]
+        )
+    if not fresh_session or metadata.get("exit_code") != 0:
         raise RunnerError("original reviewer metadata does not prove a fresh successful session")
     try:
-        jsonl_bytes, final_bytes = (path.read_bytes() for path in paths)
+        jsonl_bytes, final_bytes, stderr_bytes = (path.read_bytes() for path in paths)
         final = final_bytes.decode("utf-8")
+        stderr = stderr_bytes.decode("utf-8")
         lines = jsonl_bytes.decode("utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         raise RunnerError("reviewer session evidence is unreadable UTF-8") from exc
+    if stderr.strip():
+        raise RunnerError("reviewer continuation stderr is non-empty and requires independent reconciliation")
     events: list[dict] = []
     for line in lines:
         try:
@@ -2066,6 +2793,20 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
         if not isinstance(event, dict):
             raise RunnerError("reviewer session event is not an object")
         events.append(event)
+    failure_event_types = {
+        "error", "item.failed", "turn.failed", "tool.error", "response.failed", "stream.error",
+    }
+    for event in events:
+        event_type = str(event.get("type", "")).strip().lower()
+        if (event_type in failure_event_types or event_type.endswith((".failed", ".error"))
+                or event.get("error") not in (None, "", {}, [])):
+            raise RunnerError("reviewer session contains an error or failure event")
+        item = event.get("item")
+        if isinstance(item, dict):
+            item_type = str(item.get("type", "")).strip().lower()
+            if (item_type in {"error", "tool_error", "failure", "failed"}
+                    or item.get("error") not in (None, "", {}, [])):
+                raise RunnerError("reviewer session contains an error or failure item")
     threads = [event for event in events if event.get("type") == "thread.started"]
     starts = [index for index, event in enumerate(events) if event.get("type") == "turn.started"]
     completes = [index for index, event in enumerate(events) if event.get("type") == "turn.completed"]
@@ -2083,15 +2824,61 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
             messages.append((index, text))
     if (not messages or any(index <= starts[0] or index >= completes[0] for index, _ in messages)):
         raise RunnerError("reviewer session has no final agent_message before turn completion")
-    verdict = re.compile(r"(?im)^\s*(?:verdict|review outcome)\s*:")
+    verdict = re.compile(
+        r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome|"
+        r"finding(?:s)?|blocking findings|human_required|human-required)\s*:"
+    )
     if any(verdict.search(text) for _, text in messages[:-1]):
         raise RunnerError("reviewer session contains a contradictory earlier verdict")
     _verify_redacted_final_capture(final, messages[-1][1], runner_source, control_source)
-    return final, {
+    session = {
         "thread_id": threads[0]["thread_id"],
         "codex_jsonl_sha256": _sha256_bytes(jsonl_bytes),
         "last_message_sha256": _sha256_bytes(final_bytes),
     }
+    if metadata.get("schema") == CONTINUATION_SCHEMA:
+        session["command_failures"] = _classify_session_command_failures(events)
+        if any(item["classification"] == "required_profile_dependency_failure"
+               for item in session["command_failures"]):
+            raise RunnerError("reviewer session contains an unrecovered required profile dependency failure")
+    return final, session
+
+
+def _classify_session_command_failures(events: list[dict]) -> list[dict[str, object]]:
+    """Summarize nonzero command records for separate, evidence-based adjudication."""
+    failures = []
+    for index, event in enumerate(events):
+        item = event.get("item")
+        if not isinstance(item, dict) or item.get("type") != "command_execution":
+            continue
+        command = item.get("command")
+        output = item.get("aggregated_output")
+        if not isinstance(command, str) or not isinstance(output, str):
+            raise RunnerError("reviewer command event omits its command or captured output")
+        exit_code = item.get("exit_code")
+        if type(exit_code) is not int:
+            continue
+        has_traceback = "Traceback (most recent call last):" in output
+        if exit_code == 0 and not has_traceback:
+            continue
+        if ("validate_checkout_profile" in command
+                and "RunnerError: published review dependency is absent from origin/main:" in output):
+            classification = "required_profile_dependency_failure"
+        elif "rg " in command and exit_code == 1 and not output.strip():
+            classification = "search_no_match_candidate"
+        elif has_traceback:
+            classification = "python_traceback_requires_reconciliation"
+        else:
+            classification = "nonzero_command_requires_reconciliation"
+        failures.append({
+            "event_index": index,
+            "command": command,
+            "exit_code": exit_code,
+            "classification": classification,
+            "stored_output_sha256": _sha256_bytes(output.encode("utf-8")),
+            "sanitized_output": redact(output),
+        })
+    return failures
 
 
 def _redacted_final_journal_path(common: Path, workstream: str, run_id: str) -> Path:
@@ -3669,13 +4456,19 @@ def launch_codex(argv: list[str], worktree: Path, prompt: str, run_dir: Path, ti
         return process.returncode
 
 
-def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: float | None = None) -> int:
+def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: float | None = None,
+        checkout_profile: str | None = None) -> int:
     if not ID_RE.fullmatch(workstream):
         raise RunnerError("review workstream must be lowercase kebab-case")
     if timeout is not None and (timeout <= 0 or not float(timeout) < float("inf")):
         raise RunnerError("timeout must be a positive finite number")
     repo = Path(git(repo, "rev-parse", "--show-toplevel")).resolve()
-    expected_packet_path, _content, packet = validate_eligible_review(repo, workstream)
+    expected_packet_path, review_content, packet = validate_eligible_review(repo, workstream)
+    selected_profile = None
+    if checkout_profile is not None:
+        selected_profile, profile_main, required_paths = validate_checkout_profile(
+            repo, expected_packet_path, review_content, packet, checkout_profile,
+        )
     executable = codex_path or codex_preflight()
     if codex_path:
         help_result = subprocess.run([executable, "exec", "--help"], text=True, capture_output=True)
@@ -3697,6 +4490,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         metadata = {"schema": SCHEMA, "run_id": run_id, "workstream": workstream,
                     "phase": "preflight_complete", "created_utc": datetime.now(timezone.utc).isoformat(),
                     "run_dir": str(run_dir)}
+        if selected_profile is not None:
+            metadata["checkout_profile"] = {
+                "path": selected_profile.path, "sha256": selected_profile.digest,
+                "validated_main": profile_main, "required_path_count": len(required_paths),
+                "required_paths_sha256": hashlib.sha256(
+                    "\n".join(sorted(required_paths)).encode("utf-8")
+                ).hexdigest(),
+            }
         _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
         prior_run = unresolved_prior_run(common, workstream, run_id)
         if prior_run:
@@ -3704,8 +4505,11 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
             _write(run_dir / "RECOVERY.md", f"A prior run for `{workstream}` passed claim and has unresolved state. Recover it before another review claim. Prior evidence: `{prior_run}`. No new dispatcher claim was attempted.\n")
             raise RunnerError(f"prior claimed review needs recovery before retry; inspect {prior_run}; no new claim attempted")
-        claim_cmd = [sys.executable, str(repo / "custodian/tools/agent/dispatch.py"), "claim", workstream,
-                     "--agent", "codex-reviewer"]
+        claim_cmd = dispatcher_claim_command(repo, workstream, checkout_profile)
+        if selected_profile is not None:
+            git(repo, "fetch", "origin", "main")
+            if git(repo, "rev-parse", "--verify", "origin/main^{commit}") != profile_main:
+                raise RunnerError("origin/main changed after checkout-profile validation; no claim attempted")
         claimed = subprocess.run(claim_cmd, cwd=repo, text=True, capture_output=True)
         _write(run_dir / "claim.stdout", redact(claimed.stdout))
         _write(run_dir / "claim.stderr", redact(claimed.stderr))
@@ -3722,6 +4526,17 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
             raise
         receipt_bytes = (json.dumps(receipt, indent=2, sort_keys=True) + "\n").encode("utf-8")
         _write_bytes_exclusive(run_dir / "claim-receipt.json", receipt_bytes)
+        if selected_profile is not None:
+            try:
+                worktree = Path(receipt["worktree"]).resolve()
+                verify_checkout_profile_receipt(
+                    receipt, selected_profile, required_paths, repo=repo, reviewed_main=profile_main,
+                )
+            except RunnerError as exc:
+                metadata.update({"phase": "claim_profile_mismatch", "profile_error": redact(str(exc))})
+                _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+                _write(run_dir / "RECOVERY.md", f"Dispatcher claimed `{workstream}` but its checkout receipt did not match the selected profile `{selected_profile.path}`. Preserve the claim and worktree in the receipt. Run evidence: `{run_dir}`. Do not retry or reclaim.\n")
+                raise
         worktree = Path(receipt["worktree"]).resolve()
         actual_path = receipt["packet"]
         if actual_path != expected_packet_path:
@@ -3735,6 +4550,14 @@ def run(repo: Path, workstream: str, *, codex_path: str | None = None, timeout: 
         # Pin the baseline from the claimed checkout after dispatch has finished
         # synchronizing it. Keep the SHA and target bytes fixed for the full run.
         reviewed_main = git(worktree, "rev-parse", "--verify", "origin/main^{commit}")
+        if selected_profile is not None and reviewed_main != profile_main:
+            metadata.update({"phase": "claim_profile_main_mismatch", "reviewed_main": reviewed_main})
+            _write(run_dir / "metadata.json", json.dumps(metadata, indent=2) + "\n")
+            _write(run_dir / "RECOVERY.md", "Dispatcher claimed " + workstream
+                   + " on " + reviewed_main + " after profile validation pinned "
+                   + profile_main + ". Preserve the claim and worktree. Run evidence: "
+                   + str(run_dir) + ". Do not retry or reclaim.\n")
+            raise RunnerError("dispatcher checkout main differs from the profile-validated main; preserve the claim")
         try:
             target_content = read_git_text(worktree, reviewed_main, packet.review_target_packet)
         except ValueError as exc:
@@ -6084,6 +6907,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                  authorize_fresh_reviewer_context: bool = False,
                  recover_host_validation: bool = False,
                  recover_invalid_disposition: bool = False,
+                 recover_checkout_profile_mismatch: bool = False,
                  recover_missing_archived_disposition: bool = False,
                  recover_codex_exited_findings: bool = False,
                  recover_dual_disposition: bool = False,
@@ -6092,6 +6916,15 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                  plan_sha256: str | None = None,
                  codex_path: str | None = None, timeout: float | None = None) -> int:
     """Continue one exact preserved review claim in a new independent Codex context."""
+    if recover_checkout_profile_mismatch:
+        if (not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
+                or recover_missing_archived_disposition or recover_codex_exited_findings
+                or recover_dual_disposition or not isinstance(plan_sha256, str)
+                or not re.fullmatch(r"[0-9a-f]{64}", plan_sha256) or attest_no_active_owner
+                or attest_no_unique_evidence or codex_path is not None
+                or workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
+                or run_id != CHECKOUT_PROFILE_MISMATCH_RUN_ID):
+            raise RunnerError("checkout-profile recovery apply accepts only its exact held run with a fresh reviewer context and plan digest")
     if recover_codex_exited_findings:
         if (not authorize_fresh_reviewer_context or recover_host_validation or recover_invalid_disposition
                 or recover_missing_archived_disposition or plan_sha256
@@ -6117,6 +6950,7 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
     elif not authorize_fresh_reviewer_context:
         raise RunnerError("same-run continuation requires --authorize-fresh-reviewer-context")
     if (recover_invalid_disposition or recover_missing_archived_disposition or recover_dual_disposition
+            or recover_checkout_profile_mismatch
             or recover_codex_exited_findings) and codex_path is not None:
         raise RunnerError("special exact-run recovery must not accept an injected reviewer executable")
     if not ID_RE.fullmatch(workstream) or not _RUN_ID_RE.fullmatch(run_id):
@@ -6135,11 +6969,11 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
     mutex_path.parent.mkdir(parents=True, exist_ok=True)
     if (recover_host_validation or recover_invalid_disposition or recover_missing_archived_disposition
             or recover_dual_disposition
-            or recover_codex_exited_findings) and not mutex_path.is_file():
+            or recover_codex_exited_findings or recover_checkout_profile_mismatch) and not mutex_path.is_file():
         raise RunnerError("original paired-review supervisor lock is missing")
     locked_recovery = (recover_host_validation or recover_invalid_disposition
                        or recover_missing_archived_disposition or recover_dual_disposition
-                       or recover_codex_exited_findings)
+                       or recover_codex_exited_findings or recover_checkout_profile_mismatch)
     with mutex_path.open("rb" if locked_recovery else "a") as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -6152,14 +6986,37 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("original run metadata is missing or malformed") from exc
         if not isinstance(original, dict):
             raise RunnerError("original run metadata must be a JSON object")
+        expected_phase = ("host_validation_recovery" if recover_host_validation else
+                          "claim_profile_mismatch" if recover_checkout_profile_mismatch else
+                          "codex_exited" if recover_codex_exited_findings else "post_exit_recovery")
+        expected_phase_label = {
+            "host_validation_recovery": "host-validation recovery",
+            "claim_profile_mismatch": "claim-profile mismatch",
+            "codex_exited": "codex-exited findings",
+            "post_exit_recovery": "post-exit recovery",
+        }[expected_phase]
         if (original.get("schema") != SCHEMA or original.get("run_id") != run_id
                 or original.get("workstream") != workstream
                 or original.get("run_dir") != str(run_dir)
-                or original.get("phase") != ("host_validation_recovery" if recover_host_validation
-                                               else "codex_exited" if recover_codex_exited_findings
-                                               else "post_exit_recovery")):
-            expected_phase = "host_validation_recovery" if recover_host_validation else "post-exit recovery"
-            raise RunnerError(f"original run metadata is not the exact eligible {expected_phase}")
+                or original.get("phase") != expected_phase):
+            raise RunnerError(f"original run metadata is not the exact eligible {expected_phase_label}")
+        if recover_checkout_profile_mismatch:
+            fresh_plan = _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+            if fresh_plan.get("plan_sha256") != plan_sha256:
+                raise RunnerError("checkout-profile recovery evidence changed; obtain a fresh read-only plan")
+        if recover_checkout_profile_mismatch:
+            if (_file_manifest(run_dir) != CHECKOUT_PROFILE_MISMATCH_RUN_MANIFEST
+                    or any(path.name.startswith("continuation-") for path in run_dir.iterdir())):
+                raise RunnerError("exact held run evidence changed or already has a continuation")
+            if (original.get("checkout_profile") != {
+                    "path": CHECKOUT_PROFILE_MISMATCH_PROFILE,
+                    "sha256": CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256,
+                    "validated_main": CHECKOUT_PROFILE_MISMATCH_MAIN,
+                    "required_path_count": 399,
+                    "required_paths_sha256": "475c2e734afc2a70449af4abcf9c67822c0aab0644328aa81a0ef6f03d90fe26",
+                }
+                    or not isinstance(original.get("profile_error"), str)):
+                raise RunnerError("held run profile metadata differs from the authorized claim-profile mismatch")
         if recover_dual_disposition:
             journal = _read_dual_disposition_journal(common, workstream, run_id)
             if (journal is None or journal.get("stage") != "target_restored"
@@ -6541,9 +7398,43 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
         if (original.get("packet") is not None and original.get("packet") != active_path):
             raise RunnerError("original claim packet path differs from current active packet identity")
         reviewed_main = original.get("reviewed_main")
+        recovery_profile = None
+        recovery_required_paths: set[str] = set()
+        if recover_checkout_profile_mismatch:
+            profile_metadata = original.get("checkout_profile")
+            if not isinstance(profile_metadata, dict):
+                raise RunnerError("held profile-mismatch run omits its pinned profile metadata")
+            reviewed_main = profile_metadata.get("validated_main")
+            if reviewed_main != CHECKOUT_PROFILE_MISMATCH_MAIN:
+                raise RunnerError("held profile-mismatch run does not name its exact validated main")
         if not isinstance(reviewed_main, str) or not re.fullmatch(r"[0-9a-f]{40,64}", reviewed_main):
             raise RunnerError("original run omits its pinned reviewed-main SHA")
         reviewed_main = git(repo, "rev-parse", "--verify", f"{reviewed_main}^{{commit}}")
+        if recover_checkout_profile_mismatch:
+            pinned_active_content = read_git_text(repo, reviewed_main, active_path)
+            if pinned_active_content != active_content:
+                raise RunnerError("active review packet changed since the exact held claim")
+            pinned_packet = parse_packet(active_path, pinned_active_content)
+            if (pinned_packet.error or pinned_packet.workstream != workstream
+                    or pinned_packet.review_target_workstream != packet.review_target_workstream
+                    or pinned_packet.review_target_packet != packet.review_target_packet
+                    or pinned_packet.authoring_chat != packet.authoring_chat
+                    or pinned_packet.review_cycle != packet.review_cycle):
+                raise RunnerError("pinned review packet identity differs from the current eligible review")
+            recovery_profile, profile_main, recovery_required_paths = validate_checkout_profile(
+                repo, active_path, pinned_active_content, pinned_packet,
+                CHECKOUT_PROFILE_MISMATCH_PROFILE, main_ref=reviewed_main,
+            )
+            expected_paths_sha256 = hashlib.sha256(
+                "\n".join(sorted(recovery_required_paths)).encode("utf-8")
+            ).hexdigest()
+            if (profile_main != reviewed_main
+                    or recovery_profile.digest != CHECKOUT_PROFILE_MISMATCH_PROFILE_SHA256
+                    or profile_metadata.get("path") != recovery_profile.path
+                    or profile_metadata.get("sha256") != recovery_profile.digest
+                    or profile_metadata.get("required_path_count") != len(recovery_required_paths)
+                    or profile_metadata.get("required_paths_sha256") != expected_paths_sha256):
+                raise RunnerError("held run's recorded checkout profile does not match its pinned reconstruction")
         target_path = packet.review_target_packet
         if target_path != f"{PACKET_ROOT}/archived/{Path(target_path).name}":
             raise RunnerError("review target path is not its exact canonical archived path")
@@ -6594,6 +7485,14 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                     receipt_source_name = "claim.stdout"
         worktree = Path(receipt["worktree"]).resolve()
         branch = f"agent/{workstream}"
+        if recover_checkout_profile_mismatch:
+            if (receipt.get("run_id") != CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID
+                    or receipt.get("checkout") != "created"
+                    or worktree != Path(CHECKOUT_PROFILE_MISMATCH_WORKTREE).resolve()
+                    or receipt.get("branch") != f"agent/{CHECKOUT_PROFILE_MISMATCH_WORKSTREAM}"
+                    or _process_owns_worktree(worktree)):
+                raise RunnerError("exact held claim identity or reviewer-process state failed verification")
+            original.update({"branch": branch, "worktree": str(worktree), "packet": active_path})
         if recover_host_validation:
             recorded_worktree = original.get("recovery_worktree")
             metadata_identity_mismatch = (
@@ -6612,12 +7511,21 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             raise RunnerError("original dispatcher receipt, metadata, branch, and packet do not agree")
         if common_dir(worktree).resolve() != common or git(worktree, "branch", "--show-current") != branch:
             raise RunnerError("original claimed checkout is missing, foreign, or on another branch")
+        if recover_checkout_profile_mismatch:
+            assert recovery_profile is not None
+            verify_checkout_profile_worktree(
+                repo, worktree, recovery_profile, recovery_required_paths, reviewed_main,
+            )
         if git(worktree, "rev-parse", "--verify", "HEAD^{commit}") != reviewed_main:
             raise RunnerError("original review checkout head differs from its pinned reviewed-main SHA")
         if git(worktree, "rev-parse", "--verify", f"refs/heads/{branch}^{{commit}}") != reviewed_main:
             raise RunnerError("original local review branch moved away from its pinned reviewed main")
-        git(repo, "fetch", "origin", branch)
-        if git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{branch}^{{commit}}") != reviewed_main:
+        if recover_checkout_profile_mismatch:
+            remote_branch_tip = _cached_remote_ref_for_readonly_plan(repo, branch)
+        else:
+            git(repo, "fetch", "origin", branch)
+            remote_branch_tip = git(repo, "rev-parse", "--verify", f"refs/remotes/origin/{branch}^{{commit}}")
+        if remote_branch_tip != reviewed_main:
             raise RunnerError("published review branch moved away from its pinned reviewed main")
         try:
             original_packet_text = (worktree / active_path).read_text(encoding="utf-8")
@@ -6677,11 +7585,58 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
         )
         original_run_manifest = (_file_manifest(run_dir, omit=continuation_dir)
                                  if retry_host_validation or missing_checkout_reconstruction else _file_manifest(run_dir))
+        if recover_checkout_profile_mismatch:
+            fresh_plan = _readonly_checkout_profile_mismatch_plan_unlocked(repo, workstream, run_id)
+            if fresh_plan.get("plan_sha256") != plan_sha256:
+                raise RunnerError("checkout-profile recovery evidence changed before apply; obtain a fresh read-only plan")
         if recover_missing_archived_disposition:
             if (parent_continuation_manifest is None
                     or _file_manifest(run_dir / MISSING_ARCHIVED_DISPOSITION_PARENT) != parent_continuation_manifest):
                 raise RunnerError("protected run or continuation-01 changed during continuation-02 preflight")
-        if not recover_host_validation:
+        if recover_checkout_profile_mismatch:
+            continuation_dir.mkdir(parents=False, exist_ok=False)
+            bootstrap = {
+                "schema": "custodian.paired_review_checkout_profile_recovery.v1",
+                "workstream": workstream, "run_id": run_id,
+                "claim_run_id": CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID,
+                "phase": "host_validation_running", "reviewer_launch_count": 0,
+                "original_run_manifest": original_run_manifest,
+                "profile_path": recovery_profile.path if recovery_profile else None,
+                "profile_sha256": recovery_profile.digest if recovery_profile else None,
+                "reviewed_main": reviewed_main, "worktree": str(worktree), "branch": branch,
+            }
+            bootstrap_path = continuation_dir / "recovery-bootstrap.json"
+            _write_bytes_exclusive(
+                bootstrap_path, (json.dumps(bootstrap, indent=2, sort_keys=True) + "\n").encode(),
+            )
+            validation_dir = continuation_dir / "host-validation"
+            validation_dir.mkdir()
+            try:
+                validation_metadata = run_coordinator_validation(
+                    worktree, validation_dir, reviewed_main, implementation_commit,
+                    target_workstream=packet.review_target_workstream,
+                    target_packet_path=target_path,
+                )
+            except (HostValidationError, OSError, subprocess.SubprocessError, ValueError) as exc:
+                bootstrap.update({"phase": "host_validation_failed", "error": redact(str(exc))})
+                _write_atomic(bootstrap_path, json.dumps(bootstrap, indent=2, sort_keys=True) + "\n")
+                raise RunnerError("same-claim coordinator validation failed; no reviewer was launched") from exc
+            host_evidence = {
+                "implementation_commit": implementation_commit,
+                "report_path": validation_metadata["report_path"],
+                "report_sha256": validation_metadata["report_sha256"],
+                "metadata_sha256": validation_metadata["metadata_sha256"],
+                "evidence_run_dir": str(validation_dir),
+                "source_span": validation_metadata.get("source_span"),
+                "implementation_parent": validation_metadata.get("implementation_parent"),
+                "summary": validation_metadata.get("summary"),
+                "selected": validation_metadata.get("selected"),
+                "continuation_dir": str(continuation_dir),
+            }
+            bootstrap.update({"phase": "host_validation_passed", "host_evidence": host_evidence,
+                              "reviewer_launch_count": 0})
+            _write_atomic(bootstrap_path, json.dumps(bootstrap, indent=2, sort_keys=True) + "\n")
+        elif not recover_host_validation:
             host_evidence = _host_evidence_for_continuation(
                 repo, worktree, run_dir, original, reviewed_main, implementation_commit,
                 packet.review_target_workstream, target_path,
@@ -6689,7 +7644,8 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             host_evidence["continuation_dir"] = str(continuation_dir)
 
         # A single fixed child makes uncertain interruptions non-replayable.
-        if not retry_host_validation and not missing_checkout_reconstruction:
+        if (not retry_host_validation and not missing_checkout_reconstruction
+                and not recover_checkout_profile_mismatch):
             continuation_dir.mkdir(parents=False, exist_ok=False)
         initial = retry_child if retry_host_validation else (
             _continuation_metadata(child_metadata_path) if missing_checkout_reconstruction else {
@@ -6706,6 +7662,20 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
             "initial_tracked_changes": tracked_changes,
             "initial_untracked_files": untracked,
         })
+        if recover_checkout_profile_mismatch:
+            initial.update({
+                "continuation_number": 1,
+                "reviewer_launch_count": 0,
+                "original_run_manifest_sha256": _manifest_digest(original_run_manifest),
+                "checkout_profile_recovery": {
+                    "schema": "custodian.paired_review_checkout_profile_recovery.v1",
+                    "claim_run_id": CHECKOUT_PROFILE_MISMATCH_CLAIM_RUN_ID,
+                    "profile_path": recovery_profile.path if recovery_profile else None,
+                    "profile_sha256": recovery_profile.digest if recovery_profile else None,
+                    "profile_worktree_verified": True,
+                    "legacy_checkout_disposition_preserved": receipt.get("checkout"),
+                },
+            })
         if recover_dual_disposition:
             initial.update({"dual_disposition_recovery": {
                 "schema": DUAL_DISPOSITION_RECOVERY_SCHEMA,
@@ -6922,10 +7892,12 @@ def continue_run(repo: Path, workstream: str, run_id: str, *,
                     source_span=host_evidence.get("source_span"),
                     validation_report_path=(
                         Path(host_evidence["evidence_run_dir"]) / "validation.json"
-                        if recover_host_validation else continuation_dir / "prior-run-evidence/validation.json"
+                        if recover_host_validation or recover_checkout_profile_mismatch
+                        else continuation_dir / "prior-run-evidence/validation.json"
                     ),
-                            continuation_number=(3 if recover_dual_disposition else
-                                                 2 if recover_missing_archived_disposition else 1),
+                    continuation_number=(3 if recover_dual_disposition else
+                                         2 if recover_missing_archived_disposition else 1),
+                    prior_reviewer_launched=not recover_checkout_profile_mismatch,
                 ), continuation_dir, timeout,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
@@ -7097,6 +8069,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("review_workstream", help="exact paired review workstream; global-next is unsupported")
     parser.add_argument("--timeout", type=float, default=None)
+    parser.add_argument("--checkout-profile", default=None,
+                        help="tracked path-exact checkout profile validated against the published review dependencies")
     parser.add_argument("--continue-run", default=None,
                         help="continue this exact preserved paired-review run in a new fresh reviewer context")
     parser.add_argument("--authorize-fresh-reviewer-context", action="store_true",
@@ -7105,6 +8079,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="recover this exact run from pre-launch host_validation_recovery")
     parser.add_argument("--recover-invalid-disposition", action="store_true",
                         help="repair and close only the exact preserved invalid-disposition run; never launches a reviewer")
+    parser.add_argument("--recover-checkout-profile-mismatch", action="store_true",
+                        help="plan/apply authenticated continuation of only the exact preserved profile-mismatch claim")
     parser.add_argument("--recover-missing-archived-disposition", action="store_true",
                         help="launch the one explicitly authorized continuation-02 for the exact held missing-archive run")
     parser.add_argument("--recover-codex-exited-findings", action="store_true",
@@ -7124,6 +8100,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="operator attests missing checkout held no unique untracked/ignored evidence")
     args = parser.parse_args(argv)
     try:
+        if args.checkout_profile is not None and (args.continue_run is not None or args.authorize_fresh_reviewer_context
+                or args.recover_host_validation or args.recover_invalid_disposition
+                or args.recover_checkout_profile_mismatch
+                or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
+                or args.recover_dual_disposition or args.plan or args.apply or args.plan_sha256):
+            raise RunnerError("--checkout-profile applies only to a new canonical paired-review claim")
         if args.recover_dual_disposition:
             if (args.continue_run is None or not args.authorize_fresh_reviewer_context
                     or not args.plan_sha256 or args.recover_host_validation or args.recover_invalid_disposition
@@ -7135,6 +8117,30 @@ def main(argv: list[str] | None = None) -> int:
             return continue_run(
                 Path.cwd(), args.review_workstream, args.continue_run,
                 authorize_fresh_reviewer_context=True, recover_dual_disposition=True,
+                plan_sha256=args.plan_sha256, timeout=args.timeout,
+            )
+        if args.recover_checkout_profile_mismatch:
+            if (args.continue_run != CHECKOUT_PROFILE_MISMATCH_RUN_ID
+                    or args.review_workstream != CHECKOUT_PROFILE_MISMATCH_WORKSTREAM
+                    or args.recover_host_validation or args.recover_invalid_disposition
+                    or args.recover_missing_archived_disposition or args.recover_codex_exited_findings
+                    or args.recover_dual_disposition
+                    or args.attest_no_active_review_owner or args.attest_no_unique_worktree_evidence):
+                raise RunnerError("checkout-profile recovery requires only its exact workstream and run")
+            if args.plan:
+                if args.authorize_fresh_reviewer_context or args.plan_sha256:
+                    raise RunnerError("read-only checkout-profile plan cannot include apply authorization or a plan digest")
+                plan = plan_checkout_profile_mismatch_recovery(
+                    Path.cwd(), args.review_workstream, args.continue_run,
+                )
+                print(json.dumps(plan, indent=2, sort_keys=True))
+                return 0
+            if (not args.apply or not args.authorize_fresh_reviewer_context or not args.plan_sha256):
+                raise RunnerError("checkout-profile recovery apply requires --apply, --authorize-fresh-reviewer-context, and --plan-sha256")
+            return continue_run(
+                Path.cwd(), args.review_workstream, args.continue_run,
+                authorize_fresh_reviewer_context=True,
+                recover_checkout_profile_mismatch=True,
                 plan_sha256=args.plan_sha256, timeout=args.timeout,
             )
         if args.recover_invalid_disposition:
@@ -7206,7 +8212,8 @@ def main(argv: list[str] | None = None) -> int:
                 raise RunnerError("continuation requires both --continue-run and --authorize-fresh-reviewer-context")
             return continue_run(Path.cwd(), args.review_workstream, args.continue_run,
                                 authorize_fresh_reviewer_context=True, timeout=args.timeout)
-        return run(Path.cwd(), args.review_workstream, timeout=args.timeout)
+        return run(Path.cwd(), args.review_workstream, timeout=args.timeout,
+                   checkout_profile=args.checkout_profile)
     except (RunnerError, OSError, ValueError, subprocess.SubprocessError) as exc:
         print(f"paired_review_runner: BLOCKED: {redact(str(exc))}", file=sys.stderr)
         return 2
