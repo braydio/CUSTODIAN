@@ -5,8 +5,8 @@
 - Workstream: review-validation-paired-review-runner-time-budget-v1
 - Category: agent-ops
 - Kind: review
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P0
 - Depends on: validation-paired-review-runner-time-budget-v1
 - Locks: validation-paired-review-runner-time-budget

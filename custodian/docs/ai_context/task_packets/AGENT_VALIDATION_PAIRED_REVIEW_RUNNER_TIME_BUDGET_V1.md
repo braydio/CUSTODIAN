@@ -4,8 +4,8 @@
 - Authoring handoff: auto
 - Workstream: validation-paired-review-runner-time-budget-v1
 - Category: agent-ops
-- Status: draft
-- Dispatch: manual
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: P0
 - Depends on: none
 - Locks: validation-paired-review-runner-time-budget
