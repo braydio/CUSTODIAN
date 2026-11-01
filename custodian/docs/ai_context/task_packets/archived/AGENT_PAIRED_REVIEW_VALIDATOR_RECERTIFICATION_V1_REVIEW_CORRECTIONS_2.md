@@ -4,7 +4,7 @@
 - Workstream: `agent-paired-review-validator-recertification-v1-review-corrections-2`
 - Category: `agent-ops`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `review-agent-paired-review-validator-recertification-v1-review-corrections-1`
@@ -37,3 +37,23 @@
 - Validation: Failing-first focused regressions: `python3 -m unittest custodian.tools.agent.test_workstream -v`; `PYTHONPATH=custodian/tools/agent python3 -m unittest custodian.tools.agent.test_paired_review_runner -v`. Then `python3 custodian/tools/validation/run_validation.py --changed --base origin/main --json` with complete changed-file coverage; exact pair checks `python3 custodian/tools/agent/check_packet_categories.py <implementation-packet> <review-packet>` and `python3 custodian/tools/agent/validate_task_packet_authoring.py <implementation-packet> <review-packet>`; `python3 custodian/tools/agent/check_ai_context.py --json`; `python3 custodian/tools/agent/validate_review_pairing.py`; `python3 custodian/tools/agent/task_packet_index.py`; and `git diff --check`. Run any narrowly added validation-provenance tests. Record actual selected/passed/failed/skipped/timed-out checks, changed-file coverage/exclusions, initial and post-sync report hashes and source identities, trace witness identity/order, and teardown disk bytes. Do not launch the paired review until the implementation checkout is verified removed.
 - Task overrides: `none`
 - Deferred: The separate PASS-only findings-closeout routing defect in `paired_review_runner.py`; historical worktree retirement; any unrelated review recovery. If cycle 2 leaves any blocking finding, automatic correction is exhausted and a human decision is required; do not create cycle 3.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: yes
+- Completion boundary satisfied: yes
+- Acceptance satisfied: yes
+- Superseded/legacy production path disposition: `n/a`
+- Evidence: R1-01 false-report retry reproduced on the uncorrected baseline; implementation commit `f6239aec61cd79f9b1f27ae3d1767cf31d3982b6` binds after-sync validation to exact source identity and durable ordered trace witnesses. Workstream suite 88/88 and paired-review runner suite 274/274 passed. Canonical changed-file validation SHA-256 `8349c82da52222129fe3d9d100b15329af012e6f27f121f478ab368377bdf1ae` passed 10/10 selected checks with complete coverage, no exclusions, and clean source identity: commit `f6239aec61cd79f9b1f27ae3d1767cf31d3982b6`, tree `a6d1b4452a75f3e34f49ab1d371e27714ad1a524`, status digest `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. The normal workstream finish lifecycle remains the authority for remote landing and teardown proof.
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: success
+- Friction severity: low
+- What went wrong: The sparse worktree omitted tracked files required by the normal pre-commit hook and repository-wide Operator authority guard.
+- Root cause / contributing factors: The lightweight checkout profile selected task files but did not include the hook validator or full source scope required by guards that run when `workstream.py` changes.
+- Prevention / pipeline improvement: Materialize exact tracked hook inputs before ordinary commits and widen this claimed checkout's sparse paths enough for the repository-mandated guard; both checks were run normally with no bypass.
+- Tooling / docs drift discovered: The lightweight worktree profile does not currently enumerate all Git-hook and Operator guard inputs. This task restored only exact tracked files needed for its normal checks; no profile change was in scope.
+- Follow-up: manual-follow-up; add the hook validator and required guard scan scope to the relevant lightweight checkout profile.
