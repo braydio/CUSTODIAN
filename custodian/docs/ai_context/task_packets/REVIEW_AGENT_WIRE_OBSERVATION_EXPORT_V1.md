@@ -4,8 +4,8 @@
 - Workstream: `review-agent-wire-observation-export-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
 - Depends on: `agent-wire-observation-export-v1`
