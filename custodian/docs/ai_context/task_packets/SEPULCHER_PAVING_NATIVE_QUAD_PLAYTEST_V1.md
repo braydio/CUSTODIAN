@@ -4,8 +4,8 @@
 - Workstream: `sepulcher-paving-native-quad-playtest-v1`
 - Category: `assets-art`
 - Authoring handoff: `auto`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `none`
 - Locks: `sepulcher-native-paving-playtest`

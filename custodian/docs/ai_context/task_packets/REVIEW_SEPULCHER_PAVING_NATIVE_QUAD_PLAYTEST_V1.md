@@ -5,8 +5,8 @@
 - Category: `assets-art`
 - Authoring handoff: `auto`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-paving-native-quad-playtest-v1`
 - Locks: `sepulcher-native-paving-playtest`
