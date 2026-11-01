@@ -4872,7 +4872,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         review_path = host_validation._OPERATOR_3D_SCOPE_REVIEW_PACKET
         worktree = Path(self.temp.name) / "operator-3d-forged-review"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/operator-3d-forged-review", str(worktree), approval_main], check=True)
+                        "fixture/operator-3d-forged-review", str(worktree), approval_main], check=True,
+                       env=_historical_git_fixture_env())
         review_file = worktree / review_path
         forged = review_file.read_text(encoding="utf-8").replace("- Outcome: `passed`", "- Outcome: `findings`", 1)
         review_file.write_text(forged, encoding="utf-8")
@@ -4983,7 +4984,8 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         trace_ref = span["provenance"]["ref"]
         trace_path = Path(self.temp.name) / "operator-3d-forged-trace"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/operator-3d-forged-trace", str(trace_path), trace_ref], check=True)
+                        "fixture/operator-3d-forged-trace", str(trace_path), trace_ref], check=True,
+                       env=_historical_git_fixture_env())
         file_path = trace_path / "trace.jsonl"
         events = [json.loads(line) for line in file_path.read_text(encoding="utf-8").splitlines()]
         published = [event for event in events if event.get("event") == "worktree_published"]
@@ -8682,7 +8684,8 @@ Verify the exact post-hoc attestation.
         # A forged PASS outcome without an accepted target receipt cannot activate it.
         outcome_forgery = Path(self.temp.name) / "forged-outcome"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/forged-outcome", str(outcome_forgery), approved_main], check=True)
+                        "fixture/forged-outcome", str(outcome_forgery), approved_main], check=True,
+                       env=_historical_git_fixture_env())
         forged_review = outcome_forgery / review_path
         forged_review.write_text(forged_review.read_text().replace(
             "- Outcome: `passed`", "- Outcome: `findings`", 1).replace(
@@ -8701,7 +8704,8 @@ Verify the exact post-hoc attestation.
         # Altering the attestation after its accepted origin is detected by exact bytes.
         mutated = Path(self.temp.name) / "mutated-attestation"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
-                        "fixture/mutated-attestation", str(mutated), approved_main], check=True)
+                        "fixture/mutated-attestation", str(mutated), approved_main], check=True,
+                       env=_historical_git_fixture_env())
         attestation = mutated / attestation_path
         attestation.write_text(attestation.read_text().replace("post_hoc\": true", "post_hoc\": false"),
                                encoding="utf-8")
