@@ -5345,7 +5345,7 @@ class PairedReviewHostValidationTests(unittest.TestCase):
             text=True, capture_output=True,
         ).stdout.strip()
         subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, forged_trace_commit], check=True)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "missing or ambiguous exact workstream trace provenance"):
+        with self.assertRaisesRegex(host_validation.HostValidationError, "trace snapshots rewrite prior events|missing or ambiguous exact workstream trace provenance"):
             host_validation.resolve_validation_source_span(
                 repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,

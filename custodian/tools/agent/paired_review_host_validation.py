@@ -1780,6 +1780,34 @@ def _validate_canonical_coverage(report: dict, code_paths: set[str], manifest: d
 
 
 def _trace_events(repo: Path, ref: str) -> list[dict]:
+    history = subprocess.run(["git", "rev-list", "--reverse", ref], cwd=repo,
+                             text=True, capture_output=True)
+    if history.returncode or not history.stdout.splitlines():
+        raise HostValidationError(f"source-span workstream trace history is unreadable: {ref}")
+    previous_blob = b""
+    previous_commit = None
+    for commit in history.stdout.splitlines():
+        parents = subprocess.run(["git", "rev-list", "--parents", "-n", "1", commit],
+                                 cwd=repo, text=True, capture_output=True)
+        tree = subprocess.run(["git", "ls-tree", "-r", "-z", commit], cwd=repo,
+                              capture_output=True)
+        if (parents.returncode or tree.returncode
+                or (previous_commit is None and len(parents.stdout.split()) != 1)
+                or (previous_commit is not None
+                    and parents.stdout.split() != [commit, previous_commit])):
+            raise HostValidationError(f"source-span trace snapshot chain is not append-only: {ref}")
+        rows = [row for row in tree.stdout.split(b"\0") if row]
+        if len(rows) != 1 or rows[0].split(b"\t", 1)[1] != b"trace.jsonl":
+            raise HostValidationError(f"source-span trace snapshot has unexpected files: {ref}")
+        mode_fields = rows[0].split(b"\t", 1)[0].split()
+        if len(mode_fields) != 3 or mode_fields[0] != b"100644" or mode_fields[1] != b"blob":
+            raise HostValidationError(f"source-span trace snapshot has an invalid trace mode: {ref}")
+        blob = subprocess.run(["git", "cat-file", "blob", mode_fields[2].decode()],
+                              cwd=repo, capture_output=True)
+        if blob.returncode or not blob.stdout.startswith(previous_blob):
+            raise HostValidationError(f"source-span trace snapshots rewrite prior events: {ref}")
+        previous_blob = blob.stdout
+        previous_commit = commit
     result = subprocess.run(["git", "show", f"{ref}:trace.jsonl"], cwd=repo,
                             text=True, capture_output=True)
     if result.returncode:
@@ -3578,11 +3606,44 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
     merge_commits = []
     owned_paths = set()
     owned_paths_at_merge = {}
+    main_first_parent = subprocess.run(
+        ["git", "rev-list", "--first-parent", "--reverse", reviewed_main],
+        cwd=repo, text=True, capture_output=True,
+    )
+    if main_first_parent.returncode:
+        raise HostValidationError("cannot enumerate reviewed main first-parent provenance")
+    main_history = set(main_first_parent.stdout.splitlines())
+    inherited_resume_events = {
+        event.get("data", {}).get("head"): index
+        for index, event in enumerate(events)
+        if event.get("event") == "worktree_resumed"
+        and isinstance(event.get("data"), dict)
+        and event["data"].get("branch") == claim_record["branch"]
+        and event["data"].get("worktree") == claim_record["worktree"]
+    }
+    has_checkpoint_history = any(event.get("event") == "checkpoint_completed" for event in events)
+    inherited_main_merges: list[dict] = []
     for index, commit in enumerate(commits):
         parents = _git(repo, "rev-list", "--parents", "-n", "1", commit).split()[1:]
         if len(parents) == 1:
             owned_paths.update(_changed_paths(repo, f"{parents[0]}..{commit}"))
         else:
+            if (commit in inherited_resume_events and commit in main_history
+                    and not has_checkpoint_history):
+                expected = subprocess.run(
+                    ["git", "merge-tree", "--write-tree", parents[0], parents[1]],
+                    cwd=repo, text=True, capture_output=True,
+                )
+                tree = _git(repo, "rev-parse", f"{commit}^{{tree}}")
+                expected_tree = expected.stdout.splitlines()[0].strip() if expected.stdout.splitlines() else ""
+                if (len(parents) != 2 or expected.returncode or tree != expected_tree):
+                    raise HostValidationError("inherited-main resume merge differs from deterministic Git tree")
+                inherited_main_merges.append({
+                    "commit": commit, "first_parent": parents[0], "main_parent": parents[1],
+                    "resume_event_index": inherited_resume_events[commit], "tree": tree,
+                    "provenance": "authenticated-resume-on-reviewed-main-first-parent",
+                })
+                continue
             merge_commits.append((index, commit, parents))
             owned_paths_at_merge[commit] = set(owned_paths)
     checkpoint_resume_merge = None
@@ -3593,7 +3654,13 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
             raise HostValidationError("synchronization merge claim and lifecycle events are not from one trace")
         synchronization_merges = _verify_split_landing_sync_merges(
             repo, reviewed_main, landing_commit, source_base, source_head, commits,
-            merge_commits, owned_paths_at_merge, events, claim_record, run_id,
+            merge_commits, owned_paths_at_merge,
+            [event for index, event in enumerate(events)
+             if not (event.get("event") == "worktree_resumed"
+                     and event.get("data", {}).get("head") in {
+                         item["commit"] for item in inherited_main_merges
+                     })],
+            claim_record, run_id,
         )
         if len(synchronization_merges) == 1:
             if synchronization_merges[0]["witness_kind"] == "checkpoint-resume":
@@ -3609,7 +3676,7 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
         source_paths = sorted(set(_changed_paths(repo, f"{source_base}..{landing_commit}")
                                   + followup["followup_paths"]))
     else:
-        source_paths = sorted(owned_paths) if synchronization_merges else _changed_paths(
+        source_paths = sorted(owned_paths) if synchronization_merges or inherited_main_merges else _changed_paths(
             repo, f"{source_base}..{source_head}")
     if paired_review_metadata_path is not None:
         source_paths = [path for path in source_paths if path != paired_review_metadata_path]
@@ -3765,6 +3832,8 @@ def _split_landing_source_span(repo: Path, reviewed_main: str, landing_commit: s
                               "worktree": landing_record["path"], "branch": landing_record["branch"],
                               "landing": landing_record["landing"]},
             "archive_kind": "source-bearing" if source_bearing_archive else "archive-only"}
+    if inherited_main_merges:
+        provenance["inherited_main_merges"] = inherited_main_merges
     if claim_record.get("resumed_head") is not None:
         provenance["claim_trace"]["claim_base"] = claim_record["claim_base"]
         provenance["claim_trace"]["resumed_head"] = claim_record["resumed_head"]
