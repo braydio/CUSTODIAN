@@ -1,7 +1,7 @@
 {
   "type": "planning_manifest_only_not_custodian_asset_family_v2",
   "pilot_id": "sepulcher-modular-material-playtest-v1",
-  "status": "first_image_candidate_generated__technical_tune_needed__pilot_sources_unapproved",
+  "status": "unapproved_preview_source_and_codex_instructions_published_to_dropbox__godot_scene_pending",
   "authoring_chat_url": null,
   "authoring_chat_url_status": "awaiting exact current chat URL",
   "basis_main_commit": "1fb718fe908d3f4c8bd293c79000eda165ec55bf",
@@ -22,7 +22,8 @@
     "existing_sepulcher_grave_review_untouched": true,
     "original_72_core_images_unmodified": true,
     "generated_candidate_count": 1,
-    "approved_source_count": 0
+    "approved_source_count": 0,
+    "preview_input_published": true
   },
   "assets": [
     {
@@ -72,7 +73,7 @@
           "color_mode": "RGB",
           "byte_size": 3783377,
           "sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
-          "storage": "ChatGPT conversation artifact; neither published to Git nor uploaded to Dropbox; availability after interruption unverified"
+          "storage": "ChatGPT source candidate published in connected Dropbox (raw source + complete dev preview ZIP); no Asset V2 intake or human artwork acceptance."
         },
         "planning_target": {
           "width": 512,
@@ -100,10 +101,27 @@
         },
         "next_action": "Keep candidate as source/style reference pending review. Do not mark approved or move to pilot asset 2. Prefer deterministic seam correction and/or a new neutral repeated base without distinctive bronze L-motifs; reserve strong metallic floor geometry for independent overlay state. Recheck seam at true 512 size and 3x3 repeat, preserve original detail, then request individual human art decision. Do not automatically simplify/redraw entire image.",
         "delivery": {
-          "dropbox_uploaded": false,
+          "dropbox_uploaded": true,
           "source_work_staged": false,
           "inbox_staged": false,
-          "asset_v2_ingested": false
+          "asset_v2_ingested": false,
+          "preview_only": true,
+          "receipts": {
+            "master": {
+              "path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_base_source_candidate_v1_20261101.png",
+              "file_id": "id:8NXqdXuW6GUAAAAAAAAGMA",
+              "rev": "65f33a0c84155915cdd61",
+              "bytes": 3783377,
+              "sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf"
+            },
+            "bundle": {
+              "path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_native_quad_preview_v1_20261101.zip",
+              "file_id": "id:8NXqdXuW6GUAAAAAAAAGLw",
+              "rev": "65f33a03ca3ce915cdd61",
+              "bytes": 3672520,
+              "sha256": "1172e3e78741f0f18285dbbb50e40fd9e496470d84b1ec02f075bb7ff1d29344"
+            }
+          }
         }
       }
     },
@@ -250,7 +268,7 @@
     "active_asset_id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
     "phase": "technical_review_complete__human_approval_pending",
     "candidate_sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
-    "next_step": "Build fixed native four-crop playable preview under Codex (after staging the real SHA-verified source), then human-review actual Operator scale and repetition. Do not rank crop candidates or mark source approved.",
+    "next_step": "Codex retrieve native-quad preview ZIP from connected Dropbox; verify SHA-256 and stage only unapproved source_work master; run bundled four-crop tool and build real-camera scene for human review. Do not mark as approved or ingest.",
     "last_verified_main": "7eaf776dfe57b971069262925275331bb78c7dbc"
   },
   "native_quad_preview": {
@@ -325,6 +343,40 @@
     ],
     "no_resample": true,
     "no_art_approval": true,
-    "source_host_available": "unverified"
+    "source_host_available": "unverified",
+    "dropbox_handoff": {
+      "status": "published_preview_only_unapproved_art",
+      "uploaded_at": "2026-11-01",
+      "master": {
+        "path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_base_source_candidate_v1_20261101.png",
+        "file_id": "id:8NXqdXuW6GUAAAAAAAAGMA",
+        "rev": "65f33a0c84155915cdd61",
+        "bytes": 3783377,
+        "sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf"
+      },
+      "bundle": {
+        "path": "/CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_native_quad_preview_v1_20261101.zip",
+        "file_id": "id:8NXqdXuW6GUAAAAAAAAGLw",
+        "rev": "65f33a03ca3ce915cdd61",
+        "bytes": 3672520,
+        "sha256": "1172e3e78741f0f18285dbbb50e40fd9e496470d84b1ec02f075bb7ff1d29344"
+      },
+      "bundle_includes": [
+        "source/paving_base_source.png",
+        "README.md",
+        "MANIFEST_GAME32.md",
+        "MANIFEST.json",
+        "CODEX_IMPLEMENTATION.md",
+        "INSTALL_PREVIEW_SOURCE.py",
+        "CROP_NATIVE_QUAD.py",
+        "CHECKSUMS.sha256"
+      ],
+      "installer_test": "PASS isolated source_work staging with matching SHA",
+      "crop_test": "PASS 4x512 and exact 1024x1024 pixel equality",
+      "host_source_stage": "not_verified",
+      "godot_test": "not_run",
+      "production_approval": "pending",
+      "lifecycle_note": "Existing flat implementation_inputs preview, NOT canonical nested manifest-last dispatcher handoff."
+    }
   }
 }

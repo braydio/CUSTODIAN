@@ -8,7 +8,7 @@
 
 I examined the actual **1254×1254 RGB** `worn_limestone_and_basalt_garden_paving.png` (SHA-256 `62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf`) and selected **four adjacent native-resolution 512×512 regions**, with no arbitrary resizing and no seam corrections for this preview.
 
-**Source staging path:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_floor_materials/paving_base_source.png`. This original image currently exists as an authoring-conversation artifact and is **not known to exist on the Arch/Codex host or in Dropbox**. A ChatGPT `/mnt/data` path does not grant Codex host access. If the original bytes are not staged locally at this exact path with the SHA above, stop with a source-dependency blocker, never substitute a generated lookalike. This staging is an **unapproved source_work candidate**, not an inbox/runtime asset.
+**Source staging path:** `custodian/asset_drop/source_work/hub/first_set/hub_first_set_sepulcher_gardens_floor_materials/paving_base_source.png`. The exact original source and self-contained preview tools are now verified in connected Dropbox (see publication receipt below). The source has NOT been confirmed on the Arch/Codex host. A ChatGPT `/mnt/data` path does not grant Codex host access. If the original bytes are not staged locally at this exact path with the SHA above, stop with a source-dependency blocker, never substitute a generated lookalike. This staging is an **unapproved source_work candidate**, not an inbox/runtime asset.
 
 | Crop output | Pillow source box [left,top,right,bottom) | Pixels | Sprite center on local ground |
 |---|---|---|---|
@@ -82,3 +82,15 @@ Reuse the existing standalone Operator/Camera2D/LevelPlaytestBootstrap pattern a
 6. Human reviews scale, quality and repeat risk. No automatic art approval, Dropbox upload, `asset_drop/inbox` write, family registration, or Asset V2 ingest.
 
 Codex should **not** perform a crop search, generate nine variants, select best, or attempt seam repair. This is a first playable visual proof using fixed authoring coordinates. The current four-asset pilot/source manifest remains unchanged; this is its intermediate native-detail experiment.
+
+## Dropbox source and Codex input published (2026-11-01)
+
+The source candidate remains UNAPPROVED. Both upload operations completed and Dropbox metadata returned IDs and revisions. Retrieve the ZIP on the Codex host; it contains unchanged master, README, manifest, game-grid notes, implementation instructions, deterministic 4-crop script and a SHA-guarded source_work staging script.
+
+Raw PNG: /CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_base_source_candidate_v1_20261101.png
+Dropbox file ID: id:8NXqdXuW6GUAAAAAAAAGMA; rev: 65f33a0c84155915cdd61; 3,783,377 bytes; SHA-256: 62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf
+
+Self-contained ZIP: /CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_native_quad_preview_v1_20261101.zip
+Dropbox file ID: id:8NXqdXuW6GUAAAAAAAAGLw; rev: 65f33a03ca3ce915cdd61; 3,672,520 bytes; SHA-256: 1172e3e78741f0f18285dbbb50e40fd9e496470d84b1ec02f075bb7ff1d29344
+
+Isolated bundle test passed: 4 native 512x512 crops, pixel-exact 1024x1024 reassembly and non-destructive source staging. Actual host-local transfer/Godot test remain pending. This preview uses two flat files in the existing Dropbox implementation_inputs directory, not the nested manifest-last packet gate required for canonical dispatcher intake. No Asset V2 registration, inbox staging, source approval or production promotion has occurred.

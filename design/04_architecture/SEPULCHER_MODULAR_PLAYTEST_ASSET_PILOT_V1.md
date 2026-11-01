@@ -118,3 +118,11 @@ Generated a first paving candidate as a **1254×1254 RGB image**, not the declar
 **Decision:** The authoring assistant, not Codex, selected exact four adjacent native 512×512 crops of the actual 1254px master. Crop boxes, source SHA-256, fixed sprite centers, real-Operator scene, and A/B/C comparison modes are recorded in [`SEPULCHER_PAVING_NATIVE_QUAD_CODEX_BRIEF_V1.md`](SEPULCHER_PAVING_NATIVE_QUAD_CODEX_BRIEF_V1.md). Codex is to implement these precise crops in the playable test view, not perform a cropping experiment or choose sizes.
 
 This is a **native-detail preview**; the current unapproved `paving_base` has not become seamlessly tileable. The 1024×1024 composite sits under the existing 1024×768 initial view without stretching. The original source currently lives only in authoring-chat artifacts; Codex host transfer and SHA verification are a real prerequisite. No approved art, production Asset V2 ingest, or existing program queue changes follow from this decision.
+
+## Source and Codex preview handoff published (2026-11-01)
+
+Unapproved source PNG: /CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_base_source_candidate_v1_20261101.png; Dropbox ID id:8NXqdXuW6GUAAAAAAAAGMA; rev 65f33a0c84155915cdd61; SHA-256 62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf.
+
+Self-contained runnable Codex crop/staging/scene-instruction ZIP: /CUSTODIAN/implementation_inputs/custodian_sepulcher_paving_native_quad_preview_v1_20261101.zip; Dropbox ID id:8NXqdXuW6GUAAAAAAAAGLw; rev 65f33a03ca3ce915cdd61; SHA-256 1172e3e78741f0f18285dbbb50e40fd9e496470d84b1ec02f075bb7ff1d29344.
+
+The bundle has the unchanged master, README, manifest, game-grid notes, full implementation instructions, staging script and crop script. Local isolated staging and pixel-exact crop verification passed. The original is not visually approved and no real Godot test, Asset V2 ingest or runtime cutover is claimed. Host-local retrieval is the next dependency. These flat files are preview-only and are not a canonical nested implementation_inputs packet.
