@@ -48,6 +48,134 @@ sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
 
 
+# These are the only historical diagnostic refs required by the regression
+# cases below. Pin the remote commit and trace object identities so clean CI
+# checkouts can fetch these exact refs without depending on a developer's
+# accumulated remote-tracking refs.
+_PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
+    (
+        "refs/heads/agent-diagnostics/agent-execution-reset-v1/"
+        "20261020T135839Z-db96534ed3a7",
+        "refs/remotes/origin/agent-diagnostics/agent-execution-reset-v1/"
+        "20261020T135839Z-db96534ed3a7",
+        "826ce081626a0aa2980408728dbc8bc89a0a8811",
+        "6b4e626daf3b24a7d135145b9f432133576f3d89",
+        "7cd1c206992acc8af829087727fa8b5a66c0c29b3273c395c06cfd129bf8a545",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-grunt-raster-review-scope-attestation-v1/"
+        "20261019T195635Z-441f0bc5ee6f",
+        "refs/remotes/origin/agent-diagnostics/agent-grunt-raster-review-scope-attestation-v1/"
+        "20261019T195635Z-441f0bc5ee6f",
+        "7edace7d2cfd54702570fc1f4501e3fb3ba828ce",
+        "f9ed2fb94ca16d5d931ee30cf679765908a2bc1a",
+        "d4a66e21e6cce45acc35d0cb5bb13a916d8614984f8dc31806a26b28e5305c80",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
+        "20261020T200652Z-2fd156ce23d0",
+        "refs/remotes/origin/agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
+        "20261020T200652Z-2fd156ce23d0",
+        "fc31dfe831d562f5e5c68fba7483e124942b2f44",
+        "cdde47b5855c709e639fabc0455abe567b326310",
+        "3c3327ae13b533e5e7e5bf483bbd92fe726f888a2c1d8f83a4c30482a003f502",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-persistent-task-administrator-v1/"
+        "20261030T061213Z-c6cf54beac00",
+        "refs/remotes/origin/agent-diagnostics/agent-persistent-task-administrator-v1/"
+        "20261030T061213Z-c6cf54beac00",
+        "c76353e5f15b29386f6ff88f9524a940d15e9139",
+        "ccbb08eb138a8f238dbd5e1613c55630ab9a9a6e",
+        "d64c43b5672a311e1cdf4ea4c88aee37743a85a3a593c9cb2d274d574a381cc7",
+    ),
+    (
+        "refs/heads/agent-diagnostics/grunt-candidate-raster-workflow-v1/"
+        "20261019T100251Z-d7853dfb04a5",
+        "refs/remotes/origin/agent-diagnostics/grunt-candidate-raster-workflow-v1/"
+        "20261019T100251Z-d7853dfb04a5",
+        "bb2360e038440f726027c65f60b9c3debaae3f56",
+        "3fc823c9c921da35d8d3fe97a7aa44afd68a74d0",
+        "ac119f809a780ec3f25c526d7a24ba90658a1663035a71ff818e8b7b0fc5ea7c",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-3d-model-to-sprite-tooling-integration-v1/"
+        "20261031T020602Z-9e1691d59e2e",
+        "refs/remotes/origin/agent-diagnostics/operator-3d-model-to-sprite-tooling-integration-v1/"
+        "20261031T020602Z-9e1691d59e2e",
+        "f182b790b053563027288ff3477113f6637f522f",
+        "e8d8618e4cbb13d5187ac8ce9904a243c7da4b72",
+        "7d644903b24fd84ec02028e3887dc937edad332a7abe11a76787a4776e4fc5b4",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-motion-foundry-blender-2d-rig-v1/"
+        "20261020T144517Z-523ad5973c21",
+        "refs/remotes/origin/agent-diagnostics/operator-motion-foundry-blender-2d-rig-v1/"
+        "20261020T144517Z-523ad5973c21",
+        "a50ee4c0a2d3967934bf39fb3c708e3df0cdd094",
+        "6110cf8ea45c85c25dea1cab7ec475d2a2e2b493",
+        "0b1af733f7fdaeef984a06ecbdb9219ea5651ede5f38b6bd03a5284de9a37a6f",
+    ),
+)
+
+
+def _ensure_pinned_historical_diagnostic_refs(repository: Path = ROOT) -> None:
+    """Fetch only missing pinned trace refs and verify their immutable content."""
+    def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["git", "-C", str(repository), *args],
+            check=check, text=True, capture_output=True,
+        )
+
+    missing = []
+    for remote_ref, local_ref, expected_commit, _, _ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS:
+        existing = git("rev-parse", "--verify", f"{local_ref}^{{commit}}", check=False)
+        if existing.returncode == 0:
+            actual_commit = existing.stdout.strip()
+            if actual_commit != expected_commit:
+                raise AssertionError(
+                    f"pinned historical trace ref changed: {local_ref} "
+                    f"({actual_commit} != {expected_commit})"
+                )
+        else:
+            missing.append((remote_ref, local_ref, expected_commit))
+
+    if missing:
+        git(
+            "fetch", "--no-tags", "origin",
+            *(f"{remote_ref}:{local_ref}" for remote_ref, local_ref, _ in missing),
+        )
+        for _, local_ref, expected_commit in missing:
+            actual_commit = git("rev-parse", "--verify", f"{local_ref}^{{commit}}").stdout.strip()
+            if actual_commit != expected_commit:
+                raise AssertionError(
+                    f"fetched historical trace ref has unexpected commit: {local_ref} "
+                    f"({actual_commit} != {expected_commit})"
+                )
+
+    for _, local_ref, expected_commit, expected_blob, expected_sha256 in (
+        _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+    ):
+        blob = git("rev-parse", "--verify", f"{local_ref}:trace.jsonl").stdout.strip()
+        if blob != expected_blob:
+            raise AssertionError(
+                f"pinned historical trace blob changed: {local_ref} "
+                f"({blob} != {expected_blob})"
+            )
+        trace = subprocess.run(
+            ["git", "-C", str(repository), "show", f"{local_ref}:trace.jsonl"],
+            check=True, capture_output=True,
+        ).stdout
+        if hashlib.sha256(trace).hexdigest() != expected_sha256:
+            raise AssertionError(f"pinned historical trace bytes changed: {local_ref}")
+        commit = git("rev-parse", "--verify", f"{local_ref}^{{commit}}").stdout.strip()
+        if commit != expected_commit:
+            raise AssertionError(
+                f"pinned historical trace commit changed: {local_ref} "
+                f"({commit} != {expected_commit})"
+            )
+
+
 def _historical_git_fixture_env() -> dict[str, str]:
     env = os.environ.copy()
     env["GIT_LFS_SKIP_SMUDGE"] = "1"
@@ -4165,6 +4293,10 @@ class AdvancedHeadPassRecoveryTests(unittest.TestCase):
 
 
 class PairedReviewHostValidationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _ensure_pinned_historical_diagnostic_refs()
+
     def setUp(self):
         _mock_no_active_review_processes(self)
         self.temp = tempfile.TemporaryDirectory()
