@@ -1,9 +1,111 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T11:26:22Z",
-  "source_main_sha": "1260f542674a94b1d127b6d3d3b55f51eb1a0060",
+  "generated_at": "2026-11-01T11:39:26Z",
+  "source_main_sha": "7a6dfdf27cc4c0025e3dff8124b9728f66369a92",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "after-sync-consumer-enforcement-ready-7a6dfdf2",
+      "headline": "New safeguard targets the validation loophole left by cycle 2",
+      "summary": "A new implementation and independent-review pair has been promoted to ready/auto to close the mismatch between after-sync validation evidence produced during changed-main merges and the host validator that consumes it. The historical cycle-2 human_required outcome remains unchanged. Dispatch, implementation, acceptance and teardown are unverified.",
+      "body": "The archived cycle-2 reviewer identified R2-01: the producer requires after-sync validation witnesses for changed-main merges, but the paired-review host consumer does not authenticate those witnesses. Commit 956a272 creates a bounded correction and independent-review pair; commit 7a6dfdf changes both packet headers to ready/auto. The review depends on the implementation landing and normal teardown. No claim, execution, accepted PASS or host cleanup is established by these commits. This is a prospective fix, not retroactive acceptance of the historical human_required review.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-after-sync-consumer-enforcement-v1",
+      "occurred_at": "2026-11-01T11:39:26Z",
+      "bullets": [
+        "Two named packets promoted from draft/manual to ready/auto.",
+        "Implementation must first reproduce the missing-witness defect with real Git histories.",
+        "Fresh independent review is dependency-gated; original cycle-2 human_required remains unchanged.",
+        "Host claims, liveness, independent acceptance and teardown are unknown."
+      ],
+      "links": [
+        {
+          "title": "After-sync consumer enforcement specification",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/956a2729d2d5a17ab90a290593f6b5ec94d3b8a6"
+        },
+        {
+          "title": "Automatic handoff commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/7a6dfdf27cc4c0025e3dff8124b9728f66369a92"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has prepared a targeted repair for a gap in its independent-review safety checks. The system that produces validation evidence requires proof after merging newer main-branch code, but the system that checks the merge does not yet demand that same proof. A new implementation and review pair is ready for dispatch, not yet completed.",
+        "sections": [
+          {
+            "heading": "A mismatch at the trust boundary",
+            "text": "The producer already requires validation after a changed-main synchronization. The host validator can still authenticate that synchronization without consuming the corresponding validation witness. This creates a route for unvalidated source to appear adequately checked."
+          },
+          {
+            "heading": "A prospective repair with an independent gate",
+            "text": "The new packet calls for real-Git failing-first reproduction, exact witness binding, negative tests for missing or reused evidence, and preservation of supported workflows. A separate fresh-context reviewer must test the result after implementation lands."
+          },
+          {
+            "heading": "The historical finding stays intact",
+            "text": "The original cycle-2 review remains human_required. This work cannot rewrite its evidence or convert that past result into PASS. The new pair is declared ready/auto, but dispatch, execution, acceptance and cleanup have not been observed."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The missing check is on the receiving side",
+            "explanation": "The producer and consumer enforce different evidence contracts. Fixing only the producer would not prevent the host validator from accepting a merge without checking the required witness."
+          },
+          {
+            "title": "Ready is not accepted",
+            "explanation": "Both packets are marked ready/auto, but the reviewer is dependency-gated behind implementation. The safety improvement remains hypothetical until independently tested and accepted."
+          }
+        ],
+        "takeaway": "A narrowly scoped prospective correction is ready for dispatch; no implementation landing or independent PASS has been established.",
+        "next_watch": "Look for a real-Git failing-first reproduction, source landing, fresh independent review receipt and verified canonical teardown."
+      },
+      "details": {
+        "overview": "Commits 956a272 and 7a6dfdf create and promote the implementation/review pair for R2-01. The implementation targets paired_review_host_validation.py's split-landing synchronization checks; producer workstream.py behavior and archived cycle-2 review evidence are to remain unchanged.",
+        "ledger": [
+          {
+            "stage": "R2-01 defect identification",
+            "status": "verified documented",
+            "evidence": "Commit 956a272 cites archived cycle-2 human_required finding and producer/consumer contract mismatch."
+          },
+          {
+            "stage": "Packet authoring",
+            "status": "verified",
+            "evidence": "Commit 956a272 adds implementation and independent review packet definitions."
+          },
+          {
+            "stage": "Automatic handoff",
+            "status": "verified ready/auto declarations",
+            "evidence": "Commit 7a6dfdf changes both named packet headers; review depends on implementation."
+          },
+          {
+            "stage": "Implementation, validation and landing",
+            "status": "unknown",
+            "evidence": "No corresponding landing or validation receipt established by inspected commits."
+          },
+          {
+            "stage": "Independent acceptance and canonical teardown",
+            "status": "unknown",
+            "evidence": "No independent PASS or host cleanup proof inspected."
+          }
+        ],
+        "notes": [
+          "The review packet specifies zero automatic correction cycles, not zero independent reviews.",
+          "The implementation must bound report-byte verification claims to accessible durable evidence."
+        ],
+        "unknowns": [
+          "Canonical dispatcher claim and process liveness not inspected.",
+          "Host worktree/lock disposition and disk status not verified.",
+          "Current CI health for latest main not established."
+        ],
+        "actions": [
+          "Dispatcher/operator: verify actual eligibility and claim before execution.",
+          "Implementer: reproduce the missing-witness failure before enforcing exact witness checks.",
+          "Fresh reviewer: independently test landed behavior and issue a genuine disposition."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "sepulcher-native-quad-landed-review-gate-82d97438",
       "headline": "Sepulcher's paving preview lands, but its independent review hits a source-evidence gate",
@@ -1401,177 +1503,24 @@
           "story_id": "art-generation-protocol-91f44c89"
         }
       ]
-    },
-    {
-      "id": "art-generation-protocol-91f44c89",
-      "headline": "CUSTODIAN sets image-by-image approval rules before its large environment art push",
-      "summary": "A new main-branch protocol distinguishes planning batches from actual image generation. Large environments and seams stay one-at-a-time; small compatible props may be grouped after style calibration. Every asset still requires its own approval.",
-      "body": "Commit 91f44c89 adds the standing non-Operator AI art generation and review protocol and updates the art manifest guidance. It organizes queues of 5–10 states but requires individually reviewable sources, starts the five-image calibration one at a time, and only allows small compatible groups after style lock. This is guidance, not generated art or accepted runtime assets. Main 91f44c89e9a5bf9b269619d513777a403cc6530e.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "hub-sepulcher-awakening-art-v1",
-      "occurred_at": "2026-11-01T04:07:36Z",
-      "bullets": [
-        "Art owner: produce first calibration image with real neighboring references and seek individual approval."
-      ],
-      "links": [
-        {
-          "title": "Art protocol commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/91f44c89e9a5bf9b269619d513777a403cc6530e"
-        },
-        {
-          "title": "Art generation protocol",
-          "url": "https://github.com/braydio/CUSTODIAN/blob/91f44c89e9a5bf9b269619d513777a403cc6530e/design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The planned Hub, Sepulcher and Awakening art program now has a practical production rulebook. Its central distinction is simple: organizing several images into a queue does not mean generating them as one collage or approving them as a group. The new protocol is on main, but it does not establish that any artwork has been produced.",
-        "sections": [
-          {
-            "heading": "Different art needs different treatment",
-            "text": "Large district underlays, connectors and animation states are generated individually because camera alignment, seams and frame continuity matter. Only small compatible props and decals may be grouped after a visual style has been approved, and each source remains independently reviewable."
-          },
-          {
-            "heading": "The first five are a calibration gate",
-            "text": "The existing manifest's first five image states must be produced and approved one at a time. Approved neighboring art should guide each candidate. A source must then pass a separate asset-intake process before it can become a runtime asset."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Batch planning is not batch approval",
-            "explanation": "A queue of 5–10 states is an organizational unit. The protocol prevents an attractive collage from being mistaken for independently accepted, correctly registered game art."
-          },
-          {
-            "title": "Registration risk determines the batch size",
-            "explanation": "Images that touch existing geometry or neighboring scenery demand single-image attention. The rule protects level continuity while allowing limited efficiency for low-risk decorative pieces."
-          }
-        ],
-        "takeaway": "Art production now has explicit review and batching boundaries, but image delivery and game integration remain unproven.",
-        "next_watch": "The first individually approved calibration image and its source receipt."
-      },
-      "details": {
-        "overview": "Protocol introduced at main commit 91f44c89; no generated images inspected. The previous manifest remains a plan for 71 core states and 12 conditional states.",
-        "ledger": [
-          {
-            "stage": "Production protocol",
-            "status": "verified landed",
-            "evidence": "Commit 91f44c89."
-          },
-          {
-            "stage": "First calibration source",
-            "status": "unknown",
-            "evidence": "No approved image receipt inspected."
-          },
-          {
-            "stage": "Individual approvals",
-            "status": "unknown",
-            "evidence": "No approval receipts inspected."
-          },
-          {
-            "stage": "Asset V2 ingestion",
-            "status": "unknown",
-            "evidence": "No runtime catalog or scene receipt inspected."
-          }
-        ],
-        "notes": [
-          "The five calibration states are included within the planned core inventory, not additional assets."
-        ],
-        "unknowns": [
-          "No live art-generation or approval records inspected."
-        ],
-        "actions": [
-          "Art owner: produce the first named calibration state and request explicit source approval."
-        ]
-      },
-      "scorecard": {
-        "stage": "Production protocol landed; calibration next",
-        "as_of": "2026-11-01T04:09:12Z",
-        "scope": "Hub/Sepulcher/Awakening source-art planning and approvals only",
-        "metrics": [
-          {
-            "id": "other-art-core-states",
-            "label": "PLANNED CORE STATES",
-            "value": 71,
-            "verification": "verified",
-            "basis": "Committed manifest planning inventory; not delivered assets",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Publish production manifest",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "2d5240f0."
-          },
-          {
-            "label": "Publish generation/review protocol",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "91f44c89."
-          },
-          {
-            "label": "Generate first calibration image",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No source receipt inspected."
-          },
-          {
-            "label": "Approve five calibration images individually",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Human approval required."
-          },
-          {
-            "label": "Produce remaining states",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Style calibration prerequisite."
-          },
-          {
-            "label": "Ingest and validate runtime art",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Separate Asset V2 intake."
-          }
-        ],
-        "next_gate": "Art owner produces first calibration image for individual human approval."
-      },
-      "related": [
-        {
-          "title": "Hub and Awakening art gains a detailed production blueprint, but no images are approved",
-          "context": "The new protocol explains how the earlier manifest's images must be produced and approved.",
-          "story_id": "hub-sepulcher-art-manifest-2d5240f0"
-        }
-      ]
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T11:26:22Z",
-    "source_main_sha": "1260f542674a94b1d127b6d3d3b55f51eb1a0060",
+    "observed_at": "2026-11-01T11:39:26Z",
+    "source_main_sha": "7a6dfdf27cc4c0025e3dff8124b9728f66369a92",
     "coverage": "partial",
-    "scope": "GitHub main commits and two named workstreams: Sepulcher native-quad implementation/review and validator correction cycle-2; not canonical dispatcher queue",
+    "scope": "Only the two named after-sync consumer enforcement packets in commit 7a6dfdf; not a dispatcher-wide inventory.",
     "metrics": [
       {
-        "id": "other-sepulcher-preview-implementation",
-        "label": "SEPULCHER PREVIEW LANDED",
-        "value": 1,
-        "verification": "verified",
-        "basis": "Exactly one named native-quad playable implementation landed and archived; not an approved art source or a project-wide count",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/3ac23cda031d80fdaf283b5d9a8b5a88db2782e8"
-      },
-      {
-        "id": "other-sepulcher-attestation-drafts",
-        "label": "SOURCE-SCOPE DRAFT PACKETS",
+        "id": "ready_auto",
+        "label": "READY/AUTO IN NAMED PAIR",
         "value": 2,
         "verification": "verified",
-        "basis": "Exactly two named draft/manual attestation implementation and review packets, not ready or project-wide",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/82d9743865813130d0d4cb65525c4cd1b5095c9d"
+        "basis": "Both implementation and paired review packet headers changed from draft/manual to ready/auto in commit 7a6dfdf; two named packets only; review depends on implementation.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/7a6dfdf27cc4c0025e3dff8124b9728f66369a92"
       }
     ],
-    "focus": "Resolve Sepulcher's preserved independent-review source-scope gate through exact evidence and separately authorized, independently reviewed attestation.",
-    "note": "No canonical dispatcher audit or local host proof. Validator correction-2 review is nonpassing. No project-wide totals, current running/claimed status, teardown or CI classification."
+    "focus": "Verify dispatch eligibility and failing-first reproduction for after-sync consumer enforcement.",
+    "note": "GitHub declarations do not prove live claims, execution, acceptance or teardown. Full canonical dispatcher audit unavailable."
   }
 }
