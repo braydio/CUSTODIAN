@@ -18,7 +18,7 @@ from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from workflow_control import (
-    RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
+    TRACE_SCHEMA, TRACE_VERSION, RemoteClaim, RunTrace, WorkflowControlError, acquire_remote_claim,
     common_mutex, find_local_trace, release_remote_claim, resolve_agent_id,
     workstream_mutex,
 )
@@ -761,7 +761,8 @@ def _managed_index_is_current(repo: Path) -> bool:
 
 
 def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
-                                          source_head: str, trace: RunTrace | None) -> str | None:
+                                          source_head: str, trace: RunTrace | None, *,
+                                          require_final_noop: bool = False) -> str | None:
     """Reject pre-archive sync merges that lack the source-span trace proof."""
     if trace is None or not trace.path.is_file():
         return "source-span synchronization merge provenance requires the active lifecycle trace"
@@ -771,11 +772,16 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
         return f"cannot read source-span lifecycle trace: {exc}"
     if not events:
         return "source-span lifecycle trace is empty"
+    if any(not isinstance(event, dict) for event in events):
+        return "source-span lifecycle trace contains a non-object event"
     active_packet = trace.packet
-    if any(event.get("schema") != "custodian.workflow_trace_event.v1"
+    if any(event.get("schema") != TRACE_SCHEMA
+           or type(event.get("schema_version")) is not int
+           or event.get("schema_version") != TRACE_VERSION
+           or not isinstance(event.get("data"), dict)
            or event.get("workstream") != workstream_id
            or event.get("run_id") != trace.run_id for event in events):
-        return "source-span lifecycle trace identity is inconsistent"
+        return "source-span lifecycle trace schema, data shape, or identity is inconsistent"
     main = git("rev-parse", "origin/main", cwd=path, check=False)
     if not main:
         return "cannot authenticate source-span synchronization parents without origin/main"
@@ -802,20 +808,62 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
     claim = claim_event.get("data")
     publication = published_event.get("data")
     branch = branch_for(workstream_id)
+    claim_oid = claim.get("claim_oid") if isinstance(claim, dict) else None
+    claim_base = claim.get("main_sha") if isinstance(claim, dict) else None
+    claim_agent = claim_event.get("agent")
+    claim_pid = claim_event.get("pid")
+    expected_local_ref = f"refs/custodian/claims/{workstream_id}/{trace.run_id}"
+    expected_remote_ref = f"refs/heads/dispatch-claims/{workstream_id}"
+    claim_oid_valid = (isinstance(claim_oid, str)
+                       and re.fullmatch(r"[0-9a-f]{40,64}", claim_oid) is not None)
+    claim_base_valid = (isinstance(claim_base, str)
+                        and re.fullmatch(r"[0-9a-f]{40,64}", claim_base) is not None)
+    resolved_claim = (git("rev-parse", "--verify", f"{claim_oid}^{{commit}}",
+                          cwd=path, check=False)
+                      if claim_oid_valid else "")
+    claim_parents = (git("rev-list", "--parents", "-n", "1", claim_oid,
+                         cwd=path, check=False).split() if claim_oid_valid else [])
+    claim_subject = (git("show", "-s", "--format=%s", claim_oid, cwd=path, check=False)
+                     if claim_oid_valid else "")
+    claim_tree = (git("rev-parse", f"{claim_oid}^{{tree}}", cwd=path, check=False)
+                  if claim_oid_valid else "")
+    base_tree = (git("rev-parse", f"{claim_base}^{{tree}}", cwd=path, check=False)
+                 if claim_base_valid else "")
+    claim_subject_match = re.fullmatch(
+        rf"workstream claim {re.escape(workstream_id)} ([^:\s]+):([0-9]+):{re.escape(trace.run_id)}",
+        claim_subject,
+    )
+    published_worktree = publication.get("worktree") if isinstance(publication, dict) else None
+    try:
+        published_path_matches = (
+            isinstance(published_worktree, str)
+            and Path(published_worktree).is_absolute()
+            and os.path.normpath(published_worktree) == published_worktree
+            and Path(published_worktree).resolve() == path.resolve()
+        )
+    except (OSError, RuntimeError, ValueError):
+        published_path_matches = False
     if (not isinstance(claim, dict) or not isinstance(publication, dict)
-            or claim.get("remote_ref") != f"refs/heads/dispatch-claims/{workstream_id}"
-            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("claim_oid", "")))
-            or not re.fullmatch(r"[0-9a-f]{40,64}", str(claim.get("main_sha", "")))
+            or claim.get("remote_ref") != expected_remote_ref
+            or claim.get("local_ref") != expected_local_ref
+            or not claim_oid_valid
+            or resolved_claim != claim_oid
+            or not claim_base_valid
+            or claim_parents != [claim_oid, claim_base]
+            or claim_subject_match is None
+            or (claim_agent is not None and claim_agent != claim_subject_match.group(1))
+            or isinstance(claim_pid, bool) or not isinstance(claim_pid, int) or claim_pid <= 0
+            or claim_pid != int(claim_subject_match.group(2) if claim_subject_match else -1)
+            or claim_tree != base_tree
             or publication.get("branch") != branch
-            or publication.get("head") != claim.get("main_sha")
-            or publication.get("upstream") != claim.get("main_sha")
+            or publication.get("head") != claim_base
+            or publication.get("upstream") != claim_base
             or publication.get("clean") is not True
-            or not isinstance(publication.get("worktree"), str)
-            or not Path(publication["worktree"]).is_absolute()
+            or not published_path_matches
             or claim_pos >= published_pos):
-        return "source-span lifecycle claim or published-worktree identity is invalid"
+        return "source-span lifecycle claim commit or published-worktree identity is invalid"
 
-    source_base = claim["main_sha"]
+    source_base = claim_base
     if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, source_head],
                       cwd=path, capture_output=True).returncode:
         return "source-span claim base is not an ancestor of its archive transition"
@@ -837,14 +885,21 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
             or any(event.get("packet") != active_packet for event in events)):
         return "source-span lifecycle trace does not pin the active task packet"
 
+    if subprocess.run(["git", "merge-base", "--is-ancestor", source_base, main],
+                      cwd=path, capture_output=True).returncode:
+        return "source-span claim base is not an ancestor of origin/main"
+
     checkpoints = [(i, event) for i, event in enumerate(events)
                    if event.get("event") == "checkpoint_completed"]
+    checkpoint_starts = [(i, event) for i, event in enumerate(events)
+                         if event.get("event") == "checkpoint_started"]
     resumes = [(i, event) for i, event in enumerate(events)
                if event.get("event") == "worktree_resumed"]
     syncs = [(i, event) for i, event in enumerate(events)
              if event.get("event") == "main_sync"]
     consumed_resumes: set[int] = set()
     consumed_syncs: set[int] = set()
+    consumed_checkpoints: set[int] = set()
     previous = source_base
     previous_witness = published_pos
     for commit in history_commits:
@@ -872,41 +927,84 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
                 or git("rev-parse", f"{commit}^{{tree}}", cwd=path) != expected_tree):
             return f"source-span merge {commit} differs from Git's deterministic merge tree"
 
-        matching_checkpoints = [
+        checkpoint_candidates = [
             (i, event) for i, event in checkpoints
             if isinstance(event.get("data"), dict)
             and event["data"].get("remote_head") == first_parent
+        ]
+        matching_checkpoints = [
+            (i, event) for i, event in checkpoint_candidates
+            if isinstance(event.get("data"), dict)
             and event["data"].get("branch") == branch
             and event["data"].get("removed") is False
         ]
-        matching_resumes = [
+        if len(checkpoint_candidates) != 1 or len(matching_checkpoints) != 1:
+            return f"source-span merge {commit} lacks a unique exact checkpoint witness"
+        checkpoint_pos, checkpoint_event = matching_checkpoints[0]
+        if checkpoint_pos <= previous_witness or checkpoint_pos in consumed_checkpoints:
+            return f"source-span merge {commit} checkpoint witness is reused or out of order"
+        prior_completions = [i for i, _ in checkpoints if i < checkpoint_pos]
+        last_completion = max(prior_completions, default=-1)
+        starts_between = [
+            (i, event) for i, event in checkpoint_starts
+            if last_completion < i < checkpoint_pos
+        ]
+        if (len(starts_between) != 1
+                or starts_between[0][1]["data"].get("remove_worktree") is not False):
+            return f"source-span merge {commit} checkpoint lacks one completed retained-checkout operation"
+        consumed_checkpoints.add(checkpoint_pos)
+
+        resume_candidates = [
             (i, event) for i, event in resumes
             if isinstance(event.get("data"), dict)
             and event["data"].get("head") == commit
-            and event["data"].get("branch") == branch
-            and event["data"].get("worktree") == publication["worktree"]
         ]
-        matching_syncs = [
+        matching_resumes = [
+            (i, event) for i, event in resume_candidates
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("branch") == branch
+            and event["data"].get("worktree") == published_worktree
+        ]
+        sync_candidates = [
             (i, event) for i, event in syncs
             if isinstance(event.get("data"), dict)
             and event["data"].get("changed") is True
-            and event["data"].get("head") == commit
+            and (event["data"].get("head") == commit
+                 or event["data"].get("main_sha") == second_parent)
+        ]
+        matching_syncs = [
+            (i, event) for i, event in sync_candidates
+            if event["data"].get("head") == commit
             and event["data"].get("main_sha") == second_parent
         ]
-        if (len(matching_checkpoints) > 1 or len(matching_resumes) > 1
-                or len(matching_syncs) > 1 or (matching_resumes and matching_syncs)):
+        if (len(resume_candidates) > 1 or len(matching_resumes) != len(resume_candidates)
+                or len(sync_candidates) > 1 or len(matching_syncs) != len(sync_candidates)
+                or (matching_resumes and matching_syncs)):
             return f"source-span merge {commit} has duplicate or conflicting lifecycle witnesses"
         if matching_syncs:
             witness_pos, _ = matching_syncs[0]
-            if witness_pos <= previous_witness:
+            if witness_pos <= checkpoint_pos:
                 return f"source-span merge {commit} lifecycle witness is missing or out of order"
             consumed_syncs.add(witness_pos)
-        elif matching_resumes and len(matching_checkpoints) == 1:
-            checkpoint_pos, _ = matching_checkpoints[0]
+        elif matching_resumes:
             witness_pos, _ = matching_resumes[0]
-            if checkpoint_pos <= previous_witness or witness_pos <= checkpoint_pos:
+            if witness_pos <= checkpoint_pos:
                 return f"source-span merge {commit} lifecycle witnesses are missing or out of order"
             consumed_resumes.add(witness_pos)
+        elif require_final_noop and commit == merge_commits[-1]:
+            final_noop_candidates = [
+                (i, event) for i, event in syncs
+                if isinstance(event.get("data"), dict)
+                and event["data"].get("changed") is False
+                and event["data"].get("head") == source_head
+                and event["data"].get("main_sha") == second_parent
+            ]
+            if len(final_noop_candidates) != 1:
+                return f"source-span merge {commit} lacks its unique exact lifecycle witness"
+            witness_pos, _ = final_noop_candidates[0]
+            if witness_pos <= checkpoint_pos:
+                return f"source-span merge {commit} final no-op witness is out of order"
+            consumed_syncs.add(witness_pos)
         else:
             return f"source-span merge {commit} lacks its unique exact lifecycle witness"
         previous_witness = witness_pos
@@ -925,6 +1023,37 @@ def _source_span_sync_merge_witness_error(workstream_id: str, path: Path,
            and event["data"].get("changed") is True
            and event["data"].get("head") in source_merge_heads):
         return "source-span lifecycle trace contains an unmatched main-sync event"
+    source_merge_first_parents = {
+        git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[1]
+        for commit in source_merge_heads
+    }
+    if any(i not in consumed_checkpoints for i, event in checkpoints
+           if isinstance(event.get("data"), dict)
+           and event["data"].get("remote_head") in source_merge_first_parents):
+        return "source-span lifecycle trace contains an unmatched or reused checkpoint event"
+    if require_final_noop and merge_commits:
+        final_noops = [
+            (i, event) for i, event in syncs
+            if isinstance(event.get("data"), dict)
+            and event["data"].get("changed") is False
+            and (event["data"].get("head") == source_head
+                 or event["data"].get("main_sha") in {
+                     git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()[2]
+                     for commit in source_merge_heads
+                     if len(git("rev-list", "--parents", "-n", "1", commit, cwd=path).split()) == 3
+                 })
+        ]
+        expected_main = git("rev-parse", "origin/main", cwd=path, check=False)
+        if (len(final_noops) != 1
+                or final_noops[0][1]["data"].get("head") != source_head
+                or final_noops[0][1]["data"].get("main_sha") != expected_main):
+            return "source-span lifecycle trace lacks one exact final no-op main-sync witness"
+        latest_witness = max([
+            published_pos, *consumed_checkpoints, *consumed_resumes,
+            *(i for i in consumed_syncs if i != final_noops[0][0]),
+        ])
+        if final_noops[0][0] <= latest_witness:
+            return "source-span final no-op main-sync witness is out of order"
     return None
 
 
@@ -3378,8 +3507,13 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
     if archive_tip_error:
         raise WorkstreamError(archive_tip_error)
 
-    git("push", "-u", "origin", branch, cwd=path)
-    fetch(path)
+    # Record a genuine, remotely verified checkpoint before main synchronization.
+    # The public lifecycle helper is also the source of its start/completion events.
+    if trace:
+        _checkpoint_impl(workstream_id, False, repo, trace)
+    else:
+        git("push", "-u", "origin", branch, cwd=path)
+        fetch(path)
 
     if task_head_reachable_from_main(path):
         # ALREADY_LANDED: this exact task history is already on origin/main (a
@@ -3407,6 +3541,20 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
             import hashlib
             trace.record("validation_after_sync", path=validation_report_after_sync.name,
                          sha256=hashlib.sha256(validation_report_after_sync.read_bytes()).hexdigest(), passed=True)
+            # Recheck main after the validated merge. This emits the canonical
+            # final no-op witness when main is stable; if main advanced again,
+            # preserve the new merge and require validation of that newer tree.
+            _checkpoint_impl(workstream_id, False, repo, trace)
+            changed_again = sync_main(path)
+            trace.record("main_sync", changed=changed_again,
+                         head=git("rev-parse", "HEAD", cwd=path),
+                         main_sha=git("rev-parse", "origin/main", cwd=path))
+            if changed_again:
+                trace.publish()
+                raise WorkstreamError(
+                    "main advanced again after after-sync validation; provide a fresh green "
+                    "--validation-report-after-sync for the latest synchronization; recovery state retained"
+                )
     if trace:
         if not trace.publish():
             raise WorkstreamError(
@@ -3416,6 +3564,7 @@ def _finish_impl(workstream_id: str, validation_report: Path, validation_report_
         if requires_source_span_witnesses:
             source_span_error = _source_span_sync_merge_witness_error(
                 workstream_id, path, git("rev-parse", "HEAD", cwd=path), trace,
+                require_final_noop=True,
             )
             if source_span_error:
                 raise WorkstreamError(source_span_error)

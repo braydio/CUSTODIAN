@@ -75,14 +75,20 @@ class WorkstreamTests(unittest.TestCase):
         merge_commit = git(self.repo, "rev-parse", "HEAD")
 
         run_id = "20261031T000000Z-123456abcdef"
+        claim_oid = git(
+            self.repo, "commit-tree", f"{source_base}^{{tree}}", "-p", source_base,
+            "-m", f"workstream claim {workstream_id} codex:{os.getpid()}:{run_id}",
+        )
         trace = workstream.RunTrace.start(
             self.repo, workstream_id, packet=active_packet, agent="codex", run_id=run_id,
         )
         trace.record("remote_claim_acquired", remote_ref=f"refs/heads/dispatch-claims/{workstream_id}",
-                     claim_oid=source_base, main_sha=source_base)
+                     local_ref=f"refs/custodian/claims/{workstream_id}/{run_id}",
+                     claim_oid=claim_oid, main_sha=source_base)
         trace.record("worktree_published", worktree=str(self.repo), branch=branch,
                      head=source_base, upstream=source_base, clean=True)
         if witness:
+            trace.record("checkpoint_started", remove_worktree=False)
             trace.record("checkpoint_completed", branch=branch, remote_head=merge_first,
                          removed=False)
             trace.record("worktree_resumed", branch=branch, worktree=str(self.repo),
@@ -95,7 +101,7 @@ class WorkstreamTests(unittest.TestCase):
             workstream_id, self.repo, merge_commit, trace,
         )
         self.assertIsNotNone(error)
-        self.assertIn("unique exact lifecycle witness", error)
+        self.assertIn("checkpoint", error)
 
     def test_finish_source_span_accepts_exact_checkpoint_resume_merge_witness(self):
         workstream_id, source_base, merge_commit, _, trace = self._source_sync_merge_fixture()
@@ -104,41 +110,217 @@ class WorkstreamTests(unittest.TestCase):
         )
         self.assertIsNone(error)
 
-    def test_finish_source_span_accepts_exact_changed_main_sync_witness(self):
+    def test_finish_source_span_rejects_changed_main_sync_without_checkpoint(self):
         workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
+        trace.record("main_sync", changed=True, head=merge_commit, main_sha=main_sha)
+        error = workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace,
+        )
+        self.assertIsNotNone(error)
+        self.assertIn("checkpoint", error)
+
+    def test_finish_source_span_accepts_changed_main_sync_after_verified_checkpoint(self):
+        workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
+        merge_first = git(self.repo, "rev-parse", f"{merge_commit}^1")
+        trace.record("checkpoint_started", remove_worktree=False)
+        trace.record("checkpoint_completed", branch=workstream.branch_for(workstream_id),
+                     remote_head=merge_first, removed=False)
         trace.record("main_sync", changed=True, head=merge_commit, main_sha=main_sha)
         error = workstream._source_span_sync_merge_witness_error(
             workstream_id, self.repo, merge_commit, trace,
         )
         self.assertIsNone(error)
 
-    def test_finish_source_span_rejects_tampered_or_reused_lifecycle_witnesses(self):
-        workstream_id, _, merge_commit, _, trace = self._source_sync_merge_fixture()
+    def test_finish_source_span_requires_exact_final_noop_after_changed_sync(self):
+        workstream_id, _, merge_commit, main_sha, trace = self._source_sync_merge_fixture(witness=False)
+        merge_first = git(self.repo, "rev-parse", f"{merge_commit}^1")
+        trace.record("checkpoint_started", remove_worktree=False)
+        trace.record("checkpoint_completed", branch=workstream.branch_for(workstream_id),
+                     remote_head=merge_first, removed=False)
+        trace.record("main_sync", changed=True, head=merge_commit, main_sha=main_sha)
+        trace.record("main_sync", changed=False, head=merge_commit, main_sha=main_sha)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace, require_final_noop=True,
+        ))
+
         original = trace.path.read_text()
-        mutations = ("wrong-run", "wrong-packet", "wrong-branch", "wrong-claim-base",
-                     "wrong-resume-head", "wrong-worktree", "duplicate-resume", "reordered")
+        events = [json.loads(line) for line in original.splitlines()]
+        no_op = events[-1]
+        no_op["data"]["main_sha"] = "0" * 40
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("final no-op", workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace, require_final_noop=True,
+        ))
+
+        events = [json.loads(line) for line in original.splitlines()]
+        events.append(json.loads(json.dumps(events[-1])))
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("final no-op", workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, merge_commit, trace, require_final_noop=True,
+        ))
+        trace.path.write_text(original)
+
+    def test_finish_source_span_binds_two_changed_sync_merges_to_separate_checkpoints(self):
+        workstream_id, _, first_merge, first_main, trace = self._source_sync_merge_fixture()
+        branch = workstream.branch_for(workstream_id)
+        events = [json.loads(line) for line in trace.path.read_text().splitlines()]
+        events = [event for event in events if event["event"] != "worktree_resumed"]
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        trace.record("main_sync", changed=True, head=first_merge, main_sha=first_main)
+
+        git(self.repo, "checkout", "main")
+        (self.repo / "main-change-2.txt").write_text("second main advance\n")
+        git(self.repo, "add", "main-change-2.txt")
+        git(self.repo, "commit", "-m", "advance main a second time")
+        git(self.repo, "push", "origin", "main")
+        git(self.repo, "fetch", "origin")
+        second_main = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "checkout", branch)
+        git(self.repo, "merge", "--no-ff", "origin/main", "-m", "synchronize main again")
+        second_merge = git(self.repo, "rev-parse", "HEAD")
+        second_parent = git(self.repo, "rev-parse", f"{second_merge}^1")
+        self.assertEqual(second_parent, first_merge)
+
+        trace.record("checkpoint_started", remove_worktree=False)
+        trace.record("checkpoint_completed", branch=branch, remote_head=second_parent,
+                     removed=False)
+        trace.record("main_sync", changed=True, head=second_merge, main_sha=second_main)
+        trace.record("main_sync", changed=False, head=second_merge, main_sha=second_main)
+        self.assertIsNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, second_merge, trace, require_final_noop=True,
+        ))
+
+        original = trace.path.read_text()
+        events = [json.loads(line) for line in original.splitlines()]
+        second_checkpoint = next(
+            event for event in events
+            if event["event"] == "checkpoint_completed"
+            and event["data"].get("remote_head") == second_parent
+        )
+        events.remove(second_checkpoint)
+        second_checkpoint_start = max(
+            i for i, event in enumerate(events)
+            if event["event"] == "checkpoint_started"
+            and i < events.index(next(e for e in events if e["event"] == "main_sync"
+                                      and e["data"].get("head") == second_merge))
+        )
+        del events[second_checkpoint_start]
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("checkpoint", workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, second_merge, trace, require_final_noop=True,
+        ))
+
+        trace.path.write_text(original)
+
+    def test_finish_source_span_rejects_wrong_merge_tree_parent_order_and_main(self):
+        workstream_id, source_base, merge_commit, _, trace = self._source_sync_merge_fixture()
+        first_parent = git(self.repo, "rev-parse", f"{merge_commit}^1")
+        second_parent = git(self.repo, "rev-parse", f"{merge_commit}^2")
+        original_trace = trace.path.read_text()
+
+        wrong_tree_commit = git(
+            self.repo, "commit-tree", f"{first_parent}^{{tree}}",
+            "-p", first_parent, "-p", second_parent, "-m", "wrong deterministic tree",
+        )
+        events = [json.loads(line) for line in original_trace.splitlines()]
+        resume = next(event for event in events if event["event"] == "worktree_resumed")
+        resume["data"]["head"] = wrong_tree_commit
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIn("deterministic merge tree", workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, wrong_tree_commit, trace,
+        ))
+
+        wrong_order_commit = git(
+            self.repo, "commit-tree", f"{merge_commit}^{{tree}}",
+            "-p", second_parent, "-p", first_parent, "-m", "reversed synchronization parents",
+        )
+        events = [json.loads(line) for line in original_trace.splitlines()]
+        resume = next(event for event in events if event["event"] == "worktree_resumed")
+        resume["data"]["head"] = wrong_order_commit
+        trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
+        self.assertIsNotNone(workstream._source_span_sync_merge_witness_error(
+            workstream_id, self.repo, wrong_order_commit, trace,
+        ))
+
+        trace.path.write_text(original_trace)
+        old_main = git(self.repo, "rev-parse", "origin/main")
+        git(self.repo, "update-ref", "refs/remotes/origin/main", source_base)
+        try:
+            self.assertIn("outside origin/main", workstream._source_span_sync_merge_witness_error(
+                workstream_id, self.repo, merge_commit, trace,
+            ))
+        finally:
+            git(self.repo, "update-ref", "refs/remotes/origin/main", old_main)
+
+    def test_finish_source_span_rejects_tampered_or_reused_lifecycle_witnesses(self):
+        workstream_id, source_base, merge_commit, main_sha, trace = self._source_sync_merge_fixture()
+        original = trace.path.read_text()
+        bad_claim = git(
+            self.repo, "commit-tree", f"{source_base}^{{tree}}", "-p", source_base,
+            "-m", f"forged claim for {workstream_id}",
+        )
+        mutations = (
+            "wrong-run", "wrong-workstream", "wrong-packet", "wrong-schema-version",
+            "wrong-data-shape", "wrong-branch", "wrong-claim-base", "wrong-claim-subject",
+            "wrong-claim-pid", "wrong-checkpoint-head", "removed-checkpoint",
+            "duplicate-checkpoint", "checkpoint-after-resume", "wrong-resume-head",
+            "wrong-resume-branch", "wrong-worktree", "duplicate-resume", "reordered",
+            "wrong-sync-main", "duplicate-sync", "conflicting-sync-resume",
+        )
         for mutation in mutations:
             with self.subTest(mutation=mutation):
                 events = [json.loads(line) for line in original.splitlines()]
                 checkpoints = [event for event in events if event["event"] == "checkpoint_completed"]
                 resumes = [event for event in events if event["event"] == "worktree_resumed"]
+                claims = [event for event in events if event["event"] == "remote_claim_acquired"]
                 if mutation == "wrong-run":
                     events[0]["run_id"] = "20261031T000000Z-000000000000"
+                elif mutation == "wrong-workstream":
+                    events[0]["workstream"] = "agent-other"
                 elif mutation == "wrong-packet":
                     events[0]["packet"] = "custodian/docs/ai_context/task_packets/OTHER.md"
+                elif mutation == "wrong-schema-version":
+                    events[0]["schema_version"] = 2
+                elif mutation == "wrong-data-shape":
+                    events[0]["data"] = []
                 elif mutation == "wrong-branch":
                     checkpoints[0]["data"]["branch"] = "agent/other"
                 elif mutation == "wrong-claim-base":
-                    next(event for event in events if event["event"] == "remote_claim_acquired")["data"]["main_sha"] = "0" * 40
+                    claims[0]["data"]["main_sha"] = "0" * 40
+                elif mutation == "wrong-claim-subject":
+                    claims[0]["data"]["claim_oid"] = bad_claim
+                elif mutation == "wrong-claim-pid":
+                    claims[0]["pid"] += 1
+                elif mutation == "wrong-checkpoint-head":
+                    checkpoints[0]["data"]["remote_head"] = "0" * 40
+                elif mutation == "removed-checkpoint":
+                    checkpoints[0]["data"]["removed"] = True
+                elif mutation == "duplicate-checkpoint":
+                    events.append(json.loads(json.dumps(checkpoints[0])))
+                elif mutation == "checkpoint-after-resume":
+                    events.remove(checkpoints[0])
+                    events.append(checkpoints[0])
                 elif mutation == "wrong-resume-head":
                     resumes[0]["data"]["head"] = "0" * 40
+                elif mutation == "wrong-resume-branch":
+                    resumes[0]["data"]["branch"] = "agent/other"
                 elif mutation == "wrong-worktree":
                     resumes[0]["data"]["worktree"] = "/tmp/other-worktree"
                 elif mutation == "duplicate-resume":
                     events.append(json.loads(json.dumps(resumes[0])))
-                else:
+                elif mutation == "reordered":
                     events.remove(resumes[0])
                     events.insert(events.index(checkpoints[0]), resumes[0])
+                elif mutation in {"wrong-sync-main", "duplicate-sync", "conflicting-sync-resume"}:
+                    sync_data = {"changed": True, "head": merge_commit, "main_sha": main_sha}
+                    if mutation == "wrong-sync-main":
+                        sync_data["main_sha"] = "0" * 40
+                    sync = json.loads(json.dumps(resumes[0]))
+                    sync["event"] = "main_sync"
+                    sync["data"] = sync_data
+                    events.append(sync)
+                    if mutation == "duplicate-sync":
+                        events.append(json.loads(json.dumps(sync)))
                 trace.path.write_text("".join(json.dumps(event) + "\n" for event in events))
                 self.assertIsNotNone(workstream._source_span_sync_merge_witness_error(
                     workstream_id, self.repo, merge_commit, trace,
@@ -164,7 +346,7 @@ class WorkstreamTests(unittest.TestCase):
              mock.patch.object(workstream, "closing_summary_committed_for_workstream"), \
              mock.patch.object(workstream, "validation_green", return_value=True), \
              mock.patch.object(workstream, "git", wraps=workstream.git) as git_call:
-            with self.assertRaisesRegex(workstream.WorkstreamError, "unique exact lifecycle witness"):
+            with self.assertRaisesRegex(workstream.WorkstreamError, "checkpoint"):
                 workstream._finish_impl(
                     workstream_id, self._green_report(), repo=self.repo, trace=trace,
                 )
@@ -1913,6 +2095,7 @@ class WorkstreamTests(unittest.TestCase):
         git(self.repo, "add", "main-advance")
         git(self.repo, "commit", "-m", "main advances")
         git(self.repo, "push", "origin", "main")
+        trace = workstream.RunTrace.resume(self.repo, "needs-sync")
         with mock.patch.object(workstream, "artifact_preflight", return_value=[]):
             with self.assertRaisesRegex(workstream.WorkstreamError, "after-sync"):
                 workstream.finish("needs-sync", self._green_report(), repo=path)
@@ -1921,6 +2104,28 @@ class WorkstreamTests(unittest.TestCase):
                 "needs-sync", self._green_report("validation-2.json"),
                 validation_report_after_sync=self._green_report("after-sync.json"), repo=path,
             )
+        events = [json.loads(line) for line in trace.path.read_text().splitlines()]
+        checkpoint_positions = [i for i, event in enumerate(events)
+                                if event["event"] == "checkpoint_completed"]
+        changed_sync_positions = [i for i, event in enumerate(events)
+                                  if event["event"] == "main_sync"
+                                  and event["data"].get("changed") is True]
+        self.assertEqual(len(checkpoint_positions), 2)
+        self.assertEqual(len(changed_sync_positions), 1)
+        self.assertLess(checkpoint_positions[0], changed_sync_positions[0])
+        changed_sync = events[changed_sync_positions[0]]["data"]
+        first_checkpoint = events[checkpoint_positions[0]]["data"]
+        self.assertEqual(first_checkpoint["branch"], "agent/needs-sync")
+        self.assertIs(first_checkpoint["removed"], False)
+        self.assertEqual(
+            first_checkpoint["remote_head"],
+            git(self.repo, "rev-parse", f"{changed_sync['head']}^1"),
+        )
+        final_noop_positions = [i for i, event in enumerate(events)
+                                if event["event"] == "main_sync"
+                                and event["data"].get("changed") is False]
+        self.assertEqual(len(final_noop_positions), 1)
+        self.assertGreater(final_noop_positions[0], changed_sync_positions[0])
         self.assertFalse(path.exists())
 
     def test_teardown_tolerates_already_deleted_remote_branch(self):
