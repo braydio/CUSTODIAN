@@ -1,7 +1,7 @@
 {
   "type": "planning_manifest_only_not_custodian_asset_family_v2",
   "pilot_id": "sepulcher-modular-material-playtest-v1",
-  "status": "proposed_minimal_four_source_pilot__not_artwork_approval_or_runtime_implementation",
+  "status": "first_image_candidate_generated__technical_tune_needed__pilot_sources_unapproved",
   "authoring_chat_url": null,
   "authoring_chat_url_status": "awaiting exact current chat URL",
   "basis_main_commit": "1fb718fe908d3f4c8bd293c79000eda165ec55bf",
@@ -20,7 +20,9 @@
     "assets_registered": 0,
     "production_queue_changed": false,
     "existing_sepulcher_grave_review_untouched": true,
-    "original_72_core_images_unmodified": true
+    "original_72_core_images_unmodified": true,
+    "generated_candidate_count": 1,
+    "approved_source_count": 0
   },
   "assets": [
     {
@@ -56,7 +58,54 @@
       "source_sha256": null,
       "normalized_sha256": null,
       "dropbox_receipt": null,
-      "asset_v2_job": null
+      "asset_v2_job": null,
+      "candidate_review": {
+        "date": "2026-11-01",
+        "id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+        "generated_candidate": {
+          "generation_id": "f9e5b7c9-02a1-425b-a08c-1f1bbc84f988",
+          "source_filename": "worn_limestone_and_basalt_garden_paving.png",
+          "real_source_pixels": [
+            1254,
+            1254
+          ],
+          "color_mode": "RGB",
+          "byte_size": 3783377,
+          "sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+          "storage": "ChatGPT conversation artifact; neither published to Git nor uploaded to Dropbox; availability after interruption unverified"
+        },
+        "planning_target": {
+          "width": 512,
+          "height": 512,
+          "frames": 1,
+          "opaque": true,
+          "edge_repeat_requirement": "all 4 edges/corners continuous at 1:1 runtime scale"
+        },
+        "evaluation": {
+          "technical_status": "NEEDS_CORRECTION__NO_INGEST",
+          "human_art_approval": "PENDING",
+          "strong_points": [
+            "Detailed limestone and charcoal basalt masonry",
+            "Restrained aged-bronze inlays and high-quality wear",
+            "Strict top-down viewpoint, all-walkable floor"
+          ],
+          "issues": [
+            "1254x1254 generated source, not exact 512x512 target; normalization/resampling requires review",
+            "512x512 3x3 repeated preview shows conspicuous repeated dark blocks and L-shaped bronze inlays; repeated geometry dominates",
+            "Source left/right border RGB MAE 14.56 vs mean adjacent horizontal neighbor RGB MAE 10.44; top/bottom MAE 12.45 vs mean vertical neighbor 11.73, so true seamless edge continuity not established",
+            "Further generation attempts to simplify game appearance risk losing valuable texture detail; preserve original as candidate"
+          ],
+          "measure_method": "Pillow/numpy: mean absolute per-channel adjacent RGB differences at original 1254px source boundaries, vs all internal adjacent pixel pairs; measurements are diagnostic, not a calibrated pass/fail threshold",
+          "repeat_test": "Resize 1254 source to 512x512 using Lanczos; repeat identical reduced image 3x3; preview saved in authoring conversation only. Diagnostic resampled file is NOT accepted normalized production source."
+        },
+        "next_action": "Keep candidate as source/style reference pending review. Do not mark approved or move to pilot asset 2. Prefer deterministic seam correction and/or a new neutral repeated base without distinctive bronze L-motifs; reserve strong metallic floor geometry for independent overlay state. Recheck seam at true 512 size and 3x3 repeat, preserve original detail, then request individual human art decision. Do not automatically simplify/redraw entire image.",
+        "delivery": {
+          "dropbox_uploaded": false,
+          "source_work_staged": false,
+          "inbox_staged": false,
+          "asset_v2_ingested": false
+        }
+      }
     },
     {
       "id": "hub_first_set_sepulcher_gardens_floor_materials/paving_damage_overlay",
@@ -196,5 +245,12 @@
     "pass": "Human prefers/accepts modular scene detail, readability, projection and repetition at real Operator scale, and objective checks pass",
     "fail": "If tiling, detail loss or wall projection fails, correct only the culpable individual source or presentation composition; never regenerate the whole level",
     "post_pass": "Only then revise the 72-core V1 inventory and deterministic generation sets to replace large plate strategy, without silently changing Dust Lung DL0"
+  },
+  "review_checkpoint": {
+    "active_asset_id": "hub_first_set_sepulcher_gardens_floor_materials/paving_base",
+    "phase": "technical_review_complete__human_approval_pending",
+    "candidate_sha256": "62341f6850cd526b5b03187d9c9035318453c2b7cf2d6e213f19f1597af967bf",
+    "next_step": "Resolve seamless repetition/edge issues on first paving candidate before attempting the overlay; original source/preview currently only in conversation artifacts.",
+    "last_verified_main": "7eaf776dfe57b971069262925275331bb78c7dbc"
   }
 }
