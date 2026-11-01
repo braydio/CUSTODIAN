@@ -4,7 +4,7 @@
 - Workstream: `sepulcher-canonical-operator-floor-v2-preview-v1`
 - Category: `operator-actors`
 - Authoring handoff: `auto`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Priority: `P1`
 - Depends on: `sepulcher-paving-native-quad-playtest-v1`
@@ -22,8 +22,8 @@
 - Visual review: `conditional`
 - Goal: `In one Codex implementation turn deliver an immediately runnable new Sepulcher playtest using the ACTUAL playable Operator scene/controller with the approved 128px 2.5D visual source, plus a quiet procedural stone floor/rare bronze accents and a letterbox-free floor framing comparison, without falsely promoting incomplete gameplay animations.`
 - Completion boundary: `One ADDITIVE V2 playable Godot scene with real Operator movement/collision/HUD and default canonical-128 visual, four floor modes, independent old-vs-new character comparison, dynamic camera framing under dev-only scene ownership, focused smoke, and compact same-camera screenshots. The existing Sepulcher V1 scene remains untouched while its original paired review is held. This workstream implements and lands code in one executor turn; paired independent review remains a separate required gate.`
-- Current measured state: `As of main 7a6dfdf27cc4c0025e3dff8124b9728f66369a92, V1 Sepulcher scene is landed at 3ac23cda031d80fdaf283b5d9a8b5a88db2782e8, but its original independent review is preserved with no verdict; an exact source-scope correction/recovery workflow is separate. The V1 scene instantiates the real operator.tscn whose live SpriteFrames resolve unarmed idle and locomotion to legacy_96. The approved canonical 1920x1024 RGBA 8-direction x15-frame relaxed idle is LFS-backed in custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png, source SHA-256 d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3; source timing and complete 128px locomotion/combat cohort remain unapproved/unavailable. asset_drop/.gdignore prevents Godot resource importing source_work directly. The V1 floor has visible repeating bronze and black screen gutters at 1280x720.`
-- Evidence: `V1 captures /CUSTODIAN/visual_review/sepulcher-paving-native-quad-playtest-v1/20261101T111040Z/REVIEW_MANIFEST.json; exact canonical source/visual contract; legacy_96 runtime manifest; live V1 scene and smoke.`
+- Current measured state: `Implementation commit ba76204b8ef95224bd49ba0372b3c43000eb59b4 adds the standalone V2 scene with the actual Operator/controller/bootstrap, exact dev-only canonical idle source, four floor modes, scoped 1.25 camera, focused smoke, and matched captures. V1 is unchanged; the original V1 review claim remains preserved. Production locomotion/combat coverage and human visual approval remain incomplete by design.`
+- Evidence: `Source SHA-256 d4a6a5f5ff5fe64c3ad0f44a3f31b5d1ca2c276afe7a4c52d00337e7aaf175f3; exact byte/pixel/120-frame checks; V2 and neighboring V1 Godot smokes PASS; changed validation 4/4 PASS with complete coverage; LFS fsck PASS; four renderer captures at /CUSTODIAN/visual_review/sepulcher-canonical-operator-floor-v2-preview-v1/20261101T135136Z/REVIEW_MANIFEST.json.`
 - Task-specific authority: `design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md; design/04_architecture/OPERATOR_RUNTIME_ARCHITECTURE.md; existing real operator.tscn, body presenter and gameplay camera; V1 playtest scene; active workstream and review scope rules. This task has NO authority to change WB25-6 release gates or grant production Operator approval.`
 - Work surface: `custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2.tscn; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2_level.tscn; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/sepulcher_material_operator_v2_level.gd; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/operator_2_5d_preview_presentation.gd; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/preview/operator_2_5d_idle_relaxed_8dir_15f_128.png; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/preview/operator_2_5d_idle_relaxed_8dir_15f_128.png.import; custodian/game/world/levels/authored/dev/sepulcher_material_operator_v2/README.md; custodian/tools/operator/preview_stage_canonical_idle.py; custodian/tools/validation/levels/sepulcher_material_operator_v2_smoke.gd; custodian/tools/validation/levels/sepulcher_material_operator_v2_capture.gd; custodian/tools/validation/validation_manifest.json; auto-generated Godot scene-local .gd.uid/.import sidecars only for these new files. All new scene-local scripts and resource paths MUST be explicitly in scope; NEVER edit V1 Sepulcher scene, its archived implementation/review packet, V1 smoke/capture, operator.gd, operator.tscn, production SpriteFrames/catalog/manifest, source_work master, production camera.gd or normal game main_scene.`
 - Publication inputs: `custodian/asset_drop/source_work/operator/operator_2_5d_first_animation/unarmed_posture_idle_relaxed_01_full_body_v1_source.png, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot.tscn, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot_level.tscn, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/sepulcher_modular_material_pilot_level.gd, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/preview/generated/native_paving_nw.png, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/preview/generated/native_paving_ne.png, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/preview/generated/native_paving_sw.png, custodian/game/world/levels/authored/dev/sepulcher_modular_material_pilot/preview/generated/native_paving_se.png, custodian/game/actors/operator/operator.tscn, custodian/game/world/camera.gd, custodian/game/world/levels/level_playtest_bootstrap.gd, design/02_features/animation/OPERATOR_2_5D_VISUAL_CONTRACT.md, custodian/docs/ai_context/task_packets/OPERATOR_2_5D_RUNTIME_PROMOTION.md, custodian/tools/validation/levels/sepulcher_modular_material_pilot_smoke.gd, custodian/tools/iteration/publish_review_artifacts.py`
@@ -59,6 +59,27 @@ This intentionally tests the practical trade-off: native photographed stone as a
 ## No collisions with preserved V1 review
 
 The pending `review-sepulcher-paving-native-quad-playtest-v1` has a preserved host-validation claim/checkout. New V2 implementation is ADDITIVE under a different folder/lock and MAY READ V1 assets and scene, but may NOT modify V1 files, its archived packet, its reviewer claim/run/branch/worktree, or the pending correction attestation. Its changed-file validation registration adds a distinct new owner key; do not rewrite V1 validation entry. After this V2 implementation lands, its own paired review is independent and still required.
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Superseded/legacy production path disposition: `intentionally-preserved`
+- Evidence: `The V2 scene directly instances the real operator.tscn and full gameplay wrapper; real input movement passed; 1–4/Tab/B/V modes passed structural assertions; the source copy SHA and all 120 native atlas frames match; original floor samples remain native; V2 smoke and neighboring V1 smoke pass; changed validation is 4/4 with complete coverage; four same-position/same-camera renderer captures are published in the visual-review manifest above. Production motion art and subjective approval are deferred exactly as the packet specifies.`
+
+## Execution Feedback
+
+- Feedback schema: `custodian.task_feedback.v1`
+- Outcome: `success`
+- Friction severity: `low`
+- What went wrong: `Initial smoke found invalid GDScript constant expressions and camera/position settling assumptions; corrected before the accepted validation run.`
+- Root cause / contributing factors: `GDScript does not constant-evaluate Vector2.normalized() or constructed PackedVector2Array values, and the existing gameplay camera eases zoom.`
+- Prevention / pipeline improvement: `Use literal preview vectors, instance-local route arrays, and direct scene-scoped preview zoom through the existing framing API.`
+- Tooling / docs drift discovered: `none`
+- Follow-up: `none`
+- What worked: `The real Operator/controller/bootstrap stayed authoritative, with structural and renderer evidence produced by repeatable focused scripts.`
 
 ## Next Handoff
 
