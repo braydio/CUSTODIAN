@@ -3735,10 +3735,11 @@ class PairedReviewRunnerTests(unittest.TestCase):
         original.update({"phase": "claim_profile_mismatch", "reviewed_main": fixture["reviewed_main"]})
         original_path.write_text(json.dumps(original, sort_keys=True) + "\n")
         receipt = dict(fixture["receipt"], run_id="20261017T120001Z-abcdefabcdef",
-                       authoring_chat=fixture["chat"])
+                       authoring_chat=fixture["chat"], historical_extension="x" * 1000)
         (fixture["run_dir"] / "claim-receipt.json").write_text(json.dumps(receipt, sort_keys=True) + "\n")
-        (fixture["run_dir"] / "claim.stdout").write_text(
-            runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n")
+        claim_output = runner.CLAIM_SENTINEL + json.dumps(receipt, sort_keys=True) + "\n"
+        self.assertGreater(len(claim_output), 1200)
+        (fixture["run_dir"] / "claim.stdout").write_text(claim_output[:1200])
 
         continuation = fixture["run_dir"] / "continuation-01"
         continuation.mkdir()
@@ -3747,9 +3748,19 @@ class PairedReviewRunnerTests(unittest.TestCase):
         (continuation / "codex.jsonl").write_text("\n".join((
             json.dumps({"type": "thread.started", "thread_id": "thread-review-sample"}),
             json.dumps({"type": "turn.started"}),
+            json.dumps({"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'rg -n pattern file'",
+                "exit_code": 1, "status": "failed", "aggregated_output": "",
+            }}),
+            json.dumps({"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'python3 inspect.py'",
+                "exit_code": 1, "status": "failed",
+                "aggregated_output": "Traceback (most recent call last):\\nImportError: exploratory import\\n",
+            }}),
             json.dumps({"item": {"type": "agent_message", "text": logged_message}}),
             json.dumps({"type": "turn.completed"}),
         )) + "\n")
+        (continuation / "codex.stderr").write_text("")
         lock = runner.common_dir(repo) / "custodian-review-runs/locks/review-sample.lock"
         lock.parent.mkdir(parents=True, exist_ok=True)
         lock.touch()
@@ -3780,7 +3791,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             "phase": "coordinator_closeout", "continuation_number": 1, "reviewer_launch_count": 1,
             "exit_code": 0, "original_run_dir": str(fixture["run_dir"]),
             "last_message": str(continuation / "last-message.txt"),
-            "invocation": ["codex", "exec", "--ephemeral", "--json", "--cd", "<continuation-dir>",
+            "invocation": ["codex", "exec", "--ephemeral", "--json", "--cd", receipt["worktree"],
                            "--output-last-message", "<continuation-dir>/last-message.txt", "-"],
             "branch": receipt["branch"], "worktree": receipt["worktree"],
             "active_packet_path": active, "target_workstream": "sample", "target_packet_path": target_path,
@@ -3814,6 +3825,11 @@ class PairedReviewRunnerTests(unittest.TestCase):
         self.assertEqual(landed, "f" * 40)
         self.assertEqual(len(finish_calls), 1)
         self.assertEqual(finish_calls[0][0][4], continuation.resolve())
+        parsed_events = [json.loads(line) for line in (continuation / "codex.jsonl").read_text().splitlines()]
+        command_classifications = runner._classify_session_command_failures(parsed_events)
+        self.assertEqual([entry["classification"] for entry in command_classifications], [
+            "search_no_match_candidate", "python_traceback_requires_reconciliation",
+        ])
 
         def reject_without_lifecycle(reason):
             before_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
@@ -3846,7 +3862,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             ("reviewed_main", "b" * 40, "target, reviewed main"),
             ("implementation_commit", "b" * 40, "target, reviewed main"),
             ("branch", "agent/foreign", "branch, worktree, or packet"),
-            ("worktree", str(repo), "branch, worktree, or packet"),
+            ("worktree", str(repo), "original dispatcher claim could not be authenticated|branch, worktree, or packet"),
             ("review_cycle", True, "target, reviewed main"),
         ):
             child = json.loads(child_bytes)
@@ -3869,6 +3885,21 @@ class PairedReviewRunnerTests(unittest.TestCase):
         final_path = continuation / "last-message.txt"
         jsonl_path = continuation / "codex.jsonl"
         original_final_bytes, original_jsonl_bytes = final_path.read_bytes(), jsonl_path.read_bytes()
+        events = [json.loads(line) for line in original_jsonl_bytes.splitlines()]
+        events.insert(2, {"type": "item.completed", "item": {
+            "type": "command_execution", "command": "python validate_checkout_profile for both review packets",
+            "exit_code": 0, "status": "completed",
+            "aggregated_output": (
+                "first review packet required=399 uncovered=[]\\n"
+                "Traceback (most recent call last):\\n"
+                "RunnerError: published review dependency is absent from origin/main: "
+                "custodian/docs/ai_context/task_packets/AGENT_PAIRED_REVIEW_RUNNER_PUBLICATION_INPUT_GRAMMAR_V1.md\\n"
+            ),
+        }})
+        jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
+        with self.subTest(capture="hidden-required-profile-failure-with-zero-shell-exit"):
+            reject_without_lifecycle("unrecovered required profile dependency failure")
+        jsonl_path.write_bytes(original_jsonl_bytes)
         final_path.write_text(final_message + "tampered\n")
         with self.subTest(capture="tampered-final"):
             reject_without_lifecycle("recovery plan's original capture digests")
@@ -3877,13 +3908,13 @@ class PairedReviewRunnerTests(unittest.TestCase):
         events[2]["item"]["text"] = final_message[:100]
         jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
         with self.subTest(capture="unapproved-prefix"):
-            reject_without_lifecycle("exact pinned transformation")
+            reject_without_lifecycle("exact pinned transformation|original capture digests")
         forged_final = ("Workstream: review-sample\nIndependent disposition: passed.\n" + "Different review. " * 120)
         final_path.write_text(forged_final)
         events[2]["item"]["text"] = runner._redacted_agent_message(forged_final)
         jsonl_path.write_text("\n".join(json.dumps(event) for event in events) + "\n")
         with self.subTest(capture="mutually-consistent-replay"):
-            reject_without_lifecycle("recovery plan's original capture digests")
+            reject_without_lifecycle("recovery plan's original capture digests|exact pinned transformation")
         final_path.write_bytes(original_final_bytes)
         jsonl_path.write_bytes(original_jsonl_bytes)
         child_bytes = child_path.read_bytes()
@@ -3916,7 +3947,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
         claim_bytes = claim_stdout.read_bytes()
         altered_claim = dict(receipt, run_id="20261017T120002Z-abcdefabcdef")
         claim_stdout.write_text(runner.CLAIM_SENTINEL + json.dumps(altered_claim, sort_keys=True) + "\n")
-        reject_without_lifecycle("dispatcher output|claim receipt|claim provenance")
+        reject_without_lifecycle("dispatcher output|claim receipt|claim provenance|evidence changed")
         claim_stdout.write_bytes(claim_bytes)
 
         base_head = subprocess.run(["git", "-C", str(worktree), "rev-parse", "HEAD"], check=True,
@@ -10440,6 +10471,7 @@ Authoring chat: {chat}
                                      "text": runner._redacted_agent_message(final) if logged is None else logged}},
                            {"type": "turn.completed"}])
         (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+        (root / "codex.stderr").write_text("")
         return final, source, control
 
     def test_exact_safe_output_transformation_is_accepted_but_prefix_is_not(self):
@@ -10468,6 +10500,41 @@ Authoring chat: {chat}
             self.write_session(root, turns=2)
             with self.assertRaisesRegex(runner.RunnerError, "exactly one identified completed turn"):
                 runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+    def test_session_parser_rejects_stderr_and_turn_failures_but_classifies_commands(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _, source, control = self.write_session(root)
+            (root / "codex.stderr").write_text("reviewer warning\n")
+            with self.assertRaisesRegex(runner.RunnerError, "stderr is non-empty"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+            _, source, control = self.write_session(root)
+            events = [json.loads(line) for line in (root / "codex.jsonl").read_text().splitlines()]
+            events.insert(2, {"type": "turn.failed", "error": {"message": "turn failed"}})
+            (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            with self.assertRaisesRegex(runner.RunnerError, "error or failure event"):
+                runner._parse_redacted_final_session(root, {"fresh": True, "exit_code": 0}, source, control)
+
+            _, source, control = self.write_session(root)
+            events = [json.loads(line) for line in (root / "codex.jsonl").read_text().splitlines()]
+            events.insert(2, {"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'rg absent path'",
+                "status": "failed", "exit_code": 1, "aggregated_output": "",
+            }})
+            events.insert(3, {"type": "item.completed", "item": {
+                "type": "command_execution", "command": "/bin/bash -lc 'python3 inspect.py'",
+                "status": "failed", "exit_code": 1,
+                "aggregated_output": "Traceback (most recent call last):\\nImportError: exploratory import\\n",
+            }})
+            (root / "codex.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+            _, session = runner._parse_redacted_final_session(
+                root, {"fresh": True, "exit_code": 0}, source, control)
+            failures = runner._classify_session_command_failures(events)
+            self.assertEqual([entry["classification"] for entry in failures], [
+                "search_no_match_candidate", "python_traceback_requires_reconciliation",
+            ])
+            self.assertEqual(session["thread_id"], "thread-synthetic")
 
     def test_session_parser_rejects_unapproved_truncation(self):
         with tempfile.TemporaryDirectory() as temp:

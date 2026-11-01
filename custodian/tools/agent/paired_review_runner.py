@@ -960,7 +960,9 @@ def _verified_reviewer_pass(repo: Path, archived_text: str, metadata: dict, work
         runner_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/paired_review_runner.py")
         control_source = read_git_text(repo, reviewed_main, "custodian/tools/agent/workflow_control.py")
         final, session = _parse_redacted_final_session(session_dir, metadata, runner_source, control_source)
-        if expected_session is not None and session != expected_session:
+        capture_pin = ({key: session.get(key) for key in expected_session}
+                       if expected_session is not None else None)
+        if expected_session is not None and capture_pin != expected_session:
             raise RunnerError("reviewer session does not match the recovery plan's original capture digests")
     else:
         if expected_session is not None:
@@ -1417,7 +1419,6 @@ def _committed_pass_continuation_identity(repo: Path, workstream: str, worktree:
         original = json.loads((original_dir / "metadata.json").read_text(encoding="utf-8"))
         child = json.loads((continuation_dir / "metadata.json").read_text(encoding="utf-8"))
         journal = json.loads((continuation_dir / "rc116-recovery-journal.json").read_text(encoding="utf-8"))
-        claim_text = (original_dir / "claim.stdout").read_text(encoding="utf-8")
         claim_file = json.loads((original_dir / "claim-receipt.json").read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise RunnerError("committed PASS continuation identity evidence is missing or malformed") from exc
@@ -1436,10 +1437,14 @@ def _committed_pass_continuation_identity(repo: Path, workstream: str, worktree:
             or child.get("original_run_dir") != str(original_dir)):
         raise RunnerError("continuation is not the one completed reviewer turn awaiting coordinator closeout")
     try:
-        claim = parse_claim_receipt(claim_text, workstream, repo)
+        claim, claim_source = _host_validation_claim_receipt(
+            original_dir, workstream, repo,
+            {**original, "recovery_worktree": child.get("worktree")},
+            str(child.get("active_packet_path", "")),
+        )
     except RunnerError as exc:
         raise RunnerError("original dispatcher claim could not be authenticated: " + str(exc)) from exc
-    if claim_file != claim:
+    if claim_file != claim or claim_source != "claim-receipt.json":
         raise RunnerError("original claim receipt file disagrees with the dispatcher output")
     if (not _RUN_ID_RE.fullmatch(str(claim.get("run_id", "")))
             or child.get("branch") != claim.get("branch")
@@ -2742,7 +2747,7 @@ def _verify_redacted_final_capture(final_message: str, logged_message: str,
 def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: str,
                                   control_source: str) -> tuple[str, dict[str, str]]:
     """Authenticate one completed reviewer turn under the pinned JSONL sanitizer."""
-    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt")
+    paths = (run_dir / "codex.jsonl", run_dir / "last-message.txt", run_dir / "codex.stderr")
     if any(path.is_symlink() or not path.is_file() for path in paths):
         raise RunnerError("reviewer JSONL or saved final message is missing or unsafe")
     fresh_session = metadata.get("fresh") is True
@@ -2762,7 +2767,8 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
             and invocation[:3] == ["codex", "exec", "--ephemeral"]
             and "--json" in invocation and "--resume" not in invocation and "--continue" not in invocation
             and cd_index >= 0 and cd_index + 1 < len(invocation)
-            and invocation[cd_index + 1] == "<continuation-dir>"
+            and isinstance(metadata.get("worktree"), str)
+            and invocation[cd_index + 1] == metadata["worktree"]
             and output_index >= 0 and output_index + 1 < len(invocation)
             and invocation[output_index + 1:output_index + 2]
             == ["<continuation-dir>/last-message.txt"]
@@ -2770,11 +2776,14 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
     if not fresh_session or metadata.get("exit_code") != 0:
         raise RunnerError("original reviewer metadata does not prove a fresh successful session")
     try:
-        jsonl_bytes, final_bytes = (path.read_bytes() for path in paths)
+        jsonl_bytes, final_bytes, stderr_bytes = (path.read_bytes() for path in paths)
         final = final_bytes.decode("utf-8")
+        stderr = stderr_bytes.decode("utf-8")
         lines = jsonl_bytes.decode("utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         raise RunnerError("reviewer session evidence is unreadable UTF-8") from exc
+    if stderr.strip():
+        raise RunnerError("reviewer continuation stderr is non-empty and requires independent reconciliation")
     events: list[dict] = []
     for line in lines:
         try:
@@ -2784,6 +2793,20 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
         if not isinstance(event, dict):
             raise RunnerError("reviewer session event is not an object")
         events.append(event)
+    failure_event_types = {
+        "error", "item.failed", "turn.failed", "tool.error", "response.failed", "stream.error",
+    }
+    for event in events:
+        event_type = str(event.get("type", "")).strip().lower()
+        if (event_type in failure_event_types or event_type.endswith((".failed", ".error"))
+                or event.get("error") not in (None, "", {}, [])):
+            raise RunnerError("reviewer session contains an error or failure event")
+        item = event.get("item")
+        if isinstance(item, dict):
+            item_type = str(item.get("type", "")).strip().lower()
+            if (item_type in {"error", "tool_error", "failure", "failed"}
+                    or item.get("error") not in (None, "", {}, [])):
+                raise RunnerError("reviewer session contains an error or failure item")
     threads = [event for event in events if event.get("type") == "thread.started"]
     starts = [index for index, event in enumerate(events) if event.get("type") == "turn.started"]
     completes = [index for index, event in enumerate(events) if event.get("type") == "turn.completed"]
@@ -2801,15 +2824,61 @@ def _parse_redacted_final_session(run_dir: Path, metadata: dict, runner_source: 
             messages.append((index, text))
     if (not messages or any(index <= starts[0] or index >= completes[0] for index, _ in messages)):
         raise RunnerError("reviewer session has no final agent_message before turn completion")
-    verdict = re.compile(r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome)\s*:")
+    verdict = re.compile(
+        r"(?im)^\s*\*{0,2}(?:independent disposition|verdict|review outcome|"
+        r"finding(?:s)?|blocking findings|human_required|human-required)\s*:"
+    )
     if any(verdict.search(text) for _, text in messages[:-1]):
         raise RunnerError("reviewer session contains a contradictory earlier verdict")
     _verify_redacted_final_capture(final, messages[-1][1], runner_source, control_source)
-    return final, {
+    session = {
         "thread_id": threads[0]["thread_id"],
         "codex_jsonl_sha256": _sha256_bytes(jsonl_bytes),
         "last_message_sha256": _sha256_bytes(final_bytes),
     }
+    if metadata.get("schema") == CONTINUATION_SCHEMA:
+        session["command_failures"] = _classify_session_command_failures(events)
+        if any(item["classification"] == "required_profile_dependency_failure"
+               for item in session["command_failures"]):
+            raise RunnerError("reviewer session contains an unrecovered required profile dependency failure")
+    return final, session
+
+
+def _classify_session_command_failures(events: list[dict]) -> list[dict[str, object]]:
+    """Summarize nonzero command records for separate, evidence-based adjudication."""
+    failures = []
+    for index, event in enumerate(events):
+        item = event.get("item")
+        if not isinstance(item, dict) or item.get("type") != "command_execution":
+            continue
+        command = item.get("command")
+        output = item.get("aggregated_output")
+        if not isinstance(command, str) or not isinstance(output, str):
+            raise RunnerError("reviewer command event omits its command or captured output")
+        exit_code = item.get("exit_code")
+        if type(exit_code) is not int:
+            continue
+        has_traceback = "Traceback (most recent call last):" in output
+        if exit_code == 0 and not has_traceback:
+            continue
+        if ("validate_checkout_profile" in command
+                and "RunnerError: published review dependency is absent from origin/main:" in output):
+            classification = "required_profile_dependency_failure"
+        elif "rg " in command and exit_code == 1 and not output.strip():
+            classification = "search_no_match_candidate"
+        elif has_traceback:
+            classification = "python_traceback_requires_reconciliation"
+        else:
+            classification = "nonzero_command_requires_reconciliation"
+        failures.append({
+            "event_index": index,
+            "command": command,
+            "exit_code": exit_code,
+            "classification": classification,
+            "stored_output_sha256": _sha256_bytes(output.encode("utf-8")),
+            "sanitized_output": redact(output),
+        })
+    return failures
 
 
 def _redacted_final_journal_path(common: Path, workstream: str, run_id: str) -> Path:
