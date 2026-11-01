@@ -1,9 +1,198 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T19:20:04Z",
-  "source_main_sha": "0e5da248e93f0395f084f0abb7feba8285132bc0",
+  "generated_at": "2026-11-01T20:14:29Z",
+  "source_main_sha": "5de7fa9fe52bd9b467319042c50b9d280fe59acc",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "inherited-main-resume-provenance-ready-5de7fa9f",
+      "headline": "CUSTODIAN clears a packet handoff for a provenance fix; protected closeout still awaits execution",
+      "summary": "A new P0 implementation/review pair now passes authoring handoff after a metadata correction. It targets a canonical finish that misclassifies cleanly inherited main history as workstream-authored synchronization. No implementation or independent acceptance has occurred; the original summary-rename claim remains protected.",
+      "body": "CUSTODIAN has restored a valid task-packet handoff for a correction to its workstream finish machinery. A protected summary-rename job cannot close because the validator mistakes upstream history inherited during a clean resume for a merge authored by that job. The new correction and independent-review packets are ready for automatic dispatch, but neither has been executed or accepted.\n\nA narrow fix for a blocked finish: The original summary-rename workstream has reported clean committed source and green validation, yet its canonical finish stopped before synchronization. The new workstream must prove which Git history was inherited through a clean resume and which changes were actually authored by the workstream. It must refuse ambiguous history instead of weakening the checkpoint rule.\n\nThe publication gate recovers: The first automatic handoff for the new packet pair failed. A correction to its publication metadata landed, followed by successful repository validation and automatic packet promotion. This clears the earlier authoring failure, not the implementation, independent review, or protected original finish.\n\nWhy it matters beyond one packet: The same source-provenance distinction is checked by canonical finish and the independent-review host validator. A narrowly proven correction could prevent valid work from becoming stranded at closeout without accepting unverified source. WIRE's separate exporter-review attestation and private transport remain outstanding.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-workstream-inherited-main-resume-provenance-v1",
+      "occurred_at": "2026-11-01T20:14:29Z",
+      "bullets": [
+        "New inherited-main provenance implementation/review pair promoted to ready/auto.",
+        "Repository validation and automatic packet handoff passed on the corrected publication.",
+        "Original summary-rename claim remains protected; no finish or teardown verified.",
+        "Next gate: canonical dispatcher eligibility and claim for the implementation."
+      ],
+      "links": [
+        {
+          "title": "Promoted packet pair",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/5de7fa9fe52bd9b467319042c50b9d280fe59acc"
+        },
+        {
+          "title": "Implementation packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/5de7fa9fe52bd9b467319042c50b9d280fe59acc/custodian/docs/ai_context/task_packets/AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1.md"
+        },
+        {
+          "title": "Independent review packet",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/5de7fa9fe52bd9b467319042c50b9d280fe59acc/custodian/docs/ai_context/task_packets/REVIEW_AGENT_WORKSTREAM_INHERITED_MAIN_RESUME_PROVENANCE_V1.md"
+        },
+        {
+          "title": "Passing repository validation",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41345797272"
+        },
+        {
+          "title": "Successful authoring handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41345797223"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has restored a valid task-packet handoff for a correction to its workstream finish machinery. A protected summary-rename job cannot close because the validator mistakes upstream history inherited during a clean resume for a merge authored by that job. The new correction and independent-review packets are ready for automatic dispatch, but neither has been executed or accepted.",
+        "sections": [
+          {
+            "heading": "A narrow fix for a blocked finish",
+            "text": "The original summary-rename workstream has reported clean committed source and green validation, yet its canonical finish stopped before synchronization. The new workstream must prove which Git history was inherited through a clean resume and which changes were actually authored by the workstream. It must refuse ambiguous history instead of weakening the checkpoint rule."
+          },
+          {
+            "heading": "The publication gate recovers",
+            "text": "The first automatic handoff for the new packet pair failed. A correction to its publication metadata landed, followed by successful repository validation and automatic packet promotion. This clears the earlier authoring failure, not the implementation, independent review, or protected original finish."
+          },
+          {
+            "heading": "Why it matters beyond one packet",
+            "text": "The same source-provenance distinction is checked by canonical finish and the independent-review host validator. A narrowly proven correction could prevent valid work from becoming stranded at closeout without accepting unverified source. WIRE's separate exporter-review attestation and private transport remain outstanding."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A passing test is not a finished workstream",
+            "explanation": "The original source's reported green validation did not satisfy canonical finish because its source-span history was ambiguous. The correction addresses provenance, not the underlying feature implementation."
+          },
+          {
+            "title": "One provenance boundary has two guardians",
+            "explanation": "Both the workstream finish producer and the independent-review consumer must independently authenticate inherited versus authored Git history. Fixing only one would leave the other gate inconsistent."
+          }
+        ],
+        "takeaway": "The publication failure is resolved, but only the task-packet authoring gate has passed. Execution, independent acceptance and original closeout remain separate.",
+        "next_watch": "Look for a dispatcher-confirmed claim, failing-first real-Git regression tests, canonical landing, and then a genuine independent PASS for the provenance correction."
+      },
+      "details": {
+        "overview": "The inherited-main resume provenance correction is a separate, P0 agent-ops pair. It targets the protected summary-rename run's missing exact checkpoint at inherited Wire merge 38545e4. The packet requires authenticated original claim, clean resume identities, first-parent ancestry, and unchanged strict requirements for workstream-authored synchronization.",
+        "ledger": [
+          {
+            "stage": "Pair publication",
+            "status": "verified published",
+            "evidence": "bf2c91e67b0d and metadata correction 2df98b2c99d on main."
+          },
+          {
+            "stage": "Authoring handoff",
+            "status": "verified success",
+            "evidence": "5de7fa9fe52b promotion; GitHub Actions 41345797223 success."
+          },
+          {
+            "stage": "Repository validation",
+            "status": "verified success",
+            "evidence": "GitHub Actions 41345797272 at corrected publication SHA."
+          },
+          {
+            "stage": "Implementation claim",
+            "status": "unknown",
+            "evidence": "No current canonical dispatcher audit or host claim evidence."
+          },
+          {
+            "stage": "Implementation landing",
+            "status": "not verified",
+            "evidence": "No correction implementation landing in inspected main history."
+          },
+          {
+            "stage": "Independent review",
+            "status": "not verified",
+            "evidence": "Review packet ready/auto but dependency-gated; no PASS receipt."
+          },
+          {
+            "stage": "Original summary-rename teardown",
+            "status": "blocked/reported",
+            "evidence": "Protected original claim and source-run evidence described in published packet; host state not refreshed."
+          }
+        ],
+        "notes": [
+          "The publication exception authorizes one implementation and one independent review, not additional corrective cycles.",
+          "Separate WIRE export-review source attestation and private Dropbox transport remain unaccepted."
+        ],
+        "unknowns": [
+          "Current host dispatcher claimability, worktree/lock state and disk measurements unavailable.",
+          "Original host-private trace and diagnostic refs not independently inspected."
+        ],
+        "actions": [
+          "Dispatcher owner: confirm eligibility, then claim the correction through canonical authority.",
+          "Correction implementer: reproduce and prove inherited-main boundary with adversarial real-Git tests.",
+          "Independent reviewer: evaluate landed correction before original protected finish resumes."
+        ]
+      },
+      "scorecard": {
+        "stage": "Ready for dispatcher eligibility check; not claimed or implemented",
+        "as_of": "2026-11-01T20:14:29Z",
+        "scope": "This named inherited-main provenance implementation and paired independent review only.",
+        "metrics": [
+          {
+            "id": "other-provenance-packets",
+            "label": "PAIR PACKETS",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly two named packet files promoted by 5de7fa9f; not a project-wide count.",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/5de7fa9fe52bd9b467319042c50b9d280fe59acc"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish packet pair",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "bf2c91e6 and 2df98b2c9 publication."
+          },
+          {
+            "label": "Pass automatic authoring handoff",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "5de7fa9f and successful Action 41345797223."
+          },
+          {
+            "label": "Canonical claim",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No full dispatcher audit or live claim record available."
+          },
+          {
+            "label": "Implement and validate correction",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No implementation commit or test receipt."
+          },
+          {
+            "label": "Land and canonical cleanup",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landed correction or teardown evidence."
+          },
+          {
+            "label": "Independent acceptance",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Paired review depends on implementation; no PASS."
+          },
+          {
+            "label": "Resume protected original finish",
+            "status": "blocked",
+            "verification": "reported",
+            "evidence": "Must await correction's independent acceptance and fresh same-claim preflight."
+          }
+        ],
+        "next_gate": "Dispatcher owner must verify eligibility and claim the implementation without touching the protected original claim."
+      },
+      "related": [
+        {
+          "title": "WIRE review recovery gets an exact attestation workstream, but queue validation fails",
+          "context": "Separate source-attestation recovery still needed before the WIRE exporter review can proceed.",
+          "story_id": "wire-review-source-attestation-pair-ready-0e5da248"
+        }
+      ]
+    },
     {
       "id": "wire-review-source-attestation-pair-ready-0e5da248",
       "headline": "WIRE review recovery gets an exact attestation workstream, but queue validation fails",
@@ -1559,152 +1748,24 @@
         ]
       },
       "related": []
-    },
-    {
-      "id": "sepulcher-dropbox-preview-handoff-e4781dbe",
-      "headline": "Sepulcher's original paving source reaches a verified preview handoff",
-      "summary": "The unapproved paving master and self-contained native-quad preview bundle now have recorded Dropbox upload receipts and SHA-256 identifiers. This removes the earlier missing-external-source handoff, but Codex host retrieval, the playable Godot scene, and human art approval remain outstanding.",
-      "body": "Main now records Dropbox receipts for the original 1254px paving master and a preview ZIP with scripts and instructions. The source is still an unapproved candidate. Documentation reports isolated crop/staging checks, but no Codex-host transfer, gameplay preview, or Asset V2 intake. Do not treat a Dropbox upload as production deployment.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "general",
-      "workstream": "sepulcher-paving-native-quad-playtest-v1",
-      "occurred_at": "2026-11-01T09:30:04Z",
-      "bullets": [
-        "Original master and preview bundle have recorded Dropbox revisions and hashes.",
-        "Next gate is exact-byte host retrieval, then a real-Operator scene capture; art approval remains separate."
-      ],
-      "links": [
-        {
-          "title": "Dropbox receipt documentation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
-        },
-        {
-          "title": "Native-quad preview specification",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/543bc5e23cfb969045ada655220917b0c6d50a1f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "Sepulcher Gardens' first paving experiment has cleared an important handoff obstacle: the exact source image and its preview toolkit now have documented Dropbox receipts. The next developer no longer needs to recreate the original artwork to begin the test.",
-        "sections": [
-          {
-            "heading": "The same pixels can travel",
-            "text": "The source master and self-contained preview ZIP have recorded file revisions and SHA-256 fingerprints. Those fingerprints let the Codex host verify it retrieved the intended bytes before producing the four native-resolution crops."
-          },
-          {
-            "heading": "The floor is not in the game yet",
-            "text": "The published package is a preview input, not an approved production asset. The host still needs to retrieve and verify it, build the real-camera Operator scene, and present the result for human review. The earlier visible-repeat problem remains unresolved."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The handoff blocker has narrowed",
-            "explanation": "Previously the preview instructions existed without a verified external source package. The recorded upload receipts provide a concrete retrieval target, although they do not prove the Codex host has downloaded it."
-          }
-        ],
-        "takeaway": "Source handoff is documented; gameplay validation and art acceptance are still separate, unfinished gates.",
-        "next_watch": "Watch for a hash-verified host staging receipt and a real Operator-camera preview before any approval or Asset V2 ingest."
-      },
-      "scorecard": {
-        "stage": "Preview package published; host staging pending",
-        "as_of": "2026-11-01T10:23:33.224Z",
-        "scope": "One unapproved Sepulcher paving candidate and its preview handoff",
-        "metrics": [
-          {
-            "id": "other-pilot-candidates",
-            "label": "GENERATED CANDIDATES",
-            "value": 1,
-            "verification": "verified",
-            "basis": "Pilot manifest generated_candidate_count, within four planned sources",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
-          },
-          {
-            "id": "other-approved-sources",
-            "label": "APPROVED SOURCES",
-            "value": 0,
-            "verification": "verified",
-            "basis": "Pilot manifest approved_source_count=0 within this four-source pilot only",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
-          }
-        ],
-        "steps": [
-          {
-            "label": "First paving candidate technically reviewed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "44c07109"
-          },
-          {
-            "label": "Exact native crop brief landed",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "543bc5e2"
-          },
-          {
-            "label": "Source and preview bundle receipts published",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "e4781dbe"
-          },
-          {
-            "label": "Codex host retrieval and SHA verification",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host receipt"
-          },
-          {
-            "label": "Playable preview and human art approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No runtime capture or approval"
-          }
-        ],
-        "next_gate": "Executor retrieves the recorded Dropbox package and verifies the source hash before preview construction."
-      },
-      "details": {
-        "overview": "GitHub manifest records Dropbox file IDs/revisions and hashes for original master and preview bundle. These are documented upload receipts, not independent host execution evidence.",
-        "ledger": [
-          {
-            "stage": "Source handoff",
-            "status": "documented Dropbox publication",
-            "evidence": "e4781dbe; manifest receipts and SHA-256 values"
-          },
-          {
-            "stage": "Host staging and scene",
-            "status": "unverified",
-            "evidence": "No Codex host staging or playable capture receipt"
-          }
-        ],
-        "notes": [
-          "Source remains unapproved and excluded from production Asset V2."
-        ],
-        "unknowns": [
-          "Codex host transfer, scene execution, human approval"
-        ],
-        "actions": [
-          "Executor: retrieve and hash-check source; artist/user: evaluate actual preview."
-        ]
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T19:20:04Z",
-    "source_main_sha": "0e5da248e93f0395f084f0abb7feba8285132bc0",
+    "observed_at": "2026-11-01T20:14:29Z",
+    "source_main_sha": "5de7fa9fe52bd9b467319042c50b9d280fe59acc",
     "coverage": "partial",
-    "scope": "Named WIRE exporter/review, attestation and transport packets on GitHub main plus recent GitHub Actions; no canonical full dispatcher audit or current host inspection.",
+    "scope": "Inspected named inherited-main provenance packet pair, WIRE packets and recent GitHub Actions on main; no full canonical dispatcher audit.",
     "metrics": [
       {
-        "id": "other-attestation-packets",
-        "label": "ATTESTATION PAIR",
+        "id": "other-provenance-packets",
+        "label": "PROVENANCE PAIR",
         "value": 2,
         "verification": "verified",
-        "basis": "Two named packet files promoted in 0e5da248; not a project-wide queue or claimability count.",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/0e5da248e93f0395f084f0abb7feba8285132bc0"
+        "basis": "Two named inherited-main implementation/review packets promoted in 5de7fa9f; excludes other packets and is not a dispatcher total.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/5de7fa9fe52bd9b467319042c50b9d280fe59acc"
       }
     ],
-    "focus": "Reconcile the new attestation pair's failed queue-authority validation and automatic handoff before a canonical claim.",
-    "note": "Original exporter landed, review blocked. Attestation pair promoted in repository but CI failed. Transport remains dependency-gated; host telemetry unavailable."
+    "focus": "Verify canonical claim eligibility for the inherited-main provenance correction, then obtain its independent acceptance before resuming protected original finish.",
+    "note": "Latest inspected repository validation and handoff passed; earlier WIRE export-review source-attestation and transport gates remain unaccepted. Host metrics unavailable."
   }
 }
