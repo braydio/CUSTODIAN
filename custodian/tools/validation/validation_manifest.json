@@ -6981,6 +6981,26 @@
       "needs_import": false
     },
     {
+      "id": "wire_observation_export_unit",
+      "type": "python",
+      "script": "custodian/tools/agent/test_wire_observation_export.py",
+      "tier": "unit",
+      "tags": [
+        "agent_workflow",
+        "wire",
+        "privacy",
+        "provenance"
+      ],
+      "owners": [
+        "custodian/tools/agent/wire_observation_export.py",
+        "custodian/tools/agent/schemas/wire_observation.v1.schema.json",
+        "custodian/tools/agent/test_wire_observation_export.py",
+        "custodian/tools/validation/validation_manifest.json"
+      ],
+      "timeout_sec": 20,
+      "needs_import": false
+    },
+    {
       "id": "dispatch_claim_contract_unit",
       "type": "python",
       "script": "custodian/tools/agent/test_dispatch.py",

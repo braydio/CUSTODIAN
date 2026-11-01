@@ -3,7 +3,7 @@
 - Packet schema: `custodian.task_packet.v2`
 - Workstream: `agent-wire-observation-export-v1`
 - Category: `agent-ops`
-- Status: `ready`
+- Status: `complete`
 - Dispatch: `auto`
 - Authoring handoff: `auto`
 - Priority: `P2`
@@ -59,3 +59,11 @@
 - Refresh reason: `none`
 - Next action: After implementation lands and archives complete, perform the paired fresh-context independent review.
 - Blockers or open questions: `none`
+
+## Completion Truth
+
+- Completion schema: `custodian.task_completion.v1`
+- Goal satisfied: `yes`
+- Completion boundary satisfied: `yes`
+- Acceptance satisfied: `yes`
+- Evidence: `custodian/tools/agent/wire_observation_export.py` and its strict schema emit only allowlisted fields from the supplied task-administrator snapshot; 15 synthetic tests cover successful reconciliation, stale/mismatched/failed/incomplete evidence, duplicate identities, redaction, unavailable process evidence, schema rejection, digest stability, bounded input, and no collector/subprocess invocation. `run_validation.py --changed --base origin/main --json` passed 5/5 selected checks with complete implementation-file coverage; documentation packet and summary were explicitly excluded. No real dispatcher audit, upload, service, public feed, or scheduled integration was invoked by the exporter.
