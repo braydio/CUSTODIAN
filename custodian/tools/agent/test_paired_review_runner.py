@@ -48,15 +48,13 @@ sys.path.insert(0, str(ROOT / "custodian/tools/validation"))
 import run_validation
 
 
-# These are the only historical diagnostic refs required by the regression
-# cases below. Pin the remote commit and trace object identities so clean CI
-# checkouts can fetch these exact refs without depending on a developer's
-# accumulated remote-tracking refs.
+# This is the complete historical diagnostic-ref dependency set used by this
+# test module's source-span cases. Pin the remote commit and trace object
+# identities so clean CI checkouts can fetch exact refs without relying on a
+# developer's accumulated remote-tracking refs.
 _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
         "refs/heads/agent-diagnostics/agent-execution-reset-v1/"
-        "20261020T135839Z-db96534ed3a7",
-        "refs/remotes/origin/agent-diagnostics/agent-execution-reset-v1/"
         "20261020T135839Z-db96534ed3a7",
         "826ce081626a0aa2980408728dbc8bc89a0a8811",
         "6b4e626daf3b24a7d135145b9f432133576f3d89",
@@ -65,16 +63,12 @@ _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
         "refs/heads/agent-diagnostics/agent-grunt-raster-review-scope-attestation-v1/"
         "20261019T195635Z-441f0bc5ee6f",
-        "refs/remotes/origin/agent-diagnostics/agent-grunt-raster-review-scope-attestation-v1/"
-        "20261019T195635Z-441f0bc5ee6f",
         "7edace7d2cfd54702570fc1f4501e3fb3ba828ce",
         "f9ed2fb94ca16d5d931ee30cf679765908a2bc1a",
         "d4a66e21e6cce45acc35d0cb5bb13a916d8614984f8dc31806a26b28e5305c80",
     ),
     (
         "refs/heads/agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
-        "20261020T200652Z-2fd156ce23d0",
-        "refs/remotes/origin/agent-diagnostics/agent-paired-review-failed-host-validation-import-recovery-v1/"
         "20261020T200652Z-2fd156ce23d0",
         "fc31dfe831d562f5e5c68fba7483e124942b2f44",
         "cdde47b5855c709e639fabc0455abe567b326310",
@@ -83,16 +77,12 @@ _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
         "refs/heads/agent-diagnostics/agent-persistent-task-administrator-v1/"
         "20261030T061213Z-c6cf54beac00",
-        "refs/remotes/origin/agent-diagnostics/agent-persistent-task-administrator-v1/"
-        "20261030T061213Z-c6cf54beac00",
         "c76353e5f15b29386f6ff88f9524a940d15e9139",
         "ccbb08eb138a8f238dbd5e1613c55630ab9a9a6e",
         "d64c43b5672a311e1cdf4ea4c88aee37743a85a3a593c9cb2d274d574a381cc7",
     ),
     (
         "refs/heads/agent-diagnostics/grunt-candidate-raster-workflow-v1/"
-        "20261019T100251Z-d7853dfb04a5",
-        "refs/remotes/origin/agent-diagnostics/grunt-candidate-raster-workflow-v1/"
         "20261019T100251Z-d7853dfb04a5",
         "bb2360e038440f726027c65f60b9c3debaae3f56",
         "3fc823c9c921da35d8d3fe97a7aa44afd68a74d0",
@@ -101,8 +91,6 @@ _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
         "refs/heads/agent-diagnostics/operator-3d-model-to-sprite-tooling-integration-v1/"
         "20261031T020602Z-9e1691d59e2e",
-        "refs/remotes/origin/agent-diagnostics/operator-3d-model-to-sprite-tooling-integration-v1/"
-        "20261031T020602Z-9e1691d59e2e",
         "f182b790b053563027288ff3477113f6637f522f",
         "e8d8618e4cbb13d5187ac8ce9904a243c7da4b72",
         "7d644903b24fd84ec02028e3887dc937edad332a7abe11a76787a4776e4fc5b4",
@@ -110,11 +98,107 @@ _PINNED_HISTORICAL_DIAGNOSTIC_REFS = (
     (
         "refs/heads/agent-diagnostics/operator-motion-foundry-blender-2d-rig-v1/"
         "20261020T144517Z-523ad5973c21",
-        "refs/remotes/origin/agent-diagnostics/operator-motion-foundry-blender-2d-rig-v1/"
-        "20261020T144517Z-523ad5973c21",
         "a50ee4c0a2d3967934bf39fb3c708e3df0cdd094",
         "6110cf8ea45c85c25dea1cab7ec475d2a2e2b493",
         "0b1af733f7fdaeef984a06ecbdb9219ea5651ede5f38b6bd03a5284de9a37a6f",
+    ),
+    (
+        "refs/heads/agent-diagnostics/hub-road-empty-procession-sequence-v1/"
+        "20261022T171105Z-cde73b9b6771",
+        "a33fe02e13c7a5c14f8b81645ff27a5fb916154c",
+        "73a7290d91f35f71243fc4c858bb1b7fdb9c68e8",
+        "f4f408e8c5302182a0dadb744b6449c8ae85c65238409284db248d6a8b8364ac",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-braced-work-surface-v1/"
+        "20261019T120857Z-96de098ad393",
+        "8efe6081452371bd5a9bf831d8b1b58939bbf2ae",
+        "e6be775fb00a3a1600dce5fbaaaf169db8e82fc3",
+        "9da035c6bf6a24bb059c934d234d4a5ec4ce47e2f2ad4a6d1a2ad8102f1b1ebf",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-conflict-resolution-merge-provenance-v1/"
+        "20261022T172255Z-7f774d406013",
+        "7b7b5c629cf84884c5a21ae58ef9b07e98c78b6c",
+        "8be166dd891e9a4156333833e4d290c383153fa1",
+        "c540e3a42945c76db7e8c19ec9d33fd5a04d450294da09d3cbd466da97c0e870",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-host-validation-recovery-v1-review-corrections-1/"
+        "20261018T005240Z-25f5254d4395",
+        "664b0ea1f25e12da8c998b2d3cf037af0af40d02",
+        "9b0d4a1a662ff186b64899a8fe43185f7435cb38",
+        "53c15b4bb12c9fdd39ae855e5db4400b9fdd4b3de50ea1c5ccecd1d7466873be",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-procession-doc-scope-recovery-v1/"
+        "20261023T024405Z-15085f4dcc61",
+        "4d5c1eb2530df568c918e1f1bada3fa9ba76d418",
+        "9c702e12f5427554f404130757b1850a8a5402ce",
+        "1ddd0c04f7f24e64c584ea3b7ae1953674b226044a41f6e08474da48c282da38",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-resumed-worktree-provenance-v1/"
+        "20261022T183152Z-d2bd0dbe47d1",
+        "af95b795f623fb5424ec18ceac6d2837e1a8970e",
+        "c97cf72aac99754b55cd6e9d7a4a80fc2a1bf45d",
+        "245eba20ead9c54cc41d793dcbb60cd345d08d70675f7e0f52edffb760e35b78",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-bearing-archive-gate-v1/"
+        "20261018T073442Z-9f32a80a4938",
+        "d46c93d011dfdf40f5074e2e57dbdbfa6ec3aa96",
+        "3a8c1b7069dd0986db4a341589cc840e47365427",
+        "acfadc48f714309c8404649f7bef8c92890d1e36b7f2696d2b057ffcd6915419",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-bearing-archive-gate-v1/"
+        "20261019T022243Z-fbd7e4e2f3d7",
+        "bba08f5b3318b07ecad6cea850ec532a7a30b1ea",
+        "e94e50179b19a9e2c7ea1b20ead693db43e96582",
+        "8c827cc37336788c11a88c4bd38988fcece7d7bfa16fb3a3db31e5f46ba96a10",
+    ),
+    (
+        "refs/heads/agent-diagnostics/agent-paired-review-source-span-main-sync-recovery-v1/"
+        "20261018T064130Z-f6559c757a1f",
+        "a7a7b179d336c10f21bf4d9d0857ec3403d3e04a",
+        "b00b3a1a9d2b9df146667fc72fb48b8af362b4a4",
+        "fb525360d7e546e4172cef68c1783347dc2fedd9363de278086c1bc9ee298157",
+    ),
+    (
+        "refs/heads/agent-diagnostics/operator-motion-foundry-core-v1/"
+        "20261019T111751Z-bc1d9d1546fb",
+        "d890de8a8e929562aa8d0810e49ed4a84d332aaf",
+        "1f977b9429f15f28c90435cf6fdce5722e3b2731",
+        "89854991cd1824ac6008c1756026a04dcd42e6ee9434e5173aae6a48baa208c6",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003347Z-547f6421486d",
+        "25875923ced58e35d125aa72f27856a6067fe4ae",
+        "dbddb0d7477319460527f26ca0a003c459d51f3f",
+        "0a0936f9c51f2c21405276f72cbadd72db2fe581d06f4e0f9591d652b1879135",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003556Z-5bd6e454aaf3",
+        "48e40607204947b64081e383865e168c51c9f8e3",
+        "0cc6a8ff9c3d65f01def94df9a30029a571a4074",
+        "6ef31a391334dcbf877e63f53ce755e6967bea2b7af6b475bba3260e21e85d05",
+    ),
+    (
+        "refs/heads/agent-diagnostics/queue-execution-frontier-restoration-v1/"
+        "20261019T003727Z-bb7d35e7b6b9",
+        "adf456d25c3bdceba8d841c4a7ac53516db1a82d",
+        "74a97d09e79e8cb8300acc5297a6a34f13488202",
+        "8c4a5e22a3596e0d8f9b35d0e3f50794519cde95c70e392116b8b6f92d240476",
+    ),
+    (
+        "refs/heads/agent-diagnostics/worktree-backlog-census-and-safety-ledger-v1-review-corrections-1/"
+        "20261017T195329Z-de38cd920078",
+        "8f8ee74420c2c0a7a23d2d43d1412736feaca6e5",
+        "83ff88cc2897ff9fc41ae547254392db7f928615",
+        "2905906b90bfc1792fa40c99ecc5c3afbbf214740298b79bf48d1eadacf10999",
     ),
 )
 
@@ -127,53 +211,83 @@ def _ensure_pinned_historical_diagnostic_refs(repository: Path = ROOT) -> None:
             check=check, text=True, capture_output=True,
         )
 
-    missing = []
-    for remote_ref, local_ref, expected_commit, _, _ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS:
-        existing = git("rev-parse", "--verify", f"{local_ref}^{{commit}}", check=False)
-        if existing.returncode == 0:
-            actual_commit = existing.stdout.strip()
-            if actual_commit != expected_commit:
-                raise AssertionError(
-                    f"pinned historical trace ref changed: {local_ref} "
-                    f"({actual_commit} != {expected_commit})"
-                )
-        else:
-            missing.append((remote_ref, local_ref, expected_commit))
+    pins = [
+        (remote_ref, remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1),
+         expected_commit, expected_blob, expected_sha256)
+        for remote_ref, expected_commit, expected_blob, expected_sha256
+        in _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+    ]
+    local_refs = [local_ref for _, local_ref, *_ in pins]
 
+    def existing_refs():
+        result = git(
+            "for-each-ref", "--format=%(refname) %(objectname)", *local_refs,
+        )
+        return {
+            ref: commit for ref, commit in
+            (line.split() for line in result.stdout.splitlines())
+            if ref in local_refs
+        }
+
+    existing = existing_refs()
+    for _, local_ref, expected_commit, _, _ in pins:
+        if local_ref in existing and existing[local_ref] != expected_commit:
+            raise AssertionError(
+                f"pinned historical trace ref changed: {local_ref} "
+                f"({existing[local_ref]} != {expected_commit})"
+            )
+    missing = [pin for pin in pins if pin[1] not in existing]
     if missing:
         git(
             "fetch", "--no-tags", "origin",
-            *(f"{remote_ref}:{local_ref}" for remote_ref, local_ref, _ in missing),
+            *(f"{remote_ref}:{local_ref}" for remote_ref, local_ref, *_ in missing),
         )
-        for _, local_ref, expected_commit in missing:
-            actual_commit = git("rev-parse", "--verify", f"{local_ref}^{{commit}}").stdout.strip()
-            if actual_commit != expected_commit:
-                raise AssertionError(
-                    f"fetched historical trace ref has unexpected commit: {local_ref} "
-                    f"({actual_commit} != {expected_commit})"
-                )
+        existing = existing_refs()
 
-    for _, local_ref, expected_commit, expected_blob, expected_sha256 in (
-        _PINNED_HISTORICAL_DIAGNOSTIC_REFS
-    ):
-        blob = git("rev-parse", "--verify", f"{local_ref}:trace.jsonl").stdout.strip()
+    for _, local_ref, expected_commit, _, _ in pins:
+        actual_commit = existing.get(local_ref)
+        if actual_commit != expected_commit:
+            raise AssertionError(
+                f"fetched historical trace ref has unexpected commit: {local_ref} "
+                f"({actual_commit} != {expected_commit})"
+            )
+
+    blob_result = git(
+        "rev-parse",
+        *(f"{local_ref}:trace.jsonl" for _, local_ref, *_ in pins),
+    )
+    trace_blobs = blob_result.stdout.splitlines()
+    if len(trace_blobs) != len(pins):
+        raise AssertionError("could not resolve every pinned historical trace blob")
+    for (_, local_ref, _, expected_blob, _), blob in zip(pins, trace_blobs):
         if blob != expected_blob:
             raise AssertionError(
                 f"pinned historical trace blob changed: {local_ref} "
                 f"({blob} != {expected_blob})"
             )
-        trace = subprocess.run(
-            ["git", "-C", str(repository), "show", f"{local_ref}:trace.jsonl"],
-            check=True, capture_output=True,
-        ).stdout
+
+    trace_result = subprocess.run(
+        ["git", "-C", str(repository), "cat-file", "--batch"],
+        input=("\n".join(trace_blobs) + "\n").encode(),
+        check=True, capture_output=True,
+    )
+    trace_output = trace_result.stdout
+    offset = 0
+    for (_, local_ref, _, _, expected_sha256), expected_blob in zip(pins, trace_blobs):
+        header_end = trace_output.find(b"\n", offset)
+        if header_end < 0:
+            raise AssertionError(f"truncated pinned historical trace object: {local_ref}")
+        header = trace_output[offset:header_end].decode("ascii").split()
+        if len(header) != 3 or header[0] != expected_blob or header[1] != "blob":
+            raise AssertionError(f"unexpected pinned historical trace object: {local_ref}")
+        size = int(header[2])
+        offset = header_end + 1
+        trace = trace_output[offset:offset + size]
+        if len(trace) != size or trace_output[offset + size:offset + size + 1] != b"\n":
+            raise AssertionError(f"truncated pinned historical trace bytes: {local_ref}")
+        offset += size + 1
         if hashlib.sha256(trace).hexdigest() != expected_sha256:
             raise AssertionError(f"pinned historical trace bytes changed: {local_ref}")
-        commit = git("rev-parse", "--verify", f"{local_ref}^{{commit}}").stdout.strip()
-        if commit != expected_commit:
-            raise AssertionError(
-                f"pinned historical trace commit changed: {local_ref} "
-                f"({commit} != {expected_commit})"
-            )
 
 
 def _historical_git_fixture_env() -> dict[str, str]:
