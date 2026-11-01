@@ -301,6 +301,15 @@ def _prepare_historical_git_fixture(repository: Path, revision: str) -> None:
     env = _historical_git_fixture_env()
     subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(ROOT),
                     str(repository)], check=True, env=env)
+    refs = "".join(
+        f"update {remote_ref.replace('refs/heads/', 'refs/remotes/origin/', 1)} "
+        f"{commit}\n"
+        for remote_ref, commit, _, _ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+    )
+    subprocess.run(
+        ["git", "-C", str(repository), "update-ref", "--stdin"],
+        input=refs, check=True, text=True, capture_output=True,
+    )
     subprocess.run(["git", "-C", str(repository), "checkout", "-q", "--detach", revision],
                    check=True, env=env)
 
@@ -321,19 +330,88 @@ class _ImmediateFailureTextTestResult(unittest.TextTestResult):
         super().addFailure(test, err)
         self._write_failure_details("IMMEDIATE TEST FAILURE", test, err)
 
+    def emit_failure_report(self):
+        failures = self.errors + self.failures
+        if not failures:
+            return
+
+        fixture_refs = []
+        for remote_ref, expected_commit, expected_blob, expected_sha256 in (
+            _PINNED_HISTORICAL_DIAGNOSTIC_REFS
+        ):
+            local_ref = remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1)
+            commit_result = subprocess.run(
+                ["git", "-C", str(ROOT), "rev-parse", "--verify", local_ref],
+                text=True, capture_output=True,
+            )
+            trace_result = subprocess.run(
+                ["git", "-C", str(ROOT), "show", f"{local_ref}:trace.jsonl"],
+                text=True, capture_output=True,
+            )
+            blob_result = subprocess.run(
+                ["git", "-C", str(ROOT), "rev-parse", "--verify",
+                 f"{local_ref}:trace.jsonl"],
+                text=True, capture_output=True,
+            )
+            trace = trace_result.stdout if trace_result.returncode == 0 else ""
+            claim_oids = sorted({
+                event["data"]["claim_oid"] for line in trace.splitlines()
+                if (event := json.loads(line)).get("event") == "remote_claim_acquired"
+            })
+            fixture_refs.append({
+                "remote_ref": remote_ref,
+                "fixture_ref": local_ref,
+                "expected_commit": expected_commit,
+                "actual_commit": commit_result.stdout.strip() or None,
+                "expected_trace_blob": expected_blob,
+                "actual_trace_blob": blob_result.stdout.strip() or None,
+                "expected_trace_sha256": expected_sha256,
+                "actual_trace_sha256": hashlib.sha256(trace_result.stdout.encode()).hexdigest()
+                if trace_result.returncode == 0 else None,
+                "claim_oids": claim_oids,
+            })
+        report = {
+            "schema": "custodian.paired_review_test_failure_report.v1",
+            "failures": [
+                {"test_id": test.id(), "traceback": traceback}
+                for test, traceback in failures
+            ],
+            "historical_fixture_lookup": {
+                "scope": "all pinned agent-diagnostics refs used by this module",
+                "refs_materialized_in_historical_git_fixtures": True,
+                "refs": fixture_refs,
+            },
+        }
+        self.stream.writeln(
+            "CUSTODIAN_TEST_FAILURE_REPORT_JSON:"
+            + json.dumps(report, sort_keys=True, separators=(",", ":"))
+        )
+        self.stream.flush()
+
 
 class _ImmediateFailureTextTestRunner(unittest.TextTestRunner):
     resultclass = _ImmediateFailureTextTestResult
 
+    def run(self, test):
+        result = super().run(test)
+        result.emit_failure_report()
+        return result
+
 
 class HistoricalGitFixtureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        _ensure_pinned_historical_diagnostic_refs(ROOT)
+
     def test_historical_fixture_clone_and_checkout_skip_lfs_smudge(self):
         repository = Path("/tmp/historical-fixture")
         with patch("subprocess.run") as run:
             _prepare_historical_git_fixture(repository, "a" * 40)
 
-        self.assertEqual(run.call_count, 2)
-        for call in run.call_args_list:
+        self.assertEqual(run.call_count, 3)
+        commands = [call.args[0] for call in run.call_args_list]
+        self.assertEqual(commands[1][3:5], ["update-ref", "--stdin"])
+        for call in (run.call_args_list[0], run.call_args_list[2]):
             self.assertEqual(call.kwargs["env"]["GIT_LFS_SKIP_SMUDGE"], "1")
 
 
@@ -1132,7 +1210,7 @@ class PairedReviewRunnerTests(unittest.TestCase):
             {key: value for key, value in published_pair.items()
              if key not in {"owners", "timeout_sec"}},
         )
-        self.assertIn(actual_pair["timeout_sec"], (90, 120))
+        self.assertEqual(actual_pair["timeout_sec"], 180)
         self.assertTrue(set(published_pair["owners"]).issubset(actual_pair["owners"]))
 
     def test_invalid_disposition_repair_moves_only_the_four_allowlisted_handoff_lines(self):
@@ -4528,13 +4606,14 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_admin_scope_attestation_accepts_only_exact_historically_reviewed_service_path(self):
         repository, _, approval_main = self._build_admin_scope_approval_history()
-        source_span = host_validation.resolve_validation_source_span(
-            repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
-            host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
-            host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._ADMIN_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
+        with self._historical_claim_objects():
+            source_span = host_validation.resolve_validation_source_span(
+                repository, host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_ARCHIVE,
+                host_validation._ADMIN_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._ADMIN_SCOPE_SOURCE_PACKET,
+                approval_main=approval_main,
+            )
         self.assertEqual(source_span["provenance"]["scope_attestation"]["approval_main"], approval_main)
         self.assertEqual(
             set(source_span["provenance"]["scope_attestation"]["source_files"]),
@@ -4771,13 +4850,14 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(provenance["source_code_files"]), set(host_validation._OPERATOR_3D_SCOPE_SOURCE_CODE_BLOBS))
 
         # Exercise the full original source-span resolver with its real immutable run trace.
-        span = host_validation.resolve_validation_source_span(
-            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                approval_main=approval_main,
+            )
         self.assertEqual(span["base"], host_validation._OPERATOR_3D_SCOPE_SOURCE_BASE)
         self.assertEqual(span["head"], host_validation._OPERATOR_3D_SCOPE_SOURCE_HEAD)
         self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
@@ -4884,21 +4964,22 @@ class PairedReviewHostValidationTests(unittest.TestCase):
 
     def test_operator_3d_source_span_rejects_unrelated_trace_worktree(self):
         repository, implementation_commit, approval_main = self._build_operator_3d_scope_approval_history()
-        with self.assertRaises(host_validation.HostValidationError):
-            host_validation.resolve_validation_source_span(
+        with self._historical_claim_objects():
+            with self.assertRaises(host_validation.HostValidationError):
+                host_validation.resolve_validation_source_span(
+                    repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
+                    host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
+                    approval_main=implementation_commit,
+                )
+            span = host_validation.resolve_validation_source_span(
                 repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
                 host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-                approval_main=implementation_commit,
+                approval_main=approval_main,
             )
-        span = host_validation.resolve_validation_source_span(
-            repository, host_validation._OPERATOR_3D_SCOPE_SOURCE_REVIEWED_MAIN,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_ARCHIVE,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._OPERATOR_3D_SCOPE_SOURCE_PACKET,
-            approval_main=approval_main,
-        )
         trace_ref = span["provenance"]["ref"]
         trace_path = Path(self.temp.name) / "operator-3d-forged-trace"
         subprocess.run(["git", "-C", str(repository), "worktree", "add", "-q", "-b",
@@ -4955,6 +5036,50 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         objects left in a developer's local repository.
         """
         claims = {
+            "599c97403c67d53d60f3c394d09c756ff2b79c2d": (
+                "2e7fe81a9eff9d32fc5ec5d101f5e2f6772fdfc1",
+                "b5a46e82913455cb341c84811fd9be66b78ed138", 1792504723,
+                "workstream claim agent-execution-reset-v1 codex:1406435:20261020T135839Z-db96534ed3a7"),
+            "830cff8d534c84c28cde56ac345fb59648ec9323": (
+                "c3701f164a060eb167949cfad306229183e15590",
+                "f76854cf22aece96701bb17da14580df6ce879a2", 1792439796,
+                "workstream claim agent-grunt-raster-review-scope-attestation-v1 codex:823606:20261019T195635Z-441f0bc5ee6f"),
+            "5249f25988aa13cdf99372754509fb7b91eeef94": (
+                "157c31f685be66885059def2dd586c96713b289f",
+                "030dbe986c0ced4e8b1dc2c816f466c81146b5f2", 1792526813,
+                "workstream claim agent-paired-review-failed-host-validation-import-recovery-v1 codex:278112:20261020T200652Z-2fd156ce23d0"),
+            "0ab2d171550ea7359e7c026ca64b81eb5ee27a23": (
+                "53755f1b18574df7e10293cdb996e138dd54aba4",
+                "c1e1739e0bf44fbbc4453d879e1eec089e62c8e9", 1793340734,
+                "workstream claim agent-persistent-task-administrator-v1 codex:2968038:20261030T061213Z-c6cf54beac00"),
+            "fd2e120b5cba66fdda9e887ad58f3e98e3d66f82": (
+                "e0b3073891aa10cd945d3f54fac45cbe6b6a7052",
+                "5c659db5d9bfac7cacfd3cc67391af757dc7237c", 1792404172,
+                "workstream claim grunt-candidate-raster-workflow-v1 codex:1207098:20261019T100251Z-d7853dfb04a5"),
+            "e8198ffaf650f40495a051ca96974f7b267bcd9f": (
+                "d210ddced9e282cce63e32e0e58cb1acf3b43af6",
+                "cfa1c476e054a68eaf139b8a05610726ffc6cb92", 1793412363,
+                "workstream claim operator-3d-model-to-sprite-tooling-integration-v1 codex:4076206:20261031T020602Z-9e1691d59e2e"),
+            "e6ba1d7d33a54bfffe3e27446743ab969379dfd3": (
+                "2e7fe81a9eff9d32fc5ec5d101f5e2f6772fdfc1",
+                "b5a46e82913455cb341c84811fd9be66b78ed138", 1792507524,
+                "workstream claim operator-motion-foundry-blender-2d-rig-v1 codex:1897196:20261020T144517Z-523ad5973c21"),
+            "ade161deef427bb069096f3469ceeef3234e940e": (
+                "b7d9a623591e14bfa86bec2415b8899ff563adf7",
+                "3e68c0b1b6b19d618f18c57b97bb1c111b2b5891", 1792689066,
+                "workstream claim hub-road-empty-procession-sequence-v1 codex:2403599:20261022T171105Z-cde73b9b6771"),
+            "840af1b9a74e97f25ec806ecc78ba9eea2cf0f06": (
+                "67afd0da75287bb65169a0e698d7a5634f13e90d",
+                "9254dc8465820279723e35a3ec232557a9cf4cae", 1792689776,
+                "workstream claim agent-paired-review-conflict-resolution-merge-provenance-v1 codex:2505147:20261022T172255Z-7f774d406013"),
+            "8b6b3e83794b1e732a4010a111efd48a3577745a": (
+                "9bbcb93ca9ec59db73e5bbe4bda3824163efc26a",
+                "49a93aa726e26bd40220d3bdb658079ea9da3440", 1792723446,
+                "workstream claim agent-paired-review-procession-doc-scope-recovery-v1 codex:2204972:20261023T024405Z-15085f4dcc61"),
+            "32906fb10fc11f689f312c5b8a70c7cfa1f5873d": (
+                "66fc7f9758aa6b928e40d257431cb9dfa8194c47",
+                "dd7282d9cb96827a8b54060aae993eb994a1882e", 1792693913,
+                "workstream claim agent-paired-review-resumed-worktree-provenance-v1 codex:3187333:20261022T183152Z-d2bd0dbe47d1"),
             "34a947cf00cb0050fbb435bb1840eed57adf63b0": (
                 "ed748c33cd10c7d55c84752cfc79eea15fcea72d",
                 "83bdbd1e53fdcb06b18a5a5645f70a050c3cba01", 1792308887,
@@ -4996,6 +5121,18 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                 "55918d257cb3c663fb066f56eb79b23d174b7ae2", 1792408672,
                 "workstream claim operator-motion-foundry-core-v1 codex:503300:20261019T111751Z-bc1d9d1546fb"),
         }
+        trace_claim_oids = set()
+        for remote_ref, *_ in _PINNED_HISTORICAL_DIAGNOSTIC_REFS:
+            local_ref = remote_ref.replace("refs/heads/", "refs/remotes/origin/", 1)
+            trace = subprocess.run(
+                ["git", "show", f"{local_ref}:trace.jsonl"], cwd=ROOT,
+                check=True, capture_output=True, text=True,
+            ).stdout
+            trace_claim_oids.update(
+                event["data"]["claim_oid"] for line in trace.splitlines()
+                if (event := json.loads(line)).get("event") == "remote_claim_acquired"
+            )
+        self.assertEqual(trace_claim_oids, set(claims))
         with tempfile.TemporaryDirectory() as temporary:
             object_repo = Path(temporary) / "claim-objects.git"
             subprocess.run(["git", "init", "--bare", "-q", str(object_repo)], check=True)
@@ -8213,14 +8350,20 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(extra_paths, set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
         subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
                         implementation_commit], check=True)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
-            host_validation.resolve_validation_source_span(
+        with self._historical_claim_objects():
+            with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+                host_validation.resolve_validation_source_span(
+                    repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
+                    host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
+                    host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
+                )
+            subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
+                            approval_main], check=True)
+            span = host_validation.resolve_validation_source_span(
                 repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
                 host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
                 host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
             )
-        subprocess.run(["git", "-C", str(repository), "update-ref", "refs/remotes/origin/main",
-                        approval_main], check=True)
         provenance = host_validation._verified_procession_scope_attestation(
             repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE, extra_paths,
         )
@@ -8230,11 +8373,6 @@ class PairedReviewHostValidationTests(unittest.TestCase):
         self.assertEqual(set(provenance["source_files"]), set(host_validation._PROCESSION_SCOPE_SOURCE_FILES))
         self.assertTrue(host_validation._is_ancestor(repository, pinned_p1_main, approval_main))
         self.assertTrue(host_validation._is_ancestor(repository, base_main, approval_main))
-        span = host_validation.resolve_validation_source_span(
-            repository, pinned_p1_main, host_validation._PROCESSION_SCOPE_SOURCE_ARCHIVE,
-            host_validation._PROCESSION_SCOPE_SOURCE_WORKSTREAM,
-            host_validation._PROCESSION_SCOPE_SOURCE_PACKET,
-        )
         self.assertEqual(set(span["paths"]), archive_paths)
         self.assertEqual(span["provenance"]["scope_attestation"]["approval_outcome"], "passed")
 
@@ -8471,17 +8609,18 @@ Verify the exact post-hoc attestation.
             self.assertFalse(host_validation._source_path_documented(
                 seventh, target_text, documented, packet_terms, set(), exact_paths,
             ), seventh)
-        with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
-            host_validation.resolve_validation_source_span(
-                repository, correction_commit, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+        with self._historical_claim_objects():
+            with self.assertRaisesRegex(host_validation.HostValidationError, "lacks archived correction review"):
+                host_validation.resolve_validation_source_span(
+                    repository, correction_commit, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                    "grunt-candidate-raster-workflow-v1",
+                    "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
+                )
+            replay = host_validation.resolve_validation_source_span(
+                repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
                 "grunt-candidate-raster-workflow-v1",
                 "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
             )
-        replay = host_validation.resolve_validation_source_span(
-            repository, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            "grunt-candidate-raster-workflow-v1",
-            "custodian/docs/ai_context/task_packets/archived/GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md",
-        )
         self.assertEqual(set(replay["paths"]).intersection(exact_paths), exact_paths)
         self.assertEqual(replay["provenance"]["scope_attestation"]["approval_outcome"], "passed")
         source_paths = host_validation._source_code_paths(replay["paths"])
@@ -8503,25 +8642,27 @@ Verify the exact post-hoc attestation.
             self._assert_exact_validation_command(command, replay["base"], changed_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
-        evidence = host_validation.run_coordinator_validation(
-            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            target_workstream="grunt-candidate-raster-workflow-v1",
-            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
-                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
-            run_validation=validate,
-            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
-        )
+        with self._historical_claim_objects():
+            evidence = host_validation.run_coordinator_validation(
+                repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                target_workstream="grunt-candidate-raster-workflow-v1",
+                target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                    "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+                run_validation=validate,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
         metadata = json.loads((run_dir / "coordinator-validation.json").read_text())
         self.assertEqual(metadata["source_span"]["provenance"]["scope_attestation"],
                          replay["provenance"]["scope_attestation"])
-        verified = host_validation.verify_coordinator_validation(
-            repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
-            target_workstream="grunt-candidate-raster-workflow-v1",
-            target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
-                                "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
-            expected_report_sha256=evidence["report_sha256"],
-            expected_metadata_sha256=evidence["metadata_sha256"],
-        )
+        with self._historical_claim_objects():
+            verified = host_validation.verify_coordinator_validation(
+                repository, run_dir, approved_main, "e29847bb2dc409ad994ac59ee3e8bb4db637142e",
+                target_workstream="grunt-candidate-raster-workflow-v1",
+                target_packet_path=("custodian/docs/ai_context/task_packets/archived/"
+                                    "GRUNT_CANDIDATE_RASTER_WORKFLOW_V1.md"),
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
         self.assertTrue(verified["passed"])
         metadata_path = run_dir / "coordinator-validation.json"
         preserved_metadata = metadata_path.read_bytes()
@@ -9397,10 +9538,11 @@ Verify the exact post-hoc attestation.
         workstream = "agent-paired-review-resumed-worktree-provenance-v1"
         archive = (f"{runner.PACKET_ROOT}/archived/"
                    "PAIRED_REVIEW_RESUMED_WORKTREE_PROVENANCE_V1.md")
-        span = host_validation.resolve_validation_source_span(
-            ROOT, "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99",
-            "2e898dddc82a596b0a2bd15c150b1645cf61f29c", workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                ROOT, "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99",
+                "2e898dddc82a596b0a2bd15c150b1645cf61f29c", workstream, archive,
+            )
         self.assertEqual(span["provenance"]["trace_landing_commit"],
                          "d5c6315979f1e3fd2ee55c6e15cae7f9e30c1f99")
         self.assertEqual(span["provenance"]["trace_landing_kind"], "main-sync-merge")
@@ -9515,9 +9657,10 @@ Verify the exact post-hoc attestation.
                                       check=True, text=True, capture_output=True).stdout.strip()
         subprocess.run(["git", "-C", str(repository), "update-ref", trace_ref, trace_commit], check=True)
 
-        span = host_validation.resolve_validation_source_span(
-            repository, reviewed_main, implementation, workstream, archive,
-        )
+        with self._historical_claim_objects():
+            span = host_validation.resolve_validation_source_span(
+                repository, reviewed_main, implementation, workstream, archive,
+            )
         selected_paths = subprocess.run(
             ["git", "diff", "--name-only", f"{span['base']}..{reviewed_main}"],
             cwd=repository, check=True, text=True, capture_output=True,
@@ -9541,18 +9684,19 @@ Verify the exact post-hoc attestation.
             self._assert_exact_validation_command(command, span["base"], selected_paths)
             return subprocess.CompletedProcess(command, 0, json.dumps(report) + "\n", "")
 
-        evidence = host_validation.run_coordinator_validation(
-            repository, run_dir, reviewed_main, implementation,
-            target_workstream=workstream, target_packet_path=archive,
-            run_validation=validate,
-            capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
-        )
-        verified = host_validation.verify_coordinator_validation(
-            repository, run_dir, reviewed_main, implementation,
-            target_workstream=workstream, target_packet_path=archive,
-            expected_report_sha256=evidence["report_sha256"],
-            expected_metadata_sha256=evidence["metadata_sha256"],
-        )
+        with self._historical_claim_objects():
+            evidence = host_validation.run_coordinator_validation(
+                repository, run_dir, reviewed_main, implementation,
+                target_workstream=workstream, target_packet_path=archive,
+                run_validation=validate,
+                capability_probe=lambda: {"loopback_bind": True, "godot_home_writable": True},
+            )
+            verified = host_validation.verify_coordinator_validation(
+                repository, run_dir, reviewed_main, implementation,
+                target_workstream=workstream, target_packet_path=archive,
+                expected_report_sha256=evidence["report_sha256"],
+                expected_metadata_sha256=evidence["metadata_sha256"],
+            )
         self.assertTrue(verified["passed"])
         self.assertEqual(evidence["source_span"]["base"],
                          "9254dc8465820279723e35a3ec232557a9cf4cae")
