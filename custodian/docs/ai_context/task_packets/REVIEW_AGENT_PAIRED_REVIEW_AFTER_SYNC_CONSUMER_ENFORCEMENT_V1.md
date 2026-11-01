@@ -5,8 +5,8 @@
 - Workstream: `review-agent-paired-review-after-sync-consumer-enforcement-v1`
 - Category: `agent-ops`
 - Kind: `review`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `agent-paired-review-after-sync-consumer-enforcement-v1`
 - Locks: `workstream-finish-sync-provenance`

@@ -4,8 +4,8 @@
 - Authoring handoff: `auto`
 - Workstream: `agent-paired-review-after-sync-consumer-enforcement-v1`
 - Category: `agent-ops`
-- Status: `draft`
-- Dispatch: `manual`
+- Status: `ready`
+- Dispatch: `auto`
 - Priority: `P0`
 - Depends on: `none`
 - Locks: `workstream-finish-sync-provenance`
