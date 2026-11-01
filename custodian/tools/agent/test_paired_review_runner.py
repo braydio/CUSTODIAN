@@ -6450,6 +6450,94 @@ class PairedReviewHostValidationTests(unittest.TestCase):
                         "sample-implementation", "sample.md",
                     ))
 
+    def test_archive_only_manifest_delta_authenticates_failure_but_never_pass(self):
+        reviewed_main, paths, span, _attestation, revised, report = self._attested_manifest_change_fixture()
+        attestation_path = "custodian/docs/ai_context/review_scope_attestations/fixture.json"
+        paths = [path for path in paths if path != attestation_path]
+        span["paths"] = paths
+        span["provenance"] = {
+            "kind": "workstream-lifecycle-trace", "archive_kind": "archive-only",
+            "trace_landing_kind": "canonical-archive", "trace_landing_commit": reviewed_main,
+            "workstream": "sample-implementation",
+            "landing_trace": {"landing": reviewed_main},
+        }
+        selected_ids, changed = run_validation.manifest_change_selection(
+            revised["tests"], base_payload=host_validation._manifest_at_revision(self.root, self.base)[0],
+            current_payload=revised,
+        )
+        selected = run_validation.select_changed_tests(
+            revised["tests"], paths, manifest_ids=selected_ids, manifest_changed=changed,
+        )
+        report.update({
+            "passed": False, "changed_files": paths,
+            "selected": [item["id"] for item in selected],
+            "tests": [{"id": item["id"], "status": "failed"} for item in selected],
+            "summary": {"selected": len(selected), "passed": 0, "failed": len(selected),
+                        "timed_out": 0, "skipped": 0, "infrastructure_errors": 0},
+            "coverage": run_validation.changed_file_coverage(
+                paths, selected, revised.get("coverage_excludes", []),
+            ),
+        })
+        report_bytes = (json.dumps(report) + "\n").encode()
+        (self.run_dir / "validation.json").write_bytes(report_bytes)
+        code_paths = sorted(host_validation._source_code_paths(paths))
+        metadata = {
+            "schema": "custodian.paired_review_host_validation.v1",
+            "reviewed_main": reviewed_main, "implementation_commit": reviewed_main,
+            "worktree": str(self.root), "implementation_parent": self._git("rev-parse", f"{reviewed_main}^1"),
+            "exit_code": 4, "source_changed_during_validation": False,
+            "report_path": str((self.run_dir / "validation.json").resolve()),
+            "report_sha256": hashlib.sha256(report_bytes).hexdigest(), "report_parse_error": None,
+            "summary": report["summary"], "selected": report["selected"],
+            "command": [sys.executable, str(self.root / "custodian/tools/validation/run_validation.py"),
+                        "--changed", "--base", span["base"],
+                        *[arg for path in paths for arg in ("--changed-path", path)], "--json"],
+            "code_paths": code_paths, "implementation_paths": paths, "source_span": span,
+            "source_span_base": span["base"], "source_span_head": span["head"],
+            "validation_paths": paths, "selected_source_paths": paths,
+            "validation_fixture_overlay": None,
+            "source_sha256": {path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{reviewed_main}:{path}"], cwd=self.root,
+                check=True, capture_output=True,
+            ).stdout).hexdigest() for path in code_paths},
+        }
+        (self.run_dir / "coordinator-validation.json").write_text(json.dumps(metadata))
+        original = {"workstream": "review-sample", "run_id": "20261031T000000Z-123456789abc",
+                    "phase": "host_validation_recovery", "reviewed_main": reviewed_main,
+                    "implementation_commit": reviewed_main, "recovery_worktree": str(self.root)}
+        with patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+            result = runner._failed_host_validation_report_pair(
+                self.run_dir, original, original["workstream"], original["run_id"], span,
+                "sample-implementation", "sample.md",
+            )
+        self.assertEqual(result["kind"], "failed_validation")
+        self.assertEqual(result["failure_kind"], "test_or_infrastructure")
+
+        # A correctly re-hashed passing report remains ineligible for this
+        # failed-evidence path, as do mismatched exit codes and altered selection.
+        for label, mutate_report, mutate_metadata in (
+            ("fake pass", lambda value: value.update(passed=True), lambda _value: None),
+            ("wrong exit", lambda _value: None, lambda value: value.update(exit_code=5)),
+            ("wrong workstream", lambda _value: None,
+             lambda value: value["source_span"]["provenance"].update(workstream="other")),
+            ("selection drift", lambda value: value["selected"].pop(), lambda _value: None),
+        ):
+            with self.subTest(predicate=label):
+                bad_report = json.loads(json.dumps(report))
+                bad_metadata = json.loads(json.dumps(metadata))
+                mutate_report(bad_report)
+                mutate_metadata(bad_metadata)
+                bad_bytes = (json.dumps(bad_report) + "\n").encode()
+                (self.run_dir / "validation.json").write_bytes(bad_bytes)
+                bad_metadata["report_sha256"] = hashlib.sha256(bad_bytes).hexdigest()
+                (self.run_dir / "coordinator-validation.json").write_text(json.dumps(bad_metadata))
+                with patch.object(host_validation, "resolve_validation_source_span", return_value=span):
+                    self.assertIsNone(runner._failed_host_validation_report_pair(
+                        self.run_dir, original, original["workstream"], original["run_id"], span,
+                        "sample-implementation", "sample.md",
+                    ))
+
+
     def test_exact_inventory_coverage_only_exit_six_is_authenticated_without_legacy_broad_capture(self):
         unowned = self.root / "design/unowned_coverage_fixture.gd"
         unowned.parent.mkdir(parents=True, exist_ok=True)

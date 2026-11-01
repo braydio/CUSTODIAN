@@ -34,22 +34,26 @@ func _run() -> void:
 		_report()
 		return
 	root.add_child(game_root)
-	for _frame in 6:
-		await process_frame
 	var level := game_root.get_node("World/Level") as Node2D
 	var operator := game_root.get_node("World/Operator") as CharacterBody2D
 	var controller := game_root.get_node("World/PlayerController")
 	var camera := game_root.get_node("World/Camera2D") as Camera2D
 	var bootstrap := game_root.get_node("World/LevelPlaytestBootstrap")
 	var preview := operator.get_node("CanonicalOperatorPresentation")
+	var authored_spawn := Vector2(512, 520)
+	var spawn_marker: Vector2 = level.call("get_spawn_position", &"Spawn_Main")
+	if spawn_marker.distance_to(authored_spawn) > 0.01:
+		_fail("authored Operator spawn marker moved from its declared coordinates")
+	if bootstrap.get_meta("playtest_profile", "") != "full":
+		_fail("normal full playtest bootstrap was not activated")
+	if operator.global_position.distance_to(spawn_marker) > 0.01:
+		_fail("bootstrap did not preserve authored Operator spawn at the ready boundary")
+	for _frame in 6:
+		await process_frame
 	if operator.scene_file_path != "res://game/actors/operator/operator.tscn":
 		_fail("preview must instance the real operator.tscn")
 	if controller.get_node_or_null(controller.get("operator_path")) != operator:
 		_fail("normal PlayerController must control the actual Operator")
-	if bootstrap.get_meta("playtest_profile", "") != "full":
-		_fail("normal full playtest bootstrap was not activated")
-	if operator.global_position.distance_to(Vector2(512, 520)) > 0.01:
-		_fail("bootstrap did not preserve authored Operator spawn")
 	if level.get("camera_bounds") != Rect2(0, 0, 1024, 768):
 		_fail("sandbox camera/gameplay bounds changed")
 	if not camera.has_presentation_framing() or camera.get_presentation_bounds_override() != Rect2(0, 0, 1024, 768):
@@ -104,15 +108,21 @@ func _run() -> void:
 	Input.action_release("move_right")
 	if operator.global_position.distance_to(start) < 1.0:
 		_fail("real Operator did not move with the normal gameplay controller")
-	for _frame in 2:
-		await process_frame
+	# Stop every source of actor motion before repositioning for presentation-only
+	# assertions. Waiting with physics active made the old exact-position check
+	# depend on the next controller/CharacterBody2D tick.
+	Input.action_release("move_right")
+	controller.set_process(false)
+	controller.set_physics_process(false)
+	operator.set_physics_process(false)
 	operator.velocity = Vector2.ZERO
-	operator.global_position = Vector2(512, 520)
+	operator.global_position = authored_spawn
+	if operator.global_position.distance_to(authored_spawn) > 0.01:
+		_fail("test could not restore the fixed preview player position")
 	for _frame in 2:
-		await process_frame
-	if operator.global_position != Vector2(512, 520):
-		_fail("test could not restore identical preview player position")
-	operator.velocity = Vector2.ZERO
+		await physics_frame
+	if operator.global_position.distance_to(authored_spawn) > 0.01:
+		_fail("Operator moved after test physics and controller motion were disabled")
 
 	# Presentation modes are floor-only and preserve the live actor/camera/collision/navigation.
 	camera.set_process(false)
@@ -120,7 +130,6 @@ func _run() -> void:
 	var camera_transform := camera.global_transform
 	var camera_zoom := camera.zoom
 	var operator_transform := operator.global_transform
-	operator.set_physics_process(false)
 	for mode in [1, 2, 3, 4]:
 		level.call("set_presentation_mode", mode)
 		var roots := [blockout, courtyard, repeat, quiet]

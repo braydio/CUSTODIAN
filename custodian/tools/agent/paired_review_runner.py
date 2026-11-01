@@ -5398,6 +5398,74 @@ def _is_minimal_modern_import_failure(report: dict) -> bool:
             )
 
 
+def _validate_archive_only_failed_manifest_coverage(report: dict, code_paths: set[str],
+                                                    repo: Path, reviewed_main: str,
+                                                    implementation_commit: str,
+                                                    source_span: dict, workstream: str) -> None:
+    """Validate failed-report coverage against its exact archived source span.
+
+    A canonical archive can move an implementation packet to ``archived/``
+    after the implementation commit. In that case the lifecycle trace and the
+    archived packet's Work surface authenticate the source span, but there is
+    no post-hoc scope-attestation receipt. Reconstruct the additive test-only
+    manifest delta from that span instead of applying the post-hoc attestation
+    gate used for later manifest edits.
+    """
+    manifest_path = "custodian/tools/validation/validation_manifest.json"
+    provenance = source_span.get("provenance") if isinstance(source_span, dict) else None
+    landing = provenance.get("landing_trace") if isinstance(provenance, dict) else None
+    if (not isinstance(provenance, dict)
+            or provenance.get("kind") != "workstream-lifecycle-trace"
+            or provenance.get("archive_kind") != "archive-only"
+            or provenance.get("trace_landing_kind") != "canonical-archive"
+            or provenance.get("trace_landing_commit") != implementation_commit
+            or provenance.get("workstream") != workstream
+            or not isinstance(landing, dict)
+            or landing.get("landing") != implementation_commit
+            or manifest_path not in source_span.get("paths", [])
+            or manifest_path not in report.get("changed_files", [])):
+        raise HostValidationError("failed manifest report lacks an exact archive-only source span")
+
+    base_manifest, _ = host_validation._manifest_at_revision(repo, source_span.get("base", ""))
+    source_manifest, _ = host_validation._manifest_at_revision(repo, source_span.get("head", ""))
+    pinned_manifest = host_validation._pinned_coverage_manifest(repo, reviewed_main)
+    if source_manifest != pinned_manifest:
+        raise HostValidationError("archived source-span manifest differs from reviewed-main policy")
+
+    validation_dir = Path(__file__).resolve().parents[1] / "validation"
+    if str(validation_dir) not in sys.path:
+        sys.path.insert(0, str(validation_dir))
+    import run_validation
+    try:
+        manifest_ids, manifest_changed = run_validation.manifest_change_selection(
+            source_manifest["tests"], base_payload=base_manifest, current_payload=source_manifest,
+        )
+        selected_tests = run_validation.select_changed_tests(
+            source_manifest["tests"], report["changed_files"],
+            manifest_ids=manifest_ids, manifest_changed=manifest_changed,
+        )
+    except (run_validation.ManifestError, KeyError, TypeError) as exc:
+        raise HostValidationError(f"archived source-span validation manifest is invalid: {exc}") from exc
+    if not manifest_changed:
+        raise HostValidationError("archived source-span manifest has no test-definition delta")
+    expected_selected = [item["id"] for item in selected_tests]
+    if report.get("selected") != expected_selected:
+        raise HostValidationError("failed report selection differs from archived source-span policy")
+    expected_coverage = run_validation.changed_file_coverage(
+        report["changed_files"], selected_tests, source_manifest.get("coverage_excludes", []),
+    )
+    coverage = report.get("coverage")
+    actual_coverage = {key: coverage.get(key) for key in
+                       ("covered_files", "uncovered_files", "excluded_files", "covered_by", "complete")}
+    if actual_coverage != expected_coverage:
+        raise HostValidationError("failed report coverage differs from archived source-span policy")
+    eligible = set(expected_coverage["covered_files"])
+    excluded = set(expected_coverage["excluded_files"])
+    if (not code_paths.issubset(eligible | excluded)
+            or code_paths & set(expected_coverage["uncovered_files"])):
+        raise HostValidationError("failed report coverage omits implementation source/test files")
+
+
 def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                                         workstream: str, run_id: str,
                                         source_span: dict | None = None,
@@ -5466,6 +5534,10 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
             or metadata.get("implementation_commit") != original.get("implementation_commit")
             or metadata.get("worktree") != (original.get("recovery_worktree") or original.get("worktree"))
             or not isinstance(metadata.get("exit_code"), int) or metadata["exit_code"] <= 0
+            or (complete_suite_failure and metadata.get("exit_code") != (
+                3 if expected_counts["infrastructure_errors"] else
+                5 if expected_counts["timed_out"] else 4
+            ))
             or (coverage_only_failure and metadata.get("exit_code") != 6)
             or metadata.get("report_path") != str((run_dir / "validation.json").resolve())
             or metadata.get("report_sha256") != _sha256_bytes(report_bytes)
@@ -5602,6 +5674,7 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                 Path(metadata["worktree"]), metadata["reviewed_main"],
             )
             span = metadata.get("source_span")
+            archive_only_manifest_failure = False
             if "custodian/tools/validation/validation_manifest.json" in report.get("changed_files", []):
                 trusted_span = source_span
                 if (not isinstance(trusted_span, dict) or not isinstance(span, dict)
@@ -5616,10 +5689,23 @@ def _failed_host_validation_report_pair(run_dir: Path, original: dict,
                 if recorded_provenance != trusted_provenance:
                     return None
                 span = trusted_span
-            host_validation._validate_canonical_coverage(
-                report, set(code_paths), manifest, repo=Path(metadata["worktree"]),
-                reviewed_main=metadata["reviewed_main"], source_span=span,
-            )
+                archive_only_manifest_failure = (
+                    complete_suite_failure and modern_inventory
+                    and trusted_provenance.get("kind") == "workstream-lifecycle-trace"
+                    and trusted_provenance.get("archive_kind") == "archive-only"
+                    and trusted_provenance.get("trace_landing_kind") == "canonical-archive"
+                )
+            if archive_only_manifest_failure:
+                _validate_archive_only_failed_manifest_coverage(
+                    report, set(code_paths), Path(metadata["worktree"]),
+                    metadata["reviewed_main"], metadata["implementation_commit"],
+                    span, target_workstream or workstream,
+                )
+            else:
+                host_validation._validate_canonical_coverage(
+                    report, set(code_paths), manifest, repo=Path(metadata["worktree"]),
+                    reviewed_main=metadata["reviewed_main"], source_span=span,
+                )
         except HostValidationError as exc:
             # Exit 6 is an authentic incomplete-coverage failure when the
             # canonical policy agrees exactly but an implementation path lacks
