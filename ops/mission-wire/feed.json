@@ -1,9 +1,296 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T03:07:00Z",
-  "source_main_sha": "2d5240f002a9cd8d95e89cc6ff93124fac30878e",
+  "generated_at": "2026-11-01T04:09:12Z",
+  "source_main_sha": "91f44c89e9a5bf9b269619d513777a403cc6530e",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "art-generation-protocol-91f44c89",
+      "headline": "CUSTODIAN sets image-by-image approval rules before its large environment art push",
+      "summary": "A new main-branch protocol distinguishes planning batches from actual image generation. Large environments and seams stay one-at-a-time; small compatible props may be grouped after style calibration. Every asset still requires its own approval.",
+      "body": "Commit 91f44c89 adds the standing non-Operator AI art generation and review protocol and updates the art manifest guidance. It organizes queues of 5–10 states but requires individually reviewable sources, starts the five-image calibration one at a time, and only allows small compatible groups after style lock. This is guidance, not generated art or accepted runtime assets. Main 91f44c89e9a5bf9b269619d513777a403cc6530e.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "hub-sepulcher-awakening-art-v1",
+      "occurred_at": "2026-11-01T04:07:36Z",
+      "bullets": [
+        "Art owner: produce first calibration image with real neighboring references and seek individual approval."
+      ],
+      "links": [
+        {
+          "title": "Art protocol commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/91f44c89e9a5bf9b269619d513777a403cc6530e"
+        },
+        {
+          "title": "Art generation protocol",
+          "url": "https://github.com/braydio/CUSTODIAN/blob/91f44c89e9a5bf9b269619d513777a403cc6530e/design/04_architecture/AI_ART_GENERATION_REVIEW_PROTOCOL_V1.md"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "The planned Hub, Sepulcher and Awakening art program now has a practical production rulebook. Its central distinction is simple: organizing several images into a queue does not mean generating them as one collage or approving them as a group. The new protocol is on main, but it does not establish that any artwork has been produced.",
+        "sections": [
+          {
+            "heading": "Different art needs different treatment",
+            "text": "Large district underlays, connectors and animation states are generated individually because camera alignment, seams and frame continuity matter. Only small compatible props and decals may be grouped after a visual style has been approved, and each source remains independently reviewable."
+          },
+          {
+            "heading": "The first five are a calibration gate",
+            "text": "The existing manifest's first five image states must be produced and approved one at a time. Approved neighboring art should guide each candidate. A source must then pass a separate asset-intake process before it can become a runtime asset."
+          }
+        ],
+        "insights": [
+          {
+            "title": "Batch planning is not batch approval",
+            "explanation": "A queue of 5–10 states is an organizational unit. The protocol prevents an attractive collage from being mistaken for independently accepted, correctly registered game art."
+          },
+          {
+            "title": "Registration risk determines the batch size",
+            "explanation": "Images that touch existing geometry or neighboring scenery demand single-image attention. The rule protects level continuity while allowing limited efficiency for low-risk decorative pieces."
+          }
+        ],
+        "takeaway": "Art production now has explicit review and batching boundaries, but image delivery and game integration remain unproven.",
+        "next_watch": "The first individually approved calibration image and its source receipt."
+      },
+      "details": {
+        "overview": "Protocol introduced at main commit 91f44c89; no generated images inspected. The previous manifest remains a plan for 71 core states and 12 conditional states.",
+        "ledger": [
+          {
+            "stage": "Production protocol",
+            "status": "verified landed",
+            "evidence": "Commit 91f44c89."
+          },
+          {
+            "stage": "First calibration source",
+            "status": "unknown",
+            "evidence": "No approved image receipt inspected."
+          },
+          {
+            "stage": "Individual approvals",
+            "status": "unknown",
+            "evidence": "No approval receipts inspected."
+          },
+          {
+            "stage": "Asset V2 ingestion",
+            "status": "unknown",
+            "evidence": "No runtime catalog or scene receipt inspected."
+          }
+        ],
+        "notes": [
+          "The five calibration states are included within the planned core inventory, not additional assets."
+        ],
+        "unknowns": [
+          "No live art-generation or approval records inspected."
+        ],
+        "actions": [
+          "Art owner: produce the first named calibration state and request explicit source approval."
+        ]
+      },
+      "scorecard": {
+        "stage": "Production protocol landed; calibration next",
+        "as_of": "2026-11-01T04:09:12Z",
+        "scope": "Hub/Sepulcher/Awakening source-art planning and approvals only",
+        "metrics": [
+          {
+            "id": "other-art-core-states",
+            "label": "PLANNED CORE STATES",
+            "value": 71,
+            "verification": "verified",
+            "basis": "Committed manifest planning inventory; not delivered assets",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Publish production manifest",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "2d5240f0."
+          },
+          {
+            "label": "Publish generation/review protocol",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "91f44c89."
+          },
+          {
+            "label": "Generate first calibration image",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No source receipt inspected."
+          },
+          {
+            "label": "Approve five calibration images individually",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Human approval required."
+          },
+          {
+            "label": "Produce remaining states",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Style calibration prerequisite."
+          },
+          {
+            "label": "Ingest and validate runtime art",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "Separate Asset V2 intake."
+          }
+        ],
+        "next_gate": "Art owner produces first calibration image for individual human approval."
+      },
+      "related": [
+        {
+          "title": "Hub and Awakening art gains a detailed production blueprint, but no images are approved",
+          "context": "The new protocol explains how the earlier manifest's images must be produced and approved.",
+          "story_id": "hub-sepulcher-art-manifest-2d5240f0"
+        }
+      ]
+    },
+    {
+      "id": "archive-transition-rc119-correction-534bf45a",
+      "headline": "A protected review gets a narrowly scoped archive correction, not a blanket release",
+      "summary": "Main now contains an exact-commit exception for one archived review metadata correction. The first implementation confused Git blob IDs with SHA-256 digests; the follow-up separates both checks. Independent approval, PR #103 disposition and host cleanup remain unverified.",
+      "body": "Commits ef62a86b, e98d91d and 534bf45a add and correct a guarded archive-transition exception for review-agent-paired-review-runner-profile-summary-coverage-v1. The rule pins the archive and one administrative correction, validates parents, trees, paths, regular-file modes and both Git blob IDs and content SHA-256 digests. The committed maintenance summary reports 81 local tests and an unmocked preserved-commit canary; those are author-reported results, not independent review acceptance. The summary identifies draft PR #103 and pending independent review and CI rerun. No proof of live host state, release, recovery apply or teardown. Main 91f44c89e9a5bf9b269619d513777a403cc6530e.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "review-agent-paired-review-runner-profile-summary-coverage-v1",
+      "occurred_at": "2026-11-01T03:49:57Z",
+      "bullets": [
+        "Independent reviewer: inspect corrected RC-119 head and PR CI before any merge or lifecycle action."
+      ],
+      "links": [
+        {
+          "title": "Archive guard correction commit",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/534bf45a7bfd3a141f09ba754e0834267b5b1311"
+        },
+        {
+          "title": "Digest identifier fix",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e98d91d211b2edb3b58c987ddb54a801a06dfc01"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "A previously archived paired review now has a carefully limited route through a lifecycle guard that had rejected its administrative correction. The new code recognizes one exact historical correction rather than opening a general escape hatch. A flaw in the first version was caught and corrected, but the protected review is not thereby accepted or released.",
+        "sections": [
+          {
+            "heading": "Why the exception matters",
+            "text": "The archive guard normally rejects edits after a review packet is archived. This case involves a specific one-line metadata correction. The new rule checks the original commits, parentage, file identity and content so unrelated edits cannot borrow the exception."
+          },
+          {
+            "heading": "A subtle identity bug was caught",
+            "text": "The first version compared a Git blob identifier with a SHA-256 digest, two different kinds of fingerprint. The follow-up verifies each separately. The committed handoff reports local regression coverage, but independent review and the maintenance PR's final outcome remain outstanding."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A surgical fix preserves the wider safety boundary",
+            "explanation": "The code permits only a pinned archive/correction history, including its ordinary main-sync form, rather than weakening archive checks for other reviews."
+          },
+          {
+            "title": "Test success is not reviewer acceptance",
+            "explanation": "The maintenance summary reports passing local tests and a preserved-history canary. Those results do not prove a fresh independent approval, host recovery or canonical teardown."
+          }
+        ],
+        "takeaway": "The exact archive correction is handled in main-branch code, while review acceptance and operational recovery remain separate gates.",
+        "next_watch": "Look for independent review of the corrected maintenance head, CI evidence and an explicit disposition of PR #103."
+      },
+      "details": {
+        "overview": "Main includes RC-119 archive-transition admission code and its follow-up digest correction. Commit 534bf45a carries a maintenance summary reporting 81 local tests and an unmocked canary. This run did not independently execute them or verify PR #103 status.",
+        "ledger": [
+          {
+            "stage": "Exact correction admission implementation",
+            "status": "verified landed on main",
+            "evidence": "Main ancestry and commit 534bf45a."
+          },
+          {
+            "stage": "Local validation",
+            "status": "reported passing",
+            "evidence": "Maintenance summary reports 81 tests and preserved-commit canary; not independently executed."
+          },
+          {
+            "stage": "Independent review and PR CI",
+            "status": "unknown / pending in handoff",
+            "evidence": "Summary calls PR #103 draft and requests fresh review and rerun."
+          },
+          {
+            "stage": "Protected review acceptance",
+            "status": "unknown",
+            "evidence": "No independent PASS receipt inspected."
+          },
+          {
+            "stage": "Canonical teardown",
+            "status": "unknown",
+            "evidence": "No trustworthy host evidence."
+          }
+        ],
+        "notes": [
+          "The earlier implementation compared Git SHA-1 blob IDs to SHA-256 content digests; follow-up checks both."
+        ],
+        "unknowns": [
+          "PR #103 live status and CI outcome not independently fetched.",
+          "Host locks, worktrees, disk and review process state unavailable."
+        ],
+        "actions": [
+          "Independent reviewer: assess corrected maintenance PR and CI before any lifecycle action."
+        ]
+      },
+      "scorecard": {
+        "stage": "Guard implementation landed; independent review outstanding",
+        "as_of": "2026-11-01T04:09:12Z",
+        "scope": "RC-119 exact archived review correction; not full dispatcher",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Pin original archive and correction",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Main commit 534bf45a."
+          },
+          {
+            "label": "Correct digest comparison",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "e98d91d and 534bf45a."
+          },
+          {
+            "label": "Run local regression and canary",
+            "status": "current",
+            "verification": "reported",
+            "evidence": "Author maintenance summary reports passes."
+          },
+          {
+            "label": "Independent maintenance review",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted review receipt inspected."
+          },
+          {
+            "label": "Protected review disposition",
+            "status": "blocked",
+            "verification": "unknown",
+            "evidence": "Separate independent outcome required."
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host receipt."
+          }
+        ],
+        "next_gate": "Independent reviewer verifies corrected RC-119 head and PR CI."
+      },
+      "related": [
+        {
+          "title": "Emergency review-recovery code lands on main, but the protected review remains held",
+          "context": "Both changes concern safe continuation of protected paired reviews; neither establishes accepted recovery.",
+          "story_id": "paired-review-recovery-merge-dc5b7505"
+        }
+      ]
+    },
     {
       "id": "hub-sepulcher-art-manifest-2d5240f0",
       "headline": "Hub and Awakening art gains a detailed production blueprint, but no images are approved",
@@ -1355,13 +1642,7 @@
         ],
         "next_gate": "Existing paired-review owner must independently inspect the landed validator and produce a canonical disposition."
       },
-      "related": [
-        {
-          "title": "A new review-safety gate is queued to stop unverifiable code histories before landing",
-          "context": "The earlier article documented the ready implementation/review pair now advanced by this landing.",
-          "story_id": "validator-recertification-ready-72096cb4"
-        }
-      ]
+      "related": []
     },
     {
       "id": "godot-cache-review-handoff-24af9282",
@@ -1475,318 +1756,24 @@
         "next_gate": "Authorized recovery owner must inspect fresh host and claim evidence before acting."
       },
       "related": []
-    },
-    {
-      "id": "validator-recertification-ready-72096cb4",
-      "headline": "A new review-safety gate is queued to stop unverifiable code histories before landing",
-      "summary": "CUSTODIAN has made a validator recertification implementation and its paired independent review ready for automatic dispatch. The proposed safeguard would reject source histories lacking authenticated synchronization evidence before publication. Both packets are ready, not running or completed.",
-      "body": "The recertification pair was authored at 3c3acc05 and marked ready/auto at 72096cb4. It addresses a mismatch: the existing independent-review verifier rejects missing historical merge witnesses, but the finish workflow can publish a branch before checking all earlier synchronization evidence. The packet proposes a pre-landing fail-closed check and fresh independent review of the current validator. No implementation landing, accepted PASS or host teardown is established.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-validator-recertification-v1",
-      "occurred_at": "2026-10-31T09:38:39Z",
-      "bullets": [
-        "Two specifically inspected packets are ready/auto; the review depends on implementation.",
-        "Proposed finish-time witness validation is not yet implemented.",
-        "Existing historical review evidence is not retroactively accepted.",
-        "Host execution, locks and teardown are unknown."
-      ],
-      "links": [
-        {
-          "title": "Recertification packet creation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/3c3acc05c76d5ae56c1ca64b066351ca5796d8f6"
-        },
-        {
-          "title": "Ready implementation and review",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/72096cb4bac9a3c21226aa18c559d90453f09308"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A safety gap in CUSTODIAN's code-review pipeline now has a concrete repair plan. Two newly readied task packets propose checking the authenticity of synchronization history before changes can land, rather than discovering missing evidence only when independent review begins.",
-        "sections": [
-          {
-            "heading": "The problem sits between finishing and reviewing",
-            "text": "The current review verifier rejects a code history when it cannot authenticate a synchronization merge. The newly documented gap is earlier in the process: a workstream may publish its changes without proving that every earlier merge has the required lifecycle record."
-          },
-          {
-            "heading": "The proposed fix has its own independent test",
-            "text": "The implementation packet calls for a fail-closed check before publication, with real-Git regression tests. A separate review packet must then examine both the new guard and the complete current validator. Neither packet being ready establishes that an agent is running."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Preventing bad evidence is stronger than repairing it afterward",
-            "explanation": "The proposed change moves a provenance check earlier, where it can stop an unverifiable workstream before landing. That could reduce the accumulation of historical review-recovery cases."
-          },
-          {
-            "title": "Recertification is not retroactive forgiveness",
-            "explanation": "Even a successful new review would not automatically accept or close older protected review runs. Their original evidence and separate authorization requirements remain intact."
-          }
-        ],
-        "takeaway": "The guard is queued, not landed; its independent acceptance remains a future gate.",
-        "next_watch": "An implementation commit and real-Git validation evidence, followed by a genuine independent review receipt."
-      },
-      "details": {
-        "overview": "At main 72096cb4, both AGENT_PAIRED_REVIEW_VALIDATOR_RECERTIFICATION_V1.md and its paired review are Status ready, Dispatch auto. The implementation describes the missing finish-time source-span provenance guard. No full dispatcher audit or host execution evidence was inspected.",
-        "ledger": [
-          {
-            "stage": "Packet publication",
-            "status": "verified",
-            "evidence": "3c3acc05 created implementation and review packets."
-          },
-          {
-            "stage": "Dispatch readiness",
-            "status": "verified packet metadata only",
-            "evidence": "72096cb4 changed both named packets to ready/auto."
-          },
-          {
-            "stage": "Implementation and validation",
-            "status": "not established",
-            "evidence": "No landing or test receipt inspected."
-          },
-          {
-            "stage": "Independent review",
-            "status": "dependency-gated",
-            "evidence": "Review packet depends on implementation; no accepted PASS."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No host proof."
-          }
-        ],
-        "notes": [
-          "Ready is not claimed or running."
-        ],
-        "unknowns": [
-          "Full live dispatcher queue and current host ownership.",
-          "Any new CI checks or live worktree state."
-        ],
-        "actions": [
-          "Existing implementation owner: add and validate the pre-landing witness check.",
-          "Independent reviewer: assess the landed guard only after implementation evidence exists."
-        ]
-      },
-      "scorecard": {
-        "stage": "Implementation and paired review ready",
-        "as_of": "2026-10-31T09:38:39Z",
-        "scope": "Two named recertification packets only",
-        "metrics": [
-          {
-            "id": "ready_pair",
-            "label": "READY PACKETS",
-            "value": 2,
-            "verification": "verified",
-            "basis": "Two named packet files switched to ready/auto in 72096cb4; not a queue-wide count.",
-            "url": "https://github.com/braydio/CUSTODIAN/commit/72096cb4bac9a3c21226aa18c559d90453f09308"
-          }
-        ],
-        "steps": [
-          {
-            "label": "Author packet pair",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "3c3acc05"
-          },
-          {
-            "label": "Mark pair dispatch-ready",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "72096cb4"
-          },
-          {
-            "label": "Implement pre-landing guard",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No implementation landing inspected"
-          },
-          {
-            "label": "Validate real-Git regressions",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No passing receipt inspected"
-          },
-          {
-            "label": "Independent review acceptance",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Dependent on implementation"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Host evidence unavailable"
-          }
-        ],
-        "next_gate": "Existing implementation owner must land and validate the pre-publication provenance guard."
-      },
-      "related": [
-        {
-          "title": "Review system learns to verify repeated code synchronizations, but missing historical evidence still blocks recovery",
-          "context": "The new guard aims to prevent the kind of missing synchronization witness revealed by this earlier verifier landing.",
-          "story_id": "multi-sync-4693df7b-5c02e0dc"
-        }
-      ]
-    },
-    {
-      "id": "operator-chassis-seal-5e250a12",
-      "headline": "Operator gains an architectural safety guard, while its original review awaits evidence clearance",
-      "summary": "A new guard now measures and protects the Operator's movement-chassis ownership and code-growth limits. Its implementation is on main, with reported passing tests and repeatable sidearm scenarios. Independent review is held by a source-file declaration mismatch, so the new safeguard is not yet independently accepted.",
-      "body": "The Operator chassis authority seal landed at 82282bd3 and was archived at 5e250a12. It adds a versioned source inventory, ownership/budget checks and validation gates without claiming a gameplay change. The implementation summary reports 17/17 selected checks and two matching sidearm scenario passes, but an earlier inconsistent scenario result remains unexplained. The original review failed host source-scope validation before reviewer launch because test_workstream.py was not listed in the archived work surface. A separate attestation correction is ready, not implemented. No accepted PASS, runtime deployment or canonical teardown has been verified.",
-      "severity": "milestone",
-      "verification": "verified",
-      "category": "operator",
-      "workstream": "operator-chassis-authority-seal-v1",
-      "occurred_at": "2026-10-31T09:05:50Z",
-      "bullets": [
-        "Guard implementation landed and archived.",
-        "Local validation passes are reported; earlier sidearm inconsistency remains unresolved.",
-        "Original independent review did not launch; exact source-scope correction is ready.",
-        "No runtime deployment or canonical teardown established."
-      ],
-      "links": [
-        {
-          "title": "Operator guard implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/82282bd3b5a05c20cc7ca606f3f674760f428a0d"
-        },
-        {
-          "title": "Implementation closeout archive",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/5e250a1215cea536d3bf2030f7a82327f5a0ad58"
-        },
-        {
-          "title": "Source-scope correction packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ad42f092761ed222b8da2fb0d41a61388f70d5fc"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN's Operator now has a committed architectural guard intended to prevent movement responsibilities and code size from drifting unnoticed. The safeguard does not add a new move or animation, but it helps protect the foundation on which those features depend. Its independent review has hit a narrow evidence problem.",
-        "sections": [
-          {
-            "heading": "A boundary around the movement chassis",
-            "text": "The guard inventories source ownership, checks growth limits and runs as part of the normal validation lifecycle. It keeps the existing Operator movement controller as the authority rather than silently shifting responsibilities elsewhere."
-          },
-          {
-            "heading": "Promising tests, unfinished acceptance",
-            "text": "The implementation summary reports complete selected validation and two repeatable sidearm scenarios. It also preserves an earlier unexplained failure. The independent reviewer never launched because one regression-test file was omitted from the original packet's declared scope."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Architectural progress can be invisible in gameplay",
-            "explanation": "The landing improves the project's ability to detect future movement-system regressions. It is infrastructure for safer gameplay work, not evidence that a new player-facing feature is live."
-          },
-          {
-            "title": "Review evidence is now the gating issue",
-            "explanation": "The review stopped before reviewer judgment. The proposed remedy is a one-file, historically pinned attestation, which itself needs independent acceptance before the original review can resume."
-          }
-        ],
-        "takeaway": "The Operator guard is implemented on main, but neither independently accepted nor proven deployed.",
-        "next_watch": "A validated and independently accepted exact-source attestation, followed by separately authorized recovery of the preserved chassis review."
-      },
-      "details": {
-        "overview": "At main ad42f092761ed222b8da2fb0d41a61388f70d5fc, the chassis seal is landed and archived. The published summary reports 17/17 selected validation checks, 14 guard tests and two matching uninstrumented sidearm scenario passes; it also documents an unresolved earlier failure. Original review run 20261031T074418Z-c57f04948b7c remains held at host validation.",
-        "ledger": [
-          {
-            "stage": "Implementation",
-            "status": "verified landed and archived",
-            "evidence": "82282bd3 implementation; 5e250a12 archive."
-          },
-          {
-            "stage": "Validation",
-            "status": "reported passing with caveat",
-            "evidence": "Closeout summary reports 17/17 checks and repeatable sidearm scenarios; prior failure cause unresolved."
-          },
-          {
-            "stage": "Independent review",
-            "status": "blocked before reviewer launch",
-            "evidence": "Published attestation packet identifies omitted test_workstream.py declaration."
-          },
-          {
-            "stage": "Canonical teardown",
-            "status": "unknown",
-            "evidence": "No trustworthy current host proof."
-          }
-        ],
-        "notes": [
-          "Guard preserves known legacy debt; it does not claim completed migration."
-        ],
-        "unknowns": [
-          "Live host process, worktree, lock and disk state.",
-          "Cause of the earlier sidearm test discrepancy."
-        ],
-        "actions": [
-          "Existing correction owner: implement exact one-path attestation, then obtain independent review.",
-          "Authorized recovery owner: consider original-review planning only after genuine accepted correction PASS."
-        ]
-      },
-      "scorecard": {
-        "stage": "Landed; original independent review blocked",
-        "as_of": "2026-10-31T09:05:50Z",
-        "scope": "Operator chassis seal and its original review",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement architectural guard",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "82282bd3"
-          },
-          {
-            "label": "Publish archive",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "5e250a12"
-          },
-          {
-            "label": "Local validation",
-            "status": "current",
-            "verification": "reported",
-            "evidence": "17/17 selected checks in implementation summary"
-          },
-          {
-            "label": "Resolve review source scope",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Exact one-file attestation not yet implemented"
-          },
-          {
-            "label": "Independent acceptance",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No accepted original review receipt"
-          },
-          {
-            "label": "Canonical teardown",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "No host proof"
-          }
-        ],
-        "next_gate": "Correction owner must implement and independently clear the exact attestation before authorized original-review recovery."
-      },
-      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T03:07:00Z",
-    "source_main_sha": "2d5240f002a9cd8d95e89cc6ff93124fac30878e",
+    "observed_at": "2026-11-01T04:09:12Z",
+    "source_main_sha": "91f44c89e9a5bf9b269619d513777a403cc6530e",
     "coverage": "partial",
-    "scope": "Inspected latest main commits, PR #102, two associated workflow runs and the new art manifest; not the full dispatcher queue.",
+    "scope": "Four main commits since prior feed, named archive correction and art protocol; no canonical live dispatcher audit.",
     "metrics": [
       {
         "id": "other-art-core-states",
         "label": "PLANNED CORE ART STATES",
         "value": 71,
         "verification": "verified",
-        "basis": "71 distinct core image states enumerated in committed V1 art manifest; planning scope only, not produced assets.",
-        "url": "https://github.com/braydio/CUSTODIAN/blob/2d5240f002a9cd8d95e89cc6ff93124fac30878e/design/04_architecture/HUB_SEPULCHER_AWAKENING_ART_V1_MANIFEST.md"
+        "basis": "Committed V1 art manifest; planned states only, not generated assets.",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/2d5240f002a9cd8d95e89cc6ff93124fac30878e"
       }
     ],
-    "focus": "Generate and independently approve the first art calibration image; for recovery, obtain a fresh read-only exact-run plan before any separately authorized apply.",
-    "note": "No canonical live dispatcher audit or host telemetry. PR #102 merged; protected recovery and independent review acceptance remain unknown."
+    "focus": "Independent review of corrected RC-119 maintenance head; separately, first art calibration approval.",
+    "note": "No verified project-wide queue counts or host telemetry; protected review acceptance and teardown unknown."
   }
 }
