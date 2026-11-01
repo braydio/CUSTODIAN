@@ -35,3 +35,19 @@ Human reviewer questions:
 1. Against the approved 128px reference and separate live runtime presentation, does the upper-body silhouette read closer to the intended hood/collar/chest/shoulder relationship while keeping V002's lower half intact?
 2. Are the fitted angular shoulder shells an acceptable direction, and are the two measured right-side overlap pairs visually or technically unacceptable before V004?
 3. Which sharpness path should guide a later review: native 128px or the one-time `pixelart --choose 1` 512px reduction, given the reduced path's loss of partial alpha?
+
+## External review handoff
+
+Published the human-review package with the repository visual-review publisher. The current workstream `LATEST.json` points to:
+
+`/CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v3/20261101T053400Z/REVIEW_MANIFEST.json`
+
+The handoff uses `delete-after-review`. After the review is recorded, run:
+
+`python3 custodian/tools/iteration/publish_review_artifacts.py --reviewed-manifest /CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v3/20261101T053400Z/REVIEW_MANIFEST.json --reviewed-by chatgpt-user`
+
+The exact reviewer questions are: (1) Does the upper-body silhouette improve the hood/collar/chest/shoulder relationship against the approved reference and separately labeled runtime while preserving V002's lower half? (2) Are the fitted angular pauldrons acceptable, and must the two right-side overlaps be resolved before V004? (3) Which sharpness path should guide later iteration, given reduced output has no partial-alpha pixels?
+
+An initial smaller upload at `/CUSTODIAN/visual_review/operator-3d-visual-fidelity-candidate-v3/20261101T053200Z/REVIEW_MANIFEST.json` was superseded by the complete `LATEST.json` handoff above; it remains governed by the same delete-after-review policy.
+
+Implementation commit: `0545e5e3a237366e6c1a7ba5945294e675a9cdb5` on `manual/operator-3d-visual-fidelity-candidate-v3`.
