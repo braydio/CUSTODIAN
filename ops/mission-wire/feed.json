@@ -1,9 +1,378 @@
 {
   "schema": "custodian.wire.v1",
-  "generated_at": "2026-11-01T09:17:29.453Z",
-  "source_main_sha": "543bc5e23cfb969045ada655220917b0c6d50a1f",
+  "generated_at": "2026-11-01T10:23:33.224Z",
+  "source_main_sha": "c258c91144822fd680a62de480c340c3a8999f72",
   "publisher": "CUSTODIAN Project Watch",
   "stories": [
+    {
+      "id": "validator-r1-01-cycle2-ready-c258c911",
+      "headline": "A second review catches a retry loophole in CUSTODIAN's safety gate",
+      "summary": "An independent review of the first validator correction found R1-01: a retry could land code after a main-branch merge without consuming a required after-sync validation report. The finding is recorded and a second correction/review pair is declared ready/auto. No cycle-2 implementation or PASS is established.",
+      "body": "The first correction improved the source-sync witness checks, but its independent reviewer reproduced a separate bypass: a finish attempt synchronizes main and pauses for validation, then a retry with an invalid report can land when the next sync returns unchanged. Cycle-1 review outcome is findings, not acceptance. Two new cycle-2 packets declare ready/auto, each with sequential prerequisites. Canonical dispatch, execution, passing review, and host teardown are unverified.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "agent-paired-review-validator-recertification-v1-review-corrections-2",
+      "occurred_at": "2026-11-01T10:09:20Z",
+      "bullets": [
+        "Cycle-1 independent review reproduced the invalid after-sync retry bypass R1-01.",
+        "Cycle-2 correction and paired review declare ready/auto; dispatch and acceptance are not proven."
+      ],
+      "links": [
+        {
+          "title": "Cycle-1 independent findings closeout",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c05a8e6a688472995f52791bcdeed02e17e12942"
+        },
+        {
+          "title": "Cycle-2 correction and review packets",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/2236a2c7774d2d8bab04cb62dde0d683d0fb3101"
+        },
+        {
+          "title": "Cycle-2 ready/auto handoff",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/c258c91144822fd680a62de480c340c3a8999f72"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN's review safeguards have uncovered a second flaw while trying to close the first. A reviewer showed that a retry could slip past validation after synchronizing with newer main-branch code, so the previous correction has findings rather than independent acceptance.",
+        "sections": [
+          {
+            "heading": "The dangerous second attempt",
+            "text": "The first finish attempt correctly pauses after merging newer main code. On retry, however, the merge is no longer new. The existing implementation checks the required validation report only when that invocation sees a changed merge. The reviewer reproduced a finish that accepted a false report by never examining it."
+          },
+          {
+            "heading": "A second correction is prepared",
+            "text": "The archived cycle-1 review preserves finding R1-01. A new implementation packet and a separate independent-review packet are now declared ready for automatic handoff. They are sequential, not evidence that the repair is already running or accepted."
+          }
+        ],
+        "insights": [
+          {
+            "title": "A green test suite did not cover the retry",
+            "explanation": "The review's selected validation checks passed, but the missing retry scenario still allowed an invalid finish. This is a concrete gap between passing tests and a trustworthy lifecycle gate."
+          },
+          {
+            "title": "The next fix must remember what happened before retry",
+            "explanation": "The new packet requires the pending synchronized tree and its validation report to remain bound across retries, including when the latest synchronization reports no change."
+          }
+        ],
+        "takeaway": "The original provenance correction is not independently accepted; a second, narrower correction is ready to address the newly reproduced bypass.",
+        "next_watch": "Look for the cycle-2 implementation landing, a regression proving invalid retries fail, and an independent PASS receipt."
+      },
+      "scorecard": {
+        "stage": "Cycle-1 findings archived; cycle-2 declared ready",
+        "as_of": "2026-11-01T10:23:33.224Z",
+        "scope": "Two named cycle-2 packets, not full dispatcher inventory",
+        "metrics": [
+          {
+            "id": "ready_auto",
+            "label": "READY/AUTO IN CYCLE-2 PAIR",
+            "value": 2,
+            "verification": "verified",
+            "basis": "Exactly the two named cycle-2 packets have Status ready and Dispatch auto on main",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/c258c91144822fd680a62de480c340c3a8999f72"
+          }
+        ],
+        "steps": [
+          {
+            "label": "Cycle-1 independent review reproduces R1-01",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "Archived review and c05a8e6a; outcome findings"
+          },
+          {
+            "label": "Cycle-2 correction and review authored",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "2236a2c7"
+          },
+          {
+            "label": "Both packets declared ready/auto",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "c258c911; dependencies remain"
+          },
+          {
+            "label": "Cycle-2 implementation and regression",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No landing established"
+          },
+          {
+            "label": "Independent cycle-2 PASS",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No accepted receipt established"
+          },
+          {
+            "label": "Canonical teardown",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No live host evidence"
+          }
+        ],
+        "next_gate": "Dispatcher owner verifies the archived cycle-1 review dependency and dispatch eligibility for the cycle-2 correction."
+      },
+      "details": {
+        "overview": "Review run 20261101T094433Z-e6af1f0156bf documents R1-01 against implementation 7cfe06ed. The original R0-01 disposition remains preserved. Cycle-2 work is not yet accepted.",
+        "ledger": [
+          {
+            "stage": "Cycle-1 review",
+            "status": "verified findings, not PASS",
+            "evidence": "c05a8e6a; archived review run 20261101T094433Z-e6af1f0156bf"
+          },
+          {
+            "stage": "Cycle-2 packet handoff",
+            "status": "verified ready declarations only",
+            "evidence": "2236a2c7 and c258c911"
+          }
+        ],
+        "notes": [
+          "Changed-sync validation must remain mandatory on a later unchanged-sync retry."
+        ],
+        "unknowns": [
+          "Canonical dispatcher eligibility, live execution, independent PASS, teardown"
+        ],
+        "actions": [
+          "Dispatcher owner: verify prerequisite and dispatch correction when eligible; independent reviewer: assess after implementation landing."
+        ]
+      },
+      "related": [
+        {
+          "title": "Independent review finds a provenance loophole",
+          "context": "Earlier R0-01 review led to the first correction; this is its subsequent review finding.",
+          "story_id": "validator-recertification-findings-correction-ca0d2895"
+        }
+      ]
+    },
+    {
+      "id": "sepulcher-dropbox-preview-handoff-e4781dbe",
+      "headline": "Sepulcher's original paving source reaches a verified preview handoff",
+      "summary": "The unapproved paving master and self-contained native-quad preview bundle now have recorded Dropbox upload receipts and SHA-256 identifiers. This removes the earlier missing-external-source handoff, but Codex host retrieval, the playable Godot scene, and human art approval remain outstanding.",
+      "body": "Main now records Dropbox receipts for the original 1254px paving master and a preview ZIP with scripts and instructions. The source is still an unapproved candidate. Documentation reports isolated crop/staging checks, but no Codex-host transfer, gameplay preview, or Asset V2 intake. Do not treat a Dropbox upload as production deployment.",
+      "severity": "milestone",
+      "verification": "verified",
+      "category": "general",
+      "workstream": "sepulcher-paving-native-quad-playtest-v1",
+      "occurred_at": "2026-11-01T09:30:04Z",
+      "bullets": [
+        "Original master and preview bundle have recorded Dropbox revisions and hashes.",
+        "Next gate is exact-byte host retrieval, then a real-Operator scene capture; art approval remains separate."
+      ],
+      "links": [
+        {
+          "title": "Dropbox receipt documentation",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
+        },
+        {
+          "title": "Native-quad preview specification",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/543bc5e23cfb969045ada655220917b0c6d50a1f"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "Sepulcher Gardens' first paving experiment has cleared an important handoff obstacle: the exact source image and its preview toolkit now have documented Dropbox receipts. The next developer no longer needs to recreate the original artwork to begin the test.",
+        "sections": [
+          {
+            "heading": "The same pixels can travel",
+            "text": "The source master and self-contained preview ZIP have recorded file revisions and SHA-256 fingerprints. Those fingerprints let the Codex host verify it retrieved the intended bytes before producing the four native-resolution crops."
+          },
+          {
+            "heading": "The floor is not in the game yet",
+            "text": "The published package is a preview input, not an approved production asset. The host still needs to retrieve and verify it, build the real-camera Operator scene, and present the result for human review. The earlier visible-repeat problem remains unresolved."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The handoff blocker has narrowed",
+            "explanation": "Previously the preview instructions existed without a verified external source package. The recorded upload receipts provide a concrete retrieval target, although they do not prove the Codex host has downloaded it."
+          }
+        ],
+        "takeaway": "Source handoff is documented; gameplay validation and art acceptance are still separate, unfinished gates.",
+        "next_watch": "Watch for a hash-verified host staging receipt and a real Operator-camera preview before any approval or Asset V2 ingest."
+      },
+      "scorecard": {
+        "stage": "Preview package published; host staging pending",
+        "as_of": "2026-11-01T10:23:33.224Z",
+        "scope": "One unapproved Sepulcher paving candidate and its preview handoff",
+        "metrics": [
+          {
+            "id": "other-pilot-candidates",
+            "label": "GENERATED CANDIDATES",
+            "value": 1,
+            "verification": "verified",
+            "basis": "Pilot manifest generated_candidate_count, within four planned sources",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
+          },
+          {
+            "id": "other-approved-sources",
+            "label": "APPROVED SOURCES",
+            "value": 0,
+            "verification": "verified",
+            "basis": "Pilot manifest approved_source_count=0 within this four-source pilot only",
+            "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
+          }
+        ],
+        "steps": [
+          {
+            "label": "First paving candidate technically reviewed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "44c07109"
+          },
+          {
+            "label": "Exact native crop brief landed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "543bc5e2"
+          },
+          {
+            "label": "Source and preview bundle receipts published",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "e4781dbe"
+          },
+          {
+            "label": "Codex host retrieval and SHA verification",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No host receipt"
+          },
+          {
+            "label": "Playable preview and human art approval",
+            "status": "next",
+            "verification": "unknown",
+            "evidence": "No runtime capture or approval"
+          }
+        ],
+        "next_gate": "Executor retrieves the recorded Dropbox package and verifies the source hash before preview construction."
+      },
+      "details": {
+        "overview": "GitHub manifest records Dropbox file IDs/revisions and hashes for original master and preview bundle. These are documented upload receipts, not independent host execution evidence.",
+        "ledger": [
+          {
+            "stage": "Source handoff",
+            "status": "documented Dropbox publication",
+            "evidence": "e4781dbe; manifest receipts and SHA-256 values"
+          },
+          {
+            "stage": "Host staging and scene",
+            "status": "unverified",
+            "evidence": "No Codex host staging or playable capture receipt"
+          }
+        ],
+        "notes": [
+          "Source remains unapproved and excluded from production Asset V2."
+        ],
+        "unknowns": [
+          "Codex host transfer, scene execution, human approval"
+        ],
+        "actions": [
+          "Executor: retrieve and hash-check source; artist/user: evaluate actual preview."
+        ]
+      },
+      "related": [
+        {
+          "title": "Sepulcher paving gets a native-resolution playable preview plan",
+          "context": "This publication supplies the missing source handoff for that previously documented plan.",
+          "story_id": "sepulcher-native-paving-quad-543bc5e2"
+        }
+      ]
+    },
+    {
+      "id": "worktree-turn-retirement-policy-be250ef7",
+      "headline": "CUSTODIAN adopts a safer end-of-turn rule for temporary developer checkouts",
+      "summary": "A new repository policy requires every Codex turn to inventory its worktrees and either safely retire a disposable checkout or record why it must remain. It explicitly protects ignored files, live claims, private proof and uncertain owners. This is a policy landing, not evidence that any worktrees were removed.",
+      "body": "The new AGENTS and lifecycle documentation require branch SHA verification, tracked/untracked/ignored inventory, and use of supported finish or checkpoint commands when safe. The rule seeks to reduce accumulating temporary checkouts without sacrificing unique evidence or protected reviews. No current host worktree counts, disk measurements, or actual cleanup were inspected.",
+      "severity": "important",
+      "verification": "verified",
+      "category": "agent-ops",
+      "workstream": "",
+      "occurred_at": "2026-11-01T10:04:59Z",
+      "bullets": [
+        "Turn-end worktree retention must now be justified by inspected evidence.",
+        "No actual checkout retirement or disk recovery is established by the policy commit."
+      ],
+      "links": [
+        {
+          "title": "Turn-end worktree preservation policy",
+          "url": "https://github.com/braydio/CUSTODIAN/commit/be250ef78f97524577796d2bdd1af44e376b93c2"
+        }
+      ],
+      "images": [],
+      "article": {
+        "lead": "CUSTODIAN has changed the default treatment of temporary development checkouts. Instead of letting each Codex session leave a worktree behind indefinitely, the new rule requires a safe retirement decision at every handoff.",
+        "sections": [
+          {
+            "heading": "Cleanup must not destroy evidence",
+            "text": "A remote Git branch preserves committed tracked files, not ignored artwork, local caches, private captures or untracked proof. The new instructions require an inventory and exact remote SHA verification before a checkout can be removed."
+          },
+          {
+            "heading": "A policy is not a cleanup report",
+            "text": "Finished work should use the canonical finish lifecycle; safely parked work can use checkpoint-and-remove. Protected reviews, unknown owners, dirty files and manual experiments must be retained when their safety cannot be proven. No host-level cleanup is verified by this documentation change."
+          }
+        ],
+        "insights": [
+          {
+            "title": "The bottleneck is safe retirement, not deletion",
+            "explanation": "The policy addresses storage growth without treating missing branches or absent worktrees as proof of successful closeout. Durable evidence and lifecycle state remain separate."
+          }
+        ],
+        "takeaway": "A safer checkout-retirement rule is now documented, but actual worktree counts and disk recovery still require host evidence.",
+        "next_watch": "Look for an exact host inventory showing created, retired, retained and total worktrees with verified remote SHAs."
+      },
+      "scorecard": {
+        "stage": "Policy landed; operational effect unknown",
+        "as_of": "2026-11-01T10:23:33.224Z",
+        "scope": "Repository turn-end worktree policy, not host inventory",
+        "metrics": [],
+        "steps": [
+          {
+            "label": "Retirement and preservation policy committed",
+            "status": "done",
+            "verification": "verified",
+            "evidence": "be250ef7"
+          },
+          {
+            "label": "Live host inventory collected",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "Host unavailable"
+          },
+          {
+            "label": "Eligible checkouts safely retired",
+            "status": "unknown",
+            "verification": "unknown",
+            "evidence": "No canonical teardown evidence"
+          }
+        ],
+        "next_gate": "Host executor applies the new inventory and checkpoint/finish checks on its next authorized turn."
+      },
+      "details": {
+        "overview": "This is documentation-only policy affecting AGENTS.md and lifecycle guidance, not proof of a running reaper or executed cleanup.",
+        "ledger": [
+          {
+            "stage": "Policy landing",
+            "status": "verified",
+            "evidence": "be250ef7"
+          },
+          {
+            "stage": "Host execution",
+            "status": "unknown",
+            "evidence": "No worktree/disk audit"
+          }
+        ],
+        "notes": [
+          "Manual branches and protected reviews are excluded from automatic cleanup."
+        ],
+        "unknowns": [
+          "Retained/retired worktree counts, disk savings, live ownership"
+        ],
+        "actions": [
+          "Next authorized host executor: report inventory and safe retention/retirement decisions."
+        ]
+      },
+      "related": []
+    },
     {
       "id": "validator-recertification-findings-correction-ca0d2895",
       "headline": "Independent review finds a provenance loophole; corrective packets enter the dispatch queue",
@@ -1148,13 +1517,7 @@
         ],
         "next_gate": "Independent reviewer verifies corrected RC-119 head and PR CI."
       },
-      "related": [
-        {
-          "title": "Emergency review-recovery code lands on main, but the protected review remains held",
-          "context": "Both changes concern safe continuation of protected paired reviews; neither establishes accepted recovery.",
-          "story_id": "paired-review-recovery-merge-dc5b7505"
-        }
-      ]
+      "related": []
     },
     {
       "id": "hub-sepulcher-art-manifest-2d5240f0",
@@ -1266,526 +1629,41 @@
         ],
         "next_gate": "Art owner: generate and present the first calibration image for explicit approval."
       },
-      "related": [
-        {
-          "title": "Emergency review-recovery code lands on main, but the protected review remains held",
-          "context": "The recovery mechanism is part of the review infrastructure on which subsequent production acceptance may depend.",
-          "story_id": "paired-review-recovery-merge-dc5b7505"
-        }
-      ]
-    },
-    {
-      "id": "paired-review-recovery-merge-dc5b7505",
-      "headline": "Emergency review-recovery code lands on main, but the protected review remains held",
-      "summary": "PR #102 merged into main at 02:43 UTC. The code introduces digest-bound read-only planning and separately authorized apply for one pinned review. Merge does not prove an independent approval, actual recovery execution or clean teardown.",
-      "body": "GitHub confirms PR #102 merged in commit dc5b7505b930de1c7331104391edc3f1934cbac2. Its description reports local test passes and a pre-merge plan that is now stale. The only inspected PR review is COMMENTED on an earlier head, not APPROVED. A Validate Repository workflow associated with head b7dd0006 succeeded, while Godot Level Pipeline failed; these are distinct checks and do not establish full CI health. No fresh post-merge plan, authorized apply, independent review PASS, host cleanup or teardown was inspected. Current main advanced further to 2d5240f0.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-paired-review-runner-profile-summary-coverage-v1",
-      "occurred_at": "2026-11-01T02:43:29Z",
-      "bullets": [
-        "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
-      ],
-      "links": [
-        {
-          "title": "Merged PR #102",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/102"
-        },
-        {
-          "title": "Merge commit",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/dc5b7505b930de1c7331104391edc3f1934cbac2"
-        },
-        {
-          "title": "Validate Repository run",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41263245863"
-        },
-        {
-          "title": "Godot pipeline run",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41263245864"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "The emergency mechanism for resuming a stranded CUSTODIAN review has crossed a significant boundary: its code is now on main. It can prepare a read-only, evidence-pinned recovery plan and requires a separate authorization before applying it. That is a software landing, not proof the held review has resumed.",
-        "sections": [
-          {
-            "heading": "A narrowly bounded recovery route",
-            "text": "The merged change preserves the original claim and its evidence, while checking Git checkout contents, profile requirements and process ownership. A plan digest binds the proposed recovery to one exact historical review, reducing the risk of acting on a different claim."
-          },
-          {
-            "heading": "The safety gates remain separate",
-            "text": "The PR is merged, but the only inspected review submission was an earlier COMMENTED objection, not an approval. A repository validation run passed on the inspected head while a Godot pipeline run failed. Neither outcome proves the protected recovery was executed or accepted."
-          }
-        ],
-        "insights": [
-          {
-            "title": "Landing a recovery tool is not recovering a review",
-            "explanation": "The code makes a controlled continuation possible. A fresh plan, explicit authorization, independent reviewer outcome and eventual cleanup are still distinct steps."
-          },
-          {
-            "title": "Green repository checks do not erase a failing game pipeline",
-            "explanation": "The two workflow conclusions differ. Reporting them separately avoids turning one successful validation job into a blanket CI PASS."
-          }
-        ],
-        "takeaway": "The emergency mechanism is merged, but the original held review and its host state remain unverified.",
-        "next_watch": "Watch for a fresh post-merge plan, separate apply authorization and an independent review receipt."
-      },
-      "details": {
-        "overview": "GitHub confirms PR #102 merged in commit dc5b7505b930de1c7331104391edc3f1934cbac2. Its description reports local test passes and a pre-merge plan that is now stale. The only inspected PR review is COMMENTED on an earlier head, not APPROVED. A Validate Repository workflow associated with head b7dd0006 succeeded, while Godot Level Pipeline failed; these are distinct checks and do not establish full CI health. No fresh post-merge plan, authorized apply, independent review PASS, host cleanup or teardown was inspected. Current main advanced further to 2d5240f0.",
-        "ledger": [
-          {
-            "stage": "Landing",
-            "status": "verified merged",
-            "evidence": "PR #102 merged at dc5b7505."
-          },
-          {
-            "stage": "CI",
-            "status": "mixed",
-            "evidence": "Validate Repository success, Godot Level Pipeline failure on inspected PR head."
-          },
-          {
-            "stage": "Independent approval",
-            "status": "unknown",
-            "evidence": "Only COMMENTED review returned."
-          },
-          {
-            "stage": "Protected apply and teardown",
-            "status": "unknown",
-            "evidence": "No host evidence available."
-          }
-        ],
-        "notes": [],
-        "unknowns": [
-          "Current host liveness, locks, worktrees, disk and protected review outcome unknown."
-        ],
-        "actions": [
-          "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
-        ]
-      },
-      "scorecard": {
-        "stage": "PR #102 merged into main at 02:43 UTC. The code introduces digest-bound read-only planning and separately auth",
-        "as_of": "2026-11-01T03:07:00Z",
-        "scope": "Named workstream and cited GitHub evidence only; no canonical live dispatcher audit",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Implement bounded plan/apply",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Merged code in dc5b7505."
-          },
-          {
-            "label": "Repository validation",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Validate Repository run 41263245863 succeeded on inspected PR head."
-          },
-          {
-            "label": "Independent approval",
-            "status": "unknown",
-            "verification": "unknown",
-            "evidence": "Only COMMENTED review returned."
-          },
-          {
-            "label": "Merge code to main",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "PR #102 merged 02:43 UTC."
-          },
-          {
-            "label": "Generate fresh post-merge plan",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Pre-merge digest is stale."
-          },
-          {
-            "label": "Separately authorize apply",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No explicit apply authorization inspected."
-          },
-          {
-            "label": "Independent outcome and teardown",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "No host receipt inspected."
-          }
-        ],
-        "next_gate": "Recovery owner: generate a fresh exact-run read-only plan; do not apply without separate explicit authorization."
-      },
-      "related": [
-        {
-          "title": "Emergency review recovery remains unmerged as validation fails",
-          "context": "Earlier coverage of the same PR before its merge.",
-          "story_id": "emergency-checkout-recovery-pr102-ci-failure-2fb8ed43"
-        }
-      ]
-    },
-    {
-      "id": "emergency-checkout-recovery-pr102-ci-failure-2fb8ed43",
-      "headline": "Emergency review recovery remains unmerged as validation fails",
-      "summary": "An emergency PR proposes preserving a stranded review claim while adding a SHA-bound, two-phase recovery plan. The proposal remains unmerged. The current head's GitHub validation run failed in Fast changed validation, and no independent approval or recovery execution is established.",
-      "body": "PR #102 proposes separating checkout disposition from profile evidence and adding read-only planning plus digest-bound authorized apply for a held claim_profile_mismatch review. The PR description reports local tests and an exact-run planning smoke test, but those are author reports. A prior COMMENTED technical review objected to an earlier head's missing plan/apply boundary; the PR description now says the two-phase design exists, but that comment is not approval of the current head. Workflow run 41222525601 for head 2fb8ed43 concluded failure in Fast changed validation; the job result alone does not prove its exact root cause. Main remains e1bff4eb. No merge, independent acceptance, authorized recovery, or canonical teardown was verified.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "review-agent-paired-review-redacted-final-outcome-recovery-v1",
-      "occurred_at": "2026-10-31T17:02:02Z",
-      "bullets": [
-        "Emergency PR #102 is open and unmerged.",
-        "Current-head validation failed at Fast changed validation.",
-        "Earlier technical review was COMMENTED, not approval.",
-        "Require passing CI and independent human approval before considering merge.",
-        "Any recovery apply needs fresh exact-run plan and separate authorization."
-      ],
-      "links": [
-        {
-          "title": "Emergency recovery PR #102",
-          "url": "https://github.com/braydio/CUSTODIAN/pull/102"
-        },
-        {
-          "title": "Failed validation run",
-          "url": "https://github.com/braydio/CUSTODIAN/actions/runs/41222525601"
-        },
-        {
-          "title": "Current main",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "A proposed emergency route to recover a stranded CUSTODIAN review is now open for scrutiny, but it has not crossed the merge gate. The proposal aims to preserve the original claim and evidence while requiring a read-only recovery plan before any authorized continuation. Its current GitHub validation run failed, so the recovery remains a proposal rather than a deployed remedy.",
-        "sections": [
-          {
-            "heading": "A recovery designed to preserve the original evidence",
-            "text": "PR #102 proposes keeping the existing claim, lock, worktree and review artifacts intact. It separates checkout state from checkout-profile evidence and describes a two-phase process: first generate a pinned, read-only plan; later apply that exact plan only with fresh authorization."
-          },
-          {
-            "heading": "The validation gate is still red",
-            "text": "The current head's Validate Repository run failed in Fast changed validation. An earlier technical review also challenged an earlier revision for lacking the required plan/apply separation. The PR description now reports a two-phase implementation and local tests, but that earlier comment is not an independent approval of the revised head."
-          },
-          {
-            "heading": "What this means for game development",
-            "text": "This is infrastructure recovery, not an Operator or gameplay feature. It matters because stranded review claims and incomplete evidence can delay acceptance of downstream work. Until CI, review and explicit recovery authorization are satisfied, the project cannot treat the held review as safely resumed."
-          }
-        ],
-        "insights": [
-          {
-            "title": "A recovery plan is not permission to recover",
-            "explanation": "The proposed digest-bound plan records exactly what would be acted on. That is useful for safety and reproducibility, but the later apply remains a separate authorization gate."
-          },
-          {
-            "title": "Local tests and CI answer different questions",
-            "explanation": "The author reports successful local checks, while the inspected GitHub workflow failed. Neither a test count nor an open PR establishes independent acceptance or safe host continuation."
-          }
-        ],
-        "takeaway": "The emergency recovery has a concrete proposal, but current-head CI is failing and the PR is unmerged. No protected recovery has been verified.",
-        "next_watch": "Watch for a passing rerun on the current head and a fresh independent human approval before any merge or newly authorized exact-run recovery."
-      },
-      "details": {
-        "overview": "Observed PR #102 open at head 2fb8ed43, main e1bff4eb. GitHub Actions run 41222525601 failed in job Fast changed validation, step Run fast changed validation. An earlier COMMENTED review targets head c512ba20 and is not an approval of the current head. PR text reports 444 local tests and a later 271-test focused suite; those results were not independently reproduced here.",
-        "ledger": [
-          {
-            "stage": "Recovery implementation proposal",
-            "status": "open PR, unmerged",
-            "evidence": "PR #102 head 2fb8ed43; base main e1bff4eb."
-          },
-          {
-            "stage": "Local validation",
-            "status": "author-reported",
-            "evidence": "PR description lists local tests and planning smoke test."
-          },
-          {
-            "stage": "GitHub validation",
-            "status": "verified failure",
-            "evidence": "Run 41222525601: Fast changed validation failed."
-          },
-          {
-            "stage": "Independent review",
-            "status": "not approved",
-            "evidence": "COMMENTED technical review on older head c512ba20; no approval inspected."
-          },
-          {
-            "stage": "Landing",
-            "status": "not landed",
-            "evidence": "PR #102 remains open, merged=false."
-          },
-          {
-            "stage": "Exact-run apply and teardown",
-            "status": "unknown / not authorized",
-            "evidence": "No live host receipt or separate recovery authorization inspected."
-          }
-        ],
-        "notes": [
-          "Earlier reviewer comment identifies a missing plan/apply boundary in a prior revision.",
-          "No new main commits since e1bff4eb."
-        ],
-        "unknowns": [
-          "Exact failure cause within the fast changed-validation step was not independently established.",
-          "Live host claim, lock, process, disk and teardown state unavailable."
-        ],
-        "actions": [
-          "PR author: resolve failing CI on current head and obtain fresh independent approval.",
-          "Recovery owner: after any authorized merge, regenerate the exact-run plan; do not apply without separate authorization."
-        ]
-      },
-      "scorecard": {
-        "stage": "Emergency recovery proposed; CI failing; unmerged",
-        "as_of": "2026-10-31T22:37:53Z",
-        "scope": "PR #102 only, not full dispatcher queue",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Propose exact-run recovery",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "Open PR #102."
-          },
-          {
-            "label": "Validate current head",
-            "status": "blocked",
-            "verification": "verified",
-            "evidence": "Run 41222525601 failed."
-          },
-          {
-            "label": "Obtain independent human approval",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Only earlier COMMENTED review inspected."
-          },
-          {
-            "label": "Merge authorized fix",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "PR remains open."
-          },
-          {
-            "label": "Generate fresh pinned plan",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Post-merge plan required."
-          },
-          {
-            "label": "Separately authorize apply and verify teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "No authorization or host evidence."
-          }
-        ],
-        "next_gate": "PR author resolves current-head CI failure, then obtains independent human approval."
-      },
-      "related": [
-        {
-          "title": "Review parser fix lands, then a missing evidence file stalls the next checkout",
-          "context": "The landed profile correction is part of the same review infrastructure; its independent acceptance is still distinct from emergency recovery.",
-          "story_id": "paired-review-profile-summary-coverage-e1bff4eb"
-        }
-      ]
-    },
-    {
-      "id": "paired-review-profile-summary-coverage-e1bff4eb",
-      "headline": "Review parser fix lands, then a missing evidence file stalls the next checkout",
-      "summary": "The publication-input grammar correction has landed, removing a punctuation mismatch and circular review prerequisite. Its independent review then hit a new fail-before-claim check: the lightweight checkout profile omitted the implementation summary it needed to inspect. A two-path profile correction is now landed and awaits its own independent review. No accepted PASS or host teardown is established.",
-      "body": "Main e1bff4eb includes the landed grammar parser correction (57f79604), a new profile-summary-coverage packet pair (ec5b1350), automatic handoff (03391a69), and a narrowly scoped two-path profile fix (e1bff4eb). Grammar implementation reports 8/8 selected changed-file validation checks passing, but that is not an independent verdict. The profile fix reports exactly 49 included paths, two more than its previous 47, with no broad root inclusion. Its implementation packet is marked complete, but its paired review remains outstanding. A reported preclaim check failed safely because the grammar summary was absent; no reviewer claim was created for that attempt. No canonical live dispatcher audit or host telemetry was inspected.",
-      "severity": "important",
-      "verification": "verified",
-      "category": "agent-ops",
-      "workstream": "agent-paired-review-runner-profile-summary-coverage-v1",
-      "occurred_at": "2026-10-31T16:25:07Z",
-      "bullets": [
-        "Grammar implementation landed; independent acceptance still outstanding.",
-        "Missing summary triggered a reported safe preclaim rejection.",
-        "Profile now explicitly includes the two required root summaries.",
-        "Fresh independent profile review is next, then grammar, adapter and provisioning reviews."
-      ],
-      "links": [
-        {
-          "title": "Grammar parser implementation",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/57f796040cc3e3a51a213b529a2baeeef6fa9627"
-        },
-        {
-          "title": "Profile correction packets",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/ec5b13504f3e772ea33dfd1bf7f14e3ec5abe159"
-        },
-        {
-          "title": "Automatic handoff",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/03391a69611593c29a0df132bb50e4f277f755b9"
-        },
-        {
-          "title": "Profile correction landed",
-          "url": "https://github.com/braydio/CUSTODIAN/commit/e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f"
-        }
-      ],
-      "images": [],
-      "article": {
-        "lead": "CUSTODIAN fixed the review launcher's punctuation mismatch, but the next independent check uncovered a different missing piece: the lightweight reviewer checkout did not include the very implementation summary the reviewer needed. The safety check refused to start an incomplete review. A narrowly targeted profile update has now landed, leaving the independent verdict as the next gate.",
-        "sections": [
-          {
-            "heading": "The parser correction is on main",
-            "text": "The shared publication-input parser now accepts a conventional final period after the last file path while keeping strict checks against unsafe and malformed paths. The implementation also removes a circular prerequisite that had made the adapter review depend on a later provisioning review. Its author reports passing focused tests and changed-file validation, not an independent PASS."
-          },
-          {
-            "heading": "A smaller checkout still needs the right evidence",
-            "text": "The new sparse checkout profile was missing the grammar implementation's root-level summary. The canonical runner reportedly caught that omission before claiming a reviewer. Rather than widen the checkout indiscriminately, the follow-up adds exactly two named summaries, one for the grammar fix and one for the profile correction itself."
-          },
-          {
-            "heading": "Acceptance remains a sequence, not a single green test",
-            "text": "The profile correction is now on main with its implementation packet marked complete. Its own fresh independent review must pass before the grammar review can resume. The adapter and original provisioning reviews follow in order; protected recovery still requires separate authorization."
-          }
-        ],
-        "insights": [
-          {
-            "title": "The safety gate is finding real evidence gaps",
-            "explanation": "The failed preclaim check shows why smaller worktrees need explicit dependency coverage. A reviewer cannot fairly approve a change if its checkout silently omits a required implementation summary."
-          },
-          {
-            "title": "The fix is deliberately narrower than the problem",
-            "explanation": "The reported profile expands from 47 to 49 exact paths rather than adding a broad root directory. That preserves the storage benefit while exposing a maintenance cost: new review summaries must be explicitly included."
-          }
-        ],
-        "takeaway": "Two implementation fixes have landed, but neither substitutes for independent acceptance. The next useful evidence is a fresh PASS for the bounded profile correction.",
-        "next_watch": "Watch for the profile-correction review receipt, followed by grammar, adapter and provisioning reviews in that order."
-      },
-      "details": {
-        "overview": "Inspected five commits after prior main 23bf33e3. Grammar correction 57f79604 reports 8/8 changed-file validation checks passing. Profile packet ec5b1350 records failed preclaim 20261031T153657Z-fc9d201d733a, with 2,651,750,400 bytes available versus 7,264,125,076 required for full checkout at that historical attempt. Profile correction e1bff4eb reports 49 exact paths, prior 47 plus two summaries, and selected validation 1/1. All host measurements and validation results are author-reported, not independently remeasured.",
-        "ledger": [
-          {
-            "stage": "Grammar implementation",
-            "status": "verified landed; validation reported",
-            "evidence": "57f79604 code and summary; author reports 8/8 checks."
-          },
-          {
-            "stage": "Grammar independent review",
-            "status": "not accepted",
-            "evidence": "Missing profile summary blocked reported preclaim attempt; no PASS inspected."
-          },
-          {
-            "stage": "Profile summary correction",
-            "status": "verified landed; validation reported",
-            "evidence": "e1bff4eb adds exactly two summary paths; packet marked complete."
-          },
-          {
-            "stage": "Profile independent review",
-            "status": "outstanding",
-            "evidence": "Review packet exists; no independent PASS inspected."
-          },
-          {
-            "stage": "Adapter and provisioning reviews",
-            "status": "downstream, not verified accepted",
-            "evidence": "Packet dependencies require sequential fresh review."
-          },
-          {
-            "stage": "Protected recovery and teardown",
-            "status": "unknown / not authorized",
-            "evidence": "No canonical host evidence or separate authorization."
-          }
-        ],
-        "notes": [
-          "Main inspected at e1bff4eb3360e7f0fcdbc5bb67fa86bc2b600f4f.",
-          "Combined commit status API returned no statuses; this is not evidence of green CI."
-        ],
-        "unknowns": [
-          "Full canonical dispatcher counts, live claims and running processes unavailable.",
-          "Host disk, locks, worktrees and teardown unverified."
-        ],
-        "actions": [
-          "Independent reviewer: validate exact two-path profile delta and canonical runner dependency closure; record genuine verdict.",
-          "Only after profile PASS, independent reviewer: retry grammar correction review; then adapter and provisioning in order."
-        ]
-      },
-      "scorecard": {
-        "stage": "Profile correction landed; independent review outstanding",
-        "as_of": "2026-10-31T16:25:07Z",
-        "scope": "Grammar parser and bootstrap profile corrections, not full project queue",
-        "metrics": [],
-        "steps": [
-          {
-            "label": "Land publication-input grammar fix",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "57f79604 landed."
-          },
-          {
-            "label": "Identify missing reviewer evidence",
-            "status": "done",
-            "verification": "reported",
-            "evidence": "Preclaim failure described in ec5b1350 packet."
-          },
-          {
-            "label": "Land exact profile summary additions",
-            "status": "done",
-            "verification": "verified",
-            "evidence": "e1bff4eb adds two named paths."
-          },
-          {
-            "label": "Accept profile correction independently",
-            "status": "current",
-            "verification": "unknown",
-            "evidence": "No accepted PASS inspected."
-          },
-          {
-            "label": "Accept grammar correction independently",
-            "status": "next",
-            "verification": "unknown",
-            "evidence": "Blocked until profile review succeeds."
-          },
-          {
-            "label": "Accept adapter and provisioning reviews",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Dependent reviews still outstanding."
-          },
-          {
-            "label": "Authorize recovery and verify teardown",
-            "status": "blocked",
-            "verification": "unknown",
-            "evidence": "Separate authorization and host proof required."
-          }
-        ],
-        "next_gate": "Fresh independent reviewer must verify the landed profile correction with canonical runner evidence and record an authentic PASS."
-      },
-      "related": [
-        {
-          "title": "Review checkout fix lands, but a punctuation mismatch blocks its independent test",
-          "context": "Previous report identified the grammar incompatibility; this update covers its landing and the newly exposed checkout evidence gap.",
-          "story_id": "paired-review-profile-grammar-blocker-23bf33e3"
-        }
-      ]
+      "related": []
     }
   ],
   "snapshot": {
-    "observed_at": "2026-11-01T09:17:29.453Z",
-    "source_main_sha": "543bc5e23cfb969045ada655220917b0c6d50a1f",
+    "observed_at": "2026-11-01T10:23:33.224Z",
+    "source_main_sha": "c258c91144822fd680a62de480c340c3a8999f72",
     "coverage": "partial",
-    "scope": "Two named validator correction packets, one Sepulcher paving pilot and inspected main commits; canonical full dispatcher audit unavailable",
+    "scope": "GitHub main inspection of exactly two named cycle-2 validator correction/review packets and the Sepulcher four-source pilot manifest; no full dispatcher audit",
     "metrics": [
       {
         "id": "ready_auto",
-        "label": "CORRECTION PAIR READY",
+        "label": "READY/AUTO (CYCLE-2 PAIR)",
         "value": 2,
         "verification": "verified",
-        "basis": "Exactly two named validator correction-cycle packets declared ready/auto; not project-wide or proven eligible",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/ca0d28956579680ce1ed84e575fc7a1f318ebdab"
+        "basis": "Exactly the two named cycle-2 packets declare Status ready and Dispatch auto; not a project-wide count",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/c258c91144822fd680a62de480c340c3a8999f72"
       },
       {
         "id": "other-pilot-candidates",
-        "label": "PILOT CANDIDATES",
+        "label": "SEPULCHER PILOT CANDIDATES",
         "value": 1,
         "verification": "verified",
-        "basis": "One generated candidate in the named four-source Sepulcher pilot; from prior review",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+        "basis": "Generated candidate count within four planned Sepulcher pilot sources; not task packets",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
       },
       {
         "id": "other-pilot-approved",
-        "label": "PILOT APPROVED",
+        "label": "SEPULCHER APPROVED",
         "value": 0,
         "verification": "verified",
-        "basis": "Explicit zero approvals in the bounded four-source pilot manifest; not project-wide",
-        "url": "https://github.com/braydio/CUSTODIAN/commit/44c07109a34e2a3935265a5127e2f1962a310031"
+        "basis": "Approved source count within four planned Sepulcher pilot sources; not project-wide",
+        "url": "https://github.com/braydio/CUSTODIAN/commit/e4781dbef8e64fc86d53a3c0f27502a1d9f1caae"
       }
     ],
-    "focus": "Resolve R0-01 via the ready correction packet, then independently review; separately stage the original Sepulcher source",
-    "note": "No full dispatcher audit, live claim/host teardown evidence or complete CI coverage. New review findings are not PASS; art preview is a brief, not a build."
+    "focus": "Verify the cycle-1 independent review prerequisite and dispatch eligibility for the cycle-2 validator correction.",
+    "note": "Full canonical dispatcher audit and host evidence unavailable; claimed/running, total open, review queue, worktree counts, and CI health unknown."
   }
 }
